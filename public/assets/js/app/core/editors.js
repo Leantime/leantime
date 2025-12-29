@@ -185,10 +185,12 @@ leantime.editorController = (function () {
             {
                 // General options
                 width: "100%",
+                autoresize_min_height: 200,
+                autoresize_max_height: 800,
                 skin_url: skin_url,
                 content_css: content_css,
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; max-height: fit-content; }",
-                plugins : "autosave,imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands,textpattern",
+                plugins : "autoresize autosave imagetools shortlink checklist table emoticons autolink image lists save media searchreplace paste directionality fullscreen noneditable visualchars advlist mention slashcommands textpattern,autosave,imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands,textpattern",
                 toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
                 browser_spellcheck: true,
                 toolbar_location: 'bottom',

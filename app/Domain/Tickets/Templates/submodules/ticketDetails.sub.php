@@ -318,7 +318,7 @@ jQuery(document).ready(function($) {
             $tpl->assign('formUrl', ''.BASE_URL.'/tickets/showTicket/'.$ticket->id.'');
 
             $tpl->displaySubmodule('comments-generalComment');
-            ?>
+        ?>
         </form>
         </div>
         <?php } ?>
