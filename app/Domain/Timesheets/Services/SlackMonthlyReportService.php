@@ -181,7 +181,6 @@ public function getAllProfiles(): array {
 
         $columnState = $profile['filters']['columnState'] ?? [];
         $reportName = $profile['name'] ?? " ";
-        error_log("Generating report for profile: " . $profile['name']);
 
         $csvContent = $this->generateCsvString($filters, $columnState);
 
@@ -268,7 +267,6 @@ private function sendCsvToSlack(string $csvContent, string $profileName): bool
         ]);
         
         if ($uploadResponse->getStatusCode() !== 200) {
-            error_log("File upload failed with status: " . $uploadResponse->getStatusCode());
             return false;
         }
         

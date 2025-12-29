@@ -48,8 +48,6 @@ class SendMonthlyReportsCommand extends Command
 
         } catch (\Exception $e) {
             $io->error('✗ Error: ' . $e->getMessage());
-            error_log('Monthly reports command failed: ' . $e->getMessage());
-            error_log($e->getTraceAsString());
             
             return Command::FAILURE;
         }
