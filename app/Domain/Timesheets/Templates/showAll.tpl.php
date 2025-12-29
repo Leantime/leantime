@@ -1,3 +1,7 @@
+<script src="<?= BASE_URL ?>/assets/js/app/core/moment.min.js"></script>
+<link rel="stylesheet" type="text/css" href="<?= BASE_URL ?>/assets/css/daterangepicker.css" />
+<script type="text/javascript" src="<?= BASE_URL ?>/assets/js/app/core/daterangepicker.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/app/core/datePickers.js"></script>
 <?php
 
 defined('RESTRICTED') or exit('Restricted access');
@@ -92,7 +96,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
             leantime.timesheetsController.initEditTimeModal();
         <?php } ?>
 
-        leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1);
+        leantime.dateController.initDateRangePickerTest(".dateFrom", ".dateTo", 1);
 
         // Initialize filter preferences
         setTimeout(function() {
