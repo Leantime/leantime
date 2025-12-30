@@ -414,7 +414,7 @@
 
         const preferencesButton = jQuery(`
                 <button type="button" id="filterPreferencesBtn" class="dt-button">
-                    <span>Profiles</span>
+                    <span><i class="fa fa-bookmark"></i> Profiles</span>
                 </button>
             `)
 

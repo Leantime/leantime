@@ -99,22 +99,19 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
         leantime.dateController.initModernDateRangePicker(".dateFrom", ".dateTo", 1);
 
         // Initialize filter preferences
-        setTimeout(function() {
+        var checkDataTableReady = function() {
+            if (typeof leantimeFilterPreferences !== 'undefined' &&
 
-            if (typeof leantimeFilterPreferences !== 'undefined') {
+                jQuery.fn.dataTable.isDataTable('#allTimesheetsTable')) {
 
                 var dataTable = jQuery('#allTimesheetsTable').DataTable();
-
-                if (dataTable) {
-                    leantimeFilterPreferences.init(dataTable);
-                } else {
-                    console.error('[Profiles] Template: DataTable not found!');
-                }
-
+                leantimeFilterPreferences.init(dataTable);
             } else {
-                console.error('[Profiles] Template: leantimeFilterPreferences not defined!');
+                setTimeout(checkDataTableReady, 50);
             }
-        }, 1000);
+        };
+
+        checkDataTableReady();
 
         // Close project checkbox dropdown when clicking outside
         jQuery(document).on('click', function(e) {
