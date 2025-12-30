@@ -554,7 +554,6 @@ table td{
     border-top: 1px solid var(--neutral);
     /* text-align: center; */
     /* min-height: 41px; */
-    padding: 8px 5px 8px 20px;
 }
 
 .ticketTable .ticketModal {

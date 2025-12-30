@@ -433,7 +433,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                             <input type="submit" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveInvoice" />
                             <?php } ?>
                         </td>
-                        <td>
+                        <td> 
                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                             <input type="checkbox" id="checkAllEmpl" style="vertical-align: baseline;"/> <?php echo $tpl->__('label.select_all')?></td>
                             <?php } ?>
@@ -442,7 +442,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                             <input type="checkbox"  id="checkAllComp" style="vertical-align: baseline;"/> <?php echo $tpl->__('label.select_all')?>
                             <?php } ?>
                         </td>
-                        <td>
+                        <td style ="min-width: 80px;">
                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                                 <input type="checkbox"  id="checkAllPaid" style="vertical-align: baseline;"/> <?php echo $tpl->__('label.select_all')?>
                             <?php } ?>
