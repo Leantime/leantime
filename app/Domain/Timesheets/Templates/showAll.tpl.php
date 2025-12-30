@@ -361,7 +361,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                     <tr>
                         <td data-order="<?= $tpl->e($row['id']); ?>">
                                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                <a href="<?= BASE_URL?>/timesheets/editTime/<?= $row['id']?>" class="editTimeModal">#<?= $row['id'].' - '.$tpl->__('label.edit'); ?> </a>
+                                <a href="<?= BASE_URL?>/timesheets/editTime/<?= $row['id']?>" class="editTimeModal">#<?= $row['id']; ?> </a>
                                 <?php } else { ?>
                                 #<?= $row['id']?>
                                 <?php } ?>
@@ -436,7 +436,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                             <input type="submit" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveInvoice" />
                             <?php } ?>
                         </td>
-                        <td> 
+                        <td>
                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                             <input type="checkbox" id="checkAllEmpl" style="vertical-align: baseline;"/> <?php echo $tpl->__('label.select_all')?></td>
                             <?php } ?>
