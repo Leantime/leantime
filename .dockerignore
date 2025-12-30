@@ -1,0 +1,110 @@
+# Documentation
+*.md
+CHANGELOG.md
+README.md
+SECURITY.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+DEPLOYMENT-SETUP.md
+CLAUDE.md
+LICENSE
+
+# Development and build tools (KEEP FILES NEEDED FOR BUILD)
+makefile
+codeception.yml
+crowdin.yml
+
+# Configuration files
+phpcs.xml
+phpdoc.xml
+phpdoc-api.xml
+phpstan.neon
+web.config.sample
+nginx.example.conf
+nginx-subfolder.example.conf
+
+# Generated/dependency directories (will be installed during build)
+node_modules/
+vendor/
+
+# Logs and runtime data (will be created at runtime)
+logs/
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+!storage/logs/.gitkeep
+!storage/framework/cache/.gitkeep
+!storage/framework/sessions/.gitkeep
+!storage/framework/views/.gitkeep
+
+# User uploaded files (will be in volumes)
+userfiles/*
+public/userfiles/*
+!userfiles/.gitkeep
+!public/userfiles/.gitkeep
+
+# Build artifacts (these will be generated during build)
+classmap.json
+blocklist.json
+
+# Tests
+tests/
+codeception.yml
+
+# Helm charts (K8s deployment)
+helm/
+
+# IDE and system files
+.git/
+.gitignore
+.gitattributes
+.github/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+.editorconfig
+
+# Environment files (will be created at runtime)
+.env
+.env.*
+config/.env
+!config/sample.env
+
+# Docker files (don't include in image)
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+docker.env
+docker.env.example
+
+# CI/CD
+.github/
+*.yml
+
+# Temporary files
+*.log
+*.cache
+tmp/
+temp/
+*.tmp
+
+# Backups
+*.bak
+*.backup
+backupdb/
+
+# Local tree outputs
+treeoutput*.txt
+
+# Compiled assets (will be built during Docker build)
+public/dist/*
+public/mix-manifest.json
+
+# Cache directories
+bootstrap/cache/*
+!bootstrap/cache/.gitkeep

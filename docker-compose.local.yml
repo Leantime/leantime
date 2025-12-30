@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  leantime_db:
+    image: mysql:8.0.44
+    container_name: leantime_db_local
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-leantime}
+      MYSQL_USER: ${MYSQL_USER:-leantime}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-leantime}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - leantime-net
+    command: --character-set-server=UTF8MB4 --collation-server=UTF8MB4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    ports:
+      - "3307:3306"  # Expose MySQL on host port 3307 for direct access
+
+  leantime:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: leantime:local
+    container_name: leantime_app_local
+    restart: unless-stopped
+    env_file:
+      - docker.env
+    environment:
+      # Database connection
+      LEAN_DB_HOST: leantime_db
+      LEAN_DB_PORT: 3306
+      LEAN_DB_DATABASE: ${MYSQL_DATABASE:-leantime}
+      LEAN_DB_USER: ${MYSQL_USER:-leantime}
+      LEAN_DB_PASSWORD: ${MYSQL_PASSWORD:-leantime}
+      
+      # App settings
+      LEAN_APP_URL: ${LEAN_APP_URL:-http://localhost:8080}
+      LEAN_DEBUG: ${LEAN_DEBUG:-1}
+      LEAN_SESSION_SECURE: "false"
+      
+      # Session password (will be auto-generated if not set)
+      LEAN_SESSION_PASSWORD: ${LEAN_SESSION_PASSWORD:-}
+      
+      # Default settings
+      LEAN_SITENAME: ${LEAN_SITENAME:-Leantime-Local}
+      LEAN_LANGUAGE: ${LEAN_LANGUAGE:-en-US}
+      LEAN_DEFAULT_TIMEZONE: ${LEAN_DEFAULT_TIMEZONE:-UTC}
+    ports:
+      - "${LEAN_PORT:-8080}:8080"
+    networks:
+      - leantime-net
+    volumes:
+      # Persistent data volumes
+      - userfiles:/var/www/html/userfiles
+      - public_userfiles:/var/www/html/public/userfiles
+      - logs:/var/www/html/storage/logs
+      - sessions:/var/www/html/storage/framework/sessions
+      - cache:/var/www/html/storage/framework/cache
+      - views:/var/www/html/storage/framework/views
+    depends_on:
+      leantime_db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/healthCheck.php"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  db_data:
+    name: leantime_db_data_local
+  userfiles:
+    name: leantime_userfiles_local
+  public_userfiles:
+    name: leantime_public_userfiles_local
+  logs:
+    name: leantime_logs_local
+  sessions:
+    name: leantime_sessions_local
+  cache:
+    name: leantime_cache_local
+  views:
+    name: leantime_views_local
+
+networks:
+  leantime-net:
+    name: leantime-network-local
+    driver: bridge
