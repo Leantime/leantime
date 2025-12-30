@@ -1,11 +1,9 @@
 /**
  Timesheet Filter Preferences Manager
  */
-
 (function invokeFilterPreferences() {
     'use strict';
 
-    // Configuration
     const PROFILE_ENDPOINT = '/timesheets/saveFilterPreferences';
 
     let currentPreferences = {};
@@ -13,7 +11,7 @@
 
 
     /**
-     * Initialize filter preferences
+     * Initialize filter preferences UI
      */
     function init(dataTable) {
         dataTableInstance = dataTable;
@@ -128,21 +126,14 @@
      */
     async function applyFilters(filters) {
         if (!filters) {
-            console.warn('[Profiles] No filters to apply');
             return;
         }
-
-        // Set client
         if (filters.clientId) {
             jQuery('select[name="clientId"]').val(filters.clientId);
         }
-
-        // Set employee
         if (filters.userId) {
             jQuery('select[name="userId"]').val(filters.userId);
         }
-
-        // Set type
         if (filters.kind) {
             jQuery('select[name="kind"]').val(filters.kind);
         }
@@ -174,7 +165,6 @@
             }
         }
 
-        // Apply column state
         if (filters.columnState && dataTableInstance && typeof dataTableInstance.columns === 'function') {
             dataTableInstance.columns().every(function (index) {
                 const column = this;
