@@ -429,7 +429,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                 <tfoot>
                     <tr>
         <td colspan="4"></td>
-        <td><strong style="margin-left:-10px;"><?php echo round($sum,2); ?></strong></td>
+        <td><strong style="margin-left:-10px;"><?php echo format_hours($sum); ?></strong></td>
         <td colspan="8"></td>
                         <td>
                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
