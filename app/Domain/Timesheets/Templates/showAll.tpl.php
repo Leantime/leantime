@@ -147,9 +147,9 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
     <div class="maincontentinner">
         <form action="<?php echo BASE_URL ?>/timesheets/showAll" method="post" id="form" name="form">
 
-            <div class="pull-right">
-                <div id="tableButtons" style="display:inline-block; vertical-align: middle;"></div>
-                <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="reload" style="vertical-align: middle;" />
+            <div class="pull-right" style="display: flex; align-items: center; gap: 5px;">
+                <div id="tableButtons" style="display:inline-block;"></div>
+                <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="btn btn-primary" style="margin: 0 0 9px; padding: 4px 14px; line-height: 21px;" />
             </div>
 
             <?php
