@@ -2,11 +2,11 @@
    @if(strlen($project["name"]) > 25)
        data-tippy-content='{{ $project["name"] }}'
     @endif >
-    <span class='projectAvatar'>
+    <span class='projectAvatar' >
         @if(isset($projectTypeAvatars[$project["type"]]) && $projectTypeAvatars[$project["type"]] != "avatar")
             <span class="{{ $projectTypeAvatars[$project["type"]] }}"></span>
         @else
-            <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project["id"] }}&v={{  format($project['modified'])->timestamp() }}' />
+            <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project["id"] }}&v={{  format($project['modified'])->timestamp() }}' style = "border-radius:5px;"/>
         @endif
     </span>
     <span class='projectName'>
