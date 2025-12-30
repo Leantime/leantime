@@ -25,7 +25,6 @@
     "datatables.net-buttons": "^2.4.2",
     "datatables.net-rowgroup": "^1.4.1",
     "datatables.net-rowreorder": "^1.4.1",
-    "flatpickr": "^4.6.13",
     "fullcalendar": "^6.1.11",
     "gridstack": "^12.1.1",
     "htmx.org": "^1.9.12",
