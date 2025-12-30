@@ -1,7 +1,7 @@
 .button-primary {
-    color: #333333;
+    color: var(--primary-font-color);
     font-weight: 100;
-    background-color: transparent;
+    background-color: var(--secondary-background);
     border: 1px solid transparent;
     width: 100%;
     text-align: left;
@@ -10,7 +10,7 @@
 }
 
 .button-primary:hover {
-    background-color: #f0f0f0;
-    color: #000000;
+    background-color: var(--dropdown-link-hover-bg);
+    color: var(--dropdown-link-hover-color);
     height: 30px;
 }

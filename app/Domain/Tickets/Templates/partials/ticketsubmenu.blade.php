@@ -72,18 +72,18 @@
 @endif
 <style>
     .submit_button {
-        background-color: var(--secondary-background);
-        color: var(--primary-font-color);
+        background-color: var(--secondary-background) !important;
+        color: var(--primary-font-color) !important;
         border: none;
         padding-left: 10px;
         width: 100%;
         text-align: left;
         height: 30px;
     }
-    .submit_button:hover {
-        background-color: var(--dropdown-link-hover-bg);
+    .dropdown-menu li button.submit_button:hover {
+        background-color: var(--dropdown-link-hover-bg) !important;
         cursor: pointer;
-        color: var(--dropdown-link-hover-color);
+        color: var(--dropdown-link-hover-color) !important;
     }
 
 </style>

@@ -97,7 +97,7 @@ leantime.ticketsController = (function () {
 
             $input.on('input', function () {
                 var searchTerm = jQuery(this).val();
-                
+
                 // Apply client-side filter immediately for better UX
                 applyKanbanSearchFilter(searchTerm);
 
@@ -131,29 +131,29 @@ leantime.ticketsController = (function () {
             // Function to update URL with search term
             function updateUrlWithSearchTerm(term) {
                 var url = new URL(window.location.href);
-                
+
                 if (term && term.trim() !== '') {
                     url.searchParams.set('term', term.trim());
                     url.searchParams.set('search', 'true');
                 } else {
                     url.searchParams.delete('term');
                     // Only remove 'search' if no other search params exist
-                    var hasOtherParams = url.searchParams.has('users') || 
-                                        url.searchParams.has('milestone') || 
-                                        url.searchParams.has('type') || 
-                                        url.searchParams.has('priority') || 
+                    var hasOtherParams = url.searchParams.has('users') ||
+                                        url.searchParams.has('milestone') ||
+                                        url.searchParams.has('type') ||
+                                        url.searchParams.has('priority') ||
                                         url.searchParams.has('status');
                     if (!hasOtherParams) {
                         url.searchParams.delete('search');
                     }
                 }
-                
+
                 // Update URL without page reload, then reload to apply server-side filter
                 window.location.href = url.toString();
             }
         });
         */
-        
+
         jQuery(document).ready(function () {
             if (window.leantime && leantime.kanbanSearch && typeof leantime.kanbanSearch.init === 'function') {
                 leantime.kanbanSearch.init({
@@ -1248,23 +1248,19 @@ leantime.ticketsController = (function () {
 
                     }).done(function (response) {
                         leantime.handleAsyncResponse(response);
-                        
-                        // Update pin/unpin button when ticket is moved to a different column
-                        // Backend automatically unpins tickets when status changes
+
                         var ticketId = ui.item.attr('id');
                         if (ticketId) {
                             var $ticket = jQuery('#' + ticketId);
-                            
+
                             // Update the pin/unpin button text and icon
                             var $pinButton = $ticket.find('.submit_button:contains("Unpin")');
                             if ($pinButton.length) {
                                 $pinButton.html('<i class="fa fa-thumbtack" style=""></i> Pin Ticket');
                             }
-                            
-                            // Remove pinned-ticket class if present
+
                             $ticket.removeClass('pinned-ticket');
-                            
-                            // Remove thumbtack icon from title if present
+
                             $ticket.find('.fa-thumbtack[data-tippy-content]').remove();
                         }
                     });
