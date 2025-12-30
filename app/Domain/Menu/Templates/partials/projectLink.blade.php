@@ -2,7 +2,7 @@
    @if(strlen($project["name"]) > 25)
        data-tippy-content='{{ $project["name"] }}'
     @endif >
-    <span class='projectAvatar' >
+    <span class='projectAvatar'>
         @if(isset($projectTypeAvatars[$project["type"]]) && $projectTypeAvatars[$project["type"]] != "avatar")
             <span class="{{ $projectTypeAvatars[$project["type"]] }}"></span>
         @else
