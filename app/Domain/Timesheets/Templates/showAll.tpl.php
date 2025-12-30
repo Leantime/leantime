@@ -96,7 +96,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
             leantime.timesheetsController.initEditTimeModal();
         <?php } ?>
 
-        leantime.dateController.initDateRangePickerTest(".dateFrom", ".dateTo", 1);
+        leantime.dateController.initModernDateRangePicker(".dateFrom", ".dateTo", 1);
 
         // Initialize filter preferences
         setTimeout(function() {

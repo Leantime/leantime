@@ -82,7 +82,7 @@ leantime.dateController = (function () {
             getBaseDatePickerConfig(callback)
         );
     }
-var initDateRangePickerTest = function (fromElement, toElement, minDistance) {
+var initModernDateRangePicker = function (fromElement, toElement, minDistance) {
     var fromValue = jQuery(fromElement).val();
     var toValue = jQuery(toElement).val();
     
@@ -167,7 +167,7 @@ var initDateRangePickerTest = function (fromElement, toElement, minDistance) {
     // Make public what you want to have public, everything else is private
     return {
         initDateRangePicker:initDateRangePicker,
-        initDateRangePickerTest:initDateRangePickerTest,
+        initModernDateRangePicker:initModernDateRangePicker,
         initDatePicker:initDatePicker,
     };
 
