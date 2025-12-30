@@ -91,7 +91,6 @@ var initModernDateRangePicker = function (fromElement, toElement, minDistance) {
     if (fromValue) {
         startDate = moment(fromValue, ['YYYY-MM-DD', 'DD.MM.YYYY', 'MM/DD/YYYY', 'DD/MM/YYYY'], true);
         if (!startDate.isValid()) {
-            console.warn('Invalid start date format:', fromValue);
             startDate = moment();
         }
     } else {
@@ -101,15 +100,14 @@ var initModernDateRangePicker = function (fromElement, toElement, minDistance) {
     if (toValue) {
         endDate = moment(toValue, ['YYYY-MM-DD', 'DD.MM.YYYY', 'MM/DD/YYYY', 'DD/MM/YYYY'], true);
         if (!endDate.isValid()) {
-            console.warn('Invalid end date format:', toValue);
             endDate = moment();
         }
     } else {
         endDate = moment();
     }
 
-    var picker = jQuery(fromElement).daterangepicker({
-        autoUpdateInput: false, 
+    jQuery(fromElement).daterangepicker({
+        autoUpdateInput: false,
         opens: 'left',
         linkedCalendars: true,
         startDate: startDate,
