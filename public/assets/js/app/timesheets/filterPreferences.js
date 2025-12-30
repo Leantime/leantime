@@ -1,6 +1,3 @@
-/**
- Timesheet Filter Preferences Manager
- */
 (function invokeFilterPreferences() {
     'use strict';
 
@@ -10,9 +7,6 @@
     let dataTableInstance = null;
 
 
-    /**
-     * Initialize filter preferences UI
-     */
     function init(dataTable) {
         dataTableInstance = dataTable;
 
@@ -31,10 +25,6 @@
         setTimeout(checkAndInit, 100);
     }
 
-
-    /**
-     * Get current filter state from the form
-     */
     async function loadPreference(name) {
         try {
             const response = await fetch(leantime.appUrl + PROFILE_ENDPOINT, {
@@ -56,7 +46,6 @@
                 if (data.status === 'success' && data.preference) {
                     await applyFilters(data.preference.filters);
 
-                    // Submit form to apply filters
                     jQuery('#form').submit();
                     return true;
                 } else {
@@ -73,9 +62,6 @@
         return false;
     }
 
-    /**
-     * Save a new profile preference
-     */
     async function savePreference(name) {
 
         if (!name || name.trim() === '') {
@@ -103,7 +89,6 @@
             if (response.ok) {
                 const data = await response.json();
                 if (data.status === 'success') {
-                    // Reload preferences
                     await loadAllPreferences();
                     return true;
                 } else {
@@ -120,10 +105,6 @@
         return false;
     }
 
-
-    /**
-     * Apply filter state to the form
-     */
     async function applyFilters(filters) {
         if (!filters) {
             return;
@@ -174,16 +155,12 @@
                 }
             });
 
-            // Saves column state to the independent column state system
             if (typeof window.leantimeDataTablesColumnState !== 'undefined') {
                 await window.leantimeDataTablesColumnState.save('allTimesheetsTable', filters.columnState, true);
             }
         }
     }
 
-    /**
-     * Load all saved preferences from backend
-     */
     async function loadAllPreferences() {
         try {
             const response = await fetch(leantime.appUrl + PROFILE_ENDPOINT, {
@@ -208,9 +185,6 @@
         return {};
     }
 
-    /**
-     * Captures current filters
-     */
     function getCurrentFilters() {
 
         const projectFilters = {
@@ -225,7 +199,6 @@
             paid: jQuery('input[name="paid"]').is(':checked') ? '1' : '0'
         };
 
-        // Get selected projects
         const selectedProjects = [];
 
         jQuery('input[name="project[]"]:checked').each(function () {
@@ -244,7 +217,6 @@
             projectFilters.projects = selectedProjects;
         }
 
-        // Get column state if DataTable is available
         if (dataTableInstance && typeof dataTableInstance.columns === 'function') {
             const columnState = {};
 
@@ -262,9 +234,6 @@
         return projectFilters;
     }
 
-    /**
-     * Deletes a saved preference
-     */
     async function deletePreference(name) {
 
         if (!confirm('Are you sure you want to delete this profile?')) {
@@ -288,7 +257,6 @@
             if (response.ok) {
                 const data = await response.json();
                 if (data.status === 'success') {
-                    // Reload preferences
                     await loadAllPreferences();
                     return true;
                 } else {
@@ -355,9 +323,6 @@ function initAutoExportListeners() {
 
 jQuery(document).ready(initAutoExportListeners);
 
-    /**
-     * Show save preference dialog
-     */
     function showSaveDialog() {
         const name = prompt('Enter a name for this profile:')
 
@@ -371,9 +336,6 @@ jQuery(document).ready(initAutoExportListeners);
         }
     }
 
-    /**
-     * Update dropdown content
-     */
     function updateDropdownContent() {
         const dropdown = document.getElementById('filterPreferencesDropdown')
         if (dropdown) {
@@ -386,20 +348,14 @@ jQuery(document).ready(initAutoExportListeners);
         }
     }
 
-    /**
-     * Attach event listeners to dropdown items
-     */
     function attachDropdownEventListeners() {
-        // Load preference on click
         jQuery('.preference-name').off('click').on('click', function (e) {
             e.stopPropagation();
             const name = jQuery(this).data('name');
             loadPreference(name);
-            // Close dropdown
             jQuery('#filterPreferencesDropdown').hide();
         });
 
-        // Delete preference
         jQuery('.delete-preference').off('click').on('click', function (e) {
             e.stopPropagation();
             e.preventDefault();
@@ -411,7 +367,6 @@ jQuery(document).ready(initAutoExportListeners);
             });
         });
 
-        // Hover effects
         jQuery('.preference-item').hover(
             function () {
                 jQuery(this).css('background-color', '#f8f9fa');
@@ -422,10 +377,6 @@ jQuery(document).ready(initAutoExportListeners);
         );
     }
 
-
-    /**
-     * Initialize the preferences UI
-     */
     function initUI() {
         const tableButtons = jQuery('#tableButtons')
 
@@ -443,7 +394,6 @@ jQuery(document).ready(initAutoExportListeners);
         dtButtonsContainer.prepend(preferencesButton);
 
 
-        // Create dropdown container separately, append to body for proper positioning
         const dropdownHTML = `
             <div id="filterPreferencesDropdown" style="display: none; position: absolute; z-index: 1000; background: white; border: 1px solid #d0d5dd; border-radius: 8px; width: 300px; max-height: 400px; overflow-y: auto; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15); margin-top: 4px;">
                 <div style="padding: 12px; border-bottom: 1px solid #eee; background: #f7f9fc; border-top-left-radius: 8px; border-top-right-radius: 8px;">
@@ -462,7 +412,6 @@ jQuery(document).ready(initAutoExportListeners);
 
         jQuery('body').append(dropdownHTML);
 
-        // Toggle dropdown
         jQuery(document).on('click', '#filterPreferencesBtn', function (e) {
             e.stopPropagation();
             const dropdown = jQuery('#filterPreferencesDropdown');
@@ -471,7 +420,6 @@ jQuery(document).ready(initAutoExportListeners);
             if (dropdown.is(':visible')) {
                 dropdown.hide();
             } else {
-                // Position dropdown below button
                 const buttonOffset = button.offset();
                 const buttonHeight = button.outerHeight();
                 dropdown.css({
@@ -479,7 +427,6 @@ jQuery(document).ready(initAutoExportListeners);
                     left: buttonOffset.left
                 });
 
-                // Load and show preferences
                 loadAllPreferences().then(function () {
                     updateDropdownContent();
                     dropdown.show();
@@ -487,14 +434,11 @@ jQuery(document).ready(initAutoExportListeners);
             }
         });
 
-
-        // Save current preference
         jQuery(document).on('click', '#saveCurrentPreference', function (e) {
             e.stopPropagation();
             showSaveDialog();
         });
 
-        // Close dropdown when clicking outside
         jQuery(document).on('click', function (e) {
             if (!jQuery(e.target).closest('#filterPreferencesBtn, #filterPreferencesDropdown').length) {
                 jQuery('#filterPreferencesDropdown').hide()
@@ -537,8 +481,6 @@ jQuery(document).ready(initAutoExportListeners);
     }
 }
 
-
-    // Export public API
     window.leantimeFilterPreferences = {
         init: init,
         save: savePreference,
