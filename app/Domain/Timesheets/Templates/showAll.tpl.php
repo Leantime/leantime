@@ -98,6 +98,8 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 
         leantime.dateController.initModernDateRangePicker(".dateFrom", ".dateTo", 1);
 
+        const TIMEOUT_DELAY = 50
+
         // Initialize filter preferences
         var checkDataTableReady = function() {
             if (typeof leantimeFilterPreferences !== 'undefined' &&
@@ -107,7 +109,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                 var dataTable = jQuery('#allTimesheetsTable').DataTable();
                 leantimeFilterPreferences.init(dataTable);
             } else {
-                setTimeout(checkDataTableReady, 50);
+                setTimeout(checkDataTableReady, TIMEOUT_DELAY);
             }
         };
 
