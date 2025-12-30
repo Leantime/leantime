@@ -210,28 +210,28 @@ foreach ($tpl->get('allTimesheets') as $row) {
     // Initialize CSV export formatter (inline to avoid build dependency)
     window.leantime = window.leantime || {};
     window.leantime.timesheetsExport = window.leantime.timesheetsExport || {};
-    
+
     if (typeof window.leantime.timesheetsExport.resolveCell !== 'function') {
         window.leantime.timesheetsExport.resolveCell = function ($node, fallbackData) {
             if (typeof $node.data('order') === 'undefined') {
                 return fallbackData;
             }
-            
+
             if (! $node.hasClass('js-timesheet-hours')) {
                 return $node.data('order');
             }
-            
+
             var tableFormat = ($node.closest('table[data-hours-format]').data('hoursFormat') || '').toString();
-            
+
             if (tableFormat === 'human') {
                 // jQuery converts data-export-display to exportDisplay in .data()
                 if (typeof $node.data('exportDisplay') !== 'undefined') {
                     return $node.data('exportDisplay');
                 }
-                
+
                 return $node.text().trim();
             }
-            
+
             return $node.data('order');
         };
     }

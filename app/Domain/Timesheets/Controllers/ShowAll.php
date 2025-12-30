@@ -83,7 +83,7 @@ class ShowAll extends Controller
             $userId = intval(strip_tags($_POST['userId']));
         }
 
-        $dateFrom = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
+        $dateFrom = dtHelper()->userNow()->startOfMonth()->setToDbTimezone();
         if (! empty($_POST['dateFrom'])) {
             $dateFrom = dtHelper()->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();
         }
