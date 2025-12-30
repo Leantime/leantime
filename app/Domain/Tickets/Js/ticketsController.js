@@ -1248,6 +1248,25 @@ leantime.ticketsController = (function () {
 
                     }).done(function (response) {
                         leantime.handleAsyncResponse(response);
+                        
+                        // Update pin/unpin button when ticket is moved to a different column
+                        // Backend automatically unpins tickets when status changes
+                        var ticketId = ui.item.attr('id');
+                        if (ticketId) {
+                            var $ticket = jQuery('#' + ticketId);
+                            
+                            // Update the pin/unpin button text and icon
+                            var $pinButton = $ticket.find('.submit_button:contains("Unpin")');
+                            if ($pinButton.length) {
+                                $pinButton.html('<i class="fa fa-thumbtack" style=""></i> Pin Ticket');
+                            }
+                            
+                            // Remove pinned-ticket class if present
+                            $ticket.removeClass('pinned-ticket');
+                            
+                            // Remove thumbtack icon from title if present
+                            $ticket.find('.fa-thumbtack[data-tippy-content]').remove();
+                        }
                     });
 
                 }

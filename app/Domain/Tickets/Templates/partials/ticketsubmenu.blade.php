@@ -72,8 +72,8 @@
 @endif
 <style>
     .submit_button {
-        background-color: white;
-        color: black;
+        background-color: var(--secondary-background);
+        color: var(--primary-font-color);
         border: none;
         padding-left: 10px;
         width: 100%;
@@ -81,9 +81,9 @@
         height: 30px;
     }
     .submit_button:hover {
-        background-color: #f0f0f0;
+        background-color: var(--dropdown-link-hover-bg);
         cursor: pointer;
-        color: black;
+        color: var(--dropdown-link-hover-color);
     }
 
 </style>
