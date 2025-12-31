@@ -193,3 +193,66 @@
     color: white;
     background-color: var(--accent1) !important;
 }
+
+/* ============================================
+   LIGHT MODE ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+
+/* Enhanced focus indicators for light mode - high contrast */
+a:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    background-color: rgba(0, 70, 102, 0.08);
+}
+
+/* Dashboard task links - critical for keyboard navigation and low vision users */
+.latest-todos a:focus-visible,
+.sortableTicketList a:focus-visible {
+    outline: 3px solid var(--accent1);
+    outline-offset: 3px;
+    background-color: rgba(0, 70, 102, 0.12);
+    border-radius: 3px;
+    box-shadow: 0 0 0 4px rgba(0, 70, 102, 0.1);
+}
+
+/* Button focus states */
+button:focus-visible,
+.btn:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(0, 70, 102, 0.15);
+}
+
+/* Form element focus states */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--accent1);
+    border-color: var(--accent1);
+    box-shadow: 0 0 0 3px rgba(0, 70, 102, 0.1);
+}
+
+/* Navigation and menu focus */
+.nav a:focus-visible,
+.dropdown-menu a:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 1px;
+    background-color: rgba(0, 70, 102, 0.1);
+}
+
+/* Link hover state - high contrast change for low vision accessibility */
+a:hover {
+    color: #000000;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+}
+
+/* Dashboard task links - extra visual feedback on hover */
+.latest-todos a:hover,
+.sortableTicketList a:hover {
+    color: #000000;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    background-color: rgba(0, 0, 0, 0.05);
+}

@@ -1,0 +1,63 @@
+/**
+ * Accessibility Enhancement Styles
+ * Provides support for user preferences and assistive technologies
+ */
+
+/* High contrast mode support for Windows High Contrast users */
+@media (prefers-contrast: high) {
+    a {
+        text-decoration: underline;
+        font-weight: 500;
+    }
+
+    a:focus-visible {
+        outline-width: 3px;
+        outline-offset: 4px;
+    }
+
+    .latest-todos a,
+    .sortableTicketList a {
+        font-weight: 600;
+    }
+
+    button,
+    .btn {
+        border-width: 2px;
+    }
+}
+
+/* Reduced motion for users with vestibular disorders */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Forced colors mode - respects user's color overrides (Windows High Contrast) */
+@media (forced-colors: active) {
+    a:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+        outline: 2px solid currentColor;
+    }
+}
+
+/* Increased line height for dyslexic users using specific fonts */
+.font-atkinson,
+.font-shantell,
+[style*="font-family: 'Atkinson"],
+[style*="font-family: 'Shantell"] {
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+}

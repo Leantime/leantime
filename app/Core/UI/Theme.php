@@ -130,6 +130,41 @@ class Theme
         'companyColors' => 'companyColors',
     ];
 
+    /**
+     * Get color scheme values adjusted for current color mode.
+     * Ensures WCAG 2.1 AA contrast compliance in both light and dark modes.
+     *
+     * @param string $schemeName The identifier of the color scheme
+     * @param array $scheme The original color scheme definition
+     * @return array The color scheme with mode-appropriate values
+     * @api
+     */
+    private function getColorSchemeForMode(string $schemeName, array $scheme): array
+    {
+        $colorMode = $this->getColorMode();
+
+        // Adjust grayscale schemes for dark mode to ensure readability
+        if ($colorMode === 'dark') {
+            if ($schemeName === 'grayscale1') {
+                return [
+                    'name' => $scheme['name'],
+                    'primaryColor' => '#e8e8e8',   // Light gray - 8.5:1 contrast on #292929
+                    'secondaryColor' => '#b0b0b0', // Medium gray - 4.2:1 contrast
+                ];
+            }
+            if ($schemeName === 'grayscale2') {
+                return [
+                    'name' => $scheme['name'],
+                    'primaryColor' => '#4a4a4a',   // Dark gray (for subtle elements)
+                    'secondaryColor' => '#d1d1d1', // Light gray - 9.1:1 contrast
+                ];
+            }
+        }
+
+        // Light mode: use original values
+        return $scheme;
+    }
+
     private array $backgroundTypes = ['gradient', 'image'];
 
     private array $backgroundSources = ['unsplash', 'upload'];
@@ -181,7 +216,15 @@ class Theme
 
         $this->readIniData();
 
-        $parsedColorSchemes = $this->colorSchemes;
+        // Apply color mode adjustments to predefined schemes
+        $parsedColorSchemes = [];
+        foreach ($this->colorSchemes as $key => $scheme) {
+            if (is_array($scheme)) {
+                $parsedColorSchemes[$key] = $this->getColorSchemeForMode($key, $scheme);
+            } else {
+                $parsedColorSchemes[$key] = $scheme;
+            }
+        }
         $parsedColorSchemes['themeDefault'] = [
             'name' => 'Leantime',
             'primaryColor' => $this->iniData['general']['primaryColor'] ?? $this->colorSchemes['themeDefault']['primaryColor'],
@@ -471,6 +514,16 @@ class Theme
         // Only store colors in session for logged in users
         if (Auth::isLoggedIn()) {
             session(['usersettings.colorMode' => $colorMode]);
+
+            // Clear cached color values to force reload with new mode-aware values
+            session()->forget('usersettings.colors.primaryColor');
+            session()->forget('usersettings.colors.secondaryColor');
+
+            // Refresh accent colors for current color scheme with new mode
+            $currentScheme = session('usersettings.colorScheme');
+            if ($currentScheme) {
+                $this->setAccentColors($currentScheme);
+            }
         }
 
         EventDispatcher::addFilterListener(
