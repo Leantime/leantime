@@ -28,6 +28,71 @@ leantime.ticketsController = (function () {
 
     }
 
+    /**
+     * Move a ticket card to a different swimlane when grouped field is changed
+     * @param {number} ticketId - The ticket ID
+     * @param {string|number} newSwimlaneValue - The new swimlane value (priority, milestone, etc.)
+     */
+    var moveCardToSwimlane = function(ticketId, newSwimlaneValue) {
+        // Find the card element
+        var $card = jQuery("#ticket_" + ticketId);
+
+        if (!$card.length) {
+            console.warn("Card not found for ticket ID:", ticketId);
+            return;
+        }
+
+        // Get current status from card's column
+        var $currentColumn = $card.closest('.contentInner');
+        var statusMatch = $currentColumn.attr('class').match(/status_(\d+)/);
+
+        if (!statusMatch) {
+            console.warn("Could not determine status for ticket:", ticketId);
+            location.reload(); // Fallback to reload
+            return;
+        }
+
+        var statusId = statusMatch[1];
+
+        // Find target swimlane column
+        var $targetColumn = jQuery("#kanboard-" + newSwimlaneValue + " .contentInner.status_" + statusId);
+
+        if (!$targetColumn.length) {
+            console.warn("Target swimlane not found:", newSwimlaneValue, statusId);
+            location.reload(); // Fallback to reload
+            return;
+        }
+
+        // Don't move if already in correct location
+        if ($currentColumn[0] === $targetColumn[0]) {
+            return;
+        }
+
+        // Add exit animation
+        $card.addClass('card-moving-out');
+
+        setTimeout(function() {
+            // Move card to new swimlane
+            $card.detach().appendTo($targetColumn);
+
+            // Add entrance animation
+            $card.removeClass('card-moving-out').addClass('card-moving-in');
+
+            // Update ticket counts
+            countTickets();
+
+            // Refresh sortable to recalculate positions
+            if ($targetColumn.sortable) {
+                $targetColumn.sortable('refresh');
+            }
+
+            // Remove animation class after transition
+            setTimeout(function() {
+                $card.removeClass('card-moving-in');
+            }, 300);
+        }, 200);
+    };
+
 
     var updateRemainingHours = function (element, id) {
         var value = jQuery(element).val();
@@ -524,6 +589,11 @@ leantime.ticketsController = (function () {
                         jQuery("#effortDropdownMenuLink" + ticketId + " span.text").text(storyPointLabels[effortId]);
                         jQuery.growl({message: leantime.i18n.__("short_notifications.effort_updated"), style: "success"});
 
+                        // Move card to correct swimlane if grouped by effort
+                        if (leantime.kanbanGroupBy === 'storypoints') {
+                            moveCardToSwimlane(ticketId, effortId);
+                        }
+
                     }
                 );
             } else {
@@ -573,6 +643,11 @@ leantime.ticketsController = (function () {
 
                         jQuery.growl({message: leantime.i18n.__("short_notifications.priority_updated"), style: "success"});
 
+                        // Move card to correct swimlane if grouped by priority
+                        if (leantime.kanbanGroupBy === 'priority') {
+                            moveCardToSwimlane(ticketId, priorityId);
+                        }
+
                     }
                 );
             } else {
@@ -611,6 +686,11 @@ leantime.ticketsController = (function () {
                         jQuery("#milestoneDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
                         jQuery("#milestoneDropdownMenuLink" + ticketId).css("backgroundColor", color);
                         jQuery.growl({message: leantime.i18n.__("short_notifications.milestone_updated"), style: "success"});
+
+                        // Move card to correct swimlane if grouped by milestone
+                        if (leantime.kanbanGroupBy === 'milestoneid') {
+                            moveCardToSwimlane(ticketId, milestoneId);
+                        }
                     }
                 );
             }
@@ -681,6 +761,11 @@ leantime.ticketsController = (function () {
                         jQuery("#userDropdownMenuLink" + ticketId + " span.text span#userImage" + ticketId + " img").attr("src", leantime.appUrl + "/api/users?profileImage=" + userId);
                         jQuery("#userDropdownMenuLink" + ticketId + " span.text span#user" + ticketId).text(dataLabel);
                         jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
+
+                        // Move card to correct swimlane if grouped by user
+                        if (leantime.kanbanGroupBy === 'editorId') {
+                            moveCardToSwimlane(ticketId, userId);
+                        }
                     }
                 );
             }
@@ -743,6 +828,11 @@ leantime.ticketsController = (function () {
                     function () {
                         jQuery("#sprintDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
                         jQuery.growl({message: leantime.i18n.__("short_notifications.sprint_updated"), style: "success"});
+
+                        // Move card to correct swimlane if grouped by sprint
+                        if (leantime.kanbanGroupBy === 'sprint') {
+                            moveCardToSwimlane(ticketId, sprintId);
+                        }
                     }
                 );
             }
@@ -1097,6 +1187,24 @@ leantime.ticketsController = (function () {
                     ui.item.removeData("move_handler");
 
                     countTickets();
+
+                    // Update empty state for all columns after drag-and-drop
+                    jQuery(currentElement).find(".contentInner").each(function() {
+                        var $container = jQuery(this);
+                        var hasTickets = $container.find(".moveable").length > 0;
+
+                        if (hasTickets) {
+                            // Column has tickets - remove empty state
+                            $container.removeClass("empty-column");
+                            $container.attr("data-empty-text", "");
+                            $container.attr("aria-label", $container.attr("aria-label").replace("Empty column", "") + " column items");
+                        } else {
+                            // Column is empty - add empty state
+                            $container.addClass("empty-column");
+                            $container.attr("data-empty-text", "Empty");
+                            $container.attr("aria-label", "Empty column");
+                        }
+                    });
 
                     var statusPostData = {
                         action: "kanbanSort",

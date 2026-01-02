@@ -1,0 +1,177 @@
+/* Quick-add form styles */
+
+.quickaddContainer {
+    margin-top: 8px;
+
+    &.quickaddContainer--empty {
+        padding: 6px;
+    }
+}
+
+.quickAddLink {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--main-action-color);
+    text-decoration: none;
+    padding: 8px;
+    border-radius: var(--box-radius);
+    transition: color 0.2s ease;
+    font-size: var(--font-size-s);
+
+    &:hover {
+        color: var(--accent1);
+    }
+
+    &.empty-state {
+        justify-content: flex-start;
+        padding: 10px;
+        color: var(--primary-font-color);
+        opacity: 0.7;
+
+        &:hover {
+            color: var(--accent1);
+            opacity: 1;
+        }
+    }
+
+    i {
+        font-size: 14px;
+    }
+}
+
+.quickAddForm {
+    position: relative;
+    padding: 8px;
+
+    &.active {
+        animation: fadeIn 0.2s ease;
+    }
+
+    .quickaddContainer--empty & {
+        padding: 8px;
+    }
+}
+
+.form-group {
+    position: static;
+    margin-bottom: 0;
+}
+
+.quickAddHelp {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 16px;
+    color: var(--primary-font-color);
+    opacity: 0.5;
+    cursor: help;
+    transition: opacity 0.2s ease, color 0.2s ease;
+    padding: 4px;
+    z-index: 10;
+
+    &:hover,
+    &:focus {
+        opacity: 1;
+        color: var(--accent1);
+        outline: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--accent1);
+        outline-offset: 2px;
+        border-radius: 50%;
+        opacity: 1;
+    }
+}
+
+.quickAddInput {
+    width: 100%;
+    min-height: 38px;
+    border: 1px solid var(--main-border-color);
+    border-radius: var(--box-radius);
+    padding: 8px 28px 8px 8px;
+    resize: vertical;
+    font-family: var(--primary-font-family);
+    font-size: var(--font-size-s);
+    color: var(--primary-font-color);
+    background: var(--main-bg);
+    line-height: 1.4;
+
+    &:focus {
+        border-color: var(--accent1);
+        outline: none;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent1) 15%, transparent);
+    }
+
+    &.error {
+        border-color: var(--red);
+    }
+
+    &::placeholder {
+        color: var(--primary-font-color);
+        opacity: 0.5;
+    }
+}
+
+.error-message {
+    color: var(--red);
+    font-size: var(--font-size-s);
+    margin-top: 4px;
+    padding: 4px 8px;
+    background: color-mix(in srgb, var(--red) 10%, transparent);
+    border-radius: var(--box-radius);
+}
+
+.formButtonContainer {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+
+    .btn {
+        flex: 1;
+        padding: 6px 12px;
+        font-size: var(--font-size-s);
+    }
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .quickAddForm {
+        animation: none;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
