@@ -720,6 +720,98 @@ class Tickets
     }
 
     /**
+     * Get status breakdown counts for grouped tickets
+     *
+     * Calculates ticket counts per status column for each swimlane group.
+     * This is used to populate status breakdown visualizations like progress bars.
+     *
+     * @param array $groupedTickets - Result from getAllGrouped()
+     * @param array $statusColumns - Result from getKanbanColumns()
+     * @return array Status counts per swimlane with structure:
+     *               [
+     *                 'groupId' => [
+     *                   'statusCounts' => ['status_id' => count, ...],
+     *                   'totalCount' => int,
+     *                   'label' => string,
+     *                   'id' => string,
+     *                   'class' => string,
+     *                   'moreInfo' => string
+     *                 ]
+     *               ]
+     *
+     * @api
+     */
+    public function getStatusBreakdownBySwimlane(array $groupedTickets, array $statusColumns): array
+    {
+        $breakdown = [];
+
+        foreach ($groupedTickets as $groupId => $group) {
+            $statusCounts = [];
+            $totalCount = 0;
+
+            // Initialize all status columns to 0
+            foreach ($statusColumns as $statusId => $statusLabel) {
+                $statusCounts[$statusId] = 0;
+            }
+
+            // Count tickets by status and determine time alert
+            $hasOverdue = false;
+            $hasDueSoon = false;
+            $allStale = true;
+            $now = CarbonImmutable::now();
+
+            foreach ($group['items'] as $ticket) {
+                $status = $ticket['status'];
+                if (isset($statusCounts[$status])) {
+                    $statusCounts[$status]++;
+                    $totalCount++;
+                }
+
+                // Time alert logic
+                // Check for overdue (highest priority)
+                if (isset($ticket['dateToFinish']) && ! empty($ticket['dateToFinish'])) {
+                    $dueDate = CarbonImmutable::parse($ticket['dateToFinish']);
+                    if ($dueDate->isPast()) {
+                        $hasOverdue = true;
+                    } elseif ($dueDate->diffInDays($now) <= 3) {
+                        $hasDueSoon = true;
+                    }
+                }
+
+                // Check for stale (no activity for 14+ days)
+                if (isset($ticket['editedDate']) && ! empty($ticket['editedDate'])) {
+                    $lastActivity = CarbonImmutable::parse($ticket['editedDate']);
+                    if ($lastActivity->diffInDays($now) < 14) {
+                        $allStale = false;
+                    }
+                }
+            }
+
+            // Determine which time alert to show (priority: overdue > dueSoon > stale)
+            $timeAlert = null;
+            if ($hasOverdue) {
+                $timeAlert = 'overdue';
+            } elseif ($hasDueSoon) {
+                $timeAlert = 'dueSoon';
+            } elseif ($allStale && $totalCount > 0) {
+                $timeAlert = 'stale';
+            }
+
+            $breakdown[$groupId] = [
+                'statusCounts' => $statusCounts,
+                'totalCount' => $totalCount,
+                'label' => $group['label'],
+                'id' => $group['id'],
+                'class' => $group['class'] ?? '',
+                'moreInfo' => $group['more-info'] ?? '',
+                'timeAlert' => $timeAlert,
+            ];
+        }
+
+        return $breakdown;
+    }
+
+    /**
      * @api
      */
     public function getAllPossibleParents(TicketModel $ticket, string $projectId = 'currentProject'): array

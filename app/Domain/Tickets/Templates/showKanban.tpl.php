@@ -18,7 +18,18 @@ $priorities = $tpl->get('priorities');
 
 $allTicketGroups = $tpl->get('allTickets');
 
+// Get quick-add reopen state from session
+$reopenState = session()->get('quickadd_reopen', null);
+
+// Get current groupBy for JavaScript access
+$currentGroupBy = $searchCriteria['groupBy'] ?? 'all';
+
 ?>
+
+<script>
+    // Expose current groupBy setting to JavaScript
+    leantime.kanbanGroupBy = '<?= $tpl->escape($currentGroupBy) ?>';
+</script>
 
 <?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
 
@@ -55,7 +66,12 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
             $allTickets = $allTicketGroups['all']['items'];
         }
 ?>
-        <div class="" style="
+        <?php
+        // Detect if groupBy is active (not "all")
+        $isGroupByActive = ! empty($searchCriteria['groupBy']) && $searchCriteria['groupBy'] !== 'all';
+$columnHeaderClass = $isGroupByActive ? 'groupby-active' : '';
+?>
+        <div class="kanban-column-headers <?= $columnHeaderClass ?>" style="
             display: flex;
             position: sticky;
             top: 110px;
@@ -86,56 +102,90 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
 
                 </h4>
 
-                <div class="">
-                    <a href="javascript:void(0);"
-                       style="padding:10px; display:block; width:100%;" id="ticket_new_link_<?= $key?>"
-                       onclick="jQuery('#ticket_new_link_<?= $key?>').toggle('fast'); jQuery('#ticket_new_<?= $key?>').toggle('fast', function() { jQuery(this).find('input[name=headline]').focus(); });">
-                        <i class="fas fa-plus-circle"></i> Add To-Do</a>
-
-                     <div class="hideOnLoad " id="ticket_new_<?= $key?>" style="padding-top:5px; padding-bottom:5px;">
-
-                        <form method="post">
-                            <input type="text" name="headline" style="width:100%;" placeholder="Enter To-Do Title" title="<?= $tpl->__('label.headline') ?>"/><br />
-                            <input type="hidden" name="milestone" value="<?php echo $searchCriteria['milestone']; ?>" />
-                            <input type="hidden" name="status" value="<?php echo $key; ?> " />
-                            <input type="hidden" name="sprint" value="<?php echo session('currentSprint'); ?> " />
-                            <input type="submit" value="Save" name="quickadd" />
-                            <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new_<?= $key?>, #ticket_new_link_<?= $key?>').toggle('fast');">
-                                <?= $tpl->__('links.cancel') ?>
-                            </a>
-                        </form>
-
-                        <div class="clearfix"></div>
-                    </div>
-
-                </div>
             </div>
         <?php } ?>
         </div>
 
         <?php foreach ($allTicketGroups as $group) {?>
              <?php
-        $allTickets = $group['items'];
+$allTickets = $group['items'];
             ?>
 
             <?php if ($group['label'] != 'all') { ?>
-                <h5 class="accordionTitle kanbanLane <?= $group['class']?>" id="accordion_link_<?= $group['id'] ?>">
-                    <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?= $group['id'] ?>" onclick="leantime.snippets.accordionToggle('<?= $group['id'] ?>');">
-                        <i class="fa fa-angle-down"></i><?= $group['label'] ?> (<?= count($group['items']) ?>)
-                    </a>
-                    <br />
-                    <small style="padding-left:20px; color:var(--primary-font-color); font-size:var(--font-size-s);"><?= $group['more-info'] ?></small>
-                </h5>
-                <div class="simpleAccordionContainer kanban" id="accordion_content-<?= $group['id'] ?>">
+                <!-- New horizontal swimlane row header -->
+                <?php
+                $breakdown = $statusBreakdown[$group['id']] ?? [];
+                $swimlaneExpanded = ! in_array($group['id'], session('collapsedSwimlanes', []));
+                ?>
+
+                <?php echo app('blade.compiler')::render('@include("global::kanban.swimlane-row-header", [
+                    "groupBy" => $searchCriteria["groupBy"],
+                    "groupId" => $group["id"],
+                    "label" => $group["label"],
+                    "totalCount" => $breakdown["totalCount"] ?? count($group["items"]),
+                    "statusCounts" => $breakdown["statusCounts"] ?? [],
+                    "statusColumns" => $allKanbanColumns,
+                    "expanded" => $swimlaneExpanded,
+                    "moreInfo" => $group["more-info"] ?? null,
+                    "timeAlert" => $breakdown["timeAlert"] ?? null
+                ])', [
+                    'searchCriteria' => $searchCriteria,
+                    'group' => $group,
+                    'breakdown' => $breakdown,
+                    'allKanbanColumns' => $tpl->get('allKanbanColumns'),
+                    'swimlaneExpanded' => $swimlaneExpanded
+                ]); ?>
+
+                <!-- Kanban columns content area (collapsible) -->
+                <div class="kanban-swimlane-content" id="swimlane-content-<?= $group['id'] ?>" style="display: <?= $swimlaneExpanded ? 'block' : 'none' ?>;">
             <?php } ?>
 
                     <div class="sortableTicketList kanbanBoard" id="kanboard-<?= $group['id'] ?>" style="margin-top:-5px;">
 
                         <div class="row-fluid">
 
+                            <?php
+                    /**
+                     * Detect empty columns for visual indicator
+                     * Loop through all status columns and check if any tickets exist for that status
+                     */
+                    $emptyColumns = [];
+            foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) {
+                $hasTickets = false;
+
+                // Check if current group has any tickets in this status
+                if (isset($allTickets)) {
+                    foreach ($allTickets as $ticket) {
+                        if (isset($ticket['status']) && $ticket['status'] == $key) {
+                            $hasTickets = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (! $hasTickets) {
+                    $emptyColumns[$key] = true;
+                }
+            }
+            ?>
+
                             <?php foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) { ?>
                             <div class="column">
-                                <div class="contentInner <?php echo 'status_'.$key; ?>" >
+                                <div class="contentInner <?php echo 'status_'.$key; ?> <?= isset($emptyColumns[$key]) ? 'empty-column' : '' ?>"
+                                     data-empty-text="<?= isset($emptyColumns[$key]) ? 'Empty' : '' ?>"
+                                     aria-label="<?= isset($emptyColumns[$key]) ? 'Empty column' : htmlspecialchars($statusRow['name']).' column items' ?>"
+                                     role="list">
+
+                                    <?php if (isset($emptyColumns[$key])) { ?>
+                                        <?php
+                        $statusId = $key;
+                                        $swimlaneKey = $group['id'] ?? null;
+                                        $isEmpty = true;
+                                        $currentGroupBy = $searchCriteria['groupBy'] ?? null;
+                                        include __DIR__.'/partials/quickadd-form.inc.php';
+                                        ?>
+                                    <?php } ?>
+
                                     <?php foreach ($allTickets as $row) { ?>
                                         <?php if ($row['status'] == $key) {?>
                                         <div class="ticketBox moveable container priority-border-<?= $row['priority']?>" id="ticket_<?php echo $row['id']; ?>">
@@ -334,7 +384,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                     </div>
 
             <?php if ($group['label'] != 'all') { ?>
-                </div>
+                </div> <!-- .kanban-swimlane-content -->
             <?php } ?>
 
         <?php } ?>

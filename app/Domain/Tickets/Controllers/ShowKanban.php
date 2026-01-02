@@ -43,9 +43,17 @@ class ShowKanban extends Controller
     public function get(array $params): Response
     {
         $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
-        array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
+        $allKanbanColumns = $this->ticketService->getKanbanColumns();
 
-        $this->tpl->assign('allKanbanColumns', $this->ticketService->getKanbanColumns());
+        // NEW: Calculate status breakdown for swimlane visualizations
+        $statusBreakdown = $this->ticketService->getStatusBreakdownBySwimlane(
+            $template_assignments['allTickets'],
+            $allKanbanColumns
+        );
+
+        array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
+        $this->tpl->assign('allKanbanColumns', $allKanbanColumns);
+        $this->tpl->assign('statusBreakdown', $statusBreakdown);
 
         return $this->tpl->display('tickets.showKanban');
     }
@@ -56,14 +64,78 @@ class ShowKanban extends Controller
     public function post(array $params): Response
     {
         // QuickAdd
-        if (isset($_POST['quickadd'])) {
-            $result = $this->ticketService->quickAddTicket($params);
+        if (isset($_POST['quickadd']) && $_POST['quickadd'] == 1) {
+            $formParams = [
+                'headline' => $_POST['headline'] ?? '',
+                'status' => $_POST['status'] ?? '',
+                'milestone' => $_POST['milestone'] ?? '',
+                'sprint' => $_POST['sprint'] ?? '',
+                'projectId' => session('currentProject'),
+                'editorId' => session('userdata.id'),
+            ];
 
-            if (is_array($result)) {
-                $this->tpl->setNotification($result['message'], $result['status']);
+            // Swimlane context inheritance - map swimlane value to correct field based on groupBy
+            $swimlaneValue = $_POST['swimlane'] ?? null;
+            $groupBy = $_POST['groupBy'] ?? null;
+
+            if (! empty($swimlaneValue) && ! empty($groupBy)) {
+                // Map groupBy field to the parameter name expected by quickAddTicket()
+                $fieldMapping = [
+                    'priority' => 'priority',
+                    'storypoints' => 'storypoints',
+                    'milestoneid' => 'milestone',  // Note: service expects 'milestone' not 'milestoneid'
+                    'editorId' => 'editorId',
+                    'sprint' => 'sprint',
+                    'type' => 'type',
+                ];
+
+                if (isset($fieldMapping[$groupBy])) {
+                    $paramName = $fieldMapping[$groupBy];
+                    $formParams[$paramName] = $swimlaneValue;
+                }
             }
+
+            $result = $this->ticketService->quickAddTicket($formParams);
+
+            if (is_array($result) && isset($result['status']) && $result['status'] === 'error') {
+                // Error: reopen form with error
+                session()->flash('quickadd_reopen', [
+                    'status' => $formParams['status'],
+                    'swimlane' => $_POST['swimlane'] ?? null,
+                    'headline' => $formParams['headline'],
+                    'error' => $result['message'],
+                ]);
+                $this->tpl->setNotification($result['message'], 'error');
+            } else {
+                // Success
+                $stayOpen = isset($_POST['stay_open']) && $_POST['stay_open'] === '1';
+
+                session()->flash('toast', [
+                    'message' => 'Task created: '.htmlspecialchars($formParams['headline']),
+                    'type' => 'success',
+                ]);
+
+                if ($stayOpen) {
+                    session()->flash('quickadd_reopen', [
+                        'status' => $formParams['status'],
+                        'swimlane' => $_POST['swimlane'] ?? null,
+                        'headline' => '',
+                    ]);
+                }
+            }
+
+            return Frontcontroller::redirect(CURRENT_URL.'#status-'.$formParams['status']);
         }
 
         return Frontcontroller::redirect(CURRENT_URL);
+    }
+
+    /**
+     * Test route for new swimlane components
+     * Access via: /tickets/showKanban/componentTest
+     */
+    public function componentTest(array $params): Response
+    {
+        return $this->tpl->displayPartial('tickets::componentTest');
     }
 }
