@@ -11,13 +11,15 @@ input, button, select, textarea {
     font-family:var(--primary-font-family);
 }
 
-input:focus,
-button:focus,
-select:focus,
-textarea:focus,
-.btn:focus {
-    outline:none;
-    /* TODO: Figure out good focus outline */
+/* Focus states are now handled by theme files (light.css/dark.css) using :focus-visible
+   This ensures keyboard users see focus indicators while mouse users don't */
+input:focus-visible,
+button:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.btn:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
     text-decoration: none;
 }
 
@@ -188,7 +190,7 @@ textarea:-ms-input-placeholder{
 
 input, select,
 textarea, button {
-    outline: none;
+    /* outline is now properly handled via :focus-visible in theme files */
     font-size: var(--base-font-size);
 
 }
@@ -357,19 +359,22 @@ body input[type='submit'].btn-primary .caret,
     color:var(--primary-font-color);
 }
 
-.chosen-container,
-.chosen-container-multi .chosen-choices .search-field input {
+.chosen-container {
     font-size:var(--base-font-size);
     margin-bottom:10px;
     min-width:175px
-
 }
+
+/* Search field input styling is handled separately below to avoid conflicts */
 
 .chosen-container-multi .chosen-choices {
     background-color: var(--secondary-background);
     line-height: 21px;
+    min-height: 33px;
     border: 1px solid var(--main-border-color);
     border-radius: var(--input-radius);
+    box-shadow: none;
+    padding: 3px 5px 3px 8px;
 }
 
 .chosen-container-active .chosen-single {
@@ -390,12 +395,19 @@ body input[type='submit'].btn-primary .caret,
 
 .chosen-container-active .chosen-choices {
     border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    padding: 3px 5px 3px 8px;
 }
 
-.chosen-container-active .chosen-choices li.search-field input[type="text"] {
+.chosen-container-active .chosen-choices li.search-field input[type="text"],
+.chosen-container-active .chosen-choices .search-field .chosen-search-input {
     color:var(--primary-font-color);
+    padding: 0 !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    border: 0 !important;
+    background: transparent !important;
 }
 
 .chosen-container .chosen-drop {
@@ -660,9 +672,15 @@ select,
     right:5px;
 }
 
-.chosen-container-multi .chosen-choices .search-field input {
+.chosen-container-multi .chosen-choices li.search-field input[type="text"],
+.chosen-container-multi .chosen-choices .search-field .chosen-search-input {
     height: auto;
-    padding: var(--input-padding);
+    padding: 0 !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    border: 0 !important;
+    background: transparent !important;
+    margin: 1px 0 !important;
 }
 
 .chosen-container-single .chosen-search input {
@@ -1042,9 +1060,7 @@ input[type=range] {
     margin: 5px 0px 5px 0;
     width: 100%;
 }
-input[type=range]:focus {
-    outline: none;
-}
+/* Range input focus is now handled by theme files using :focus-visible */
 input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
     height: 5px;
@@ -1188,8 +1204,9 @@ input[type=range]:focus::-ms-fill-upper {
     min-height: auto;
     background-color: var(--input-background);
     line-height: 21px;
+    padding: 6px 10px;
     border: 1px solid var(--main-border-color);
-    box-shadow: var(--input-shadow);
+    box-shadow: none;
     border-radius: var(--input-radius);
 }
 
@@ -1527,9 +1544,7 @@ input[type="checkbox"].toggle {
     cursor: pointer;
 }
 
-input[type="checkbox"].toggle:focus {
-    outline:none;
-}
+/* Toggle focus states are now handled by theme files using :focus-visible */
 
 input[type="checkbox"].toggle {
     height: 20px;

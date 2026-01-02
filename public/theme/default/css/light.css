@@ -188,6 +188,37 @@
 
     --transparencyLayer: transparent;
 
+    /* Priority Colors */
+    --priority-critical: #dc2626;      /* Red-600 */
+    --priority-critical-bg: #fee2e2;   /* Red-100 */
+    --priority-high: #f97316;          /* Orange-500 */
+    --priority-high-bg: #ffedd5;       /* Orange-100 */
+    --priority-medium: #eab308;        /* Yellow-500 */
+    --priority-medium-bg: #fef3c7;     /* Yellow-100 */
+    --priority-low: #22c55e;           /* Green-500 */
+    --priority-low-bg: #dcfce7;        /* Green-100 */
+    --priority-lowest: #6b7280;        /* Gray-500 */
+    --priority-lowest-bg: #f3f4f6;     /* Gray-100 */
+
+    /* Swimlane Header Design Tokens */
+    --swimlane-header-bg: var(--layered-background);
+    --swimlane-header-border: var(--main-border-color);
+    --swimlane-header-hover: var(--col-hover-bg);
+    --swimlane-indicator-size: 32px;
+    --swimlane-label-font-size: 14px;
+    --swimlane-count-bg: var(--accent2);
+    --swimlane-count-color: white;
+
+    /* Progress Bar Tokens */
+    --progress-bar-height: 4px;
+    --progress-bar-bg: var(--main-border-color);
+    --progress-bar-radius: 2px;
+
+    /* Status Colors for Progress Bars */
+    --status-new-color: #60a5fa;          /* Blue-400 */
+    --status-in-progress-color: #f59e0b;  /* Amber-500 */
+    --status-done-color: #10b981;         /* Emerald-500 */
+
 }
 
 .ss-option:hover {
@@ -250,4 +281,154 @@ a:hover {
     text-decoration: underline;
     text-decoration-thickness: 2px;
     background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* ===================================
+   CUSTOM INPUT COMPONENT FOCUS STATES
+   =================================== */
+
+/* Chosen Dropdowns */
+.chosen-container-single .chosen-single:focus-visible,
+.chosen-container-multi .chosen-choices:focus-visible,
+.chosen-container-active.chosen-with-drop .chosen-single {
+    outline: 2px solid var(--accent1) !important;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
+}
+
+/* Fallback for keyboard focus when :focus-visible doesn't trigger */
+.chosen-container-single .chosen-single:focus,
+.chosen-container-multi .chosen-choices:focus {
+    outline: 2px solid var(--accent1) !important;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
+}
+
+/* Chosen dropdown search input */
+.chosen-container-active .chosen-search input[type="text"]:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+}
+
+/* SlimSelect */
+.ss-main:focus-visible,
+.ss-main.ss-open-above:focus-visible,
+.ss-main.ss-open-below:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
+}
+
+/* jQuery UI Datepicker Input */
+input.hasDatepicker:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    border-color: var(--accent1);
+    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
+}
+
+/* jQuery UI Datepicker Widget - when opened */
+.ui-datepicker .ui-state-active:focus-visible,
+.ui-datepicker .ui-datepicker-current-day a:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 1px;
+}
+
+/* TagsInput Container */
+div.tagsinput:focus-within {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    border-color: var(--accent1);
+    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
+}
+
+/* TagsInput Individual Tags */
+.tagsinput span.tag a:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 1px;
+}
+
+/* Custom Toggle Switch */
+input[type="checkbox"].toggle:focus-visible + label,
+input[type="checkbox"].toggle:focus-visible + .toggle-label {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
+}
+
+/* Radio Tab Component */
+.radioTab:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    background-color: rgba(var(--accent1-hsl), 0.05);
+}
+
+/* Selectable Component (emoji, icon, color picker) */
+.selectable:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    background-color: rgba(var(--accent1-hsl), 0.1);
+    transform: scale(1.05);
+}
+
+/* Weekday Selector */
+.weekday-label:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
+}
+
+/* Kanban Cards */
+.ticketBox:focus-visible {
+    outline: 3px solid var(--accent1);
+    outline-offset: 4px;
+    background-color: var(--kanban-card-hover);
+    box-shadow: 0 0 0 6px rgba(var(--accent1-hsl), 0.1);
+}
+
+/* Dropdown Menu Items - Use :focus-visible instead of :focus */
+.dropdown-menu > li > a:focus-visible {
+    background-color: var(--dropdown-link-hover-bg);
+    color: var(--dropdown-link-hover-color);
+    outline: 2px solid var(--accent1);
+    outline-offset: -2px;
+}
+
+/* TinyMCE Editor - Focus on iframe container */
+.tox-edit-area__iframe:focus-visible,
+.mce-content-body:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+}
+
+/* Upload Buttons */
+.uppy-FileInput-btn:focus-visible,
+.date-picker-form-control .reset-button:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
+}
+
+/* Time Pickers */
+input[type="time"]:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    border-color: var(--accent1);
+    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .selectable:focus-visible {
+        transform: none;
+    }
+}
+
+/* CRITICAL: Remove Bootstrap inset shadow from Chosen search input */
+.chosen-container-multi .chosen-choices li.search-field input[type="text"],
+.chosen-container-multi .chosen-choices .search-field input,
+.chosen-container .chosen-choices input.chosen-search-input,
+#collaborators_chosen input[type="text"] {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
 }
