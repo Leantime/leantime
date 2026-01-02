@@ -143,36 +143,42 @@ leantime.kanbanController = (function () {
      * @param {string} swimlaneId - Swimlane identifier
      */
     var toggleSwimlane = function(swimlaneId) {
-        var header = document.querySelector('[data-swimlane-id="' + swimlaneId + '"]');
+        var sidebar = document.querySelector('.kanban-swimlane-sidebar[data-swimlane-id="' + swimlaneId + '"]');
         var content = document.getElementById('swimlane-content-' + swimlaneId);
+        var collapsed = document.getElementById('swimlane-collapsed-' + swimlaneId);
+        var toggleBtn = sidebar ? sidebar.querySelector('.accordion-toggle-swimlane') : null;
 
-        if (!header || !content) {
-            console.error('Swimlane header or content not found for ID:', swimlaneId);
+        if (!sidebar || !content) {
+            console.error('Swimlane sidebar or content not found for ID:', swimlaneId);
             return;
         }
 
-        var isExpanded = header.getAttribute('data-expanded') === 'true';
+        var isExpanded = toggleBtn ? toggleBtn.getAttribute('aria-expanded') === 'true' : false;
         var newExpanded = !isExpanded;
 
-        // Update data attribute
-        header.setAttribute('data-expanded', newExpanded.toString());
+        // Update aria-expanded attribute
+        if (toggleBtn) {
+            toggleBtn.setAttribute('aria-expanded', newExpanded.toString());
+        }
 
-        // Toggle content visibility with animation
+        // Update chevron icon
+        var chevronIcon = sidebar.querySelector('.kanban-lane-chevron i');
+        if (chevronIcon) {
+            chevronIcon.className = newExpanded ? 'fa fa-chevron-up' : 'fa fa-chevron-right';
+        }
+
+        // Toggle between expanded content and collapsed compact view
         if (newExpanded) {
-            // Expand
+            // Show full kanban columns, hide compact view
             content.style.display = 'block';
-            // Update chevron direction (rotate from 0deg to 90deg)
-            var chevron = header.querySelector('span:first-child');
-            if (chevron) {
-                chevron.style.transform = 'rotate(90deg)';
+            if (collapsed) {
+                collapsed.style.display = 'none';
             }
         } else {
-            // Collapse
+            // Hide full kanban columns, show compact view
             content.style.display = 'none';
-            // Update chevron direction (rotate from 90deg to 0deg)
-            var chevron = header.querySelector('span:first-child');
-            if (chevron) {
-                chevron.style.transform = 'rotate(0deg)';
+            if (collapsed) {
+                collapsed.style.display = 'flex';
             }
         }
 
