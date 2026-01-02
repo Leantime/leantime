@@ -4,6 +4,7 @@
     --accent1-hsl: 199, 100%, 20%;
     --accent1-hover: #333;
     --accent1-color:#fff;
+    --focus-ring-color: rgba(0, 70, 102, 0.6);
 
     --accent2: hsla(168, 100%, 33%, 1);
     --accent2-hsl: 168, 100%, 33%;
@@ -140,7 +141,7 @@
     --dark-green-text-color:#fff;
 
     --yellow: #fdab3d;
-    --yellow-text-color: #fff;
+    --yellow-text-color: #000;
 
     --blue: #1B75BB;
     --blue-text-color: #fff;
@@ -158,13 +159,13 @@
     --purple-text-color:#fff;
 
     --pink: #F26CA7;
-    --pink-text-color:#fff;
+    --pink-text-color:#000;
 
     --brown: #BB611B;
     --brown-text-color: #fff;
 
     --grey: #aaaaaa;
-    --grey-text-color:#fff;
+    --grey-text-color:#000;
 
     --dark-grey: #4c4c4c;
     --dark-grey-text-color: #fff;

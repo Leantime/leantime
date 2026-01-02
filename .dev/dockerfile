@@ -28,7 +28,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     iputils-ping \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN pecl install xdebug
+RUN pecl install xdebug redis
 
 RUN docker-php-ext-configure gd --enable-gd --with-jpeg=/usr/include/ --with-freetype --with-jpeg
 RUN docker-php-ext-install \
@@ -43,7 +43,7 @@ RUN docker-php-ext-install \
     opcache \
     ldap \
     zip
-RUN docker-php-ext-enable zip xdebug
+RUN docker-php-ext-enable zip xdebug redis
 
 COPY ./dev-apache-site.conf /etc/apache2/sites-enabled/000-default.conf
 

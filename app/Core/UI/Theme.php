@@ -134,9 +134,10 @@ class Theme
      * Get color scheme values adjusted for current color mode.
      * Ensures WCAG 2.1 AA contrast compliance in both light and dark modes.
      *
-     * @param string $schemeName The identifier of the color scheme
-     * @param array $scheme The original color scheme definition
+     * @param  string  $schemeName  The identifier of the color scheme
+     * @param  array  $scheme  The original color scheme definition
      * @return array The color scheme with mode-appropriate values
+     *
      * @api
      */
     private function getColorSchemeForMode(string $schemeName, array $scheme): array
@@ -155,7 +156,7 @@ class Theme
             if ($schemeName === 'grayscale2') {
                 return [
                     'name' => $scheme['name'],
-                    'primaryColor' => '#4a4a4a',   // Dark gray (for subtle elements)
+                    'primaryColor' => '#a0a0a0',   // Light gray - 5.0:1 contrast on #292929
                     'secondaryColor' => '#d1d1d1', // Light gray - 9.1:1 contrast
                 ];
             }

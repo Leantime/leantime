@@ -4,6 +4,7 @@
     --accent1-hsl: 199, 100%, 20%;
     --accent1-hover: #555;
     --accent1-color: #fff;
+    --focus-ring-color: #66b3ff;
 
     --accent2: hsla(168, 100%, 33%, 1);
     --accent2-hsl: 168, 100%, 33%;
@@ -65,7 +66,7 @@
     --main-menu-link-color: var(--primary-font-color);
 
     --main-menu-link-hover-bg: #222;
-    --main-menu-link-hover-color: var(--accent1);
+    --main-menu-link-hover-color: #ffffff;
 
     --main-menu-overlayed-link-hover-bg: rgba(1, 1, 1, 0.4);
 
@@ -460,43 +461,38 @@ body .ticketDropdown ul::after {
 
 /* Enhanced focus indicators for dark mode - higher contrast */
 a:focus-visible {
-    outline: 2px solid var(--accent1);
-    outline-offset: 3px;
-    background-color: rgba(255, 255, 255, 0.05);
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
 }
 
 /* Dashboard task links - critical for grayscale mode readability */
 .latest-todos a:focus-visible,
 .sortableTicketList a:focus-visible {
-    outline: 3px solid var(--accent1);
-    outline-offset: 4px;
-    background-color: rgba(255, 255, 255, 0.1);
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
     border-radius: 3px;
 }
 
 /* Button focus states */
 button:focus-visible,
 .btn:focus-visible {
-    outline: 2px solid var(--accent1);
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
 }
 
 /* Form element focus states */
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-    outline: 2px solid var(--accent1);
-    border-color: var(--accent1);
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+    outline: 2px solid var(--focus-ring-color);
+    border-color: var(--focus-ring-color);
 }
 
 /* Navigation and menu focus */
 .nav a:focus-visible,
 .dropdown-menu a:focus-visible {
-    outline: 2px solid var(--accent1);
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 1px;
-    background-color: rgba(255, 255, 255, 0.08);
 }
 
 /* Link hover state - high contrast change for low vision accessibility */

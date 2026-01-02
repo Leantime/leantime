@@ -4,6 +4,7 @@
     --accent1-hsl: 199, 100%, 20%;
     --accent1-hover: #555;
     --accent1-color:#fff;
+    --focus-ring-color: var(--accent1);
 
     --accent2: hsla(168, 100%, 33%, 1);
     --accent2-hsl: 168, 100%, 33%;
@@ -161,13 +162,13 @@
     --purple-text-color:#fff;
 
     --pink: #F26CA7;
-    --pink-text-color:#fff;
+    --pink-text-color:#000;
 
     --brown: #BB611B;
     --brown-text-color: #fff;
 
     --grey: #aaaaaa;
-    --grey-text-color:#fff;
+    --grey-text-color:#000;
 
     --dark-grey: #4c4c4c;
     --dark-grey-text-color: #fff;
@@ -200,44 +201,38 @@
 
 /* Enhanced focus indicators for light mode - high contrast */
 a:focus-visible {
-    outline: 2px solid var(--accent1);
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
-    background-color: rgba(0, 70, 102, 0.08);
 }
 
 /* Dashboard task links - critical for keyboard navigation and low vision users */
 .latest-todos a:focus-visible,
 .sortableTicketList a:focus-visible {
-    outline: 3px solid var(--accent1);
-    outline-offset: 3px;
-    background-color: rgba(0, 70, 102, 0.12);
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
     border-radius: 3px;
-    box-shadow: 0 0 0 4px rgba(0, 70, 102, 0.1);
 }
 
 /* Button focus states */
 button:focus-visible,
 .btn:focus-visible {
-    outline: 2px solid var(--accent1);
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(0, 70, 102, 0.15);
 }
 
 /* Form element focus states */
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-    outline: 2px solid var(--accent1);
-    border-color: var(--accent1);
-    box-shadow: 0 0 0 3px rgba(0, 70, 102, 0.1);
+    outline: 2px solid var(--focus-ring-color);
+    border-color: var(--focus-ring-color);
 }
 
 /* Navigation and menu focus */
 .nav a:focus-visible,
 .dropdown-menu a:focus-visible {
-    outline: 2px solid var(--accent1);
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 1px;
-    background-color: rgba(0, 70, 102, 0.1);
 }
 
 /* Link hover state - high contrast change for low vision accessibility */

@@ -4,6 +4,7 @@
     --accent1-hsl: 199, 100%, 20%;
     --accent1-hover: #404040;
     --accent1-color: #fff;
+    --focus-ring-color: rgba(102, 179, 255, 0.7);
 
     --accent2: hsla(168, 100%, 33%, 1);
     --accent2-hsl: 168, 100%, 33%;
@@ -65,7 +66,7 @@
     --main-menu-link-color: var(--primary-font-color);
 
     --main-menu-link-hover-bg: #1f1f1f;
-    --main-menu-link-hover-color: var(--accent1);
+    --main-menu-link-hover-color: #ffffff;
 
     --main-menu-overlayed-link-hover-bg: rgba(1, 1, 1, 0.4);
 
