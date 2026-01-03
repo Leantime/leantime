@@ -40,7 +40,7 @@
 }
 
 .column .contentInner {
-    background: transparent;
+    background: color-mix(in srgb, var(--primary-font-color) 3%, transparent);
     border: none;
     padding: 10px 8px;
     min-height: 52px; /* Match collapsed row height */
@@ -75,10 +75,10 @@
     border-radius: 4px;
 }
 
-/* Empty column state - very subtle tint, no borders */
+/* Empty column state - same background as non-empty for consistency */
 .column .contentInner:empty,
 .column .contentInner.empty-column {
-    background: color-mix(in srgb, var(--primary-font-color) 2%, transparent);
+    background: color-mix(in srgb, var(--primary-font-color) 3%, transparent);
     border: none;
     border-radius: var(--box-radius);
     min-height: 52px;
@@ -532,48 +532,69 @@ body .maincontent .priority-text-5 a:link {
    150px horizontal layout with two rows
    ============================================ */
 
+/* Sentinel element for Intersection Observer sticky detection */
+.kanban-swimlane-sentinel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    pointer-events: none;
+}
+
 /* Main swimlane row - flexbox container */
 .kanban-swimlane-row {
     display: flex;
     align-items: stretch;
-    margin-bottom: 24px;
-    padding-bottom: 24px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
     background: transparent;
     border-radius: var(--box-radius);
     overflow: visible;
-    border-bottom: 1px solid color-mix(in srgb, var(--primary-font-color) 10%, transparent);
+    position: relative; /* For sentinel positioning */
 }
 
 .kanban-swimlane-row:last-child {
-    border-bottom: none;
     margin-bottom: 0;
     padding-bottom: 0;
 }
 
 /* 150px fixed-width header - PRD Section 3 */
+/* Outer container stretches full height of swimlane */
 .kanban-swimlane-sidebar {
     width: 150px;
     min-width: 150px;
     flex-shrink: 0;
-    padding: 12px 10px;
     background: var(--kanban-col-title-bg, #FAFAF5);
     border: none;
     border-radius: var(--box-radius);
     box-shadow: var(--min-shadow);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-self: stretch; /* Extend to full row height */
-    min-height: 80px;
+    align-self: stretch; /* Full height of swimlane */
     cursor: pointer;
     transition: background 150ms ease-out, box-shadow 150ms ease-out;
     margin-right: 8px;
-    margin-top: 49px; /* Align with first ticket card */
+    margin-top: 10px; /* Align with column background top */
+    position: relative; /* For inner positioning */
+}
+
+/* Inner content wrapper - receives transform for sticky */
+.kanban-swimlane-sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 10px;
 }
 
 .kanban-swimlane-sidebar:hover {
     background: var(--kanban-col-title-hover, #F5F5F0);
     box-shadow: var(--regular-shadow);
+}
+
+/* JavaScript-controlled sticky state using transform (keeps element in flow) */
+.kanban-swimlane-sidebar.is-sticky {
+    z-index: 10;
+    box-shadow: var(--regular-shadow);
+    /* transform is set via JS to translate the sidebar to sticky position */
 }
 
 .kanban-swimlane-sidebar:focus-visible {
@@ -657,18 +678,18 @@ body .maincontent .priority-text-5 a:link {
     line-height: 1.4;
 }
 
-/* Count badge - PRD Section 6.6 */
+/* Count badge - PRD Section 6.6 - Enhanced for accessibility */
 .kanban-lane-count {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #E8EFD5;
-    color: #5C6B3D;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 600;
-    min-width: 24px;
+    background: #3D4A2A; /* Dark olive background */
+    color: #FFFFFF; /* White text for high contrast */
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 26px;
     flex-shrink: 0;
 }
 
@@ -1026,11 +1047,23 @@ body .maincontent .priority-text-5 a:link {
     border-left-color: var(--grey);
 }
 
-/* Dark mode badge color adjustment - keep olive tones per PRD */
+/* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
     .kanban-lane-count {
-        background: #3D4A2A; /* Dark olive */
-        color: #C5D4A8; /* Light olive text */
+        background: #4A5832; /* Slightly lighter olive for dark mode */
+        color: #FFFFFF;
+    }
+
+    /* Subtle hover for dark mode - transparent overlay */
+    .kanban-swimlane-sidebar:hover {
+        background: rgba(255, 255, 255, 0.08); /* Subtle white overlay */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .kanban-swimlane-sidebar:focus-visible {
+        background: rgba(255, 255, 255, 0.08);
+        outline: 2px solid var(--accent1);
+        outline-offset: 2px;
     }
 }
 

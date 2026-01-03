@@ -139,6 +139,48 @@ leantime.kanbanController = (function () {
     };
 
     /**
+     * Equalize column heights within a swimlane content area
+     * Sets all columns to the max height for consistent appearance
+     * @param {HTMLElement} contentElement - The swimlane content container
+     */
+    var equalizeColumnHeights = function(contentElement) {
+        var columns = contentElement.querySelectorAll('.column .contentInner');
+        if (columns.length === 0) return;
+
+        // Reset heights first to get natural heights
+        columns.forEach(function(col) {
+            col.style.minHeight = '';
+        });
+
+        // Find max height
+        var maxHeight = 0;
+        columns.forEach(function(col) {
+            var height = col.offsetHeight;
+            if (height > maxHeight) {
+                maxHeight = height;
+            }
+        });
+
+        // Set all columns to max height
+        if (maxHeight > 0) {
+            columns.forEach(function(col) {
+                col.style.minHeight = maxHeight + 'px';
+            });
+        }
+    };
+
+    /**
+     * Reset column heights to natural height
+     * @param {HTMLElement} contentElement - The swimlane content container
+     */
+    var resetColumnHeights = function(contentElement) {
+        var columns = contentElement.querySelectorAll('.column .contentInner');
+        columns.forEach(function(col) {
+            col.style.minHeight = '';
+        });
+    };
+
+    /**
      * Toggle swimlane collapse/expand
      * Two states only:
      * - Expanded: full ticket cards
@@ -171,9 +213,15 @@ leantime.kanbanController = (function () {
         if (newExpanded) {
             row.classList.remove('swimlane-collapsed');
             content.classList.remove('collapsed');
+            // Reset column heights when expanding
+            resetColumnHeights(content);
         } else {
             row.classList.add('swimlane-collapsed');
             content.classList.add('collapsed');
+            // Equalize column heights when collapsing
+            setTimeout(function() {
+                equalizeColumnHeights(content);
+            }, 50); // Small delay to let CSS transitions complete
         }
 
         // Persist state to session via AJAX
@@ -240,6 +288,66 @@ leantime.kanbanController = (function () {
         }
     };
 
+    /**
+     * Initialize column heights for all collapsed swimlanes on page load
+     */
+    var initCollapsedColumnHeights = function() {
+        var collapsedContents = document.querySelectorAll('.kanban-swimlane-content.collapsed');
+        collapsedContents.forEach(function(content) {
+            equalizeColumnHeights(content);
+        });
+    };
+
+    /**
+     * Initialize sticky swimlane sidebars using scroll listener and transform
+     * Uses transform instead of position:fixed to avoid layout shifts
+     */
+    var initStickySwimlaneSidebars = function() {
+        var rows = document.querySelectorAll('.kanban-swimlane-row');
+        if (rows.length === 0) return;
+
+        // Skip on mobile (vertical layout doesn't need sticky)
+        if (window.innerWidth <= 768) return;
+
+        var STICKY_TOP = 120; // Distance from viewport top when sticky
+
+        var updateStickyPositions = function() {
+            rows.forEach(function(row) {
+                var sidebar = row.querySelector('.kanban-swimlane-sidebar');
+                var sidebarInner = row.querySelector('.kanban-swimlane-sidebar-inner');
+                var sentinel = row.querySelector('.kanban-swimlane-sentinel');
+                if (!sidebar || !sidebarInner || !sentinel) return;
+
+                var sentinelRect = sentinel.getBoundingClientRect();
+                var sidebarRect = sidebar.getBoundingClientRect();
+
+                // Calculate if sidebar content should be sticky
+                var shouldBeSticky = sentinelRect.top < STICKY_TOP && sidebarRect.bottom > (STICKY_TOP + 100);
+
+                if (shouldBeSticky) {
+                    // Calculate how much to translate the inner content
+                    var translateY = STICKY_TOP - sidebarRect.top;
+
+                    // Don't translate beyond the sidebar bottom
+                    var maxTranslate = sidebarRect.height - sidebarInner.offsetHeight - 12;
+                    translateY = Math.min(translateY, Math.max(0, maxTranslate));
+
+                    sidebar.classList.add('is-sticky');
+                    sidebarInner.style.transform = 'translateY(' + translateY + 'px)';
+                } else {
+                    sidebar.classList.remove('is-sticky');
+                    sidebarInner.style.transform = '';
+                }
+            });
+        };
+
+        // Update on scroll
+        window.addEventListener('scroll', updateStickyPositions, { passive: true });
+
+        // Initial check
+        updateStickyPositions();
+    };
+
     // Initialize on page load
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
@@ -248,6 +356,8 @@ leantime.kanbanController = (function () {
             initQuickAddHelp();
             initSwimlaneKeyboard();
             initProgressBarTooltips();
+            initCollapsedColumnHeights();
+            initStickySwimlaneSidebars();
         });
     } else {
         initQuickAddKeyboard();
@@ -255,6 +365,8 @@ leantime.kanbanController = (function () {
         initQuickAddHelp();
         initSwimlaneKeyboard();
         initProgressBarTooltips();
+        initCollapsedColumnHeights();
+        initStickySwimlaneSidebars();
     }
 
     // Make public what you want to have public, everything else is private
@@ -265,7 +377,10 @@ leantime.kanbanController = (function () {
         initQuickAddHelp: initQuickAddHelp,
         toggleSwimlane: toggleSwimlane,
         initSwimlaneKeyboard: initSwimlaneKeyboard,
-        initProgressBarTooltips: initProgressBarTooltips
+        initProgressBarTooltips: initProgressBarTooltips,
+        equalizeColumnHeights: equalizeColumnHeights,
+        resetColumnHeights: resetColumnHeights,
+        initStickySwimlaneSidebars: initStickySwimlaneSidebars
     };
 
 })();

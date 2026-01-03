@@ -46,6 +46,11 @@ if (in_array($groupBy, ['storypoints', 'effort'])) {
     $effortLabel = TicketDesignTokens::getEffort((float)$groupId)['tshirtLabel'] ?? '';
 }
 
+// Strip existing profileImage HTML from label for editorId (we use user-avatar component instead)
+if ($groupBy === 'editorId') {
+    $label = preg_replace('/<div class=[\'"]profileImage[\'"]>.*?<\/div>\s*/i', '', $label);
+}
+
 // Transform statusColumns for micro-progress-bar
 $statusLabels = [];
 foreach ($statusColumns as $statusId => $statusData) {
@@ -58,7 +63,7 @@ foreach ($statusColumns as $statusId => $statusData) {
 @endphp
 
 {{-- PRD v2 Compliant: 150px horizontal layout with two rows --}}
-{{-- Header looks IDENTICAL in expanded and collapsed states --}}
+{{-- Outer container stretches full height, inner content scrolls/sticks --}}
 <div {{ $attributes->merge(['class' => 'kanban-swimlane-sidebar']) }}
      data-swimlane-id="{{ $groupId }}"
      tabindex="0"
@@ -68,6 +73,9 @@ foreach ($statusColumns as $statusId => $statusData) {
      aria-label="{{ strip_tags($label) }} - {{ $totalCount }} tasks - {{ $expanded ? 'Expanded' : 'Collapsed' }}"
      onclick="leantime.kanbanController.toggleSwimlane('{{ $groupId }}')"
      onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); leantime.kanbanController.toggleSwimlane('{{ $groupId }}'); }">
+
+    {{-- Inner content wrapper - this receives the transform for sticky behavior --}}
+    <div class="kanban-swimlane-sidebar-inner">
 
     {{-- Row 1: Chevron + Icon + Label + Time Indicator --}}
     <div class="swimlane-header-row1">
@@ -125,6 +133,8 @@ foreach ($statusColumns as $statusId => $statusData) {
         {{-- Count Badge --}}
         <span class="kanban-lane-count" title="{{ $totalCount }} tasks">{{ $totalCount }}</span>
     </div>
+
+    </div>{{-- .kanban-swimlane-sidebar-inner --}}
 </div>
 
 {{-- Tooltip shown on hover for long labels --}}

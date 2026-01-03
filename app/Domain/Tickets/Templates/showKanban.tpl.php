@@ -125,6 +125,8 @@ $allTickets = $group['items'];
                 }
                 ?>
                 <div class="kanban-swimlane-row <?= $swimlaneExpanded ? '' : 'swimlane-collapsed' ?>" id="swimlane-row-<?= $group['id'] ?>">
+                    <!-- Sentinel for Intersection Observer sticky detection -->
+                    <div class="kanban-swimlane-sentinel" data-swimlane-id="<?= $group['id'] ?>" aria-hidden="true"></div>
 
                     <?php
                     // Render the blade component for the header

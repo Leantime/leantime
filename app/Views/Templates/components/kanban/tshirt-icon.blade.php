@@ -7,8 +7,10 @@
 @php
 use Leantime\Domain\Tickets\Models\TicketDesignTokens;
 
+// Handle null/0/empty effort as "No Effort"
+$isNoEffort = $effort === null || $effort === '' || $effort === 0 || $effort === '0';
 $token = TicketDesignTokens::getEffort($effort);
-$sizeLabel = $token['tshirtLabel'] ?? 'M';
+$sizeLabel = $isNoEffort ? 'No Effort' : ($token['tshirtLabel'] ?? 'M');
 
 $sizes = [
     'sm' => ['width' => 20, 'height' => 18],
