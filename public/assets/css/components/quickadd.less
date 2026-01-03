@@ -1,7 +1,7 @@
 /* Quick-add form styles */
 
 .quickaddContainer {
-    margin-top: 8px;
+    margin-bottom: 10px;
 
     &.quickaddContainer--empty {
         padding: 6px;
@@ -53,21 +53,22 @@
     }
 }
 
-.form-group {
-    position: static;
+.quickAddForm .form-group {
+    position: relative;
     margin-bottom: 0;
 }
 
 .quickAddHelp {
     position: absolute;
-    top: -6px;
-    right: -6px;
-    font-size: 16px;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    font-size: 14px;
     color: var(--primary-font-color);
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: help;
     transition: opacity 0.2s ease, color 0.2s ease;
-    padding: 4px;
+    padding: 2px;
     z-index: 10;
 
     &:hover,
@@ -87,11 +88,11 @@
 
 .quickAddInput {
     width: 100%;
-    min-height: 38px;
+    min-height: 32px;
     border: 1px solid var(--main-border-color);
     border-radius: var(--box-radius);
-    padding: 8px 28px 8px 8px;
-    resize: vertical;
+    padding: 6px 10px;
+    resize: none;
     font-family: var(--primary-font-family);
     font-size: var(--font-size-s);
     color: var(--primary-font-color);

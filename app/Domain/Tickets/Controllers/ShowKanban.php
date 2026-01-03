@@ -83,6 +83,7 @@ class ShowKanban extends Controller
                 $fieldMapping = [
                     'priority' => 'priority',
                     'storypoints' => 'storypoints',
+                    'effort' => 'storypoints',  // effort maps to storypoints field
                     'milestoneid' => 'milestone',  // Note: service expects 'milestone' not 'milestoneid'
                     'editorId' => 'editorId',
                     'sprint' => 'sprint',
