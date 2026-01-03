@@ -27,23 +27,24 @@
 .column {
     box-sizing: border-box;
     height:auto;
-    padding:0px 5px;
+    padding: 0 6px;
     flex:1;
     min-width:150px;
 }
 
 .column:first-child {
-    padding-left:0px;
+    padding-left: 0;
 }
 .column:last-child {
-    padding-right:0px;
+    padding-right: 0;
 }
 
 .column .contentInner {
-    background:var(--kanban-col-bg);
-    border:0px solid var(--neutral);
-    padding: 10px 0px;
-    min-height:52px; /* Match collapsed row height */
+    background: transparent;
+    border: none;
+    padding: 10px 8px;
+    min-height: 52px; /* Match collapsed row height */
+    border-radius: var(--box-radius);
     /*overflow-y:scroll; Danger: when enabled the dropdowns will be hidden in the overflow. */
 }
 
@@ -74,13 +75,13 @@
     border-radius: 4px;
 }
 
-/* Empty column state - subtle indication */
+/* Empty column state - very subtle tint, no borders */
 .column .contentInner:empty,
 .column .contentInner.empty-column {
     background: color-mix(in srgb, var(--primary-font-color) 2%, transparent);
-    border: 1px solid color-mix(in srgb, var(--primary-font-color) 6%, transparent);
+    border: none;
     border-radius: var(--box-radius);
-    min-height: 32px; /* Reduced to account for 10px padding on parent (total 52px) */
+    min-height: 52px;
 }
 
 /* Add To-Do link styling in empty columns */
@@ -527,39 +528,52 @@ body .maincontent .priority-text-5 a:link {
 }
 
 /* ============================================
-   SMART HYBRID SWIMLANE HEADERS
+   SWIMLANE ROW HEADERS - PRD v2 COMPLIANT
+   150px horizontal layout with two rows
    ============================================ */
 
 /* Main swimlane row - flexbox container */
 .kanban-swimlane-row {
     display: flex;
-    align-items: stretch; /* Sidebar and columns stretch to match height */
-    gap: 8px; /* Consistent spacing between sidebar and content */
-    margin-bottom: 20px;
-    position: relative;
-    min-height: auto; /* Let row grow naturally with content */
+    align-items: stretch;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    background: transparent;
+    border-radius: var(--box-radius);
+    overflow: visible;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary-font-color) 10%, transparent);
 }
 
-/* Smart hybrid sidebar - transitions between narrow and wide */
+.kanban-swimlane-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* 150px fixed-width header - PRD Section 3 */
 .kanban-swimlane-sidebar {
-    flex: 0 0 70px;
-    min-width: 70px;
-    background: var(--kanban-col-title-bg);
+    width: 150px;
+    min-width: 150px;
+    flex-shrink: 0;
+    padding: 12px 10px;
+    background: var(--kanban-col-title-bg, #FAFAF5);
     border: none;
-    border-radius: var(--box-radius) 0 0 var(--box-radius);
-    padding: 12px 8px;
+    border-radius: var(--box-radius);
+    box-shadow: var(--min-shadow);
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 8px;
-    position: relative;
-    overflow: visible; /* Allow tooltip to show outside */
+    align-self: stretch; /* Extend to full row height */
+    min-height: 80px;
     cursor: pointer;
-    transition: background 150ms ease-out;
+    transition: background 150ms ease-out, box-shadow 150ms ease-out;
+    margin-right: 8px;
+    margin-top: 49px; /* Align with first ticket card */
 }
 
 .kanban-swimlane-sidebar:hover {
-    background: var(--kanban-col-title-hover, var(--kanban-col-title-bg));
+    background: var(--kanban-col-title-hover, #F5F5F0);
+    box-shadow: var(--regular-shadow);
 }
 
 .kanban-swimlane-sidebar:focus-visible {
@@ -567,21 +581,35 @@ body .maincontent .priority-text-5 a:link {
     outline-offset: 2px;
 }
 
-/* Chevron icon for expand/collapse */
+/* Row 1: Chevron + Icon + Label + Time Indicator */
+.swimlane-header-row1 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 26px;
+}
 
-/* Chevron icon for accordion expand/collapse */
+/* Row 2: Progress Bar + Count Badge */
+.swimlane-header-row2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 16px; /* Align with label, not chevron */
+}
+
+/* Chevron - 10px, rotates on toggle */
 .kanban-lane-chevron {
-    font-size: 14px;
-    transition: transform 150ms ease-out;
+    font-size: 10px;
+    color: var(--primary-font-color);
+    opacity: 0.6;
+    width: 10px;
     flex-shrink: 0;
+    transition: transform 0.2s ease;
 }
 
-/* Rotate chevron when collapsed */
-.kanban-swimlane-sidebar[aria-expanded="false"] .kanban-lane-chevron {
-    /* Chevron points right when collapsed */
-}
+/* Chevron rotation handled by icon class (fa-chevron-down vs fa-chevron-right) */
 
-/* Smart indicator container */
+/* Icon/Avatar container */
 .kanban-indicator {
     display: flex;
     align-items: center;
@@ -589,53 +617,68 @@ body .maincontent .priority-text-5 a:link {
     flex-shrink: 0;
 }
 
-/* Avatar indicator (for user groupBy) */
+/* Avatar indicator (for user groupBy) - 24px in header */
 .kanban-indicator-avatar {
-    width: 36px;
-    height: 36px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--main-border-color);
 }
 
-/* Icon indicator (for type, milestone, sprint, status) */
+/* Icon indicator (for type, milestone, sprint) */
 .kanban-indicator-icon {
-    font-size: 24px;
+    font-size: 16px;
     color: var(--primary-font-color);
 }
 
-/* Priority color circle */
+/* Priority thermometer - sized for header */
 .kanban-priority-indicator {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    width: 14px;
+    height: 24px;
 }
 
-/* Effort size indicator (for storypoints) */
+/* Effort t-shirt indicator */
 .kanban-effort-indicator {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
-    padding: 6px 8px;
-    background: var(--neutral);
-    border-radius: 4px;
     color: var(--primary-font-color);
 }
 
-/* Count badge */
-.kanban-lane-count {
-    display: inline-block;
-    background: var(--accent2);
-    color: var(--accent2-color);
-    padding: 3px 8px;
-    border-radius: 10px;
-    font-size: var(--font-size-s);
+/* Label - truncates with ellipsis */
+.swimlane-header-label {
+    font-size: 13px;
     font-weight: 600;
+    color: var(--primary-font-color);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     line-height: 1.4;
+}
+
+/* Count badge - PRD Section 6.6 */
+.kanban-lane-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #E8EFD5;
+    color: #5C6B3D;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 24px;
+    flex-shrink: 0;
+}
+
+/* Time indicator in header */
+.swimlane-time-indicator {
     flex-shrink: 0;
 }
 
 
-/* Tooltip - shown on hover when collapsed */
+/* Tooltip - shown on hover for additional info */
 .kanban-sidebar-tooltip {
     position: absolute;
     left: 100%;
@@ -646,8 +689,8 @@ body .maincontent .priority-text-5 a:link {
     border-left: none;
     border-radius: 0 var(--box-radius) var(--box-radius) 0;
     padding: 12px 16px;
-    min-width: 200px;
-    max-width: 300px;
+    min-width: 180px;
+    max-width: 280px;
     box-shadow: var(--regular-shadow);
     opacity: 0;
     visibility: hidden;
@@ -658,7 +701,7 @@ body .maincontent .priority-text-5 a:link {
     pointer-events: none;
 }
 
-/* Show tooltip on hover */
+/* Show tooltip on hover - only when label is truncated */
 .kanban-swimlane-sidebar:hover .kanban-sidebar-tooltip,
 .kanban-swimlane-sidebar:focus-visible .kanban-sidebar-tooltip {
     opacity: 1;
@@ -688,10 +731,11 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-content {
     flex: 1;
     min-width: 0;  /* Allow flexbox shrinking */
-    background: var(--main-bg-color);
+    background: transparent;
     border: none;
     border-radius: 0 var(--box-radius) var(--box-radius) 0;
     overflow: visible;  /* For dropdown menus */
+    padding: 10px 4px;
 }
 
 /* Collapsed swimlane state - compact tickets within columns */
@@ -799,35 +843,9 @@ body .maincontent .priority-text-5 a:link {
 
 /* ============================================
    COLLAPSED SWIMLANE ROW STYLES
+   PRD: Header looks IDENTICAL in both states
+   Only chevron rotates and cards transform
    ============================================ */
-
-/* When row is collapsed, make sidebar more compact */
-.kanban-swimlane-row.swimlane-collapsed .kanban-swimlane-sidebar {
-    padding: 8px;
-    gap: 6px;
-    justify-content: flex-start; /* Keep elements at top */
-}
-
-/* Smaller indicators in collapsed state */
-.kanban-swimlane-row.swimlane-collapsed .kanban-indicator-icon {
-    font-size: 18px;
-}
-
-.kanban-swimlane-row.swimlane-collapsed .kanban-indicator-avatar {
-    width: 28px;
-    height: 28px;
-}
-
-.kanban-swimlane-row.swimlane-collapsed .kanban-priority-indicator {
-    width: 24px;
-    height: 24px;
-}
-
-/* Smaller count badge in collapsed state */
-.kanban-swimlane-row.swimlane-collapsed .kanban-lane-count {
-    padding: 2px 6px;
-    font-size: var(--font-size-xs);
-}
 
 /* Better spacing between compact tasks */
 .kanban-swimlane-content.collapsed .ticketBox {
@@ -1008,18 +1026,18 @@ body .maincontent .priority-text-5 a:link {
     border-left-color: var(--grey);
 }
 
-/* Dark mode badge color adjustment */
+/* Dark mode badge color adjustment - keep olive tones per PRD */
 @media (prefers-color-scheme: dark) {
     .kanban-lane-count {
-        background: var(--accent1);
-        color: var(--accent1-color);
+        background: #3D4A2A; /* Dark olive */
+        color: #C5D4A8; /* Light olive text */
     }
 }
 
 /* Column headers alignment with swimlane sidebar */
 .kanban-column-headers.groupby-active {
     /* Add left margin to align with kanban content when groupBy is active */
-    margin-left: 78px; /* Matches sidebar width (70px) + gap (8px) */
+    margin-left: 158px; /* Matches sidebar width (150px) + margin (8px) */
     transition: margin-left 300ms ease-out;
 }
 
@@ -1037,6 +1055,9 @@ body .maincontent .priority-text-5 a:link {
         border-radius: var(--box-radius) var(--box-radius) 0 0;
         padding: 12px 16px;
         align-items: flex-start;
+        margin-right: 0;
+        margin-top: 0;
+        margin-bottom: 8px;
     }
 
     /* Hide tooltip on mobile */
