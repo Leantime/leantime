@@ -29,6 +29,36 @@ leantime.ticketsController = (function () {
     }
 
     /**
+     * Update swimlane row counts after card movement
+     * Counts tickets in each swimlane row and updates the count badges
+     */
+    function updateSwimlaneCounts()
+    {
+        jQuery(".kanban-swimlane-row").each(function() {
+            var $row = jQuery(this);
+            var swimlaneId = $row.attr('id');
+
+            if (!swimlaneId) return;
+
+            // Extract the swimlane identifier from the row ID (e.g., "swimlane-row-3" -> "3")
+            var swimlaneKey = swimlaneId.replace('swimlane-row-', '');
+
+            // Find the swimlane content area and count tickets
+            var $content = $row.find('.kanban-swimlane-content');
+            var ticketCount = $content.find('.moveable').length;
+
+            // Update all count badges in this swimlane's sidebar
+            var $sidebar = $row.find('.kanban-swimlane-sidebar');
+            $sidebar.find('.kanban-lane-count').text(ticketCount);
+
+            // Update the aria-label for accessibility
+            var currentLabel = $sidebar.attr('aria-label') || '';
+            var newLabel = currentLabel.replace(/\d+ tasks/, ticketCount + ' tasks');
+            $sidebar.attr('aria-label', newLabel);
+        });
+    }
+
+    /**
      * Move a ticket card to a different swimlane when grouped field is changed
      * @param {number} ticketId - The ticket ID
      * @param {string|number} newSwimlaneValue - The new swimlane value (priority, milestone, etc.)
@@ -80,6 +110,7 @@ leantime.ticketsController = (function () {
 
             // Update ticket counts
             countTickets();
+            updateSwimlaneCounts();
 
             // Refresh sortable to recalculate positions
             if ($targetColumn.sortable) {
@@ -1130,6 +1161,7 @@ leantime.ticketsController = (function () {
         jQuery(document).ready(function () {
 
             countTickets();
+            updateSwimlaneCounts();
 
             jQuery(".filterBar .row-fluid").css("opacity", "1");
 
@@ -1198,6 +1230,7 @@ leantime.ticketsController = (function () {
                     ui.item.removeData("move_handler");
 
                     countTickets();
+                    updateSwimlaneCounts();
 
                     // Update empty state for all columns after drag-and-drop
                     jQuery(".sortableTicketList").find(".contentInner").each(function() {

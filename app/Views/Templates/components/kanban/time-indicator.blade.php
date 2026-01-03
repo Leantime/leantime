@@ -20,6 +20,6 @@ if (!$config) {
 @endphp
 
 <span {{ $attributes->merge(['class' => 'time-indicator']) }}
-      style="font-size: 16px; min-width: 24px; min-height: 24px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;"
-      title="{{ $config['label'] }}"
+      style="font-size: 18px; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;"
+      data-tippy-content="{{ $config['label'] }}"
       aria-label="{{ $config['label'] }}">{{ $config['icon'] }}</span>

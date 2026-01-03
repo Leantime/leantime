@@ -22,12 +22,15 @@ $iconComponent = match($groupBy) {
     'milestoneid' => 'milestone-icon',
     'type' => 'type-icon',
     'sprint' => 'sprint-icon',
+    'dueDate' => null, // No icon for due date buckets - label is sufficient
     default => null // Status and other groupings use FontAwesome icon below
 };
 
 // For groupBy types without a component, use FontAwesome icon
 $faIcon = match($groupBy) {
     'status' => 'fa-circle-dot',
+    'milestoneid' => null, // No icon for milestones
+    'dueDate' => null, // No icon for due date buckets - label is sufficient
     default => 'fa-layer-group'
 };
 
@@ -101,7 +104,7 @@ foreach ($statusColumns as $statusId => $statusData) {
         @endif
 
         {{-- Label - truncates with ellipsis --}}
-        <span class="swimlane-header-label" title="{{ strip_tags($label) }}">
+        <span class="swimlane-header-label" data-tippy-content="{{ strip_tags($label) }}">
             {!! $label !!}
         </span>
 
@@ -113,7 +116,7 @@ foreach ($statusColumns as $statusId => $statusData) {
         @endif
 
         {{-- Count Badge (inline) - only visible when collapsed --}}
-        <span class="kanban-lane-count kanban-lane-count--inline" title="{{ $totalCount }} tasks">{{ $totalCount }}</span>
+        <span class="kanban-lane-count kanban-lane-count--inline" data-tippy-content="{{ $totalCount }} tasks">{{ $totalCount }}</span>
     </div>
 
     {{-- Row 2: Progress Bar + Count Badge --}}
@@ -130,7 +133,7 @@ foreach ($statusColumns as $statusId => $statusData) {
         </div>
 
         {{-- Count Badge --}}
-        <span class="kanban-lane-count" title="{{ $totalCount }} tasks">{{ $totalCount }}</span>
+        <span class="kanban-lane-count" data-tippy-content="{{ $totalCount }} tasks">{{ $totalCount }}</span>
     </div>
 
     </div>{{-- .kanban-swimlane-sidebar-inner --}}

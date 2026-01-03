@@ -251,23 +251,42 @@ leantime.kanbanController = (function () {
     };
 
     /**
-     * Initialize Tippy.js tooltips for progress bar segments
+     * Initialize Tippy.js tooltips for swimlane header elements
      */
     var initProgressBarTooltips = function() {
         if (typeof tippy === 'undefined') {
             return;
         }
 
-        var segments = document.querySelectorAll('.status-segment[data-tippy-content]');
-        if (segments.length > 0) {
-            tippy(segments, {
-                allowHTML: true,
-                placement: 'top',
-                arrow: true,
-                theme: 'light-border',
-                trigger: 'mouseenter focus'
-            });
-        }
+        var tippyConfig = {
+            allowHTML: true,
+            placement: 'top',
+            arrow: true,
+            theme: 'light-border',
+            trigger: 'mouseenter focus',
+            delay: [500, 0] // 500ms show delay, 0ms hide delay
+        };
+
+        // All swimlane header elements with tooltips
+        var tooltipSelectors = [
+            '.status-segment[data-tippy-content]',      // Progress bar segments
+            '.time-indicator[data-tippy-content]',      // Time indicators (overdue, due soon, stale)
+            '.kanban-lane-count[data-tippy-content]',   // Count badges
+            '.tshirt-icon[data-tippy-content]',         // Effort icons
+            '.thermometer-icon[data-tippy-content]',    // Priority icons
+            '.user-avatar[data-tippy-content]',         // User avatars
+            '.type-icon[data-tippy-content]',           // Type icons
+            '.sprint-icon[data-tippy-content]',         // Sprint icons
+            '.milestone-icon[data-tippy-content]',      // Milestone icons
+            '.swimlane-header-label[data-tippy-content]' // Swimlane labels
+        ];
+
+        tooltipSelectors.forEach(function(selector) {
+            var elements = document.querySelectorAll(selector);
+            if (elements.length > 0) {
+                tippy(elements, tippyConfig);
+            }
+        });
     };
 
     /**

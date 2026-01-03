@@ -10,6 +10,6 @@ $fontSize = $sizes[$size] ?? '16px';
 
 <span {{ $attributes->merge(['class' => 'milestone-icon']) }}
       style="font-size: {{ $fontSize }}; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 24px;"
-      title="Milestone: {{ $label }}"
+      data-tippy-content="Milestone: {{ $label }}"
       role="img"
       aria-label="Milestone: {{ $label }}">🎯</span>

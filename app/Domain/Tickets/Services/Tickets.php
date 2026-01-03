@@ -605,11 +605,17 @@ class Tickets
             return $ticketGroups;
         }
 
+        // Special handling for due date grouping (computed buckets, not direct field values)
+        if ($searchCriteria['groupBy'] == 'dueDate') {
+            return $this->groupTicketsByDueDate($tickets);
+        }
+
         $groupByOptions = $this->getGroupByFieldOptions();
 
         foreach ($tickets as $ticket) {
             $class = '';
             $moreInfo = '';
+            $sortId = null; // Custom sort ID, defaults to groupedFieldValue if null
 
             if (isset($ticket[$searchCriteria['groupBy']])) {
                 $groupedFieldValue = strtolower($ticket[$searchCriteria['groupBy']]);
@@ -636,6 +642,7 @@ class Tickets
                                 $class = 'priority-text-'.$groupedFieldValue;
                             } else {
                                 $label = 'No Priority Set';
+                                $sortId = '999'; // Sort "No Priority" after Lowest (5)
                             }
                             break;
                         case 'storypoints':
@@ -695,7 +702,7 @@ class Tickets
                     $ticketGroups[$groupedFieldValue] = [
                         'label' => $label,
                         'more-info' => $moreInfo,
-                        'id' => strtolower($groupedFieldValue),
+                        'id' => $sortId ?? strtolower($groupedFieldValue),
                         'class' => $class,
                         'items' => [$ticket],
                     ];
@@ -703,20 +710,145 @@ class Tickets
             }
         }
 
-        // Sort main groups
-
+        // Sort main groups by appropriate field
         switch ($searchCriteria['groupBy']) {
             case 'status':
             case 'priority':
             case 'storypoints':
+                // Sort numerically by ID for ordered fields (priority 1-5, status order, effort points)
                 $ticketGroups = array_sort($ticketGroups, 'id');
-                // no break
+                break;
             default:
+                // Sort alphabetically by label for other groupings
                 $ticketGroups = array_sort($ticketGroups, 'label');
                 break;
         }
 
         return $ticketGroups;
+    }
+
+    /**
+     * Group tickets by due date into time-based buckets
+     *
+     * Buckets (in order):
+     * 1. Overdue - due_date < today
+     * 2. Due This Week - 0-6 days from today (includes today)
+     * 3. Due Next Week - 7-13 days from today
+     * 4. Due Later - 14+ days from today
+     * 5. No Due Date - null/empty due date
+     *
+     * @param array $tickets Array of ticket data
+     * @return array Grouped tickets by due date bucket
+     */
+    private function groupTicketsByDueDate(array $tickets): array
+    {
+        // Define buckets in display order with sort IDs
+        $bucketDefinitions = [
+            'overdue' => [
+                'label' => 'Overdue',
+                'id' => '0',
+                'class' => '',
+            ],
+            'due-this-week' => [
+                'label' => 'Due This Week',
+                'id' => '1',
+                'class' => '',
+            ],
+            'due-next-week' => [
+                'label' => 'Due Next Week',
+                'id' => '2',
+                'class' => '',
+            ],
+            'due-later' => [
+                'label' => 'Due Later',
+                'id' => '3',
+                'class' => '',
+            ],
+            'no-due-date' => [
+                'label' => 'No Due Date',
+                'id' => '4',
+                'class' => '',
+            ],
+        ];
+
+        // Initialize all buckets with empty items (so empty buckets still display)
+        $ticketGroups = [];
+        foreach ($bucketDefinitions as $bucketKey => $bucketDef) {
+            $ticketGroups[$bucketKey] = [
+                'label' => $bucketDef['label'],
+                'id' => $bucketDef['id'],
+                'class' => $bucketDef['class'],
+                'more-info' => '',
+                'items' => [],
+            ];
+        }
+
+        // Get today's date at midnight in user's timezone
+        $today = CarbonImmutable::now()->startOfDay();
+
+        // Assign each ticket to appropriate bucket
+        foreach ($tickets as $ticket) {
+            $bucketKey = $this->getDueDateBucket($ticket['dateToFinish'] ?? null, $today);
+            $ticketGroups[$bucketKey]['items'][] = $ticket;
+        }
+
+        // Sort tickets within each bucket by due date (earliest first)
+        // For "No Due Date" bucket, sort by creation date (oldest first)
+        foreach ($ticketGroups as $bucketKey => &$group) {
+            if ($bucketKey === 'no-due-date') {
+                // Sort by creation date (oldest first)
+                usort($group['items'], function ($a, $b) {
+                    $dateA = $a['date'] ?? '';
+                    $dateB = $b['date'] ?? '';
+                    return strcmp($dateA, $dateB);
+                });
+            } else {
+                // Sort by due date (earliest first)
+                usort($group['items'], function ($a, $b) {
+                    $dateA = $a['dateToFinish'] ?? '';
+                    $dateB = $b['dateToFinish'] ?? '';
+                    return strcmp($dateA, $dateB);
+                });
+            }
+        }
+        unset($group);
+
+        return $ticketGroups;
+    }
+
+    /**
+     * Determine which due date bucket a ticket belongs to
+     *
+     * @param string|null $dateToFinish The ticket's due date
+     * @param CarbonImmutable $today Today's date at midnight
+     * @return string The bucket key
+     */
+    private function getDueDateBucket(?string $dateToFinish, CarbonImmutable $today): string
+    {
+        // Handle null/empty/invalid due dates
+        if (empty($dateToFinish) || str_starts_with($dateToFinish, '0000-00-00')) {
+            return 'no-due-date';
+        }
+
+        try {
+            $dueDate = CarbonImmutable::parse($dateToFinish)->startOfDay();
+        } catch (\Exception $e) {
+            return 'no-due-date';
+        }
+
+        $diffDays = $today->diffInDays($dueDate, false); // false = signed difference
+
+        if ($diffDays < 0) {
+            return 'overdue';
+        }
+        if ($diffDays <= 6) {
+            return 'due-this-week'; // 0-6 days (includes today)
+        }
+        if ($diffDays <= 13) {
+            return 'due-next-week'; // 7-13 days
+        }
+
+        return 'due-later'; // 14+ days
     }
 
     /**
@@ -2386,27 +2518,19 @@ class Tickets
      */
     public function getGroupByFieldOptions(): array
     {
+        // Alphabetically ordered (except "No Grouping" stays first as default)
         return [
             'all' => [
                 'id' => 'all',
                 'field' => 'all',
                 'class' => '',
                 'label' => 'no_group',
-
             ],
-            'type' => [
-                'id' => 'type',
-                'field' => 'type',
-                'label' => 'type',
+            'dueDate' => [
+                'id' => 'dueDate',
+                'field' => 'dueDate',
                 'class' => '',
-                'function' => 'getTicketTypes',
-            ],
-            'status' => [
-                'id' => 'status',
-                'field' => 'status',
-                'label' => 'todo_status',
-                'class' => '',
-                'function' => 'getStatusLabels',
+                'label' => 'due_date',
             ],
             'effort' => [
                 'id' => 'effort',
@@ -2415,6 +2539,13 @@ class Tickets
                 'class' => '',
                 'function' => 'getEffortLabels',
             ],
+            'milestone' => [
+                'id' => 'milestone',
+                'field' => 'milestoneid',
+                'label' => 'milestone',
+                'class' => '',
+                'function' => null,
+            ],
             'priority' => [
                 'id' => 'priority',
                 'field' => 'priority',
@@ -2422,12 +2553,25 @@ class Tickets
                 'class' => '',
                 'function' => 'getPriorityLabels',
             ],
-            'milestone' => [
-                'id' => 'milestone',
-                'field' => 'milestoneid',
-                'label' => 'milestone',
+            'sprint' => [
+                'id' => 'sprint',
+                'field' => 'sprint',
                 'class' => '',
-                'function' => null,
+                'label' => 'sprint',
+            ],
+            'status' => [
+                'id' => 'status',
+                'field' => 'status',
+                'label' => 'todo_status',
+                'class' => '',
+                'function' => 'getStatusLabels',
+            ],
+            'type' => [
+                'id' => 'type',
+                'field' => 'type',
+                'label' => 'type',
+                'class' => '',
+                'function' => 'getTicketTypes',
             ],
             'user' => [
                 'id' => 'user',
@@ -2436,21 +2580,6 @@ class Tickets
                 'class' => '',
                 'funtion' => 'buildEditorName',
             ],
-            'sprint' => [
-                'id' => 'sprint',
-                'field' => 'sprint',
-                'class' => '',
-                'label' => 'sprint',
-            ],
-
-            /*
-            "tags" => [
-                'id' => 'groupByTagsLink',
-                'field' => 'tags',
-                'label' => 'tags',
-            ],* @api
-*
-*/
         ];
     }
 

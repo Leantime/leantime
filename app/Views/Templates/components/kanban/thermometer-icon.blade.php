@@ -23,7 +23,7 @@ $sizeConfig = $sizes[$size] ?? $sizes['md'];
 
 <span {{ $attributes->merge(['class' => 'thermometer-icon']) }}
       style="display: inline-flex; align-items: center; gap: 4px;"
-      title="{{ $label }} Priority">
+      data-tippy-content="{{ $label }} Priority">
     <svg
         width="{{ $sizeConfig['width'] }}"
         height="{{ $sizeConfig['height'] }}"

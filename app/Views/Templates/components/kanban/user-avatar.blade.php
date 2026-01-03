@@ -46,7 +46,7 @@ if ($username && $username !== 'Unassigned') {
 
 <div {{ $attributes->merge(['class' => 'user-avatar']) }}
      style="display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background-color: {{ $colors['bg'] }}; width: {{ $sizeStyles['width'] }}; height: {{ $sizeStyles['height'] }}; font-size: {{ $sizeStyles['fontSize'] }}; flex-shrink: 0;"
-     title="{{ $username }}">
+     data-tippy-content="{{ $username }}">
     @if($userId)
         <img src="{{ BASE_URL }}/api/users?profileImage={{ $userId }}"
              alt="{{ $username }}"

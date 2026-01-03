@@ -24,7 +24,7 @@ $color = '#159A80'; // Brand teal from design
 
 <span {{ $attributes->merge(['class' => 'tshirt-icon']) }}
       style="display: inline-flex; align-items: center; gap: 4px;"
-      title="{{ $sizeLabel }} Effort">
+      data-tippy-content="{{ $sizeLabel }} Effort">
     <svg
         width="{{ $sizeConfig['width'] }}"
         height="{{ $sizeConfig['height'] }}"
