@@ -1187,6 +1187,10 @@ leantime.ticketsController = (function () {
                 start: function (event, ui) {
                     ui.item.addClass('tilt');
                     tilt_direction(ui.item);
+
+                    // Store original swimlane for cross-swimlane detection
+                    var $originalSwimlane = ui.item.closest('.sortableTicketList.kanbanBoard');
+                    ui.item.data('originalSwimlaneId', $originalSwimlane.attr('id'));
                 },
                 stop: function (event, ui) {
                     ui.item.removeClass("tilt");
@@ -1196,7 +1200,7 @@ leantime.ticketsController = (function () {
                     countTickets();
 
                     // Update empty state for all columns after drag-and-drop
-                    jQuery(currentElement).find(".contentInner").each(function() {
+                    jQuery(".sortableTicketList").find(".contentInner").each(function() {
                         var $container = jQuery(this);
                         var hasTickets = $container.find(".moveable").length > 0;
 
@@ -1213,6 +1217,145 @@ leantime.ticketsController = (function () {
                         }
                     });
 
+                    // Detect cross-swimlane movement and update groupBy field
+                    var $newSwimlane = ui.item.closest('.sortableTicketList.kanbanBoard');
+                    var newSwimlaneId = $newSwimlane.attr('id');
+                    var originalSwimlaneId = ui.item.data('originalSwimlaneId');
+
+                    if (originalSwimlaneId && newSwimlaneId && originalSwimlaneId !== newSwimlaneId) {
+                        // Card moved to different swimlane - update the groupBy field
+                        var ticketId = ui.item[0].id.replace('ticket_', '');
+                        var newGroupValue = newSwimlaneId.replace('kanboard-', '');
+
+                        // Map groupBy values to API field names
+                        var groupByFieldMap = {
+                            'milestoneid': 'milestoneid',
+                            'editorId': 'editorId',
+                            'priority': 'priority',
+                            'storypoints': 'storypoints',
+                            'sprint': 'sprint'
+                        };
+
+                        var groupBy = leantime.kanbanGroupBy;
+                        var fieldName = groupByFieldMap[groupBy];
+
+                        if (fieldName && ticketId) {
+                            var $card = jQuery('#ticket_' + ticketId);
+
+                            // OPTIMISTIC UI UPDATE - update visuals immediately before server confirms
+                            if (groupBy === 'milestoneid') {
+                                // Find the new swimlane's label for the milestone
+                                var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
+                                var newLabel = $newSwimlaneHeader.text() || leantime.i18n.__("label.no_milestone");
+
+                                // Update milestone dropdown on card
+                                var $milestoneDropdown = $card.find('.milestoneDropdown .dropdown-toggle .text');
+                                if ($milestoneDropdown.length) {
+                                    $milestoneDropdown.text(newLabel);
+                                }
+
+                                // Get the milestone color from the dropdown menu item
+                                var $milestoneMenuItem = $card.find('.milestoneDropdown .dropdown-menu a[data-value^="' + ticketId + '_' + newGroupValue + '_"]');
+                                var milestoneColor = '#b0b0b0'; // Default gray for "No Milestone"
+
+                                if ($milestoneMenuItem.length && newGroupValue !== '0' && newGroupValue !== '') {
+                                    // Extract color from the data-value (format: ticketId_milestoneId_color)
+                                    var dataValue = $milestoneMenuItem.attr('data-value');
+                                    if (dataValue) {
+                                        var parts = dataValue.split('_');
+                                        if (parts.length >= 3) {
+                                            milestoneColor = parts.slice(2).join('_'); // Handle colors with underscores
+                                        }
+                                    }
+                                    // Also try getting from inline style
+                                    if (!milestoneColor || milestoneColor === '#b0b0b0') {
+                                        var inlineStyle = $milestoneMenuItem.attr('style');
+                                        if (inlineStyle) {
+                                            var colorMatch = inlineStyle.match(/background-color:\s*([^;]+)/i);
+                                            if (colorMatch) {
+                                                milestoneColor = colorMatch[1].trim();
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Update the dropdown toggle background color
+                                $card.find('.milestoneDropdown .dropdown-toggle').css('background-color', milestoneColor);
+
+                            } else if (groupBy === 'priority') {
+                                // Update priority border and dropdown on card
+                                $card.removeClass(function(index, className) {
+                                    return (className.match(/(^|\s)priority-border-\S+/g) || []).join(' ');
+                                }).addClass('priority-border-' + newGroupValue);
+
+                                // Update priority dropdown text and background
+                                var priorityLabels = {'1': 'Critical', '2': 'High', '3': 'Medium', '4': 'Low', '5': 'Lowest'};
+                                var $priorityDropdown = jQuery('#priorityDropdownMenuLink' + ticketId);
+                                if ($priorityDropdown.length) {
+                                    $priorityDropdown.find('span.text').text(priorityLabels[newGroupValue] || newGroupValue);
+                                    $priorityDropdown.removeClass('priority-bg-1 priority-bg-2 priority-bg-3 priority-bg-4 priority-bg-5');
+                                    $priorityDropdown.addClass('priority-bg-' + newGroupValue);
+                                }
+
+                            } else if (groupBy === 'editorId') {
+                                // Update user dropdown on card
+                                var $userDropdown = jQuery('#userDropdownMenuLink' + ticketId);
+                                if ($userDropdown.length) {
+                                    // Update user image
+                                    $userDropdown.find('span.text span img').attr('src', leantime.appUrl + '/api/users?profileImage=' + newGroupValue);
+
+                                    // Get the new user's name from swimlane header
+                                    var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
+                                    var newUserName = $newSwimlaneHeader.text() || leantime.i18n.__("label.not_assigned");
+                                    $userDropdown.find('span.text span#user' + ticketId).text(newUserName);
+                                }
+
+                            } else if (groupBy === 'storypoints') {
+                                // Update effort dropdown on card
+                                var storyPointLabels = {'0.5': '< 2min', '1': 'XS', '2': 'S', '3': 'M', '5': 'L', '8': 'XL', '13': 'XXL'};
+                                var $effortDropdown = jQuery('#effortDropdownMenuLink' + ticketId);
+                                if ($effortDropdown.length) {
+                                    $effortDropdown.find('span.text').text(storyPointLabels[newGroupValue] || newGroupValue);
+                                }
+
+                            } else if (groupBy === 'sprint') {
+                                // Update sprint dropdown on card
+                                var $sprintDropdown = jQuery('#sprintDropdownMenuLink' + ticketId);
+                                if ($sprintDropdown.length) {
+                                    // Get the new sprint's name from swimlane header
+                                    var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
+                                    var newSprintName = $newSwimlaneHeader.text() || leantime.i18n.__("label.backlog");
+                                    $sprintDropdown.find('span.text').text(newSprintName);
+                                }
+                            }
+
+                            // Show success notification immediately for better perceived speed
+                            jQuery.growl({message: "To-Do Updated", style: "success"});
+
+                            var patchData = {
+                                id: ticketId
+                            };
+                            patchData[fieldName] = newGroupValue;
+
+                            // PATCH the ticket with the new swimlane value (confirmation happens in background)
+                            jQuery.ajax({
+                                type: 'PATCH',
+                                url: leantime.appUrl + '/api/tickets',
+                                data: patchData
+                            }).fail(function() {
+                                jQuery.growl({message: leantime.i18n.__("short_notifications.not_saved") || "Error updating ticket", style: "error"});
+                                // Reload on failure to restore correct state
+                                location.reload();
+                            });
+                        }
+                    }
+
+                    // Clean up stored data
+                    ui.item.removeData('originalSwimlaneId');
+
+                    // Get the new parent swimlane for status update
+                    var $targetSwimlane = ui.item.closest('.sortableTicketList');
+
                     var statusPostData = {
                         action: "kanbanSort",
                         payload: {},
@@ -1221,8 +1364,8 @@ leantime.ticketsController = (function () {
 
 
                     for (var i = 0; i < ticketStatusList.length; i++) {
-                        if (jQuery(currentElement).find(".contentInner.status_" + ticketStatusList[i]).length) {
-                            statusPostData.payload[ticketStatusList[i]] = jQuery(currentElement).find(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
+                        if ($targetSwimlane.find(".contentInner.status_" + ticketStatusList[i]).length) {
+                            statusPostData.payload[ticketStatusList[i]] = $targetSwimlane.find(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
                         }
                     }
 

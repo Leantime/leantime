@@ -116,26 +116,10 @@ leantime.kanbanController = (function () {
 
     /**
      * Initialize help tooltips for quick-add forms
+     * Uses native title attribute - no Tippy needed
      */
     var initQuickAddHelp = function() {
-        var helpIcons = document.querySelectorAll('[data-quickadd-help]');
-
-        if (typeof tippy === 'undefined') {
-            return;
-        }
-
-        helpIcons.forEach(function(icon) {
-            tippy(icon, {
-                content: icon.getAttribute('data-tippy-content'),
-                allowHTML: true,
-                placement: 'left',
-                arrow: true,
-                theme: 'light-border',
-                interactive: false,
-                role: 'tooltip',
-                trigger: 'mouseenter focus'
-            });
-        });
+        // Native title tooltips are used instead of Tippy
     };
 
     /**

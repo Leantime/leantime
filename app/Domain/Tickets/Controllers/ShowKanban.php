@@ -42,6 +42,12 @@ class ShowKanban extends Controller
      */
     public function get(array $params): Response
     {
+        // Status groupBy is redundant on Kanban (status already shown as columns)
+        // Auto-reset to "all" (no grouping) for cleaner default view
+        if (isset($params['groupBy']) && $params['groupBy'] === 'status') {
+            $params['groupBy'] = 'all';
+        }
+
         $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
         $allKanbanColumns = $this->ticketService->getKanbanColumns();
 

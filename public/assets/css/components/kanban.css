@@ -49,7 +49,7 @@
     box-sizing: border-box;
     height:auto;
     padding: 0 6px;
-    flex:1;
+    flex: 1 1 0;  /* Equal width columns regardless of content */
     min-width:150px;
 }
 
@@ -769,19 +769,27 @@ body .maincontent .priority-text-5 a:link {
 }
 
 /* --- COLLAPSED CONTENT AREA (via data-expanded for initial load) --- */
-/* Reduce column heights when collapsed - auto-fit to content */
+/* Reduce column heights when collapsed - stretch to fill row */
 .kanban-swimlane-row[data-expanded="false"] .column .contentInner {
     padding: 8px 6px;
     min-height: auto !important;
+    height: 100%; /* Fill column height */
+}
+
+/* Empty columns in collapsed rows should maintain consistent height */
+.kanban-swimlane-row[data-expanded="false"] .column .contentInner:empty,
+.kanban-swimlane-row[data-expanded="false"] .column .contentInner.empty-column {
+    min-height: 52px !important;
+    height: 100%; /* Fill column height */
 }
 
 .kanban-swimlane-row[data-expanded="false"] .column {
     height: auto !important;
-    align-self: flex-start !important;
+    align-self: stretch !important;
 }
 
 .kanban-swimlane-row[data-expanded="false"] .sortableTicketList .row-fluid {
-    align-items: flex-start !important;
+    align-items: stretch !important;
 }
 
 /* Compact ticket cards when collapsed */
@@ -979,6 +987,14 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-content.collapsed .column .contentInner {
     padding: 8px 4px;
     min-height: auto;
+    height: 100%; /* Fill column height */
+}
+
+/* Empty columns in collapsed state should match height of columns with content */
+.kanban-swimlane-content.collapsed .column .contentInner:empty,
+.kanban-swimlane-content.collapsed .column .contentInner.empty-column {
+    min-height: 52px !important;
+    height: 100%; /* Fill column height */
 }
 
 /* ============================================
@@ -996,15 +1012,16 @@ body .maincontent .priority-text-5 a:link {
     margin-bottom: 0;
 }
 
-/* Align columns to top and ensure consistent padding */
+/* Align columns to stretch and ensure consistent padding */
 .kanban-swimlane-content.collapsed .sortableTicketList .row-fluid {
-    align-items: flex-start;
+    align-items: stretch;
     padding-bottom: 0;
 }
 
-/* Ensure columns have consistent appearance */
+/* Ensure columns stretch to fill row height */
 .kanban-swimlane-content.collapsed .column {
     min-height: auto;
+    align-self: stretch;
 }
 
 /* ============================================
@@ -1346,3 +1363,12 @@ body .maincontent .priority-text-5 a:link {
 .status-segment.status-2 { background-color: #f97316; } /* Waiting for approval - Orange */
 .status-segment.status-0 { background-color: #10b981; } /* Done - Green */
 .status-segment.status--1 { background-color: #9ca3af; } /* Archived - Gray */
+
+/* Allow dropdown menus to overflow in kanban columns */
+.kanban-swimlane-content .column .contentInner {
+    overflow: visible;
+}
+
+.kanban-swimlane-content .sortableTicketList {
+    overflow: visible;
+}
