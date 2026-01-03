@@ -177,6 +177,7 @@ leantime.kanbanController = (function () {
         var columns = contentElement.querySelectorAll('.column .contentInner');
         columns.forEach(function(col) {
             col.style.minHeight = '';
+            col.style.height = '';  // Clear height set by setUpKanbanColumns()
         });
     };
 
@@ -215,15 +216,11 @@ leantime.kanbanController = (function () {
         // Toggle state on content area
         if (newExpanded) {
             content.classList.remove('collapsed');
-            // Reset column heights when expanding
-            resetColumnHeights(content);
         } else {
             content.classList.add('collapsed');
-            // Equalize column heights when collapsing
-            setTimeout(function() {
-                equalizeColumnHeights(content);
-            }, 50); // Small delay to let CSS transitions complete
         }
+        // Always reset column heights - let CSS handle auto-fit
+        resetColumnHeights(content);
 
         // Persist state to session via AJAX
         jQuery.ajax({
@@ -357,7 +354,6 @@ leantime.kanbanController = (function () {
             initQuickAddHelp();
             initSwimlaneKeyboard();
             initProgressBarTooltips();
-            initCollapsedColumnHeights();
             initStickySwimlaneSidebars();
         });
     } else {
@@ -366,7 +362,6 @@ leantime.kanbanController = (function () {
         initQuickAddHelp();
         initSwimlaneKeyboard();
         initProgressBarTooltips();
-        initCollapsedColumnHeights();
         initStickySwimlaneSidebars();
     }
 

@@ -1135,8 +1135,15 @@ leantime.ticketsController = (function () {
 
             jQuery(".sortableTicketList").each(function(){
 
-                let height = 250;
                 let kanbanLaneId = jQuery(this).attr("id");
+
+                // Skip collapsed swimlanes - let CSS handle their height
+                var swimlaneRow = jQuery(this).closest('.kanban-swimlane-row');
+                if (swimlaneRow.length && swimlaneRow.attr('data-expanded') === 'false') {
+                    return;
+                }
+
+                let height = 250;
 
                 jQuery(this).find(".column .contentInner").each(function () {
                     if (jQuery(this).height() > height) {

@@ -769,10 +769,19 @@ body .maincontent .priority-text-5 a:link {
 }
 
 /* --- COLLAPSED CONTENT AREA (via data-expanded for initial load) --- */
-/* Reduce column heights when collapsed */
+/* Reduce column heights when collapsed - auto-fit to content */
 .kanban-swimlane-row[data-expanded="false"] .column .contentInner {
     padding: 8px 6px;
-    min-height: auto;
+    min-height: auto !important;
+}
+
+.kanban-swimlane-row[data-expanded="false"] .column {
+    height: auto !important;
+    align-self: flex-start !important;
+}
+
+.kanban-swimlane-row[data-expanded="false"] .sortableTicketList .row-fluid {
+    align-items: flex-start !important;
 }
 
 /* Compact ticket cards when collapsed */
