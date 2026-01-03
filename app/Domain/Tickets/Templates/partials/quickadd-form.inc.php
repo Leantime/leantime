@@ -40,22 +40,21 @@ $hasError = $isActive && ! empty($reopenState['error']);
         <input type="hidden" name="sprint" value="<?= session('currentSprint') ?? '' ?>" />
         <input type="hidden" name="stay_open" value="0" data-stay-open-input />
 
+        <i class="fa fa-circle-question quickAddHelp"
+           data-tippy-content="<strong>Keyboard Shortcuts:</strong><br>• Enter - Save and add another<br>• Shift+Enter - Save and close<br>• Esc - Cancel"
+           tabindex="0"
+           aria-label="Keyboard shortcuts help"></i>
+
         <div class="form-group">
             <label for="headline-<?= $statusId ?>-<?= $swimlaneKey ?? 'default' ?>" class="sr-only">Task name</label>
-            <textarea name="headline"
-                      id="headline-<?= $statusId ?>-<?= $swimlaneKey ?? 'default' ?>"
-                      class="form-control quickAddInput <?= $hasError ? 'error' : '' ?>"
-                      placeholder="What are you working on? ↵"
-                      rows="1"
-                      <?= $isActive ? 'autofocus' : '' ?>
-                      data-quickadd-input><?= htmlspecialchars($savedHeadline) ?></textarea>
-
-            <i class="fa fa-circle-question quickAddHelp"
-               data-quickadd-help
-               data-tippy-content="<strong>Keyboard Shortcuts:</strong><br>• Enter - Save and add another<br>• Shift+Enter - Save and close<br>• Esc - Cancel"
-               role="button"
-               tabindex="0"
-               aria-label="Keyboard shortcuts help"></i>
+            <input type="text"
+                   name="headline"
+                   id="headline-<?= $statusId ?>-<?= $swimlaneKey ?? 'default' ?>"
+                   class="form-control quickAddInput <?= $hasError ? 'error' : '' ?>"
+                   placeholder="What are you working on? ↵"
+                   value="<?= htmlspecialchars($savedHeadline) ?>"
+                   <?= $isActive ? 'autofocus' : '' ?>
+                   data-quickadd-input />
 
             <?php if ($hasError) { ?>
                 <div class="error-message" role="alert"><?= htmlspecialchars($reopenState['error']) ?></div>

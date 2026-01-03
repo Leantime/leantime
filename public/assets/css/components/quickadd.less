@@ -2,6 +2,8 @@
 
 .quickaddContainer {
     margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
 
     &.quickaddContainer--empty {
         padding: 6px;
@@ -40,36 +42,42 @@
     }
 }
 
-.quickAddForm {
+form.quickAddForm {
     position: relative;
-    padding: 8px;
+    display: block;
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    margin: 0;
 
     &.active {
         animation: fadeIn 0.2s ease;
     }
 
     .quickaddContainer--empty & {
-        padding: 8px;
+        padding: 12px;
     }
 }
 
 .quickAddForm .form-group {
     position: relative;
     margin-bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
+/* Help icon positioned in top-right corner of form */
 .quickAddHelp {
     position: absolute;
-    top: 50%;
+    top: 8px;
     right: 8px;
-    transform: translateY(-50%);
     font-size: 14px;
     color: var(--primary-font-color);
     opacity: 0.4;
     cursor: help;
     transition: opacity 0.2s ease, color 0.2s ease;
-    padding: 2px;
-    z-index: 10;
+    padding: 4px;
+    z-index: 5;
 
     &:hover,
     &:focus {
@@ -88,16 +96,18 @@
 
 .quickAddInput {
     width: 100%;
-    min-height: 32px;
+    max-width: 100%;
+    height: 36px;
     border: 1px solid var(--main-border-color);
     border-radius: var(--box-radius);
-    padding: 6px 10px;
-    resize: none;
+    padding: 8px 12px;
     font-family: var(--primary-font-family);
     font-size: var(--font-size-s);
     color: var(--primary-font-color);
     background: var(--main-bg);
     line-height: 1.4;
+    display: block;
+    box-sizing: border-box;
 
     &:focus {
         border-color: var(--accent1);
@@ -126,13 +136,21 @@
 
 .formButtonContainer {
     display: flex;
-    gap: 6px;
-    margin-top: 8px;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
 
     .btn {
-        flex: 1;
-        padding: 6px 12px;
+        padding: 6px 14px;
         font-size: var(--font-size-s);
+    }
+
+    .btn-primary {
+        flex-shrink: 0;
+    }
+
+    .btn-secondary {
+        flex-shrink: 0;
     }
 }
 

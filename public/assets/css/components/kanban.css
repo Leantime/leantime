@@ -683,7 +683,7 @@ body .maincontent .priority-text-5 a:link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #3D4A2A; /* Dark olive background */
+    background: color-mix(in srgb, var(--accent2) 76%, black); /* Darkened brand teal - WCAG AA compliant (4.9:1 contrast) */
     color: #FFFFFF; /* White text for high contrast */
     padding: 3px 10px;
     border-radius: 12px;
@@ -696,6 +696,42 @@ body .maincontent .priority-text-5 a:link {
 /* Time indicator in header */
 .swimlane-time-indicator {
     flex-shrink: 0;
+}
+
+/* ============================================
+   COLLAPSED HEADER STATE
+   Compact single-row header when swimlane is collapsed
+   ============================================ */
+
+/* Inline count badge - hidden by default (shown in collapsed state) */
+.kanban-lane-count--inline {
+    display: none;
+    margin-left: auto;
+}
+
+/* Collapsed swimlane header - compact single row */
+.swimlane-collapsed .kanban-swimlane-sidebar-inner {
+    padding: 10px 12px;
+}
+
+/* Hide row 2 in collapsed state */
+.swimlane-collapsed .swimlane-header-row2 {
+    display: none;
+}
+
+/* Hide time indicator in collapsed state */
+.swimlane-collapsed .swimlane-time-indicator {
+    display: none;
+}
+
+/* Show inline count badge when collapsed */
+.swimlane-collapsed .kanban-lane-count--inline {
+    display: inline-flex;
+}
+
+/* Adjust row 1 for collapsed - ensure count badge aligns right */
+.swimlane-collapsed .swimlane-header-row1 {
+    min-height: auto;
 }
 
 
@@ -1049,10 +1085,7 @@ body .maincontent .priority-text-5 a:link {
 
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
-    .kanban-lane-count {
-        background: #4A5832; /* Slightly lighter olive for dark mode */
-        color: #FFFFFF;
-    }
+    /* Count badge uses var(--primary-color) which auto-adapts to theme */
 
     /* Subtle hover for dark mode - transparent overlay */
     .kanban-swimlane-sidebar:hover {

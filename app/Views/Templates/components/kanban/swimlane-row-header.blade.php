@@ -105,30 +105,29 @@ foreach ($statusColumns as $statusId => $statusData) {
             {!! $label !!}
         </span>
 
-        {{-- Time indicator (⏳ ⏰ 💤) --}}
+        {{-- Time indicator (⏳ ⏰ 💤) - hidden when collapsed --}}
         @if($timeAlert)
             <span class="swimlane-time-indicator">
                 <x-global::kanban.time-indicator :type="$timeAlert" />
             </span>
         @endif
+
+        {{-- Count Badge (inline) - only visible when collapsed --}}
+        <span class="kanban-lane-count kanban-lane-count--inline" title="{{ $totalCount }} tasks">{{ $totalCount }}</span>
     </div>
 
     {{-- Row 2: Progress Bar + Count Badge --}}
     <div class="swimlane-header-row2">
-        {{-- Micro Progress Bar (status breakdown) --}}
-        @if($totalCount > 0 && count($statusCounts) > 0)
-            <div style="flex: 1; min-width: 0;">
-                <x-global::kanban.micro-progress-bar
-                    :statusCounts="$statusCounts"
-                    :statusColumns="$statusLabels"
-                    :totalCount="$totalCount"
-                    :expandOnHover="true"
-                    size="lg"
-                />
-            </div>
-        @else
-            <div style="flex: 1;"></div>
-        @endif
+        {{-- Micro Progress Bar (status breakdown) - always shown, gray when empty --}}
+        <div style="flex: 1; min-width: 0;">
+            <x-global::kanban.micro-progress-bar
+                :statusCounts="$statusCounts"
+                :statusColumns="$statusLabels"
+                :totalCount="$totalCount"
+                :expandOnHover="true"
+                size="lg"
+            />
+        </div>
 
         {{-- Count Badge --}}
         <span class="kanban-lane-count" title="{{ $totalCount }} tasks">{{ $totalCount }}</span>

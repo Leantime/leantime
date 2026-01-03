@@ -117,12 +117,13 @@ $allTickets = $group['items'];
                 $swimlaneExpanded = ! in_array($group['id'], session('collapsedSwimlanes', []));
                 $groupBy = $searchCriteria['groupBy'] ?? 'status';
 
-                // Calculate status counts for this swimlane
-                $statusCounts = [];
-                foreach ($group['items'] as $ticket) {
-                    $status = $ticket['status'] ?? 0;
-                    $statusCounts[$status] = ($statusCounts[$status] ?? 0) + 1;
-                }
+// Get pre-calculated status breakdown with timeAlert from service
+                // Use string key to match how PHP array keys work with mixed types
+                $statusBreakdown = $tpl->get('statusBreakdown');
+                $groupIdKey = (string) $group['id'];
+                $swimlaneBreakdown = $statusBreakdown[$groupIdKey] ?? $statusBreakdown[$group['id']] ?? [];
+                $statusCounts = $swimlaneBreakdown['statusCounts'] ?? [];
+                $timeAlert = $swimlaneBreakdown['timeAlert'] ?? null;
                 ?>
                 <div class="kanban-swimlane-row <?= $swimlaneExpanded ? '' : 'swimlane-collapsed' ?>" id="swimlane-row-<?= $group['id'] ?>">
                     <!-- Sentinel for Intersection Observer sticky detection -->
@@ -146,7 +147,7 @@ $allTickets = $group['items'];
                             'groupBy' => $groupBy,
                             'groupId' => $group['id'],
                             'label' => $group['label'],
-                            'totalCount' => count($group['items']),
+                            'totalCount' => $swimlaneBreakdown['totalCount'] ?? count($group['items']),
                             'statusCounts' => $statusCounts,
                             'statusColumns' => $tpl->get('allKanbanColumns'),
                             'expanded' => $swimlaneExpanded,

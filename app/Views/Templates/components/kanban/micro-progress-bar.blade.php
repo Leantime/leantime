@@ -39,9 +39,9 @@ $expandedHeight = $heights['expanded'][$size] ?? '22px';
      onmouseenter="this.querySelector('.progress-segments').style.height='{{ $expandedHeight }}'; this.querySelector('.progress-segments').style.borderRadius='4px';"
      onmouseleave="this.querySelector('.progress-segments').style.height='{{ $collapsedHeight }}'; this.querySelector('.progress-segments').style.borderRadius='2.5px';">
 
-    @if(count($segments) > 0)
-        <div class="progress-segments"
-             style="display: flex; height: {{ $collapsedHeight }}; border-radius: 2.5px; overflow: hidden; background-color: #D4D4D4; width: 100%; transition: height 0.2s ease, border-radius 0.2s ease; cursor: {{ $expandOnHover ? 'pointer' : 'default' }};">
+    <div class="progress-segments"
+         style="display: flex; height: {{ $collapsedHeight }}; border-radius: 2.5px; overflow: hidden; background-color: #D4D4D4; width: 100%; transition: height 0.2s ease, border-radius 0.2s ease; cursor: {{ $expandOnHover && count($segments) > 0 ? 'pointer' : 'default' }};">
+        @if(count($segments) > 0)
             @foreach($segments as $segment)
                 <div class="status-segment status-{{ $segment['id'] }}"
                      style="width: {{ $segment['percentage'] }}%; display: flex; align-items: center; justify-content: center;"
@@ -52,8 +52,10 @@ $expandedHeight = $heights['expanded'][$size] ?? '22px';
                     @endif
                 </div>
             @endforeach
-        </div>
+        @endif
+    </div>
 
+    @if(count($segments) > 0)
         <!-- Show counts on hover -->
         <style>
             .micro-progress-bar:hover .segment-count {
@@ -66,6 +68,11 @@ $expandedHeight = $heights['expanded'][$size] ?? '22px';
             @foreach($segments as $segment)
                 {{ $segment['label'] }}: {{ $segment['count'] }}.
             @endforeach
+        </span>
+    @else
+        <!-- Empty state for screen readers -->
+        <span style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;">
+            No tasks in this group.
         </span>
     @endif
 </div>

@@ -749,9 +749,9 @@ class Tickets
             $statusCounts = [];
             $totalCount = 0;
 
-            // Initialize all status columns to 0
+            // Initialize all status columns to 0 (use string keys for consistency)
             foreach ($statusColumns as $statusId => $statusLabel) {
-                $statusCounts[$statusId] = 0;
+                $statusCounts[(string) $statusId] = 0;
             }
 
             // Count tickets by status and determine time alert
@@ -761,7 +761,7 @@ class Tickets
             $now = CarbonImmutable::now();
 
             foreach ($group['items'] as $ticket) {
-                $status = $ticket['status'];
+                $status = (string) ($ticket['status'] ?? '');
                 if (isset($statusCounts[$status])) {
                     $statusCounts[$status]++;
                     $totalCount++;
@@ -797,7 +797,8 @@ class Tickets
                 $timeAlert = 'stale';
             }
 
-            $breakdown[$groupId] = [
+            // Use string version of group['id'] as key for consistent lookup in template
+            $breakdown[(string) $group['id']] = [
                 'statusCounts' => $statusCounts,
                 'totalCount' => $totalCount,
                 'label' => $group['label'],
