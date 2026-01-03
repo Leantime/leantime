@@ -209,14 +209,15 @@ leantime.kanbanController = (function () {
             chevronIcon.className = newExpanded ? 'fa fa-chevron-down' : 'fa fa-chevron-right';
         }
 
-        // Toggle collapsed class on row and content
+        // Update data-expanded attribute on row (CSS uses this for styling)
+        row.setAttribute('data-expanded', newExpanded.toString());
+
+        // Toggle state on content area
         if (newExpanded) {
-            row.classList.remove('swimlane-collapsed');
             content.classList.remove('collapsed');
             // Reset column heights when expanding
             resetColumnHeights(content);
         } else {
-            row.classList.add('swimlane-collapsed');
             content.classList.add('collapsed');
             // Equalize column heights when collapsing
             setTimeout(function() {

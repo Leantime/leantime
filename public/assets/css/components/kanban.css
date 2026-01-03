@@ -3,14 +3,35 @@
     margin-bottom:40px;
 }
 
-/* Remove margins/padding when inside swimlane to prevent sidebar stretching */
+/* ============================================
+   SWIMLANE AUTO-HEIGHT: Row fits to content
+   ============================================ */
+/* Remove margins from kanbanBoard so row auto-fits */
 .kanban-swimlane-content .kanbanBoard {
-    margin-top: 0;
-    margin-bottom: 0;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
 }
 
+/* Remove bottom padding and align columns to top (not stretch) */
 .kanban-swimlane-content .sortableTicketList .row-fluid {
-    padding-bottom: 0;
+    padding-bottom: 0 !important;
+    align-items: flex-start !important;
+}
+
+/* Ensure clearfix doesn't add extra height */
+.kanban-swimlane-content .row-fluid > .clearfix {
+    display: none !important;
+}
+
+/* Allow columns to auto-size height */
+.kanban-swimlane-content .column .contentInner {
+    min-height: auto !important;
+}
+
+/* Ensure columns don't stretch beyond content */
+.kanban-swimlane-content .column {
+    height: auto !important;
+    align-self: flex-start !important;
 }
 
 .tilt.right {
@@ -513,6 +534,8 @@ body .maincontent .priority-text-5 a:link {
     padding-bottom: 20px;
 }
 
+/* Note: Swimlane auto-height overrides are at the top of this file */
+
 .widgettitle strong {
     line-height:normal;
 }
@@ -547,7 +570,7 @@ body .maincontent .priority-text-5 a:link {
     display: flex;
     align-items: stretch;
     margin-bottom: 8px;
-    padding-bottom: 8px;
+    padding-bottom: 0;
     background: transparent;
     border-radius: var(--box-radius);
     overflow: visible;
@@ -699,8 +722,11 @@ body .maincontent .priority-text-5 a:link {
 }
 
 /* ============================================
-   COLLAPSED HEADER STATE
-   Compact single-row header when swimlane is collapsed
+   SWIMLANE HEADER STATES
+   Header uses align-self: stretch to match content height in BOTH states.
+   Only internal content changes between states:
+   - Expanded: two rows (row1 + row2 with progress bar)
+   - Collapsed: single row (row1 with inline count badge)
    ============================================ */
 
 /* Inline count badge - hidden by default (shown in collapsed state) */
@@ -709,31 +735,77 @@ body .maincontent .priority-text-5 a:link {
     margin-left: auto;
 }
 
-/* Collapsed swimlane header - compact single row */
-.swimlane-collapsed .kanban-swimlane-sidebar-inner {
+/* --- EXPANDED STATE (data-expanded="true") --- */
+/* Row 1 has margin-bottom for spacing before row 2 */
+.kanban-swimlane-row[data-expanded="true"] .swimlane-header-row1 {
+    margin-bottom: 8px;
+}
+
+/* --- COLLAPSED STATE (data-expanded="false") --- */
+/* Reduced padding for compact look, header stays top-aligned */
+.kanban-swimlane-row[data-expanded="false"] .kanban-swimlane-sidebar-inner {
     padding: 10px 12px;
 }
 
-/* Hide row 2 in collapsed state */
-.swimlane-collapsed .swimlane-header-row2 {
+/* Remove row 1 margin (no row 2) */
+.kanban-swimlane-row[data-expanded="false"] .swimlane-header-row1 {
+    margin-bottom: 0;
+    gap: 8px;
+}
+
+/* Hide row 2 (progress bar + count) */
+.kanban-swimlane-row[data-expanded="false"] .swimlane-header-row2 {
     display: none;
 }
 
-/* Hide time indicator in collapsed state */
-.swimlane-collapsed .swimlane-time-indicator {
+/* Hide time indicator */
+.kanban-swimlane-row[data-expanded="false"] .swimlane-time-indicator {
     display: none;
 }
 
-/* Show inline count badge when collapsed */
-.swimlane-collapsed .kanban-lane-count--inline {
+/* Show inline count badge */
+.kanban-swimlane-row[data-expanded="false"] .kanban-lane-count--inline {
     display: inline-flex;
 }
 
-/* Adjust row 1 for collapsed - ensure count badge aligns right */
-.swimlane-collapsed .swimlane-header-row1 {
+/* --- COLLAPSED CONTENT AREA (via data-expanded for initial load) --- */
+/* Reduce column heights when collapsed */
+.kanban-swimlane-row[data-expanded="false"] .column .contentInner {
+    padding: 8px 6px;
     min-height: auto;
 }
 
+/* Compact ticket cards when collapsed */
+.kanban-swimlane-row[data-expanded="false"] .ticketBox {
+    padding: 6px 8px;
+    padding-right: 36px;
+    margin-bottom: 4px;
+}
+
+/* Hide extra content in collapsed tickets */
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .kanbanContent,
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .timerContainer,
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .border-top,
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .clearfix,
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .tw-flex:not(.tw-items-center),
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .inlineDropDownContainer {
+    display: none !important;
+}
+
+/* Compact title styling */
+.kanban-swimlane-row[data-expanded="false"] .ticketBox h4 {
+    margin: 0;
+    font-size: var(--font-size-s);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Remove row-fluid bottom padding in collapsed state */
+.kanban-swimlane-row[data-expanded="false"] .sortableTicketList .row-fluid {
+    padding-bottom: 0;
+}
 
 /* Tooltip - shown on hover for additional info */
 .kanban-sidebar-tooltip {
@@ -792,7 +864,9 @@ body .maincontent .priority-text-5 a:link {
     border: none;
     border-radius: 0 var(--box-radius) var(--box-radius) 0;
     overflow: visible;  /* For dropdown menus */
-    padding: 10px 4px;
+    padding-top: 10px;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 /* Collapsed swimlane state - compact tickets within columns */
@@ -1243,6 +1317,16 @@ body .maincontent .priority-text-5 a:link {
 .micro-progress-bar .status-segment {
     height: 100%;
     transition: width 0.3s ease;
+    border-left: 1px solid rgba(255,255,255,0.5);
+    border-right: 1px solid rgba(255,255,255,0.5);
+}
+
+.micro-progress-bar .status-segment:first-child {
+    border-left: none;
+}
+
+.micro-progress-bar .status-segment:last-child {
+    border-right: none;
 }
 
 /* Status-specific colors */
@@ -1250,6 +1334,6 @@ body .maincontent .priority-text-5 a:link {
 .status-segment.status-4 { background-color: var(--status-in-progress-color, #f59e0b); }
 .status-segment.status-5 { background-color: var(--status-done-color, #10b981); }
 .status-segment.status-1 { background-color: #ef4444; } /* Blocked - Red */
-.status-segment.status-2 { background-color: #f59e0b; } /* Waiting for approval - Amber */
+.status-segment.status-2 { background-color: #f97316; } /* Waiting for approval - Orange */
 .status-segment.status-0 { background-color: #10b981; } /* Done - Green */
 .status-segment.status--1 { background-color: #9ca3af; } /* Archived - Gray */

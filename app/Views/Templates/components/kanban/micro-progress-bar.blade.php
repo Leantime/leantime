@@ -44,12 +44,10 @@ $expandedHeight = $heights['expanded'][$size] ?? '22px';
         @if(count($segments) > 0)
             @foreach($segments as $segment)
                 <div class="status-segment status-{{ $segment['id'] }}"
-                     style="width: {{ $segment['percentage'] }}%; display: flex; align-items: center; justify-content: center;"
-                     title="{{ $segment['label'] }}: {{ $segment['count'] }}">
-                    @if($segment['percentage'] > 12)
-                        <span class="segment-count"
-                              style="font-size: 12px; font-weight: 700; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.2s ease;">{{ $segment['count'] }}</span>
-                    @endif
+                     style="width: {{ $segment['percentage'] }}%; display: flex; align-items: center; justify-content: center; overflow: hidden; min-width: 0;"
+                     data-tippy-content="{{ $segment['label'] }}: {{ $segment['count'] }}">
+                    <span class="segment-count"
+                          style="font-size: 11px; font-weight: 700; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.2s ease; white-space: nowrap; padding: 0 3px;">{{ $segment['count'] }}</span>
                 </div>
             @endforeach
         @endif

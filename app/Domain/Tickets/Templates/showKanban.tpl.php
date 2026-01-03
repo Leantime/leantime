@@ -125,7 +125,7 @@ $allTickets = $group['items'];
                 $statusCounts = $swimlaneBreakdown['statusCounts'] ?? [];
                 $timeAlert = $swimlaneBreakdown['timeAlert'] ?? null;
                 ?>
-                <div class="kanban-swimlane-row <?= $swimlaneExpanded ? '' : 'swimlane-collapsed' ?>" id="swimlane-row-<?= $group['id'] ?>">
+                <div class="kanban-swimlane-row" data-expanded="<?= $swimlaneExpanded ? 'true' : 'false' ?>" id="swimlane-row-<?= $group['id'] ?>">
                     <!-- Sentinel for Intersection Observer sticky detection -->
                     <div class="kanban-swimlane-sentinel" data-swimlane-id="<?= $group['id'] ?>" aria-hidden="true"></div>
 
@@ -158,7 +158,7 @@ $allTickets = $group['items'];
                     ?>
 
                     <!-- Kanban columns content area (toggles between expanded and collapsed/compact) -->
-                    <div class="kanban-swimlane-content <?= $swimlaneExpanded ? '' : 'collapsed' ?>" id="swimlane-content-<?= $group['id'] ?>">
+                    <div class="kanban-swimlane-content" id="swimlane-content-<?= $group['id'] ?>">
             <?php } ?>
 
                     <div class="sortableTicketList kanbanBoard" id="kanboard-<?= $group['id'] ?>" style="margin-top:-5px;">
