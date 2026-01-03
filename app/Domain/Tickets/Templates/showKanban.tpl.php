@@ -118,69 +118,62 @@ $allTickets = $group['items'];
                 $swimlaneExpanded = ! in_array($group['id'], session('collapsedSwimlanes', []));
                 $ticketTypeIcons = $tpl->get('ticketTypeIcons');
                 ?>
-                <div class="kanban-swimlane-row" id="swimlane-row-<?= $group['id'] ?>">
-                    <!-- Sidebar with header -->
-                    <div class="kanban-swimlane-sidebar" data-expanded="false" data-swimlane-id="<?= $group['id'] ?>">
-                        <!-- Expand/collapse toggle -->
-                        <button class="sidebar-width-toggle" title="Expand sidebar" aria-label="Expand sidebar">
-                            <i class="fa fa-angle-double-right"></i>
-                        </button>
+                <div class="kanban-swimlane-row <?= $swimlaneExpanded ? '' : 'swimlane-collapsed' ?>" id="swimlane-row-<?= $group['id'] ?>">
+                    <!-- Sidebar header - single click toggles between expanded/collapsed -->
+                    <div class="kanban-swimlane-sidebar"
+                         data-swimlane-id="<?= $group['id'] ?>"
+                         role="button"
+                         tabindex="0"
+                         aria-expanded="<?= $swimlaneExpanded ? 'true' : 'false' ?>"
+                         aria-controls="swimlane-content-<?= $group['id'] ?>"
+                         aria-label="<?= $tpl->escape($group['label']) ?> - <?= count($group['items']) ?> tasks - Click to <?= $swimlaneExpanded ? 'collapse' : 'expand' ?>"
+                         onclick="leantime.kanbanController.toggleSwimlane('<?= $group['id'] ?>')"
+                         onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); leantime.kanbanController.toggleSwimlane('<?= $group['id'] ?>'); }">
 
-                        <!-- Accordion toggle content -->
-                        <button class="accordion-toggle-swimlane"
-                                data-swimlane-id="<?= $group['id'] ?>"
-                                aria-expanded="<?= $swimlaneExpanded ? 'true' : 'false' ?>"
-                                aria-controls="swimlane-content-<?= $group['id'] ?>"
-                                onclick="leantime.kanbanController.toggleSwimlane('<?= $group['id'] ?>')">
+                        <!-- Chevron -->
+                        <span class="kanban-lane-chevron">
+                            <i class="fa fa-chevron-<?= $swimlaneExpanded ? 'down' : 'right' ?>"></i>
+                        </span>
 
-                            <!-- Chevron -->
-                            <span class="kanban-lane-chevron">
-                                <i class="fa fa-chevron-<?= $swimlaneExpanded ? 'up' : 'right' ?>"></i>
-                            </span>
+                        <!-- Visual indicator based on groupBy -->
+                        <div class="kanban-indicator">
+                            <?php
+                            $groupBy = $searchCriteria['groupBy'] ?? 'status';
+                            switch ($groupBy) {
+                                case 'priority':
+                                    $priorityId = (int) $group['id'];
+                                    echo "<div class='kanban-priority-indicator priority-bg-{$priorityId}'></div>";
+                                    break;
+                                case 'storypoints':
+                                case 'effort':
+                                    $effortLabels = ['1' => 'XS', '2' => 'S', '3' => 'M', '5' => 'L', '8' => 'XL', '13' => 'XXL'];
+                                    $effortLabel = $effortLabels[$group['id']] ?? $group['id'];
+                                    echo "<span class='kanban-effort-indicator'>{$effortLabel}</span>";
+                                    break;
+                                case 'milestoneid':
+                                    echo "<i class='fa fa-flag kanban-indicator-icon'></i>";
+                                    break;
+                                case 'sprint':
+                                    echo "<i class='fa fa-spinner kanban-indicator-icon'></i>";
+                                    break;
+                                case 'editorId':
+                                    $userId = $group['id'];
+                                    echo "<img src='".BASE_URL."/api/users?profileImage={$userId}' class='kanban-indicator-avatar' alt='' />";
+                                    break;
+                                case 'type':
+                                    $typeIcon = $ticketTypeIcons[strtolower($group['id'])] ?? 'fa-ticket';
+                                    echo "<i class='fa {$typeIcon} kanban-indicator-icon'></i>";
+                                    break;
+                                default:
+                                    echo "<i class='fa fa-layer-group kanban-indicator-icon'></i>";
+                            }
+                            ?>
+                        </div>
 
-                            <!-- Visual indicator based on groupBy -->
-                            <div class="kanban-indicator">
-                                <?php
-                                $groupBy = $searchCriteria['groupBy'] ?? 'status';
-                                switch ($groupBy) {
-                                    case 'priority':
-                                        $priorityId = (int) $group['id'];
-                                        echo "<div class='kanban-priority-indicator priority-bg-{$priorityId}'></div>";
-                                        break;
-                                    case 'storypoints':
-                                    case 'effort':
-                                        $effortLabels = ['1' => 'XS', '2' => 'S', '3' => 'M', '5' => 'L', '8' => 'XL', '13' => 'XXL'];
-                                        $effortLabel = $effortLabels[$group['id']] ?? $group['id'];
-                                        echo "<span class='kanban-effort-indicator'>{$effortLabel}</span>";
-                                        break;
-                                    case 'milestoneid':
-                                        echo "<i class='fa fa-flag kanban-indicator-icon'></i>";
-                                        break;
-                                    case 'sprint':
-                                        echo "<i class='fa fa-spinner kanban-indicator-icon'></i>";
-                                        break;
-                                    case 'editorId':
-                                        $userId = $group['id'];
-                                        echo "<img src='".BASE_URL."/api/users?profileImage={$userId}' class='kanban-indicator-avatar' alt='' />";
-                                        break;
-                                    case 'type':
-                                        $typeIcon = $ticketTypeIcons[strtolower($group['id'])] ?? 'fa-ticket';
-                                        echo "<i class='fa {$typeIcon} kanban-indicator-icon'></i>";
-                                        break;
-                                    default:
-                                        echo "<i class='fa fa-layer-group kanban-indicator-icon'></i>";
-                                }
-                                ?>
-                            </div>
+                        <!-- Count badge -->
+                        <span class="kanban-lane-count"><?= count($group['items']) ?></span>
 
-                            <!-- Count badge -->
-                            <span class="kanban-lane-count"><?= count($group['items']) ?></span>
-                        </button>
-
-                        <!-- Label (shown when sidebar expanded) -->
-                        <span class="kanban-lane-label"><?= $tpl->escape($group['label']) ?></span>
-
-                        <!-- Tooltip for collapsed state -->
+                        <!-- Tooltip on hover -->
                         <div class="kanban-sidebar-tooltip">
                             <div class="tooltip-label"><?= $tpl->escape($group['label']) ?></div>
                             <?php if (! empty($group['more-info'])) { ?>
@@ -189,41 +182,8 @@ $allTickets = $group['items'];
                         </div>
                     </div>
 
-                    <!-- Collapsed view with compact tickets -->
-                    <div class="kanban-swimlane-collapsed" id="swimlane-collapsed-<?= $group['id'] ?>" style="display: <?= $swimlaneExpanded ? 'none' : 'flex' ?>;">
-                        <div class="compact-tickets-container">
-                            <?php
-                            $maxCompactTickets = 8;
-                            $ticketCount = 0;
-                            foreach ($allTickets as $ticket) {
-                                if ($ticketCount >= $maxCompactTickets) {
-                                    break;
-                                }
-                                $ticketCount++;
-                                $typeIcon = $ticketTypeIcons[strtolower($ticket['type'])] ?? 'fa-ticket';
-                                ?>
-                                <a href="#/tickets/showTicket/<?= $ticket['id'] ?>" class="compact-ticket priority-border-<?= $ticket['priority'] ?>">
-                                    <span class="compact-ticket-id">#<?= $ticket['id'] ?></span>
-                                    <i class="fa <?= $typeIcon ?> compact-ticket-type"></i>
-                                    <span class="compact-ticket-title"><?= $tpl->escape($ticket['headline']) ?></span>
-                                    <?php if ($ticket['editorId']) { ?>
-                                        <span class="compact-ticket-avatar">
-                                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $ticket['editorId'] ?>" alt="" />
-                                        </span>
-                                    <?php } ?>
-                                </a>
-                            <?php } ?>
-                            <?php if (count($allTickets) > $maxCompactTickets) { ?>
-                                <span class="compact-ticket-more">+<?= count($allTickets) - $maxCompactTickets ?> more</span>
-                            <?php } ?>
-                            <?php if (count($allTickets) === 0) { ?>
-                                <span class="compact-ticket-empty"><i class="fa fa-inbox"></i> No tasks</span>
-                            <?php } ?>
-                        </div>
-                    </div>
-
-                    <!-- Kanban columns content area (expanded view) -->
-                    <div class="kanban-swimlane-content" id="swimlane-content-<?= $group['id'] ?>" style="display: <?= $swimlaneExpanded ? 'block' : 'none' ?>;">
+                    <!-- Kanban columns content area (toggles between expanded and collapsed/compact) -->
+                    <div class="kanban-swimlane-content <?= $swimlaneExpanded ? '' : 'collapsed' ?>" id="swimlane-content-<?= $group['id'] ?>">
             <?php } ?>
 
                     <div class="sortableTicketList kanbanBoard" id="kanboard-<?= $group['id'] ?>" style="margin-top:-5px;">
@@ -262,15 +222,13 @@ $allTickets = $group['items'];
                                      aria-label="<?= isset($emptyColumns[$key]) ? 'Empty column' : htmlspecialchars($statusRow['name']).' column items' ?>"
                                      role="list">
 
-                                    <?php if (isset($emptyColumns[$key])) { ?>
-                                        <?php
-                        $statusId = $key;
+                                    <?php
+                                        $statusId = $key;
                                         $swimlaneKey = $group['id'] ?? null;
-                                        $isEmpty = true;
+                                        $isEmpty = isset($emptyColumns[$key]);
                                         $currentGroupBy = $searchCriteria['groupBy'] ?? null;
                                         include __DIR__.'/partials/quickadd-form.inc.php';
-                                        ?>
-                                    <?php } ?>
+                                    ?>
 
                                     <?php foreach ($allTickets as $row) { ?>
                                         <?php if ($row['status'] == $key) {?>

@@ -542,93 +542,32 @@ body .maincontent .priority-text-5 a:link {
 
 /* Smart hybrid sidebar - transitions between narrow and wide */
 .kanban-swimlane-sidebar {
-    flex: 0 0 70px;  /* Default collapsed */
+    flex: 0 0 70px;
     min-width: 70px;
     background: var(--kanban-col-title-bg);
     border: none;
     border-radius: var(--box-radius) 0 0 var(--box-radius);
-    padding: 10px 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    overflow: visible; /* Allow tooltip to show outside */
-    transition: flex-basis 300ms ease-out,
-                min-width 300ms ease-out,
-                padding 300ms ease-out;
-}
-
-/* Expanded state */
-.kanban-swimlane-sidebar[data-expanded="true"] {
-    flex: 0 0 180px;
-    min-width: 180px;
-    padding: 10px 16px;
-    align-items: flex-start;
-}
-
-/* Width toggle button (»/«) */
-.sidebar-width-toggle {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    background: transparent;
-    border: none;
-    padding: 4px 6px;
-    cursor: pointer;
-    color: var(--primary-font-color);
-    opacity: 0.4;
-    transition: opacity 150ms ease-out;
-    z-index: 10;
-    font-size: 12px;
-}
-
-.sidebar-width-toggle:hover {
-    opacity: 1;
-}
-
-.sidebar-width-toggle:focus-visible {
-    outline: 2px solid var(--accent1);
-    outline-offset: 2px;
-    border-radius: 3px;
-    opacity: 1;
-}
-
-/* Flip chevron icon when expanded */
-.kanban-swimlane-sidebar[data-expanded="true"] .sidebar-width-toggle .fa {
-    transform: rotate(180deg);
-}
-
-/* Accordion toggle button */
-.accordion-toggle-swimlane {
+    padding: 12px 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    width: 100%;
-    background: transparent;
-    border: none;
-    padding: 0;  /* No extra padding - let parent sidebar padding handle it */
+    position: relative;
+    overflow: visible; /* Allow tooltip to show outside */
     cursor: pointer;
-    color: inherit;
-    font: inherit;
-    text-align: center;
+    transition: background 150ms ease-out;
 }
 
-.accordion-toggle-swimlane:hover {
-    opacity: 0.85;
+.kanban-swimlane-sidebar:hover {
+    background: var(--kanban-col-title-hover, var(--kanban-col-title-bg));
 }
 
-.accordion-toggle-swimlane:focus-visible {
+.kanban-swimlane-sidebar:focus-visible {
     outline: 2px solid var(--accent1);
     outline-offset: 2px;
-    border-radius: 4px;
 }
 
-/* Expanded state: horizontal layout */
-.kanban-swimlane-sidebar[data-expanded="true"] .accordion-toggle-swimlane {
-    align-items: flex-start;
-    text-align: left;
-}
+/* Chevron icon for expand/collapse */
 
 /* Chevron icon for accordion expand/collapse */
 .kanban-lane-chevron {
@@ -637,9 +576,9 @@ body .maincontent .priority-text-5 a:link {
     flex-shrink: 0;
 }
 
-/* Rotate chevron when accordion collapsed */
-.accordion-toggle-swimlane[aria-expanded="false"] .kanban-lane-chevron {
-    transform: rotate(-90deg);
+/* Rotate chevron when collapsed */
+.kanban-swimlane-sidebar[aria-expanded="false"] .kanban-lane-chevron {
+    /* Chevron points right when collapsed */
 }
 
 /* Smart indicator container */
@@ -695,33 +634,6 @@ body .maincontent .priority-text-5 a:link {
     flex-shrink: 0;
 }
 
-/* Label - hidden when collapsed, shown when expanded */
-.kanban-lane-label {
-    font-weight: 600;
-    font-size: var(--base-font-size);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    display: none;  /* Hidden by default (collapsed) */
-}
-
-.kanban-swimlane-sidebar[data-expanded="true"] .kanban-lane-label {
-    display: block;
-}
-
-/* More-info - only shown when expanded */
-.kanban-lane-info {
-    font-size: var(--font-size-s);
-    color: var(--primary-font-color);
-    opacity: 0.7;
-    line-height: 1.3;
-    word-wrap: break-word;
-    display: none;  /* Hidden when collapsed */
-}
-
-.kanban-swimlane-sidebar[data-expanded="true"] .kanban-lane-info {
-    display: block;
-    margin-top: 4px;
-}
 
 /* Tooltip - shown on hover when collapsed */
 .kanban-sidebar-tooltip {
@@ -746,20 +658,15 @@ body .maincontent .priority-text-5 a:link {
     pointer-events: none;
 }
 
-/* Show tooltip on hover/focus (only when collapsed) */
-.kanban-swimlane-sidebar:not([data-expanded="true"]):hover .kanban-sidebar-tooltip,
-.kanban-swimlane-sidebar:not([data-expanded="true"]) .accordion-toggle-swimlane:focus-visible ~ .kanban-sidebar-tooltip {
+/* Show tooltip on hover */
+.kanban-swimlane-sidebar:hover .kanban-sidebar-tooltip,
+.kanban-swimlane-sidebar:focus-visible .kanban-sidebar-tooltip {
     opacity: 1;
     visibility: visible;
     transform: translateX(0);
     transition: opacity 200ms ease-out,
                 transform 200ms ease-out,
                 visibility 0s 0s;
-}
-
-/* Hide tooltip when expanded */
-.kanban-swimlane-sidebar[data-expanded="true"] .kanban-sidebar-tooltip {
-    display: none;
 }
 
 /* Tooltip content */
@@ -787,9 +694,159 @@ body .maincontent .priority-text-5 a:link {
     overflow: visible;  /* For dropdown menus */
 }
 
-/* Collapsed swimlane state (accordion closed) */
+/* Collapsed swimlane state - compact tickets within columns */
 .kanban-swimlane-content.collapsed {
+    display: block;
+}
+
+/* Compact ticket cards when swimlane is collapsed */
+.kanban-swimlane-content.collapsed .ticketBox {
+    padding: 6px 8px;
+    padding-right: 36px; /* Space for user avatar */
+    margin-bottom: 4px;
+    position: relative;
+}
+
+.kanban-swimlane-content.collapsed .ticketBox .row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.kanban-swimlane-content.collapsed .ticketBox .col-md-12 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+}
+
+/* Hide most content in collapsed state, but keep title visible */
+.kanban-swimlane-content.collapsed .ticketBox .kanbanContent,
+.kanban-swimlane-content.collapsed .ticketBox .timerContainer,
+.kanban-swimlane-content.collapsed .ticketBox .border-top,
+.kanban-swimlane-content.collapsed .ticketBox .clearfix,
+.kanban-swimlane-content.collapsed .ticketBox .tw-flex,
+.kanban-swimlane-content.collapsed .ticketBox .inlineDropDownContainer {
+    display: none !important;
+}
+
+/* Make kanbanCardContent a flex item for collapsed state so h4 shows inline */
+.kanban-swimlane-content.collapsed .ticketBox .kanbanCardContent {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* Show only essential info: ID, type icon, title, avatar */
+.kanban-swimlane-content.collapsed .ticketBox h4 {
+    margin: 0;
+    font-size: var(--font-size-s);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+}
+
+.kanban-swimlane-content.collapsed .ticketBox h4 a {
+    font-weight: 500;
+}
+
+/* Compact ticket ID and type */
+.kanban-swimlane-content.collapsed .ticketBox small {
+    font-size: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Hide parent headline in collapsed */
+.kanban-swimlane-content.collapsed .ticketBox small:first-of-type {
     display: none;
+}
+
+/* Show type icon and ID inline */
+.kanban-swimlane-content.collapsed .ticketBox .col-md-12 > small {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Add user avatar at the end */
+.kanban-swimlane-content.collapsed .ticketBox .userDropdown {
+    display: block !important;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.kanban-swimlane-content.collapsed .ticketBox .userDropdown .dropdown-toggle {
+    padding: 0;
+}
+
+.kanban-swimlane-content.collapsed .ticketBox .userDropdown img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Reduce column padding in collapsed state */
+.kanban-swimlane-content.collapsed .column .contentInner {
+    padding: 8px 4px;
+    min-height: auto;
+}
+
+/* ============================================
+   COLLAPSED SWIMLANE ROW STYLES
+   ============================================ */
+
+/* When row is collapsed, make sidebar more compact */
+.kanban-swimlane-row.swimlane-collapsed .kanban-swimlane-sidebar {
+    padding: 8px;
+    gap: 6px;
+    justify-content: flex-start; /* Keep elements at top */
+}
+
+/* Smaller indicators in collapsed state */
+.kanban-swimlane-row.swimlane-collapsed .kanban-indicator-icon {
+    font-size: 18px;
+}
+
+.kanban-swimlane-row.swimlane-collapsed .kanban-indicator-avatar {
+    width: 28px;
+    height: 28px;
+}
+
+.kanban-swimlane-row.swimlane-collapsed .kanban-priority-indicator {
+    width: 24px;
+    height: 24px;
+}
+
+/* Smaller count badge in collapsed state */
+.kanban-swimlane-row.swimlane-collapsed .kanban-lane-count {
+    padding: 2px 6px;
+    font-size: var(--font-size-xs);
+}
+
+/* Better spacing between compact tasks */
+.kanban-swimlane-content.collapsed .ticketBox {
+    margin-bottom: 6px;
+}
+
+.kanban-swimlane-content.collapsed .ticketBox:last-child {
+    margin-bottom: 0;
+}
+
+/* Align columns to top and ensure consistent padding */
+.kanban-swimlane-content.collapsed .sortableTicketList .row-fluid {
+    align-items: flex-start;
+    padding-bottom: 0;
+}
+
+/* Ensure columns have consistent appearance */
+.kanban-swimlane-content.collapsed .column {
+    min-height: auto;
 }
 
 /* ============================================
@@ -982,33 +1039,9 @@ body .maincontent .priority-text-5 a:link {
         align-items: flex-start;
     }
 
-    /* Always show label on mobile */
-    .kanban-lane-label {
-        display: block !important;
-    }
-
-    /* Always show more-info on mobile if exists */
-    .kanban-lane-info {
-        display: block !important;
-    }
-
-    /* Hide width toggle on mobile */
-    .sidebar-width-toggle {
-        display: none;
-    }
-
     /* Hide tooltip on mobile */
     .kanban-sidebar-tooltip {
         display: none !important;
-    }
-
-    /* Horizontal layout on mobile */
-    .accordion-toggle-swimlane {
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 12px;
-        text-align: left;
     }
 
     .kanban-swimlane-content {

@@ -140,46 +140,40 @@ leantime.kanbanController = (function () {
 
     /**
      * Toggle swimlane collapse/expand
+     * Two states only:
+     * - Expanded: full ticket cards
+     * - Collapsed: compact ticket cards
      * @param {string} swimlaneId - Swimlane identifier
      */
     var toggleSwimlane = function(swimlaneId) {
+        var row = document.getElementById('swimlane-row-' + swimlaneId);
         var sidebar = document.querySelector('.kanban-swimlane-sidebar[data-swimlane-id="' + swimlaneId + '"]');
         var content = document.getElementById('swimlane-content-' + swimlaneId);
-        var collapsed = document.getElementById('swimlane-collapsed-' + swimlaneId);
-        var toggleBtn = sidebar ? sidebar.querySelector('.accordion-toggle-swimlane') : null;
 
-        if (!sidebar || !content) {
-            console.error('Swimlane sidebar or content not found for ID:', swimlaneId);
+        if (!row || !sidebar || !content) {
+            console.error('Swimlane elements not found for ID:', swimlaneId);
             return;
         }
 
-        var isExpanded = toggleBtn ? toggleBtn.getAttribute('aria-expanded') === 'true' : false;
+        var isExpanded = sidebar.getAttribute('aria-expanded') === 'true';
         var newExpanded = !isExpanded;
 
-        // Update aria-expanded attribute
-        if (toggleBtn) {
-            toggleBtn.setAttribute('aria-expanded', newExpanded.toString());
-        }
+        // Update aria-expanded on sidebar
+        sidebar.setAttribute('aria-expanded', newExpanded.toString());
 
         // Update chevron icon
         var chevronIcon = sidebar.querySelector('.kanban-lane-chevron i');
         if (chevronIcon) {
-            chevronIcon.className = newExpanded ? 'fa fa-chevron-up' : 'fa fa-chevron-right';
+            chevronIcon.className = newExpanded ? 'fa fa-chevron-down' : 'fa fa-chevron-right';
         }
 
-        // Toggle between expanded content and collapsed compact view
+        // Toggle collapsed class on row and content
         if (newExpanded) {
-            // Show full kanban columns, hide compact view
-            content.style.display = 'block';
-            if (collapsed) {
-                collapsed.style.display = 'none';
-            }
+            row.classList.remove('swimlane-collapsed');
+            content.classList.remove('collapsed');
         } else {
-            // Hide full kanban columns, show compact view
-            content.style.display = 'none';
-            if (collapsed) {
-                collapsed.style.display = 'flex';
-            }
+            row.classList.add('swimlane-collapsed');
+            content.classList.add('collapsed');
         }
 
         // Persist state to session via AJAX
