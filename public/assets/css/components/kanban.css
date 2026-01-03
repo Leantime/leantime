@@ -1391,14 +1391,6 @@ body .maincontent .priority-text-5 a:link {
     position: relative;
 }
 
-/* Fix sub-pixel rendering gaps between segments */
-.micro-progress-bar .status-segment:not(:last-child) {
-    margin-right: -1px;
-}
-
-.micro-progress-bar .status-segment:last-child {
-    flex-grow: 1;
-}
 
 .micro-progress-bar .segment-count {
     font-size: 11px;

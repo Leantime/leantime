@@ -97,12 +97,12 @@ leantime.ticketsController = (function () {
 
             if (totalCount === 0) {
                 // No tickets - hide all segments
-                $segments.css('flex', '0 0 0%').find('.segment-count').text('');
+                $segments.css('flex', '0 1 0%').find('.segment-count').text('');
                 $segments.attr('data-tippy-content', '');
                 return;
             }
 
-            // Update each segment's width and count
+            // Update each segment's flex-grow proportionally
             $segments.each(function() {
                 var $segment = jQuery(this);
                 var classAttr = $segment.attr('class');
@@ -114,7 +114,8 @@ leantime.ticketsController = (function () {
                     var count = statusCounts[statusId] || 0;
                     var percentage = (count / totalCount) * 100;
 
-                    $segment.css('flex', '0 0 ' + percentage + '%');
+                    // Use flex-grow proportionally so segments fill 100% without gaps
+                    $segment.css('flex', percentage + ' 1 0%');
 
                     // Update count text
                     var $countSpan = $segment.find('.segment-count');

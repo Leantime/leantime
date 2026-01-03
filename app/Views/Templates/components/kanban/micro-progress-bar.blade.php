@@ -39,11 +39,13 @@ $expandedHeight = $heights['expanded'][$size] ?? '22px';
     <div class="progress-segments"
          style="display: flex; align-items: stretch; height: {{ $collapsedHeight }}; border-radius: 2.5px; overflow: hidden; background-color: #D4D4D4; width: 100%; transition: height 0.2s ease, border-radius 0.2s ease; cursor: {{ $expandOnHover && $totalCount > 0 ? 'pointer' : 'default' }};">
         @foreach($segments as $segment)
+            @if($segment['percentage'] > 0)
             <div class="status-segment status-{{ $segment['id'] }}"
-                 style="flex: 0 0 {{ $segment['percentage'] }}%; overflow: hidden;"
-                 data-tippy-content="{{ $segment['count'] > 0 ? $segment['label'] . ': ' . $segment['count'] : '' }}">
-                <span class="segment-count">{{ $segment['count'] > 0 ? $segment['count'] : '' }}</span>
+                 style="flex: {{ $segment['percentage'] }} 1 0%; overflow: hidden;"
+                 data-tippy-content="{{ $segment['label'] }}: {{ $segment['count'] }}">
+                <span class="segment-count">{{ $segment['count'] }}</span>
             </div>
+            @endif
         @endforeach
     </div>
 
