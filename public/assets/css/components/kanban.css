@@ -327,6 +327,35 @@
     color: var(--grey);
 }
 
+/* ============================================
+   COLUMN COUNT HOVER REVEAL
+   Progressive disclosure - reduce visual noise
+   ============================================ */
+
+/* Hide column counts by default - show on hover */
+.widgettitle .count {
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
+
+/* Show on hover/focus */
+.widgettitle:hover .count,
+.widgettitle:focus-within .count {
+    opacity: 1;
+}
+
+/* Mobile: Count visible when header is tapped (toggled class) */
+.widgettitle.count-visible .count {
+    opacity: 1;
+}
+
+/* Mobile: Visual indicator that header is interactive */
+@media (max-width: 768px) {
+    .widgettitle {
+        cursor: pointer;
+    }
+}
+
 .sortableTicketList li{
     list-style:none;
 }
@@ -1340,19 +1369,54 @@ body .maincontent .priority-text-5 a:link {
 }
 
 /* Micro Progress Bar - Status Breakdown Visualization */
-.micro-progress-bar .status-segment {
-    height: 100%;
-    transition: width 0.3s ease;
-    border-left: 1px solid rgba(255,255,255,0.5);
-    border-right: 1px solid rgba(255,255,255,0.5);
+.micro-progress-bar .progress-segments {
+    gap: 0;
+    line-height: 0;
+    font-size: 0;
 }
 
-.micro-progress-bar .status-segment:first-child {
-    border-left: none;
+.micro-progress-bar .status-segment {
+    height: 100%;
+    transition: flex 0.3s ease;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-size: 11px;
+    min-width: 0;
+    position: relative;
+}
+
+/* Fix sub-pixel rendering gaps between segments */
+.micro-progress-bar .status-segment:not(:last-child) {
+    margin-right: -1px;
 }
 
 .micro-progress-bar .status-segment:last-child {
-    border-right: none;
+    flex-grow: 1;
+}
+
+.micro-progress-bar .segment-count {
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+}
+
+.micro-progress-bar:hover .segment-count {
+    opacity: 1;
+}
+
+/* Hide empty count spans to prevent blank hover artifacts */
+.micro-progress-bar .segment-count:empty {
+    display: none;
 }
 
 /* Status-specific colors */

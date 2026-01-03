@@ -648,6 +648,13 @@ class Tickets
                         case 'storypoints':
                             $efforts = $this->getEffortLabels();
                             $label = $efforts[$groupedFieldValue] ?? 'No Effort Set';
+                            // For descending sort: subtract from 100 so higher values sort first
+                            // No effort (0 or empty) gets 999 to sort last
+                            if (empty($groupedFieldValue) || $groupedFieldValue == '0') {
+                                $sortId = '999';
+                            } else {
+                                $sortId = str_pad((string) (100 - (float) $groupedFieldValue), 6, '0', STR_PAD_LEFT);
+                            }
                             break;
                         case 'milestoneid':
                             $label = 'No Milestone Set';

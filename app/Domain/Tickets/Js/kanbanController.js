@@ -290,6 +290,25 @@ leantime.kanbanController = (function () {
     };
 
     /**
+     * Initialize tap-to-reveal column counts on mobile/touch devices
+     * Toggles .count-visible class on .widgettitle elements
+     */
+    var initMobileColumnCountToggle = function() {
+        // Only on touch devices
+        if (!('ontouchstart' in window)) return;
+
+        document.querySelectorAll('.widgettitle').forEach(function(header) {
+            header.addEventListener('click', function(e) {
+                // Don't interfere with dropdown clicks
+                if (e.target.closest('.dropdown-toggle, .dropdown-menu')) return;
+
+                // Toggle visibility
+                this.classList.toggle('count-visible');
+            });
+        });
+    };
+
+    /**
      * Initialize column heights for all collapsed swimlanes on page load
      */
     var initCollapsedColumnHeights = function() {
@@ -358,6 +377,7 @@ leantime.kanbanController = (function () {
             initSwimlaneKeyboard();
             initProgressBarTooltips();
             initStickySwimlaneSidebars();
+            initMobileColumnCountToggle();
         });
     } else {
         initQuickAddKeyboard();
@@ -366,6 +386,7 @@ leantime.kanbanController = (function () {
         initSwimlaneKeyboard();
         initProgressBarTooltips();
         initStickySwimlaneSidebars();
+        initMobileColumnCountToggle();
     }
 
     // Make public what you want to have public, everything else is private
@@ -379,7 +400,8 @@ leantime.kanbanController = (function () {
         initProgressBarTooltips: initProgressBarTooltips,
         equalizeColumnHeights: equalizeColumnHeights,
         resetColumnHeights: resetColumnHeights,
-        initStickySwimlaneSidebars: initStickySwimlaneSidebars
+        initStickySwimlaneSidebars: initStickySwimlaneSidebars,
+        initMobileColumnCountToggle: initMobileColumnCountToggle
     };
 
 })();

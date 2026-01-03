@@ -56,6 +56,80 @@ leantime.ticketsController = (function () {
             var newLabel = currentLabel.replace(/\d+ tasks/, ticketCount + ' tasks');
             $sidebar.attr('aria-label', newLabel);
         });
+
+        // Also update the progress bars
+        updateSwimlaneProgressBars();
+    }
+
+    /**
+     * Update swimlane progress bars after card movement
+     * Recalculates status distribution and updates the micro-progress-bar segments
+     */
+    function updateSwimlaneProgressBars()
+    {
+        jQuery(".kanban-swimlane-row").each(function() {
+            var $row = jQuery(this);
+            var $content = $row.find('.kanban-swimlane-content');
+            var $progressBar = $row.find('.micro-progress-bar .progress-segments');
+
+            if (!$progressBar.length) return;
+
+            // Count tickets per status in this swimlane
+            var statusCounts = {};
+            var totalCount = 0;
+
+            $content.find('.contentInner').each(function() {
+                var $column = jQuery(this);
+                var classAttr = $column.attr('class') || '';
+                var statusMatch = classAttr.match(/status_(-?\d+)/);
+                if (statusMatch) {
+                    var statusId = statusMatch[1];
+                    var ticketCount = $column.find('.moveable').length;
+                    if (ticketCount > 0) {
+                        statusCounts[statusId] = ticketCount;
+                        totalCount += ticketCount;
+                    }
+                }
+            });
+
+            // Get existing segments and their status IDs
+            var $segments = $progressBar.find('.status-segment');
+
+            if (totalCount === 0) {
+                // No tickets - hide all segments
+                $segments.css('flex', '0 0 0%').find('.segment-count').text('');
+                $segments.attr('data-tippy-content', '');
+                return;
+            }
+
+            // Update each segment's width and count
+            $segments.each(function() {
+                var $segment = jQuery(this);
+                var classAttr = $segment.attr('class');
+                if (!classAttr) return;
+
+                var statusMatch = classAttr.match(/status-(-?\d+)/);
+                if (statusMatch) {
+                    var statusId = statusMatch[1];
+                    var count = statusCounts[statusId] || 0;
+                    var percentage = (count / totalCount) * 100;
+
+                    $segment.css('flex', '0 0 ' + percentage + '%');
+
+                    // Update count text
+                    var $countSpan = $segment.find('.segment-count');
+                    if ($countSpan.length) {
+                        $countSpan.text(count > 0 ? count : '');
+                    }
+
+                    // Update tooltip - only show if count > 0
+                    var currentTooltip = $segment.attr('data-tippy-content') || '';
+                    var labelMatch = currentTooltip.match(/^([^:]+):/);
+                    var label = labelMatch ? labelMatch[1] : 'Status ' + statusId;
+                    $segment.attr('data-tippy-content', count > 0 ? label + ': ' + count : '');
+                }
+            });
+        });
     }
 
     /**
@@ -74,7 +148,8 @@ leantime.ticketsController = (function () {
 
         // Get current status from card's column
         var $currentColumn = $card.closest('.contentInner');
-        var statusMatch = $currentColumn.attr('class').match(/status_(\d+)/);
+        var classAttr = $currentColumn.attr('class') || '';
+        var statusMatch = classAttr.match(/status_(\d+)/);
 
         if (!statusMatch) {
             console.warn("Could not determine status for ticket:", ticketId);
@@ -1241,7 +1316,8 @@ leantime.ticketsController = (function () {
                             // Column has tickets - remove empty state
                             $container.removeClass("empty-column");
                             $container.attr("data-empty-text", "");
-                            $container.attr("aria-label", $container.attr("aria-label").replace("Empty column", "") + " column items");
+                            var currentLabel = $container.attr("aria-label") || "";
+                            $container.attr("aria-label", currentLabel.replace("Empty column", "") + " column items");
                         } else {
                             // Column is empty - add empty state
                             $container.addClass("empty-column");
@@ -1266,11 +1342,48 @@ leantime.ticketsController = (function () {
                             'editorId': 'editorId',
                             'priority': 'priority',
                             'storypoints': 'storypoints',
-                            'sprint': 'sprint'
+                            'sprint': 'sprint',
+                            'dueDate': 'dateToFinish'
                         };
 
                         var groupBy = leantime.kanbanGroupBy;
                         var fieldName = groupByFieldMap[groupBy];
+
+                        // Special handling for dueDate - calculate actual date from bucket ID
+                        if (groupBy === 'dueDate') {
+                            var today = new Date();
+                            today.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
+
+                            // Bucket IDs: 0=overdue, 1=due-this-week, 2=due-next-week, 3=due-later, 4=no-due-date
+                            switch (newGroupValue) {
+                                case '0': // Overdue - set to yesterday
+                                    var yesterday = new Date(today);
+                                    yesterday.setDate(yesterday.getDate() - 1);
+                                    newGroupValue = yesterday.toISOString().split('T')[0];
+                                    break;
+                                case '1': // Due This Week - set to end of this week (Saturday)
+                                    var endOfWeek = new Date(today);
+                                    var daysUntilSaturday = 6 - endOfWeek.getDay();
+                                    if (daysUntilSaturday < 0) daysUntilSaturday = 0;
+                                    endOfWeek.setDate(endOfWeek.getDate() + daysUntilSaturday);
+                                    newGroupValue = endOfWeek.toISOString().split('T')[0];
+                                    break;
+                                case '2': // Due Next Week - set to next week Saturday
+                                    var nextWeekEnd = new Date(today);
+                                    var daysUntilNextSaturday = 6 - nextWeekEnd.getDay() + 7;
+                                    nextWeekEnd.setDate(nextWeekEnd.getDate() + daysUntilNextSaturday);
+                                    newGroupValue = nextWeekEnd.toISOString().split('T')[0];
+                                    break;
+                                case '3': // Due Later - set to 3 weeks from now
+                                    var later = new Date(today);
+                                    later.setDate(later.getDate() + 21);
+                                    newGroupValue = later.toISOString().split('T')[0];
+                                    break;
+                                case '4': // No Due Date - clear the date
+                                    newGroupValue = '';
+                                    break;
+                            }
+                        }
 
                         if (fieldName && ticketId) {
                             var $card = jQuery('#ticket_' + ticketId);
@@ -1359,6 +1472,23 @@ leantime.ticketsController = (function () {
                                     var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
                                     var newSprintName = $newSwimlaneHeader.text() || leantime.i18n.__("label.backlog");
                                     $sprintDropdown.find('span.text').text(newSprintName);
+                                }
+
+                            } else if (groupBy === 'dueDate') {
+                                // Update due date display on card
+                                var $dateDisplay = $card.find('.dues .fa-calendar').parent();
+                                if ($dateDisplay.length && newGroupValue) {
+                                    // Format the date for display (MM/DD/YYYY)
+                                    var dateParts = newGroupValue.split('-');
+                                    var formattedDate = dateParts[1] + '/' + dateParts[2] + '/' + dateParts[0];
+                                    $dateDisplay.contents().filter(function() {
+                                        return this.nodeType === 3; // Text nodes only
+                                    }).first().replaceWith(' ' + formattedDate);
+                                } else if ($dateDisplay.length && !newGroupValue) {
+                                    // Clear the date display for "No Due Date"
+                                    $dateDisplay.contents().filter(function() {
+                                        return this.nodeType === 3;
+                                    }).first().replaceWith(' No due date');
                                 }
                             }
 
