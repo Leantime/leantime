@@ -2,17 +2,17 @@
 
 namespace Leantime\Domain\Auth\Repositories;
 
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Str;
 use Leantime\Core\Db\Db;
-use PDO;
 
 class AccessTokenRepository
 {
-    private Db $db;
+    private ConnectionInterface $db;
 
     public function __construct(Db $db)
     {
-        $this->db = $db;
+        $this->db = $db->getConnection();
     }
 
     public function createToken(int $userId, string $name, array $abilities = ['*']): array
@@ -20,20 +20,14 @@ class AccessTokenRepository
         $token = Str::random(40);
         $hashedToken = hash('sha256', $token);
 
-        $query = 'INSERT INTO zp_access_tokens
-                (tokenable_type, tokenable_id, name, token, abilities, created_at)
-                VALUES
-                (:tokenable_type, :tokenable_id, :name, :token, :abilities, NOW())';
-
-        $statement = $this->db->database->prepare($query);
-        $statement->bindValue(':tokenable_type', 'Leantime\\Domain\\Auth\\Services\\Auth', PDO::PARAM_STR);
-        $statement->bindValue(':tokenable_id', $userId, PDO::PARAM_INT);
-        $statement->bindValue(':name', $name, PDO::PARAM_STR);
-        $statement->bindValue(':token', $hashedToken, PDO::PARAM_STR);
-        $statement->bindValue(':abilities', json_encode($abilities), PDO::PARAM_STR);
-
-        $statement->execute();
-        $id = $this->db->database->lastInsertId();
+        $id = $this->db->table('zp_access_tokens')->insertGetId([
+            'tokenable_type' => 'Leantime\\Domain\\Auth\\Services\\Auth',
+            'tokenable_id' => $userId,
+            'name' => $name,
+            'token' => $hashedToken,
+            'abilities' => json_encode($abilities),
+            'created_at' => now(),
+        ]);
 
         return [
             'id' => $id,
@@ -45,95 +39,69 @@ class AccessTokenRepository
     {
         $hashedToken = hash('sha256', $token);
 
-        $query = 'SELECT * FROM zp_access_tokens WHERE token = :token';
-        $statement = $this->db->database->prepare($query);
-        $statement->bindValue(':token', $hashedToken, PDO::PARAM_STR);
-        $statement->execute();
+        $result = $this->db->table('zp_access_tokens')
+            ->where('token', $hashedToken)
+            ->first();
 
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
-
-        return $result ?: null;
+        return $result ? (array) $result : null;
     }
 
     public function findTokenById(int $tokenId): ?array
     {
+        $result = $this->db->table('zp_access_tokens')
+            ->where('id', $tokenId)
+            ->first();
 
-        $query = 'SELECT * FROM zp_access_tokens WHERE id = :tokenId';
-        $statement = $this->db->database->prepare($query);
-        $statement->bindValue(':tokenId', $tokenId, PDO::PARAM_INT);
-        $statement->execute();
-
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
-
-        return $result ?: null;
+        return $result ? (array) $result : null;
     }
 
     public function deleteToken(int $id): bool
     {
-        $query = 'DELETE FROM zp_access_tokens WHERE id = :id';
-        $statement = $this->db->database->prepare($query);
-        $statement->bindValue(':id', $id, PDO::PARAM_INT);
-
-        return $statement->execute();
+        return $this->db->table('zp_access_tokens')
+            ->where('id', $id)
+            ->delete() > 0;
     }
 
     public function updateLastUsedAt(int $id): bool
     {
-        $query = 'UPDATE zp_access_tokens SET last_used_at = NOW() WHERE id = :id';
-        $statement = $this->db->database->prepare($query);
-        $statement->bindValue(':id', $id, PDO::PARAM_INT);
-
-        return $statement->execute();
+        return $this->db->table('zp_access_tokens')
+            ->where('id', $id)
+            ->update(['last_used_at' => now()]) > 0;
     }
 
-    public function getTokenByUserId($userId, $name = null)
+    public function getTokenByUserId(int|string $userId, ?string $name = null): ?array
     {
-
-        $query = 'SELECT * FROM zp_access_tokens
-            WHERE tokenable_id = :userId
-            AND ((expires_at IS NULL) OR expires_at > NOW())';
-
-        if ($name !== null) {
-            $query .= ' AND name = :name';
-        }
-
-        $statement = $this->db->database->prepare($query);
-        $statement->bindValue(':userId', $userId, PDO::PARAM_STR);
+        $query = $this->db->table('zp_access_tokens')
+            ->where('tokenable_id', $userId)
+            ->where(function ($q) {
+                $q->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            });
 
         if ($name !== null) {
-            $statement->bindValue(':name', $name, PDO::PARAM_STR);
+            $query->where('name', $name);
         }
 
-        $statement->execute();
+        $result = $query->first();
 
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
-
-        return $result ?: null;
-
+        return $result ? (array) $result : null;
     }
 
-    public function getAllTokensByUserId($userId, $name = null)
+    public function getAllTokensByUserId(int|string $userId, ?string $name = null): ?array
     {
-
-        $query = 'SELECT * FROM zp_access_tokens
-            WHERE tokenable_id = :userId';
-
-        if ($name !== null) {
-            $query .= ' AND name = :name';
-        }
-
-        $statement = $this->db->database->prepare($query);
-        $statement->bindValue(':userId', $userId, PDO::PARAM_STR);
+        $query = $this->db->table('zp_access_tokens')
+            ->where('tokenable_id', $userId);
 
         if ($name !== null) {
-            $statement->bindValue(':name', $name, PDO::PARAM_STR);
+            $query->where('name', $name);
         }
 
-        $statement->execute();
+        $results = $query->get();
 
-        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        if ($results->isEmpty()) {
+            return null;
+        }
 
-        return $result ?: null;
-
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 }

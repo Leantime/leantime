@@ -3,12 +3,13 @@
 namespace Leantime\Domain\Entityrelations\Repositories;
 
 use Exception;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Facades\Schema;
 use Leantime\Core\Db\Db as DbCore;
-use PDO;
 
 class Entityrelations
 {
-    private DbCore $db;
+    private ConnectionInterface $db;
 
     public array $applications = [
         'general' => 'General',
@@ -19,79 +20,55 @@ class Entityrelations
      */
     public function __construct(DbCore $db)
     {
-        $this->db = $db;
+        $this->db = $db->getConnection();
     }
 
     /**
      * @return false|mixed
      */
-    /**
-     * @return false|mixed
-     */
-    public function getSetting($type): mixed
+    public function getSetting(string $type): mixed
     {
         if ($this->checkIfInstalled() === false) {
             return false;
         }
 
-        $sql = 'SELECT
-						value
-				FROM zp_settings WHERE `key` = :key
-				LIMIT 1';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
-
         try {
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
+            $result = $this->db->table('zp_settings')
+                ->where('key', $type)
+                ->limit(1)
+                ->first();
+
+            if ($result !== null && isset($result->value)) {
+                return $result->value;
+            }
+
+            return false;
         } catch (Exception $e) {
             report($e);
 
             return false;
         }
-
-        if ($values !== false && isset($values['value'])) {
-            return $values['value'];
-        }
-
-        // TODO: This needs to return null or throw an exception if the setting doesn't exist.
-        return false;
     }
 
-    public function saveSetting($type, $value): bool
+    public function saveSetting(string $type, string $value): bool
     {
-
         if ($this->checkIfInstalled() === false) {
             return false;
         }
 
-        $sql = 'INSERT INTO zp_settings (`key`, `value`)
-				VALUES (:key, :value) ON DUPLICATE KEY UPDATE
-				  `value` = :valueUpdate';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
-        $stmn->bindvalue(':value', $value, PDO::PARAM_STR);
-        $stmn->bindvalue(':valueUpdate', $value, PDO::PARAM_STR);
-
-        $return = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $return;
+        return $this->db->table('zp_settings')
+            ->updateOrInsert(
+                ['key' => $type],
+                ['value' => $value]
+            );
     }
 
-    public function deleteSetting($type): void
+    public function deleteSetting(string $type): void
     {
-
-        $sql = 'DELETE FROM zp_settings WHERE `key` = :key LIMIT 1';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $stmn->closeCursor();
+        $this->db->table('zp_settings')
+            ->where('key', $type)
+            ->limit(1)
+            ->delete();
     }
 
     /**
@@ -99,29 +76,18 @@ class Entityrelations
      */
     public function checkIfInstalled(): bool
     {
-
         if (session()->exists('isInstalled') && session('isInstalled')) {
             return true;
         }
 
         try {
-            $stmn = $this->db->database->prepare("SHOW TABLES LIKE 'zp_user'");
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            if (! count($values)) {
+            if (! Schema::hasTable('zp_user')) {
                 session(['isInstalled' => false]);
 
                 return false;
             }
 
-            $stmn = $this->db->database->prepare('SELECT COUNT(*) FROM zp_user');
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+            $this->db->table('zp_user')->count();
 
             session(['isInstalled' => true]);
 

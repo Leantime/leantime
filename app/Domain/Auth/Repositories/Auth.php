@@ -2,10 +2,10 @@
 
 namespace Leantime\Domain\Auth\Repositories;
 
+use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use PDO;
 
 class Auth
 {
@@ -52,10 +52,7 @@ class Auth
 
     private ?string $session = null;
 
-    /**
-     * @var DbCore|null - db connection
-     */
-    private ?DbCore $db = null;
+    private ConnectionInterface $db;
 
     /**
      * @var string userrole (admin, client, employee)
@@ -93,7 +90,7 @@ class Auth
         EnvironmentCore $config,
         UserRepository $userRepo
     ) {
-        $this->db = $db;
+        $this->db = $db->getConnection();
         $this->config = $config;
         $this->userRepo = $userRepo;
     }
@@ -103,14 +100,10 @@ class Auth
      */
     public function invalidateSession(string $sessionId): bool
     {
-        $query = "UPDATE zp_user SET session = '' WHERE session = :sessionid LIMIT 1";
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':sessionid', $sessionId);
-        $result = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->db->table('zp_user')
+            ->where('session', $sessionId)
+            ->limit(1)
+            ->update(['session' => '']) >= 0;
     }
 
     /**
@@ -118,13 +111,11 @@ class Auth
      */
     private function invalidateExpiredUserSessions(): bool
     {
-        $query = "UPDATE zp_user SET session = '' WHERE (".time().' - sessionTime) > '.$this->config->sessionExpiration;
+        $expirationTime = time() - $this->config->sessionExpiration;
 
-        $stmn = $this->db->database->prepare($query);
-        $result = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->db->table('zp_user')
+            ->where('sessionTime', '<', $expirationTime)
+            ->update(['session' => '']) >= 0;
     }
 
     /**
@@ -151,28 +142,16 @@ class Auth
      */
     public function updateUserSession(int $userId, string $sessionid, string $time): bool
     {
-
-        $query = 'UPDATE zp_user
-            SET
-                lastlogin = NOW(),
-                session = :sessionid,
-                sessionTime = :time,
-                pwReset = NULL,
-                pwResetExpiration = NULL
-            WHERE
-                id =  :id
-            LIMIT 1';
-
-        $stmn = $this->db->database->prepare($query);
-
-        $stmn->bindValue(':id', $userId, PDO::PARAM_INT);
-        $stmn->bindValue(':sessionid', $sessionid);
-        $stmn->bindValue(':time', $time);
-        $result = $stmn->execute();
-
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->db->table('zp_user')
+            ->where('id', $userId)
+            ->limit(1)
+            ->update([
+                'lastlogin' => now(),
+                'session' => $sessionid,
+                'sessionTime' => $time,
+                'pwReset' => null,
+                'pwResetExpiration' => null,
+            ]) >= 0;
     }
 
     /**
@@ -180,21 +159,10 @@ class Auth
      */
     public function validateResetLink(string $hash): bool
     {
-
-        $query = "SELECT id FROM zp_user WHERE pwReset = :resetLink AND status LIKE 'a' LIMIT 1";
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':resetLink', $hash);
-
-        $stmn->execute();
-        $returnValues = $stmn->fetch();
-        $stmn->closeCursor();
-
-        if ($returnValues !== false && count($returnValues) > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->db->table('zp_user')
+            ->where('pwReset', $hash)
+            ->where('status', 'like', 'a')
+            ->exists();
     }
 
     /**
@@ -202,62 +170,38 @@ class Auth
      */
     public function getUserByInviteLink(string $hash): bool|array
     {
+        $result = $this->db->table('zp_user')
+            ->where('pwReset', $hash)
+            ->where('status', 'like', 'i')
+            ->limit(1)
+            ->first();
 
-        $query = "SELECT * FROM zp_user WHERE pwReset = :resetLink AND status LIKE 'i' LIMIT 1";
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':resetLink', $hash, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $returnValues = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $returnValues;
+        return $result ? (array) $result : false;
     }
 
     public function setPWResetLink(string $username, string $resetLink): bool
     {
-
-        $query = 'UPDATE zp_user
-            SET
-                pwReset = :link,
-                pwResetExpiration = :time,
-                pwResetCount = IFNULL(pwResetCount, 0)+1
-            WHERE
-                username = :user
-            LIMIT 1';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':user', $username);
-        $stmn->bindValue(':time', date('Y-m-d h:i:s', time()));
-        $stmn->bindValue(':link', $resetLink);
-        $result = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->db->table('zp_user')
+            ->where('username', $username)
+            ->limit(1)
+            ->update([
+                'pwReset' => $resetLink,
+                'pwResetExpiration' => now(),
+                'pwResetCount' => $this->db->raw('COALESCE(pwResetCount, 0) + 1'),
+            ]) >= 0;
     }
 
     public function changePW(string $password, string $hash): bool
     {
-
-        $query = "UPDATE zp_user
-            SET
-                password = :password,
-                pwReset = '',
-                pwResetExpiration = '',
-                lastpwd_change = :time,
-                pwResetCount = 0
-            WHERE
-                pwReset = :hash
-            LIMIT 1";
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':time', date('Y-m-d h:i:s', time()), PDO::PARAM_STR);
-        $stmn->bindValue(':hash', $hash, PDO::PARAM_STR);
-        $stmn->bindValue(':password', password_hash($password, PASSWORD_DEFAULT), PDO::PARAM_STR);
-        $result = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->db->table('zp_user')
+            ->where('pwReset', $hash)
+            ->limit(1)
+            ->update([
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+                'pwReset' => '',
+                'pwResetExpiration' => '',
+                'lastpwd_change' => now(),
+                'pwResetCount' => 0,
+            ]) >= 0;
     }
 }

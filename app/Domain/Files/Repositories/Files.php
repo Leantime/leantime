@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Files\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Files\Contracts\FileManagerInterface;
-use PDO;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Files
@@ -14,197 +14,174 @@ class Files
 
     public array $userModules = ['project' => 'Projects', 'ticket' => 'Tickets', 'private' => 'General'];
 
-    private DbCore $db;
+    private ConnectionInterface $db;
 
     private FileManagerInterface $fileManager;
 
     public function __construct(DbCore $db, FileManagerInterface $fileManager)
     {
-        $this->db = $db;
+        $this->db = $db->getConnection();
         $this->fileManager = $fileManager;
     }
 
-    public function addFile($values, $module): false|string
+    public function addFile(array $values, string $module): false|string
     {
+        $id = $this->db->table('zp_file')->insertGetId([
+            'encName' => $values['encName'],
+            'realName' => $values['realName'],
+            'extension' => $values['extension'],
+            'module' => $module,
+            'moduleId' => $values['moduleId'],
+            'userId' => $values['userId'],
+            'date' => now(),
+        ]);
 
-        $sql = 'INSERT INTO zp_file (
-					encName, realName, extension, module, moduleId, userId, date
-				) VALUES (
-					:encName, :realName, :extension, :module, :moduleId, :userId, NOW()
-				)';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':encName', $values['encName']);
-        $stmn->bindValue(':realName', $values['realName']);
-        $stmn->bindValue(':extension', $values['extension']);
-        $stmn->bindValue(':module', $module);
-        $stmn->bindValue(':moduleId', $values['moduleId'], PDO::PARAM_INT);
-        $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_INT);
-
-        $stmn->execute();
-        $stmn->closeCursor();
-
-        return $this->db->database->lastInsertId();
+        return (string) $id;
     }
 
-    public function getFile($id): array|false
+    public function getFile(int $id): array|false
     {
+        $result = $this->db->table('zp_file as file')
+            ->select(
+                'file.id',
+                'file.extension',
+                'file.realName',
+                'file.encName',
+                'file.date',
+                'file.module',
+                'file.moduleId',
+                'user.firstname',
+                'user.lastname'
+            )
+            ->join('zp_user as user', 'file.userId', '=', 'user.id')
+            ->where('file.id', $id)
+            ->first();
 
-        $sql = 'SELECT
-					file.id, file.extension, file.realName, file.encName, file.date, file.module, file.moduleId,
-					user.firstname, user.lastname
-				FROM zp_file as file
-				INNER JOIN zp_user as user ON file.userId = user.id
-				WHERE file.id=:id';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values;
+        return $result ? (array) $result : false;
     }
 
     public function getFiles(int $userId = 0): false|array
     {
+        $query = $this->db->table('zp_file as file')
+            ->select(
+                'file.id',
+                'file.moduleId',
+                'file.extension',
+                'file.realName',
+                'file.encName',
+                'file.date',
+                'file.module',
+                'user.firstname',
+                'user.lastname'
+            )
+            ->join('zp_user as user', 'file.userId', '=', 'user.id');
 
-        $sql = 'SELECT
-					file.id, file.moduleId, file.extension, file.realName, file.encName, file.date, file.module,
-					user.firstname, user.lastname
-				FROM zp_file as file
-				INNER JOIN zp_user as user ON file.userId = user.id ';
-
-        if ($userId && $userId > 0) {
-            $sql .= ' WHERE file.userId = '.$userId;
+        if ($userId > 0) {
+            $query->where('file.userId', $userId);
         }
 
-        $sql .= ' ORDER BY file.module, file.moduleId';
+        $results = $query->orderBy('file.module')
+            ->orderBy('file.moduleId')
+            ->get();
 
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
-    public function getFolders($module): array
+    public function getFolders(string $module): array
     {
-
         $folders = [];
         $files = $this->getFiles(session('userdata.id'));
 
-        $sql = match ($module) {
-            'ticket' => 'SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1',
-            'client' => 'SELECT name as title, id FROM zp_clients WHERE id=:moduleId LIMIT 1',
-            'project' => 'SELECT name as title, id FROM zp_projects WHERE id=:moduleId LIMIT 1',
-            'lead' => 'SELECT name as title, id FROM zp_lead WHERE id=:moduleId LIMIT 1',
-            default => 'SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1',
+        $table = match ($module) {
+            'ticket' => 'zp_tickets',
+            'client' => 'zp_clients',
+            'project' => 'zp_projects',
+            'lead' => 'zp_lead',
+            default => 'zp_tickets',
         };
 
-        $stmn = $this->db->database->prepare($sql);
+        $titleColumn = match ($module) {
+            'ticket' => 'headline',
+            'client' => 'name',
+            'project' => 'name',
+            'lead' => 'name',
+            default => 'headline',
+        };
 
         $ids = [];
         foreach ($files as $file) {
-            $stmn->bindValue(':moduleId', $file['moduleId'], PDO::PARAM_STR);
-            $stmn->execute();
             if (! isset($ids[$file['moduleId']])) {
-                $folders[] = $stmn->fetch();
+                $result = $this->db->table($table)
+                    ->select("{$titleColumn} as title", 'id')
+                    ->where('id', $file['moduleId'])
+                    ->limit(1)
+                    ->first();
+
+                if ($result) {
+                    $folders[] = (array) $result;
+                }
                 $ids[$file['moduleId']] = true;
             }
         }
 
-        $stmn->closeCursor();
-
         return $folders;
     }
 
-    /**
-     * @param  null  $moduleId
-     */
-    public function getFilesByModule(string $module = '', $moduleId = null, ?int $userId = 0): false|array
+    public function getFilesByModule(string $module = '', ?int $moduleId = null, ?int $userId = 0): false|array
     {
+        $query = $this->db->table('zp_file as file')
+            ->select(
+                'file.id',
+                'file.extension',
+                'file.realName',
+                'file.encName',
+                'file.date',
+                'file.module',
+                'file.moduleId',
+                'user.firstname',
+                'user.lastname',
+                'user.id AS userId'
+            )
+            ->addSelect('file.date AS rawDate')
+            ->join('zp_user as user', 'file.userId', '=', 'user.id');
 
-        $sql = "SELECT
-					file.id,
-					file.extension,
-					file.realName,
-					file.encName,
-					file.date,
-					DATE_FORMAT(file.date,  '%Y,%m,%e') AS timelineDate,
-					file.module,
-					file.moduleId,
-					user.firstname,
-					user.lastname,
-					user.id AS userId
-				FROM zp_file as file
-
-				INNER JOIN zp_user as user ON file.userId = user.id ";
-
-        if ($module != '') {
-            $sql .= ' WHERE file.module=:module ';
+        if ($module !== '') {
+            $query->where('file.module', $module);
         } else {
-            $sql .= " WHERE file.module <> '' ";
+            $query->where('file.module', '<>', '');
         }
 
-        if ($moduleId != null) {
-            $sql .= ' AND moduleId=:moduleId';
+        if ($moduleId !== null) {
+            $query->where('file.moduleId', $moduleId);
         }
 
-        if ($userId && $userId > 0) {
-            $sql .= ' AND userId= :userId';
+        if ($userId > 0) {
+            $query->where('file.userId', $userId);
         }
 
-        $stmn = $this->db->database->prepare($sql);
-        if ($module != '') {
-            $stmn->bindValue(':module', $module, PDO::PARAM_STR);
-        }
+        $results = $query->get();
 
-        if ($moduleId != null) {
-            $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
-        }
-
-        if ($userId && $userId > 0) {
-            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-        }
-
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
-    public function deleteFile($id): bool
+    public function deleteFile(int $id): bool
     {
-        $sql = 'SELECT encName, extension FROM zp_file WHERE id=:id';
+        $result = $this->db->table('zp_file')
+            ->select('encName', 'extension')
+            ->where('id', $id)
+            ->first();
 
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        if (isset($values['encName']) && isset($values['extension'])) {
+        if ($result && isset($result->encName) && isset($result->extension)) {
             // Use FileManager to delete the file
-            $fileName = $values['encName'].'.'.$values['extension'];
+            $fileName = $result->encName.'.'.$result->extension;
 
             // Delete file from default storage
             $this->fileManager->deleteFile($fileName, 'default');
         }
 
-        $sql = 'DELETE FROM zp_file WHERE id=:id';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $result = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->db->table('zp_file')
+            ->where('id', $id)
+            ->delete() > 0;
     }
 
     /**
@@ -212,7 +189,7 @@ class Files
      *
      * @throws BindingResolutionException
      */
-    public function upload($file, $module, $moduleId): false|string|array
+    public function upload(array $file, string $module, int $moduleId): false|string|array
     {
         // Clean module mess
         if ($module === 'projects') {
@@ -271,9 +248,9 @@ class Files
         }
     }
 
-    public function uploadCloud($name, $url, $module, $moduleId): void
+    public function uploadCloud(string $name, string $url, string $module, int $moduleId): void
     {
 
-        // Add cloud stuff ehre.
+        // Add cloud stuff here.
     }
 }

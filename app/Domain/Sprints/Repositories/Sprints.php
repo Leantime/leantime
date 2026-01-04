@@ -2,232 +2,228 @@
 
 namespace Leantime\Domain\Sprints\Repositories;
 
+use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
-use PDO;
+use Leantime\Domain\Sprints\Models\Sprints as SprintsModel;
 
 class Sprints
 {
-    private DbCore $db;
+    private ConnectionInterface $db;
 
     /**
      * __construct - get database connection
      */
     public function __construct(DbCore $db)
     {
-        $this->db = $db;
+        $this->db = $db->getConnection();
     }
 
     /**
      * getSprint - get single sprint
-     *
-     * @param  int  $id
      */
-    public function getSprint($id): \Leantime\Domain\Sprints\Models\Sprints|false
+    public function getSprint(int $id): SprintsModel|false
     {
+        $result = $this->db->table('zp_sprints as sprint')
+            ->select(
+                'sprint.id',
+                'sprint.name',
+                'sprint.projectId',
+                'sprint.startDate',
+                'sprint.endDate',
+                'sprint.modified'
+            )
+            ->where('sprint.id', $id)
+            ->limit(1)
+            ->first();
 
-        $query = 'SELECT
-					sprint.id,
-					sprint.name,
-					sprint.projectId,
-					sprint.startDate,
-					sprint.endDate,
-					sprint.modified
-				FROM zp_sprints as sprint
-				WHERE sprint.id = :id
-				LIMIT 1';
+        if ($result === null) {
+            return false;
+        }
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-        $stmn->execute();
-        $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Sprints\Models\Sprints");
-        $value = $stmn->fetch();
+        $sprint = new SprintsModel;
+        $sprint->id = $result->id;
+        $sprint->name = $result->name;
+        $sprint->projectId = $result->projectId;
+        $sprint->startDate = $result->startDate;
+        $sprint->endDate = $result->endDate;
+        $sprint->modified = $result->modified;
 
-        $stmn->closeCursor();
-
-        return $value;
+        return $sprint;
     }
 
     /**
      * getAllSprints - get all sprints for a project
      */
-    public function getAllSprints($projectId = null): array
+    public function getAllSprints(?int $projectId = null): array
     {
+        $query = $this->db->table('zp_sprints')
+            ->select(
+                'id',
+                'name',
+                'projectId',
+                'startDate',
+                'endDate',
+                'modified'
+            );
 
-        $query = 'SELECT
-					zp_sprints.id,
-					zp_sprints.name,
-					zp_sprints.projectId,
-					zp_sprints.startDate,
-					zp_sprints.endDate,
-					zp_sprints.modified
-				FROM zp_sprints';
-
-        if ($projectId != null) {
-            $query .= ' WHERE zp_sprints.projectId = :id';
-        }
-        $query .= ' ORDER BY zp_sprints.startDate DESC';
-
-        $stmn = $this->db->database->prepare($query);
-
-        if ($projectId != null) {
-            $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
+        if ($projectId !== null) {
+            $query->where('projectId', $projectId);
         }
 
-        $stmn->execute();
+        $results = $query->orderBy('startDate', 'desc')->get();
 
-        $value = $stmn->fetchAll(PDO::FETCH_CLASS, "Leantime\Domain\Sprints\Models\Sprints");
+        return $results->map(function ($row) {
+            $sprint = new SprintsModel;
+            $sprint->id = $row->id;
+            $sprint->name = $row->name;
+            $sprint->projectId = $row->projectId;
+            $sprint->startDate = $row->startDate;
+            $sprint->endDate = $row->endDate;
+            $sprint->modified = $row->modified;
 
-        $stmn->closeCursor();
-
-        return $value;
+            return $sprint;
+        })->toArray();
     }
 
     /**
-     * getAllSprints - get all sprints for a project
+     * getAllFutureSprints - get all future sprints for a project
      */
-    public function getAllFutureSprints($projectId): array
+    public function getAllFutureSprints(int $projectId): array
     {
+        $results = $this->db->table('zp_sprints')
+            ->select(
+                'id',
+                'name',
+                'projectId',
+                'startDate',
+                'endDate',
+                'modified'
+            )
+            ->where('projectId', $projectId)
+            ->where('endDate', '>', now())
+            ->orderBy('startDate', 'desc')
+            ->get();
 
-        $query = 'SELECT
-					zp_sprints.id,
-					zp_sprints.name,
-					zp_sprints.projectId,
-					zp_sprints.startDate,
-					zp_sprints.endDate,
-					zp_sprints.modified
-				FROM zp_sprints
-				WHERE zp_sprints.projectId = :id AND zp_sprints.endDate > NOW()
-				ORDER BY zp_sprints.startDate DESC';
+        return $results->map(function ($row) {
+            $sprint = new SprintsModel;
+            $sprint->id = $row->id;
+            $sprint->name = $row->name;
+            $sprint->projectId = $row->projectId;
+            $sprint->startDate = $row->startDate;
+            $sprint->endDate = $row->endDate;
+            $sprint->modified = $row->modified;
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
-        $stmn->execute();
-
-        $value = $stmn->fetchAll(PDO::FETCH_CLASS, "Leantime\Domain\Sprints\Models\Sprints");
-
-        $stmn->closeCursor();
-
-        return $value;
+            return $sprint;
+        })->toArray();
     }
 
     /**
-     * getCurrentSprintId - get current sprint for a project
+     * getCurrentSprint - get current sprint for a project
      */
-    public function getCurrentSprint($projectId): mixed
+    public function getCurrentSprint(int $projectId): mixed
     {
+        $result = $this->db->table('zp_sprints')
+            ->select(
+                'id',
+                'name',
+                'projectId',
+                'startDate',
+                'endDate',
+                'modified'
+            )
+            ->where('projectId', $projectId)
+            ->where('startDate', '<', now())
+            ->where('endDate', '>', now())
+            ->orderBy('startDate')
+            ->limit(1)
+            ->first();
 
-        $query = 'SELECT
-					zp_sprints.id,
-					zp_sprints.name,
-					zp_sprints.projectId,
-					zp_sprints.startDate,
-					zp_sprints.endDate,
-					zp_sprints.modified
-				FROM zp_sprints
-				WHERE zp_sprints.projectId = :id
-				AND zp_sprints.startDate < NOW() AND zp_sprints.endDate > NOW() ORDER BY zp_sprints.startDate  LIMIT 1';
+        if ($result === null) {
+            return false;
+        }
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
-        $stmn->execute();
-        $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Sprints\Models\Sprints");
+        $sprint = new SprintsModel;
+        $sprint->id = $result->id;
+        $sprint->name = $result->name;
+        $sprint->projectId = $result->projectId;
+        $sprint->startDate = $result->startDate;
+        $sprint->endDate = $result->endDate;
+        $sprint->modified = $result->modified;
 
-        $value = $stmn->fetch();
-
-        $stmn->closeCursor();
-
-        return $value;
+        return $sprint;
     }
 
     /**
      * getUpcomingSprint - gets the next upcoming sprint
      */
-    public function getUpcomingSprint($projectId): array
+    public function getUpcomingSprint(int $projectId): SprintsModel|false
     {
+        $result = $this->db->table('zp_sprints')
+            ->select(
+                'id',
+                'name',
+                'projectId',
+                'startDate',
+                'endDate',
+                'modified'
+            )
+            ->where('projectId', $projectId)
+            ->where('startDate', '>', now())
+            ->orderBy('startDate', 'asc')
+            ->limit(1)
+            ->first();
 
-        $query = 'SELECT
-					zp_sprints.id,
-					zp_sprints.name,
-					zp_sprints.projectId,
-					zp_sprints.startDate,
-					zp_sprints.endDate,
-					zp_sprints.modified
-				FROM zp_sprints
-				WHERE zp_sprints.projectId = :id
-				AND zp_sprints.startDate > NOW() ORDER BY zp_sprints.startDate ASC LIMIT 1';
+        if ($result === null) {
+            return false;
+        }
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
-        $stmn->execute();
-        $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Sprints\Models\Sprints");
+        $sprint = new SprintsModel;
+        $sprint->id = $result->id;
+        $sprint->name = $result->name;
+        $sprint->projectId = $result->projectId;
+        $sprint->startDate = $result->startDate;
+        $sprint->endDate = $result->endDate;
+        $sprint->modified = $result->modified;
 
-        $value = $stmn->fetch();
-
-        $stmn->closeCursor();
-
-        return $value;
+        return $sprint;
     }
 
-    public function addSprint($sprint): bool|int
+    public function addSprint(SprintsModel $sprint): bool|int
     {
+        $id = $this->db->table('zp_sprints')->insertGetId([
+            'name' => $sprint->name,
+            'projectId' => $sprint->projectId,
+            'startDate' => $sprint->startDate,
+            'endDate' => $sprint->endDate,
+            'modified' => now(),
+        ]);
 
-        $query = 'INSERT INTO zp_sprints (name, projectId, startDate, endDate, modified) VALUES (:name, :projectId, :startDate, :endDate, NOW())';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':name', $sprint->name, PDO::PARAM_STR);
-        $stmn->bindValue(':projectId', $sprint->projectId, PDO::PARAM_STR);
-        $stmn->bindValue(':startDate', $sprint->startDate, PDO::PARAM_STR);
-        $stmn->bindValue(':endDate', $sprint->endDate, PDO::PARAM_STR);
-
-        $execution = $stmn->execute();
-        $id = $this->db->database->lastInsertId();
-        $stmn->closeCursor();
-
-        return $execution ? $id : false;
+        return $id ?: false;
     }
 
-    public function editSprint($sprint): bool
+    public function editSprint(SprintsModel $sprint): bool
     {
-
-        $query = 'UPDATE zp_sprints
-                      SET
-                        name = :name,
-                        projectId = :projectId,
-                        startDate = :startDate,
-                        endDate = :endDate,
-                        modified = NOW()
-                        WHERE id = :id';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':name', $sprint->name, PDO::PARAM_STR);
-        $stmn->bindValue(':projectId', $sprint->projectId, PDO::PARAM_STR);
-        $stmn->bindValue(':startDate', $sprint->startDate, PDO::PARAM_STR);
-        $stmn->bindValue(':endDate', $sprint->endDate, PDO::PARAM_STR);
-        $stmn->bindValue(':id', $sprint->id, PDO::PARAM_STR);
-
-        $execution = $stmn->execute();
-
-        $stmn->closeCursor();
-
-        return $execution;
+        return $this->db->table('zp_sprints')
+            ->where('id', $sprint->id)
+            ->update([
+                'name' => $sprint->name,
+                'projectId' => $sprint->projectId,
+                'startDate' => $sprint->startDate,
+                'endDate' => $sprint->endDate,
+                'modified' => now(),
+            ]) >= 0;
     }
 
-    public function delSprint($id): void
+    public function delSprint(int|string $id): void
     {
+        // Clear sprint from tickets
+        $this->db->table('zp_tickets')
+            ->where('sprint', $id)
+            ->update(['sprint' => '']);
 
-        $query = "UPDATE zp_tickets
-                SET
-                    sprint = ''
-                WHERE sprint = :id";
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->execute();
-
-        $query = 'DELETE FROM zp_sprints WHERE id = :id';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->execute();
+        // Delete the sprint
+        $this->db->table('zp_sprints')
+            ->where('id', $id)
+            ->delete();
     }
 }
