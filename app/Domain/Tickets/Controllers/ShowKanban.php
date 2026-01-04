@@ -117,10 +117,7 @@ class ShowKanban extends Controller
                 // Success
                 $stayOpen = isset($_POST['stay_open']) && $_POST['stay_open'] === '1';
 
-                session()->flash('toast', [
-                    'message' => 'Task created: '.htmlspecialchars($formParams['headline']),
-                    'type' => 'success',
-                ]);
+                $this->tpl->setNotification('Task created: '.htmlspecialchars($formParams['headline']), 'success');
 
                 if ($stayOpen) {
                     session()->flash('quickadd_reopen', [
@@ -135,14 +132,5 @@ class ShowKanban extends Controller
         }
 
         return Frontcontroller::redirect(CURRENT_URL);
-    }
-
-    /**
-     * Test route for new swimlane components
-     * Access via: /tickets/showKanban/componentTest
-     */
-    public function componentTest(array $params): Response
-    {
-        return $this->tpl->displayPartial('tickets::componentTest');
     }
 }

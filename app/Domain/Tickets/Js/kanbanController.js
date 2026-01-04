@@ -27,8 +27,6 @@ leantime.kanbanController = (function () {
             link.style.display = 'none';
             link.setAttribute('aria-expanded', 'true');
             input.focus();
-            // Initialize tooltips for this form if not already done
-            initQuickAddHelp();
         }
     };
 
@@ -115,14 +113,6 @@ leantime.kanbanController = (function () {
     };
 
     /**
-     * Initialize help tooltips for quick-add forms
-     * Uses native title attribute - no Tippy needed
-     */
-    var initQuickAddHelp = function() {
-        // Native title tooltips are used instead of Tippy
-    };
-
-    /**
      * Equalize column heights within a swimlane content area
      * Sets all columns to the max height for consistent appearance
      * @param {HTMLElement} contentElement - The swimlane content container
@@ -168,36 +158,6 @@ leantime.kanbanController = (function () {
     };
 
     /**
-     * Equalize contentInner heights within a swimlane
-     * Makes all column backgrounds extend to match the tallest column
-     * @param {HTMLElement} contentElement - The swimlane content container
-     */
-    var equalizeContentInnerHeights = function(contentElement) {
-        var contentInners = contentElement.querySelectorAll('.column .contentInner');
-        if (contentInners.length === 0) return;
-
-        // Reset heights to get natural sizes
-        contentInners.forEach(function(el) {
-            el.style.height = '';
-        });
-
-        // Find max height
-        var maxHeight = 0;
-        contentInners.forEach(function(el) {
-            if (el.offsetHeight > maxHeight) {
-                maxHeight = el.offsetHeight;
-            }
-        });
-
-        // Set all to max height
-        if (maxHeight > 0) {
-            contentInners.forEach(function(el) {
-                el.style.height = maxHeight + 'px';
-            });
-        }
-    };
-
-    /**
      * Initialize column heights for all expanded swimlanes on page load
      * Uses requestAnimationFrame to ensure DOM is fully rendered before measuring
      */
@@ -208,7 +168,7 @@ leantime.kanbanController = (function () {
             requestAnimationFrame(function() {
                 var expandedContents = document.querySelectorAll('.kanban-swimlane-content:not(.collapsed)');
                 expandedContents.forEach(function(content) {
-                    equalizeContentInnerHeights(content);
+                    equalizeColumnHeights(content);
                 });
             });
         });
@@ -249,8 +209,8 @@ leantime.kanbanController = (function () {
         // Toggle state on content area
         if (newExpanded) {
             content.classList.remove('collapsed');
-            // Equalize contentInner heights so empty columns match tallest
-            equalizeContentInnerHeights(content);
+            // Equalize column heights so empty columns match tallest
+            equalizeColumnHeights(content);
         } else {
             content.classList.add('collapsed');
             // Reset column heights when collapsed - let CSS handle auto-sizing
@@ -425,7 +385,6 @@ leantime.kanbanController = (function () {
         document.addEventListener('DOMContentLoaded', function() {
             initQuickAddKeyboard();
             initClickOutsideSave();
-            initQuickAddHelp();
             initSwimlaneKeyboard();
             initProgressBarTooltips();
             initStickySwimlaneSidebars();
@@ -436,7 +395,6 @@ leantime.kanbanController = (function () {
     } else {
         initQuickAddKeyboard();
         initClickOutsideSave();
-        initQuickAddHelp();
         initSwimlaneKeyboard();
         initProgressBarTooltips();
         initStickySwimlaneSidebars();
@@ -450,12 +408,10 @@ leantime.kanbanController = (function () {
         toggleQuickAdd: toggleQuickAdd,
         initQuickAddKeyboard: initQuickAddKeyboard,
         initClickOutsideSave: initClickOutsideSave,
-        initQuickAddHelp: initQuickAddHelp,
         toggleSwimlane: toggleSwimlane,
         initSwimlaneKeyboard: initSwimlaneKeyboard,
         initProgressBarTooltips: initProgressBarTooltips,
         equalizeColumnHeights: equalizeColumnHeights,
-        equalizeContentInnerHeights: equalizeContentInnerHeights,
         resetColumnHeights: resetColumnHeights,
         initCollapsedColumnHeights: initCollapsedColumnHeights,
         initExpandedColumnHeights: initExpandedColumnHeights,
