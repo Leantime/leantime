@@ -213,8 +213,8 @@ leantime.kanbanController = (function () {
             equalizeColumnHeights(content);
         } else {
             content.classList.add('collapsed');
-            // Reset column heights when collapsed - let CSS handle auto-sizing
-            resetColumnHeights(content);
+            // Equalize column heights when collapsed - maintain visual alignment
+            equalizeColumnHeights(content);
         }
 
         // Persist state to session via AJAX
@@ -321,12 +321,12 @@ leantime.kanbanController = (function () {
 
     /**
      * Initialize column heights for all collapsed swimlanes on page load
-     * Reset any inline heights and let CSS handle auto-sizing
+     * Equalize heights so columns visually align even when collapsed
      */
     var initCollapsedColumnHeights = function() {
         var collapsedContents = document.querySelectorAll('.kanban-swimlane-content.collapsed');
         collapsedContents.forEach(function(content) {
-            resetColumnHeights(content);
+            equalizeColumnHeights(content);
         });
     };
 
