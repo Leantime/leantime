@@ -658,6 +658,7 @@ class Tickets
                             break;
                         case 'milestoneid':
                             $label = 'No Milestone Set';
+                            $sortId = 'zzz_no_milestone'; // Sort "No Milestone" last alphabetically
                             if ($ticket['milestoneid'] > 0) {
                                 $milestone = $this->getTicket($ticket['milestoneid']);
                                 $color = $milestone->tags;
@@ -679,7 +680,8 @@ class Tickets
                                 $status = $statusLabels[$milestone->status]['name'];
                                 $class = '" style="color:'.$color.'"';
                                 $moreInfo = $this->language->__('label.start').': '.$startDate.' • '.$this->language->__('label.end').': '.$endDate.' • '.$this->language->__('label.status_lowercase').': '.$status;
-                                $label = $ticket['milestoneHeadline']." <a href='#/tickets/editMilestone/".$ticket['milestoneid']."' style='float:right;'><i class='fa fa-edit'></i></a><a>";
+                                $label = $ticket['milestoneHeadline'];
+                                $sortId = 'a_'.$ticket['milestoneHeadline']; // Named milestones sort first alphabetically
                             }
 
                             break;
@@ -722,7 +724,8 @@ class Tickets
             case 'status':
             case 'priority':
             case 'storypoints':
-                // Sort numerically by ID for ordered fields (priority 1-5, status order, effort points)
+            case 'milestoneid':
+                // Sort by ID for ordered fields (named milestones first, "No Milestone" last)
                 $ticketGroups = array_sort($ticketGroups, 'id');
                 break;
             default:
@@ -744,7 +747,7 @@ class Tickets
      * 4. Due Later - 14+ days from today
      * 5. No Due Date - null/empty due date
      *
-     * @param array $tickets Array of ticket data
+     * @param  array  $tickets  Array of ticket data
      * @return array Grouped tickets by due date bucket
      */
     private function groupTicketsByDueDate(array $tickets): array
@@ -807,6 +810,7 @@ class Tickets
                 usort($group['items'], function ($a, $b) {
                     $dateA = $a['date'] ?? '';
                     $dateB = $b['date'] ?? '';
+
                     return strcmp($dateA, $dateB);
                 });
             } else {
@@ -814,6 +818,7 @@ class Tickets
                 usort($group['items'], function ($a, $b) {
                     $dateA = $a['dateToFinish'] ?? '';
                     $dateB = $b['dateToFinish'] ?? '';
+
                     return strcmp($dateA, $dateB);
                 });
             }
@@ -826,8 +831,8 @@ class Tickets
     /**
      * Determine which due date bucket a ticket belongs to
      *
-     * @param string|null $dateToFinish The ticket's due date
-     * @param CarbonImmutable $today Today's date at midnight
+     * @param  string|null  $dateToFinish  The ticket's due date
+     * @param  CarbonImmutable  $today  Today's date at midnight
      * @return string The bucket key
      */
     private function getDueDateBucket(?string $dateToFinish, CarbonImmutable $today): string
@@ -864,18 +869,18 @@ class Tickets
      * Calculates ticket counts per status column for each swimlane group.
      * This is used to populate status breakdown visualizations like progress bars.
      *
-     * @param array $groupedTickets - Result from getAllGrouped()
-     * @param array $statusColumns - Result from getKanbanColumns()
+     * @param  array  $groupedTickets  - Result from getAllGrouped()
+     * @param  array  $statusColumns  - Result from getKanbanColumns()
      * @return array Status counts per swimlane with structure:
      *               [
-     *                 'groupId' => [
-     *                   'statusCounts' => ['status_id' => count, ...],
-     *                   'totalCount' => int,
-     *                   'label' => string,
-     *                   'id' => string,
-     *                   'class' => string,
-     *                   'moreInfo' => string
-     *                 ]
+     *               'groupId' => [
+     *               'statusCounts' => ['status_id' => count, ...],
+     *               'totalCount' => int,
+     *               'label' => string,
+     *               'id' => string,
+     *               'class' => string,
+     *               'moreInfo' => string
+     *               ]
      *               ]
      *
      * @api

@@ -131,12 +131,14 @@ leantime.kanbanController = (function () {
         var columns = contentElement.querySelectorAll('.column .contentInner');
         if (columns.length === 0) return;
 
-        // Reset heights first to get natural heights
+        // Reset ALL height styles first to get natural heights
+        // This includes height set by setUpKanbanColumns() in ticketsController
         columns.forEach(function(col) {
             col.style.minHeight = '';
+            col.style.height = '';
         });
 
-        // Find max height
+        // Find max height from natural content
         var maxHeight = 0;
         columns.forEach(function(col) {
             var height = col.offsetHeight;
@@ -145,7 +147,7 @@ leantime.kanbanController = (function () {
             }
         });
 
-        // Set all columns to max height
+        // Set all columns to max height using minHeight (allows growth if needed)
         if (maxHeight > 0) {
             columns.forEach(function(col) {
                 col.style.minHeight = maxHeight + 'px';
@@ -162,6 +164,53 @@ leantime.kanbanController = (function () {
         columns.forEach(function(col) {
             col.style.minHeight = '';
             col.style.height = '';  // Clear height set by setUpKanbanColumns()
+        });
+    };
+
+    /**
+     * Equalize contentInner heights within a swimlane
+     * Makes all column backgrounds extend to match the tallest column
+     * @param {HTMLElement} contentElement - The swimlane content container
+     */
+    var equalizeContentInnerHeights = function(contentElement) {
+        var contentInners = contentElement.querySelectorAll('.column .contentInner');
+        if (contentInners.length === 0) return;
+
+        // Reset heights to get natural sizes
+        contentInners.forEach(function(el) {
+            el.style.height = '';
+        });
+
+        // Find max height
+        var maxHeight = 0;
+        contentInners.forEach(function(el) {
+            if (el.offsetHeight > maxHeight) {
+                maxHeight = el.offsetHeight;
+            }
+        });
+
+        // Set all to max height
+        if (maxHeight > 0) {
+            contentInners.forEach(function(el) {
+                el.style.height = maxHeight + 'px';
+            });
+        }
+    };
+
+    /**
+     * Initialize column heights for all expanded swimlanes on page load
+     * Uses requestAnimationFrame to ensure DOM is fully rendered before measuring
+     */
+    var initExpandedColumnHeights = function() {
+        // Wait for next frame to ensure DOM is painted
+        requestAnimationFrame(function() {
+            // Double RAF for extra safety (after layout + paint)
+            requestAnimationFrame(function() {
+                var expandedContents = document.querySelectorAll('.kanban-swimlane-content:not(.collapsed)');
+                expandedContents.forEach(function(content) {
+                    equalizeContentInnerHeights(content);
+                });
+            });
         });
     };
 
@@ -200,11 +249,13 @@ leantime.kanbanController = (function () {
         // Toggle state on content area
         if (newExpanded) {
             content.classList.remove('collapsed');
+            // Equalize contentInner heights so empty columns match tallest
+            equalizeContentInnerHeights(content);
         } else {
             content.classList.add('collapsed');
+            // Reset column heights when collapsed - let CSS handle auto-sizing
+            resetColumnHeights(content);
         }
-        // Always reset column heights - let CSS handle auto-fit
-        resetColumnHeights(content);
 
         // Persist state to session via AJAX
         jQuery.ajax({
@@ -310,11 +361,12 @@ leantime.kanbanController = (function () {
 
     /**
      * Initialize column heights for all collapsed swimlanes on page load
+     * Reset any inline heights and let CSS handle auto-sizing
      */
     var initCollapsedColumnHeights = function() {
         var collapsedContents = document.querySelectorAll('.kanban-swimlane-content.collapsed');
         collapsedContents.forEach(function(content) {
-            equalizeColumnHeights(content);
+            resetColumnHeights(content);
         });
     };
 
@@ -378,6 +430,8 @@ leantime.kanbanController = (function () {
             initProgressBarTooltips();
             initStickySwimlaneSidebars();
             initMobileColumnCountToggle();
+            initCollapsedColumnHeights();
+            initExpandedColumnHeights();
         });
     } else {
         initQuickAddKeyboard();
@@ -387,6 +441,8 @@ leantime.kanbanController = (function () {
         initProgressBarTooltips();
         initStickySwimlaneSidebars();
         initMobileColumnCountToggle();
+        initCollapsedColumnHeights();
+        initExpandedColumnHeights();
     }
 
     // Make public what you want to have public, everything else is private
@@ -399,7 +455,10 @@ leantime.kanbanController = (function () {
         initSwimlaneKeyboard: initSwimlaneKeyboard,
         initProgressBarTooltips: initProgressBarTooltips,
         equalizeColumnHeights: equalizeColumnHeights,
+        equalizeContentInnerHeights: equalizeContentInnerHeights,
         resetColumnHeights: resetColumnHeights,
+        initCollapsedColumnHeights: initCollapsedColumnHeights,
+        initExpandedColumnHeights: initExpandedColumnHeights,
         initStickySwimlaneSidebars: initStickySwimlaneSidebars,
         initMobileColumnCountToggle: initMobileColumnCountToggle
     };

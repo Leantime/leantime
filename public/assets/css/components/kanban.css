@@ -12,10 +12,9 @@
     margin-bottom: 0 !important;
 }
 
-/* Remove bottom padding and align columns to top (not stretch) */
+/* Swimlane column container */
 .kanban-swimlane-content .sortableTicketList .row-fluid {
     padding-bottom: 0 !important;
-    align-items: flex-start !important;
 }
 
 /* Ensure clearfix doesn't add extra height */
@@ -23,15 +22,18 @@
     display: none !important;
 }
 
-/* Allow columns to auto-size height */
-.kanban-swimlane-content .column .contentInner {
-    min-height: auto !important;
+/* Collapsed swimlanes: shrink columns to fit content */
+.kanban-swimlane-content.collapsed .sortableTicketList .row-fluid {
+    align-items: flex-start !important;
 }
 
-/* Ensure columns don't stretch beyond content */
-.kanban-swimlane-content .column {
+.kanban-swimlane-content.collapsed .column {
     height: auto !important;
-    align-self: flex-start !important;
+}
+
+.kanban-swimlane-content.collapsed .column .contentInner {
+    min-height: auto !important;
+    height: auto !important;
 }
 
 .tilt.right {
@@ -797,28 +799,34 @@ body .maincontent .priority-text-5 a:link {
     display: inline-flex;
 }
 
+/* CRITICAL: Override parent flex alignment when collapsed */
+/* Without this, sidebar and content area stretch to match each other's height */
+.kanban-swimlane-row[data-expanded="false"] {
+    align-items: flex-start !important;
+}
+
 /* --- COLLAPSED CONTENT AREA (via data-expanded for initial load) --- */
-/* Reduce column heights when collapsed - stretch to fill row */
+/* Reduce column heights when collapsed - let content determine height */
 .kanban-swimlane-row[data-expanded="false"] .column .contentInner {
     padding: 8px 6px;
     min-height: auto !important;
-    height: 100%; /* Fill column height */
+    height: auto; /* Let content determine height */
 }
 
 /* Empty columns in collapsed rows should maintain consistent height */
 .kanban-swimlane-row[data-expanded="false"] .column .contentInner:empty,
 .kanban-swimlane-row[data-expanded="false"] .column .contentInner.empty-column {
     min-height: 52px !important;
-    height: 100%; /* Fill column height */
+    height: auto; /* Let content determine height */
 }
 
 .kanban-swimlane-row[data-expanded="false"] .column {
     height: auto !important;
-    align-self: stretch !important;
+    align-self: flex-start !important; /* Don't stretch columns to row height */
 }
 
 .kanban-swimlane-row[data-expanded="false"] .sortableTicketList .row-fluid {
-    align-items: stretch !important;
+    align-items: flex-start !important; /* Don't stretch columns to row height */
 }
 
 /* Compact ticket cards when collapsed */
@@ -1015,15 +1023,15 @@ body .maincontent .priority-text-5 a:link {
 /* Reduce column padding in collapsed state */
 .kanban-swimlane-content.collapsed .column .contentInner {
     padding: 8px 4px;
-    min-height: auto;
-    height: 100%; /* Fill column height */
+    min-height: auto !important;
+    height: auto !important; /* Override inline JS styles */
 }
 
 /* Empty columns in collapsed state should match height of columns with content */
 .kanban-swimlane-content.collapsed .column .contentInner:empty,
 .kanban-swimlane-content.collapsed .column .contentInner.empty-column {
     min-height: 52px !important;
-    height: 100%; /* Fill column height */
+    height: auto !important; /* Override inline JS styles */
 }
 
 /* ============================================
@@ -1041,16 +1049,16 @@ body .maincontent .priority-text-5 a:link {
     margin-bottom: 0;
 }
 
-/* Align columns to stretch and ensure consistent padding */
+/* Align columns to flex-start - let content determine height */
 .kanban-swimlane-content.collapsed .sortableTicketList .row-fluid {
-    align-items: stretch;
+    align-items: flex-start; /* Don't stretch columns to row height */
     padding-bottom: 0;
 }
 
-/* Ensure columns stretch to fill row height */
+/* Let columns be only as tall as their content */
 .kanban-swimlane-content.collapsed .column {
     min-height: auto;
-    align-self: stretch;
+    align-self: flex-start; /* Don't stretch columns to row height */
 }
 
 /* ============================================

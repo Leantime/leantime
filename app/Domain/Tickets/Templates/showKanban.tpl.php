@@ -155,10 +155,10 @@ $allTickets = $group['items'];
                             'timeAlert' => $group['timeAlert'] ?? null,
                         ]
                     );
-                    ?>
+                ?>
 
                     <!-- Kanban columns content area (toggles between expanded and collapsed/compact) -->
-                    <div class="kanban-swimlane-content" id="swimlane-content-<?= $group['id'] ?>">
+                    <div class="kanban-swimlane-content<?= !$swimlaneExpanded ? ' collapsed' : '' ?>" id="swimlane-content-<?= $group['id'] ?>">
             <?php } ?>
 
                     <div class="sortableTicketList kanbanBoard" id="kanboard-<?= $group['id'] ?>" style="margin-top:-5px;">
@@ -166,11 +166,11 @@ $allTickets = $group['items'];
                         <div class="row-fluid">
 
                             <?php
-                    /**
-                     * Detect empty columns for visual indicator
-                     * Loop through all status columns and check if any tickets exist for that status
-                     */
-                    $emptyColumns = [];
+                /**
+                 * Detect empty columns for visual indicator
+                 * Loop through all status columns and check if any tickets exist for that status
+                 */
+                $emptyColumns = [];
             foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) {
                 $hasTickets = false;
 
@@ -199,11 +199,11 @@ $allTickets = $group['items'];
 
                                     <?php
                                         $statusId = $key;
-                                        $swimlaneKey = $group['id'] ?? null;
-                                        $isEmpty = isset($emptyColumns[$key]);
-                                        $currentGroupBy = $searchCriteria['groupBy'] ?? null;
-                                        include __DIR__.'/partials/quickadd-form.inc.php';
-                                    ?>
+                                $swimlaneKey = $group['id'] ?? null;
+                                $isEmpty = isset($emptyColumns[$key]);
+                                $currentGroupBy = $searchCriteria['groupBy'] ?? null;
+                                include __DIR__.'/partials/quickadd-form.inc.php';
+                                ?>
 
                                     <?php foreach ($allTickets as $row) { ?>
                                         <?php if ($row['status'] == $key) {?>
@@ -254,11 +254,11 @@ $allTickets = $group['items'];
                                                     <div class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown" >
                                                         <a style="background-color:<?= $tpl->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?= $row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text"><?php
-                                                            if ($row['milestoneid'] != '' && $row['milestoneid'] != 0) {
-                                                                $tpl->e($row['milestoneHeadline']);
-                                                            } else {
-                                                                echo $tpl->__('label.no_milestone');
-                                                            }?>
+                                                        if ($row['milestoneid'] != '' && $row['milestoneid'] != 0) {
+                                                            $tpl->e($row['milestoneHeadline']);
+                                                        } else {
+                                                            echo $tpl->__('label.no_milestone');
+                                                        }?>
                                                             </span>
                                                             &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                         </a>
