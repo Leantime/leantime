@@ -61,7 +61,7 @@ $hasError = $isActive && ! empty($reopenState['error']);
             <?php } ?>
 
             <div id="quick-add-help-<?= $statusId ?>-<?= $swimlaneKey ?? 'default' ?>" class="sr-only">
-                Press Enter to save and add another task. Press Shift plus Enter to save and close. Press Escape to cancel.
+                Press Enter to save and close. Press Shift plus Enter to save and add another task. Press Escape to cancel.
             </div>
         </div>
 
@@ -71,6 +71,10 @@ $hasError = $isActive && ! empty($reopenState['error']);
                     onclick="leantime.kanbanController.toggleQuickAdd(this.closest('.quickaddContainer').querySelector('.quickAddLink'))">
                 Cancel
             </button>
+            <i class="fa fa-circle-question quickAddHelp"
+               tabindex="0"
+               title="Enter: Save and close&#10;Shift+Enter: Save and add another&#10;Esc: Cancel"
+               aria-label="Enter: Save and close, Shift+Enter: Save and add another, Esc: Cancel"></i>
         </div>
     </form>
 </div>

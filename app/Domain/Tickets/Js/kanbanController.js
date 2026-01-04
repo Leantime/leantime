@@ -53,19 +53,19 @@ leantime.kanbanController = (function () {
 
             var stayOpenInput = form.querySelector('[data-stay-open-input]');
 
-            // Enter: Save and stay open
+            // Enter: Save and close
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 form.dataset.submitting = 'true';
-                stayOpenInput.value = '1';
+                stayOpenInput.value = '0';
                 form.submit();
             }
 
-            // Shift+Enter: Save and close
+            // Shift+Enter: Save and stay open
             if (e.key === 'Enter' && e.shiftKey) {
                 e.preventDefault();
                 form.dataset.submitting = 'true';
-                stayOpenInput.value = '0';
+                stayOpenInput.value = '1';
                 form.submit();
             }
 
