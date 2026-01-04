@@ -4,9 +4,9 @@
 <ul class="headmenu pull-right">
     @dispatchEvent('insideHeadMenu')
 
-    @include('timesheets::partials.stopwatch', [
+    {{-- @include('timesheets::partials.stopwatch', [
                'progressSteps' => $onTheClock
-           ])
+           ]) --}}
 
     @if ($login::userIsAtLeast("manager", true))
         <li class="notificationDropdown appsLink">

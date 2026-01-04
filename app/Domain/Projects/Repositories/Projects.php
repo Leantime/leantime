@@ -5,13 +5,14 @@ namespace Leantime\Domain\Projects\Repositories;
 use DateInterval;
 use DatePeriod;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use PDO;
 use SVG\SVG;
 
 class Projects
@@ -31,13 +32,17 @@ class Projects
      */
     public array $state = [0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN'];
 
+    private ConnectionInterface $connection;
+
     public function __construct(
         protected Environment $config,
         protected DbCore $db,
-        protected Avatarcreator $avatarcreator
+        protected Avatarcreator $avatarcreator,
+        protected DatabaseHelper $dbHelper
     ) {
         $this->config = $config;
         $this->db = $db;
+        $this->connection = $db->getConnection();
     }
 
     /**
@@ -45,51 +50,69 @@ class Projects
      */
     public function getAll(bool $showClosedProjects = false): array
     {
-
-        $query = "SELECT
-					project.id,
-					project.name,
-					project.clientId,
-					project.hourBudget,
-					project.dollarBudget,
-					project.state,
-                    project.menuType,
-                    project.type,
-                    project.modified,
-					client.name AS clientName,
-					client.id AS clientId,
-					comments.status as status,
-					project.start,
-					project.end
-				FROM zp_projects as project
-				LEFT JOIN zp_clients as client ON project.clientId = client.id
-                LEFT JOIN zp_comment as comments ON comments.id = (
-                      SELECT
-						id
-                      FROM zp_comment
-                      WHERE module = 'project' AND moduleId = project.id
-                      ORDER BY date DESC LIMIT 1
-                    )
-				";
+        $query = $this->connection->table('zp_projects as project')
+            ->select([
+                'project.id',
+                'project.name',
+                'project.clientId',
+                'project.hourBudget',
+                'project.dollarBudget',
+                'project.state',
+                'project.menuType',
+                'project.type',
+                'project.modified',
+                'client.name as clientName',
+                'client.id as clientId',
+                'project.start',
+                'project.end',
+            ])
+            ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id');
 
         if ($showClosedProjects === false) {
-            $query .= ' WHERE project.state IS NULL OR project.state <> -1 ';
+            $query->where(function ($q) {
+                $q->whereNull('project.state')
+                    ->orWhere('project.state', '<>', -1);
+            });
         }
 
-        $query .= '
-				GROUP BY
-					project.id,
-					project.name,
-					project.clientId
-				ORDER BY clientName, project.name';
+        $query->groupBy([
+            'project.id',
+            'project.name',
+            'project.clientId',
+        ])
+            ->orderBy('clientName')
+            ->orderBy('project.name');
 
-        $stmn = $this->db->database->prepare($query);
+        $results = $query->get();
 
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
+        // Get project IDs for fetching latest comment statuses
+        $projectIds = $results->pluck('id')->toArray();
 
-        return $values;
+        // Fetch latest comment status per project using a separate query
+        $latestComments = [];
+        if (! empty($projectIds)) {
+            $comments = $this->connection->table('zp_comment')
+                ->select('moduleId', 'status', 'date')
+                ->where('module', 'project')
+                ->whereIn('moduleId', $projectIds)
+                ->orderByDesc('date')
+                ->get();
+
+            // Group by moduleId and take only the first (latest) per project
+            foreach ($comments as $comment) {
+                if (! isset($latestComments[$comment->moduleId])) {
+                    $latestComments[$comment->moduleId] = $comment->status;
+                }
+            }
+        }
+
+        // Merge comment status into results
+        return $results->map(function ($item) use ($latestComments) {
+            $arr = (array) $item;
+            $arr['status'] = $latestComments[$arr['id']] ?? null;
+
+            return $arr;
+        })->toArray();
     }
 
     /**
@@ -100,43 +123,61 @@ class Projects
      */
     public function getProjectsByType(string $type): array
     {
-        $query = 'SELECT
-					project.id,
-					project.name,
-					project.clientId,
-					project.hourBudget,
-					project.dollarBudget,
-					project.state,
-                    project.menuType,
-                    project.type,
-                    project.modified,
-					client.name AS clientName,
-					client.id AS clientId,
-					comments.status as status,
-					project.start,
-					project.end
-				FROM zp_projects as project
-				LEFT JOIN zp_clients as client ON project.clientId = client.id
-                LEFT JOIN zp_comment as comments ON comments.id = (
-                      SELECT id
-                      FROM zp_comment
-                      WHERE module = \'project\' AND moduleId = project.id
-                      ORDER BY date DESC LIMIT 1
-                    )
-				WHERE project.type = :type
-				GROUP BY
-					project.id,
-					project.name,
-					project.clientId
-				ORDER BY clientName, project.name';
+        $query = $this->connection->table('zp_projects as project')
+            ->select([
+                'project.id',
+                'project.name',
+                'project.clientId',
+                'project.hourBudget',
+                'project.dollarBudget',
+                'project.state',
+                'project.menuType',
+                'project.type',
+                'project.modified',
+                'client.name as clientName',
+                'client.id as clientId',
+                'project.start',
+                'project.end',
+            ])
+            ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id')
+            ->where('project.type', $type)
+            ->groupBy([
+                'project.id',
+                'project.name',
+                'project.clientId',
+            ])
+            ->orderBy('clientName')
+            ->orderBy('project.name');
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':type', $type, PDO::PARAM_STR);
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
+        $results = $query->get();
 
-        return $values;
+        // Get project IDs for fetching latest comment statuses
+        $projectIds = $results->pluck('id')->toArray();
+
+        // Fetch latest comment status per project using a separate query
+        $latestComments = [];
+        if (! empty($projectIds)) {
+            $comments = $this->connection->table('zp_comment')
+                ->select('moduleId', 'status', 'date')
+                ->where('module', 'project')
+                ->whereIn('moduleId', $projectIds)
+                ->orderByDesc('date')
+                ->get();
+
+            foreach ($comments as $comment) {
+                if (! isset($latestComments[$comment->moduleId])) {
+                    $latestComments[$comment->moduleId] = $comment->status;
+                }
+            }
+        }
+
+        // Merge comment status into results
+        return $results->map(function ($item) use ($latestComments) {
+            $arr = (array) $item;
+            $arr['status'] = $latestComments[$arr['id']] ?? null;
+
+            return $arr;
+        })->toArray();
     }
 
     /**
@@ -145,43 +186,45 @@ class Projects
      */
     public function getUsersAssignedToProject($id, $includeApiUsers = false): array|bool
     {
-
-        $query = 'SELECT
-					DISTINCT zp_user.id,
-					IF(zp_user.firstname IS NOT NULL, zp_user.firstname, zp_user.username) AS firstname,
-					zp_user.lastname,
-					zp_user.username,
-					zp_user.notifications,
-					zp_user.profileId,
-					zp_user.jobTitle,
-					zp_user.source,
-                    zp_user.status,
-                    zp_user.modified,
-                    zp_user.role,
-                    zp_relationuserproject.projectRole
-				FROM zp_relationuserproject
-				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
-				LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
-                WHERE
-                        zp_relationuserproject.projectId = :projectId
-                        AND zp_user.id IS NOT NULL ';
+        $query = $this->connection->table('zp_relationuserproject')
+            ->select([
+                'zp_user.id',
+                'zp_user.firstname',
+                'zp_user.lastname',
+                'zp_user.username',
+                'zp_user.notifications',
+                'zp_user.profileId',
+                'zp_user.jobTitle',
+                'zp_user.source',
+                'zp_user.status',
+                'zp_user.modified',
+                'zp_user.role',
+                'zp_relationuserproject.projectRole',
+            ])
+            ->distinct()
+            ->leftJoin('zp_user', 'zp_relationuserproject.userId', '=', 'zp_user.id')
+            ->leftJoin('zp_projects', 'zp_relationuserproject.projectId', '=', 'zp_projects.id')
+            ->where('zp_relationuserproject.projectId', $id)
+            ->whereNotNull('zp_user.id');
 
         if ($includeApiUsers === false) {
-            $query .= " AND !(zp_user.source <=> 'api') ";
+            $query->where(function ($q) {
+                $q->whereNull('zp_user.source')
+                    ->orWhere('zp_user.source', '<>', 'api');
+            });
         }
 
-        $query .= '
-				    GROUP BY zp_user.id
-                    ORDER BY zp_user.lastname';
+        $query->orderBy('zp_user.lastname');
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
+        $results = $query->get();
 
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
+        // Post-process to use firstname if available, otherwise username
+        return $results->map(function ($item) {
+            $arr = (array) $item;
+            $arr['firstname'] = $arr['firstname'] ?? $arr['username'];
 
-        return $values;
+            return $arr;
+        })->toArray();
     }
 
     /**
@@ -200,163 +243,158 @@ class Projects
 
     public function getUserProjects(int $userId, string $projectStatus = 'all', ?int $clientId = null, string $accessStatus = 'assigned', string $projectTypes = 'all'): false|array
     {
-
-        $query = "SELECT
-					project.id,
-					project.name,
-					project.details,
-					project.clientId,
-					project.state,
-					project.hourBudget,
-					project.dollarBudget,
-				    project.menuType,
-				    project.type,
-				    project.parent,
-				    project.modified,
-				    project.start,
-				    project.end,
-					client.name AS clientName,
-					client.id AS clientId,
-					parent.id AS parentId,
-					parent.name as parentName,
-					IF(favorite.id IS NULL, false, true) as isFavorite
-				FROM zp_projects as project
-				LEFT JOIN zp_relationuserproject AS relation ON project.id = relation.projectId
-				LEFT JOIN zp_projects as parent ON parent.id = project.parent
-				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_user as `user` ON relation.userId = user.id
-				LEFT JOIN zp_reactions as favorite ON project.id = favorite.moduleId
-				                                          AND favorite.module = 'project'
-				                                          AND favorite.reaction = 'favorite'
-				                                          AND favorite.userId = :id
-                LEFT JOIN zp_user as requestingUser ON requestingUser.id = :id
-				WHERE (project.active > '-1' OR project.active IS NULL)";
+        $query = $this->connection->table('zp_projects as project')
+            ->select([
+                'project.id',
+                'project.name',
+                'project.details',
+                'project.clientId',
+                'project.state',
+                'project.hourBudget',
+                'project.dollarBudget',
+                'project.menuType',
+                'project.type',
+                'project.parent',
+                'project.modified',
+                'project.start',
+                'project.end',
+                'client.name as clientName',
+                'client.id as clientId',
+                'parent.id as parentId',
+                'parent.name as parentName',
+            ])
+            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as isFavorite')
+            ->leftJoin('zp_relationuserproject as relation', 'project.id', '=', 'relation.projectId')
+            ->leftJoin('zp_projects as parent', 'parent.id', '=', 'project.parent')
+            ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id')
+            ->leftJoin('zp_user as user', 'relation.userId', '=', 'user.id')
+            ->leftJoin('zp_reactions as favorite', function ($join) use ($userId) {
+                $join->on('project.id', '=', 'favorite.moduleId')
+                    ->where('favorite.module', 'project')
+                    ->where('favorite.reaction', 'favorite')
+                    ->where('favorite.userId', $userId);
+            })
+            ->leftJoin('zp_user as requestingUser', function ($join) use ($userId) {
+                $join->whereRaw('requestingUser.id = ?', [$userId]);
+            })
+            ->where(function ($q) {
+                $q->where('project.active', '>', '-1')
+                    ->orWhereNull('project.active');
+            });
 
         // All Projects this user has access to
         if ($accessStatus == 'all') {
-            $query .= " AND
-				(
-				    relation.userId = :id
-                    OR (project.psettings = 'clients' AND project.clientId = requestingUser.clientId)
-                    OR project.psettings = 'all'
-                    OR requestingUser.role >= 40
-
-				)";
-
-            // All projects the user is assigned to OR the users client is assigned to
+            $query->where(function ($q) use ($userId) {
+                $q->where('relation.userId', $userId)
+                    ->orWhere(function ($q2) {
+                        $q2->where('project.psettings', 'clients')
+                            ->whereColumn('project.clientId', 'requestingUser.clientId');
+                    })
+                    ->orWhere('project.psettings', 'all')
+                    ->orWhereRaw('requestingUser.role >= 40');
+            });
         } elseif ($accessStatus == 'clients') {
-            $query .= " AND
-				(
-				    relation.userId = :id
-                    OR (project.psettings = 'clients' AND project.clientId = requestingUser.clientId)
-				)";
-
-            // Only assigned
+            $query->where(function ($q) use ($userId) {
+                $q->where('relation.userId', $userId)
+                    ->orWhere(function ($q2) {
+                        $q2->where('project.psettings', 'clients')
+                            ->whereColumn('project.clientId', 'requestingUser.clientId');
+                    });
+            });
         } else {
-            $query .= ' AND
-				(relation.userId = :id)';
+            $query->where('relation.userId', $userId);
         }
 
         if ($projectStatus == 'open') {
-            $query .= " AND (project.state <> '-1' OR project.state IS NULL)";
+            $query->where(function ($q) {
+                $q->where('project.state', '<>', '-1')
+                    ->orWhereNull('project.state');
+            });
         } elseif ($projectStatus == 'closed') {
-            $query .= ' AND (project.state = -1)';
+            $query->where('project.state', -1);
         }
 
         if ($clientId != '' && $clientId != null && $clientId > 0) {
-            $query .= ' AND project.clientId = :clientId';
+            $query->where('project.clientId', $clientId);
         }
 
         if ($projectTypes != 'all' && $projectTypes != 'project') {
-            $projectTypeIn = DbCore::arrayToPdoBindingString('projectType', count(explode(',', $projectTypes)));
-            $query .= ' AND project.type IN('.$projectTypeIn.')';
+            $types = explode(',', $projectTypes);
+            $query->whereIn('project.type', $types);
         }
 
         if ($projectTypes == 'project') {
-            $query .= " AND (project.type = 'project' OR project.type IS NULL)";
+            $query->where(function ($q) {
+                $q->where('project.type', 'project')
+                    ->orWhereNull('project.type');
+            });
         }
 
-        $query .= ' GROUP BY
-					project.id
-				    ORDER BY clientName, project.name';
+        $query->groupBy('project.id')
+            ->orderBy('clientName')
+            ->orderBy('project.name');
 
-        $stmn = $this->db->database->prepare($query);
+        $results = $query->get();
 
-        if ($userId == '') {
-            $stmn->bindValue(':id', session('userdata.id'), PDO::PARAM_STR);
-        } else {
-            $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
-        }
-
-        if ($clientId != '' && $clientId != null && $clientId > 0) {
-            $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
-        }
-
-        if ($projectTypes != 'all' && $projectTypes != 'project') {
-            foreach (explode(',', $projectTypes) as $key => $type) {
-                $stmn->bindValue(':projectType'.$key, $type, PDO::PARAM_STR);
-            }
-        }
-
-        if ($projectTypes == 'project') {
-            $query .= " AND (project.type = 'project' OR project.type IS NULL)";
-        }
-
-        $stmn->execute();
-        $values = $stmn->fetchAll(PDO::FETCH_ASSOC);
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     // This populates the projects show all tab and shows users all the projects that they could access
     public function getProjectsUserHasAccessTo($userId, string $status = 'all', string $clientId = ''): false|array
     {
-
-        $query = "SELECT
-					project.id,
-					project.name,
-					project.clientId,
-					project.state,
-					project.hourBudget,
-					project.dollarBudget,
-				    project.menuType,
-				    project.type,
-				    project.parent,
-				    project.modified,
-					client.name AS clientName,
-					client.id AS clientId,
-					IF(favorite.id IS NULL, false, true) as isFavorite
-				FROM zp_projects AS project
-				LEFT JOIN zp_relationuserproject as relation ON project.id = relation.projectId
-				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_reactions as favorite ON project.id = favorite.moduleId AND favorite.module = 'project' AND favorite.reaction = 'favorite' AND favorite.userId = :id
-				WHERE
-				    (   relation.userId = :id
-				        OR project.psettings = 'all'
-				        OR (project.psettings = 'clients' AND project.clientId = :clientId)
-				    )
-				  AND (project.active > '-1' OR project.active IS NULL)";
+        $query = $this->connection->table('zp_projects as project')
+            ->select([
+                'project.id',
+                'project.name',
+                'project.clientId',
+                'project.state',
+                'project.hourBudget',
+                'project.dollarBudget',
+                'project.menuType',
+                'project.type',
+                'project.parent',
+                'project.modified',
+                'client.name as clientName',
+                'client.id as clientId',
+            ])
+            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as isFavorite')
+            ->leftJoin('zp_relationuserproject as relation', 'project.id', '=', 'relation.projectId')
+            ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id')
+            ->leftJoin('zp_reactions as favorite', function ($join) use ($userId) {
+                $join->on('project.id', '=', 'favorite.moduleId')
+                    ->where('favorite.module', 'project')
+                    ->where('favorite.reaction', 'favorite')
+                    ->where('favorite.userId', $userId);
+            })
+            ->where(function ($q) use ($userId, $clientId) {
+                $q->where('relation.userId', $userId)
+                    ->orWhere('project.psettings', 'all')
+                    ->orWhere(function ($q2) use ($clientId) {
+                        $q2->where('project.psettings', 'clients')
+                            ->where('project.clientId', $clientId);
+                    });
+            })
+            ->where(function ($q) {
+                $q->where('project.active', '>', '-1')
+                    ->orWhereNull('project.active');
+            });
 
         if ($status == 'open') {
-            $query .= " AND (project.state <> '-1' OR project.state IS NULL)";
+            $query->where(function ($q) {
+                $q->where('project.state', '<>', '-1')
+                    ->orWhereNull('project.state');
+            });
         } elseif ($status == 'closed') {
-            $query .= ' AND (project.state = -1)';
+            $query->where('project.state', -1);
         }
 
-        $query .= ' GROUP BY
-					project.id
-				ORDER BY clientName, project.name';
+        $query->groupBy('project.id')
+            ->orderBy('clientName')
+            ->orderBy('project.name');
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
-        $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
+        $results = $query->get();
 
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     /**
@@ -364,97 +402,73 @@ class Projects
      */
     public function getNumberOfProjects($clientId = null, $type = null): mixed
     {
-
-        $sql = 'SELECT COUNT(id) AS projectCount FROM `zp_projects` WHERE id >0';
+        $query = $this->connection->table('zp_projects')
+            ->where('id', '>', 0);
 
         if ($clientId != null && is_numeric($clientId)) {
-            $sql .= ' AND clientId = :clientId';
+            $query->where('clientId', $clientId);
         }
 
         if ($type != null) {
-            $sql .= ' AND type = :type';
+            $query->where('type', $type);
         }
 
-        $stmn = $this->db->database->prepare($sql);
-
-        if ($clientId != null && is_numeric($clientId)) {
-            $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);
-        }
-
-        if ($type != null) {
-            $stmn->bindValue(':type', $type, PDO::PARAM_STR);
-        }
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        if (isset($values['projectCount']) === true) {
-            return $values['projectCount'];
-        } else {
-            return 0;
-        }
+        return $query->count();
     }
 
     // Get all open user projects /param: open, closed, all
 
     public function getClientProjects($clientId): false|array
     {
+        $results = $this->connection->table('zp_projects as project')
+            ->select([
+                'project.id',
+                'project.name',
+                'project.clientId',
+                'project.hourBudget',
+                'project.dollarBudget',
+                'project.state',
+                'project.menuType',
+                'project.modified',
+                'project.type',
+                'client.name as clientName',
+                'client.id as clientId',
+            ])
+            ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id')
+            ->where(function ($q) {
+                $q->where('project.active', '>', '-1')
+                    ->orWhereNull('project.active');
+            })
+            ->where('clientId', $clientId)
+            ->groupBy([
+                'project.id',
+                'project.name',
+                'project.clientId',
+            ])
+            ->orderBy('clientName')
+            ->orderBy('project.name')
+            ->get();
 
-        $sql = "SELECT
-					project.id,
-					project.name,
-					project.clientId,
-					project.hourBudget,
-					project.dollarBudget,
-					project.state,
-				    project.menuType,
-				    project.modified,
-				    project.type,
-					client.name AS clientName,
-					client.id AS clientId
-				FROM zp_projects as project
-				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				WHERE
-				  (project.active > '-1' OR project.active IS NULL)
-				  AND clientId = :clientId
-				GROUP BY
-					project.id,
-					project.name,
-					project.clientId
-				ORDER BY clientName, project.name";
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     public function getProjectTickets($projectId): false|array
     {
+        $results = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.editFrom',
+                'zp_tickets.editTo',
+                'zp_user.firstname',
+                'zp_user.lastname',
+            ])
+            ->leftJoin('zp_user', 'zp_tickets.editorId', '=', 'zp_user.id')
+            ->where('projectId', $projectId)
+            ->orderBy('zp_tickets.editFrom')
+            ->get();
 
-        $sql = 'SELECT zp_tickets.id,
-		zp_tickets.headline,
-		zp_tickets.editFrom,
-		zp_tickets.editTo,
-		zp_user.firstname,
-		zp_user.lastname
-		 FROM zp_tickets
-		LEFT JOIN zp_user ON zp_tickets.editorId = zp_user.id
-		WHERE projectId=:projectId ORDER BY zp_tickets.editFrom';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     /**
@@ -462,68 +476,61 @@ class Projects
      */
     public function getProject($id): array|bool
     {
+        $userId = session('userdata.id');
 
-        $query = "SELECT
-					zp_projects.id,
-					zp_projects.name,
-					zp_projects.clientId,
-					zp_projects.details,
-					zp_projects.state,
-					zp_projects.hourBudget,
-					zp_projects.dollarBudget,
-					zp_projects.psettings,
-				    zp_projects.menuType,
-				    zp_projects.avatar,
-				    zp_projects.cover,
-				    zp_projects.type,
-				    zp_projects.parent,
-				    zp_projects.modified,
-					zp_clients.name AS clientName,
-					zp_projects.start,
-					zp_projects.end,
-                    IF(favorite.id IS NULL, false, true) as isFavorite
-				FROM zp_projects
-				  LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-				  LEFT JOIN zp_reactions as favorite ON zp_projects.id = favorite.moduleId
-				                                          AND favorite.module = 'project'
-				                                          AND favorite.reaction = 'favorite'
-				                                          AND favorite.userId = :id
-                  LEFT JOIN zp_user as requestingUser ON requestingUser.id = :id
-				WHERE zp_projects.id = :projectId
-				GROUP BY
-					zp_projects.id,
-					zp_projects.name,
-					zp_projects.clientId,
-					zp_projects.details
-				LIMIT 1";
+        $result = $this->connection->table('zp_projects')
+            ->select([
+                'zp_projects.id',
+                'zp_projects.name',
+                'zp_projects.clientId',
+                'zp_projects.details',
+                'zp_projects.state',
+                'zp_projects.hourBudget',
+                'zp_projects.dollarBudget',
+                'zp_projects.psettings',
+                'zp_projects.menuType',
+                'zp_projects.avatar',
+                'zp_projects.cover',
+                'zp_projects.type',
+                'zp_projects.parent',
+                'zp_projects.modified',
+                'zp_clients.name as clientName',
+                'zp_projects.start',
+                'zp_projects.end',
+            ])
+            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as isFavorite')
+            ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
+            ->leftJoin('zp_reactions as favorite', function ($join) use ($userId) {
+                $join->on('zp_projects.id', '=', 'favorite.moduleId')
+                    ->where('favorite.module', 'project')
+                    ->where('favorite.reaction', 'favorite')
+                    ->where('favorite.userId', $userId);
+            })
+            ->leftJoin('zp_user as requestingUser', function ($join) use ($userId) {
+                $join->on('requestingUser.id', '=', $this->connection->raw((int) $userId));
+            })
+            ->where('zp_projects.id', $id)
+            ->groupBy([
+                'zp_projects.id',
+                'zp_projects.name',
+                'zp_projects.clientId',
+                'zp_projects.details',
+            ])
+            ->limit(1)
+            ->first();
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
-        $stmn->bindValue(':id', session('userdata.id'), PDO::PARAM_STR);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values;
+        return $result ? (array) $result : false;
     }
 
     public function getProjectBookedHours($id): array|bool
     {
+        $result = $this->connection->table('zp_tickets')
+            ->selectRaw('zp_tickets.projectId, SUM(zp_timesheets.hours) AS totalHours')
+            ->join('zp_timesheets', 'zp_timesheets.ticketId', '=', 'zp_tickets.id')
+            ->where('projectId', $id)
+            ->first();
 
-        $query = 'SELECT zp_tickets.projectId, SUM(zp_timesheets.hours) AS totalHours
-				FROM zp_tickets
-				INNER JOIN zp_timesheets ON zp_timesheets.ticketId = zp_tickets.id
-				WHERE projectId = :id';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values;
+        return $result ? (array) $result : false;
     }
 
     public function recursive_array_search($needle, $haystack): false|int|string
@@ -540,22 +547,25 @@ class Projects
 
     public function getProjectBookedHoursArray($id): array|bool
     {
+        $dateFormatSql = match ($this->dbHelper->getDriverName()) {
+            'mysql' => "DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')",
+            'pgsql' => "TO_CHAR(zp_timesheets.workDate, 'YYYY-MM-DD')",
+            default => "DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')",
+        };
 
-        $query = "SELECT
-                        zp_tickets.projectId,
-			            SUM(zp_timesheets.hours) AS totalHours,
-			            DATE_FORMAT(zp_timesheets.workDate,'%Y-%m-%d') AS workDate
-				    FROM zp_tickets
-				    INNER JOIN zp_timesheets ON zp_timesheets.ticketId = zp_tickets.id
-				    WHERE projectId =  :id GROUP BY zp_timesheets.workDate
-				    ORDER BY workDate";
+        $results = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.projectId',
+            ])
+            ->selectRaw('SUM(zp_timesheets.hours) AS totalHours')
+            ->selectRaw("{$dateFormatSql} AS workDate")
+            ->join('zp_timesheets', 'zp_timesheets.ticketId', '=', 'zp_tickets.id')
+            ->where('projectId', $id)
+            ->groupByRaw($dateFormatSql)
+            ->orderBy('workDate')
+            ->get();
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $results = $stmn->fetchAll();
-        $stmn->closeCursor();
+        $results = array_map(fn ($item) => (array) $item, $results->toArray());
 
         $chartArr = [];
 
@@ -594,20 +604,13 @@ class Projects
 
     public function getProjectBookedDollars($id): mixed
     {
+        $result = $this->connection->table('zp_tickets')
+            ->selectRaw('zp_tickets.projectId, SUM(zp_timesheets.hours * zp_timesheets.rate) AS totalDollars')
+            ->join('zp_timesheets', 'zp_timesheets.ticketId', '=', 'zp_tickets.id')
+            ->where('projectId', $id)
+            ->first();
 
-        $query = 'SELECT zp_tickets.projectId, SUM(zp_timesheets.hours*zp_timesheets.rate) AS totalDollars
-				FROM zp_tickets
-				INNER JOIN zp_timesheets ON zp_timesheets.ticketId = zp_tickets.id
-				WHERE projectId = :id';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values;
+        return $result ? (array) $result : false;
     }
 
     /**
@@ -617,68 +620,31 @@ class Projects
      */
     public function addProject(bool|array $values): int|bool
     {
-
-        $query = 'INSERT INTO `zp_projects` (
-				            `name`,
-                           `details`,
-                           `clientId`,
-                           `hourBudget`,
-                           `dollarBudget`,
-                           `psettings`,
-                           `menuType`,
-                           `type`,
-                           `parent`,
-                           `start`,
-                           `end`,
-                           `created`,
-                           `modified`
-
-                        ) VALUES (
-                            :name,
-                            :details,
-                            :clientId,
-                            :hourBudget,
-                            :dollarBudget,
-                            :psettings,
-                            :menuType,
-                            :type,
-                            :parent,
-                            :start,
-                            :end,
-                            :created,
-                            :modified
-                        )';
-
-        $stmn = $this->db->database->prepare($query);
-
-        $stmn->bindValue('name', $values['name'], PDO::PARAM_STR);
-        $stmn->bindValue('details', $values['details'], PDO::PARAM_STR);
-        $stmn->bindValue('clientId', $values['clientId'], PDO::PARAM_STR);
-        $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
-        $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
-        $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
-        $stmn->bindValue('menuType', $values['menuType'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
-        $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
-        $stmn->bindValue('created', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $stmn->bindValue('modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-
         $startDate = null;
         if (isset($values['start']) && $values['start'] !== false && $values['start'] != '') {
             $startDate = $values['start'];
         }
-        $stmn->bindValue('start', $startDate, PDO::PARAM_STR);
 
         $endDate = null;
         if (isset($values['end']) && $values['end'] !== false && $values['end'] != '') {
             $endDate = $values['end'];
         }
 
-        $stmn->bindValue('end', $endDate, PDO::PARAM_STR);
-        $stuff = $stmn->execute();
-
-        $projectId = $this->db->database->lastInsertId();
-        $stmn->closeCursor();
+        $projectId = $this->connection->table('zp_projects')->insertGetId([
+            'name' => $values['name'],
+            'details' => $values['details'],
+            'clientId' => $values['clientId'],
+            'hourBudget' => $values['hourBudget'],
+            'dollarBudget' => $values['dollarBudget'],
+            'psettings' => $values['psettings'],
+            'menuType' => $values['menuType'] ?? '',
+            'type' => $values['type'] ?? 'project',
+            'parent' => $values['parent'] ?? null,
+            'start' => $startDate,
+            'end' => $endDate,
+            'created' => date('Y-m-d H:i:s'),
+            'modified' => date('Y-m-d H:i:s'),
+        ]);
 
         // Add author to project
         if (session()->exists('userdata.id')) {
@@ -702,57 +668,36 @@ class Projects
      */
     public function editProject(array $values, $id): void
     {
-
         $oldProject = $this->getProject($id);
-
-        $query = 'UPDATE zp_projects SET
-				name = :name,
-				details = :details,
-				clientId = :clientId,
-				state = :state,
-				hourBudget = :hourBudget,
-				dollarBudget = :dollarBudget,
-				psettings = :psettings,
-				menuType = :menuType,
-				type = :type,
-				parent = :parent,
-				start = :start,
-				end = :end,
-				modified = :modified
-				WHERE id = :id
-
-				LIMIT 1';
-
-        $stmn = $this->db->database->prepare($query);
-
-        $stmn->bindValue('name', $values['name'], PDO::PARAM_STR);
-        $stmn->bindValue('details', $values['details'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue('clientId', $values['clientId'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue('state', $values['state'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue('hourBudget', $values['hourBudget'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue('dollarBudget', $values['dollarBudget'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue('psettings', $values['psettings'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue('menuType', $values['menuType'] ?? 'default', PDO::PARAM_STR);
-        $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
-        $stmn->bindValue('id', $id, PDO::PARAM_STR);
-        $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
-        $stmn->bindValue('modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
         $startDate = null;
         if (isset($values['start']) && $values['start'] !== false && $values['start'] != '') {
             $startDate = $values['start'];
         }
-        $stmn->bindValue('start', $startDate, PDO::PARAM_STR);
 
         $endDate = null;
         if (isset($values['end']) && $values['end'] !== false && $values['end'] != '') {
             $endDate = $values['end'];
         }
-        $stmn->bindValue('end', $endDate, PDO::PARAM_STR);
 
-        $stmn->execute();
-
-        $stmn->closeCursor();
+        $this->connection->table('zp_projects')
+            ->where('id', $id)
+            ->limit(1)
+            ->update([
+                'name' => $values['name'],
+                'details' => $values['details'] ?? '',
+                'clientId' => $values['clientId'] ?? '',
+                'state' => $values['state'] ?? '',
+                'hourBudget' => $values['hourBudget'] ?? '',
+                'dollarBudget' => $values['dollarBudget'] ?? '',
+                'psettings' => $values['psettings'] ?? '',
+                'menuType' => $values['menuType'] ?? 'default',
+                'type' => $values['type'] ?? 'project',
+                'parent' => $values['parent'] ?? null,
+                'start' => $startDate,
+                'end' => $endDate,
+                'modified' => date('Y-m-d H:i:s'),
+            ]);
 
         static::dispatch_event('editProject', ['values' => $values, 'oldProject' => $oldProject]);
     }
@@ -783,22 +728,14 @@ class Projects
      */
     public function deleteProject($id): void
     {
+        $this->connection->table('zp_projects')
+            ->where('id', $id)
+            ->limit(1)
+            ->delete();
 
-        $query = 'DELETE FROM zp_projects WHERE id = :id LIMIT 1';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $stmn->closeCursor();
-
-        $query = 'DELETE FROM zp_tickets WHERE projectId = :id';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $stmn->closeCursor();
+        $this->connection->table('zp_tickets')
+            ->where('projectId', $id)
+            ->delete();
     }
 
     /**
@@ -806,23 +743,11 @@ class Projects
      */
     public function hasTickets($id): bool
     {
-
-        $query = "SELECT id FROM zp_tickets WHERE projectId = :id
-                      AND zp_tickets.type <> 'subtask' AND
-                       zp_tickets.type <> 'milestone' LIMIT 1";
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        if (count($values) == 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return $this->connection->table('zp_tickets')
+            ->where('projectId', $id)
+            ->where('zp_tickets.type', '<>', 'subtask')
+            ->where('zp_tickets.type', '<>', 'milestone')
+            ->exists();
     }
 
     /**
@@ -832,33 +757,24 @@ class Projects
      */
     public function getUserProjectRelation($id, $projectId = null): array
     {
-
-        $query = 'SELECT
-				zp_relationuserproject.userId,
-				zp_relationuserproject.projectId,
-				zp_projects.name,
-				zp_projects.modified,
-				zp_relationuserproject.projectRole
-			FROM zp_relationuserproject JOIN zp_projects
-				ON zp_relationuserproject.projectId = zp_projects.id
-			WHERE userId = :id';
-
-        if ($projectId != null) {
-            $query .= ' AND  zp_projects.id = :projectId';
-        }
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
+        $query = $this->connection->table('zp_relationuserproject')
+            ->select([
+                'zp_relationuserproject.userId',
+                'zp_relationuserproject.projectId',
+                'zp_projects.name',
+                'zp_projects.modified',
+                'zp_relationuserproject.projectRole',
+            ])
+            ->join('zp_projects', 'zp_relationuserproject.projectId', '=', 'zp_projects.id')
+            ->where('userId', $id);
 
         if ($projectId != null) {
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            $query->where('zp_projects.id', $projectId);
         }
 
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
+        $results = $query->get();
 
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     /**
@@ -901,28 +817,11 @@ class Projects
         }
 
         // Select users are allowed to see project
-        $query = 'SELECT
-				zp_relationuserproject.userId,
-				zp_relationuserproject.projectId,
-				zp_projects.name,
-                zp_projects.modified
-			FROM zp_relationuserproject JOIN zp_projects
-				ON zp_relationuserproject.projectId = zp_projects.id
-			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        if ($values && count($values) > 1) {
-            return true;
-        }
-
-        return false;
+        return $this->connection->table('zp_relationuserproject')
+            ->join('zp_projects', 'zp_relationuserproject.projectId', '=', 'zp_projects.id')
+            ->where('userId', $userId)
+            ->where('zp_relationuserproject.projectId', $projectId)
+            ->exists();
     }
 
     /**
@@ -933,7 +832,6 @@ class Projects
      */
     public function isUserMemberOfProject($userId, $projectId): bool
     {
-
         $userRepo = app()->make(UserRepository::class);
         $user = $userRepo->getUser($userId);
 
@@ -950,28 +848,11 @@ class Projects
         }
 
         // Select users are allowed to see project
-        $query = 'SELECT
-				zp_relationuserproject.userId,
-				zp_relationuserproject.projectId,
-				zp_projects.name,
-                zp_projects.modified
-			FROM zp_relationuserproject JOIN zp_projects
-				ON zp_relationuserproject.projectId = zp_projects.id
-			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        if ($values && count($values) > 1) {
-            return true;
-        }
-
-        return false;
+        return $this->connection->table('zp_relationuserproject')
+            ->join('zp_projects', 'zp_relationuserproject.projectId', '=', 'zp_projects.id')
+            ->where('userId', $userId)
+            ->where('zp_relationuserproject.projectId', $projectId)
+            ->exists();
     }
 
     /**
@@ -979,16 +860,12 @@ class Projects
      */
     public function editUserProjectRelations($id, $projects): bool
     {
+        $results = $this->connection->table('zp_relationuserproject')
+            ->select(['id', 'userId', 'projectId', 'projectRole'])
+            ->where('userId', $id)
+            ->get();
 
-        $sql = 'SELECT id,userId,projectId,projectRole FROM zp_relationuserproject WHERE userId=:id';
-
-        $stmn = $this->db->database->prepare($sql);
-
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
+        $values = array_map(fn ($item) => (array) $item, $results->toArray());
 
         // Add relations that don't exist
         foreach ($projects as $project) {
@@ -1019,101 +896,54 @@ class Projects
 
     public function deleteProjectRelation($userId, $projectId): void
     {
-
-        $sql = 'DELETE FROM zp_relationuserproject WHERE projectId=:projectId AND userId=:userId';
-
-        $stmn = $this->db->database->prepare($sql);
-
-        $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-        $stmn->execute();
-
-        $stmn->closeCursor();
+        $this->connection->table('zp_relationuserproject')
+            ->where('projectId', $projectId)
+            ->where('userId', $userId)
+            ->delete();
     }
 
     public function deleteAllProjectRelations($userId): void
     {
-
-        $sql = 'DELETE FROM zp_relationuserproject WHERE userId=:userId';
-
-        $stmn = $this->db->database->prepare($sql);
-
-        $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-
-        $stmn->execute();
-
-        $stmn->closeCursor();
+        $this->connection->table('zp_relationuserproject')
+            ->where('userId', $userId)
+            ->delete();
     }
 
     public function deleteAllUserRelations($projectId): void
     {
-
-        $sql = 'DELETE FROM zp_relationuserproject WHERE projectId=:projectId';
-
-        $stmn = $this->db->database->prepare($sql);
-
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-        $stmn->execute();
-
-        $stmn->closeCursor();
+        $this->connection->table('zp_relationuserproject')
+            ->where('projectId', $projectId)
+            ->delete();
     }
 
     public function addProjectRelation($userId, $projectId, $projectRole): void
     {
         $oldProject = $this->getProject($projectId);
 
-        $sql = 'INSERT INTO zp_relationuserproject (
-					userId,
-					projectId,
-                    projectRole
-				) VALUES (
-					:userId,
-					:projectId,
-					:projectRole
-				)';
-
-        $stmn = $this->db->database->prepare($sql);
-
-        $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-        $stmn->bindValue(':projectRole', $projectRole, PDO::PARAM_STR);
-
-        $stmn->execute();
-
-        $stmn->closeCursor();
+        $this->connection->table('zp_relationuserproject')->insert([
+            'userId' => $userId,
+            'projectId' => $projectId,
+            'projectRole' => $projectRole,
+        ]);
 
         static::dispatch_event('userAddedToProject', ['userId' => $userId, 'projectId' => $projectId, 'projectRole' => $projectRole, 'oldProject' => $oldProject]);
     }
 
     public function patch($id, $params): bool
     {
-
         unset($params['act']);
 
-        $sql = 'UPDATE zp_projects SET ';
-
+        $updateData = [];
         foreach ($params as $key => $value) {
-            $sql .= ''.DbCore::sanitizeToColumnString($key).'=:'.DbCore::sanitizeToColumnString($key).', ';
+            $updateData[DbCore::sanitizeToColumnString($key)] = $value;
         }
 
-        $sql .= 'modified=:modified ';
+        $updateData['modified'] = date('Y-m-d H:i:s');
 
-        $sql .= ' WHERE id=:id LIMIT 1';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-
-        foreach ($params as $key => $value) {
-            $stmn->bindValue(':'.DbCore::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
-        }
-
-        $return = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $return;
+        return $this->connection->table('zp_projects')
+            ->where('id', $id)
+            ->limit(1)
+            ->update($updateData) >= 0;
     }
 
     /**
@@ -1123,24 +953,12 @@ class Projects
      */
     public function setPicture($fileId, $id): bool
     {
-
-        $sql = 'UPDATE
-                        `zp_projects`
-                    SET
-                        avatar = :fileId,
-                        modified = :modified
-                    WHERE id = :userId';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':fileId', $fileId, PDO::PARAM_INT);
-        $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
-        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-
-        $result = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $result;
-
+        return $this->connection->table('zp_projects')
+            ->where('id', $id)
+            ->update([
+                'avatar' => $fileId,
+                'modified' => date('Y-m-d H:i:s'),
+            ]) >= 0;
     }
 
     /**
@@ -1155,22 +973,16 @@ class Projects
      */
     public function getProjectAvatar($id): array|false
     {
-
-        $value = false;
-
-        if ($id !== false) {
-            $sql = 'SELECT avatar, name FROM `zp_projects` WHERE id = :id LIMIT 1';
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $value = $stmn->fetch();
-            $stmn->closeCursor();
-
+        if ($id === false) {
+            return false;
         }
 
-        return $value;
+        $result = $this->connection->table('zp_projects')
+            ->select(['avatar', 'name'])
+            ->where('id', $id)
+            ->limit(1)
+            ->first();
 
+        return $result ? (array) $result : false;
     }
 }

@@ -4,14 +4,14 @@ namespace Leantime\Domain\Tickets\Repositories;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
+use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\EntityRelationshipEnum;
 use Leantime\Domain\Users\Services\Users;
-use PDO;
 
 class Tickets
 {
@@ -22,6 +22,10 @@ class Tickets
     public ?object $tickets = null;
 
     private DbCore $db;
+
+    private ConnectionInterface $connection;
+
+    private DatabaseHelper $dbHelper;
 
     public array $statusClasses = ['3' => 'label-info', '1' => 'label-important', '4' => 'label-warning', '2' => 'label-warning', '0' => 'label-success', '-1' => 'label-default'];
 
@@ -101,14 +105,17 @@ class Tickets
      *
      * @return void
      */
-    public function __construct(DbCore $db, LanguageCore $language)
+    public function __construct(DbCore $db, LanguageCore $language, DatabaseHelper $dbHelper)
     {
         $this->db = $db;
+        $this->connection = $db->getConnection();
         $this->language = $language;
+        $this->dbHelper = $dbHelper;
     }
 
     /**
-     * @return array|array[]
+     * @api
+     * Get Ticket Status List
      */
     public function getStateLabels($projectId = null): array
     {
@@ -120,24 +127,17 @@ class Tickets
             $projectId = session('currentProject');
         }
 
-        $sql = 'SELECT
-						value
-				FROM zp_settings WHERE `key` = :key
-				LIMIT 1';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindvalue(':key', 'projectsettings.'.$projectId.'.ticketlabels', PDO::PARAM_STR);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
+        $result = $this->connection->table('zp_settings')
+            ->select('value')
+            ->where('key', 'projectsettings.'.$projectId.'.ticketlabels')
+            ->first();
 
         $labels = [];
 
         $statusList = $this->statusListSeed;
 
         // Override the state values that are in the db
-        if ($values !== false) {
+        if ($result !== null) {
 
             $statusList = [];
 
@@ -145,7 +145,7 @@ class Tickets
             // Adding the original version back in case folks removed it
             $statusList[-1] = $this->statusListSeed[-1];
 
-            foreach (unserialize($values['value']) as $key => $status) {
+            foreach (unserialize($result->value) as $key => $status) {
                 if (is_int($key)) {
                     // Backwards Compatibility with existing labels in db
                     // Prior to 2.1.9 labels were stored as <<statuskey>>:<<labelString>>
@@ -265,54 +265,52 @@ class Tickets
         $users = app()->make(Users::class);
         $user = $users->getUser($id);
 
-        $sql = "SELECT
-						ticket.id,
-						ticket.headline,
-						ticket.type,
-						ticket.description,
-						ticket.date,
-						ticket.dateToFinish,
-						ticket.projectId,
-						ticket.priority,
-						ticket.status,
-						project.name as projectName,
-						client.name as clientName,
-						client.name as clientName,
-						t1.id AS authorId,
-						t1.firstname AS authorFirstname,
-						t1.lastname AS authorLastname,
-						t2.id AS editorId,
-						t2.firstname AS editorFirstname,
-						t2.lastname AS editorLastname
-				FROM
-				zp_tickets AS ticket
-				LEFT JOIN zp_projects as project ON ticket.projectId = project.id
-				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_user AS t1 ON ticket.userId = t1.id
-				LEFT JOIN zp_user AS t2 ON ticket.editorId = t2.id
-				WHERE (
-				    ticket.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :id)
-                    OR project.psettings = 'all'
-                    OR (project.psettings = 'clients' AND project.clientId = :clientId)
-                )
-                AND ticket.type <> 'milestone'
-				ORDER BY ticket.id DESC";
+        $query = $this->connection->table('zp_tickets as ticket')
+            ->select([
+                'ticket.id',
+                'ticket.headline',
+                'ticket.type',
+                'ticket.description',
+                'ticket.date',
+                'ticket.dateToFinish',
+                'ticket.projectId',
+                'ticket.priority',
+                'ticket.status',
+                'project.name as projectName',
+                'client.name as clientName',
+                't1.id as authorId',
+                't1.firstname as authorFirstname',
+                't1.lastname as authorLastname',
+                't2.id as editorId',
+                't2.firstname as editorFirstname',
+                't2.lastname as editorLastname',
+            ])
+            ->leftJoin('zp_projects as project', 'ticket.projectId', '=', 'project.id')
+            ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id')
+            ->leftJoin('zp_user as t1', 'ticket.userId', '=', 't1.id')
+            ->leftJoin('zp_user as t2', 'ticket.editorId', '=', 't2.id')
+            ->where(function ($q) use ($id, $user) {
+                $q->whereIn('ticket.projectId', function ($subquery) use ($id) {
+                    $subquery->select('projectId')
+                        ->from('zp_relationuserproject')
+                        ->where('zp_relationuserproject.userId', $id);
+                })
+                    ->orWhere('project.psettings', 'all')
+                    ->orWhere(function ($q2) use ($user) {
+                        $q2->where('project.psettings', 'clients')
+                            ->where('project.clientId', $user['clientId'] ?? '');
+                    });
+            })
+            ->where('ticket.type', '<>', 'milestone')
+            ->orderByDesc('ticket.id');
 
         if ($limit > -1) {
-            $sql .= ' LIMIT :limit';
+            $query->limit($limit);
         }
 
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->bindValue(':clientId', $user['clientId'] ?? '', PDO::PARAM_STR);
-        if ($limit > -1) {
-            $stmn->bindValue(':limit', $limit, PDO::PARAM_INT);
-        }
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
+        $results = $query->get();
 
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     /**
@@ -320,549 +318,482 @@ class Tickets
      *
      * @param  null  $limit
      */
+    /**
+     * getAllBySearchCriteria - get Tickets by search criteria array
+     *
+     * @param  null  $limit
+     */
     public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', $limit = null, $includeCounts = true, $offset = null): bool|array
     {
-        $query = "
-                SELECT
-                     zp_tickets.id,
-                zp_tickets.headline,
-                zp_tickets.description,
-                zp_tickets.date,
-                zp_tickets.sprint,
-                zp_sprints.name as sprintName,
-                zp_tickets.storypoints,
-                zp_tickets.sortindex,
-                zp_tickets.dateToFinish,
-                zp_tickets.projectId,
-                zp_tickets.priority,
-                IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
-                zp_tickets.status,
-                zp_tickets.tags,
-                zp_tickets.editorId,
-                zp_tickets.dependingTicketId,
-                zp_tickets.milestoneid,
-                zp_tickets.planHours,
-                zp_tickets.editFrom,
-                zp_tickets.editTo,
-                zp_tickets.hourRemaining,
-                COALESCE(ROUND(timesheet_agg.total_hours, 2), 0) AS bookedHours,
-                zp_projects.name AS projectName,
-                zp_clients.name AS clientName,
-                zp_clients.id AS clientId,
-                t1.id AS authorId,
-                t1.lastname AS authorLastname,
-                t1.firstname AS authorFirstname,
-                t1.profileId AS authorProfileId,
-                t2.firstname AS editorFirstname,
-                t2.lastname AS editorLastname,
-                t2.profileId AS editorProfileId,
-                milestone.headline AS milestoneHeadline,
-                IF((milestone.tags IS NULL OR milestone.tags = ''), 'var(--grey)', milestone.tags) AS milestoneColor,";
+        $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
+        $userId = $searchCriteria['currentUser'] ?? session('userdata.id') ?? '-1';
+        $clientId = $searchCriteria['currentClient'] ?? session('userdata.clientId') ?? '-1';
+
+        $query = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.description',
+                'zp_tickets.date',
+                'zp_tickets.sprint',
+                'zp_tickets.storypoints',
+                'zp_tickets.sortindex',
+                'zp_tickets.dateToFinish',
+                'zp_tickets.projectId',
+                'zp_tickets.priority',
+                'zp_tickets.status',
+                'zp_tickets.tags',
+                'zp_tickets.editorId',
+                'zp_tickets.dependingTicketId',
+                'zp_tickets.milestoneid',
+                'zp_tickets.planHours',
+                'zp_tickets.editFrom',
+                'zp_tickets.editTo',
+                'zp_tickets.hourRemaining',
+                'zp_sprints.name as sprintName',
+                'zp_projects.name as projectName',
+                'zp_clients.name as clientName',
+                'zp_clients.id as clientId',
+                't1.id as authorId',
+                't1.lastname as authorLastname',
+                't1.firstname as authorFirstname',
+                't1.profileId as authorProfileId',
+                't2.firstname as editorFirstname',
+                't2.lastname as editorLastname',
+                't2.profileId as editorProfileId',
+                'milestone.headline as milestoneHeadline',
+                'parent.headline as parentHeadline',
+            ])
+            ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
+            ->selectRaw("CASE WHEN (milestone.tags IS NULL OR milestone.tags = '') THEN 'var(--grey)' ELSE milestone.tags END AS milestoneColor")
+            ->selectRaw('COALESCE(ROUND(timesheet_agg.total_hours, 2), 0) AS bookedHours');
 
         if ($includeCounts) {
-            $query .= '
-                    COALESCE(comment_agg.comment_count, 0) AS commentCount,
-                    COALESCE(file_agg.file_count, 0) AS fileCount,
-                    COALESCE(subtask_agg.subtask_count, 0) AS subtaskCount,
-                           ';
+            $query->selectRaw('COALESCE(comment_agg.comment_count, 0) AS commentCount')
+                ->selectRaw('COALESCE(file_agg.file_count, 0) AS fileCount')
+                ->selectRaw('COALESCE(subtask_agg.subtask_count, 0) AS subtaskCount');
         } else {
-            $query .= '
-                        0 AS commentCount,
-                        0 AS fileCount,
-                        0 AS subtaskCount,
-                    ';
+            $query->selectRaw('0 AS commentCount')
+                ->selectRaw('0 AS fileCount')
+                ->selectRaw('0 AS subtaskCount');
         }
 
-        $query .= "
-                    parent.headline AS parentHeadline
-                FROM
-                    zp_tickets
-                LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-                LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-                LEFT JOIN zp_user AS t1 ON zp_tickets.userId = t1.id
-                LEFT JOIN zp_user AS t2 ON zp_tickets.editorId = t2.id
-                LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
-                LEFT JOIN zp_sprints ON zp_tickets.sprint = zp_sprints.id
-                LEFT JOIN zp_tickets AS milestone ON zp_tickets.milestoneid = milestone.id AND zp_tickets.milestoneid > 0 AND milestone.type = 'milestone'
-                LEFT JOIN zp_tickets AS parent ON zp_tickets.dependingTicketId = parent.id";
-
-        $query .= '
-            LEFT JOIN (
-                SELECT ticketId, SUM(hours) as total_hours
-                FROM zp_timesheets
-                GROUP BY ticketId
-            ) AS timesheet_agg ON zp_tickets.id = timesheet_agg.ticketId';
+        $query->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
+            ->leftJoin('zp_user as t1', 'zp_tickets.userId', '=', 't1.id')
+            ->leftJoin('zp_user as t2', 'zp_tickets.editorId', '=', 't2.id')
+            ->leftJoin('zp_user as requestor', function ($join) use ($requestorId) {
+                $join->on('requestor.id', '=', $this->connection->raw((int) $requestorId));
+            })
+            ->leftJoin('zp_sprints', 'zp_tickets.sprint', '=', 'zp_sprints.id')
+            ->leftJoin('zp_tickets as milestone', function ($join) {
+                $join->on('zp_tickets.milestoneid', '=', 'milestone.id')
+                    ->where('zp_tickets.milestoneid', '>', 0)
+                    ->where('milestone.type', '=', 'milestone');
+            })
+            ->leftJoin('zp_tickets as parent', 'zp_tickets.dependingTicketId', '=', 'parent.id')
+            ->leftJoinSub(
+                $this->connection->table('zp_timesheets')
+                    ->select('ticketId')
+                    ->selectRaw('SUM(hours) as total_hours')
+                    ->groupBy('ticketId'),
+                'timesheet_agg',
+                'zp_tickets.id',
+                '=',
+                'timesheet_agg.ticketId'
+            );
 
         if ($includeCounts) {
-            $query .= "
-            LEFT JOIN (
-                SELECT moduleId, COUNT(*) as comment_count
-                FROM zp_comment
-                WHERE module = 'ticket'
-                GROUP BY moduleId
-            ) AS comment_agg ON zp_tickets.id = comment_agg.moduleId
-            LEFT JOIN (
-                SELECT moduleId, COUNT(*) as file_count
-                FROM zp_file
-                WHERE module = 'ticket'
-                GROUP BY moduleId
-            ) AS file_agg ON zp_tickets.id = file_agg.moduleId
-            LEFT JOIN (
-                SELECT dependingTicketId, COUNT(*) as subtask_count
-                FROM zp_tickets
-                WHERE dependingTicketId > 0
-                GROUP BY dependingTicketId
-            ) AS subtask_agg ON zp_tickets.id = subtask_agg.dependingTicketId";
+            $query->leftJoinSub(
+                $this->connection->table('zp_comment')
+                    ->select('moduleId')
+                    ->selectRaw('COUNT(*) as comment_count')
+                    ->where('module', 'ticket')
+                    ->groupBy('moduleId'),
+                'comment_agg',
+                'zp_tickets.id',
+                '=',
+                'comment_agg.moduleId'
+            )
+                ->leftJoinSub(
+                    $this->connection->table('zp_file')
+                        ->select('moduleId')
+                        ->selectRaw('COUNT(*) as file_count')
+                        ->where('module', 'ticket')
+                        ->groupBy('moduleId'),
+                    'file_agg',
+                    'zp_tickets.id',
+                    '=',
+                    'file_agg.moduleId'
+                )
+                ->leftJoinSub(
+                    $this->connection->table('zp_tickets')
+                        ->select('dependingTicketId')
+                        ->selectRaw('COUNT(*) as subtask_count')
+                        ->where('dependingTicketId', '>', 0)
+                        ->groupBy('dependingTicketId'),
+                    'subtask_agg',
+                    'zp_tickets.id',
+                    '=',
+                    'subtask_agg.dependingTicketId'
+                );
         }
 
-        $query .= "
-            LEFT JOIN zp_relationuserproject AS rup ON zp_tickets.projectId = rup.projectId AND rup.userId = :userId
-            LEFT JOIN zp_entity_relationship AS er ON er.entityAType = 'Ticket' AND er.entityBType = 'User' AND er.entityA = zp_tickets.id  AND er.relationship = '".EntityRelationshipEnum::Collaborator->value."'
-            WHERE (
-                rup.projectId IS NOT NULL
-                OR zp_projects.psettings = 'all'
-                OR (zp_projects.psettings = 'clients' AND zp_projects.clientId = :clientId)
-                OR (requestor.role >= 40)
-            )
-        ";
+        $query->leftJoin('zp_relationuserproject as rup', function ($join) use ($userId) {
+            $join->on('zp_tickets.projectId', '=', 'rup.projectId')
+                ->where('rup.userId', '=', $userId);
+        })
+            ->leftJoin('zp_entity_relationship as er', function ($join) {
+                $join->on('er.entityAType', '=', $this->connection->raw("'Ticket'"))
+                    ->on('er.entityBType', '=', $this->connection->raw("'User'"))
+                    ->on('er.entityA', '=', 'zp_tickets.id')
+                    ->on('er.relationship', '=', $this->connection->raw("'".EntityRelationshipEnum::Collaborator->value."'"));
+            })
+            ->where(function ($q) use ($clientId) {
+                $q->whereNotNull('rup.projectId')
+                    ->orWhere('zp_projects.psettings', 'all')
+                    ->orWhere(function ($q2) use ($clientId) {
+                        $q2->where('zp_projects.psettings', 'clients')
+                            ->where('zp_projects.clientId', $clientId);
+                    })
+                    ->orWhere('requestor.role', '>=', 40);
+            });
 
+        // Apply search criteria filters
         if (isset($searchCriteria['dateFrom']) && $searchCriteria['dateFrom'] != '') {
-            $query .= ' AND zp_tickets.date > :dateFrom';
+            $query->where('zp_tickets.date', '>', $searchCriteria['dateFrom']);
         }
 
         if (isset($searchCriteria['dateTo']) && $searchCriteria['dateTo'] != '') {
-            $query .= ' AND zp_tickets.date < :dateTo';
+            $query->where('zp_tickets.date', '<', $searchCriteria['dateTo']);
         }
 
         if (isset($searchCriteria['excludeType']) && $searchCriteria['excludeType'] != '') {
-            $query .= ' AND zp_tickets.type <> :excludeType';
+            $query->where('zp_tickets.type', '<>', $searchCriteria['excludeType']);
         }
 
-        // Pulling tasks is currrently locked to the currentProject (which is tied to the user session)
         if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
-            $query .= ' AND zp_tickets.projectId = :projectId';
+            $query->where('zp_tickets.projectId', $searchCriteria['currentProject']);
         }
 
         if (isset($searchCriteria['users']) && $searchCriteria['users'] != '') {
-            $editorIdIn = DbCore::arrayToPdoBindingString('users', count(explode(',', $searchCriteria['users'])));
-            $query .= ' AND zp_tickets.editorId IN('.$editorIdIn.')';
-            $query .= ' OR er.entityB IN('.$editorIdIn.')';
+            $userIds = explode(',', $searchCriteria['users']);
+            $query->where(function ($q) use ($userIds) {
+                $q->whereIn('zp_tickets.editorId', $userIds)
+                    ->orWhereIn('er.entityB', $userIds);
+            });
         }
 
         if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] != '') {
-            $milestoneIn = DbCore::arrayToPdoBindingString('milestone', count(explode(',', $searchCriteria['milestone'])));
-            $query .= ' AND zp_tickets.milestoneid IN('.$milestoneIn.')';
+            $milestoneIds = explode(',', $searchCriteria['milestone']);
+            $query->whereIn('zp_tickets.milestoneid', $milestoneIds);
         }
 
         if (isset($searchCriteria['status']) && $searchCriteria['status'] == 'all') {
-            $query .= ' ';
+            // No filter
         } elseif (isset($searchCriteria['status']) && $searchCriteria['status'] != '') {
             $statusArray = explode(',', $searchCriteria['status']);
 
             if (array_search('not_done', $statusArray) !== false) {
-                // Project Id needs to be set to search for not_done due to custom done states across projects
                 if ($searchCriteria['currentProject'] != '') {
                     $statusLabels = $this->getStateLabels($searchCriteria['currentProject']);
-
                     $statusList = [];
                     foreach ($statusLabels as $key => $status) {
                         if ($status['statusType'] !== 'DONE') {
                             $statusList[] = $key;
                         }
                     }
-
-                    $query .= ' AND zp_tickets.status IN('.implode(',', $statusList).')';
+                    if (! empty($statusList)) {
+                        $query->whereIn('zp_tickets.status', $statusList);
+                    }
                 }
             } else {
-                $statusIn = DbCore::arrayToPdoBindingString(
-                    'status',
-                    count(explode(',', $searchCriteria['status']))
-                );
-                $query .= ' AND zp_tickets.status IN('.$statusIn.')';
+                $statuses = explode(',', $searchCriteria['status']);
+                $query->whereIn('zp_tickets.status', $statuses);
             }
         } else {
-            $query .= ' AND zp_tickets.status <> -1';
+            $query->where('zp_tickets.status', '<>', -1);
         }
 
         if (isset($searchCriteria['type']) && $searchCriteria['type'] != '') {
-            $typeIn = DbCore::arrayToPdoBindingString('type', count(explode(',', strtolower($searchCriteria['type']))));
-            $query .= ' AND LOWER(zp_tickets.type) IN('.$typeIn.')';
+            $types = array_map('strtolower', explode(',', $searchCriteria['type']));
+            $query->whereIn($this->connection->raw('LOWER(zp_tickets.type)'), $types);
         }
 
         if (isset($searchCriteria['priority']) && $searchCriteria['priority'] != '') {
-            $priorityIn = DbCore::arrayToPdoBindingString('priority', count(explode(',', strtolower($searchCriteria['priority']))));
-            $query .= ' AND LOWER(zp_tickets.priority) IN('.$priorityIn.')';
+            $priorities = array_map('strtolower', explode(',', $searchCriteria['priority']));
+            $query->whereIn($this->connection->raw('LOWER(zp_tickets.priority)'), $priorities);
         }
 
         if (isset($searchCriteria['term']) && $searchCriteria['term'] != '') {
-            $query .= ' AND (FIND_IN_SET(:termStandard, zp_tickets.tags) OR zp_tickets.headline LIKE :termWild OR zp_tickets.description LIKE :termWild OR zp_tickets.id LIKE :termWild)';
+            $term = $searchCriteria['term'];
+            $termWild = '%'.$term.'%';
+            $findInSetSql = $this->dbHelper->findInSet('?', 'zp_tickets.tags');
+            $query->where(function ($q) use ($term, $termWild, $findInSetSql) {
+                $q->whereRaw($findInSetSql, [$term])
+                    ->orWhere('zp_tickets.headline', 'LIKE', $termWild)
+                    ->orWhere('zp_tickets.description', 'LIKE', $termWild)
+                    ->orWhere('zp_tickets.id', 'LIKE', $termWild);
+            });
         }
 
         if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] > 0 && $searchCriteria['sprint'] != 'all') {
-            $sprintIn = DbCore::arrayToPdoBindingString('sprint', count(explode(',', $searchCriteria['sprint'])));
-            $query .= ' AND zp_tickets.sprint IN('.$sprintIn.')';
+            $sprintIds = explode(',', $searchCriteria['sprint']);
+            $query->whereIn('zp_tickets.sprint', $sprintIds);
         }
 
         if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] == 'backlog') {
-            $query .= " AND (zp_tickets.sprint IS NULL OR zp_tickets.sprint = '' OR zp_tickets.sprint = -1)";
+            $query->where(function ($q) {
+                $q->whereNull('zp_tickets.sprint')
+                    ->orWhere('zp_tickets.sprint', '')
+                    ->orWhere('zp_tickets.sprint', -1);
+            });
         }
 
-        $query .= ' GROUP BY zp_tickets.id ';
+        $query->groupBy('zp_tickets.id');
 
+        // Apply sorting
         if ($sort == 'standard') {
-            $query .= ' ORDER BY zp_tickets.sortindex ASC, zp_tickets.id DESC';
+            $query->orderBy('zp_tickets.sortindex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'kanbansort') {
-            $query .= ' ORDER BY zp_tickets.kanbanSortIndex ASC, zp_tickets.id DESC';
+            $query->orderBy('zp_tickets.kanbanSortIndex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'duedate') {
-            $query .= " ORDER BY (zp_tickets.dateToFinish = '0000-00-00 00:00:00'), zp_tickets.dateToFinish ASC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
+            $query->orderByRaw("(zp_tickets.dateToFinish = '0000-00-00 00:00:00')")
+                ->orderBy('zp_tickets.dateToFinish', 'ASC')
+                ->orderBy('zp_tickets.sortindex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'priority') {
-            $query .= ' ORDER BY zp_tickets.priority ASC, zp_tickets.dateToFinish ASC, zp_tickets.sortindex ASC, zp_tickets.id DESC';
+            $query->orderBy('zp_tickets.priority', 'ASC')
+                ->orderBy('zp_tickets.dateToFinish', 'ASC')
+                ->orderBy('zp_tickets.sortindex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'date') {
-            $query .= ' ORDER BY zp_tickets.date DESC, zp_tickets.sortindex ASC, zp_tickets.id DESC';
+            $query->orderByDesc('zp_tickets.date')
+                ->orderBy('zp_tickets.sortindex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
         }
 
         if ($limit !== null && $limit > 0) {
+            $query->limit($limit);
             if ($offset !== null && $offset > 0) {
-                $query .= ' LIMIT :offset, :limit';
-            } else {
-                $query .= ' LIMIT :limit';
+                $query->offset($offset);
             }
         }
 
-        $stmn = $this->db->database->prepare($query);
+        $results = $query->get();
 
-        if (isset($searchCriteria['dateFrom']) && $searchCriteria['dateFrom'] != '') {
-            $stmn->bindValue(':dateFrom', $searchCriteria['dateFrom'], PDO::PARAM_STR);
-        }
-
-        if (isset($searchCriteria['dateTo']) && $searchCriteria['dateTo'] != '') {
-            $stmn->bindValue(':dateTo', $searchCriteria['dateTo'], PDO::PARAM_STR);
-        }
-
-        if (isset($searchCriteria['excludeType']) && $searchCriteria['excludeType'] != '') {
-            $stmn->bindValue(':excludeType', $searchCriteria['excludeType'], PDO::PARAM_STR);
-        }
-
-        // NOTE: This should not be removed as it is used for authorization
-        if (isset($searchCriteria['currentUser'])) {
-            $stmn->bindValue(':userId', $searchCriteria['currentUser'], PDO::PARAM_INT);
-        } else {
-            $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
-        }
-
-        // Current client is only used for authorization as it represents the current client Id assigned to a user.
-        // Do not attempt to filter tickets using this value.
-        if (isset($searchCriteria['currentClient'])) {
-            $stmn->bindValue(':clientId', $searchCriteria['currentClient'], PDO::PARAM_INT);
-        } else {
-            $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
-        }
-
-        if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
-            $stmn->bindValue(':projectId', $searchCriteria['currentProject'], PDO::PARAM_INT);
-        }
-
-        if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] != '') {
-            foreach (explode(',', $searchCriteria['milestone']) as $key => $milestone) {
-                $stmn->bindValue(':milestone'.$key, $milestone, PDO::PARAM_STR);
-            }
-        }
-
-        if (isset($searchCriteria['type']) && $searchCriteria['type'] != '') {
-            foreach (explode(',', $searchCriteria['type']) as $key => $type) {
-                $stmn->bindValue(':type'.$key, $type, PDO::PARAM_STR);
-            }
-        }
-
-        if (isset($searchCriteria['priority']) && $searchCriteria['priority'] != '') {
-            foreach (explode(',', $searchCriteria['priority']) as $key => $priority) {
-                $stmn->bindValue(':priority'.$key, $priority, PDO::PARAM_STR);
-            }
-        }
-
-        if (isset($searchCriteria['users']) && $searchCriteria['users'] != '') {
-            foreach (explode(',', $searchCriteria['users']) as $key => $user) {
-                $stmn->bindValue(':users'.$key, $user, PDO::PARAM_STR);
-            }
-        }
-
-        if (isset($searchCriteria['status']) && $searchCriteria['status'] != 'all') {
-            $statusArray = explode(',', $searchCriteria['status']);
-            if ($searchCriteria['status'] != '' && array_search('not_done', $statusArray) === false) {
-                foreach (explode(',', $searchCriteria['status']) as $key => $status) {
-                    $stmn->bindValue(':status'.$key, $status, PDO::PARAM_STR);
-                }
-            }
-        }
-
-        if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] > 0 && $searchCriteria['sprint'] != 'all') {
-            foreach (explode(',', $searchCriteria['sprint']) as $key => $sprint) {
-                $stmn->bindValue(':sprint'.$key, $sprint, PDO::PARAM_STR);
-            }
-        }
-
-        if (isset($searchCriteria['term']) && $searchCriteria['term'] != '') {
-            $termWild = '%'.$searchCriteria['term'].'%';
-            $stmn->bindValue(':termWild', $termWild, PDO::PARAM_STR);
-            $stmn->bindValue(':termStandard', $searchCriteria['term'], PDO::PARAM_STR);
-        }
-
-        if ($limit !== null && $limit > 0) {
-            $stmn->bindValue(':limit', $limit, PDO::PARAM_INT);
-            if ($offset !== null && $offset > 0) {
-                $stmn->bindValue(':offset', $offset, PDO::PARAM_INT);
-            }
-        }
-
-        if (session()->exists('userdata')) {
-            $stmn->bindValue(':requestorId', session('userdata.id'), PDO::PARAM_INT);
-        } else {
-            $stmn->bindValue(':requestorId', -1, PDO::PARAM_INT);
-        }
-
-        $stmn->execute();
-
-        $values = $stmn->fetchAll(PDO::FETCH_ASSOC);
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     public function simpleTicketQuery(?int $userId, ?int $projectId, array $types = []): array|false
     {
+        $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
+        $clientId = session('userdata.clientId') ?? '-1';
 
-        $query = <<<'SQL'
-                SELECT
-                    zp_tickets.id,
-                    zp_tickets.headline,
-                    zp_tickets.description,
-                    zp_tickets.date,
-                    zp_tickets.sprint,
-                    zp_tickets.storypoints,
-                    zp_tickets.sortindex,
-                    zp_tickets.dateToFinish,
-                    zp_tickets.projectId,
-                    zp_tickets.priority,
-                    IF(zp_tickets.type <> "", zp_tickets.type, "task") AS type,
-                    zp_tickets.status,
-                    zp_tickets.tags,
-                    zp_tickets.userId,
-                    zp_tickets.editorId,
-                    zp_tickets.dependingTicketId,
-                    zp_tickets.milestoneid,
-                    milestones.headline AS milestoneHeadline,
-                    zp_tickets.planHours,
-                    zp_tickets.editFrom,
-                    zp_tickets.editTo,
-                    zp_tickets.hourRemaining,
-                    zp_projects.name AS projectName,
-                    zp_projects.details AS projectDescription
-                FROM
-                    zp_tickets
-                    LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-                    LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
-                    LEFT JOIN zp_tickets AS milestones ON zp_tickets.milestoneid = milestones.id
-                    LEFT JOIN zp_entity_relationship AS er ON er.entityAType = 'Ticket' AND er.entityBType = 'User' AND er.relationship = '$EntityRelationshipEnum::Collaborator->value' AND er.entityA = zp_tickets.id
-                      WHERE (
-                        zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :requestorId)
-                        OR zp_projects.psettings = 'all'
-                        OR (zp_projects.psettings = 'clients' AND zp_projects.clientId = :clientId)
-                        OR (requestor.role >= 40)
-                    )
-            SQL;
+        $query = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.description',
+                'zp_tickets.date',
+                'zp_tickets.sprint',
+                'zp_tickets.storypoints',
+                'zp_tickets.sortindex',
+                'zp_tickets.dateToFinish',
+                'zp_tickets.projectId',
+                'zp_tickets.priority',
+                'zp_tickets.status',
+                'zp_tickets.tags',
+                'zp_tickets.userId',
+                'zp_tickets.editorId',
+                'zp_tickets.dependingTicketId',
+                'zp_tickets.milestoneid',
+                'zp_tickets.planHours',
+                'zp_tickets.editFrom',
+                'zp_tickets.editTo',
+                'zp_tickets.hourRemaining',
+                'milestones.headline as milestoneHeadline',
+                'zp_projects.name as projectName',
+                'zp_projects.details as projectDescription',
+            ])
+            ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->leftJoin('zp_user as requestor', function ($join) use ($requestorId) {
+                $join->on('requestor.id', '=', $this->connection->raw((int) $requestorId));
+            })
+            ->leftJoin('zp_tickets as milestones', 'zp_tickets.milestoneid', '=', 'milestones.id')
+            ->leftJoin('zp_entity_relationship as er', function ($join) {
+                $join->on('er.entityAType', '=', $this->connection->raw("'Ticket'"))
+                    ->on('er.entityBType', '=', $this->connection->raw("'User'"))
+                    ->on('er.relationship', '=', $this->connection->raw("'Collaborator'"))
+                    ->on('er.entityA', '=', 'zp_tickets.id');
+            })
+            ->where(function ($q) use ($requestorId, $clientId) {
+                $q->whereIn('zp_tickets.projectId', function ($subquery) use ($requestorId) {
+                    $subquery->select('projectId')
+                        ->from('zp_relationuserproject')
+                        ->where('zp_relationuserproject.userId', $requestorId);
+                })
+                    ->orWhere('zp_projects.psettings', 'all')
+                    ->orWhere(function ($q2) use ($clientId) {
+                        $q2->where('zp_projects.psettings', 'clients')
+                            ->where('zp_projects.clientId', $clientId);
+                    })
+                    ->orWhere('requestor.role', '>=', 40);
+            });
 
-        // Pulling tasks is currrently locked to the currentProject (which is tied to the user session)
         if (isset($projectId) && $projectId > 0) {
-            $query .= ' AND zp_tickets.projectId = :projectId';
+            $query->where('zp_tickets.projectId', $projectId);
         }
 
         if (isset($userId) && $userId > 0) {
-            $query .= ' AND zp_tickets.editorId = :userId';
-            $query .= ' OR er.entityB = :userId';
+            $query->where(function ($q) use ($userId) {
+                $q->where('zp_tickets.editorId', $userId)
+                    ->orWhere('er.entityB', $userId);
+            });
         }
 
         if (count($types) > 0) {
-            $typeIn = DbCore::arrayToPdoBindingString('types', count($types));
-            $query .= ' AND zp_tickets.type IN('.$typeIn.')';
+            $query->whereIn('zp_tickets.type', $types);
         }
 
-        $query .= ' ORDER BY zp_tickets.dateToFinish DESC, zp_tickets.sortindex ASC, zp_tickets.id DESC';
+        $results = $query->orderByDesc('zp_tickets.dateToFinish')
+            ->orderBy('zp_tickets.sortindex', 'ASC')
+            ->orderByDesc('zp_tickets.id')
+            ->get();
 
-        $stmn = $this->db->database->prepare($query);
-
-        if (isset($projectId) && $projectId > 0) {
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-        }
-
-        if (isset($userId) && $userId > 0) {
-            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-        }
-
-        if (count($types) > 0) {
-            foreach ($types as $key => $type) {
-                $stmn->bindValue(':types'.$key, $type, PDO::PARAM_STR);
-            }
-        }
-
-        $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
-
-        // Current client is only used for authorization as it represents the current client Id assigned to a user.
-        // Do not attempt to filter tickets using this value.
-        if (session()->exists('userdata')) {
-            $stmn->bindValue(':requestorId', session('userdata.id'), PDO::PARAM_INT);
-        } else {
-            $stmn->bindValue(':requestorId', -1, PDO::PARAM_INT);
-        }
-
-        $stmn->execute();
-
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     public function getScheduledTasks(CarbonImmutable $dateFrom, CarbonImmutable $dateTo, ?int $userId = null)
     {
+        $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
+        $clientId = session('userdata.clientId') ?? '-1';
+        $activeUserId = $userId ?? (session('userdata.id') ?? '-1');
 
-        $query = <<<'SQL'
-                SELECT
-                    zp_tickets.id,
-                    zp_tickets.headline,
-                    zp_tickets.description,
-                    zp_tickets.date,
-                    zp_tickets.sprint,
-                    zp_tickets.storypoints,
-                    zp_tickets.sortindex,
-                    zp_tickets.dateToFinish,
-                    zp_tickets.projectId,
-                    zp_tickets.priority,
-                    IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
-                    zp_tickets.status,
-                    zp_tickets.tags,
-                    zp_tickets.editorId,
-                    zp_tickets.dependingTicketId,
-                    zp_tickets.milestoneid,
-                    zp_tickets.planHours,
-                    zp_tickets.editFrom,
-                    zp_tickets.editTo,
-                    zp_tickets.hourRemaining
-                FROM
-                    zp_tickets
-                LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-                LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
-                WHERE
-                    (
-                        zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
-                        OR zp_projects.psettings = 'all'
-                        OR (zp_projects.psettings = 'clients' AND zp_projects.clientId = :clientId)
-                        OR (requestor.role >= 40)
-                    )
-                    AND zp_tickets.type <> 'milestone'
-            SQL;
+        $query = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.description',
+                'zp_tickets.date',
+                'zp_tickets.sprint',
+                'zp_tickets.storypoints',
+                'zp_tickets.sortindex',
+                'zp_tickets.dateToFinish',
+                'zp_tickets.projectId',
+                'zp_tickets.priority',
+                'zp_tickets.status',
+                'zp_tickets.tags',
+                'zp_tickets.editorId',
+                'zp_tickets.dependingTicketId',
+                'zp_tickets.milestoneid',
+                'zp_tickets.planHours',
+                'zp_tickets.editFrom',
+                'zp_tickets.editTo',
+                'zp_tickets.hourRemaining',
+            ])
+            ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->leftJoin('zp_user as requestor', function ($join) use ($requestorId) {
+                $join->on('requestor.id', '=', $this->connection->raw((int) $requestorId));
+            })
+            ->where(function ($q) use ($activeUserId, $clientId) {
+                $q->whereIn('zp_tickets.projectId', function ($subquery) use ($activeUserId) {
+                    $subquery->select('projectId')
+                        ->from('zp_relationuserproject')
+                        ->where('zp_relationuserproject.userId', $activeUserId);
+                })
+                    ->orWhere('zp_projects.psettings', 'all')
+                    ->orWhere(function ($q2) use ($clientId) {
+                        $q2->where('zp_projects.psettings', 'clients')
+                            ->where('zp_projects.clientId', $clientId);
+                    })
+                    ->orWhere('requestor.role', '>=', 40);
+            })
+            ->where('zp_tickets.type', '<>', 'milestone');
 
         if (isset($userId)) {
-            $query .= ' AND zp_tickets.editorId = :userId';
+            $query->where('zp_tickets.editorId', $userId);
         }
 
-        $query .= ' AND ((zp_tickets.editFrom BETWEEN :dateFrom AND :dateTo) OR (zp_tickets.editTo BETWEEN :dateFrom AND :dateTo))';
+        $query->where(function ($q) use ($dateFrom, $dateTo) {
+            $q->whereBetween('zp_tickets.editFrom', [$dateFrom->formatDateTimeForDb(), $dateTo->formatDateTimeForDb()])
+                ->orWhereBetween('zp_tickets.editTo', [$dateFrom->formatDateTimeForDb(), $dateTo->formatDateTimeForDb()]);
+        });
 
-        $stmn = $this->db->database->prepare($query);
+        $results = $query->get();
 
-        if (isset($userId)) {
-            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-        } else {
-            $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
-        }
-
-        $stmn->bindValue(':dateFrom', $dateFrom->formatDateTimeForDb(), PDO::PARAM_STR);
-
-        $stmn->bindValue(':dateTo', $dateTo->formatDateTimeForDb(), PDO::PARAM_STR);
-
-        if (session()->exists('userdata')) {
-            $stmn->bindValue(':requestorId', session('userdata.id'), PDO::PARAM_INT);
-        } else {
-            $stmn->bindValue(':requestorId', -1, PDO::PARAM_INT);
-        }
-
-        $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     public function getAllByProjectId($projectId): false|array
     {
+        $results = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.description',
+                'zp_tickets.date',
+                'zp_tickets.dateToFinish',
+                'zp_tickets.projectId',
+                'zp_tickets.priority',
+                'zp_tickets.status',
+                'zp_tickets.sprint',
+                'zp_tickets.storypoints',
+                'zp_tickets.hourRemaining',
+                'zp_tickets.acceptanceCriteria',
+                'zp_tickets.userId',
+                'zp_tickets.editorId',
+                'zp_tickets.planHours',
+                'zp_tickets.tags',
+                'zp_tickets.url',
+                'zp_tickets.editFrom',
+                'zp_tickets.editTo',
+                'zp_tickets.dependingTicketId',
+                'zp_tickets.milestoneid',
+                'zp_projects.name as projectName',
+                'zp_clients.name as clientName',
+                'zp_user.firstname as userFirstname',
+                'zp_user.lastname as userLastname',
+                't3.firstname as editorFirstname',
+                't3.lastname as editorLastname',
+            ])
+            ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
+            ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
+            ->leftJoin('zp_user as t3', 'zp_tickets.editorId', '=', 't3.id')
+            ->where('zp_tickets.projectId', $projectId)
+            ->get();
 
-        $query = "SELECT
-						zp_tickets.id,
-						zp_tickets.headline,
-						IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
-						zp_tickets.description,
-						zp_tickets.date,
-						zp_tickets.dateToFinish,
-						zp_tickets.projectId,
-						zp_tickets.priority,
-						zp_tickets.status,
-						zp_tickets.sprint,
-						zp_tickets.storypoints,
-						zp_tickets.hourRemaining,
-						zp_tickets.acceptanceCriteria,
-						zp_tickets.userId,
-						zp_tickets.editorId,
-						zp_tickets.planHours,
-						zp_tickets.tags,
-						zp_tickets.url,
-						zp_tickets.editFrom,
-						zp_tickets.editTo,
-						zp_tickets.dependingTicketId,
-						zp_tickets.milestoneid,
-						zp_projects.name AS projectName,
-						zp_clients.name AS clientName,
-						zp_user.firstname AS userFirstname,
-						zp_user.lastname AS userLastname,
-						t3.firstname AS editorFirstname,
-						t3.lastname AS editorLastname
-					FROM
-				        zp_tickets
-				    LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-					LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-					LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
-					LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
-					WHERE
-						zp_tickets.projectId = :projectId";
+        // Convert stdClass objects to Tickets model instances
+        $tickets = [];
+        foreach ($results as $row) {
+            $ticket = new \Leantime\Domain\Tickets\Models\Tickets;
+            foreach ((array) $row as $key => $value) {
+                if (property_exists($ticket, $key)) {
+                    $ticket->$key = $value;
+                }
+            }
+            $tickets[] = $ticket;
+        }
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetchAll(PDO::FETCH_CLASS, '\Leantime\Domain\Tickets\Models\Tickets');
-        $stmn->closeCursor();
-
-        return $values;
+        return $tickets;
     }
 
     public function getTags($projectId): false|array
     {
+        $results = $this->connection->table('zp_tickets')
+            ->select('zp_tickets.tags')
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->where('zp_tickets.projectId', $projectId)
+            ->where('zp_tickets.type', '<>', 'milestone')
+            ->get();
 
-        $query = "SELECT
-						zp_tickets.tags
-					FROM
-						zp_tickets LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-					WHERE
-						zp_tickets.projectId = :projectId AND zp_tickets.type <> 'milestone'";
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     /**
@@ -870,186 +801,187 @@ class Tickets
      */
     public function getTicket($id): \Leantime\Domain\Tickets\Models\Tickets|bool
     {
+        $result = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.description',
+                'zp_tickets.date',
+                'zp_tickets.dateToFinish',
+                'zp_tickets.projectId',
+                'zp_tickets.priority',
+                'zp_tickets.status',
+                'zp_tickets.sprint',
+                'zp_tickets.storypoints',
+                'zp_tickets.hourRemaining',
+                'zp_tickets.acceptanceCriteria',
+                'zp_tickets.userId',
+                'zp_tickets.editorId',
+                'zp_tickets.planHours',
+                'zp_tickets.tags',
+                'zp_tickets.url',
+                'zp_tickets.editFrom',
+                'zp_tickets.editTo',
+                'zp_tickets.dependingTicketId',
+                'zp_tickets.milestoneid',
+                'milestones.headline as milestoneHeadline',
+                'zp_projects.name as projectName',
+                'zp_projects.details as projectDescription',
+                'zp_clients.name as clientName',
+                'zp_user.firstname as userFirstname',
+                'zp_user.lastname as userLastname',
+                't3.firstname as editorFirstname',
+                't3.lastname as editorLastname',
+                'parent.headline as parentHeadline',
+            ])
+            ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
+            ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
+            ->leftJoin('zp_user as t3', 'zp_tickets.editorId', '=', 't3.id')
+            ->leftJoin('zp_tickets as parent', 'zp_tickets.dependingTicketId', '=', 'parent.id')
+            ->leftJoin('zp_tickets as milestones', 'zp_tickets.milestoneid', '=', 'milestones.id')
+            ->where('zp_tickets.id', $id)
+            ->limit(1)
+            ->first();
 
-        $query = "SELECT
-						zp_tickets.id,
-						zp_tickets.headline,
-						IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
-						zp_tickets.description,
-						zp_tickets.date,
-						zp_tickets.dateToFinish,
-						zp_tickets.projectId,
-						zp_tickets.priority,
-						zp_tickets.status,
-						zp_tickets.sprint,
-						zp_tickets.storypoints,
-						zp_tickets.hourRemaining,
-						zp_tickets.acceptanceCriteria,
-						zp_tickets.userId,
-						zp_tickets.editorId,
-						zp_tickets.planHours,
-						zp_tickets.tags,
-						zp_tickets.url,
-						zp_tickets.editFrom,
-						zp_tickets.editTo,
-						zp_tickets.dependingTicketId,
-						zp_tickets.milestoneid,
-						milestones.headline AS milestoneHeadline,
-						zp_projects.name AS projectName,
-						zp_projects.details AS projectDescription,
-						zp_clients.name AS clientName,
-						zp_user.firstname AS userFirstname,
-						zp_user.lastname AS userLastname,
-						t3.firstname AS editorFirstname,
-						t3.lastname AS editorLastname,
-						parent.headline AS parentHeadline
-					FROM
-						zp_tickets
-					LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-					LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-					LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
-					LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
-					LEFT JOIN zp_tickets AS parent on zp_tickets.dependingTicketId = parent.id
-					LEFT JOIN zp_tickets AS milestones on zp_tickets.milestoneid = milestones.id
-
-					WHERE
-						zp_tickets.id = :ticketId
-					LIMIT 1";
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':ticketId', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetchObject('\Leantime\Domain\Tickets\Models\Tickets');
-        $stmn->closeCursor();
-
-        if ($values) {
-            $values->collaborators = $this->getCollaborators($id);
+        if (! $result) {
+            return false;
         }
+
+        $values = new \Leantime\Domain\Tickets\Models\Tickets;
+        foreach ((array) $result as $key => $value) {
+            $values->$key = $value;
+        }
+
+        $values->collaborators = $this->getCollaborators($id);
 
         return $values;
     }
 
     public function getAllSubtasks($id): false|array
     {
+        $dateFormatSql = match ($this->dbHelper->getDriverName()) {
+            'mysql' => "DATE_FORMAT(zp_tickets.date, '%Y,%m,%e')",
+            'pgsql' => "TO_CHAR(zp_tickets.date, 'YYYY,MM,DD')",
+            default => "DATE_FORMAT(zp_tickets.date, '%Y,%m,%e')",
+        };
 
-        $query = "SELECT
-						zp_tickets.id,
-						zp_tickets.headline,
-						IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
-						zp_tickets.description,
-						zp_tickets.date,
-						DATE_FORMAT(zp_tickets.date, '%Y,%m,%e') AS timelineDate,
-						DATE_FORMAT(zp_tickets.dateToFinish, '%Y,%m,%e') AS timelineDateToFinish,
-						zp_tickets.dateToFinish,
-						zp_tickets.projectId,
-						zp_tickets.priority,
-						zp_tickets.status,
-						zp_tickets.sprint,
-						zp_tickets.storypoints,
-						IFNULL(zp_tickets.hourRemaining, 0) AS hourRemaining,
-						zp_tickets.acceptanceCriteria,
-						zp_tickets.userId,
-						zp_tickets.editorId,
-						IFNULL(zp_tickets.planHours, 0) AS planHours,
-						zp_tickets.tags,
-						zp_tickets.url,
-						zp_tickets.editFrom,
-						zp_tickets.editTo,
-						zp_tickets.dependingTicketId,
-						zp_tickets.milestoneid,
-						zp_projects.name AS projectName,
-						zp_clients.name AS clientName,
-						zp_user.firstname AS userFirstname,
-						zp_user.lastname AS userLastname,
-						t3.firstname AS editorFirstname,
-						t3.lastname AS editorLastname
-					FROM
-						zp_tickets
-					LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-					LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-					LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
-					LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
-					WHERE
-						zp_tickets.dependingTicketId = :ticketId
-					ORDER BY zp_tickets.date DESC";
+        $dateToFinishFormatSql = match ($this->dbHelper->getDriverName()) {
+            'mysql' => "DATE_FORMAT(zp_tickets.dateToFinish, '%Y,%m,%e')",
+            'pgsql' => "TO_CHAR(zp_tickets.dateToFinish, 'YYYY,MM,DD')",
+            default => "DATE_FORMAT(zp_tickets.dateToFinish, '%Y,%m,%e')",
+        };
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':ticketId', $id, PDO::PARAM_INT);
+        $results = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.description',
+                'zp_tickets.date',
+                'zp_tickets.dateToFinish',
+                'zp_tickets.projectId',
+                'zp_tickets.priority',
+                'zp_tickets.status',
+                'zp_tickets.sprint',
+                'zp_tickets.storypoints',
+                'zp_tickets.acceptanceCriteria',
+                'zp_tickets.userId',
+                'zp_tickets.editorId',
+                'zp_tickets.tags',
+                'zp_tickets.url',
+                'zp_tickets.editFrom',
+                'zp_tickets.editTo',
+                'zp_tickets.dependingTicketId',
+                'zp_tickets.milestoneid',
+                'zp_projects.name as projectName',
+                'zp_clients.name as clientName',
+                'zp_user.firstname as userFirstname',
+                'zp_user.lastname as userLastname',
+                't3.firstname as editorFirstname',
+                't3.lastname as editorLastname',
+            ])
+            ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
+            ->selectRaw("{$dateFormatSql} AS timelineDate")
+            ->selectRaw("{$dateToFinishFormatSql} AS timelineDateToFinish")
+            ->selectRaw('COALESCE(zp_tickets.hourRemaining, 0) AS hourRemaining')
+            ->selectRaw('COALESCE(zp_tickets.planHours, 0) AS planHours')
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
+            ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
+            ->leftJoin('zp_user as t3', 'zp_tickets.editorId', '=', 't3.id')
+            ->where('zp_tickets.dependingTicketId', $id)
+            ->orderByDesc('zp_tickets.date')
+            ->get();
 
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     public function getAllPossibleParents(\Leantime\Domain\Tickets\Models\Tickets $ticket, $projectId): false|array
     {
-
-        $query = "SELECT
-						zp_tickets.id,
-						zp_tickets.headline,
-						IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
-						zp_tickets.description,
-						zp_tickets.date,
-						DATE_FORMAT(zp_tickets.date, '%Y,%m,%e') AS timelineDate,
-						DATE_FORMAT(zp_tickets.dateToFinish, '%Y,%m,%e') AS timelineDateToFinish,
-						zp_tickets.dateToFinish,
-						zp_tickets.projectId,
-						zp_tickets.priority,
-						zp_tickets.status,
-						zp_tickets.sprint,
-						zp_tickets.storypoints,
-						IFNULL(zp_tickets.hourRemaining, 0) AS hourRemaining,
-						zp_tickets.acceptanceCriteria,
-						zp_tickets.userId,
-						zp_tickets.editorId,
-						IFNULL(zp_tickets.planHours, 0) AS planHours,
-						zp_tickets.tags,
-						zp_tickets.url,
-						zp_tickets.editFrom,
-						zp_tickets.editTo,
-						zp_tickets.dependingTicketId,
-						zp_tickets.milestoneid,
-						zp_projects.name AS projectName,
-						zp_clients.name AS clientName,
-						zp_user.firstname AS userFirstname,
-						zp_user.lastname AS userLastname,
-						t3.firstname AS editorFirstname,
-						t3.lastname AS editorLastname
-					FROM
-						zp_tickets
-					LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-					LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-					LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
-					LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
-					WHERE
-						zp_tickets.id <> :ticketId
-					    AND zp_tickets.type <> 'milestone'
-					    AND (zp_tickets.dependingTicketId <> :ticketId OR zp_tickets.dependingTicketId IS NULL)
-                    ";
-
-        if ($projectId !== 0) {
-            $query .= ' AND zp_tickets.projectId = :projectId';
-        }
-
-        $query .= ' ORDER BY zp_tickets.date DESC';
-
-        $stmn = $this->db->database->prepare($query);
-
-        $stmn->bindValue(':ticketId', $ticket->id ?? 0, PDO::PARAM_INT);
-        $stmn->bindValue(':dependingId', $ticket->dependingTicketId ?? null, PDO::PARAM_INT);
+        $query = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.description',
+                'zp_tickets.date',
+                'zp_tickets.dateToFinish',
+                'zp_tickets.projectId',
+                'zp_tickets.priority',
+                'zp_tickets.status',
+                'zp_tickets.sprint',
+                'zp_tickets.storypoints',
+                'zp_tickets.acceptanceCriteria',
+                'zp_tickets.userId',
+                'zp_tickets.editorId',
+                'zp_tickets.tags',
+                'zp_tickets.url',
+                'zp_tickets.editFrom',
+                'zp_tickets.editTo',
+                'zp_tickets.dependingTicketId',
+                'zp_tickets.milestoneid',
+                'zp_projects.name as projectName',
+                'zp_clients.name as clientName',
+                'zp_user.firstname as userFirstname',
+                'zp_user.lastname as userLastname',
+                't3.firstname as editorFirstname',
+                't3.lastname as editorLastname',
+            ])
+            ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
+            ->selectRaw($this->dbHelper->formatDate('zp_tickets.date', '%Y,%m,%e').' AS timelineDate')
+            ->selectRaw($this->dbHelper->formatDate('zp_tickets.dateToFinish', '%Y,%m,%e').' AS timelineDateToFinish')
+            ->selectRaw('COALESCE(zp_tickets.hourRemaining, 0) AS hourRemaining')
+            ->selectRaw('COALESCE(zp_tickets.planHours, 0) AS planHours')
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
+            ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
+            ->leftJoin('zp_user as t3', 'zp_tickets.editorId', '=', 't3.id')
+            ->where('zp_tickets.id', '<>', $ticket->id ?? 0)
+            ->where('zp_tickets.type', '<>', 'milestone')
+            ->where(function ($q) use ($ticket) {
+                $q->where('zp_tickets.dependingTicketId', '<>', $ticket->id ?? 0)
+                    ->orWhereNull('zp_tickets.dependingTicketId');
+            });
 
         if ($projectId !== 0) {
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            $query->where('zp_tickets.projectId', $projectId);
         }
 
-        $stmn->execute();
-        $values = $stmn->fetchAll(PDO::FETCH_CLASS, 'Leantime\Domain\Tickets\Models\Tickets');
-        $stmn->closeCursor();
+        $results = $query->orderByDesc('zp_tickets.date')->get();
 
-        return $values;
+        // Convert stdClass objects to Tickets model instances
+        $tickets = [];
+        foreach ($results as $row) {
+            $ticket = new \Leantime\Domain\Tickets\Models\Tickets;
+            foreach ((array) $row as $key => $value) {
+                if (property_exists($ticket, $key)) {
+                    $ticket->$key = $value;
+                }
+            }
+            $tickets[] = $ticket;
+        }
+
+        return $tickets;
     }
 
     /**
@@ -1057,225 +989,196 @@ class Tickets
      */
     public function getAllMilestones(array $searchCriteria, string $sort = 'standard'): false|array
     {
-
         $statusGroups = $this->getStatusListGroupedByType($searchCriteria['currentProject'] ?? session('currentProject'));
 
-        $query = "SELECT
-						zp_tickets.id,
-						zp_tickets.headline,
-						IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
-						zp_tickets.description,
-						zp_tickets.date,
-						DATE_FORMAT(zp_tickets.date, '%Y,%m,%e') AS timelineDate,
-						DATE_FORMAT(zp_tickets.dateToFinish, '%Y,%m,%e') AS timelineDateToFinish,
-						zp_tickets.dateToFinish,
-						zp_tickets.projectId,
-						zp_tickets.priority,
-						zp_tickets.status,
-						zp_tickets.sprint,
-						zp_tickets.storypoints,
-						zp_tickets.hourRemaining,
-						zp_tickets.acceptanceCriteria,
-						depMilestone.headline AS milestoneHeadline,
-						IF((depMilestone.tags IS NULL OR depMilestone.tags = ''), 'var(--grey)', depMilestone.tags) AS milestoneColor,
-						zp_tickets.userId,
-						zp_tickets.editorId,
-						zp_tickets.planHours,
-						IF((zp_tickets.tags IS NULL OR zp_tickets.tags = ''), 'var(--grey)', zp_tickets.tags) AS tags,
-						zp_tickets.url,
-						zp_tickets.editFrom,
-						zp_tickets.editTo,
-						zp_tickets.sortIndex,
-						zp_tickets.dependingTicketId,
-						zp_tickets.milestoneid,
-						zp_projects.name AS projectName,
-						zp_clients.name AS clientName,
-						zp_user.firstname AS userFirstname,
-						zp_user.lastname AS userLastname,
-						t3.firstname AS editorFirstname,
-						t3.lastname AS editorLastname,
-						t3.profileId AS editorProfileId
-					FROM
-						zp_tickets
-						LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-						LEFT JOIN zp_tickets AS depMilestone ON zp_tickets.milestoneid = depMilestone.id
-						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
-						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
-					    LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
-						WHERE (zp_projects.state <> -1 OR zp_projects.state IS NULL)
-						AND (
-                        zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
-                        OR zp_projects.psettings = 'all'
-                        OR (zp_projects.psettings = 'clients' AND zp_projects.clientId = :clientId)
-                        OR (requestor.role >= 40)
-                    )
-                    ";
+        $requestorId = session('userdata.id') ?? '-1';
+        $userId = $searchCriteria['currentUser'] ?? session('userdata.id') ?? '-1';
+        $clientId = $searchCriteria['currentClient'] ?? session('userdata.clientId') ?? '-1';
 
+        $query = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.description',
+                'zp_tickets.date',
+                'zp_tickets.dateToFinish',
+                'zp_tickets.projectId',
+                'zp_tickets.priority',
+                'zp_tickets.status',
+                'zp_tickets.sprint',
+                'zp_tickets.storypoints',
+                'zp_tickets.hourRemaining',
+                'zp_tickets.acceptanceCriteria',
+                'zp_tickets.userId',
+                'zp_tickets.editorId',
+                'zp_tickets.planHours',
+                'zp_tickets.url',
+                'zp_tickets.editFrom',
+                'zp_tickets.editTo',
+                'zp_tickets.sortIndex',
+                'zp_tickets.dependingTicketId',
+                'zp_tickets.milestoneid',
+                'zp_projects.name as projectName',
+                'zp_clients.name as clientName',
+                'zp_user.firstname as userFirstname',
+                'zp_user.lastname as userLastname',
+                't3.firstname as editorFirstname',
+                't3.lastname as editorLastname',
+                't3.profileId as editorProfileId',
+                'depMilestone.headline as milestoneHeadline',
+            ])
+            ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
+            ->selectRaw($this->dbHelper->formatDate('zp_tickets.date', '%Y,%m,%e').' AS timelineDate')
+            ->selectRaw($this->dbHelper->formatDate('zp_tickets.dateToFinish', '%Y,%m,%e').' AS timelineDateToFinish')
+            ->selectRaw("CASE WHEN (depMilestone.tags IS NULL OR depMilestone.tags = '') THEN 'var(--grey)' ELSE depMilestone.tags END AS milestoneColor")
+            ->selectRaw("CASE WHEN (zp_tickets.tags IS NULL OR zp_tickets.tags = '') THEN 'var(--grey)' ELSE zp_tickets.tags END AS tags")
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->leftJoin('zp_tickets as depMilestone', 'zp_tickets.milestoneid', '=', 'depMilestone.id')
+            ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
+            ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
+            ->leftJoin('zp_user as t3', 'zp_tickets.editorId', '=', 't3.id')
+            ->leftJoin('zp_user as requestor', function ($join) use ($requestorId) {
+                $join->on('requestor.id', '=', $this->connection->raw((int) $requestorId));
+            })
+            ->where(function ($q) {
+                $q->where('zp_projects.state', '<>', -1)
+                    ->orWhereNull('zp_projects.state');
+            })
+            ->where(function ($q) use ($userId, $clientId) {
+                $q->whereIn('zp_tickets.projectId', function ($subquery) use ($userId) {
+                    $subquery->select('projectId')
+                        ->from('zp_relationuserproject')
+                        ->where('zp_relationuserproject.userId', $userId);
+                })
+                    ->orWhere('zp_projects.psettings', 'all')
+                    ->orWhere(function ($q2) use ($clientId) {
+                        $q2->where('zp_projects.psettings', 'clients')
+                            ->where('zp_projects.clientId', $clientId);
+                    })
+                    ->orWhere('requestor.role', '>=', 40);
+            });
+
+        // Apply search criteria filters
         if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
-            $query .= ' AND zp_tickets.projectId = :projectId';
+            $query->where('zp_tickets.projectId', $searchCriteria['currentProject']);
         }
 
-        if (isset($searchCriteria['clients']) && $searchCriteria['clients'] != 0 && $searchCriteria['clients'] != '' && $searchCriteria['clients'] != '') {
-            $clientIdIn = DbCore::arrayToPdoBindingString('clients', count(explode(',', $searchCriteria['clients'])));
-            $query .= ' AND zp_projects.clientId IN('.$clientIdIn.')';
+        if (isset($searchCriteria['clients']) && $searchCriteria['clients'] != 0 && $searchCriteria['clients'] != '') {
+            $clientIds = explode(',', $searchCriteria['clients']);
+            $query->whereIn('zp_projects.clientId', $clientIds);
         }
 
         if (isset($searchCriteria['users']) && $searchCriteria['users'] != '') {
-            $editorIdIn = DbCore::arrayToPdoBindingString('users', count(explode(',', $searchCriteria['users'])));
-            $query .= ' AND zp_tickets.editorId IN('.$editorIdIn.')';
+            $userIds = explode(',', $searchCriteria['users']);
+            $query->whereIn('zp_tickets.editorId', $userIds);
         }
 
         if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] != '') {
-            $milestoneIn = DbCore::arrayToPdoBindingString('milestone', count(explode(',', $searchCriteria['milestone'])));
-            $query .= ' AND zp_tickets.milestoneid IN('.$milestoneIn.')';
+            $milestoneIds = explode(',', $searchCriteria['milestone']);
+            $query->whereIn('zp_tickets.milestoneid', $milestoneIds);
         }
 
         if (isset($searchCriteria['status']) && $searchCriteria['status'] == 'all') {
-            $query .= ' ';
+            // No filter
         } elseif (isset($searchCriteria['status']) && $searchCriteria['status'] != '') {
             $statusArray = explode(',', $searchCriteria['status']);
 
             if (array_search('not_done', $statusArray) !== false) {
-                // Project Id needs to be set to search for not_done due to custom done states across projects
                 if ($searchCriteria['currentProject'] != '') {
                     $statusLabels = $this->getStateLabels($searchCriteria['currentProject']);
-
                     $statusList = [];
                     foreach ($statusLabels as $key => $status) {
                         if ($status['statusType'] !== 'DONE') {
                             $statusList[] = $key;
                         }
                     }
-
-                    $query .= ' AND zp_tickets.status IN('.implode(',', $statusList).')';
+                    if (! empty($statusList)) {
+                        $query->whereIn('zp_tickets.status', $statusList);
+                    }
                 }
             } else {
-                $statusIn = DbCore::arrayToPdoBindingString(
-                    'status',
-                    count(explode(',', $searchCriteria['status']))
-                );
-                $query .= ' AND zp_tickets.status IN('.$statusIn.')';
+                $statuses = explode(',', $searchCriteria['status']);
+                $query->whereIn('zp_tickets.status', $statuses);
             }
         } else {
-            $query .= ' AND zp_tickets.status <> -1';
+            $query->where('zp_tickets.status', '<>', -1);
         }
 
         if (isset($searchCriteria['type']) && $searchCriteria['type'] != '') {
-            $typeIn = DbCore::arrayToPdoBindingString('type', count(explode(',', strtolower($searchCriteria['type']))));
-            $query .= ' AND LOWER(zp_tickets.type) IN('.$typeIn.')';
+            $types = array_map('strtolower', explode(',', $searchCriteria['type']));
+            $query->whereIn($this->connection->raw('LOWER(zp_tickets.type)'), $types);
         }
 
         if (isset($searchCriteria['priority']) && $searchCriteria['priority'] != '') {
-            $priorityIn = DbCore::arrayToPdoBindingString('priority', count(explode(',', strtolower($searchCriteria['priority']))));
-            $query .= ' AND LOWER(zp_tickets.priority) IN('.$priorityIn.')';
+            $priorities = array_map('strtolower', explode(',', $searchCriteria['priority']));
+            $query->whereIn($this->connection->raw('LOWER(zp_tickets.priority)'), $priorities);
         }
 
         if (isset($searchCriteria['term']) && $searchCriteria['term'] != '') {
-            $query .= ' AND (FIND_IN_SET(:termStandard, zp_tickets.tags) OR zp_tickets.headline LIKE :termWild OR zp_tickets.description LIKE :termWild OR zp_tickets.id LIKE :termWild)';
+            $term = $searchCriteria['term'];
+            $termWild = '%'.$term.'%';
+            $findInSetSql = $this->dbHelper->findInSet('?', 'zp_tickets.tags');
+            $query->where(function ($q) use ($term, $termWild, $findInSetSql) {
+                $q->whereRaw($findInSetSql, [$term])
+                    ->orWhere('zp_tickets.headline', 'LIKE', $termWild)
+                    ->orWhere('zp_tickets.description', 'LIKE', $termWild)
+                    ->orWhere('zp_tickets.id', 'LIKE', $termWild);
+            });
         }
 
         if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] > 0 && $searchCriteria['sprint'] != 'all') {
-            $sprintIn = DbCore::arrayToPdoBindingString('sprint', count(explode(',', $searchCriteria['sprint'])));
-            $query .= ' AND (zp_tickets.sprint IN('.$sprintIn.") OR zp_tickets.type = 'milestone')";
+            $sprintIds = explode(',', $searchCriteria['sprint']);
+            $query->where(function ($q) use ($sprintIds) {
+                $q->whereIn('zp_tickets.sprint', $sprintIds)
+                    ->orWhere('zp_tickets.type', 'milestone');
+            });
         }
 
         if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] == 'backlog') {
-            $query .= " AND (zp_tickets.sprint IS NULL OR zp_tickets.sprint = '' OR zp_tickets.sprint = -1 OR zp_tickets.type = 'milestone')";
+            $query->where(function ($q) {
+                $q->whereNull('zp_tickets.sprint')
+                    ->orWhere('zp_tickets.sprint', '')
+                    ->orWhere('zp_tickets.sprint', -1)
+                    ->orWhere('zp_tickets.type', 'milestone');
+            });
         }
 
-        $query .= '	GROUP BY
-						zp_tickets.id';
+        $query->groupBy('zp_tickets.id');
 
+        // Apply sorting
         if ($sort == 'standard') {
-            $query .= ' ORDER BY zp_tickets.sortindex ASC, zp_tickets.editFrom ASC, zp_tickets.id DESC';
+            $query->orderBy('zp_tickets.sortindex', 'ASC')
+                ->orderBy('zp_tickets.editFrom', 'ASC')
+                ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'kanbansort') {
-            $query .= ' ORDER BY zp_tickets.kanbanSortIndex ASC, zp_tickets.id DESC';
+            $query->orderBy('zp_tickets.kanbanSortIndex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'duedate') {
-            $query .= " ORDER BY (zp_tickets.dateToFinish = '0000-00-00 00:00:00'), zp_tickets.dateToFinish ASC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
+            $query->orderByRaw("(zp_tickets.dateToFinish = '0000-00-00 00:00:00')")
+                ->orderBy('zp_tickets.dateToFinish', 'ASC')
+                ->orderBy('zp_tickets.sortindex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'date') {
-            $query .= ' ORDER BY zp_tickets.date DESC, zp_tickets.sortindex ASC, zp_tickets.id DESC';
+            $query->orderByDesc('zp_tickets.date')
+                ->orderBy('zp_tickets.sortindex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
         }
 
-        $stmn = $this->db->database->prepare($query);
+        $results = $query->get();
 
-        // NOTE: This should not be removed as it is used for authorization
-        if (isset($searchCriteria['currentUser'])) {
-            $stmn->bindValue(':userId', $searchCriteria['currentUser'], PDO::PARAM_INT);
-        } else {
-            $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
-        }
-
-        $stmn->bindValue(':requestorId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
-
-        if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
-            $stmn->bindValue(':projectId', $searchCriteria['currentProject'], PDO::PARAM_INT);
-        }
-
-        if (isset($searchCriteria['users']) && $searchCriteria['users'] != '') {
-            foreach (explode(',', $searchCriteria['users']) as $key => $user) {
-                $stmn->bindValue(':users'.$key, $user, PDO::PARAM_STR);
-            }
-        }
-
-        if (isset($searchCriteria['clients']) && $searchCriteria['clients'] != 0 && $searchCriteria['clients'] != '' && $searchCriteria['clients'] != '') {
-            foreach (explode(',', $searchCriteria['clients']) as $key => $client) {
-                $stmn->bindValue(':clients'.$key, $client, PDO::PARAM_STR);
-            }
-        }
-
-        // Current client is only used for authorization as it represents the current client Id assigned to a user.
-        // Do not attempt to filter tickets using this value.
-        if (isset($searchCriteria['currentClient'])) {
-            $stmn->bindValue(':clientId', $searchCriteria['currentClient'], PDO::PARAM_INT);
-        } else {
-            $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
-        }
-
-        if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] != '') {
-            foreach (explode(',', $searchCriteria['milestone']) as $key => $milestone) {
-                $stmn->bindValue(':milestone'.$key, $milestone, PDO::PARAM_STR);
-            }
-        }
-
-        if (isset($searchCriteria['status']) && $searchCriteria['status'] != 'all') {
-            $statusArray = explode(',', $searchCriteria['status']);
-            if ($searchCriteria['status'] != '' && array_search('not_done', $statusArray) === false) {
-                foreach (explode(',', $searchCriteria['status']) as $key => $status) {
-                    $stmn->bindValue(':status'.$key, $status, PDO::PARAM_STR);
+        // Convert stdClass objects to Tickets model instances
+        $tickets = [];
+        foreach ($results as $row) {
+            $ticket = new \Leantime\Domain\Tickets\Models\Tickets;
+            foreach ((array) $row as $key => $value) {
+                if (property_exists($ticket, $key)) {
+                    $ticket->$key = $value;
                 }
             }
+            $tickets[] = $ticket;
         }
 
-        if (isset($searchCriteria['type']) && $searchCriteria['type'] != '') {
-            foreach (explode(',', $searchCriteria['type']) as $key => $type) {
-                $stmn->bindValue(':type'.$key, $type, PDO::PARAM_STR);
-            }
-        }
-
-        if (isset($searchCriteria['priority']) && $searchCriteria['priority'] != '') {
-            foreach (explode(',', $searchCriteria['priority']) as $key => $priority) {
-                $stmn->bindValue(':priority'.$key, $priority, PDO::PARAM_STR);
-            }
-        }
-
-        if (isset($searchCriteria['term']) && $searchCriteria['term'] != '') {
-            $termWild = '%'.$searchCriteria['term'].'%';
-            $stmn->bindValue(':termWild', $termWild, PDO::PARAM_STR);
-            $stmn->bindValue(':termStandard', $searchCriteria['term'], PDO::PARAM_STR);
-        }
-
-        if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] > 0 && $searchCriteria['sprint'] != 'all') {
-            foreach (explode(',', $searchCriteria['sprint']) as $key => $sprint) {
-                $stmn->bindValue(':sprint'.$key, $sprint, PDO::PARAM_STR);
-            }
-        }
-
-        $stmn->execute();
-        $values = $stmn->fetchAll(PDO::FETCH_CLASS, 'Leantime\Domain\Tickets\Models\Tickets');
-        $stmn->closeCursor();
-
-        return $values;
+        return $tickets;
     }
 
     /**
@@ -1301,210 +1204,138 @@ class Tickets
 
     public function getFirstTicket($projectId): mixed
     {
+        $result = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.description',
+                'zp_tickets.date',
+                'zp_tickets.dateToFinish',
+                'zp_tickets.projectId',
+                'zp_tickets.priority',
+                'zp_tickets.status',
+                'zp_tickets.sprint',
+                'zp_tickets.storypoints',
+                'zp_tickets.hourRemaining',
+                'zp_tickets.acceptanceCriteria',
+                'zp_tickets.userId',
+                'zp_tickets.editorId',
+                'zp_tickets.planHours',
+                'zp_tickets.tags',
+                'zp_tickets.url',
+                'zp_tickets.editFrom',
+                'zp_tickets.editTo',
+                'zp_tickets.dependingTicketId',
+                'zp_tickets.milestoneid',
+            ])
+            ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
+            ->selectRaw($this->dbHelper->formatDate('zp_tickets.date', '%Y,%m,%e').' AS timelineDate')
+            ->selectRaw($this->dbHelper->formatDate('zp_tickets.dateToFinish', '%Y,%m,%e').' AS timelineDateToFinish')
+            ->where('zp_tickets.type', '<>', 'milestone')
+            ->where('zp_tickets.projectId', $projectId)
+            ->orderBy('zp_tickets.date', 'ASC')
+            ->limit(1)
+            ->first();
 
-        $query = "SELECT
-						zp_tickets.id,
-						zp_tickets.headline,
-						IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
-						zp_tickets.description,
-						zp_tickets.date,
-						DATE_FORMAT(zp_tickets.date, '%Y,%m,%e') AS timelineDate,
-						DATE_FORMAT(zp_tickets.dateToFinish, '%Y,%m,%e') AS timelineDateToFinish,
-						zp_tickets.dateToFinish,
-						zp_tickets.projectId,
-						zp_tickets.priority,
-						zp_tickets.status,
-						zp_tickets.sprint,
-						zp_tickets.storypoints,
-						zp_tickets.hourRemaining,
-						zp_tickets.acceptanceCriteria,
-						zp_tickets.userId,
-						zp_tickets.editorId,
-						zp_tickets.planHours,
-						zp_tickets.tags,
-						zp_tickets.url,
-						zp_tickets.editFrom,
-						zp_tickets.editTo,
-						zp_tickets.dependingTicketId,
-						zp_tickets.milestoneid
+        if (! $result) {
+            return false;
+        }
 
-					FROM
-						zp_tickets
-					WHERE
-						zp_tickets.type <> 'milestone' AND zp_tickets.projectId = :projectId
-                    ORDER BY
-					    zp_tickets.date ASC
-					LIMIT 1";
+        $ticket = new \Leantime\Domain\Tickets\Models\Tickets;
+        foreach ((array) $result as $key => $value) {
+            if (property_exists($ticket, $key)) {
+                $ticket->$key = $value;
+            }
+        }
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $stmn->setFetchMode(PDO::FETCH_CLASS, 'Leantime\Domain\Tickets\Models\Tickets');
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values;
+        return $ticket;
     }
 
     public function getNumberOfAllTickets($projectId = null): mixed
     {
-
-        $query = "SELECT
-						COUNT(zp_tickets.id) AS allTickets
-					FROM
-						zp_tickets
-					WHERE
-						zp_tickets.type <> 'milestone'";
+        $query = $this->connection->table('zp_tickets')
+            ->where('zp_tickets.type', '<>', 'milestone');
 
         if (! is_null($projectId)) {
-            $query .= 'AND zp_tickets.projectId = :projectId ';
+            $query->where('zp_tickets.projectId', $projectId);
         }
 
-        $stmn = $this->db->database->prepare($query);
-
-        if (! is_null($projectId)) {
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-        }
-
-        $stmn->execute();
-
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values['allTickets'];
+        return $query->count();
     }
 
     public function getNumberOfMilestones($projectId = null): mixed
     {
-
-        $query = "SELECT
-						COUNT(zp_tickets.id) AS allTickets
-					FROM
-						zp_tickets
-					WHERE
-						zp_tickets.type = 'milestone' ";
+        $query = $this->connection->table('zp_tickets')
+            ->where('zp_tickets.type', 'milestone');
 
         if (! is_null($projectId)) {
-            $query .= 'AND zp_tickets.projectId = :projectId ';
+            $query->where('zp_tickets.projectId', $projectId);
         }
 
-        $stmn = $this->db->database->prepare($query);
-
-        if (! is_null($projectId)) {
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-        }
-
-        $stmn->execute();
-
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values['allTickets'];
+        return $query->count();
     }
 
     public function getNumberOfClosedTickets($projectId): mixed
     {
+        $statusGroupsSQL = $this->getStatusListGroupedByType($projectId);
+        $statusGroups = $this->dbHelper->parseStatusGroups($statusGroupsSQL);
 
-        $statusGroups = $this->getStatusListGroupedByType($projectId);
+        $query = $this->connection->table('zp_tickets')
+            ->where('zp_tickets.type', '<>', 'milestone')
+            ->where('zp_tickets.projectId', $projectId);
 
-        $query = "SELECT
-						COUNT(zp_tickets.id) AS allTickets
-					FROM
-						zp_tickets
-					WHERE
-						zp_tickets.type <> 'milestone' AND zp_tickets.projectId = :projectId
-						AND zp_tickets.status ".$statusGroups['DONE'].'
-                    ORDER BY
-					    zp_tickets.date ASC
-					LIMIT 1';
+        if (! empty($statusGroups['DONE'])) {
+            $query->whereIn('zp_tickets.status', $statusGroups['DONE']);
+        } else {
+            $query->whereRaw('1=0'); // Empty status group = no matches
+        }
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-        $stmn->execute();
-
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values['allTickets'];
+        return $query->count();
     }
 
     public function getEffortOfClosedTickets($projectId, $averageStorySize): mixed
     {
+        $statusGroupsSQL = $this->getStatusListGroupedByType($projectId);
+        $statusGroups = $this->dbHelper->parseStatusGroups($statusGroupsSQL);
 
-        $statusGroups = $this->getStatusListGroupedByType($projectId);
+        $query = $this->connection->table('zp_tickets')
+            ->selectRaw("SUM(CASE WHEN zp_tickets.storypoints <> '' THEN zp_tickets.storypoints ELSE ? END) AS allEffort", [$averageStorySize])
+            ->where('zp_tickets.type', '<>', 'milestone')
+            ->where('zp_tickets.projectId', $projectId);
 
-        $query = "SELECT
-						SUM(CASE when zp_tickets.storypoints <> '' then zp_tickets.storypoints else :avgStorySize end) AS allEffort
-					FROM
-						zp_tickets
-					WHERE
-						zp_tickets.type <> 'milestone' AND zp_tickets.projectId = :projectId
-						AND zp_tickets.status ".$statusGroups['DONE'].'
-                    ORDER BY
-					    zp_tickets.date ASC
-					LIMIT 1';
+        if (! empty($statusGroups['DONE'])) {
+            $query->whereIn('zp_tickets.status', $statusGroups['DONE']);
+        } else {
+            $query->whereRaw('1=0'); // Empty status group = no matches
+        }
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-        $stmn->bindValue(':avgStorySize', $averageStorySize, PDO::PARAM_INT);
+        $result = $query->first();
 
-        $stmn->execute();
-
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values['allEffort'];
+        return $result->allEffort ?? 0;
     }
 
     public function getEffortOfAllTickets($projectId, $averageStorySize): mixed
     {
+        $result = $this->connection->table('zp_tickets')
+            ->selectRaw("SUM(CASE WHEN zp_tickets.storypoints <> '' THEN zp_tickets.storypoints ELSE ? END) AS allEffort", [$averageStorySize])
+            ->where('zp_tickets.type', '<>', 'milestone')
+            ->where('zp_tickets.projectId', $projectId)
+            ->first();
 
-        $query = "SELECT
-						SUM(CASE when zp_tickets.storypoints <> '' then zp_tickets.storypoints else :avgStorySize end) AS allEffort
-					FROM
-						zp_tickets
-					WHERE
-						zp_tickets.type <> 'milestone' AND zp_tickets.projectId = :projectId
-                    ORDER BY
-					    zp_tickets.date ASC
-					LIMIT 1";
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-        $stmn->bindValue(':avgStorySize', $averageStorySize, PDO::PARAM_INT);
-
-        $stmn->execute();
-
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values['allEffort'];
+        return $result->allEffort ?? 0;
     }
 
     public function getAverageTodoSize($projectId): mixed
     {
-        $query = "SELECT
-						AVG(zp_tickets.storypoints) as avgSize
-					FROM
-						zp_tickets
-					WHERE
-						zp_tickets.type <> 'milestone' AND
-						(zp_tickets.storypoints <> '' AND zp_tickets.storypoints IS NOT NULL) AND zp_tickets.projectId = :projectId
-                    ORDER BY
-					    zp_tickets.date ASC
-					LIMIT 1";
+        $result = $this->connection->table('zp_tickets')
+            ->selectRaw('AVG(zp_tickets.storypoints) as avgSize')
+            ->where('zp_tickets.type', '<>', 'milestone')
+            ->where('zp_tickets.storypoints', '<>', '')
+            ->whereNotNull('zp_tickets.storypoints')
+            ->where('zp_tickets.projectId', $projectId)
+            ->first();
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-        $stmn->execute();
-
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values['avgSize'];
+        return $result->avgSize ?? null;
     }
 
     /**
@@ -1512,95 +1343,31 @@ class Tickets
      */
     public function addTicket(array $values): bool|int
     {
-
-        $query = 'INSERT INTO zp_tickets (
-						headline,
-						type,
-						description,
-						date,
-						dateToFinish,
-						projectId,
-						status,
-						userId,
-						tags,
-						sprint,
-						storypoints,
-						priority,
-						hourRemaining,
-						planHours,
-						acceptanceCriteria,
-						editFrom,
-						editTo,
-						editorId,
-						dependingTicketId,
-                        milestoneid,
-						sortindex,
-						kanbanSortindex,
-                        modified
-				) VALUES (
-						:headline,
-						:type,
-						:description,
-						:date,
-						:dateToFinish,
-						:projectId,
-						:status,
-						:userId,
-						:tags,
-						:sprint,
-						:storypoints,
-						:priority,
-						:hourRemaining,
-						:planHours,
-						:acceptanceCriteria,
-						:editFrom,
-						:editTo,
-						:editorId,
-						:dependingTicketId,
-				         :milestoneid,
-						:sortIndex,
-						0,
-                        :modified
-				)';
-
-        $stmn = $this->db->database->prepare($query);
-
-        $stmn->bindValue(':headline', $values['headline'], PDO::PARAM_STR);
-        $stmn->bindValue(':type', $values['type'], PDO::PARAM_STR);
-        $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
-        $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
-        $stmn->bindValue(':dateToFinish', $values['dateToFinish'], PDO::PARAM_STR);
-        $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
-        $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-        $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_STR);
-        $stmn->bindValue(':tags', $values['tags'], PDO::PARAM_STR);
-
-        $stmn->bindValue(':sprint', $values['sprint'], PDO::PARAM_STR);
-        $stmn->bindValue(':storypoints', $values['storypoints'], PDO::PARAM_STR);
-        $stmn->bindValue(':priority', $values['priority'], PDO::PARAM_STR);
-        $stmn->bindValue(':hourRemaining', $values['hourRemaining'], PDO::PARAM_STR);
-        $stmn->bindValue(':planHours', $values['planHours'], PDO::PARAM_STR);
-        $stmn->bindValue(':acceptanceCriteria', $values['acceptanceCriteria'], PDO::PARAM_STR);
-
-        $stmn->bindValue(':editFrom', $values['editFrom'], PDO::PARAM_STR);
-        $stmn->bindValue(':editTo', $values['editTo'], PDO::PARAM_STR);
-        $stmn->bindValue(':sortIndex', $values['sortIndex'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':editorId', $values['editorId'], PDO::PARAM_STR);
-        $stmn->bindValue(':modified', dtHelper()->userNow()->formatDateTimeForDb(), PDO::PARAM_STR);
-
-        $depending = $values['dependingTicketId'] ?? '';
-
-        $stmn->bindValue(':dependingTicketId', $depending, PDO::PARAM_STR);
-
-        $milestoneId = $values['milestoneid'] ?? '';
-
-        $stmn->bindValue(':milestoneid', $milestoneId, PDO::PARAM_STR);
-
-        $stmn->execute();
-
-        $stmn->closeCursor();
-
-        $ticketId = $this->db->database->lastInsertId();
+        $ticketId = $this->connection->table('zp_tickets')->insertGetId([
+            'headline' => $values['headline'],
+            'type' => $values['type'],
+            'description' => $values['description'],
+            'date' => $values['date'],
+            'dateToFinish' => $values['dateToFinish'],
+            'projectId' => $values['projectId'],
+            'status' => $values['status'],
+            'userId' => $values['userId'],
+            'tags' => $values['tags'],
+            'sprint' => $values['sprint'],
+            'storypoints' => $values['storypoints'],
+            'priority' => $values['priority'],
+            'hourRemaining' => $values['hourRemaining'],
+            'planHours' => $values['planHours'],
+            'acceptanceCriteria' => $values['acceptanceCriteria'],
+            'editFrom' => $values['editFrom'],
+            'editTo' => $values['editTo'],
+            'editorId' => $values['editorId'],
+            'dependingTicketId' => $values['dependingTicketId'] ?? '',
+            'milestoneid' => $values['milestoneid'] ?? '',
+            'sortindex' => $values['sortIndex'] ?? '',
+            'kanbanSortindex' => 0,
+            'modified' => dtHelper()->userNow()->formatDateTimeForDb(),
+        ]);
 
         if ($ticketId !== false) {
             $ticketId = intval($ticketId);
@@ -1616,33 +1383,25 @@ class Tickets
 
     public function patchTicket($id, array $params): bool
     {
-
         $this->addTicketChange(session('userdata.id'), $id, $params);
 
-        $sql = 'UPDATE zp_tickets SET ';
-
+        // Sanitize params to use only valid column names
+        $updates = [];
         foreach ($params as $key => $value) {
-            $sql .= ''.DbCore::sanitizeToColumnString($key).'=:'.DbCore::sanitizeToColumnString($key).', ';
+            $sanitizedKey = DbCore::sanitizeToColumnString($key);
+            $updates[$sanitizedKey] = $value;
+
             // send status update event
             if ($key == 'status') {
                 static::dispatch_event('ticketStatusUpdate', ['ticketId' => $id, 'status' => $value, 'action' => 'ticketStatusUpdate']);
             }
         }
 
-        $sql .= 'id=:id, modified=:modified WHERE id=:id LIMIT 1';
+        $updates['modified'] = dtHelper()->userNow()->formatDateTimeForDb();
 
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->bindValue(':modified', dtHelper()->userNow()->formatDateTimeForDb(), PDO::PARAM_STR);
-
-        foreach ($params as $key => $value) {
-            $stmn->bindValue(':'.DbCore::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
-        }
-
-        $return = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $return;
+        return $this->connection->table('zp_tickets')
+            ->where('id', $id)
+            ->update($updates);
     }
 
     /**
@@ -1650,60 +1409,32 @@ class Tickets
      */
     public function updateTicket(array $values, $id): bool
     {
-
         $this->addTicketChange(session('userdata.id'), $id, $values);
 
-        $query = 'UPDATE zp_tickets
-			SET
-				headline = :headline,
-				type = :type,
-				description=:description,
-				projectId=:projectId,
-				status = :status,
-                date = :date,
-				dateToFinish = :dateToFinish,
-				sprint = :sprint,
-				storypoints = :storypoints,
-				priority = :priority,
-				hourRemaining = :hourRemaining,
-				planHours = :planHours,
-				tags = :tags,
-				editorId = :editorId,
-				editFrom = :editFrom,
-				editTo = :editTo,
-				acceptanceCriteria = :acceptanceCriteria,
-				dependingTicketId = :dependingTicketId,
-                milestoneid = :milestoneid,
-                modified = :modified
-			WHERE id = :id LIMIT 1';
-
-        $stmn = $this->db->database->prepare($query);
-
-        $stmn->bindValue(':headline', $values['headline'], PDO::PARAM_STR);
-        $stmn->bindValue(':type', $values['type'], PDO::PARAM_STR);
-        $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
-        $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
-        $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-        $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
-        $stmn->bindValue(':dateToFinish', $values['dateToFinish'], PDO::PARAM_STR);
-        $stmn->bindValue(':sprint', $values['sprint'], PDO::PARAM_STR);
-        $stmn->bindValue(':storypoints', $values['storypoints'], PDO::PARAM_STR);
-        $stmn->bindValue(':priority', $values['priority'], PDO::PARAM_STR);
-        $stmn->bindValue(':hourRemaining', $values['hourRemaining'], PDO::PARAM_STR);
-        $stmn->bindValue(':acceptanceCriteria', $values['acceptanceCriteria'], PDO::PARAM_STR);
-        $stmn->bindValue(':planHours', $values['planHours'], PDO::PARAM_STR);
-        $stmn->bindValue(':tags', $values['tags'], PDO::PARAM_STR);
-        $stmn->bindValue(':editorId', $values['editorId'], PDO::PARAM_STR);
-        $stmn->bindValue(':editFrom', $values['editFrom'], PDO::PARAM_STR);
-        $stmn->bindValue(':editTo', $values['editTo'], PDO::PARAM_STR);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->bindValue(':dependingTicketId', $values['dependingTicketId'], PDO::PARAM_STR);
-        $stmn->bindValue(':milestoneid', $values['milestoneid'], PDO::PARAM_STR);
-        $stmn->bindValue(':modified', dtHelper()->userNow()->formatDateTimeForDb(), PDO::PARAM_STR);
-
-        $result = $stmn->execute();
-
-        $stmn->closeCursor();
+        $result = $this->connection->table('zp_tickets')
+            ->where('id', $id)
+            ->update([
+                'headline' => $values['headline'],
+                'type' => $values['type'],
+                'description' => $values['description'],
+                'projectId' => $values['projectId'],
+                'status' => $values['status'],
+                'date' => $values['date'],
+                'dateToFinish' => $values['dateToFinish'],
+                'sprint' => $values['sprint'],
+                'storypoints' => $values['storypoints'],
+                'priority' => $values['priority'],
+                'hourRemaining' => $values['hourRemaining'],
+                'planHours' => $values['planHours'],
+                'tags' => $values['tags'],
+                'editorId' => $values['editorId'],
+                'editFrom' => $values['editFrom'],
+                'editTo' => $values['editTo'],
+                'acceptanceCriteria' => $values['acceptanceCriteria'],
+                'dependingTicketId' => $values['dependingTicketId'],
+                'milestoneid' => $values['milestoneid'],
+                'modified' => dtHelper()->userNow()->formatDateTimeForDb(),
+            ]);
 
         $this->removeCollaborators($id);
 
@@ -1715,44 +1446,22 @@ class Tickets
 
     public function updateTicketStatus($ticketId, $status, int $ticketSorting = -1, $handler = null): bool
     {
-
         $this->addTicketChange(session('userdata.id'), $ticketId, ['status' => $status]);
 
+        $updates = [
+            'status' => $status,
+            'modified' => dtHelper()->userNow()->formatDateTimeForDb(),
+        ];
+
         if ($ticketSorting > -1) {
-            $query = 'UPDATE zp_tickets
-					SET
-						kanbanSortIndex = :sortIndex,
-						status = :status,
-                        modified = :modified
-					WHERE id = :ticketId
-					LIMIT 1';
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':status', $status, PDO::PARAM_INT);
-            $stmn->bindValue(':sortIndex', $ticketSorting, PDO::PARAM_INT);
-            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-            $stmn->bindValue(':modified', dtHelper()->userNow()->formatDateTimeForDb(), PDO::PARAM_STR);
-        } else {
-            $query = 'UPDATE zp_tickets
-					SET
-						status = :status,
-                        modified = :modified
-					WHERE id = :ticketId
-					LIMIT 1';
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':status', $status, PDO::PARAM_INT);
-            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-            $stmn->bindValue(':modified', dtHelper()->userNow()->formatDateTimeForDb(), PDO::PARAM_STR);
+            $updates['kanbanSortIndex'] = $ticketSorting;
         }
 
         static::dispatch_event('ticketStatusUpdate', ['ticketId' => $ticketId, 'status' => $status, 'action' => 'ticketStatusUpdate', 'handler' => $handler]);
 
-        $result = $stmn->execute();
-
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->connection->table('zp_tickets')
+            ->where('id', $ticketId)
+            ->update($updates);
     }
 
     public function addTicketChange($userId, $ticketId, $values): void
@@ -1779,14 +1488,15 @@ class Tickets
 
         $changedFields = [];
 
-        $sql = 'SELECT * FROM zp_tickets WHERE id=:ticketId LIMIT 1';
+        $oldValues = $this->connection->table('zp_tickets')
+            ->where('id', $ticketId)
+            ->first();
 
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
+        if (! $oldValues) {
+            return;
+        }
 
-        $stmn->execute();
-        $oldValues = $stmn->fetch();
-        $stmn->closeCursor();
+        $oldValues = (array) $oldValues;
 
         // compare table
         foreach ($fields as $enum => $dbTable) {
@@ -1801,27 +1511,19 @@ class Tickets
             }
         }
 
-        $sql = 'INSERT INTO zp_tickethistory (
-					userId, ticketId, changeType, changeValue, dateModified
-				) VALUES (
-					:userId, :ticketId, :changeType, :changeValue, :date
-				)';
-
-        $stmn = $this->db->database->prepare($sql);
-
         foreach ($changedFields as $field => $value) {
-            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-            $stmn->bindValue(':changeType', $field, PDO::PARAM_STR);
-            $stmn->bindValue(':changeValue', $value, PDO::PARAM_STR);
-            $stmn->bindValue(':date', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-
-            $stmn->execute();
+            $this->connection->table('zp_tickethistory')->insert([
+                'userId' => $userId,
+                'ticketId' => $ticketId,
+                'changeType' => $field,
+                'changeValue' => $value,
+                'dateModified' => date('Y-m-d H:i:s'),
+            ]);
         }
-
-        $stmn->closeCursor();
     }
 
+    /**
+     * Get all tasks (and optionally subtasks) that belong to a milestone
     /**
      * Get all tasks (and optionally subtasks) that belong to a milestone
      *
@@ -1835,20 +1537,14 @@ class Tickets
             $projectId = session('currentProject');
         }
 
-        $query = 'SELECT * FROM zp_tickets
-                  WHERE milestoneid = :milestoneId
-                  AND projectId = :projectId
-                  ORDER BY sortindex ASC, id DESC';
+        $results = $this->connection->table('zp_tickets')
+            ->where('milestoneid', $milestoneId)
+            ->where('projectId', $projectId)
+            ->orderBy('sortindex', 'ASC')
+            ->orderBy('id', 'DESC')
+            ->get();
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':milestoneId', $milestoneId, PDO::PARAM_INT);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $tickets = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $tickets ?: [];
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     /**
@@ -1859,59 +1555,13 @@ class Tickets
      */
     public function getSubtasksByParent(int $parentTicketId): array
     {
-        $query = 'SELECT * FROM zp_tickets
-                  WHERE dependingTicketId = :parentTicketId
-                  ORDER BY sortindex ASC, id DESC';
+        $results = $this->connection->table('zp_tickets')
+            ->where('dependingTicketId', $parentTicketId)
+            ->orderBy('sortindex', 'ASC')
+            ->orderBy('id', 'DESC')
+            ->get();
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':parentTicketId', $parentTicketId, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $tickets = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $tickets ?: [];
-    }
-
-    /**
-     * Bulk update sortindex for multiple tickets in a single transaction
-     *
-     * @param  array  $updates  Array of ['ticketId' => sortindex]
-     * @return bool True on success
-     */
-    public function bulkUpdateSortIndex(array $updates): bool
-    {
-        if (empty($updates)) {
-            return true;
-        }
-
-        // Build CASE statement for bulk update
-        $caseStatements = [];
-        $ticketIds = [];
-
-        foreach ($updates as $ticketId => $sortIndex) {
-            // Cast to int for safety
-            $ticketId = (int) $ticketId;
-            $sortIndex = (int) $sortIndex;
-            $caseStatements[] = "WHEN id = {$ticketId} THEN {$sortIndex}";
-            $ticketIds[] = $ticketId;
-        }
-
-        $query = 'UPDATE zp_tickets
-                  SET sortindex = CASE
-                      '.implode(' ', $caseStatements).'
-                  END
-                  WHERE id IN ('.implode(',', $ticketIds).')';
-
-        try {
-            $result = $this->db->database->exec($query);
-
-            return $result !== false;
-        } catch (\PDOException $e) {
-            Log::error('Failed to bulk update sortindex: '.$e->getMessage());
-
-            return false;
-        }
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     /**
@@ -1919,54 +1569,35 @@ class Tickets
      */
     public function delticket($id): bool
     {
-        $this->removeCollaborators($id);
-        $query = 'DELETE FROM zp_tickets WHERE id = :id';
+        $this->connection->table('zp_tickets')
+            ->where('id', $id)
+            ->delete();
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $result = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $result;
+        return true;
     }
 
     /**
      * @return true
      */
-    /**
-     * @return true
-     */
-    /**
-     * @return true
-     */
     public function delMilestone($id): bool
     {
+        // Clear milestoneid from tickets
+        $this->connection->table('zp_tickets')
+            ->where('milestoneid', $id)
+            ->update([
+                'milestoneid' => '',
+                'modified' => dtHelper()->userNow()->formatDateTimeForDb(),
+            ]);
 
-        $query = "UPDATE zp_tickets
-                SET
-                    milestoneid = '',
-                    modified = :modified
-                WHERE milestoneid = :id";
+        // Clear milestoneid from canvas items
+        $this->connection->table('zp_canvas_items')
+            ->where('milestoneid', $id)
+            ->update(['milestoneid' => '']);
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->bindValue(':modified', dtHelper()->userNow()->formatDateTimeForDb(), PDO::PARAM_STR);
-        $stmn->execute();
-
-        $query = "UPDATE zp_canvas_items
-                SET
-                    milestoneid = ''
-                WHERE milestoneid = :id";
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->execute();
-
-        $query = 'DELETE FROM zp_tickets WHERE id = :id';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->execute();
+        // Delete the milestone
+        $this->connection->table('zp_tickets')
+            ->where('id', $id)
+            ->delete();
 
         return true;
     }
@@ -1981,19 +1612,16 @@ class Tickets
      */
     public function addCollaborators(int $ticketId, array $collaborators, int $createdBy): bool
     {
-        $query = "INSERT INTO zp_entity_relationship (
-                    entityA, entityAType, entityB, entityBType, relationship, createdOn, createdBy
-                ) VALUES (
-                    :entityA, 'Ticket', :entityB, 'User', '".EntityRelationshipEnum::Collaborator->value."', NOW(), :createdBy
-                )";
-
-        $stmn = $this->db->database->prepare($query);
-
         foreach ($collaborators as $userId) {
-            $stmn->bindValue(':entityA', $ticketId, PDO::PARAM_INT);
-            $stmn->bindValue(':entityB', $userId, PDO::PARAM_INT);
-            $stmn->bindValue(':createdBy', $createdBy, PDO::PARAM_INT);
-            $stmn->execute();
+            $this->connection->table('zp_entity_relationship')->insert([
+                'entityA' => $ticketId,
+                'entityAType' => 'Ticket',
+                'entityB' => $userId,
+                'entityBType' => 'User',
+                'relationship' => EntityRelationshipEnum::Collaborator->value,
+                'createdOn' => now(),
+                'createdBy' => $createdBy,
+            ]);
         }
 
         return true;
@@ -2007,15 +1635,13 @@ class Tickets
      */
     public function getCollaborators(int $ticketId): array
     {
-        $query = "SELECT entityB AS userId
-                FROM zp_entity_relationship
-                WHERE entityA = :entityA AND entityAType = 'Ticket' AND relationship = '".EntityRelationshipEnum::Collaborator->value."'";
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':entityA', $ticketId, PDO::PARAM_INT);
-        $stmn->execute();
-
-        return $stmn->fetchAll(PDO::FETCH_COLUMN);
+        return $this->connection->table('zp_entity_relationship')
+            ->select('entityB AS userId')
+            ->where('entityA', $ticketId)
+            ->where('entityAType', 'Ticket')
+            ->where('relationship', EntityRelationshipEnum::Collaborator->value)
+            ->pluck('userId')
+            ->toArray();
     }
 
     /**
@@ -2026,12 +1652,10 @@ class Tickets
      */
     public function removeCollaborators(int $ticketId): bool
     {
-        $query = "DELETE FROM zp_entity_relationship
-                WHERE entityA = :entityA AND entityAType = 'Ticket' AND relationship = '".EntityRelationshipEnum::Collaborator->value."'";
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':entityA', $ticketId, PDO::PARAM_INT);
-
-        return $stmn->execute();
+        return $this->connection->table('zp_entity_relationship')
+            ->where('entityA', $ticketId)
+            ->where('entityAType', 'Ticket')
+            ->where('relationship', EntityRelationshipEnum::Collaborator->value)
+            ->delete();
     }
 }

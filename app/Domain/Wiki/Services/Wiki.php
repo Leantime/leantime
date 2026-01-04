@@ -83,7 +83,11 @@ class Wiki
      */
     public function getWiki($id): mixed
     {
-        return $this->wikiRepository->getWiki($id);
+        if ($id === null) {
+            return false;
+        }
+
+        return $this->wikiRepository->getWiki((int) $id);
     }
 
     /**
