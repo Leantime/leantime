@@ -1,15 +1,11 @@
-# Multi-stage Dockerfile for Leantime
-# Stage 1: Build frontend assets
 FROM node:20-alpine AS frontend-builder
 
 WORKDIR /build
 
-# Copy package files and configs
 COPY package*.json ./
 COPY webpack.mix.js ./
 COPY tailwind.config.js ./
 
-# Install npm dependencies
 RUN npm ci --production=false
 
 # Copy source files needed for build
