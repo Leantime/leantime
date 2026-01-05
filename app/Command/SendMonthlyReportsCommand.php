@@ -16,31 +16,30 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class SendMonthlyReportsCommand extends Command
 {
-protected function execute(InputInterface $input, OutputInterface $output): int
-{
-    ! defined('BASE_URL') && define('BASE_URL', '');
-    ! defined('CURRENT_URL') && define('CURRENT_URL', '');
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        ! defined('BASE_URL') && define('BASE_URL', '');
+        ! defined('CURRENT_URL') && define('CURRENT_URL', '');
 
-    $io = new SymfonyStyle($input, $output);
+        $io = new SymfonyStyle($input, $output);
 
-    try {
-        $io->writeln('[' . date('Y-m-d H:i:s') . '] Starting monthly reports job...');
+            try {
+                $io->writeln('[' . date('Y-m-d H:i:s') . '] Starting monthly reports job...');
 
-        $slackReportService = app()->make(SlackMonthlyReportService::class);
+                $slackReportService = app()->make(SlackMonthlyReportService::class);
 
-        $io->writeln('Fetching profiles with auto-export enabled...');
+                $io->writeln('Fetching profiles with auto-export enabled...');
         
-        $allUserProfiles = $slackReportService->getAllProfilesWithEnabledAutoExport();
-                $io->writeln('DEBUG: Total users with profiles: ' . count($allUserProfiles));
+                $allUserProfiles = $slackReportService->getAllProfilesWithEnabledAutoExport();
 
 
-        if (empty($allUserProfiles)) {
-            $io->warning('No profiles with auto-export enabled found.');
-            return Command::SUCCESS;
-        }
+            if (empty($allUserProfiles)) {
+                $io->warning('No profiles with auto-export enabled found.');
+                return Command::SUCCESS;
+            }
 
-        $totalUsers = count($allUserProfiles);
-        $io->success("Found {$totalUsers} user(s) with enabled profiles.");
+            $totalUsers = count($allUserProfiles);
+            $io->success("Found {$totalUsers} user(s) with enabled profiles.");
 
         foreach ($allUserProfiles as $userProfile) {
             $userId = $userProfile['user_id'];
