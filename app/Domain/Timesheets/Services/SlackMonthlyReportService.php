@@ -119,7 +119,7 @@ public function __construct(
             $autoExportProfiles[$name] = $profile;
         }
     }
-    
+    error_log(print_r($autoExportProfiles, true));
     return $autoExportProfiles;
 }
 
@@ -182,23 +182,28 @@ public function getAllProfiles(): array {
 
    public function sendMonthlyReportToSlack($profilesWithEnabledAutoExport): void
 {
-    $allUsers = $this->userService->getAll();
-    $allProfiles = [];
     foreach ($profilesWithEnabledAutoExport as $profileName => $profile) {
+        $profileFilters = $profile['filters'] ?? [];
+        $userId = $profileFilters['userId'] ?? null;
+        if ($userId === 'all' || $userId === '') {
+            $userId = null; 
+        } elseif ($userId !== null) {
+            $userId = (int)$userId;  
+        }
         $filters = [
-            'dateFrom' => isset($profile['dateFrom']) ? dtHelper()->parseUserDateTime($profile['dateFrom'])->setToDbTimezone() : dtHelper()->userNow()->startOfMonth()->setToDbTimezone(),
-            'dateTo' => isset($profile['dateTo']) ? dtHelper()->parseUserDateTime($profile['dateTo'])->setToDbTimezone() : dtHelper()->userNow()->endOfMonth()->setToDbTimezone(),
-            'projectFilter' => $profile['projectFilter'] ?? -1,
-            'kind' => $profile['kind'] ?? 'all',
-            'userId' => $profile['userId'] ?? null,
-            'invEmplCheck' => $profile['invEmplCheck'] ?? '-1',
-            'invCompCheck' => $profile['invCompCheck'] ?? '0',
-            'ticketParameter' => $profile['ticketParameter'] ?? '-1',
-            'paidCheck' => $profile['paidCheck'] ?? '0',
-            'clientId' => $profile['clientId'] ?? -1,
+            'dateFrom' => isset($profileFilters['dateFrom']) ? dtHelper()->parseUserDateTime($profileFilters['dateFrom'])->setToDbTimezone() : dtHelper()->userNow()->startOfMonth()->setToDbTimezone(),
+            'dateTo' => isset($profileFilters['dateTo']) ? dtHelper()->parseUserDateTime($profileFilters['dateTo'])->setToDbTimezone() : dtHelper()->userNow()->endOfMonth()->setToDbTimezone(),
+            'projectFilter' => $profileFilters['projects'] ?? -1,
+            'kind' => $profileFilters['kind'] ?? 'all',
+            'userId' => $userId,
+            'invEmplCheck' => $profileFilters['invEmpl'] ?? '-1',
+            'invCompCheck' => $profileFilters['invComp'] ?? '0',
+            'ticketParameter' => $profileFilters['ticketParameter'] ?? '-1',
+            'paidCheck' => $profileFilters['paid'] ?? '0',
+            'clientId' => $profileFilters['clientId'] ?? -1,
         ];
 
-        $columnState = $profile['filters']['columnState'] ?? [];
+        $columnState = $profileFilters['columnState'] ?? [];
         $reportName = $profile['name'] ?? " ";
 
         $csvContent = $this->generateCsvString($filters, $columnState);
