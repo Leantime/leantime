@@ -16,40 +16,53 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class SendMonthlyReportsCommand extends Command
 {
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        ! defined('BASE_URL') && define('BASE_URL', '');
-        ! defined('CURRENT_URL') && define('CURRENT_URL', '');
+protected function execute(InputInterface $input, OutputInterface $output): int
+{
+    ! defined('BASE_URL') && define('BASE_URL', '');
+    ! defined('CURRENT_URL') && define('CURRENT_URL', '');
 
-        $io = new SymfonyStyle($input, $output);
+    $io = new SymfonyStyle($input, $output);
 
-        try {
-            $io->writeln('[' . date('Y-m-d H:i:s') . '] Starting monthly reports job...');
+    try {
+        $io->writeln('[' . date('Y-m-d H:i:s') . '] Starting monthly reports job...');
 
-            $slackReportService = app()->make(SlackMonthlyReportService::class);
+        $slackReportService = app()->make(SlackMonthlyReportService::class);
 
-            $io->writeln('Fetching profiles with auto-export enabled...');
-            $profilesWithEnabledAutoExport = $slackReportService->getAllProfilesWithEnabledAutoExport();
+        $io->writeln('Fetching profiles with auto-export enabled...');
+        
+        $allUserProfiles = $slackReportService->getAllProfilesWithEnabledAutoExport();
+                $io->writeln('DEBUG: Total users with profiles: ' . count($allUserProfiles));
 
-            if (empty($profilesWithEnabledAutoExport)) {
-                $io->warning('No profiles with auto-export enabled found.');
-                return Command::SUCCESS;
-            }
 
-            $userCount = count($profilesWithEnabledAutoExport);
-            $io->success("Found {$userCount} user(s) with enabled profiles.");
-
-            $io->writeln('Sending reports to Slack...');
-            $slackReportService->sendAutomaticMonthlyReportToSlack($profilesWithEnabledAutoExport);
-
-            $io->success('✓ Monthly reports sent successfully!');
-            
+        if (empty($allUserProfiles)) {
+            $io->warning('No profiles with auto-export enabled found.');
             return Command::SUCCESS;
-
-        } catch (\Exception $e) {
-            $io->error('✗ Error: ' . $e->getMessage());
-            
-            return Command::FAILURE;
         }
+
+        $totalUsers = count($allUserProfiles);
+        $io->success("Found {$totalUsers} user(s) with enabled profiles.");
+
+        foreach ($allUserProfiles as $userProfile) {
+            $userId = $userProfile['user_id'];
+            $userName = $userProfile['user_name'];
+            $profiles = $userProfile['profiles'];
+            
+            $profileCount = count($profiles);
+            $io->writeln("Processing {$profileCount} profile(s) for {$userName} (ID: {$userId})...");
+                        $io->writeln('DEBUG: Profiles for user ' . $userId . ': ' . json_encode($profiles, JSON_PRETTY_PRINT));
+
+            
+            $slackReportService->sendMonthlyReportToSlack($profiles);
+        }
+
+        $io->success('✓ Monthly reports sent successfully!');
+        
+        return Command::SUCCESS;
+
+    } catch (\Exception $e) {
+        $io->error('✗ Error: ' . $e->getMessage());
+        
+        return Command::FAILURE;
     }
+}
 }

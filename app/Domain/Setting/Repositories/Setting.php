@@ -113,6 +113,11 @@ class Setting
         $this->cache->forget($type);
     }
 
+    public function clearCache ($setting): void
+    {
+        $this->cache->forget($setting);
+    }
+
     /**
      * checkIfInstalled checks if zp user table exists (and assumes that leantime is installed)
      */

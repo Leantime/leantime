@@ -9,6 +9,8 @@ use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Leantime\Domain\Users\Services\Users as UserService;
+use Illuminate\Support\Facades\Cache;
+
 
 class SlackMonthlyReportService {
     private string $webhookUrl;
@@ -99,6 +101,8 @@ public function __construct(
     public function getUsersProfilesWithEnabledAutoExport(int $userId): array 
 {
     $settingKey = "user.{$userId}.timesheetFilters";
+
+    $this->settingRepository->clearCache($settingKey);
     $preferences = $this->settingRepository->getSetting($settingKey);
     
     if (!$preferences) {
@@ -119,7 +123,6 @@ public function __construct(
             $autoExportProfiles[$name] = $profile;
         }
     }
-    error_log(print_r($autoExportProfiles, true));
     return $autoExportProfiles;
 }
 
@@ -209,40 +212,6 @@ public function getAllProfiles(): array {
         $csvContent = $this->generateCsvString($filters, $columnState);
 
         $this->sendCsvToSlack($csvContent, $reportName);
-    }
-}
-
-public function sendAutomaticMonthlyReportToSlack($profilesWithEnabledAutoExport): void
-{
-    foreach ($profilesWithEnabledAutoExport as $userProfileData) {
-        $userId = $userProfileData['user_id'];
-        $userName = $userProfileData['user_name'];
-        
-        foreach ($userProfileData['profiles'] as $profile) {
-            $filters = [
-                'dateFrom' => isset($profile['dateFrom']) 
-                    ? dtHelper()->parseUserDateTime($profile['dateFrom'])->setToDbTimezone() 
-                    : dtHelper()->userNow()->startOfMonth()->setToDbTimezone(),
-                'dateTo' => isset($profile['dateTo']) 
-                    ? dtHelper()->parseUserDateTime($profile['dateTo'])->setToDbTimezone() 
-                    : dtHelper()->userNow()->endOfMonth()->setToDbTimezone(),
-                'projectFilter' => $profile['projectFilter'] ?? -1,
-                'kind' => $profile['kind'] ?? 'all',
-                'userId' => $profile['userId'] ?? null,
-                'invEmplCheck' => $profile['invEmplCheck'] ?? '-1',
-                'invCompCheck' => $profile['invCompCheck'] ?? '0',
-                'ticketParameter' => $profile['ticketParameter'] ?? '-1',
-                'paidCheck' => $profile['paidCheck'] ?? '0',
-                'clientId' => $profile['clientId'] ?? -1,
-            ];
-
-            $columnState = $profile['filters']['columnState'] ?? [];
-            $reportName = $profile['name'] ?? " ";
-            
-            $csvContent = $this->generateCsvString($filters, $columnState);
-
-            $this->sendCsvToSlack($csvContent, $userName);
-        }
     }
 }
 
