@@ -72,7 +72,7 @@
         const filters = getCurrentFilters();
 
         try {
-            const response = await fetch(leantime.appUrl + PREFERENCES_ENDPOINT, {
+            const response = await fetch(leantime.appUrl + PROFILE_ENDPOINT, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

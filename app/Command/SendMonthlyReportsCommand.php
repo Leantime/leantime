@@ -29,7 +29,7 @@ class SendMonthlyReportsCommand extends Command
             $slackReportService = app()->make(SlackMonthlyReportService::class);
 
             $io->writeln('Fetching profiles with auto-export enabled...');
-            $profilesWithEnabledAutoExport = $slackReportService->getAllProfiles();
+            $profilesWithEnabledAutoExport = $slackReportService->getAllProfilesWithEnabledAutoExport();
 
             if (empty($profilesWithEnabledAutoExport)) {
                 $io->warning('No profiles with auto-export enabled found.');

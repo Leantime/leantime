@@ -123,6 +123,25 @@ public function __construct(
     return $autoExportProfiles;
 }
 
+public function getAllProfilesWithEnabledAutoExport (): array {
+    $allUsers = $this->userService->getAll();
+    $allProfiles = [];
+
+    foreach ($allUsers as $user) {
+        $userId = $user['id'];
+        $profiles = $this->getUsersProfilesWithEnabledAutoExport($userId);
+
+        if (!empty($profiles)) {
+            $allProfiles[] = [
+                'user_id' => $userId,
+                'user_name' => $user['firstname'] . ' ' . $user['lastname'],
+                'profiles' => $profiles
+            ];
+        }
+    }
+    return $allProfiles;
+}
+
 public function getAllUsersProfiles(int $userId): array {
     $settingKey = "user.{$userId}.timesheetFilters";
     $preferences = $this->settingRepository->getSetting($settingKey);
