@@ -152,6 +152,13 @@ server {
     access_log /var/log/nginx/leantime-access.log;
     error_log /var/log/nginx/leantime-error.log;
 
+    client_body_timeout 300s;
+    client_header_timeout 300s;
+    send_timeout 300s;
+    proxy_connect_timeout 300s;
+    proxy_send_timeout 300s;
+    proxy_read_timeout 300s;
+
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
@@ -163,8 +170,8 @@ server {
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param PATH_INFO $fastcgi_path_info;
-        fastcgi_buffering off;
-        fastcgi_read_timeout 300;
+    fastcgi_buffering off;
+    fastcgi_read_timeout 300;
     }
 
     location ~ /\. {
@@ -260,7 +267,14 @@ RUN mkdir -p \
     public/userfiles
 
 COPY --chown=root:root <<'EOF' /entrypoint.sh
+#!/bin/sh
 set -e
+mkdir -p /var/lib/nginx/tmp/client_body
+chown -R www-data:www-data /var/lib/nginx
+chmod -R 755 /var/lib/nginx
+
+chown -R www-data:www-data /var/www/html/userfiles /var/www/html/public/userfiles
+chmod -R 775 /var/www/html/userfiles /var/www/html/public/userfiles
 
 echo "Starting Leantime container..."
 
