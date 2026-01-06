@@ -354,8 +354,11 @@ class Timesheets extends Repository
         return $call->fetchAll();
     }
 
-        public function getMonthlyTimesheets(int $projectId, CarbonInterface $fromDate, int $userId = 0): mixed
+    public function getMonthlyTimesheets(int $projectId, int $userId = 0): mixed
     {
+        $fromDate = dtHelper()->userNow()->startOfMonth()->setToDbTimezone();
+        $endDate = dtHelper()->userNow()->endOfMonth()->addDay()->setToDbTimezone();
+    
         $query = 'SELECT
             zp_timesheets.id,
             zp_timesheets.userId,
@@ -370,7 +373,6 @@ class Timesheets extends Repository
             zp_timesheets.invoicedCompDate,
             zp_timesheets.paid,
             zp_timesheets.paidDate,
-            zp_timesheets.kind,
             zp_timesheets.modified,
             zp_tickets.headline,
             zp_tickets.planHours,
@@ -384,7 +386,7 @@ class Timesheets extends Repository
         LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
         LEFT JOIN zp_clients ON zp_clients.id = zp_projects.clientId
         WHERE
-            (zp_timesheets.workDate >= :dateStart1 AND zp_timesheets.workDate < :dateEnd)
+            (zp_timesheets.workDate >= :dateStart AND zp_timesheets.workDate < :dateEnd)
             AND (zp_timesheets.userId = :userId)
             AND hours > 0
         ';
@@ -396,16 +398,9 @@ class Timesheets extends Repository
         $query .= ' ORDER BY zp_timesheets.ticketId, zp_timesheets.kind, zp_timesheets.workDate DESC';
 
         $call = $this->dbcall(func_get_args());
-
         $call->prepare($query);
 
-        if (! $fromDate->isUtc()) {
-            $fromDate->setTimezone('UTC');
-        }
-
-        $call->bindValue(':dateStart1', $fromDate);
-
-        $endDate = $fromDate->addDays(7);
+        $call->bindValue(':dateStart', $fromDate);
         $call->bindValue(':dateEnd', $endDate);
         $call->bindValue(':userId', $userId, PDO::PARAM_INT);
 
