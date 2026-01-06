@@ -1800,4 +1800,57 @@ class Projects
         return $project;
 
     }
+
+    /**
+     * Check if a project key is already taken by another project*
+     * @api
+     */
+    public function isProjectKeyTaken(string $key, int $excludeProjectId = 0): bool
+    {
+        return $this->projectRepository->isProjectKeyTaken($key, $excludeProjectId);
+    }
+
+    /**
+     * Validate a project key format and availability
+     * @api
+     */
+    public function validateProjectKey(string $key, int $projectId = 0): array
+    {
+        // Check if key is empty
+        if (empty($key)) {
+            return [
+                'valid' => false,
+                'message' => $this->language->__('validation.project_key_required'),
+            ];
+        }
+
+        // Check key length (2-10 characters)
+        if (strlen($key) < 2 || strlen($key) > 10) {
+            return [
+                'valid' => false,
+                'message' => $this->language->__('validation.project_key_length'),
+            ];
+        }
+
+        // Check for valid characters (only letters and numbers)
+        if (! preg_match('/^[A-Z0-9]+$/', $key)) {
+            return [
+                'valid' => false,
+                'message' => $this->language->__('validation.project_key_format'),
+            ];
+        }
+
+        // Check if key is already taken
+        if ($this->isProjectKeyTaken($key, $projectId)) {
+            return [
+                'valid' => false,
+                'message' => $this->language->__('validation.project_key_taken'),
+            ];
+        }
+
+        return [
+            'valid' => true,
+            'message' => '',
+        ];
+    }
 }

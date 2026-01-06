@@ -72,6 +72,7 @@ class Install
         30400,
         30408,
         30409,
+        30410,
     ];
 
     /**
@@ -474,6 +475,7 @@ class Install
                 CREATE TABLE `zp_projects` (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
                     `name` varchar(100) DEFAULT NULL,
+                    `projectKey` varchar(10) DEFAULT NULL,
                     `clientId` int(100) DEFAULT NULL,
                     `details` text,
                     `state` int(2) DEFAULT NULL,
@@ -491,7 +493,8 @@ class Install
                     `avatar` MEDIUMTEXT NULL ,
                     `cover` MEDIUMTEXT NULL,
                     `sortIndex` INT(11) NULL,
-                    PRIMARY KEY (`id`)
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `idx_projectKey` (`projectKey`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_punch_clock` (
@@ -2076,6 +2079,49 @@ class Install
                 }
             }
         }
+
+        return count($errors) ? $errors : true;
+    }
+
+    /**
+     * Add projectKey column to zp_projects table
+     */
+    public function update_sql_30410(): bool|array
+    {
+        $errors = [];
+
+        try {
+            // Check if projectKey column already exists
+            $columnExists = $this->connection->select(
+                "SELECT COUNT(*) as count
+                 FROM INFORMATION_SCHEMA.COLUMNS
+                 WHERE TABLE_SCHEMA = DATABASE()
+                 AND TABLE_NAME = 'zp_projects'
+                 AND COLUMN_NAME = 'projectKey'"
+            );
+
+            // Only add column if it doesn't exist
+            if ($columnExists[0]->count == 0) {
+                $this->connection->statement(
+                    'ALTER TABLE `zp_projects` ADD COLUMN `projectKey` VARCHAR(10) NULL DEFAULT NULL AFTER `name`'
+                );
+
+                // Add unique index
+                $this->connection->statement(
+                    'ALTER TABLE `zp_projects` ADD UNIQUE INDEX `idx_projectKey` (`projectKey`)'
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to add projectKey column: '.$e->getMessage());
+            Log::error($e);
+
+            // Don't fail for duplicate columns or indexes
+            if (! str_contains($e->getMessage(), 'Duplicate column name') &&
+                ! str_contains($e->getMessage(), 'Duplicate key name')) {
+                array_push($errors, 'Failed to add projectKey column: '.$e->getMessage());
+            }
+        }
+
 
         return count($errors) ? $errors : true;
     }

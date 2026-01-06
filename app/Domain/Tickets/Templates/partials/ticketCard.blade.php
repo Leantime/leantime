@@ -7,6 +7,7 @@
                     <a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}">{{ $row['parentHeadline'] }}</a> //
                 @endif
             @endif
+            <small class="tw-text-gray-500">{{ !empty($row['projectKey']) ? $row['projectKey'] . '-' : '#' }}{{ $row['id'] }}</small><br />
             <strong>
                 @if(isset($row['pinned']) && $row['pinned'])
                     <i class="fa fa-thumbtack" style="color: var(--accent2); margin-right: 5px; transform: rotate(45deg);" data-tippy-content="{{ __('text.pinned_ticket') }}"></i>

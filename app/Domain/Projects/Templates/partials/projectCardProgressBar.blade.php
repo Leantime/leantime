@@ -37,7 +37,7 @@
                     <div class="commentImage" style="margin-right:-10px;" data-tippy-content="{{ $member['firstname'] }} {{ $member['lastname'] }}">
                         <img
                             style=""
-                            src="{{  BASE_URL }}/api/users?profileImage={{ $member['id'] }}&v={{ format($member['modified'])->timestamp() }}" data-tippy-content="{{ $member['firstname'] . ' ' . $member['lastname'] }}" />
+                            src="{{  BASE_URL }}/api/users?profileImage={{ $member['id'] }}&v={{ !empty($member['modified']) ? format($member['modified'])->timestamp() : time() }}" data-tippy-content="{{ $member['firstname'] . ' ' . $member['lastname'] }}" />
                     </div>
                 @endforeach
             </div>

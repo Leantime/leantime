@@ -135,7 +135,13 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                         <tr style="height:1px;">
                             <?php $tpl->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
                             <td data-order="<?= $tpl->e($row['id']); ?>">
-                                #<?= $tpl->e($row['id']); ?>
+                                <?php 
+                                if (!empty($row['projectKey'])) {
+                                    echo $tpl->escape($row['projectKey']) . '-' . $tpl->escape($row['id']);
+                                } else {
+                                    echo '#' . $tpl->escape($row['id']);
+                                }
+                                ?>
                             </td>
 
                         <td data-order="<?= $tpl->e($row['headline']); ?>">

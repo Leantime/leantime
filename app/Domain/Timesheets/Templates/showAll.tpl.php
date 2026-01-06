@@ -376,8 +376,16 @@ foreach ($tpl->get('allTimesheets') as $row) {
                                 #<?= $row['id']?>
                                 <?php } ?>
                         </td>
-                        <td data-order="<?= $tpl->e($row['ticketId']); ?>">
-                                <a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>">#<?php echo $tpl->escape($row['ticketId']); ?></a>
+                        <td data-order="<?php echo !empty($row['projectKey']) ? $tpl->escape($row['projectKey']) . '-' . $tpl->escape($row['ticketId']) : '#' . $tpl->escape($row['ticketId']); ?>">
+                                <a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>">
+                                    <?php 
+                                    if (!empty($row['projectKey'])) {
+                                        echo $tpl->escape($row['projectKey']) . '-' . $tpl->escape($row['ticketId']);
+                                    } else {
+                                        echo '#' . $tpl->escape($row['ticketId']);
+                                    }
+                                    ?>
+                                </a>
                         </td>
                         <td data-order="<?= $tpl->escape($row['workDate']); ?>">
                                 <?php echo format($row['workDate'])->date(); ?>
