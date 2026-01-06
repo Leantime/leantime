@@ -229,6 +229,7 @@ jQuery(document).ready(function(){
                 <ul class="dropdown-menu">
                     <li><a href="<?php echo BASE_URL ?>/timesheets/showMy" class="active"><?php echo $tpl->__('links.week_view') ?></a></li>
                     <li><a href="<?php echo BASE_URL ?>/timesheets/showMyList" ><?php echo $tpl->__('links.list_view') ?></a></li>
+                    <li><a href="<?= BASE_URL?>/timesheets/showMyMonthlyTimesheet" class="active">Monthly View</a></li>
                 </ul>
             </div>
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">

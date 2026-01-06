@@ -26,7 +26,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
         echo $tpl->displayNotification();
 ?>
 
-        <form action="<?php echo BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
+        <form action="<?php echo BASE_URL ?>/timesheets/showMyMonthlyTimesheet" method="post" id="form" name="form">
             <div class="filterWrapper tw-relative">
                 <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left"><?php echo $tpl->__('links.filter') ?> (1)</a>
                 <div class="filterBar" style="display:none; top:30px;">
