@@ -354,63 +354,6 @@ class Timesheets extends Repository
         return $call->fetchAll();
     }
 
-    public function getMonthlyTimesheets(int $projectId, int $userId = 0): mixed
-    {
-        $fromDate = dtHelper()->userNow()->startOfMonth()->setToDbTimezone();
-        $endDate = dtHelper()->userNow()->endOfMonth()->addDay()->setToDbTimezone();
-    
-        $query = 'SELECT
-            zp_timesheets.id,
-            zp_timesheets.userId,
-            zp_timesheets.ticketId,
-            zp_timesheets.workDate as workDate,
-            zp_timesheets.hours,
-            zp_timesheets.description,
-            zp_timesheets.kind,
-            zp_timesheets.invoicedEmpl,
-            zp_timesheets.invoicedComp,
-            zp_timesheets.invoicedEmplDate,
-            zp_timesheets.invoicedCompDate,
-            zp_timesheets.paid,
-            zp_timesheets.paidDate,
-            zp_timesheets.modified,
-            zp_tickets.headline,
-            zp_tickets.planHours,
-            zp_projects.name,
-            zp_projects.id AS projectId,
-            zp_projects.clientId AS clientId,
-            zp_clients.name AS clientName
-        FROM
-            zp_timesheets
-        LEFT JOIN zp_tickets ON zp_tickets.id = zp_timesheets.ticketId
-        LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-        LEFT JOIN zp_clients ON zp_clients.id = zp_projects.clientId
-        WHERE
-            (zp_timesheets.workDate >= :dateStart AND zp_timesheets.workDate < :dateEnd)
-            AND (zp_timesheets.userId = :userId)
-            AND hours > 0
-        ';
-
-        if ($projectId > 0) {
-            $query .= ' AND zp_tickets.projectId = :projectId';
-        }
-
-        $query .= ' ORDER BY zp_timesheets.ticketId, zp_timesheets.kind, zp_timesheets.workDate DESC';
-
-        $call = $this->dbcall(func_get_args());
-        $call->prepare($query);
-
-        $call->bindValue(':dateStart', $fromDate);
-        $call->bindValue(':dateEnd', $endDate);
-        $call->bindValue(':userId', $userId, PDO::PARAM_INT);
-
-        if ($projectId > 0) {
-            $call->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-        }
-
-        return $call->fetchAll();
-    }
-
     /**
      * getUsersTicketHours - get the total hours
      *
