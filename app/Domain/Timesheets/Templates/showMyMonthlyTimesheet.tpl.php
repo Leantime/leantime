@@ -6,39 +6,30 @@ foreach ($__data as $var => $val) {
 
 /** @var \Carbon\Carbon $currentDate */
 $dateFrom = $tpl->get('dateFrom');
+$daysInMonth = $dateFrom->daysInMonth();
 $hoursFormat = session('usersettings.hours_format', 'decimal');
 
 ?>
 <script type="text/javascript">
     jQuery(document).ready(function() {
-        var startDate;
-        var endDate;
-
-        // Initialize datepicker dates from server values
         var initStartDate = jQuery('#startDate').val();
         var initEndDate = jQuery('#endDate').val();
 
         jQuery('.month-picker').datepicker({
-            dateFormat: 'yy-mm-dd', // Use consistent format
-
+            dateFormat: 'yy-mm-dd',
             dayNames: leantime.i18n.__("language.dayNames").split(","),
             dayNamesMin: leantime.i18n.__("language.dayNamesMin").split(","),
             dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
-
             monthNames: leantime.i18n.__("language.monthNames").split(","),
             monthNamesShort: leantime.i18n.__("language.monthNamesShort").split(","),
-
             isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
-
             firstDay: 1,
             autoSize: true,
             showOtherMonths: true,
             selectOtherMonths: true,
-
             changeMonth: true,
             changeYear: true,
             showButtonPanel: true,
-
             onSelect: function(dateText, inst) {
                 jQuery(this).change();
                 jQuery("#timesheetList").submit();
@@ -54,21 +45,15 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
         }
 
         jQuery("#nextMonth").click(function() {
-            // Get the current date from the startDate field
             var currentDate = jQuery("#startDate").datepicker('getDate');
-
             if (!currentDate) {
                 currentDate = new Date();
             }
 
-            // Calculate next month (first day)
             var nextMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-
-            // Format as YYYY-MM-DD
             var startDateStr = nextMonthDate.getFullYear() + '-' +
                 String(nextMonthDate.getMonth() + 1).padStart(2, '0') + '-01';
 
-            // Last day of next month
             var lastDay = new Date(nextMonthDate.getFullYear(), nextMonthDate.getMonth() + 1, 0);
             var endDateStr = lastDay.getFullYear() + '-' +
                 String(lastDay.getMonth() + 1).padStart(2, '0') + '-' +
@@ -80,21 +65,15 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
         });
 
         jQuery("#prevMonth").click(function() {
-            // Get the current date from the startDate field
             var currentDate = jQuery("#startDate").datepicker('getDate');
-
             if (!currentDate) {
                 currentDate = new Date();
             }
 
-            // Calculate previous month (first day)
             var prevMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-
-            // Format as YYYY-MM-DD
             var startDateStr = prevMonthDate.getFullYear() + '-' +
                 String(prevMonthDate.getMonth() + 1).padStart(2, '0') + '-01';
 
-            // Last day of previous month
             var lastDay = new Date(prevMonthDate.getFullYear(), prevMonthDate.getMonth() + 1, 0);
             var endDateStr = lastDay.getFullYear() + '-' +
                 String(lastDay.getMonth() + 1).padStart(2, '0') + '-' +
@@ -105,93 +84,63 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
             jQuery("#timesheetList").submit();
         });
 
-        // =======================
-        // 1. Build monthly table dynamically
-        // =======================
-        function buildMonthTable(date) {
-            var year = date.getFullYear();
-            var month = date.getMonth();
-            var daysInMonth = new Date(year, month + 1, 0).getDate();
+        // Calculate sums on input change
+        // Calculate sums on input change
+        jQuery(".timesheetTable input.hourCell").change(function() {
+            var daysInMonth = parseInt(jQuery(".timesheetTable").data('days-in-month'));
 
-            var $table = jQuery("#timesheetTable");
-
-            // 1. Generate table headers
-            var $theadRow = $table.find("thead tr");
-            $theadRow.find("th:gt(0)").remove(); // remove old headers
-            for (var d = 1; d <= daysInMonth; d++) {
-                $theadRow.append('<th class="day' + d + '">' + d + '</th>');
+            // Initialize column sums
+            let colSums = {};
+            for (let d = 1; d <= daysInMonth; d++) {
+                colSums['day' + d] = 0;
             }
 
-            // 2. Generate input cells for each row
-            $table.find("tbody .timesheetRow").each(function() {
-                var $row = jQuery(this);
-                $row.find("td:gt(0)").remove(); // remove old cells
-
-                for (var d = 1; d <= daysInMonth; d++) {
-                    $row.append('<td class="rowday' + d + '"><input type="number" class="hourCell" min="0" step="0.25" value="0"></td>');
-                }
-
-                // Add row sum column if not exists
-                if ($row.find(".rowSum").length === 0) {
-                    $row.append('<td class="rowSum"><strong>0</strong></td>');
-                }
-            });
-
-            // 3. Generate footer daily totals
-            var $dailyTotalRow = $table.find("tfoot tr:first");
-            $dailyTotalRow.find("td:gt(0)").remove(); // remove old totals
-
-            for (var d = 1; d <= daysInMonth; d++) {
-                $dailyTotalRow.append('<td id="day' + d + '">0</td>');
-            }
-        }
-
-        // =======================
-        // 2. Calculate sums on input change
-        // =======================
-        jQuery(document).on("change", ".timesheetTable input.hourCell", function() {
-            var $table = jQuery("#timesheetTable");
-            var daysInMonth = $table.find("thead th").length - 1; // minus Task column
-
-            var colSums = Array(daysInMonth).fill(0);
-            var finalSum = 0;
-
-            // Loop rows
-            $table.find(".timesheetRow").each(function() {
+            // Calculate row and column sums
+            jQuery(".timesheetRow").each(function(i) {
                 var rowSum = 0;
 
-                jQuery(this).find("input.hourCell").each(function(index) {
-                    var val = parseFloat(jQuery(this).val()) || 0;
-                    rowSum += val;
-                    colSums[index] += val;
+                jQuery(this).find("input.hourCell").each(function() {
+                    if (jQuery(this).is(':disabled')) return;
+
+                    var currentValue = parseFloat(jQuery(this).val());
+                    rowSum = Math.round((rowSum + currentValue) * 100) / 100;
+
+                    var currentClass = jQuery(this).parent().attr('class');
+                    for (let d = 1; d <= daysInMonth; d++) {
+                        if (currentClass.indexOf("rowday" + d) > -1) {
+                            colSums['day' + d] = colSums['day' + d] + currentValue;
+                            break;
+                        }
+                    }
                 });
 
-                rowSum = Math.round(rowSum * 100) / 100;
-                jQuery(this).find(".rowSum strong").text(rowSum);
-                finalSum += rowSum;
+                jQuery(this).find(".rowSum strong").text(format_hours(rowSum));
             });
 
-            // Update daily totals
-            colSums.forEach((sum, index) => {
-                jQuery("#day" + (index + 1)).text(sum.toFixed(2));
-            });
+            // Update column totals
+            var finalSum = 0;
+            for (let d = 1; d <= daysInMonth; d++) {
+                var dayKey = 'day' + d;
+                var colTotal = Math.round(colSums[dayKey] * 100) / 100;
+                finalSum += colTotal;
 
-            // Update final sum
-            jQuery("#finalSum").text(Math.round(finalSum * 100) / 100);
+                if (colTotal > 0) {
+                    jQuery("#" + dayKey).text(format_hours(colTotal));
+                } else {
+                    jQuery("#" + dayKey).text('');
+                }
+                jQuery("#" + dayKey).attr('data-decimal', colTotal);
+            }
+
+            var roundedSum = Math.round(finalSum * 100) / 100;
+            jQuery("#finalSum").text(format_hours(roundedSum));
+            jQuery("#finalSum").attr('data-decimal', roundedSum);
         });
 
-        // =======================
-        // 3. Initialize with current month
-        // =======================
-        jQuery(document).ready(function() {
-            var selectedDate = new Date();
-            buildMonthTable(selectedDate);
-
-            // Optional: if user is manager, init edit modal
-            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                leantime.timesheetsController.initEditTimeModal();
-            <?php } ?>
-        });
+        // Optional: if user is manager, init edit modal
+        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+            leantime.timesheetsController.initEditTimeModal();
+        <?php } ?>
     });
 </script>
 
@@ -236,29 +185,13 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 
             </div>
             <div style=" width: 100%; overflow-x:scroll;">
-                <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX" data-hours-format="<?= $tpl->escape($hoursFormat); ?>">
-                    <colgroup>
-                        <col class="con0">
-                        <col class="con1">
-                        <col class="con0">
-                        <col class="con1">
-                        <col class="con0">
-                        <col class="con1">
-                        <col class="con0">
-                        <col class="con1">
-                        <col class="con0">
-                        <col class="con1">
-                        <col class="con0">
-
-                    </colgroup>
+                <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX" data-hours-format="<?= $tpl->escape($hoursFormat); ?>" data-days-in-month="<?= $daysInMonth ?>">
                     <thead>
                         <tr>
                             <th><?php echo $tpl->__('label.client_product') ?></th>
                             <th><?php echo $tpl->__('subtitles.todo') ?></th>
                             <th><?php echo $tpl->__('label.type') ?></th>
                             <?php
-                            $dateFrom = $tpl->get('dateFrom');
-                            $daysInMonth = $dateFrom->daysInMonth();
                             for ($d = 1; $d <= $daysInMonth; $d++) {
                                 echo "<th>{$d}</th>";
                             }
@@ -270,7 +203,6 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                         <?php
                         // @todo: move all this calculations into the service the timesheets class.
                         foreach ($tpl->get('allTimesheets') as $timeRow) {
-                            $timesheetId = 'new';
                         ?>
                             <tr class="gradeA timesheetRow">
                                 <td width="14%"><?php $tpl->e($timeRow['clientName']); ?> // <?php $tpl->e($timeRow['name']); ?></td>
@@ -306,8 +238,8 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                                             ?>
                                                 <input type="text"
                                                     class="hourCell"
-                                                    style="width: 70px;
-                                                name=" <?php echo $inputNameKey ?>"
+                                                    style="width: 70px;"
+                                                    name=" <?php echo $inputNameKey ?>"
                                                     value="<?php echo format_hours($dayData['hours']); ?>"
                                                     data-decimal-value="<?php echo $dayData['hours']; ?>" />
 
@@ -328,7 +260,6 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                                 <?php } ?>
 
                                 <td class="rowSum" data-order="<?php echo $timeRow['rowSum']; ?>"><strong><?php echo format_hours($timeRow['rowSum']); ?></strong></td>
-                            </tr>
                             </tr>
                         <?php } ?>
 
@@ -419,13 +350,13 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                                 $col = $colSum[$dayKey] ?? 0;
                                 $totalHours += $col;
                             ?>
-                                <td id="<?php echo $dayKey ?>" data-decimal="<?php echo $col; ?>">
+                                <td id="<?php echo $dayKey ?>" style="padding-left:15px;">
                                     <?php if ($col > 0) {
                                         echo format_hours($col);
                                     } ?>
                                 </td>
                             <?php } ?>
-                            <td id="finalSum" data-decimal="<?php echo $totalHours; ?>"><?php echo format_hours($totalHours); ?></td>
+                            <td id="finalSum"><?php echo format_hours($totalHours); ?></td>
                         </tr>
                     </tfoot>
                 </table>
