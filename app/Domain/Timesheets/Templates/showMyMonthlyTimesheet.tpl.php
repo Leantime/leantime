@@ -10,202 +10,195 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 
 ?>
 <script type="text/javascript">
-    jQuery(document).ready(function() {
-        var startDate;
-        var endDate;
-        var selectCurrentMonth = function() {
-            window.setTimeout(function() {
-                jQuery('.ui-monthpicker').find('.ui-datepicker-current-day a').addClass('ui-state-active').removeClass('ui-state-default');
-            }, 1);
-        };
+jQuery(document).ready(function() {
+    var startDate;
+    var endDate;
+    
+    // Initialize datepicker dates from server values
+    var initStartDate = jQuery('#startDate').val();
+    var initEndDate = jQuery('#endDate').val();
+    
+    jQuery('.month-picker').datepicker({
+        dateFormat: 'yy-mm-dd', // Use consistent format
+        
+        dayNames: leantime.i18n.__("language.dayNames").split(","),
+        dayNamesMin: leantime.i18n.__("language.dayNamesMin").split(","),
+        dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
 
-        var setDates = function(input) {
-            var $input = jQuery(input);
-            var date = $input.datepicker('getDate');
+        monthNames: leantime.i18n.__("language.monthNames").split(","),
+        monthNamesShort: leantime.i18n.__("language.monthNamesShort").split(","),
 
-            if (date !== null) {
-                startDate = new Date(date.getFullYear(), date.getMonth(), 1);
-                endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        currentText: leantime.i18n.__("language.currentText"),
+        closeText: leantime.i18n.__("language.closeText"),
+        buttonText: leantime.i18n.__("language.buttonText"),
+        nextText: leantime.i18n.__("language.nextText"),
+        prevText: leantime.i18n.__("language.prevText"),
+        weekHeader: leantime.i18n.__("language.weekHeader"),
 
-                var inst = $input.data('datepicker');
-                var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;
-                jQuery('#startDate').datepicker("setDate", startDate);
-                jQuery('#endDate').datepicker("setDate", endDate);
-                jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
-                jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
+        isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+
+        firstDay: 1,
+        autoSize: true,
+        showOtherMonths: true,
+        selectOtherMonths: true,
+
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+
+        onSelect: function(dateText, inst) {
+            jQuery(this).change();
+            jQuery("#timesheetList").submit();
+        }
+    });
+
+    // Set initial dates from server
+    if (initStartDate) {
+        jQuery('#startDate').datepicker('setDate', initStartDate);
+    }
+    if (initEndDate) {
+        jQuery('#endDate').datepicker('setDate', initEndDate);
+    }
+
+    jQuery("#nextMonth").click(function() {
+        // Get the current date from the startDate field
+        var currentDate = jQuery("#startDate").datepicker('getDate');
+        
+        if (!currentDate) {
+            currentDate = new Date();
+        }
+        
+        // Calculate next month (first day)
+        var nextMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+        
+        // Format as YYYY-MM-DD
+        var startDateStr = nextMonthDate.getFullYear() + '-' + 
+                          String(nextMonthDate.getMonth() + 1).padStart(2, '0') + '-01';
+        
+        // Last day of next month
+        var lastDay = new Date(nextMonthDate.getFullYear(), nextMonthDate.getMonth() + 1, 0);
+        var endDateStr = lastDay.getFullYear() + '-' + 
+                        String(lastDay.getMonth() + 1).padStart(2, '0') + '-' + 
+                        String(lastDay.getDate()).padStart(2, '0');
+
+        jQuery('#startDate').val(startDateStr);
+        jQuery('#endDate').val(endDateStr);
+        jQuery("#timesheetList").submit();
+    });
+
+    jQuery("#prevMonth").click(function() {
+        // Get the current date from the startDate field
+        var currentDate = jQuery("#startDate").datepicker('getDate');
+        
+        if (!currentDate) {
+            currentDate = new Date();
+        }
+        
+        // Calculate previous month (first day)
+        var prevMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+        
+        // Format as YYYY-MM-DD
+        var startDateStr = prevMonthDate.getFullYear() + '-' + 
+                          String(prevMonthDate.getMonth() + 1).padStart(2, '0') + '-01';
+        
+        // Last day of previous month
+        var lastDay = new Date(prevMonthDate.getFullYear(), prevMonthDate.getMonth() + 1, 0);
+        var endDateStr = lastDay.getFullYear() + '-' + 
+                        String(lastDay.getMonth() + 1).padStart(2, '0') + '-' + 
+                        String(lastDay.getDate()).padStart(2, '0');
+
+        jQuery('#startDate').val(startDateStr);
+        jQuery('#endDate').val(endDateStr);
+        jQuery("#timesheetList").submit();
+    });
+
+        // =======================
+        // 1. Build monthly table dynamically
+        // =======================
+        function buildMonthTable(date) {
+            var year = date.getFullYear();
+            var month = date.getMonth();
+            var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            var $table = jQuery("#timesheetTable");
+
+            // 1. Generate table headers
+            var $theadRow = $table.find("thead tr");
+            $theadRow.find("th:gt(0)").remove(); // remove old headers
+            for (var d = 1; d <= daysInMonth; d++) {
+                $theadRow.append('<th class="day' + d + '">' + d + '</th>');
             }
-        };
 
-        jQuery('.month-picker').datepicker({
-            dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
+            // 2. Generate input cells for each row
+            $table.find("tbody .timesheetRow").each(function() {
+                var $row = jQuery(this);
+                $row.find("td:gt(0)").remove(); // remove old cells
 
-            dayNames: leantime.i18n.__("language.dayNames").split(","),
-            dayNamesMin: leantime.i18n.__("language.dayNamesMin").split(","),
-            dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                for (var d = 1; d <= daysInMonth; d++) {
+                    $row.append('<td class="rowday' + d + '"><input type="number" class="hourCell" min="0" step="0.25" value="0"></td>');
+                }
 
-            monthNames: leantime.i18n.__("language.monthNames").split(","),
-            monthNamesShort: leantime.i18n.__("language.monthNamesShort").split(","),
-
-            currentText: leantime.i18n.__("language.currentText"),
-            closeText: leantime.i18n.__("language.closeText"),
-            buttonText: leantime.i18n.__("language.buttonText"),
-            nextText: leantime.i18n.__("language.nextText"),
-            prevText: leantime.i18n.__("language.prevText"),
-            weekHeader: leantime.i18n.__("language.weekHeader"),
-
-            isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
-
-            firstDay: 1,
-            autoSize: true,
-            showOtherMonths: true,
-            selectOtherMonths: true,
-
-            // --- NOVO ---
-            changeMonth: true,
-            changeYear: true,
-            showButtonPanel: true,
-
-            onSelect: function(dateText, inst) {
-
-                // MJESEČNI SUBMIT
-                setMonthlyDates(this);
-
-                jQuery(this).change();
-                jQuery("#timesheetList").submit();
-            },
-
-            beforeShowDay: function(date) {
-                var cssClass = '';
-
-                if (date >= startDate && date <= endDate)
-                    cssClass = 'ui-datepicker-current-day';
-
-                return [true, cssClass];
-            },
-
-            onChangeMonthYear: function(year, month, inst) {
-                // highlight mjeseca ako imas custom hover
-            },
-        });
-
-        var $calendar = jQuery('.ui-monthpicker .ui-datepicker-calendar');
-        $calendar.on('mousemove', function() {
-            jQuery(this).find('td a').addClass('ui-state-hover');
-        });
-        $calendar.on('mouseleave', function() {
-            jQuery(this).find('td a').removeClass('ui-state-hover');
-        });
-
-        jQuery(".project-select").chosen();
-        jQuery(".ticket-select").chosen();
-        jQuery(".project-select").change(function() {
-            jQuery(".ticket-select").removeAttr("selected");
-            jQuery(".ticket-select").val("");
-            jQuery(".ticket-select").trigger("liszt:updated");
-
-            jQuery(".ticket-select option").show();
-            jQuery("#ticketSelect .chosen-results li").show();
-            var selectedValue = jQuery(this).find("option:selected").val();
-            jQuery(".ticket-select option").not(".project_" + selectedValue).hide();
-            jQuery("#ticketSelect .chosen-results li").not(".project_" + selectedValue).hide();
-            jQuery(".ticket-select").chosen("destroy").chosen();
-        });
-
-        jQuery(".ticket-select").change(function() {
-            var selectedValue = jQuery(this).find("option:selected").attr("data-value");
-            jQuery(".project-select option[value=" + selectedValue + "]").attr("selected", "selected");
-            jQuery(".project-select").trigger("liszt:updated");
-            jQuery(".ticket-select").chosen("destroy").chosen();
-        });
-
-        jQuery("#nextMonth").click(function() {
-            var date = jQuery("#endDate").datepicker('getDate');
-
-            var startDate = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-            var endDate = new Date(date.getFullYear(), date.getMonth() + 2, 0);
-
-            var inst = jQuery("#endDate").data('datepicker');
-            var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;
-
-            jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
-            jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
-            jQuery("#timesheetList").submit();
-        });
-
-        jQuery("#prevMonth").click(function() {
-            var date = jQuery("#startDate").datepicker('getDate');
-
-            var startDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
-            var endDate = new Date(date.getFullYear(), date.getMonth(), 0);
-
-            var inst = jQuery("#startDate").data('datepicker');
-            var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;
-            jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
-            jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
-            jQuery("#timesheetList").submit();
-        });
-
-        jQuery(".timesheetTable input").change(function() {
-            //Row Sum
-            let colSum1 = 0;
-            let colSum2 = 0;
-            let colSum3 = 0;
-            let colSum4 = 0;
-            let colSum5 = 0;
-            let colSum6 = 0;
-            let colSum7 = 0;
-
-            jQuery(".timesheetRow").each(function(i) {
-                var rowSum = 0;
-
-                jQuery(this).find("input.hourCell").each(function() {
-                    var currentValue = parseFloat(jQuery(this).val());
-                    rowSum = Math.round((rowSum + currentValue) * 100) / 100;
-
-                    var currentClass = jQuery(this).parent().attr('class');
-
-                    if (currentClass.indexOf("rowday1") > -1) {
-                        colSum1 = colSum1 + currentValue;
-                    }
-                    if (currentClass.indexOf("rowday2") > -1) {
-                        colSum2 = colSum2 + currentValue;
-                    }
-                    if (currentClass.indexOf("rowday3") > -1) {
-                        colSum3 = colSum3 + currentValue;
-                    }
-                    if (currentClass.indexOf("rowday4") > -1) {
-                        colSum4 = colSum4 + currentValue;
-                    }
-                    if (currentClass.indexOf("rowday5") > -1) {
-                        colSum5 = colSum5 + currentValue;
-                    }
-                    if (currentClass.indexOf("rowday6") > -1) {
-                        colSum6 = colSum6 + currentValue;
-                    }
-                    if (currentClass.indexOf("rowday7") > -1) {
-                        colSum7 = colSum7 + currentValue;
-                    }
-                });
-
-                jQuery(this).find(".rowSum strong").text(rowSum);
+                // Add row sum column if not exists
+                if ($row.find(".rowSum").length === 0) {
+                    $row.append('<td class="rowSum"><strong>0</strong></td>');
+                }
             });
 
-            jQuery("#day1").text(colSum1.toFixed(2));
-            jQuery("#day2").text(colSum2.toFixed(2));
-            jQuery("#day3").text(colSum3.toFixed(2));
-            jQuery("#day4").text(colSum4.toFixed(2));
-            jQuery("#day5").text(colSum5.toFixed(2));
-            jQuery("#day6").text(colSum6.toFixed(2));
-            jQuery("#day7").text(colSum7.toFixed(2));
+            // 3. Generate footer daily totals
+            var $dailyTotalRow = $table.find("tfoot tr:first");
+            $dailyTotalRow.find("td:gt(0)").remove(); // remove old totals
 
-            var finalSum = colSum1 + colSum2 + colSum3 + colSum4 + colSum5 + colSum6 + colSum7;
-            var roundedSum = Math.round((finalSum) * 100) / 100;
+            for (var d = 1; d <= daysInMonth; d++) {
+                $dailyTotalRow.append('<td id="day' + d + '">0</td>');
+            }
+        }
 
-            jQuery("#finalSum").text(roundedSum);
+        // =======================
+        // 2. Calculate sums on input change
+        // =======================
+        jQuery(document).on("change", ".timesheetTable input.hourCell", function() {
+            var $table = jQuery("#timesheetTable");
+            var daysInMonth = $table.find("thead th").length - 1; // minus Task column
+
+            var colSums = Array(daysInMonth).fill(0);
+            var finalSum = 0;
+
+            // Loop rows
+            $table.find(".timesheetRow").each(function() {
+                var rowSum = 0;
+
+                jQuery(this).find("input.hourCell").each(function(index) {
+                    var val = parseFloat(jQuery(this).val()) || 0;
+                    rowSum += val;
+                    colSums[index] += val;
+                });
+
+                rowSum = Math.round(rowSum * 100) / 100;
+                jQuery(this).find(".rowSum strong").text(rowSum);
+                finalSum += rowSum;
+            });
+
+            // Update daily totals
+            colSums.forEach((sum, index) => {
+                jQuery("#day" + (index + 1)).text(sum.toFixed(2));
+            });
+
+            // Update final sum
+            jQuery("#finalSum").text(Math.round(finalSum * 100) / 100);
         });
-        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-            leantime.timesheetsController.initEditTimeModal();
-        <?php } ?>
+
+        // =======================
+        // 3. Initialize with current month
+        // =======================
+        jQuery(document).ready(function() {
+            var selectedDate = new Date();
+            buildMonthTable(selectedDate);
+
+            // Optional: if user is manager, init edit modal
+            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                leantime.timesheetsController.initEditTimeModal();
+            <?php } ?>
+        });
     });
 </script>
 
@@ -226,7 +219,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 
         ?>
 
-        <form action="<?php echo BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
+        <form action="<?php echo BASE_URL ?>/timesheets/showMyMonthlyTimesheet" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
                 <button class="btn dropdown-toggle" data-toggle="dropdown">
                     <?php echo "Monthly view" ?> <?= $tpl->__('links.view') ?>
@@ -239,14 +232,14 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
             </div>
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
 
-                <div class="padding-top-sm">
-                    <a href="javascript:void(0)" style="font-size:16px;" id="prevMonth"><i class="fa fa-chevron-left"></i></a>
-                    <input type="text" class="month-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat') ?>" value="<?php echo dtHelper()->userNow()->startOfMonth()->format('Y-m-d') ?>" style="margin-top:5px;" />
-                    <?php echo $tpl->__('label.until'); ?>
-                    <input type="text" class="month-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat') ?>" value="<?php echo dtHelper()->userNow()->endOfMonth()->format('Y-m-d') ?>" style="margin-top:6px;" />
-                    <a href="javascript:void(0)" style="font-size:16px;" id="nextMonth"><i class="fa fa-chevron-right"></i></a>
-                    <input type="hidden" name="search" value="1" />
-                </div>
+<div class="padding-top-sm">
+    <a href="javascript:void(0)" style="font-size:16px;" id="prevMonth"><i class="fa fa-chevron-left"></i></a>
+    <input type="text" class="month-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat') ?>" value="<?php echo $dateFrom->copy()->startOfMonth()->format('Y-m-d') ?>" style="margin-top:5px;" />
+    <?php echo $tpl->__('label.until'); ?>
+    <input type="text" class="month-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat') ?>" value="<?php echo $dateFrom->copy()->endOfMonth()->format('Y-m-d') ?>" style="margin-top:6px;" />
+    <a href="javascript:void(0)" style="font-size:16px;" id="nextMonth"><i class="fa fa-chevron-right"></i></a>
+    <input type="hidden" name="search" value="1" />
+</div>
 
             </div>
             <div style=" width: 100%; overflow-x:scroll;">
@@ -267,43 +260,21 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                     </colgroup>
                     <thead>
                         <?php
-
-                        $days = explode(',', $tpl->__('language.dayNamesShort'));
-                        // Make the first day of week monday, by shifting sunday to the back of the array.
-                        $days[] = array_shift($days);
+                        $dateFrom = $tpl->get('dateFrom');
+                        $daysInMonth = $dateFrom->daysInMonth();
+                        for ($d = 1; $d <= $daysInMonth; $d++) {
+                            echo "<th>{$d}</th>";
+                        }
                         ?>
                         <tr>
                             <th><?php echo $tpl->__('label.client_product') ?></th>
                             <th><?php echo $tpl->__('subtitles.todo') ?></th>
                             <th><?php echo $tpl->__('label.type') ?></th>
-                            <?php
-                            $i = 0;
-                            foreach ($days as $day) { ?>
-                                <th class="<?php if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) {
-                                                echo 'active';
-                                            } ?>
-                    "><?php echo $day ?><br />
-                                    <?php
-
-                                    echo $dateFrom->addDays($i)->formatDateForUser();
-                                    $i++;
-                                    ?>
-                                </th>
-                            <?php } ?>
                             <th><?php echo $tpl->__('label.total') ?></th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $colSum = [
-                            'day1' => 0,
-                            'day2' => 0,
-                            'day3' => 0,
-                            'day4' => 0,
-                            'day5' => 0,
-                            'day6' => 0,
-                            'day7' => 0,
-                        ];
                         // @todo: move all this calculations into the service the timesheets class.
                         foreach ($tpl->get('allTimesheets') as $timeRow) {
                             $timesheetId = 'new';
@@ -423,34 +394,12 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                                     <?php } ?>
                                 </select>
                             </td>
-
-                            <?php
-                            $i = 0;
-                            foreach ($days as $day) {
-                            ?>
-                                <td width="7%" class="rowday<?php echo $i + 1; ?><?php if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) {
-                                                                                        echo ' active';
-                                                                                    } ?>">
-                                    <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|<?php echo $dateFrom->addDays($i)->formatDateForUser() ?>|<?php echo $dateFrom->addDays($i)->getTimestamp() ?>" value="<?php echo format_hours(0); ?>" data-decimal-value="0" />
-                                </td>
-                            <?php
-                                $i++;
-                            } ?>
                         </tr>
                     </tbody>
 
                     <tfoot>
                         <tr style="font-weight:bold;">
                             <td colspan="3"><?php echo $tpl->__('label.total') ?></td>
-                            <?php
-                            $totalHours = 0;
-                            foreach ($colSum as $key => $col) {
-                                $totalHours += $col;
-
-                            ?>
-                                <td id="<?php echo $key ?>" data-decimal="<?php echo $col; ?>"><?php echo format_hours($col); ?></td>
-                            <?php } ?>
-                            <td id="finalSum" data-decimal="<?php echo $totalHours; ?>"><?php echo format_hours($totalHours); ?></td>
                         </tr>
                     </tfoot>
                 </table>

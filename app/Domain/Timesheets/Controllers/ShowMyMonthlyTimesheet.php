@@ -50,50 +50,55 @@ class ShowMyMonthlyTimesheet extends Controller
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function run(): Response
-    {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
+public function run(): Response
+{
+    Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
-        $fromDate = dtHelper()->userNow()->startOfMonth()->setToDbTimezone();
+    $fromDate = dtHelper()->userNow()->startOfMonth();
 
-        $kind = 'all';
-        if (isset($_POST['search'])) {
-            // User date comes is in user date format and user timezone. Change it to utc.
-            if (! empty($_POST['startDate'])) {
-                try {
-                    $fromDate = dtHelper()->parseUserDateTime($_POST['startDate'])->setToDbTimezone();
-                } catch (\Exception $e) {
-                    Log::warning($e);
-                    Log::warning('User timezone: '.session('usersettings.timezone'));
-                    Log::warning('User dateTime format: '.session('usersettings.date_format'));
-                    $this->tpl->setNotification('Could not parse date', 'error', 'save_timesheet');
-                }
+    $kind = 'all';
+    if (isset($_POST['search'])) {
+        // User date comes is in user date format and user timezone. Change it to utc.
+        if (! empty($_POST['startDate'])) {
+            try {
+                $fromDate = dtHelper()->parseUserDateTime($_POST['startDate'])->startOfMonth();
+                
+                // Debug logging
+                error_log('Received startDate: ' . $_POST['startDate']);
+                error_log('Parsed to: ' . $fromDate->format('Y-m-d H:i:s'));
+            } catch (\Exception $e) {
+                error_log($e);
+                error_log('User timezone: '.session('usersettings.timezone'));
+                error_log('User dateTime format: '.session('usersettings.date_format'));
+                $this->tpl->setNotification('Could not parse date', 'error', 'save_timesheet');
             }
         }
-
-        if (isset($_POST['saveTimeSheet'])) {
-            $this->saveTimeSheet($_POST);
-        }
-
-        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromDate, session('userdata.id'));
-        $existingTicketIds = array_map(fn ($item) => $item['ticketId'], $myTimesheets);
-
-        $this->tpl->assign('existingTicketIds', $existingTicketIds);
-        $this->tpl->assign('dateFrom', $fromDate);
-        $this->tpl->assign('actKind', $kind);
-        $this->tpl->assign('kind', $this->timesheetRepo->kind);
-        $this->tpl->assign('allProjects', $this->projects->getUserProjects(
-            userId: session('userdata.id'),
-            projectTypes: 'project'
-        ));
-        $this->tpl->assign('allTickets', $this->tickets->getUsersTickets(
-            id: session('userdata.id'),
-            limit: -1
-        ));
-        $this->tpl->assign('allTimesheets', $myTimesheets);
-
-        return $this->tpl->display('timesheets.showMyMonthlyTimesheet');
     }
+
+    if (isset($_POST['saveTimeSheet'])) {
+        $this->saveTimeSheet($_POST);
+    }
+
+    $fromDateDb = $fromDate->copy()->setToDbTimezone();
+    $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromDateDb, session('userdata.id'));
+    $existingTicketIds = array_map(fn ($item) => $item['ticketId'], $myTimesheets);
+
+    $this->tpl->assign('existingTicketIds', $existingTicketIds);
+    $this->tpl->assign('dateFrom', $fromDate);
+    $this->tpl->assign('actKind', $kind);
+    $this->tpl->assign('kind', $this->timesheetRepo->kind);
+    $this->tpl->assign('allProjects', $this->projects->getUserProjects(
+        userId: session('userdata.id'),
+        projectTypes: 'project'
+    ));
+    $this->tpl->assign('allTickets', $this->tickets->getUsersTickets(
+        id: session('userdata.id'),
+        limit: -1
+    ));
+    $this->tpl->assign('allTimesheets', $myTimesheets);
+
+    return $this->tpl->display('timesheets.showMyMonthlyTimesheet');
+}
 
     /**
      * @throws BindingResolutionException
