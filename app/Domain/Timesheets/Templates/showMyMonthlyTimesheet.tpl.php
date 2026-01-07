@@ -1,245 +1,464 @@
 <?php
-
 defined('RESTRICTED') or exit('Restricted access');
-use Leantime\Core\Support\FromFormat;
-
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
+
+/** @var \Carbon\Carbon $currentDate */
+$dateFrom = $tpl->get('dateFrom');
 $hoursFormat = session('usersettings.hours_format', 'decimal');
+
 ?>
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        var startDate;
+        var endDate;
+        var selectCurrentMonth = function() {
+            window.setTimeout(function() {
+                jQuery('.ui-monthpicker').find('.ui-datepicker-current-day a').addClass('ui-state-active').removeClass('ui-state-default');
+            }, 1);
+        };
+
+        var setDates = function(input) {
+            var $input = jQuery(input);
+            var date = $input.datepicker('getDate');
+
+            if (date !== null) {
+                startDate = new Date(date.getFullYear(), date.getMonth(), 1);
+                endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+                var inst = $input.data('datepicker');
+                var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;
+                jQuery('#startDate').datepicker("setDate", startDate);
+                jQuery('#endDate').datepicker("setDate", endDate);
+                jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
+                jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
+            }
+        };
+
+        jQuery('.month-picker').datepicker({
+            dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
+
+            dayNames: leantime.i18n.__("language.dayNames").split(","),
+            dayNamesMin: leantime.i18n.__("language.dayNamesMin").split(","),
+            dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+
+            monthNames: leantime.i18n.__("language.monthNames").split(","),
+            monthNamesShort: leantime.i18n.__("language.monthNamesShort").split(","),
+
+            currentText: leantime.i18n.__("language.currentText"),
+            closeText: leantime.i18n.__("language.closeText"),
+            buttonText: leantime.i18n.__("language.buttonText"),
+            nextText: leantime.i18n.__("language.nextText"),
+            prevText: leantime.i18n.__("language.prevText"),
+            weekHeader: leantime.i18n.__("language.weekHeader"),
+
+            isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+
+            firstDay: 1,
+            autoSize: true,
+            showOtherMonths: true,
+            selectOtherMonths: true,
+
+            // --- NOVO ---
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+
+            onSelect: function(dateText, inst) {
+
+                // MJESEČNI SUBMIT
+                setMonthlyDates(this);
+
+                jQuery(this).change();
+                jQuery("#timesheetList").submit();
+            },
+
+            beforeShowDay: function(date) {
+                var cssClass = '';
+
+                if (date >= startDate && date <= endDate)
+                    cssClass = 'ui-datepicker-current-day';
+
+                return [true, cssClass];
+            },
+
+            onChangeMonthYear: function(year, month, inst) {
+                // highlight mjeseca ako imas custom hover
+            },
+        });
+
+        var $calendar = jQuery('.ui-monthpicker .ui-datepicker-calendar');
+        $calendar.on('mousemove', function() {
+            jQuery(this).find('td a').addClass('ui-state-hover');
+        });
+        $calendar.on('mouseleave', function() {
+            jQuery(this).find('td a').removeClass('ui-state-hover');
+        });
+
+        jQuery(".project-select").chosen();
+        jQuery(".ticket-select").chosen();
+        jQuery(".project-select").change(function() {
+            jQuery(".ticket-select").removeAttr("selected");
+            jQuery(".ticket-select").val("");
+            jQuery(".ticket-select").trigger("liszt:updated");
+
+            jQuery(".ticket-select option").show();
+            jQuery("#ticketSelect .chosen-results li").show();
+            var selectedValue = jQuery(this).find("option:selected").val();
+            jQuery(".ticket-select option").not(".project_" + selectedValue).hide();
+            jQuery("#ticketSelect .chosen-results li").not(".project_" + selectedValue).hide();
+            jQuery(".ticket-select").chosen("destroy").chosen();
+        });
+
+        jQuery(".ticket-select").change(function() {
+            var selectedValue = jQuery(this).find("option:selected").attr("data-value");
+            jQuery(".project-select option[value=" + selectedValue + "]").attr("selected", "selected");
+            jQuery(".project-select").trigger("liszt:updated");
+            jQuery(".ticket-select").chosen("destroy").chosen();
+        });
+
+        jQuery("#nextMonth").click(function() {
+            var date = jQuery("#endDate").datepicker('getDate');
+
+            var startDate = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+            var endDate = new Date(date.getFullYear(), date.getMonth() + 2, 0);
+
+            var inst = jQuery("#endDate").data('datepicker');
+            var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;
+
+            jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
+            jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
+            jQuery("#timesheetList").submit();
+        });
+
+        jQuery("#prevMonth").click(function() {
+            var date = jQuery("#startDate").datepicker('getDate');
+
+            var startDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+            var endDate = new Date(date.getFullYear(), date.getMonth(), 0);
+
+            var inst = jQuery("#startDate").data('datepicker');
+            var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;
+            jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
+            jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
+            jQuery("#timesheetList").submit();
+        });
+
+        jQuery(".timesheetTable input").change(function() {
+            //Row Sum
+            let colSum1 = 0;
+            let colSum2 = 0;
+            let colSum3 = 0;
+            let colSum4 = 0;
+            let colSum5 = 0;
+            let colSum6 = 0;
+            let colSum7 = 0;
+
+            jQuery(".timesheetRow").each(function(i) {
+                var rowSum = 0;
+
+                jQuery(this).find("input.hourCell").each(function() {
+                    var currentValue = parseFloat(jQuery(this).val());
+                    rowSum = Math.round((rowSum + currentValue) * 100) / 100;
+
+                    var currentClass = jQuery(this).parent().attr('class');
+
+                    if (currentClass.indexOf("rowday1") > -1) {
+                        colSum1 = colSum1 + currentValue;
+                    }
+                    if (currentClass.indexOf("rowday2") > -1) {
+                        colSum2 = colSum2 + currentValue;
+                    }
+                    if (currentClass.indexOf("rowday3") > -1) {
+                        colSum3 = colSum3 + currentValue;
+                    }
+                    if (currentClass.indexOf("rowday4") > -1) {
+                        colSum4 = colSum4 + currentValue;
+                    }
+                    if (currentClass.indexOf("rowday5") > -1) {
+                        colSum5 = colSum5 + currentValue;
+                    }
+                    if (currentClass.indexOf("rowday6") > -1) {
+                        colSum6 = colSum6 + currentValue;
+                    }
+                    if (currentClass.indexOf("rowday7") > -1) {
+                        colSum7 = colSum7 + currentValue;
+                    }
+                });
+
+                jQuery(this).find(".rowSum strong").text(rowSum);
+            });
+
+            jQuery("#day1").text(colSum1.toFixed(2));
+            jQuery("#day2").text(colSum2.toFixed(2));
+            jQuery("#day3").text(colSum3.toFixed(2));
+            jQuery("#day4").text(colSum4.toFixed(2));
+            jQuery("#day5").text(colSum5.toFixed(2));
+            jQuery("#day6").text(colSum6.toFixed(2));
+            jQuery("#day7").text(colSum7.toFixed(2));
+
+            var finalSum = colSum1 + colSum2 + colSum3 + colSum4 + colSum5 + colSum6 + colSum7;
+            var roundedSum = Math.round((finalSum) * 100) / 100;
+
+            jQuery("#finalSum").text(roundedSum);
+        });
+        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+            leantime.timesheetsController.initEditTimeModal();
+        <?php } ?>
+    });
+</script>
 
 <!-- page header -->
 <div class="pageheader">
     <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
     <div class="pagetitle">
         <h5><?php echo $tpl->__('headline.overview'); ?></h5>
-        <h1><?php echo $tpl->__('headline.my_timesheets') ?></h1>
+        <h1><?php echo $tpl->__('headline.my_timesheets'); ?></h1>
     </div>
 </div>
 <!-- page header -->
-
 
 <div class="maincontent">
     <div class="maincontentinner">
         <?php
         echo $tpl->displayNotification();
-?>
 
-        <form action="<?php echo BASE_URL ?>/timesheets/showMyMonthlyTimesheet" method="post" id="form" name="form">
-            <div class="filterWrapper tw-relative">
-                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left"><?php echo $tpl->__('links.filter') ?> (1)</a>
-                <div class="filterBar" style="display:none; top:30px;">
+        ?>
 
-                    <div class="filterBoxLeft">
-                        <label for="dateFrom"><?php echo $tpl->__('label.date_from'); ?> <?php echo $tpl->__('label.date_to'); ?></label>
-                        <input type="text"
-                               id="dateFrom"
-                               class="dateFrom"
-                               name="dateFrom"
-                               value="<?php echo $tpl->get('dateFrom')->formatDateForUser(); ?>"
-                               style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
-                        <input type="text"
-                               id="dateTo"
-                               class="dateTo"
-                               name="dateTo"
-                               value="<?php echo $tpl->get('dateTo')->formatDateForUser(); ?>"
-                               style="margin-bottom:10px; width:90px" />
-                    </div>
+        <form action="<?php echo BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
+            <div class="btn-group viewDropDown pull-right">
+                <button class="btn dropdown-toggle" data-toggle="dropdown">
+                    <?php echo "Monthly view" ?> <?= $tpl->__('links.view') ?>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="<?php echo BASE_URL ?>/timesheets/showMy" class="active"><?php echo $tpl->__('links.week_view') ?></a></li>
+                    <li><a href="<?php echo BASE_URL ?>/timesheets/showMyList"><?php echo $tpl->__('links.list_view') ?></a></li>
+                    <li><a href="<?= BASE_URL ?>/timesheets/showMyMonthlyTimesheet" class="active">Monthly View</a></li>
+                </ul>
+            </div>
+            <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
 
-                    <div class="filterBoxLeft">
-                        <label for="kind"><?php echo $tpl->__('label.type')?></label>
-                        <select id="kind" name="kind" onchange="submit();">
-                            <option value="all"><?php echo $tpl->__('label.all_types'); ?></option>
-                            <?php foreach ($tpl->get('kind') as $key => $row) {
-                                echo '<option value="'.$key.'"';
-                                if ($key == $tpl->get('actKind')) {
-                                    echo ' selected="selected"';
-                                }
-                                echo '>'.$tpl->__($row).'</option>';
-                            }
-?>
-
-                        </select>
-                    </div>
-                    <div class="filterBoxLeft">
-                        <label>&nbsp;</label>
-                        <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="reload" />
-                    </div>
-                    <div class="clearall"></div>
+                <div class="padding-top-sm">
+                    <a href="javascript:void(0)" style="font-size:16px;" id="prevMonth"><i class="fa fa-chevron-left"></i></a>
+                    <input type="text" class="month-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat') ?>" value="<?php echo dtHelper()->userNow()->startOfMonth()->format('Y-m-d') ?>" style="margin-top:5px;" />
+                    <?php echo $tpl->__('label.until'); ?>
+                    <input type="text" class="month-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat') ?>" value="<?php echo dtHelper()->userNow()->endOfMonth()->format('Y-m-d') ?>" style="margin-top:6px;" />
+                    <a href="javascript:void(0)" style="font-size:16px;" id="nextMonth"><i class="fa fa-chevron-right"></i></a>
+                    <input type="hidden" name="search" value="1" />
                 </div>
+
             </div>
-            <div class="pull-right">
-                <div class="btn-group viewDropDown">
-                    <button class="btn dropdown-toggle" data-toggle="dropdown"><?= $tpl->__('links.list_view') ?> <?= $tpl->__('links.view') ?></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="<?= BASE_URL?>/timesheets/showMy" ><?= $tpl->__('links.week_view') ?></a></li>
-                        <li><a href="<?= BASE_URL?>/timesheets/showMyList" class="active"><?= $tpl->__('links.list_view') ?></a></li>
-                        <li><a href="<?= BASE_URL?>/timesheets/showMyMonthlyTimesheet" class="active">Monthly View</a></li>
-                    </ul>
-                </div>
+            <div style=" width: 100%; overflow-x:scroll;">
+                <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX" data-hours-format="<?= $tpl->escape($hoursFormat); ?>">
+                    <colgroup>
+                        <col class="con0">
+                        <col class="con1">
+                        <col class="con0">
+                        <col class="con1">
+                        <col class="con0">
+                        <col class="con1">
+                        <col class="con0">
+                        <col class="con1">
+                        <col class="con0">
+                        <col class="con1">
+                        <col class="con0">
+
+                    </colgroup>
+                    <thead>
+                        <?php
+
+                        $days = explode(',', $tpl->__('language.dayNamesShort'));
+                        // Make the first day of week monday, by shifting sunday to the back of the array.
+                        $days[] = array_shift($days);
+                        ?>
+                        <tr>
+                            <th><?php echo $tpl->__('label.client_product') ?></th>
+                            <th><?php echo $tpl->__('subtitles.todo') ?></th>
+                            <th><?php echo $tpl->__('label.type') ?></th>
+                            <?php
+                            $i = 0;
+                            foreach ($days as $day) { ?>
+                                <th class="<?php if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) {
+                                                echo 'active';
+                                            } ?>
+                    "><?php echo $day ?><br />
+                                    <?php
+
+                                    echo $dateFrom->addDays($i)->formatDateForUser();
+                                    $i++;
+                                    ?>
+                                </th>
+                            <?php } ?>
+                            <th><?php echo $tpl->__('label.total') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $colSum = [
+                            'day1' => 0,
+                            'day2' => 0,
+                            'day3' => 0,
+                            'day4' => 0,
+                            'day5' => 0,
+                            'day6' => 0,
+                            'day7' => 0,
+                        ];
+                        // @todo: move all this calculations into the service the timesheets class.
+                        foreach ($tpl->get('allTimesheets') as $timeRow) {
+                            $timesheetId = 'new';
+                        ?>
+                            <tr class="gradeA timesheetRow">
+                                <td width="14%"><?php $tpl->e($timeRow['clientName']); ?> // <?php $tpl->e($timeRow['name']); ?></td>
+                                <td width="14%">
+                                    <a href="#/tickets/showTicket/<?php echo $timeRow['ticketId']; ?>"><?php $tpl->e($timeRow['headline']); ?></a>
+                                </td>
+                                <td width="10%">
+                                    <?php
+                                    echo $tpl->__($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']); ?>
+                                    <?php if ($timeRow['hasTimesheetOffset']) { ?>
+                                        <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
+                                            data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone">
+                                        </i>
+                                    <?php } ?>
+                                </td>
+
+                                <?php foreach (array_keys($timeRow) as $dayKey) {
+                                    if (str_starts_with($dayKey, 'day')) {
+                                        $colSum[$dayKey] = ($colSum[$dayKey] ?? 0) + $timeRow[$dayKey]['hours']; ?>
+
+                                        <td width="7%" class="row<?php
+                                                                    echo $dayKey;
+                                                                    if ($timeRow[$dayKey]['start']->setToUserTimezone()->isToday()) {
+                                                                        echo ' active';
+                                                                    }
+                                                                    ?>">
+
+
+                                            <?php
+                                            $inputNameKey = $timeRow['ticketId'] . '|' . $timeRow['kind'] . '|' . ($timeRow[$dayKey]['actualWorkDate'] ? $timeRow[$dayKey]['actualWorkDate']->formatDateForUser() : 'false') . '|' . ($timeRow[$dayKey]['actualWorkDate'] ? $timeRow[$dayKey]['actualWorkDate']->getTimestamp() : 'false');
+                                            ?>
+                                            <input type="text"
+                                                class="hourCell"
+                                                <?php if (empty($timeRow[$dayKey]['actualWorkDate'])) {
+                                                    echo "disabled='disabled'";
+                                                } ?>
+                                                name="<?php echo $inputNameKey ?>"
+                                                value="<?php echo format_hours($timeRow[$dayKey]['hours']); ?>"
+                                                data-decimal-value="<?php echo $timeRow[$dayKey]['hours']; ?>"
+                                                <?php if (empty($timeRow[$dayKey]['actualWorkDate'])) { ?>
+                                                data-tippy-content="Cannot add time entry in previous timezone"
+                                                <?php } ?> />
+
+                                            <?php if (! empty($timeRow[$dayKey]['description'])) { ?>
+                                                <a href="<?= BASE_URL ?>/timesheets/editTime/<?= $timeRow[$dayKey]['id'] ?>" class="editTimeModal">
+                                                    <i class="fa fa-circle-info" data-tippy-content="<?php echo $tpl->escape($timeRow[$dayKey]['description']); ?>"></i>
+                                                </a>
+                                            <?php } ?>
+                                        </td>
+                                <?php
+                                    }
+                                } ?>
+
+                                <td width="7%" class="rowSum" data-order="<?php echo $timeRow['rowSum']; ?>"><strong><?php echo format_hours($timeRow['rowSum']); ?></strong></td>
+                            </tr>
+                        <?php } ?>
+
+                        <!-- Row to add new time registration -->
+                        <tr class="gradeA timesheetRow">
+                            <td width="14%">
+                                <div class="form-group" id="projectSelect">
+                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_project') ?>" style="" class="project-select">
+                                        <option value=""></option>
+                                        <?php foreach ($tpl->get('allProjects') as $projectRow) { ?>
+                                            <?php echo sprintf(
+                                                $tpl->dispatchTplFilter(
+                                                    'client_product_format',
+                                                    '<option value="%s">%s / %s</option>'
+                                                ),
+                                                ...$tpl->dispatchTplFilter(
+                                                    'client_product_values',
+                                                    [
+                                                        $projectRow['id'],
+                                                        $tpl->escape($projectRow['clientName']),
+                                                        $tpl->escape($projectRow['name']),
+                                                    ]
+                                                )
+                                            ); ?>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </td>
+                            <td width="14%">
+                                <div class="form-group" id="ticketSelect">
+                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_todo') ?>" style="" class="ticket-select" name="ticketId">
+                                        <option value=""></option>
+                                        <?php foreach ($tpl->get('allTickets') as $ticketRow) {
+                                            if (in_array($ticketRow['id'], $tpl->get('existingTicketIds'))) {
+                                                continue;
+                                            }
+                                        ?>
+                                            <?php echo sprintf(
+                                                $tpl->dispatchTplFilter(
+                                                    'todo_format',
+                                                    '<option value="%1$s" data-value="%2$s" class="project_%2$s">%1$s / %3$s</option>'
+                                                ),
+                                                ...$tpl->dispatchTplFilter(
+                                                    'todo_values',
+                                                    [
+                                                        $ticketRow['id'],
+                                                        $ticketRow['projectId'],
+                                                        $tpl->escape($ticketRow['headline']),
+                                                    ]
+                                                )
+                                            ); ?>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </td>
+                            <td width="14%">
+                                <select class="kind-select" name="kindId">
+                                    <?php foreach ($tpl->get('kind') as $key => $kindRow) { ?>
+                                        <?php echo '<option value=' . $key . '>' . $tpl->__($kindRow) . '</option>'; ?>
+                                    <?php } ?>
+                                </select>
+                            </td>
+
+                            <?php
+                            $i = 0;
+                            foreach ($days as $day) {
+                            ?>
+                                <td width="7%" class="rowday<?php echo $i + 1; ?><?php if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) {
+                                                                                        echo ' active';
+                                                                                    } ?>">
+                                    <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|<?php echo $dateFrom->addDays($i)->formatDateForUser() ?>|<?php echo $dateFrom->addDays($i)->getTimestamp() ?>" value="<?php echo format_hours(0); ?>" data-decimal-value="0" />
+                                </td>
+                            <?php
+                                $i++;
+                            } ?>
+                        </tr>
+                    </tbody>
+
+                    <tfoot>
+                        <tr style="font-weight:bold;">
+                            <td colspan="3"><?php echo $tpl->__('label.total') ?></td>
+                            <?php
+                            $totalHours = 0;
+                            foreach ($colSum as $key => $col) {
+                                $totalHours += $col;
+
+                            ?>
+                                <td id="<?php echo $key ?>" data-decimal="<?php echo $col; ?>"><?php echo format_hours($col); ?></td>
+                            <?php } ?>
+                            <td id="finalSum" data-decimal="<?php echo $totalHours; ?>"><?php echo format_hours($totalHours); ?></td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
-
-            <div class="pull-right" style="margin-right:3px;">
-                <div id="tableButtons" style="display:inline-block"></div>
+            <div class="right">
+                <input type="submit" name="saveTimeSheet" class="saveTimesheetBtn" value="Save" />
             </div>
-
-            <div class="clearfix"></div>
-
-            <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable" data-hours-format="<?= $tpl->escape($hoursFormat); ?>">
-                <colgroup>
-                      <col class="con0" width="100px"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1"/>
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th><?php echo $tpl->__('label.id'); ?></th>
-                        <th><?php echo $tpl->__('label.date'); ?></th>
-                        <th><?php echo $tpl->__('label.hours'); ?></th>
-                        <th><?php echo $tpl->__('label.plan_hours'); ?></th>
-                        <th><?php echo $tpl->__('label.difference'); ?></th>
-                        <th><?php echo $tpl->__('label.ticket'); ?></th>
-                        <th><?php echo $tpl->__('label.project'); ?></th>
-                        <th><?php echo $tpl->__('label.employee'); ?></th>
-                        <th><?php echo $tpl->__('label.type')?></th>
-                        <th><?php echo $tpl->__('label.description'); ?></th>
-                        <th><?php echo $tpl->__('label.invoiced'); ?></th>
-                        <th><?php echo $tpl->__('label.invoiced_comp'); ?></th>
-                        <th><?php echo $tpl->__('label.paid'); ?></th>
-                    </tr>
-
-                </thead>
-                <tbody>
-
-                <?php
-
-                $sum = 0;
-$billableSum = 0;
-
-foreach ($tpl->get('allTimesheets') as $row) {
-    $sum = $sum + $row['hours']; ?>
-                    <tr>
-                        <td data-order="<?php echo $tpl->e($row['id']); ?>">
-                            <a href="<?= BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal" id="editTimesheet-<?php echo $row['id']?>">#<?php echo $row['id'].' - '.$tpl->__('label.edit'); ?> </a></td>
-                        <td data-order="<?php echo format($row['workDate'])->isoDateTime(); ?>">
-                            <?php echo format($row['workDate'])->date(); ?>
-                            <?php echo format($row['workDate'])->time(); ?>
-                        </td>
-                        <?php /* legacy: <td data-order="<?php $tpl->e($row['hours']); ?>"><?php $tpl->e($row['hours'] ?: 0); ?></td> */ ?>
-                        <td data-order="<?php $tpl->e($row['hours']); ?>" data-export-display="<?php echo format_hours($row['hours'] ?: 0); ?>" class="js-timesheet-hours">
-                            <?php echo format_hours($row['hours'] ?: 0); ?>
-                        </td>
-                        <?php /* legacy: <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php $tpl->e($row['planHours'] ?: 0); ?></td> */ ?>
-                        <td data-order="<?php $tpl->e($row['planHours']); ?>" data-export-display="<?php echo format_hours($row['planHours'] ?: 0); ?>" class="js-timesheet-hours">
-                            <?php echo format_hours($row['planHours'] ?: 0); ?>
-                        </td>
-                        <?php $diff = ($row['planHours'] ?: 0) - ($row['hours'] ?: 0); ?>
-                        <?php /* legacy: <td data-order="<?php echo $diff; ?>"><?php echo $diff; ?></td> */ ?>
-                        <td data-order="<?php echo $diff; ?>" data-export-display="<?php echo format_hours($diff); ?>" class="js-timesheet-hours">
-                            <?php echo format_hours($diff); ?>
-                        </td>
-                        <td data-order="<?php echo $tpl->e($row['headline']); ?>">
-                            <a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a>
-                        </td>
-
-                        <td data-order="<?php echo $tpl->e($row['name']); ?>">
-                            <a href="<?php echo BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $tpl->e($row['name']); ?></a>
-                        </td>
-                        <td>
-                            <?php sprintf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?>
-                        </td>
-                        <td>
-                            <?php echo $tpl->__($tpl->get('kind')[$row['kind']]); ?>
-                        </td>
-                        <td>
-                            <?php $tpl->e($row['description']); ?>
-                        </td>
-                        <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
-                            echo format(value: $row['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date();
-                        }?>">
-                            <?php if ($row['invoicedEmpl'] == '1') {
-                                echo format(value: $row['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date();
-                            } else {
-                                echo $tpl->__('label.pending');
-                            } ?>
-                        </td>
-                        <td data-order="<?php if ($row['invoicedComp'] == '1') {
-                            echo format(value: $row['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date();
-                        }?>">
-                            <?php if ($row['invoicedComp'] == '1') {
-                                echo format(value: $row['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date();
-                            } else {
-                                echo $tpl->__('label.pending');
-                            } ?>
-                        </td>
-                        <td data-order="<?php if ($row['paid'] == '1') {
-                            echo format(value: $row['paidDate'], fromFormat: FromFormat::DbDate)->date();
-                        }?>">
-                            <?php if ($row['paid'] == '1') {
-                                echo format(value: $row['paidDate'], fromFormat: FromFormat::DbDate)->date();
-                            } else {
-                                echo $tpl->__('label.pending');
-                            } ?>
-                        </td>
-                    </tr>
-                <?php } ?>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td></td>
-                        <td colspan="1"><strong><?php echo $tpl->__('label.total_hours')?></strong></td>
-                        <?php /* legacy total: <td colspan="11"><strong><?php echo $sum; ?></strong></td> */ ?>
-                        <td colspan="11" class="js-timesheet-hours" data-export-display="<?php echo format_hours($sum); ?>"><strong><?php echo format_hours($sum); ?></strong></td>
-                    </tr>
-                </tfoot>
-            </table>
+            <div class="clearall"></div>
         </form>
     </div>
 </div>
-
-<script type="text/javascript">
-    // Initialize CSV export formatter (inline to avoid build dependency)
-    window.leantime = window.leantime || {};
-    window.leantime.timesheetsExport = window.leantime.timesheetsExport || {};
-
-    if (typeof window.leantime.timesheetsExport.resolveCell !== 'function') {
-        window.leantime.timesheetsExport.resolveCell = function ($node, fallbackData) {
-            if (typeof $node.data('order') === 'undefined') {
-                return fallbackData;
-            }
-
-            if (! $node.hasClass('js-timesheet-hours')) {
-                return $node.data('order');
-            }
-
-            var tableFormat = ($node.closest('table[data-hours-format]').data('hoursFormat') || '').toString();
-
-            if (tableFormat === 'human') {
-                // jQuery converts data-export-display to exportDisplay in .data()
-                if (typeof $node.data('exportDisplay') !== 'undefined') {
-                    return $node.data('exportDisplay');
-                }
-
-                return $node.text().trim();
-            }
-
-            return $node.data('order');
-        };
-    }
-
-    jQuery(document).ready(function(){
-        leantime.timesheetsController.initTimesheetsTable();
-        leantime.timesheetsController.initEditTimeModal();
-        leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1);
-    });
-</script>
