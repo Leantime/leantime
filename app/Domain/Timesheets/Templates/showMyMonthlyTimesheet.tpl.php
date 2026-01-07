@@ -259,6 +259,10 @@ jQuery(document).ready(function() {
 
                     </colgroup>
                     <thead>
+                        <tr>
+                            <th><?php echo $tpl->__('label.client_product') ?></th>
+                            <th><?php echo $tpl->__('subtitles.todo') ?></th>
+                            <th><?php echo $tpl->__('label.type') ?></th>
                         <?php
                         $dateFrom = $tpl->get('dateFrom');
                         $daysInMonth = $dateFrom->daysInMonth();
@@ -266,10 +270,6 @@ jQuery(document).ready(function() {
                             echo "<th>{$d}</th>";
                         }
                         ?>
-                        <tr>
-                            <th><?php echo $tpl->__('label.client_product') ?></th>
-                            <th><?php echo $tpl->__('subtitles.todo') ?></th>
-                            <th><?php echo $tpl->__('label.type') ?></th>
                             <th><?php echo $tpl->__('label.total') ?></th>
                         </tr>
                     </thead>
@@ -294,44 +294,45 @@ jQuery(document).ready(function() {
                                     <?php } ?>
                                 </td>
 
-                                <?php foreach (array_keys($timeRow) as $dayKey) {
-                                    if (str_starts_with($dayKey, 'day')) {
-                                        $colSum[$dayKey] = ($colSum[$dayKey] ?? 0) + $timeRow[$dayKey]['hours']; ?>
+    <?php 
+    // Loop through ALL days in the month, not just the ones with data
+    for ($d = 1; $d <= $daysInMonth; $d++) {
+        $dayKey = 'day' . $d;
+        $dayData = $timeRow[$dayKey] ?? null;
+        
+        if ($dayData) {
+            $colSum[$dayKey] = ($colSum[$dayKey] ?? 0) + $dayData['hours'];
+        }
+    ?>
+        <td class="row<?php echo $dayKey; ?><?php if ($dayData && $dayData['start']->setToUserTimezone()->isToday()) { echo ' active'; } ?>">
+            <?php if ($dayData && !empty($dayData['actualWorkDate'])) { 
+                $inputNameKey = $timeRow['ticketId'] . '|' . $timeRow['kind'] . '|' . $dayData['actualWorkDate']->formatDateForUser() . '|' . $dayData['actualWorkDate']->getTimestamp();
+            ?>
+                <input type="text"
+                    class="hourCell"
+                    name="<?php echo $inputNameKey ?>"
+                    value="<?php echo format_hours($dayData['hours']); ?>"
+                    data-decimal-value="<?php echo $dayData['hours']; ?>" />
 
-                                        <td width="7%" class="row<?php
-                                                                    echo $dayKey;
-                                                                    if ($timeRow[$dayKey]['start']->setToUserTimezone()->isToday()) {
-                                                                        echo ' active';
-                                                                    }
-                                                                    ?>">
+                <?php if (!empty($dayData['description'])) { ?>
+                    <a href="<?= BASE_URL ?>/timesheets/editTime/<?= $dayData['id'] ?>" class="editTimeModal">
+                        <i class="fa fa-circle-info" data-tippy-content="<?php echo $tpl->escape($dayData['description']); ?>"></i>
+                    </a>
+                <?php } ?>
+            <?php } else { ?>
+                <input type="text"
+                    class="hourCell"
+                    disabled='disabled'
+                    value="0"
+                    data-tippy-content="Cannot add time entry in previous timezone" />
+            <?php } ?>
+        </td>
+    <?php } ?>
 
+    <td class="rowSum" data-order="<?php echo $timeRow['rowSum']; ?>"><strong><?php echo format_hours($timeRow['rowSum']); ?></strong></td>
+</tr>
 
-                                            <?php
-                                            $inputNameKey = $timeRow['ticketId'] . '|' . $timeRow['kind'] . '|' . ($timeRow[$dayKey]['actualWorkDate'] ? $timeRow[$dayKey]['actualWorkDate']->formatDateForUser() : 'false') . '|' . ($timeRow[$dayKey]['actualWorkDate'] ? $timeRow[$dayKey]['actualWorkDate']->getTimestamp() : 'false');
-                                            ?>
-                                            <input type="text"
-                                                class="hourCell"
-                                                <?php if (empty($timeRow[$dayKey]['actualWorkDate'])) {
-                                                    echo "disabled='disabled'";
-                                                } ?>
-                                                name="<?php echo $inputNameKey ?>"
-                                                value="<?php echo format_hours($timeRow[$dayKey]['hours']); ?>"
-                                                data-decimal-value="<?php echo $timeRow[$dayKey]['hours']; ?>"
-                                                <?php if (empty($timeRow[$dayKey]['actualWorkDate'])) { ?>
-                                                data-tippy-content="Cannot add time entry in previous timezone"
-                                                <?php } ?> />
-
-                                            <?php if (! empty($timeRow[$dayKey]['description'])) { ?>
-                                                <a href="<?= BASE_URL ?>/timesheets/editTime/<?= $timeRow[$dayKey]['id'] ?>" class="editTimeModal">
-                                                    <i class="fa fa-circle-info" data-tippy-content="<?php echo $tpl->escape($timeRow[$dayKey]['description']); ?>"></i>
-                                                </a>
-                                            <?php } ?>
-                                        </td>
-                                <?php
-                                    }
-                                } ?>
-
-                                <td width="7%" class="rowSum" data-order="<?php echo $timeRow['rowSum']; ?>"><strong><?php echo format_hours($timeRow['rowSum']); ?></strong></td>
+                                <td width="14%" class="rowSum" data-order="<?php echo $timeRow['rowSum']; ?>"><strong><?php echo format_hours($timeRow['rowSum']); ?></strong></td>
                             </tr>
                         <?php } ?>
 
