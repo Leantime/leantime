@@ -28,13 +28,6 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
             monthNames: leantime.i18n.__("language.monthNames").split(","),
             monthNamesShort: leantime.i18n.__("language.monthNamesShort").split(","),
 
-            currentText: leantime.i18n.__("language.currentText"),
-            closeText: leantime.i18n.__("language.closeText"),
-            buttonText: leantime.i18n.__("language.buttonText"),
-            nextText: leantime.i18n.__("language.nextText"),
-            prevText: leantime.i18n.__("language.prevText"),
-            weekHeader: leantime.i18n.__("language.weekHeader"),
-
             isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
 
             firstDay: 1,
@@ -307,35 +300,35 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                                     <td class="row<?php echo $dayKey; ?><?php if ($dayData && $dayData['start']->setToUserTimezone()->isToday()) {
                                                                             echo ' active';
                                                                         } ?>">
-                                        <?php if ($dayData && !empty($dayData['actualWorkDate'])) {
-                                            $inputNameKey = $timeRow['ticketId'] . '|' . $timeRow['kind'] . '|' . $dayData['actualWorkDate']->formatDateForUser() . '|' . $dayData['actualWorkDate']->getTimestamp();
-                                        ?>
-                                            <input type="text"
-                                                class="hourCell"
-                                                style="width: 70px;
-                                                name="<?php echo $inputNameKey ?>"
-                                                value="<?php echo format_hours($dayData['hours']); ?>"
-                                                data-decimal-value="<?php echo $dayData['hours']; ?>" />
+                                        <div style="display:flex; gap:10px; align-items:center;">
+                                            <?php if ($dayData && !empty($dayData['actualWorkDate'])) {
+                                                $inputNameKey = $timeRow['ticketId'] . '|' . $timeRow['kind'] . '|' . $dayData['actualWorkDate']->formatDateForUser() . '|' . $dayData['actualWorkDate']->getTimestamp();
+                                            ?>
+                                                <input type="text"
+                                                    class="hourCell"
+                                                    style="width: 70px;
+                                                name=" <?php echo $inputNameKey ?>"
+                                                    value="<?php echo format_hours($dayData['hours']); ?>"
+                                                    data-decimal-value="<?php echo $dayData['hours']; ?>" />
 
-                                            <?php if (!empty($dayData['description'])) { ?>
-                                                <a href="<?= BASE_URL ?>/timesheets/editTime/<?= $dayData['id'] ?>" class="editTimeModal">
-                                                    <i class="fa fa-circle-info" data-tippy-content="<?php echo $tpl->escape($dayData['description']); ?>"></i>
-                                                </a>
-                                            <?php } ?>
-                                        <?php } else { ?>
-                                            <input type="text"
-                                                class="hourCell"
-                                                disabled='disabled'
-                                                value="0"
-                                                data-tippy-content="Cannot add time entry in previous timezone" />
-                                        <?php } ?>
+                                                <?php if (!empty($dayData['description'])) { ?>
+                                                    <a href="<?= BASE_URL ?>/timesheets/editTime/<?= $dayData['id'] ?>" class="editTimeModal">
+                                                        <i class="fa fa-circle-info" data-tippy-content="<?php echo $tpl->escape($dayData['description']); ?>"></i>
+                                                    </a>
+                                                <?php } ?>
+                                        </div>
+                                    <?php } else { ?>
+                                        <input type="text"
+                                            class="hourCell"
+                                            disabled='disabled'
+                                            value="0"
+                                            data-tippy-content="Cannot add time entry in previous timezone" />
+                                    <?php } ?>
                                     </td>
                                 <?php } ?>
 
                                 <td class="rowSum" data-order="<?php echo $timeRow['rowSum']; ?>"><strong><?php echo format_hours($timeRow['rowSum']); ?></strong></td>
                             </tr>
-
-                            <td width="14%" class="rowSum" data-order="<?php echo $timeRow['rowSum']; ?>"><strong><?php echo format_hours($timeRow['rowSum']); ?></strong></td>
                             </tr>
                         <?php } ?>
 
@@ -398,12 +391,41 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                                     <?php } ?>
                                 </select>
                             </td>
+                            <?php
+                            for ($d = 1; $d <= $daysInMonth; $d++) {
+                                $dayDate = $dateFrom->copy()->setDay($d); // Use copy() to avoid modifying the original
+                            ?>
+                                <td width="7%" class="rowday<?php echo $d; ?><?php if ($dayDate->setToUserTimezone()->isToday()) {
+                                                                                    echo ' active';
+                                                                                } ?>">
+                                    <input type="text"
+                                        class="hourCell"
+                                        style="width:70px;"
+                                        name="new|GENERAL_BILLABLE|<?php echo $dayDate->formatDateForUser() ?>|<?php echo $dayDate->getTimestamp() ?>"
+                                        value="<?php echo format_hours(0); ?>"
+                                        data-decimal-value="0" />
+                                </td>
+                            <?php } ?>
                         </tr>
                     </tbody>
 
                     <tfoot>
                         <tr style="font-weight:bold;">
                             <td colspan="3"><?php echo $tpl->__('label.total') ?></td>
+                            <?php
+                            $totalHours = 0;
+                            for ($d = 1; $d <= $daysInMonth; $d++) {
+                                $dayKey = 'day' . $d;
+                                $col = $colSum[$dayKey] ?? 0;
+                                $totalHours += $col;
+                            ?>
+                                <td id="<?php echo $dayKey ?>" data-decimal="<?php echo $col; ?>">
+                                    <?php if ($col > 0) {
+                                        echo format_hours($col);
+                                    } ?>
+                                </td>
+                            <?php } ?>
+                            <td id="finalSum" data-decimal="<?php echo $totalHours; ?>"><?php echo format_hours($totalHours); ?></td>
                         </tr>
                     </tfoot>
                 </table>
