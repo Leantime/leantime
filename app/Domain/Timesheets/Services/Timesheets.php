@@ -372,6 +372,7 @@ class Timesheets
             fromDate: $fromDate,
             userId: $userId
         );
+
         // Timesheets are grouped by ticketId + type
         $timesheetGroups = [];
         foreach ($allTimesheets as $timesheet) {
