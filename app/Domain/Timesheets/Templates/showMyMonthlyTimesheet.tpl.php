@@ -1,10 +1,9 @@
 <?php
 defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
+    $$var = $val;
 }
 
-/** @var \Carbon\Carbon $currentDate */
 $dateFrom = $tpl->get('dateFrom');
 $daysInMonth = $dateFrom->daysInMonth();
 $hoursFormat = session('usersettings.hours_format', 'decimal');
@@ -29,14 +28,32 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
             selectOtherMonths: true,
             changeMonth: true,
             changeYear: true,
-            showButtonPanel: true,
-            onSelect: function(dateText, inst) {
+            onClose: function(dateText, inst) {
+                var month = jQuery("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                var year = jQuery("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                jQuery(this).data('datepicker-open', false);
+                jQuery(this).datepicker('setDate', new Date(year, month, 1));
                 jQuery(this).change();
                 jQuery("#timesheetList").submit();
-            }
+            },
+            beforeShow: function(input, inst) {
+                jQuery("#ui-datepicker-div").addClass('hide-calendar');
+                jQuery(this).data('datepicker-open', true);
+            },
+            onChangeMonthYear: function(year, month, inst) {
+                if (jQuery(this).data('datepicker-open')) {
+                    var startDateStr = year + '-' + String(month).padStart(2, '0') + '-01';
+                    var lastDay = new Date(year, month, 0);
+                    var endDateStr = year + '-' + String(month).padStart(2, '0') + '-' + String(lastDay.getDate()).padStart(2, '0');
+
+                    jQuery('#startDate').val(startDateStr);
+                    jQuery('#endDate').val(endDateStr);
+
+                    jQuery("#timesheetList").submit();
+                }
+            },
         });
 
-        // Set initial dates from server
         if (initStartDate) {
             jQuery('#startDate').datepicker('setDate', initStartDate);
         }
@@ -84,18 +101,14 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
             jQuery("#timesheetList").submit();
         });
 
-        // Calculate sums on input change
-        // Calculate sums on input change
         jQuery(".timesheetTable input.hourCell").change(function() {
             var daysInMonth = parseInt(jQuery(".timesheetTable").data('days-in-month'));
 
-            // Initialize column sums
             let colSums = {};
             for (let d = 1; d <= daysInMonth; d++) {
                 colSums['day' + d] = 0;
             }
 
-            // Calculate row and column sums
             jQuery(".timesheetRow").each(function(i) {
                 var rowSum = 0;
 
@@ -117,7 +130,6 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                 jQuery(this).find(".rowSum strong").text(format_hours(rowSum));
             });
 
-            // Update column totals
             var finalSum = 0;
             for (let d = 1; d <= daysInMonth; d++) {
                 var dayKey = 'day' + d;
@@ -137,14 +149,25 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
             jQuery("#finalSum").attr('data-decimal', roundedSum);
         });
 
-        // Optional: if user is manager, init edit modal
         <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
             leantime.timesheetsController.initEditTimeModal();
         <?php } ?>
     });
 </script>
+<style>
+    .hide-calendar .ui-datepicker-calendar {
+        display: none;
+    }
 
-<!-- page header -->
+    .ui-datepicker-prev {
+        display: none !important;
+    }
+
+    .ui-datepicker-next {
+        display: none !important;
+    }
+</style>
+
 <div class="pageheader">
     <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
     <div class="pagetitle">
@@ -152,7 +175,6 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
         <h1><?php echo $tpl->__('headline.my_timesheets'); ?></h1>
     </div>
 </div>
-<!-- page header -->
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -176,9 +198,9 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 
                 <div class="padding-top-sm">
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevMonth"><i class="fa fa-chevron-left"></i></a>
-                    <input type="text" class="month-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat') ?>" value="<?php echo $dateFrom->copy()->startOfMonth()->format('Y-m-d') ?>" style="margin-top:5px;" />
+                    <input type="text" class="month-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat') ?>" value="<?php echo $dateFrom->copy()->startOfMonth()->format('Y-m-d') ?>" style="margin-top:5px; width:100px;" />
                     <?php echo $tpl->__('label.until'); ?>
-                    <input type="text" class="month-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat') ?>" value="<?php echo $dateFrom->copy()->endOfMonth()->format('Y-m-d') ?>" style="margin-top:6px;" />
+                    <input type="text" class="month-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat') ?>" value="<?php echo $dateFrom->copy()->endOfMonth()->format('Y-m-d') ?>" style="margin-top:6px; width:100px;" />
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextMonth"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
                 </div>
@@ -201,7 +223,6 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                     </thead>
                     <tbody>
                         <?php
-                        // @todo: move all this calculations into the service the timesheets class.
                         foreach ($tpl->get('allTimesheets') as $timeRow) {
                         ?>
                             <tr class="gradeA timesheetRow">
@@ -220,7 +241,6 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                                 </td>
 
                                 <?php
-                                // Loop through ALL days in the month, not just the ones with data
                                 for ($d = 1; $d <= $daysInMonth; $d++) {
                                     $dayKey = 'day' . $d;
                                     $dayData = $timeRow[$dayKey] ?? null;
@@ -263,7 +283,6 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                             </tr>
                         <?php } ?>
 
-                        <!-- Row to add new time registration -->
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
                                 <div class="form-group" id="projectSelect">
@@ -324,7 +343,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                             </td>
                             <?php
                             for ($d = 1; $d <= $daysInMonth; $d++) {
-                                $dayDate = $dateFrom->copy()->setDay($d); // Use copy() to avoid modifying the original
+                                $dayDate = $dateFrom->copy()->setDay($d); 
                             ?>
                                 <td width="7%" class="rowday<?php echo $d; ?><?php if ($dayDate->setToUserTimezone()->isToday()) {
                                                                                     echo ' active';

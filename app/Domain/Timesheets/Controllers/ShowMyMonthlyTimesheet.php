@@ -2,9 +2,6 @@
 
 namespace Leantime\Domain\Timesheets\Controllers;
 
-use Carbon\CarbonInterface;
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\Log;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
@@ -12,7 +9,6 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowMyMonthlyTimesheet extends Controller
@@ -25,31 +21,18 @@ class ShowMyMonthlyTimesheet extends Controller
 
     private TicketRepository $tickets;
 
-    private UserRepository $userRepo;
-
-    /**
-     * init - initialze private variables
-     */
     public function init(
         TimesheetService $timesheetService,
         TimesheetRepository $timesheetRepo,
         ProjectRepository $projects,
         TicketRepository $tickets,
-        UserRepository $userRepo
     ): void {
         $this->timesheetService = $timesheetService;
         $this->timesheetRepo = $timesheetRepo;
         $this->projects = $projects;
         $this->tickets = $tickets;
-        $this->userRepo = $userRepo;
     }
 
-    /**
-     * run - display template and edit data
-     *
-     *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
 public function run(): Response
 {
     Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
@@ -58,18 +41,10 @@ public function run(): Response
 
     $kind = 'all';
     if (isset($_POST['search'])) {
-        // User date comes is in user date format and user timezone. Change it to utc.
         if (! empty($_POST['startDate'])) {
             try {
                 $fromDate = dtHelper()->parseUserDateTime($_POST['startDate'])->startOfMonth();
-                
-                // Debug logging
-                error_log('Received startDate: ' . $_POST['startDate']);
-                error_log('Parsed to: ' . $fromDate->format('Y-m-d H:i:s'));
             } catch (\Exception $e) {
-                error_log($e);
-                error_log('User timezone: '.session('usersettings.timezone'));
-                error_log('User dateTime format: '.session('usersettings.date_format'));
                 $this->tpl->setNotification('Could not parse date', 'error', 'save_timesheet');
             }
         }
@@ -100,14 +75,10 @@ public function run(): Response
     return $this->tpl->display('timesheets.showMyMonthlyTimesheet');
 }
 
-    /**
-     * @throws BindingResolutionException
-     */
     public function saveTimeSheet(array $postData): void
     {
         foreach ($postData as $key => $dateEntry) {
-            // The temp data should contain four parts, spectated by "|":
-            // TICKET ID | Type of booked hours | Date | Timestamp
+
             $tempData = explode('|', $key);
 
             if (count($tempData) === 4) {
@@ -117,7 +88,6 @@ public function run(): Response
                 $timestamp = $tempData[3];
                 $hours = $dateEntry;
 
-                // if ticket ID is set to new, pull id and hour type from form field
                 if ($ticketId === 'new' || $ticketId === 0) {
                     $ticketId = (int) $postData['ticketId'];
                     $kind = $postData['kindId'];
@@ -129,21 +99,18 @@ public function run(): Response
                     }
                 }
 
-                // Parse hours using TimeParser for flexible input formats
                 $parsedHours = $hours;
                 if (!empty($hours) && !is_numeric($hours)) {
                     try {
                         $parser = app(\Leantime\Domain\Timesheets\Services\TimeParser::class);
                         $parsedHours = $parser->parseTimeToDecimal($hours);
                         
-                        // Additional validation: check for unreasonably large values
-                        if ($parsedHours > 24 * 365) { // More than a year of work
+                        if ($parsedHours > 24 * 365) { 
                             throw new \InvalidArgumentException('Time value is unreasonably large. Please enter a valid amount of time.');
                         }
                     } catch (\InvalidArgumentException $e) {
                         $this->tpl->setNotification($e->getMessage(), 'error', 'time_parse_error');
                         
-                        // Skip saving this entry if parsing failed
                         continue;
                     }
                 }
@@ -157,7 +124,6 @@ public function run(): Response
                     'kind' => $kind,
                 ];
 
-                // This should not be the case since we set the input to disabled, but check anyways
                 if ($timestamp !== 'false' && $timestamp != false) {
                     try {
                         $this->timesheetService->upsertTime($ticketId, $values);
@@ -165,7 +131,6 @@ public function run(): Response
                     } catch (\Exception $e) {
                         $this->tpl->setNotification('Error logging time: '.$e->getMessage(), 'error', 'save_timesheet');
                         report($e);
-
                         continue;
                     }
                 }
