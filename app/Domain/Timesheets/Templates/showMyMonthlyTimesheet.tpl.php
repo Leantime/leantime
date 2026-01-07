@@ -166,6 +166,21 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
     .ui-datepicker-next {
         display: none !important;
     }
+
+    .ui-datepicker-header.ui-widget-header.ui-helper-clearfix.ui-corner-all {
+        background: white !important;
+        max-height: 40px;
+    }
+
+    .ui-datepicker-month {
+        margin-right: 20px;
+    }
+
+    .ui-datepicker-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 </style>
 
 <div class="pageheader">
