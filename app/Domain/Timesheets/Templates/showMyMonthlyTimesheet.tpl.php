@@ -186,12 +186,12 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
         <form action="<?php echo BASE_URL ?>/timesheets/showMyMonthlyTimesheet" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
                 <button class="btn dropdown-toggle" data-toggle="dropdown">
-                    <?php echo "Monthly view" ?> <?= $tpl->__('links.view') ?>
+                    <i class="fa fa-calendar-alt" style="margin-right:5px;"></i><?php echo "Monthly view" ?> <?= $tpl->__('links.view') ?>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="<?php echo BASE_URL ?>/timesheets/showMy" class="active"><?php echo $tpl->__('links.week_view') ?></a></li>
+                    <li><a href="<?php echo BASE_URL ?>/timesheets/showMy"><?php echo $tpl->__('links.week_view') ?></a></li>
                     <li><a href="<?php echo BASE_URL ?>/timesheets/showMyList"><?php echo $tpl->__('links.list_view') ?></a></li>
-                    <li><a href="<?= BASE_URL ?>/timesheets/showMyMonthlyTimesheet" class="active">Monthly View</a></li>
+                    <li><a href="<?= BASE_URL ?>/timesheets/showMyMonthlyTimesheet" class="active"><i class="fa fa-calendar-alt" style="margin-right:5px;"></i>Monthly View</a></li>
                 </ul>
             </div>
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
