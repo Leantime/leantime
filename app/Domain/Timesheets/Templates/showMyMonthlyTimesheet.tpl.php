@@ -343,7 +343,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                             </td>
                             <?php
                             for ($d = 1; $d <= $daysInMonth; $d++) {
-                                $dayDate = $dateFrom->copy()->setDay($d); 
+                                $dayDate = $dateFrom->copy()->setDay($d);
                             ?>
                                 <td width="7%" class="rowday<?php echo $d; ?><?php if ($dayDate->setToUserTimezone()->isToday()) {
                                                                                     echo ' active';
