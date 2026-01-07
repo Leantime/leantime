@@ -119,12 +119,7 @@
             jQuery('select[name="kind"]').val(filters.kind);
         }
 
-        if (filters.dateFrom) {
-            jQuery('input[name="dateFrom"]').val(filters.dateFrom);
-        }
-        if (filters.dateTo) {
-            jQuery('input[name="dateTo"]').val(filters.dateTo);
-        }
+
         jQuery('input[name="invEmpl"]').prop('checked', filters.invEmpl === '1');
         jQuery('input[name="invComp"]').prop('checked', filters.invComp === '1');
         jQuery('input[name="paid"]').prop('checked', filters.paid === '1');
@@ -192,8 +187,6 @@
             clientId: jQuery('select[name="clientId"]').val() || '-1',
             userId: jQuery('select[name="userId"]').val() || 'all',
             kind: jQuery('select[name="kind"]').val() || 'all',
-            dateFrom: jQuery('input[name="dateFrom"]').val() || '',
-            dateTo: jQuery('input[name="dateTo"]').val() || '',
             invEmpl: jQuery('input[name="invEmpl"]').is(':checked') ? '1' : '0',
             invComp: jQuery('input[name="invComp"]').is(':checked') ? '1' : '0',
             paid: jQuery('input[name="paid"]').is(':checked') ? '1' : '0'
@@ -285,7 +278,7 @@ function buildPreferencesDropdown() {
     keys.forEach(function (key) {
         const pref = currentPreferences[key];
         const checked = pref.autoExport ? 'checked' : '';
-        
+
         html += `
             <div class="preference-item" style="display: flex; align-items: center; justify-content: space-between;flex-wrap:wrap; padding: 10px 12px; border-bottom: 1px solid #eee;">
                 <div class="preference-name" data-name="${key}" style="flex: 1; font-weight: 500; color: #333;">${key}</div>
@@ -304,7 +297,7 @@ function buildPreferencesDropdown() {
 }
 
 function initAutoExportListeners() {
-    jQuery(document).on('change', '.auto-export', function() {        
+    jQuery(document).on('change', '.auto-export', function() {
         fetch(leantime.appUrl + '/timesheets/saveFilterPreferences', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -449,7 +442,7 @@ jQuery(document).ready(initAutoExportListeners);
             e.stopPropagation();
             const profileName = jQuery(this).data('name');
             const isEnabled = jQuery(this).is(':checked');
-    
+
             saveAutoExportSetting(profileName, isEnabled);
         });
 
@@ -470,7 +463,7 @@ jQuery(document).ready(initAutoExportListeners);
                 autoExport: enabled
             })
         });
-        
+
         if (response.ok) {
             const data = await response.json();
             if (data.status === 'success') {
