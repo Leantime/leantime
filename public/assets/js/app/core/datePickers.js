@@ -107,7 +107,7 @@ leantime.dateController = (function () {
                 firstDay: 1
             },
             ranges: {
-                'Today': [moment(), moment()],
+                'Today': [moment().startOf('day'), moment().endOf('day')],
                 'This Week': [moment().startOf('week'), moment().endOf('week')],
                 'This Month': [moment().startOf('month'), moment().endOf('month')],
                 'Last 7 Days': [moment().subtract(6, 'days'), moment()]

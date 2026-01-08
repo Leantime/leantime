@@ -82,15 +82,14 @@ class ShowAll extends Controller
         if (! empty($_POST['userId'])) {
             $userId = intval(strip_tags($_POST['userId']));
         }
-
         $dateFrom = dtHelper()->userNow()->startOfMonth()->setToDbTimezone();
-        if (! empty($_POST['dateFrom'])) {
-            $dateFrom = dtHelper()->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();
+            if (! empty($_POST['dateFrom'])) {
+            $dateFrom = dtHelper()->parseUserDateTime($_POST['dateFrom'])->startOfDay()->setToDbTimezone();
         }
 
         $dateTo = dtHelper()->userNow()->endOfMonth()->setToDbTimezone();
-        if (! empty($_POST['dateTo'])) {
-            $dateTo = dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
+            if (! empty($_POST['dateTo'])) {
+            $dateTo = dtHelper()->parseUserDateTime($_POST['dateTo'])->endOfDay()->setToDbTimezone();
         }
 
         $invEmplCheck = '-1';
