@@ -230,7 +230,8 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                             <th><?php echo $tpl->__('label.type') ?></th>
                             <?php
                             for ($d = 1; $d <= $daysInMonth; $d++) {
-                                echo "<th>{$d}</th>";
+                                $dayDate = $dateFrom->copy()->setDay($d);
+                                echo '<th>' . $dayDate->format('j.n.Y.') . '</th>';
                             }
                             ?>
                             <th><?php echo $tpl->__('label.total') ?></th>
