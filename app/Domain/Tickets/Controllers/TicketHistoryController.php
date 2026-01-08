@@ -111,6 +111,8 @@ class TicketHistoryController extends Controller
                         $attributeLabel = 'Due Date';
                     } elseif($detailsAttributeId === 'dueTime') {
                         $attributeLabel = 'Due Date Time';
+                    } elseif($detailsAttributeId === 'ticketDescription') {
+                        $attributeLabel = 'Description';
                     } else {
                         $attributeLabel = 'Status';
                     }
@@ -118,7 +120,9 @@ class TicketHistoryController extends Controller
                     $html .= '<strong>' . htmlspecialchars($change['changedBy']) . '</strong> changed '. $attributeLabel . ' on ';
                     $html .= '<span style="color: #666; font-size: 0.9em;">' . date('d.m.Y H:i', strtotime($change['changedAt'])) . '</span><br>';
                     $html .= '<span style="color: #999;">' . htmlspecialchars($change['oldStatusText']) . '</span>';
+                    if($detailsAttributeId != 'ticketDescription'){
                     $html .= ' <i class="fa fa-arrow-right" style="color: #999; font-size: 0.8em;"></i> ';
+                    }
                     $html .= '<span style="color: #28a745; font-weight: bold;">' . htmlspecialchars($change['newStatusText']) . '</span>';
                     $html .= '</li>';
                 }

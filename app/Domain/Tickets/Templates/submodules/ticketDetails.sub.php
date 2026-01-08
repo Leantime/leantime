@@ -224,6 +224,49 @@ jQuery(document).ready(function($) {
     if (ticketIdOnLoad) {
         loadStatusHistory(ticketIdOnLoad);
     }
+        window.initialTicketDescription = '';
+    
+    if (typeof tinymce !== 'undefined') {
+        tinymce.on('AddEditor', function(e) {
+            if (e.editor.id === 'ticketDescription') {
+                e.editor.on('init', function() {
+                    window.initialTicketDescription = e.editor.getContent();
+                });
+                
+                e.editor.off('SaveContent');
+                
+                e.editor.on('SaveContent', function() {
+                    const currentDescription = e.editor.getContent();
+                    
+                    if (window.initialTicketDescription !== currentDescription) {
+                        const ticketId = $('#status-change-log').data('ticket-id');
+                        const user = $('#status-select').data('user') || 'Unknown User';
+                        
+                        $.ajax({
+                            url: '<?= BASE_URL ?>/tickets/ticketHistoryController/logStatusChange',
+                            method: 'POST',
+                            data: {
+                                ticketId: ticketId,
+                                oldStatus: '',
+                                newStatus: '',
+                                oldStatusText: '',
+                                newStatusText: '',
+                                user: user,
+                                detailsAttributeId: 'ticketDescription'
+                            },
+                            success: function(response) {
+                                window.initialTicketDescription = currentDescription;
+                                loadStatusHistory(ticketId);
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error logging description:', error);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
 
    $('#status-select, #priority, #storypoints, #editorId, #deadline').on('change', function() {
         var changedElementId = $(this).attr('id');
