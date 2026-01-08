@@ -282,9 +282,9 @@ function buildPreferencesDropdown() {
         html += `
             <div class="preference-item" style="display: flex; align-items: center; justify-content: space-between;flex-wrap:wrap; padding: 10px 12px; border-bottom: 1px solid #eee;">
                 <div class="preference-name" data-name="${key}" style="flex: 1; font-weight: 500; color: #333;">${key}</div>
-                <div style="display:flex; gap:5px; margin-right:30px;">
-                    <input type="checkbox" class="auto-export" style="margin-bottom:10px;" data-preference-name="${key}" ${checked}/>
-                    <label style="margin-top:5px;">Automatic monthly export</label>
+                <div style="display:flex; gap:8px; align-items: center; white-space: nowrap; margin-right: 15px;">
+                    <label style="margin: 0; line-height: 1; display: flex; align-items: center;">Slack</label>
+                    <input type="checkbox" class="auto-export" data-preference-name="${key}" ${checked} style="margin: 0; vertical-align: middle;"/>
                 </div>
                 <button class="delete-preference" data-name="${key}" style="background: none; border: none; color: #dc3545; cursor: pointer;" title="Delete">
                     <i class="fa fa-trash"></i>
