@@ -212,6 +212,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
 
                 <div class="padding-top-sm">
+                    <?php echo "Month from"; ?>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevMonth"><i class="fa fa-chevron-left"></i></a>
                     <input type="text" class="month-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat') ?>" value="<?php echo $dateFrom->copy()->startOfMonth()->format('Y-m-d') ?>" style="margin-top:5px; width:100px;" />
                     <?php echo $tpl->__('label.until'); ?>
