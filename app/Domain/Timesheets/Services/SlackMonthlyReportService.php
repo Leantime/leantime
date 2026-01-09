@@ -9,7 +9,8 @@ use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Leantime\Domain\Users\Services\Users as UserService;
-use Illuminate\Support\Facades\Cache;
+use Leantime\Core\UI\Template;
+
 
 class SlackMonthlyReportService {
     private string $webhookUrl;
@@ -18,13 +19,15 @@ class SlackMonthlyReportService {
     private SettingRepository $settingRepository;
     private UserService $userService;
     private \GuzzleHttp\Client $httpClient;
+    private Template $tpl;
 
 public function __construct(
     TimesheetService $timesheetsService,
     TicketService $ticketService,
     SettingRepository $settingRepository,
     \GuzzleHttp\Client $httpClient,
-    UserService $userService
+    UserService $userService,
+    Template $tpl
 ) {
     $this->webhookUrl = env('SLACK_WEBHOOK_URL', '');
     $this->timesheetsService = $timesheetsService;
@@ -32,6 +35,7 @@ public function __construct(
     $this->settingRepository = $settingRepository;
     $this->httpClient = $httpClient;
     $this->userService = $userService;
+    $this->tpl = $tpl;
 }
 
     private function getFiltersFromRequest(): array
@@ -184,6 +188,14 @@ public function getAllProfiles(): array {
 
    public function sendMonthlyReportToSlack($profilesWithEnabledAutoExport): void
 {
+        if (empty($profilesWithEnabledAutoExport)) {
+        $this->tpl->setNotification(
+            'No profiles with checkbox Slack ticked!',
+            'error',
+            'save_timesheet'
+        );
+        return;
+        }
     foreach ($profilesWithEnabledAutoExport as $profileName => $profile) {
         $profileFilters = $profile['filters'] ?? [];
         $userId = $profileFilters['userId'] ?? null;
@@ -212,6 +224,11 @@ public function getAllProfiles(): array {
 
         $this->sendCsvToSlack($csvContent, $reportName);
     }
+    $this->tpl->setNotification(
+        'Monthly reports successfully sent to Slack.',
+        'success',
+        'save_timesheet'
+    );
 }
 
 private function sendCsvToSlack(string $csvContent, string $profileName): bool

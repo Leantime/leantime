@@ -35,16 +35,4 @@ public function sendCsvFromUsersProfilesWhichHaveTickboxTrue(): Response
     }
     return Frontcontroller::redirect(BASE_URL.'/timesheets/showAll');
 }
-
-public function sendCsvFromAllProfiles(): Response
-{
-    if(Auth::userIsAtLeast(Roles::$admin)) {
-        $allProfiles = $this->slackReportService->getAllProfiles();
-
-        $this->slackReportService->sendAutomaticMonthlyReportToSlack($allProfiles);
-
-        return Frontcontroller::redirect(BASE_URL.'/timesheets/showAll');
-    }
-    return Frontcontroller::redirect(BASE_URL.'/timesheets/showAll');
-}
 }
