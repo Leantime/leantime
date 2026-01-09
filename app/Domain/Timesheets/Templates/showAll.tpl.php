@@ -3,6 +3,7 @@
 <script type="text/javascript" src="<?= BASE_URL ?>/assets/js/app/core/daterangepicker.min.js"></script>
 <script src="<?= BASE_URL ?>/assets/js/app/core/datePickers.js"></script>
 <?php
+
 defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor

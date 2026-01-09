@@ -11,7 +11,6 @@ use GuzzleHttp\Exception\ClientException;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Leantime\Core\UI\Template;
 
-
 class SlackMonthlyReportService {
     private string $webhookUrl;
     private TimesheetService $timesheetsService;
