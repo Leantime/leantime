@@ -269,6 +269,8 @@ jQuery(document).ready(function(){
 $days[] = array_shift($days);
 ?>
                 <tr>
+                    <th>ID</th>
+                    <th>Tick.ID</th>
                     <th><?php echo $tpl->__('label.client_product')?></th>
                     <th><?php echo $tpl->__('subtitles.todo')?></th>
                     <th><?php echo $tpl->__('label.type')?></th>
@@ -305,11 +307,40 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
     $timesheetId = 'new';
     ?>
                             <tr class="gradeA timesheetRow">
-                                <td width="14%"><?php $tpl->e($timeRow['clientName']); ?> // <?php $tpl->e($timeRow['name']); ?></td>
-                                <td width="14%">
-                                    <a href="#/tickets/showTicket/<?php echo $timeRow['ticketId']; ?>"><?php $tpl->e($timeRow['headline']); ?></a>
+                                <td width="5%">
+                                    <?php
+                                    $logIds = [];
+                                    foreach (array_keys($timeRow) as $dayKey) {
+
+                                        error_log($dayKey);
+
+                                        if (str_starts_with($dayKey, 'day') && !empty($timeRow[$dayKey]['id'])) {
+                                            $logIds[] = $timeRow[$dayKey]['id'];
+                                        }
+                                    }
+                                    if (!empty($logIds)) {
+                                        $firstId = $logIds[0];
+                                        echo '<a href="' . BASE_URL . '/timesheets/editTime/' . $firstId . '" class="editTimeModal">#' . implode(', #', $logIds) . '</a>';
+                                    } else {
+                                        echo '-';
+                                    }
+                                    ?>
                                 </td>
-                                <td width="10%">
+                                <td width="5%">
+                                    <?php
+                                    $projectKey = $timeRow['projectKey'] ?? '';
+                                    $ticketId = $timeRow['ticketId'];
+                                    $tickIdDisplay = !empty($projectKey) ? $projectKey . '-' . $ticketId : '#' . $ticketId;
+                                    ?>
+                                    <a href="#/tickets/showTicket/<?php echo $ticketId; ?>">
+                                        <?php echo $tickIdDisplay; ?>
+                                    </a>
+                                </td>
+                                <td width="12%"><?php $tpl->e($timeRow['clientName']); ?> // <?php $tpl->e($timeRow['name']); ?></td>
+                                <td width="12%">
+                                    <a href="#/tickets/showTicket/<?php echo  $timeRow['ticketId']; ?>"><?php $tpl->e($timeRow['headline']); ?></a>
+                                </td>
+                                <td width="8%">
                                 <?php
                                 echo $tpl->__($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']); ?>
                             <?php if ($timeRow['hasTimesheetOffset']) { ?>
@@ -357,13 +388,15 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                                 }
                             } ?>
 
-                                <td width="7%" class="rowSum" data-order="<?php echo $timeRow['rowSum']; ?>"><strong><?php echo format_hours($timeRow['rowSum']); ?></strong></td>
+                                <td width="6%" class="rowSum" data-order="<?php echo $timeRow['rowSum']; ?>"><strong><?php echo format_hours($timeRow['rowSum']); ?></strong></td>
                             </tr>
                         <?php } ?>
 
                         <!-- Row to add new time registration -->
                         <tr class="gradeA timesheetRow">
-                            <td width="14%">
+                            <td width="5%">-</td>
+                            <td width="5%">-</td>
+                            <td width="12%">
                                 <div class="form-group" id="projectSelect">
                                     <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_project')?>" style="" class="project-select" >
                                         <option value=""></option>
@@ -386,7 +419,7 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                                     </select>
                                 </div>
                             </td>
-                            <td width="14%">
+                            <td width="12%">
                                 <div class="form-group" id="ticketSelect">
                                     <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_todo')?>" style="" class="ticket-select" name="ticketId">
                                         <option value=""></option>
@@ -413,7 +446,7 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                                     </select>
                                 </div>
                             </td>
-                            <td width="14%">
+                            <td width="8%">
                                 <select class="kind-select" name="kindId">
                                         <?php foreach ($tpl->get('kind') as $key => $kindRow) { ?>
                                             <?php echo '<option value='.$key.'>'.$tpl->__($kindRow).'</option>'; ?>
@@ -425,7 +458,7 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                             $i = 0;
 foreach ($days as $day) {
     ?>
-                                <td width="7%" class="rowday<?php echo $i + 1; ?><?php if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) {
+                                <td width="6%" class="rowday<?php echo $i + 1; ?><?php if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) {
                                     echo ' active';
                                 } ?>">
                                     <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|<?php echo $dateFrom->addDays($i)->formatDateForUser() ?>|<?php echo $dateFrom->addDays($i)->getTimestamp() ?>" value="<?php echo format_hours(0); ?>" data-decimal-value="0" />
@@ -438,7 +471,7 @@ foreach ($days as $day) {
 
                 <tfoot>
                     <tr style="font-weight:bold;">
-                        <td colspan="3"><?php echo $tpl->__('label.total')?></td>
+                        <td colspan="5"><?php echo $tpl->__('label.total')?></td>
                         <?php
                         $totalHours = 0;
 foreach ($colSum as $key => $col) {

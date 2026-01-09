@@ -104,6 +104,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                 <thead>
                     <tr>
                         <th><?php echo $tpl->__('label.id'); ?></th>
+                        <th>Tick.ID</th>
                         <th><?php echo $tpl->__('label.date'); ?></th>
                         <th><?php echo $tpl->__('label.hours'); ?></th>
                         <th><?php echo $tpl->__('label.plan_hours'); ?></th>
@@ -130,7 +131,19 @@ foreach ($tpl->get('allTimesheets') as $row) {
     $sum = $sum + $row['hours']; ?>
                     <tr>
                         <td data-order="<?php echo $tpl->e($row['id']); ?>">
-                            <a href="<?= BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal" id="editTimesheet-<?php echo $row['id']?>">#<?php echo $row['id'].' - '.$tpl->__('label.edit'); ?> </a></td>
+                            <a href="<?= BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal">#<?php echo $row['id']; ?></a>
+                        </td>
+                        <td data-order="<?php echo !empty($row['projectKey']) ? $tpl->escape($row['projectKey']) . '-' . $tpl->escape($row['ticketId']) : '#' . $tpl->escape($row['ticketId']); ?>">
+                            <a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>">
+                                <?php
+                                if (!empty($row['projectKey'])) {
+                                    echo $tpl->escape($row['projectKey']) . '-' . $tpl->escape($row['ticketId']);
+                                } else {
+                                    echo '#' . $tpl->escape($row['ticketId']);
+                                }
+                                ?>
+                            </a>
+                        </td>
                         <td data-order="<?php echo format($row['workDate'])->isoDateTime(); ?>">
                             <?php echo format($row['workDate'])->date(); ?>
                             <?php echo format($row['workDate'])->time(); ?>
@@ -196,6 +209,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                 </tbody>
                 <tfoot>
                     <tr>
+                        <td></td>
                         <td></td>
                         <td colspan="1"><strong><?php echo $tpl->__('label.total_hours')?></strong></td>
                         <?php /* legacy total: <td colspan="11"><strong><?php echo $sum; ?></strong></td> */ ?>

@@ -403,6 +403,8 @@ class Timesheets
                     'name' => $timesheet['name'],
                     'headline' => $timesheet['headline'],
                     'ticketId' => $timesheet['ticketId'],
+                    'projectId' => $timesheet['projectId'],
+                    'projectKey' => $timesheet['projectKey'],
                     'hasTimesheetOffset' => $workdateOffsetStart !== 0,
                     'day1' => [
                         'start' => $fromDate,
