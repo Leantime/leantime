@@ -214,6 +214,19 @@ class Timesheets
             throw new MissingParameterException('Ticket Id is a required field');
         }
 
+        // Either date, dateString or timestamp is required
+        if (! isset($params['date']) && empty($params['timestamp']) && empty($params['dateString'])) {
+            throw new MissingParameterException('Date or timestamp is a required field');
+        }
+
+        if (! isset($params['hours'])) {
+            throw new MissingParameterException('Hours is a required field');
+        }
+
+        if (! isset($params['kind'])) {
+            throw new MissingParameterException('Timesheet type is a required field');
+        }
+
         // Support multiple date formats:
         // 1. dateString (YYYY-MM-DD) - parsed using user's stored timezone (recommended for mobile/API)
         // 2. timestamp (Unix epoch) - used as-is
@@ -228,18 +241,8 @@ class Timesheets
                 ->format('Y-m-d H:i:s');
         } elseif (! empty($params['timestamp'])) {
             $values['date'] = CarbonImmutable::createFromTimestamp($params['timestamp'], 'UTC')->format('Y-m-d H:i:s');
-        } elseif (! empty($params['date'])) {
-            $values['date'] = dtHelper()->parseUserDateTime($params['date'], 'start')->formatDateTimeForDb();
         } else {
-            throw new MissingParameterException('Date or timestamp is a required field');
-        }
-
-        if (! isset($params['hours'])) {
-            throw new MissingParameterException('Hours is a required field');
-        }
-
-        if (! isset($params['kind'])) {
-            throw new MissingParameterException('Timesheet type is a required field');
+            $values['date'] = dtHelper()->parseUserDateTime($params['date'], 'start')->formatDateTimeForDb();
         }
 
         $values['hours'] = $params['hours'];
@@ -250,6 +253,18 @@ class Timesheets
         $this->timesheetsRepo->upsertTimesheetEntry($values);
 
         return true;
+    }
+
+    /**
+     * Delete a timesheet entry
+     *
+     * @param  int  $id  The ID of the timesheet entry to delete
+     *
+     * @api
+     */
+    public function deleteTime(int $id): void
+    {
+        $this->timesheetsRepo->deleteTime($id);
     }
 
     /**
@@ -280,14 +295,26 @@ class Timesheets
     }
 
     /**
+     * Get remaining hours for a ticket (planned hours minus logged hours)
+     *
+     * @param  int|Tickets  $ticketOrId  Ticket ID or Tickets object
      * @return int|mixed
      *
      * @api
      */
-    public function getRemainingHours(Tickets $ticket): mixed
+    public function getRemainingHours(int|Tickets $ticketOrId): mixed
     {
-        $totalHoursLogged = $this->getSumLoggedHoursForTicket($ticket->id);
-        $planHours = $ticket->planHours;
+        // Support both ticket ID (for API calls) and Tickets object (for internal use)
+        if ($ticketOrId instanceof Tickets) {
+            $ticketId = $ticketOrId->id;
+            $planHours = $ticketOrId->planHours;
+        } else {
+            $ticketId = $ticketOrId;
+            // Fetch plan hours from repository
+            $planHours = $this->timesheetsRepo->getTicketPlanHours($ticketId);
+        }
+
+        $totalHoursLogged = $this->getSumLoggedHoursForTicket($ticketId);
 
         $remaining = $planHours - $totalHoursLogged;
 
