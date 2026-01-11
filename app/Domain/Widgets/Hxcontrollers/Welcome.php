@@ -93,7 +93,7 @@ class Welcome extends HtmxController
         $totalToday = count($todaysTasks['totalTasks'] ?? []);
         $doneToday = count($todaysTasks['doneTasks'] ?? []);
 
-        $this->tpl->assign('showSettingsIndicator', $showSettingsIndicator = true);
+        $this->tpl->assign('showSettingsIndicator', $showSettingsIndicator);
         $this->tpl->assign('totalTickets', $totalTickets);
         $this->tpl->assign('closedTicketsCount', $closedTicketsCount);
         $this->tpl->assign('ticketsInGoals', $ticketsInGoals);

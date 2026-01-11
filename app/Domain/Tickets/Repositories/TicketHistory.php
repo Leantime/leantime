@@ -2,44 +2,32 @@
 
 namespace Leantime\Domain\Tickets\Repositories;
 
+use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
-use PDO;
 
 class TicketHistory
 {
-    private DbCore $db;
+    private ConnectionInterface $db;
 
     /**
      * __construct - get database connection
      */
     public function __construct(DbCore $db)
     {
-        $this->db = $db;
+        $this->db = $db->getConnection();
     }
 
     public function getRecentTicketHistory(\DateTime $startingFrom, int $ticketId): array
     {
-        $query = 'SELECT *
-                    FROM zp_tickethistory
-                    WHERE
-                    dateModified >= :startingFrom';
+        $query = $this->db->table('zp_tickethistory')
+            ->where('dateModified', '>=', $startingFrom->format('Y-m-d'));
 
         if ($ticketId !== null) {
-            $query .= ' AND ticketId = :ticketId';
+            $query->where('ticketId', $ticketId);
         }
 
-        $query .= ' ORDER BY dateModified DESC';
+        $results = $query->orderBy('dateModified', 'desc')->get();
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':startingFrom', $startingFrom->format('Y-m-d'), PDO::PARAM_STR);
-
-        if ($ticketId !== null) {
-            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-        }
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 }

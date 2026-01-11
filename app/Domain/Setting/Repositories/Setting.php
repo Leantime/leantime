@@ -3,13 +3,13 @@
 namespace Leantime\Domain\Setting\Repositories;
 
 use Exception;
+use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Setting\Services\SettingCache;
-use PDO;
 
 class Setting
 {
-    private DbCore $db;
+    private ConnectionInterface $db;
 
     private SettingCache $cache;
 
@@ -22,14 +22,14 @@ class Setting
      */
     public function __construct(DbCore $db, SettingCache $cache)
     {
-        $this->db = $db;
+        $this->db = $db->getConnection();
         $this->cache = $cache;
     }
 
     /**
      * @return false|mixed
      */
-    public function getSetting($type, $default = false): mixed
+    public function getSetting(string $type, mixed $default = false): mixed
     {
         if ($this->checkIfInstalled() === false) {
             return false;
@@ -41,56 +41,41 @@ class Setting
             return $cachedValue;
         }
 
-        $sql = 'SELECT
-                        value
-                FROM zp_settings WHERE `key` = :key
-                LIMIT 1';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
-
         try {
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
+            $result = $this->db->table('zp_settings')
+                ->where('key', $type)
+                ->limit(1)
+                ->first();
+
+            if ($result !== null && isset($result->value)) {
+                // Store in cache for future requests
+                $this->cache->set($type, $result->value);
+
+                return $result->value;
+            }
+
+            // value is not in the db, which is fine. Let's cache that too
+            $this->cache->set($type, false);
+
+            return $default;
         } catch (Exception $e) {
             report($e);
 
             return false;
         }
-
-        if ($values !== false && isset($values['value'])) {
-            // Store in cache for future requests
-            $this->cache->set($type, $values['value']);
-
-            return $values['value'];
-        }
-
-        // value is not in the db, which is fine. Let's cache that too
-        $this->cache->set($type, false);
-
-        // TODO: This needs to return null or throw an exception if the setting doesn't exist.
-        return $default;
     }
 
-    public function saveSetting($type, $value): bool
+    public function saveSetting(string $type, mixed $value): bool
     {
-
         if ($this->checkIfInstalled() === false) {
             return false;
         }
 
-        $sql = 'INSERT INTO zp_settings (`key`, `value`)
-                VALUES (:key, :value) ON DUPLICATE KEY UPDATE
-                  `value` = :valueUpdate';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
-        $stmn->bindvalue(':value', $value, PDO::PARAM_STR);
-        $stmn->bindvalue(':valueUpdate', $value, PDO::PARAM_STR);
-
-        $return = $stmn->execute();
-        $stmn->closeCursor();
+        $return = $this->db->table('zp_settings')
+            ->updateOrInsert(
+                ['key' => $type],
+                ['value' => $value]
+            );
 
         // Update cache
         $this->cache->set($type, $value);
@@ -98,16 +83,12 @@ class Setting
         return $return;
     }
 
-    public function deleteSetting($type): void
+    public function deleteSetting(string $type): void
     {
-
-        $sql = 'DELETE FROM zp_settings WHERE `key` = :key LIMIT 1';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $stmn->closeCursor();
+        $this->db->table('zp_settings')
+            ->where('key', $type)
+            ->limit(1)
+            ->delete();
 
         // Remove from cache
         $this->cache->forget($type);
@@ -118,24 +99,17 @@ class Setting
      */
     public function checkIfInstalled(): bool
     {
-
         $cachedValue = $this->cache->get('isInstalled');
         if ($cachedValue !== null) {
             return true;
         }
 
         try {
-
-            $stmn = $this->db->database->prepare('SELECT COUNT(*) FROM zp_user');
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+            $this->db->table('zp_user')->count();
 
             $this->cache->set('isInstalled', true);
 
             return true;
-
         } catch (Exception $e) {
             report($e);
 

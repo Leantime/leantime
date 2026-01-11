@@ -2,20 +2,20 @@
 
 namespace Leantime\Domain\Plugins\Repositories;
 
+use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Plugins\Models\InstalledPlugin;
-use PDO;
 
 class Plugins
 {
-    private DbCore $db;
+    private ConnectionInterface $db;
 
     /**
      * __construct - get database connection
      */
     public function __construct(DbCore $db)
     {
-        $this->db = $db;
+        $this->db = $db->getConnection();
     }
 
     /**
@@ -23,34 +23,42 @@ class Plugins
      */
     public function getAllPlugins(bool $enabledOnly = true): false|array
     {
-        $query = 'SELECT
-                id,
-                name,
-                enabled,
-                description,
-                version,
-                installdate,
-                foldername,
-                homepage,
-                authors,
-                format,
-                license
-            FROM zp_plugins';
+        $query = $this->db->table('zp_plugins')
+            ->select(
+                'id',
+                'name',
+                'enabled',
+                'description',
+                'version',
+                'installdate',
+                'foldername',
+                'homepage',
+                'authors',
+                'format',
+                'license'
+            );
 
         if ($enabledOnly) {
-            $query .= ' WHERE enabled = true';
+            $query->where('enabled', true);
         }
 
-        $query .= ' GROUP BY name ';
+        $results = $query->groupBy('name')->get();
 
-        $stmn = $this->db->database->prepare($query);
-
-        $stmn->execute();
-        $stmn->setFetchMode(PDO::FETCH_CLASS, InstalledPlugin::class);
-        $allPlugins = $stmn->fetchAll();
-
-        foreach ($allPlugins as &$row) { // Use reference so we can modify in place
-            $row->authors = json_decode($row->authors);
+        $allPlugins = [];
+        foreach ($results as $row) {
+            $plugin = new InstalledPlugin;
+            $plugin->id = $row->id;
+            $plugin->name = $row->name;
+            $plugin->enabled = $row->enabled;
+            $plugin->description = $row->description;
+            $plugin->version = $row->version;
+            $plugin->installdate = $row->installdate;
+            $plugin->foldername = $row->foldername;
+            $plugin->homepage = $row->homepage;
+            $plugin->authors = json_decode($row->authors);
+            $plugin->format = $row->format;
+            $plugin->license = $row->license;
+            $allPlugins[] = $plugin;
         }
 
         return $allPlugins;
@@ -58,130 +66,80 @@ class Plugins
 
     public function getPlugin(int $id): InstalledPlugin|false
     {
+        $result = $this->db->table('zp_plugins')
+            ->select(
+                'id',
+                'name',
+                'enabled',
+                'description',
+                'version',
+                'installdate',
+                'foldername',
+                'homepage',
+                'authors',
+                'license',
+                'format'
+            )
+            ->where('id', $id)
+            ->first();
 
-        $query = 'SELECT
-                    id,
-                  name,
-                  enabled,
-                  description,
-                  version,
-                  installdate,
-                  foldername,
-                  homepage,
-                  authors,
-                  license,
-                  format
+        if ($result === null) {
+            return false;
+        }
 
-                FROM zp_plugins WHERE id = :id';
-
-        $stmn = $this->db->database->prepare($query);
-
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $stmn->setFetchMode(PDO::FETCH_CLASS, InstalledPlugin::class);
-        $plugin = $stmn->fetch();
+        $plugin = new InstalledPlugin;
+        $plugin->id = $result->id;
+        $plugin->name = $result->name;
+        $plugin->enabled = $result->enabled;
+        $plugin->description = $result->description;
+        $plugin->version = $result->version;
+        $plugin->installdate = $result->installdate;
+        $plugin->foldername = $result->foldername;
+        $plugin->homepage = $result->homepage;
+        $plugin->authors = $result->authors;
+        $plugin->license = $result->license;
+        $plugin->format = $result->format;
 
         return $plugin;
     }
 
-    public function addPlugin(\Leantime\Domain\Plugins\Models\InstalledPlugin $plugin): false|string
+    public function addPlugin(InstalledPlugin $plugin): false|string
     {
+        $id = $this->db->table('zp_plugins')->insertGetId([
+            'name' => $plugin->name,
+            'enabled' => $plugin->enabled,
+            'description' => $plugin->description,
+            'version' => $plugin->version,
+            'installdate' => $plugin->installdate,
+            'foldername' => $plugin->foldername,
+            'homepage' => $plugin->homepage,
+            'authors' => $plugin->authors,
+            'license' => $plugin->license ?? '',
+            'format' => $plugin->format ?? 'folder',
+        ]);
 
-        $sql = 'INSERT INTO zp_plugins (
-                name,
-                enabled,
-                description,
-                version,
-                installdate,
-                foldername,
-                homepage,
-                authors,
-                license,
-                format
-            ) VALUES (
-                :name,
-                :enabled,
-                :description,
-                :version,
-                :installdate,
-                :foldername,
-                :homepage,
-                :authors,
-                :license,
-                :format
-            )';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':name', $plugin->name, PDO::PARAM_STR);
-        $stmn->bindValue(':enabled', $plugin->enabled, PDO::PARAM_STR);
-        $stmn->bindValue(':description', $plugin->description, PDO::PARAM_STR);
-        $stmn->bindValue(':version', $plugin->version, PDO::PARAM_STR);
-        $stmn->bindValue(':installdate', $plugin->installdate, PDO::PARAM_STR);
-        $stmn->bindValue(':foldername', $plugin->foldername, PDO::PARAM_STR);
-        $stmn->bindValue(':homepage', $plugin->homepage, PDO::PARAM_STR);
-        $stmn->bindValue(':authors', $plugin->authors, PDO::PARAM_STR);
-        $stmn->bindValue(':license', $plugin->license ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':format', $plugin->format ?? 'folder', PDO::PARAM_STR);
-
-        $stmn->execute();
-
-        $id = $this->db->database->lastInsertId();
-        $stmn->closeCursor();
-
-        return $id;
+        return (string) $id;
     }
 
     public function enablePlugin(int $id): bool
     {
-
-        $sql = 'UPDATE zp_plugins
-                   SET enabled = 1
-                WHERE id = :id
-            ';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $result = $stmn->execute();
-
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->db->table('zp_plugins')
+            ->where('id', $id)
+            ->update(['enabled' => 1]) > 0;
     }
 
     public function disablePlugin(int $id): bool
     {
-
-        $sql = 'UPDATE zp_plugins
-                   SET enabled = 0
-                WHERE id = :id
-            ';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $result = $stmn->execute();
-
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->db->table('zp_plugins')
+            ->where('id', $id)
+            ->update(['enabled' => 0]) > 0;
     }
 
     public function removePlugin(int $id): bool
     {
-
-        $sql = 'DELETE FROM zp_plugins
-                WHERE id = :id LIMIT 1
-            ';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $result = $stmn->execute();
-
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->db->table('zp_plugins')
+            ->where('id', $id)
+            ->limit(1)
+            ->delete() > 0;
     }
 }
