@@ -347,6 +347,7 @@ class Install
                     `projectId` INT NULL,
                     `type` VARCHAR(45) NULL,
                     `description` TEXT,
+                    `color` VARCHAR(50) DEFAULT 'ocean',
                     `modified` datetime DEFAULT NULL,
                     PRIMARY KEY (`id`),
                     KEY `ProjectIdType` (`projectId` ASC, `type` ASC),
