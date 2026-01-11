@@ -45,8 +45,6 @@ class Timesheets
     }
 
     /**
-     * @param  int  $ticketId
-     *
      * @api
      */
     public function punchIn(int $ticketId): mixed
@@ -55,8 +53,6 @@ class Timesheets
     }
 
     /**
-     * @param  int  $ticketId
-     *
      * @api
      */
     public function punchOut(int $ticketId): float|false|int

@@ -947,6 +947,25 @@ class Timesheets extends Repository
     }
 
     /**
+     * Get planned hours for a ticket
+     */
+    public function getTicketPlanHours(int $ticketId): float
+    {
+        $query = 'SELECT planHours FROM zp_tickets WHERE id = :ticketId LIMIT 1';
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+        $call->bindValue(':ticketId', $ticketId);
+
+        $call->execute();
+
+        $result = $call->fetch(PDO::FETCH_ASSOC);
+
+        return (float) ($result['planHours'] ?? 0);
+    }
+
+    /**
      * Clean up empty timesheets.
      *
      * This function deletes all timesheets from the "zp_timesheets" table
