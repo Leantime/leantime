@@ -7,7 +7,6 @@ use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Exceptions\MissingParameterException;
-use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Users\Repositories\Users;
@@ -18,8 +17,6 @@ class Timesheets
 
     private Users $userRepo;
 
-    private SettingService $settingService;
-
     public array $kind = [
         'GENERAL_BILLABLE' => 'label.general_billable',
         'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
@@ -29,27 +26,10 @@ class Timesheets
         'TESTING' => 'label.testing',
     ];
 
-    public function __construct(TimesheetRepository $timesheetsRepo, Users $userRepo, SettingService $settingService)
+    public function __construct(TimesheetRepository $timesheetsRepo, Users $userRepo)
     {
         $this->timesheetsRepo = $timesheetsRepo;
         $this->userRepo = $userRepo;
-        $this->settingService = $settingService;
-    }
-
-    /**
-     * Get user's timezone from settings, fallback to session, then default to UTC
-     */
-    private function getUserTimezone(?int $userId = null): string
-    {
-        $userId = $userId ?? session('userdata.id');
-        if ($userId) {
-            $tz = $this->settingService->getSetting('usersettings.'.$userId.'.timezone');
-            if ($tz && $tz !== false) {
-                return $tz;
-            }
-        }
-        // Fallback to session timezone or UTC
-        return session('usersettings.timezone') ?? 'UTC';
     }
 
     /**
@@ -136,18 +116,8 @@ class Timesheets
             throw new MissingParameterException('Ticket Id is a required field');
         }
 
-        // Support multiple date formats:
-        // 1. dateString (YYYY-MM-DD) - parsed using user's stored timezone (recommended for mobile/API)
-        // 2. timestamp (Unix epoch) - used as-is
-        // 3. date + time - parsed in user's session timezone
-        $userTimezone = $this->getUserTimezone($values['userId']);
-
         if (! empty($params['dateString'])) {
-            // Mobile sends date string, parse using user's stored timezone for API consistency
-            $values['date'] = CarbonImmutable::parse($params['dateString'], $userTimezone)
-                ->startOfDay()
-                ->setTimezone('UTC')
-                ->format('Y-m-d H:i:s');
+            $values['date'] = dtHelper()->parseUserDateTime($params['dateString'], 'start')->formatDateTimeForDb();
         } elseif (! empty($params['timestamp'])) {
             $values['date'] = CarbonImmutable::createFromTimestamp($params['timestamp'], 'UTC')->format('Y-m-d H:i:s');
         } elseif (! empty($params['date']) && empty($params['time'])) {
@@ -227,18 +197,8 @@ class Timesheets
             throw new MissingParameterException('Timesheet type is a required field');
         }
 
-        // Support multiple date formats:
-        // 1. dateString (YYYY-MM-DD) - parsed using user's stored timezone (recommended for mobile/API)
-        // 2. timestamp (Unix epoch) - used as-is
-        // 3. date - parsed in user's session timezone
-        $userTimezone = $this->getUserTimezone($values['userId']);
-
         if (! empty($params['dateString'])) {
-            // Mobile sends date string, parse using user's stored timezone for API consistency
-            $values['date'] = CarbonImmutable::parse($params['dateString'], $userTimezone)
-                ->startOfDay()
-                ->setTimezone('UTC')
-                ->format('Y-m-d H:i:s');
+            $values['date'] = dtHelper()->parseUserDateTime($params['dateString'], 'start')->formatDateTimeForDb();
         } elseif (! empty($params['timestamp'])) {
             $values['date'] = CarbonImmutable::createFromTimestamp($params['timestamp'], 'UTC')->format('Y-m-d H:i:s');
         } else {
