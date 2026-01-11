@@ -69,10 +69,8 @@ class Timesheets
      *
      * @api
      */
-    public function punchIn(int|string $ticketId): mixed
+    public function punchIn(int $ticketId): mixed
     {
-        $ticketId = (int) $ticketId;
-
         return $this->timesheetsRepo->punchIn($ticketId);
     }
 
@@ -81,11 +79,29 @@ class Timesheets
      *
      * @api
      */
-    public function punchOut(int|string $ticketId): float|false|int
+    public function punchOut(int $ticketId): float|false|int
     {
-        $ticketId = (int) $ticketId;
-
         return $this->timesheetsRepo->punchOut($ticketId);
+    }
+
+    /**
+     * Stop the active timer for the current user (no ticket ID required)
+     *
+     * @api
+     */
+    public function stopActiveTimer(): float|false|int
+    {
+        $userId = session('userdata.id');
+        if (! $userId) {
+            return false;
+        }
+
+        $clockedStatus = $this->timesheetsRepo->isClocked($userId);
+        if ($clockedStatus === false || ! isset($clockedStatus['id'])) {
+            return false;
+        }
+
+        return $this->timesheetsRepo->punchOut($clockedStatus['id']);
     }
 
     /**
