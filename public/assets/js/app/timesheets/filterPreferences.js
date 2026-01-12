@@ -5,6 +5,7 @@
 
     let currentPreferences = {};
     let dataTableInstance = null;
+    let selectedRangeName = null; 
 
 
     function init(dataTable) {
@@ -18,11 +19,26 @@
             const dtButtons = jQuery('#tableButtons .dt-buttons');
             if (dtButtons.length > 0) {
                 initUI();
+                initDateRangeTracking();
             }
 
         };
 
         setTimeout(checkAndInit, 100);
+    }
+
+    function initDateRangeTracking() {
+        const dateInput = jQuery('input[name="dateFrom"]');
+        
+        if (dateInput.length && dateInput.data('daterangepicker')) {
+            dateInput.on('apply.daterangepicker', function(ev, picker) {
+                if (picker.chosenLabel) {
+                    selectedRangeName = picker.chosenLabel;
+                }
+            });
+        } else {
+            setTimeout(initDateRangeTracking, 500);
+        }
     }
 
     async function loadPreference(name) {
@@ -104,6 +120,35 @@
         alert('Failed to save profile');
         return false;
     }
+    function applyDateRange(rangeName) {
+        const dateInput = jQuery('input[name="dateFrom"]');
+        
+        if (!dateInput.length || !dateInput.data('daterangepicker')) {
+            return false;
+        }
+
+        const picker = dateInput.data('daterangepicker');
+        const ranges = picker.ranges;
+
+        if (ranges && ranges[rangeName]) {
+            const range = ranges[rangeName];
+            const startDate = range[0];
+            const endDate = range[1];
+
+            picker.setStartDate(startDate);
+            picker.setEndDate(endDate);
+            picker.chosenLabel = rangeName;
+
+            jQuery('input[name="dateFrom"]').val(startDate.format('YYYY-MM-DD'));
+            jQuery('input[name="dateTo"]').val(endDate.format('YYYY-MM-DD'));
+
+            selectedRangeName = rangeName;
+
+            return true;
+        }
+
+        return false;
+    }
 
     async function applyFilters(filters) {
         if (!filters) {
@@ -119,6 +164,25 @@
             jQuery('select[name="kind"]').val(filters.kind);
         }
 
+        if (filters.dateRange && filters.dateRange !== 'Custom') {
+            const applied = applyDateRange(filters.dateRange);
+            
+            if (!applied) {
+                if (filters.dateFrom) {
+                    jQuery('input[name="dateFrom"]').val(filters.dateFrom);
+                }
+                if (filters.dateTo) {
+                    jQuery('input[name="dateTo"]').val(filters.dateTo);
+                }
+            }
+        } else {
+            if (filters.dateFrom) {
+                jQuery('input[name="dateFrom"]').val(filters.dateFrom);
+            }
+            if (filters.dateTo) {
+                jQuery('input[name="dateTo"]').val(filters.dateTo);
+            }
+        }
 
         jQuery('input[name="invEmpl"]').prop('checked', filters.invEmpl === '1');
         jQuery('input[name="invComp"]').prop('checked', filters.invComp === '1');
@@ -181,6 +245,20 @@
     }
 
     function getCurrentFilters() {
+        const dateFrom = jQuery('input[name="dateFrom"]').val() || '';
+        const dateTo = jQuery('input[name="dateTo"]').val() || '';
+        
+        let dateRange = 'Custom';
+        const dateInput = jQuery('input[name="dateFrom"]');
+        
+        if (dateInput.length && dateInput.data('daterangepicker')) {
+            const picker = dateInput.data('daterangepicker');
+            if (picker.chosenLabel) {
+                dateRange = picker.chosenLabel;
+            } else if (selectedRangeName) {
+                dateRange = selectedRangeName;
+            }
+        }
 
         const projectFilters = {
             projects: [],
@@ -189,7 +267,10 @@
             kind: jQuery('select[name="kind"]').val() || 'all',
             invEmpl: jQuery('input[name="invEmpl"]').is(':checked') ? '1' : '0',
             invComp: jQuery('input[name="invComp"]').is(':checked') ? '1' : '0',
-            paid: jQuery('input[name="paid"]').is(':checked') ? '1' : '0'
+            paid: jQuery('input[name="paid"]').is(':checked') ? '1' : '0',
+            dateRange: dateRange,  
+            dateFrom: dateFrom,
+            dateTo: dateTo
         };
 
         const selectedProjects = [];
@@ -278,10 +359,17 @@ function buildPreferencesDropdown() {
     keys.forEach(function (key) {
         const pref = currentPreferences[key];
         const checked = pref.autoExport ? 'checked' : '';
+        let dateInfo = '';
+        if (pref.filters && pref.filters.dateRange && pref.filters.dateRange !== 'Custom') {
+            dateInfo = `<small style="color: #666; font-size: 11px; display: block; margin-top: 2px;">📅 ${pref.filters.dateRange}</small>`;
+        }
 
         html += `
             <div class="preference-item" style="display: flex; align-items: center; justify-content: space-between;flex-wrap:wrap; padding: 10px 12px; border-bottom: 1px solid #eee;">
-                <div class="preference-name" data-name="${key}" style="flex: 1; font-weight: 500; color: #333;">${key}</div>
+                <div class="preference-name" data-name="${key}" style="flex: 1; font-weight: 500; color: #333;">
+                    ${key}
+                    ${dateInfo}
+                </div>
                 <div style="display:flex; gap:8px; align-items: center; white-space: nowrap; margin-right: 15px;">
                     <label style="margin: 0; line-height: 1; display: flex; align-items: center;">Slack</label>
                     <input type="checkbox" class="auto-export" data-preference-name="${key}" ${checked} style="margin: 0; vertical-align: middle;"/>
