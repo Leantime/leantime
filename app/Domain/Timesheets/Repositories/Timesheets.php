@@ -10,6 +10,7 @@ use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Db\Repository;
+use PDO;
 
 class Timesheets extends Repository
 {
