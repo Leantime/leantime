@@ -294,7 +294,7 @@ class Install
                     try {
 
                         $settingsService = app()->make(\Leantime\Domain\Setting\Services\Setting::class);
-                        $settingsService->saveSetting('db-version', $this->settings->dbVersion);
+                        $settingsService->saveSetting('db-version', $this->convert_version($updateVersion));
 
                         // $stmn = $this->database->prepare("INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', '".$this->settings->dbVersion."') ON DUPLICATE KEY UPDATE `value` = '".$this->settings->dbVersion."'");
                         // $stmn->execute();
@@ -318,6 +318,18 @@ class Install
         session()->forget('dbVersion');
 
         return true;
+    }
+
+    private function convert_version($inputVersion): string
+    {
+        // $inputVersion is in the format of 10000 and needs to be converted to 1.0.0
+        $versionString = str_pad((string) $inputVersion, 5, '0', STR_PAD_LEFT);
+
+        $major = intval(substr($versionString, 0, -4));
+        $minor = intval(substr($versionString, -4, 2));
+        $patch = intval(substr($versionString, -2)  );
+
+        return $major . '.' . $minor . '.' . $patch;
     }
 
     /**
