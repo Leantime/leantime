@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\app\Core\Files;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Filesystem\FilesystemManager;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Files\Exceptions\FileValidationException;
 use Leantime\Core\Files\FileManager;
+use Leantime\Core\Language;
+use Leantime\Core\Support\CarbonMacros;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 use Unit\TestCase;
@@ -27,6 +30,33 @@ class FileManagerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Set up session values needed for DateTimeHelper (used by dtHelper())
+        session(['usersettings.timezone' => 'UTC']);
+        session(['usersettings.language' => 'en-US']);
+        session(['usersettings.date_format' => 'Y-m-d']);
+        session(['usersettings.time_format' => 'H:i']);
+
+        // Mock Environment and bind to container for dtHelper()
+        $envMock = $this->createMock(Environment::class);
+        $envMock->defaultTimezone = 'UTC';
+        $envMock->language = 'en-US';
+        app()->instance(Environment::class, $envMock);
+
+        // Mock Language and bind to container
+        $langMock = $this->createMock(Language::class);
+        $langMock->method('__')->willReturnCallback(function ($index) {
+            $map = [
+                'language.dateformat' => 'Y-m-d',
+                'language.timeformat' => 'H:i',
+            ];
+
+            return $map[$index] ?? $index;
+        });
+        app()->instance(Language::class, $langMock);
+
+        // Register CarbonMacros for date parsing
+        CarbonImmutable::mixin(new CarbonMacros('UTC', 'en-US', 'Y-m-d', 'H:i'));
 
         // Mock the FilesystemManager
         $this->filesystemManager = $this->createMock(FilesystemManager::class);

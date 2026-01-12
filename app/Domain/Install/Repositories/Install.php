@@ -73,6 +73,7 @@ class Install
         30408,
         30409,
         30410,
+        30411,
     ];
 
     /**
@@ -359,6 +360,7 @@ class Install
                     `projectId` INT NULL,
                     `type` VARCHAR(45) NULL,
                     `description` TEXT,
+                    `color` VARCHAR(50) DEFAULT 'ocean',
                     `modified` datetime DEFAULT NULL,
                     PRIMARY KEY (`id`),
                     KEY `ProjectIdType` (`projectId` ASC, `type` ASC),
@@ -2119,5 +2121,30 @@ class Install
         }
 
         return true;
+    }
+
+    public function update_sql_30411(): bool|array
+    {
+        $errors = [];
+
+        $sql = [
+            // Add color column to zp_canvas for notebook color support
+            'ALTER TABLE `zp_canvas` ADD COLUMN `color` VARCHAR(50) DEFAULT "ocean" AFTER `description`;',
+        ];
+
+        foreach ($sql as $statement) {
+            try {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
+                Log::error($statement.' Failed: '.$e->getMessage());
+                Log::error($e);
+                // Don't fail for duplicate column
+                if (! str_contains($e->getMessage(), 'Duplicate column name')) {
+                    array_push($errors, $statement.' Failed: '.$e->getMessage());
+                }
+            }
+        }
+
+        return count($errors) ? $errors : true;
     }
 }

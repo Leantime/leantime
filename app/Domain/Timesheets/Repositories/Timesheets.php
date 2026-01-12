@@ -10,6 +10,7 @@ use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Db\Repository;
+use PDO;
 
 class Timesheets extends Repository
 {
@@ -840,6 +841,25 @@ class Timesheets extends Repository
             ->where('id', $id)
             ->limit(1)
             ->delete();
+    }
+
+    /**
+     * Get planned hours for a ticket
+     */
+    public function getTicketPlanHours(int $ticketId): float
+    {
+        $query = 'SELECT planHours FROM zp_tickets WHERE id = :ticketId LIMIT 1';
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+        $call->bindValue(':ticketId', $ticketId);
+
+        $call->execute();
+
+        $result = $call->fetch(PDO::FETCH_ASSOC);
+
+        return (float) ($result['planHours'] ?? 0);
     }
 
     /**

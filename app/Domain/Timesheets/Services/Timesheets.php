@@ -7,7 +7,6 @@ use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Exceptions\MissingParameterException;
-use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Users\Repositories\Users;
@@ -18,8 +17,6 @@ class Timesheets
 
     private Users $userRepo;
 
-    private SettingService $settingService;
-
     public array $kind = [
         'GENERAL_BILLABLE' => 'label.general_billable',
         'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
@@ -29,27 +26,10 @@ class Timesheets
         'TESTING' => 'label.testing',
     ];
 
-    public function __construct(TimesheetRepository $timesheetsRepo, Users $userRepo, SettingService $settingService)
+    public function __construct(TimesheetRepository $timesheetsRepo, Users $userRepo)
     {
         $this->timesheetsRepo = $timesheetsRepo;
         $this->userRepo = $userRepo;
-        $this->settingService = $settingService;
-    }
-
-    /**
-     * Get user's timezone from settings, fallback to session, then default to UTC
-     */
-    private function getUserTimezone(?int $userId = null): string
-    {
-        $userId = $userId ?? session('userdata.id');
-        if ($userId) {
-            $tz = $this->settingService->getSetting('usersettings.'.$userId.'.timezone');
-            if ($tz && $tz !== false) {
-                return $tz;
-            }
-        }
-        // Fallback to session timezone or UTC
-        return session('usersettings.timezone') ?? 'UTC';
     }
 
     /**
@@ -65,27 +45,39 @@ class Timesheets
     }
 
     /**
-     * @param  int  $ticketId
-     *
      * @api
      */
-    public function punchIn(int|string $ticketId): mixed
+    public function punchIn(int $ticketId): mixed
     {
-        $ticketId = (int) $ticketId;
-
         return $this->timesheetsRepo->punchIn($ticketId);
     }
 
     /**
-     * @param  int  $ticketId
+     * @api
+     */
+    public function punchOut(int $ticketId): float|false|int
+    {
+        return $this->timesheetsRepo->punchOut($ticketId);
+    }
+
+    /**
+     * Stop the active timer for the current user (no ticket ID required)
      *
      * @api
      */
-    public function punchOut(int|string $ticketId): float|false|int
+    public function stopActiveTimer(): float|false|int
     {
-        $ticketId = (int) $ticketId;
+        $userId = session('userdata.id');
+        if (! $userId) {
+            return false;
+        }
 
-        return $this->timesheetsRepo->punchOut($ticketId);
+        $clockedStatus = $this->timesheetsRepo->isClocked($userId);
+        if ($clockedStatus === false || ! isset($clockedStatus['id'])) {
+            return false;
+        }
+
+        return $this->timesheetsRepo->punchOut($clockedStatus['id']);
     }
 
     /**
@@ -120,18 +112,8 @@ class Timesheets
             throw new MissingParameterException('Ticket Id is a required field');
         }
 
-        // Support multiple date formats:
-        // 1. dateString (YYYY-MM-DD) - parsed using user's stored timezone (recommended for mobile/API)
-        // 2. timestamp (Unix epoch) - used as-is
-        // 3. date + time - parsed in user's session timezone
-        $userTimezone = $this->getUserTimezone($values['userId']);
-
         if (! empty($params['dateString'])) {
-            // Mobile sends date string, parse using user's stored timezone for API consistency
-            $values['date'] = CarbonImmutable::parse($params['dateString'], $userTimezone)
-                ->startOfDay()
-                ->setTimezone('UTC')
-                ->format('Y-m-d H:i:s');
+            $values['date'] = dtHelper()->parseUserDateTime($params['dateString'], 'start')->formatDateTimeForDb();
         } elseif (! empty($params['timestamp'])) {
             $values['date'] = CarbonImmutable::createFromTimestamp($params['timestamp'], 'UTC')->format('Y-m-d H:i:s');
         } elseif (! empty($params['date']) && empty($params['time'])) {
@@ -198,23 +180,8 @@ class Timesheets
             throw new MissingParameterException('Ticket Id is a required field');
         }
 
-        // Support multiple date formats:
-        // 1. dateString (YYYY-MM-DD) - parsed using user's stored timezone (recommended for mobile/API)
-        // 2. timestamp (Unix epoch) - used as-is
-        // 3. date - parsed in user's session timezone
-        $userTimezone = $this->getUserTimezone($values['userId']);
-
-        if (! empty($params['dateString'])) {
-            // Mobile sends date string, parse using user's stored timezone for API consistency
-            $values['date'] = CarbonImmutable::parse($params['dateString'], $userTimezone)
-                ->startOfDay()
-                ->setTimezone('UTC')
-                ->format('Y-m-d H:i:s');
-        } elseif (! empty($params['timestamp'])) {
-            $values['date'] = CarbonImmutable::createFromTimestamp($params['timestamp'], 'UTC')->format('Y-m-d H:i:s');
-        } elseif (! empty($params['date'])) {
-            $values['date'] = dtHelper()->parseUserDateTime($params['date'], 'start')->formatDateTimeForDb();
-        } else {
+        // Either date, dateString or timestamp is required
+        if (! isset($params['date']) && empty($params['timestamp']) && empty($params['dateString'])) {
             throw new MissingParameterException('Date or timestamp is a required field');
         }
 
@@ -226,6 +193,14 @@ class Timesheets
             throw new MissingParameterException('Timesheet type is a required field');
         }
 
+        if (! empty($params['dateString'])) {
+            $values['date'] = dtHelper()->parseUserDateTime($params['dateString'], 'start')->formatDateTimeForDb();
+        } elseif (! empty($params['timestamp'])) {
+            $values['date'] = CarbonImmutable::createFromTimestamp($params['timestamp'], 'UTC')->format('Y-m-d H:i:s');
+        } else {
+            $values['date'] = dtHelper()->parseUserDateTime($params['date'], 'start')->formatDateTimeForDb();
+        }
+
         $values['hours'] = $params['hours'];
 
         $loggingUser = $this->userRepo->getUser($values['userId']);
@@ -234,6 +209,18 @@ class Timesheets
         $this->timesheetsRepo->upsertTimesheetEntry($values);
 
         return true;
+    }
+
+    /**
+     * Delete a timesheet entry
+     *
+     * @param  int  $id  The ID of the timesheet entry to delete
+     *
+     * @api
+     */
+    public function deleteTime(int $id): void
+    {
+        $this->timesheetsRepo->deleteTime($id);
     }
 
     /**
@@ -264,14 +251,26 @@ class Timesheets
     }
 
     /**
+     * Get remaining hours for a ticket (planned hours minus logged hours)
+     *
+     * @param  int|Tickets  $ticketOrId  Ticket ID or Tickets object
      * @return int|mixed
      *
      * @api
      */
-    public function getRemainingHours(Tickets $ticket): mixed
+    public function getRemainingHours(int|Tickets $ticketOrId): mixed
     {
-        $totalHoursLogged = $this->getSumLoggedHoursForTicket($ticket->id);
-        $planHours = $ticket->planHours;
+        // Support both ticket ID (for API calls) and Tickets object (for internal use)
+        if ($ticketOrId instanceof Tickets) {
+            $ticketId = $ticketOrId->id;
+            $planHours = $ticketOrId->planHours;
+        } else {
+            $ticketId = $ticketOrId;
+            // Fetch plan hours from repository
+            $planHours = $this->timesheetsRepo->getTicketPlanHours($ticketId);
+        }
+
+        $totalHoursLogged = $this->getSumLoggedHoursForTicket($ticketId);
 
         $remaining = $planHours - $totalHoursLogged;
 
