@@ -349,10 +349,11 @@ private function generateCsvString(array $filters, array $columnState = []): str
     fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
     
     fputcsv($output, array_values($headers));
+    $totalHours = 0;
 
     foreach ($allTimesheets as $row) {
         $diff = $row['planHours'] - $row['hours'];
-        
+        $totalHours += (float) $row['hours'];
         $rowData = [
             'id' => $row['id'],
             'tickId' => $row['ticketId'],
@@ -376,6 +377,28 @@ private function generateCsvString(array $filters, array $columnState = []): str
         $filteredRow = array_intersect_key($rowData, $activeColumns);
         fputcsv($output, array_values($filteredRow));
     }
+        $totalsRowData = [
+        'id' => '',
+        'tickId' => '',
+        'date' => '',
+        'ticket' => '',
+        'hours' => format_hours($totalHours, $hoursFormat),
+        'planHours' => '',
+        'difference' => '',
+        'project' => '',
+        'client' => '',
+        'employee' => '',
+        'type' => '',
+        'milestone' => '',
+        'tags' => '',
+        'description' => '',
+        'invoiced' => '',
+        'mgrApproval' => '',
+        'paid' => ''
+    ];
+
+    $filteredTotalsRow = array_intersect_key($totalsRowData, $activeColumns);
+    fputcsv($output, array_values($filteredTotalsRow));
 
     rewind($output);
     $csvContent = stream_get_contents($output);
