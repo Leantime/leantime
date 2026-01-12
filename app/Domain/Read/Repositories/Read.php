@@ -2,52 +2,33 @@
 
 namespace Leantime\Domain\Read\Repositories;
 
+use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
-use PDO;
 
 class Read
 {
-    private DbCore $db;
+    private ConnectionInterface $db;
 
     public function __construct(DbCore $db)
     {
-        $this->db = $db;
+        $this->db = $db->getConnection();
     }
 
-    public function markAsRead($module, $moduleId, $userId): void
+    public function markAsRead(string $module, int|string $moduleId, int|string $userId): void
     {
-
-        $sql = 'INSERT INTO zp_read (module,moduleId,userId) VALUES (:module,:moduleId,:userId)';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':module', $module, PDO::PARAM_STR);
-        $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_STR);
-        $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $stmn->closeCursor();
+        $this->db->table('zp_read')->insert([
+            'module' => $module,
+            'moduleId' => $moduleId,
+            'userId' => $userId,
+        ]);
     }
 
-    public function isRead($module, $moduleId, $userId): bool
+    public function isRead(string $module, int|string $moduleId, int|string $userId): bool
     {
-
-        $sql = 'SELECT * FROM zp_read
-					WHERE module=:module AND moduleId=:moduleId AND userId=:userId';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':module', $module, PDO::PARAM_STR);
-        $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_STR);
-        $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        $return = false;
-        if ($values) {
-            $return = true;
-        }
-
-        return $return;
+        return $this->db->table('zp_read')
+            ->where('module', $module)
+            ->where('moduleId', $moduleId)
+            ->where('userId', $userId)
+            ->exists();
     }
 }

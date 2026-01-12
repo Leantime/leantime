@@ -2,28 +2,25 @@
 
 namespace Leantime\Domain\Queue\Repositories;
 
+use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Queue\Workers\Workers;
 use Leantime\Domain\Users\Repositories\Users as UserRepo;
-use PDO;
 
 class Queue
 {
-    private DbCore $db;
+    private ConnectionInterface $db;
 
     private UserRepo $users;
 
     public function __construct(DbCore $db, UserRepo $users)
     {
-        $this->db = $db;
+        $this->db = $db->getConnection();
         $this->users = $users;
     }
 
-    public function queueMessageToUsers($recipients, $message, string $subject = '', int $projectId = 0): void
+    public function queueMessageToUsers(array $recipients, string $message, string $subject = '', int $projectId = 0): void
     {
-
-        $sql = 'INSERT INTO zp_queue (msghash,channel,userId,subject,message,thedate,projectId) VALUES (:msghash,:channel,:userId,:subject,:message,:thedate,:projectId)';
-
         $recipients = array_unique($recipients);
 
         foreach ($recipients as $recipient) {
@@ -48,99 +45,67 @@ class Queue
             $userEmail = $theuser['username'];
             $msghash = md5($thedate.$subject.$message.$userEmail.$projectId);
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':msghash', $msghash, PDO::PARAM_STR);
-            $stmn->bindValue(':channel', Workers::EMAILS->value, PDO::PARAM_STR);
-            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-            $stmn->bindValue(':subject', $subject, PDO::PARAM_STR);
-            $stmn->bindValue(':message', $message, PDO::PARAM_STR);
-            $stmn->bindValue(':thedate', $thedate, PDO::PARAM_STR);
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
             try {
-                $stmn->execute();
-            } catch (\PDOException  $e) {
+                $this->db->table('zp_queue')->insert([
+                    'msghash' => $msghash,
+                    'channel' => Workers::EMAILS->value,
+                    'userId' => $userId,
+                    'subject' => $subject,
+                    'message' => $message,
+                    'thedate' => $thedate,
+                    'projectId' => $projectId,
+                ]);
+            } catch (\PDOException $e) {
                 report($e);
             }
-
-            $stmn->closeCursor();
         }
     }
 
     // TODO later : lists messages per user or per project ?
 
-    /**
-     * @param  string  $channel
-     */
-    public function listMessageInQueue(Workers $channel, $recipients = null, int $projectId = 0): false|array
+    public function listMessageInQueue(Workers $channel, mixed $recipients = null, int $projectId = 0): false|array
     {
-        $sql = 'SELECT
-                    *
-                FROM zp_queue
-                WHERE channel = :channel ORDER BY userId, projectId ASC, thedate ASC';
+        $results = $this->db->table('zp_queue')
+            ->where('channel', $channel->value)
+            ->orderBy('userId')
+            ->orderBy('projectId')
+            ->orderBy('thedate')
+            ->get();
 
-        $stmn = $this->db->database->prepare($sql);
-
-        $stmn->bindValue(':channel', $channel->value, PDO::PARAM_STR);
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
-    public function deleteMessageInQueue($msghashes): bool
+    public function deleteMessageInQueue(string|array $msghashes): bool
     {
         // NEW : Allowing one hash or an array of them
-        if (is_string($msghashes)) {
-            $thehashes = [$msghashes];
-        } else {
-            $thehashes = $msghashes;
-        }
+        $thehashes = is_string($msghashes) ? [$msghashes] : $msghashes;
 
-        $sql = 'DELETE FROM zp_queue WHERE msghash=:msghash';
-
-        $stmn = $this->db->database->prepare($sql);
         foreach ($thehashes as $msghash) {
-            $stmn->bindValue(':msghash', $msghash, PDO::PARAM_STR);
-            $result = $stmn->execute();
+            $this->db->table('zp_queue')
+                ->where('msghash', $msghash)
+                ->delete();
         }
-        $stmn->closeCursor();
 
-        return $result;
+        return true;
     }
 
-    /**
-     * @param  $recipients
-     * @param  string  $subject
-     */
-    public function addMessageToQueue($channel, $subject, $message, $userId, int $projectId = 0): void
+    public function addMessageToQueue(Workers $channel, string $subject, string $message, int $userId, int $projectId = 0): void
     {
-
-        $sql = 'INSERT INTO zp_queue
-                        (msghash,channel,userId,subject,message,thedate,projectId)
-                    VALUES
-                        (:msghash,:channel,:userId,:subject,:message,:thedate,:projectId)';
-
         $thedate = date('Y-m-d H:i:s');
         $msghash = md5($thedate.$subject.$message.$projectId);
 
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':msghash', $msghash, PDO::PARAM_STR);
-        $stmn->bindValue(':channel', $channel->value, PDO::PARAM_STR);
-        $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-        $stmn->bindValue(':subject', $subject, PDO::PARAM_STR);
-        $stmn->bindValue(':message', $message, PDO::PARAM_STR);
-        $stmn->bindValue(':thedate', $thedate, PDO::PARAM_STR);
-        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
         try {
-            $stmn->execute();
-        } catch (\PDOException  $e) {
+            $this->db->table('zp_queue')->insert([
+                'msghash' => $msghash,
+                'channel' => $channel->value,
+                'userId' => $userId,
+                'subject' => $subject,
+                'message' => $message,
+                'thedate' => $thedate,
+                'projectId' => $projectId,
+            ]);
+        } catch (\PDOException $e) {
             report($e);
         }
-
-        $stmn->closeCursor();
-
     }
 }

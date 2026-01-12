@@ -210,6 +210,7 @@ class Install
             $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
             $stmn->bindValue(':dbVersion', $this->settings->dbVersion, PDO::PARAM_STR);
             $stmn->bindValue(':company', $values['company'], PDO::PARAM_STR);
+            $stmn->bindValue(':createdOn', date('Y-m-d H:i:s'), PDO::PARAM_STR);
             $stmn->bindValue(':pwReset', $pwReset, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -649,7 +650,7 @@ class Install
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 INSERT INTO `zp_user`(`id`,`username`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`, `createdOn`, `pwReset`)
-                VALUES (1,:email,:firstname,:lastname,'','',NULL,0,'i',NULL,'50','','',0,0,NULL,0,1, NOW(), :pwReset);
+                VALUES (1,:email,:firstname,:lastname,'','',NULL,0,'i',NULL,'50','','',0,0,NULL,0,1, :createdOn, :pwReset);
 
                 CREATE TABLE `zp_sprints` (
                     `id` INT NOT NULL AUTO_INCREMENT,
@@ -1615,8 +1616,8 @@ class Install
                 ADD COLUMN `action` TEXT NULL DEFAULT NULL AFTER `probability`,
                 ADD COLUMN `assignedTo` INT NULL DEFAULT NULL AFTER `action`;',
             "UPDATE zp_canvas_items SET
-                    currentValue = CAST(IF(`data` = '', 0, `data`) AS DECIMAL(10,2)),
-                    endValue = CAST(IF(`conclusion` = '', 0, `conclusion`) AS DECIMAL(10,2)),
+                    currentValue = CAST(CASE WHEN `data` = '' THEN 0 ELSE `data` END AS DECIMAL(10,2)),
+                    endValue = CAST(CASE WHEN `conclusion` = '' THEN 0 ELSE `conclusion` END AS DECIMAL(10,2)),
                     title = description,
                     description = assumptions
                     WHERE box = 'goal';",

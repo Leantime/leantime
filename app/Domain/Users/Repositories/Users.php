@@ -3,14 +3,17 @@
 namespace Leantime\Domain\Users\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Files\Repositories\Files;
-use PDO;
 use SVG\SVG;
 
 class Users
 {
+    private ConnectionInterface $connection;
+
     public string $user;
 
     public string $lastname;
@@ -37,26 +40,23 @@ class Users
     public function __construct(
         protected Environment $config,
         protected DbCore $db,
-
+        protected DatabaseHelper $dbHelper,
         protected Files $files
-    ) {}
+    ) {
+        $this->connection = $db->getConnection();
+    }
 
     /**
      * getUser - get on user from db
      */
     public function getUser($id): array|bool
     {
+        $result = $this->connection->table('zp_user')
+            ->where('id', $id)
+            ->limit(1)
+            ->first();
 
-        $sql = 'SELECT * FROM `zp_user` WHERE id = :id LIMIT 1';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values;
+        return $result ? (array) $result : false;
     }
 
     /**
@@ -66,18 +66,11 @@ class Users
      */
     public function getUserBySha($hash): array|false
     {
+        $result = $this->connection->table('zp_user')
+            ->whereRaw('SHA1(CONCAT(id, ?)) = ?', [$this->config->sessionPassword, $hash])
+            ->first();
 
-        $sql = 'SELECT * FROM `zp_user` WHERE SHA1(CONCAT(id,:sessionSecret)) = :hash';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':hash', $hash, PDO::PARAM_STR);
-        $stmn->bindValue(':sessionSecret', $this->config->sessionPassword, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values;
+        return $result ? (array) $result : false;
     }
 
     /**
@@ -87,14 +80,13 @@ class Users
      */
     public function getLastLogin(): ?string
     {
+        $result = $this->connection->table('zp_user')
+            ->select('lastlogin')
+            ->orderByDesc('lastlogin')
+            ->limit(1)
+            ->first();
 
-        $sql = 'SELECT  lastlogin FROM `zp_user` Order by lastlogin DESC LIMIT 1';
-
-        $stmn = $this->db->database->query($sql);
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values['lastlogin'] ?? null;
+        return $result->lastlogin ?? null;
     }
 
     /**
@@ -102,51 +94,41 @@ class Users
      */
     public function getUserByEmail(string $email, string $status = 'a'): array|false
     {
-        $sql = 'SELECT * FROM `zp_user` WHERE username = :email ';
+        $query = $this->connection->table('zp_user')
+            ->where('username', $email);
 
         if ($status === 'a') {
-            $sql .= " and LOWER(status) = 'a'";
+            $query->whereRaw('LOWER(status) = ?', ['a']);
         }
 
         if ($status === 'i') {
-            $sql .= " and LOWER(status) = 'i'";
+            $query->whereRaw('LOWER(status) = ?', ['i']);
         }
 
-        $sql .= ' LIMIT 1';
+        $result = $query->limit(1)->first();
 
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':email', $email, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values;
+        return $result ? (array) $result : false;
     }
 
     public function getNumberOfUsers($activeOnly = false, $includeApi = true): int
     {
-        $sql = 'SELECT COUNT(id) AS userCount FROM `zp_user`';
-        $conditions = [];
+        $query = $this->connection->table('zp_user')
+            ->selectRaw('COUNT(id) AS userCount');
 
         if ($activeOnly) {
-            $conditions[] = "status = 'a'";
+            $query->where('status', 'a');
         }
 
         if ($includeApi) {
-            $conditions[] = "(source != 'api' OR source IS NULL)";
+            $query->where(function ($q) {
+                $q->where('source', '!=', 'api')
+                    ->orWhereNull('source');
+            });
         }
 
-        foreach ($conditions as $condition) {
-            $sql .= str_contains($sql, 'WHERE') ? ' AND' : ' WHERE';
-            $sql .= " $condition";
-        }
+        $result = $query->first();
 
-        $stmn = $this->db->database->query($sql);
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $values['userCount'] ?? 0;
+        return $result->userCount ?? 0;
     }
 
     /**
@@ -154,23 +136,20 @@ class Users
      */
     public function getEmployees(): array
     {
+        $results = $this->connection->table('zp_user')
+            ->select([
+                'zp_user.id',
+                'zp_user.lastname',
+                'zp_user.jobTitle',
+                'zp_user.jobLevel',
+                'zp_user.department',
+                'zp_user.modified',
+            ])
+            ->selectRaw('COALESCE(zp_user.firstname, zp_user.username) AS firstname')
+            ->orderBy('lastname')
+            ->get();
 
-        $sql = 'SELECT
-            zp_user.id,
-            IF(zp_user.firstname IS NOT NULL, zp_user.firstname, zp_user.username) AS firstname,
-            zp_user.lastname,
-            zp_user.jobTitle,
-            zp_user.jobLevel,
-            zp_user.department,
-            zp_user.modified
-         FROM zp_user
-            ORDER BY lastname';
-
-        $stmn = $this->db->database->query($sql);
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     /**
@@ -180,68 +159,66 @@ class Users
      */
     public function getAll($activeOnly = false): array
     {
-
-        $query = "SELECT
-                      zp_user.id,
-                      lastname,
-                      IF(firstname <> '', firstname, username) AS firstname,
-                      role,
-                      profileId,
-                      status,
-                      username,
-                      twoFAEnabled,
-                      clientId,
-                      zp_clients.name AS clientName,
-                      jobTitle,
-                      jobLevel,
-                      department,
-                      zp_user.modified
-                    FROM `zp_user`
-                    LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
-                    WHERE !(source <=> 'api')";
+        $query = $this->connection->table('zp_user')
+            ->select([
+                'zp_user.id',
+                'lastname',
+                'role',
+                'profileId',
+                'status',
+                'username',
+                'twoFAEnabled',
+                'clientId',
+                'zp_clients.name as clientName',
+                'jobTitle',
+                'jobLevel',
+                'department',
+                'zp_user.modified',
+            ])
+            ->selectRaw("CASE WHEN firstname <> '' THEN firstname ELSE username END AS firstname")
+            ->leftJoin('zp_clients', 'zp_clients.id', '=', 'zp_user.clientId')
+            ->where(function ($q) {
+                $q->whereNull('source')
+                    ->orWhere('source', '!=', 'api');
+            });
 
         if ($activeOnly) {
-            $query .= " AND status LIKE 'a' ";
+            $query->where('status', 'like', 'a');
         }
 
-        $query .= ' ORDER BY lastname';
+        $results = $query->orderBy('lastname')->get();
 
-        $stmn = $this->db->database->query($query);
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     public function getAllBySource($source): false|array
     {
+        $query = $this->connection->table('zp_user')
+            ->select([
+                'zp_user.id',
+                'lastname',
+                'firstname',
+                'role',
+                'profileId',
+                'status',
+                'username',
+                'lastlogin',
+                'createdOn',
+                'jobTitle',
+                'jobLevel',
+                'department',
+                'modified',
+            ]);
 
-        $query = 'SELECT
-                      zp_user.id,
-                      lastname,
-                      firstname,
-                      role,
-                      profileId,
-                      status,
-                      username,
-                      lastlogin,
-                      createdOn,
-                      jobTitle,
-                      jobLevel,
-                      department,
-                      modified
-                    FROM `zp_user`
-                    WHERE source <=> :source
-                    ORDER BY lastname';
+        if ($source === null) {
+            $query->whereNull('source');
+        } else {
+            $query->where('source', $source);
+        }
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':source', $source, PDO::PARAM_STR);
+        $results = $query->orderBy('lastname')->get();
 
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     /**
@@ -249,54 +226,43 @@ class Users
      */
     public function getAllClientUsers($clientId): array
     {
+        $results = $this->connection->table('zp_user')
+            ->select([
+                'zp_user.id',
+                'lastname',
+                'firstname',
+                'role',
+                'profileId',
+                'status',
+                'username',
+                'twoFAEnabled',
+                'zp_clients.name as clientName',
+                'jobTitle',
+                'jobLevel',
+                'department',
+                'modified',
+            ])
+            ->leftJoin('zp_clients', 'zp_clients.id', '=', 'zp_user.clientId')
+            ->where('clientId', $clientId)
+            ->orderBy('lastname')
+            ->get();
 
-        $query = 'SELECT
-                        zp_user.id,
-                        lastname,
-                        firstname,
-                        role,
-                        profileId,
-                        status,
-                        username,
-                        twoFAEnabled,
-                        zp_clients.name AS clientName,
-                        jobTitle,
-                        jobLevel,
-                        department,
-                        modified
-                    FROM `zp_user`
-                    LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
-                    WHERE clientId = :clientId
-                    ORDER BY lastname';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     public function isAdmin($userId): bool
     {
+        $result = $this->connection->table('zp_user')
+            ->select('role')
+            ->where('id', $userId)
+            ->limit(1)
+            ->first();
 
-        $sql = 'SELECT role FROM zp_user WHERE id = :id LIMIT 1';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $user = $stmn->fetch();
-        $stmn->closeCursor();
-
-        $flag = false;
-        if (in_array($user['role'], $this->adminRoles)) {
-            $flag = true;
+        if ($result && in_array($result->role, $this->adminRoles)) {
+            return true;
         }
 
-        return $flag;
+        return false;
     }
 
     /**
@@ -304,54 +270,30 @@ class Users
      */
     public function editUser(array $values, $id): bool
     {
-        if (isset($values['password']) && $values['password'] != '') {
-            $chgPW = ' password = :password, ';
-        } else {
-            $chgPW = '';
-        }
-
-        $query = 'UPDATE `zp_user` SET
-                firstname = :firstname,
-                lastname = :lastname,
-                username = :username,
-                phone = :phone,
-                status = :status,
-                role = :role,
-                hours = :hours,
-                wage = :wage,
-                jobTitle = :jobTitle,
-                jobLevel = :jobLevel,
-                department = :department,
-                '.$chgPW.'
-                clientId = :clientId,
-                modified = :modified
-             WHERE id = :id LIMIT 1';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
-        $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
-        $stmn->bindValue(':username', $values['user'], PDO::PARAM_STR);
-        $stmn->bindValue(':phone', $values['phone'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-        $stmn->bindValue(':role', $values['role'], PDO::PARAM_STR);
-        $stmn->bindValue(':hours', $values['hours'] ?? 0, PDO::PARAM_STR);
-        $stmn->bindValue(':wage', $values['wage'] ?? 0, PDO::PARAM_STR);
-        $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_STR);
-        $stmn->bindValue(':jobTitle', $values['jobTitle'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':jobLevel', $values['jobLevel'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':department', $values['department'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $updateData = [
+            'firstname' => $values['firstname'],
+            'lastname' => $values['lastname'],
+            'username' => $values['user'],
+            'phone' => $values['phone'] ?? '',
+            'status' => $values['status'],
+            'role' => $values['role'],
+            'hours' => $values['hours'] ?? 0,
+            'wage' => $values['wage'] ?? 0,
+            'clientId' => $values['clientId'],
+            'jobTitle' => $values['jobTitle'] ?? '',
+            'jobLevel' => $values['jobLevel'] ?? '',
+            'department' => $values['department'] ?? '',
+            'modified' => now(),
+        ];
 
         if (isset($values['password']) && $values['password'] != '') {
-            $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
+            $updateData['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
         }
 
-        $result = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->connection->table('zp_user')
+            ->where('id', $id)
+            ->limit(1)
+            ->update($updateData);
     }
 
     /**
@@ -359,28 +301,17 @@ class Users
      */
     public function usernameExist($username, string $userId = ''): bool
     {
+        $query = $this->connection->table('zp_user')
+            ->selectRaw('COUNT(username) AS numUser')
+            ->where('username', $username);
 
         if ($userId != '') {
-            $queryOwn = ' AND id != :id ';
-        } else {
-            $queryOwn = '';
+            $query->where('id', '!=', $userId);
         }
 
-        $query = 'SELECT COUNT(username) AS numUser FROM `zp_user` WHERE username = :username '.$queryOwn.' LIMIT 1';
+        $result = $query->limit(1)->first();
 
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':username', $username, PDO::PARAM_STR);
-
-        if ($userId !== '') {
-            $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
-        }
-
-        $stmn->execute();
-
-        $result = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return (int) $result['numUser'] === 1;
+        return (int) $result->numUser === 1;
     }
 
     /**
@@ -391,16 +322,13 @@ class Users
      */
     public function removeFromClient(int $userId): bool
     {
-        $query = 'UPDATE `zp_user` SET clientId = NULL, modified = :modified WHERE id = :id LIMIT 1';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $userId, PDO::PARAM_INT);
-        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-
-        $result = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->connection->table('zp_user')
+            ->where('id', $userId)
+            ->limit(1)
+            ->update([
+                'clientId' => null,
+                'modified' => now(),
+            ]);
     }
 
     /**
@@ -408,39 +336,23 @@ class Users
      */
     public function editOwn($values, $id): void
     {
-
-        if (isset($values['password']) && $values['password'] !== '') {
-            $chgPW = ' password = :password, ';
-        } else {
-            $chgPW = '';
-        }
-
-        $query = 'UPDATE `zp_user` SET
-                lastname = :lastname,
-                firstname = :firstname,
-                username = :username,
-                '.$chgPW.'
-                phone = :phone,
-                notifications = :notifications,
-                modified = :modified
-                WHERE id = :id LIMIT 1';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
-        $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
-        $stmn->bindValue(':username', $values['user'], PDO::PARAM_STR);
-        $stmn->bindValue(':phone', $values['phone'], PDO::PARAM_STR);
-        $stmn->bindValue(':notifications', $values['notifications'], PDO::PARAM_STR);
-        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $updateData = [
+            'lastname' => $values['lastname'],
+            'firstname' => $values['firstname'],
+            'username' => $values['user'],
+            'phone' => $values['phone'],
+            'notifications' => $values['notifications'],
+            'modified' => now(),
+        ];
 
         if (isset($values['password']) && $values['password'] != '') {
-            $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
+            $updateData['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
         }
 
-        $stmn->execute();
-        $stmn->closeCursor();
+        $this->connection->table('zp_user')
+            ->where('id', $id)
+            ->limit(1)
+            ->update($updateData);
     }
 
     /**
@@ -448,75 +360,26 @@ class Users
      */
     public function addUser(array $values): false|string
     {
+        $userId = $this->connection->table('zp_user')->insertGetId([
+            'firstname' => $values['firstname'] ?? '',
+            'lastname' => $values['lastname'] ?? '',
+            'phone' => $values['phone'] ?? '',
+            'username' => $values['user'],
+            'role' => $values['role'],
+            'notifications' => 1,
+            'clientId' => $values['clientId'] ?? '',
+            'password' => password_hash($values['password'], PASSWORD_DEFAULT),
+            'source' => $values['source'] ?? '',
+            'pwReset' => $values['pwReset'] ?? '',
+            'status' => $values['status'] ?? '',
+            'createdOn' => now(),
+            'jobTitle' => $values['jobTitle'] ?? '',
+            'jobLevel' => $values['jobLevel'] ?? '',
+            'department' => $values['department'] ?? '',
+            'modified' => now(),
+        ]);
 
-        $query = 'INSERT INTO `zp_user` (
-                            firstname,
-                            lastname,
-                            phone,
-                            username,
-                            role,
-                            notifications,
-                            clientId,
-                            password,
-                            source,
-                            pwReset,
-                            status,
-                            createdOn,
-                            jobTitle,
-                            jobLevel,
-                            department,
-                            modified
-                        ) VALUES (
-                            :firstname,
-                            :lastname,
-                            :phone,
-                            :user,
-                            :role,
-                            1,
-                            :clientId,
-                            :password,
-                            :source,
-                            :pwReset,
-                            :status,
-                            :createdOn,
-                            :jobTitle,
-                            :jobLevel,
-                            :department,
-                            :modified
-                        )';
-
-        $stmn = $this->db->database->prepare($query);
-
-        $stmn->bindValue(':firstname', $values['firstname'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':lastname', $values['lastname'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':phone', $values['phone'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':user', $values['user'], PDO::PARAM_STR);
-        $stmn->bindValue(':role', $values['role'], PDO::PARAM_STR);
-
-        $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
-        $stmn->bindValue(':clientId', $values['clientId'] ?? '', PDO::PARAM_INT);
-
-        $stmn->bindValue(':jobTitle', $values['jobTitle'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':jobLevel', $values['jobLevel'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':department', $values['department'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':createdOn', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-
-        if (isset($values['source'])) {
-            $stmn->bindValue(':source', $values['source'], PDO::PARAM_STR);
-        } else {
-            $stmn->bindValue(':source', '', PDO::PARAM_STR);
-        }
-
-        $stmn->bindValue(':pwReset', $values['pwReset'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
-
-        $stmn->execute();
-        $userId = $this->db->database->lastInsertId();
-
-        $stmn->closeCursor();
-
-        return $userId;
+        return $userId !== false ? (string) $userId : false;
     }
 
     /**
@@ -524,14 +387,9 @@ class Users
      */
     public function deleteUser($id): void
     {
-
-        $query = 'DELETE FROM `zp_user` WHERE zp_user.id = :id';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $stmn->closeCursor();
+        $this->connection->table('zp_user')
+            ->where('zp_user.id', $id)
+            ->delete();
     }
 
     /**
@@ -541,22 +399,12 @@ class Users
      */
     public function setPicture($fileId, $id): void
     {
-
-        $sql = 'UPDATE
-                        `zp_user`
-                    SET
-                        profileId = :fileId,
-                        modified = :modified
-                    WHERE id = :userId';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':fileId', $fileId, PDO::PARAM_INT);
-        $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
-        $stmn->bindValue(':modified', dtHelper()->dbNow()->formatDateTimeForDb(), PDO::PARAM_STR);
-
-        $stmn->execute();
-        $stmn->closeCursor();
-
+        $this->connection->table('zp_user')
+            ->where('id', $id)
+            ->update([
+                'profileId' => $fileId,
+                'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
+            ]);
     }
 
     /**
@@ -566,50 +414,37 @@ class Users
      */
     public function getProfilePicture($id): array|false
     {
-        $value = false;
-        if ($id !== false) {
-            $sql = 'SELECT profileId, firstname, lastname FROM `zp_user` WHERE id = :id LIMIT 1';
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $value = $stmn->fetch();
-            $stmn->closeCursor();
+        if ($id === false) {
+            return false;
         }
 
-        return $value;
+        $result = $this->connection->table('zp_user')
+            ->select(['profileId', 'firstname', 'lastname'])
+            ->where('id', $id)
+            ->limit(1)
+            ->first();
 
+        return $result ? (array) $result : false;
     }
 
     public function patchUser($id, $params): bool
     {
-
-        $sql = 'UPDATE zp_user SET';
-
-        foreach ($params as $key => $value) {
-            $sql .= ' '.DbCore::sanitizeToColumnString($key).'=:'.DbCore::sanitizeToColumnString($key).', ';
-        }
-
-        $sql .= ' modified =:modified WHERE id=:id LIMIT 1';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-
+        $updates = [];
         foreach ($params as $key => $value) {
             $cleanKey = DbCore::sanitizeToColumnString($key);
-            $val = $value;
             if ($cleanKey === 'password') {
-                $val = password_hash($value, PASSWORD_DEFAULT);
+                $updates[$cleanKey] = password_hash($value, PASSWORD_DEFAULT);
+            } else {
+                $updates[$cleanKey] = $value;
             }
-            $stmn->bindValue(':'.$cleanKey, $val, PDO::PARAM_STR);
         }
 
-        $return = $stmn->execute();
-        $stmn->closeCursor();
+        $updates['modified'] = now();
 
-        return $return;
+        return $this->connection->table('zp_user')
+            ->where('id', $id)
+            ->limit(1)
+            ->update($updates);
     }
 
     /**
@@ -620,18 +455,13 @@ class Users
      */
     public function getUserIdByName(string $firstname, string $lastname): int|bool
     {
-        $query = 'SELECT profileId FROM `zp_user` WHERE `firstname` = :firstname AND `lastname` = :lastname';
+        $result = $this->connection->table('zp_user')
+            ->select('profileId')
+            ->where('firstname', $firstname)
+            ->where('lastname', $lastname)
+            ->first();
 
-        $stmn = $this->db->database->prepare($query);
-
-        $stmn->bindValue(':firstname', $firstname, PDO::PARAM_STR);
-        $stmn->bindValue(':lastname', $lastname, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $result = $stmn->fetch();
-        $stmn->closeCursor();
-
-        return $result['profileId'] ?? false;
+        return $result->profileId ?? false;
     }
 
     /**
@@ -643,14 +473,11 @@ class Users
      */
     public function getUserSettings(int $userId, ?string $settingPath = null): mixed
     {
-        $sql = 'SELECT settings FROM `zp_user` WHERE id = :id LIMIT 1';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $userId, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $result = $stmn->fetch();
-        $stmn->closeCursor();
+        $result = $this->connection->table('zp_user')
+            ->select('settings')
+            ->where('id', $userId)
+            ->limit(1)
+            ->first();
 
         // If no settings exist yet, return empty array
         if (! $result || empty($result['settings'])) {

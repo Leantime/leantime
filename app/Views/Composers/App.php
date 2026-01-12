@@ -14,7 +14,6 @@ class App extends Composer
 
     public static array $views = [
         'global::layouts.app',
-        'global::layouts.entry',
     ];
 
     private Menu $menuRepo;

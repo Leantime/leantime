@@ -6,9 +6,9 @@
 
 namespace Leantime\Domain\Clients\Repositories;
 
+use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Db\Repository;
-use PDO;
 
 class Clients extends Repository
 {
@@ -18,65 +18,62 @@ class Clients extends Repository
 
     public int $id;
 
-    /**
-     * @var object
-     */
-    private $db = '';
+    private ConnectionInterface $db;
 
     /**
      * __construct - get database connection
      */
-    public function __construct(
-        DbCore $db
-    ) {
-        $this->db = $db;
+    public function __construct(DbCore $db)
+    {
+        $this->db = $db->getConnection();
     }
 
     /**
      * getClient - get one client from db
      */
-    public function getClient($id): array|false
+    public function getClient(int|string $id): array|false
     {
+        $result = $this->db->table('zp_clients')
+            ->select(
+                'zp_clients.id',
+                'zp_clients.name',
+                'zp_clients.street',
+                'zp_clients.zip',
+                'zp_clients.city',
+                'zp_clients.state',
+                'zp_clients.country',
+                'zp_clients.phone',
+                'zp_clients.internet',
+                'zp_clients.email'
+            )
+            ->selectRaw('COUNT(zp_projects.clientId) AS numberOfProjects')
+            ->leftJoin('zp_projects', 'zp_clients.id', '=', 'zp_projects.clientId')
+            ->where('zp_clients.id', $id)
+            ->groupBy(
+                'zp_clients.id',
+                'zp_clients.name',
+                'zp_clients.street',
+                'zp_clients.zip',
+                'zp_clients.city',
+                'zp_clients.state',
+                'zp_clients.country',
+                'zp_clients.phone',
+                'zp_clients.internet',
+                'zp_clients.email'
+            )
+            ->orderBy('zp_clients.name')
+            ->limit(1)
+            ->first();
 
-        $query = 'SELECT
-                 zp_clients.id,
-                 zp_clients.name,
-                 zp_clients.street,
-                 zp_clients.zip,
-                 zp_clients.city,
-                 zp_clients.state,
-                 zp_clients.country,
-                 zp_clients.phone,
-                 zp_clients.internet,
-                 zp_clients.email,
-              COUNT(zp_projects.clientId) AS numberOfProjects
-					FROM zp_clients
-					LEFT JOIN zp_projects ON zp_clients.id = zp_projects.clientId
-				WHERE  zp_clients.id = :id
-				GROUP BY
-						zp_clients.id,
-						zp_clients.name,
-						zp_clients.internet
-				ORDER BY zp_clients.name
-				LIMIT 1
-				';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $row = $stmn->fetch();
-        $stmn->closeCursor();
-
-        if ($row !== false && count($row) > 0) {
+        if ($result !== null) {
+            $row = (array) $result;
             $this->name = $row['name'];
-
             $this->id = $row['id'];
 
             return $row;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -84,28 +81,23 @@ class Clients extends Repository
      */
     public function getAll(): array
     {
+        $results = $this->db->table('zp_clients')
+            ->select(
+                'zp_clients.id',
+                'zp_clients.name',
+                'zp_clients.internet'
+            )
+            ->selectRaw('COUNT(zp_projects.clientId) AS numberOfProjects')
+            ->leftJoin('zp_projects', 'zp_clients.id', '=', 'zp_projects.clientId')
+            ->groupBy(
+                'zp_clients.id',
+                'zp_clients.name',
+                'zp_clients.internet'
+            )
+            ->orderBy('zp_clients.name')
+            ->get();
 
-        $query = 'SELECT
-						zp_clients.id,
-						zp_clients.name,
-						zp_clients.internet,
-						COUNT(zp_projects.clientId) AS numberOfProjects
-					FROM zp_clients
-					LEFT JOIN zp_projects ON zp_clients.id = zp_projects.clientId
-
-					GROUP BY
-						zp_clients.id,
-						zp_clients.name,
-						zp_clients.internet
-				ORDER BY zp_clients.name';
-
-        $stmn = $this->db->database->prepare($query);
-
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     /**
@@ -113,67 +105,38 @@ class Clients extends Repository
      */
     public function getNumberOfClients(): mixed
     {
-
-        $sql = 'SELECT COUNT(id) AS clientCount FROM `zp_clients`';
-
-        $stmn = $this->db->database->prepare($sql);
-
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
-
-        if (isset($values['clientCount']) === true) {
-            return $values['clientCount'];
-        } else {
-            return 0;
-        }
+        return $this->db->table('zp_clients')->count();
     }
 
-    public function isClient($values): bool
+    public function isClient(array $values): bool
     {
-
-        $sql = 'SELECT name, street FROM zp_clients WHERE
-			name = :name AND street = :street LIMIT 1';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
-        $stmn->bindValue(':street', $values['street'], PDO::PARAM_STR);
-
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        $flag = false;
-        if (count($values)) {
-            $flag = true;
-        }
-
-        return $flag;
+        return $this->db->table('zp_clients')
+            ->where('name', $values['name'])
+            ->where('street', $values['street'])
+            ->exists();
     }
 
-    public function getClientsUsers($clientId): false|array
+    public function getClientsUsers(int|string $clientId): false|array
     {
+        $results = $this->db->table('zp_user')
+            ->select(
+                'id',
+                'firstname',
+                'lastname',
+                'username',
+                'notifications',
+                'profileId',
+                'phone',
+                'status'
+            )
+            ->where('clientId', $clientId)
+            ->where(function ($query) {
+                $query->whereNull('source')
+                    ->orWhere('source', '!=', 'api');
+            })
+            ->get();
 
-        $sql = "SELECT
-                    zp_user.id,
-					zp_user.firstname,
-					zp_user.lastname,
-					zp_user.username,
-					zp_user.notifications,
-					zp_user.profileId,
-					zp_user.phone,
-                    zp_user.status
-                    FROM zp_user WHERE clientId = :clientId
-                    AND !(source <=> 'api') ";
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
-
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        return $values;
+        return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
     /**
@@ -181,102 +144,66 @@ class Clients extends Repository
      */
     public function addClient(array $values): false|string
     {
+        $id = $this->db->table('zp_clients')->insertGetId([
+            'name' => $values['name'],
+            'street' => $values['street'] ?? '',
+            'zip' => $values['zip'] ?? '',
+            'city' => $values['city'] ?? '',
+            'state' => $values['state'] ?? '',
+            'country' => $values['country'] ?? '',
+            'phone' => $values['phone'] ?? '',
+            'internet' => $values['internet'] ?? '',
+            'email' => $values['email'] ?? '',
+        ]);
 
-        $sql = 'INSERT INTO zp_clients (
-					name, street, zip, city, state, country, phone, internet, email
-				) VALUES (
-					:name, :street, :zip, :city, :state, :country, :phone, :internet, :email
-				)';
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
-        $stmn->bindValue(':street', $values['street'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':zip', $values['zip'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':city', $values['city'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':state', $values['state'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':country', $values['country'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':phone', $values['phone'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':internet', $values['internet'] ?? '', PDO::PARAM_STR);
-        $stmn->bindValue(':email', $values['email'] ?? '', PDO::PARAM_STR);
-
-        $stmn->execute();
-
-        $id = $this->db->database->lastInsertId();
-        $stmn->closeCursor();
-
-        return $id;
+        return (string) $id;
     }
 
     /**
      * editClient - edit a client
      */
-    public function editClient(array $values, $id): bool
+    public function editClient(array $values, int|string $id): bool
     {
-
-        $query = 'UPDATE zp_clients SET
-			 	name = :name,
-			 	street = :street,
-			 	zip = :zip,
-			 	city = :city,
-			 	state = :state,
-			 	country = :country,
-			 	phone = :phone,
-			 	internet = :internet,
-			 	email = :email
-			 WHERE id = :id LIMIT 1';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
-        $stmn->bindValue(':street', $values['street'], PDO::PARAM_STR);
-        $stmn->bindValue(':zip', $values['zip'], PDO::PARAM_STR);
-        $stmn->bindValue(':city', $values['city'], PDO::PARAM_STR);
-        $stmn->bindValue(':state', $values['state'], PDO::PARAM_STR);
-        $stmn->bindValue(':country', $values['country'], PDO::PARAM_STR);
-        $stmn->bindValue(':phone', $values['phone'], PDO::PARAM_STR);
-        $stmn->bindValue(':internet', $values['internet'], PDO::PARAM_STR);
-        $stmn->bindValue(':email', $values['email'], PDO::PARAM_STR);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-        $result = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $result;
+        return $this->db->table('zp_clients')
+            ->where('id', $id)
+            ->limit(1)
+            ->update([
+                'name' => $values['name'],
+                'street' => $values['street'],
+                'zip' => $values['zip'],
+                'city' => $values['city'],
+                'state' => $values['state'],
+                'country' => $values['country'],
+                'phone' => $values['phone'],
+                'internet' => $values['internet'],
+                'email' => $values['email'],
+            ]) >= 0;
     }
 
     /**
-     * deleteClient - delete a client
+     * deleteClient - delete a client and associated projects
      */
-    public function deleteClient($id): bool
+    public function deleteClient(int|string $id): bool
     {
+        // Delete projects associated with the client first
+        $this->db->table('zp_projects')
+            ->where('clientId', $id)
+            ->delete();
 
-        $query = 'DELETE zp_clients, zp_projects FROM zp_clients LEFT JOIN zp_projects ON zp_clients.id = zp_projects.clientId WHERE zp_clients.id = :id';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $result = $stmn->execute();
-        $stmn->closeCursor();
-
-        return $result;
+        // Then delete the client
+        return $this->db->table('zp_clients')
+            ->where('id', $id)
+            ->delete() > 0;
     }
 
     /**
      * hasTickets - check if a project has Tickets
      */
-    public function hasTickets($id): bool
+    public function hasTickets(int|string $id): bool
     {
-
-        $query = 'SELECT zp_projects.id FROM zp_projects JOIN zp_tickets ON zp_projects.id = zp_tickets.projectId WHERE zp_projects.clientId = :id';
-
-        $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        if (count($values) > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->db->table('zp_projects')
+            ->join('zp_tickets', 'zp_projects.id', '=', 'zp_tickets.projectId')
+            ->where('zp_projects.clientId', $id)
+            ->exists();
     }
 }
