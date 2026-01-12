@@ -2,8 +2,10 @@
 
 namespace Unit\app\Domain\Tickets\Services;
 
+use Carbon\CarbonImmutable;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Support\CarbonMacros;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
@@ -33,6 +35,28 @@ class TicketsServiceTest extends TestCase
         session(['usersettings.language' => 'en-US']);
         session(['usersettings.date_format' => 'Y-m-d']);
         session(['usersettings.time_format' => 'H:i']);
+
+        // Mock Environment and bind to container for dtHelper()
+        $envMock = $this->make(EnvironmentCore::class, [
+            'defaultTimezone' => 'UTC',
+            'language' => 'en-US',
+        ]);
+        app()->instance(EnvironmentCore::class, $envMock);
+
+        // Mock Language and bind to container
+        $langMock = $this->createMock(LanguageCore::class);
+        $langMock->method('__')->willReturnCallback(function ($index) {
+            $map = [
+                'language.dateformat' => 'Y-m-d',
+                'language.timeformat' => 'H:i',
+            ];
+
+            return $map[$index] ?? $index;
+        });
+        app()->instance(LanguageCore::class, $langMock);
+
+        // Register CarbonMacros for date parsing
+        CarbonImmutable::mixin(new CarbonMacros('UTC', 'en-US', 'Y-m-d', 'H:i'));
 
         // Create mocks for all dependencies
         $tpl = $this->make(TemplateCore::class);
