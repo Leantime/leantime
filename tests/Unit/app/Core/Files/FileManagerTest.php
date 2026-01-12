@@ -28,6 +28,12 @@ class FileManagerTest extends TestCase
     {
         parent::setUp();
 
+        // Set up session values needed for DateTimeHelper (used by dtHelper())
+        session(['usersettings.timezone' => 'UTC']);
+        session(['usersettings.language' => 'en-US']);
+        session(['usersettings.date_format' => 'Y-m-d']);
+        session(['usersettings.time_format' => 'H:i']);
+
         // Mock the FilesystemManager
         $this->filesystemManager = $this->createMock(FilesystemManager::class);
 

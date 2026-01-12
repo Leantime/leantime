@@ -28,6 +28,12 @@ class TicketsServiceTest extends TestCase
     {
         parent::setUp();
 
+        // Set up session values needed for DateTimeHelper
+        session(['usersettings.timezone' => 'UTC']);
+        session(['usersettings.language' => 'en-US']);
+        session(['usersettings.date_format' => 'Y-m-d']);
+        session(['usersettings.time_format' => 'H:i']);
+
         // Create mocks for all dependencies
         $tpl = $this->make(TemplateCore::class);
         $language = $this->make(LanguageCore::class);
