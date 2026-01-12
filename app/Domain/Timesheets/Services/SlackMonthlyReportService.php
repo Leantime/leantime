@@ -397,6 +397,12 @@ private function generateCsvString(array $filters, array $columnState = []): str
         'paid' => ''
     ];
 
+    foreach($totalsRowData as $key => $value) {
+        if (isset($activeColumns[$key]) && isset($activeColumns['hours'])) {
+            $totalsRowData[$key] = 'TOTAL';
+            break;
+        }
+    }
     $filteredTotalsRow = array_intersect_key($totalsRowData, $activeColumns);
     fputcsv($output, array_values($filteredTotalsRow));
 
