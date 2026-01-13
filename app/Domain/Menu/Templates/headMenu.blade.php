@@ -221,7 +221,7 @@
     </li>
     <li>
         <a
-            href="{{ BASE_URL }}/dashboard/home"
+            href="{{ BASE_URL }}/timesheets/showMy"
             @if ($menuType == 'personal')
                 class="active"
             @endif
