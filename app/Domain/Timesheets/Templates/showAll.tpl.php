@@ -41,6 +41,13 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
     }
 
     const projectAllLabel = <?php echo json_encode(strip_tags($tpl->__('menu.all_projects'))); ?>;
+    const projectNames = <?php
+        $projectMap = [];
+        foreach ($tpl->get('allProjects') as $project) {
+            $projectMap[$project['id']] = $project['name'];
+        }
+        echo json_encode($projectMap);
+    ?>;
 
     function updateProjectCountInline() {
         var checkedCount = document.querySelectorAll('.project-checkbox:checked').length;
@@ -50,6 +57,15 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
         if (countElement) {
             if (allChecked || checkedCount === 0) {
                 countElement.textContent = projectAllLabel;
+            } else if (checkedCount === 1) {
+                var checkedProject = document.querySelector('.project-checkbox:checked');
+                if (checkedProject) {
+                    var projectId = parseInt(checkedProject.value);
+                    var projectName = projectNames[projectId] || (checkedCount + ' project(s) selected');
+                    countElement.textContent = projectName;
+                } else {
+                    countElement.textContent = checkedCount + ' project(s) selected';
+                }
             } else {
                 countElement.textContent = checkedCount + ' project(s) selected';
             }
@@ -153,7 +169,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                 <button class="dt-button" onclick="document.getElementById('exportSlackForm').submit();" style="padding: 4px 14px;">
                 Export to Slack
             </button>
-        </div>  
+        </div>
         <form action="<?php echo BASE_URL ?>/timesheets/showAll" method="post" id="form" name="form">
             <div class="pull-right">
                 <div id="tableButtons" style="display:inline-block; vertical-align: middle;"></div>
@@ -188,11 +204,33 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                             <button type="button" class="project-dropdown-toggle" style="width: 100%; padding: 4px 14px; text-align: left; background: #fff; border: 1px solid #ccc; cursor: pointer; border-radius: 20px; font-size: 14px; line-height: 20px; height: 30px; display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #555; box-sizing: border-box;" onclick="document.getElementById('projectCheckboxDropdown').style.display = document.getElementById('projectCheckboxDropdown').style.display === 'none' ? 'block' : 'none';">
                                 <span class="selected-count" id="projectSelectedCount" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                     <?php
-                                    $selectedProjects = is_array($tpl->get('projectFilter')) ? $tpl->get('projectFilter') : [$tpl->get('projectFilter')];
-                                    if ($tpl->get('projectFilter') == -1 || !is_array($tpl->get('projectFilter'))) {
+                                    $projectFilter = $tpl->get('projectFilter');
+                                    $allProjects = $tpl->get('allProjects');
+
+                                    if ($projectFilter == -1 || (!is_array($projectFilter) && $projectFilter == -1)) {
                                         echo strip_tags($tpl->__('menu.all_projects'));
+                                    } elseif (is_array($projectFilter) && count($projectFilter) == 1) {
+                                        $projectId = $projectFilter[0];
+                                        $projectName = '';
+                                        foreach ($allProjects as $project) {
+                                            if ($project['id'] == $projectId) {
+                                                $projectName = $tpl->escape($project['name']);
+                                                break;
+                                            }
+                                        }
+                                        echo $projectName ?: (count($projectFilter) . ' project(s) selected');
+                                    } elseif (is_array($projectFilter)) {
+                                        echo count($projectFilter) . ' project(s) selected';
                                     } else {
-                                        echo count($selectedProjects) . ' project(s) selected';
+                                        $projectId = (int) $projectFilter;
+                                        $projectName = '';
+                                        foreach ($allProjects as $project) {
+                                            if ($project['id'] == $projectId) {
+                                                $projectName = $tpl->escape($project['name']);
+                                                break;
+                                            }
+                                        }
+                                        echo $projectName ?: '1 project(s) selected';
                                     }
                                     ?>
                                 </span>
@@ -208,6 +246,8 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                                     <span><?php echo strip_tags($tpl->__('menu.all_projects')) ?></span>
                                 </label>
                                 <?php
+                                $projectFilter = $tpl->get('projectFilter');
+                                $selectedProjects = is_array($projectFilter) ? $projectFilter : ($projectFilter != -1 ? [$projectFilter] : []);
                                 foreach ($tpl->get('allProjects') as $project) { ?>
                                     <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer; color: #333; transition: background-color 0.2s ease;" class="project-checkbox-label" onmouseover="this.style.background='#eef2f7'; this.style.color='#333';" onmouseout="this.style.background='white'; this.style.color='#333';" onclick="event.stopPropagation();">
                                         <input type="checkbox" name="project[]" value="<?= $project['id'] ?>" class="project-checkbox" style="margin: 0; vertical-align: middle;"
@@ -374,7 +414,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                         </td>
                         <td data-order="<?php echo !empty($row['projectKey']) ? $tpl->escape($row['projectKey']) . '-' . $tpl->escape($row['ticketId']) : '#' . $tpl->escape($row['ticketId']); ?>">
                                 <a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>">
-                                    <?php 
+                                    <?php
                                     if (!empty($row['projectKey'])) {
                                         echo $tpl->escape($row['projectKey']) . '-' . $tpl->escape($row['ticketId']);
                                     } else {
