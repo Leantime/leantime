@@ -146,14 +146,22 @@ class Notifications
         return $results;
     }
 
-    public function markAllNotificationRead($userId): bool
+    public function markAllNotificationRead($userId, ?string $type = null): bool
     {
 
         $sql = 'UPDATE zp_notifications SET `read` = 1 WHERE userId = :id';
 
+        if ($type !== null) {
+            $sql .= ' AND type = :type';
+        }
+
         $stmn = $this->db->database->prepare($sql);
 
         $stmn->bindValue(':id', $userId, PDO::PARAM_INT);
+
+        if ($type !== null) {
+            $stmn->bindValue(':type', $type, PDO::PARAM_STR);
+        }
 
         $results = $stmn->execute();
 

@@ -63,31 +63,16 @@
             data-tippy-content='{{ __('popover.notifications') }}'
         >
             <span class="fa-solid fa-bell"></span>
-            @if($newNotificationCount>0)
-                <span class='notificationCounter'>{{ $newNotificationCount }}</span>
+            @if($totalNewNotifications>0)
+                <span class='notificationCounter'>{{ $totalNewNotifications }}</span>
             @endif
         </a>
 
         <div class='dropdown-menu' id='notificationsDropdown'>
 
-            <div class='dropdownTabs'>
-                <a
-                    href='javascript:void(0);'
-                    class='notifcationTabs active'
-                    id="notificationsListLink"
-                    onclick="toggleNotificationTabs('notifications')"
-                >Notification ({{ $totalNewNotifications }})</a>
-                <a
-                    href='javascript:void(0);'
-                    class='notifcationTabs'
-                    id="mentionsListLink"
-                    onclick="toggleNotificationTabs('mentions')"
-                >Mentions ({{ $totalNewMentions }})</a>
-            </div>
-
             <div class="scroll-wrapper">
 
-                <ul id='notificationsList' class='notifcationViewLists'>
+                <ul id='notificationsList' class='notificationViewLists'>
                     @if ($totalNotificationCount === 0)
                         <p style='padding: 10px'>{{ __('text.no_notifications') }}</p>
                     @endif
@@ -118,7 +103,29 @@
                     @endforeach
                 </ul>
 
-                <ul id='mentionsList' style='display:none;' class='notificationViewLists'>
+            </div>
+        </div>
+
+    </li>
+
+    <li class="notificationDropdown">
+        <a
+            href='javascript:void(0);'
+            class="dropdown-toggle profileHandler mentionHandler"
+            data-toggle='dropdown'
+            data-tippy-content='Mentions'
+        >
+            <span class="fa-solid fa-at"></span>
+            @if($totalNewMentions > 0)
+                <span class='notificationCounter'>{{ $totalNewMentions }}</span>
+            @endif
+        </a>
+
+        <div class='dropdown-menu' id='mentionsDropdown'>
+
+            <div class="scroll-wrapper">
+
+                <ul id='mentionsList' class='notificationViewLists'>
                     @if ($totalMentionCount === 0)
                         <p style="padding: 10px">{{ __('text.no_notifications') }}</p>
                     @endif
@@ -259,13 +266,6 @@
 @once
     @push('scripts')
         <script>
-            function toggleNotificationTabs(active) {
-                jQuery(".notifcationTabs").removeClass("active");
-                jQuery('#' + active + 'ListLink').addClass("active");
-                jQuery('.notifcationViewLists').hide();
-                jQuery('#' + active + 'List').show();
-            }
-
             jQuery(document).ready(function () {
                 jQuery('.notificationHandler').on('click', function () {
                     jQuery.ajax(
@@ -278,8 +278,25 @@
                             }
                         }
                     ).done(function () {
-                        jQuery(".notifcationViewLists li.new").removeClass("new");
-                        jQuery(".notificationCounter").fadeOut();
+                        jQuery("#notificationsDropdown .notificationViewLists li.new").removeClass("new");
+                        jQuery("#notificationsDropdown .notificationCounter").fadeOut();
+                    })
+                });
+
+                jQuery('.mentionHandler').on('click', function () {
+                    jQuery.ajax(
+                        {
+                            type: 'PATCH',
+                            url: leantime.appUrl + '/api/notifications',
+                            data: {
+                                id: 'all',
+                                action: 'read',
+                                type: 'mention'
+                            }
+                        }
+                    ).done(function () {
+                        jQuery("#mentionsDropdown .notificationViewLists li.new").removeClass("new");
+                        jQuery("#mentionsDropdown .notificationCounter").fadeOut();
                     })
                 });
 
@@ -287,7 +304,7 @@
                     e.stopPropagation();
                 });
 
-                jQuery('notificationsDropdown li').click(function () {
+                jQuery('#notificationsDropdown li, #mentionsDropdown li').click(function () {
                     const url = jQuery(this).data('url');
                     const id = jQuery(this).data('id');
 

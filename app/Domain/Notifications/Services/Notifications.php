@@ -68,11 +68,11 @@ class Notifications
     /**
      * @api
      */
-    public function markNotificationRead($id, $userId): bool
+    public function markNotificationRead($id, $userId, ?string $type = null): bool
     {
 
         if ($id == 'all') {
-            return $this->notificationsRepo->markAllNotificationRead($userId);
+            return $this->notificationsRepo->markAllNotificationRead($userId, $type);
         } else {
             return $this->notificationsRepo->markNotificationRead($id);
         }
