@@ -115,10 +115,10 @@ leantime.dateController = (function () {
             }
         });
 
-        if (!existingFromValue) {
+        if (!fromValue) {
             jQuery(fromElement).val(startDate.format('YYYY-MM-DD'));
         }
-        if (!existingToValue) {
+        if (!toValue) {
             jQuery(toElement).val(endDate.format('YYYY-MM-DD'));
         }
 
