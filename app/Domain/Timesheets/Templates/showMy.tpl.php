@@ -312,7 +312,6 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                                     $logIds = [];
                                     foreach (array_keys($timeRow) as $dayKey) {
 
-                                        error_log($dayKey);
 
                                         if (str_starts_with($dayKey, 'day') && !empty($timeRow[$dayKey]['id'])) {
                                             $logIds[] = $timeRow[$dayKey]['id'];
