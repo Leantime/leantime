@@ -74,8 +74,8 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                     <button class="btn dropdown-toggle" data-toggle="dropdown"><?= $tpl->__('links.list_view') ?> <?= $tpl->__('links.view') ?></button>
                     <ul class="dropdown-menu">
                         <li><a href="<?= BASE_URL?>/timesheets/showMy" ><?= $tpl->__('links.week_view') ?></a></li>
-                        <li><a href="<?= BASE_URL?>/timesheets/showMyList" class="active"><?= $tpl->__('links.list_view') ?></a></li>
                         <li><a href="<?= BASE_URL?>/timesheets/showMyMonthlyTimesheet"><i class="fa fa-calendar-alt" style="margin-right:5px;"></i>Monthly View</a></li>
+                        <li><a href="<?= BASE_URL?>/timesheets/showMyList" class="active"><?= $tpl->__('links.list_view') ?></a></li>
                     </ul>
                 </div>
             </div>
