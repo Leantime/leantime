@@ -45,7 +45,7 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
                     </span>
                     <label for="description"><?php echo $tpl->__('label.description') ?></label>
                     <span class="field">
-                        <textarea rows="5" cols="50" id="description" name="description"><?php echo $values['description']; ?></textarea><br />
+                        <textarea rows="5" cols="50" id="description" name="description" style="width:600px; height:250px;"><?php echo $values['description']; ?></textarea><br />
                     </span>
                     <input type="hidden" name="saveTimes" value="1" />
                     <input type="submit" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveTimes" class="button" />
