@@ -249,8 +249,8 @@ jQuery(document).ready(function($) {
                                 ticketId: ticketId,
                                 oldStatus: '',
                                 newStatus: '',
-                                oldStatusText: '',
-                                newStatusText: '',
+                                oldStatusText: window.initialTicketDescription,
+                                newStatusText: currentDescription,
                                 user: user,
                                 detailsAttributeId: 'ticketDescription'
                             },

@@ -29,7 +29,7 @@ class TicketHistoryController extends Controller
     {
         if (!$this->authService->loggedIn()) {
             return new JsonResponse([
-                'success' => false, 
+                'success' => false,
                 'error' => 'Unauthorized'
             ], 401);
         }
@@ -44,7 +44,7 @@ class TicketHistoryController extends Controller
 
         if (!$ticketId) {
             return new JsonResponse([
-                'success' => false, 
+                'success' => false,
                 'error' => 'No ticket ID provided'
             ], 400);
         }
@@ -68,7 +68,7 @@ class TicketHistoryController extends Controller
                 ]);
             } else {
                 return new JsonResponse([
-                    'success' => false, 
+                    'success' => false,
                     'error' => 'Failed to save status change'
                 ], 500);
             }
@@ -101,36 +101,50 @@ class TicketHistoryController extends Controller
                 $html = '<ul style="list-style: none; padding: 0; margin: 0;">';
                 foreach ($changes as $change) {
                     $detailsAttributeId = $change['detailsAttributeId'];
-                    if($detailsAttributeId === 'priority') {
-                        $attributeLabel = 'Priority';
-                    } elseif($detailsAttributeId === 'storypoints') {
-                        $attributeLabel = 'Effort';
-                    } elseif($detailsAttributeId === 'editorId') {
-                        $attributeLabel = 'Assigned to';
-                    } elseif($detailsAttributeId === 'deadline') {
-                        $attributeLabel = 'Due Date';
-                    } elseif($detailsAttributeId === 'dueTime') {
-                        $attributeLabel = 'Due Date Time';
-                    } elseif($detailsAttributeId === 'ticketDescription') {
-                        $attributeLabel = 'Description';
-                    } else {
-                        $attributeLabel = 'Status';
-                    }
+
+                    $attributeLabels = [
+                        'priority' => 'Priority',
+                        'storypoints' => 'Effort',
+                        'editorId' => 'Assigned to',
+                        'deadline' => 'Due Date',
+                        'dueTime' => 'Due Date Time',
+                        'ticketDescription' => 'Description',
+                    ];
+
+                    $attributeLabel = $attributeLabels[$detailsAttributeId] ?? 'Status';
+
                     $html .= '<li style="padding: 8px 0; border-bottom: 1px solid #eee;">';
-                    $html .= '<strong>' . htmlspecialchars($change['changedBy']) . '</strong> changed '. $attributeLabel . ' on ';
+                    $html .= '<strong>' . htmlspecialchars($change['changedBy']) . '</strong> changed ' . $attributeLabel . ' on ';
                     $html .= '<span style="color: #666; font-size: 0.9em;">' . date('d.m.Y H:i', strtotime($change['changedAt'])) . '</span><br>';
-                    $html .= '<span style="color: #999;">' . htmlspecialchars($change['oldStatusText']) . '</span>';
-                    if($detailsAttributeId != 'ticketDescription'){
-                    $html .= ' <i class="fa fa-arrow-right" style="color: #999; font-size: 0.8em;"></i> ';
+
+                    if ($detailsAttributeId === 'ticketDescription') {
+                        $html .= '<div style="margin-top: 8px;">';
+                        $html .= '<details style="cursor: pointer;">';
+                        $html .= '<summary style="color: #666; font-size: 0.9em;">View changes</summary>';
+                        $html .= '<div style="margin-top: 8px; padding: 8px; background: #f5f5f5; border-radius: 4px;">';
+                        $html .= '<div style="margin-bottom: 8px;"><strong>Old:</strong></div>';
+                        $html .= '<div style="padding: 8px; background: #fff; border-left: 3px solid #dc3545; margin-bottom: 12px;">';
+                        $html .= $change['oldStatusText'] ?: '<em>Empty</em>';
+                        $html .= '</div>';
+                        $html .= '<div style="margin-bottom: 8px;"><strong>New:</strong></div>';
+                        $html .= '<div style="padding: 8px; background: #fff; border-left: 3px solid #28a745;">';
+                        $html .= $change['newStatusText'] ?: '<em>Empty</em>';
+                        $html .= '</div>';
+                        $html .= '</div>';
+                        $html .= '</details>';
+                        $html .= '</div>';
+                    } else {
+                        $html .= '<span style="color: #999;">' . htmlspecialchars($change['oldStatusText']) . '</span>';
+                        $html .= ' <i class="fa fa-arrow-right" style="color: #999; font-size: 0.8em;"></i> ';
+                        $html .= '<span style="color: #28a745; font-weight: bold;">' . htmlspecialchars($change['newStatusText']) . '</span>';
                     }
-                    $html .= '<span style="color: #28a745; font-weight: bold;">' . htmlspecialchars($change['newStatusText']) . '</span>';
+
                     $html .= '</li>';
                 }
                 $html .= '</ul>';
             }
 
             return new Response($html, 200, ['Content-Type' => 'text/html']);
-            
         } catch (\Exception $e) {
             return new Response(
                 '<p style="color: red;">Error loading status changes: ' . htmlspecialchars($e->getMessage()) . '</p>',
