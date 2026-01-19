@@ -80,7 +80,7 @@ class TicketDesignTokens
     /**
      * Get priority token by ID
      *
-     * @param int $id Priority ID (1-5)
+     * @param  int  $id  Priority ID (1-5)
      * @return array|null Priority configuration array or null if not found
      */
     public static function getPriority(int $id): ?array
@@ -91,7 +91,7 @@ class TicketDesignTokens
     /**
      * Get effort token by points
      *
-     * @param float $points Story points value
+     * @param  float  $points  Story points value
      * @return array|null Effort configuration array or null if not found
      */
     public static function getEffort(float $points): ?array
@@ -102,7 +102,7 @@ class TicketDesignTokens
     /**
      * Get type token by name
      *
-     * @param string $type Ticket type name
+     * @param  string  $type  Ticket type name
      * @return array|null Type configuration array or null if not found
      */
     public static function getType(string $type): ?array

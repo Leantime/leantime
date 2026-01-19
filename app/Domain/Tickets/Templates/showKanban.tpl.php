@@ -117,7 +117,7 @@ $allTickets = $group['items'];
                 $swimlaneExpanded = ! in_array($group['id'], session('collapsedSwimlanes', []));
                 $groupBy = $searchCriteria['groupBy'] ?? 'status';
 
-// Get pre-calculated status breakdown with timeAlert from service
+                // Get pre-calculated status breakdown with timeAlert from service
                 // Use string key to match how PHP array keys work with mixed types
                 $statusBreakdown = $tpl->get('statusBreakdown');
                 $groupIdKey = (string) $group['id'];
@@ -158,7 +158,7 @@ $allTickets = $group['items'];
                 ?>
 
                     <!-- Kanban columns content area (toggles between expanded and collapsed/compact) -->
-                    <div class="kanban-swimlane-content<?= !$swimlaneExpanded ? ' collapsed' : '' ?>" id="swimlane-content-<?= $group['id'] ?>">
+                    <div class="kanban-swimlane-content<?= ! $swimlaneExpanded ? ' collapsed' : '' ?>" id="swimlane-content-<?= $group['id'] ?>">
             <?php } ?>
 
                     <div class="sortableTicketList kanbanBoard" id="kanboard-<?= $group['id'] ?>" style="margin-top:-5px;">

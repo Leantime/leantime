@@ -37,7 +37,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     if ($input['field'] === 'status' && $currentRoute === 'tickets.showKanban') {
                         continue;
                     }
-                ?>
+                    ?>
                     <li>
                         <span class="radio">
                             <input
