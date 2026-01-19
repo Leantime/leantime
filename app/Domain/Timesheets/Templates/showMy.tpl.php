@@ -224,7 +224,7 @@ jQuery(document).ready(function(){
         <form action="<?php echo BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
 <div style="position: relative; display: inline-block;">
-    <button style="cursor: pointer; background: none; border: none; font-size: 18px;">
+    <button style="cursor: pointer; background: none; border: none; font-size: 18px;margin-top:5px;">
         &#x24D8;
         <span style="
             visibility: hidden;
@@ -242,7 +242,7 @@ jQuery(document).ready(function(){
             transition: opacity 0.3s, visibility 0.3s;
             z-index: 1000;
         ">
-            Your info text here
+            You can export your timesheet in the <strong>List view</strong>.
         </span>
     </button>
 </div>
