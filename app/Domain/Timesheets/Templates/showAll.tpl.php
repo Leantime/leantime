@@ -188,7 +188,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                 <tr>
                     <td style="vertical-align: top;">
                         <label for="clients"><?php echo $tpl->__('label.client'); ?></label>
-                        <select name="clientId">
+                        <select name="clientId" id ="clients">
                             <option value="-1"><?php echo strip_tags($tpl->__('menu.all_clients')) ?></option>
                             <?php foreach ($tpl->get('allClients') as $client) {?>
                                 <option value="<?= $client['id'] ?>"
@@ -511,3 +511,10 @@ foreach ($tpl->get('allTimesheets') as $row) {
         </form>
     </div>
 </div>
+                    <script>
+                        jQuery(document).ready(function() {
+                            jQuery('#clients').on('change', function() {
+                                jQuery('input.reload[type="submit"]').trigger('click');
+                            });
+                        });
+                    </script>
