@@ -223,6 +223,47 @@ jQuery(document).ready(function(){
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
+<div style="position: relative; display: inline-block;">
+    <button style="cursor: pointer; background: none; border: none; font-size: 18px;">
+        &#x24D8;
+        <span style="
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            white-space: nowrap;
+            font-size: 14px;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 1000;
+        ">
+            Your info text here
+        </span>
+    </button>
+</div>
+
+<style>
+button:hover span {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Optional: Add arrow pointer */
+button span::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #333;
+}
+</style>
                 <button class="btn dropdown-toggle" data-toggle="dropdown">
                     <?php echo $tpl->__('links.week_view') ?> <?= $tpl->__('links.view') ?>
                 </button>
