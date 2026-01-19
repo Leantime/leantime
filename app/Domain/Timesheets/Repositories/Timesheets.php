@@ -15,12 +15,12 @@ class Timesheets extends Repository
     private DbCore $db;
 
     public array $kind = [
-        'GENERAL_BILLABLE' => 'label.general_billable',
-        'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
-        'PROJECTMANAGEMENT' => 'label.projectmanagement',
-        'DEVELOPMENT' => 'label.development',
-        'BUGFIXING_NOT_BILLABLE' => 'label.bugfixing_not_billable',
-        'TESTING' => 'label.testing',
+        'GENERAL_BILLABLE' => 'General, billable',
+        'GENERAL_NOT_BILLABLE' => 'General, not billable',
+        'PROJECTMANAGEMENT' => 'Project management',
+        'DEVELOPMENT' => 'Development',
+        'BUGFIXING_NOT_BILLABLE' => 'Bugfixing, not billable',
+        'TESTING' => 'Testing',
     ];
 
     /**
