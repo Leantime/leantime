@@ -5,7 +5,8 @@
 
     let currentPreferences = {};
     let dataTableInstance = null;
-    let selectedRangeName = null; 
+    let selectedRangeName = null;
+    let activeProfileName = localStorage.getItem('activeProfileName') || null;
 
 
     function init(dataTable) {
@@ -20,6 +21,7 @@
             if (dtButtons.length > 0) {
                 initUI();
                 initDateRangeTracking();
+                updateActiveProfileDisplay();
             }
 
         };
@@ -29,9 +31,9 @@
 
     function initDateRangeTracking() {
         const dateInput = jQuery('input[name="dateFrom"]');
-        
+
         if (dateInput.length && dateInput.data('daterangepicker')) {
-            dateInput.on('apply.daterangepicker', function(ev, picker) {
+            dateInput.on('apply.daterangepicker', function (ev, picker) {
                 if (picker.chosenLabel) {
                     selectedRangeName = picker.chosenLabel;
                 }
@@ -61,7 +63,9 @@
 
                 if (data.status === 'success' && data.preference) {
                     await applyFilters(data.preference.filters);
-
+                    activeProfileName = name;
+                    localStorage.setItem('activeProfileName', name);
+                    updateActiveProfileDisplay();
                     jQuery('#form').submit();
                     return true;
                 } else {
@@ -76,6 +80,35 @@
 
         alert('Failed to load profile');
         return false;
+    }
+
+    function updateActiveProfileDisplay() {
+        const button = jQuery('#filterPreferencesBtn');
+        if (activeProfileName) {
+            button.html(`<span><i class="fa fa-bookmark"></i> Profile: ${activeProfileName}</span>`);
+        } else {
+            button.html(`<span><i class="fa fa-bookmark"></i> None selected</span>`);
+            button.css('background-color', '');
+        }
+    }
+
+    function clearActiveProfile() {
+        activeProfileName = null;
+        localStorage.removeItem('activeProfileName');
+        updateActiveProfileDisplay();
+    }
+
+    function onFilterChange() {
+        if (activeProfileName) {
+            clearActiveProfile();
+        }
+    }
+
+    function attachFilterChangeListeners() {
+        jQuery('select[name="clientId"], select[name="userId"], select[name="kind"]').on('change', onFilterChange);
+        jQuery('input[name="invEmpl"], input[name="invComp"], input[name="paid"]').on('change', onFilterChange);
+        jQuery('input[name="project[]"]').on('change', onFilterChange);
+        jQuery('input[name="dateFrom"]').on('apply.daterangepicker', onFilterChange);
     }
 
     async function savePreference(name) {
@@ -122,7 +155,7 @@
     }
     function applyDateRange(rangeName) {
         const dateInput = jQuery('input[name="dateFrom"]');
-        
+
         if (!dateInput.length || !dateInput.data('daterangepicker')) {
             return false;
         }
@@ -166,7 +199,7 @@
 
         if (filters.dateRange && filters.dateRange !== 'Custom') {
             const applied = applyDateRange(filters.dateRange);
-            
+
             if (!applied) {
                 if (filters.dateFrom) {
                     jQuery('input[name="dateFrom"]').val(filters.dateFrom);
@@ -247,10 +280,10 @@
     function getCurrentFilters() {
         const dateFrom = jQuery('input[name="dateFrom"]').val() || '';
         const dateTo = jQuery('input[name="dateTo"]').val() || '';
-        
+
         let dateRange = 'Custom';
         const dateInput = jQuery('input[name="dateFrom"]');
-        
+
         if (dateInput.length && dateInput.data('daterangepicker')) {
             const picker = dateInput.data('daterangepicker');
             if (picker.chosenLabel) {
@@ -268,7 +301,7 @@
             invEmpl: jQuery('input[name="invEmpl"]').is(':checked') ? '1' : '0',
             invComp: jQuery('input[name="invComp"]').is(':checked') ? '1' : '0',
             paid: jQuery('input[name="paid"]').is(':checked') ? '1' : '0',
-            dateRange: dateRange,  
+            dateRange: dateRange,
             dateFrom: dateFrom,
             dateTo: dateTo
         };
@@ -348,26 +381,30 @@
     }
 
 
-function buildPreferencesDropdown() {
-    const keys = Object.keys(currentPreferences);
+    function buildPreferencesDropdown() {
+        const keys = Object.keys(currentPreferences);
 
-    if (keys.length === 0) {
-        return '<div style="padding: 12px; text-align: center; color: #666;"><i class="fa fa-info-circle"></i> No saved profiles</div>';
-    }
-
-    let html = '';
-    keys.forEach(function (key) {
-        const pref = currentPreferences[key];
-        const checked = pref.autoExport ? 'checked' : '';
-        let dateInfo = '';
-        if (pref.filters && pref.filters.dateRange && pref.filters.dateRange !== 'Custom') {
-            dateInfo = `<small style="color: #666; font-size: 11px; display: block; margin-top: 2px;">📅 ${pref.filters.dateRange}</small>`;
+        if (keys.length === 0) {
+            return '<div style="padding: 12px; text-align: center; color: #666;"><i class="fa fa-info-circle"></i> No saved profiles</div>';
         }
 
-        html += `
-            <div class="preference-item" style="display: flex; align-items: center; justify-content: space-between;flex-wrap:wrap; padding: 10px 12px; border-bottom: 1px solid #eee;">
+        let html = '';
+        keys.forEach(function (key) {
+            const pref = currentPreferences[key];
+            const checked = pref.autoExport ? 'checked' : '';
+            const isActive = (key === activeProfileName);
+            const activeStyle = isActive ? 'background-color: #e8f4f8; border-left: 3px solid #004666;' : '';
+            const activeIcon = isActive ? '<i class="fa fa-check-circle" style="color: #004666; margin-right: 5px;"></i>' : '';
+
+            let dateInfo = '';
+            if (pref.filters && pref.filters.dateRange && pref.filters.dateRange !== 'Custom') {
+                dateInfo = `<small style="color: #666; font-size: 11px; display: block; margin-top: 2px;">📅 ${pref.filters.dateRange}</small>`;
+            }
+
+            html += `
+            <div class="preference-item" style="display: flex; align-items: center; justify-content: space-between;flex-wrap:wrap; padding: 10px 12px; border-bottom: 1px solid #eee; ${activeStyle}">
                 <div class="preference-name" data-name="${key}" style="flex: 1; font-weight: 500; color: #333;">
-                    ${key}
+                    ${activeIcon}${key}
                     ${dateInfo}
                 </div>
                 <div style="display:flex; gap:8px; align-items: center; white-space: nowrap; margin-right: 15px;">
@@ -379,30 +416,30 @@ function buildPreferencesDropdown() {
                 </button>
             </div>
         `;
-    });
-
-    return html;
-}
-
-function initAutoExportListeners() {
-    jQuery(document).on('change', '.auto-export', function() {
-        fetch(leantime.appUrl + '/timesheets/saveFilterPreferences', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                action: 'setAutoExport',
-                name: this.dataset.preferenceName,
-                autoExport: this.checked
-            })
-        })
-        .then(r => r.json())
-        .catch(() => {
-            this.checked = !this.checked;
         });
-    });
-}
 
-jQuery(document).ready(initAutoExportListeners);
+        return html;
+    }
+
+    function initAutoExportListeners() {
+        jQuery(document).on('change', '.auto-export', function () {
+            fetch(leantime.appUrl + '/timesheets/saveFilterPreferences', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'setAutoExport',
+                    name: this.dataset.preferenceName,
+                    autoExport: this.checked
+                })
+            })
+                .then(r => r.json())
+                .catch(() => {
+                    this.checked = !this.checked;
+                });
+        });
+    }
+
+    jQuery(document).ready(initAutoExportListeners);
 
     function showSaveDialog() {
         const name = prompt('Enter a name for this profile:')
@@ -473,7 +510,7 @@ jQuery(document).ready(initAutoExportListeners);
                 </button>
             `);
         dtButtonsContainer.prepend(preferencesButton);
-
+        updateActiveProfileDisplay();
 
         const dropdownHTML = `
             <div id="filterPreferencesDropdown" style="display: none; position: absolute; z-index: 1000; background: white; border: 1px solid #d0d5dd; border-radius: 8px; width: 300px; max-height: 400px; overflow-y: auto; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15); margin-top: 4px;">
@@ -492,6 +529,7 @@ jQuery(document).ready(initAutoExportListeners);
         `;
 
         jQuery('body').append(dropdownHTML);
+        attachFilterChangeListeners();
 
         jQuery(document).on('click', '#filterPreferencesBtn', function (e) {
             e.stopPropagation();
@@ -526,7 +564,13 @@ jQuery(document).ready(initAutoExportListeners);
             }
         });
 
-        jQuery(document).on('change', '.auto-export-checkbox', function(e) {
+        jQuery(document).on('click', '#clearActiveProfile', function (e) {
+            e.stopPropagation();
+            clearActiveProfile();
+            updateDropdownContent();
+        });
+
+        jQuery(document).on('change', '.auto-export-checkbox', function (e) {
             e.stopPropagation();
             const profileName = jQuery(this).data('name');
             const isEnabled = jQuery(this).is(':checked');
@@ -537,30 +581,30 @@ jQuery(document).ready(initAutoExportListeners);
     }
 
     async function saveAutoExportSetting(profileName, enabled) {
-    try {
-        const response = await fetch(leantime.appUrl + PROFILE_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify({
-                action: 'setAutoExport',
-                name: profileName,
-                autoExport: enabled
-            })
-        });
+        try {
+            const response = await fetch(leantime.appUrl + PROFILE_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    action: 'setAutoExport',
+                    name: profileName,
+                    autoExport: enabled
+                })
+            });
 
-        if (response.ok) {
-            const data = await response.json();
-            if (data.status === 'success') {
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === 'success') {
+                }
             }
+        } catch (error) {
+            console.error('[Profiles] Failed to save auto-export setting:', error);
         }
-    } catch (error) {
-        console.error('[Profiles] Failed to save auto-export setting:', error);
     }
-}
 
     window.leantimeFilterPreferences = {
         init: init,
