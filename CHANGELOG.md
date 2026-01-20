@@ -1,3 +1,271 @@
+# Version: 3.6.0
+
+## Highlights
+
+### Kanban Board Improvements
+- **Collapsible Swimlanes** - Collapse swimlane rows to show compact ticket views with balanced layouts
+- **Horizontal Swimlane Headers** - New layout with status breakdowns and sticky headers
+- **Quick-Add Form** - Faster ticket creation directly from the kanban board with keyboard shortcuts
+- **Due Date GroupBy** - New grouping option for organizing tickets by due date
+- **Optimistic UI Updates** - Smoother card movements with immediate visual feedback
+- **Cross-Swimlane Movement** - Improved ticket dragging between swimlanes with progress bar updates
+
+### Accessibility (WCAG 2.1 AA Compliance)
+- Improved contrast ratios and focus indicators throughout the application
+- Better support for low vision users in dark mode and grayscale
+- Comprehensive accessibility improvements for custom input components (dropdowns, date pickers, etc.)
+- TinyMCE editor accessibility fix for screen readers
+
+### New Features
+- **Multiple Collaborators** - Assign multiple collaborators to a single ticket
+- **Ticket Modified Timestamp** - Track when tickets were last modified
+- **Notebook Colors** - Add colors to notebooks for better organization
+- **Timesheet Filters** - Filter timesheets by ticket and invoiced status
+- **News Toggle** - Option to disable pulling external news
+
+### API & Mobile
+- Timezone-safe date handling for mobile time entries
+- Improved JSON-RPC response handling and acceptance tests
+- Better API authentication for all endpoints
+
+### Localization
+- New Russian translation (ru-RU)
+- New Ukrainian translation (uk-UA)
+- Updated Chinese (zh-CN) and Polish (pl-PL) translations
+
+### Performance & Stability
+- Refactored repositories to use Laravel query builder
+- Removed CPU-heavy CSS animations
+- Efficient database connection management
+- Fixed schema update gap for safer database migrations
+- Daily plugin license checks (reduced from more frequent)
+
+### Bug Fixes
+- Fixed 2FA QR code generation
+- Fixed milestone filter not working correctly
+- Fixed modal responsiveness on smaller screens
+- Fixed plugin details view when plugins have reviews
+- Fixed title not populating in certain scenarios
+- Fixed LDAP type hardening
+- Fixed installer with different database configurations
+
+---
+
+## All Changes
+
+* [920376334](https://github.com/Leantime/leantime/commit/9203763344a1ce4bbbf8d6c0180a8e1e04f0115e): Merge branch 'master' of https://github.com/Leantime/leantime
+* [3cd4ebe43](https://github.com/Leantime/leantime/commit/3cd4ebe43fde66aa6cbb3d06cc5e70af6728f8d4): Bump version to 3.6.0
+* [33653d889](https://github.com/Leantime/leantime/commit/33653d889f0da3b383dbfcf2ceb92aaeadc4d53f): Merge pull request #3205 from Leantime/feature/cloud-sync-accessibility-kanban
+* [9ff494b23](https://github.com/Leantime/leantime/commit/9ff494b232a65728bd75eaecd5d2c0552296a369): Refactor version string formatting in Install.php
+* [192aa1f24](https://github.com/Leantime/leantime/commit/192aa1f240c76263cebe90271c2a4d78b4eea95a): Add iframe_aria_text option to TinyMCE editor configs
+* [3b4227179](https://github.com/Leantime/leantime/commit/3b422717978fafd0e9c5e99c71a4b6dbf11e493c): Fix code style issues in cherry-picked files
+* [ca5b367ff](https://github.com/Leantime/leantime/commit/ca5b367fffaf8fca7b34a874ff7a93b12e54343f): Fix collapsed swimlane column height equalization
+* [0bc23be06](https://github.com/Leantime/leantime/commit/0bc23be06fd4ded88fbd95219421ba0f2a45dfb2): Address PR #61 review feedback from Marcel
+* [4bbd8d27b](https://github.com/Leantime/leantime/commit/4bbd8d27b5d6114e5fea63feb675e6b6633b0f54): Fix quick-add keyboard shortcuts and progress bar updates
+* [d5495d631](https://github.com/Leantime/leantime/commit/d5495d631f7ba0d0ff9f450e5d2513341671acb9): Improve milestone groupBy ordering and swimlane collapse behavior
+* [904733821](https://github.com/Leantime/leantime/commit/904733821109dfb3f98bcdbc6db93424d17a0058): Fix progress bar gray gap with proportional flex-grow
+* [8419e93ef](https://github.com/Leantime/leantime/commit/8419e93efbce49490249ac50041ed29f0381add7): Fix cross-swimlane ticket movement and improve progress bar styling
+* [1665d8b1b](https://github.com/Leantime/leantime/commit/1665d8b1badda22e28441a14a7b6dde916728ff3): Add Due Date groupBy option and improve swimlane UX
+* [476c2d252](https://github.com/Leantime/leantime/commit/476c2d2526fba283d3013b4e37c64fc5e9ca5b2f): Add optimistic UI updates and improve kanban swimlane UX
+* [75ca7eec2](https://github.com/Leantime/leantime/commit/75ca7eec27baea377e4adc2a2b7f54a9d35145dd): Fix collapsed swimlane row height to auto-fit content
+* [819fd5360](https://github.com/Leantime/leantime/commit/819fd53603418ef05610b2ae3d655287382549e9): Improve swimlane row height and progress bar readability
+* [4016ed704](https://github.com/Leantime/leantime/commit/4016ed704e441d33272e62e2e5471baba9e0de58): Fix progress bar status colors and improve count badge accessibility
+* [28f6e0b59](https://github.com/Leantime/leantime/commit/28f6e0b599200c25cc0e3519a11e001f6fbd6f73): Refine quick-add form and add effort groupBy mapping
+* [8bfce55aa](https://github.com/Leantime/leantime/commit/8bfce55aaf49d757e604c32f76a6a5cad5fe1bf1): Add sticky swimlane headers and improve dark mode accessibility
+* [8cfec41a7](https://github.com/Leantime/leantime/commit/8cfec41a76608313875b892278ddcd2978f78b80): Refactor swimlane headers to PRD v2 horizontal layout
+* [3bd897182](https://github.com/Leantime/leantime/commit/3bd897182a5e4595226e0c013ea8a415b6ffabc2): Improve collapsed swimlane view with compact tickets and balanced layout
+* [53f07a579](https://github.com/Leantime/leantime/commit/53f07a579ba43c2391e261ed037a99cc413d24bb): Add collapsed swimlane view with compact tickets
+* [e506945b2](https://github.com/Leantime/leantime/commit/e506945b27701f441552455b675e82cbe067539f): Add comprehensive accessibility improvements for custom input components
+* [f67a83214](https://github.com/Leantime/leantime/commit/f67a8321423a67f5ef04d20f508ec856c3d29f88): Add quick-add form and card movement optimizations
+* [091699d71](https://github.com/Leantime/leantime/commit/091699d71cf36bef8f1bf231b631f428d561e4fd): Add horizontal swimlane headers with status breakdowns
+* [e8f45a230](https://github.com/Leantime/leantime/commit/e8f45a2304da1115a9bc18de38f3e1ba4aeaaef0): Improve accessibility contrast ratios and focus indicators for WCAG 2.1 AA compliance
+* [ca99f686e](https://github.com/Leantime/leantime/commit/ca99f686ee4237ec95a49ff6d63bea3d5f4560ba): Improve accessibility for low vision users in dark mode and grayscale
+* [2347139db](https://github.com/Leantime/leantime/commit/2347139db829b445f6db40bf69289a3ba92a95fe): Update Notes Plugin labels in en-US.ini
+* [8497240ae](https://github.com/Leantime/leantime/commit/8497240ae849a328d5e5eaff1a2021a7684488e5): Merge pull request #3200 from Leantime/feature/mobile-timezone-fix
+* [dac0e4dfb](https://github.com/Leantime/leantime/commit/dac0e4dfbc1c936e7b7956935f1e1ac0736a93e4): Merge pull request #3193 from Leantime/dependabot/npm_and_yarn/multi-a0817b5bb4
+* [99b0ec87f](https://github.com/Leantime/leantime/commit/99b0ec87f7a8d4efdebd89d6cead9991521d5fa2): Merge pull request #3192 from cbos/fix_potential_schema_update_gap
+* [f53388784](https://github.com/Leantime/leantime/commit/f53388784284774389ecc913b186786e8370e90d): Fix unit tests by properly binding mocks for dtHelper dependencies
+* [56e886bad](https://github.com/Leantime/leantime/commit/56e886bad97576a1b4d71d1a6a17fe52d0ae47e1): Fix unit tests by adding session setup for dtHelper
+* [9d3e75c42](https://github.com/Leantime/leantime/commit/9d3e75c42ad4334d8ccbfffed5be2527b99ebbd4): Fix PDO import in Timesheets repository
+* [be1040a25](https://github.com/Leantime/leantime/commit/be1040a25fb2f4b2defeb233d8785680f8da56d9): Merge branch 'master' into feature/mobile-timezone-fix
+* [5b07e31ed](https://github.com/Leantime/leantime/commit/5b07e31ed83d5edb68709f8cdd43e456fe614d11): Add missing getTicketPlanHours repository method
+* [6c05cb8b1](https://github.com/Leantime/leantime/commit/6c05cb8b11d04af0b1daa7247fd4045846b132b5): Add filter and sort labels for Notes plugin
+* [798372c4e](https://github.com/Leantime/leantime/commit/798372c4ebecd41fd824b507060b119582d493d5): Bump database version to 3.4.11 in AppSettings
+* [bd945530e](https://github.com/Leantime/leantime/commit/bd945530e4204ac71421aad59fabe75cc7b866c6): Refactor timesheet date parsing and remove SettingService
+* [6d93abc91](https://github.com/Leantime/leantime/commit/6d93abc91cc3839216490f20fb9c54c2ef23f32e): Add color column to tasks table schema
+* [344d11bce](https://github.com/Leantime/leantime/commit/344d11bce77979fb77fef0c99f807b210da358d7): Merge branch 'master' of https://github.com/Leantime/leantime
+* [6f22fa4bd](https://github.com/Leantime/leantime/commit/6f22fa4bd3530a965383be1b78697cccb0322aee): Add database migration for notebook color column
+* [ec5fbd5a4](https://github.com/Leantime/leantime/commit/ec5fbd5a444f508075560563dfa9a0d585672c06): Add timezone-safe date handling for mobile API
+* [aa706bd7f](https://github.com/Leantime/leantime/commit/aa706bd7fd9d0a8881a99299710251dae422a64a): feat(api): Add timezone-safe date handling for mobile time entries
+* [c13714eff](https://github.com/Leantime/leantime/commit/c13714effa3b654d1d01eecb760bc79c9ed34dc6): feat(api): Add timezone-safe date handling for mobile time entries
+* [17854c4a4](https://github.com/Leantime/leantime/commit/17854c4a41c90802a669ea30939c4208a113e4ac): build(deps): bump qs and body-parser
+* [02827416d](https://github.com/Leantime/leantime/commit/02827416dabaee1e6c8150ca56f54c7c791b3bdf): Merge branch 'master' into fix_potential_schema_update_gap
+* [7bfc29d7b](https://github.com/Leantime/leantime/commit/7bfc29d7b2b47324dd1df35c36d84ae0211229a5): Merge pull request #3191 from Leantime/dependabot/npm_and_yarn/multi-c8afcbbcd8
+* [7b7b54402](https://github.com/Leantime/leantime/commit/7b7b544021f1f5c2868c09f76ad1e9da1202d5c7): build(deps): bump qs and express
+* [a888ff329](https://github.com/Leantime/leantime/commit/a888ff32915c02b178342cea87181ea755423094): Merge pull request #3179 from Leantime/dependabot/npm_and_yarn/js-yaml-4.1.1
+* [2007529e2](https://github.com/Leantime/leantime/commit/2007529e2063e45f58117295a18aff3951e0f415): Merge pull request #3169 from Leantime/dependabot/npm_and_yarn/glob-10.5.0
+* [bb0be84f6](https://github.com/Leantime/leantime/commit/bb0be84f63fb9cd409d45c98ac44a52a64a6f449): Merge pull request #3189 from Webajt/patch-1
+* [91ac8cac6](https://github.com/Leantime/leantime/commit/91ac8cac609f9e8e9a4592c9789c334378deb3c9): Refactor repositories to use Laravel query builder
+* [e2f2f4863](https://github.com/Leantime/leantime/commit/e2f2f486342c51b8bbfa4116b5bc85be3a4a60ff): fix: store updated db version instead of final target version to prevent potential issues with an update which fails half way a serie of updates
+* [a69221b2f](https://github.com/Leantime/leantime/commit/a69221b2f38ee61564843b75384d2a1121fc034c): Update pl-PL.ini
+* [6316354a1](https://github.com/Leantime/leantime/commit/6316354a160d2b760c01897f3d14dc4089aa0349): idea file
+* [dda067890](https://github.com/Leantime/leantime/commit/dda067890735243fa274e0853fa3da89f60fd790): build(deps-dev): bump glob from 10.4.5 to 10.5.0
+* [f55b66cc5](https://github.com/Leantime/leantime/commit/f55b66cc5958f59993f0ff8663d9e110d8506431): Sync bug fixes and improvements from leantime-cloud
+* [e88d62f06](https://github.com/Leantime/leantime/commit/e88d62f0679ee7ebcf7307c80adfec2b88e1bb97): build(deps-dev): bump js-yaml from 4.1.0 to 4.1.1
+* [503e37816](https://github.com/Leantime/leantime/commit/503e378160faadf0e1ed4467b2d4a5046b405861): Merge pull request #3176 from Leantime/dependabot/npm_and_yarn/node-forge-1.3.2
+* [82a1aad1b](https://github.com/Leantime/leantime/commit/82a1aad1bb751a5d6d1579078072ba69792b594f): Merge pull request #3171 from and-ri/master
+* [5c3ee880f](https://github.com/Leantime/leantime/commit/5c3ee880f7d58758e7e8194957fb5c57dba736dd): Merge pull request #3170 from ashanzzz/master
+* [42526b063](https://github.com/Leantime/leantime/commit/42526b063066869d88a3a9f3c3bc371dd392a81e): build(deps): bump node-forge from 1.3.1 to 1.3.2
+* [40231ce46](https://github.com/Leantime/leantime/commit/40231ce46ade8dd3943d21a874b02efb854819d3): Add uk-UA language to languagelist.ini
+* [93eb1e4b2](https://github.com/Leantime/leantime/commit/93eb1e4b2dff9f8e4ee3ad52028a56b452ab6c9e): add uk-UA language file
+* [d8a230e3c](https://github.com/Leantime/leantime/commit/d8a230e3ca560344028881a56249559725997b08): Update zh-CN.ini
+* [30e1758c6](https://github.com/Leantime/leantime/commit/30e1758c64deed1112026810009c6138451dee4a): Update zh-CN.ini
+* [0de4c8060](https://github.com/Leantime/leantime/commit/0de4c8060dccf402c5e9077d23f62b786c65e81e): Merge pull request #3157 from Akashsah2003/feature/collaborator-to-task
+* [cf1a7dcb4](https://github.com/Leantime/leantime/commit/cf1a7dcb44dbd129572634976b9f138ff025f69e): Corrected entityA column name in zp_entity_relationship
+* [6604f9376](https://github.com/Leantime/leantime/commit/6604f9376c1df637b73af87ab4bab6bc3ea25b86): Merge pull request #3137 from ITK-Leantime/feature/prevent-ticket-description-autosave-bleedthrough-on-new-ticket
+* [e463f6fb8](https://github.com/Leantime/leantime/commit/e463f6fb8364e271cc3f5b130556455c5cf10cae): Merge pull request #3155 from shklyarik/localization/ru
+* [5ee839c8f](https://github.com/Leantime/leantime/commit/5ee839c8fa7f2bf2c265f011551dfae7ddeb8cf1): Merge branch 'master' into localization/ru
+* [bf9f9da2a](https://github.com/Leantime/leantime/commit/bf9f9da2a44ca26495ead7a5810d7a38c6f58335): Merge pull request #3162 from ThighCandy/master
+* [0fa58f3d1](https://github.com/Leantime/leantime/commit/0fa58f3d1d6d9f6b7ffc652607a05a2087b65f50): Update sample.env
+* [8e41134ec](https://github.com/Leantime/leantime/commit/8e41134ec53f58c943f8c1fe9dc744e016d85c58): feat: Add multiple collaborators to a ticket
+* [6b3a5bdca](https://github.com/Leantime/leantime/commit/6b3a5bdca20fe55a26f8b3b4d1d02e333aa6a3df): Added Russian translation for ru-RU.ini
+* [b771400e4](https://github.com/Leantime/leantime/commit/b771400e49099219cf8fcbb51b12a050982dd192): Merge pull request #3142 from ITK-Leantime/feature/ticket-modified
+* [eab5ca7ba](https://github.com/Leantime/leantime/commit/eab5ca7ba73c6dfd28e2d08aa37926cbdf177719): Changed modified to use dtHelper
+* [211639884](https://github.com/Leantime/leantime/commit/211639884490a28e16e5e047ea857c8b546f72a0): Merge pull request #3143 from KaminskiDaniell/patch-1
+* [98305e9fd](https://github.com/Leantime/leantime/commit/98305e9fd029dc74673b4b84e401bee07e297bb7): Update polish translation
+* [d640f2262](https://github.com/Leantime/leantime/commit/d640f226215c514da6028724b7e625ecfd2d4840): Changed sql assignment spacing
+* [9c0b2ae15](https://github.com/Leantime/leantime/commit/9c0b2ae156a7a1705bec81fbc86aea51fcaf5b59): Added modified
+* [734581734](https://github.com/Leantime/leantime/commit/7345817344d5b77ef963ced3ff57e268dc93934a): Set modified for tickets on create and update
+* [cff698c92](https://github.com/Leantime/leantime/commit/cff698c92bfe7dd204e0c72a448c1cebabe3289b): Redefined tinymce autosave restore to prevent restoring on new tickets
+* [b6d88f165](https://github.com/Leantime/leantime/commit/b6d88f16598f9091bf1903433a22a21188fa57f2): Change development server port from 8090 to 5080
+* [2f7eb446a](https://github.com/Leantime/leantime/commit/2f7eb446a01605ea9b3e2568f31051e5be7fa66d): Change schedule method from everyDay to daily
+* [a69737803](https://github.com/Leantime/leantime/commit/a69737803e73afa9225e2e5d93b8bcc85866521d): Change report scheduling from everyMinute to daily
+* [826db0c76](https://github.com/Leantime/leantime/commit/826db0c76afd1b87bfe7cd5dbd50b45dc9264605): fix: Change plugin license check frequency to daily
+* [8102ee7ac](https://github.com/Leantime/leantime/commit/8102ee7ac8aef5d6b3dadf47276b6f85dfda244a): Merge pull request #3103 from Leantime/dependabot/npm_and_yarn/multi-c22e25d29b
+* [b6be6ac7c](https://github.com/Leantime/leantime/commit/b6be6ac7c0e49ffb9bbaea140757ca9a29cf363e): Merge branch 'master' of https://github.com/Leantime/leantime
+* [112a72ed6](https://github.com/Leantime/leantime/commit/112a72ed627be774db6752559a92cae81607f591): fix: code styles
+* [d19d212f1](https://github.com/Leantime/leantime/commit/d19d212f1d039b4bf494ec61a5f0bb711cfa2b3f): fix: smaller responsive update. Make modal usable #3088
+* [ec7c655b2](https://github.com/Leantime/leantime/commit/ec7c655b235e470fbdab73b6399862a1ecfd68af): Merge pull request #3126 from taj54/action/version-bump
+* [bcb43232f](https://github.com/Leantime/leantime/commit/bcb43232fc830839eb0f904ca9c86ae1b49e1767): Merge branch 'Leantime:master' into action/version-bump
+* [300e64547](https://github.com/Leantime/leantime/commit/300e64547c695cd0edda5d2c0d2fd70bb05b47e1): fix: milestone filter not working correctly #3124
+* [32a065d06](https://github.com/Leantime/leantime/commit/32a065d069b4b900912fa17a129077d877357f9d): fix: correct path in version bump workflow
+* [4556ea11f](https://github.com/Leantime/leantime/commit/4556ea11ff61ae96e20c1fff4a82cf819b4f9c57): generate release notes
+* [ceeb87175](https://github.com/Leantime/leantime/commit/ceeb87175922171293bd66d6ebffc3855430983d): Merge pull request #3112 from taj54/action/version-bump
+* [4ff2566ac](https://github.com/Leantime/leantime/commit/4ff2566acaf725f6741aedb59c0082712d1b07f3): Merge pull request #3122 from hhawkinsau/fix/title-not-populated-3121
+* [b6817df78](https://github.com/Leantime/leantime/commit/b6817df7880004f49c2935ecadbf8bb01af3de3d): feat: Improved handling of news and option to disabled pulling news #3117
+* [eab1ad7a5](https://github.com/Leantime/leantime/commit/eab1ad7a579b530164f82bb1cebb7201491e7333): fix: hardening of types in ldap class #3120
+* [8648e8e0d](https://github.com/Leantime/leantime/commit/8648e8e0df6526d0b9bb96bd28578b2fa5426c5d): fix: Use of different db configs on the installer fails for some set ups #3119
+* [9cd858ca3](https://github.com/Leantime/leantime/commit/9cd858ca3bd7fd3067d67db7ddf5e70f3dd9d8b1): fix: title not populated (#3121)
+* [5a0c8809e](https://github.com/Leantime/leantime/commit/5a0c8809e8c91ff3b43e1518115c57a7f71e8a5b): ci: update universal-version-bump to v0.14.0
+* [2086f54d2](https://github.com/Leantime/leantime/commit/2086f54d25599071755b60a0d5c585242bdacd9c): chore(ci): update version-bump action
+* [ec02ac186](https://github.com/Leantime/leantime/commit/ec02ac18665d8c6ffee4eead213b04d8c260f113): ci: update version-bump action to v0.13.2
+* [dfb862dc2](https://github.com/Leantime/leantime/commit/dfb862dc22af6e35502f8c7160c14d1fcfb59fd0): ci: add version bump workflow
+* [61dd011e0](https://github.com/Leantime/leantime/commit/61dd011e0f84122307369b75bf80c0204de20992): Add sample configuration file with options
+* [37cebf68f](https://github.com/Leantime/leantime/commit/37cebf68fd1f61eb7f9d24163fa45cfaf82fc6c0): Merge pull request #3105 from Stup4400OFF/patch-1
+* [6c2cf4c81](https://github.com/Leantime/leantime/commit/6c2cf4c8170d6453f91f81c4892773c43463912a): Merge pull request #3108 from agilgur5/docs-remove-duplicate-extensions-list
+* [e4923c025](https://github.com/Leantime/leantime/commit/e4923c02557f391d764a8da70d019853333ade5c): docs: remove duplicated PHP Extensions list
+* [b37d0a863](https://github.com/Leantime/leantime/commit/b37d0a8636e14ddc4dfa1cc3523bdefe4ff6a122): Update CHANGELOG.md
+* [6eea6130c](https://github.com/Leantime/leantime/commit/6eea6130c828f5ea11e343ec3ba83b6ff556512e): Update CHANGELOG.md
+* [5a6094748](https://github.com/Leantime/leantime/commit/5a6094748cd857a30111d208f3bf5fb07a609a73): Merge branch 'master' into dependabot/npm_and_yarn/multi-c22e25d29b
+* [d14d36f7d](https://github.com/Leantime/leantime/commit/d14d36f7deeb238f4da787f9cffa601d021c9706): fix: broken details view when plugins have reviews
+* [a32722b6f](https://github.com/Leantime/leantime/commit/a32722b6f9f5732883d3f44204cf29b69777ecea): task: remove strict types declaration
+* [6ecfd4a58](https://github.com/Leantime/leantime/commit/6ecfd4a58cc47b73ea0b91d789cb2403b718acf7): Merge branch 'master' of https://github.com/Leantime/leantime
+* [70593abf6](https://github.com/Leantime/leantime/commit/70593abf646a04b18c72de9c7bdc955782831927): fix: improve type safety and fix role comparison
+* [575bdc0d3](https://github.com/Leantime/leantime/commit/575bdc0d396636c75df7b6c7c9f49f41af489ab6): build(deps): bump brace-expansion
+* [d38b9968a](https://github.com/Leantime/leantime/commit/d38b9968aab687d9789aae06baae4837c7196abb): Merge pull request #3100 from Leantime/dependabot/npm_and_yarn/mermaid-11.10.0
+* [56290c5b5](https://github.com/Leantime/leantime/commit/56290c5b592b6b6f039eb1e1b6492cd313c14477): Merge pull request #3102 from Leantime/dependabot/npm_and_yarn/sha.js-2.4.12
+* [73c95be0b](https://github.com/Leantime/leantime/commit/73c95be0bf11e68f7ee0bdae5909b6737a2ac864): Merge pull request #3101 from borghiste/docs/README.md
+* [7590c9a94](https://github.com/Leantime/leantime/commit/7590c9a94aee9e6a8abca807865647d5442dafbd): build(deps): bump sha.js from 2.4.11 to 2.4.12
+* [03d36dd8f](https://github.com/Leantime/leantime/commit/03d36dd8ff2df63c25172afc7252d76bb5c8f1be): fix: update readme.md
+* [8cc2de3ee](https://github.com/Leantime/leantime/commit/8cc2de3ee2a3433ba981f7ef5f1e5f0976268804): build(deps): bump mermaid from 11.6.0 to 11.10.0
+* [7b05db231](https://github.com/Leantime/leantime/commit/7b05db23192d89cf716eeddd13b096e58c4fcb20): Merge pull request #3098 from ITK-Leantime/hotfix/timesheets-showall-project-filter-placement
+* [d9f549434](https://github.com/Leantime/leantime/commit/d9f549434f9fdb3327cb9c071eec8fee61fe5288): Fixed typo in timesheets showAll template
+
+
+# Version: 3.5.12
+
+* [c8677b1ec](https://github.com/Leantime/leantime/commit/c8677b1ecb003b8c7e129543692a761a09a938cf): task: version bump
+* [cdcf06be5](https://github.com/Leantime/leantime/commit/cdcf06be599e93ded0392da08e276b2672fb27a1): fix: issue with new invoice filter
+* [b4a47d704](https://github.com/Leantime/leantime/commit/b4a47d704750b7ccaeec9d2baa0ac7b2e1e3a8a9): Merge pull request #3093 from ITK-Leantime/feature/ticket-filter-in-show-all-timesheets
+* [c3494ce15](https://github.com/Leantime/leantime/commit/c3494ce1519ecda99dc433f839a8aa5e3c61edba): Merge pull request #3094 from ITK-Leantime/feature/invoiced-filter-in-show-all-timesheets
+* [3899ceda6](https://github.com/Leantime/leantime/commit/3899ceda6ce16bdeb4dfd991beee654d0bdde0d8): fix: Remove cpu heavy animations
+* [7b0e86c51](https://github.com/Leantime/leantime/commit/7b0e86c513d643d3a5ba7b384f267dc3f238ce2b): task: use skip ssl instead
+* [9a44c5268](https://github.com/Leantime/leantime/commit/9a44c5268115a49b67b55422644b7eb97df53b8b): task: update mysql db for tests
+* [75e7d9a68](https://github.com/Leantime/leantime/commit/75e7d9a687bcda3ba5dd518b152e1742298d0501): task: fix formatting
+* [c41bf9e59](https://github.com/Leantime/leantime/commit/c41bf9e595aa2296132128bfa5a493ca52a77d72): fix: Fix for failing tests
+* [6b345c280](https://github.com/Leantime/leantime/commit/6b345c280e3006e77326bedc8db4f475658c09a8): Added base translations
+* [3c536cbdf](https://github.com/Leantime/leantime/commit/3c536cbdf90a1f5196c9f5394c3a60ad261390c0): Reformulated label name
+* [6e44271f1](https://github.com/Leantime/leantime/commit/6e44271f1f7d605f31fed2250130c62a8a39bda0): Coding standards
+* [72b03fe86](https://github.com/Leantime/leantime/commit/72b03fe8613381be8113839849076692c08c7d79): Altered Timesheets repo method getAll to take invempl as 0
+* [7f79af825](https://github.com/Leantime/leantime/commit/7f79af825dfc9ffd7a105281e3af6a4d743e7537): Changed invempl from being a checkbox to be a select
+* [378ceec24](https://github.com/Leantime/leantime/commit/378ceec248d0d58ac02b39dbcf5bb27b8087d981): Added handling of invempl as a selected
+* [78728006f](https://github.com/Leantime/leantime/commit/78728006f6c7439f0773e1fa74a7642990dc9e9a): Indentation
+* [38e659672](https://github.com/Leantime/leantime/commit/38e659672c3a36cbf3ea68a6c4c5f140b0583a0c): Coding standards
+* [c32c13533](https://github.com/Leantime/leantime/commit/c32c135336cb28796e1229e90f6e0c812c12c157): Added string to translation files
+* [79dd7f39f](https://github.com/Leantime/leantime/commit/79dd7f39fb6970db4c296dc7ef8965c3b7bc0b3f): Changed default of ticketFilter to be -1 to align with the rest
+* [88a8f0680](https://github.com/Leantime/leantime/commit/88a8f068003377b2f253a6ca630275278aa563a2): Modified projectFilter to better align with current functionality
+* [0629b093b](https://github.com/Leantime/leantime/commit/0629b093bd2859b139f848276fd21b667fb6cd83): Ensured that setting ticketFilter cannot result in an empty query by accident
+* [c87d29b6b](https://github.com/Leantime/leantime/commit/c87d29b6b21857087866ec4726658a2fcff9ec5f): Added ticketFilter to timesheets/showAll
+
+
+# Version: 3.5.11
+
+* [3132027cb](https://github.com/Leantime/leantime/commit/3132027cbf2ec4338a83cc58b81f741c815d3727): task: version bump
+* [c920c63f6](https://github.com/Leantime/leantime/commit/c920c63f6edeee923ad82f4cfbe68f80bae1735c): Merge pull request #3080 from Leantime/dependabot/npm_and_yarn/multi-96c788614a
+* [06056494d](https://github.com/Leantime/leantime/commit/06056494d55757eaa7145170c641ba5fbb05e60a): Merge pull request #3089 from MeatyFresh/patch-3
+* [35b14e36c](https://github.com/Leantime/leantime/commit/35b14e36c166ddd9e1338ca5787cfe9439a6f739): Clear out previously defined sections
+* [b24b38b8e](https://github.com/Leantime/leantime/commit/b24b38b8e3fadfa7ce73069f652ce6e4b20f545d): feat/fix: Remove css transitions as they reduce performance on various browsers.
+* [c461c4884](https://github.com/Leantime/leantime/commit/c461c4884d416b59d4415ea5c7aea5a10c1b78ce): feat: Ensure efficient use of database connections
+* [f44ccd867](https://github.com/Leantime/leantime/commit/f44ccd8676e42dc0cc688f589b1d33a6bce57287): fix: api authentication not working when request was anything other than /api/jsonrpc
+* [4b643bf4b](https://github.com/Leantime/leantime/commit/4b643bf4b563b46355fe5187664084abe203edcf): build(deps): bump on-headers and compression
+* [0b1ec6952](https://github.com/Leantime/leantime/commit/0b1ec6952b2cee220792947c00f8c974d80583f6): task: update gitignore
+
+
+# Version: 3.5.10
+
+* [28b5cd013](https://github.com/Leantime/leantime/commit/28b5cd01392974bbf39195fd1e584f2829d923dc): Update release.yml
+* [0d922fbeb](https://github.com/Leantime/leantime/commit/0d922fbebf8b331e953580c63d298bb4642e34df): task: fix code style
+* [09731cdea](https://github.com/Leantime/leantime/commit/09731cdeab599ed7940e811fab5180eeb0032b37): fix: company managers should only be able to change projects in their own org
+* [5c88b82ca](https://github.com/Leantime/leantime/commit/5c88b82ca257f161bc03fb8eeee3abac39ccca8b): task: version bump
+* [c98aa02da](https://github.com/Leantime/leantime/commit/c98aa02da8dbe88867c563c8e8879859e1be9e63): feat: group changes via drag and drop
+* [459aab772](https://github.com/Leantime/leantime/commit/459aab7728b99341621406308f8d23f3b0785bb1): Merge branch 'master' of https://github.com/Leantime/leantime
+* [bae8cfed8](https://github.com/Leantime/leantime/commit/bae8cfed8563f12b7dbca3bcc0eef94770f123fe): task: remove junie file
+* [27553ead2](https://github.com/Leantime/leantime/commit/27553ead24dc309f476d4640abcb4ec95cc4782b): task: update unit test
+* [d85bcc7f1](https://github.com/Leantime/leantime/commit/d85bcc7f13ba2542ced929a3300fc00277e79d15): Merge pull request #3053 from Leantime/dependabot/npm_and_yarn/pbkdf2-3.1.3
+* [b48c8560a](https://github.com/Leantime/leantime/commit/b48c8560afca1b879db9d9430e9eb320b4ef6774): Merge branch 'master' into dependabot/npm_and_yarn/pbkdf2-3.1.3
+* [4d88d5d89](https://github.com/Leantime/leantime/commit/4d88d5d89e83ea8efecb0cc992e95efe15e0a367): task: improve claude code prompt
+* [781e6a359](https://github.com/Leantime/leantime/commit/781e6a35916b206b0795f8bb625e5ceafe2addee): task: code cleanup
+* [3857ca222](https://github.com/Leantime/leantime/commit/3857ca222a76897b15bb06e593f57f6989285a00): fix: resolve issue with composer loading for phar plugins
+* [7105207c7](https://github.com/Leantime/leantime/commit/7105207c740edc7066062a21aa566235f684bd31): fix: improved filename sanitizer
+* [8b0339167](https://github.com/Leantime/leantime/commit/8b033916761e5d0ea2f8a2afa8c082ad07ba66ff): fix: datetime formatting issue on project settings
+* [ebdf2bd91](https://github.com/Leantime/leantime/commit/ebdf2bd9108965ae2972058a08c86fde361847ac): fix: delete goal board issue
+* [981b103fb](https://github.com/Leantime/leantime/commit/981b103fb8429d370ec313e5c82e0b55f99ab463): fix: error when saving idea without title
+* [eb1c07655](https://github.com/Leantime/leantime/commit/eb1c076550b02bae9cc2058906dfe556fb621ced): fix: Ensure api users remain on project after save
+* [5b54b2d10](https://github.com/Leantime/leantime/commit/5b54b2d105d92afe964c5216417926412ba6acb8): fix: typos
+* [6abbdc0a8](https://github.com/Leantime/leantime/commit/6abbdc0a8213202ca5cc8433c2d572596c473aa9): feat: allow setting redis db
+* [dfae8057a](https://github.com/Leantime/leantime/commit/dfae8057a9ee436d82f8f374ec6671313fce07a9): fix: edge case where autosave retention of editor is too long
+* [4f43795ec](https://github.com/Leantime/leantime/commit/4f43795ec56b73098c48cd8a888b1af9cf21c3f8): task: add class to appsLink menu point
+* [063fe148e](https://github.com/Leantime/leantime/commit/063fe148e0f0e2f68055cffb240d9472fbb94874): fix: load more ticket loader unset variable
+* [036c0ffc6](https://github.com/Leantime/leantime/commit/036c0ffc6a8b4b7d10aef5082610e4bdd31abf8d): Merge branch 'master' of https://github.com/Leantime/leantime
+* [db98d25f0](https://github.com/Leantime/leantime/commit/db98d25f0a488b6341d469d1a2a1ee85640fcb04): fix: Fix exception handler when logger facade not available
+* [685029011](https://github.com/Leantime/leantime/commit/6850290119ce13519d921be67adb0a28f3f13742): task: update packages
+* [1a02581b8](https://github.com/Leantime/leantime/commit/1a02581b8887e4f8d791f62a481466cf93a49c52): feat: Improve ticket search query
+* [d3aae1da2](https://github.com/Leantime/leantime/commit/d3aae1da29189ad7c84bc303c78f6fd1e33bfa13): Merge pull request #3066 from ITK-Leantime/issue-3063-json-rpc-response-id-acceptance-test
+* [9b6950e41](https://github.com/Leantime/leantime/commit/9b6950e415dd65d9f1dd098369c09d1b2474fbea): Merge pull request #3072 from ITK-Leantime/issue-3071-get-all-comments
+* [7ec9e4b48](https://github.com/Leantime/leantime/commit/7ec9e4b481a51ba65c287c835c1266b749f38782): Merge pull request #3073 from ITK-Leantime/feature/code-cleanup
+* [1dd92a4d5](https://github.com/Leantime/leantime/commit/1dd92a4d5d5bbf04695399fec75b47143f3d40bd): Applied coding standards
+* [36d47e924](https://github.com/Leantime/leantime/commit/36d47e924d660e83139043634b3a7749257e5e25): Made it possible to get all comments
+* [ae8fdca76](https://github.com/Leantime/leantime/commit/ae8fdca7635e85009d95392557597e458d73c132): Fixed JSON RPC acceptance tests
+* [f88054fbc](https://github.com/Leantime/leantime/commit/f88054fbc0ba6582d3bf6f8c46f935d3b1297d65): Merge pull request #3059 from Leantime/changelog-ci-3.5.9-1751301140
+* [2515147df](https://github.com/Leantime/leantime/commit/2515147dfb2e4625d01d440e9da4ce2e5c93a094): Merge pull request #3064 from ITK-Leantime/issue-3063-json-rpc-response-id
+* [a7b314708](https://github.com/Leantime/leantime/commit/a7b3147085b4f123ff5e9903de2bd2fde45f750c): Updated type declaration for id parameter
+* [11bcaebb4](https://github.com/Leantime/leantime/commit/11bcaebb40e5cc4bbd8f45dbdd7a74961fef081d): fix: revert sql based limit setting in todo widget since we need to verify done/open tasks afterwards
+* [9c30c2829](https://github.com/Leantime/leantime/commit/9c30c28294df290082928c470962f94311ebf8aa): Merge branch 'master' of https://github.com/Leantime/leantime
+* [4ddb8b7bd](https://github.com/Leantime/leantime/commit/4ddb8b7bd57430ddebd5897fb274ae62b901efb7): fix: broken twoFA qr code generation fixed
+* [c72d3d941](https://github.com/Leantime/leantime/commit/c72d3d94146580bd7016681387a5c7a505aaadee): [Changelog CI] Add Changelog for Version 3.5.9
+* [1d5ce361b](https://github.com/Leantime/leantime/commit/1d5ce361b91804202425bb6dcedda0fff45d56f0): build(deps): bump pbkdf2 from 3.1.2 to 3.1.3
+
+
 # Version: 3.5.9
 
 * [1f45dc0](https://github.com/Leantime/leantime/commit/1f45dc06a7c596b6310a764e36f9fa6f52e1e526): task: version bump
