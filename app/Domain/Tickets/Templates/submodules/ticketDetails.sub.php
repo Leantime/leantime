@@ -128,7 +128,8 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                     </div>
                     <div style="padding-top:6px;">
                         <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
-                        <a href="javascript:void(0);" onclick="assignToMe();"><?php echo $tpl->__('label.assign_to_me'); ?></a>                        <?php } ?>
+                           <a href="javascript:void(0);" onclick="jQuery('#editorId').val(<?php echo session('userdata.id'); ?>).trigger('chosen:updated');"><?php echo $tpl->__('label.assign_to_me'); ?></a>
+                        <?php } ?>
                     </div>
                 </div>
 
@@ -218,54 +219,12 @@ jQuery(document).ready(function($) {
             }
         });
     }
-window.assignToMe = function() {
-    const userId = <?php echo session('userdata.id'); ?>;
-    const $editorSelect = $('#editorId');
-    const currentEditorId = $editorSelect.val();
-    
-    if (currentEditorId == userId) {
-        console.log('Already assigned to current user');
-        return; 
-    }
-    
-    const ticketId = $('#status-change-log').data('ticket-id');
-    const user = $('#status-select').data('user') || 'Unknown User';
-    
-    const oldStatusText = $editorSelect.data('old-status');
-    const newStatusText = '<?php echo addslashes($currentUserName); ?>';
-    
-    $editorSelect.val(userId).trigger('chosen:updated');
-    
-    $.ajax({
-        url: '<?= BASE_URL ?>/tickets/ticketHistoryController/logStatusChange',
-        method: 'POST',
-        data: {
-            ticketId: ticketId,
-            oldStatus: currentEditorId,
-            newStatus: userId,
-            oldStatusText: oldStatusText,
-            newStatusText: newStatusText,
-            user: user,
-            detailsAttributeId: 'editorId'
-        },
-        success: function(response) {
-            console.log('Status change saved', response);
-            loadStatusHistory(ticketId);
-            $editorSelect.data('old-status', newStatusText);
-        },
-        error: function(xhr, status, error) {
-            console.error('Error saving status:', error);
-            console.error('Response:', xhr.responseText);
-        }
-    });
-};
 
     const ticketIdOnLoad = $('#status-change-log').data('ticket-id');
     if (ticketIdOnLoad) {
         loadStatusHistory(ticketIdOnLoad);
     }
-    
-    window.initialTicketDescription = '';
+        window.initialTicketDescription = '';
     
     if (typeof tinymce !== 'undefined') {
         tinymce.on('AddEditor', function(e) {
@@ -309,7 +268,7 @@ window.assignToMe = function() {
         });
     }
 
-    $('#status-select, #priority, #storypoints, #editorId, #deadline').on('change', function() {
+   $('#status-select, #priority, #storypoints, #editorId, #deadline').on('change', function() {
         var changedElementId = $(this).attr('id');
         const ticketId = $('#status-change-log').data('ticket-id');
         const oldStatusKey = $(this).data('old-status');
@@ -319,7 +278,7 @@ window.assignToMe = function() {
         const user = $(this).data('user') || 'Unknown User';
 
         $.ajax({
-            url: '<?= BASE_URL ?>/tickets/ticketHistoryController/logStatusChange',
+            url: '/tickets/ticketHistoryController/logStatusChange',
             method: 'POST',
             data: {
                 ticketId: ticketId,
@@ -342,7 +301,6 @@ window.assignToMe = function() {
 
         $(this).data('old-status', newStatusKey);
     });
-    
     $('#dueTime').on('blur', function() {
         var changedElementId = $(this).attr('id');
         const ticketId = $('#status-change-log').data('ticket-id');
