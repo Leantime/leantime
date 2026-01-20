@@ -3,6 +3,27 @@
     margin-bottom:40px;
 }
 
+/* ============================================
+   SWIMLANE AUTO-HEIGHT: Row fits to content
+   ============================================ */
+/* Remove margins from kanbanBoard so row auto-fits */
+.kanban-swimlane-content .kanbanBoard {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* Swimlane column container */
+.kanban-swimlane-content .sortableTicketList .row-fluid {
+    padding-bottom: 0 !important;
+}
+
+/* Ensure clearfix doesn't add extra height */
+.kanban-swimlane-content .row-fluid > .clearfix {
+    display: none !important;
+}
+
+/* Collapsed swimlanes: JS handles height equalization via equalizeColumnHeights() */
+
 .tilt.right {
     transform: rotate(3deg);
     -moz-transform: rotate(3deg);
@@ -17,23 +38,24 @@
 .column {
     box-sizing: border-box;
     height:auto;
-    padding:0px 5px;
-    flex:1;
+    padding: 0 6px;
+    flex: 1 1 0;  /* Equal width columns regardless of content */
     min-width:150px;
 }
 
 .column:first-child {
-    padding-left:0px;
+    padding-left: 0;
 }
 .column:last-child {
-    padding-right:0px;
+    padding-right: 0;
 }
 
 .column .contentInner {
-    background:var(--kanban-col-bg);
-    border:0px solid var(--neutral);
-    padding: 5px 0px;
-    min-height:45px;
+    background: color-mix(in srgb, var(--primary-font-color) 3%, transparent);
+    border: none;
+    padding: 10px 8px;
+    min-height: 52px; /* Match collapsed row height */
+    border-radius: var(--box-radius);
     /*overflow-y:scroll; Danger: when enabled the dropdowns will be hidden in the overflow. */
 }
 
@@ -55,10 +77,61 @@
 }
 
 .column .contentInner .ui-state-highlight {
-    background:var(--col-title-bg);
-    border: 2px dotted var(--neutral);
-    visibility:visible;
-    display:block;
+    background: color-mix(in srgb, var(--primary-font-color) 3%, transparent);
+    border: 2px dashed color-mix(in srgb, var(--primary-font-color) 20%, transparent);
+    visibility: visible;
+    display: block;
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--primary-font-color) 12%, transparent),
+                0 1px 3px color-mix(in srgb, var(--primary-font-color) 8%, transparent);
+    border-radius: 4px;
+}
+
+/* Empty column state - same background as non-empty for consistency */
+.column .contentInner:empty,
+.column .contentInner.empty-column {
+    background: color-mix(in srgb, var(--primary-font-color) 3%, transparent);
+    border: none;
+    border-radius: var(--box-radius);
+    min-height: 52px;
+}
+
+/* Add To-Do link styling in empty columns */
+.column .contentInner.empty-column a[id^="ticket_new_link_group_"] {
+    color: var(--primary-font-color);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-radius: var(--box-radius-small);
+    opacity: 0.7;
+}
+
+.column .contentInner.empty-column a[id^="ticket_new_link_group_"]:hover {
+    background: color-mix(in srgb, var(--accent1) 10%, transparent);
+    color: var(--accent1);
+    opacity: 1;
+}
+
+.column .contentInner.empty-column a[id^="ticket_new_link_group_"] i {
+    margin-right: 5px;
+}
+
+/* Quick-add form styling in empty columns */
+.column .contentInner.empty-column div[id^="ticket_new_group_"] {
+    background: var(--layered-background);
+    border-radius: var(--box-radius-small);
+}
+
+.column .contentInner.empty-column div[id^="ticket_new_group_"] input[type="text"] {
+    background: var(--input-background);
+    border: 1px solid var(--main-border-color);
+    color: var(--primary-font-color);
+    border-radius: var(--input-radius);
+    padding: var(--input-padding);
+    margin-bottom: 5px;
+}
+
+.column .contentInner.empty-column div[id^="ticket_new_group_"] input[type="text"]:focus {
+    border-color: var(--accent1);
+    outline: none;
 }
 
 .portlet {
@@ -160,6 +233,117 @@
 
 .title-border-grey{
     border-bottom:5px solid var(--grey);
+}
+
+/* ============================================
+   COLUMN COUNT COLORS - MATCH BORDER COLORS
+   ============================================ */
+
+/* Match count color to status border color */
+.titleBorderColor1 .count,
+.title-border-label-important .count {
+    color: var(--red);
+}
+
+.title-border-label-danger .count {
+    color: var(--dark-red);
+}
+
+.titleBorderColor3 .count,
+.title-border-label-info .count {
+    color: var(--dark-blue);
+}
+
+.titleBorderColor4 .count,
+.title-border-label-warning .count {
+    color: var(--yellow);
+}
+
+.titleBorderColor2 .count {
+    color: var(--yellow);
+}
+
+.titleBorderColor0 .count,
+.title-border-label-success .count {
+    color: var(--green);
+}
+
+.titleBorderColor-1 .count,
+.title-border-label-default .count {
+    color: var(--grey);
+}
+
+.title-border-label-purple .count {
+    color: var(--purple);
+}
+
+.title-border-label-pink .count {
+    color: var(--pink);
+}
+
+.title-border-label-brown .count {
+    color: var(--brown);
+}
+
+.title-border-label-blue .count {
+    color: var(--blue);
+}
+
+.title-border-label-dark-blue .count {
+    color: var(--dark-blue);
+}
+
+.title-border-label-darker-blue .count {
+    color: var(--darker-blue);
+}
+
+.title-border-label-green .count {
+    color: var(--green);
+}
+
+.title-border-dark-green .count {
+    color: var(--dark-green);
+}
+
+.title-border-red .count {
+    color: var(--red);
+}
+
+.title-border-dark-red .count {
+    color: var(--dark-red);
+}
+
+.title-border-grey .count {
+    color: var(--grey);
+}
+
+/* ============================================
+   COLUMN COUNT HOVER REVEAL
+   Progressive disclosure - reduce visual noise
+   ============================================ */
+
+/* Hide column counts by default - show on hover */
+.widgettitle .count {
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
+
+/* Show on hover/focus */
+.widgettitle:hover .count,
+.widgettitle:focus-within .count {
+    opacity: 1;
+}
+
+/* Mobile: Count visible when header is tapped (toggled class) */
+.widgettitle.count-visible .count {
+    opacity: 1;
+}
+
+/* Mobile: Visual indicator that header is interactive */
+@media (max-width: 768px) {
+    .widgettitle {
+        cursor: pointer;
+    }
 }
 
 .sortableTicketList li{
@@ -369,6 +553,8 @@ body .maincontent .priority-text-5 a:link {
     padding-bottom: 20px;
 }
 
+/* Note: Swimlane auto-height overrides are at the top of this file */
+
 .widgettitle strong {
     line-height:normal;
 }
@@ -383,12 +569,689 @@ body .maincontent .priority-text-5 a:link {
 
 }
 
-.kanbanLane {
-    border-bottom: 1px solid var(--neutral);
-    color: var(--kanban-col-title-color);
-    padding: 10px 10px;
+/* ============================================
+   SWIMLANE ROW HEADERS - PRD v2 COMPLIANT
+   150px horizontal layout with two rows
+   ============================================ */
+
+/* Sentinel element for Intersection Observer sticky detection */
+.kanban-swimlane-sentinel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    pointer-events: none;
+}
+
+/* Main swimlane row - flexbox container */
+.kanban-swimlane-row {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 8px;
+    padding-bottom: 0;
+    background: transparent;
+    border-radius: var(--box-radius);
+    overflow: visible;
+    position: relative; /* For sentinel positioning */
+}
+
+.kanban-swimlane-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* 150px fixed-width header - PRD Section 3 */
+/* Outer container stretches full height of swimlane */
+.kanban-swimlane-sidebar {
+    width: 150px;
+    min-width: 150px;
+    flex-shrink: 0;
+    background: var(--kanban-col-title-bg, #FAFAF5);
+    border: none;
+    border-radius: var(--box-radius);
+    box-shadow: var(--min-shadow);
+    align-self: stretch; /* Full height of swimlane */
+    cursor: pointer;
+    transition: background 150ms ease-out, box-shadow 150ms ease-out;
+    margin-right: 8px;
+    margin-top: 10px; /* Align with column background top */
+    position: relative; /* For inner positioning */
+}
+
+/* Inner content wrapper - receives transform for sticky */
+.kanban-swimlane-sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 10px;
+}
+
+.kanban-swimlane-sidebar:hover {
+    background: var(--kanban-col-title-hover, #F5F5F0);
+    box-shadow: var(--regular-shadow);
+}
+
+/* JavaScript-controlled sticky state using transform (keeps element in flow) */
+.kanban-swimlane-sidebar.is-sticky {
+    z-index: 10;
+    box-shadow: var(--regular-shadow);
+    /* transform is set via JS to translate the sidebar to sticky position */
+}
+
+.kanban-swimlane-sidebar:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+}
+
+/* Row 1: Chevron + Icon + Label + Time Indicator */
+.swimlane-header-row1 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 26px;
+}
+
+/* Row 2: Progress Bar + Count Badge */
+.swimlane-header-row2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 16px; /* Align with label, not chevron */
+}
+
+/* Chevron - 10px, rotates on toggle */
+.kanban-lane-chevron {
+    font-size: 10px;
+    color: var(--primary-font-color);
+    opacity: 0.6;
+    width: 10px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+/* Chevron rotation handled by icon class (fa-chevron-down vs fa-chevron-right) */
+
+/* Icon/Avatar container */
+.kanban-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Avatar indicator (for user groupBy) - 24px in header */
+.kanban-indicator-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--main-border-color);
+}
+
+/* Icon indicator (for type, milestone, sprint) */
+.kanban-indicator-icon {
+    font-size: 16px;
+    color: var(--primary-font-color);
+}
+
+/* Priority thermometer - sized for header */
+.kanban-priority-indicator {
+    width: 14px;
+    height: 24px;
+}
+
+/* Effort t-shirt indicator */
+.kanban-effort-indicator {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary-font-color);
+}
+
+/* Label - truncates with ellipsis */
+.swimlane-header-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary-font-color);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+/* Count badge - PRD Section 6.6 - Enhanced for accessibility */
+.kanban-lane-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--accent2) 76%, black); /* Darkened brand teal - WCAG AA compliant (4.9:1 contrast) */
+    color: #FFFFFF; /* White text for high contrast */
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 26px;
+    flex-shrink: 0;
+}
+
+/* Time indicator in header */
+.swimlane-time-indicator {
+    flex-shrink: 0;
+}
+
+/* ============================================
+   SWIMLANE HEADER STATES
+   Header uses align-self: stretch to match content height in BOTH states.
+   Only internal content changes between states:
+   - Expanded: two rows (row1 + row2 with progress bar)
+   - Collapsed: single row (row1 with inline count badge)
+   ============================================ */
+
+/* Inline count badge - hidden by default (shown in collapsed state) */
+.kanban-lane-count--inline {
+    display: none;
+    margin-left: auto;
+}
+
+/* --- EXPANDED STATE (data-expanded="true") --- */
+/* Row 1 has margin-bottom for spacing before row 2 */
+.kanban-swimlane-row[data-expanded="true"] .swimlane-header-row1 {
+    margin-bottom: 8px;
+}
+
+/* --- COLLAPSED STATE (data-expanded="false") --- */
+/* Reduced padding for compact look, header stays top-aligned */
+.kanban-swimlane-row[data-expanded="false"] .kanban-swimlane-sidebar-inner {
+    padding: 10px 12px;
+}
+
+/* Remove row 1 margin (no row 2) */
+.kanban-swimlane-row[data-expanded="false"] .swimlane-header-row1 {
+    margin-bottom: 0;
+    gap: 8px;
+}
+
+/* Hide row 2 (progress bar + count) */
+.kanban-swimlane-row[data-expanded="false"] .swimlane-header-row2 {
+    display: none;
+}
+
+/* Hide time indicator */
+.kanban-swimlane-row[data-expanded="false"] .swimlane-time-indicator {
+    display: none;
+}
+
+/* Show inline count badge */
+.kanban-swimlane-row[data-expanded="false"] .kanban-lane-count--inline {
+    display: inline-flex;
+}
+
+/* CRITICAL: Override parent flex alignment when collapsed */
+/* Without this, sidebar and content area stretch to match each other's height */
+.kanban-swimlane-row[data-expanded="false"] {
+    align-items: flex-start !important;
+}
+
+/* --- COLLAPSED CONTENT AREA (via data-expanded for initial load) --- */
+/* Compact padding for collapsed state - JS handles height equalization */
+.kanban-swimlane-row[data-expanded="false"] .column .contentInner {
+    padding: 8px 6px;
+}
+
+/* Compact ticket cards when collapsed */
+.kanban-swimlane-row[data-expanded="false"] .ticketBox {
+    padding: 6px 8px;
+    padding-right: 36px;
+    margin-bottom: 4px;
+}
+
+/* Hide extra content in collapsed tickets */
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .kanbanContent,
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .timerContainer,
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .border-top,
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .clearfix,
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .tw-flex:not(.tw-items-center),
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .inlineDropDownContainer {
+    display: none !important;
+}
+
+/* Compact title styling */
+.kanban-swimlane-row[data-expanded="false"] .ticketBox h4 {
+    margin: 0;
+    font-size: var(--font-size-s);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Remove row-fluid bottom padding in collapsed state */
+.kanban-swimlane-row[data-expanded="false"] .sortableTicketList .row-fluid {
+    padding-bottom: 0;
+}
+
+/* Tooltip - shown on hover for additional info */
+.kanban-sidebar-tooltip {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    z-index: 1000;
+    background: var(--kanban-col-title-bg);
+    border: 1px solid var(--main-border-color);
+    border-left: none;
+    border-radius: 0 var(--box-radius) var(--box-radius) 0;
+    padding: 12px 16px;
+    min-width: 180px;
+    max-width: 280px;
+    box-shadow: var(--regular-shadow);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-10px);
+    transition: opacity 200ms ease-out,
+                transform 200ms ease-out,
+                visibility 0s 200ms;
+    pointer-events: none;
+}
+
+/* Show tooltip on hover - only when label is truncated */
+.kanban-swimlane-sidebar:hover .kanban-sidebar-tooltip,
+.kanban-swimlane-sidebar:focus-visible .kanban-sidebar-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    transition: opacity 200ms ease-out,
+                transform 200ms ease-out,
+                visibility 0s 0s;
+}
+
+/* Tooltip content */
+.kanban-sidebar-tooltip .tooltip-label {
+    font-weight: 600;
     font-size: var(--base-font-size);
-    padding-top:0px;
+    margin-bottom: 6px;
+    word-wrap: break-word;
+}
+
+.kanban-sidebar-tooltip .tooltip-info {
+    font-size: var(--font-size-s);
+    color: var(--primary-font-color);
+    opacity: 0.7;
+    line-height: 1.3;
+}
+
+/* Kanban content area */
+.kanban-swimlane-content {
+    flex: 1;
+    min-width: 0;  /* Allow flexbox shrinking */
+    background: transparent;
+    border: none;
+    border-radius: 0 var(--box-radius) var(--box-radius) 0;
+    overflow: visible;  /* For dropdown menus */
+    padding-top: 10px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Collapsed swimlane state - compact tickets within columns */
+.kanban-swimlane-content.collapsed {
+    display: block;
+}
+
+/* Compact ticket cards when swimlane is collapsed */
+.kanban-swimlane-content.collapsed .ticketBox {
+    padding: 6px 8px;
+    padding-right: 36px; /* Space for user avatar */
+    margin-bottom: 4px;
+    position: relative;
+}
+
+.kanban-swimlane-content.collapsed .ticketBox .row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.kanban-swimlane-content.collapsed .ticketBox .col-md-12 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+}
+
+/* Hide most content in collapsed state, but keep title visible */
+.kanban-swimlane-content.collapsed .ticketBox .kanbanContent,
+.kanban-swimlane-content.collapsed .ticketBox .timerContainer,
+.kanban-swimlane-content.collapsed .ticketBox .border-top,
+.kanban-swimlane-content.collapsed .ticketBox .clearfix,
+.kanban-swimlane-content.collapsed .ticketBox .tw-flex,
+.kanban-swimlane-content.collapsed .ticketBox .inlineDropDownContainer {
+    display: none !important;
+}
+
+/* Make kanbanCardContent a flex item for collapsed state so h4 shows inline */
+.kanban-swimlane-content.collapsed .ticketBox .kanbanCardContent {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* Show only essential info: ID, type icon, title, avatar */
+.kanban-swimlane-content.collapsed .ticketBox h4 {
+    margin: 0;
+    font-size: var(--font-size-s);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+}
+
+.kanban-swimlane-content.collapsed .ticketBox h4 a {
+    font-weight: 500;
+}
+
+/* Compact ticket ID and type */
+.kanban-swimlane-content.collapsed .ticketBox small {
+    font-size: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Hide parent headline in collapsed */
+.kanban-swimlane-content.collapsed .ticketBox small:first-of-type {
+    display: none;
+}
+
+/* Show type icon and ID inline */
+.kanban-swimlane-content.collapsed .ticketBox .col-md-12 > small {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Add user avatar at the end */
+.kanban-swimlane-content.collapsed .ticketBox .userDropdown {
+    display: block !important;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.kanban-swimlane-content.collapsed .ticketBox .userDropdown .dropdown-toggle {
+    padding: 0;
+}
+
+.kanban-swimlane-content.collapsed .ticketBox .userDropdown img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Reduce column padding in collapsed state - JS handles height equalization */
+.kanban-swimlane-content.collapsed .column .contentInner {
+    padding: 8px 4px;
+}
+
+/* ============================================
+   COLLAPSED SWIMLANE ROW STYLES
+   PRD: Header looks IDENTICAL in both states
+   Only chevron rotates and cards transform
+   ============================================ */
+
+/* Better spacing between compact tasks */
+.kanban-swimlane-content.collapsed .ticketBox {
+    margin-bottom: 6px;
+}
+
+.kanban-swimlane-content.collapsed .ticketBox:last-child {
+    margin-bottom: 0;
+}
+
+/* Align columns to flex-start - let content determine height */
+.kanban-swimlane-content.collapsed .sortableTicketList .row-fluid {
+    align-items: flex-start; /* Don't stretch columns to row height */
+    padding-bottom: 0;
+}
+
+/* Let columns be only as tall as their content */
+.kanban-swimlane-content.collapsed .column {
+    min-height: auto;
+    align-self: flex-start; /* Don't stretch columns to row height */
+}
+
+/* ============================================
+   COLLAPSED COMPACT VIEW
+   ============================================ */
+
+.kanban-swimlane-collapsed {
+    flex: 1;
+    min-width: 0;
+    background: var(--kanban-col-bg);
+    border: none;
+    border-radius: 0 var(--box-radius) var(--box-radius) 0;
+    padding: 10px 12px;
+    overflow: hidden;
+    height: 52px; /* Fixed height: 32px tickets + 10px padding top/bottom */
+    display: flex;
+    align-items: center; /* Center vertically for balanced spacing */
+}
+
+.compact-tickets-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Match column widths */
+    gap: 8px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.compact-ticket {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: var(--kanban-card-bg);
+    border: 1px solid var(--main-border-color);
+    border-left: 3px solid transparent; /* Priority color goes here */
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--primary-font-color);
+    transition: all 150ms ease-out;
+    font-size: var(--font-size-xs);
+    min-width: 0;
+    overflow: hidden;
+    height: 32px; /* Fixed height to fit in row */
+}
+
+.compact-ticket:hover {
+    background: var(--kanban-card-hover);
+    box-shadow: var(--min-shadow);
+    text-decoration: none;
+    color: var(--primary-font-color);
+    border-color: var(--accent1);
+}
+
+.compact-ticket:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+}
+
+/* Priority indicator dot */
+.compact-priority {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Ticket content area */
+.compact-ticket-content {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.compact-ticket-id {
+    font-weight: 600;
+    color: var(--primary-font-color);
+    opacity: 0.7;
+    flex-shrink: 0;
+    font-size: 10px;
+}
+
+.compact-ticket-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+    font-size: 11px;
+}
+
+/* Type icon */
+.compact-ticket-type {
+    flex-shrink: 0;
+    opacity: 0.6;
+    font-size: 10px;
+}
+
+/* User avatar */
+.compact-ticket-avatar {
+    flex-shrink: 0;
+}
+
+.compact-ticket-avatar img {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--main-border-color);
+}
+
+/* More indicator */
+.compact-ticket-more {
+    display: flex;
+    align-items: center;
+    padding: 4px 10px;
+    background: var(--neutral-background);
+    border-radius: 4px;
+    font-size: var(--font-size-xs);
+    color: var(--primary-font-color);
+    opacity: 0.7;
+    font-weight: 600;
+    height: 32px;
+}
+
+/* Empty state */
+.compact-ticket-empty {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    color: var(--primary-font-color);
+    opacity: 0.5;
+    font-size: var(--font-size-xs);
+    font-style: italic;
+    height: 32px;
+}
+
+/* Priority border colors for compact tickets */
+.compact-ticket.priority-border-1 {
+    border-left-color: var(--dark-red);
+}
+
+.compact-ticket.priority-border-2 {
+    border-left-color: var(--red);
+}
+
+.compact-ticket.priority-border-3 {
+    border-left-color: var(--yellow);
+}
+
+.compact-ticket.priority-border-4 {
+    border-left-color: var(--green);
+}
+
+.compact-ticket.priority-border-5 {
+    border-left-color: var(--grey);
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    /* Count badge uses var(--primary-color) which auto-adapts to theme */
+
+    /* Subtle hover for dark mode - transparent overlay */
+    .kanban-swimlane-sidebar:hover {
+        background: rgba(255, 255, 255, 0.08); /* Subtle white overlay */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .kanban-swimlane-sidebar:focus-visible {
+        background: rgba(255, 255, 255, 0.08);
+        outline: 2px solid var(--accent1);
+        outline-offset: 2px;
+    }
+}
+
+/* Column headers alignment with swimlane sidebar */
+.kanban-column-headers.groupby-active {
+    /* Add left margin to align with kanban content when groupBy is active */
+    margin-left: 158px; /* Matches sidebar width (150px) + margin (8px) */
+    transition: margin-left 300ms ease-out;
+}
+
+/* Mobile: Always expanded, stack vertically */
+@media (max-width: 768px) {
+    .kanban-swimlane-row {
+        flex-direction: column;
+    }
+
+    .kanban-swimlane-sidebar {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: none;
+        min-width: auto;
+        border-radius: var(--box-radius) var(--box-radius) 0 0;
+        padding: 12px 16px;
+        align-items: flex-start;
+        margin-right: 0;
+        margin-top: 0;
+        margin-bottom: 8px;
+    }
+
+    /* Hide tooltip on mobile */
+    .kanban-sidebar-tooltip {
+        display: none !important;
+    }
+
+    .kanban-swimlane-content {
+        border-radius: 0 0 var(--box-radius) var(--box-radius);
+    }
+
+    /* Remove left margin on mobile */
+    .kanban-column-headers.groupby-active {
+        margin-left: 0 !important;
+    }
+
+    /* Collapsed view mobile adjustments */
+    .kanban-swimlane-collapsed {
+        border-radius: 0 0 var(--box-radius) var(--box-radius);
+    }
+
+    .compact-ticket {
+        max-width: 100%;
+        font-size: var(--font-size-xs);
+    }
+
+    .compact-ticket-avatar img {
+        width: 16px;
+        height: 16px;
+    }
 }
 
 .kanbanBoard .ticketDropdown a.dropdown-toggle {
@@ -441,4 +1304,96 @@ body .maincontent .priority-text-5 a:link {
 
 .leader-line {
     z-index:20;
+}
+
+/* Card movement animations for swimlane transitions */
+.card-moving-out {
+    opacity: 0.5;
+    transform: scale(0.95);
+    transition: all 0.2s ease-out;
+}
+
+.card-moving-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .card-moving-out,
+    .card-moving-in {
+        transition: none;
+        animation: none;
+    }
+}
+
+/* Micro Progress Bar - Status Breakdown Visualization */
+.micro-progress-bar .progress-segments {
+    gap: 0;
+    line-height: 0;
+    font-size: 0;
+}
+
+.micro-progress-bar .status-segment {
+    height: 100%;
+    transition: flex 0.3s ease;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-size: 11px;
+    min-width: 0;
+    position: relative;
+}
+
+
+.micro-progress-bar .segment-count {
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+}
+
+.micro-progress-bar:hover .segment-count {
+    opacity: 1;
+}
+
+/* Hide empty count spans to prevent blank hover artifacts */
+.micro-progress-bar .segment-count:empty {
+    display: none;
+}
+
+/* Status-specific colors */
+.status-segment.status-3 { background-color: var(--status-new-color, #60a5fa); }
+.status-segment.status-4 { background-color: var(--status-in-progress-color, #f59e0b); }
+.status-segment.status-5 { background-color: var(--status-done-color, #10b981); }
+.status-segment.status-1 { background-color: #ef4444; } /* Blocked - Red */
+.status-segment.status-2 { background-color: #f97316; } /* Waiting for approval - Orange */
+.status-segment.status-0 { background-color: #10b981; } /* Done - Green */
+.status-segment.status--1 { background-color: #9ca3af; } /* Archived - Gray */
+
+/* Allow dropdown menus to overflow in kanban columns */
+.kanban-swimlane-content .column .contentInner {
+    overflow: visible;
+}
+
+.kanban-swimlane-content .sortableTicketList {
+    overflow: visible;
 }

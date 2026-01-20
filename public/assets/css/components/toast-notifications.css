@@ -1,0 +1,107 @@
+/* Toast Notifications */
+.toast-notification {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    min-width: 300px;
+    max-width: 500px;
+    background: var(--main-bg);
+    border: 1px solid var(--main-border-color);
+    border-radius: var(--box-radius);
+    box-shadow: var(--large-shadow);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast-notification.toast-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-notification--success {
+    border-left: 4px solid var(--accent1);
+}
+
+.toast-notification--error {
+    border-left: 4px solid var(--red);
+}
+
+.toast-notification--info {
+    border-left: 4px solid var(--blue);
+}
+
+.toast-notification__content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.toast-notification__icon {
+    flex-shrink: 0;
+    color: var(--accent1);
+}
+
+.toast-notification--error .toast-notification__icon {
+    color: var(--red);
+}
+
+.toast-notification--info .toast-notification__icon {
+    color: var(--blue);
+}
+
+.toast-notification__message {
+    margin: 0;
+    flex: 1;
+    font-size: var(--font-size-s);
+    color: var(--primary-font-color);
+    line-height: 1.5;
+}
+
+.toast-notification__dismiss {
+    background: none;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--primary-font-color);
+    cursor: pointer;
+    padding: 0 0.5rem;
+    margin-left: 0.5rem;
+    opacity: 0.5;
+    flex-shrink: 0;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toast-notification__dismiss:hover {
+    opacity: 1;
+}
+
+.toast-notification__dismiss:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    opacity: 1;
+}
+
+/* Hide animation */
+.toast-notification--hiding {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .toast-notification,
+    .toast-notification--hiding {
+        transition: none;
+    }
+}

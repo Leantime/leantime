@@ -1,13 +1,38 @@
-a, a:hover, a:link, a:active, a:focus {
+/* Base link styles - outline removed for mouse interaction only */
+a, a:hover, a:link, a:active {
     outline: none;
     color: var(--primary-color);
     text-decoration: none;
 }
 
-body a:hover {
+/* Accessible keyboard focus indicator - WCAG 2.1 AA compliant */
+a:focus {
+    color: var(--primary-color);
     text-decoration: none;
-    color:var(--primary-font-color);
+}
 
+a:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+body a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+    color: var(--primary-font-color);
+}
+
+/* Focus styles for interactive elements */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
 }
 
 label, input, textarea, select, button {

@@ -26,6 +26,7 @@ services:
         condition: service_healthy
     networks:
       - leantime_internal
+      - leantime
 #      - traefik
 #    labels:
 #      - "traefik.enable=true"
@@ -98,6 +99,8 @@ networks:
   leantime_internal:
     driver: bridge
     name: leantime_internal
+  leantime:
+    driver: bridge
 #  traefik:
 #    external: true
 #    name: traefik

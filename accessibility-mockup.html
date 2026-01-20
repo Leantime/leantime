@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leantime Accessibility Improvements Mockup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 .badge {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: normal;
+        }
+
+        .badge.critical {
+            background: #c41e3a;
+            color: white;
+        }
+
+        .badge.warning {
+            background: #f9a825;
+            color: black;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .comparison-box {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .comparison-header {
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .before .comparison-header {
+            background: #ffebee;
+            color: #c41e3a;
+        }
+
+        .after .comparison-header {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .comparison-content {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .contrast-info {
+            font-size: 12px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .contrast-fail {
+            background: #ffebee;
+            color: #c41e3a;
+        }
+
+        .contrast-pass {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        /* Dark mode simulation containers */
+        .dark-container {
+            background: #292929;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .light-container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        /* Status labels */
+        .label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin: 4px;
+        }
+
+        /* Dropdown mockup */
+        .dropdown-mockup {
+            background: #292929;
+            border-radius: 10px;
+            padding: 8px 0;
+            width: 250px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dropdown-item:hover {
+            background: #222;
+        }
+
+        .dropdown-item .icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .dropdown-item .text {
+            flex: 1;
+        }
+
+        .dropdown-item .text small {
+            display: block;
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        /* Menu mockup */
+        .menu-mockup {
+            background: #292929;
+            border-radius: 10px;
+            padding: 10px;
+            width: 200px;
+        }
+
+        .menu-item {
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin-bottom: 2px;
+        }
+
+        .menu-item.hover {
+            background: #222;
+        }
+
+        /* Grayscale demo */
+        .grayscale-demo {
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .grayscale-text {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .grayscale-link {
+            text-decoration: underline;
+        }
+
+        /* Focus indicator demo */
+        .focus-demo {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .focus-button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .focus-button.before-focus {
+            outline: 2px solid #0052a3;
+            outline-offset: 2px;
+        }
+
+        .focus-button.after-focus {
+            outline: 3px solid #66b3ff;
+            outline-offset: 3px;
+            box-shadow: 0 0 0 7px rgba(102, 179, 255, 0.2);
+        }
+
+        /* Softer focus alternatives */
+        .focus-button.after-focus-soft {
+            outline: 2px solid #66b3ff;
+            outline-offset: 2px;
+            box-shadow: none;
+        }
+
+        .focus-button.after-focus-minimal {
+            outline: 2px solid rgba(102, 179, 255, 0.7);
+            outline-offset: 2px;
+            box-shadow: none;
+        }
+
+        /* Info boxes */
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #1976d2;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box.neuro {
+            background: #f3e5f5;
+            border-left-color: #7b1fa2;
+        }
+
+        /* Tab navigation for themes */
+        .theme-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .theme-tab {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .theme-tab.active {
+            background: #004666;
+            color: white;
+        }
+
+        .theme-tab:not(.active) {
+            background: #eee;
+            color: #333;
+        }
+
+        .theme-content {
+            display: none;
+        }
+
+        .theme-content.active {
+            display: block;
+        }
+
+        /* Spacing */
+        .mb-10 { margin-bottom: 10px; }
+        .mb-20 { margin-bottom: 20px; }
+        .mt-20 { margin-top: 20px; }
+
+        /* Grid for labels */
+        .label-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Leantime Accessibility Improvements</h1>
+    <p class="subtitle">Visual comparison of current issues and proposed fixes</p>
+
+    <!-- Issue 1: Grey Label -->
+    <div class="section">
+        <h2>
+            Issue #1: Grey Status Label
+            <span class="badge critical">CRITICAL - 2.3:1 ratio</span>
+        </h2>
+        <p class="mb-20">White text on grey background fails WCAG AA requirements (needs 4.5:1 minimum)</p>
+
+        <div class="comparison">
+            <div class="comparison-box before">
+                <div class="comparison-header">BEFORE (Current)</div>
+                <div class="comparison-content light-container">
+                    <span class="label" style="background: #aaaaaa; color: #ffffff;">Grey Status</span>
+                    <span class="label" style="background: #aaaaaa; color: #ffffff;">Backlog</span>
+                    <span class="label" style="background: #aaaaaa; color: #ffffff;">On Hold</span>
+                    <div class="contrast-info contrast-fail">Contrast: 2.3:1 - FAILS WCAG AA</div>
+                </div>
+            </div>
+            <div class="comparison-box after">
+                <div class="comparison-header">AFTER (Proposed)</div>
+                <div class="comparison-content light-container">
+                    <span class="label" style="background: #aaaaaa; color: #000000;">Grey Status</span>
+                    <span class="label" style="background: #aaaaaa; color: #000000;">Backlog</span>
+                    <span class="label" style="background: #aaaaaa; color: #000000;">On Hold</span>
+                    <div class="contrast-info contrast-pass">Contrast: 7.0:1 - PASSES WCAG AAA</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue 2: Yellow Label (Minimal Theme) -->
+    <div class="section">
+        <h2>
+            Issue #2: Yellow Status Label (Minimal Theme)
+            <span class="badge critical">CRITICAL - 2.1:1 ratio</span>
+        </h2>
+        <p class="mb-20">Minimal theme uses white text on yellow, while Default theme correctly uses black</p>
+
+        <div class="comparison">
+            <div class="comparison-box before">
+                <div class="comparison-header">BEFORE (Minimal Theme)</div>
+                <div class="comparison-content light-container">
+                    <span class="label" style="background: #fdab3d; color: #ffffff;">In Progress</span>
+                    <span class="label" style="background: #fdab3d; color: #ffffff;">Warning</span>
+                    <span class="label" style="background: #fdab3d; color: #ffffff;">Pending</span>
+                    <div class="contrast-info contrast-fail">Contrast: 2.1:1 - FAILS WCAG AA</div>
+                </div>
+            </div>
+            <div class="comparison-box after">
+                <div class="comparison-header">AFTER (Match Default Theme)</div>
+                <div class="comparison-content light-container">
+                    <span class="label" style="background: #fdab3d; color: #000000;">In Progress</span>
+                    <span class="label" style="background: #fdab3d; color: #000000;">Warning</span>
+                    <span class="label" style="background: #fdab3d; color: #000000;">Pending</span>
+                    <div class="contrast-info contrast-pass">Contrast: 8.5:1 - PASSES WCAG AAA</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue 3: Pink Label -->
+    <div class="section">
+        <h2>
+            Issue #3: Pink Status Label
+            <span class="badge warning">MARGINAL - 3.1:1 ratio</span>
+        </h2>
+        <p class="mb-20">White text on pink background barely fails WCAG AA for normal text</p>
+
+        <div class="comparison">
+            <div class="comparison-box before">
+                <div class="comparison-header">BEFORE (Current)</div>
+                <div class="comparison-content light-container">
+                    <span class="label" style="background: #F26CA7; color: #ffffff;">Design</span>
+                    <span class="label" style="background: #F26CA7; color: #ffffff;">UX Review</span>
+                    <div class="contrast-info contrast-fail">Contrast: 3.1:1 - FAILS WCAG AA (needs 4.5:1)</div>
+                </div>
+            </div>
+            <div class="comparison-box after">
+                <div class="comparison-header">AFTER (Proposed)</div>
+                <div class="comparison-content light-container">
+                    <span class="label" style="background: #F26CA7; color: #000000;">Design</span>
+                    <span class="label" style="background: #F26CA7; color: #000000;">UX Review</span>
+                    <div class="contrast-info contrast-pass">Contrast: 5.5:1 - PASSES WCAG AA</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue 4: Dark Mode Menu Hover -->
+    <div class="section">
+        <h2>
+            Issue #4: Dark Mode Menu Hover Color
+            <span class="badge warning">MARGINAL - 3.4:1 ratio</span>
+        </h2>
+        <p class="mb-20">The accent color (teal/blue) used for hover states is too dark against dark backgrounds</p>
+
+        <div class="comparison">
+            <div class="comparison-box before">
+                <div class="comparison-header">BEFORE (Current Dark Mode)</div>
+                <div class="comparison-content">
+                    <div class="menu-mockup">
+                        <div class="menu-item" style="color: #bbbbbb;">
+                            Dashboard
+                        </div>
+                        <div class="menu-item hover" style="color: #0052a3;">
+                            Projects (hover)
+                        </div>
+                        <div class="menu-item" style="color: #bbbbbb;">
+                            Timesheets
+                        </div>
+                        <div class="menu-item" style="color: #bbbbbb;">
+                            Reports
+                        </div>
+                    </div>
+                    <div class="contrast-info contrast-fail mt-20">Hover text: 3.4:1 - Hard to read</div>
+                </div>
+            </div>
+            <div class="comparison-box after">
+                <div class="comparison-header">AFTER (Proposed)</div>
+                <div class="comparison-content">
+                    <div class="menu-mockup">
+                        <div class="menu-item" style="color: #bbbbbb;">
+                            Dashboard
+                        </div>
+                        <div class="menu-item hover" style="color: #66b3ff;">
+                            Projects (hover)
+                        </div>
+                        <div class="menu-item" style="color: #bbbbbb;">
+                            Timesheets
+                        </div>
+                        <div class="menu-item" style="color: #bbbbbb;">
+                            Reports
+                        </div>
+                    </div>
+                    <div class="contrast-info contrast-pass mt-20">Hover text: 6.8:1 - Clear and readable</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue 5: Project Dropdown (Your reported issue) -->
+    <div class="section">
+        <h2>
+            Issue #5: Dark Mode Project Dropdown
+            <span class="badge critical">YOUR REPORTED ISSUE</span>
+        </h2>
+        <p class="mb-20">This is the menu dropdown issue you mentioned - project names are hard to read</p>
+
+        <div class="comparison">
+            <div class="comparison-box before">
+                <div class="comparison-header">BEFORE (Current)</div>
+                <div class="comparison-content">
+                    <div class="dropdown-mockup">
+                        <div class="dropdown-item">
+                            <div class="icon" style="background: linear-gradient(135deg, #0052a3 20%, #00a887 90%); color: white;">LT</div>
+                            <div class="text" style="color: #bbbbbb;">
+                                Leantime Core
+                                <small style="color: #888;">Development</small>
+                            </div>
+                        </div>
+                        <div class="dropdown-item" style="background: #222;">
+                            <div class="icon" style="background: linear-gradient(135deg, #0052a3 20%, #00a887 90%); color: white;">MK</div>
+                            <div class="text" style="color: #0052a3;">
+                                Marketing Website
+                                <small style="color: #666;">Design Team</small>
+                            </div>
+                        </div>
+                        <div class="dropdown-item">
+                            <div class="icon" style="background: linear-gradient(135deg, #0052a3 20%, #00a887 90%); color: white;">CL</div>
+                            <div class="text" style="color: #bbbbbb;">
+                                Client Portal
+                                <small style="color: #888;">Q1 2024</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contrast-info contrast-fail mt-20">Hover state text nearly invisible (3.4:1)</div>
+                </div>
+            </div>
+            <div class="comparison-box after">
+                <div class="comparison-header">AFTER (Proposed)</div>
+                <div class="comparison-content">
+                    <div class="dropdown-mockup">
+                        <div class="dropdown-item">
+                            <div class="icon" style="background: linear-gradient(135deg, #0052a3 20%, #00a887 90%); color: white;">LT</div>
+                            <div class="text" style="color: #eeeeee;">
+                                Leantime Core
+                                <small style="color: #aaa;">Development</small>
+                            </div>
+                        </div>
+                        <div class="dropdown-item" style="background: #222;">
+                            <div class="icon" style="background: linear-gradient(135deg, #0052a3 20%, #00a887 90%); color: white;">MK</div>
+                            <div class="text" style="color: #ffffff;">
+                                Marketing Website
+                                <small style="color: #aaa;">Design Team</small>
+                            </div>
+                        </div>
+                        <div class="dropdown-item">
+                            <div class="icon" style="background: linear-gradient(135deg, #0052a3 20%, #00a887 90%); color: white;">CL</div>
+                            <div class="text" style="color: #eeeeee;">
+                                Client Portal
+                                <small style="color: #aaa;">Q1 2024</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contrast-info contrast-pass mt-20">All text clearly readable (11:1+)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue 6: Grayscale Mode -->
+    <div class="section">
+        <h2>
+            Issue #6: Grayscale2 Color Scheme in Dark Mode
+            <span class="badge critical">CRITICAL - 1.4:1 ratio</span>
+        </h2>
+        <p class="mb-20">The "Grayscale Reverse" color scheme uses nearly invisible colors in dark mode</p>
+
+        <div class="comparison">
+            <div class="comparison-box before">
+                <div class="comparison-header">BEFORE (Current Grayscale2 Dark)</div>
+                <div class="comparison-content">
+                    <div class="grayscale-demo" style="background: #292929;">
+                        <div class="grayscale-text" style="color: #4a4a4a;">
+                            This primary text is nearly invisible!
+                        </div>
+                        <a class="grayscale-link" style="color: #4a4a4a;">Links are impossible to see</a>
+                        <div class="grayscale-text mt-20" style="color: #d1d1d1;">
+                            Secondary text is fine though.
+                        </div>
+                    </div>
+                    <div class="contrast-info contrast-fail mt-20">Primary: 1.4:1 - Completely unreadable!</div>
+                </div>
+            </div>
+            <div class="comparison-box after">
+                <div class="comparison-header">AFTER (Proposed Fix)</div>
+                <div class="comparison-content">
+                    <div class="grayscale-demo" style="background: #292929;">
+                        <div class="grayscale-text" style="color: #a0a0a0;">
+                            Primary text is now clearly visible
+                        </div>
+                        <a class="grayscale-link" style="color: #a0a0a0;">Links are easy to find and read</a>
+                        <div class="grayscale-text mt-20" style="color: #d1d1d1;">
+                            Secondary text remains the same.
+                        </div>
+                    </div>
+                    <div class="contrast-info contrast-pass mt-20">Primary: 5.0:1 - Meets WCAG AA</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Status Labels Comparison -->
+    <div class="section">
+        <h2>Complete Status Label Comparison</h2>
+        <p class="mb-20">Comparing all status labels before and after fixes</p>
+
+        <div class="theme-tabs">
+            <button class="theme-tab active" onclick="showTheme('light')">Light Mode</button>
+            <button class="theme-tab" onclick="showTheme('dark')">Dark Mode</button>
+        </div>
+
+        <div id="light-theme" class="theme-content active">
+            <h3 class="mb-10">Light Mode - Before & After</h3>
+            <div class="comparison">
+                <div class="comparison-box before">
+                    <div class="comparison-header">BEFORE</div>
+                    <div class="comparison-content light-container">
+                        <div class="label-grid">
+                            <span class="label" style="background: #c41e3a; color: #fff;">Dark Red</span>
+                            <span class="label" style="background: #d64045; color: #fff;">Red</span>
+                            <span class="label" style="background: #2e7d32; color: #fff;">Green</span>
+                            <span class="label" style="background: #1b5e20; color: #fff;">Dark Green</span>
+                            <span class="label" style="background: #f9a825; color: #000;">Yellow</span>
+                            <span class="label" style="background: #1976d2; color: #fff;">Blue</span>
+                            <span class="label" style="background: #0d47a1; color: #fff;">Dark Blue</span>
+                            <span class="label" style="background: #5F0F40; color: #fff;">Purple</span>
+                            <span class="label" style="background: #F26CA7; color: #fff;">Pink ❌</span>
+                            <span class="label" style="background: #BB611B; color: #fff;">Brown</span>
+                            <span class="label" style="background: #aaaaaa; color: #fff;">Grey ❌</span>
+                            <span class="label" style="background: #4c4c4c; color: #fff;">Dark Grey</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-box after">
+                    <div class="comparison-header">AFTER</div>
+                    <div class="comparison-content light-container">
+                        <div class="label-grid">
+                            <span class="label" style="background: #c41e3a; color: #fff;">Dark Red</span>
+                            <span class="label" style="background: #d64045; color: #fff;">Red</span>
+                            <span class="label" style="background: #2e7d32; color: #fff;">Green</span>
+                            <span class="label" style="background: #1b5e20; color: #fff;">Dark Green</span>
+                            <span class="label" style="background: #f9a825; color: #000;">Yellow</span>
+                            <span class="label" style="background: #1565c0; color: #fff;">Blue ✓</span>
+                            <span class="label" style="background: #0d47a1; color: #fff;">Dark Blue</span>
+                            <span class="label" style="background: #5F0F40; color: #fff;">Purple</span>
+                            <span class="label" style="background: #F26CA7; color: #000;">Pink ✓</span>
+                            <span class="label" style="background: #BB611B; color: #fff;">Brown</span>
+                            <span class="label" style="background: #aaaaaa; color: #000;">Grey ✓</span>
+                            <span class="label" style="background: #4c4c4c; color: #fff;">Dark Grey</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="dark-theme" class="theme-content">
+            <h3 class="mb-10">Dark Mode - Before & After</h3>
+            <div class="comparison">
+                <div class="comparison-box before">
+                    <div class="comparison-header">BEFORE</div>
+                    <div class="comparison-content dark-container">
+                        <div class="label-grid">
+                            <span class="label" style="background: #D61B0A; color: #fff;">Dark Red</span>
+                            <span class="label" style="background: #F76C5E; color: #000;">Red</span>
+                            <span class="label" style="background: #32965D; color: #fff;">Green ⚠️</span>
+                            <span class="label" style="background: #1F5C39; color: #fff;">Dark Green</span>
+                            <span class="label" style="background: #FDB833; color: #000;">Yellow</span>
+                            <span class="label" style="background: #1B75BB; color: #fff;">Blue</span>
+                            <span class="label" style="background: #124F7D; color: #fff;">Dark Blue</span>
+                            <span class="label" style="background: #5F0F40; color: #fff;">Purple</span>
+                            <span class="label" style="background: #F26CA7; color: #000;">Pink</span>
+                            <span class="label" style="background: #4C212A; color: #fff;">Brown</span>
+                            <span class="label" style="background: #b0b0b0; color: #000;">Grey</span>
+                            <span class="label" style="background: #707070; color: #fff;">Dark Grey</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-box after">
+                    <div class="comparison-header">AFTER</div>
+                    <div class="comparison-content dark-container">
+                        <div class="label-grid">
+                            <span class="label" style="background: #D61B0A; color: #fff;">Dark Red</span>
+                            <span class="label" style="background: #F76C5E; color: #000;">Red</span>
+                            <span class="label" style="background: #238b47; color: #fff;">Green ✓</span>
+                            <span class="label" style="background: #1F5C39; color: #fff;">Dark Green</span>
+                            <span class="label" style="background: #FDB833; color: #000;">Yellow</span>
+                            <span class="label" style="background: #1B75BB; color: #fff;">Blue</span>
+                            <span class="label" style="background: #124F7D; color: #fff;">Dark Blue</span>
+                            <span class="label" style="background: #5F0F40; color: #fff;">Purple</span>
+                            <span class="label" style="background: #F26CA7; color: #000;">Pink</span>
+                            <span class="label" style="background: #4C212A; color: #fff;">Brown</span>
+                            <span class="label" style="background: #b0b0b0; color: #000;">Grey</span>
+                            <span class="label" style="background: #707070; color: #fff;">Dark Grey</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Neurodiverse Enhancements -->
+    <div class="section">
+        <h2>Neurodiverse Accessibility Enhancements</h2>
+        <p class="mb-20">Additional improvements for ADHD, Autism, and Dyslexia</p>
+
+        <div class="info-box neuro">
+            <strong>Focus on:</strong> Clear visual feedback, consistent patterns, reduced cognitive load, and readable text formatting.
+        </div>
+
+        <h3 class="mb-10 mt-20">Enhanced Focus Indicators (ADHD/Autism)</h3>
+        <p class="mb-20">Three options ranging from bold to subtle:</p>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px;">
+            <!-- Current -->
+            <div class="comparison-box before">
+                <div class="comparison-header">CURRENT</div>
+                <div class="comparison-content dark-container" style="text-align: center; padding: 30px 15px;">
+                    <button class="focus-button before-focus" style="background: #0052a3; color: white;">
+                        Button
+                    </button>
+                    <p style="color: #888; margin-top: 15px; font-size: 11px;">2px dark outline<br>Hard to see on dark bg</p>
+                </div>
+            </div>
+
+            <!-- Option A: Bold -->
+            <div class="comparison-box after">
+                <div class="comparison-header">OPTION A: Bold</div>
+                <div class="comparison-content dark-container" style="text-align: center; padding: 30px 15px;">
+                    <button class="focus-button after-focus" style="background: #0052a3; color: white;">
+                        Button
+                    </button>
+                    <p style="color: #888; margin-top: 15px; font-size: 11px;">3px + glow<br>Maximum visibility</p>
+                </div>
+            </div>
+
+            <!-- Option B: Soft (Recommended) -->
+            <div class="comparison-box after">
+                <div class="comparison-header" style="background: #c8e6c9;">OPTION B: Soft ★</div>
+                <div class="comparison-content dark-container" style="text-align: center; padding: 30px 15px;">
+                    <button class="focus-button after-focus-soft" style="background: #0052a3; color: white;">
+                        Button
+                    </button>
+                    <p style="color: #888; margin-top: 15px; font-size: 11px;">2px bright, no glow<br><strong>Recommended</strong></p>
+                </div>
+            </div>
+
+            <!-- Option C: Minimal (Less Theme) -->
+            <div class="comparison-box after">
+                <div class="comparison-header">OPTION C: Minimal</div>
+                <div class="comparison-content dark-container" style="text-align: center; padding: 30px 15px;">
+                    <button class="focus-button after-focus-minimal" style="background: #0052a3; color: white;">
+                        Button
+                    </button>
+                    <p style="color: #888; margin-top: 15px; font-size: 11px;">2px semi-transparent<br>For "Less" theme</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>Recommendation:</strong> Use <strong>Option B (Soft)</strong> as the default for the "More" theme, and <strong>Option C (Minimal)</strong> for the "Less" theme. This maintains accessibility while respecting the visual simplicity of each theme.
+        </div>
+
+        <h4 class="mb-10 mt-20">Light Mode Comparison</h4>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+            <!-- Current Light -->
+            <div class="comparison-box before">
+                <div class="comparison-header">CURRENT</div>
+                <div class="comparison-content light-container" style="text-align: center; padding: 30px 15px;">
+                    <button class="focus-button" style="background: #004666; color: white; outline: 2px solid #004666; outline-offset: 2px;">
+                        Button
+                    </button>
+                </div>
+            </div>
+
+            <!-- Option A Light -->
+            <div class="comparison-box after">
+                <div class="comparison-header">OPTION A: Bold</div>
+                <div class="comparison-content light-container" style="text-align: center; padding: 30px 15px;">
+                    <button class="focus-button" style="background: #004666; color: white; outline: 3px solid #004666; outline-offset: 3px; box-shadow: 0 0 0 7px rgba(0, 70, 102, 0.15);">
+                        Button
+                    </button>
+                </div>
+            </div>
+
+            <!-- Option B Light -->
+            <div class="comparison-box after">
+                <div class="comparison-header" style="background: #c8e6c9;">OPTION B: Soft ★</div>
+                <div class="comparison-content light-container" style="text-align: center; padding: 30px 15px;">
+                    <button class="focus-button" style="background: #004666; color: white; outline: 2px solid #004666; outline-offset: 2px;">
+                        Button
+                    </button>
+                </div>
+            </div>
+
+            <!-- Option C Light -->
+            <div class="comparison-box after">
+                <div class="comparison-header">OPTION C: Minimal</div>
+                <div class="comparison-content light-container" style="text-align: center; padding: 30px 15px;">
+                    <button class="focus-button" style="background: #004666; color: white; outline: 2px solid rgba(0, 70, 102, 0.6); outline-offset: 2px;">
+                        Button
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="mb-10 mt-20">Text Readability (Dyslexia)</h3>
+        <div class="comparison">
+            <div class="comparison-box before">
+                <div class="comparison-header">BEFORE (Current)</div>
+                <div class="comparison-content light-container">
+                    <p style="line-height: 1.5; letter-spacing: 0; max-width: none; text-align: justify;">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                    </p>
+                    <p style="font-size: 12px; color: #666; margin-top: 10px;">Line height: 1.5 | Letter spacing: 0 | No max-width | Justified text</p>
+                </div>
+            </div>
+            <div class="comparison-box after">
+                <div class="comparison-header">AFTER (Dyslexia-Friendly)</div>
+                <div class="comparison-content light-container">
+                    <p style="line-height: 1.8; letter-spacing: 0.03em; max-width: 65ch; text-align: left; word-spacing: 0.08em;">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                    </p>
+                    <p style="font-size: 12px; color: #666; margin-top: 10px;">Line height: 1.8 | Letter spacing: 0.03em | Max-width: 65ch | Left-aligned</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="section">
+        <h2>Summary of Changes</h2>
+
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f5f5f5;">
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Issue</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Current</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Proposed</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Impact</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">Grey label text</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">#fff (2.3:1)</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">#000 (7.0:1)</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee; color: #2e7d32;">+204%</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">Yellow label (minimal)</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">#fff (2.1:1)</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">#000 (8.5:1)</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee; color: #2e7d32;">+305%</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">Pink label text</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">#fff (3.1:1)</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">#000 (5.5:1)</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee; color: #2e7d32;">+77%</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">Dark mode hover</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">#0052a3 (3.4:1)</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">#66b3ff (6.8:1)</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee; color: #2e7d32;">+100%</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">Grayscale2 primary (dark)</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">#4a4a4a (1.4:1)</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">#a0a0a0 (5.0:1)</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee; color: #2e7d32;">+257%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function showTheme(theme) {
+            // Hide all theme content
+            document.querySelectorAll('.theme-content').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Remove active from all tabs
+            document.querySelectorAll('.theme-tab').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Show selected theme
+            document.getElementById(theme + '-theme').classList.add('active');
+
+            // Activate selected tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

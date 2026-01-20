@@ -32,7 +32,12 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                 <?php } ?>
             </button>
             <ul class="dropdown-menu">
-                <?php foreach ($groupBy as $input) { ?>
+                <?php foreach ($groupBy as $input) {
+                    // Hide "status" option on Kanban view since status is already shown as columns
+                    if ($input['field'] === 'status' && $currentRoute === 'tickets.showKanban') {
+                        continue;
+                    }
+                    ?>
                     <li>
                         <span class="radio">
                             <input
