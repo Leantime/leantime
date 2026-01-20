@@ -511,10 +511,10 @@ foreach ($tpl->get('allTimesheets') as $row) {
         </form>
     </div>
 </div>
-                    <script>
-                        jQuery(document).ready(function() {
-                            jQuery('#clients, #userId, #kind').on('change', function() {
-                                jQuery('input.reload[type="submit"]').trigger('click');
-                            });
-                        });
-                    </script>
+<script>
+    jQuery(document).ready(function() {
+    jQuery('#clients, #userId, #kind').on('change', function() {
+    jQuery('input.reload[type="submit"]').trigger('click');
+    });
+});
+</script>
