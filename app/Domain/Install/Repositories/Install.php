@@ -328,9 +328,9 @@ class Install
 
         $major = intval(substr($versionString, 0, -4));
         $minor = intval(substr($versionString, -4, 2));
-        $patch = intval(substr($versionString, -2)  );
+        $patch = intval(substr($versionString, -2));
 
-        return $major . '.' . $minor . '.' . $patch;
+        return $major.'.'.$minor.'.'.$patch;
     }
 
     /**
