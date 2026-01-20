@@ -262,8 +262,7 @@ window.assignToMe = function() {
     if (ticketIdOnLoad) {
         loadStatusHistory(ticketIdOnLoad);
     }
-    
-    window.initialTicketDescription = '';
+        window.initialTicketDescription = '';
     
     if (typeof tinymce !== 'undefined') {
         tinymce.on('AddEditor', function(e) {
@@ -307,7 +306,7 @@ window.assignToMe = function() {
         });
     }
 
-    $('#status-select, #priority, #storypoints, #editorId, #deadline').on('change', function() {
+   $('#status-select, #priority, #storypoints, #editorId, #deadline').on('change', function() {
         var changedElementId = $(this).attr('id');
         const ticketId = $('#status-change-log').data('ticket-id');
         const oldStatusKey = $(this).data('old-status');
@@ -339,7 +338,6 @@ window.assignToMe = function() {
 
         $(this).data('old-status', newStatusKey);
     });
-    
     $('#dueTime').on('blur', function() {
         var changedElementId = $(this).attr('id');
         const ticketId = $('#status-change-log').data('ticket-id');
