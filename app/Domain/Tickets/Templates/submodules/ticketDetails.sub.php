@@ -224,7 +224,6 @@ window.assignToMe = function() {
     const currentEditorId = $editorSelect.val();
     
     if (currentEditorId == userId) {
-        console.log('Already assigned to current user');
         return; 
     }
     
@@ -249,7 +248,6 @@ window.assignToMe = function() {
             detailsAttributeId: 'editorId'
         },
         success: function(response) {
-            console.log('Status change saved', response);
             loadStatusHistory(ticketId);
             $editorSelect.data('old-status', newStatusText);
         },
@@ -331,7 +329,6 @@ window.assignToMe = function() {
                 detailsAttributeId: changedElementId
             },
             success: function(response) {
-                console.log('Status change saved', response);
                 loadStatusHistory(ticketId);
             },
             error: function(xhr, status, error) {
@@ -351,7 +348,6 @@ window.assignToMe = function() {
         const oldStatusText = $(this).data('old-status');
         const newStatusText = $(this).val();
         const user = $(this).data('user') || 'Unknown User';
-        console.log('Date: ', oldStatusText, newStatusText);
 
         $.ajax({
             url: '<?= BASE_URL ?>/tickets/ticketHistoryController/logStatusChange',
@@ -366,7 +362,6 @@ window.assignToMe = function() {
                 detailsAttributeId: changedElementId
             },
             success: function(response) {
-                console.log('Status change saved', response);
                 loadStatusHistory(ticketId);
             },
             error: function(xhr, status, error) {
