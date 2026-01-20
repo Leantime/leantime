@@ -239,7 +239,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                             <div id="projectCheckboxDropdown" class="project-checkbox-dropdown" style="display: none; position: absolute; z-index: 1000; background: white; border: 1px solid #d0d5dd; border-radius: 14px; width: 100%; max-height: 250px; overflow-y: auto; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1); margin-top: 6px;">
                                 <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid #eef2f7; background: #f7f9fc; font-weight: bold; border-top-left-radius: 14px; border-top-right-radius: 14px; cursor: pointer;" onclick="event.stopPropagation();">
                                     <input type="checkbox" name="project[]" value="-1" class="project-checkbox-all" id="projectCheckboxAll" style="margin: 0; vertical-align: middle;"
-                                        onchange="if(this.checked) { document.querySelectorAll('.project-checkbox').forEach(function(cb){cb.checked=false;}); } updateProjectCountInline();"
+                                        onchange="if(this.checked) { document.querySelectorAll('.project-checkbox').forEach(function(cb){cb.checked=false;}); } updateProjectCountInline(); document.getElementById('form').submit();"
                                         <?php if (!is_array($tpl->get('projectFilter')) || $tpl->get('projectFilter') == -1) {
                                             echo 'checked="checked"';
                                         } ?>>
@@ -251,7 +251,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                                 foreach ($tpl->get('allProjects') as $project) { ?>
                                     <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer; color: #333; transition: background-color 0.2s ease;" class="project-checkbox-label" onmouseover="this.style.background='#eef2f7'; this.style.color='#333';" onmouseout="this.style.background='white'; this.style.color='#333';" onclick="event.stopPropagation();">
                                         <input type="checkbox" name="project[]" value="<?= $project['id'] ?>" class="project-checkbox" style="margin: 0; vertical-align: middle;"
-                                            onchange="if(this.checked) { document.getElementById('projectCheckboxAll').checked=false; } else { var anyChecked = document.querySelectorAll('.project-checkbox:checked').length > 0; if(!anyChecked) { document.getElementById('projectCheckboxAll').checked=true; } } updateProjectCountInline();"
+                                            onchange="if(this.checked) { document.getElementById('projectCheckboxAll').checked=false; } else { var anyChecked = document.querySelectorAll('.project-checkbox:checked').length > 0; if(!anyChecked) { document.getElementById('projectCheckboxAll').checked=true; } } updateProjectCountInline(); document.getElementById('form').submit();"
                                             <?php if (is_array($selectedProjects) && in_array($project['id'], $selectedProjects)) {
                                                 echo 'checked="checked"';
                                             } ?>>
