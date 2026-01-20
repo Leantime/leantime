@@ -200,6 +200,36 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMyMonthlyTimesheet" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
+                <div style="position: relative; display: inline-block;">
+    <button style="cursor: pointer; background: none; border: none; font-size: 18px;margin-top:5px;">
+        &#x24D8;
+        <span style="
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            white-space: nowrap;
+            font-size: 14px;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 1000;
+        ">
+            You can export your timesheet in the <strong>List view</strong>.
+        </span>
+    </button>
+</div>
+
+<style>
+button:hover span {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+</style>
                 <button class="btn dropdown-toggle" data-toggle="dropdown">
                     <i class="fa fa-calendar-alt" style="margin-right:5px;"></i><?php echo "Monthly view" ?> <?= $tpl->__('links.view') ?>
                 </button>
