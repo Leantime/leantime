@@ -128,8 +128,7 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                     </div>
                     <div style="padding-top:6px;">
                         <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
-                           <a href="javascript:void(0);" onclick="jQuery('#editorId').val(<?php echo session('userdata.id'); ?>).trigger('chosen:updated');"><?php echo $tpl->__('label.assign_to_me'); ?></a>
-                        <?php } ?>
+                        <a href="javascript:void(0);" onclick="assignToMe();"><?php echo $tpl->__('label.assign_to_me'); ?></a>                        <?php } ?>
                     </div>
                 </div>
 
@@ -219,7 +218,6 @@ jQuery(document).ready(function($) {
             }
         });
     }
-
 window.assignToMe = function() {
     const userId = <?php echo session('userdata.id'); ?>;
     const $editorSelect = $('#editorId');
@@ -319,7 +317,7 @@ window.assignToMe = function() {
         const user = $(this).data('user') || 'Unknown User';
 
         $.ajax({
-            url: '/tickets/ticketHistoryController/logStatusChange',
+            url: '<?= BASE_URL ?>/tickets/ticketHistoryController/logStatusChange',
             method: 'POST',
             data: {
                 ticketId: ticketId,
@@ -331,7 +329,6 @@ window.assignToMe = function() {
                 detailsAttributeId: changedElementId
             },
             success: function(response) {
-                console.log('Status change saved', response);
                 loadStatusHistory(ticketId);
             },
             error: function(xhr, status, error) {
@@ -350,7 +347,6 @@ window.assignToMe = function() {
         const oldStatusText = $(this).data('old-status');
         const newStatusText = $(this).val();
         const user = $(this).data('user') || 'Unknown User';
-        console.log('Date: ', oldStatusText, newStatusText);
 
         $.ajax({
             url: '<?= BASE_URL ?>/tickets/ticketHistoryController/logStatusChange',
@@ -365,7 +361,6 @@ window.assignToMe = function() {
                 detailsAttributeId: changedElementId
             },
             success: function(response) {
-                console.log('Status change saved', response);
                 loadStatusHistory(ticketId);
             },
             error: function(xhr, status, error) {
