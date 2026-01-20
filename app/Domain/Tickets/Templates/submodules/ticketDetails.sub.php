@@ -220,6 +220,47 @@ jQuery(document).ready(function($) {
         });
     }
 
+window.assignToMe = function() {
+    const userId = <?php echo session('userdata.id'); ?>;
+    const $editorSelect = $('#editorId');
+    const currentEditorId = $editorSelect.val();
+    
+    if (currentEditorId == userId) {
+        return; 
+    }
+    
+    const ticketId = $('#status-change-log').data('ticket-id');
+    const user = $('#status-select').data('user') || 'Unknown User';
+    
+    const oldStatusText = $editorSelect.data('old-status');
+    const newStatusText = '<?php echo addslashes($currentUserName); ?>';
+    
+    $editorSelect.val(userId).trigger('chosen:updated');
+    $editorSelect.data('old-status', newStatusText);
+    
+    $.ajax({
+        url: '<?= BASE_URL ?>/tickets/ticketHistoryController/logStatusChange',
+        method: 'POST',
+        data: {
+            ticketId: ticketId,
+            oldStatus: currentEditorId,
+            newStatus: userId,
+            oldStatusText: oldStatusText,
+            newStatusText: newStatusText,
+            user: user,
+            detailsAttributeId: 'editorId'
+        },
+        success: function(response) {
+            $('.saveTicketBtn').trigger('click');
+            loadStatusHistory(ticketId);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error saving status:', error);
+            console.error('Response:', xhr.responseText);
+        }
+    });
+};
+
     const ticketIdOnLoad = $('#status-change-log').data('ticket-id');
     if (ticketIdOnLoad) {
         loadStatusHistory(ticketIdOnLoad);
