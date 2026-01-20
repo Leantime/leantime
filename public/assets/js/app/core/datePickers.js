@@ -125,6 +125,7 @@ leantime.dateController = (function () {
         jQuery(fromElement).on('apply.daterangepicker', function(ev, picker) {
             jQuery(fromElement).val(picker.startDate.format('YYYY-MM-DD'));
             jQuery(toElement).val(picker.endDate.format('YYYY-MM-DD'));
+            jQuery('#form').submit();
         });
 
         jQuery(toElement).on('focus click', function(e) {
