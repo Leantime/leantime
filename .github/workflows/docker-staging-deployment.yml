@@ -3,7 +3,7 @@ name: Deploy PearLog to Staging
 on:
   push:
     branches:
-      - develop  
+      - tmp/dockerizing  
   workflow_dispatch:
 
 env:
@@ -60,15 +60,15 @@ jobs:
           ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
               -i ~/.ssh/staging_key \
               ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-              "sudo chown -R \$USER:\$USER ${{ secrets.STAGING_PATH }} && \
-              sudo chmod -R 755 ${{ secrets.STAGING_PATH }}"
+              "sudo chown -R \$USER:\$USER ${{ secrets.DOCKER_APP_STAGING_PATH }} && \
+              sudo chmod -R 755 ${{ secrets.DOCKER_APP_STAGING_PATH }}"
 
       - name: Upload docker-compose.staging.yml to server
         run: |
           scp -P ${{ secrets.SERVER_SSH_PORT || 22 }} \
               -i ~/.ssh/staging_key \
               docker-compose.staging.yml \
-              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_PATH }}
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DOCKER_APP_STAGING_PATH }}
 
       - name: Deploy to Staging
         id: deploy
@@ -81,7 +81,7 @@ jobs:
           
           IMAGE_NAME="${{ env.IMAGE_NAME }}"
           NEW_IMAGE_TAG="${{ env.IMAGE_TAG }}"
-          APP_DIR="${{ secrets.STAGING_PATH }}"
+          APP_DIR="${{ secrets.DOCKER_APP_STAGING_PATH }}"
           CONTAINER_NAME="pearlog_app_staging"
           TIMESTAMP=\$(date +%Y%m%d_%H%M%S)
           
@@ -161,7 +161,7 @@ jobs:
           set -e
           
           IMAGE_NAME="${{ env.IMAGE_NAME }}"
-          APP_DIR="${{ secrets.STAGING_PATH }}"
+          APP_DIR="${{ secrets.DOCKER_APP_STAGING_PATH }}"
           CONTAINER_NAME="pearlog_app_staging"
           
           echo "[ERROR] Deployment failed! Initiating rollback..."
@@ -241,7 +241,7 @@ jobs:
           ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
               -i ~/.ssh/staging_key \
               ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << ENDSSH
-          APP_DIR="${{ secrets.STAGING_PATH }}"
+          APP_DIR="${{ secrets.DOCKER_APP_STAGING_PATH }}"
           CONTAINER_NAME="pearlog_app_staging"
           
           cd "\${APP_DIR}"
@@ -266,7 +266,7 @@ jobs:
           set -e
           
           IMAGE_NAME="${{ env.IMAGE_NAME }}"
-          APP_DIR="${{ secrets.STAGING_PATH }}"
+          APP_DIR="${{ secrets.DOCKER_APP_STAGING_PATH }}"
           
           echo "[INFO] Cleaning up old Docker images..."
           cd "\${APP_DIR}"

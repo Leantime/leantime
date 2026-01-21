@@ -1,7 +1,9 @@
 services:
   leantime_db:
     image: mysql:8.0.44
-    container_name: leantime_db_local
+    container_name: leantime_staging_db
+    env_file:
+      - docker.env
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
