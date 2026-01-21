@@ -275,7 +275,7 @@ button:hover span {
                 </div>
 
             </div>
-                <div style=" width: 100%;">
+                <div style=" width: 100%; overflow-x:scroll;">
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX" data-hours-format="<?= $tpl->escape($hoursFormat); ?>">
                 <colgroup>
                       <col class="con0" >
@@ -422,10 +422,12 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                         <?php } ?>
 
                         <!-- Row to add new time registration -->
-                        <tr class="gradeA timesheetRow" style="z-index: 9999;" >
-                            <td width="14%" style="z-index: 9999;" >
+                        <tr class="gradeA timesheetRow">
+                            <td width="5%">-</td>
+                            <td width="5%">-</td>
+                            <td width="12%">
                                 <div class="form-group" id="projectSelect">
-                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_project')?>" class="project-select">
+                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_project')?>" style="" class="project-select" >
                                         <option value=""></option>
                                         <?php foreach ($tpl->get('allProjects') as $projectRow) { ?>
                                             <?php echo sprintf(
