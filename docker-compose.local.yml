@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   leantime_db:
     image: mysql:8.0.44
