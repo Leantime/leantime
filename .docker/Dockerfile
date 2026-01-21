@@ -45,6 +45,23 @@ RUN set -ex; \
     rm -rf /tmp/* /var/cache/apk/*
 
 
+# ---------- Frontend build stage ----------
+FROM node:18-alpine AS frontend
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy only frontend source files
+COPY resources resources
+COPY webpack.mix.js ./
+COPY public public
+
+# Build assets
+RUN npm run production
+
 
 # Production stage
 FROM --platform=$TARGETPLATFORM php:8.3-fpm-alpine
@@ -116,6 +133,7 @@ COPY config/nginx.conf /etc/nginx/nginx.conf
 COPY config/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY --chmod=0755 start.sh /start.sh
+COPY --from=frontend --chown=www-data:www-data /app/public/dist /var/www/html/public/dist
 
 # Switch to non-root user
 USER www-data

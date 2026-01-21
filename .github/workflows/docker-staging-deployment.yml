@@ -27,6 +27,7 @@ jobs:
           context: .
           push: false
           load: true
+          platforms: linux/arm64
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           cache-from: type=gha
