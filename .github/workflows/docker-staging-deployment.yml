@@ -109,11 +109,14 @@ jobs:
           echo "[INFO] Stopping existing containers..."
           docker-compose -f docker-compose.staging.yml down || true
           
-          sed -i "s|image:.*${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${NEW_IMAGE_TAG}|g" docker-compose.staging.yml
+          echo "[DEBUG] Image name: ${IMAGE_NAME}:${NEW_IMAGE_TAG}"
+          sed -i "s|image: pearlog:.*|image: \${IMAGE_NAME}:\${NEW_IMAGE_TAG}|" docker-compose.staging.yml
+          echo "[DEBUG] After sed - line 28:"
+          sed -n '28p' docker-compose.staging.yml
           
           # Start new containers
           echo "[INFO] Deploying new version..."
-          docker-compose -f docker-compose.staging.yml up -d --no-build
+          docker-compose -f docker-compose.staging.yml up -d 
           
           # Wait for health check
           echo "[INFO] Waiting for application to become healthy..."

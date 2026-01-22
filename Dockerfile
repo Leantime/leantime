@@ -373,9 +373,8 @@ echo "Starting services..."
 
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 EOF
-
-RUN chmod +x /entrypoint.sh
-
+RUN sed -i 's/\r$//' /entrypoint.sh && \
+    chmod +x /entrypoint.sh
 RUN mkdir -p /var/log/supervisor
 
 EXPOSE 8080
