@@ -107,13 +107,13 @@ jobs:
           fi
           
           echo "[INFO] Stopping existing containers..."
-          docker compose down || true
+          docker-compose -f docker-compose.staging.yml down || true
           
           sed -i "s|image:.*${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${NEW_IMAGE_TAG}|g" docker-compose.staging.yml
           
           # Start new containers
           echo "[INFO] Deploying new version..."
-          docker compose up -d --no-build
+          docker-compose -f docker-compose.staging.yml up -d --no-build
           
           # Wait for health check
           echo "[INFO] Waiting for application to become healthy..."
@@ -122,7 +122,7 @@ jobs:
             # Check if container is running first
             if ! docker ps | grep -q "\${CONTAINER_NAME}"; then
               echo "[ERROR] Container \${CONTAINER_NAME} is not running!"
-              docker compose logs --tail=50 \${CONTAINER_NAME}
+              docker-compose -f docker-compose.staging.yml logs --tail=50 \${CONTAINER_NAME}
               exit 1
             fi
             
@@ -139,7 +139,7 @@ jobs:
           
           if [ "\${HEALTH_PASSED}" = false ]; then
             echo "[ERROR] Application did not become healthy after 60 seconds"
-            docker compose logs --tail=50 \${CONTAINER_NAME}
+            docker-compose -f docker-compose.staging.yml logs --tail=50 \${CONTAINER_NAME}
             exit 1
           fi
           
@@ -149,7 +149,7 @@ jobs:
           echo "======================================"
           echo "[SUCCESS] Deployment successful!"
           echo "======================================"
-          docker compose ps
+          docker-compose -f docker-compose.staging.yml ps
           ENDSSH
 
       - name: Rollback on Failure
@@ -172,7 +172,7 @@ jobs:
           
           if [ -z "\${PREVIOUS_IMAGE_TAG}" ]; then
             echo "[WARN] No previous image to rollback to"
-            docker compose down
+            docker-compose -f docker-compose.staging.yml down
             exit 1
           fi
           
@@ -193,10 +193,10 @@ jobs:
           fi
           
           echo "[INFO] Stopping failed containers..."
-          docker compose down --timeout 30
+          docker-compose -f docker-compose.staging.yml down --timeout 30
           
           echo "[INFO] Starting previous version..."
-          docker compose up -d
+          docker-compose -f docker-compose.staging.yml up -d
           
           # Wait for rollback to complete
           echo "[INFO] Waiting for rollback to complete..."
@@ -215,12 +215,12 @@ jobs:
           
           if [ "\${ROLLBACK_SUCCESS}" = false ]; then
             echo "[ERROR] Rollback failed! Manual intervention required."
-            docker compose logs --tail=50 \${CONTAINER_NAME}
+            docker-compose -f docker-compose.staging.yml logs --tail=50 \${CONTAINER_NAME}
             exit 1
           fi
           
           echo "[SUCCESS] Rollback successful!"
-          docker compose ps
+          docker-compose -f docker-compose.staging.yml ps
           ENDSSH
 
       - name: Post-Rollback Cleanup
@@ -247,7 +247,7 @@ jobs:
           cd "\${APP_DIR}"
           
           echo "[INFO] Final deployment verification..."
-          docker compose ps
+          docker-compose ps
           
           echo ""
           echo "[INFO] Container status:"

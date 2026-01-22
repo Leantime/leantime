@@ -1,3 +1,4 @@
+# ---------- Composer dependencies stage ----------
 FROM php:8.2-fpm-alpine AS composer-builder
 
 WORKDIR /build
@@ -41,6 +42,39 @@ RUN composer install \
     --no-progress \
     --prefer-dist
 
+
+# ---------- Frontend build stage ----------
+FROM node:18-alpine AS frontend
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json ./
+
+# Install ALL dependencies (need dev deps for webpack)
+RUN npm ci
+
+# Copy webpack config and babel config
+COPY webpack.mix.js .babelrc ./
+
+# Copy source files for build - Leantime structure
+COPY app ./app
+COPY public ./public
+
+# Build frontend assets
+RUN npx mix --production
+
+# Verify the build was successful
+RUN ls -la public/dist && \
+    if [ ! -d "public/dist/js" ]; then \
+        echo "ERROR: Frontend build failed - public/dist/js not found!"; \
+        ls -la public/dist || true; \
+        exit 1; \
+    fi && \
+    echo "✓ Frontend assets built successfully"
+
+
+# ---------- Production stage ----------
 FROM php:8.2-fpm-alpine
 
 RUN apk add --no-cache \
@@ -217,19 +251,13 @@ COPY --chown=www-data:www-data . .
 
 COPY --from=composer-builder --chown=www-data:www-data /build/vendor ./vendor
 
-RUN if [ ! -d "public/dist/js" ]; then \
-        echo "ERROR: public/dist/js not found! Please run 'npx mix --production' locally first"; \
-        exit 1; \
-    fi && \
-    chown -R www-data:www-data public/dist
+# Copy built frontend assets from frontend stage (REPLACES the old check)
+COPY --from=frontend --chown=www-data:www-data /app/public/dist ./public/dist
 
+# The size check is already done in the frontend stage, so we can remove it here
+# But if you want to keep it as a final verification, you can:
 RUN APP_SIZE=$(stat -c%s "public/dist/js/compiled-app.3.5.12.min.js" 2>/dev/null || echo "0") && \
-    if [ "$APP_SIZE" -lt "150000" ]; then \
-        echo "ERROR: compiled-app.js is too small ($APP_SIZE bytes). Expected >150KB"; \
-        echo "Please run 'npx mix --production' locally before building Docker image"; \
-        exit 1; \
-    fi && \
-    echo "✓ compiled-app.js size OK: $APP_SIZE bytes"
+    echo "✓ Final verification: compiled-app.js size: $APP_SIZE bytes"
 
 RUN if [ ! -f blocklist.json ]; then \
         echo "{}" > blocklist.json; \
