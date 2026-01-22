@@ -28,9 +28,7 @@ RUN case "${TARGETPLATFORM}" in \
 
 # Install and configure PHP extensions
 RUN set -ex; \
-    # Configure extensions
     docker-php-ext-configure gd --with-freetype --with-jpeg; \
-    # Install extensions one by one to prevent memory issues
     docker-php-ext-install mysqli && \
     docker-php-ext-install pdo_mysql && \
     docker-php-ext-install bcmath && \
@@ -50,17 +48,31 @@ FROM node:18-alpine AS frontend
 
 WORKDIR /app
 
-# Install dependencies
+# Copy package files first
 COPY package.json package-lock.json ./
+
+# Install dependencies (remove --only=production, we need dev deps for webpack)
 RUN npm ci
 
-# Copy only frontend source files
-COPY resources resources
+# Copy webpack config
 COPY webpack.mix.js ./
-COPY public public
 
-# Build assets
-RUN npm run production
+# Copy source files needed for build
+COPY resources ./resources
+
+# Copy the public directory structure that Laravel Mix expects
+COPY public ./public
+
+# Build assets - this will output to public/dist
+RUN npx mix --production
+
+# Verify build output
+RUN ls -la public/dist && \
+    if [ ! -d "public/dist/js" ]; then \
+        echo "ERROR: Frontend build failed - public/dist/js not found!"; \
+        ls -la public/dist || true; \
+        exit 1; \
+    fi
 
 
 # Production stage
@@ -103,11 +115,9 @@ RUN set -ex; \
 
 # Set Permissions
 RUN set -ex; \
-    # Modify existing www-data user/group
     deluser www-data; \
     addgroup -g ${PGID} www-data; \
     adduser -u ${PUID} -G www-data -h /home/www-data -s /bin/sh -D www-data; \
-    # Create required directories
     mkdir -p /var/www/html/userfiles \
             /var/www/html/public/userfiles \
             /var/www/html/bootstrap/cache \
@@ -133,6 +143,8 @@ COPY config/nginx.conf /etc/nginx/nginx.conf
 COPY config/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY --chmod=0755 start.sh /start.sh
+
+# Copy built frontend assets from frontend stage
 COPY --from=frontend --chown=www-data:www-data /app/public/dist /var/www/html/public/dist
 
 # Switch to non-root user
@@ -140,7 +152,7 @@ USER www-data
 
 # Add healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-    CMD curl -f http://localhost:8080 || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/healthCheck.php || exit 1
 
 EXPOSE 8080
 ENTRYPOINT ["/sbin/tini", "--", "/start.sh"]
