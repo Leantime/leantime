@@ -3,7 +3,7 @@ name: Deploy Leantime to Staging
 on:
   push:
     branches:
-      - tmp/dockerizing  
+      - tmp/dockerizing   
   workflow_dispatch:
 
 env:
@@ -29,8 +29,6 @@ jobs:
           load: true
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Install docker-pussh plugin
         run: |
@@ -115,8 +113,8 @@ jobs:
           fi
           
           # Stop only the app container (not database!)
-          echo "[INFO] Stopping app container..."
-          docker-compose -f docker-compose.staging.yml stop leantime || true
+          echo "[INFO] Removing app container..."
+          docker-compose -f docker-compose.staging.yml rm -f -s leantime || true
           
           # Update image in docker-compose
           echo "[DEBUG] Updating image to: ${IMAGE_NAME}:${NEW_IMAGE_TAG}"
@@ -125,7 +123,7 @@ jobs:
           
           # Start new version (only app, not database)
           echo "[INFO] Deploying new version..."
-          docker-compose -f docker-compose.staging.yml up -d 
+          docker-compose -f docker-compose.staging.yml up -d --force-recreate leantime 
           
           # Wait for health check
           echo "[INFO] Waiting for application to become healthy..."
@@ -205,12 +203,12 @@ jobs:
           fi
           
           # Stop failed container
-          echo "[INFO] Stopping failed container..."
-          docker-compose -f docker-compose.staging.yml stop leantime --timeout 30
+          echo "[INFO] Removing failed container..."
+          docker-compose -f docker-compose.staging.yml rm -f -s leantime
           
           # Start previous version
           echo "[INFO] Starting previous version..."
-          docker-compose -f docker-compose.staging.yml up -d --no-deps leantime
+          docker-compose -f docker-compose.staging.yml up -d --no-deps --force-recreate leantime
           
           # Wait for rollback to complete
           echo "[INFO] Waiting for rollback to complete..."
@@ -259,6 +257,12 @@ jobs:
           CONTAINER_NAME="leantime_app_local"
           
           cd "${APP_DIR}"
+          sync 
+          sleep 2
+          if [ ! -r "docker-compose.staging.yml" ]; then
+          echo "[ERROR] docker-compose.staging.yml not readable!"
+          exit 1
+          fi
           
           echo "[INFO] Final deployment verification..."
           docker-compose -f docker-compose.staging.yml ps
