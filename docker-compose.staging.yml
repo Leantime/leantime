@@ -3,52 +3,46 @@ services:
     image: mysql:8.0.44
     container_name: leantime_staging_db
     env_file:
-      - docker.env
+      - .env
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-leantime}
-      MYSQL_USER: ${MYSQL_USER:-leantime}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-leantime}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - leantime-net
     command: --character-set-server=UTF8MB4 --collation-server=UTF8MB4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
     ports:
-      - "3307:3306"  
+      - "3307:3306"
 
   leantime:
     build:
       context: .
       dockerfile: Dockerfile
-    image: leantime:local
+    image: leantime:staging
     container_name: leantime_app_local
     restart: unless-stopped
     env_file:
-      - docker.env
+      - .env
     environment:
       LEAN_DB_HOST: leantime_db
       LEAN_DB_PORT: 3306
-      LEAN_DB_DATABASE: ${MYSQL_DATABASE:-leantime}
-      LEAN_DB_USER: ${MYSQL_USER:-leantime}
-      LEAN_DB_PASSWORD: ${MYSQL_PASSWORD:-leantime}
-      
-      LEAN_APP_URL: ${LEAN_APP_URL:-http://localhost:8080}
-      LEAN_DEBUG: ${LEAN_DEBUG:-1}
+      LEAN_APP_URL: ${LEAN_APP_URL}
+      LEAN_DEBUG: ${LEAN_DEBUG}
       LEAN_SESSION_SECURE: "false"
-      
-      LEAN_SESSION_PASSWORD: ${LEAN_SESSION_PASSWORD:-}
-      
-      LEAN_SITENAME: ${LEAN_SITENAME:-Leantime-Local}
-      LEAN_LANGUAGE: ${LEAN_LANGUAGE:-en-US}
-      LEAN_DEFAULT_TIMEZONE: ${LEAN_DEFAULT_TIMEZONE:-UTC}
+      LEAN_SESSION_PASSWORD: ${LEAN_SESSION_PASSWORD}
+      LEAN_SITENAME: ${LEAN_SITENAME}
+      LEAN_LANGUAGE: ${LEAN_LANGUAGE}
+      LEAN_DEFAULT_TIMEZONE: ${LEAN_DEFAULT_TIMEZONE}
     ports:
       - "${LEAN_PORT:-8080}:8080"
     networks:
@@ -64,10 +58,10 @@ services:
       leantime_db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/healthCheck.php"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080 || exit 1"]
       interval: 30s
-      timeout: 10s
-      retries: 3
+      timeout: 5s
+      retries: 5
       start_period: 60s
 
 volumes:

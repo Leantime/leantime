@@ -1,4 +1,4 @@
-name: Deploy PearLog to Staging
+name: Deploy Leantime to Staging
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: pearlog
+  IMAGE_NAME: leantime
   IMAGE_TAG: staging-${{ github.sha }}
 
 jobs:
@@ -76,45 +76,54 @@ jobs:
         run: |
           ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
               -i ~/.ssh/staging_key \
-              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << ENDSSH
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << 'ENDSSH'
           set -e
           
           IMAGE_NAME="${{ env.IMAGE_NAME }}"
           NEW_IMAGE_TAG="${{ env.IMAGE_TAG }}"
           APP_DIR="${{ secrets.DOCKER_APP_STAGING_PATH }}"
-          CONTAINER_NAME="pearlog_app_staging"
-          TIMESTAMP=\$(date +%Y%m%d_%H%M%S)
+          CONTAINER_NAME="leantime_app_local"
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           
           echo "======================================"
           echo "[INFO] Starting deployment to staging..."
-          echo "Directory: \${APP_DIR}"
-          echo "Image: \${IMAGE_NAME}:\${NEW_IMAGE_TAG}"
+          echo "Directory: ${APP_DIR}"
+          echo "Image: ${IMAGE_NAME}:${NEW_IMAGE_TAG}"
           echo "======================================"
           
-          cd "\${APP_DIR}"
+          cd "${APP_DIR}"
           
-          CURRENT_IMAGE_TAG=\$(docker inspect \${CONTAINER_NAME} --format '{{.Config.Image}}' 2>/dev/null | cut -d':' -f2)
-          echo "\${CURRENT_IMAGE_TAG}" > "\${APP_DIR}/.previous_image_tag.txt"
+          # Check if .env exists
+          if [ ! -f ".env" ]; then
+            echo "[ERROR] .env file not found! Cannot deploy."
+            exit 1
+          fi
           
+          # Get current image tag for rollback
+          CURRENT_IMAGE_TAG=$(docker inspect ${CONTAINER_NAME} --format '{{.Config.Image}}' 2>/dev/null | cut -d':' -f2)
+          echo "${CURRENT_IMAGE_TAG}" > "${APP_DIR}/.previous_image_tag.txt"
+          
+          # Backup configs
           if [ -f "docker-compose.staging.yml" ]; then
-            cp docker-compose.staging.yml "docker-compose.staging.yml.backup.\${TIMESTAMP}"
+            cp docker-compose.staging.yml "docker-compose.staging.yml.backup.${TIMESTAMP}"
             echo "[INFO] Backed up docker-compose.staging.yml"
           fi
           
           if [ -f ".env" ]; then
-            cp .env ".env.backup.\${TIMESTAMP}"
+            cp .env ".env.backup.${TIMESTAMP}"
             echo "[INFO] Backed up .env"
           fi
           
-          echo "[INFO] Stopping existing containers..."
-          docker-compose -f docker-compose.staging.yml down || true
+          # Stop only the app container (not database!)
+          echo "[INFO] Stopping app container..."
+          docker-compose -f docker-compose.staging.yml stop leantime || true
           
-          echo "[DEBUG] Image name: ${IMAGE_NAME}:${NEW_IMAGE_TAG}"
-          sed -i "s|image: pearlog:.*|image: \${IMAGE_NAME}:\${NEW_IMAGE_TAG}|" docker-compose.staging.yml
-          echo "[DEBUG] After sed - line 28:"
-          sed -n '28p' docker-compose.staging.yml
+          # Update image in docker-compose
+          echo "[DEBUG] Updating image to: ${IMAGE_NAME}:${NEW_IMAGE_TAG}"
+          sed -i "s|image: leantime:.*|image: ${IMAGE_NAME}:${NEW_IMAGE_TAG}|" docker-compose.staging.yml
+          echo "[DEBUG] Updated docker-compose.staging.yml"
           
-          # Start new containers
+          # Start new version (only app, not database)
           echo "[INFO] Deploying new version..."
           docker-compose -f docker-compose.staging.yml up -d 
           
@@ -123,31 +132,31 @@ jobs:
           HEALTH_PASSED=false
           for i in {1..30}; do
             # Check if container is running first
-            if ! docker ps | grep -q "\${CONTAINER_NAME}"; then
-              echo "[ERROR] Container \${CONTAINER_NAME} is not running!"
-              docker-compose -f docker-compose.staging.yml logs --tail=50 \${CONTAINER_NAME}
+            if ! docker ps | grep -q "${CONTAINER_NAME}"; then
+              echo "[ERROR] Container ${CONTAINER_NAME} is not running!"
+              docker-compose -f docker-compose.staging.yml logs --tail=50 leantime
               exit 1
             fi
             
-            # Try health check
-            if docker exec "\${CONTAINER_NAME}" wget --no-verbose --tries=1 --spider http://localhost:8080/healthCheck.php 2>&1 | grep -q "200 OK"; then
-              echo "[SUCCESS] Application is healthy! (attempt \$i)"
+            # Try health check (using curl without specific endpoint)
+            if docker exec "${CONTAINER_NAME}" curl -f http://localhost:8080 >/dev/null 2>&1; then
+              echo "[SUCCESS] Application is healthy! (attempt $i)"
               HEALTH_PASSED=true
               break
             fi
             
-            echo "[INFO] Waiting for application to become healthy... (attempt \$i/30)"
+            echo "[INFO] Waiting for application to become healthy... (attempt $i/30)"
             sleep 2
           done
           
-          if [ "\${HEALTH_PASSED}" = false ]; then
+          if [ "${HEALTH_PASSED}" = false ]; then
             echo "[ERROR] Application did not become healthy after 60 seconds"
-            docker-compose -f docker-compose.staging.yml logs --tail=50 \${CONTAINER_NAME}
+            docker-compose -f docker-compose.staging.yml logs --tail=50 leantime
             exit 1
           fi
           
           # Store current image tag for reference
-          echo "\${IMAGE_NAME}:\${NEW_IMAGE_TAG}" > .current_image_tag
+          echo "${IMAGE_NAME}:${NEW_IMAGE_TAG}" > .current_image_tag
           
           echo "======================================"
           echo "[SUCCESS] Deployment successful!"
@@ -160,65 +169,67 @@ jobs:
         run: |
           ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
               -i ~/.ssh/staging_key \
-              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << ENDSSH
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << 'ENDSSH'
           set -e
           
           IMAGE_NAME="${{ env.IMAGE_NAME }}"
           APP_DIR="${{ secrets.DOCKER_APP_STAGING_PATH }}"
-          CONTAINER_NAME="pearlog_app_staging"
+          CONTAINER_NAME="leantime_app_local"
           
           echo "[ERROR] Deployment failed! Initiating rollback..."
-          cd "\${APP_DIR}"
+          cd "${APP_DIR}"
           
           # Get previous image tag
-          PREVIOUS_IMAGE_TAG=\$(cat "\${APP_DIR}/.previous_image_tag.txt" 2>/dev/null || echo "")
+          PREVIOUS_IMAGE_TAG=$(cat "${APP_DIR}/.previous_image_tag.txt" 2>/dev/null || echo "")
           
-          if [ -z "\${PREVIOUS_IMAGE_TAG}" ]; then
+          if [ -z "${PREVIOUS_IMAGE_TAG}" ]; then
             echo "[WARN] No previous image to rollback to"
-            docker-compose -f docker-compose.staging.yml down
+            docker-compose -f docker-compose.staging.yml stop leantime
             exit 1
           fi
           
-          echo "[INFO] Rolling back to: \${IMAGE_NAME}:\${PREVIOUS_IMAGE_TAG}"
+          echo "[INFO] Rolling back to: ${IMAGE_NAME}:${PREVIOUS_IMAGE_TAG}"
           
           # Restore backups
-          LATEST_ENV_BACKUP=\$(ls -t .env.backup.* 2>/dev/null | head -n 1)
-          LATEST_COMPOSE_BACKUP=\$(ls -t docker-compose.staging.yml.backup.* 2>/dev/null | head -n 1)
+          LATEST_ENV_BACKUP=$(ls -t .env.backup.* 2>/dev/null | head -n 1)
+          LATEST_COMPOSE_BACKUP=$(ls -t docker-compose.staging.yml.backup.* 2>/dev/null | head -n 1)
           
-          if [ -n "\${LATEST_COMPOSE_BACKUP}" ]; then
-            cp "\${LATEST_COMPOSE_BACKUP}" docker-compose.staging.yml
+          if [ -n "${LATEST_COMPOSE_BACKUP}" ]; then
+            cp "${LATEST_COMPOSE_BACKUP}" docker-compose.staging.yml
             echo "[INFO] Restored docker-compose.staging.yml from backup"
           fi
           
-          if [ -n "\${LATEST_ENV_BACKUP}" ]; then
-            cp "\${LATEST_ENV_BACKUP}" .env
+          if [ -n "${LATEST_ENV_BACKUP}" ]; then
+            cp "${LATEST_ENV_BACKUP}" .env
             echo "[INFO] Restored .env from backup"
           fi
           
-          echo "[INFO] Stopping failed containers..."
-          docker-compose -f docker-compose.staging.yml down --timeout 30
+          # Stop failed container
+          echo "[INFO] Stopping failed container..."
+          docker-compose -f docker-compose.staging.yml stop leantime --timeout 30
           
+          # Start previous version
           echo "[INFO] Starting previous version..."
-          docker-compose -f docker-compose.staging.yml up -d
+          docker-compose -f docker-compose.staging.yml up -d --no-deps leantime
           
           # Wait for rollback to complete
           echo "[INFO] Waiting for rollback to complete..."
           ROLLBACK_SUCCESS=false
           for i in {1..30}; do
-            if docker ps | grep -q "\${CONTAINER_NAME}"; then
-              if docker exec "\${CONTAINER_NAME}" wget --no-verbose --tries=1 --spider http://localhost:8080/healthCheck.php 2>&1 | grep -q "200 OK"; then
-                echo "[INFO] Application is healthy after rollback (attempt \$i)"
+            if docker ps | grep -q "${CONTAINER_NAME}"; then
+              if docker exec "${CONTAINER_NAME}" curl -f http://localhost:8080 >/dev/null 2>&1; then
+                echo "[INFO] Application is healthy after rollback (attempt $i)"
                 ROLLBACK_SUCCESS=true
                 break
               fi
             fi
-            echo "[INFO] Waiting for rollback... (attempt \$i/30)"
+            echo "[INFO] Waiting for rollback... (attempt $i/30)"
             sleep 2
           done
           
-          if [ "\${ROLLBACK_SUCCESS}" = false ]; then
+          if [ "${ROLLBACK_SUCCESS}" = false ]; then
             echo "[ERROR] Rollback failed! Manual intervention required."
-            docker-compose -f docker-compose.staging.yml logs --tail=50 \${CONTAINER_NAME}
+            docker-compose -f docker-compose.staging.yml logs --tail=50 leantime
             exit 1
           fi
           
@@ -231,7 +242,7 @@ jobs:
         run: |
           ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
               -i ~/.ssh/staging_key \
-              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << ENDSSH
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << 'ENDSSH'
           
           echo "[INFO] Cleaning up failed deployment image..."
           docker rmi -f ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} 2>/dev/null || true
@@ -243,18 +254,22 @@ jobs:
         run: |
           ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
               -i ~/.ssh/staging_key \
-              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << ENDSSH
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << 'ENDSSH'
           APP_DIR="${{ secrets.DOCKER_APP_STAGING_PATH }}"
-          CONTAINER_NAME="pearlog_app_staging"
+          CONTAINER_NAME="leantime_app_local"
           
-          cd "\${APP_DIR}"
+          cd "${APP_DIR}"
           
           echo "[INFO] Final deployment verification..."
-          docker-compose ps
+          docker-compose -f docker-compose.staging.yml ps
           
           echo ""
           echo "[INFO] Container status:"
-          docker ps | grep "\${CONTAINER_NAME}" || echo "Container not found"
+          docker ps | grep "${CONTAINER_NAME}" || echo "Container not found"
+          
+          echo ""
+          echo "[INFO] Testing endpoint..."
+          curl -I https://staging-pearlog.pearshadow.com || echo "Endpoint test failed"
           
           echo ""
           echo "[SUCCESS] Verification complete!"
@@ -265,31 +280,31 @@ jobs:
         run: |
           ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
               -i ~/.ssh/staging_key \
-              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << ENDSSH
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << 'ENDSSH'
           set -e
           
           IMAGE_NAME="${{ env.IMAGE_NAME }}"
           APP_DIR="${{ secrets.DOCKER_APP_STAGING_PATH }}"
           
           echo "[INFO] Cleaning up old Docker images..."
-          cd "\${APP_DIR}"
+          cd "${APP_DIR}"
           
           # Keep last 3 images for staging
-          docker images "\${IMAGE_NAME}" --format "{{.Repository}}:{{.Tag}} {{.ID}}" | \
+          docker images "${IMAGE_NAME}" --format "{{.Repository}}:{{.Tag}} {{.ID}}" | \
             grep "staging-" | \
             tail -n +4 | \
-            awk '{print \$2}' | \
+            awk '{print $2}' | \
             xargs -r docker rmi -f 2>/dev/null || true
           
           docker image prune -f
           
           # Cleanup old backups (keep last 7 days)
           echo "[INFO] Cleaning up old backups..."
-          find "\${APP_DIR}" -name "*.backup.*" -type f -mtime +7 -delete
+          find "${APP_DIR}" -name "*.backup.*" -type f -mtime +7 -delete
           echo "[INFO] Backups older than 7 days removed"
           
           echo "[INFO] Cleanup complete!"
-          docker images "\${IMAGE_NAME}"
+          docker images "${IMAGE_NAME}"
           ENDSSH
 
       - name: Notify on Failure

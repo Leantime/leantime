@@ -30,7 +30,7 @@ services:
     container_name: leantime_app_local
     restart: unless-stopped
     env_file:
-      - docker.env
+      - .env
     environment:
       LEAN_DB_HOST: leantime_db
       LEAN_DB_PORT: 3306
