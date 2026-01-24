@@ -2,7 +2,7 @@
 
     <li class='timerHeadMenu' id='timerHeadMenu' hx-get="{{BASE_URL}}/timesheets/stopwatch/get-status" hx-trigger="timerUpdate from:body">
 
-    @if ($onTheClock !== false|null)
+    @if ($onTheClock !== false)
             <a
                 href='javascript:void(0);'
                 class='dropdown-toggle'
