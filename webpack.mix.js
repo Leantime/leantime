@@ -161,6 +161,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./public/assets/js/libs/tinymce-plugins/advancedTemplate/plugin.js",
         "./public/assets/js/libs/tinymce-plugins/aiTools/plugin.js",
     ], `public/dist/js/compiled-editor-component.${version}.min.js`)
+    .js('./public/assets/js/app/core/tiptap/index.js', `public/dist/js/compiled-tiptap-editor.${version}.min.js`)
     .combine([
         "./public/assets/js/libs/simpleGantt/snap.svg-min.js",
         "./public/assets/js/libs/simpleGantt/frappe-gantt.js",
@@ -178,6 +179,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
     .less('./public/assets/less/app.less', `public/dist/css/app.${version}.min.css`, {
         sourceMap: true,
     })
+    .copy('./public/assets/css/components/tiptap-editor.css', `public/dist/css/tiptap-editor.${version}.min.css`)
     .tailwind()
     .copy('./public/assets/images', 'public/dist/images')
     .copy('./public/assets/fonts', 'public/dist/fonts')
