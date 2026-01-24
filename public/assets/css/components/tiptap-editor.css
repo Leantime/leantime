@@ -1,0 +1,397 @@
+/**
+ * Tiptap Editor Styles for Leantime
+ *
+ * Modern, clean editor styling that matches Leantime's design system.
+ * Uses CSS variables for theming support.
+ */
+
+/* ==========================================================================
+   Editor Container
+   ========================================================================== */
+
+.tiptap-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.tiptap-editor {
+    position: relative;
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #ddd);
+    border-radius: var(--box-radius, 8px);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tiptap-editor:focus-within {
+    border-color: var(--primary-color, #5a67d8);
+    box-shadow: 0 0 0 3px var(--primary-color-15, rgba(90, 103, 216, 0.15));
+}
+
+/* ==========================================================================
+   ProseMirror Content Area
+   ========================================================================== */
+
+.tiptap-editor .ProseMirror {
+    padding: 16px;
+    min-height: 150px;
+    max-height: 60vh;
+    overflow-y: auto;
+    outline: none;
+    font-family: var(--main-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+    font-size: var(--base-font-size, 14px);
+    line-height: 1.6;
+    color: var(--main-text-color, #333);
+}
+
+.tiptap-editor .ProseMirror:focus {
+    outline: none;
+}
+
+/* Placeholder */
+.tiptap-editor .ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: var(--muted-text-color, #999);
+    pointer-events: none;
+    height: 0;
+    font-style: italic;
+}
+
+.tiptap-editor .is-editor-empty::before {
+    content: attr(data-placeholder);
+    color: var(--muted-text-color, #999);
+    pointer-events: none;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+.tiptap-editor .ProseMirror h1,
+.tiptap-editor .ProseMirror h2,
+.tiptap-editor .ProseMirror h3,
+.tiptap-editor .ProseMirror h4 {
+    font-weight: 600;
+    line-height: 1.3;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    color: var(--main-titles-color, #222);
+}
+
+.tiptap-editor .ProseMirror h1:first-child,
+.tiptap-editor .ProseMirror h2:first-child,
+.tiptap-editor .ProseMirror h3:first-child,
+.tiptap-editor .ProseMirror h4:first-child {
+    margin-top: 0;
+}
+
+.tiptap-editor .ProseMirror h1 { font-size: 1.75em; }
+.tiptap-editor .ProseMirror h2 { font-size: 1.5em; }
+.tiptap-editor .ProseMirror h3 { font-size: 1.25em; }
+.tiptap-editor .ProseMirror h4 { font-size: 1.1em; }
+
+.tiptap-editor .ProseMirror p {
+    margin: 0 0 1em 0;
+}
+
+.tiptap-editor .ProseMirror p:last-child {
+    margin-bottom: 0;
+}
+
+/* Links */
+.tiptap-editor .ProseMirror a {
+    color: var(--primary-color, #5a67d8);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.tiptap-editor .ProseMirror a:hover {
+    color: var(--primary-color-dark, #4c51bf);
+}
+
+/* Bold, Italic, etc. */
+.tiptap-editor .ProseMirror strong {
+    font-weight: 600;
+}
+
+.tiptap-editor .ProseMirror em {
+    font-style: italic;
+}
+
+.tiptap-editor .ProseMirror u {
+    text-decoration: underline;
+}
+
+.tiptap-editor .ProseMirror s {
+    text-decoration: line-through;
+}
+
+/* Highlight */
+.tiptap-editor .ProseMirror mark {
+    background-color: var(--highlight-color, #fef3c7);
+    padding: 0.1em 0.2em;
+    border-radius: 2px;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+.tiptap-editor .ProseMirror ul,
+.tiptap-editor .ProseMirror ol {
+    padding-left: 1.5em;
+    margin: 0 0 1em 0;
+}
+
+.tiptap-editor .ProseMirror li {
+    margin-bottom: 0.25em;
+}
+
+.tiptap-editor .ProseMirror li p {
+    margin: 0;
+}
+
+/* Nested lists */
+.tiptap-editor .ProseMirror ul ul,
+.tiptap-editor .ProseMirror ol ol,
+.tiptap-editor .ProseMirror ul ol,
+.tiptap-editor .ProseMirror ol ul {
+    margin-top: 0.25em;
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Task Lists (Checklists)
+   ========================================================================== */
+
+.tiptap-editor .ProseMirror ul[data-type="taskList"] {
+    list-style: none;
+    padding-left: 0;
+}
+
+.tiptap-editor .ProseMirror ul[data-type="taskList"] li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.tiptap-editor .ProseMirror ul[data-type="taskList"] li > label {
+    flex: 0 0 auto;
+    margin-top: 3px;
+}
+
+.tiptap-editor .ProseMirror ul[data-type="taskList"] li > div {
+    flex: 1 1 auto;
+}
+
+.tiptap-editor .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--primary-color, #5a67d8);
+}
+
+.tiptap-editor .ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div {
+    text-decoration: line-through;
+    color: var(--muted-text-color, #999);
+}
+
+/* ==========================================================================
+   Blockquotes
+   ========================================================================== */
+
+.tiptap-editor .ProseMirror blockquote {
+    border-left: 4px solid var(--primary-color, #5a67d8);
+    padding-left: 1em;
+    margin: 1em 0;
+    color: var(--muted-text-color, #666);
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Code
+   ========================================================================== */
+
+/* Inline code */
+.tiptap-editor .ProseMirror code {
+    background: var(--code-background, #f4f4f5);
+    color: var(--code-color, #e11d48);
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+    font-size: 0.9em;
+}
+
+/* Code blocks */
+.tiptap-editor .ProseMirror pre {
+    background: var(--code-block-background, #1e1e1e);
+    color: var(--code-block-color, #d4d4d4);
+    padding: 1em;
+    border-radius: var(--box-radius, 8px);
+    overflow-x: auto;
+    margin: 1em 0;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.tiptap-editor .ProseMirror pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
+    font-size: inherit;
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+.tiptap-editor .ProseMirror table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+    table-layout: fixed;
+    overflow: hidden;
+}
+
+.tiptap-editor .ProseMirror th,
+.tiptap-editor .ProseMirror td {
+    border: 1px solid var(--main-border-color, #ddd);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+    position: relative;
+}
+
+.tiptap-editor .ProseMirror th {
+    background: var(--table-header-background, #f9fafb);
+    font-weight: 600;
+}
+
+.tiptap-editor .ProseMirror .selectedCell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--primary-color-15, rgba(90, 103, 216, 0.15));
+    pointer-events: none;
+}
+
+/* Table resize handle */
+.tiptap-editor .ProseMirror .column-resize-handle {
+    position: absolute;
+    right: -2px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--primary-color, #5a67d8);
+    cursor: col-resize;
+}
+
+/* ==========================================================================
+   Images
+   ========================================================================== */
+
+.tiptap-editor .ProseMirror img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--box-radius, 8px);
+    margin: 1em 0;
+}
+
+.tiptap-editor .ProseMirror img.ProseMirror-selectednode {
+    outline: 3px solid var(--primary-color, #5a67d8);
+}
+
+/* ==========================================================================
+   Horizontal Rule
+   ========================================================================== */
+
+.tiptap-editor .ProseMirror hr {
+    border: none;
+    border-top: 2px solid var(--main-border-color, #ddd);
+    margin: 2em 0;
+}
+
+/* ==========================================================================
+   Selection
+   ========================================================================== */
+
+.tiptap-editor .ProseMirror ::selection {
+    background: var(--primary-color-30, rgba(90, 103, 216, 0.3));
+}
+
+/* ==========================================================================
+   Editor Variants
+   ========================================================================== */
+
+/* Simple editor - smaller */
+.tiptap-editor.tiptap-simple .ProseMirror {
+    min-height: 80px;
+    max-height: 300px;
+}
+
+/* Notes editor - medium */
+.tiptap-editor.tiptap-notes .ProseMirror {
+    min-height: 200px;
+}
+
+/* Inline editor - minimal chrome */
+.tiptap-editor.tiptap-inline {
+    border: none;
+    background: transparent;
+}
+
+.tiptap-editor.tiptap-inline .ProseMirror {
+    padding: 4px;
+    min-height: auto;
+}
+
+.tiptap-editor.tiptap-inline:focus-within {
+    box-shadow: none;
+}
+
+/* ==========================================================================
+   Dark Mode Support
+   ========================================================================== */
+
+[data-theme="dark"] .tiptap-editor,
+.dark .tiptap-editor {
+    background: var(--main-background, #1f2937);
+    border-color: var(--main-border-color, #374151);
+}
+
+[data-theme="dark"] .tiptap-editor .ProseMirror,
+.dark .tiptap-editor .ProseMirror {
+    color: var(--main-text-color, #e5e7eb);
+}
+
+[data-theme="dark"] .tiptap-editor .ProseMirror code,
+.dark .tiptap-editor .ProseMirror code {
+    background: var(--code-background, #374151);
+}
+
+[data-theme="dark"] .tiptap-editor .ProseMirror th,
+.dark .tiptap-editor .ProseMirror th {
+    background: var(--table-header-background, #374151);
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes tiptap-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tiptap-editor {
+    animation: tiptap-fade-in 0.2s ease-out;
+}
