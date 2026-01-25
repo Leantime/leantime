@@ -162,6 +162,7 @@ var defaultOptions = {
     autosaveKey: null,
     autosaveInterval: 30000,
     uploadUrl: '/api/files',
+    toolbar: null, // 'complex', 'simple', 'notes', or false to disable
     onUpdate: null,
     onBlur: null,
     onFocus: null,
@@ -192,24 +193,57 @@ function createTiptapEditor(elementOrSelector, options) {
     if (element.tagName === 'TEXTAREA') {
         textarea = element;
 
-        // Create wrapper
-        var wrapper = document.createElement('div');
-        wrapper.className = 'tiptap-wrapper';
-
-        // Create editor container
-        var editorEl = document.createElement('div');
-        editorEl.className = 'tiptap-editor';
-        if (textarea.id) {
-            editorEl.setAttribute('data-textarea-id', textarea.id);
+        // Check if wrapper already exists (editor being re-initialized)
+        var existingWrapper = textarea.closest('.tiptap-wrapper');
+        if (!existingWrapper && textarea.nextElementSibling && textarea.nextElementSibling.classList.contains('tiptap-wrapper')) {
+            existingWrapper = textarea.nextElementSibling;
         }
 
-        // Hide textarea but keep for form submission
-        textarea.style.display = 'none';
+        var wrapper, editorEl;
 
-        // Insert wrapper after textarea
-        textarea.parentNode.insertBefore(wrapper, textarea.nextSibling);
-        wrapper.appendChild(textarea);
-        wrapper.appendChild(editorEl);
+        if (existingWrapper) {
+            // Reuse existing wrapper, but clean up old toolbars and editor element
+            wrapper = existingWrapper;
+
+            // Remove any existing toolbars
+            var oldToolbars = wrapper.querySelectorAll('.tiptap-toolbar');
+            oldToolbars.forEach(function(tb) { tb.remove(); });
+
+            // Remove old editor element if exists
+            var oldEditorEl = wrapper.querySelector('.tiptap-editor');
+            if (oldEditorEl) {
+                // Destroy any existing editor instance
+                EditorRegistry.destroy(oldEditorEl);
+                oldEditorEl.remove();
+            }
+
+            // Create new editor container
+            editorEl = document.createElement('div');
+            editorEl.className = 'tiptap-editor';
+            if (textarea.id) {
+                editorEl.setAttribute('data-textarea-id', textarea.id);
+            }
+            wrapper.appendChild(editorEl);
+        } else {
+            // Create new wrapper
+            wrapper = document.createElement('div');
+            wrapper.className = 'tiptap-wrapper';
+
+            // Create editor container
+            editorEl = document.createElement('div');
+            editorEl.className = 'tiptap-editor';
+            if (textarea.id) {
+                editorEl.setAttribute('data-textarea-id', textarea.id);
+            }
+
+            // Hide textarea but keep for form submission
+            textarea.style.display = 'none';
+
+            // Insert wrapper after textarea
+            textarea.parentNode.insertBefore(wrapper, textarea.nextSibling);
+            wrapper.appendChild(textarea);
+            wrapper.appendChild(editorEl);
+        }
 
         element = editorEl;
     } else {
@@ -217,6 +251,13 @@ function createTiptapEditor(elementOrSelector, options) {
         var parent = element.parentElement;
         if (parent) {
             textarea = parent.querySelector('textarea');
+        }
+
+        // Also check for and remove existing toolbars in the wrapper
+        var wrapper = element.closest('.tiptap-wrapper');
+        if (wrapper) {
+            var oldToolbars = wrapper.querySelectorAll('.tiptap-toolbar');
+            oldToolbars.forEach(function(tb) { tb.remove(); });
         }
     }
 
@@ -310,11 +351,19 @@ function createTiptapEditor(elementOrSelector, options) {
     // Register with registry
     EditorRegistry.register(element, editor);
 
+    // Create toolbar if configured
+    var toolbar = null;
+    if (options.toolbar && window.leantime && window.leantime.tiptapToolbar) {
+        toolbar = window.leantime.tiptapToolbar.create(editor, options.toolbar);
+        window.leantime.tiptapToolbar.attach({ element: element }, toolbar);
+    }
+
     // Return wrapper object with useful methods
     return {
         editor: editor,
         element: element,
         textarea: textarea,
+        toolbar: toolbar,
         getHTML: function() { return editor.getHTML(); },
         getText: function() { return editor.getText(); },
         getJSON: function() { return editor.getJSON(); },
@@ -326,6 +375,9 @@ function createTiptapEditor(elementOrSelector, options) {
         isEditable: function() { return editor.isEditable; },
         setEditable: function(editable) { editor.setEditable(editable); },
         destroy: function() {
+            if (toolbar) {
+                toolbar.destroy();
+            }
             if (textarea) {
                 textarea.value = editor.getHTML();
             }
@@ -430,6 +482,7 @@ var tiptapController = {
             autosave: true,
             autosaveKey: 'leantime-tiptap-complex-' + path + '-' + projectId + '-' + entityId,
             tables: true,
+            toolbar: 'complex',
         }, options || {});
 
         return createTiptapEditor(elementOrSelector, mergedOptions);
@@ -444,6 +497,7 @@ var tiptapController = {
             autosave: true,
             autosaveKey: 'leantime-tiptap-simple-' + path + '-' + formId,
             tables: false,
+            toolbar: 'simple',
         }, options || {});
 
         return createTiptapEditor(elementOrSelector, mergedOptions);
@@ -460,6 +514,7 @@ var tiptapController = {
             autosave: true,
             autosaveKey: 'leantime-tiptap-notes-' + notebookId + '-' + noteId,
             tables: true,
+            toolbar: 'notes',
         }, options || {});
 
         return createTiptapEditor(elementOrSelector, mergedOptions);
@@ -470,6 +525,7 @@ var tiptapController = {
             placeholder: 'Click to edit...',
             autosave: false,
             tables: false,
+            toolbar: false,
         }, options || {});
 
         return createTiptapEditor(elementOrSelector, mergedOptions);

@@ -163,6 +163,9 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
     ], `public/dist/js/compiled-editor-component.${version}.min.js`)
     .js('./public/assets/js/app/core/tiptap/index.js', `public/dist/js/compiled-tiptap-editor.${version}.min.js`)
     .combine([
+        './public/assets/js/app/core/tiptap/extensions/toolbar.js'
+    ], `public/dist/js/compiled-tiptap-toolbar.${version}.min.js`)
+    .combine([
         './public/assets/js/app/core/tiptap/test-utils.js'
     ], `public/dist/js/compiled-tiptap-tests.${version}.min.js`)
     .combine([

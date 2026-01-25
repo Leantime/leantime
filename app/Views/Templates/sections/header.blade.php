@@ -35,6 +35,7 @@
 <script src="{!! BASE_URL !!}/dist/js/compiled-calendar-component.{!! $version !!}.min.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/compiled-table-component.{!! $version !!}.min.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/compiled-editor-component.{!! $version !!}.min.js"></script>
+<script src="{!! BASE_URL !!}/dist/js/compiled-tiptap-toolbar.{!! $version !!}.min.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/compiled-tiptap-editor.{!! $version !!}.min.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/compiled-gantt-component.{!! $version !!}.min.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/compiled-chart-component.{!! $version !!}.min.js"></script>
