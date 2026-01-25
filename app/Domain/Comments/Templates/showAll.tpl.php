@@ -26,7 +26,7 @@ if (str_contains($formUrl, '?delComment=')) {
     </a>
 
     <div id="comment0" class="commentBox">
-        <textarea rows="5" cols="50" class="tinymceSimple"
+        <textarea rows="5" cols="50" class="tiptapSimple"
                   name="text"></textarea><br/>
         <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>"
                name="comment" class="btn btn-default btn-success"
@@ -124,8 +124,10 @@ if (str_contains($formUrl, '?delComment=')) {
 
 <script type='text/javascript'>
 
-
-    leantime.editorController.initSimpleEditor();
+    // Initialize Tiptap simple editor
+    if (window.leantime && window.leantime.tiptapController) {
+        leantime.tiptapController.initSimpleEditor();
+    }
 
     function toggleCommentBoxes(id) {
         <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
@@ -134,18 +136,32 @@ if (str_contains($formUrl, '?delComment=')) {
             } else {
                 jQuery('#mainToggler').show();
             }
+
+            // Destroy existing Tiptap editors before removing textareas
+            jQuery('.commentBox').each(function() {
+                var wrapper = jQuery(this).find('.tiptap-wrapper');
+                if (wrapper.length && window.leantime && window.leantime.tiptapController) {
+                    leantime.tiptapController.registry.destroyWithin(wrapper[0]);
+                }
+            });
+
             jQuery('.commentBox').hide('fast', function () {
+                // Remove both textarea and any tiptap wrapper
                 jQuery('.commentBox textarea').remove();
-                jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-                leantime.editorController.initSimpleEditor();
+                jQuery('.commentBox .tiptap-wrapper').remove();
+
+                // Create new textarea with tiptapSimple class
+                jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tiptapSimple"></textarea>');
+
+                // Initialize Tiptap editor on the new textarea
+                if (window.leantime && window.leantime.tiptapController) {
+                    leantime.tiptapController.initSimpleEditor();
+                }
             });
 
             jQuery('#comment' + id + '').show('fast');
             jQuery('#father').val(id);
         <?php } ?>
     }
-
-
-
 
 </script>

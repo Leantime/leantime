@@ -587,6 +587,7 @@ var tiptapController = {
         var editors = initEditorsBySelector('textarea.tiptapSimple', {
             placeholder: 'Write a comment...',
             tables: false,
+            toolbar: 'simple',
         });
         if (callback && editors.length > 0) {
             callback(editors);

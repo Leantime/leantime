@@ -591,6 +591,13 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     border-bottom-right-radius: var(--box-radius, 8px);
 }
 
+/* When bottom toolbar is present, remove bottom border radius from editor */
+.tiptap-wrapper:has(.tiptap-toolbar--bottom) .tiptap-editor {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: none;
+}
+
 /* ==========================================================================
    Dark Mode - Toolbar
    ========================================================================== */

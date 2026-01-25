@@ -34,7 +34,7 @@ if (str_contains($formUrl, '?delComment=')) {
                 <img src="<?= BASE_URL ?>/api/users?profileImage=<?= session('userdata.id')?>&v=<?= format(session('userdata.modified'))->timestamp() ?>" />
             </div>
             <div class="commentReply">
-                <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
+                <textarea rows="5" cols="50" class="tiptapSimple" name="text"></textarea>
                 <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
             </div>
             <input type="hidden" name="comment" class="commenterField" value="1"/>
@@ -165,15 +165,16 @@ if (str_contains($formUrl, '?delComment=')) {
 <script type='text/javascript'>
 
     jQuery(document).ready(function() {
-        leantime.editorController.initSimpleEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initSimpleEditor();
+        }
     });
 
-    function toggleCommentBoxes(id, commentId, formHash,editComment = false, isReply = false) {
+    function toggleCommentBoxes(id, commentId, formHash, editComment = false, isReply = false) {
         <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
 
-
             if (parseInt(id, 10) === 0) {
-                    jQuery(`.mainToggler-${formHash}`).hide();
+                jQuery(`.mainToggler-${formHash}`).hide();
             } else {
                 jQuery(`.mainToggler-${formHash}`).show();
             }
@@ -185,11 +186,37 @@ if (str_contains($formUrl, '?delComment=')) {
                 jQuery('#submit-reply-button').val('<?php echo $tpl->__('buttons.save') ?>');
             }
 
+            // Destroy existing Tiptap editors before removing textareas
+            jQuery(`.commentBox-${formHash}`).each(function() {
+                var wrapper = jQuery(this).find('.tiptap-wrapper');
+                if (wrapper.length && window.leantime && window.leantime.tiptapController) {
+                    leantime.tiptapController.registry.destroyWithin(wrapper[0]);
+                }
+            });
+
             jQuery(`.commentBox-${formHash} textarea`).remove();
+            jQuery(`.commentBox-${formHash} .tiptap-wrapper`).remove();
             jQuery(`.commentBox-${formHash}`).hide();
-            jQuery(`#comment-${formHash}-${id} .commentReply`).prepend(`<textarea rows="5" cols="75" name="text" id="editor_${formHash}-${id}" class="tinymceSimple">${editComment ? jQuery(`#comment-text-to-hide-${isReply ? 'reply-' : ''}${formHash}-${commentId || id}`).html() : ''}</textarea>`);
-            leantime.editorController.initSimpleEditor();
-            tinyMCE.get(`editor_${formHash}-${id}`).focus();
+
+            // Create textarea with tiptapSimple class
+            var initialContent = editComment ? jQuery(`#comment-text-to-hide-${isReply ? 'reply-' : ''}${formHash}-${commentId || id}`).html() : '';
+            jQuery(`#comment-${formHash}-${id} .commentReply`).prepend(`<textarea rows="5" cols="75" name="text" id="editor_${formHash}-${id}" class="tiptapSimple">${initialContent}</textarea>`);
+
+            // Initialize Tiptap editor
+            if (window.leantime && window.leantime.tiptapController) {
+                leantime.tiptapController.initSimpleEditor();
+                // Focus the editor after a short delay to allow initialization
+                setTimeout(function() {
+                    var editorEl = document.querySelector(`#comment-${formHash}-${id} .tiptap-editor`);
+                    if (editorEl) {
+                        var editor = leantime.tiptapController.registry.get(editorEl);
+                        if (editor) {
+                            editor.commands.focus('end');
+                        }
+                    }
+                }, 100);
+            }
+
             jQuery(`#comment-${formHash}-${id}`).show();
             jQuery(`#father-${formHash}`).val(id);
 
