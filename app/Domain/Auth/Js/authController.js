@@ -17,25 +17,18 @@ leantime.authController = (function () {
 
         jQuery(container).find(".quickAddLink").hide();
 
-        if (jQuery(container).find(".complexEditor").length) {
-            jQuery(container).find(".complexEditor").each(function (element) {
-                if (jQuery(this).tinymce()) {
-                    jQuery(this).tinymce().getBody().setAttribute('contenteditable', "false");
+        // Make Tiptap editors readonly
+        if (jQuery(container).find(".tiptap-editor").length && window.leantime && window.leantime.tiptapController) {
+            jQuery(container).find(".tiptap-editor").each(function () {
+                var editor = leantime.tiptapController.registry.get(this);
+                if (editor) {
+                    editor.setEditable(false);
                 }
             });
         }
 
-        if (jQuery(container).find(".tinymceSimple").length) {
-            jQuery(container).find(".tinymceSimple").each(function (element) {
-
-                if (jQuery(this).tinymce()) {
-                    jQuery(this).tinymce().getBody().setAttribute('contenteditable', "false");
-                }
-            });
-        }
-
-        jQuery(container).find(".tox-editor-header").hide();
-        jQuery(container).find(".tox-statusbar").hide();
+        // Hide Tiptap toolbar
+        jQuery(container).find(".tiptap-toolbar").hide();
 
         jQuery(container).find(".ticketDropdown a").removeAttr("data-toggle");
 

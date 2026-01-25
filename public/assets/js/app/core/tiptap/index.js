@@ -22,6 +22,7 @@ const TableHeader = require('@tiptap/extension-table-header').default;
 const Highlight = require('@tiptap/extension-highlight').default;
 const Underline = require('@tiptap/extension-underline').default;
 const Typography = require('@tiptap/extension-typography').default;
+const { createMentionExtension } = require('./extensions/mention');
 
 /**
  * EditorRegistry - Manages Tiptap editor instances
@@ -276,9 +277,14 @@ function createTiptapEditor(elementOrSelector, options) {
             emptyEditorClass: 'is-editor-empty',
         }),
         Link.configure({
-            openOnClick: false,
+            openOnClick: 'whenNotEditable',
             HTMLAttributes: {
                 rel: 'noopener noreferrer',
+                target: '_blank',
+            },
+            // Allow Ctrl/Cmd+click to open links while editing
+            validate: function(url) {
+                return /^https?:\/\//.test(url) || /^mailto:/.test(url);
             },
         }),
         Image.configure({
@@ -296,6 +302,11 @@ function createTiptapEditor(elementOrSelector, options) {
         Typography,
     ];
 
+    // Add mention extension if enabled (enabled by default)
+    if (options.mentions !== false) {
+        extensions.push(createMentionExtension());
+    }
+
     // Add table extensions if needed
     if (options.tables !== false) {
         extensions.push(
@@ -307,6 +318,9 @@ function createTiptapEditor(elementOrSelector, options) {
             TableHeader
         );
     }
+
+    // Debug: Log the element we're creating the editor in
+    console.log('[Tiptap] Creating editor in element:', element, 'wrapper:', element.closest('.tiptap-wrapper'));
 
     // Create editor
     var editor = new Editor({
@@ -351,12 +365,170 @@ function createTiptapEditor(elementOrSelector, options) {
     // Register with registry
     EditorRegistry.register(element, editor);
 
+    // Verify editor is properly created and ensure it's interactive
+    var proseMirrorEl = element.querySelector('.ProseMirror');
+    if (proseMirrorEl) {
+        console.log('[Tiptap] ProseMirror element created, contenteditable:', proseMirrorEl.getAttribute('contenteditable'));
+
+        // Ensure contenteditable is set
+        if (proseMirrorEl.getAttribute('contenteditable') !== 'true') {
+            proseMirrorEl.setAttribute('contenteditable', 'true');
+        }
+
+        // Ensure it's focusable
+        if (!proseMirrorEl.getAttribute('tabindex')) {
+            proseMirrorEl.setAttribute('tabindex', '0');
+        }
+
+        // Force pointer-events via inline style as fallback
+        proseMirrorEl.style.pointerEvents = 'auto';
+        proseMirrorEl.style.cursor = 'text';
+    } else {
+        console.error('[Tiptap] ProseMirror element NOT found!');
+    }
+
     // Create toolbar if configured
     var toolbar = null;
     if (options.toolbar && window.leantime && window.leantime.tiptapToolbar) {
         toolbar = window.leantime.tiptapToolbar.create(editor, options.toolbar);
         window.leantime.tiptapToolbar.attach({ element: element }, toolbar);
     }
+
+    // Click handler to ensure focus works and handle Ctrl/Cmd+click on links
+    element.addEventListener('click', function(e) {
+        // Check if Ctrl/Cmd+click on a link
+        if ((e.ctrlKey || e.metaKey) && e.target.tagName === 'A' && e.target.href) {
+            e.preventDefault();
+            window.open(e.target.href, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        // Also check if clicking on an element inside a link
+        var linkEl = e.target.closest('a[href]');
+        if ((e.ctrlKey || e.metaKey) && linkEl && linkEl.href) {
+            e.preventDefault();
+            window.open(linkEl.href, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        if (!editor.isFocused) {
+            editor.commands.focus();
+        }
+    });
+
+    // Image upload helper function
+    function uploadImage(file, callback) {
+        // Get module info from the page context
+        var moduleId = '';
+        var module = 'ticket';
+
+        // Try to get ticket ID from URL or form
+        var ticketIdInput = document.querySelector('input[name="id"], input[name="itemId"], input[name="ticketId"]');
+        if (ticketIdInput && ticketIdInput.value) {
+            moduleId = ticketIdInput.value;
+        }
+
+        // Check if we're in a wiki/doc context
+        if (window.location.href.indexOf('/wiki/') > -1 || window.location.href.indexOf('/docs/') > -1) {
+            module = 'wiki';
+            var wikiIdInput = document.querySelector('input[name="id"]');
+            if (wikiIdInput) moduleId = wikiIdInput.value;
+        }
+
+        // Check project context
+        if (window.location.href.indexOf('/projects/') > -1) {
+            module = 'project';
+        }
+
+        // Fallback to current project
+        if (!moduleId && window.leantime && window.leantime.currentProject) {
+            moduleId = window.leantime.currentProject;
+            module = 'project';
+        }
+
+        var formData = new FormData();
+        formData.append('file', file);
+
+        var uploadUrl = leantime.appUrl + '/api/files';
+        if (module && moduleId) {
+            uploadUrl += '?module=' + module + '&moduleId=' + moduleId;
+        }
+
+        fetch(uploadUrl, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function(response) {
+            if (!response.ok) throw new Error('Upload failed');
+            return response.json();
+        })
+        .then(function(data) {
+            var imageUrl = leantime.appUrl + '/files/get?module=' + data.module +
+                '&encName=' + data.encName +
+                '&ext=' + data.extension +
+                '&realName=' + data.realName;
+            callback(null, imageUrl, data.realName);
+        })
+        .catch(function(err) {
+            console.error('Image upload failed:', err);
+            callback(err);
+        });
+    }
+
+    // Handle paste events for images
+    element.addEventListener('paste', function(e) {
+        var items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+                e.preventDefault();
+                var file = items[i].getAsFile();
+                if (file) {
+                    uploadImage(file, function(err, url, name) {
+                        if (!err && url) {
+                            editor.chain().focus().setImage({ src: url, alt: name || 'Pasted image' }).run();
+                        }
+                    });
+                }
+                break;
+            }
+        }
+    });
+
+    // Handle drag and drop for images
+    element.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        element.classList.add('tiptap-dragover');
+    });
+
+    element.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        element.classList.remove('tiptap-dragover');
+    });
+
+    element.addEventListener('drop', function(e) {
+        e.preventDefault();
+        element.classList.remove('tiptap-dragover');
+
+        var files = e.dataTransfer && e.dataTransfer.files;
+        if (!files || files.length === 0) return;
+
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            if (file.type.indexOf('image') !== -1) {
+                uploadImage(file, function(err, url, name) {
+                    if (!err && url) {
+                        editor.chain().focus().setImage({ src: url, alt: name || 'Dropped image' }).run();
+                    }
+                });
+            }
+        }
+    });
 
     // Return wrapper object with useful methods
     return {

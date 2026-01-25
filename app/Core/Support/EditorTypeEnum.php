@@ -12,16 +12,16 @@ enum EditorTypeEnum: string
     /**
      * Shows a simplified editor used for comments
      */
-    case Simple = 'tinymceSimple';
+    case Simple = 'simpleEditor';
 
     /**
      * Shows a more complex editor for entity descriptions
      */
-    case Complex = 'tinymceComplex';
+    case Complex = 'complexEditor';
 
     /**
-     * Shows the full editor with all featuers
+     * Shows the full editor with all features
      */
-    case Notes = 'tinymceNotes';
+    case Notes = 'notesEditor';
 
 }

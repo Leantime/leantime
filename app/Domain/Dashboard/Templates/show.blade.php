@@ -331,7 +331,7 @@
                                 </select>
 
                                 <div class="commentReply">
-                                    <textarea rows="5" cols="50" class="tinymceSimple tw-w-full" name="text"></textarea>
+                                    <textarea rows="5" cols="50" class="simpleEditor tw-w-full" name="text"></textarea>
                                     <input
                                         type="submit"
                                         value="{{ __('buttons.save') }}"
@@ -498,7 +498,9 @@
 
 @once @push('scripts')
 <script type='text/javascript'>
-    leantime.editorController.initSimpleEditor();
+    if (window.leantime && window.leantime.tiptapController) {
+        leantime.tiptapController.initSimpleEditor();
+    }
 </script>
 @endpush @endonce
 

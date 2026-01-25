@@ -163,7 +163,9 @@ $project = $tpl->get('project');
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
 
         leantime.projectsController.initProjectTabs();
-        leantime.editorController.initComplexEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initComplexEditor();
+        }
 
         }
     );

@@ -66,21 +66,50 @@
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>',
             title: 'Link (Ctrl+K)',
             command: function(editor) {
-                var url = window.prompt('Enter URL:');
-                if (url) {
-                    editor.chain().focus().setLink({ href: url }).run();
+                // Check if we're already on a link (to unlink)
+                if (editor.isActive('link')) {
+                    editor.chain().focus().unsetLink().run();
+                    return;
                 }
+
+                // Check if there's selected text
+                var selection = editor.state.selection;
+                var hasSelection = !selection.empty;
+
+                // Use setTimeout to ensure prompt appears above modal
+                setTimeout(function() {
+                    var url = window.prompt('Enter URL:', 'https://');
+                    if (url === null) return; // User cancelled
+
+                    if (url && url !== 'https://') {
+                        // Ensure URL has protocol
+                        if (!/^https?:\/\//i.test(url) && !/^mailto:/i.test(url)) {
+                            url = 'https://' + url;
+                        }
+
+                        if (hasSelection) {
+                            // Apply link to selected text
+                            editor.chain().focus().setLink({ href: url }).run();
+                        } else {
+                            // No selection - prompt for link text
+                            var linkText = window.prompt('Enter link text:', url);
+                            if (linkText) {
+                                editor.chain().focus()
+                                    .insertContent('<a href="' + url + '">' + linkText + '</a>')
+                                    .run();
+                            }
+                        }
+                    }
+                }, 10);
             },
             isActive: function(editor) { return editor.isActive('link'); }
         },
         image: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>',
             title: 'Image',
-            command: function(editor) {
-                var url = window.prompt('Enter image URL:');
-                if (url) {
-                    editor.chain().focus().setImage({ src: url }).run();
-                }
+            command: function(editor, button) {
+                // Show image options popover
+                showImagePopover(editor, button);
             },
             isActive: function() { return false; }
         },
@@ -132,6 +161,181 @@
     };
 
     /**
+     * Close any open image popovers
+     */
+    function closeImagePopover() {
+        var existingPopover = document.querySelector('.tiptap-image-popover');
+        if (existingPopover) {
+            existingPopover.remove();
+        }
+    }
+
+    /**
+     * Show image upload/URL popover
+     */
+    function showImagePopover(editor, button) {
+        // Close any existing popover
+        closeImagePopover();
+
+        // Create popover
+        var popover = document.createElement('div');
+        popover.className = 'tiptap-image-popover';
+
+        // Get module info from the page context
+        var moduleId = '';
+        var module = 'ticket';
+
+        // Try to get ticket ID from URL or form
+        var ticketIdInput = document.querySelector('input[name="id"], input[name="itemId"], input[name="ticketId"]');
+        if (ticketIdInput && ticketIdInput.value) {
+            moduleId = ticketIdInput.value;
+        }
+
+        // Check if we're in a wiki/doc context
+        if (window.location.href.indexOf('/wiki/') > -1 || window.location.href.indexOf('/docs/') > -1) {
+            module = 'wiki';
+            var wikiIdInput = document.querySelector('input[name="id"]');
+            if (wikiIdInput) moduleId = wikiIdInput.value;
+        }
+
+        // Check project context
+        if (window.location.href.indexOf('/projects/') > -1) {
+            module = 'project';
+        }
+
+        // Fallback to current project
+        if (!moduleId && window.leantime && window.leantime.currentProject) {
+            moduleId = window.leantime.currentProject;
+            module = 'project';
+        }
+
+        popover.innerHTML =
+            '<div class="tiptap-image-popover__content">' +
+                '<div class="tiptap-image-popover__option tiptap-image-popover__upload">' +
+                    '<input type="file" accept="image/*" class="tiptap-image-popover__file-input" />' +
+                    '<span class="tiptap-image-popover__icon">' +
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
+                    '</span>' +
+                    '<span>Upload image</span>' +
+                '</div>' +
+                '<div class="tiptap-image-popover__divider"></div>' +
+                '<div class="tiptap-image-popover__url-section">' +
+                    '<input type="text" placeholder="Or paste image URL..." class="tiptap-image-popover__url-input" />' +
+                    '<button type="button" class="tiptap-image-popover__url-btn">Insert</button>' +
+                '</div>' +
+            '</div>';
+
+        // Position popover below button
+        var buttonRect = button.getBoundingClientRect();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+        popover.style.position = 'absolute';
+        popover.style.top = (buttonRect.bottom + scrollTop + 4) + 'px';
+        popover.style.left = (buttonRect.left + scrollLeft) + 'px';
+        popover.style.zIndex = '10001';
+
+        document.body.appendChild(popover);
+
+        // File input handler
+        var fileInput = popover.querySelector('.tiptap-image-popover__file-input');
+        var uploadOption = popover.querySelector('.tiptap-image-popover__upload');
+
+        uploadOption.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+
+            // Show loading state
+            uploadOption.innerHTML = '<span class="tiptap-image-popover__loading">Uploading...</span>';
+
+            // Upload to Leantime API
+            var formData = new FormData();
+            formData.append('file', file);
+
+            var uploadUrl = leantime.appUrl + '/api/files';
+            if (module && moduleId) {
+                uploadUrl += '?module=' + module + '&moduleId=' + moduleId;
+            }
+
+            fetch(uploadUrl, {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(response) {
+                if (!response.ok) throw new Error('Upload failed');
+                return response.json();
+            })
+            .then(function(data) {
+                // Build image URL from response
+                var imageUrl = leantime.appUrl + '/files/get?module=' + data.module +
+                    '&encName=' + data.encName +
+                    '&ext=' + data.extension +
+                    '&realName=' + data.realName;
+
+                // Insert image into editor
+                editor.chain().focus().setImage({ src: imageUrl, alt: data.realName }).run();
+                closeImagePopover();
+            })
+            .catch(function(err) {
+                console.error('Image upload failed:', err);
+                uploadOption.innerHTML = '<span style="color: var(--error-color)">Upload failed. Try again.</span>';
+                setTimeout(function() {
+                    closeImagePopover();
+                }, 2000);
+            });
+        });
+
+        // URL input handler
+        var urlInput = popover.querySelector('.tiptap-image-popover__url-input');
+        var urlBtn = popover.querySelector('.tiptap-image-popover__url-btn');
+
+        urlBtn.addEventListener('click', function() {
+            var url = urlInput.value.trim();
+            if (url) {
+                editor.chain().focus().setImage({ src: url }).run();
+                closeImagePopover();
+            }
+        });
+
+        urlInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                urlBtn.click();
+            }
+        });
+
+        // Close on click outside
+        setTimeout(function() {
+            document.addEventListener('click', function closeOnClickOutside(e) {
+                if (!popover.contains(e.target) && e.target !== button) {
+                    closeImagePopover();
+                    document.removeEventListener('click', closeOnClickOutside);
+                }
+            });
+        }, 10);
+
+        // Close on Escape
+        document.addEventListener('keydown', function closeOnEscape(e) {
+            if (e.key === 'Escape') {
+                closeImagePopover();
+                document.removeEventListener('keydown', closeOnEscape);
+            }
+        });
+
+        // Focus URL input
+        setTimeout(function() {
+            urlInput.focus();
+        }, 50);
+    }
+
+    /**
      * Create a toolbar for the editor
      */
     function createToolbar(editor, config) {
@@ -172,13 +376,47 @@
             button.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                buttonDef.command(editor);
+                buttonDef.command(editor, button);
             });
 
             buttonGroup.appendChild(button);
         });
 
         toolbar.appendChild(buttonGroup);
+
+        // Add dynamically registered plugin buttons
+        if (window.leantime && window.leantime.tiptapController) {
+            var registeredButtons = window.leantime.tiptapController.getToolbarButtons();
+            if (registeredButtons && registeredButtons.size > 0) {
+                // Add separator before plugin buttons
+                var pluginSeparator = document.createElement('div');
+                pluginSeparator.className = 'tiptap-toolbar__separator';
+                buttonGroup.appendChild(pluginSeparator);
+
+                registeredButtons.forEach(function(buttonConfig, name) {
+                    var button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'tiptap-toolbar__button tiptap-toolbar__button--plugin';
+                    button.setAttribute('data-command', name);
+                    button.setAttribute('title', buttonConfig.title || buttonConfig.label || name);
+                    button.setAttribute('aria-label', buttonConfig.title || buttonConfig.label || name);
+                    button.innerHTML = buttonConfig.icon || '<span>' + (buttonConfig.label || name) + '</span>';
+
+                    // Click handler
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (buttonConfig.action) {
+                            buttonConfig.action(editor, button);
+                        } else if (buttonConfig.command) {
+                            buttonConfig.command(editor, button);
+                        }
+                    });
+
+                    buttonGroup.appendChild(button);
+                });
+            }
+        }
 
         // Update button states on editor changes
         var updateButtonStates = function() {

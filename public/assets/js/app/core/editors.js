@@ -1,4 +1,19 @@
+/**
+ * @deprecated This TinyMCE-based editor controller is deprecated.
+ * Use leantime.tiptapController instead.
+ *
+ * Migration Guide:
+ * - initSimpleEditor() -> tiptapController.initSimpleEditor() or use class="tiptapSimple"
+ * - initComplexEditor() -> tiptapController.initComplexEditor() or use class="tiptapComplex"
+ * - initNotesEditor() -> tiptapController.initNotesEditor() or use class="tiptapNotes"
+ *
+ * This file is kept for backwards compatibility with external plugins.
+ * It will be removed in a future release.
+ */
 leantime.editorController = (function () {
+
+    // Log deprecation warning
+    console.warn('[Leantime] editorController (TinyMCE) is deprecated. Please migrate to tiptapController.');
 
     var markDownTextPatterns = [
         {start: '*', end: '*', format: 'italic'},
