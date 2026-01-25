@@ -57,7 +57,7 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 
                 </ul>
                 <hr />
-                <a href="#/calendar/importGCal"><i class="fa-regular fa-calendar-plus"></i> Import Calendar</a>
+                <a href="#/calendar/connectCalendar" class="formModal"><i class="fa-regular fa-calendar-plus"></i> <?= $tpl->__('label.connect_calendar') ?></a>
             </div>
         </div>
         <div class="col-md-10">
