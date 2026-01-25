@@ -580,6 +580,7 @@ var tiptapController = {
         return initEditorsBySelector('textarea.tiptapComplex', {
             placeholder: "Start writing your description...",
             tables: true,
+            toolbar: 'complex',
         });
     },
 
