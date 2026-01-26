@@ -19,19 +19,6 @@ leantime.modals = (function () {
 
                     jQuery(".showDialogOnLoad").show();
 
-                    // Destroy TinyMCE editors
-                    if(typeof tinymce !== 'undefined' && tinymce.editors.length>0) {
-                        console.log('[Modal] Destroying', tinymce.editors.length, 'TinyMCE editor(s)');
-
-                        tinymce.editors.forEach(function(editor) {
-                            editor.save();
-                            editor.destroy();
-                            editor.remove();
-                        });
-
-                        tinymce.EditorManager.remove();
-                    }
-
                     // Destroy Tiptap editors
                     if(window.leantime?.tiptapController?.registry) {
                         var count = window.leantime.tiptapController.registry.destroyAll();
@@ -43,18 +30,6 @@ leantime.modals = (function () {
                 },
                 beforeShowCont: function () {
                     jQuery(".showDialogOnLoad").show();
-
-                    // Destroy TinyMCE editors
-                    if(typeof tinymce !== 'undefined' && tinymce.editors.length>0) {
-
-                        tinymce.editors.forEach(function(editor) {
-                            editor.save();
-                            editor.destroy();
-                            editor.remove();
-                        });
-
-                        tinymce.EditorManager.remove();
-                    }
 
                     // Destroy Tiptap editors
                     if(window.leantime?.tiptapController?.registry) {

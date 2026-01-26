@@ -15,7 +15,7 @@
      */
     var toolbarButtons = {
         bold: {
-            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path></svg>',
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path></svg>',
             title: 'Bold (Ctrl+B)',
             command: function(editor) { editor.chain().focus().toggleBold().run(); },
             isActive: function(editor) { return editor.isActive('bold'); }
@@ -271,20 +271,34 @@
 
         menu.innerHTML = menuContent;
 
-        // Position menu below button
+        // Position menu relative to button
         var buttonRect = button.getBoundingClientRect();
         var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        var viewportHeight = window.innerHeight;
 
         menu.style.position = 'absolute';
-        menu.style.top = (buttonRect.bottom + scrollTop + 4) + 'px';
-        menu.style.left = (buttonRect.right + scrollLeft - 180) + 'px'; // Align to right edge
+        menu.style.left = (buttonRect.right + scrollLeft - 200) + 'px'; // Align to right edge
         menu.style.zIndex = '10001';
 
         document.body.appendChild(menu);
 
-        // Ensure menu doesn't go off-screen
+        // Get menu dimensions after adding to DOM
         var menuRect = menu.getBoundingClientRect();
+
+        // Check if menu would go off-screen at the bottom
+        var spaceBelow = viewportHeight - buttonRect.bottom;
+        var spaceAbove = buttonRect.top;
+
+        if (spaceBelow < menuRect.height + 10 && spaceAbove > menuRect.height + 10) {
+            // Position above the button
+            menu.style.top = (buttonRect.top + scrollTop - menuRect.height - 4) + 'px';
+        } else {
+            // Position below the button (default)
+            menu.style.top = (buttonRect.bottom + scrollTop + 4) + 'px';
+        }
+
+        // Ensure menu doesn't go off-screen horizontally
         if (menuRect.left < 10) {
             menu.style.left = '10px';
         }

@@ -66,8 +66,8 @@
 }
 
 .tiptap-editor:focus-within {
-    border-color: var(--primary-color, #5a67d8);
-    box-shadow: 0 0 0 3px var(--primary-color-15, rgba(90, 103, 216, 0.15));
+    border-color: var(--main-border-color, #ccc);
+    box-shadow: 0 0 0 2px var(--dropdown-link-hover-bg, rgba(0, 0, 0, 0.05));
 }
 
 /* ==========================================================================
@@ -241,29 +241,31 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 24px; /* Match the line-height of text */
+    width: 20px;
+    height: 22px; /* Match first line of text */
+    margin-top: 1px; /* Fine-tune vertical alignment */
     user-select: none;
 }
 
 .tiptap-editor .ProseMirror ul[data-type="taskList"] li > div {
     flex: 1 1 auto;
     min-width: 0;
-    line-height: 24px; /* Same height as checkbox container */
+    padding-top: 1px;
 }
 
 .tiptap-editor .ProseMirror ul[data-type="taskList"] li > div > p {
     margin: 0;
-    line-height: inherit;
+    line-height: 1.5;
 }
 
 .tiptap-editor .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
     cursor: pointer;
     accent-color: var(--primary-color, #5a67d8);
     margin: 0;
-    border-radius: 4px;
+    border-radius: 3px;
 }
 
 .tiptap-editor .ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div {
@@ -295,29 +297,31 @@ ul[data-type="taskList"] li > label {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 24px;
+    width: 20px;
+    height: 22px;
+    margin-top: 1px;
     user-select: none;
 }
 
 ul[data-type="taskList"] li > div {
     flex: 1 1 auto;
     min-width: 0;
-    line-height: 24px;
+    padding-top: 1px;
 }
 
 ul[data-type="taskList"] li > div > p {
     margin: 0;
-    line-height: inherit;
+    line-height: 1.5;
 }
 
 ul[data-type="taskList"] input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
     cursor: pointer;
     accent-color: var(--primary-color, #5a67d8);
     margin: 0;
-    border-radius: 4px;
+    border-radius: 3px;
 }
 
 ul[data-type="taskList"] li[data-checked="true"] > div {
@@ -584,20 +588,22 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     display: flex;
     align-items: center;
     gap: 4px;
-    padding: 10px 14px;
-    background: var(--toolbar-background, #ffffff);
-    border: 1px solid var(--main-border-color, rgba(0, 0, 0, 0.08));
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+    padding: 8px 12px;
+    background: var(--toolbar-background, rgba(255, 255, 255, 0.95));
+    border: 1px solid var(--main-border-color, rgba(0, 0, 0, 0.06));
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
     flex-wrap: wrap;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .tiptap-toolbar--top {
-    border-radius: 10px 10px 0 0;
+    border-radius: 12px 12px 0 0;
     border-bottom: none;
 }
 
 .tiptap-toolbar--bottom {
-    border-radius: 0 0 10px 10px;
+    border-radius: 0 0 12px 12px;
     border-top: none;
 }
 
@@ -631,34 +637,34 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     padding: 0;
     border: none;
     border-radius: 6px;
     background: transparent;
-    color: var(--main-text-color, #374151);
+    color: var(--main-text-color, #4b5563);
     cursor: pointer;
-    transition: all 0.12s ease;
+    transition: all 0.15s ease;
 }
 
 .tiptap-toolbar__button:hover {
-    background: rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.06);
     color: var(--main-text-color, #111827);
 }
 
 .tiptap-toolbar__button:active {
     background: rgba(0, 0, 0, 0.1);
-    transform: scale(0.97);
+    transform: scale(0.95);
 }
 
 .tiptap-toolbar__button.is-active {
-    background: rgba(var(--primary-color-rgb, 90, 103, 216), 0.15);
+    background: rgba(var(--primary-color-rgb, 90, 103, 216), 0.12);
     color: var(--primary-color, #5a67d8);
 }
 
 .tiptap-toolbar__button.is-active:hover {
-    background: rgba(var(--primary-color-rgb, 90, 103, 216), 0.22);
+    background: rgba(var(--primary-color-rgb, 90, 103, 216), 0.18);
     color: var(--primary-color, #5a67d8);
 }
 
@@ -707,9 +713,9 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 [data-theme="dark"] .tiptap-toolbar,
 .dark .tiptap-toolbar {
-    background: var(--toolbar-background, #2d2d2d);
-    border-color: var(--main-border-color, rgba(255, 255, 255, 0.08));
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+    background: var(--toolbar-background, rgba(45, 45, 45, 0.95));
+    border-color: var(--main-border-color, rgba(255, 255, 255, 0.06));
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 [data-theme="dark"] .tiptap-toolbar__button,
@@ -912,8 +918,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-editor.tiptap-dragover,
 .tiptap-editor.tiptap-dragover .ProseMirror {
-    background: rgba(var(--primary-color-rgb, 90, 103, 216), 0.05);
-    outline: 2px dashed var(--primary-color, #5a67d8);
+    background: var(--dropdown-link-hover-bg, rgba(245, 245, 245, 0.5));
+    outline: 2px dashed var(--main-border-color, #ddd);
     outline-offset: -2px;
 }
 
@@ -3264,7 +3270,7 @@ div[id^="comments-"] > div > .clearall {
 }
 
 .tiptap-column:focus-within {
-    border-color: var(--primary-color, #5a67d8);
+    border-color: var(--main-border-color, #ccc);
     border-style: solid;
 }
 
@@ -3329,16 +3335,30 @@ div[id^="comments-"] > div > .clearall {
    ========================================================================== */
 
 .tiptap-more-menu {
-    min-width: 180px;
-    background: var(--main-background, #fff);
-    border: 1px solid var(--main-border-color, #e2e8f0);
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    min-width: 200px;
+    background: var(--main-background, rgba(255, 255, 255, 0.98));
+    border: 1px solid var(--main-border-color, rgba(0, 0, 0, 0.06));
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
     overflow: hidden;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    animation: tiptap-menu-appear 0.12s ease-out;
+}
+
+@keyframes tiptap-menu-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .tiptap-more-menu__list {
-    padding: 4px 0;
+    padding: 6px;
 }
 
 .tiptap-more-menu__item {
@@ -3346,22 +3366,24 @@ div[id^="comments-"] > div > .clearall {
     align-items: center;
     gap: 10px;
     width: 100%;
-    padding: 8px 12px;
+    padding: 8px 10px;
     background: none;
     border: none;
+    border-radius: 6px;
     cursor: pointer;
     text-align: left;
     font-size: 13px;
-    color: var(--main-text-color, #333);
-    transition: background-color 0.15s ease;
+    color: var(--main-text-color, #374151);
+    transition: all 0.12s ease;
 }
 
 .tiptap-more-menu__item:hover {
-    background: var(--element-hover, #f5f5f5);
+    background: var(--dropdown-link-hover-bg, rgba(245, 245, 245, 1));
+    color: var(--dropdown-link-hover-color, var(--primary-font-color, #333));
 }
 
 .tiptap-more-menu__item.is-active {
-    background: var(--primary-color-15, rgba(90, 103, 216, 0.15));
+    background: var(--dropdown-link-hover-bg, rgba(245, 245, 245, 1));
     color: var(--primary-color, #5a67d8);
 }
 
@@ -3390,20 +3412,27 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-more-menu__divider {
     height: 1px;
-    margin: 4px 0;
-    background: var(--main-border-color, #e2e8f0);
+    margin: 6px;
+    background: var(--main-border-color, rgba(0, 0, 0, 0.08));
 }
 
 /* Dark mode */
 [data-theme="dark"] .tiptap-more-menu,
 .dark .tiptap-more-menu {
-    background: var(--element-bg, #1e293b);
-    border-color: var(--main-border-color, #334155);
+    background: rgba(30, 41, 59, 0.98);
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 [data-theme="dark"] .tiptap-more-menu__item:hover,
 .dark .tiptap-more-menu__item:hover {
-    background: var(--element-hover, #334155);
+    background: var(--dropdown-link-hover-bg, rgba(255, 255, 255, 0.06));
+    color: var(--dropdown-link-hover-color, var(--primary-font-color, #e5e5e5));
+}
+
+[data-theme="dark"] .tiptap-more-menu__divider,
+.dark .tiptap-more-menu__divider {
+    background: rgba(255, 255, 255, 0.08);
 }
 
 /* ==========================================================================

@@ -56,7 +56,6 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         .js("./node_modules/@lottiefiles/lottie-player/dist/lottie-player.js", `public/dist/js/compiled-lottieplayer.${version}.min.js`)
         .combine([
         "./public/assets/js/app/app.js",
-        "./public/assets/js/app/core/editors.js",
         "./public/assets/js/app/core/snippets.js",
         "./public/assets/js/app/core/modals.js",
         "./public/assets/js/app/core/tableHandling.js",
@@ -123,44 +122,6 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./node_modules/datatables.net-buttons/js/buttons.print.js",
         "./node_modules/datatables.net-buttons/js/buttons.colVis.js",
     ], `public/dist/js/compiled-table-component.${version}.min.js`)
-    .combine([
-        "./node_modules/tinymce/tinymce.js",
-        "./node_modules/tinymce/icons/default/icons.js",
-        "./node_modules/tinymce/jquery.tinymce.js",
-        "./node_modules/tinymce/themes/silver/theme.js",
-        "./node_modules/tinymce/plugins/autolink/plugin.js",
-        "./node_modules/tinymce/plugins/link/plugin.js",
-        "./node_modules/tinymce/plugins/textcolor/plugin.js",
-        "./node_modules/tinymce/plugins/image/plugin.js",
-        "./node_modules/tinymce/plugins/imagetools/plugin.js",
-        "./node_modules/tinymce/plugins/lists/plugin.js",
-        "./node_modules/tinymce/plugins/save/plugin.js",
-        "./node_modules/tinymce/plugins/autosave/plugin.js",
-        "./node_modules/tinymce/plugins/media/plugin.js",
-        "./node_modules/tinymce/plugins/searchreplace/plugin.js",
-        "./node_modules/tinymce/plugins/paste/plugin.js",
-        "./node_modules/tinymce/plugins/directionality/plugin.js",
-        "./node_modules/tinymce/plugins/fullscreen/plugin.js",
-        "./node_modules/tinymce/plugins/noneditable/plugin.js",
-        "./node_modules/tinymce/plugins/visualchars/plugin.js",
-        "./node_modules/tinymce/plugins/emoticons/plugin.js",
-        "./node_modules/tinymce/plugins/emoticons/js/emojis.min.js",
-        "./node_modules/tinymce/plugins/advlist/plugin.js",
-        "./node_modules/tinymce/plugins/autoresize/plugin.js",
-        "./node_modules/tinymce/plugins/codesample/plugin.js",
-        "./node_modules/tinymce/plugins/textpattern/plugin.js",
-        "./public/assets/js/libs/tinymce-plugins/helper.js",
-        "./public/assets/js/libs/tinymce-plugins/checklist/index.js",
-        "./public/assets/js/libs/tinymce-plugins/shortlink/index.js",
-        "./public/assets/js/libs/tinymce-plugins/table/plugin.js",
-        "./public/assets/js/libs/tinymce-plugins/bettertable/index.js",
-        "./public/assets/js/libs/tinymce-plugins/collapsibleheaders/index.js",
-        "./public/assets/js/libs/tinymce-plugins/embed/index.js",
-        "./public/assets/js/libs/tinymce-plugins/slashcommands/slashcommands.js",
-        "./public/assets/js/libs/tinymce-plugins/mention/plugin.js",
-        "./public/assets/js/libs/tinymce-plugins/advancedTemplate/plugin.js",
-        "./public/assets/js/libs/tinymce-plugins/aiTools/plugin.js",
-    ], `public/dist/js/compiled-editor-component.${version}.min.js`)
     .js('./public/assets/js/app/core/tiptap/index.js', `public/dist/js/compiled-tiptap-editor.${version}.min.js`)
     .combine([
         './public/assets/js/app/core/tiptap/extensions/toolbar.js'
@@ -179,9 +140,6 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
     .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`, {
         sourceMap: true,
     })
-    .less('./public/assets/less/editor.less', `public/dist/css/editor.${version}.min.css`, {
-        sourceMap: true,
-    })
     .less('./public/assets/less/app.less', `public/dist/css/app.${version}.min.css`, {
         sourceMap: true,
     })
@@ -190,7 +148,6 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
     .copy('./public/assets/images', 'public/dist/images')
     .copy('./public/assets/fonts', 'public/dist/fonts')
     .copy('./public/assets/lottie', 'public/dist/lottie')
-    .copy('./public/assets/css/libs/tinymceSkin/oxide', 'public/dist/css/libs/tinymceSkin/oxide')
     .eslint({
         fix: true,
         extensions: ['js'],

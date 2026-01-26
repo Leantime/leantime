@@ -4,7 +4,6 @@
     "/js/compiled-lottieplayer.3.6.0.min.js": "/js/compiled-lottieplayer.3.6.0.min.js",
     "/js/compiled-tiptap-editor.3.6.0.min.js": "/js/compiled-tiptap-editor.3.6.0.min.js",
     "/css/main.3.6.0.min.css": "/css/main.3.6.0.min.css",
-    "/css/editor.3.6.0.min.css": "/css/editor.3.6.0.min.css",
     "/css/app.3.6.0.min.css": "/css/app.3.6.0.min.css",
     "/js/compiled-footer.3.6.0.min.js": "/js/compiled-footer.3.6.0.min.js",
     "/js/compiled-app.3.6.0.min.js": "/js/compiled-app.3.6.0.min.js",
@@ -13,7 +12,6 @@
     "/js/compiled-global-component.3.6.0.min.js": "/js/compiled-global-component.3.6.0.min.js",
     "/js/compiled-calendar-component.3.6.0.min.js": "/js/compiled-calendar-component.3.6.0.min.js",
     "/js/compiled-table-component.3.6.0.min.js": "/js/compiled-table-component.3.6.0.min.js",
-    "/js/compiled-editor-component.3.6.0.min.js": "/js/compiled-editor-component.3.6.0.min.js",
     "/js/compiled-tiptap-toolbar.3.6.0.min.js": "/js/compiled-tiptap-toolbar.3.6.0.min.js",
     "/js/compiled-tiptap-tests.3.6.0.min.js": "/js/compiled-tiptap-tests.3.6.0.min.js",
     "/js/compiled-gantt-component.3.6.0.min.js": "/js/compiled-gantt-component.3.6.0.min.js",
@@ -231,16 +229,5 @@
     "/lottie/leo/rolling_leo.json": "/lottie/leo/rolling_leo.json",
     "/lottie/leo/sleep.json": "/lottie/leo/sleep.json",
     "/lottie/leo/smoking.json": "/lottie/leo/smoking.json",
-    "/lottie/leo/still.json": "/lottie/leo/still.json",
-    "/css/libs/tinymceSkin/oxide/content.css": "/css/libs/tinymceSkin/oxide/content.css",
-    "/css/libs/tinymceSkin/oxide/content.inline.css": "/css/libs/tinymceSkin/oxide/content.inline.css",
-    "/css/libs/tinymceSkin/oxide/content.inline.min.css": "/css/libs/tinymceSkin/oxide/content.inline.min.css",
-    "/css/libs/tinymceSkin/oxide/content.min.css": "/css/libs/tinymceSkin/oxide/content.min.css",
-    "/css/libs/tinymceSkin/oxide/content.mobile.css": "/css/libs/tinymceSkin/oxide/content.mobile.css",
-    "/css/libs/tinymceSkin/oxide/content.mobile.min.css": "/css/libs/tinymceSkin/oxide/content.mobile.min.css",
-    "/css/libs/tinymceSkin/oxide/fonts/tinymce-mobile.woff": "/css/libs/tinymceSkin/oxide/fonts/tinymce-mobile.woff",
-    "/css/libs/tinymceSkin/oxide/skin.css": "/css/libs/tinymceSkin/oxide/skin.css",
-    "/css/libs/tinymceSkin/oxide/skin.min.css": "/css/libs/tinymceSkin/oxide/skin.min.css",
-    "/css/libs/tinymceSkin/oxide/skin.mobile.css": "/css/libs/tinymceSkin/oxide/skin.mobile.css",
-    "/css/libs/tinymceSkin/oxide/skin.mobile.min.css": "/css/libs/tinymceSkin/oxide/skin.mobile.min.css"
+    "/lottie/leo/still.json": "/lottie/leo/still.json"
 }
