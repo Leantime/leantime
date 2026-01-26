@@ -33,18 +33,18 @@ function loadKaTeX() {
             return;
         }
 
-        // Load KaTeX CSS
+        // Load KaTeX CSS (using unpkg.com which is allowed by CSP)
         if (!document.querySelector('link[href*="katex"]')) {
             var cssLink = document.createElement('link');
             cssLink.rel = 'stylesheet';
-            cssLink.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css';
+            cssLink.href = 'https://unpkg.com/katex@0.16.9/dist/katex.min.css';
             cssLink.crossOrigin = 'anonymous';
             document.head.appendChild(cssLink);
         }
 
-        // Load KaTeX JS
+        // Load KaTeX JS (using unpkg.com which is allowed by CSP)
         var script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js';
+        script.src = 'https://unpkg.com/katex@0.16.9/dist/katex.min.js';
         script.crossOrigin = 'anonymous';
         script.onload = function() {
             katexLoaded = true;

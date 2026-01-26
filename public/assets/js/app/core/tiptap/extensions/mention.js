@@ -6,6 +6,61 @@
 
 const Mention = require('@tiptap/extension-mention').default;
 const { PluginKey } = require('@tiptap/pm/state');
+const { mergeAttributes } = require('@tiptap/core');
+
+/**
+ * Extended Mention extension that outputs data-tagged-user-id for backend notifications
+ */
+const LeantimeMention = Mention.extend({
+    // Render as <a> tag with data-tagged-user-id attribute for backend processing
+    renderHTML: function(props) {
+        var node = props.node;
+        var HTMLAttributes = props.HTMLAttributes;
+
+        return [
+            'a',
+            mergeAttributes(
+                { 'data-tagged-user-id': node.attrs.id },
+                this.options.HTMLAttributes,
+                HTMLAttributes
+            ),
+            '@' + node.attrs.label
+        ];
+    },
+
+    // Parse mentions from existing HTML (both old TinyMCE format and new format)
+    parseHTML: function() {
+        return [
+            {
+                tag: 'a[data-tagged-user-id]',
+                getAttrs: function(element) {
+                    return {
+                        id: element.getAttribute('data-tagged-user-id'),
+                        label: element.textContent.replace(/^@/, '')
+                    };
+                }
+            },
+            {
+                tag: 'a.userMention[data-tagged-user-id]',
+                getAttrs: function(element) {
+                    return {
+                        id: element.getAttribute('data-tagged-user-id'),
+                        label: element.textContent.replace(/^@/, '')
+                    };
+                }
+            },
+            {
+                tag: 'span[data-type="mention"]',
+                getAttrs: function(element) {
+                    return {
+                        id: element.getAttribute('data-id'),
+                        label: element.getAttribute('data-label') || element.textContent.replace(/^@/, '')
+                    };
+                }
+            }
+        ];
+    }
+});
 
 /**
  * Fetch users from the API based on query
@@ -171,12 +226,9 @@ function createMentionExtension() {
         }
     }
 
-    return Mention.configure({
+    return LeantimeMention.configure({
         HTMLAttributes: {
             class: 'tiptap-mention',
-        },
-        renderLabel: function(props) {
-            return '@' + props.node.attrs.label;
         },
         suggestion: {
             char: '@',
