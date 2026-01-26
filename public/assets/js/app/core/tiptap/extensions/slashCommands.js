@@ -464,38 +464,60 @@ function positionPopup(popup, clientRect) {
         return;
     }
 
-    var popupHeight = popup.offsetHeight || 300;
-    var popupWidth = popup.offsetWidth || 280;
-    var viewportHeight = window.innerHeight;
-    var viewportWidth = window.innerWidth;
-
-    // For position:fixed, use clientRect directly (viewport-relative)
-    var top = clientRect.bottom + 8;
-    var left = clientRect.left;
-
-    // Adjust if popup would go off-screen (bottom)
-    if (top + popupHeight > viewportHeight) {
-        top = clientRect.top - popupHeight - 8;
-    }
-
-    // Adjust if popup would go off-screen (right)
-    if (left + popupWidth > viewportWidth) {
-        left = viewportWidth - popupWidth - 16;
-    }
-
-    // Adjust if popup would go off-screen (left)
-    if (left < 16) {
-        left = 16;
-    }
-
-    // Ensure top is not negative
-    if (top < 8) {
-        top = 8;
-    }
-
-    popup.style.top = top + 'px';
-    popup.style.left = left + 'px';
+    // Show popup first to get accurate dimensions
+    popup.style.visibility = 'hidden';
     popup.style.display = 'block';
+
+    // Use requestAnimationFrame to ensure DOM has rendered
+    requestAnimationFrame(function() {
+        var popupHeight = popup.offsetHeight || 300;
+        var popupWidth = popup.offsetWidth || 280;
+        var viewportHeight = window.innerHeight;
+        var viewportWidth = window.innerWidth;
+
+        // For position:fixed, use clientRect directly (viewport-relative)
+        var cursorTop = clientRect.top;
+        var cursorBottom = clientRect.bottom;
+        var left = clientRect.left;
+
+        // Calculate space above and below
+        var spaceBelow = viewportHeight - cursorBottom - 16; // 16px margin
+        var spaceAbove = cursorTop - 16; // 16px margin
+
+        var top;
+
+        // Position below cursor if there's enough space, otherwise above
+        if (spaceBelow >= popupHeight || spaceBelow >= spaceAbove) {
+            // Position below
+            top = cursorBottom + 8;
+            // If still overflows, constrain to viewport
+            if (top + popupHeight > viewportHeight - 8) {
+                popup.style.maxHeight = (viewportHeight - top - 16) + 'px';
+            }
+        } else {
+            // Position above cursor
+            top = cursorTop - popupHeight - 8;
+            // If top goes negative, position at top with constrained height
+            if (top < 8) {
+                top = 8;
+                popup.style.maxHeight = (cursorTop - 24) + 'px';
+            }
+        }
+
+        // Adjust if popup would go off-screen (right)
+        if (left + popupWidth > viewportWidth) {
+            left = viewportWidth - popupWidth - 16;
+        }
+
+        // Adjust if popup would go off-screen (left)
+        if (left < 16) {
+            left = 16;
+        }
+
+        popup.style.top = top + 'px';
+        popup.style.left = left + 'px';
+        popup.style.visibility = 'visible';
+    });
 }
 
 /**
