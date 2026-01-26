@@ -3477,3 +3477,218 @@ div[id^="comments-"] > div > .clearall {
     background: var(--element-bg, #1e293b);
     border-color: var(--main-border-color, #334155);
 }
+
+/* ==========================================================================
+   Mobile Responsiveness
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    /* Editor wrapper */
+    .tiptap-wrapper {
+        margin: 0;
+    }
+
+    /* Editor content area - better touch targets */
+    .tiptap-editor {
+        min-height: 150px;
+    }
+
+    .tiptap-editor .ProseMirror {
+        padding: 12px;
+        font-size: 16px; /* Prevent iOS zoom on focus */
+    }
+
+    /* Toolbar - allow wrapping and smaller buttons */
+    .tiptap-toolbar {
+        padding: 6px 8px;
+        gap: 2px;
+        border-radius: 8px;
+    }
+
+    .tiptap-toolbar__btn {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+    }
+
+    .tiptap-toolbar__btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .tiptap-toolbar__divider {
+        margin: 0 4px;
+        height: 20px;
+    }
+
+    /* Hide less essential toolbar buttons on mobile */
+    .tiptap-toolbar__btn[data-command="superscript"],
+    .tiptap-toolbar__btn[data-command="subscript"],
+    .tiptap-toolbar__btn[data-command="highlight"],
+    .tiptap-toolbar__btn[data-command="fontFamily"],
+    .tiptap-toolbar__btn[data-command="fontSize"] {
+        display: none;
+    }
+
+    /* Slash command popup - full width on mobile */
+    .tiptap-slash-popup {
+        left: 8px !important;
+        right: 8px;
+        width: auto;
+        max-width: none;
+        min-width: auto;
+    }
+
+    .tiptap-slash-popup__item {
+        padding: 12px;
+    }
+
+    .tiptap-slash-popup__icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    /* More menu - better positioning on mobile */
+    .tiptap-more-menu {
+        min-width: 180px;
+    }
+
+    .tiptap-more-menu__item {
+        padding: 12px 14px;
+    }
+
+    /* Template picker - full screen on mobile */
+    .tiptap-template-picker__content {
+        width: 95vw;
+        max-width: none;
+        max-height: 85vh;
+        margin: 2.5vh auto;
+    }
+
+    .tiptap-template-picker__item {
+        padding: 14px;
+    }
+
+    /* Mermaid dialog - full width on mobile */
+    .tiptap-mermaid-dialog__content {
+        width: 95vw;
+        max-width: none;
+        max-height: 85vh;
+    }
+
+    .tiptap-mermaid-dialog__editor {
+        min-height: 150px;
+    }
+
+    /* Math dialog - full width on mobile */
+    .tiptap-math-dialog__content {
+        width: 95vw;
+        max-width: none;
+    }
+
+    /* Embed dialog - full width on mobile */
+    .tiptap-embed-dialog__content {
+        width: 95vw;
+        max-width: none;
+    }
+
+    /* Emoji picker - full width on mobile */
+    .tiptap-emoji-picker__content {
+        width: 95vw;
+        max-width: none;
+        max-height: 60vh;
+    }
+
+    .tiptap-emoji-picker__emoji {
+        width: 36px;
+        height: 36px;
+        font-size: 22px;
+    }
+
+    /* Table responsive */
+    .tiptap-editor table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Code blocks - horizontal scroll */
+    .tiptap-editor pre {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Font popovers */
+    .tiptap-font-popover {
+        min-width: 150px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .tiptap-editor .ProseMirror {
+        padding: 10px;
+    }
+
+    .tiptap-toolbar {
+        padding: 4px 6px;
+    }
+
+    .tiptap-toolbar__btn {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+    }
+
+    .tiptap-toolbar__btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* Hide even more toolbar buttons on very small screens */
+    .tiptap-toolbar__btn[data-command="alignLeft"],
+    .tiptap-toolbar__btn[data-command="alignCenter"],
+    .tiptap-toolbar__btn[data-command="alignRight"],
+    .tiptap-toolbar__btn[data-command="table"] {
+        display: none;
+    }
+
+    .tiptap-slash-popup__icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .tiptap-slash-popup__label {
+        font-size: 14px;
+    }
+
+    .tiptap-slash-popup__description {
+        font-size: 12px;
+    }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .tiptap-toolbar__btn {
+        min-width: 40px;
+        min-height: 40px;
+    }
+
+    .tiptap-slash-popup__item {
+        min-height: 48px;
+    }
+
+    .tiptap-more-menu__item {
+        min-height: 44px;
+    }
+
+    /* Remove hover effects on touch devices */
+    .tiptap-toolbar__btn:hover {
+        background: transparent;
+    }
+
+    .tiptap-toolbar__btn:active {
+        background: var(--dropdown-link-hover-bg, rgba(0, 0, 0, 0.05));
+    }
+}
