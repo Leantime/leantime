@@ -98,6 +98,11 @@ if (str_contains($formUrl, '?delComment=')) {
                                     <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                                 </a>
                             <?php } ?>
+                            <span class="comment-reactions" id="reactions-<?= $row['id'] ?>"
+                                 hx-get="<?= BASE_URL ?>/hx/comments/reactions/get?commentId=<?= $row['id'] ?>"
+                                 hx-trigger="load"
+                                 hx-swap="outerHTML">
+                            </span>
                         </div>
 
                         <div class="replies">
@@ -136,6 +141,11 @@ if (str_contains($formUrl, '?delComment=')) {
                                                         </a>
                                                     <?php } ?>
                                                 <?php } ?>
+                                                <span class="comment-reactions" id="reactions-<?= $comment['id'] ?>"
+                                                     hx-get="<?= BASE_URL ?>/hx/comments/reactions/get?commentId=<?= $comment['id'] ?>"
+                                                     hx-trigger="load"
+                                                     hx-swap="outerHTML">
+                                                </span>
                                             </div>
                                         </div>
                                         <div class="clearall"></div>
@@ -251,5 +261,71 @@ if (str_contains($formUrl, '?delComment=')) {
         }, options);
 
         observer.observe(element);
+    }
+
+    // Reaction emoji picker - uses keys that map to the Reactions model
+    var reactionOptions = [
+        { key: 'like', emoji: '👍' },
+        { key: 'love', emoji: '❤️' },
+        { key: 'celebrate', emoji: '🎉' },
+        { key: 'funny', emoji: '😄' },
+        { key: 'interesting', emoji: '🤔' },
+        { key: 'support', emoji: '💯' }
+    ];
+    var activeReactionPicker = null;
+
+    function toggleReactionPicker(btn, commentId) {
+        // Close any existing picker
+        if (activeReactionPicker) {
+            activeReactionPicker.remove();
+            activeReactionPicker = null;
+        }
+
+        // Create picker element
+        var picker = document.createElement('div');
+        picker.className = 'reaction-emoji-picker show';
+        picker.innerHTML = '<div class="reaction-emoji-picker__grid">' +
+            reactionOptions.map(function(r) {
+                return '<button type="button" class="reaction-emoji-picker__btn" ' +
+                    'onclick="addReaction(\'' + r.key + '\', ' + commentId + ')">' +
+                    r.emoji + '</button>';
+            }).join('') +
+        '</div>';
+
+        // Position the picker near the button
+        var btnRect = btn.getBoundingClientRect();
+        picker.style.position = 'fixed';
+        picker.style.left = btnRect.left + 'px';
+        picker.style.top = (btnRect.bottom + 5) + 'px';
+
+        document.body.appendChild(picker);
+        activeReactionPicker = picker;
+
+        // Close on click outside
+        setTimeout(function() {
+            document.addEventListener('click', closeReactionPicker);
+        }, 0);
+    }
+
+    function closeReactionPicker(e) {
+        if (activeReactionPicker && !activeReactionPicker.contains(e.target) && !e.target.classList.contains('add-reaction-btn')) {
+            activeReactionPicker.remove();
+            activeReactionPicker = null;
+            document.removeEventListener('click', closeReactionPicker);
+        }
+    }
+
+    function addReaction(reactionKey, commentId) {
+        if (activeReactionPicker) {
+            activeReactionPicker.remove();
+            activeReactionPicker = null;
+        }
+
+        // Make HTMX request to toggle reaction
+        htmx.ajax('POST', '<?= BASE_URL ?>/hx/comments/reactions/toggle?commentId=' + commentId, {
+            values: { reaction: reactionKey },
+            target: '#reactions-' + commentId,
+            swap: 'outerHTML'
+        });
     }
 </script>

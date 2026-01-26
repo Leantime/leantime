@@ -112,4 +112,39 @@ class Reactions
 
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }
+
+    /**
+     * getEntityReactionsWithUsers - gets all reactions for an entity with user names
+     *
+     * @return array returns array grouped by reaction with user names
+     */
+    public function getEntityReactionsWithUsers(string $module, int $moduleId): array
+    {
+        $results = $this->db->table('zp_reactions')
+            ->select('zp_reactions.reaction', 'zp_reactions.userId', 'zp_user.firstname', 'zp_user.lastname')
+            ->leftJoin('zp_user', 'zp_reactions.userId', '=', 'zp_user.id')
+            ->where('zp_reactions.module', $module)
+            ->where('zp_reactions.moduleId', $moduleId)
+            ->get();
+
+        // Group by reaction and collect user names
+        $grouped = [];
+        foreach ($results as $row) {
+            $reaction = $row->reaction;
+            if (! isset($grouped[$reaction])) {
+                $grouped[$reaction] = [
+                    'reaction' => $reaction,
+                    'reactionCount' => 0,
+                    'users' => [],
+                ];
+            }
+            $grouped[$reaction]['reactionCount']++;
+            $grouped[$reaction]['users'][] = [
+                'userId' => $row->userId,
+                'name' => trim($row->firstname.' '.$row->lastname),
+            ];
+        }
+
+        return array_values($grouped);
+    }
 }

@@ -22,7 +22,23 @@ const TableHeader = require('@tiptap/extension-table-header').default;
 const Highlight = require('@tiptap/extension-highlight').default;
 const Underline = require('@tiptap/extension-underline').default;
 const Typography = require('@tiptap/extension-typography').default;
+const Superscript = require('@tiptap/extension-superscript').default;
+const Subscript = require('@tiptap/extension-subscript').default;
+const CharacterCount = require('@tiptap/extension-character-count').default;
+const TextAlign = require('@tiptap/extension-text-align').default;
+const TextStyle = require('@tiptap/extension-text-style').default;
+const Color = require('@tiptap/extension-color').default;
+const FontFamily = require('@tiptap/extension-font-family').default;
+const FontSize = require('tiptap-extension-font-size').default;
 const { createMentionExtension } = require('./extensions/mention');
+const { createSlashCommandsExtension } = require('./extensions/slashCommands');
+const { EmbedNode, showEmbedDialog } = require('./extensions/embed');
+const { createMermaidExtension, showMermaidDialog } = require('./extensions/mermaid');
+const { createMathExtension, showMathDialog, loadKaTeX } = require('./extensions/math');
+const { createDetailsExtension } = require('./extensions/details');
+const { createEmojiExtension, showEmojiPickerDialog } = require('./extensions/emoji');
+const { createTableOfContentsExtension } = require('./extensions/tableOfContents');
+const { createColumnsExtension } = require('./extensions/columns');
 
 /**
  * EditorRegistry - Manages Tiptap editor instances
@@ -300,11 +316,54 @@ function createTiptapEditor(elementOrSelector, options) {
         }),
         Underline,
         Typography,
+        Superscript,
+        Subscript,
+        TextStyle,
+        Color,
+        TextAlign.configure({
+            types: ['heading', 'paragraph'],
+        }),
+        CharacterCount.configure({
+            limit: null, // No limit by default
+        }),
+        FontFamily,
+        FontSize,
     ];
+
+    // Add Phase 6 advanced extensions if enabled (enabled by default for complex editors)
+    if (options.advancedExtensions !== false) {
+        // Mermaid diagrams
+        extensions.push(createMermaidExtension());
+
+        // LaTeX/Math (inline and block)
+        extensions.push.apply(extensions, createMathExtension());
+
+        // Details/Collapsible sections
+        extensions.push.apply(extensions, createDetailsExtension());
+
+        // Emoji picker
+        extensions.push(createEmojiExtension());
+
+        // Table of Contents
+        extensions.push.apply(extensions, createTableOfContentsExtension());
+
+        // Column layouts
+        extensions.push.apply(extensions, createColumnsExtension());
+    }
 
     // Add mention extension if enabled (enabled by default)
     if (options.mentions !== false) {
         extensions.push(createMentionExtension());
+    }
+
+    // Add slash commands extension if enabled (enabled by default for complex/notes editors)
+    if (options.slashCommands !== false) {
+        extensions.push(createSlashCommandsExtension());
+    }
+
+    // Add embed extension for video embeds
+    if (options.embeds !== false) {
+        extensions.push(EmbedNode);
     }
 
     // Add table extensions if needed
@@ -670,6 +729,7 @@ var tiptapController = {
             autosaveKey: 'leantime-tiptap-simple-' + path + '-' + formId,
             tables: false,
             toolbar: 'simple',
+            slashCommands: false, // Disable slash commands for simple editors
         }, options || {});
 
         return createTiptapEditor(elementOrSelector, mergedOptions);
@@ -812,6 +872,12 @@ var tiptapController = {
 // Make available globally
 window.leantime = window.leantime || {};
 window.leantime.tiptapController = tiptapController;
+
+// Expose Phase 6 extension dialogs for slash commands
+window.leantime.tiptapMermaid = { showMermaidDialog: showMermaidDialog };
+window.leantime.tiptapMath = { showMathDialog: showMathDialog, loadKaTeX: loadKaTeX };
+window.leantime.tiptapEmoji = { showEmojiPickerDialog: showEmojiPickerDialog };
+window.leantime.tiptapEmbed = { showDialog: showEmbedDialog };
 
 // Auto-initialize HTMX hooks when DOM is ready
 if (document.readyState === 'loading') {

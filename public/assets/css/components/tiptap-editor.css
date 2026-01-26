@@ -326,6 +326,58 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 }
 
 /* ==========================================================================
+   Superscript & Subscript
+   ========================================================================== */
+
+.tiptap-editor .ProseMirror sup {
+    vertical-align: super;
+    font-size: 0.75em;
+    line-height: 0;
+}
+
+.tiptap-editor .ProseMirror sub {
+    vertical-align: sub;
+    font-size: 0.75em;
+    line-height: 0;
+}
+
+/* ==========================================================================
+   Text Alignment
+   ========================================================================== */
+
+.tiptap-editor .ProseMirror p[style*="text-align: left"],
+.tiptap-editor .ProseMirror h1[style*="text-align: left"],
+.tiptap-editor .ProseMirror h2[style*="text-align: left"],
+.tiptap-editor .ProseMirror h3[style*="text-align: left"],
+.tiptap-editor .ProseMirror h4[style*="text-align: left"] {
+    text-align: left;
+}
+
+.tiptap-editor .ProseMirror p[style*="text-align: center"],
+.tiptap-editor .ProseMirror h1[style*="text-align: center"],
+.tiptap-editor .ProseMirror h2[style*="text-align: center"],
+.tiptap-editor .ProseMirror h3[style*="text-align: center"],
+.tiptap-editor .ProseMirror h4[style*="text-align: center"] {
+    text-align: center;
+}
+
+.tiptap-editor .ProseMirror p[style*="text-align: right"],
+.tiptap-editor .ProseMirror h1[style*="text-align: right"],
+.tiptap-editor .ProseMirror h2[style*="text-align: right"],
+.tiptap-editor .ProseMirror h3[style*="text-align: right"],
+.tiptap-editor .ProseMirror h4[style*="text-align: right"] {
+    text-align: right;
+}
+
+.tiptap-editor .ProseMirror p[style*="text-align: justify"],
+.tiptap-editor .ProseMirror h1[style*="text-align: justify"],
+.tiptap-editor .ProseMirror h2[style*="text-align: justify"],
+.tiptap-editor .ProseMirror h3[style*="text-align: justify"],
+.tiptap-editor .ProseMirror h4[style*="text-align: justify"] {
+    text-align: justify;
+}
+
+/* ==========================================================================
    Blockquotes
    ========================================================================== */
 
@@ -1285,5 +1337,2114 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 [data-theme="dark"] .tiptap-ai-dialog__footer,
 .dark .tiptap-ai-dialog__footer {
+    border-color: var(--main-border-color, #334155);
+}
+
+/* ==========================================================================
+   Slash Commands Popup
+   ========================================================================== */
+
+.tiptap-slash-popup {
+    position: fixed;
+    z-index: 100000;
+    min-width: 280px;
+    max-width: 320px;
+    max-height: 360px;
+    overflow-y: auto;
+    background: var(--main-background, #ffffff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+    padding: 8px;
+    animation: tiptap-slash-fade-in 0.15s ease-out;
+}
+
+@keyframes tiptap-slash-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tiptap-slash-popup__header {
+    padding: 8px 12px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--secondary-font-color, #64748b);
+}
+
+.tiptap-slash-popup__empty {
+    padding: 16px;
+    text-align: center;
+    color: var(--secondary-font-color, #64748b);
+    font-size: var(--base-font-size, 14px);
+}
+
+.tiptap-slash-popup__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+    background-color: transparent;
+}
+
+/* Only use --active class for highlighting (controlled by JS on hover/keyboard) */
+.tiptap-slash-popup__item--active {
+    background-color: var(--dropdown-link-hover-bg, var(--tab-active-background, #f5f5f5));
+}
+
+.tiptap-slash-popup__icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--secondary-action-bg, #f5f5f5);
+    border-radius: 8px;
+    color: var(--primary-font-color, #1e293b);
+    transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.tiptap-slash-popup__item--active .tiptap-slash-popup__icon {
+    background-color: var(--primary-color, #1b75bb);
+    color: #ffffff;
+}
+
+.tiptap-slash-popup__icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.tiptap-slash-popup__content {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.tiptap-slash-popup__label {
+    font-size: var(--base-font-size, 14px);
+    font-weight: 500;
+    color: var(--primary-font-color, #1e293b);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tiptap-slash-popup__description {
+    font-size: calc(var(--base-font-size, 14px) - 2px);
+    color: var(--secondary-font-color, #64748b);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+
+/* Dark mode slash popup */
+[data-theme="dark"] .tiptap-slash-popup,
+.dark .tiptap-slash-popup {
+    background: var(--element-bg, #1e293b);
+    border-color: var(--main-border-color, #334155);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .tiptap-slash-popup__header,
+.dark .tiptap-slash-popup__header {
+    color: var(--secondary-font-color, #94a3b8);
+}
+
+[data-theme="dark"] .tiptap-slash-popup__item--active,
+.dark .tiptap-slash-popup__item--active {
+    background-color: var(--dropdown-link-hover-bg, var(--layered-background, #334155));
+}
+
+[data-theme="dark"] .tiptap-slash-popup__icon,
+.dark .tiptap-slash-popup__icon {
+    background: var(--secondary-action-bg, #334155);
+    color: var(--primary-font-color, #f1f5f9);
+}
+
+[data-theme="dark"] .tiptap-slash-popup__item--active .tiptap-slash-popup__icon,
+.dark .tiptap-slash-popup__item--active .tiptap-slash-popup__icon {
+    background-color: var(--primary-color, #1b75bb);
+    color: #ffffff;
+}
+
+[data-theme="dark"] .tiptap-slash-popup__label,
+.dark .tiptap-slash-popup__label {
+    color: var(--primary-font-color, #f1f5f9);
+}
+
+[data-theme="dark"] .tiptap-slash-popup__description,
+.dark .tiptap-slash-popup__description {
+    color: var(--secondary-font-color, #94a3b8);
+}
+
+[data-theme="dark"] .tiptap-slash-popup__empty,
+.dark .tiptap-slash-popup__empty {
+    color: var(--secondary-font-color, #94a3b8);
+}
+
+/* ==========================================================================
+   Template Picker
+   ========================================================================== */
+
+.tiptap-template-picker {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tiptap-template-picker__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+}
+
+.tiptap-template-picker__content {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    background: var(--main-background, #ffffff);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    animation: tiptap-dialog-fade-in 0.2s ease-out;
+}
+
+.tiptap-template-picker__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--main-border-color, #e2e8f0);
+    flex-shrink: 0;
+}
+
+.tiptap-template-picker__header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--primary-font-color, #1e293b);
+}
+
+.tiptap-template-picker__close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--secondary-font-color, #64748b);
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+}
+
+.tiptap-template-picker__close:hover {
+    background: var(--secondary-action-bg, #f1f5f9);
+    color: var(--primary-font-color, #1e293b);
+}
+
+.tiptap-template-picker__search {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--main-border-color, #e2e8f0);
+    flex-shrink: 0;
+}
+
+.tiptap-template-picker__search-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: var(--element-radius, 8px);
+    font-size: var(--base-font-size, 14px);
+    color: var(--primary-font-color, #1e293b);
+    background: var(--main-background, #ffffff);
+    transition: border-color 0.15s ease;
+}
+
+.tiptap-template-picker__search-input:focus {
+    outline: none;
+    border-color: var(--primary-color, #5a67d8);
+}
+
+.tiptap-template-picker__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+}
+
+.tiptap-template-picker__loading,
+.tiptap-template-picker__empty {
+    padding: 32px;
+    text-align: center;
+    color: var(--secondary-font-color, #64748b);
+    font-size: var(--base-font-size, 14px);
+}
+
+.tiptap-template-picker__category {
+    margin-bottom: 16px;
+}
+
+.tiptap-template-picker__category-title {
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--secondary-font-color, #64748b);
+}
+
+.tiptap-template-picker__item {
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.1s ease;
+}
+
+.tiptap-template-picker__item:hover {
+    background: var(--secondary-action-bg, #f1f5f9);
+}
+
+.tiptap-template-picker__item-title {
+    font-size: var(--base-font-size, 14px);
+    font-weight: 500;
+    color: var(--primary-font-color, #1e293b);
+}
+
+.tiptap-template-picker__item-desc {
+    font-size: calc(var(--base-font-size, 14px) - 2px);
+    color: var(--secondary-font-color, #64748b);
+    margin-top: 4px;
+}
+
+/* Dark mode template picker */
+[data-theme="dark"] .tiptap-template-picker__content,
+.dark .tiptap-template-picker__content {
+    background: var(--element-bg, #1e293b);
+}
+
+[data-theme="dark"] .tiptap-template-picker__header,
+[data-theme="dark"] .tiptap-template-picker__search,
+.dark .tiptap-template-picker__header,
+.dark .tiptap-template-picker__search {
+    border-color: var(--main-border-color, #334155);
+}
+
+[data-theme="dark"] .tiptap-template-picker__header h3,
+.dark .tiptap-template-picker__header h3 {
+    color: var(--primary-font-color, #f1f5f9);
+}
+
+[data-theme="dark"] .tiptap-template-picker__search-input,
+.dark .tiptap-template-picker__search-input {
+    background: var(--element-bg, #0f172a);
+    border-color: var(--main-border-color, #334155);
+    color: var(--primary-font-color, #f1f5f9);
+}
+
+[data-theme="dark"] .tiptap-template-picker__item:hover,
+.dark .tiptap-template-picker__item:hover {
+    background: var(--secondary-action-bg, #334155);
+}
+
+[data-theme="dark"] .tiptap-template-picker__item-title,
+.dark .tiptap-template-picker__item-title {
+    color: var(--primary-font-color, #f1f5f9);
+}
+
+[data-theme="dark"] .tiptap-template-picker__item-desc,
+.dark .tiptap-template-picker__item-desc {
+    color: var(--secondary-font-color, #94a3b8);
+}
+
+/* ==========================================================================
+   Video Embeds
+   ========================================================================== */
+
+.tiptap-embed {
+    position: relative;
+    width: 100%;
+    margin: 16px 0;
+    background: var(--secondary-action-bg, #f1f5f9);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tiptap-embed__wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* Default 16:9 aspect ratio */
+}
+
+/* Video embeds - 16:9 */
+.tiptap-embed--video .tiptap-embed__wrapper,
+.tiptap-embed--presentation .tiptap-embed__wrapper {
+    padding-bottom: 56.25%;
+}
+
+/* Design tools - 4:3 */
+.tiptap-embed--design .tiptap-embed__wrapper {
+    padding-bottom: 75%;
+}
+
+/* Document embeds - taller */
+.tiptap-embed--document .tiptap-embed__wrapper {
+    padding-bottom: 100%;
+    max-height: 600px;
+}
+
+/* Form embeds - fixed height */
+.tiptap-embed--form .tiptap-embed__wrapper {
+    padding-bottom: 0;
+    height: 500px;
+}
+
+.tiptap-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Embed type labels */
+.tiptap-embed::before {
+    content: attr(data-type);
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 4px;
+    text-transform: capitalize;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.tiptap-embed:hover::before {
+    opacity: 1;
+}
+
+/* Embed dialog - reuse AI dialog styles */
+.tiptap-embed-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tiptap-embed-dialog__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+}
+
+.tiptap-embed-dialog__content {
+    position: relative;
+    width: 90%;
+    max-width: 480px;
+    background: var(--main-background, #ffffff);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: tiptap-dialog-fade-in 0.2s ease-out;
+}
+
+.tiptap-embed-dialog__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--main-border-color, #e2e8f0);
+}
+
+.tiptap-embed-dialog__header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--primary-font-color, #1e293b);
+}
+
+.tiptap-embed-dialog__close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--secondary-font-color, #64748b);
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+}
+
+.tiptap-embed-dialog__close:hover {
+    background: var(--secondary-action-bg, #f1f5f9);
+    color: var(--primary-font-color, #1e293b);
+}
+
+.tiptap-embed-dialog__body {
+    padding: 20px;
+}
+
+.tiptap-embed-dialog__field {
+    margin-bottom: 0;
+}
+
+.tiptap-embed-dialog__field label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: var(--base-font-size, 14px);
+    font-weight: 500;
+    color: var(--primary-font-color, #1e293b);
+}
+
+.tiptap-embed-dialog__input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: var(--element-radius, 8px);
+    font-family: inherit;
+    font-size: var(--base-font-size, 14px);
+    color: var(--primary-font-color, #1e293b);
+    background: var(--main-background, #ffffff);
+    transition: border-color 0.15s ease;
+}
+
+.tiptap-embed-dialog__input:focus {
+    outline: none;
+    border-color: var(--primary-color, #5a67d8);
+}
+
+.tiptap-embed-dialog__hint {
+    margin-top: 8px;
+    font-size: calc(var(--base-font-size, 14px) - 2px);
+    color: var(--secondary-font-color, #64748b);
+}
+
+.tiptap-embed-dialog__preview {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tiptap-embed-dialog__preview--success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.tiptap-embed-dialog__preview--error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.tiptap-embed-dialog__services {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--main-border-color, #e2e8f0);
+}
+
+.tiptap-embed-dialog__services-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--secondary-font-color, #64748b);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tiptap-embed-dialog__services-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tiptap-embed-dialog__service {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--secondary-action-bg, #f1f5f9);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--secondary-font-color, #64748b);
+}
+
+.tiptap-embed-dialog__service i {
+    font-size: 14px;
+    width: 16px;
+    text-align: center;
+}
+
+.tiptap-embed-dialog__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--main-border-color, #e2e8f0);
+}
+
+.tiptap-embed-dialog__btn {
+    padding: var(--input-padding, 10px 20px);
+    border-radius: var(--element-radius, 6px);
+    font-size: var(--base-font-size, 14px);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.tiptap-embed-dialog__btn--cancel {
+    background: var(--secondary-action-bg, #f1f5f9);
+    color: var(--secondary-action-color, #475569);
+    border: 1px solid var(--secondary-action-bg, #f1f5f9);
+}
+
+.tiptap-embed-dialog__btn--cancel:hover {
+    background: var(--secondary-action-hover-bg, #e2e8f0);
+}
+
+.tiptap-embed-dialog__btn--primary {
+    background: var(--main-action-bg);
+    color: var(--main-action-color);
+    border: 1px solid var(--main-action-bg);
+    font-weight: bold;
+}
+
+.tiptap-embed-dialog__btn--primary:hover {
+    background: var(--main-action-hover-bg);
+}
+
+/* Dark mode embeds */
+[data-theme="dark"] .tiptap-embed,
+.dark .tiptap-embed {
+    background: var(--secondary-action-bg, #334155);
+}
+
+[data-theme="dark"] .tiptap-embed-dialog__content,
+.dark .tiptap-embed-dialog__content {
+    background: var(--element-bg, #1e293b);
+}
+
+[data-theme="dark"] .tiptap-embed-dialog__header,
+[data-theme="dark"] .tiptap-embed-dialog__footer,
+.dark .tiptap-embed-dialog__header,
+.dark .tiptap-embed-dialog__footer {
+    border-color: var(--main-border-color, #334155);
+}
+
+[data-theme="dark"] .tiptap-embed-dialog__header h3,
+[data-theme="dark"] .tiptap-embed-dialog__field label,
+.dark .tiptap-embed-dialog__header h3,
+.dark .tiptap-embed-dialog__field label {
+    color: var(--primary-font-color, #f1f5f9);
+}
+
+[data-theme="dark"] .tiptap-embed-dialog__input,
+.dark .tiptap-embed-dialog__input {
+    background: var(--element-bg, #0f172a);
+    border-color: var(--main-border-color, #334155);
+    color: var(--primary-font-color, #f1f5f9);
+}
+
+/* ==========================================================================
+   Comment Reactions
+   ========================================================================== */
+
+/* Comment section spacing */
+.mainToggler-wrapper,
+div[class^="mainToggler-"] {
+    margin-bottom: 20px;
+}
+
+#comments > div,
+/* Spacing between "Add new comment" and posted comments */
+div[class^="mainToggler-"] {
+    margin-bottom: 24px;
+}
+
+/* Space between comment cards */
+div[id^="comments-"] > div {
+    margin-top: 8px;
+}
+
+div[id^="comments-"] > div > .clearall {
+    margin-bottom: 20px;
+}
+
+/* Comment actions row - Reply and Reactions inline */
+.commentLinks {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+    padding-top: 0;
+}
+
+.commentLinks > a,
+.commentLinks > span,
+.commentLinks > .comment-reactions {
+    flex-shrink: 0;
+}
+
+.commentLinks a {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 5px;
+    color: var(--secondary-font-color, #64748b);
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 0.15s ease;
+    white-space: nowrap;
+    margin-bottom: 0 !important;
+    margin-right: 0 !important;
+}
+
+.commentLinks a:hover {
+    color: var(--primary-color, #5a67d8);
+}
+
+.comment-reactions {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px;
+    margin-left: 0;
+    vertical-align: middle;
+}
+
+.reaction-list {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 6px;
+    vertical-align: middle;
+}
+
+.reaction-picker-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.reaction-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 14px;
+    background: var(--element-bg, #f8fafc);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.reaction-btn:hover {
+    background: var(--kanban-card-bg, #f1f5f9);
+    border-color: var(--primary-color, #5a67d8);
+}
+
+.reaction-btn.active {
+    background: rgba(90, 103, 216, 0.1);
+    border-color: var(--primary-color, #5a67d8);
+}
+
+.reaction-emoji {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: var(--secondary-font-color, #64748b);
+    font-weight: 500;
+}
+
+.reaction-btn.active .reaction-count {
+    color: var(--primary-color, #5a67d8);
+}
+
+.add-reaction-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px dashed var(--main-border-color, #e2e8f0);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--secondary-font-color, #94a3b8);
+}
+
+.add-reaction-btn:hover {
+    background: var(--kanban-card-bg, #f1f5f9);
+    border-color: var(--primary-color, #5a67d8);
+    border-style: solid;
+    color: var(--primary-color, #5a67d8);
+}
+
+.add-reaction-btn i {
+    font-size: 14px;
+}
+
+/* Emoji Picker Popup */
+.reaction-emoji-picker {
+    position: absolute;
+    z-index: 1000;
+    background: var(--element-bg, #ffffff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    padding: 8px;
+    display: none;
+}
+
+.reaction-emoji-picker.show {
+    display: block;
+}
+
+.reaction-emoji-picker__grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+}
+
+.reaction-emoji-picker__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.15s ease;
+}
+
+.reaction-emoji-picker__btn:hover {
+    background: var(--kanban-card-bg, #f1f5f9);
+}
+
+/* Dark Mode for Reactions */
+[data-theme="dark"] .reaction-btn,
+.dark .reaction-btn {
+    background: var(--element-bg, #1e293b);
+    border-color: var(--main-border-color, #334155);
+}
+
+[data-theme="dark"] .reaction-btn:hover,
+.dark .reaction-btn:hover {
+    background: var(--kanban-card-bg, #334155);
+}
+
+[data-theme="dark"] .reaction-btn.active,
+.dark .reaction-btn.active {
+    background: rgba(90, 103, 216, 0.2);
+}
+
+[data-theme="dark"] .add-reaction-btn,
+.dark .add-reaction-btn {
+    border-color: var(--main-border-color, #334155);
+    color: var(--secondary-font-color, #94a3b8);
+}
+
+[data-theme="dark"] .add-reaction-btn:hover,
+.dark .add-reaction-btn:hover {
+    background: var(--kanban-card-bg, #334155);
+}
+
+[data-theme="dark"] .reaction-emoji-picker,
+.dark .reaction-emoji-picker {
+    background: var(--element-bg, #1e293b);
+    border-color: var(--main-border-color, #334155);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .reaction-emoji-picker__btn:hover,
+.dark .reaction-emoji-picker__btn:hover {
+    background: var(--kanban-card-bg, #334155);
+}
+
+/* ==========================================================================
+   Color Picker Popover
+   ========================================================================== */
+
+.tiptap-color-popover {
+    background: var(--element-bg, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    padding: 8px;
+    animation: tiptap-popover-fade-in 0.15s ease-out;
+}
+
+@keyframes tiptap-popover-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tiptap-color-popover__grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+}
+
+.tiptap-color-popover__btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.tiptap-color-popover__btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+}
+
+.tiptap-color-popover__btn:focus {
+    outline: 2px solid var(--primary-color, #5a67d8);
+    outline-offset: 2px;
+}
+
+/* Dark mode */
+[data-theme="dark"] .tiptap-color-popover,
+.dark .tiptap-color-popover {
+    background: var(--element-bg, #1e293b);
+    border-color: var(--main-border-color, #334155);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .tiptap-color-popover__btn,
+.dark .tiptap-color-popover__btn {
+    border-color: var(--main-border-color, #334155);
+}
+
+/* ==========================================================================
+   Phase 6 Extensions - Mermaid Diagrams
+   ========================================================================== */
+
+.tiptap-mermaid {
+    position: relative;
+    margin: 16px 0;
+    padding: 16px;
+    background: var(--code-background, #f8f9fa);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 8px;
+}
+
+.tiptap-mermaid__diagram {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    overflow: auto;
+}
+
+.tiptap-mermaid__diagram svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.tiptap-mermaid__edit-btn,
+.tiptap-mermaid__delete-btn {
+    position: absolute;
+    top: 8px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+    color: var(--main-text-color, #333);
+}
+
+.tiptap-mermaid__edit-btn {
+    right: 40px;
+}
+
+.tiptap-mermaid__delete-btn {
+    right: 8px;
+}
+
+.tiptap-mermaid:hover .tiptap-mermaid__edit-btn,
+.tiptap-mermaid:hover .tiptap-mermaid__delete-btn {
+    opacity: 1;
+}
+
+.tiptap-mermaid__edit-btn:hover,
+.tiptap-mermaid__delete-btn:hover {
+    background: var(--element-hover, #f0f0f0);
+}
+
+.tiptap-mermaid__delete-btn:hover {
+    color: var(--error-color, #ef4444);
+}
+
+.tiptap-mermaid__edit {
+    padding: 8px 0;
+}
+
+.tiptap-mermaid__textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 12px;
+    font-family: var(--code-font-family, 'Monaco', 'Menlo', monospace);
+    font-size: 13px;
+    line-height: 1.5;
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 6px;
+    resize: vertical;
+}
+
+.tiptap-mermaid__buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    justify-content: flex-end;
+}
+
+.tiptap-mermaid__save-btn,
+.tiptap-mermaid__cancel-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.tiptap-mermaid__save-btn {
+    background: var(--primary-color, #5a67d8);
+    color: #fff;
+    border: none;
+}
+
+.tiptap-mermaid__cancel-btn {
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    color: var(--main-text-color, #333);
+}
+
+.tiptap-mermaid__error {
+    padding: 12px;
+    background: var(--error-background, #fef2f2);
+    color: var(--error-color, #ef4444);
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* Mermaid Dialog */
+.tiptap-mermaid-dialog__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 10002;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.tiptap-mermaid-dialog {
+    width: 90%;
+    max-width: 700px;
+    max-height: calc(100vh - 40px);
+    margin: auto;
+    background: var(--main-background, #fff);
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.tiptap-mermaid-dialog__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--main-border-color, #e2e8f0);
+    flex-shrink: 0;
+}
+
+.tiptap-mermaid-dialog__header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.tiptap-mermaid-dialog__close {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--main-text-color, #333);
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.tiptap-mermaid-dialog__close:hover {
+    background: var(--element-hover, #f0f0f0);
+}
+
+.tiptap-mermaid-dialog__body {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.tiptap-mermaid-dialog__templates {
+    margin-bottom: 16px;
+}
+
+.tiptap-mermaid-dialog__templates label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.tiptap-mermaid-dialog__template-select {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 6px;
+    background: var(--main-background, #fff);
+}
+
+.tiptap-mermaid-dialog__code {
+    width: 100%;
+    min-height: 180px;
+    padding: 12px;
+    font-family: var(--code-font-family, 'Monaco', 'Menlo', monospace);
+    font-size: 13px;
+    line-height: 1.5;
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 6px;
+    resize: vertical;
+}
+
+.tiptap-mermaid-dialog__preview {
+    margin-top: 16px;
+}
+
+.tiptap-mermaid-dialog__preview label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.tiptap-mermaid-dialog__preview-area {
+    min-height: 150px;
+    max-height: 250px;
+    padding: 16px;
+    background: var(--code-background, #f8f9fa);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+}
+
+.tiptap-mermaid-dialog__preview-area svg {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+}
+
+.tiptap-mermaid-dialog__preview-empty,
+.tiptap-mermaid-dialog__preview-error {
+    color: var(--secondary-text-color, #6b7280);
+    font-style: italic;
+    font-size: 13px;
+}
+
+.tiptap-mermaid-dialog__preview-error {
+    color: var(--error-color, #ef4444);
+}
+
+.tiptap-mermaid-dialog__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--main-border-color, #e2e8f0);
+    background: var(--secondary-action-bg, #f9fafb);
+    flex-shrink: 0;
+}
+
+.tiptap-mermaid-dialog__cancel,
+.tiptap-mermaid-dialog__insert {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.tiptap-mermaid-dialog__cancel {
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    color: var(--main-text-color, #333);
+}
+
+.tiptap-mermaid-dialog__insert {
+    background: var(--primary-color, #5a67d8);
+    border: none;
+    color: #fff;
+}
+
+/* ==========================================================================
+   Phase 6 Extensions - LaTeX/Math
+   ========================================================================== */
+
+.tiptap-math {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tiptap-math--inline {
+    padding: 0 4px;
+    margin: 0 2px;
+    background: var(--code-background, #f5f5f5);
+    border-radius: 4px;
+}
+
+.tiptap-math--block {
+    position: relative;
+    display: block;
+    margin: 16px 0;
+    padding: 20px;
+    background: var(--code-background, #f8f9fa);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.tiptap-math__display {
+    overflow-x: auto;
+}
+
+.tiptap-math__edit-btn,
+.tiptap-math__delete-btn {
+    position: absolute;
+    top: 8px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    color: var(--main-text-color, #333);
+}
+
+.tiptap-math__edit-btn {
+    right: 40px;
+}
+
+.tiptap-math__delete-btn {
+    right: 8px;
+}
+
+.tiptap-math--block:hover .tiptap-math__edit-btn,
+.tiptap-math--block:hover .tiptap-math__delete-btn {
+    opacity: 1;
+}
+
+.tiptap-math__error {
+    color: var(--error-color, #ef4444);
+    font-size: 13px;
+}
+
+.tiptap-math__placeholder {
+    font-family: var(--code-font-family, monospace);
+    color: var(--secondary-text-color, #6b7280);
+}
+
+/* Math Dialog */
+.tiptap-math-dialog__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 10002;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.tiptap-math-dialog {
+    width: 90%;
+    max-width: 550px;
+    max-height: calc(100vh - 40px);
+    margin: auto;
+    background: var(--main-background, #fff);
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.tiptap-math-dialog__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--main-border-color, #e2e8f0);
+    flex-shrink: 0;
+}
+
+.tiptap-math-dialog__header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.tiptap-math-dialog__close {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--main-text-color, #333);
+    cursor: pointer;
+}
+
+.tiptap-math-dialog__body {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.tiptap-math-dialog__type {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.tiptap-math-dialog__type label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.tiptap-math-dialog__code {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    font-family: var(--code-font-family, monospace);
+    font-size: 14px;
+    line-height: 1.5;
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 6px;
+    resize: vertical;
+}
+
+.tiptap-math-dialog__examples {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--secondary-text-color, #6b7280);
+}
+
+.tiptap-math-dialog__preview {
+    margin-top: 16px;
+}
+
+.tiptap-math-dialog__preview label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.tiptap-math-dialog__preview-area {
+    min-height: 60px;
+    padding: 16px;
+    background: var(--code-background, #f8f9fa);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tiptap-math-dialog__preview-empty,
+.tiptap-math-dialog__preview-error {
+    color: var(--secondary-text-color, #6b7280);
+    font-style: italic;
+    font-size: 13px;
+}
+
+.tiptap-math-dialog__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--main-border-color, #e2e8f0);
+    background: var(--secondary-action-bg, #f9fafb);
+    flex-shrink: 0;
+}
+
+.tiptap-math-dialog__cancel,
+.tiptap-math-dialog__insert {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.tiptap-math-dialog__cancel {
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+}
+
+.tiptap-math-dialog__insert {
+    background: var(--primary-color, #5a67d8);
+    border: none;
+    color: #fff;
+}
+
+/* ==========================================================================
+   Phase 6 Extensions - Details/Collapsible
+   ========================================================================== */
+
+.tiptap-details {
+    margin: 16px 0;
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tiptap-details summary,
+.tiptap-details__summary {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--secondary-action-bg, #f9fafb);
+    cursor: pointer;
+    list-style: none;
+    font-weight: 500;
+    user-select: none;
+}
+
+.tiptap-details summary::-webkit-details-marker,
+.tiptap-details__summary::-webkit-details-marker {
+    display: none;
+}
+
+/* Hide native marker in Firefox and other browsers */
+.tiptap-details summary,
+.tiptap-details__summary {
+    list-style: none;
+}
+
+.tiptap-details summary::marker,
+.tiptap-details__summary::marker {
+    display: none;
+    content: '';
+}
+
+/* Arrow using ::before for native HTML details (not NodeView) */
+.tiptap-details summary:not(.tiptap-details__summary)::before {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-right: 10px;
+    border-left: 6px solid currentColor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    transition: transform 0.2s ease;
+}
+
+.tiptap-details[open] summary:not(.tiptap-details__summary)::before {
+    transform: rotate(90deg);
+}
+
+/* Arrow element for Tiptap NodeView (clickable) */
+.tiptap-details__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.tiptap-details__arrow:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.tiptap-details__arrow::before {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 6px solid currentColor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    transition: transform 0.2s ease;
+}
+
+.tiptap-details[open] .tiptap-details__arrow::before {
+    transform: rotate(90deg);
+}
+
+/* Remove ::before from summary when using NodeView arrow */
+.tiptap-details__summary::before {
+    display: none;
+}
+
+.tiptap-details__summary-content {
+    flex: 1;
+}
+
+.tiptap-details__delete-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin-left: 8px;
+    background: none;
+    border: none;
+    border-radius: 4px;
+    color: var(--secondary-text-color, #6b7280);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.tiptap-details__summary:hover .tiptap-details__delete-btn {
+    display: inline-flex;
+}
+
+.tiptap-details__delete-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error-color, #ef4444);
+}
+
+.tiptap-details__content {
+    padding: 16px;
+}
+
+.tiptap-details__content > *:first-child {
+    margin-top: 0;
+}
+
+.tiptap-details__content > *:last-child {
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Phase 6 Extensions - Emoji Popup
+   ========================================================================== */
+
+.tiptap-emoji-popup {
+    position: fixed;
+    width: 280px;
+    max-height: 300px;
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    z-index: 10001;
+}
+
+.tiptap-emoji-popup__list {
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.tiptap-emoji-popup__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.tiptap-emoji-popup__item:hover,
+.tiptap-emoji-popup__item--selected {
+    background: var(--primary-color-15, rgba(90, 103, 216, 0.15));
+}
+
+.tiptap-emoji-popup__emoji {
+    font-size: 20px;
+    width: 28px;
+    text-align: center;
+}
+
+.tiptap-emoji-popup__shortcode {
+    font-size: 13px;
+    color: var(--secondary-text-color, #6b7280);
+}
+
+.tiptap-emoji-popup__empty {
+    padding: 16px;
+    text-align: center;
+    color: var(--secondary-text-color, #6b7280);
+    font-size: 13px;
+}
+
+/* Emoji Dialog */
+.tiptap-emoji-dialog__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 10002;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.tiptap-emoji-dialog {
+    width: 90%;
+    max-width: 400px;
+    max-height: calc(100vh - 40px);
+    margin: auto;
+    background: var(--main-background, #fff);
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.tiptap-emoji-dialog__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--main-border-color, #e2e8f0);
+    flex-shrink: 0;
+}
+
+.tiptap-emoji-dialog__header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.tiptap-emoji-dialog__close {
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.tiptap-emoji-dialog__search {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--main-border-color, #e2e8f0);
+    flex-shrink: 0;
+}
+
+.tiptap-emoji-dialog__search-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 6px;
+}
+
+.tiptap-emoji-dialog__grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 4px;
+    padding: 16px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.tiptap-emoji-dialog__emoji-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 20px;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.tiptap-emoji-dialog__emoji-btn:hover {
+    background: var(--primary-color-15, rgba(90, 103, 216, 0.15));
+}
+
+.tiptap-emoji-dialog__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 24px;
+    color: var(--secondary-text-color, #6b7280);
+}
+
+.tiptap-emoji-dialog__footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 20px;
+    border-top: 1px solid var(--main-border-color, #e2e8f0);
+    background: var(--secondary-action-bg, #f9fafb);
+    flex-shrink: 0;
+}
+
+.tiptap-emoji-dialog__cancel {
+    padding: 8px 16px;
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   Phase 6 Extensions - Table of Contents
+   ========================================================================== */
+
+.tiptap-toc {
+    position: relative;
+    margin: 16px 0;
+    padding: 16px;
+    background: var(--secondary-action-bg, #f9fafb);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 8px;
+}
+
+.tiptap-toc__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.tiptap-toc__title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--main-text-color, #333);
+}
+
+.tiptap-toc__settings-btn,
+.tiptap-toc__delete-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    color: var(--main-text-color, #333);
+}
+
+.tiptap-toc:hover .tiptap-toc__settings-btn,
+.tiptap-toc:hover .tiptap-toc__delete-btn {
+    opacity: 1;
+}
+
+.tiptap-toc__settings-panel {
+    margin-bottom: 12px;
+    padding: 12px;
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 6px;
+}
+
+.tiptap-toc__setting {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.tiptap-toc__setting:last-child {
+    margin-bottom: 0;
+}
+
+.tiptap-toc__depth-select {
+    padding: 4px 8px;
+    font-size: 13px;
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 4px;
+}
+
+.tiptap-toc__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.tiptap-toc__item {
+    margin: 4px 0;
+}
+
+.tiptap-toc__item--level-1 { padding-left: 0; }
+.tiptap-toc__item--level-2 { padding-left: 16px; }
+.tiptap-toc__item--level-3 { padding-left: 32px; }
+.tiptap-toc__item--level-4 { padding-left: 48px; }
+.tiptap-toc__item--level-5 { padding-left: 64px; }
+.tiptap-toc__item--level-6 { padding-left: 80px; }
+
+.tiptap-toc__link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    color: var(--primary-color, #5a67d8);
+    text-decoration: none;
+    font-size: 13px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.tiptap-toc__link:hover {
+    background: var(--primary-color-15, rgba(90, 103, 216, 0.15));
+}
+
+.tiptap-toc__number {
+    color: var(--secondary-text-color, #6b7280);
+    font-weight: 500;
+}
+
+.tiptap-toc__empty {
+    padding: 12px;
+    text-align: center;
+    color: var(--secondary-text-color, #6b7280);
+    font-style: italic;
+    font-size: 13px;
+}
+
+.tiptap-toc__highlight {
+    animation: toc-highlight 2s ease-out;
+}
+
+@keyframes toc-highlight {
+    0%, 30% {
+        background-color: var(--warning-bg, #fef3c7);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+/* ==========================================================================
+   Phase 6 Extensions - Column Layouts
+   ========================================================================== */
+
+.tiptap-columns {
+    display: grid;
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.tiptap-columns--2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.tiptap-columns--3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.tiptap-columns--4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.tiptap-column {
+    position: relative;
+    border: 1px dashed var(--main-border-color, #e2e8f0);
+    border-radius: 6px;
+    padding: 12px;
+    min-height: 100px;
+    background: var(--main-background, #fff);
+}
+
+.tiptap-column:focus-within {
+    border-color: var(--primary-color, #5a67d8);
+    border-style: solid;
+}
+
+.tiptap-column__content {
+    min-height: 50px;
+}
+
+.tiptap-column__content > *:first-child {
+    margin-top: 0;
+}
+
+.tiptap-column__content > *:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive columns */
+@media (max-width: 768px) {
+    .tiptap-columns--2,
+    .tiptap-columns--3,
+    .tiptap-columns--4 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   Phase 6 Extensions - Font Family/Size Popovers
+   ========================================================================== */
+
+.tiptap-font-popover {
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    min-width: 180px;
+    overflow: hidden;
+}
+
+.tiptap-font-popover__list {
+    max-height: 280px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.tiptap-font-popover__btn {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.tiptap-font-popover__btn:hover {
+    background: var(--primary-color-15, rgba(90, 103, 216, 0.15));
+}
+
+/* ==========================================================================
+   More Menu Dropdown
+   ========================================================================== */
+
+.tiptap-more-menu {
+    min-width: 180px;
+    background: var(--main-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+}
+
+.tiptap-more-menu__list {
+    padding: 4px 0;
+}
+
+.tiptap-more-menu__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: 13px;
+    color: var(--main-text-color, #333);
+    transition: background-color 0.15s ease;
+}
+
+.tiptap-more-menu__item:hover {
+    background: var(--element-hover, #f5f5f5);
+}
+
+.tiptap-more-menu__item.is-active {
+    background: var(--primary-color-15, rgba(90, 103, 216, 0.15));
+    color: var(--primary-color, #5a67d8);
+}
+
+.tiptap-more-menu__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.tiptap-more-menu__icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.tiptap-more-menu__label {
+    flex: 1;
+}
+
+.tiptap-more-menu__arrow {
+    font-size: 14px;
+    color: var(--secondary-text-color, #6b7280);
+}
+
+.tiptap-more-menu__divider {
+    height: 1px;
+    margin: 4px 0;
+    background: var(--main-border-color, #e2e8f0);
+}
+
+/* Dark mode */
+[data-theme="dark"] .tiptap-more-menu,
+.dark .tiptap-more-menu {
+    background: var(--element-bg, #1e293b);
+    border-color: var(--main-border-color, #334155);
+}
+
+[data-theme="dark"] .tiptap-more-menu__item:hover,
+.dark .tiptap-more-menu__item:hover {
+    background: var(--element-hover, #334155);
+}
+
+/* ==========================================================================
+   Dark Mode Overrides for Phase 6 Extensions
+   ========================================================================== */
+
+[data-theme="dark"] .tiptap-mermaid,
+[data-theme="dark"] .tiptap-math--block,
+[data-theme="dark"] .tiptap-details,
+[data-theme="dark"] .tiptap-toc,
+.dark .tiptap-mermaid,
+.dark .tiptap-math--block,
+.dark .tiptap-details,
+.dark .tiptap-toc {
+    background: var(--element-bg, #1e293b);
+    border-color: var(--main-border-color, #334155);
+}
+
+[data-theme="dark"] .tiptap-details summary,
+[data-theme="dark"] .tiptap-details__summary,
+.dark .tiptap-details summary,
+.dark .tiptap-details__summary {
+    background: var(--code-background, #0f172a);
+}
+
+[data-theme="dark"] .tiptap-emoji-popup,
+[data-theme="dark"] .tiptap-emoji-dialog,
+[data-theme="dark"] .tiptap-mermaid-dialog,
+[data-theme="dark"] .tiptap-math-dialog,
+[data-theme="dark"] .tiptap-font-popover,
+.dark .tiptap-emoji-popup,
+.dark .tiptap-emoji-dialog,
+.dark .tiptap-mermaid-dialog,
+.dark .tiptap-math-dialog,
+.dark .tiptap-font-popover {
+    background: var(--element-bg, #1e293b);
+    border-color: var(--main-border-color, #334155);
+}
+
+[data-theme="dark"] .tiptap-column,
+.dark .tiptap-column {
+    background: var(--element-bg, #1e293b);
     border-color: var(--main-border-color, #334155);
 }

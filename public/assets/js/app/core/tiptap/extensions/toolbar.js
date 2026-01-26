@@ -138,8 +138,218 @@
             title: 'Redo (Ctrl+Shift+Z)',
             command: function(editor) { editor.chain().focus().redo().run(); },
             isActive: function() { return false; }
+        },
+        superscript: {
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 19 5-5"/><path d="m9 19-5-5"/><path d="M19 9h-4l3.5-4a1.5 1.5 0 0 0-3-1"/></svg>',
+            title: 'Superscript',
+            command: function(editor) { editor.chain().focus().toggleSuperscript().run(); },
+            isActive: function(editor) { return editor.isActive('superscript'); }
+        },
+        subscript: {
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 5 5 5"/><path d="m9 5-5 5"/><path d="M19 21h-4l3.5-4a1.5 1.5 0 0 0-3-1"/></svg>',
+            title: 'Subscript',
+            command: function(editor) { editor.chain().focus().toggleSubscript().run(); },
+            isActive: function(editor) { return editor.isActive('subscript'); }
+        },
+        alignLeft: {
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>',
+            title: 'Align Left',
+            command: function(editor) { editor.chain().focus().setTextAlign('left').run(); },
+            isActive: function(editor) { return editor.isActive({ textAlign: 'left' }); }
+        },
+        alignCenter: {
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="5" y1="18" x2="19" y2="18"/></svg>',
+            title: 'Align Center',
+            command: function(editor) { editor.chain().focus().setTextAlign('center').run(); },
+            isActive: function(editor) { return editor.isActive({ textAlign: 'center' }); }
+        },
+        alignRight: {
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg>',
+            title: 'Align Right',
+            command: function(editor) { editor.chain().focus().setTextAlign('right').run(); },
+            isActive: function(editor) { return editor.isActive({ textAlign: 'right' }); }
+        },
+        textColor: {
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="m6 16 6-12 6 12"/><path d="M8 12h8"/></svg>',
+            title: 'Text Color',
+            command: function(editor, button) {
+                showColorPopover(editor, button);
+            },
+            isActive: function() { return false; }
+        },
+        highlight: {
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg>',
+            title: 'Highlight',
+            command: function(editor, button) {
+                showHighlightPopover(editor, button);
+            },
+            isActive: function(editor) { return editor.isActive('highlight'); }
+        },
+        fontFamily: {
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><text x="4" y="17" font-size="14" font-family="serif" fill="currentColor" stroke="none">Aa</text></svg>',
+            title: 'Font Family',
+            command: function(editor, button) {
+                showFontFamilyPopover(editor, button);
+            },
+            isActive: function() { return false; }
+        },
+        fontSize: {
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>',
+            title: 'Font Size',
+            command: function(editor, button) {
+                showFontSizePopover(editor, button);
+            },
+            isActive: function() { return false; }
+        },
+        more: {
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>',
+            title: 'More options',
+            command: function(editor, button) {
+                showMoreMenu(editor, button);
+            },
+            isActive: function() { return false; }
         }
     };
+
+    /**
+     * Items in the "More" dropdown menu
+     */
+    var moreMenuItems = [
+        { key: 'superscript', label: 'Superscript', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 19 5-5"/><path d="m9 19-5-5"/><path d="M19 9h-4l3.5-4a1.5 1.5 0 0 0-3-1"/></svg>' },
+        { key: 'subscript', label: 'Subscript', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 5 5 5"/><path d="m9 5-5 5"/><path d="M19 21h-4l3.5-4a1.5 1.5 0 0 0-3-1"/></svg>' },
+        { type: 'divider' },
+        { key: 'alignLeft', label: 'Align Left', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>' },
+        { key: 'alignCenter', label: 'Align Center', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="5" y1="18" x2="19" y2="18"/></svg>' },
+        { key: 'alignRight', label: 'Align Right', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg>' },
+        { type: 'divider' },
+        { key: 'textColor', label: 'Text Color', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16"/><path d="m6 16 6-12 6 12"/><path d="M8 12h8"/></svg>', hasSubmenu: true },
+        { key: 'highlight', label: 'Highlight', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg>', hasSubmenu: true },
+        { type: 'divider' },
+        { key: 'horizontalRule', label: 'Horizontal Line', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/></svg>' },
+        { key: 'clearFormatting', label: 'Clear Formatting', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/><line x1="2" y1="2" x2="22" y2="22" stroke-width="2"/></svg>' }
+    ];
+
+    /**
+     * Close any open more menu
+     */
+    function closeMoreMenu() {
+        var existingMenu = document.querySelector('.tiptap-more-menu');
+        if (existingMenu) {
+            existingMenu.remove();
+        }
+    }
+
+    /**
+     * Show more options dropdown menu
+     */
+    function showMoreMenu(editor, button) {
+        closeMoreMenu();
+        closeColorPopover();
+        closeFontPopover();
+
+        var menu = document.createElement('div');
+        menu.className = 'tiptap-more-menu';
+
+        var menuContent = '<div class="tiptap-more-menu__list">';
+        moreMenuItems.forEach(function(item) {
+            if (item.type === 'divider') {
+                menuContent += '<div class="tiptap-more-menu__divider"></div>';
+            } else {
+                var activeClass = '';
+                var buttonDef = toolbarButtons[item.key];
+                if (buttonDef && buttonDef.isActive && buttonDef.isActive(editor)) {
+                    activeClass = ' is-active';
+                }
+                menuContent += '<button type="button" class="tiptap-more-menu__item' + activeClass + '" data-command="' + item.key + '">' +
+                    '<span class="tiptap-more-menu__icon">' + item.icon + '</span>' +
+                    '<span class="tiptap-more-menu__label">' + item.label + '</span>' +
+                    (item.hasSubmenu ? '<span class="tiptap-more-menu__arrow">›</span>' : '') +
+                '</button>';
+            }
+        });
+        menuContent += '</div>';
+
+        menu.innerHTML = menuContent;
+
+        // Position menu below button
+        var buttonRect = button.getBoundingClientRect();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+        menu.style.position = 'absolute';
+        menu.style.top = (buttonRect.bottom + scrollTop + 4) + 'px';
+        menu.style.left = (buttonRect.right + scrollLeft - 180) + 'px'; // Align to right edge
+        menu.style.zIndex = '10001';
+
+        document.body.appendChild(menu);
+
+        // Ensure menu doesn't go off-screen
+        var menuRect = menu.getBoundingClientRect();
+        if (menuRect.left < 10) {
+            menu.style.left = '10px';
+        }
+
+        // Add click handlers
+        menu.querySelectorAll('.tiptap-more-menu__item').forEach(function(menuItem) {
+            menuItem.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var commandKey = menuItem.getAttribute('data-command');
+
+                // Special handling for items with submenus
+                if (commandKey === 'textColor') {
+                    closeMoreMenu();
+                    showColorPopover(editor, button);
+                    return;
+                }
+                if (commandKey === 'highlight') {
+                    closeMoreMenu();
+                    showHighlightPopover(editor, button);
+                    return;
+                }
+
+                // Special handling for clear formatting
+                if (commandKey === 'clearFormatting') {
+                    editor.chain().focus().clearNodes().unsetAllMarks().run();
+                    closeMoreMenu();
+                    return;
+                }
+
+                // Special handling for horizontal rule
+                if (commandKey === 'horizontalRule') {
+                    editor.chain().focus().setHorizontalRule().run();
+                    closeMoreMenu();
+                    return;
+                }
+
+                // Use the button definition for other commands
+                var buttonDef = toolbarButtons[commandKey];
+                if (buttonDef && buttonDef.command) {
+                    buttonDef.command(editor, menuItem);
+                    closeMoreMenu();
+                }
+            });
+        });
+
+        // Close on click outside
+        setTimeout(function() {
+            document.addEventListener('click', function closeOnClickOutside(e) {
+                if (!menu.contains(e.target) && e.target !== button) {
+                    closeMoreMenu();
+                    document.removeEventListener('click', closeOnClickOutside);
+                }
+            });
+        }, 10);
+
+        // Close on Escape
+        document.addEventListener('keydown', function closeOnEscape(e) {
+            if (e.key === 'Escape') {
+                closeMoreMenu();
+                document.removeEventListener('keydown', closeOnEscape);
+            }
+        });
+    }
 
     /**
      * Toolbar configurations
@@ -147,18 +357,333 @@
     var toolbarConfigs = {
         complex: {
             position: 'top',
-            buttons: ['bold', 'italic', 'strike', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code'],
+            buttons: ['bold', 'italic', 'strike', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more'],
             expandable: ['table', 'code']
         },
         simple: {
             position: 'bottom',
-            buttons: ['bold', 'italic', '|', 'link', 'image', '|', 'bulletList']
+            buttons: ['bold', 'italic', '|', 'link', 'image', '|', 'bulletList', '|', 'more']
         },
         notes: {
             position: 'top',
-            buttons: ['bold', 'italic', 'strike', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code']
+            buttons: ['bold', 'italic', 'strike', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more']
         }
     };
+
+    /**
+     * Close any open color popovers
+     */
+    function closeColorPopover() {
+        var existingPopover = document.querySelector('.tiptap-color-popover');
+        if (existingPopover) {
+            existingPopover.remove();
+        }
+    }
+
+    /**
+     * Show color picker popover
+     */
+    function showColorPopover(editor, button) {
+        closeColorPopover();
+
+        var colors = [
+            { name: 'Default', value: null },
+            { name: 'Gray', value: '#6b7280' },
+            { name: 'Red', value: '#ef4444' },
+            { name: 'Orange', value: '#f97316' },
+            { name: 'Yellow', value: '#eab308' },
+            { name: 'Green', value: '#22c55e' },
+            { name: 'Blue', value: '#3b82f6' },
+            { name: 'Purple', value: '#a855f7' },
+            { name: 'Pink', value: '#ec4899' }
+        ];
+
+        var popover = document.createElement('div');
+        popover.className = 'tiptap-color-popover';
+
+        var colorGrid = '<div class="tiptap-color-popover__grid">';
+        colors.forEach(function(color) {
+            var style = color.value ? 'background-color: ' + color.value : 'background: linear-gradient(135deg, #fff 45%, #ff0000 45%, #ff0000 55%, #fff 55%)';
+            colorGrid += '<button type="button" class="tiptap-color-popover__btn" data-color="' + (color.value || '') + '" title="' + color.name + '" style="' + style + '"></button>';
+        });
+        colorGrid += '</div>';
+
+        popover.innerHTML = colorGrid;
+
+        // Position popover below button
+        var buttonRect = button.getBoundingClientRect();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+        popover.style.position = 'absolute';
+        popover.style.top = (buttonRect.bottom + scrollTop + 4) + 'px';
+        popover.style.left = (buttonRect.left + scrollLeft) + 'px';
+        popover.style.zIndex = '10001';
+
+        document.body.appendChild(popover);
+
+        // Add click handlers to color buttons
+        popover.querySelectorAll('.tiptap-color-popover__btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var colorValue = btn.getAttribute('data-color');
+                if (colorValue) {
+                    editor.chain().focus().setColor(colorValue).run();
+                } else {
+                    editor.chain().focus().unsetColor().run();
+                }
+                closeColorPopover();
+            });
+        });
+
+        // Close on click outside
+        setTimeout(function() {
+            document.addEventListener('click', function closeOnClickOutside(e) {
+                if (!popover.contains(e.target) && e.target !== button) {
+                    closeColorPopover();
+                    document.removeEventListener('click', closeOnClickOutside);
+                }
+            });
+        }, 10);
+
+        // Close on Escape
+        document.addEventListener('keydown', function closeOnEscape(e) {
+            if (e.key === 'Escape') {
+                closeColorPopover();
+                document.removeEventListener('keydown', closeOnEscape);
+            }
+        });
+    }
+
+    /**
+     * Show highlight picker popover
+     */
+    function showHighlightPopover(editor, button) {
+        closeColorPopover();
+
+        var highlightColors = [
+            { name: 'Remove', value: null },
+            { name: 'Yellow', value: '#fef08a' },
+            { name: 'Green', value: '#bbf7d0' },
+            { name: 'Blue', value: '#bfdbfe' },
+            { name: 'Purple', value: '#e9d5ff' },
+            { name: 'Pink', value: '#fbcfe8' },
+            { name: 'Orange', value: '#fed7aa' }
+        ];
+
+        var popover = document.createElement('div');
+        popover.className = 'tiptap-color-popover';
+
+        var colorGrid = '<div class="tiptap-color-popover__grid">';
+        highlightColors.forEach(function(color) {
+            var style = color.value ? 'background-color: ' + color.value : 'background: linear-gradient(135deg, #fff 45%, #ff0000 45%, #ff0000 55%, #fff 55%)';
+            colorGrid += '<button type="button" class="tiptap-color-popover__btn" data-color="' + (color.value || '') + '" title="' + color.name + '" style="' + style + '"></button>';
+        });
+        colorGrid += '</div>';
+
+        popover.innerHTML = colorGrid;
+
+        // Position popover below button
+        var buttonRect = button.getBoundingClientRect();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+        popover.style.position = 'absolute';
+        popover.style.top = (buttonRect.bottom + scrollTop + 4) + 'px';
+        popover.style.left = (buttonRect.left + scrollLeft) + 'px';
+        popover.style.zIndex = '10001';
+
+        document.body.appendChild(popover);
+
+        // Add click handlers to color buttons
+        popover.querySelectorAll('.tiptap-color-popover__btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var colorValue = btn.getAttribute('data-color');
+                if (colorValue) {
+                    editor.chain().focus().toggleHighlight({ color: colorValue }).run();
+                } else {
+                    editor.chain().focus().unsetHighlight().run();
+                }
+                closeColorPopover();
+            });
+        });
+
+        // Close on click outside
+        setTimeout(function() {
+            document.addEventListener('click', function closeOnClickOutside(e) {
+                if (!popover.contains(e.target) && e.target !== button) {
+                    closeColorPopover();
+                    document.removeEventListener('click', closeOnClickOutside);
+                }
+            });
+        }, 10);
+
+        // Close on Escape
+        document.addEventListener('keydown', function closeOnEscape(e) {
+            if (e.key === 'Escape') {
+                closeColorPopover();
+                document.removeEventListener('keydown', closeOnEscape);
+            }
+        });
+    }
+
+    /**
+     * Close any open font popovers
+     */
+    function closeFontPopover() {
+        var existingPopover = document.querySelector('.tiptap-font-popover');
+        if (existingPopover) {
+            existingPopover.remove();
+        }
+    }
+
+    /**
+     * Show font family picker popover
+     */
+    function showFontFamilyPopover(editor, button) {
+        closeFontPopover();
+
+        var fonts = [
+            { name: 'Default', value: null },
+            { name: 'Arial', value: 'Arial, sans-serif' },
+            { name: 'Georgia', value: 'Georgia, serif' },
+            { name: 'Times New Roman', value: '"Times New Roman", serif' },
+            { name: 'Courier New', value: '"Courier New", monospace' },
+            { name: 'Verdana', value: 'Verdana, sans-serif' },
+            { name: 'Trebuchet MS', value: '"Trebuchet MS", sans-serif' },
+            { name: 'Comic Sans MS', value: '"Comic Sans MS", cursive' }
+        ];
+
+        var popover = document.createElement('div');
+        popover.className = 'tiptap-font-popover';
+
+        var list = '<div class="tiptap-font-popover__list">';
+        fonts.forEach(function(font) {
+            var style = font.value ? 'font-family: ' + font.value : '';
+            list += '<button type="button" class="tiptap-font-popover__btn" data-font="' + (font.value || '') + '" style="' + style + '">' + font.name + '</button>';
+        });
+        list += '</div>';
+
+        popover.innerHTML = list;
+
+        // Position popover below button
+        var buttonRect = button.getBoundingClientRect();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+        popover.style.position = 'absolute';
+        popover.style.top = (buttonRect.bottom + scrollTop + 4) + 'px';
+        popover.style.left = (buttonRect.left + scrollLeft) + 'px';
+        popover.style.zIndex = '10001';
+
+        document.body.appendChild(popover);
+
+        // Add click handlers
+        popover.querySelectorAll('.tiptap-font-popover__btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var fontValue = btn.getAttribute('data-font');
+                if (fontValue) {
+                    editor.chain().focus().setFontFamily(fontValue).run();
+                } else {
+                    editor.chain().focus().unsetFontFamily().run();
+                }
+                closeFontPopover();
+            });
+        });
+
+        // Close on click outside
+        setTimeout(function() {
+            document.addEventListener('click', function closeOnClickOutside(e) {
+                if (!popover.contains(e.target) && e.target !== button) {
+                    closeFontPopover();
+                    document.removeEventListener('click', closeOnClickOutside);
+                }
+            });
+        }, 10);
+
+        // Close on Escape
+        document.addEventListener('keydown', function closeOnEscape(e) {
+            if (e.key === 'Escape') {
+                closeFontPopover();
+                document.removeEventListener('keydown', closeOnEscape);
+            }
+        });
+    }
+
+    /**
+     * Show font size picker popover
+     */
+    function showFontSizePopover(editor, button) {
+        closeFontPopover();
+
+        var sizes = [
+            { name: 'Small', value: '12px' },
+            { name: 'Normal', value: null },
+            { name: '14px', value: '14px' },
+            { name: '16px', value: '16px' },
+            { name: '18px', value: '18px' },
+            { name: '20px', value: '20px' },
+            { name: '24px', value: '24px' },
+            { name: '28px', value: '28px' },
+            { name: '32px', value: '32px' },
+            { name: '36px', value: '36px' },
+            { name: '48px', value: '48px' }
+        ];
+
+        var popover = document.createElement('div');
+        popover.className = 'tiptap-font-popover';
+
+        var list = '<div class="tiptap-font-popover__list">';
+        sizes.forEach(function(size) {
+            var style = size.value ? 'font-size: ' + size.value : '';
+            list += '<button type="button" class="tiptap-font-popover__btn" data-size="' + (size.value || '') + '" style="' + style + '">' + size.name + '</button>';
+        });
+        list += '</div>';
+
+        popover.innerHTML = list;
+
+        // Position popover below button
+        var buttonRect = button.getBoundingClientRect();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+        popover.style.position = 'absolute';
+        popover.style.top = (buttonRect.bottom + scrollTop + 4) + 'px';
+        popover.style.left = (buttonRect.left + scrollLeft) + 'px';
+        popover.style.zIndex = '10001';
+
+        document.body.appendChild(popover);
+
+        // Add click handlers
+        popover.querySelectorAll('.tiptap-font-popover__btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var sizeValue = btn.getAttribute('data-size');
+                if (sizeValue) {
+                    editor.chain().focus().setFontSize(sizeValue).run();
+                } else {
+                    editor.chain().focus().unsetFontSize().run();
+                }
+                closeFontPopover();
+            });
+        });
+
+        // Close on click outside
+        setTimeout(function() {
+            document.addEventListener('click', function closeOnClickOutside(e) {
+                if (!popover.contains(e.target) && e.target !== button) {
+                    closeFontPopover();
+                    document.removeEventListener('click', closeOnClickOutside);
+                }
+            });
+        }, 10);
+
+        // Close on Escape
+        document.addEventListener('keydown', function closeOnEscape(e) {
+            if (e.key === 'Escape') {
+                closeFontPopover();
+                document.removeEventListener('keydown', closeOnEscape);
+            }
+        });
+    }
 
     /**
      * Close any open image popovers

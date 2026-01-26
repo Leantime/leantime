@@ -2147,4 +2147,39 @@ class Install
 
         return count($errors) ? $errors : true;
     }
+
+    public function update_sql_30412(): bool|array
+    {
+        $errors = [];
+
+        $sql = [
+            // Create comment reactions table
+            'CREATE TABLE IF NOT EXISTS `zp_comment_reactions` (
+                `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                `commentId` int(11) unsigned NOT NULL,
+                `userId` int(11) NOT NULL,
+                `reaction` varchar(50) NOT NULL,
+                `created` datetime DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `unique_reaction` (`commentId`, `userId`, `reaction`),
+                KEY `idx_comment_reactions_commentId` (`commentId`),
+                KEY `idx_comment_reactions_userId` (`userId`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;',
+        ];
+
+        foreach ($sql as $statement) {
+            try {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
+                Log::error($statement.' Failed: '.$e->getMessage());
+                Log::error($e);
+                // Don't fail if table already exists
+                if (! str_contains($e->getMessage(), 'already exists')) {
+                    array_push($errors, $statement.' Failed: '.$e->getMessage());
+                }
+            }
+        }
+
+        return count($errors) ? $errors : true;
+    }
 }
