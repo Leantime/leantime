@@ -298,9 +298,9 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
 
                                             <div class="timerContainer " id="timerContainer-<?php echo $row['id']; ?>" >
 
-                                                    <div class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown" >
-                                                        <a style="background-color:<?= $tpl->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?= $row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            <span class="text"><?php
+                                                    <div class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown" style="max-width: 100%;">
+                                                        <a style="background-color:<?= $tpl->escape($row['milestoneColor'])?>;max-width: 100%;display: inline-block;" class="dropdown-toggle f-left label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?= $row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <span class="text" style="display: inline-block; max-width: calc(100% - 20px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle;"><?php
                                                             if ($row['milestoneid'] != '' && $row['milestoneid'] != 0) {
                                                                 $tpl->e($row['milestoneHeadline']);
                                                             } else {
@@ -309,7 +309,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                                             </span>
                                                             &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                         </a>
-                                                        <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?= $row['id']?>">
+                                                        <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?= $row['id']?>" style="position: absolute; z-index: 9999;">
                                                             <li class="nav-header border"><?= $tpl->__('dropdown.choose_milestone')?></li>
                                                             <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?= $tpl->__('label.no_milestone')?>" data-value='<?= $row['id'].'_0_#b0b0b0'?>'> <?= $tpl->__('label.no_milestone')?> </a></li>
 
