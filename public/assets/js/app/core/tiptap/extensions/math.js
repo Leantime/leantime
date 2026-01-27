@@ -9,54 +9,18 @@
 
 const { Node, mergeAttributes } = require('@tiptap/core');
 
-// Check if KaTeX is available
-var katexLoaded = false;
-var katexLoadPromise = null;
+// Import KaTeX directly from npm package (bundled with webpack)
+const katex = require('katex');
+require('katex/dist/katex.min.css');
+
+// Make KaTeX available globally for consistency
+window.katex = katex;
 
 /**
- * Load KaTeX dynamically if not already loaded
+ * Load KaTeX - returns immediately since it's bundled
  */
 function loadKaTeX() {
-    if (katexLoaded && window.katex) {
-        return Promise.resolve(window.katex);
-    }
-
-    if (katexLoadPromise) {
-        return katexLoadPromise;
-    }
-
-    katexLoadPromise = new Promise(function(resolve, reject) {
-        // Check if already loaded
-        if (window.katex) {
-            katexLoaded = true;
-            resolve(window.katex);
-            return;
-        }
-
-        // Load KaTeX CSS (using unpkg.com which is allowed by CSP)
-        if (!document.querySelector('link[href*="katex"]')) {
-            var cssLink = document.createElement('link');
-            cssLink.rel = 'stylesheet';
-            cssLink.href = 'https://unpkg.com/katex@0.16.9/dist/katex.min.css';
-            cssLink.crossOrigin = 'anonymous';
-            document.head.appendChild(cssLink);
-        }
-
-        // Load KaTeX JS (using unpkg.com which is allowed by CSP)
-        var script = document.createElement('script');
-        script.src = 'https://unpkg.com/katex@0.16.9/dist/katex.min.js';
-        script.crossOrigin = 'anonymous';
-        script.onload = function() {
-            katexLoaded = true;
-            resolve(window.katex);
-        };
-        script.onerror = function() {
-            reject(new Error('Failed to load KaTeX'));
-        };
-        document.head.appendChild(script);
-    });
-
-    return katexLoadPromise;
+    return Promise.resolve(katex);
 }
 
 /**
@@ -65,12 +29,8 @@ function loadKaTeX() {
 function renderMath(latex, displayMode) {
     displayMode = displayMode === undefined ? false : displayMode;
 
-    if (!window.katex) {
-        return '<span class="tiptap-math__error">KaTeX not loaded</span>';
-    }
-
     try {
-        return window.katex.renderToString(latex, {
+        return katex.renderToString(latex, {
             throwOnError: false,
             displayMode: displayMode,
             strict: false,

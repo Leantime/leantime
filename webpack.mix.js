@@ -148,6 +148,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
     .copy('./public/assets/images', 'public/dist/images')
     .copy('./public/assets/fonts', 'public/dist/fonts')
     .copy('./public/assets/lottie', 'public/dist/lottie')
+    .copy('./node_modules/katex/dist/fonts', 'public/dist/fonts/katex')
     .eslint({
         fix: true,
         extensions: ['js'],

@@ -63,7 +63,7 @@
     "jquery-ui-dist": "1.13.2",
     "jquery-ui-touch-punch": "^0.2.3",
     "jstree": "^3.3.16",
-    "katex": "^0.16.28",
+    "katex": "^0.16.9",
     "leader-line": "^1.0.7",
     "lowlight": "^3.2.0",
     "luxon": "^3.4.4",
