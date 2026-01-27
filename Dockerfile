@@ -1,4 +1,3 @@
-# ---------- Composer dependencies stage ----------
 FROM php:8.2-fpm-alpine AS composer-builder
 
 WORKDIR /build
@@ -42,39 +41,57 @@ RUN composer install \
     --no-progress \
     --prefer-dist
 
-
-# ---------- Frontend build stage ----------
 FROM node:18-alpine AS frontend
 
 WORKDIR /app
 
-# Copy package files
 COPY package.json package-lock.json ./
 
-# Install ALL dependencies (need dev deps for webpack)
 RUN npm ci
 
-# Copy webpack config and babel config
 COPY webpack.mix.js .babelrc ./
+COPY tailwind.config.js ./ 
 
-# Copy source files for build - Leantime structure
 COPY app ./app
 COPY public ./public
 
-# Build frontend assets
+COPY generateBlocklist.mjs ./
+
+RUN mkdir -p ./storage/framework/cache ./bootstrap/cache && \
+    rm -rf ./bootstrap/cache/*.php || true
+
 RUN npx mix --production
 
-# Verify the build was successful
-RUN ls -la public/dist && \
+RUN if [ -f "generateBlocklist.mjs" ]; then \
+        node generateBlocklist.mjs; \
+    else \
+        echo '{}' > blocklist.json; \
+    fi
+
+RUN echo "=== Frontend Build Verification ===" && \
+    echo "=== Contents of public/dist/ ===" && \
+    ls -lah public/dist/ && \
+    echo "" && \
+    echo "=== JavaScript files ===" && \
+    ls -lah public/dist/js/ && \
+    echo "" && \
+    echo "=== CSS files ===" && \
+    ls -lah public/dist/css/ && \
+    echo "" && \
+    echo "=== mix-manifest.json ===" && \
+    cat public/dist/mix-manifest.json && \
+    echo "" && \
     if [ ! -d "public/dist/js" ]; then \
         echo "ERROR: Frontend build failed - public/dist/js not found!"; \
-        ls -la public/dist || true; \
+        exit 1; \
+    fi && \
+    if [ ! -d "public/dist/css" ]; then \
+        echo "ERROR: Frontend build failed - public/dist/css not found!"; \
         exit 1; \
     fi && \
     echo "✓ Frontend assets built successfully"
 
 
-# ---------- Production stage ----------
 FROM php:8.2-fpm-alpine
 
 RUN apk add --no-cache \
@@ -90,6 +107,7 @@ RUN apk add --no-cache \
     libxml2 \
     oniguruma \
     openldap \
+    font-noto-emoji \
     && apk add --no-cache --virtual .build-deps \
     freetype-dev \
     libjpeg-turbo-dev \
@@ -204,8 +222,8 @@ server {
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param PATH_INFO $fastcgi_path_info;
-    fastcgi_buffering off;
-    fastcgi_read_timeout 300;
+        fastcgi_buffering off;
+        fastcgi_read_timeout 300;
     }
 
     location ~ /\. {
@@ -251,29 +269,41 @@ COPY --chown=www-data:www-data . .
 
 COPY --from=composer-builder --chown=www-data:www-data /build/vendor ./vendor
 
-# Copy built frontend assets from frontend stage (REPLACES the old check)
+RUN rm -rf public/dist
+
 COPY --from=frontend --chown=www-data:www-data /app/public/dist ./public/dist
 
-# The size check is already done in the frontend stage, so we can remove it here
-# But if you want to keep it as a final verification, you can:
-RUN APP_SIZE=$(stat -c%s "public/dist/js/compiled-app.3.5.12.min.js" 2>/dev/null || echo "0") && \
-    echo "✓ Final verification: compiled-app.js size: $APP_SIZE bytes"
+COPY --from=frontend --chown=www-data:www-data /app/blocklist.json ./blocklist.json
 
-RUN if [ ! -f blocklist.json ]; then \
-        echo "{}" > blocklist.json; \
+RUN echo "=== FINAL Asset Verification ===" && \
+    echo "Contents of public/:" && \
+    ls -lah public/ && \
+    echo "" && \
+    echo "Contents of public/dist/:" && \
+    ls -lah public/dist/ && \
+    echo "" && \
+    echo "Contents of public/dist/js/:" && \
+    ls -lah public/dist/js/ && \
+    echo "" && \
+    echo "Contents of public/dist/css/:" && \
+    ls -lah public/dist/css/ && \
+    echo "" && \
+    echo "mix-manifest.json contents:" && \
+    cat public/dist/mix-manifest.json && \
+    echo "" && \
+    APP_SIZE=$(stat -c%s "public/dist/js/compiled-app.3.5.12.min.js" 2>/dev/null || echo "0") && \
+    echo "✓ compiled-app.js size: $APP_SIZE bytes" && \
+    CSS_COUNT=$(find public/dist/css -name "*.css" 2>/dev/null | wc -l) && \
+    echo "✓ CSS files found: $CSS_COUNT" && \
+    if [ "$APP_SIZE" -lt "100000" ]; then \
+        echo "ERROR: compiled-app.js is too small ($APP_SIZE bytes)!"; \
+        exit 1; \
     fi && \
-    chown www-data:www-data blocklist.json
-
-RUN if [ -f ./public/mix-manifest.json ]; then \
-        echo "✓ mix-manifest.json found"; \
-    elif [ -f ./mix-manifest.json ]; then \
-        mv ./mix-manifest.json ./public/mix-manifest.json; \
-        echo "✓ Moved mix-manifest.json to public/"; \
-    else \
-        echo "{}" > ./public/mix-manifest.json; \
-        echo "✓ Created empty mix-manifest.json"; \
+    if [ "$CSS_COUNT" -eq "0" ]; then \
+        echo "ERROR: No CSS files found!"; \
+        exit 1; \
     fi && \
-    chown www-data:www-data ./public/mix-manifest.json
+    echo "✓ All assets verified successfully!"
 
 RUN mkdir -p \
     storage/framework/cache \
@@ -297,6 +327,7 @@ RUN mkdir -p \
 COPY --chown=root:root <<'EOF' /entrypoint.sh
 #!/bin/sh
 set -e
+
 mkdir -p /var/lib/nginx/tmp/client_body
 chown -R www-data:www-data /var/lib/nginx
 chmod -R 755 /var/lib/nginx
@@ -361,20 +392,35 @@ else
 fi
 
 echo "Clearing cache..."
-rm -rf /var/www/html/storage/framework/cache/* || true
-rm -rf /var/www/html/storage/framework/sessions/* || true
-rm -rf /var/www/html/storage/framework/views/* || true
 rm -rf /var/www/html/bootstrap/cache/*.php || true
-rm -f /var/www/html/storage/framework/composerPaths.php || true
-rm -f /var/www/html/storage/framework/viewPaths.php || true
+rm -rf /var/www/html/storage/framework/composerPaths.php || true
+rm -rf /var/www/html/storage/framework/viewPaths.php || true
+
+find /var/www/html/storage/framework/cache -type f ! -name '.gitignore' -delete 2>/dev/null || true
+find /var/www/html/storage/framework/cache -type d -empty -delete 2>/dev/null || true
+
+find /var/www/html/storage/framework/sessions -type f ! -name '.gitignore' -delete 2>/dev/null || true
+find /var/www/html/storage/framework/sessions -type d -empty -delete 2>/dev/null || true
+
+find /var/www/html/storage/framework/views -type f ! -name '.gitignore' -delete 2>/dev/null || true
+find /var/www/html/storage/framework/views -type d -empty -delete 2>/dev/null || true
+
+echo "Cache cleared successfully!"
+
+echo "=== Pre-startup Asset Check ==="
+ls -lah /var/www/html/public/dist/js/compiled-app.*.min.js || echo "WARNING: compiled-app.js not found!"
+ls -lah /var/www/html/public/dist/css/ || echo "WARNING: CSS directory not found!"
+echo "================================"
 
 echo "Leantime initialization complete!"
 echo "Starting services..."
 
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 EOF
+
 RUN sed -i 's/\r$//' /entrypoint.sh && \
     chmod +x /entrypoint.sh
+
 RUN mkdir -p /var/log/supervisor
 
 EXPOSE 8080

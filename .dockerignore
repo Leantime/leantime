@@ -89,3 +89,5 @@ treeoutput*.txt
 
 bootstrap/cache/*
 !bootstrap/cache/.gitkeep
+public/dist/
+public/mix-manifest.json
