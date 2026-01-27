@@ -427,7 +427,7 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                             <td width="5%">-</td>
                             <td width="12%">
                                 <div class="form-group" id="projectSelect">
-                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_project')?>" style="" class="project-select" >
+                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_project')?>" class="project-select">
                                         <option value=""></option>
                                         <?php foreach ($tpl->get('allProjects') as $projectRow) { ?>
                                             <?php echo sprintf(
@@ -476,7 +476,7 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                                 </div>
                             </td>
                             <td width="8%">
-                                <select class="kind-select" name="kindId">
+                                <select class="kind-select" name="kindId" style="width:150px;">
                                         <?php foreach ($tpl->get('kind') as $key => $kindRow) { ?>
                                             <?php echo '<option value='.$key.'>'.$tpl->__($kindRow).'</option>'; ?>
                                         <?php }?>
