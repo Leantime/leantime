@@ -2100,24 +2100,92 @@ class Install
     {
         $errors = [];
 
-        $sql = [
-            // Rename the column `enitityA` to `entityA`
-            'ALTER TABLE `zp_entity_relationship` CHANGE COLUMN `enitityA` `entityA` INT NULL;',
+        // First, check if we need to rename the table from plural to singular
+        // Old migration (update_sql_20115) created zp_entity_relationships (plural)
+        // but the code now expects zp_entity_relationship (singular)
+        try {
+            $pluralTableExists = $this->connection->select(
+                "SELECT COUNT(*) as cnt FROM information_schema.tables
+                 WHERE table_schema = DATABASE()
+                 AND table_name = 'zp_entity_relationships'"
+            );
 
-            // Drop the old index on `enitityA`
-            'ALTER TABLE `zp_entity_relationship` DROP INDEX `entityA`;',
-
-            // Create a new index on `entityA`
-            'ALTER TABLE `zp_entity_relationship` ADD INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC);',
-        ];
-
-        foreach ($sql as $statement) {
-            try {
-                $this->connection->statement($statement);
-            } catch (\Exception $e) {
-                Log::error($statement.' Failed: '.$e->getMessage());
-                Log::error($e);
+            if ($pluralTableExists[0]->cnt > 0) {
+                // Rename plural table to singular
+                $this->connection->statement('RENAME TABLE `zp_entity_relationships` TO `zp_entity_relationship`;');
             }
+        } catch (\Exception $e) {
+            Log::error('Failed to check/rename zp_entity_relationships table: '.$e->getMessage());
+        }
+
+        // Check if the singular table exists before trying to alter it
+        try {
+            $tableExists = $this->connection->select(
+                "SELECT COUNT(*) as cnt FROM information_schema.tables
+                 WHERE table_schema = DATABASE()
+                 AND table_name = 'zp_entity_relationship'"
+            );
+
+            if ($tableExists[0]->cnt == 0) {
+                // Table doesn't exist - create it with correct schema
+                $this->connection->statement('
+                    CREATE TABLE `zp_entity_relationship` (
+                        `id` INT NOT NULL AUTO_INCREMENT,
+                        `entityA` INT NULL,
+                        `entityAType` VARCHAR(45) NULL,
+                        `entityB` INT NULL,
+                        `entityBType` VARCHAR(45) NULL,
+                        `relationship` VARCHAR(45) NULL,
+                        `createdOn` DATETIME NULL,
+                        `createdBy` INT NULL,
+                        `meta` TEXT NULL,
+                        PRIMARY KEY (`id`),
+                        INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC),
+                        INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                ');
+
+                return true;
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to check/create zp_entity_relationship table: '.$e->getMessage());
+
+            return true;
+        }
+
+        // Check if the column needs to be renamed (has the typo)
+        try {
+            $columnExists = $this->connection->select(
+                "SELECT COUNT(*) as cnt FROM information_schema.columns
+                 WHERE table_schema = DATABASE()
+                 AND table_name = 'zp_entity_relationship'
+                 AND column_name = 'enitityA'"
+            );
+
+            if ($columnExists[0]->cnt > 0) {
+                // Column has the typo, fix it
+                $sql = [
+                    // Rename the column `enitityA` to `entityA`
+                    'ALTER TABLE `zp_entity_relationship` CHANGE COLUMN `enitityA` `entityA` INT NULL;',
+
+                    // Drop the old index on `enitityA`
+                    'ALTER TABLE `zp_entity_relationship` DROP INDEX `entityA`;',
+
+                    // Create a new index on `entityA`
+                    'ALTER TABLE `zp_entity_relationship` ADD INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC);',
+                ];
+
+                foreach ($sql as $statement) {
+                    try {
+                        $this->connection->statement($statement);
+                    } catch (\Exception $e) {
+                        Log::error($statement.' Failed: '.$e->getMessage());
+                        Log::error($e);
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to check/fix enitityA column: '.$e->getMessage());
         }
 
         return true;
@@ -2146,5 +2214,89 @@ class Install
         }
 
         return count($errors) ? $errors : true;
+    }
+
+    public function update_sql_30412(): bool|array
+    {
+        // This migration fixes the zp_entity_relationship table for users who:
+        // 1. Upgraded from older versions with plural table name (zp_entity_relationships)
+        // 2. Already ran the broken update_sql_30410 which failed
+        // 3. Have the table with the typo column (enitityA instead of entityA)
+
+        // Step 1: Check if plural table exists and rename to singular
+        try {
+            $pluralTableExists = $this->connection->select(
+                "SELECT COUNT(*) as cnt FROM information_schema.tables
+                 WHERE table_schema = DATABASE()
+                 AND table_name = 'zp_entity_relationships'"
+            );
+
+            if ($pluralTableExists[0]->cnt > 0) {
+                $this->connection->statement('RENAME TABLE `zp_entity_relationships` TO `zp_entity_relationship`;');
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30412: Failed to check/rename plural table: '.$e->getMessage());
+        }
+
+        // Step 2: Check if singular table exists, create if not
+        try {
+            $tableExists = $this->connection->select(
+                "SELECT COUNT(*) as cnt FROM information_schema.tables
+                 WHERE table_schema = DATABASE()
+                 AND table_name = 'zp_entity_relationship'"
+            );
+
+            if ($tableExists[0]->cnt == 0) {
+                $this->connection->statement('
+                    CREATE TABLE `zp_entity_relationship` (
+                        `id` INT NOT NULL AUTO_INCREMENT,
+                        `entityA` INT NULL,
+                        `entityAType` VARCHAR(45) NULL,
+                        `entityB` INT NULL,
+                        `entityBType` VARCHAR(45) NULL,
+                        `relationship` VARCHAR(45) NULL,
+                        `createdOn` DATETIME NULL,
+                        `createdBy` INT NULL,
+                        `meta` TEXT NULL,
+                        PRIMARY KEY (`id`),
+                        INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC),
+                        INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                ');
+
+                return true;
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30412: Failed to check/create table: '.$e->getMessage());
+
+            return true;
+        }
+
+        // Step 3: Check if column typo exists and fix it
+        try {
+            $columnExists = $this->connection->select(
+                "SELECT COUNT(*) as cnt FROM information_schema.columns
+                 WHERE table_schema = DATABASE()
+                 AND table_name = 'zp_entity_relationship'
+                 AND column_name = 'enitityA'"
+            );
+
+            if ($columnExists[0]->cnt > 0) {
+                $this->connection->statement('ALTER TABLE `zp_entity_relationship` CHANGE COLUMN `enitityA` `entityA` INT NULL;');
+
+                // Try to fix the index too
+                try {
+                    $this->connection->statement('ALTER TABLE `zp_entity_relationship` DROP INDEX `entityA`;');
+                } catch (\Exception $e) {
+                    // Index may not exist or have different name, ignore
+                }
+
+                $this->connection->statement('ALTER TABLE `zp_entity_relationship` ADD INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC);');
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30412: Failed to fix column typo: '.$e->getMessage());
+        }
+
+        return true;
     }
 }
