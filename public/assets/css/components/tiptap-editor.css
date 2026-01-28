@@ -2586,22 +2586,35 @@ div[id^="comments-"] > div > .clearall {
     cursor: pointer;
 }
 
+/* Increase KaTeX font size for better readability in editor */
+.tiptap-math .katex {
+    font-size: 1.4em;
+}
+
 .tiptap-math--inline {
-    padding: 0 4px;
+    padding: 2px 6px;
     margin: 0 2px;
     background: var(--code-background, #f5f5f5);
     border-radius: 4px;
+}
+
+.tiptap-math--inline .katex {
+    font-size: 1.2em;
 }
 
 .tiptap-math--block {
     position: relative;
     display: block;
     margin: 16px 0;
-    padding: 20px;
+    padding: 24px;
     background: var(--code-background, #f8f9fa);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 8px;
     text-align: center;
+}
+
+.tiptap-math--block .katex {
+    font-size: 1.5em;
 }
 
 .tiptap-math__display {
@@ -2756,14 +2769,19 @@ div[id^="comments-"] > div > .clearall {
 }
 
 .tiptap-math-dialog__preview-area {
-    min-height: 60px;
-    padding: 16px;
+    min-height: 80px;
+    padding: 20px;
     background: var(--code-background, #f8f9fa);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Larger font size in the preview dialog */
+.tiptap-math-dialog__preview-area .katex {
+    font-size: 1.6em;
 }
 
 .tiptap-math-dialog__preview-empty,
