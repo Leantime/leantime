@@ -23,10 +23,7 @@ services:
       start_period: 30s
 
   leantime:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: leantime:prod
+    image: leantime-prod:prod
     container_name: leantime_app_prod
     restart: unless-stopped
     env_file:

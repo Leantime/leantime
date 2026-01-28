@@ -126,7 +126,7 @@ jobs:
 
           # Start new version (only app, not database)
           echo "[INFO] Deploying new version..."
-          docker-compose -f docker-compose.production.yml up -d --force-recreate leantime
+          docker-compose -f docker-compose.production.yml up -d leantime
           
           # Wait for health check
           echo "[INFO] Waiting for application to become healthy..."
