@@ -7,6 +7,8 @@ use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Db\Repository;
@@ -605,13 +607,27 @@ class Timesheets extends Repository
     /**
      * punchIn - clock in on a specified ticket
      */
-    public function punchIn(int $ticketId): mixed
+    public function punchIn(int $ticketId): bool
     {
-        return $this->db->table('zp_punch_clock')->insert([
-            'id' => $ticketId,
-            'userId' => session('userdata.id'),
-            'punchIn' => time(),
-        ]);
+        $userId = session('userdata.id');
+
+        if (empty($userId)) {
+            Log::warning('punchIn: No userId in session');
+
+            return false;
+        }
+
+        try {
+            return $this->db->table('zp_punch_clock')->insert([
+                'id' => $ticketId,
+                'userId' => $userId,
+                'punchIn' => time(),
+            ]);
+        } catch (QueryException $e) {
+            Log::error('punchIn failed: '.$e->getMessage());
+
+            return false;
+        }
     }
 
     /**

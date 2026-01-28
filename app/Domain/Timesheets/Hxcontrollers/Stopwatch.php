@@ -35,14 +35,14 @@ class Stopwatch extends HtmxController
      */
     public function stopTimer(): void
     {
-        if (! $this->incomingRequest->getMethod() == 'PATCH') {
+        if ($this->incomingRequest->getMethod() !== 'PATCH') {
             throw new Error('This endpoint only supports PATCH requests');
         }
 
         $params = $this->incomingRequest->request->all();
 
-        if (isset($params['action']) === true && $params['action'] == 'stop') {
-            $ticketId = filter_var($params['ticketId'], FILTER_SANITIZE_NUMBER_INT);
+        if (isset($params['action']) && $params['action'] === 'stop') {
+            $ticketId = (int) filter_var($params['ticketId'], FILTER_SANITIZE_NUMBER_INT);
             $hoursBooked = $this->timesheetService->punchOut($ticketId);
         }
 
@@ -54,20 +54,26 @@ class Stopwatch extends HtmxController
 
     public function startTimer(): void
     {
-        if (! $this->incomingRequest->getMethod() == 'PATCH') {
+        if ($this->incomingRequest->getMethod() !== 'PATCH') {
             throw new Error('This endpoint only supports PATCH requests');
         }
 
         $params = $this->incomingRequest->request->all();
 
-        if (isset($params['action']) === true && $params['action'] == 'start') {
-            $ticketId = filter_var($params['ticketId'], FILTER_SANITIZE_NUMBER_INT);
+        if (isset($params['action']) && $params['action'] === 'start') {
+            $ticketId = (int) filter_var($params['ticketId'], FILTER_SANITIZE_NUMBER_INT);
+
             if ($ticketId > 0) {
-                $this->timesheetService->punchIn($ticketId);
+                $result = $this->timesheetService->punchIn($ticketId);
+
+                if ($result) {
+                    $this->tpl->setNotification(__('short_notifications.timer_started'), 'success');
+                } else {
+                    $this->tpl->setNotification(__('short_notifications.timer_start_failed'), 'error');
+                }
             }
         }
 
-        $this->tpl->setNotification(__('short_notifications.timer_started'), 'success');
         $this->tpl->setHTMXEvent('timerUpdate');
 
         $onTheClock = session()->exists('userdata') ? $this->timesheetService->isClocked(session('userdata.id')) : false;
