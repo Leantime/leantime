@@ -20,6 +20,7 @@
 <link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/main.{!! $version !!}.min.css"/>
 <link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/app.{!! $version !!}.min.css"/>
 <link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/tiptap-editor.{!! $version !!}.min.css"/>
+<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/katex.min.css"/>
 
 @dispatchEvent('afterLinkTags')
 

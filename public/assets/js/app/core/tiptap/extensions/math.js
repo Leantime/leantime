@@ -10,8 +10,8 @@
 const { Node, mergeAttributes } = require('@tiptap/core');
 
 // Import KaTeX directly from npm package (bundled with webpack)
+// Note: KaTeX CSS is loaded separately via link tag in pageBottom.blade.php
 const katex = require('katex');
-require('katex/dist/katex.min.css');
 
 // Make KaTeX available globally for consistency
 window.katex = katex;

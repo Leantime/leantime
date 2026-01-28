@@ -156,6 +156,34 @@ var Details = Node.create({
             'Mod-Alt-d': function() {
                 return this.editor.commands.setDetails();
             },
+            // Allow Mod-Enter to exit details and create paragraph after
+            'Mod-Enter': function() {
+                var editor = this.editor;
+                var state = editor.state;
+                var selection = state.selection;
+
+                // Check if we're inside a details node
+                var detailsNode = null;
+                var detailsPos = null;
+
+                state.doc.nodesBetween(selection.from, selection.to, function(node, pos) {
+                    if (node.type.name === 'details') {
+                        detailsNode = node;
+                        detailsPos = pos;
+                    }
+                });
+
+                if (detailsNode && detailsPos !== null) {
+                    // Insert paragraph after details
+                    var endPos = detailsPos + detailsNode.nodeSize;
+                    return editor.chain()
+                        .insertContentAt(endPos, { type: 'paragraph' })
+                        .focus(endPos + 1)
+                        .run();
+                }
+
+                return false;
+            },
         };
     },
 });
@@ -285,7 +313,6 @@ var DetailsContent = Node.create({
     name: 'detailsContent',
     group: 'detailsContent',
     content: 'block+',
-    defining: true,
 
     parseHTML: function() {
         return [

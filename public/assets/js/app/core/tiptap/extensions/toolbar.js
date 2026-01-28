@@ -11,6 +11,29 @@
     'use strict';
 
     /**
+     * Check if the current selection is in a node that only allows inline content
+     * (like detailsSummary). Block commands should not run in these contexts.
+     */
+    function isInInlineOnlyContext(editor) {
+        var state = editor.state;
+        var selection = state.selection;
+        var $from = selection.$from;
+
+        // Walk up the document tree to check parent nodes
+        for (var depth = $from.depth; depth >= 0; depth--) {
+            var node = $from.node(depth);
+            var nodeType = node.type;
+
+            // Only check for specific nodes that don't allow block content
+            if (nodeType.name === 'detailsSummary') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Toolbar button definitions
      */
     var toolbarButtons = {
@@ -35,32 +58,63 @@
         heading: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16"></path><path d="M18 4v16"></path><path d="M6 12h12"></path></svg>',
             title: 'Heading',
-            command: function(editor) { editor.chain().focus().toggleHeading({ level: 2 }).run(); },
-            isActive: function(editor) { return editor.isActive('heading'); }
+            command: function(editor, button) {
+                // Don't run in inline-only contexts (like detailsSummary)
+                if (isInInlineOnlyContext(editor)) {
+                    return;
+                }
+                showHeadingPopover(editor, button);
+            },
+            isActive: function(editor) { return editor.isActive('heading'); },
+            isDisabled: function(editor) { return isInInlineOnlyContext(editor); }
         },
         quote: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z"></path><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3z"></path></svg>',
             title: 'Quote',
-            command: function(editor) { editor.chain().focus().toggleBlockquote().run(); },
-            isActive: function(editor) { return editor.isActive('blockquote'); }
+            command: function(editor) {
+                if (isInInlineOnlyContext(editor)) {
+                    return;
+                }
+                editor.chain().focus().toggleBlockquote().run();
+            },
+            isActive: function(editor) { return editor.isActive('blockquote'); },
+            isDisabled: function(editor) { return isInInlineOnlyContext(editor); }
         },
         bulletList: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"></line><line x1="9" y1="12" x2="20" y2="12"></line><line x1="9" y1="18" x2="20" y2="18"></line><circle cx="4" cy="6" r="1" fill="currentColor"></circle><circle cx="4" cy="12" r="1" fill="currentColor"></circle><circle cx="4" cy="18" r="1" fill="currentColor"></circle></svg>',
             title: 'Bullet List',
-            command: function(editor) { editor.chain().focus().toggleBulletList().run(); },
-            isActive: function(editor) { return editor.isActive('bulletList'); }
+            command: function(editor) {
+                if (isInInlineOnlyContext(editor)) {
+                    return;
+                }
+                editor.chain().focus().toggleBulletList().run();
+            },
+            isActive: function(editor) { return editor.isActive('bulletList'); },
+            isDisabled: function(editor) { return isInInlineOnlyContext(editor); }
         },
         orderedList: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path></svg>',
             title: 'Numbered List',
-            command: function(editor) { editor.chain().focus().toggleOrderedList().run(); },
-            isActive: function(editor) { return editor.isActive('orderedList'); }
+            command: function(editor) {
+                if (isInInlineOnlyContext(editor)) {
+                    return;
+                }
+                editor.chain().focus().toggleOrderedList().run();
+            },
+            isActive: function(editor) { return editor.isActive('orderedList'); },
+            isDisabled: function(editor) { return isInInlineOnlyContext(editor); }
         },
         taskList: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="6" height="6" rx="1"></rect><path d="M5 11V8h2"></path><line x1="12" y1="8" x2="21" y2="8"></line><rect x="3" y="13" width="6" height="6" rx="1"></rect><path d="M5 16l1.5 1.5L9 14"></path><line x1="12" y1="16" x2="21" y2="16"></line></svg>',
             title: 'Checklist',
-            command: function(editor) { editor.chain().focus().toggleTaskList().run(); },
-            isActive: function(editor) { return editor.isActive('taskList'); }
+            command: function(editor) {
+                if (isInInlineOnlyContext(editor)) {
+                    return;
+                }
+                editor.chain().focus().toggleTaskList().run();
+            },
+            isActive: function(editor) { return editor.isActive('taskList'); },
+            isDisabled: function(editor) { return isInInlineOnlyContext(editor); }
         },
         link: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>',
@@ -545,6 +599,93 @@
         if (existingPopover) {
             existingPopover.remove();
         }
+        var existingHeadingPopover = document.querySelector('.tiptap-heading-popover');
+        if (existingHeadingPopover) {
+            existingHeadingPopover.remove();
+        }
+    }
+
+    /**
+     * Show heading level picker popover
+     */
+    function showHeadingPopover(editor, button) {
+        closeFontPopover();
+
+        var headings = [
+            { name: 'Paragraph', level: 0 },
+            { name: 'Heading 1', level: 1 },
+            { name: 'Heading 2', level: 2 },
+            { name: 'Heading 3', level: 3 },
+            { name: 'Heading 4', level: 4 }
+        ];
+
+        var popover = document.createElement('div');
+        popover.className = 'tiptap-heading-popover tiptap-font-popover';
+
+        var list = '<div class="tiptap-font-popover__list">';
+        headings.forEach(function(h) {
+            var isActive = h.level === 0
+                ? !editor.isActive('heading')
+                : editor.isActive('heading', { level: h.level });
+            var activeClass = isActive ? ' is-active' : '';
+            var fontSize = h.level === 0 ? '14px' : (20 - h.level * 2) + 'px';
+            var fontWeight = h.level === 0 ? 'normal' : 'bold';
+            list += '<button type="button" class="tiptap-font-popover__btn' + activeClass + '" data-level="' + h.level + '" style="font-size: ' + fontSize + '; font-weight: ' + fontWeight + ';">' + h.name + '</button>';
+        });
+        list += '</div>';
+
+        popover.innerHTML = list;
+
+        // Position popover below button
+        var buttonRect = button.getBoundingClientRect();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+        popover.style.position = 'absolute';
+        popover.style.top = (buttonRect.bottom + scrollTop + 4) + 'px';
+        popover.style.left = (buttonRect.left + scrollLeft) + 'px';
+        popover.style.zIndex = '10001';
+
+        document.body.appendChild(popover);
+
+        // Add click handlers
+        popover.querySelectorAll('.tiptap-font-popover__btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var level = parseInt(btn.getAttribute('data-level'), 10);
+                if (level === 0) {
+                    // Convert to paragraph
+                    editor.chain().focus().setParagraph().run();
+                } else {
+                    // Select all content in the current block, unset colors, then apply heading
+                    var state = editor.state;
+                    var selection = state.selection;
+                    var $from = selection.$from;
+
+                    // Get the parent block node
+                    var parentPos = $from.start($from.depth);
+                    var parentEnd = $from.end($from.depth);
+
+                    // Select the entire block content, unset color marks, then apply heading
+                    editor.chain()
+                        .focus()
+                        .setTextSelection({ from: parentPos, to: parentEnd })
+                        .unsetMark('textStyle')
+                        .toggleHeading({ level: level })
+                        .run();
+                }
+                closeFontPopover();
+            });
+        });
+
+        // Close popover when clicking outside
+        setTimeout(function() {
+            document.addEventListener('click', function closeHandler(e) {
+                if (!popover.contains(e.target) && e.target !== button) {
+                    closeFontPopover();
+                    document.removeEventListener('click', closeHandler);
+                }
+            });
+        }, 0);
     }
 
     /**
@@ -960,13 +1101,26 @@
             buttons.forEach(function(button) {
                 var commandName = button.getAttribute('data-command');
                 var buttonDef = toolbarButtons[commandName];
-                if (buttonDef && buttonDef.isActive) {
-                    if (buttonDef.isActive(editor)) {
-                        button.classList.add('is-active');
-                        button.setAttribute('aria-pressed', 'true');
-                    } else {
-                        button.classList.remove('is-active');
-                        button.setAttribute('aria-pressed', 'false');
+                if (buttonDef) {
+                    // Update active state
+                    if (buttonDef.isActive) {
+                        if (buttonDef.isActive(editor)) {
+                            button.classList.add('is-active');
+                            button.setAttribute('aria-pressed', 'true');
+                        } else {
+                            button.classList.remove('is-active');
+                            button.setAttribute('aria-pressed', 'false');
+                        }
+                    }
+                    // Update disabled state
+                    if (buttonDef.isDisabled) {
+                        if (buttonDef.isDisabled(editor)) {
+                            button.classList.add('is-disabled');
+                            button.setAttribute('aria-disabled', 'true');
+                        } else {
+                            button.classList.remove('is-disabled');
+                            button.setAttribute('aria-disabled', 'false');
+                        }
                     }
                 }
             });

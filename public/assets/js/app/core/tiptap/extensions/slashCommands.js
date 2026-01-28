@@ -394,6 +394,28 @@ function createSuggestionPopup() {
 }
 
 /**
+ * Track if we're using keyboard navigation (to ignore mouse hover during keyboard use)
+ */
+var isKeyboardNavigating = false;
+var keyboardNavTimeout = null;
+
+/**
+ * Update only the active state without re-rendering (for keyboard navigation)
+ */
+function updateActiveItem(popup, selectedIndex) {
+    var items = popup.querySelectorAll('.tiptap-slash-popup__item');
+    items.forEach(function(item, index) {
+        if (index === selectedIndex) {
+            item.classList.add('tiptap-slash-popup__item--active');
+            // Scroll into view without re-rendering
+            item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        } else {
+            item.classList.remove('tiptap-slash-popup__item--active');
+        }
+    });
+}
+
+/**
  * Render command items in popup
  */
 function renderCommandItems(items, popup, selectedIndex, onSelect, onHover) {
@@ -403,6 +425,7 @@ function renderCommandItems(items, popup, selectedIndex, onSelect, onHover) {
     }
 
     var html = '<div class="tiptap-slash-popup__header">Commands</div>';
+    html += '<div class="tiptap-slash-popup__items">';
     html += items.map(function(item, index) {
         var activeClass = index === selectedIndex ? 'tiptap-slash-popup__item--active' : '';
         return '<div class="tiptap-slash-popup__item ' + activeClass + '" data-index="' + index + '">' +
@@ -413,6 +436,7 @@ function renderCommandItems(items, popup, selectedIndex, onSelect, onHover) {
             '</div>' +
         '</div>';
     }).join('');
+    html += '</div>';
 
     popup.innerHTML = html;
 
@@ -427,8 +451,13 @@ function renderCommandItems(items, popup, selectedIndex, onSelect, onHover) {
             }
         });
 
-        // Update active state on hover
+        // Update active state on hover (only if not using keyboard)
         el.addEventListener('mouseenter', function() {
+            // Skip if we're in the middle of keyboard navigation
+            if (isKeyboardNavigating) {
+                return;
+            }
+
             var index = parseInt(el.getAttribute('data-index'), 10);
             // Remove active class from all items
             popup.querySelectorAll('.tiptap-slash-popup__item').forEach(function(item) {
@@ -604,9 +633,13 @@ function createSlashCommandsExtension(customCommands) {
                                 selectedIndex = 0;
                                 currentItems = props.items || [];
                                 commandRef = props.command;
+                                isKeyboardNavigating = false;
 
                                 renderCommandItems(currentItems, popup, selectedIndex, function(item) {
                                     selectItem(item);
+                                }, function(hoveredIndex) {
+                                    // Sync selectedIndex when mouse hovers
+                                    selectedIndex = hoveredIndex;
                                 });
                                 positionPopup(popup, props.clientRect ? props.clientRect() : null);
                             },
@@ -618,6 +651,9 @@ function createSlashCommandsExtension(customCommands) {
 
                                 renderCommandItems(currentItems, popup, selectedIndex, function(item) {
                                     selectItem(item);
+                                }, function(hoveredIndex) {
+                                    // Sync selectedIndex when mouse hovers
+                                    selectedIndex = hoveredIndex;
                                 });
                                 positionPopup(popup, props.clientRect ? props.clientRect() : null);
                             },
@@ -627,19 +663,31 @@ function createSlashCommandsExtension(customCommands) {
 
                                 if (event.key === 'ArrowDown') {
                                     event.preventDefault();
+                                    // Set keyboard navigating flag
+                                    isKeyboardNavigating = true;
+                                    clearTimeout(keyboardNavTimeout);
+                                    keyboardNavTimeout = setTimeout(function() {
+                                        isKeyboardNavigating = false;
+                                    }, 500);
+
                                     selectedIndex = (selectedIndex + 1) % currentItems.length;
-                                    renderCommandItems(currentItems, popup, selectedIndex, function(item) {
-                                        selectItem(item);
-                                    });
+                                    // Just update active state, don't re-render
+                                    updateActiveItem(popup, selectedIndex);
                                     return true;
                                 }
 
                                 if (event.key === 'ArrowUp') {
                                     event.preventDefault();
+                                    // Set keyboard navigating flag
+                                    isKeyboardNavigating = true;
+                                    clearTimeout(keyboardNavTimeout);
+                                    keyboardNavTimeout = setTimeout(function() {
+                                        isKeyboardNavigating = false;
+                                    }, 500);
+
                                     selectedIndex = (selectedIndex - 1 + currentItems.length) % currentItems.length;
-                                    renderCommandItems(currentItems, popup, selectedIndex, function(item) {
-                                        selectItem(item);
-                                    });
+                                    // Just update active state, don't re-render
+                                    updateActiveItem(popup, selectedIndex);
                                     return true;
                                 }
 
@@ -669,6 +717,8 @@ function createSlashCommandsExtension(customCommands) {
                                 currentItems = [];
                                 selectedIndex = 0;
                                 commandRef = null;
+                                isKeyboardNavigating = false;
+                                clearTimeout(keyboardNavTimeout);
                             }
                         };
                     }
