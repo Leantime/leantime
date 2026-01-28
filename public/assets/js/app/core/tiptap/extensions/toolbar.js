@@ -371,7 +371,7 @@
     var toolbarConfigs = {
         complex: {
             position: 'top',
-            buttons: ['bold', 'italic', 'strike', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more'],
+            buttons: ['bold', 'italic', 'strike', '|', 'fontFamily', 'fontSize', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more'],
             expandable: ['table', 'code']
         },
         simple: {
@@ -380,7 +380,7 @@
         },
         notes: {
             position: 'top',
-            buttons: ['bold', 'italic', 'strike', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more']
+            buttons: ['bold', 'italic', 'strike', '|', 'fontFamily', 'fontSize', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more']
         }
     };
 
