@@ -225,7 +225,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
 
                             <?php foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) { ?>
                             <div class="column">
-                                <div class="contentInner <?php echo 'status_'.$key; ?>" >
+                                <div class="contentInner <?php echo 'status_'.$key; ?>" style="min-width: 190px;">
                                     <?php foreach ($allTickets as $row) { ?>
                                         <?php if ($row['status'] == $key) {?>
                                         <?php
