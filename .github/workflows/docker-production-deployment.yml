@@ -3,7 +3,7 @@ name: Deploy Leantime to Production
 on:
   push:
     branches:
-      - feature/#5731-dockerize-production
+      - master
   workflow_dispatch:
 
 env:

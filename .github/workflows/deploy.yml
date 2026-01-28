@@ -3,8 +3,7 @@ name: Deploy Leantime
 on:
   push:
     branches:
-      - develop
-      - master
+      - disabledPermanently
   workflow_dispatch:
 
 jobs:

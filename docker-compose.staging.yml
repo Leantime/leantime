@@ -25,10 +25,7 @@ services:
       - "3307:3306"
 
   leantime:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: leantime:staging
+    image: leantime-staging:staging
     container_name: leantime_app_local
     restart: unless-stopped
     env_file:
