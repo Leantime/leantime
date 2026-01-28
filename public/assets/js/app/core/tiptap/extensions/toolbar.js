@@ -368,7 +368,7 @@
     var toolbarConfigs = {
         complex: {
             position: 'top',
-            buttons: ['bold', 'italic', 'strike', '|', 'fontFamily', 'fontSize', 'color', 'highlight', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more'],
+            buttons: ['bold', 'italic', 'strike', '|', 'fontFamily', 'fontSize', 'textColor', 'highlight', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more'],
             expandable: ['table', 'code']
         },
         simple: {
@@ -377,7 +377,7 @@
         },
         notes: {
             position: 'top',
-            buttons: ['bold', 'italic', 'strike', '|', 'fontFamily', 'fontSize', 'color', 'highlight', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more']
+            buttons: ['bold', 'italic', 'strike', '|', 'fontFamily', 'fontSize', 'textColor', 'highlight', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more']
         }
     };
 
