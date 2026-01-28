@@ -507,6 +507,84 @@ class Timesheets
         return $timesheetGroups;
     }
 
+    /* getMonthlyTimesheets - get timesheets grouped by day for the full month (for monthly view) */
+    public function getMonthlyTimesheets(int $projectId, CarbonInterface $fromDate, int $userId = 0): array
+    {
+        $daysInMonth = $fromDate->daysInMonth();
+
+        $allTimesheets = $this->timesheetsRepo->getMonthlyTimesheets(
+            projectId: $projectId,
+            fromDate: $fromDate,
+            userId: $userId,
+            daysInMonth: $daysInMonth
+        );
+
+        $timesheetGroups = [];
+        foreach ($allTimesheets as $timesheet) {
+            try {
+                $currentWorkDate = dtHelper()->parseDbDateTime($timesheet['workDate']);
+            } catch (\Exception $e) {
+                Log::warning($e);
+
+                continue;
+            }
+
+            $workdateOffsetStart = (int) ($currentWorkDate->setToUserTimezone()->secondsSinceMidnight() / 60 / 60);
+            $timezonedTime = $currentWorkDate->format('H:i:s');
+            $groupKey = $timesheet['ticketId'].'-'.$timesheet['kind'].'-'.$timezonedTime;
+
+            if (! isset($timesheetGroups[$groupKey])) {
+                $group = [
+                    'kind' => $timesheet['kind'],
+                    'clientName' => $timesheet['clientName'],
+                    'name' => $timesheet['name'],
+                    'headline' => $timesheet['headline'],
+                    'ticketId' => $timesheet['ticketId'],
+                    'projectId' => $timesheet['projectId'],
+                    'projectKey' => $timesheet['projectKey'],
+                    'hasTimesheetOffset' => $workdateOffsetStart !== 0,
+                    'rowSum' => 0,
+                ];
+
+                for ($d = 0; $d < $daysInMonth; $d++) {
+                    $dayNum = $d + 1;
+                    $dayStart = $fromDate->copy()->addDays($d);
+                    $dayEnd = $fromDate->copy()->addDays($d)->addHours(23)->addMinutes(59);
+                    $group['day'.$dayNum] = [
+                        'start' => $dayStart,
+                        'end' => $dayEnd,
+                        'actualWorkDate' => $workdateOffsetStart === 0
+                            ? $fromDate->copy()->addDays($d)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second)
+                            : '',
+                        'hours' => 0,
+                        'description' => '',
+                        'id' => null,
+                    ];
+                }
+
+                $timesheetGroups[$groupKey] = $group;
+            }
+
+            for ($d = 1; $d <= $daysInMonth; $d++) {
+                $dayKey = 'day'.$d;
+                $start = $timesheetGroups[$groupKey][$dayKey]['start'];
+                $end = $timesheetGroups[$groupKey][$dayKey]['end'];
+
+                if ($currentWorkDate->gte($start) && $currentWorkDate->lt($end)) {
+                    $timesheetGroups[$groupKey][$dayKey]['hours'] += $timesheet['hours'];
+                    $timesheetGroups[$groupKey][$dayKey]['actualWorkDate'] = $currentWorkDate;
+                    $timesheetGroups[$groupKey][$dayKey]['description'] = $timesheet['description'];
+                    $timesheetGroups[$groupKey][$dayKey]['id'] = $timesheet['id'];
+                    break;
+                }
+            }
+
+            $timesheetGroups[$groupKey]['rowSum'] += $timesheet['hours'];
+        }
+
+        return $timesheetGroups;
+    }
+
     /**
      * @api
      */

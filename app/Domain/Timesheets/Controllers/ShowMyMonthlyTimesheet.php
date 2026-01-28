@@ -60,7 +60,7 @@ class ShowMyMonthlyTimesheet extends Controller
         }
 
         $fromDateDb = $fromDate->copy()->setToDbTimezone();
-        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromDateDb, session('userdata.id'));
+        $myTimesheets = $this->timesheetService->getMonthlyTimesheets(-1, $fromDateDb, session('userdata.id'));
         $existingTicketIds = array_map(fn($item) => $item['ticketId'], $myTimesheets);
 
         $this->tpl->assign('existingTicketIds', $existingTicketIds);
