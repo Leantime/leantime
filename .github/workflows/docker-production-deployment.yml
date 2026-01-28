@@ -1,0 +1,324 @@
+name: Deploy Leantime to Production
+
+on:
+  push:
+    branches:
+      - feature/#5731-dockerize-production
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: leantime-prod
+  IMAGE_TAG: prod-${{ github.sha }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          load: true
+          platforms: linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+
+      - name: Install docker-pussh plugin
+        run: |
+          mkdir -p ~/.docker/cli-plugins
+          curl -sSL https://raw.githubusercontent.com/psviderski/unregistry/main/docker-pussh \
+            -o ~/.docker/cli-plugins/docker-pussh
+          chmod +x ~/.docker/cli-plugins/docker-pussh
+          echo "Plugin installed"
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/production_key
+          chmod 600 ~/.ssh/production_key
+          ssh-keyscan -p ${{ secrets.SERVER_SSH_PORT || 22 }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Push image to server
+        run: |
+          echo "Pushing image to server..."
+          docker pussh ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SERVER_SSH_PORT || 22 }} \
+            -i ~/.ssh/production_key
+          echo "Image pushed successfully!"
+
+      - name: Prepare server directory
+        run: |
+          ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
+              -i ~/.ssh/production_key \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+              "sudo chown -R \$USER:\$USER ${{ secrets.DOCKER_APP_PROD_PATH }} && \
+              sudo chmod -R 755 ${{ secrets.DOCKER_APP_PROD_PATH }}"
+
+      - name: Upload docker-compose.production.yml to server
+        run: |
+          scp -P ${{ secrets.SERVER_SSH_PORT || 22 }} \
+              -i ~/.ssh/production_key \
+              docker-compose.production.yml \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DOCKER_APP_PROD_PATH }}
+
+      - name: Deploy to Production
+        id: deploy
+        continue-on-error: true
+        run: |
+          ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
+              -i ~/.ssh/production_key \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << 'ENDSSH'
+          set -e
+          
+          IMAGE_NAME="${{ env.IMAGE_NAME }}"
+          NEW_IMAGE_TAG="${{ env.IMAGE_TAG }}"
+          APP_DIR="${{ secrets.DOCKER_APP_PROD_PATH }}"
+          CONTAINER_NAME="leantime_app_prod"
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          
+          echo "======================================"
+          echo "[INFO] Starting deployment to production..."
+          echo "Directory: ${APP_DIR}"
+          echo "Image: ${IMAGE_NAME}:${NEW_IMAGE_TAG}"
+          echo "======================================"
+          
+          cd "${APP_DIR}"
+          
+          # Check if .env exists
+          if [ ! -f ".env" ]; then
+            echo "[ERROR] .env file not found! Cannot deploy."
+            exit 1
+          fi
+          
+          # Get current image tag for rollback
+          CURRENT_IMAGE_TAG=$(docker inspect ${CONTAINER_NAME} --format '{{.Config.Image}}' 2>/dev/null | cut -d':' -f2)
+          echo "${CURRENT_IMAGE_TAG}" > "${APP_DIR}/.previous_image_tag.txt"
+          
+          # Backup configs
+          if [ -f "docker-compose.production.yml" ]; then
+            cp docker-compose.production.yml "docker-compose.production.yml.backup.${TIMESTAMP}"
+            echo "[INFO] Backed up docker-compose.production.yml"
+          fi
+          
+          if [ -f ".env" ]; then
+            cp .env ".env.backup.${TIMESTAMP}"
+            echo "[INFO] Backed up .env"
+          fi
+          
+          # Stop only the app container (not database!)
+          echo "[INFO] Removing app container..."
+          docker-compose -f docker-compose.production.yml rm -f -s leantime || true
+          
+          # Update image in docker-compose
+          echo "[DEBUG] Updating image to: ${IMAGE_NAME}:${NEW_IMAGE_TAG}"
+          sed -i "s|image: ${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${NEW_IMAGE_TAG}|" docker-compose.production.yml
+          echo "[DEBUG] Updated docker-compose.production.yml"
+
+          # Start new version (only app, not database)
+          echo "[INFO] Deploying new version..."
+          docker-compose -f docker-compose.production.yml up -d --force-recreate leantime
+          
+          # Wait for health check
+          echo "[INFO] Waiting for application to become healthy..."
+          HEALTH_PASSED=false
+          for i in {1..30}; do
+            # Check if container is running first
+            if ! docker ps | grep -q "${CONTAINER_NAME}"; then
+              echo "[ERROR] Container ${CONTAINER_NAME} is not running!"
+              docker-compose -f docker-compose.production.yml logs --tail=50 leantime
+              exit 1
+            fi
+            
+            # Try health check (using curl without specific endpoint)
+            if docker exec "${CONTAINER_NAME}" curl -f http://localhost:8080 >/dev/null 2>&1; then
+              echo "[SUCCESS] Application is healthy! (attempt $i)"
+              HEALTH_PASSED=true
+              break
+            fi
+            
+            echo "[INFO] Waiting for application to become healthy... (attempt $i/30)"
+            sleep 2
+          done
+          
+          if [ "${HEALTH_PASSED}" = false ]; then
+            echo "[ERROR] Application did not become healthy after 60 seconds"
+            docker-compose -f docker-compose.production.yml logs --tail=50 leantime
+            exit 1
+          fi
+          
+          # Store current image tag for reference
+          echo "${IMAGE_NAME}:${NEW_IMAGE_TAG}" > .current_image_tag
+          
+          echo "======================================"
+          echo "[SUCCESS] Deployment successful!"
+          echo "======================================"
+          docker-compose -f docker-compose.production.yml ps
+          ENDSSH
+
+      - name: Rollback on Failure
+        if: steps.deploy.outcome == 'failure'
+        run: |
+          ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
+              -i ~/.ssh/production_key \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << 'ENDSSH'
+          set -e
+          
+          IMAGE_NAME="${{ env.IMAGE_NAME }}"
+          APP_DIR="${{ secrets.DOCKER_APP_PROD_PATH }}"
+          CONTAINER_NAME="leantime_app_prod"
+
+          echo "[ERROR] Deployment failed! Initiating rollback..."
+          cd "${APP_DIR}"
+          
+          # Get previous image tag
+          PREVIOUS_IMAGE_TAG=$(cat "${APP_DIR}/.previous_image_tag.txt" 2>/dev/null || echo "")
+          
+          if [ -z "${PREVIOUS_IMAGE_TAG}" ] || [ "${PREVIOUS_IMAGE_TAG}" = "none" ]; then
+            echo "[WARN] No previous image to rollback to"
+            docker-compose -f docker-compose.production.yml stop leantime
+            exit 1
+          fi
+          
+          echo "[INFO] Rolling back to: ${IMAGE_NAME}:${PREVIOUS_IMAGE_TAG}"
+          
+          # Restore backups
+          LATEST_ENV_BACKUP=$(ls -t .env.backup.* 2>/dev/null | head -n 1)
+          LATEST_COMPOSE_BACKUP=$(ls -t docker-compose.production.yml.backup.* 2>/dev/null | head -n 1)
+
+          if [ -n "${LATEST_COMPOSE_BACKUP}" ]; then
+            cp "${LATEST_COMPOSE_BACKUP}" docker-compose.production.yml
+            echo "[INFO] Restored docker-compose.production.yml from backup"
+          fi
+          
+          if [ -n "${LATEST_ENV_BACKUP}" ]; then
+            cp "${LATEST_ENV_BACKUP}" .env
+            echo "[INFO] Restored .env from backup"
+          fi
+          
+          # Stop failed container
+          echo "[INFO] Removing failed container..."
+          docker-compose -f docker-compose.production.yml rm -f -s leantime
+
+          # Start previous version
+          echo "[INFO] Starting previous version..."
+          docker-compose -f docker-compose.production.yml up -d --no-deps --force-recreate leantime
+
+          # Wait for rollback to complete
+          echo "[INFO] Waiting for rollback to complete..."
+          ROLLBACK_SUCCESS=false
+          for i in {1..30}; do
+            if docker ps | grep -q "${CONTAINER_NAME}"; then
+              if docker exec "${CONTAINER_NAME}" curl -f http://localhost:8080 >/dev/null 2>&1; then
+                echo "[INFO] Application is healthy after rollback (attempt $i)"
+                ROLLBACK_SUCCESS=true
+                break
+              fi
+            fi
+            echo "[INFO] Waiting for rollback... (attempt $i/30)"
+            sleep 2
+          done
+          
+          if [ "${ROLLBACK_SUCCESS}" = false ]; then
+            echo "[ERROR] Rollback failed! Manual intervention required."
+            docker-compose -f docker-compose.production.yml logs --tail=50 leantime
+            exit 1
+          fi
+          
+          echo "[SUCCESS] Rollback successful!"
+          docker-compose -f docker-compose.production.yml ps
+          ENDSSH
+
+      - name: Post-Rollback Cleanup
+        if: steps.deploy.outcome == 'failure'
+        run: |
+          ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
+              -i ~/.ssh/production_key \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << 'ENDSSH'
+          
+          echo "[INFO] Cleaning up failed deployment image..."
+          docker rmi -f ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} 2>/dev/null || true
+          docker image prune -f
+          ENDSSH
+
+      - name: Final Verification
+        if: success()
+        run: |
+          ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
+              -i ~/.ssh/production_key \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << 'ENDSSH'
+          APP_DIR="${{ secrets.DOCKER_APP_PROD_PATH }}"
+          CONTAINER_NAME="leantime_app_prod"
+
+          cd "${APP_DIR}"
+          sync 
+          sleep 2
+          if [ ! -r "docker-compose.production.yml" ]; then
+          echo "[ERROR] docker-compose.production.yml not readable!"
+          exit 1
+          fi
+          
+          echo "[INFO] Final deployment verification..."
+          docker-compose -f docker-compose.production.yml ps
+          
+          echo ""
+          echo "[INFO] Container status:"
+          docker ps | grep "${CONTAINER_NAME}" || echo "Container not found"
+          
+          echo ""
+          echo "[INFO] Testing endpoint..."
+          curl -I https://pearlog-prod.pearshadow.com || echo "Endpoint test failed"
+          
+          echo ""
+          echo "[SUCCESS] Verification complete!"
+          ENDSSH
+
+      - name: Cleanup Old Images
+        if: success()
+        run: |
+          ssh -p ${{ secrets.SERVER_SSH_PORT || 22 }} \
+              -i ~/.ssh/production_key \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << 'ENDSSH'
+          set -e
+          
+          IMAGE_NAME="${{ env.IMAGE_NAME }}"
+          APP_DIR="${{ secrets.DOCKER_APP_PROD_PATH }}"
+          
+          echo "[INFO] Cleaning up old Docker images..."
+          cd "${APP_DIR}"
+          
+          # Keep last 3 production images
+          docker images "${IMAGE_NAME}" --format "{{.Repository}}:{{.Tag}} {{.ID}}" | \
+            grep "prod-" | \
+            tail -n +4 | \
+            awk '{print $2}' | \
+            xargs -r docker rmi -f 2>/dev/null || true
+          
+          docker image prune -f
+          
+          # Cleanup old backups (keep last 7 days)
+          echo "[INFO] Cleaning up old backups..."
+          find "${APP_DIR}" -name "*.backup.*" -type f -mtime +7 -delete
+          echo "[INFO] Backups older than 7 days removed"
+          
+          echo "[INFO] Cleanup complete!"
+          docker images "${IMAGE_NAME}"
+          ENDSSH
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "======================================"
+          echo "Deployment to production failed!"
+          echo "Check logs for details."
+          echo "If rollback occurred, the previous version should still be running."
+          echo "======================================"
