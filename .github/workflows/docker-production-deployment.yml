@@ -191,19 +191,17 @@ jobs:
           
           echo "[INFO] Rolling back to: ${IMAGE_NAME}:${PREVIOUS_IMAGE_TAG}"
           
-          # Restore backups
+          # Restore .env backup only (docker-compose backup won't help)
           LATEST_ENV_BACKUP=$(ls -t .env.backup.* 2>/dev/null | head -n 1)
-          LATEST_COMPOSE_BACKUP=$(ls -t docker-compose.production.yml.backup.* 2>/dev/null | head -n 1)
-
-          if [ -n "${LATEST_COMPOSE_BACKUP}" ]; then
-            cp "${LATEST_COMPOSE_BACKUP}" docker-compose.production.yml
-            echo "[INFO] Restored docker-compose.production.yml from backup"
-          fi
-          
           if [ -n "${LATEST_ENV_BACKUP}" ]; then
             cp "${LATEST_ENV_BACKUP}" .env
             echo "[INFO] Restored .env from backup"
           fi
+          
+          # Update image in docker-compose to previous version
+          echo "[INFO] Updating image to: ${IMAGE_NAME}:${PREVIOUS_IMAGE_TAG}"
+          sed -i "s|image: ${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${PREVIOUS_IMAGE_TAG}|" docker-compose.production.yml
+          echo "[INFO] Updated docker-compose.production.yml to previous version"
           
           # Stop failed container
           echo "[INFO] Removing failed container..."
@@ -211,7 +209,7 @@ jobs:
 
           # Start previous version
           echo "[INFO] Starting previous version..."
-          docker-compose -f docker-compose.production.yml up -d --no-deps --force-recreate leantime
+          docker-compose -f docker-compose.production.yml up -d leantime
 
           # Wait for rollback to complete
           echo "[INFO] Waiting for rollback to complete..."
