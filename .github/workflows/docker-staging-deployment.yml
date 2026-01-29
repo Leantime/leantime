@@ -94,17 +94,14 @@ jobs:
           
           cd "${APP_DIR}"
           
-          # Check if .env exists
           if [ ! -f ".env" ]; then
             echo "[ERROR] .env file not found! Cannot deploy."
             exit 1
           fi
           
-          # Get current image tag for rollback
           CURRENT_IMAGE_TAG=$(docker inspect ${CONTAINER_NAME} --format '{{.Config.Image}}' 2>/dev/null | cut -d':' -f2)
           echo "${CURRENT_IMAGE_TAG}" > "${APP_DIR}/.previous_image_tag.txt"
           
-          # Backup configs
           if [ -f "docker-compose.staging.yml" ]; then
             cp docker-compose.staging.yml "docker-compose.staging.yml.backup.${TIMESTAMP}"
             echo "[INFO] Backed up docker-compose.staging.yml"
@@ -115,20 +112,16 @@ jobs:
             echo "[INFO] Backed up .env"
           fi
           
-          # Stop only the app container (not database!)
           echo "[INFO] Removing app container..."
           docker-compose -f docker-compose.staging.yml rm -f -s leantime || true
           
-          # Update image in docker-compose
           echo "[DEBUG] Updating image to: ${IMAGE_NAME}:${NEW_IMAGE_TAG}"
           sed -i "s|image: leantime-staging:.*|image: ${IMAGE_NAME}:${NEW_IMAGE_TAG}|" docker-compose.staging.yml
           echo "[DEBUG] Updated docker-compose.staging.yml"
           
-          # Start new version (only app, not database)
           echo "[INFO] Deploying new version..."
           docker-compose -f docker-compose.staging.yml up -d leantime 
           
-          # Wait for health check
           echo "[INFO] Waiting for application to become healthy..."
           HEALTH_PASSED=false
           for i in {1..30}; do
@@ -139,7 +132,6 @@ jobs:
               exit 1
             fi
             
-            # Try health check (using curl without specific endpoint)
             if docker exec "${CONTAINER_NAME}" curl -f http://localhost:8080 >/dev/null 2>&1; then
               echo "[SUCCESS] Application is healthy! (attempt $i)"
               HEALTH_PASSED=true
@@ -156,7 +148,6 @@ jobs:
             exit 1
           fi
           
-          # Store current image tag for reference
           echo "${IMAGE_NAME}:${NEW_IMAGE_TAG}" > .current_image_tag
           
           echo "======================================"
@@ -180,7 +171,6 @@ jobs:
           echo "[ERROR] Deployment failed! Initiating rollback..."
           cd "${APP_DIR}"
           
-          # Get previous image tag
           PREVIOUS_IMAGE_TAG=$(cat "${APP_DIR}/.previous_image_tag.txt" 2>/dev/null || echo "")
           
           if [ -z "${PREVIOUS_IMAGE_TAG}" ] || [ "${PREVIOUS_IMAGE_TAG}" = "none" ]; then
@@ -191,27 +181,22 @@ jobs:
           
           echo "[INFO] Rolling back to: ${IMAGE_NAME}:${PREVIOUS_IMAGE_TAG}"
           
-          # Restore .env backup only (docker-compose backup won't help)
           LATEST_ENV_BACKUP=$(ls -t .env.backup.* 2>/dev/null | head -n 1)
           if [ -n "${LATEST_ENV_BACKUP}" ]; then
             cp "${LATEST_ENV_BACKUP}" .env
             echo "[INFO] Restored .env from backup"
           fi
           
-          # Update image in docker-compose to previous version
           echo "[INFO] Updating image to: ${IMAGE_NAME}:${PREVIOUS_IMAGE_TAG}"
           sed -i "s|image: leantime-staging:.*|image: ${IMAGE_NAME}:${PREVIOUS_IMAGE_TAG}|" docker-compose.staging.yml
           echo "[INFO] Updated docker-compose.staging.yml to previous version"
           
-          # Stop failed container
           echo "[INFO] Removing failed container..."
           docker-compose -f docker-compose.staging.yml rm -f -s leantime
 
-          # Start previous version
           echo "[INFO] Starting previous version..."
           docker-compose -f docker-compose.staging.yml up -d leantime
 
-          # Wait for rollback to complete
           echo "[INFO] Waiting for rollback to complete..."
           ROLLBACK_SUCCESS=false
           for i in {1..30}; do
@@ -294,7 +279,6 @@ jobs:
           echo "[INFO] Cleaning up old Docker images..."
           cd "${APP_DIR}"
           
-          # Keep last 3 images for staging
           docker images "${IMAGE_NAME}" --format "{{.Repository}}:{{.Tag}} {{.ID}}" | \
             grep "staging-" | \
             tail -n +4 | \
@@ -303,7 +287,6 @@ jobs:
           
           docker image prune -f
           
-          # Cleanup old backups (keep last 7 days)
           echo "[INFO] Cleaning up old backups..."
           find "${APP_DIR}" -name "*.backup.*" -type f -mtime +7 -delete
           echo "[INFO] Backups older than 7 days removed"
