@@ -39,6 +39,7 @@ class ArticleContent extends HtmxController
         $status = $this->incomingRequest->request->get('status');
         $icon = $this->incomingRequest->request->get('icon');
         $tags = $this->incomingRequest->request->get('tags');
+        $milestoneId = $this->incomingRequest->request->get('milestoneId');
 
         if (! $articleId) {
             return new Response('Article ID required', 400);
@@ -61,7 +62,7 @@ class ArticleContent extends HtmxController
         $article->tags = $tags !== null ? $tags : $existingArticle->tags;
         $article->data = $icon !== null ? $icon : $existingArticle->data;
         $article->status = $status !== null ? $status : $existingArticle->status;
-        $article->milestoneId = $existingArticle->milestoneId;
+        $article->milestoneId = $milestoneId !== null ? $milestoneId : $existingArticle->milestoneId;
         $article->sortindex = $existingArticle->sortindex;
 
         if ($this->wikiService->updateArticle($article)) {

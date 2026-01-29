@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Wiki\Models\Wiki;
 use Leantime\Domain\Wiki\Services\Wiki as WikiService;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,10 +17,13 @@ class Show extends Controller
 
     private CommentService $commentService;
 
-    public function init(WikiService $wikiService, CommentService $commentService): void
+    private TicketService $ticketService;
+
+    public function init(WikiService $wikiService, CommentService $commentService, TicketService $ticketService): void
     {
         $this->wikiService = $wikiService;
         $this->commentService = $commentService;
+        $this->ticketService = $ticketService;
     }
 
     /**
@@ -121,12 +125,20 @@ class Show extends Controller
             $comment = [];
         }
 
+        // Get all milestones for the project
+        $allProjectMilestones = $this->ticketService->getAllMilestones([
+            'sprint' => '',
+            'type' => 'milestone',
+            'currentProject' => session('currentProject'),
+        ]);
+
         $this->tpl->assign('comments', $comment);
         $this->tpl->assign('numComments', count($comment));
         $this->tpl->assign('currentArticle', $currentArticle);
         $this->tpl->assign('currentWiki', $currentWiki);
         $this->tpl->assign('wikis', $wikis);
         $this->tpl->assign('wikiHeadlines', $wikiHeadlines);
+        $this->tpl->assign('milestones', $allProjectMilestones);
 
         return $this->tpl->display('wiki.show');
     }

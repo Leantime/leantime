@@ -4,6 +4,7 @@ foreach ($__data as $var => $val) {
 }
 $wikis = $tpl->get('wikis');
 $wikiHeadlines = $tpl->get('wikiHeadlines');
+$milestones = $tpl->get('milestones') ?? [];
 
 $currentWiki = $tpl->get('currentWiki');
 $currentArticle = $tpl->get('currentArticle');
@@ -346,18 +347,48 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                         </div>
 
                         <!-- Milestone -->
-                        <?php if (! empty($currentArticle->milestoneHeadline)) { ?>
                         <div class="wiki-property-row">
                             <span class="wiki-property-label">
                                 <i class="fa fa-flag"></i> Milestone
                             </span>
                             <span class="wiki-property-value">
-                                <a href="<?= BASE_URL ?>/tickets/roadmap#/tickets/editMilestone/<?= $currentArticle->milestoneId ?>" class="wiki-milestone-link">
-                                    <?= $tpl->escape($currentArticle->milestoneHeadline) ?>
-                                </a>
+                                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                    <div class="wiki-milestone-dropdown dropdown" id="wikiMilestoneDropdown">
+                                        <button class="wiki-milestone-btn" data-toggle="dropdown">
+                                            <?php if (! empty($currentArticle->milestoneHeadline)) { ?>
+                                                <span class="milestone-text"><?= $tpl->escape($currentArticle->milestoneHeadline) ?></span>
+                                            <?php } else { ?>
+                                                <span class="milestone-text none">None</span>
+                                            <?php } ?>
+                                            <i class="fa fa-chevron-down"></i>
+                                        </button>
+                                        <ul class="dropdown-menu wiki-milestone-menu">
+                                            <li><a href="javascript:void(0)" class="wiki-milestone-option" data-value=""><i class="fa fa-times"></i> None</a></li>
+                                            <?php if (count($milestones) > 0) { ?>
+                                                <li class="divider"></li>
+                                                <?php foreach ($milestones as $milestone) { ?>
+                                                    <li>
+                                                        <a href="javascript:void(0)"
+                                                           class="wiki-milestone-option<?= $currentArticle->milestoneId == $milestone->id ? ' active' : '' ?>"
+                                                           data-value="<?= $milestone->id ?>">
+                                                            <i class="fa fa-flag"></i> <?= $tpl->escape($milestone->headline) ?>
+                                                        </a>
+                                                    </li>
+                                                <?php } ?>
+                                            <?php } ?>
+                                        </ul>
+                                    </div>
+                                <?php } else { ?>
+                                    <?php if (! empty($currentArticle->milestoneHeadline)) { ?>
+                                        <a href="<?= BASE_URL ?>/tickets/roadmap#/tickets/editMilestone/<?= $currentArticle->milestoneId ?>" class="wiki-milestone-link">
+                                            <?= $tpl->escape($currentArticle->milestoneHeadline) ?>
+                                        </a>
+                                    <?php } else { ?>
+                                        <span class="wiki-no-milestone">None</span>
+                                    <?php } ?>
+                                <?php } ?>
                             </span>
                         </div>
-                        <?php } ?>
 
                         <!-- Last Saved -->
                         <div class="wiki-property-row">
@@ -373,9 +404,6 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                     <!-- Actions Section -->
                     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                     <div class="wiki-properties-section wiki-actions-section">
-                        <a href="#/wiki/articleDialog/<?= $currentArticle->id; ?>" class="wiki-action-btn inlineEdit">
-                            <i class="fa fa-cog"></i> Article Settings
-                        </a>
                         <a href="#/wiki/delArticle/<?= $currentArticle->id; ?>" class="wiki-action-btn delete">
                             <i class="fa fa-trash"></i> Delete Article
                         </a>
@@ -481,17 +509,36 @@ jQuery(document).ready(function() {
         localStorage.setItem('wikiPropertiesCollapsed', 'false');
     });
 
-    // Restore contents panel state
-    if (localStorage.getItem('wikiContentsCollapsed') === 'true') {
+    // Responsive: auto-collapse panels on smaller screens
+    var isSmallScreen = window.innerWidth <= 1280;
+
+    // Restore contents panel state (or auto-collapse on small screens)
+    if (isSmallScreen || localStorage.getItem('wikiContentsCollapsed') === 'true') {
         jQuery('#contentsPanel').addClass('collapsed');
         jQuery('#showContentsBtn').addClass('visible');
     }
 
-    // Restore properties panel state
-    if (localStorage.getItem('wikiPropertiesCollapsed') === 'true') {
+    // Restore properties panel state (or auto-collapse on small screens)
+    if (isSmallScreen || localStorage.getItem('wikiPropertiesCollapsed') === 'true') {
         jQuery('#propertiesPanel').addClass('collapsed');
         jQuery('#showPropertiesBtn').addClass('visible');
     }
+
+    // Handle window resize
+    var resizeTimeout;
+    jQuery(window).on('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+            var nowSmall = window.innerWidth <= 1280;
+            if (nowSmall) {
+                // Auto-collapse both panels on small screens
+                jQuery('#contentsPanel').addClass('collapsed');
+                jQuery('#showContentsBtn').addClass('visible');
+                jQuery('#propertiesPanel').addClass('collapsed');
+                jQuery('#showPropertiesBtn').addClass('visible');
+            }
+        }, 150);
+    });
 
     // ==========================================
     // Click-to-Edit with Tiptap
@@ -780,38 +827,86 @@ jQuery(document).ready(function() {
     var iconInput = document.getElementById('wikiArticleIcon');
     if (iconInput && jQuery.fn.iconpicker) {
         jQuery('.wiki-icon-btn').iconpicker({
-            component: '.wiki-icon-btn',
-            input: '#wikiArticleIcon',
+            component: '.wiki-icon-btn > i',
+            input: '.articleIcon',
             inputSearch: true,
-            defaultValue: iconInput.value || 'fa fa-file-alt',
+            defaultValue: 'far fa-file-alt',
+            selected: iconInput.value || 'far fa-file-alt',
+            showFooter: false,
+            searchInFooter: false,
             icons: [
-                {title: "fa fa-file-alt", searchTerms:['document', 'file']},
-                {title: "fa fa-book", searchTerms:['book', 'docs']},
-                {title: "fa fa-lightbulb", searchTerms:['idea', 'light']},
-                {title: "fa fa-rocket", searchTerms:['launch', 'rocket']},
-                {title: "fa fa-cog", searchTerms:['settings', 'gear']},
-                {title: "fa fa-code", searchTerms:['code', 'dev']},
-                {title: "fa fa-star", searchTerms:['star', 'favorite']},
-                {title: "fa fa-heart", searchTerms:['heart', 'love']},
-                {title: "fa fa-flag", searchTerms:['flag', 'milestone']},
-                {title: "fa fa-check", searchTerms:['check', 'done']},
-                {title: "fa fa-list", searchTerms:['list', 'checklist']},
-                {title: "fa fa-users", searchTerms:['users', 'team']},
-                {title: "fa fa-calendar", searchTerms:['calendar', 'date']},
-                {title: "fa fa-clipboard", searchTerms:['clipboard', 'notes']},
-                {title: "fa fa-chart-bar", searchTerms:['chart', 'analytics']},
-                {title: "fa fa-folder", searchTerms:['folder', 'directory']},
-                {title: "fa fa-globe", searchTerms:['globe', 'world']},
-                {title: "fa fa-lock", searchTerms:['lock', 'security']},
-                {title: "fa fa-bolt", searchTerms:['bolt', 'quick']},
-                {title: "fa fa-puzzle-piece", searchTerms:['puzzle', 'integration']}
+                {title: "far fa-file-alt", searchTerms:['icons']},
+                {title: "fab fa-accessible-icon", searchTerms:['icons']},
+                {title: "far fa-address-book", searchTerms:['icons']},
+                {title: "fas fa-archive", searchTerms:['icons']},
+                {title: "fas fa-asterisk", searchTerms:['icons']},
+                {title: "fas fa-balance-scale", searchTerms:['icons']},
+                {title: "fas fa-ban", searchTerms:['icons']},
+                {title: "fas fa-bell", searchTerms:['icons']},
+                {title: "fas fa-binoculars", searchTerms:['icons']},
+                {title: "fas fa-birthday-cake", searchTerms:['icons']},
+                {title: "fas fa-bolt", searchTerms:['icons']},
+                {title: "fas fa-book", searchTerms:['icons']},
+                {title: "fas fa-bookmark", searchTerms:['icons']},
+                {title: "fas fa-briefcase", searchTerms:['icons']},
+                {title: "fas fa-bug", searchTerms:['icons']},
+                {title: "far fa-building", searchTerms:['icons']},
+                {title: "fas fa-bullhorn", searchTerms:['icons']},
+                {title: "far fa-calendar-alt", searchTerms:['icons']},
+                {title: "fas fa-chart-bar", searchTerms:['icons']},
+                {title: "fas fa-check-circle", searchTerms:['icons']},
+                {title: "fas fa-chart-line", searchTerms:['icons']},
+                {title: "fas fa-chess", searchTerms:['icons']},
+                {title: "fas fa-cogs", searchTerms:['icons']},
+                {title: "fas fa-comments", searchTerms:['icons']},
+                {title: "fas fa-compass", searchTerms:['icons']},
+                {title: "fas fa-database", searchTerms:['icons']},
+                {title: "fas fa-envelope", searchTerms:['icons']},
+                {title: "fas fa-exclamation-triangle", searchTerms:['icons']},
+                {title: "fas fa-flask", searchTerms:['icons']},
+                {title: "fas fa-globe", searchTerms:['icons']},
+                {title: "fas fa-gem", searchTerms:['icons']},
+                {title: "fas fa-graduation-cap", searchTerms:['icons']},
+                {title: "fas fa-hand-spock", searchTerms:['icons']},
+                {title: "fas fa-heart", searchTerms:['icons']},
+                {title: "fas fa-home", searchTerms:['icons']},
+                {title: "fas fa-image", searchTerms:['icons']},
+                {title: "fas fa-info-circle", searchTerms:['icons']},
+                {title: "fas fa-key", searchTerms:['icons']},
+                {title: "fas fa-leaf", searchTerms:['icons']},
+                {title: "fas fa-life-ring", searchTerms:['icons']},
+                {title: "fas fa-lightbulb", searchTerms:['icons']},
+                {title: "fas fa-link", searchTerms:['icons']},
+                {title: "fas fa-location-arrow", searchTerms:['icons']},
+                {title: "fas fa-lock", searchTerms:['icons']},
+                {title: "fas fa-map", searchTerms:['icons']},
+                {title: "fas fa-map-signs", searchTerms:['icons']},
+                {title: "fas fa-money-bill-alt", searchTerms:['icons']},
+                {title: "fas fa-paper-plane", searchTerms:['icons']},
+                {title: "fas fa-paperclip", searchTerms:['icons']},
+                {title: "fas fa-question-circle", searchTerms:['icons']},
+                {title: "fas fa-quote-left", searchTerms:['icons']},
+                {title: "fas fa-road", searchTerms:['icons']},
+                {title: "fas fa-rocket", searchTerms:['icons']},
+                {title: "fas fa-shopping-cart", searchTerms:['icons']},
+                {title: "fas fa-sitemap", searchTerms:['icons']},
+                {title: "fas fa-sliders-h", searchTerms:['icons']},
+                {title: "fas fa-star", searchTerms:['icons']},
+                {title: "fas fa-tachometer-alt", searchTerms:['icons']},
+                {title: "fas fa-thermometer-half", searchTerms:['icons']},
+                {title: "fas fa-thumbs-down", searchTerms:['icons']},
+                {title: "fas fa-thumbs-up", searchTerms:['icons']},
+                {title: "fas fa-trash-alt", searchTerms:['icons']},
+                {title: "fas fa-trophy", searchTerms:['icons']},
+                {title: "fas fa-user-circle", searchTerms:['icons']},
+                {title: "fas fa-utensils", searchTerms:['icons']}
             ]
         });
 
         jQuery('.wiki-icon-btn').on('iconpickerSelected', function(event) {
             var newIcon = event.iconpickerValue;
-            jQuery('#wikiArticleIcon').val(newIcon);
-            jQuery('.wiki-icon-btn i').attr('class', newIcon);
+            jQuery('.articleIcon').val(newIcon);
+            jQuery('.wiki-icon-btn > i').attr('class', newIcon);
 
             saveField('icon', newIcon, function() {
                 // Update sidebar tree icon
@@ -874,6 +969,43 @@ jQuery(document).ready(function() {
                         updateLastSaved();
                     });
                 }
+            });
+        });
+    }
+
+    // ==========================================
+    // Milestone Dropdown
+    // ==========================================
+
+    var milestoneDropdown = document.getElementById('wikiMilestoneDropdown');
+    if (milestoneDropdown) {
+        var milestoneOptions = milestoneDropdown.querySelectorAll('.wiki-milestone-option');
+        var milestoneBtn = milestoneDropdown.querySelector('.wiki-milestone-btn');
+        var milestoneText = milestoneBtn.querySelector('.milestone-text');
+
+        milestoneOptions.forEach(function(option) {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                var newMilestoneId = option.dataset.value;
+                var newMilestoneText = option.textContent.trim();
+
+                // Remove active class from all options
+                milestoneOptions.forEach(function(opt) {
+                    opt.classList.remove('active');
+                });
+                option.classList.add('active');
+
+                saveField('milestoneId', newMilestoneId, function() {
+                    // Update button text
+                    if (newMilestoneId === '') {
+                        milestoneText.textContent = 'None';
+                        milestoneText.classList.add('none');
+                    } else {
+                        milestoneText.textContent = newMilestoneText.replace(/^[\s\S]*?fa-flag\s*/, '');
+                        milestoneText.classList.remove('none');
+                    }
+                    updateLastSaved();
+                });
             });
         });
     }
