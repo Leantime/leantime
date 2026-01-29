@@ -74,6 +74,8 @@ class Install
         30409,
         30410,
         30411,
+        30412,
+        30413,
     ];
 
     /**
@@ -2096,99 +2098,190 @@ class Install
         return count($errors) ? $errors : true;
     }
 
+    /**
+     * Migration 30410: Ensure zp_entity_relationship table exists with correct schema
+     *
+     * This migration must handle all possible database states from different upgrade paths:
+     * - State A: Only plural table (zp_entity_relationships) exists with typo column (enitityA)
+     * - State B: Only singular table (zp_entity_relationship) exists with correct column (entityA)
+     * - State C: Only singular table exists with typo column (enitityA)
+     * - State D: Both tables exist (from failed previous migrations)
+     * - State E: Neither table exists (fresh install edge case)
+     *
+     * @return bool Always returns true to prevent blocking subsequent migrations
+     */
     public function update_sql_30410(): bool|array
     {
-        $errors = [];
+        $pluralTable = 'zp_entity_relationships';
+        $singularTable = 'zp_entity_relationship';
 
-        // First, check if we need to rename the table from plural to singular
-        // Old migration (update_sql_20115) created zp_entity_relationships (plural)
-        // but the code now expects zp_entity_relationship (singular)
         try {
-            $pluralTableExists = $this->connection->select(
-                "SELECT COUNT(*) as cnt FROM information_schema.tables
-                 WHERE table_schema = DATABASE()
-                 AND table_name = 'zp_entity_relationships'"
-            );
+            $pluralExists = $this->tableExistsForMigration($pluralTable);
+            $singularExists = $this->tableExistsForMigration($singularTable);
 
-            if ($pluralTableExists[0]->cnt > 0) {
-                // Rename plural table to singular
-                $this->connection->statement('RENAME TABLE `zp_entity_relationships` TO `zp_entity_relationship`;');
+            // Case D: Both tables exist - merge data from plural into singular, then drop plural
+            if ($pluralExists && $singularExists) {
+                $this->mergeEntityRelationshipTables($pluralTable, $singularTable);
             }
-        } catch (\Exception $e) {
-            Log::error('Failed to check/rename zp_entity_relationships table: '.$e->getMessage());
-        }
-
-        // Check if the singular table exists before trying to alter it
-        try {
-            $tableExists = $this->connection->select(
-                "SELECT COUNT(*) as cnt FROM information_schema.tables
-                 WHERE table_schema = DATABASE()
-                 AND table_name = 'zp_entity_relationship'"
-            );
-
-            if ($tableExists[0]->cnt == 0) {
-                // Table doesn't exist - create it with correct schema
-                $this->connection->statement('
-                    CREATE TABLE `zp_entity_relationship` (
-                        `id` INT NOT NULL AUTO_INCREMENT,
-                        `entityA` INT NULL,
-                        `entityAType` VARCHAR(45) NULL,
-                        `entityB` INT NULL,
-                        `entityBType` VARCHAR(45) NULL,
-                        `relationship` VARCHAR(45) NULL,
-                        `createdOn` DATETIME NULL,
-                        `createdBy` INT NULL,
-                        `meta` TEXT NULL,
-                        PRIMARY KEY (`id`),
-                        INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC),
-                        INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-                ');
+            // Case A: Only plural exists - rename to singular
+            elseif ($pluralExists && ! $singularExists) {
+                $this->connection->statement("RENAME TABLE `{$pluralTable}` TO `{$singularTable}`");
+            }
+            // Case E: Neither exists - create singular with correct schema
+            elseif (! $pluralExists && ! $singularExists) {
+                $this->createEntityRelationshipTable();
 
                 return true;
             }
+            // Case B/C: Only singular exists - continue to fix column/index if needed
+
+            // Fix column typo if present (handles Case A after rename, Case C, Case D after merge)
+            $this->fixEntityAColumnTypo($singularTable);
+
+            // Ensure correct index exists
+            $this->ensureEntityAIndex($singularTable);
+
         } catch (\Exception $e) {
-            Log::error('Failed to check/create zp_entity_relationship table: '.$e->getMessage());
-
-            return true;
-        }
-
-        // Check if the column needs to be renamed (has the typo)
-        try {
-            $columnExists = $this->connection->select(
-                "SELECT COUNT(*) as cnt FROM information_schema.columns
-                 WHERE table_schema = DATABASE()
-                 AND table_name = 'zp_entity_relationship'
-                 AND column_name = 'enitityA'"
-            );
-
-            if ($columnExists[0]->cnt > 0) {
-                // Column has the typo, fix it
-                $sql = [
-                    // Rename the column `enitityA` to `entityA`
-                    'ALTER TABLE `zp_entity_relationship` CHANGE COLUMN `enitityA` `entityA` INT NULL;',
-
-                    // Drop the old index on `enitityA`
-                    'ALTER TABLE `zp_entity_relationship` DROP INDEX `entityA`;',
-
-                    // Create a new index on `entityA`
-                    'ALTER TABLE `zp_entity_relationship` ADD INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC);',
-                ];
-
-                foreach ($sql as $statement) {
-                    try {
-                        $this->connection->statement($statement);
-                    } catch (\Exception $e) {
-                        Log::error($statement.' Failed: '.$e->getMessage());
-                        Log::error($e);
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            Log::error('Failed to check/fix enitityA column: '.$e->getMessage());
+            Log::error('Migration 30410: '.$e->getMessage());
+            // Don't fail the migration - log and continue
         }
 
         return true;
+    }
+
+    /**
+     * Check if a table exists in the current database
+     */
+    private function tableExistsForMigration(string $tableName): bool
+    {
+        $result = $this->connection->select(
+            'SELECT COUNT(*) as cnt FROM information_schema.tables
+             WHERE table_schema = DATABASE() AND table_name = ?',
+            [$tableName]
+        );
+
+        return $result[0]->cnt > 0;
+    }
+
+    /**
+     * Check if a column exists in a table
+     */
+    private function columnExistsForMigration(string $tableName, string $columnName): bool
+    {
+        $result = $this->connection->select(
+            'SELECT COUNT(*) as cnt FROM information_schema.columns
+             WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?',
+            [$tableName, $columnName]
+        );
+
+        return $result[0]->cnt > 0;
+    }
+
+    /**
+     * Check if an index exists on a table
+     */
+    private function indexExistsForMigration(string $tableName, string $indexName): bool
+    {
+        $result = $this->connection->select(
+            'SELECT COUNT(*) as cnt FROM information_schema.statistics
+             WHERE table_schema = DATABASE() AND table_name = ? AND index_name = ?',
+            [$tableName, $indexName]
+        );
+
+        return $result[0]->cnt > 0;
+    }
+
+    /**
+     * Merge data from plural table into singular table, then drop plural
+     */
+    private function mergeEntityRelationshipTables(string $sourceTable, string $targetTable): void
+    {
+        try {
+            // Determine column names in source table (may have typo)
+            $sourceHasTypo = $this->columnExistsForMigration($sourceTable, 'enitityA');
+            $sourceEntityAColumn = $sourceHasTypo ? 'enitityA' : 'entityA';
+
+            // Determine column names in target table (may have typo)
+            $targetHasTypo = $this->columnExistsForMigration($targetTable, 'enitityA');
+            $targetEntityAColumn = $targetHasTypo ? 'enitityA' : 'entityA';
+
+            // Insert data from source into target, ignoring duplicates
+            $this->connection->statement("
+                INSERT IGNORE INTO `{$targetTable}` (
+                    `{$targetEntityAColumn}`, `entityAType`, `entityB`, `entityBType`,
+                    `relationship`, `createdOn`, `createdBy`, `meta`
+                )
+                SELECT
+                    `{$sourceEntityAColumn}`, `entityAType`, `entityB`, `entityBType`,
+                    `relationship`, `createdOn`, `createdBy`, `meta`
+                FROM `{$sourceTable}`
+            ");
+
+            // Drop the source (plural) table
+            $this->connection->statement("DROP TABLE `{$sourceTable}`");
+
+        } catch (\Exception $e) {
+            Log::error('Migration 30410: Failed to merge tables: '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Create the entity_relationship table with correct schema
+     */
+    private function createEntityRelationshipTable(): void
+    {
+        $this->connection->statement('
+            CREATE TABLE `zp_entity_relationship` (
+                `id` INT NOT NULL AUTO_INCREMENT,
+                `entityA` INT NULL,
+                `entityAType` VARCHAR(45) NULL,
+                `entityB` INT NULL,
+                `entityBType` VARCHAR(45) NULL,
+                `relationship` VARCHAR(45) NULL,
+                `createdOn` DATETIME NULL,
+                `createdBy` INT NULL,
+                `meta` TEXT NULL,
+                PRIMARY KEY (`id`),
+                INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC),
+                INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ');
+    }
+
+    /**
+     * Fix the entityA column typo if it exists
+     */
+    private function fixEntityAColumnTypo(string $tableName): void
+    {
+        try {
+            if ($this->columnExistsForMigration($tableName, 'enitityA')) {
+                $this->connection->statement(
+                    "ALTER TABLE `{$tableName}` CHANGE COLUMN `enitityA` `entityA` INT NULL"
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error("Migration 30410: Failed to fix column typo in {$tableName}: ".$e->getMessage());
+        }
+    }
+
+    /**
+     * Ensure the entityA index exists with correct columns
+     */
+    private function ensureEntityAIndex(string $tableName): void
+    {
+        try {
+            // Drop the old index if it exists (it may reference the wrong column)
+            if ($this->indexExistsForMigration($tableName, 'entityA')) {
+                $this->connection->statement("ALTER TABLE `{$tableName}` DROP INDEX `entityA`");
+            }
+
+            // Create the index with correct columns
+            $this->connection->statement(
+                "ALTER TABLE `{$tableName}` ADD INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC)"
+            );
+        } catch (\Exception $e) {
+            Log::error("Migration 30410: Failed to ensure entityA index on {$tableName}: ".$e->getMessage());
+        }
     }
 
     public function update_sql_30411(): bool|array
@@ -2216,85 +2309,88 @@ class Install
         return count($errors) ? $errors : true;
     }
 
+    /**
+     * Migration 30412: Safety net for zp_entity_relationship table
+     *
+     * This migration acts as a final safety net for users who may have had issues
+     * with migration 30410. It performs the same checks and fixes using the shared
+     * helper methods to ensure the table is in the correct state.
+     *
+     * Since 30410 is now robust and idempotent, this migration will typically
+     * find everything already correct and simply return true.
+     *
+     * @return bool Always returns true to prevent blocking subsequent migrations
+     */
     public function update_sql_30412(): bool|array
     {
-        // This migration fixes the zp_entity_relationship table for users who:
-        // 1. Upgraded from older versions with plural table name (zp_entity_relationships)
-        // 2. Already ran the broken update_sql_30410 which failed
-        // 3. Have the table with the typo column (enitityA instead of entityA)
+        $pluralTable = 'zp_entity_relationships';
+        $singularTable = 'zp_entity_relationship';
 
-        // Step 1: Check if plural table exists and rename to singular
         try {
-            $pluralTableExists = $this->connection->select(
-                "SELECT COUNT(*) as cnt FROM information_schema.tables
-                 WHERE table_schema = DATABASE()
-                 AND table_name = 'zp_entity_relationships'"
-            );
+            $pluralExists = $this->tableExistsForMigration($pluralTable);
+            $singularExists = $this->tableExistsForMigration($singularTable);
 
-            if ($pluralTableExists[0]->cnt > 0) {
-                $this->connection->statement('RENAME TABLE `zp_entity_relationships` TO `zp_entity_relationship`;');
-            }
-        } catch (\Exception $e) {
-            Log::error('Migration 30412: Failed to check/rename plural table: '.$e->getMessage());
-        }
-
-        // Step 2: Check if singular table exists, create if not
-        try {
-            $tableExists = $this->connection->select(
-                "SELECT COUNT(*) as cnt FROM information_schema.tables
-                 WHERE table_schema = DATABASE()
-                 AND table_name = 'zp_entity_relationship'"
-            );
-
-            if ($tableExists[0]->cnt == 0) {
-                $this->connection->statement('
-                    CREATE TABLE `zp_entity_relationship` (
-                        `id` INT NOT NULL AUTO_INCREMENT,
-                        `entityA` INT NULL,
-                        `entityAType` VARCHAR(45) NULL,
-                        `entityB` INT NULL,
-                        `entityBType` VARCHAR(45) NULL,
-                        `relationship` VARCHAR(45) NULL,
-                        `createdOn` DATETIME NULL,
-                        `createdBy` INT NULL,
-                        `meta` TEXT NULL,
-                        PRIMARY KEY (`id`),
-                        INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC),
-                        INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-                ');
+            // Handle any remaining plural table issues
+            if ($pluralExists && $singularExists) {
+                $this->mergeEntityRelationshipTables($pluralTable, $singularTable);
+            } elseif ($pluralExists && ! $singularExists) {
+                $this->connection->statement("RENAME TABLE `{$pluralTable}` TO `{$singularTable}`");
+            } elseif (! $pluralExists && ! $singularExists) {
+                $this->createEntityRelationshipTable();
 
                 return true;
             }
-        } catch (\Exception $e) {
-            Log::error('Migration 30412: Failed to check/create table: '.$e->getMessage());
 
-            return true;
+            // Ensure column and index are correct
+            $this->fixEntityAColumnTypo($singularTable);
+            $this->ensureEntityAIndex($singularTable);
+
+        } catch (\Exception $e) {
+            Log::error('Migration 30412: '.$e->getMessage());
         }
 
-        // Step 3: Check if column typo exists and fix it
+        return true;
+    }
+
+    /**
+     * Migration 30413: Final fix for zp_entity_relationship table
+     *
+     * This migration ensures all users get the entity_relationship table fix,
+     * including those whose DB version was already recorded as 30412+ due to
+     * previous failed or partial migrations.
+     *
+     * Since all the helper methods are idempotent, this will simply verify
+     * the table is correct (doing nothing if already fixed) or apply the fix
+     * if still needed.
+     *
+     * @return bool Always returns true to prevent blocking subsequent migrations
+     */
+    public function update_sql_30413(): bool|array
+    {
+        $pluralTable = 'zp_entity_relationships';
+        $singularTable = 'zp_entity_relationship';
+
         try {
-            $columnExists = $this->connection->select(
-                "SELECT COUNT(*) as cnt FROM information_schema.columns
-                 WHERE table_schema = DATABASE()
-                 AND table_name = 'zp_entity_relationship'
-                 AND column_name = 'enitityA'"
-            );
+            $pluralExists = $this->tableExistsForMigration($pluralTable);
+            $singularExists = $this->tableExistsForMigration($singularTable);
 
-            if ($columnExists[0]->cnt > 0) {
-                $this->connection->statement('ALTER TABLE `zp_entity_relationship` CHANGE COLUMN `enitityA` `entityA` INT NULL;');
+            // Handle any remaining plural table issues
+            if ($pluralExists && $singularExists) {
+                $this->mergeEntityRelationshipTables($pluralTable, $singularTable);
+            } elseif ($pluralExists && ! $singularExists) {
+                $this->connection->statement("RENAME TABLE `{$pluralTable}` TO `{$singularTable}`");
+            } elseif (! $pluralExists && ! $singularExists) {
+                $this->createEntityRelationshipTable();
 
-                // Try to fix the index too
-                try {
-                    $this->connection->statement('ALTER TABLE `zp_entity_relationship` DROP INDEX `entityA`;');
-                } catch (\Exception $e) {
-                    // Index may not exist or have different name, ignore
-                }
-
-                $this->connection->statement('ALTER TABLE `zp_entity_relationship` ADD INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC);');
+                return true;
             }
+
+            // Ensure column and index are correct
+            $this->fixEntityAColumnTypo($singularTable);
+            $this->ensureEntityAIndex($singularTable);
+
         } catch (\Exception $e) {
-            Log::error('Migration 30412: Failed to fix column typo: '.$e->getMessage());
+            Log::error('Migration 30413: '.$e->getMessage());
         }
 
         return true;
