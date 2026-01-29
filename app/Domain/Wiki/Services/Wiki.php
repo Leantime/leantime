@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Wiki\Services;
 
 use Leantime\Core\Language;
+use Leantime\Domain\Audit\Repositories\Audit as AuditRepository;
 use Leantime\Domain\Wiki\Models\Article;
 use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
 
@@ -15,11 +16,16 @@ class Wiki
 
     private Language $language;
 
-    public function __construct(WikiRepository $wikiRepository,
-        Language $language)
-    {
+    private AuditRepository $auditRepo;
+
+    public function __construct(
+        WikiRepository $wikiRepository,
+        Language $language,
+        AuditRepository $auditRepo
+    ) {
         $this->wikiRepository = $wikiRepository;
         $this->language = $language;
+        $this->auditRepo = $auditRepo;
     }
 
     /**
@@ -179,6 +185,36 @@ class Wiki
 
         return false;
 
+    }
+
+    /**
+     * Get combined activity feed for an article (audit events + comments).
+     *
+     * @api
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getArticleActivity(int $articleId, int $limit = 20): array
+    {
+        $activity = [];
+
+        // Get audit events for this article
+        $auditEvents = $this->auditRepo->getEventsForEntity('article', $articleId, $limit);
+        foreach ($auditEvents as $event) {
+            $values = ! empty($event['values']) ? json_decode($event['values'], true) : [];
+
+            $activity[] = [
+                'type' => 'audit',
+                'action' => $event['action'] ?? '',
+                'date' => $event['date'] ?? '',
+                'firstname' => $event['firstname'] ?? '',
+                'lastname' => $event['lastname'] ?? '',
+                'profileId' => $event['profileId'] ?? '',
+                'values' => $values,
+            ];
+        }
+
+        return array_slice($activity, 0, $limit);
     }
 
     public function clearWikiCache()

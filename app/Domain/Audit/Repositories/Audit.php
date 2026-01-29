@@ -48,6 +48,25 @@ class Audit
         return $result ? (array) $result : null;
     }
 
+    /**
+     * Get audit events for a specific entity.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getEventsForEntity(string $entity, int $entityId, int $limit = 20): array
+    {
+        return $this->db->table('zp_audit')
+            ->select('zp_audit.*', 'zp_user.firstname', 'zp_user.lastname', 'zp_user.profileId')
+            ->leftJoin('zp_user', 'zp_audit.userId', '=', 'zp_user.id')
+            ->where('entity', $entity)
+            ->where('entityId', $entityId)
+            ->orderBy('date', 'desc')
+            ->limit($limit)
+            ->get()
+            ->map(fn ($item) => (array) $item)
+            ->toArray();
+    }
+
     public function pruneEvents(int $ageDays = 30): void
     {
         $cutoffDate = CarbonImmutable::now()->subDays($ageDays)->startOfDay();

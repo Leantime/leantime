@@ -121,9 +121,12 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    background: var(--secondary-background);
+    background: var(--glass-background);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: var(--glass-border);
     margin: 12px;
-    border-radius: var(--box-radius-large, 20px);
+    border-radius: var(--box-radius);
     position: relative;
 }
 
@@ -256,10 +259,12 @@
 .wiki-properties-panel {
     width: 280px;
     flex-shrink: 0;
-    padding: 20px;
+    padding: 20px 24px 20px 20px;
     border-left: 1px solid var(--main-border-color);
     overflow-y: auto;
     transition: width 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .wiki-properties-panel.collapsed {
@@ -1069,9 +1074,25 @@
    Activity Feed
    ========================================================================== */
 
+/* Activity section grows to fill available space */
+.wiki-activity-section {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
 .wiki-activity-feed {
-    max-height: 300px;
     overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Delete button pinned to bottom */
+.wiki-properties-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--main-border-color);
 }
 
 .wiki-activity-item {
@@ -1123,10 +1144,34 @@
     font-weight: 600;
 }
 
+.wiki-activity-icon.status {
+    background: var(--yellow-bg, rgba(255, 193, 7, 0.1));
+    color: var(--yellow, #e0a800);
+}
+
 .wiki-activity-time {
     color: var(--secondary-font-color);
     font-size: var(--font-size-xs);
     margin-top: 2px;
+}
+
+.wiki-activity-detail {
+    color: var(--secondary-font-color);
+    font-style: italic;
+}
+
+.wiki-activity-loading {
+    padding: 16px 0;
+    text-align: center;
+    color: var(--secondary-font-color);
+    font-size: var(--font-size-s);
+}
+
+.wiki-activity-empty {
+    padding: 16px 0;
+    text-align: center;
+    color: var(--secondary-font-color);
+    font-size: var(--font-size-s);
 }
 
 /* ==========================================================================
@@ -1187,7 +1232,9 @@
     font-style: italic;
 }
 
-.wiki-tree-link.active .wiki-tree-draft {
+.wiki-tree-link.active .wiki-tree-draft,
+.dropdown-menu > li > a.active .wiki-tree-draft,
+.dropdown-menu > li > a:hover .wiki-tree-draft {
     color: rgba(255, 255, 255, 0.7);
 }
 
@@ -1251,6 +1298,27 @@
     background: var(--accent1);
     border-color: var(--accent1);
     color: white;
+}
+
+/* ==========================================================================
+   Milestone Card (in document area)
+   ========================================================================== */
+
+.wiki-milestone-card {
+    margin-top: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+
+.wiki-milestone-card .milestonContainer,
+.wiki-milestone-card .milestoneCard {
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
 }
 
 /* ==========================================================================

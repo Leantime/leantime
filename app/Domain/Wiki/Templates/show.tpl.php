@@ -144,10 +144,12 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                             </nav>
 
                             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                <a class="wiki-create-btn inlineEdit" href="#/wiki/articleDialog/">
+                                <button class="wiki-create-btn"
+                                        hx-post="<?= BASE_URL ?>/hx/wiki/articleContent/create"
+                                        hx-swap="none">
                                     <i class="fa fa-plus"></i>
                                     <span><?= $tpl->__('link.create_article') ?></span>
-                                </a>
+                                </button>
                             <?php } ?>
                         </div>
 
@@ -235,7 +237,7 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                         </div>
 
                         <?php if (! empty($currentArticle->milestoneHeadline)) { ?>
-                            <div class="milestonContainer border" style="margin-top: 32px;">
+                            <div class="wiki-milestone-card">
                                 <div hx-trigger="load"
                                      hx-indicator=".htmx-indicator"
                                      hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $currentArticle->milestoneId ?>">
@@ -323,12 +325,41 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                                 <i class="fa fa-folder-tree"></i> Parent
                             </span>
                             <span class="wiki-property-value">
-                                <?php if ($currentArticle->parent && $currentArticle->parent > 0) { ?>
-                                    <a href="<?= BASE_URL ?>/wiki/show/<?= $currentArticle->parent ?>" class="wiki-parent-link">
-                                        <?= $parentName ?>
-                                    </a>
+                                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                    <div class="wiki-parent-dropdown dropdown" id="wikiParentDropdown">
+                                        <button class="wiki-milestone-btn" data-toggle="dropdown">
+                                            <span class="parent-text<?= (! $currentArticle->parent || $currentArticle->parent == 0) ? ' none' : '' ?>"><?= $parentName ?></span>
+                                            <i class="fa fa-chevron-down"></i>
+                                        </button>
+                                        <ul class="dropdown-menu wiki-milestone-menu">
+                                            <li><a href="javascript:void(0)" class="wiki-parent-option<?= (! $currentArticle->parent || $currentArticle->parent == 0) ? ' active' : '' ?>" data-value="0"><i class="fa fa-times"></i> None</a></li>
+                                            <?php
+                                            // Filter out current article from the list
+                                            $parentOptions = array_filter($wikiHeadlines, function ($h) use ($currentArticle) {
+                                                return $h->id != $currentArticle->id;
+                                            });
+                                            if (count($parentOptions) > 0) { ?>
+                                                <li class="divider"></li>
+                                                <?php foreach ($parentOptions as $headline) { ?>
+                                                    <li>
+                                                        <a href="javascript:void(0)"
+                                                           class="wiki-parent-option<?= $currentArticle->parent == $headline->id ? ' active' : '' ?>"
+                                                           data-value="<?= $headline->id ?>">
+                                                            <i class="<?= $tpl->escape($headline->data ?: 'fa fa-file-alt') ?>"></i> <?= $tpl->escape($headline->title) ?><?php if ($headline->status === 'draft') { ?> <span class="wiki-tree-draft">(<?= $tpl->__('label.draft') ?>)</span><?php } ?>
+                                                        </a>
+                                                    </li>
+                                                <?php } ?>
+                                            <?php } ?>
+                                        </ul>
+                                    </div>
                                 <?php } else { ?>
-                                    <span class="wiki-no-parent"><?= $parentName ?></span>
+                                    <?php if ($currentArticle->parent && $currentArticle->parent > 0) { ?>
+                                        <a href="<?= BASE_URL ?>/wiki/show/<?= $currentArticle->parent ?>" class="wiki-parent-link">
+                                            <?= $parentName ?>
+                                        </a>
+                                    <?php } else { ?>
+                                        <span class="wiki-no-parent"><?= $parentName ?></span>
+                                    <?php } ?>
                                 <?php } ?>
                             </span>
                         </div>
@@ -363,7 +394,7 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                                             <i class="fa fa-chevron-down"></i>
                                         </button>
                                         <ul class="dropdown-menu wiki-milestone-menu">
-                                            <li><a href="javascript:void(0)" class="wiki-milestone-option" data-value=""><i class="fa fa-times"></i> None</a></li>
+                                            <li><a href="javascript:void(0)" class="wiki-milestone-option" data-value="0"><i class="fa fa-times"></i> None</a></li>
                                             <?php if (count($milestones) > 0) { ?>
                                                 <li class="divider"></li>
                                                 <?php foreach ($milestones as $milestone) { ?>
@@ -401,46 +432,28 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                         </div>
                     </div>
 
-                    <!-- Actions Section -->
+                    <!-- Activity Section -->
+                    <div class="wiki-properties-section wiki-activity-section">
+                        <h6 class="wiki-properties-section-title">Activity</h6>
+
+                        <div id="wikiActivityContainer"
+                             hx-get="<?= BASE_URL ?>/hx/wiki/articleActivity?articleId=<?= $currentArticle->id ?>"
+                             hx-trigger="load, refreshActivity from:body"
+                             hx-swap="innerHTML">
+                            <div class="wiki-activity-loading">
+                                <i class="fa fa-circle-notch fa-spin"></i> Loading activity...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete (pinned to bottom) -->
                     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                    <div class="wiki-properties-section wiki-actions-section">
+                    <div class="wiki-properties-footer">
                         <a href="#/wiki/delArticle/<?= $currentArticle->id; ?>" class="wiki-action-btn delete">
                             <i class="fa fa-trash"></i> Delete Article
                         </a>
                     </div>
                     <?php } ?>
-
-                    <!-- Activity Section -->
-                    <div class="wiki-properties-section">
-                        <h6 class="wiki-properties-section-title">Activity</h6>
-
-                        <div class="wiki-activity-feed" id="wikiActivityFeed">
-                            <!-- Activity loaded via HTMX or shown inline -->
-                            <div class="wiki-activity-item">
-                                <div class="wiki-activity-icon edit">
-                                    <i class="fa fa-edit"></i>
-                                </div>
-                                <div class="wiki-activity-content">
-                                    <div class="wiki-activity-text">
-                                        <strong><?= $tpl->escape($currentArticle->firstname) ?></strong> modified this
-                                    </div>
-                                    <div class="wiki-activity-time"><?= format($currentArticle->modified)->date() ?></div>
-                                </div>
-                            </div>
-
-                            <div class="wiki-activity-item">
-                                <div class="wiki-activity-icon">
-                                    <i class="fa fa-plus"></i>
-                                </div>
-                                <div class="wiki-activity-content">
-                                    <div class="wiki-activity-text">
-                                        <strong><?= $tpl->escape($currentArticle->firstname) ?></strong> created this
-                                    </div>
-                                    <div class="wiki-activity-time"><?= format($currentArticle->created)->date() ?></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                         </div><!-- /.wiki-properties-panel -->
                     </div><!-- /.wiki-content-layout -->
@@ -456,9 +469,11 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                 </div>
                 <h3 class="wiki-empty-state-title"><?= $tpl->__('headlines.no_articles_yet') ?></h3>
                 <p class="wiki-empty-state-text"><?= $tpl->__('text.create_new_content') ?></p>
-                <a href='#/wiki/articleDialog/' class='inlineEdit btn btn-primary'>
-                    <i class='fa fa-plus'></i> <?= $tpl->__('link.create_article') ?>
-                </a>
+                <button class="btn btn-primary"
+                        hx-post="<?= BASE_URL ?>/hx/wiki/articleContent/create"
+                        hx-swap="none">
+                    <i class="fa fa-plus"></i> <?= $tpl->__('link.create_article') ?>
+                </button>
             </div>
         <?php } ?>
 
@@ -669,11 +684,8 @@ jQuery(document).ready(function() {
                 if (data.success) {
                     lastSavedContent = content;
                     showIndicator('saved');
-                    // Update Last Saved in properties
-                    var lastSavedEl = document.getElementById('wikiLastSaved');
-                    if (lastSavedEl) {
-                        lastSavedEl.textContent = 'Just now';
-                    }
+                    // Update Last Saved and activity feed
+                    updateLastSaved();
                     setTimeout(function() {
                         if (!isEditing) {
                             hideIndicator();
@@ -966,6 +978,22 @@ jQuery(document).ready(function() {
                             statusPill.innerHTML = '<i class="fa fa-check"></i> Published <i class="fa fa-chevron-down"></i>';
                         }
 
+                        // Update sidebar tree draft indicator
+                        var activeLink = document.querySelector('.wiki-tree-link.active');
+                        if (activeLink) {
+                            var draftLabel = activeLink.querySelector('.wiki-tree-draft');
+                            if (newStatus === 'draft') {
+                                if (!draftLabel) {
+                                    draftLabel = document.createElement('span');
+                                    draftLabel.className = 'wiki-tree-draft';
+                                    activeLink.appendChild(draftLabel);
+                                }
+                                draftLabel.textContent = '(<?= $tpl->__('label.draft') ?>)';
+                            } else if (draftLabel) {
+                                draftLabel.remove();
+                            }
+                        }
+
                         updateLastSaved();
                     });
                 }
@@ -996,15 +1024,37 @@ jQuery(document).ready(function() {
                 option.classList.add('active');
 
                 saveField('milestoneId', newMilestoneId, function() {
-                    // Update button text
-                    if (newMilestoneId === '') {
-                        milestoneText.textContent = 'None';
-                        milestoneText.classList.add('none');
-                    } else {
-                        milestoneText.textContent = newMilestoneText.replace(/^[\s\S]*?fa-flag\s*/, '');
-                        milestoneText.classList.remove('none');
-                    }
-                    updateLastSaved();
+                    // Reload page to update milestone card
+                    window.location.reload();
+                });
+            });
+        });
+    }
+
+    // ==========================================
+    // Parent Dropdown
+    // ==========================================
+
+    var parentDropdown = document.getElementById('wikiParentDropdown');
+    if (parentDropdown) {
+        var parentOptions = parentDropdown.querySelectorAll('.wiki-parent-option');
+        var parentBtn = parentDropdown.querySelector('.wiki-milestone-btn');
+        var parentText = parentBtn.querySelector('.parent-text');
+
+        parentOptions.forEach(function(option) {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                var newParentId = option.dataset.value;
+                var newParentText = option.textContent.trim();
+
+                parentOptions.forEach(function(opt) {
+                    opt.classList.remove('active');
+                });
+                option.classList.add('active');
+
+                saveField('parent', newParentId, function() {
+                    // Reload page to update tree hierarchy
+                    window.location.reload();
                 });
             });
         });
@@ -1020,6 +1070,8 @@ jQuery(document).ready(function() {
             lastSavedEl.textContent = 'Just now';
             lastSavedEl.dataset.timestamp = new Date().toISOString();
         }
+        // Refresh the activity feed via HTMX
+        htmx.trigger(document.body, 'refreshActivity');
     }
 
     // Generic field save function
