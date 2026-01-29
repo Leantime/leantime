@@ -32,6 +32,7 @@ class InitialHeaders
             "img-src * 'self' *.leantime.io *.amazonaws.com data: blob: marketplace.localhost",
             "frame-src 'self' *.google.com *.microsoft.com *.live.com",
             "frame-ancestors 'self' *.google.com *.microsoft.com *.live.com",
+            "connect-src 'self' http://localhost:3100",
         ];
         $cspParts = self::dispatchFilter('cspParts', $cspParts);
         $csp = implode(';', $cspParts);

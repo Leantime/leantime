@@ -109,6 +109,7 @@ class Menu
                     10 => ['type' => 'item', 'module' => 'projects', 'role' => 'manager', 'title' => 'menu.all_projects', 'icon' => 'fa fa-fw fa-briefcase', 'tooltip' => 'menu.all_projects_tooltip', 'href' => '/projects/showAll', 'active' => ['showAll']],
                     15 => ['type' => 'item', 'module' => 'clients', 'role' => 'admin', 'title' => 'menu.all_clients', 'icon' => 'fa fa-fw fa-address-book', 'tooltip' => 'menu.all_clients_tooltip', 'href' => '/clients/showAll', 'active' => ['showAll']],
                     20 => ['type' => 'item', 'module' => 'users', 'role' => 'admin', 'title' => 'menu.all_users', 'icon' => 'fa fa-fw fa-users', 'tooltip' => 'menu.all_users_tooltip', 'href' => '/users/showAll', 'active' => ['showAll']],
+                    25 => ['type' => 'item', 'module' => 'sihterice', 'role' => 'admin', 'title' => 'Sihterice', 'icon' => 'fa fa-fw fa-cube', 'tooltip' => 'Sihterice Frontend', 'href' => '/sihterice/show', 'active' => ['show']],
                 ],
             ],
             15 => [
@@ -426,6 +427,7 @@ class Menu
             'connector.integration' => 'company',
             'billing.subscriptions' => 'company',
             'llamadorian.statusCollector' => 'personal',
+            'sihterice.show' => 'company',
         ];
 
         $sections = self::dispatch_filter('menuSections', $sections, ['currentRoute' => $currentRoute, 'default' => $default]);
