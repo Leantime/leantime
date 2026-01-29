@@ -1,3 +1,18 @@
+# Version: 3.6.1
+
+## Bug Fixes
+- **Timer Not Starting** - Fixed an issue where the stopwatch/timer feature stopped working after the 3.6.0 update (#3208)
+- **Database Migration Fix** - Added migration to fix entity relationship table issues that caused dashboard and ticket errors (#3221)
+
+---
+
+## All Changes
+
+* [ca1c5c39f](https://github.com/Leantime/leantime/commit/ca1c5c39f): fix(db): Add migration to fix zp_entity_relationship table issues
+* [8222454c0](https://github.com/Leantime/leantime/commit/8222454c0): Fix timer not starting after v3.6.0 update (#3208)
+
+---
+
 # Version: 3.6.0
 
 ## Highlights
