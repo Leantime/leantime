@@ -212,7 +212,7 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                                                 if (! empty($tag)) { ?>
                                                     <span class="wiki-document-tag"><?= $tpl->escape($tag) ?></span>
                                                 <?php }
-                                            } ?>
+                                                } ?>
                                         </div>
                                     <?php } ?>
                                 <?php } ?>
@@ -261,8 +261,8 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                                 <input type="hidden" name="comment" value="1" />
                                 <?php
                                 $tpl->assign('formUrl', BASE_URL.'/wiki/show/'.$currentArticle->id.'');
-                                $tpl->displaySubmodule('comments-generalComment');
-                                ?>
+            $tpl->displaySubmodule('comments-generalComment');
+            ?>
                             </form>
                         </section>
 
@@ -312,15 +312,15 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                         <?php
                         // Find parent article name
                         $parentName = 'None';
-                        if ($currentArticle->parent && $currentArticle->parent > 0) {
-                            foreach ($wikiHeadlines as $headline) {
-                                if ($headline->id == $currentArticle->parent) {
-                                    $parentName = $tpl->escape($headline->title);
-                                    break;
-                                }
-                            }
-                        }
-                        ?>
+            if ($currentArticle->parent && $currentArticle->parent > 0) {
+                foreach ($wikiHeadlines as $headline) {
+                    if ($headline->id == $currentArticle->parent) {
+                        $parentName = $tpl->escape($headline->title);
+                        break;
+                    }
+                }
+            }
+            ?>
                         <!-- Parent -->
                         <div class="wiki-property-row">
                             <span class="wiki-property-label">
@@ -336,11 +336,11 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                                         <ul class="dropdown-menu wiki-milestone-menu">
                                             <li><a href="javascript:void(0)" class="wiki-parent-option<?= (! $currentArticle->parent || $currentArticle->parent == 0) ? ' active' : '' ?>" data-value="0"><i class="fa fa-times"></i> None</a></li>
                                             <?php
-                                            // Filter out current article from the list
-                                            $parentOptions = array_filter($wikiHeadlines, function ($h) use ($currentArticle) {
-                                                return $h->id != $currentArticle->id;
-                                            });
-                                            if (count($parentOptions) > 0) { ?>
+                                // Filter out current article from the list
+                                $parentOptions = array_filter($wikiHeadlines, function ($h) use ($currentArticle) {
+                                    return $h->id != $currentArticle->id;
+                                });
+                                    if (count($parentOptions) > 0) { ?>
                                                 <li class="divider"></li>
                                                 <?php foreach ($parentOptions as $headline) { ?>
                                                     <li>
