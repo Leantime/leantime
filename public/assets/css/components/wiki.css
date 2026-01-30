@@ -121,10 +121,7 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    background: var(--glass-background);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: var(--glass-border);
+    background: var(--secondary-background);
     margin: 12px;
     border-radius: var(--box-radius);
     position: relative;
@@ -314,29 +311,50 @@
     position: relative;
 }
 
-.wiki-icon-btn {
+.wiki-icon-btn,
+.wiki-icon-btn.btn.btn-default {
     width: 48px;
     height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    border: none;
+    background: transparent !important;
+    border: none !important;
     border-radius: 12px;
     font-size: 1.8em;
     color: var(--secondary-font-color);
+    box-shadow: none !important;
+    padding: 0;
     cursor: pointer;
     transition: all 0.15s ease;
 }
 
 .wiki-icon-btn:hover {
-    background: var(--layered-background);
+    background: var(--layered-background) !important;
     color: var(--primary-font-color);
 }
 
 .wiki-icon-btn:focus {
     outline: none;
-    background: var(--layered-background);
+    background: var(--layered-background) !important;
+}
+
+.wiki-icon-caret {
+    font-size: 9px;
+    color: var(--secondary-font-color);
+    opacity: 0;
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    transition: opacity 0.15s ease;
+}
+
+.wiki-icon-picker {
+    position: relative;
+}
+
+.wiki-icon-picker:hover .wiki-icon-caret {
+    opacity: 0.6;
 }
 
 /* Title Editable (contenteditable h1) */
@@ -374,6 +392,7 @@
 /* Tags Wrapper */
 .wiki-tags-wrapper {
     margin-bottom: 16px;
+    margin-left: 56px;
 }
 
 .wiki-tags-wrapper .tagsinput {
@@ -1080,12 +1099,17 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+}
+
+#wikiActivityContainer {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .wiki-activity-feed {
-    overflow-y: auto;
-    flex: 1;
-    min-height: 0;
+    /* Content rendered inside #wikiActivityContainer via HTMX */
 }
 
 /* Delete button pinned to bottom */

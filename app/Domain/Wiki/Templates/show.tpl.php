@@ -172,11 +172,13 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                                     <div class="wiki-title-wrapper" id="wikiTitleWrapper">
                                         <div class="wiki-icon-picker">
                                             <button type="button"
-                                                    class="wiki-icon-btn icp icp-dd dropdown-toggle iconpicker-container"
+                                                    class="wiki-icon-btn icp icp-dd btn btn-default dropdown-toggle iconpicker-container"
                                                     data-toggle="dropdown"
                                                     title="Change icon">
-                                                <i class="<?= $tpl->escape($currentArticle->data ?: 'fa fa-file-alt') ?>"></i>
+                                                <span class="iconPlaceholder"><i class="<?= $tpl->escape($currentArticle->data ?: 'fa fa-file-alt') ?>"></i></span>
+                                                <span class="wiki-icon-caret"><i class="fa fa-chevron-down"></i></span>
                                             </button>
+                                            <div class="dropdown-menu"></div>
                                             <input type="hidden" id="wikiArticleIcon" class="articleIcon" value="<?= $tpl->escape($currentArticle->data) ?>" />
                                         </div>
                                         <h1 class="wiki-title-editable"
@@ -839,7 +841,7 @@ jQuery(document).ready(function() {
     var iconInput = document.getElementById('wikiArticleIcon');
     if (iconInput && jQuery.fn.iconpicker) {
         jQuery('.wiki-icon-btn').iconpicker({
-            component: '.wiki-icon-btn > i',
+            component: '.btn > .iconPlaceholder',
             input: '.articleIcon',
             inputSearch: true,
             defaultValue: 'far fa-file-alt',
@@ -918,7 +920,7 @@ jQuery(document).ready(function() {
         jQuery('.wiki-icon-btn').on('iconpickerSelected', function(event) {
             var newIcon = event.iconpickerValue;
             jQuery('.articleIcon').val(newIcon);
-            jQuery('.wiki-icon-btn > i').attr('class', newIcon);
+            jQuery('.wiki-icon-btn .iconPlaceholder > i').attr('class', newIcon);
 
             saveField('icon', newIcon, function() {
                 // Update sidebar tree icon
