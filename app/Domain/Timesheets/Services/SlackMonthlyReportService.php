@@ -323,6 +323,9 @@ private function generateCsvString(array $filters, array $columnState = []): str
         $filters['paidCheck'],
         $filters['clientId']
     );
+    usort($allTimesheets, function($a, $b) {
+        return strtotime($a['workDate']) <=> strtotime($b['workDate']);
+    });
 
     $userId = $filters['userId'] ?? session('userdata.id');
     $hoursFormat = 'decimal';
@@ -393,7 +396,8 @@ private function generateCsvString(array $filters, array $columnState = []): str
         $filteredRow = array_intersect_key($rowData, $activeColumns);
         fputcsv($output, array_values($filteredRow));
     }
-        $totalsRowData = [
+    
+    $totalsRowData = [
         'id' => '',
         'tickId' => '',
         'date' => '',
