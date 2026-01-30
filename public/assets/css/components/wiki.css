@@ -12,7 +12,7 @@
 .wiki-layout {
     display: flex;
     gap: 0;
-    min-height: calc(100vh - 120px);
+    height: calc(100vh - 120px);
     position: relative;
 }
 
@@ -119,6 +119,7 @@
 .wiki-content {
     flex: 1;
     min-width: 0;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     background: var(--secondary-background);
@@ -258,7 +259,7 @@
     flex-shrink: 0;
     padding: 20px 24px 20px 20px;
     border-left: 1px solid var(--main-border-color);
-    overflow-y: auto;
+    overflow: hidden;
     transition: width 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
     display: flex;
     flex-direction: column;

@@ -32,6 +32,42 @@ var defaultCommands = [
         }
     },
     {
+        name: 'columns4',
+        label: '4 Columns',
+        description: 'Create four-column layout',
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="4" height="18" rx="1"/><rect x="7" y="3" width="4" height="18" rx="1"/><rect x="13" y="3" width="4" height="18" rx="1"/><rect x="19" y="3" width="4" height="18" rx="1"/></svg>',
+        command: function(editor) {
+            editor.chain().focus().setColumns(4).run();
+        }
+    },
+    {
+        name: 'sidebarLeft',
+        label: 'Sidebar Left',
+        description: 'Narrow left, wide right layout',
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="11" y="3" width="10" height="18" rx="1"/></svg>',
+        command: function(editor) {
+            editor.chain().focus().setColumnLayout(2, 'sidebar-left').run();
+        }
+    },
+    {
+        name: 'sidebarRight',
+        label: 'Sidebar Right',
+        description: 'Wide left, narrow right layout',
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="10" height="18" rx="1"/><rect x="16" y="3" width="5" height="18" rx="1"/></svg>',
+        command: function(editor) {
+            editor.chain().focus().setColumnLayout(2, 'sidebar-right').run();
+        }
+    },
+    {
+        name: 'sidebarBoth',
+        label: 'Sidebar Both',
+        description: 'Sidebars on both sides of content',
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="4" height="18" rx="1"/><rect x="8" y="3" width="8" height="18" rx="1"/><rect x="18" y="3" width="4" height="18" rx="1"/></svg>',
+        command: function(editor) {
+            editor.chain().focus().setColumnLayout(3, 'sidebar-both').run();
+        }
+    },
+    {
         name: 'bulletList',
         label: 'Bullet List',
         description: 'Create a simple bullet list',

@@ -3306,6 +3306,56 @@ div[id^="comments-"] > div > .clearall {
    Phase 6 Extensions - Column Layouts
    ========================================================================== */
 
+/* Column layout wrapper (added by NodeView for toolbar support) */
+.tiptap-columns-wrapper {
+    position: relative;
+    margin: 16px 0;
+}
+
+.tiptap-columns-wrapper > .tiptap-columns {
+    margin: 0; /* Wrapper handles the margin */
+}
+
+/* Column layout toolbar */
+.tiptap-columns-toolbar {
+    position: absolute;
+    top: -14px;
+    right: 4px;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 5;
+}
+
+.tiptap-columns-wrapper:hover > .tiptap-columns-toolbar,
+.tiptap-columns-wrapper:focus-within > .tiptap-columns-toolbar {
+    opacity: 1;
+}
+
+.tiptap-columns-toolbar__btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--secondary-background, #fff);
+    border: 1px solid var(--main-border-color, #e2e8f0);
+    border-radius: 6px;
+    color: var(--secondary-font-color, #64748b);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.tiptap-columns-toolbar__btn:hover {
+    background: var(--red, #e74c3c);
+    color: white;
+    border-color: var(--red, #e74c3c);
+}
+
 .tiptap-columns {
     display: grid;
     gap: 16px;
@@ -3322,6 +3372,19 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-columns--4 {
     grid-template-columns: repeat(4, 1fr);
+}
+
+/* Asymmetric layout variants */
+.tiptap-columns--sidebar-left {
+    grid-template-columns: 1fr 2fr;
+}
+
+.tiptap-columns--sidebar-right {
+    grid-template-columns: 2fr 1fr;
+}
+
+.tiptap-columns--sidebar-both {
+    grid-template-columns: 1fr 2fr 1fr;
 }
 
 .tiptap-column {
@@ -3354,7 +3417,10 @@ div[id^="comments-"] > div > .clearall {
 @media (max-width: 768px) {
     .tiptap-columns--2,
     .tiptap-columns--3,
-    .tiptap-columns--4 {
+    .tiptap-columns--4,
+    .tiptap-columns--sidebar-left,
+    .tiptap-columns--sidebar-right,
+    .tiptap-columns--sidebar-both {
         grid-template-columns: 1fr;
     }
 }
@@ -3540,6 +3606,13 @@ div[id^="comments-"] > div > .clearall {
 .dark .tiptap-column {
     background: var(--element-bg, #1e293b);
     border-color: var(--main-border-color, #334155);
+}
+
+[data-theme="dark"] .tiptap-columns-toolbar__btn,
+.dark .tiptap-columns-toolbar__btn {
+    background: var(--element-bg, #1e293b);
+    border-color: var(--main-border-color, #334155);
+    color: var(--secondary-font-color, #94a3b8);
 }
 
 /* ==========================================================================
