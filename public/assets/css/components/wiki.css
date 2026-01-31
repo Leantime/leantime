@@ -409,13 +409,13 @@
     border-radius: 16px;
     padding: 4px 10px;
     margin: 2px 4px 2px 0;
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
 }
 
 .wiki-tags-wrapper .tagsinput input {
     background: transparent;
     border: none;
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
     color: var(--secondary-font-color);
     width: auto !important;
     min-width: 100px;
@@ -435,7 +435,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 16px;
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
     color: var(--secondary-font-color);
 }
 
@@ -471,7 +471,7 @@
 
 .wiki-document {
     font-family: var(--primary-font-family);
-    font-size: 15px;
+    font-size: var(--font-size-l);
     line-height: 1.75;
     color: var(--primary-font-color);
     max-width: 900px;
@@ -759,7 +759,7 @@
     background: var(--layered-background);
     border: 1px solid var(--main-border-color);
     border-radius: 20px;
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
     color: var(--primary-font-color);
     z-index: 100;
     transition: all 0.2s ease;
@@ -824,7 +824,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 8px 0;
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
 }
 
 .wiki-property-label {
@@ -832,11 +832,15 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    flex-shrink: 0;
 }
 
 .wiki-property-value {
     color: var(--primary-font-color);
     font-weight: 500;
+    min-width: 0;
+    max-width: 60%;
+    text-align: right;
 }
 
 /* Status Badge */
@@ -846,18 +850,18 @@
     gap: 6px;
     padding: 5px 12px;
     border-radius: 16px;
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
     font-weight: 500;
 }
 
 .wiki-status-badge.draft {
-    background: var(--yellow-bg, rgba(255, 193, 7, 0.15));
-    color: var(--yellow-text-color, #856404);
+    background: var(--yellow);
+    color: var(--yellow-text-color);
 }
 
 .wiki-status-badge.published {
-    background: var(--green-bg, rgba(40, 167, 69, 0.15));
-    color: var(--green-text-color, #155724);
+    background: var(--green);
+    color: var(--green-text-color);
 }
 
 /* Author with Avatar */
@@ -903,22 +907,25 @@
 }
 
 .wiki-milestone-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    display: inline-block;
     padding: 5px 10px;
     border-radius: 6px;
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
     font-weight: 500;
     border: none;
     background: transparent;
     color: var(--primary-font-color);
     cursor: pointer;
     transition: all 0.15s ease;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .wiki-milestone-btn:hover {
-    background: var(--layered-background);
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--primary-font-color);
 }
 
 .wiki-milestone-btn .milestone-text.none {
@@ -929,11 +936,12 @@
 .wiki-milestone-btn .fa-chevron-down {
     font-size: 9px;
     color: var(--secondary-font-color);
+    margin-left: 6px;
 }
 
 .wiki-milestone-menu {
-    min-width: 220px;
-    max-width: 280px;
+    min-width: 200px;
+    max-width: 250px;
     max-height: 300px;
     overflow-y: auto;
     padding: 6px;
@@ -948,21 +956,29 @@
     gap: 8px;
     padding: 8px 12px;
     border-radius: 8px;
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
     color: var(--primary-font-color);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .wiki-milestone-menu li a:hover {
     background: var(--layered-background);
     text-decoration: none;
+    color: var(--primary-font-color);
 }
 
 .wiki-milestone-menu li a.active {
     background: var(--accent1);
     color: white;
+}
+
+.wiki-milestone-menu li a.active:hover {
+    background: var(--accent1);
+    color: white;
+    opacity: 0.9;
 }
 
 .wiki-milestone-menu li a i {
@@ -998,23 +1014,24 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: var(--box-radius-large);
+    font-size: var(--base-font-size);
+    font-weight: normal;
     border: none;
     cursor: pointer;
+    box-shadow: var(--min-shadow);
     transition: all 0.15s ease;
 }
 
 .wiki-status-pill.draft {
-    background: var(--yellow, #ffc107);
-    color: #000;
+    background: var(--yellow);
+    color: var(--yellow-text-color);
 }
 
 .wiki-status-pill.published {
-    background: var(--green, #28a745);
-    color: white;
+    background: var(--green);
+    color: var(--green-text-color);
 }
 
 .wiki-status-pill:hover {
@@ -1029,27 +1046,42 @@
 .wiki-status-menu {
     min-width: 140px;
     padding: 6px;
-    border-radius: 12px;
+    border-radius: var(--box-radius);
     box-shadow: var(--regular-shadow);
 }
 
+.wiki-status-menu li {
+    margin-bottom: 1px;
+    padding: 0 10px;
+}
+
 .wiki-status-menu li a {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--primary-font-color);
+    display: block;
+    padding: 5px 10px;
+    border-radius: var(--box-radius-large);
+    font-size: var(--base-font-size);
+    color: #fff;
+}
+
+.wiki-status-menu li a.draft-option {
+    background: var(--yellow);
+    color: var(--yellow-text-color);
+}
+
+.wiki-status-menu li a.published-option {
+    background: var(--green);
+    color: var(--green-text-color);
 }
 
 .wiki-status-menu li a:hover {
-    background: var(--layered-background);
+    opacity: 0.85;
+    text-decoration: none;
 }
 
 .wiki-status-menu li a i {
     width: 16px;
     text-align: center;
+    margin-right: 4px;
 }
 
 /* Actions Section */
@@ -1067,12 +1099,12 @@
     gap: 8px;
     padding: 10px 14px;
     border-radius: 12px;
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
     font-weight: 500;
     text-decoration: none;
     color: var(--primary-font-color);
-    background: var(--secondary-background);
-    border: 1px solid var(--main-border-color);
+    background: transparent;
+    border: none;
     transition: all 0.15s ease;
 }
 
@@ -1087,7 +1119,6 @@
 
 .wiki-action-btn.delete:hover {
     background: var(--red-bg, rgba(220, 53, 69, 0.1));
-    border-color: var(--red, #dc3545);
 }
 
 /* ==========================================================================
@@ -1125,7 +1156,7 @@
     gap: 10px;
     padding: 10px 0;
     border-bottom: 1px solid var(--neutral);
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
 }
 
 .wiki-activity-item:last-child {
@@ -1189,14 +1220,14 @@
     padding: 16px 0;
     text-align: center;
     color: var(--secondary-font-color);
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
 }
 
 .wiki-activity-empty {
     padding: 16px 0;
     text-align: center;
     color: var(--secondary-font-color);
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
 }
 
 /* ==========================================================================
@@ -1227,7 +1258,7 @@
     border-radius: 12px;
     color: var(--primary-font-color);
     text-decoration: none;
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
     transition: background 0.15s ease;
 }
 
@@ -1274,7 +1305,7 @@
     background: transparent;
     border: 1px dashed var(--main-border-color);
     color: var(--secondary-font-color);
-    font-size: var(--font-size-s);
+    font-size: var(--base-font-size);
     cursor: pointer;
     transition: all 0.15s ease;
     width: 100%;
@@ -1550,15 +1581,7 @@
     background: rgba(255, 230, 0, 0.3);
 }
 
-[data-theme="dark"] .wiki-status-badge.draft {
-    background: rgba(255, 193, 7, 0.2);
-    color: #ffc107;
-}
-
-[data-theme="dark"] .wiki-status-badge.published {
-    background: rgba(40, 167, 69, 0.2);
-    color: #28a745;
-}
+/* Dark mode status colors handled by theme CSS variables */
 
 [data-theme="dark"] .wiki-properties-panel {
     box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);

@@ -160,8 +160,8 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
 
                         <div class="wiki-content-inner">
 
-                        <!-- Toggle for collapsed Properties -->
-                        <button class="wiki-panel-toggle right" id="showPropertiesBtn" title="Show Properties">
+                        <!-- Toggle for collapsed Details -->
+                        <button class="wiki-panel-toggle right" id="showPropertiesBtn" title="Show Details">
                             <i class="fa fa-chevron-left"></i>
                         </button>
 
@@ -271,7 +271,7 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                         <!-- Properties Panel (inside content area) -->
                         <div class="wiki-properties-panel" id="propertiesPanel">
                             <div class="wiki-panel-header">
-                                <h5 class="wiki-panel-title">Properties</h5>
+                                <h5 class="wiki-panel-title">Details</h5>
                                 <button class="wiki-collapse-btn" id="collapseProperties" title="Collapse">
                                     <i class="fa fa-chevron-right"></i>
                                 </button>
@@ -297,8 +297,8 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                                             <i class="fa fa-chevron-down"></i>
                                         </button>
                                         <ul class="dropdown-menu wiki-status-menu">
-                                            <li><a href="javascript:void(0)" class="wiki-status-option" data-value="draft"><i class="fa fa-pencil"></i> Draft</a></li>
-                                            <li><a href="javascript:void(0)" class="wiki-status-option" data-value="published"><i class="fa fa-check"></i> Published</a></li>
+                                            <li><a href="javascript:void(0)" class="wiki-status-option draft-option" data-value="draft"><i class="fa fa-pencil"></i> Draft</a></li>
+                                            <li><a href="javascript:void(0)" class="wiki-status-option published-option" data-value="published"><i class="fa fa-check"></i> Published</a></li>
                                         </ul>
                                     </div>
                                 <?php } else { ?>
