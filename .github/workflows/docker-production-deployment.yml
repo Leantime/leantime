@@ -113,14 +113,14 @@ jobs:
           fi
           
           echo "[INFO] Removing app container..."
-          docker-compose -f docker-compose.production.yml rm -f -s leantime || true
+          docker compose -f docker-compose.production.yml rm -f -s leantime || true
           
           echo "[DEBUG] Updating image to: ${IMAGE_NAME}:${NEW_IMAGE_TAG}"
           sed -i "s|image: ${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${NEW_IMAGE_TAG}|" docker-compose.production.yml
           echo "[DEBUG] Updated docker-compose.production.yml"
 
           echo "[INFO] Deploying new version..."
-          docker-compose -f docker-compose.production.yml up -d leantime
+          docker compose -f docker-compose.production.yml up -d leantime
           
           echo "[INFO] Waiting for application to become healthy..."
           HEALTH_PASSED=false
@@ -128,7 +128,7 @@ jobs:
             # Check if container is running first
             if ! docker ps | grep -q "${CONTAINER_NAME}"; then
               echo "[ERROR] Container ${CONTAINER_NAME} is not running!"
-              docker-compose -f docker-compose.production.yml logs --tail=50 leantime
+              docker compose -f docker-compose.production.yml logs --tail=50 leantime
               exit 1
             fi
             
@@ -144,7 +144,7 @@ jobs:
           
           if [ "${HEALTH_PASSED}" = false ]; then
             echo "[ERROR] Application failed to start within 60 seconds"
-            docker-compose -f docker-compose.production.yml logs --tail=50 leantime
+            docker compose -f docker-compose.production.yml logs --tail=50 leantime
             exit 1
           fi
           
@@ -153,7 +153,7 @@ jobs:
           echo "======================================"
           echo "[SUCCESS] Deployment successful!"
           echo "======================================"
-          docker-compose -f docker-compose.production.yml ps
+          docker compose -f docker-compose.production.yml ps
           ENDSSH
 
       - name: Rollback on Failure
@@ -175,7 +175,7 @@ jobs:
           
           if [ -z "${PREVIOUS_IMAGE_TAG}" ] || [ "${PREVIOUS_IMAGE_TAG}" = "none" ]; then
             echo "[WARN] No previous image to rollback to"
-            docker-compose -f docker-compose.production.yml stop leantime
+            docker compose -f docker-compose.production.yml stop leantime
             exit 1
           fi
           
@@ -192,10 +192,10 @@ jobs:
           echo "[INFO] Updated docker-compose.production.yml to previous version"
           
           echo "[INFO] Removing failed container..."
-          docker-compose -f docker-compose.production.yml rm -f -s leantime
+          docker compose -f docker-compose.production.yml rm -f -s leantime
 
           echo "[INFO] Starting previous version..."
-          docker-compose -f docker-compose.production.yml up -d leantime
+          docker compose -f docker-compose.production.yml up -d leantime
 
           echo "[INFO] Waiting for rollback to complete..."
           ROLLBACK_SUCCESS=false
@@ -213,12 +213,12 @@ jobs:
           
           if [ "${ROLLBACK_SUCCESS}" = false ]; then
             echo "[ERROR] Rollback failed! Manual intervention required."
-            docker-compose -f docker-compose.production.yml logs --tail=50 leantime
+            docker compose -f docker-compose.production.yml logs --tail=50 leantime
             exit 1
           fi
           
           echo "[SUCCESS] Rollback successful!"
-          docker-compose -f docker-compose.production.yml ps
+          docker compose -f docker-compose.production.yml ps
           ENDSSH
 
       - name: Post-Rollback Cleanup
@@ -251,7 +251,7 @@ jobs:
           fi
           
           echo "[INFO] Final deployment verification..."
-          docker-compose -f docker-compose.production.yml ps
+          docker compose -f docker-compose.production.yml ps
           
           echo ""
           echo "[INFO] Container status:"
