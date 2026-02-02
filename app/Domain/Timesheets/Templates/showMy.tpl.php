@@ -215,7 +215,7 @@ jQuery(document).ready(function(){
 <!-- page header -->
 
 <div class="maincontent">
-    <div class="maincontentinner" style ="width:1200px;">
+    <div class="maincontentinner">
         <?php
         echo $tpl->displayNotification();
 
