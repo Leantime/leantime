@@ -3,6 +3,33 @@ defined('RESTRICTED') or exit('Restricted access');
 ?>
 
 <style>
+    /* Pillow Select Styles */
+    .pillow-select {
+        padding: 4px 12px;
+        border-radius: 15px;
+        border: 1px solid #ddd;
+        background: white;
+        font-size: 14px;
+        line-height: 20px;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.2s;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Ctitle%3Edown-arrow%3C%2Ftitle%3E%3Cg%20fill%3D%22%23000000%22%3E%3Cpath%20d%3D%22M10.293%2C3.293%2C6%2C7.586%2C1.707%2C3.293A1%2C1%2C0%2C0%2C0%2C.293%2C4.707l5%2C5a1%2C1%2C0%2C0%2C0%2C1.414%2C0l5-5a1%2C1%2C0%2C1%2C0-1.414-1.414Z%22%20fill%3D%22%23000000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        padding-right: 28px;
+        vertical-align: middle;
+    }
+    .pillow-select:hover {
+        border-color: #aaa;
+    }
+    .pillow-select:focus {
+        border-color: var(--primary-color, #1b75bb);
+        box-shadow: 0 0 0 2px rgba(27, 117, 187, 0.1);
+    }
+
     /* Delete Modal Styles */
     .delete-modal-content {
         background: white;
@@ -174,6 +201,23 @@ defined('RESTRICTED') or exit('Restricted access');
                 <a href="javascript:void(0)" onclick="openModal()" class="btn btn-primary"><i class="fa fa-plus"></i> Add Employee</a>
             </div>
             <div class="col-md-6 align-right">
+                <a href="javascript:void(0)" onclick="downloadAllPdfs()" class="btn btn-primary" style="margin-right: 15px;"><i class="fa fa-download"></i> Download All</a>
+                <select id="monthSelector" class="pillow-select">
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <select id="yearSelector" class="pillow-select" style="margin-left: 10px;">
+                </select>
             </div>
         </div>
 
@@ -185,6 +229,7 @@ defined('RESTRICTED') or exit('Restricted access');
                 <col class="con0">
                 <col class="con1">
                 <col class="con0">
+                <col class="con1">
             </colgroup>
             <thead>
                 <tr>
@@ -193,7 +238,8 @@ defined('RESTRICTED') or exit('Restricted access');
                     <th class="head1">Last Name</th>
                     <th class="head0">Email</th>
                     <th class="head1">Position</th>
-                    <th class="head0 no-sort"></th>
+                    <th class="head0 no-sort">PDF</th>
+                    <th class="head1 no-sort"></th>
                 </tr>
             </thead>
             <tbody id="employeesBody">
@@ -274,6 +320,7 @@ defined('RESTRICTED') or exit('Restricted access');
 
 <script>
     const API_BASE = 'http://localhost:3100/api/employees'
+    const API_HOST = 'http://localhost:3100'
     const API_TOKEN = '<?php echo $tpl->get('sihtericeToken'); ?>'
     let isEditing = false
 
@@ -339,7 +386,7 @@ defined('RESTRICTED') or exit('Restricted access');
         }
 
         const tbody = document.getElementById('employeesBody')
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;"><i class="fa fa-spinner fa-spin"></i> Loading...</td></tr>'
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;"><i class="fa fa-spinner fa-spin"></i> Loading...</td></tr>'
 
         try {
             const res = await fetch(`${API_BASE}/all`, {
@@ -348,14 +395,14 @@ defined('RESTRICTED') or exit('Restricted access');
             const result = await res.json()
 
             if (result.error) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px;"><i class="fa fa-exclamation-triangle"></i> Error: ${result.error}</td></tr>`
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px;"><i class="fa fa-exclamation-triangle"></i> Error: ${result.error}</td></tr>`
                 return
             }
 
             if (!result.data || result.data.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px;">
+                        <td colspan="7" style="text-align: center; padding: 40px;">
                             <i class="fa fa-users"></i>
                             <p>No employees found</p>
                             <a href="javascript:void(0)" onclick="openModal()" class="btn btn-primary"><i class="fa fa-plus"></i> Add First Employee</a>
@@ -375,6 +422,9 @@ defined('RESTRICTED') or exit('Restricted access');
                     <td style="padding: 6px 10px;">${escapeHtml(emp.email)}</td>
                     <td style="padding: 6px 10px;">${escapeHtml(emp.position || '-')}</td>
                     <td style="padding: 6px 10px;">
+                        <a href="javascript:void(0)" onclick="downloadPdf(${emp.id})" title="Download PDF"><i class="fa fa-file-pdf-o"></i> Download</a>
+                    </td>
+                    <td style="padding: 6px 10px;">
                         <a href="javascript:void(0)" onclick='editEmployee(${JSON.stringify(emp)})' class="edit"><i class="fa fa-edit"></i> Edit</a>
                     </td>
                 `
@@ -389,14 +439,14 @@ defined('RESTRICTED') or exit('Restricted access');
                     "searching": false,
                     "paging": false,
                     "columnDefs": [
-                        { "orderable": false, "targets": 5 }
+                        { "orderable": false, "targets": [5, 6] }
                     ]
                 });
             }
 
         } catch (err) {
             console.error("Error loading employees:", err)
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px;"><i class="fa fa-exclamation-triangle"></i> Error loading employees</td></tr>`
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px;"><i class="fa fa-exclamation-triangle"></i> Error loading employees</td></tr>`
         }
     }
 
@@ -535,6 +585,99 @@ defined('RESTRICTED') or exit('Restricted access');
         }
     }
 
+    // PDF DOWNLOAD (returns ZIP file from backend)
+    async function downloadPdf(employeeId) {
+        const month = document.getElementById('monthSelector').value
+        const year = document.getElementById('yearSelector').value
+
+        const url = `http://localhost:3100/api/worksheets/download/employee/${employeeId}/${month}/${year}`
+
+        try {
+            const res = await fetch(url, {
+                headers: {'Authorization': `Bearer ${API_TOKEN}`}
+            })
+
+            if (!res.ok) {
+                const result = await res.json()
+                showNotification(result.error || 'Error downloading worksheet', 'error')
+                return
+            }
+
+            const blob = await res.blob()
+            const downloadUrl = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = downloadUrl
+            const monthStr = month.toString().padStart(2, '0')
+            a.download = `employee-${employeeId}-worksheets-${year}-${monthStr}.zip`
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+            window.URL.revokeObjectURL(downloadUrl)
+        } catch (err) {
+            console.error("Error downloading worksheet:", err)
+            showNotification('Error downloading worksheet', 'error')
+        }
+    }
+
+    // DOWNLOAD ALL EMPLOYEES PDFs
+    async function downloadAllPdfs() {
+        const month = document.getElementById('monthSelector').value
+        const year = document.getElementById('yearSelector').value
+
+        const url = `${API_HOST}/api/worksheets/download/employees/${month}/${year}`
+
+        try {
+            showNotification('Generating worksheets, please wait...', 'info')
+
+            const res = await fetch(url, {
+                headers: {'Authorization': `Bearer ${API_TOKEN}`}
+            })
+
+            if (!res.ok) {
+                const result = await res.json()
+                showNotification(result.error || 'Error downloading worksheets', 'error')
+                return
+            }
+
+            const blob = await res.blob()
+            const downloadUrl = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = downloadUrl
+            const monthStr = month.toString().padStart(2, '0')
+            a.download = `worksheets-${year}-${monthStr}.zip`
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+            window.URL.revokeObjectURL(downloadUrl)
+
+            showNotification('Download complete!', 'success')
+        } catch (err) {
+            showNotification('Error downloading worksheets', 'error')
+        }
+    }
+
+    // INIT MONTH/YEAR SELECTORS
+    function initSelectors() {
+        const now = new Date()
+        const currentMonth = now.getMonth() + 1
+        const currentYear = now.getFullYear()
+
+        // Set current month
+        document.getElementById('monthSelector').value = currentMonth
+
+        // Populate years (current year and 2 years back)
+        const yearSelector = document.getElementById('yearSelector')
+
+        for (let y = currentYear; y >= currentYear - 2; y--) {
+            const option = document.createElement('option')
+            option.value = y
+            option.textContent = y
+            yearSelector.appendChild(option)
+        }
+        yearSelector.value = currentYear
+    }
+
     // INIT
+    initSelectors()
     loadEmployees()
 </script>
