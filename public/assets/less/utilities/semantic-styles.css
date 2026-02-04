@@ -1,0 +1,41 @@
+
+.priority-text-1 {
+    @apply text-red-50;
+}
+
+.priority-text-2 {
+    @apply text-orange-50;
+}
+
+.priority-text-3 {
+    @apply text-yellow-50;
+}
+
+.priority-text-4 {
+    @apply text-green-50;
+}
+
+.priority-text-5 {
+    @apply text-blue-50;
+}
+
+.priority-text-6 {
+    @apply text-neutral-50;
+}
+
+.dropdown-hover {
+    @apply input-hover;
+}
+
+.focus-outline-default {
+    @apply border-base-content/20 outline-base-content/20 outline outline-2;
+}
+
+.border-color-default {
+    @apply border-base-content/30;
+}
+
+.leading-lg {
+    line-height:1.5rem;
+}
+

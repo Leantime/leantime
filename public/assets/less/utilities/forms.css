@@ -1,0 +1,22 @@
+.input-hover {
+    @apply bg-base-content/5 text-base-content;
+}
+
+.input-shadow {
+    @apply shadow-md;
+}
+
+.input,
+.select,
+.textarea {
+    &:hover,
+    &:focus {
+        @apply input-hover;
+    }
+
+    &-bordered {
+        &:hover {
+            @apply border-base-content/50 bg-none rounded-md;
+        }
+    }
+}

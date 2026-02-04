@@ -1,25 +1,35 @@
-<div style="max-width:700px;">
+@push('styles')
+    <link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/app-components.{!! get_release_version() !!}.min.css"/>
+@endpush
+
+<div class="max-w-3xl">
     <form class="onboardingModal" method="post" id="projectTitleOnboarding" action="{{ BASE_URL }}/help/firstLogin?step={{ $nextStep }}">
         <input type="hidden" name="currentStep" value="{{ $currentStep }}" />
-        <div class="row">
-            <div class="col-md-8">
-                <h1>{{  __('headlines.hi_there') }}</h1>
-                <p>{!!  __('text.get_organized_with_projects') !!}</p>
-                <br />
-                <label>{{ __('label.start_with_project_title') }}</label>
-                <input type="text" id="projectName" name="projectname" value="" placeholder="" style="width:100%;"/><br />
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+            <div class="md:col-span-8">
+                <h1 class="text-2xl font-semibold">{{ __('headlines.hi_there') }}</h1>
+                <p class="text-base-content opacity-80">{!! __('text.get_organized_with_projects') !!}</p>
 
+                <div class="mt-4">
+                    <x-global::forms.text-input
+                        id="projectName"
+                        name="projectname"
+                        labelText="{{ __('label.start_with_project_title') }}"
+                        placeholder=""
+                        variant="fullWidth"
+                    />
+                </div>
             </div>
-            <div class="col-md-4">
-                <div class='svgContainer' style="width:300px; margin-top:40px;">
+            <div class="md:col-span-4">
+                <div class="svgContainer mt-6 md:mt-10" style="max-width:300px;">
                     {!! file_get_contents(ROOT . "/dist/images/svg/undraw_game_day_ucx9.svg") !!}
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12 tw-text-right">
-                <input type="submit" value="{{ __('buttons.next') }}" />
-            </div>
+        <div class="mt-4 flex justify-end">
+            <x-global::forms.button type="submit" contentRole="primary">
+                {{ __('buttons.next') }}
+            </x-global::forms.button>
         </div>
     </form>
 </div>

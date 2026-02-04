@@ -1,0 +1,31 @@
+.badge {
+    @apply border-color-default;
+
+    &:hover {
+        @apply input-hover;
+    }
+
+    .icon {
+        @apply h-lg;
+        font-size: 100%;
+        margin-left:-2px;
+        margin-right:2px;
+    }
+}
+
+.badge-md {
+    @apply text-xs;
+}
+
+.badge-lg {
+    @apply text-sm;
+}
+
+.dropdown > .badge:active {
+    animation: button-pop 0s ease-out;
+    transform: scale(var(--btn-focus-scale, 0.97));
+}
+
+.dropdown > .badge:focus {
+    @apply focus-outline-default;
+}

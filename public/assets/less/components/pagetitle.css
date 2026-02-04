@@ -1,0 +1,29 @@
+.pagetitle {
+    @apply text-pagetitle-content text-xl/4;
+
+
+    .dropdown {
+
+        .btn {
+            @apply text-pagetitle-content text-xl/4 font-light;
+
+            &:hover {
+                @apply bg-none border-pagetitle-content;
+            }
+
+        }
+    }
+
+}
+
+.filterWrapper {
+    .dropdown {
+        .btn {
+            color: rgb(8, 8, 236) !important;  
+        }
+
+        .text-base-content {
+            color: blue !important;  
+        }
+    }
+}

@@ -1,0 +1,11 @@
+.rounded-element {
+    @apply rounded-lg;
+}
+
+.glass-card {
+    @apply p-md glass rounded-box shadow-md mb-md;
+    background: var(--glass-background);
+    border: var(--glass-border);
+    position: relative;
+
+}

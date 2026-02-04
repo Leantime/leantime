@@ -25,6 +25,7 @@
     "datatables.net-buttons": "^2.4.2",
     "datatables.net-rowgroup": "^1.4.1",
     "datatables.net-rowreorder": "^1.4.1",
+    "flatpickr": "^4.6.13",
     "fullcalendar": "^6.1.11",
     "gridstack": "^12.1.1",
     "htmx.org": "^1.9.12",
@@ -51,6 +52,10 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",
+    "@tailwindcss/nesting": "^0.0.0-insiders.565cd3e",
+    "@tailwindcss/typography": "github:tailwindcss/typography",
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^4.12.10",
     "dotenv": "^16.4.5",
     "eslint": "^8.50.0",
     "eslint-plugin-vue": "^9.17.0",
@@ -61,12 +66,17 @@
     "less": "^4.2.0",
     "less-loader": "^11.1.3",
     "mix-tailwindcss": "^1.3.0",
+    "postcss": "^8.4.45",
+    "postcss-import": "^16.1.0",
+    "postcss-url": "^10.1.3",
     "selenium-standalone": "^9.3.3",
     "tailwindcss": "^3.4.1",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
   },
-  "scripts": {},
+  "scripts": {
+    "build:components": "mix --mix-config webpack.components.mix.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Leantime/leantime"

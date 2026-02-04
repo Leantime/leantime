@@ -1,0 +1,11 @@
+.form-control {
+    @apply pb-1;
+}
+
+.label {
+    @apply text-sm py-0.5 ;
+}
+
+.label-text {
+    @apply text-sm text-base-content/80 flex gap-xs;
+}

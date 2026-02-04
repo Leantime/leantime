@@ -60,6 +60,47 @@
     @include('global::sections.pageBottom')
     @stack('scripts')
     @include('help::helpermodal')
+
+    {{-- Toast notifications --}}
+    @if(session()->has('toast'))
+        @php
+            $toastMessage = session('toast')['message'] ?? session('toast.message', '');
+            $toastType = session('toast')['type'] ?? session('toast.type', 'success');
+        @endphp
+        @if($toastMessage)
+            <div
+                class="toast-notification toast-notification--{{ $toastType }}"
+                role="alert"
+                aria-live="polite"
+                aria-atomic="true"
+                data-toast
+            >
+                <div class="toast-notification__content">
+                    @if($toastType === 'success')
+                        <svg class="toast-notification__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    @elseif($toastType === 'error')
+                        <svg class="toast-notification__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    @else
+                        <svg class="toast-notification__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2"/>
+                            <path d="M10 6V10M10 14H10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    @endif
+                    <p class="toast-notification__message">{{ $toastMessage }}</p>
+                </div>
+                <button
+                    type="button"
+                    class="toast-notification__dismiss"
+                    aria-label="Close notification"
+                    onclick="this.closest('[data-toast]').remove()"
+                >×</button>
+            </div>
+        @endif
+    @endif
 </body>
 
 </html>

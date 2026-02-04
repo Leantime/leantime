@@ -1,0 +1,125 @@
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('~fonts/Hanken_Grotesk/HankenGrotesk-VariableFont_wght.ttf') format("truetype-variations");
+  font-weight: 100 1000;
+  font-style:normal;
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('~fonts/Hanken_Grotesk/HankenGrotesk-Italic-VariableFont_wght.ttf') format("truetype-variations");
+  font-weight: 100 1000;
+  font-style:italic;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('~fonts/atkinson/Atkinson-Hyperlegible-Regular-102.ttf') format('truetype'),
+    url('~fonts/atkinson/Atkinson-Hyperlegible-Regular-102a.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('~fonts/atkinson/Atkinson-Hyperlegible-BoldItalic-102.ttf') format('truetype'),
+    url('~fonts/atkinson/Atkinson-Hyperlegible-BoldItalic-102a.woff2') format('woff2');
+    font-weight: bold;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('~fonts/atkinson/Atkinson-Hyperlegible-Bold-102.ttf') format('truetype'),
+    url('~fonts/atkinson/Atkinson-Hyperlegible-Bold-102a.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('~fonts/atkinson/Atkinson-Hyperlegible-Italic-102.ttf') format('truetype'),
+    url('~fonts/atkinson/Atkinson-Hyperlegible-Italic-102a.woff2') format('woff2');
+
+    font-weight: normal;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'Shantell Sans';
+    src: url('~fonts/shantell/Shantell_Sans-Informal_Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Shantell Sans';
+    src: url('~fonts/shantell/Shantell_Sans-Informal_Bold_Italic.woff2') format('woff2');
+    font-weight: bold;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'Shantell Sans';
+    src: url('~fonts/shantell/Shantell_Sans-Informal_Bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Shantell Sans';
+    src: url('~fonts/shantell/Shantell_Sans-Informal_Regular_Italic.woff2') format('woff2');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Material Symbols Rounded';
+    src: url('~fonts/material-icons/MaterialSymbolsRounded-VariableFont_FILL,GRAD,opsz,wght.ttf') format("truetype-variations");
+    font-weight: 100 700;
+}
+
+.material-symbols-rounded {
+
+    @apply font-materialIcons align-middle;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
+
+    font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' -25,
+          'opsz' 20;
+
+      &.fill {
+          font-variation-settings:'FILL' 1,
+          'wght' 400,
+          'GRAD' -25,
+          'opsz' 20;
+      }
+
+    &.strong {
+        font-variation-settings:'FILL' 1,
+        'wght' 600,
+        'GRAD' -25,
+        'opsz' 20;
+    }
+
+}
+
+strong .material-symbols-rounded {
+    font-variation-settings:'FILL' 1,
+    'wght' 600,
+    'GRAD' -25,
+    'opsz' 20;
+}

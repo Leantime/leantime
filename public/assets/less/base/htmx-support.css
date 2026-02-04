@@ -1,0 +1,78 @@
+.full-width-loader {
+  opacity:0;
+  position:fixed;
+  z-index: 100;
+  bottom:0px;
+  left:0px;
+  height: 5px;
+  width:100%;
+  background-color: transparent
+}
+
+
+.full-width-loader .indeterminate {
+  width:20%;
+  background:var(--element-gradient);
+  width:50%;
+  height:5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  box-shadow:var(--regular-shadow);
+
+}
+
+@keyframes progressBar {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+
+.full-width-loader.htmx-request {
+  display:block;
+  opacity:1;
+}
+
+.full-width-loader.htmx-request .indeterminate {
+  animation: progressBar 3s ease-in-out;
+  animation-fill-mode: both;
+}
+
+.htmx-request .htmx-loaded-content {
+    display:none;
+}
+
+.htmx-request .htmx-loaded-content {
+    display:none;
+}
+
+.htmx-indicator,
+.htmx-indicator-small {
+    display:none;
+}
+
+.htmx-indicator img,
+.htmx-indicator-small img{
+    width:75px;
+    margin:auto;
+}
+
+.htmx-request.htmx-indicator {
+    display:block;
+}
+
+.htmx-request.htmx-indicator-small {
+    display:inline-block;
+}
+
+/* Hide or show the actual/previous content based on htmx indicator visibility */
+.htmx-indicator.htmx-loaded-content {
+    display:block;
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator.htmx-loaded-content {
+    display: none;
+    opacity:0;
+}
+
+

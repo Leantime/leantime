@@ -1,0 +1,48 @@
+
+
+
+.tabs {
+
+    .tab {
+
+        @apply p-1 h-xxl text-sm;
+
+        &:hover {
+            @apply dropdown-hover;
+        }
+    }
+
+
+    &.tabs-headings {
+        @apply mb-sm;
+    }
+
+    &.tabs-boxed {
+        @apply bg-base-content/5 rounded-btn;
+
+        .tab {
+            @apply hover:dropdown-hover;
+
+            &.tab-active {}
+
+        }
+
+    }
+
+    &.tabs-bordered {
+        .tab:is(.tab-active, [aria-selected="true"]):not(.tab-disabled):not([disabled]),
+        .tab:is(input:checked) {
+            @apply border-primary text-primary font-bold;
+        }
+    }
+
+}
+
+
+
+
+
+
+
+
+
