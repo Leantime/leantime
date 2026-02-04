@@ -59,9 +59,9 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
                 <br />
                 <canvas id="canvas"></canvas>
                 <p><br />
-                    <?php echo $tpl->__('label.planned_hours'); ?>: <?php echo $ticket->planHours; ?><br />
-                    <?php echo $tpl->__('label.booked_hours') ?>: <?php echo $tpl->get('timesheetsAllHours'); ?><br />
-                    <?php echo $tpl->__('label.actual_hours_remaining') ?>: <?php echo $remainingHours; ?><br />
+                    <?php echo $tpl->__('label.planned_hours'); ?>: <?php echo format_hours($ticket->planHours); ?><br />
+                    <?php echo $tpl->__('label.booked_hours') ?>: <?php echo format_hours($tpl->get('timesheetsAllHours')); ?><br />
+                    <?php echo $tpl->__('label.actual_hours_remaining') ?>: <?php echo format_hours($remainingHours); ?><br />
                 </p>
 
                 <div style="margin-top: 20px;">
