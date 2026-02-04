@@ -223,7 +223,7 @@ return [
         'channels' => [
             'stack' => [
                 'driver' => 'stack',
-                'channels' => ['single', 'syslog', 'sentry'],
+                'channels' => explode(',', env('LEAN_LOG_CHANNELS', 'single,syslog,sentry')),
                 'ignore_exceptions' => false,
             ],
             'single' => [
@@ -248,6 +248,14 @@ return [
                 'driver' => 'sentry',
                 'level' => env('LEAN_SENTRY_LOG_LEVEL', 'error'),
                 'bubble' => true,
+            ],
+            'stderr' => [
+                'driver' => 'monolog',
+                'handler' => \Monolog\Handler\StreamHandler::class,
+                'with' => [
+                    'stream' => 'php://stderr',
+                ],
+                'level' => env('LEAN_DEBUG', 0) ? 'debug' : 'error',
             ],
         ],
         'default' => 'stack',
@@ -581,6 +589,24 @@ return [
                         env('LEAN_DB_IDLE_TIMEOUT', 3600),
                         env('LEAN_DB_IDLE_TIMEOUT', 3600)
                     ),
+                ]) : [],
+            ],
+            'pgsql' => [
+                'driver' => 'pgsql',
+                'url' => env('LEAN_DB_URL'),
+                'host' => env('LEAN_DB_HOST', '127.0.0.1'),
+                'port' => env('LEAN_DB_PORT', '5432'),
+                'database' => env('LEAN_DB_DATABASE', 'leantime'),
+                'username' => env('LEAN_DB_USER', 'postgres'),
+                'password' => env('LEAN_DB_PASSWORD', ''),
+                'charset' => env('LEAN_DB_CHARSET', 'utf8'),
+                'prefix' => '',
+                'prefix_indexes' => true,
+                'search_path' => env('LEAN_DB_SCHEMA', 'public'),
+                'sslmode' => env('LEAN_DB_SSLMODE', 'prefer'),
+                'options' => extension_loaded('pdo_pgsql') ? array_filter([
+                    PDO::ATTR_PERSISTENT => env('LEAN_DB_PERSISTENT_CONNECTIONS', true),
+                    PDO::ATTR_TIMEOUT => env('LEAN_DB_CONNECTION_TIMEOUT', 30),
                 ]) : [],
             ],
         ],

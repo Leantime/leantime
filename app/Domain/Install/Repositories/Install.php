@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings as AppSettingCore;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Domain\Install\Services\SchemaBuilder;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Setting\Services\SettingCache;
@@ -104,8 +105,11 @@ class Install
         $this->dbManager = $dbManager;
 
         // Use Laravel's database connection for consistency with the rest of the application
+        // Detect the configured database driver (defaults to 'mysql')
+        $defaultConnection = config('database.default', 'mysql');
+
         try {
-            $this->connection = $this->dbManager->connection('mysql');
+            $this->connection = $this->dbManager->connection($defaultConnection);
         } catch (\Exception $e) {
             Log::error('Failed to establish database connection during installation: '.$e->getMessage());
             // During installation, we may need to create a temporary connection without database selection
@@ -124,24 +128,46 @@ class Install
     /**
      * Create a temporary database connection for installation purposes
      * This is used when the main database connection fails during installation
+     * Supports both MySQL and PostgreSQL
      */
     private function createTemporaryConnection(): void
     {
         try {
-            // Create a temporary connection without selecting a specific database
-            $config = [
-                'driver' => 'mysql',
-                'host' => $this->config->dbHost,
-                'port' => $this->config->dbPort ?? 3306,
-                'username' => $this->config->dbUser,
-                'password' => $this->config->dbPassword,
-                'charset' => 'utf8mb4',
-                'collation' => 'utf8mb4_unicode_ci',
-                'options' => [
-                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"',
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                ],
-            ];
+            $driver = config('database.default', 'mysql');
+
+            if ($driver === 'pgsql') {
+                // PostgreSQL temporary connection
+                $config = [
+                    'driver' => 'pgsql',
+                    'host' => $this->config->dbHost,
+                    'port' => $this->config->dbPort ?? 5432,
+                    'database' => 'postgres', // Connect to default postgres database
+                    'username' => $this->config->dbUser,
+                    'password' => $this->config->dbPassword,
+                    'charset' => 'utf8',
+                    'prefix' => '',
+                    'search_path' => 'public',
+                    'sslmode' => env('LEAN_DB_SSLMODE', 'prefer'),
+                    'options' => [
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    ],
+                ];
+            } else {
+                // MySQL temporary connection (default)
+                $config = [
+                    'driver' => 'mysql',
+                    'host' => $this->config->dbHost,
+                    'port' => $this->config->dbPort ?? 3306,
+                    'username' => $this->config->dbUser,
+                    'password' => $this->config->dbPassword,
+                    'charset' => 'utf8mb4',
+                    'collation' => 'utf8mb4_unicode_ci',
+                    'options' => [
+                        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"',
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    ],
+                ];
+            }
 
             // Use Laravel's DB manager to create a temporary connection
             config(['database.connections.install_temp' => $config]);
@@ -164,8 +190,8 @@ class Install
 
         try {
 
-            // Use Laravel's database connection
-            $this->connection->statement('USE `'.$this->config->dbDatabase.'`');
+            // Select the database - MySQL uses USE, PostgreSQL uses search_path
+            $this->selectDatabase($this->config->dbDatabase);
 
             $count = $this->connection->table('zp_user')->count();
 
@@ -183,46 +209,47 @@ class Install
     }
 
     /**
-     * setupDB installs database
+     * Select/switch to a specific database
+     * Handles database-specific syntax for MySQL vs PostgreSQL
+     */
+    private function selectDatabase(string $database): void
+    {
+        $driver = $this->connection->getDriverName();
+
+        if ($driver === 'pgsql') {
+            // PostgreSQL: reconnect with the correct database
+            // Since we can't "USE" a database in PostgreSQL like MySQL,
+            // the database is specified at connection time
+            $this->connection->getPdo()->exec('SET search_path TO public');
+        } else {
+            // MySQL: USE statement
+            $this->connection->statement('USE `'.$database.'`');
+        }
+    }
+
+    /**
+     * setupDB installs database using database-agnostic Schema Builder
      *
      * @param  array  $values  Form values for admin user and company information
      * @param  string  $db
      */
     public function setupDB(array $values, $db = ''): bool
     {
-
-        $sql = $this->sqlPrep();
-
         try {
-            // Use Laravel's database connection
+            // Select the database
             $dbName = $db ?: $this->config->dbDatabase;
-            $this->connection->statement('USE `'.$dbName.'`');
+            $this->selectDatabase($dbName);
 
             $pwReset = Str::random(32);
             session()->put('pwReset', $pwReset);
 
-            // Use PDO for multi-statement SQL with parameter binding
-            // We need to use PDO directly because Laravel's statement() method
-            // may not handle multi-statement SQL properly
-            $pdo = $this->connection->getPdo();
-            $stmn = $pdo->prepare($sql);
-
-            $stmn->bindValue(':email', $values['email'], PDO::PARAM_STR);
-            $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
-            $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
-            $stmn->bindValue(':dbVersion', $this->settings->dbVersion, PDO::PARAM_STR);
-            $stmn->bindValue(':company', $values['company'], PDO::PARAM_STR);
-            $stmn->bindValue(':createdOn', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-            $stmn->bindValue(':pwReset', $pwReset, PDO::PARAM_STR);
-
-            $stmn->execute();
-
-            /** @noinspection PhpStatementHasEmptyBodyInspection */
-            while ($stmn->nextRowset()) {/* https://bugs.php.net/bug.php?id=61613 */
-            }
+            // Use SchemaBuilder for database-agnostic table creation
+            $schemaBuilder = app()->make(SchemaBuilder::class);
+            $schemaBuilder->createAllTables();
+            $schemaBuilder->insertInitialData($values, $pwReset);
 
             return true;
-        } catch (PDOException $e) {
+        } catch (\Exception $e) {
             Log::error($e);
 
             return false;
@@ -244,7 +271,7 @@ class Install
 
         $errors = [];
 
-        $this->connection->statement('USE `'.$this->config->dbDatabase.'`');
+        $this->selectDatabase($this->config->dbDatabase);
 
         $versionArray = explode('.', $this->settings->dbVersion);
         if (is_array($versionArray) && count($versionArray) == 3) {
