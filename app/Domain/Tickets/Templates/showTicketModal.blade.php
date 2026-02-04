@@ -23,17 +23,27 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
 <div style="min-width:70%">
 
     <?php if ($ticket->dependingTicketId > 0) { ?>
-        <small><a href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small> //
-    <?php } ?>
-    <small class="tw-float-right tw-pr-md" style="padding:5px 30px 0px 0px">Created by <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | Last Updated: <?= format($ticket->date)->date(); ?> </small>
-    <div class="title-button-wrapper">
-    <h1 class="tw-mb-0" style="margin-bottom:0px;"><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> <?php 
-        $projectKey = $ticket->projectKey ?? $projectData['projectKey'] ?? '';
-        echo !empty($projectKey) ? $projectKey . '-' : '#';
-    ?><?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
+    <small><a
+            href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small>
 
+    <?php } ?>
+    <small class="tw-float-right tw-pr-md" style="padding:5px 30px 0px 0px">Created
+        by <?php $tpl->e($ticket->userFirstname); ?><?php $tpl->e($ticket->userLastname); ?> | Last
+        Updated: <?= format($ticket->date)->date(); ?> </small>
+    <div class="title-button-wrapper">
+        <h1 class="tw-mb-0" style="margin-bottom:0px;">
+            <i class="fa fa-clone"
+               style="cursor: pointer; margin-left: 10px; font-size: 0.8em; color: #666;"
+               title="Copy ticket URL"
+               onclick="navigator.clipboard.writeText('<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/tickets/showKanban?tab=ticketdetails#' . $_SERVER['REQUEST_URI']; ?>').then(()=>{this.className='fa fa-check';this.style.color='#28a745';setTimeout(()=>{this.className='fa fa-clone';this.style.color='#666'},2000)})"></i>
+            <i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i>
+            <?php
+            $projectKey = $ticket->projectKey ?? $projectData['projectKey'] ?? '';
+            echo !empty($projectKey) ? $projectKey . '-' : '#';
+            ?><?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?>
+        </h1>
     </div>
-    <br />
+    <br/>
 
     <?php if ($login::userIsAtLeast($roles::$editor)) {
         $onTheClock = $tpl->get('onTheClock');
