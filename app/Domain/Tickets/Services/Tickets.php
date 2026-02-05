@@ -1739,14 +1739,26 @@ class Tickets
      */
     public function updateTicket($values): array|bool
     {
+        $currentTicket = $this->getTicket($values['id']);
+
+        if (! $currentTicket) {
+            return ['msg' => 'This ticket id does not exist within your leantime account.', 'type' => 'error'];
+        }
+
         if (! isset($values['headline'])) {
-            $currentTicket = $this->getTicket($values['id']);
-
-            if (! $currentTicket) {
-                return ['msg' => 'This ticket id does not exist within your leantime account.', 'type' => 'error'];
-            }
-
             $values['headline'] = $currentTicket->headline;
+        }
+
+        if (isset($values['status']) && session()->exists('currentProject')) {
+            $oldStatus = $currentTicket->status;
+            $newStatus = (int) $values['status'];
+
+            if ($oldStatus != $newStatus) {
+                $projectId = (int) session('currentProject');
+                if ($this->isTicketPinned($values['id'], $projectId)) {
+                    $this->unpinTicket($values['id'], $projectId);
+                }
+            }
         }
 
         $values = [
