@@ -125,6 +125,8 @@ class ShowProject extends Controller
             if (isset($_POST['slackSave'])) {
                 $webhook = strip_tags($_POST['slackWebhookURL']);
                 $this->settingsRepo->saveSetting('projectsettings.'.$id.'.slackWebhookURL', $webhook);
+                $channelId = strip_tags($_POST['slackChannelId'] ?? '');
+                $this->settingsRepo->saveSetting('projectsettings.'.$id.'.slackChannelId', $channelId);
                 $this->tpl->setNotification($this->language->__('notification.saved_slack_webhook'), 'success');
             }
 
@@ -183,6 +185,9 @@ class ShowProject extends Controller
 
             $slackWebhook = $this->settingsRepo->getSetting('projectsettings.'.$id.'.slackWebhookURL');
             $this->tpl->assign('slackWebhookURL', $slackWebhook);
+
+            $slackChannelId = $this->settingsRepo->getSetting('projectsettings.'.$id.'.slackChannelId');
+            $this->tpl->assign('slackChannelId', $slackChannelId);
 
             for ($i = 1; $i <= 3; $i++) {
                 $discordWebhook = $this->settingsRepo->getSetting('projectsettings.'.$id.'.discordWebhookURL'.$i);

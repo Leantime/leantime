@@ -391,7 +391,10 @@
         let html = '';
         keys.forEach(function (key) {
             const pref = currentPreferences[key];
-            const checked = pref.autoExport ? 'checked' : '';
+            const hasProject = pref.slackProjectId && pref.slackProjectId !== '';
+            const checked = pref.autoExport && hasProject ? 'checked' : '';
+            const disabled = !hasProject ? 'disabled' : '';
+            const slackStyle = !hasProject ? 'opacity: 0.5;' : '';
             const isActive = (key === activeProfileName);
             const activeStyle = isActive ? 'background-color: #e8f4f8; border-left: 3px solid #004666;' : '';
             const activeIcon = isActive ? '<i class="fa fa-check-circle" style="color: #004666; margin-right: 5px;"></i>' : '';
@@ -401,16 +404,28 @@
                 dateInfo = `<small style="color: #666; font-size: 11px; display: block; margin-top: 2px;">📅 ${pref.filters.dateRange}</small>`;
             }
 
+            let projectTooltip = '';
+            if (hasProject && typeof projectNames !== 'undefined' && projectNames[pref.slackProjectId]) {
+                projectTooltip = projectNames[pref.slackProjectId];
+            } else {
+                projectTooltip = 'No project set';
+            }
+
             html += `
             <div class="preference-item" style="display: flex; align-items: center; justify-content: space-between;flex-wrap:wrap; padding: 10px 12px; border-bottom: 1px solid #eee; ${activeStyle}">
                 <div class="preference-name" data-name="${key}" style="flex: 1; font-weight: 500; color: #333;">
                     ${activeIcon}${key}
                     ${dateInfo}
                 </div>
-                <div style="display:flex; gap:8px; align-items: center; white-space: nowrap; margin-right: 15px;">
-                    <label style="margin: 0; line-height: 1; display: flex; align-items: center;">Slack</label>
-                    <input type="checkbox" class="auto-export" data-preference-name="${key}" ${checked} style="margin: 0; vertical-align: middle;"/>
+                <div style="display:flex; gap:8px; align-items: center; white-space: nowrap; margin-right: 8px;">
+                    <div style="${slackStyle}" title="${projectTooltip}">
+                        <label style="margin: 0; line-height: 1; display: flex; align-items: center; cursor: help;">Slack</label>
+                    </div>
+                    <input type="checkbox" class="auto-export" data-preference-name="${key}" ${checked} ${disabled} style="margin: 0; vertical-align: middle;"/>
                 </div>
+                <button class="edit-slack-project" data-name="${key}" style="background: none; border: none; color: #004666; cursor: pointer; padding: 2px;" title="Set Slack Project">
+                    <i class="fa fa-edit"></i>
+                </button>
                 <button class="delete-preference" data-name="${key}" style="background: none; border: none; color: #dc3545; cursor: pointer;" title="Delete">
                     <i class="fa fa-trash"></i>
                 </button>
@@ -485,6 +500,13 @@
             });
         });
 
+        jQuery('.edit-slack-project').off('click').on('click', function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            const name = jQuery(this).data('name');
+            showProjectSelector(name);
+        });
+
         jQuery('.preference-item').hover(
             function () {
                 jQuery(this).css('background-color', '#f8f9fa');
@@ -493,6 +515,96 @@
                 jQuery(this).css('background-color', 'transparent');
             }
         );
+    }
+
+    function showProjectSelector(profileName) {
+        // Remove existing modal if any
+        jQuery('#slackProjectModal').remove();
+
+        const pref = currentPreferences[profileName];
+        const currentProjectId = pref ? pref.slackProjectId : '';
+
+        // Build project options
+        let projectOptions = '<option value="">-- No Project (Disable Slack) --</option>';
+        if (typeof projectNames !== 'undefined') {
+            for (const [id, name] of Object.entries(projectNames)) {
+                const selected = id == currentProjectId ? 'selected' : '';
+                projectOptions += `<option value="${id}" ${selected}>${name}</option>`;
+            }
+        }
+
+        const modalHtml = `
+            <div id="slackProjectModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                <div style="background: white; border-radius: 8px; padding: 20px; min-width: 350px; max-width: 450px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+                    <h4 style="margin: 0 0 15px 0; color: #333;">
+                        <i class="fa fa-slack" style="color: #4A154B;"></i> Set Slack Project
+                    </h4>
+                    <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
+                        Select a project for profile "<strong>${profileName}</strong>".<br/>
+                        <small>The Slack channel ID must be configured in the project settings.</small>
+                    </p>
+                    <select id="slackProjectSelect" class="form-control" style="width: 100%; padding: 8px; margin-bottom: 15px;">
+                        ${projectOptions}
+                    </select>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button type="button" id="cancelSlackProject" class="btn btn-default" style="padding: 8px 16px;">Cancel</button>
+                        <button type="button" id="saveSlackProject" class="btn btn-primary" style="padding: 8px 16px; background: #004666; border: none;">Save</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        jQuery('body').append(modalHtml);
+
+        jQuery('#cancelSlackProject').on('click', function () {
+            jQuery('#slackProjectModal').remove();
+        });
+
+        jQuery('#slackProjectModal').on('click', function (e) {
+            if (e.target === this) {
+                jQuery('#slackProjectModal').remove();
+            }
+        });
+
+        jQuery('#saveSlackProject').on('click', function () {
+            const selectedProjectId = jQuery('#slackProjectSelect').val();
+            saveSlackProjectSetting(profileName, selectedProjectId).then(function (success) {
+                jQuery('#slackProjectModal').remove();
+                if (success) {
+                    loadAllPreferences().then(function () {
+                        updateDropdownContent();
+                    });
+                }
+            });
+        });
+    }
+
+    async function saveSlackProjectSetting(profileName, projectId) {
+        try {
+            const response = await fetch(leantime.appUrl + PROFILE_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    action: 'setSlackProject',
+                    name: profileName,
+                    slackProjectId: projectId
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === 'success') {
+                    return true;
+                }
+            }
+        } catch (error) {
+            console.error('[Profiles] Failed to save Slack project setting:', error);
+        }
+        return false;
     }
 
     function initUI() {

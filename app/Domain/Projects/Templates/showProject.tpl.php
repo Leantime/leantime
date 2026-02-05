@@ -240,9 +240,15 @@ $state = $tpl->get('state');
                         <?= $tpl->__('text.slack_instructions'); ?>
                     </div>
                     <div class="col-md-4">
-                        <strong><?= $tpl->__('label.webhook_url'); ?></strong><br />
                         <form action="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
+                            <strong><?= $tpl->__('label.webhook_url'); ?></strong><br />
                             <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="<?php echo $tpl->escape($tpl->get('slackWebhookURL')); ?>"/>
+                            <br /><br />
+                            <strong><?= $tpl->__('label.slack_channel_id'); ?></strong><br />
+                            <input type="text" name="slackChannelId" id="slackChannelId" placeholder="C0123456789" value="<?php echo $tpl->escape($tpl->get('slackChannelId')); ?>"/>
+                            <small style="display: block; color: #666; margin-top: 4px;">
+                                <?= $tpl->__('text.slack_channel_id_help'); ?>
+                            </small>
                             <br />
                             <input type="submit" value="<?= $tpl->__('buttons.save'); ?>" name="slackSave" />
                         </form>

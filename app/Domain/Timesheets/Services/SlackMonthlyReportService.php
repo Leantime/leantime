@@ -100,25 +100,25 @@ public function __construct(
         ];
     }
 
-    public function getUsersProfilesWithEnabledAutoExport(int $userId): array 
+    public function getUsersProfilesWithEnabledAutoExport(int $userId): array
 {
     $settingKey = "user.{$userId}.timesheetFilters";
 
     $this->settingRepository->clearCache($settingKey);
     $preferences = $this->settingRepository->getSetting($settingKey);
-    
+
     if (!$preferences) {
         return [];
     }
-    
+
     if (is_string($preferences)) {
         $preferences = json_decode($preferences, true);
     }
-    
+
     if (!is_array($preferences)) {
         return [];
     }
-    
+
     $autoExportProfiles = [];
     foreach ($preferences as $name => $profile) {
         if (isset($profile['autoExport']) && $profile['autoExport'] === true) {
@@ -150,19 +150,19 @@ public function getAllProfilesWithEnabledAutoExport (): array {
 public function getAllUsersProfiles(int $userId): array {
     $settingKey = "user.{$userId}.timesheetFilters";
     $preferences = $this->settingRepository->getSetting($settingKey);
-    
+
     if (!$preferences) {
         return [];
     }
-    
+
     if (is_string($preferences)) {
         $preferences = json_decode($preferences, true);
     }
-    
+
     if (!is_array($preferences)) {
         return [];
     }
-    
+
     return $preferences;
 }
 
@@ -173,80 +173,131 @@ public function getAllProfiles(): array {
     foreach ($allUsers as $user) {
         $userId = $user['id'];
         $profiles = $this->getAllUsersProfiles($userId);
-        
+
         if (!empty($profiles)) {
             $allProfiles[] = [
                 'user_id' => $userId,
-                'user_name' => $user['firstname'] . ' ' . $user['lastname'], 
+                'user_name' => $user['firstname'] . ' ' . $user['lastname'],
                 'profiles' => $profiles
             ];
         }
     }
     return $allProfiles;
 }
-
-   public function sendMonthlyReportToSlack($profilesWithEnabledAutoExport): void
-{
-        if (empty($profilesWithEnabledAutoExport)) {
-        $this->tpl->setNotification(
-            'No profiles with checkbox Slack ticked!',
-            'error',
-            'save_timesheet'
-        );
-        return;
-        }
-    foreach ($profilesWithEnabledAutoExport as $profileName => $profile) {
-        $profileFilters = $profile['filters'] ?? [];
-        $userId = $profileFilters['userId'] ?? null;
-        if ($userId === 'all' || $userId === '') {
-            $userId = null; 
-        } elseif ($userId !== null) {
-            $userId = (int)$userId;  
-        }
-        $filters = [
-            'dateFrom' => isset($profileFilters['dateFrom']) ? dtHelper()->parseUserDateTime($profileFilters['dateFrom'])->setToDbTimezone() : dtHelper()->userNow()->startOfMonth()->setToDbTimezone(),
-            'dateTo' => isset($profileFilters['dateTo']) ? dtHelper()->parseUserDateTime($profileFilters['dateTo'])->setToDbTimezone() : dtHelper()->userNow()->endOfMonth()->setToDbTimezone(),
-            'projectFilter' => $profileFilters['projects'] ?? -1,
-            'kind' => $profileFilters['kind'] ?? 'all',
-            'userId' => $userId,
-            'invEmplCheck' => $profileFilters['invEmpl'] ?? '-1',
-            'invCompCheck' => $profileFilters['invComp'] ?? '0',
-            'ticketParameter' => $profileFilters['ticketParameter'] ?? '-1',
-            'paidCheck' => $profileFilters['paid'] ?? '0',
-            'clientId' => $profileFilters['clientId'] ?? -1,
-        ];
-
-        $columnState = $profileFilters['columnState'] ?? [];
-        $reportName = $profile['name'] ?? " ";
-
-        $csvContent = $this->generateCsvString($filters, $columnState);
-
-        $this->sendCsvToSlack($csvContent, $reportName);
+    /* Get Slack channel ID for a specific project */
+    public function getProjectSlackChannelId(int $projectId): string
+    {
+        return $this->settingRepository->getSetting('projectsettings.' . $projectId . '.slackChannelId') ?: '';
     }
-    $this->tpl->setNotification(
-        'Monthly reports successfully sent to Slack.',
-        'success',
-        'save_timesheet'
-    );
-}
 
-private function sendCsvToSlack(string $csvContent, string $profileName): bool
+    //Send monthly report to slack
+    public function sendMonthlyReportToSlack($profilesWithEnabledAutoExport): void {
+        if (empty($profilesWithEnabledAutoExport)) {
+            $this->tpl->setNotification(
+                'No profiles with checkbox Slack ticked!',
+                'error',
+                'save_timesheet'
+            );
+            return;
+        }
+
+        $successCount = 0;
+        $failCount = 0;
+        $debugInfo = [];
+
+        foreach ($profilesWithEnabledAutoExport as $profileName => $profile) {
+            // Get the project's Slack channel ID
+            $slackProjectId = $profile['slackProjectId'] ?? null;
+
+            if (empty($slackProjectId)) {
+                $debugInfo[] = "Profile '{$profileName}': No project assigned";
+                $failCount++;
+                continue; // Skip profiles without a project assigned
+            }
+
+            $channelId = $this->getProjectSlackChannelId((int) $slackProjectId);
+
+            if (empty($channelId)) {
+                $debugInfo[] = "Profile '{$profileName}': Project ID {$slackProjectId} has no Slack channel configured";
+                $failCount++;
+                continue; // Skip if project has no Slack channel configured
+            }
+
+            $profileFilters = $profile['filters'] ?? [];
+            $userId = $profileFilters['userId'] ?? null;
+            if ($userId === 'all' || $userId === '') {
+                $userId = null;
+            } elseif ($userId !== null) {
+                $userId = (int)$userId;
+            }
+
+            // Always use current month instead of saved dates
+            $currentMonthStart = dtHelper()->userNow()->startOfMonth()->setToDbTimezone();
+            $currentMonthEnd = dtHelper()->userNow()->endOfMonth()->setToDbTimezone();
+
+            $filters = [
+                'dateFrom' => $currentMonthStart,
+                'dateTo' => $currentMonthEnd,
+                'projectFilter' => $profileFilters['projects'] ?? -1,
+                'kind' => $profileFilters['kind'] ?? 'all',
+                'userId' => $userId,
+                'invEmplCheck' => $profileFilters['invEmpl'] ?? '-1',
+                'invCompCheck' => $profileFilters['invComp'] ?? '0',
+                'ticketParameter' => $profileFilters['ticketParameter'] ?? '-1',
+                'paidCheck' => $profileFilters['paid'] ?? '0',
+                'clientId' => $profileFilters['clientId'] ?? -1,
+            ];
+
+            $columnState = $profileFilters['columnState'] ?? [];
+            $reportName = $profile['name'] ?? " ";
+
+            $csvContent = $this->generateCsvString($filters, $columnState);
+
+            if ($this->sendCsvToSlack($csvContent, $reportName, $channelId)) {
+                $successCount++;
+            } else {
+                $failCount++;
+            }
+        }
+
+        if ($successCount > 0 && $failCount === 0) {
+            $this->tpl->setNotification(
+                "Monthly reports successfully sent to Slack ({$successCount} profile(s)).",
+                'success',
+                'save_timesheet'
+            );
+        } elseif ($successCount > 0 && $failCount > 0) {
+            $this->tpl->setNotification(
+                "Sent {$successCount} report(s) to Slack. {$failCount} failed (missing project or channel config).",
+                'success',
+                'save_timesheet'
+            );
+        } else {
+            $debugMessage = !empty($debugInfo) ? ' Details: ' . implode('; ', $debugInfo) : '';
+            $this->tpl->setNotification(
+                'Failed to send reports. Please check project Slack channel configuration.' . $debugMessage,
+                'error',
+                'save_timesheet'
+            );
+        }
+    }
+
+private function sendCsvToSlack(string $csvContent, string $profileName, string $channelId): bool
 {
     $slackBotToken = env('SLACK_BOT_TOKEN', '');
-    
+
     if (empty($slackBotToken)) {
+        \Illuminate\Support\Facades\Log::warning('Slack export failed: SLACK_BOT_TOKEN not configured in .env');
         return false;
     }
 
-    $channelId = env('SLACK_CHANNEL_ID', '');
-    
     if (empty($channelId)) {
         return false;
     }
-    
+
     try {
         $filename = "timesheet_{$profileName}_" . date('Y-m-d') . ".csv";
-                
+
         $getUploadUrlResponse = $this->httpClient->post('https://slack.com/api/files.getUploadURLExternal', [
             'headers' => [
                 'Authorization' => "Bearer {$slackBotToken}",
@@ -259,25 +310,25 @@ private function sendCsvToSlack(string $csvContent, string $profileName): bool
         ]);
 
         $uploadUrlData = json_decode($getUploadUrlResponse->getBody()->getContents(), true);
-        
+
         if (!isset($uploadUrlData['ok']) || !$uploadUrlData['ok']) {
             return false;
         }
 
         $uploadUrl = $uploadUrlData['upload_url'];
         $fileId = $uploadUrlData['file_id'];
-                
+
         $uploadResponse = $this->httpClient->post($uploadUrl, [
             'body' => $csvContent,
             'headers' => [
                 'Content-Type' => 'text/csv',
             ]
         ]);
-        
+
         if ($uploadResponse->getStatusCode() !== 200) {
             return false;
         }
-        
+
         $completeResponse = $this->httpClient->post('https://slack.com/api/files.completeUploadExternal', [
             'headers' => [
                 'Authorization' => "Bearer {$slackBotToken}",
@@ -296,13 +347,13 @@ private function sendCsvToSlack(string $csvContent, string $profileName): bool
         ]);
 
         $completeData = json_decode($completeResponse->getBody()->getContents(), true);
-        
+
         if (isset($completeData['ok']) && $completeData['ok']) {
             return true;
         } else {
             return false;
         }
-        
+
     } catch (\GuzzleHttp\Exception\GuzzleException $e) {
         report($e);
         return false;
@@ -364,9 +415,9 @@ private function generateCsvString(array $filters, array $columnState = []): str
     $headers = array_intersect_key($allColumns, $activeColumns);
 
     $output = fopen('php://temp', 'w+');
-    
+
     fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
-    
+
     fputcsv($output, array_values($headers));
     $totalHours = 0;
 
@@ -396,7 +447,7 @@ private function generateCsvString(array $filters, array $columnState = []): str
         $filteredRow = array_intersect_key($rowData, $activeColumns);
         fputcsv($output, array_values($filteredRow));
     }
-    
+
     $totalsRowData = [
         'id' => '',
         'tickId' => '',

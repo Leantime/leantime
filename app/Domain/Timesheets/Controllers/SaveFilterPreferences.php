@@ -166,6 +166,24 @@ class SaveFilterPreferences extends Controller
     
     return $this->jsonResponse(['status' => 'success']);
 }
+            elseif ($action === 'setSlackProject') {
+                $slackProjectId = $input['slackProjectId'] ?? '';
+
+                if (!isset($allPreferences[$preferenceName])) {
+                    return $this->jsonResponse(['status' => 'error', 'message' => 'Profile not found'], 404);
+                }
+
+                $allPreferences[$preferenceName]['slackProjectId'] = $slackProjectId;
+
+                // If project is removed, also disable autoExport
+                if (empty($slackProjectId)) {
+                    $allPreferences[$preferenceName]['autoExport'] = false;
+                }
+
+                $this->settingRepo->saveSetting($settingKey, json_encode($allPreferences));
+
+                return $this->jsonResponse(['status' => 'success']);
+            }
             else {
                 return $this->jsonResponse([
                     'status' => 'error',
