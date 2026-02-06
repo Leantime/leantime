@@ -307,7 +307,7 @@ window.assignToMe = function() {
         });
     }
 
-   $('#status-select, #priority, #storypoints, #editorId, #deadline, #type',).on('change', function() {
+   $('#status-select, #priority, #storypoints, #editorId, #deadline, #type, select[name="projectId"], #milestoneid, #sprint-select, #dependingTicketId').on('change', function() {
         var changedElementId = $(this).attr('id');
         const ticketId = $('#status-change-log').data('ticket-id');
         const oldStatusKey = $(this).data('old-status');
@@ -450,7 +450,16 @@ window.assignToMe = function() {
                     <!-- Project -->
                     <div class="form-group">
                         <label class="control-label"><?= $tpl->__('label.project') ?></label>
-                        <select name="projectId" class="tw-w-full">
+                        <select name="projectId" id="projectId" class="tw-w-full autosave-field"
+                                data-old-status="<?php 
+                                    foreach ($allAssignedprojects as $project) {
+                                        if ($ticket->projectId == $project['id'] || (!$ticket->projectId && session('currentProject') == $project['id'])) {
+                                            echo $tpl->escape($project['name']);
+                                            break;
+                                        }
+                                    }
+                                ?>"
+                                data-user="<?= htmlspecialchars($currentUserName) ?>">
                             <?php foreach ($allAssignedprojects as $project) { ?>
                                 <option value="<?= $project['id'] ?>"
                                     <?php
@@ -470,9 +479,20 @@ window.assignToMe = function() {
                         <label class="control-label"><?php echo $tpl->__('label.milestone'); ?></label>
                         <div class="">
                             <div class="form-group">
-                                <select  name="milestoneid"  class="span11" >
+                                <select name="milestoneid" id="milestoneid" class="span11 autosave-field"
+                                        data-old-status="<?php 
+                                            $milestoneName = 'Not assigned to milestone';
+                                            foreach ($tpl->get('milestones') as $milestoneRow) {
+                                                if ($ticket->milestoneid == $milestoneRow->id) {
+                                                    $milestoneName = $tpl->escape($milestoneRow->headline);
+                                                    break;
+                                                }
+                                            }
+                                            echo $milestoneName;
+                                        ?>"
+                                        data-user="<?= htmlspecialchars($currentUserName) ?>">
                                     <option value=""><?php echo $tpl->__('label.not_assigned_to_milestone'); ?></option>
-                                    <?php foreach ($tpl->get('milestones') as $milestoneRow) {     ?>
+                                    <?php foreach ($tpl->get('milestones') as $milestoneRow) { ?>
                                         <?php echo "<option value='".$milestoneRow->id."'";
 
                                         if (($ticket->milestoneid == $milestoneRow->id)) {
@@ -491,8 +511,20 @@ window.assignToMe = function() {
                     <div class="form-group">
                         <label class="control-label"><?php echo $tpl->__('label.sprint'); ?></label>
                         <div class="">
-
-                            <select id="sprint-select" class="span11" name="sprint"
+                            <select id="sprint-select" class="span11 autosave-field" name="sprint"
+                                    data-old-status="<?php 
+                                        $sprintName = 'Backlog';
+                                        if ($tpl->get('sprints')) {
+                                            foreach ($tpl->get('sprints') as $sprintRow) {
+                                                if ($ticket->sprint == $sprintRow->id) {
+                                                    $sprintName = $tpl->escape($sprintRow->name);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        echo $sprintName;
+                                    ?>"
+                                    data-user="<?= htmlspecialchars($currentUserName) ?>"
                                     data-placeholder="<?php echo $ticket->sprint ?>">
                                 <option value=""><?php echo $tpl->__('label.backlog'); ?></option>
                                 <?php
@@ -504,7 +536,7 @@ window.assignToMe = function() {
                                             } ?>
                                         ><?php $tpl->e($sprintRow->name); ?></option>
                                     <?php }
-                                    } ?>
+                                } ?>
                             </select>
                         </div>
                     </div>
@@ -514,23 +546,31 @@ window.assignToMe = function() {
                         <label class="control-label"><?php echo $tpl->__('label.related_to'); ?></label>
                         <div class="">
                             <div class="form-group">
-                                <select  name="dependingTicketId"  class="span11" >
+                                <select name="dependingTicketId" id="dependingTicketId" class="span11 autosave-field"
+                                        data-old-status="<?php 
+                                            $relatedName = 'Not related';
+                                            if (is_array($tpl->get('ticketParents'))) {
+                                                foreach ($tpl->get('ticketParents') as $ticketRow) {
+                                                    if ($ticket->dependingTicketId == $ticketRow->id) {
+                                                        $relatedName = $tpl->escape($ticketRow->headline);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            echo $relatedName;
+                                        ?>"
+                                        data-user="<?= htmlspecialchars($currentUserName) ?>">
                                     <option value=""><?php echo $tpl->__('label.not_related'); ?></option>
                                     <?php
                                     if (is_array($tpl->get('ticketParents'))) {
-                                        foreach ($tpl->get('ticketParents') as $ticketRow) {
-                                            ?>
-                                            <?php echo "<option value='".$ticketRow->id."'";
-
-                                            if (($ticket->dependingTicketId == $ticketRow->id)) {
-                                                echo " selected='selected' ";
-                                            }
-
-                                            echo '>'.$tpl->escape($ticketRow->headline).'</option>'; ?>
-
-                                            <?php
-                                        }
-                                    }?>
+                                        foreach ($tpl->get('ticketParents') as $ticketRow) { ?>
+                                            <option value="<?= $ticketRow->id ?>"
+                                                <?php if ($ticket->dependingTicketId == $ticketRow->id) {
+                                                    echo " selected='selected' ";
+                                                } ?>
+                                            ><?= $tpl->escape($ticketRow->headline) ?></option>
+                                        <?php }
+                                    } ?>
                                 </select>
                             </div>
                         </div>
