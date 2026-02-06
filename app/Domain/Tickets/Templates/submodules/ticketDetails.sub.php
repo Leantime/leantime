@@ -307,7 +307,7 @@ window.assignToMe = function() {
         });
     }
 
-   $('#status-select, #priority, #storypoints, #editorId, #deadline, #type, select[name="projectId"], #milestoneid, #sprint-select, #dependingTicketId').on('change', function() {
+   $('#status-select, #priority, #storypoints, #editorId, #deadline, #type, select[name="projectId"], #milestoneid, #sprint-select, #dependingTicketId,  #editFrom, #editTo').on('change', function() {
         var changedElementId = $(this).attr('id');
         const ticketId = $('#status-change-log').data('ticket-id');
         const oldStatusKey = $(this).data('old-status');
@@ -339,7 +339,7 @@ window.assignToMe = function() {
 
         $(this).data('old-status', newStatusKey);
     });
-    $('#dueTime').on('blur', function() {
+    $('#dueTime, #timeFrom, #timeTo, #planHours, #hourRemaining').on('blur', function() {
         var changedElementId = $(this).attr('id');
         const ticketId = $('#status-change-log').data('ticket-id');
         const oldStatusKey = $(this).data('old-status');
@@ -597,30 +597,46 @@ window.assignToMe = function() {
                     <div class="form-group">
                         <label class=" control-label"><?php echo $tpl->__('label.working_date_from'); ?></label>
                         <div class="">
-                            <input type="text" class="editFrom" style="width:100px;" name="editFrom" autocomplete="off"
-                                   value="<?= format($ticket->editFrom)->date(); ?>" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
-                            <input type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
+                            <input type="text" class="editFrom autosave-field" style="width:100px;" name="editFrom" id="editFrom" autocomplete="off"
+                                   value="<?= format($ticket->editFrom)->date(); ?>" 
+                                   placeholder="<?= $tpl->__('language.dateformat') ?>"
+                                   data-old-status="<?= format($ticket->editFrom)->date(); ?>"
+                                   data-user="<?= htmlspecialchars($currentUserName) ?>"/>
+                            <input type="time" class="timepicker autosave-after-lost-focus" style="width:120px;" id="timeFrom" autocomplete="off"
                                    value="<?= format($ticket->editFrom)->time24(); ?>"
-                                   name="timeFrom"/>
+                                   name="timeFrom"
+                                   data-old-status="<?= format($ticket->editFrom)->time24(); ?>"
+                                   data-user="<?= htmlspecialchars($currentUserName) ?>"/>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class=" control-label"><?php echo $tpl->__('label.working_date_to'); ?></label>
                         <div class="">
-                            <input type="text" class="editTo" style="width:100px;" name="editTo" autocomplete="off"
-                                   value="<?= format($ticket->editTo)->date() ?>" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
-                            <input type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
+                            <input type="text" class="editTo autosave-field" style="width:100px;" name="editTo" id="editTo" autocomplete="off"
+                                   value="<?= format($ticket->editTo)->date() ?>" 
+                                   placeholder="<?= $tpl->__('language.dateformat') ?>"
+                                   data-old-status="<?= format($ticket->editTo)->date() ?>"
+                                   data-user="<?= htmlspecialchars($currentUserName) ?>"/>
+                            <input type="time" class="timepicker autosave-after-lost-focus" style="width:120px;" id="timeTo" autocomplete="off"
                                    value="<?= format($ticket->editTo)->time24() ?>"
-                                   name="timeTo"/>
+                                   name="timeTo"
+                                   data-old-status="<?= format($ticket->editTo)->time24() ?>"
+                                   data-user="<?= htmlspecialchars($currentUserName) ?>"/>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class=" control-label"><?php echo $tpl->__('label.planned_hours'); ?> / <?php echo $tpl->__('label.estimated_hours_remaining'); ?></label>
                         <div class="">
-                            <input type="text" value="<?php $tpl->e($ticket->planHours); ?>" name="planHours" style="width:45px;"/>&nbsp;/&nbsp;
-                            <input type="text" value="<?php $tpl->e($ticket->hourRemaining); ?>" name="hourRemaining" style="width:45px;"/>
+                            <input type="text" value="<?php $tpl->e($ticket->planHours); ?>" name="planHours" id="planHours" style="width:45px;" 
+                                   class="autosave-after-lost-focus"
+                                   data-old-status="<?php $tpl->e($ticket->planHours); ?>"
+                                   data-user="<?= htmlspecialchars($currentUserName) ?>"/>&nbsp;/&nbsp;
+                            <input type="text" value="<?php $tpl->e($ticket->hourRemaining); ?>" name="hourRemaining" id="hourRemaining" style="width:45px;" 
+                                   class="autosave-after-lost-focus"
+                                   data-old-status="<?php $tpl->e($ticket->hourRemaining); ?>"
+                                   data-user="<?= htmlspecialchars($currentUserName) ?>"/>
                             <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="<?php echo $tpl->__('tooltip.how_many_hours_remaining'); ?>">
                                 &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
                             </a>

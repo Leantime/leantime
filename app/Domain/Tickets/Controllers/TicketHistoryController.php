@@ -101,6 +101,7 @@ class TicketHistoryController extends Controller
                 $html = '<ul style="list-style: none; padding: 0; margin: 0;">';
                 foreach ($changes as $change) {
                     $detailsAttributeId = $change['detailsAttributeId'];
+                    
 
                     $attributeLabels = [
                         'priority' => 'Priority',
@@ -109,6 +110,17 @@ class TicketHistoryController extends Controller
                         'deadline' => 'Due Date',
                         'dueTime' => 'Due Date Time',
                         'ticketDescription' => 'Description',
+                        'type' => 'Type',
+                        'projectId' => 'Project',
+                        'milestoneid' => 'Milestone',
+                        'sprint-select' => 'Sprint',
+                        'dependingTicketId' => 'Related To',
+                        'editFrom' => 'Work Start',
+                        'timeFrom' => 'Work Start Time',
+                        'editTo' => 'Work End',
+                        'timeTo' => 'Work End Time',
+                        'planHours' => 'Planned Hours',
+                        'hourRemaining' => 'Estimated Hours Remaining',
                     ];
 
                     $attributeLabel = $attributeLabels[$detailsAttributeId] ?? 'Status';
