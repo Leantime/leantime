@@ -52,7 +52,7 @@ class TimeParser
             if ($hours < 0) {
                 throw new InvalidArgumentException('Time cannot be negative');
             }
-            return round($hours, 2);
+            return round($hours, 4);
         }
 
         // Normalize the input (trim spaces, lowercase)
@@ -65,13 +65,13 @@ class TimeParser
         // Try to parse as natural language first
         $naturalLanguageResult = $this->parseNaturalLanguage($input);
         if ($naturalLanguageResult !== null) {
-            return round($naturalLanguageResult, 2);
+            return round($naturalLanguageResult, 4);
         }
 
         // Try to parse as Jira-style format
         $jiraFormatResult = $this->parseJiraFormat($input);
         if ($jiraFormatResult !== null) {
-            return round($jiraFormatResult, 2);
+            return round($jiraFormatResult, 4);
         }
 
         // If nothing matched, throw an error
