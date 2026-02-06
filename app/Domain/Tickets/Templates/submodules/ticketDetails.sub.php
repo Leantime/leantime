@@ -307,7 +307,7 @@ window.assignToMe = function() {
         });
     }
 
-   $('#status-select, #priority, #storypoints, #editorId, #deadline').on('change', function() {
+   $('#status-select, #priority, #storypoints, #editorId, #deadline, #type',).on('change', function() {
         var changedElementId = $(this).attr('id');
         const ticketId = $('#status-change-log').data('ticket-id');
         const oldStatusKey = $(this).data('old-status');
@@ -425,7 +425,16 @@ window.assignToMe = function() {
                     <div class="form-group">
                         <label class="control-label"><?php echo $tpl->__('label.todo_type'); ?></label>
                         <div class="">
-                            <select id='type' name='type' class="span11">
+                            <select id='type' name='type' class="span11 autosave-field" 
+                                    data-old-status="<?php 
+                                        foreach ($ticketTypes as $types) {
+                                            if (strtolower($types) == strtolower($ticket->type ?? '')) {
+                                                echo $tpl->__('label.'.strtolower($types));
+                                                break;
+                                            }
+                                        }
+                                    ?>"
+                                    data-user="<?= htmlspecialchars($currentUserName) ?>">
                                 <?php foreach ($ticketTypes as $types) {
                                     echo "<option value='".strtolower($types)."' ";
                                     if (strtolower($types) == strtolower($ticket->type ?? '')) {
