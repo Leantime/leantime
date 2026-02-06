@@ -399,9 +399,6 @@ rm -rf /var/www/html/storage/framework/viewPaths.php || true
 find /var/www/html/storage/framework/cache -type f ! -name '.gitignore' -delete 2>/dev/null || true
 find /var/www/html/storage/framework/cache -type d -empty -delete 2>/dev/null || true
 
-find /var/www/html/storage/framework/sessions -type f ! -name '.gitignore' -delete 2>/dev/null || true
-find /var/www/html/storage/framework/sessions -type d -empty -delete 2>/dev/null || true
-
 find /var/www/html/storage/framework/views -type f ! -name '.gitignore' -delete 2>/dev/null || true
 find /var/www/html/storage/framework/views -type d -empty -delete 2>/dev/null || true
 
