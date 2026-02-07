@@ -227,11 +227,14 @@ leantime.accessibilityController = (function () {
                     var $iframe = jQuery('#' + editor.id + '_ifr');
                     $iframe.attr('aria-label', labelText);
 
-                    // Add help text
+                    // Add help text outside iframe (properly hidden for screen readers only)
+                    // Note: Help text is intentionally kept minimal as keyboard shortcuts
+                    // are handled by TinyMCE internally
                     if (!jQuery('#' + editor.id + '-help').length) {
-                        $iframe.after(
-                            '<span id="' + editor.id + '-help" class="sr-only">' +
-                            'Rich text editor. Press ALT+F10 to access toolbar. Press ESC to return to editing area.' +
+                        var $container = $iframe.parent();
+                        $container.append(
+                            '<span id="' + editor.id + '-help" class="sr-only" style="position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden;">' +
+                            'Rich text editor' +
                             '</span>'
                         );
                     }
