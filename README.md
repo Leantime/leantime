@@ -213,6 +213,91 @@ For timesheets: <br />
 `docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run -g timesheet --steps`<br />
 
 
+### Local Testing on a Clean Ubuntu Server ###
+
+If you're spinning up a fresh Ubuntu VM (e.g. on DigitalOcean, AWS, etc.) to test, follow these steps:
+
+#### 1. Install dependencies
+
+```bash
+sudo apt update
+sudo apt install -y ca-certificates curl gnupg git make
+```
+
+#### 2. Install Docker
+
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+$(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+#### 3. Install Node.js, PHP, and Composer
+
+```bash
+# Node.js
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# PHP + required extensions
+sudo apt install -y php-cli php-xml php-curl php-mbstring php-zip php-ldap php-mysql php-bcmath php-gd unzip
+
+# Composer
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
+```
+
+#### 4. Clone and build
+
+```bash
+git clone https://github.com/TechHutTV/leantime.git
+cd leantime
+make clean build
+```
+
+#### 5. Start the dev environment
+
+```bash
+make run-dev
+```
+
+#### 6. Fix storage directories (if you get a 500 error)
+
+The storage directories may not exist inside the container. Run:
+
+```bash
+docker exec leantime-dev mkdir -p /var/www/html/storage/logs /var/www/html/storage/framework/cache /var/www/html/storage/framework/sessions /var/www/html/storage/framework/views
+docker exec leantime-dev chown -R www-data:www-data /var/www/html/storage
+```
+
+#### 7. Fix Apache AllowOverride (if you still get a 500 error)
+
+If `.htaccess` rewrites aren't working, enable them:
+
+```bash
+docker exec leantime-dev sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
+docker exec leantime-dev apache2ctl restart
+```
+
+#### 8. Access the app
+
+Open `http://<your-server-ip>:5080` in your browser. Make sure port 5080 is open in your firewall/security group.
+
+Other services:
+- MailDev (email testing): check `docker ps` for the mapped port
+- phpMyAdmin: check `docker ps` for the mapped port (auth: `leantime:leantime`)
+- S3Ninja: check `docker ps` for the mapped port
+
+<br /><br />
+
 ###  🏗 Update ###
 
 #### Manual
