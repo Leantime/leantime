@@ -617,8 +617,10 @@ class Tickets
             $moreInfo = '';
             $sortId = null; // Custom sort ID, defaults to groupedFieldValue if null
 
-            if (isset($ticket[$searchCriteria['groupBy']])) {
-                $groupedFieldValue = strtolower($ticket[$searchCriteria['groupBy']]);
+            if (isset($ticket[$searchCriteria['groupBy']])
+                || ($searchCriteria['groupBy'] === 'dependingTicketId' && array_key_exists('dependingTicketId', $ticket))
+            ) {
+                $groupedFieldValue = strtolower((string) ($ticket[$searchCriteria['groupBy']] ?? '0'));
 
                 if (isset($ticketGroups[$groupedFieldValue])) {
                     $ticketGroups[$groupedFieldValue]['items'][] = $ticket;
@@ -703,6 +705,15 @@ class Tickets
                             $icon = $this->getTypeIcons();
                             $label = "<i class='fa ".($icon[strtolower($ticket['type'])] ?? '')."'></i>".$ticket['type'];
                             break;
+                        case 'dependingTicketId':
+                            if ($ticket['dependingTicketId'] > 0 && ! empty($ticket['parentHeadline'])) {
+                                $label = $ticket['parentHeadline'];
+                                $sortId = 'a_'.strtolower($ticket['parentHeadline']);
+                            } else {
+                                $label = $this->language->__('label.no_parent_task');
+                                $sortId = 'zzz_no_parent';
+                            }
+                            break;
                         default:
                             $label = $groupedFieldValue;
                             break;
@@ -725,6 +736,7 @@ class Tickets
             case 'priority':
             case 'storypoints':
             case 'milestoneid':
+            case 'dependingTicketId':
                 // Sort by ID for ordered fields (named milestones first, "No Milestone" last)
                 $ticketGroups = array_sort($ticketGroups, 'id');
                 break;
@@ -2557,6 +2569,12 @@ class Tickets
                 'label' => 'milestone',
                 'class' => '',
                 'function' => null,
+            ],
+            'parentTask' => [
+                'id' => 'parentTask',
+                'field' => 'dependingTicketId',
+                'label' => 'parent_task',
+                'class' => '',
             ],
             'priority' => [
                 'id' => 'priority',
