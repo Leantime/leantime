@@ -425,10 +425,16 @@ class Calendar
                         }
                     }
 
+                    // Detect if the due date has no specific time set (stored as end-of-day 23:59:59).
+                    // If so, treat it as an all-day event to avoid timezone boundary issues
+                    // that cause the event to appear on two days in the calendar.
+                    $isEndOfDay = $dueDate->format('H:i:s') === '23:59:59';
+                    $allDay = $isEndOfDay;
+
                     $newValues[] = $this->mapEventData(
                         title: $context.$ticket['headline'].' ('.$statusName.')',
                         description: $ticket['description'],
-                        allDay: false,
+                        allDay: $allDay,
                         id: $ticket['id'],
                         projectId: $ticket['projectId'],
                         eventType: 'ticket',
