@@ -610,6 +610,11 @@ class Tickets
             return $this->groupTicketsByDueDate($tickets);
         }
 
+        // Resolve root parents so sub-tasks of sub-tasks group under the top-level parent
+        if ($searchCriteria['groupBy'] === 'dependingTicketId') {
+            $tickets = $this->resolveRootParents($tickets);
+        }
+
         $groupByOptions = $this->getGroupByFieldOptions();
 
         foreach ($tickets as $ticket) {
@@ -747,6 +752,76 @@ class Tickets
         }
 
         return $ticketGroups;
+    }
+
+    /**
+     * Resolve root parents for each ticket by walking up the parent chain.
+     *
+     * Ensures sub-tasks of sub-tasks are grouped under the top-level parent
+     * rather than their immediate parent. For example, if C -> B -> A,
+     * both B and C will have their dependingTicketId set to A's id.
+     *
+     * @param  array<int, array<string, mixed>>  $tickets
+     * @return array<int, array<string, mixed>>
+     */
+    private function resolveRootParents(array $tickets): array
+    {
+        // Build a lookup map of ticket IDs to their parent and headline
+        $ticketMap = [];
+        foreach ($tickets as $ticket) {
+            $ticketMap[(int) $ticket['id']] = [
+                'dependingTicketId' => $ticket['dependingTicketId'] ?? null,
+                'headline' => $ticket['headline'] ?? '',
+            ];
+        }
+
+        foreach ($tickets as $key => $ticket) {
+            if (empty($ticket['dependingTicketId']) || $ticket['dependingTicketId'] <= 0) {
+                continue;
+            }
+
+            $currentId = (int) $ticket['dependingTicketId'];
+            $visited = [(int) $ticket['id']];
+
+            while (true) {
+                if (in_array($currentId, $visited)) {
+                    break; // Stop walking if we detect a circular reference
+                }
+                $visited[] = $currentId;
+
+                // Check if this parent also has a parent of its own
+                $parentInfo = null;
+                if (isset($ticketMap[$currentId])) {
+                    $parentInfo = $ticketMap[$currentId];
+                } else {
+                    $parentTicket = $this->getTicket($currentId);
+                    if ($parentTicket !== false) {
+                        $parentInfo = [
+                            'dependingTicketId' => $parentTicket->dependingTicketId,
+                            'headline' => $parentTicket->headline,
+                        ];
+                        $ticketMap[$currentId] = $parentInfo;
+                    }
+                }
+
+                if ($parentInfo && ! empty($parentInfo['dependingTicketId']) && (int) $parentInfo['dependingTicketId'] > 0) {
+                    $currentId = (int) $parentInfo['dependingTicketId'];
+
+                    continue;
+                }
+
+                // This ticket has no parent so it is the root
+                break;
+            }
+
+            // Point the ticket at the root parent instead of its immediate parent
+            if ($currentId !== (int) $ticket['dependingTicketId']) {
+                $tickets[$key]['dependingTicketId'] = $currentId;
+                $tickets[$key]['parentHeadline'] = $ticketMap[$currentId]['headline'] ?? '';
+            }
+        }
+
+        return $tickets;
     }
 
     /**
