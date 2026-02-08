@@ -66,7 +66,7 @@ class Calendar extends RepositoryCore
     {
         $query = $this->db->table('zp_calendar')
             ->where('userId', session('userdata.id'))
-            ->where('dateFrom', '<>', '0000-00-00 00:00:00');
+            ->whereNotNull('dateFrom');
 
         if (! empty($dateFrom)) {
             $query->where('dateFrom', '>=', $dateFrom->format('Y-m-d H:i:s'));
@@ -92,7 +92,7 @@ class Calendar extends RepositoryCore
     public function getAll(?int $userId, ?CarbonImmutable $dateFrom, ?CarbonImmutable $dateTo): false|array
     {
         $query = $this->db->table('zp_calendar')
-            ->where('dateFrom', '<>', '0000-00-00 00:00:00');
+            ->whereNotNull('dateFrom');
 
         if (! empty($userId)) {
             $query->where('userId', '>=', $userId);
@@ -134,7 +134,7 @@ class Calendar extends RepositoryCore
 
         $results = $this->db->table('zp_calendar')
             ->where('userId', $userId)
-            ->where('dateFrom', '<>', '0000-00-00 00:00:00')
+            ->whereNotNull('dateFrom')
             ->get();
 
         $values = array_map(fn ($item) => (array) $item, $results->toArray());
@@ -247,7 +247,7 @@ class Calendar extends RepositoryCore
      */
     private function mapEventData(
         string $title,
-        string $description,
+        ?string $description,
         bool $allDay,
         int $id,
         int $projectId,
@@ -309,7 +309,7 @@ class Calendar extends RepositoryCore
             ->select('id', 'headline', 'dateToFinish')
             ->where(function ($query) {
                 $query->where('userId', session('userdata.id'))
-                    ->orWhere('editorId', session('userdata.id'));
+                    ->orWhere('editorId', (string) session('userdata.id'));
             })
             ->where('dateToFinish', '<>', '000-00-00 00:00:00')
             ->get();
@@ -323,7 +323,7 @@ class Calendar extends RepositoryCore
             ->select('id', 'headline', 'editFrom', 'editTo')
             ->where(function ($query) {
                 $query->where('userId', session('userdata.id'))
-                    ->orWhere('editorId', session('userdata.id'));
+                    ->orWhere('editorId', (string) session('userdata.id'));
             })
             ->where('editFrom', '<>', '000-00-00 00:00:00')
             ->get();

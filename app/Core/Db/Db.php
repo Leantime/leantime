@@ -29,13 +29,16 @@ class Db
      * __construct - connect to database and select database
      *
      * @param  object  $app  Application container
-     * @param  string  $connection  Connection name
+     * @param  string|null  $connection  Connection name (defaults to configured default connection)
      * @return void
      */
-    public function __construct($app, $connection = 'mysql')
+    public function __construct($app, ?string $connection = null)
     {
         // Get Laravel's database manager from the container
         $this->dbManager = $app['db'];
+
+        // Use the configured default connection if none specified
+        $connection = $connection ?? $app['config']->get('database.default', 'mysql');
 
         // Get a connection from the manager
         try {

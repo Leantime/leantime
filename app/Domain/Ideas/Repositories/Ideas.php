@@ -227,15 +227,25 @@ class Ideas
                 'milestone.editTo as milestoneEditTo'
             )
             ->selectRaw("CASE WHEN zp_canvas_items.status IS NULL THEN 'idea' ELSE zp_canvas_items.status END as status")
-            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS commentCount')
+            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS "commentCount"')
             ->leftJoin('zp_user AS t1', 'zp_canvas_items.author', '=', 't1.id')
-            ->leftJoin('zp_tickets AS milestone', 'milestone.id', '=', 'zp_canvas_items.milestoneId')
+            ->leftJoin('zp_tickets AS milestone', function ($join) {
+                $join->on('zp_canvas_items.milestoneId', '=', $this->db->raw('CAST("milestone"."id" AS TEXT)'));
+            })
             ->leftJoin('zp_comment', function ($join) {
                 $join->on('zp_canvas_items.id', '=', 'zp_comment.moduleId')
                     ->where('zp_comment.module', '=', 'idea');
             })
             ->where('zp_canvas_items.canvasId', $id)
-            ->groupBy('zp_canvas_items.id')
+            ->groupBy(
+                'zp_canvas_items.id',
+                't1.firstname',
+                't1.lastname',
+                't1.profileId',
+                'milestone.headline',
+                'milestone.editTo',
+                'zp_canvas_items.status'
+            )
             ->orderBy('zp_canvas_items.sortindex')
             ->get();
 
@@ -265,7 +275,9 @@ class Ideas
                 'milestone.headline as milestoneHeadline',
                 'milestone.editTo as milestoneEditTo'
             )
-            ->leftJoin('zp_tickets AS milestone', 'milestone.id', '=', 'zp_canvas_items.milestoneId')
+            ->leftJoin('zp_tickets AS milestone', function ($join) {
+                $join->on('zp_canvas_items.milestoneId', '=', $this->db->raw('CAST("milestone"."id" AS TEXT)'));
+            })
             ->leftJoin('zp_user AS t1', 'zp_canvas_items.author', '=', 't1.id')
             ->where('zp_canvas_items.id', $id)
             ->first();

@@ -36,7 +36,7 @@ class Reactions
     public function getGroupedEntityReactions(string $module, int $moduleId): array|false
     {
         $results = $this->db->table('zp_reactions')
-            ->selectRaw('COUNT(reaction) AS reactionCount, reaction')
+            ->selectRaw('COUNT(reaction) AS "reactionCount", reaction')
             ->where('module', $module)
             ->where('moduleId', $moduleId)
             ->groupBy('reaction')
@@ -100,7 +100,7 @@ class Reactions
     public function getReactionsByModule(string $module, ?int $moduleId = null): array|false
     {
         $query = $this->db->table('zp_reactions')
-            ->selectRaw('reaction, COUNT(reaction) as reactionCount')
+            ->selectRaw('reaction, COUNT(reaction) as "reactionCount"')
             ->where('module', $module);
 
         if ($moduleId !== null) {

@@ -146,7 +146,7 @@ class SchemaBuilder
             $table->integer('projectId')->nullable();
             $table->string('type', 45)->nullable();
             $table->text('description')->nullable();
-            $table->string('color', 50)->default('ocean');
+            $table->string('color', 50)->nullable()->default('ocean');
             $table->dateTime('modified')->nullable();
 
             $table->index(['projectId', 'type'], 'ProjectIdType');
@@ -327,7 +327,7 @@ class SchemaBuilder
             $table->integer('clientId')->nullable();
             $table->text('details')->nullable();
             $table->integer('state')->nullable();
-            $table->string('hourBudget', 255)->default('');
+            $table->string('hourBudget', 255)->nullable()->default('');
             $table->integer('dollarBudget')->nullable();
             $table->integer('active')->nullable();
             $table->text('menuType')->nullable();
@@ -352,14 +352,13 @@ class SchemaBuilder
     private function createPunchClockTable(): void
     {
         Schema::create('zp_punch_clock', function (Blueprint $table) {
-            $table->unsignedBigInteger('id')->autoIncrement();
+            $table->id();
             $table->integer('userId');
             $table->integer('minutes')->nullable();
             $table->integer('hours')->nullable();
             $table->integer('punchIn')->nullable();
 
-            // Composite primary key
-            $table->primary(['id', 'userId']);
+            $table->index(['userId'], 'idx_punch_clock_userId');
         });
     }
 
@@ -508,11 +507,11 @@ class SchemaBuilder
         Schema::create('zp_user', function (Blueprint $table) {
             $table->id();
             $table->string('username', 175);
-            $table->string('password', 255)->default('');
-            $table->string('firstname', 100);
-            $table->string('lastname', 100);
-            $table->string('phone', 25)->default('');
-            $table->string('profileId', 100)->default('');
+            $table->string('password', 255)->nullable()->default('');
+            $table->string('firstname', 100)->nullable()->default('');
+            $table->string('lastname', 100)->nullable()->default('');
+            $table->string('phone', 25)->nullable()->default('');
+            $table->string('profileId', 100)->nullable()->default('');
             $table->dateTime('lastlogin')->nullable();
             $table->string('status', 1)->default('A');
             $table->dateTime('expires')->nullable();
@@ -590,7 +589,7 @@ class SchemaBuilder
             $table->integer('sum_todos_xl')->nullable();
             $table->integer('sum_todos_xxl')->nullable();
             $table->integer('sum_todos_none')->nullable();
-            $table->text('tickets')->nullable();
+            $table->integer('tickets')->nullable();
             $table->float('daily_avg_hours_booked_todo')->nullable();
             $table->float('daily_avg_hours_booked_point')->nullable();
             $table->float('daily_avg_hours_planned_todo')->nullable();
@@ -599,7 +598,7 @@ class SchemaBuilder
             $table->float('daily_avg_hours_remaining_todo')->nullable();
             $table->integer('sum_teammembers')->nullable();
 
-            $table->index(['projectId', 'sprintId'], 'projectId');
+            $table->index(['projectId', 'sprintId'], 'idx_stats_projectId');
             $table->index(['projectId', 'sprintId', 'date'], 'idx_stats_projectId_sprintId_date');
             $table->index(['sprintId', 'date'], 'idx_stats_sprintId_date');
         });
@@ -613,8 +612,6 @@ class SchemaBuilder
         Schema::create('zp_settings', function (Blueprint $table) {
             $table->string('key', 175)->primary();
             $table->text('value')->nullable();
-
-            $table->index(['key'], 'idx_settings_key');
         });
     }
 
@@ -633,9 +630,9 @@ class SchemaBuilder
             $table->text('values')->nullable();
             $table->dateTime('date')->nullable();
 
-            $table->index(['projectId'], 'projectId');
-            $table->index(['projectId', 'action'], 'projectAction');
-            $table->index(['projectId', 'entity', 'entityId'], 'projectEntityEntityId');
+            $table->index(['projectId'], 'idx_audit_projectId');
+            $table->index(['projectId', 'action'], 'idx_audit_projectAction');
+            $table->index(['projectId', 'entity', 'entityId'], 'idx_audit_projectEntityEntityId');
         });
     }
 
@@ -653,8 +650,8 @@ class SchemaBuilder
             $table->dateTime('thedate');
             $table->integer('projectId');
 
-            $table->index(['projectId'], 'projectId');
-            $table->index(['userId'], 'userId');
+            $table->index(['projectId'], 'idx_queue_projectId');
+            $table->index(['userId'], 'idx_queue_userId');
         });
     }
 
@@ -695,9 +692,9 @@ class SchemaBuilder
             $table->integer('authorId')->nullable();
             $table->text('message')->nullable();
 
-            $table->index(['userId'], 'userId');
-            $table->index(['userId', 'datetime'], 'userId,datetime');
-            $table->index(['userId', 'read'], 'userId,read');
+            $table->index(['userId'], 'idx_notifications_userId');
+            $table->index(['userId', 'datetime'], 'idx_notifications_userId_datetime');
+            $table->index(['userId', 'read'], 'idx_notifications_userId_read');
         });
     }
 
@@ -717,8 +714,8 @@ class SchemaBuilder
             $table->integer('createdBy')->nullable();
             $table->text('meta')->nullable();
 
-            $table->index(['entityA', 'entityAType', 'relationship'], 'entityA');
-            $table->index(['entityB', 'entityBType', 'relationship'], 'entityB');
+            $table->index(['entityA', 'entityAType', 'relationship'], 'idx_entity_relationship_entityA');
+            $table->index(['entityB', 'entityBType', 'relationship'], 'idx_entity_relationship_entityB');
         });
     }
 
@@ -756,8 +753,8 @@ class SchemaBuilder
             $table->string('reaction', 45)->nullable();
             $table->dateTime('date')->nullable();
 
-            $table->index(['moduleId', 'module', 'reaction'], 'entity');
-            $table->index(['userId', 'moduleId', 'module', 'reaction'], 'user');
+            $table->index(['moduleId', 'module', 'reaction'], 'idx_reactions_entity');
+            $table->index(['userId', 'moduleId', 'module', 'reaction'], 'idx_reactions_user');
         });
     }
 
@@ -821,7 +818,7 @@ class SchemaBuilder
             $table->dateTime('nextProcessingDate')->nullable();
             $table->tinyInteger('enabled')->default(1);
 
-            $table->index(['entityId'], 'entityId');
+            $table->index(['entityId'], 'idx_recurring_patterns_entityId');
         });
     }
 }

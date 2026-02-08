@@ -115,7 +115,7 @@ class Goalcanvas extends Canvas
                 'tags'
             )
             ->where('box', 'goal')
-            ->where('milestoneId', $milestoneId)
+            ->where('milestoneId', (string) $milestoneId)
             ->get();
 
         return array_map(fn ($item) => (array) $item, $results->toArray());

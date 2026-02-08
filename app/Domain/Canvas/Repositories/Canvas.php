@@ -233,12 +233,12 @@ class Canvas
                 't1.firstname as authorFirstname',
                 't1.lastname as authorLastname',
             ])
-            ->selectRaw('COUNT(zp_canvas_items.id) AS boxItems')
+            ->selectRaw('COUNT(zp_canvas_items.id) AS "boxItems"')
             ->leftJoin('zp_user as t1', 'zp_canvas.author', '=', 't1.id')
             ->leftJoin('zp_canvas_items', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
             ->where('type', $canvasType)
             ->where('projectId', $projectId)
-            ->groupBy(['zp_canvas.id', 'zp_canvas.title', 'zp_canvas.created'])
+            ->groupBy(['zp_canvas.id', 'zp_canvas.title', 'zp_canvas.created', 'zp_canvas.author', 'zp_canvas.description', 't1.firstname', 't1.lastname'])
             ->orderBy('zp_canvas.title')
             ->orderBy('zp_canvas.created')
             ->get();
@@ -413,16 +413,18 @@ class Canvas
                 'milestone.headline as milestoneHeadline',
                 'milestone.editTo as milestoneEditTo',
             ])
-            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS commentCount')
-            ->selectRaw('0 AS percentDone')
+            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS "commentCount"')
+            ->selectRaw('0 AS "percentDone"')
             ->leftJoin('zp_user as t1', 'zp_canvas_items.author', '=', 't1.id')
-            ->leftJoin('zp_tickets as milestone', 'milestone.id', '=', 'zp_canvas_items.milestoneId')
+            ->leftJoin('zp_tickets as milestone', function ($join) {
+                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw('CAST("milestone"."id" AS TEXT)'));
+            })
             ->leftJoin('zp_comment', function ($join) {
                 $join->on('zp_canvas_items.id', '=', 'zp_comment.moduleId')
                     ->where('zp_comment.module', '=', static::CANVAS_NAME.'canvasitem');
             })
             ->where('zp_canvas_items.canvasId', $id)
-            ->groupBy(['zp_canvas_items.id', 'zp_canvas_items.box', 'zp_canvas_items.sortindex'])
+            ->groupBy(['zp_canvas_items.id', 'zp_canvas_items.box', 'zp_canvas_items.sortindex', 't1.firstname', 't1.lastname', 't1.profileId', 'milestone.headline', 'milestone.editTo'])
             ->orderBy('zp_canvas_items.box')
             ->orderBy('zp_canvas_items.sortindex')
             ->get();
@@ -524,10 +526,12 @@ class Canvas
             ->leftJoin('zp_canvas as board', 'board.id', '=', 'zp_canvas_items.canvasId')
             ->leftJoin('zp_canvas_items as parentKPI', 'zp_canvas_items.kpi', '=', 'parentKPI.id')
             ->leftJoin('zp_canvas_items as parentGoal', 'zp_canvas_items.parent', '=', 'parentGoal.id')
-            ->leftJoin('zp_tickets as milestone', 'milestone.id', '=', 'zp_canvas_items.milestoneId')
+            ->leftJoin('zp_tickets as milestone', function ($join) {
+                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw('CAST("milestone"."id" AS TEXT)'));
+            })
             ->leftJoin('zp_user as t1', 'zp_canvas_items.author', '=', 't1.id')
             ->where('board.projectId', $projectId)
-            ->groupBy(['id', 'board.id'])
+            ->groupBy(['id', 'board.id', 'board.title', 'parentKPI.description', 'parentGoal.description', 't1.firstname', 't1.lastname', 'milestone.headline', 'milestone.editTo'])
             ->orderBy('board.id')
             ->get();
 
@@ -637,17 +641,17 @@ class Canvas
                 'milestone.headline as milestoneHeadline',
                 'milestone.editTo as milestoneEditTo',
             ])
-            ->selectRaw('COUNT(progressTickets.id) AS allTickets')
+            ->selectRaw('COUNT("progressTickets".id) AS "allTickets"')
             ->selectSub(function ($query) use ($statusGroups) {
                 $query->from('zp_tickets as progressSub')
                     ->selectRaw('(
                         CASE WHEN
-                          COUNT(DISTINCT progressSub.id) > 0
+                          COUNT(DISTINCT "progressSub".id) > 0
                         THEN
                           ROUND(
                             (
-                              SUM(CASE WHEN progressSub.status '.$statusGroups['DONE'].' THEN CASE WHEN progressSub.storypoints = 0 THEN 3 ELSE progressSub.storypoints END ELSE 0 END) /
-                              SUM(CASE WHEN progressSub.storypoints = 0 THEN 3 ELSE progressSub.storypoints END)
+                              SUM(CASE WHEN "progressSub".status '.$statusGroups['DONE'].' THEN CASE WHEN "progressSub".storypoints = 0 THEN 3 ELSE "progressSub".storypoints END ELSE 0 END) /
+                              SUM(CASE WHEN "progressSub".storypoints = 0 THEN 3 ELSE "progressSub".storypoints END)
                             ) *100)
                         ELSE
                           0
@@ -664,7 +668,9 @@ class Canvas
                     ->where('progressTickets.type', '<>', 'milestone')
                     ->where('progressTickets.type', '<>', 'subtask');
             })
-            ->leftJoin('zp_tickets as milestone', 'milestone.id', '=', 'zp_canvas_items.milestoneId')
+            ->leftJoin('zp_tickets as milestone', function ($join) {
+                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw('CAST("milestone"."id" AS TEXT)'));
+            })
             ->leftJoin('zp_user as t1', 'zp_canvas_items.author', '=', 't1.id')
             ->where('zp_canvas_items.id', $id)
             ->first();
@@ -730,7 +736,7 @@ class Canvas
     public function getNumberOfCanvasItems($projectId = null): mixed
     {
         $query = $this->connection->table('zp_canvas_items')
-            ->selectRaw('COUNT(zp_canvas_items.id) AS canvasCount')
+            ->selectRaw('COUNT(zp_canvas_items.id) AS "canvasCount"')
             ->leftJoin('zp_canvas as canvasBoard', 'zp_canvas_items.canvasId', '=', 'canvasBoard.id')
             ->where('canvasBoard.type', static::CANVAS_NAME.'canvas');
 
@@ -752,7 +758,7 @@ class Canvas
     public function getNumberOfBoards($projectId = null): mixed
     {
         $query = $this->connection->table('zp_canvas')
-            ->selectRaw('COUNT(zp_canvas.id) AS boardCount')
+            ->selectRaw('COUNT(zp_canvas.id) AS "boardCount"')
             ->where('zp_canvas.type', static::CANVAS_NAME.'canvas');
 
         if (! is_null($projectId)) {
@@ -774,7 +780,7 @@ class Canvas
     public function existCanvas(int $projectId, string $canvasTitle): bool
     {
         $result = $this->connection->table('zp_canvas')
-            ->selectRaw('COUNT(id) as nbCanvas')
+            ->selectRaw('COUNT(id) as "nbCanvas"')
             ->where('projectId', $projectId)
             ->where('title', $canvasTitle)
             ->where('type', static::CANVAS_NAME.'canvas')
@@ -813,9 +819,9 @@ class Canvas
             ])
             ->selectRaw($this->dbHelper->currentTimestamp().' as created')
             ->selectRaw($this->dbHelper->currentTimestamp().' as modified')
-            ->selectRaw('? as canvasId', [$newCanvasId])
+            ->selectRaw('? as "canvasId"', [$newCanvasId])
             ->select(['status', 'relates'])
-            ->selectRaw("'' as milestoneId")
+            ->selectRaw("'' as \"milestoneId\"")
             ->select([
                 'kpi', 'data1', 'startDate', 'endDate', 'setting', 'metricType', 'impact',
                 'effort', 'probability', 'action', 'assignedTo', 'startValue', 'currentValue', 'endValue',
@@ -851,9 +857,9 @@ class Canvas
             ])
             ->selectRaw($this->dbHelper->currentTimestamp().' as created')
             ->selectRaw($this->dbHelper->currentTimestamp().' as modified')
-            ->selectRaw('? as canvasId', [$canvasId])
+            ->selectRaw('? as "canvasId"', [$canvasId])
             ->select(['status', 'relates'])
-            ->selectRaw("'' as milestoneId")
+            ->selectRaw("'' as \"milestoneId\"")
             ->select([
                 'kpi', 'data1', 'startDate', 'endDate', 'setting', 'metricType', 'impact',
                 'effort', 'probability', 'action', 'assignedTo', 'startValue', 'currentValue', 'endValue',
@@ -881,7 +887,7 @@ class Canvas
                 'zp_canvas.type as canvasType',
                 'zp_canvas_items.box',
             ])
-            ->selectRaw('COUNT(zp_canvas_items.id) AS boxItems')
+            ->selectRaw('COUNT(zp_canvas_items.id) AS "boxItems"')
             ->leftJoin('zp_canvas_items', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId');
 
         if ($projectId != '') {
@@ -927,7 +933,7 @@ class Canvas
             $query->whereIn('type', $boards);
         }
 
-        $results = $query->groupBy(['zp_canvas.id', 'zp_canvas.type', 'zp_canvas.title'])
+        $results = $query->groupBy(['zp_canvas.id', 'zp_canvas.type', 'zp_canvas.title', 'zp_canvas.created'])
             ->orderByDesc('modified')
             ->get();
 

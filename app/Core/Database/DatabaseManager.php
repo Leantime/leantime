@@ -7,25 +7,32 @@ use Illuminate\Support\Facades\Log;
 
 class DatabaseManager
 {
+    /**
+     * Switch the database connection to use the given configuration.
+     *
+     * @param  array  $config  Database configuration with keys: dbHost, dbDatabase, dbUser, dbPassword
+     */
     public static function switchConnection(array $config): void
     {
         try {
+            $connectionName = config('database.default', 'mysql');
+
             // Purge existing connections
-            DB::purge('mysql');
+            DB::purge($connectionName);
 
             // Update the configuration
             config([
-                'database.connections.mysql.host' => $config['dbHost'],
-                'database.connections.mysql.database' => $config['dbDatabase'],
-                'database.connections.mysql.username' => $config['dbUser'],
-                'database.connections.mysql.password' => $config['dbPassword'],
+                "database.connections.{$connectionName}.host" => $config['dbHost'],
+                "database.connections.{$connectionName}.database" => $config['dbDatabase'],
+                "database.connections.{$connectionName}.username" => $config['dbUser'],
+                "database.connections.{$connectionName}.password" => $config['dbPassword'],
             ]);
 
             // Reconnect with new configuration
-            DB::reconnect('mysql');
+            DB::reconnect($connectionName);
 
             // Verify connection
-            DB::connection('mysql')->getPdo();
+            DB::connection($connectionName)->getPdo();
 
         } catch (\Exception $e) {
             Log::error('Database connection failed: '.$e->getMessage());
