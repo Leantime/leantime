@@ -42,7 +42,19 @@ class Plugins
             $query->where('enabled', true);
         }
 
-        $results = $query->groupBy('name')->get();
+        $results = $query->groupBy(
+            'id',
+            'name',
+            'enabled',
+            'description',
+            'version',
+            'installdate',
+            'foldername',
+            'homepage',
+            'authors',
+            'format',
+            'license'
+        )->get();
 
         $allPlugins = [];
         foreach ($results as $row) {

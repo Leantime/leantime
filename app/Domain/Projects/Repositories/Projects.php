@@ -79,6 +79,16 @@ class Projects
             'project.id',
             'project.name',
             'project.clientId',
+            'project.hourBudget',
+            'project.dollarBudget',
+            'project.state',
+            'project.menuType',
+            'project.type',
+            'project.modified',
+            'client.name',
+            'client.id',
+            'project.start',
+            'project.end',
         ])
             ->orderBy('clientName')
             ->orderBy('project.name');
@@ -145,6 +155,16 @@ class Projects
                 'project.id',
                 'project.name',
                 'project.clientId',
+                'project.hourBudget',
+                'project.dollarBudget',
+                'project.state',
+                'project.menuType',
+                'project.type',
+                'project.modified',
+                'client.name',
+                'client.id',
+                'project.start',
+                'project.end',
             ])
             ->orderBy('clientName')
             ->orderBy('project.name');
@@ -263,7 +283,7 @@ class Projects
                 'parent.id as parentId',
                 'parent.name as parentName',
             ])
-            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as isFavorite')
+            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as "isFavorite"')
             ->leftJoin('zp_relationuserproject as relation', 'project.id', '=', 'relation.projectId')
             ->leftJoin('zp_projects as parent', 'parent.id', '=', 'project.parent')
             ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id')
@@ -275,10 +295,10 @@ class Projects
                     ->where('favorite.userId', $userId);
             })
             ->leftJoin('zp_user as requestingUser', function ($join) use ($userId) {
-                $join->whereRaw('requestingUser.id = ?', [$userId]);
+                $join->on('requestingUser.id', '=', $this->connection->raw((int) $userId));
             })
             ->where(function ($q) {
-                $q->where('project.active', '>', '-1')
+                $q->where('project.active', '>', -1)
                     ->orWhereNull('project.active');
             });
 
@@ -291,7 +311,7 @@ class Projects
                             ->whereColumn('project.clientId', 'requestingUser.clientId');
                     })
                     ->orWhere('project.psettings', 'all')
-                    ->orWhereRaw('requestingUser.role >= 40');
+                    ->orWhere('requestingUser.role', '>=', 40);
             });
         } elseif ($accessStatus == 'clients') {
             $query->where(function ($q) use ($userId) {
@@ -307,7 +327,7 @@ class Projects
 
         if ($projectStatus == 'open') {
             $query->where(function ($q) {
-                $q->where('project.state', '<>', '-1')
+                $q->where('project.state', '<>', -1)
                     ->orWhereNull('project.state');
             });
         } elseif ($projectStatus == 'closed') {
@@ -330,7 +350,26 @@ class Projects
             });
         }
 
-        $query->groupBy('project.id')
+        $query->groupBy([
+            'project.id',
+            'project.name',
+            'project.details',
+            'project.clientId',
+            'project.state',
+            'project.hourBudget',
+            'project.dollarBudget',
+            'project.menuType',
+            'project.type',
+            'project.parent',
+            'project.modified',
+            'project.start',
+            'project.end',
+            'client.name',
+            'client.id',
+            'parent.id',
+            'parent.name',
+            'favorite.id',
+        ])
             ->orderBy('clientName')
             ->orderBy('project.name');
 
@@ -357,7 +396,7 @@ class Projects
                 'client.name as clientName',
                 'client.id as clientId',
             ])
-            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as isFavorite')
+            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as "isFavorite"')
             ->leftJoin('zp_relationuserproject as relation', 'project.id', '=', 'relation.projectId')
             ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id')
             ->leftJoin('zp_reactions as favorite', function ($join) use ($userId) {
@@ -375,20 +414,34 @@ class Projects
                     });
             })
             ->where(function ($q) {
-                $q->where('project.active', '>', '-1')
+                $q->where('project.active', '>', -1)
                     ->orWhereNull('project.active');
             });
 
         if ($status == 'open') {
             $query->where(function ($q) {
-                $q->where('project.state', '<>', '-1')
+                $q->where('project.state', '<>', -1)
                     ->orWhereNull('project.state');
             });
         } elseif ($status == 'closed') {
             $query->where('project.state', -1);
         }
 
-        $query->groupBy('project.id')
+        $query->groupBy([
+            'project.id',
+            'project.name',
+            'project.clientId',
+            'project.state',
+            'project.hourBudget',
+            'project.dollarBudget',
+            'project.menuType',
+            'project.type',
+            'project.parent',
+            'project.modified',
+            'client.name',
+            'client.id',
+            'favorite.id',
+        ])
             ->orderBy('clientName')
             ->orderBy('project.name');
 
@@ -436,7 +489,7 @@ class Projects
             ])
             ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id')
             ->where(function ($q) {
-                $q->where('project.active', '>', '-1')
+                $q->where('project.active', '>', -1)
                     ->orWhereNull('project.active');
             })
             ->where('clientId', $clientId)
@@ -444,6 +497,14 @@ class Projects
                 'project.id',
                 'project.name',
                 'project.clientId',
+                'project.hourBudget',
+                'project.dollarBudget',
+                'project.state',
+                'project.menuType',
+                'project.modified',
+                'project.type',
+                'client.name',
+                'client.id',
             ])
             ->orderBy('clientName')
             ->orderBy('project.name')
@@ -463,7 +524,9 @@ class Projects
                 'zp_user.firstname',
                 'zp_user.lastname',
             ])
-            ->leftJoin('zp_user', 'zp_tickets.editorId', '=', 'zp_user.id')
+            ->leftJoin('zp_user', function ($join) {
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw('CAST("zp_user"."id" AS TEXT)'));
+            })
             ->where('projectId', $projectId)
             ->orderBy('zp_tickets.editFrom')
             ->get();
@@ -498,7 +561,7 @@ class Projects
                 'zp_projects.start',
                 'zp_projects.end',
             ])
-            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as isFavorite')
+            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as "isFavorite"')
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_reactions as favorite', function ($join) use ($userId) {
                 $join->on('zp_projects.id', '=', 'favorite.moduleId')
@@ -515,6 +578,20 @@ class Projects
                 'zp_projects.name',
                 'zp_projects.clientId',
                 'zp_projects.details',
+                'zp_projects.state',
+                'zp_projects.hourBudget',
+                'zp_projects.dollarBudget',
+                'zp_projects.psettings',
+                'zp_projects.menuType',
+                'zp_projects.avatar',
+                'zp_projects.cover',
+                'zp_projects.type',
+                'zp_projects.parent',
+                'zp_projects.modified',
+                'zp_clients.name',
+                'zp_projects.start',
+                'zp_projects.end',
+                'favorite.id',
             ])
             ->limit(1)
             ->first();
@@ -525,7 +602,7 @@ class Projects
     public function getProjectBookedHours($id): array|bool
     {
         $result = $this->connection->table('zp_tickets')
-            ->selectRaw('zp_tickets.projectId, SUM(zp_timesheets.hours) AS totalHours')
+            ->selectRaw('"zp_tickets"."projectId", SUM(zp_timesheets.hours) AS "totalHours"')
             ->join('zp_timesheets', 'zp_timesheets.ticketId', '=', 'zp_tickets.id')
             ->where('projectId', $id)
             ->first();
@@ -548,17 +625,17 @@ class Projects
     public function getProjectBookedHoursArray($id): array|bool
     {
         $dateFormatSql = match ($this->dbHelper->getDriverName()) {
-            'mysql' => "DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')",
-            'pgsql' => "TO_CHAR(zp_timesheets.workDate, 'YYYY-MM-DD')",
-            default => "DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')",
+            'mysql' => "DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d')",
+            'pgsql' => "TO_CHAR(zp_timesheets.\"workDate\", 'YYYY-MM-DD')",
+            default => "DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d')",
         };
 
         $results = $this->connection->table('zp_tickets')
             ->select([
                 'zp_tickets.projectId',
             ])
-            ->selectRaw('SUM(zp_timesheets.hours) AS totalHours')
-            ->selectRaw("{$dateFormatSql} AS workDate")
+            ->selectRaw('SUM(zp_timesheets.hours) AS "totalHours"')
+            ->selectRaw("{$dateFormatSql} AS \"workDate\"")
             ->join('zp_timesheets', 'zp_timesheets.ticketId', '=', 'zp_tickets.id')
             ->where('projectId', $id)
             ->groupByRaw($dateFormatSql)
@@ -605,7 +682,7 @@ class Projects
     public function getProjectBookedDollars($id): mixed
     {
         $result = $this->connection->table('zp_tickets')
-            ->selectRaw('zp_tickets.projectId, SUM(zp_timesheets.hours * zp_timesheets.rate) AS totalDollars')
+            ->selectRaw('"zp_tickets"."projectId", SUM(zp_timesheets.hours * zp_timesheets.rate) AS "totalDollars"')
             ->join('zp_timesheets', 'zp_timesheets.ticketId', '=', 'zp_tickets.id')
             ->where('projectId', $id)
             ->first();

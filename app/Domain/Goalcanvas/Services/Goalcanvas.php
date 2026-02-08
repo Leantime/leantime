@@ -35,8 +35,8 @@ class Goalcanvas
                 $progressValue = 0;
                 $goal['goalProgress'] = 0;
                 $total = $goal['endValue'] - $goal['startValue'];
-                // Skip if total value is 0.
-                if ($total <= 0) {
+                // Skip if start and end are the same (no range to measure).
+                if ($total == 0) {
                     continue;
                 }
 
@@ -50,7 +50,7 @@ class Goalcanvas
                     $progressValue = $goal['currentValue'] - $goal['startValue'];
                 }
 
-                $goal['goalProgress'] = round($progressValue / $total, 2) * 100;
+                $goal['goalProgress'] = max(0, min(100, round($progressValue / $total, 2) * 100));
             }
         }
 

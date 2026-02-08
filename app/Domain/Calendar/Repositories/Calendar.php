@@ -66,7 +66,7 @@ class Calendar extends RepositoryCore
     {
         $query = $this->db->table('zp_calendar')
             ->where('userId', session('userdata.id'))
-            ->where('dateFrom', '<>', '0000-00-00 00:00:00');
+            ->whereNotNull('dateFrom');
 
         if (! empty($dateFrom)) {
             $query->where('dateFrom', '>=', $dateFrom->format('Y-m-d H:i:s'));
@@ -92,7 +92,7 @@ class Calendar extends RepositoryCore
     public function getAll(?int $userId, ?CarbonImmutable $dateFrom, ?CarbonImmutable $dateTo): false|array
     {
         $query = $this->db->table('zp_calendar')
-            ->where('dateFrom', '<>', '0000-00-00 00:00:00');
+            ->whereNotNull('dateFrom');
 
         if (! empty($userId)) {
             $query->where('userId', '>=', $userId);
@@ -134,7 +134,7 @@ class Calendar extends RepositoryCore
 
         $results = $this->db->table('zp_calendar')
             ->where('userId', $userId)
-            ->where('dateFrom', '<>', '0000-00-00 00:00:00')
+            ->whereNotNull('dateFrom')
             ->get();
 
         $values = array_map(fn ($item) => (array) $item, $results->toArray());
@@ -182,10 +182,17 @@ class Calendar extends RepositoryCore
                 if (dtHelper()->isValidDateString($ticket['dateToFinish'])) {
                     $context = '❕ '.$this->language->__('label.due_todo');
 
+                    // Detect if the due date has no specific time set (stored as end-of-day 23:59:59).
+                    // If so, treat it as an all-day event to avoid timezone boundary issues
+                    // that cause the event to appear on two days in the calendar.
+                    $dueDate = dtHelper()->parseDbDateTime($ticket['dateToFinish']);
+                    $isEndOfDay = $dueDate->format('H:i:s') === '23:59:59';
+                    $allDay = $isEndOfDay;
+
                     $newValues[] = $this->mapEventData(
                         title: $context.$ticket['headline'].' ('.$statusName.')',
                         description: $ticket['description'],
-                        allDay: false,
+                        allDay: $allDay,
                         id: $ticket['id'],
                         projectId: $ticket['projectId'],
                         eventType: 'ticket',
@@ -240,7 +247,7 @@ class Calendar extends RepositoryCore
      */
     private function mapEventData(
         string $title,
-        string $description,
+        ?string $description,
         bool $allDay,
         int $id,
         int $projectId,
@@ -302,7 +309,7 @@ class Calendar extends RepositoryCore
             ->select('id', 'headline', 'dateToFinish')
             ->where(function ($query) {
                 $query->where('userId', session('userdata.id'))
-                    ->orWhere('editorId', session('userdata.id'));
+                    ->orWhere('editorId', (string) session('userdata.id'));
             })
             ->where('dateToFinish', '<>', '000-00-00 00:00:00')
             ->get();
@@ -316,7 +323,7 @@ class Calendar extends RepositoryCore
             ->select('id', 'headline', 'editFrom', 'editTo')
             ->where(function ($query) {
                 $query->where('userId', session('userdata.id'))
-                    ->orWhere('editorId', session('userdata.id'));
+                    ->orWhere('editorId', (string) session('userdata.id'));
             })
             ->where('editFrom', '<>', '000-00-00 00:00:00')
             ->get();
