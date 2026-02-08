@@ -184,7 +184,7 @@ leantime.editorController = (function () {
         jQuery('textarea.tinymceSimple').tinymce(
             {
                 // General options
-                iframe_aria_text: '',
+                iframe_aria_text: 'Rich text editor',
                 width: "100%",
                 skin_url: skin_url,
                 content_css: content_css,
@@ -232,7 +232,7 @@ leantime.editorController = (function () {
         jQuery('textarea.complexEditor').tinymce(
             {
                 // General options
-                iframe_aria_text: '',
+                iframe_aria_text: 'Rich text editor',
                 width: "100%",
                 skin_url: leantime.appUrl + '/dist/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/'+ leantime.colorScheme +'.css,'
@@ -311,7 +311,7 @@ leantime.editorController = (function () {
         jQuery('textarea.notesEditor').tinymce(
             {
                 // General options
-                iframe_aria_text: '',
+                iframe_aria_text: 'Rich text editor',
                 width: "100%",
                 skin_url: leantime.appUrl + '/dist/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/'+ leantime.colorScheme +'.css,'
@@ -383,7 +383,7 @@ leantime.editorController = (function () {
         jQuery(id).tinymce(
             {
                 // General options
-                iframe_aria_text: '',
+                iframe_aria_text: 'Rich text editor',
                 width: "100%",
                 skin_url: skin_url,
                 inline: true,
