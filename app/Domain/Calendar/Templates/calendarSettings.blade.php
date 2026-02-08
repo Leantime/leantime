@@ -8,20 +8,22 @@
 <h5 class="subtitle">{{ __('label.connected_calendars') }}</h5>
 
 @if(count($externalCalendars) > 0)
-    <ul class="sortableTicketList" style="margin-bottom: 20px;">
+    <ul class="simpleList" style="margin-bottom: 20px;">
         @foreach($externalCalendars as $calendar)
-            <li style="padding: 10px; background: var(--secondary-background); border-radius: 5px; margin-bottom: 8px;">
-                <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; background-color: {{ $calendar['colorClass'] }};"></span>
+            <li style="padding: 10px; background: var(--secondary-background); border-radius: var(--box-radius-small); margin-bottom: 8px;">
+                <span class="indicatorCircle" style="background-color: {{ e($calendar['colorClass']) }};"></span>
                 <strong>{{ $calendar['name'] }}</strong>
-                <span style="float: right;">
-                    <a href="#/calendar/editExternal/{{ $calendar['id'] }}" class="formModal" data-tippy-content="{{ __('label.edit') }}">
-                        <i class="fa fa-pen"></i>
-                    </a>
-                    &nbsp;
-                    <a href="#/calendar/delExternalCalendar/{{ $calendar['id'] }}" class="delete" data-tippy-content="{{ __('label.delete') }}">
-                        <i class="fa fa-trash"></i>
-                    </a>
-                </span>
+                @if(empty($calendar['managedByPlugin']))
+                    <span style="float: right;">
+                        <a href="#/calendar/editExternal/{{ $calendar['id'] }}" class="formModal" data-tippy-content="{{ __('label.edit') }}">
+                            <i class="fa fa-pen"></i>
+                        </a>
+                        &nbsp;
+                        <a href="#/calendar/delExternalCalendar/{{ $calendar['id'] }}" class="delete" data-tippy-content="{{ __('label.delete') }}">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </span>
+                @endif
             </li>
         @endforeach
     </ul>
@@ -33,6 +35,7 @@
 @endif
 
 {{-- Plugin-injected sections (Google Calendar, etc.) --}}
+{{-- Note: Plugin content via {!! !!} is trusted. Plugins are responsible for sanitizing their output. --}}
 @foreach($pluginSections as $section)
     <hr style="margin: 20px 0;" />
 
@@ -41,7 +44,7 @@
             @if(($section['iconType'] ?? 'fontawesome') === 'svg')
                 <span style="display: inline-block; width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">{!! $section['icon'] !!}</span>
             @else
-                <i class="{{ $section['icon'] }}" style="margin-right: 8px;"></i>
+                <i class="{{ e($section['icon']) }}" style="margin-right: 8px;"></i>
             @endif
         @endif
         {{ $section['title'] }}
@@ -61,7 +64,7 @@
                 <a href="{{ $action['url'] }}"
                    class="btn {{ $action['class'] ?? 'btn-default' }} {{ ($action['type'] ?? 'link') === 'modal' ? 'formModal' : '' }}">
                     @if(isset($action['icon']))
-                        <i class="{{ $action['icon']}}"></i>
+                        <i class="{{ e($action['icon']) }}"></i>
                     @endif
                     {{ $action['label'] }}
                 </a>

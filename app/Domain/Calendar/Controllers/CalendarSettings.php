@@ -13,13 +13,25 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * Plugins can register additional settings sections via the filter:
  * 'leantime.domain.calendar.controllers.calendarsettings.get.calendarSettings.sections'
+ *
+ * Plugins can mark calendars as plugin-managed (hides edit/delete UI) via the filter:
+ * 'leantime.domain.calendar.controllers.calendarsettings.get.calendarSettings.externalCalendars'
+ *
+ * Section array structure:
+ *   - id: string (unique identifier)
+ *   - icon: string (FontAwesome class or SVG markup)
+ *   - iconType: string ('fontawesome'|'svg', default 'fontawesome')
+ *   - title: string (section heading)
+ *   - description: string (optional description text)
+ *   - content: string (raw HTML content - plugin must sanitize)
+ *   - actions: array (optional action buttons with url, label, class, icon, type keys)
  */
 class CalendarSettings extends Controller
 {
     private CalendarRepository $calendarRepo;
 
     /**
-     * Initialize the controller.
+     * Initialize the controller with dependencies.
      */
     public function init(CalendarRepository $calendarRepo): void
     {
@@ -29,12 +41,15 @@ class CalendarSettings extends Controller
     /**
      * Display the Calendar Settings modal.
      */
-    public function get(): Response
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
         // Get external calendars for the current user
         $externalCalendars = $this->calendarRepo->getMyExternalCalendars(session('userdata.id'));
+
+        // Plugins can augment calendar data (e.g., add 'managedByPlugin' => true to hide edit/delete)
+        $externalCalendars = self::dispatchFilter('calendarSettings.externalCalendars', $externalCalendars);
 
         // Plugins can add their settings sections via this filter
         $pluginSections = self::dispatchFilter('calendarSettings.sections', []);

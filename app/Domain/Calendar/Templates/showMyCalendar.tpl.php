@@ -38,7 +38,7 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 
                 <?php foreach ($tpl->get('externalCalendars') as $calendars) { ?>
                     <li>
-                        <?php if (empty($calendars['isGoogleCalendar'])) { ?>
+                        <?php if (empty($calendars['managedByPlugin'])) { ?>
                         <div class="inlineDropDownContainer" style="float:right;">
                             <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
                                 <i class="fa fa-ellipsis-h" aria-hidden="true"></i>

@@ -10,12 +10,13 @@
     <h5><i class="fa fa-calendar-alt"></i> {{ __('label.ical_url_title') }}</h5>
     <p class="text-muted small">{{ __('label.ical_url_description') }}</p>
 
-    <form action="{{ BASE_URL }}/calendar/importGCal" method="post" class="formModal">
+    <form action="{{ BASE_URL }}/calendar/connectCalendar" method="post" class="formModal">
+        @csrf
         <label for="ical_name">{{ __('label.calendar_name') }}:</label>
-        <input type="text" id="ical_name" name="name" autocomplete="off" placeholder="My Calendar" /><br />
+        <input type="text" id="ical_name" name="name" autocomplete="off" placeholder="{{ __('label.calendar_name') }}" /><br />
 
         <label for="ical_url">{{ __('label.ical_url') }}:</label>
-        <input type="text" id="ical_url" name="url" autocomplete="off" style="width:100%;" placeholder="https://calendar.google.com/calendar/ical/..." /><br />
+        <input type="text" id="ical_url" name="url" autocomplete="off" style="width:100%;" placeholder="https://example.com/calendar.ics" /><br />
 
         <label for="ical_color">{{ __('label.color') }}:</label>
         <input type="text" id="ical_color" name="colorClass" autocomplete="off" value="#082236" class="simpleColorPicker"/>
@@ -28,6 +29,7 @@
 <br />
 
 {{-- Plugin-injected providers (Google Calendar, etc.) --}}
+{{-- Note: SVG icons via {!! !!} are trusted plugin content. Plugins are responsible for sanitizing their output. --}}
 @foreach($providers as $provider)
     @if($provider['id'] !== 'ical')
         <div class="boxedContent">
@@ -35,7 +37,7 @@
                 @if(($provider['iconType'] ?? 'fontawesome') === 'svg')
                     {!! $provider['icon'] !!}
                 @else
-                    <i class="{{ $provider['icon'] }}"></i>
+                    <i class="{{ e($provider['icon']) }}"></i>
                 @endif
                 {{ $provider['title'] }}
             </h5>
