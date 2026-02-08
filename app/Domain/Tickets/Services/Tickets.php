@@ -615,6 +615,7 @@ class Tickets
         foreach ($tickets as $ticket) {
             $class = '';
             $moreInfo = '';
+            $groupColor = '';
             $sortId = null; // Custom sort ID, defaults to groupedFieldValue if null
 
             if (isset($ticket[$searchCriteria['groupBy']])) {
@@ -662,7 +663,8 @@ class Tickets
                             if ($ticket['milestoneid'] > 0) {
                                 $milestone = $this->getTicket($ticket['milestoneid']);
                                 $color = $milestone->tags;
-                                $class = '" style="color:'.$color.'"';
+                                $class = '';
+                                $groupColor = $color;
 
                                 try {
                                     $startDate = dtHelper()->parseDbDateTime($milestone->editFrom)->formatDateForUser();
@@ -678,10 +680,9 @@ class Tickets
 
                                 $statusLabels = $this->getStatusLabels($milestone->projectId);
                                 $status = $statusLabels[$milestone->status]['name'];
-                                $class = '" style="color:'.$color.'"';
                                 $moreInfo = $this->language->__('label.start').': '.$startDate.' • '.$this->language->__('label.end').': '.$endDate.' • '.$this->language->__('label.status_lowercase').': '.$status;
                                 $label = $ticket['milestoneHeadline'];
-                                $sortId = 'a_'.$ticket['milestoneHeadline']; // Named milestones sort first alphabetically
+                                $sortId = 'a_'.preg_replace('/[^a-zA-Z0-9_-]/', '_', $ticket['milestoneHeadline']); // Named milestones sort first alphabetically
                             }
 
                             break;
@@ -713,6 +714,7 @@ class Tickets
                         'more-info' => $moreInfo,
                         'id' => $sortId ?? strtolower($groupedFieldValue),
                         'class' => $class,
+                        'color' => $groupColor,
                         'items' => [$ticket],
                     ];
                 }

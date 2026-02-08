@@ -38,6 +38,7 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 
                 <?php foreach ($tpl->get('externalCalendars') as $calendars) { ?>
                     <li>
+                        <?php if (empty($calendars['managedByPlugin'])) { ?>
                         <div class="inlineDropDownContainer" style="float:right;">
                             <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
                                 <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
@@ -50,6 +51,7 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                                 <li><a href="#/calendar/delExternalCalendar/<?= $calendars['id']?>" class="delete"><i class="fa fa-trash"></i> <?= $tpl->__('links.delete_external_calendar')?></a></li>
                             </ul>
                         </div>
+                        <?php } ?>
                         <span class="indicatorCircle" style="background:<?= $calendars['colorClass'] ?>"></span><?= $calendars['name'] ?>
 
                     </li>
@@ -57,7 +59,8 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 
                 </ul>
                 <hr />
-                <a href="#/calendar/connectCalendar" class="formModal"><i class="fa-regular fa-calendar-plus"></i> <?= $tpl->__('label.connect_calendar') ?></a>
+                <a href="#/calendar/connectCalendar" class="formModal" style="display:block; margin-bottom:8px; margin-left:-5px;"><i class="fa-regular fa-calendar-plus" style="width:16px;"></i> <?= $tpl->__('label.connect_calendar') ?></a>
+                <a href="#/calendar/calendarSettings" class="formModal" style="margin-left:-5px;"><i class="fa fa-cog" style="width:16px;"></i> <?= $tpl->__('label.calendar_settings') ?></a>
             </div>
         </div>
         <div class="col-md-10">

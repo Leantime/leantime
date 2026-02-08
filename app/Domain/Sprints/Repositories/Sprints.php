@@ -219,7 +219,7 @@ class Sprints
         // Clear sprint from tickets
         $this->db->table('zp_tickets')
             ->where('sprint', $id)
-            ->update(['sprint' => '']);
+            ->update(['sprint' => null]);
 
         // Delete the sprint
         $this->db->table('zp_sprints')

@@ -72,8 +72,8 @@ class Ldap
             $this->ldapDn = $this->config->ldapDn;
             $this->defaultRoleKey = (int) $this->config->ldapDefaultRoleKey;
             $this->port = $this->config->ldapPort;
-            $this->ldapLtGroupAssignments = json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments)), true);
-            $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys'), true) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)), true);
+            $this->ldapLtGroupAssignments = json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments)));
+            $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)));
             $this->directoryType = $this->config->ldapType;
 
             $this->ldapDomain = $this->config->ldapDomain;

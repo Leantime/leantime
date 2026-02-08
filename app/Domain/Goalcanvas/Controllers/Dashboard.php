@@ -88,8 +88,8 @@ class Dashboard extends Controller
                 $total = $item['endValue'] - $item['startValue'];
                 $progressValue = $item['currentValue'] - $item['startValue'];
 
-                if ($total > 0) {
-                    $percentDone = round($progressValue / $total * 100, 2);
+                if ($total != 0) {
+                    $percentDone = max(0, min(100, round($progressValue / $total * 100, 2)));
                 } else {
                     $percentDone = 0;
                 }

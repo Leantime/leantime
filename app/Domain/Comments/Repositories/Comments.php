@@ -185,7 +185,17 @@ class Comments
             $query->where('comment.moduleId', $moduleId);
         }
 
-        $results = $query->groupBy('comment.id')->get();
+        $results = $query->groupBy(
+            'comment.id',
+            'comment.module',
+            'comment.text',
+            'comment.date',
+            'comment.moduleId',
+            'comment.userId',
+            'comment.commentParent',
+            'comment.status',
+            'zp_projects.id'
+        )->get();
 
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }

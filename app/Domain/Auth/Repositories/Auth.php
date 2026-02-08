@@ -114,7 +114,7 @@ class Auth
         $expirationTime = time() - $this->config->sessionExpiration;
 
         return $this->db->table('zp_user')
-            ->where('sessionTime', '<', $expirationTime)
+            ->where('sessiontime', '<', $expirationTime)
             ->update(['session' => '']) >= 0;
     }
 
@@ -148,7 +148,7 @@ class Auth
             ->update([
                 'lastlogin' => now(),
                 'session' => $sessionid,
-                'sessionTime' => $time,
+                'sessiontime' => $time,
                 'pwReset' => null,
                 'pwResetExpiration' => null,
             ]) >= 0;
@@ -172,7 +172,7 @@ class Auth
     {
         $result = $this->db->table('zp_user')
             ->where('pwReset', $hash)
-            ->where('status', 'like', 'i')
+            ->whereRaw('LOWER(status) = ?', ['i'])
             ->limit(1)
             ->first();
 
