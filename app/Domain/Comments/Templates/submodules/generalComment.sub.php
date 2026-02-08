@@ -87,7 +87,7 @@ if (str_contains($formUrl, '?delComment=')) {
                                     <?php } ?>
                             </div>
                             <span class="name"><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></span>
-                            <div class="text mce-content-body" id="commentText-<?= $formHash ?>-<?= $row['id']?>">
+                            <div class="text tiptap-content" id="commentText-<?= $formHash ?>-<?= $row['id']?>">
                                 <div id="comment-text-to-hide-<?= $formHash ?>-<?= $row['id']?>"><?php echo $tpl->escapeMinimal($row['text']); ?></div>
                             </div>
                         </div>
@@ -122,7 +122,7 @@ if (str_contains($formUrl, '?delComment=')) {
                                                     ); ?>
                                                 </div>
                                                 <span class="name"><?php printf($tpl->__('text.full_name'), $tpl->escape($comment['firstname']), $tpl->escape($comment['lastname'])); ?></span>
-                                                <div class="text mce-content-body" id="comment-text-to-hide-reply-<?= $formHash ?>-<?= $comment['id']?>"><?php echo $tpl->escapeMinimal($comment['text']); ?></div>
+                                                <div class="text tiptap-content" id="comment-text-to-hide-reply-<?= $formHash ?>-<?= $comment['id']?>"><?php echo $tpl->escapeMinimal($comment['text']); ?></div>
                                             </div>
 
                                             <div class="commentLinks">

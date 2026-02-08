@@ -94,9 +94,7 @@ class Reactions
     }
 
     /**
-     * addReaction - adds a reaction to an entity, checks if a user has already reacted the same way
-     *
-     *
+     * removeReaction - removes a user's reaction from an entity
      *
      * @api
      */

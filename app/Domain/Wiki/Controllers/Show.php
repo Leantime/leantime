@@ -29,7 +29,7 @@ class Show extends Controller
     /**
      * @throws BindingResolutionException
      */
-    public function get($params): Response
+    public function get(array $params): Response
     {
 
         $currentArticle = '';
@@ -51,7 +51,7 @@ class Show extends Controller
 
             $currentArticle = $this->wikiService->setCurrentArticle($params['id'], session('usersettings.id'));
 
-            if ($currentArticle == false) {
+            if ($currentArticle === false) {
                 $this->wikiService->clearWikiCache();
 
                 return Frontcontroller::redirect(BASE_URL.'/errors/error404');
@@ -146,7 +146,7 @@ class Show extends Controller
     /**
      * @throws BindingResolutionException
      */
-    public function post($params): Response
+    public function post(array $params): Response
     {
 
         if (isset($_GET['id']) === true) {
@@ -171,7 +171,7 @@ class Show extends Controller
         return Frontcontroller::redirect(BASE_URL.'/wiki/show/');
     }
 
-    protected function setWikiAndRedirect($id)
+    protected function setWikiAndRedirect($id): Response
     {
 
         $this->wikiService->clearWikiCache();

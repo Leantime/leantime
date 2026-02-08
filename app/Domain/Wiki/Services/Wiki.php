@@ -29,12 +29,14 @@ class Wiki
     }
 
     /**
+     * Get an article by ID and project.
+     *
      * @api
      */
-    public function getArticle($id, $projectId = null): mixed
+    public function getArticle(?int $id, ?int $projectId = null): mixed
     {
 
-        if ($projectId == null) {
+        if ($projectId === null) {
             $projectId = session('currentProject');
         }
 
@@ -118,19 +120,42 @@ class Wiki
     }
 
     /**
+     * Create a new article and record an audit event.
+     *
      * @api
      */
     public function createArticle(Article $article): false|string
     {
-        return $this->wikiRepository->createArticle($article);
+        $id = $this->wikiRepository->createArticle($article);
+
+        if ($id !== false) {
+            $this->auditRepo->storeEvent(
+                action: 'article.create',
+                values: json_encode(['title' => $article->title], JSON_THROW_ON_ERROR),
+                entity: 'article',
+                entityId: (int) $id,
+                userId: (int) session('userdata.id'),
+                projectId: (int) session('currentProject')
+            );
+        }
+
+        return $id;
     }
 
     /**
+     * Update an article and record audit events for changed fields.
+     *
      * @api
      */
-    public function updateArticle(Article $article): bool
+    public function updateArticle(Article $article, ?Article $existingArticle = null): bool
     {
-        return $this->wikiRepository->updateArticle($article);
+        $result = $this->wikiRepository->updateArticle($article);
+
+        if ($result && $existingArticle !== null) {
+            $this->recordArticleChanges($existingArticle, $article);
+        }
+
+        return $result;
     }
 
     public function setCurrentWiki($id)
@@ -201,7 +226,8 @@ class Wiki
         // Get audit events for this article
         $auditEvents = $this->auditRepo->getEventsForEntity('article', $articleId, $limit);
         foreach ($auditEvents as $event) {
-            $values = ! empty($event['values']) ? json_decode($event['values'], true) : [];
+            $decoded = ! empty($event['values']) ? json_decode($event['values'], true) : [];
+            $values = is_array($decoded) ? $decoded : [];
 
             $activity[] = [
                 'type' => 'audit',
@@ -215,6 +241,94 @@ class Wiki
         }
 
         return array_slice($activity, 0, $limit);
+    }
+
+    /**
+     * Record audit events for changed fields between existing and updated articles.
+     */
+    private function recordArticleChanges(Article $existing, Article $updated): void
+    {
+        $userId = (int) session('userdata.id');
+        $projectId = (int) session('currentProject');
+        $articleId = (int) $updated->id;
+
+        if ($updated->title !== $existing->title) {
+            $this->auditRepo->storeEvent(
+                action: 'article.title',
+                values: json_encode(['from' => $existing->title, 'to' => $updated->title], JSON_THROW_ON_ERROR),
+                entity: 'article',
+                entityId: $articleId,
+                userId: $userId,
+                projectId: $projectId
+            );
+        }
+
+        if ($updated->status !== $existing->status) {
+            $this->auditRepo->storeEvent(
+                action: 'article.status',
+                values: json_encode(['from' => $existing->status, 'to' => $updated->status], JSON_THROW_ON_ERROR),
+                entity: 'article',
+                entityId: $articleId,
+                userId: $userId,
+                projectId: $projectId
+            );
+        }
+
+        if ((int) $updated->parent !== (int) $existing->parent) {
+            $this->auditRepo->storeEvent(
+                action: 'article.parent',
+                values: json_encode(['from' => $existing->parent, 'to' => $updated->parent], JSON_THROW_ON_ERROR),
+                entity: 'article',
+                entityId: $articleId,
+                userId: $userId,
+                projectId: $projectId
+            );
+        }
+
+        if ((int) $updated->milestoneId !== (int) $existing->milestoneId) {
+            $this->auditRepo->storeEvent(
+                action: 'article.milestone',
+                values: json_encode(['from' => $existing->milestoneId, 'to' => $updated->milestoneId], JSON_THROW_ON_ERROR),
+                entity: 'article',
+                entityId: $articleId,
+                userId: $userId,
+                projectId: $projectId
+            );
+        }
+
+        if ($updated->data !== ($existing->data ?? '')) {
+            $this->auditRepo->storeEvent(
+                action: 'article.icon',
+                values: json_encode(['from' => $existing->data, 'to' => $updated->data], JSON_THROW_ON_ERROR),
+                entity: 'article',
+                entityId: $articleId,
+                userId: $userId,
+                projectId: $projectId
+            );
+        }
+
+        if ($updated->tags !== ($existing->tags ?? '')) {
+            $this->auditRepo->storeEvent(
+                action: 'article.tags',
+                values: json_encode(['from' => $existing->tags, 'to' => $updated->tags], JSON_THROW_ON_ERROR),
+                entity: 'article',
+                entityId: $articleId,
+                userId: $userId,
+                projectId: $projectId
+            );
+        }
+
+        // Content edits - just record that it happened, not the diff
+        if ($updated->description !== $existing->description) {
+            $this->auditRepo->storeEvent(
+                action: 'article.edit',
+                values: '',
+                entity: 'article',
+                entityId: $articleId,
+                userId: $userId,
+                projectId: $projectId
+            );
+        }
     }
 
     public function clearWikiCache()

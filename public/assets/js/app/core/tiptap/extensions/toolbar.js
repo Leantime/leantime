@@ -149,7 +149,12 @@
                             var linkText = window.prompt('Enter link text:', url);
                             if (linkText) {
                                 editor.chain().focus()
-                                    .insertContent('<a href="' + url + '">' + linkText + '</a>')
+                                    .insertContent(linkText)
+                                    .setTextSelection({
+                                        from: editor.state.selection.from - linkText.length,
+                                        to: editor.state.selection.from
+                                    })
+                                    .setLink({ href: url })
                                     .run();
                             }
                         }

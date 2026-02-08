@@ -378,9 +378,6 @@ function createTiptapEditor(elementOrSelector, options) {
         );
     }
 
-    // Debug: Log the element we're creating the editor in
-    console.log('[Tiptap] Creating editor in element:', element, 'wrapper:', element.closest('.tiptap-wrapper'));
-
     // Create editor
     var editor = new Editor({
         element: element,
@@ -427,8 +424,6 @@ function createTiptapEditor(elementOrSelector, options) {
     // Verify editor is properly created and ensure it's interactive
     var proseMirrorEl = element.querySelector('.ProseMirror');
     if (proseMirrorEl) {
-        console.log('[Tiptap] ProseMirror element created, contenteditable:', proseMirrorEl.getAttribute('contenteditable'));
-
         // Ensure contenteditable is set
         if (proseMirrorEl.getAttribute('contenteditable') !== 'true') {
             proseMirrorEl.setAttribute('contenteditable', 'true');
@@ -442,8 +437,6 @@ function createTiptapEditor(elementOrSelector, options) {
         // Force pointer-events via inline style as fallback
         proseMirrorEl.style.pointerEvents = 'auto';
         proseMirrorEl.style.cursor = 'text';
-    } else {
-        console.error('[Tiptap] ProseMirror element NOT found!');
     }
 
     // Create toolbar if configured
@@ -453,8 +446,11 @@ function createTiptapEditor(elementOrSelector, options) {
         window.leantime.tiptapToolbar.attach({ element: element }, toolbar);
     }
 
+    // Store event handler references for cleanup
+    var handlers = {};
+
     // Click handler to ensure focus works and handle Ctrl/Cmd+click on links
-    element.addEventListener('click', function(e) {
+    handlers.click = function(e) {
         // Check if Ctrl/Cmd+click on a link
         if ((e.ctrlKey || e.metaKey) && e.target.tagName === 'A' && e.target.href) {
             e.preventDefault();
@@ -473,7 +469,8 @@ function createTiptapEditor(elementOrSelector, options) {
         if (!editor.isFocused) {
             editor.commands.focus();
         }
-    });
+    };
+    element.addEventListener('click', handlers.click);
 
     // Image upload helper function
     function uploadImage(file, callback) {
@@ -526,10 +523,10 @@ function createTiptapEditor(elementOrSelector, options) {
             return response.json();
         })
         .then(function(data) {
-            var imageUrl = leantime.appUrl + '/files/get?module=' + data.module +
-                '&encName=' + data.encName +
-                '&ext=' + data.extension +
-                '&realName=' + data.realName;
+            var imageUrl = leantime.appUrl + '/files/get?module=' + encodeURIComponent(data.module) +
+                '&encName=' + encodeURIComponent(data.encName) +
+                '&ext=' + encodeURIComponent(data.extension) +
+                '&realName=' + encodeURIComponent(data.realName);
             callback(null, imageUrl, data.realName);
         })
         .catch(function(err) {
@@ -539,7 +536,7 @@ function createTiptapEditor(elementOrSelector, options) {
     }
 
     // Handle paste events for images
-    element.addEventListener('paste', function(e) {
+    handlers.paste = function(e) {
         var items = e.clipboardData && e.clipboardData.items;
         if (!items) return;
 
@@ -557,20 +554,23 @@ function createTiptapEditor(elementOrSelector, options) {
                 break;
             }
         }
-    });
+    };
+    element.addEventListener('paste', handlers.paste);
 
     // Handle drag and drop for images
-    element.addEventListener('dragover', function(e) {
+    handlers.dragover = function(e) {
         e.preventDefault();
         element.classList.add('tiptap-dragover');
-    });
+    };
+    element.addEventListener('dragover', handlers.dragover);
 
-    element.addEventListener('dragleave', function(e) {
+    handlers.dragleave = function(e) {
         e.preventDefault();
         element.classList.remove('tiptap-dragover');
-    });
+    };
+    element.addEventListener('dragleave', handlers.dragleave);
 
-    element.addEventListener('drop', function(e) {
+    handlers.drop = function(e) {
         e.preventDefault();
         element.classList.remove('tiptap-dragover');
 
@@ -587,7 +587,8 @@ function createTiptapEditor(elementOrSelector, options) {
                 });
             }
         }
-    });
+    };
+    element.addEventListener('drop', handlers.drop);
 
     // Return wrapper object with useful methods
     return {
@@ -606,6 +607,13 @@ function createTiptapEditor(elementOrSelector, options) {
         isEditable: function() { return editor.isEditable; },
         setEditable: function(editable) { editor.setEditable(editable); },
         destroy: function() {
+            // Remove event listeners to prevent memory leaks
+            if (handlers.click) element.removeEventListener('click', handlers.click);
+            if (handlers.paste) element.removeEventListener('paste', handlers.paste);
+            if (handlers.dragover) element.removeEventListener('dragover', handlers.dragover);
+            if (handlers.dragleave) element.removeEventListener('dragleave', handlers.dragleave);
+            if (handlers.drop) element.removeEventListener('drop', handlers.drop);
+
             if (toolbar) {
                 toolbar.destroy();
             }
@@ -648,10 +656,7 @@ function setupHtmxHooks() {
         var target = event.detail.target;
         if (!target) return;
 
-        var count = EditorRegistry.destroyWithin(target);
-        if (count > 0) {
-            console.log('[Tiptap] Destroyed', count, 'editor(s) before HTMX swap');
-        }
+        EditorRegistry.destroyWithin(target);
     });
 
     // Initialize new editors after HTMX swaps content
@@ -686,7 +691,6 @@ function setupHtmxHooks() {
         });
     });
 
-    console.log('[Tiptap] HTMX integration initialized');
 }
 
 /**
@@ -800,10 +804,6 @@ var tiptapController = {
             }
         });
 
-        if (editors.length > 0) {
-            console.log('[Tiptap] Initialized', editors.length, 'editor(s)');
-        }
-
         return editors;
     },
 
@@ -847,17 +847,14 @@ var tiptapController = {
 
     registerExtension: function(name, extension) {
         extensionRegistry.set(name, extension);
-        console.log('[Tiptap] Registered extension:', name);
     },
 
     registerSlashCommand: function(command, handler) {
         slashCommandRegistry.set(command, handler);
-        console.log('[Tiptap] Registered slash command:', command);
     },
 
     registerToolbarButton: function(name, config) {
         toolbarButtonRegistry.set(name, config);
-        console.log('[Tiptap] Registered toolbar button:', name);
     },
 
     getSlashCommands: function() {

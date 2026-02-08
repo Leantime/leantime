@@ -5,6 +5,9 @@ namespace Leantime\Domain\Reactions\Repositories;
 use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
 
+/**
+ * Repository for managing user reactions on entities.
+ */
 class Reactions
 {
     private ConnectionInterface $db;
@@ -15,7 +18,7 @@ class Reactions
     }
 
     /**
-     * addReaction - adds a reaction to an entity
+     * Add a reaction to an entity.
      */
     public function addReaction(int $userId, string $module, int $moduleId, string $reaction): bool
     {
@@ -24,7 +27,7 @@ class Reactions
             'moduleId' => $moduleId,
             'userId' => $userId,
             'reaction' => $reaction,
-            'date' => date('Y-m-d H:i:s'),
+            'date' => dtHelper()->userNow()->formatDateTimeForDb(),
         ]);
     }
 
@@ -141,7 +144,7 @@ class Reactions
             $grouped[$reaction]['reactionCount']++;
             $grouped[$reaction]['users'][] = [
                 'userId' => $row->userId,
-                'name' => trim($row->firstname.' '.$row->lastname),
+                'name' => trim(($row->firstname ?? '').' '.($row->lastname ?? '')),
             ];
         }
 

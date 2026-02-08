@@ -351,10 +351,18 @@ function showMermaidDialog(editor) {
                     window.mermaid.render(id, code).then(function(result) {
                         previewArea.innerHTML = result.svg;
                     }).catch(function(error) {
-                        previewArea.innerHTML = '<span class="tiptap-mermaid-dialog__preview-error">' + (error.message || 'Invalid syntax') + '</span>';
+                        var errorSpan = document.createElement('span');
+                        errorSpan.className = 'tiptap-mermaid-dialog__preview-error';
+                        errorSpan.textContent = error.message || 'Invalid syntax';
+                        previewArea.innerHTML = '';
+                        previewArea.appendChild(errorSpan);
                     });
                 } catch (error) {
-                    previewArea.innerHTML = '<span class="tiptap-mermaid-dialog__preview-error">' + (error.message || 'Error') + '</span>';
+                    var errorSpan = document.createElement('span');
+                    errorSpan.className = 'tiptap-mermaid-dialog__preview-error';
+                    errorSpan.textContent = error.message || 'Error';
+                    previewArea.innerHTML = '';
+                    previewArea.appendChild(errorSpan);
                 }
             }
         }, 500);

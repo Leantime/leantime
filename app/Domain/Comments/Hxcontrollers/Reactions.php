@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Leantime\Domain\Comments\Hxcontrollers;
 
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Reactions\Services\Reactions as ReactionsService;
 
+/**
+ * HTMX Controller for managing comment reactions (toggle, get).
+ */
 class Reactions extends HtmxController
 {
     protected static string $view = 'comments::partials.reactions';
@@ -21,11 +26,20 @@ class Reactions extends HtmxController
      */
     public function toggle(): void
     {
-        $commentId = (int) ($_GET['commentId'] ?? 0);
-        $reaction = $_POST['reaction'] ?? '';
-        $userId = session('userdata.id');
+        $commentId = (int) $this->incomingRequest->query->get('commentId', 0);
+        $reaction = (string) $this->incomingRequest->request->get('reaction', '');
+        $userId = (int) session('userdata.id');
 
         if (! $commentId || ! $reaction || ! $userId) {
+            $this->tpl->assign('reactions', []);
+            $this->tpl->assign('commentId', 0);
+            $this->tpl->assign('userReactions', []);
+
+            return;
+        }
+
+        // Validate reaction against known types
+        if ($this->reactionsService->getReactionType($reaction) === false) {
             $this->tpl->assign('reactions', []);
             $this->tpl->assign('commentId', 0);
             $this->tpl->assign('userReactions', []);
@@ -58,8 +72,8 @@ class Reactions extends HtmxController
      */
     public function get(): void
     {
-        $commentId = (int) ($_GET['commentId'] ?? 0);
-        $userId = session('userdata.id');
+        $commentId = (int) $this->incomingRequest->query->get('commentId', 0);
+        $userId = (int) session('userdata.id');
 
         if (! $commentId) {
             $this->tpl->assign('reactions', []);
@@ -75,7 +89,7 @@ class Reactions extends HtmxController
     /**
      * Load reactions data for template.
      */
-    private function loadReactions(int $commentId, ?int $userId): void
+    private function loadReactions(int $commentId, int $userId): void
     {
         // Get reactions with user names for tooltips
         $reactionsWithUsers = $this->reactionsService->getEntityReactionsWithUsers('comment', $commentId);

@@ -142,7 +142,8 @@ function getEmbedUrl(url, type, id) {
             return url;
 
         default:
-            return url;
+            // Unknown embed type - return null to reject
+            return null;
     }
 }
 
@@ -335,7 +336,7 @@ var EmbedNode = Node.create({
                     // Allow all permissions needed for editable embeds
                     allow: 'accelerometer; autoplay; clipboard-read; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen; camera; microphone',
                     // Sandbox with permissions for editing
-                    sandbox: 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals',
+                    sandbox: 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals',
                     title: attrs.title || getTypeName(type) + ' embed',
                     loading: 'lazy',
                 }
@@ -359,6 +360,11 @@ var EmbedNode = Node.create({
 
                     var embedId = extractId(url, type);
                     var embedSrc = getEmbedUrl(url, type, embedId);
+
+                    if (!embedSrc) {
+                        console.warn('[Embed] Could not generate embed URL for:', url);
+                        return false;
+                    }
 
                     return commands.insertContent({
                         type: self.name,

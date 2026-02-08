@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Leantime\Core\Support;
 
 /**
- * Enum class FromFormat
+ * Enum representing the available editor types in Leantime.
  *
- * An enumeration class representing various formats for date and time values.
+ * Each case maps to a specific editor configuration with varying feature sets.
  */
 enum EditorTypeEnum: string
 {
