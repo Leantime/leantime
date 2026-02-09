@@ -48,6 +48,13 @@ class TicketHistoryController extends Controller
                 'error' => 'No ticket ID provided'
             ], 400);
         }
+        
+        if ($oldStatusText === $newStatusText) {
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'No change detected'
+        ]);
+    }
 
         try {
             $insertId = $this->ticketHistoryModel->addStatusChange(
