@@ -591,7 +591,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     gap: 4px;
     padding: 8px 12px;
     background: var(--toolbar-background, rgba(255, 255, 255, 0.95));
-    border: 1px solid var(--main-border-color, rgba(0, 0, 0, 0.06));
+    border: 1px solid var(--main-border-color, #ddd);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
     flex-wrap: wrap;
     backdrop-filter: blur(8px);

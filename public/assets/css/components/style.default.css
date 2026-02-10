@@ -1737,6 +1737,21 @@ a.filter-term {
     font-weight: bold;
 }
 
+.noteForm {
+    background: var(--secondary-background, #f5f5f5);
+    border-radius: 15px;
+    padding: 20px;
+    padding-bottom: 10px;
+}
+
+.noteForm .tiptap-toolbar {
+    background: var(--main-background, #fff);
+}
+
+.noteForm .tiptap-editor:focus-within {
+    box-shadow: none;
+}
+
 .commentBox {
     margin-top:15px;
 }

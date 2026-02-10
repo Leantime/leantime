@@ -835,8 +835,9 @@ var tiptapController = {
     },
 
     initNotesEditor: function(callback) {
-        var editors = initEditorsBySelector('textarea.tiptapNotes', {
-            placeholder: "Start writing your note...",
+        var editors = initEditorsBySelector('textarea.tiptapNotes, textarea.notesEditor', {
+            placeholder: "Type '/' for commands or start writing...",
+            toolbar: 'notes',
             tables: true,
             onBlur: callback,
         });
