@@ -869,6 +869,7 @@ var tiptapController = {
 // Make available globally
 window.leantime = window.leantime || {};
 window.leantime.tiptapController = tiptapController;
+window.leantime.editorController = tiptapController;
 
 // Expose Phase 6 extension dialogs for slash commands
 window.leantime.tiptapMermaid = { showMermaidDialog: showMermaidDialog };
