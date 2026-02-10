@@ -35,12 +35,11 @@ leantime.timesheetsController = (function () {
                 },
                 "columnDefs": [
                     {
-                        "targets": 5, // Difference column (index 5)
-                        "searchable": false // Disable filtering for this column
+                        "targets": 5,
+                        "searchable": false
                     }
                 ],
                 "dom": '<"top">rt<"bottom"ilp><"clear">',
-                // CUSTOM: Enable searching for modern search component
                 "searching": true,
                 "stateSave": true,
                 "displayLength": 100,
@@ -61,14 +60,12 @@ leantime.timesheetsController = (function () {
                                 columns: ':visible',
                                 format: {
                                     body: function (data, row, column, node) {
-                                        // Use the export formatter if available
                                         if (typeof window.leantime !== 'undefined' &&
                                             typeof window.leantime.timesheetsExport !== 'undefined' &&
                                             typeof window.leantime.timesheetsExport.resolveCell === 'function') {
                                             return window.leantime.timesheetsExport.resolveCell(jQuery(node), data);
                                         }
 
-                                        // Fallback to original logic
                                         if (typeof jQuery(node).data('order') !== 'undefined') {
                                             data = jQuery(node).data('order');
                                         }
@@ -95,7 +92,6 @@ leantime.timesheetsController = (function () {
                             .append(buttonsContainer);
                     }
                 } catch (e) {
-                    // Swallow exception to avoid breaking rendering if Buttons fails
                 }
             }
 
@@ -103,7 +99,6 @@ leantime.timesheetsController = (function () {
                 allTimesheets.draw(false);
             });
 
-            // CUSTOM: Initialize modern search component
             if (typeof leantime.timesheetSearch !== 'undefined') {
                 leantime.timesheetSearch.init(allTimesheets);
             }
@@ -113,7 +108,6 @@ leantime.timesheetsController = (function () {
 var isReady = false;
 var pendingClick = null;
 
-// Early click handler
 document.addEventListener('click', function(e) {
     var target = e.target.closest('.editTimeModal');
     if (target && !isReady) {
@@ -128,10 +122,6 @@ document.addEventListener('click', function(e) {
 }, true);
 
 function initWhenReady() {
-    if (typeof jQuery === 'undefined') {
-        setTimeout(initWhenReady, 100);
-        return;
-    }
     
     if (typeof jQuery.fn.nyroModal === 'undefined') {
         setTimeout(initWhenReady, 100);
@@ -184,9 +174,6 @@ var initEditTimeModal = function () {
 
 initWhenReady();
 
-    /**
-     * Format hours according to user preference
-     */
     var formatHours = function (hours) {
         var hoursFormat = jQuery('.timesheetTable').data('hours-format') ||
             jQuery('#allTimesheetsTable').data('hours-format') ||
@@ -201,9 +188,6 @@ initWhenReady();
         return formatHoursHuman(hours);
     };
 
-    /**
-     * Convert decimal hours to human-readable format
-     */
     var formatHoursHuman = function (hours) {
         var totalMinutes = Math.round(hours * 60);
 
@@ -244,8 +228,6 @@ initWhenReady();
         return parts.join(' ');
     };
 
-
-    // Make public what you want to have public, everything else is private
     return {
         initTimesheetsTable: initTimesheetsTable,
         initEditTimeModal: initEditTimeModal,
