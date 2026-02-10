@@ -525,7 +525,7 @@ class Projects
                 'zp_user.lastname',
             ])
             ->leftJoin('zp_user', function ($join) {
-                $join->on('zp_tickets.editorId', '=', $this->connection->raw('CAST("zp_user"."id" AS TEXT)'));
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw('CAST("zp_user"."id" AS CHAR)'));
             })
             ->where('projectId', $projectId)
             ->orderBy('zp_tickets.editFrom')
