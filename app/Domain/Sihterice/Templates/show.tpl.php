@@ -324,6 +324,13 @@ defined('RESTRICTED') or exit('Restricted access');
     const API_TOKEN = '<?php echo $tpl->get('sihtericeToken'); ?>'
     let isEditing = false
 
+    // Headers for API call
+    function getApiHeaders(extra = {}) {
+        const h = { 'Authorization': `Bearer ${API_TOKEN}` };
+        if (API_HOST.includes('ngrok')) h['ngrok-skip-browser-warning'] = '1';
+        return { ...h, ...extra };
+    }
+
     // MODAL FUNCTIONS
     function openModal(employee = null) {
         const modal = document.getElementById('employeeModal')
@@ -390,7 +397,7 @@ defined('RESTRICTED') or exit('Restricted access');
 
         try {
             const res = await fetch(`${API_BASE}/all`, {
-                headers: {'Authorization': `Bearer ${API_TOKEN}`}
+                headers: getApiHeaders()
             })
             const result = await res.json()
 
@@ -469,20 +476,14 @@ defined('RESTRICTED') or exit('Restricted access');
                 // Update existing
                 res = await fetch(`${API_BASE}/edit/${id}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_TOKEN}`
-                    },
+                    headers: getApiHeaders({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify({ firstName, lastName, email, position })
                 })
             } else {
                 // Create new
                 res = await fetch(`${API_BASE}/create`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_TOKEN}`
-                    },
+                    headers: getApiHeaders({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify({ firstName, lastName, email, position })
                 })
             }
@@ -548,7 +549,7 @@ defined('RESTRICTED') or exit('Restricted access');
         try {
             const res = await fetch(`${API_BASE}/remove/${id}`, {
                 method: 'DELETE',
-                headers: {'Authorization': `Bearer ${API_TOKEN}`}
+                headers: getApiHeaders()
             })
             const result = await res.json()
 
@@ -594,11 +595,11 @@ defined('RESTRICTED') or exit('Restricted access');
 
         try {
             const res = await fetch(url, {
-                headers: {'Authorization': `Bearer ${API_TOKEN}`}
+                headers: getApiHeaders()
             })
 
             if (!res.ok) {
-                const result = await res.json()
+                let result; try { result = await res.json(); } catch (_) { result = {}; }
                 showNotification(result.error || 'Error downloading worksheet', 'error')
                 return
             }
@@ -630,11 +631,11 @@ defined('RESTRICTED') or exit('Restricted access');
             showNotification('Generating worksheets, please wait...', 'info')
 
             const res = await fetch(url, {
-                headers: {'Authorization': `Bearer ${API_TOKEN}`}
+                headers: getApiHeaders()
             })
 
             if (!res.ok) {
-                const result = await res.json()
+                let result; try { result = await res.json(); } catch (_) { result = {}; }
                 showNotification(result.error || 'Error downloading worksheets', 'error')
                 return
             }

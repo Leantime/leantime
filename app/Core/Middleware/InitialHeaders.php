@@ -32,7 +32,7 @@ class InitialHeaders
             "img-src * 'self' *.leantime.io *.amazonaws.com data: blob: marketplace.localhost",
             "frame-src 'self' *.google.com *.microsoft.com *.live.com",
             "frame-ancestors 'self' *.google.com *.microsoft.com *.live.com",
-            "connect-src 'self' " . (config('app.sihterice_address') ?: 'http://localhost:3300'),
+            "connect-src 'self' https://st-api.pearshadow.com http://host.docker.internal:3300 https://*.ngrok-free.app " . trim((string) (config('app.sihterice_address') ?? '')),
         ];
         $cspParts = self::dispatchFilter('cspParts', $cspParts);
         $csp = implode(';', $cspParts);
