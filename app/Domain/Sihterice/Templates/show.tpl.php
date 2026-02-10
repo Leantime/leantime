@@ -319,8 +319,8 @@ defined('RESTRICTED') or exit('Restricted access');
 </div>
 
 <script>
-    const API_BASE = 'http://localhost:3100/api/employees'
-    const API_HOST = 'http://localhost:3100'
+    const API_BASE = <?php echo json_encode($tpl->get('sihtericeAddress') . '/api/employees'); ?>;
+    const API_HOST = <?php echo json_encode($tpl->get('sihtericeAddress')); ?>;
     const API_TOKEN = '<?php echo $tpl->get('sihtericeToken'); ?>'
     let isEditing = false
 
@@ -590,7 +590,7 @@ defined('RESTRICTED') or exit('Restricted access');
         const month = document.getElementById('monthSelector').value
         const year = document.getElementById('yearSelector').value
 
-        const url = `http://localhost:3100/api/worksheets/download/employee/${employeeId}/${month}/${year}`
+        const url = `${API_HOST}/api/worksheets/download/employee/${employeeId}/${month}/${year}`
 
         try {
             const res = await fetch(url, {

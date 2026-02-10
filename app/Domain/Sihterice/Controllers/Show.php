@@ -14,6 +14,7 @@ class Show extends Controller
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
         $this->tpl->assign('sihtericeToken', env('SIHTERICE_TOKEN', ''));
+        $this->tpl->assign('sihtericeAddress', env('SIHTERICE_ADDRESS', 'http://localhost:3300'));
 
         return $this->tpl->display('sihterice.show');
     }
