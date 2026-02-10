@@ -609,9 +609,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     border-top: none;
 }
 
-/* Adjust editor border radius when toolbar is present */
-.tiptap-wrapper .tiptap-toolbar--top + .tiptap-editor,
-.tiptap-wrapper .tiptap-editor:has(+ .tiptap-toolbar--bottom) {
+/* Adjust editor border radius when top toolbar is present */
+.tiptap-wrapper .tiptap-toolbar--top + .tiptap-editor {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }

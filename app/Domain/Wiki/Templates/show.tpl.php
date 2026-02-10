@@ -619,7 +619,8 @@ jQuery(document).ready(function() {
         function showToolbar() {
             if (window.leantime.tiptapToolbar) {
                 var toolbar = window.leantime.tiptapToolbar.create(editor, 'complex');
-                window.leantime.tiptapToolbar.attach({ element: editorEl }, toolbar);
+                var tiptapEditorEl = wrapper.querySelector('.tiptap-editor');
+                window.leantime.tiptapToolbar.attach({ element: tiptapEditorEl || editorEl }, toolbar);
             }
         }
 
