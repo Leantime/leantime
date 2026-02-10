@@ -237,6 +237,9 @@ function createTiptapEditor(elementOrSelector, options) {
             // Create new editor container
             editorEl = document.createElement('div');
             editorEl.className = 'tiptap-editor';
+            if (options.toolbar && typeof options.toolbar === 'string') {
+                editorEl.classList.add('tiptap-' + options.toolbar);
+            }
             if (textarea.id) {
                 editorEl.setAttribute('data-textarea-id', textarea.id);
             }
@@ -249,6 +252,9 @@ function createTiptapEditor(elementOrSelector, options) {
             // Create editor container
             editorEl = document.createElement('div');
             editorEl.className = 'tiptap-editor';
+            if (options.toolbar && typeof options.toolbar === 'string') {
+                editorEl.classList.add('tiptap-' + options.toolbar);
+            }
             if (textarea.id) {
                 editorEl.setAttribute('data-textarea-id', textarea.id);
             }

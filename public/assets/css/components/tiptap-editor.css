@@ -58,7 +58,7 @@
     position: relative;
     background: var(--main-background, #fff);
     border: 1px solid var(--main-border-color, #ddd);
-    border-radius: var(--box-radius, 8px);
+    border-radius: 15px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     min-height: 150px;
     z-index: 1;
@@ -599,12 +599,13 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 }
 
 .tiptap-toolbar--top {
-    border-radius: 12px 12px 0 0;
+    border-radius: 15px 15px 0 0;
     border-bottom: none;
+    box-shadow: none;
 }
 
 .tiptap-toolbar--bottom {
-    border-radius: 0 0 12px 12px;
+    border-radius: 0 0 15px 15px;
     border-top: none;
 }
 
@@ -703,8 +704,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 }
 
 .tiptap-wrapper .tiptap-editor + .tiptap-toolbar--bottom {
-    border-bottom-left-radius: var(--box-radius, 8px);
-    border-bottom-right-radius: var(--box-radius, 8px);
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
 }
 
 /* When bottom toolbar is present, remove bottom border radius from editor */

@@ -1737,6 +1737,10 @@ a.filter-term {
     font-weight: bold;
 }
 
+.commentBox {
+    margin-top:15px;
+}
+
 .commentBox textarea {
     width: 80%;
     height: 70px;
