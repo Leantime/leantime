@@ -268,7 +268,7 @@ class Timesheets extends Repository
     public function getHoursBooked(): mixed
     {
         $result = $this->db->table('zp_timesheets')
-            ->selectRaw('SUM(hours) AS "hoursBooked"')
+            ->selectRaw('SUM(hours) AS '.$this->dbHelper->wrapColumn('hoursBooked'))
             ->first();
 
         return $result->hoursBooked ?? 0;
@@ -335,14 +335,15 @@ class Timesheets extends Repository
     public function getUsersTicketHours(int $ticketId, int $userId): mixed
     {
         // Use raw SQL for DATE_FORMAT as it's MySQL/PostgreSQL specific
+        $wrappedWorkDate = $this->dbHelper->wrapColumn('workDate');
         $dateFormatSql = match ($this->dbHelper->getDriverName()) {
-            'mysql' => "DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d')",
-            'pgsql' => "TO_CHAR(zp_timesheets.\"workDate\", 'YYYY-MM-DD')",
-            default => "DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d')",
+            'mysql' => "DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d')",
+            'pgsql' => "TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'YYYY-MM-DD')",
+            default => "DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d')",
         };
 
         $result = $this->db->table('zp_timesheets')
-            ->selectRaw('SUM(hours) AS "sumHours"')
+            ->selectRaw('SUM(hours) AS '.$this->dbHelper->wrapColumn('sumHours'))
             ->where('ticketId', $ticketId)
             ->where('userId', $userId)
             ->groupByRaw($dateFormatSql)
@@ -393,10 +394,11 @@ class Timesheets extends Repository
     {
         // Note: WITH ROLLUP is MySQL-specific and not supported in PostgreSQL
         // This would need a different approach for PostgreSQL if this method is used
+        $wrappedWorkDate = $this->dbHelper->wrapColumn('workDate');
         $monthSql = match ($this->dbHelper->getDriverName()) {
-            'mysql' => 'MONTH(zp_timesheets."workDate")',
-            'pgsql' => 'EXTRACT(MONTH FROM zp_timesheets."workDate")::integer',
-            default => 'MONTH(zp_timesheets."workDate")',
+            'mysql' => "MONTH(zp_timesheets.{$wrappedWorkDate})",
+            'pgsql' => "EXTRACT(MONTH FROM zp_timesheets.{$wrappedWorkDate})::integer",
+            default => "MONTH(zp_timesheets.{$wrappedWorkDate})",
         };
 
         $results = $this->db->table('zp_timesheets')
@@ -418,25 +420,27 @@ class Timesheets extends Repository
      */
     public function getLoggedHoursForTicket(int $ticketId): array
     {
+        $wrappedWorkDate = $this->dbHelper->wrapColumn('workDate');
+        $wrappedMonthName = $this->dbHelper->wrapColumn('monthName');
         $dateFormatYearSql = match ($this->dbHelper->getDriverName()) {
-            'mysql' => "YEAR(zp_timesheets.\"workDate\") AS year,
-                        DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d') AS utc,
-                        DATE_FORMAT(zp_timesheets.\"workDate\", '%M') AS \"monthName\",
-                        DATE_FORMAT(zp_timesheets.\"workDate\", '%m') AS month",
-            'pgsql' => "EXTRACT(YEAR FROM zp_timesheets.\"workDate\")::integer AS year,
-                        TO_CHAR(zp_timesheets.\"workDate\", 'YYYY-MM-DD') AS utc,
-                        TO_CHAR(zp_timesheets.\"workDate\", 'Month') AS \"monthName\",
-                        TO_CHAR(zp_timesheets.\"workDate\", 'MM') AS month",
-            default => "YEAR(zp_timesheets.\"workDate\") AS year,
-                        DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d') AS utc,
-                        DATE_FORMAT(zp_timesheets.\"workDate\", '%M') AS \"monthName\",
-                        DATE_FORMAT(zp_timesheets.\"workDate\", '%m') AS month",
+            'mysql' => "YEAR(zp_timesheets.{$wrappedWorkDate}) AS year,
+                        DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d') AS utc,
+                        DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%M') AS {$wrappedMonthName},
+                        DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%m') AS month",
+            'pgsql' => "EXTRACT(YEAR FROM zp_timesheets.{$wrappedWorkDate})::integer AS year,
+                        TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'YYYY-MM-DD') AS utc,
+                        TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'Month') AS {$wrappedMonthName},
+                        TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'MM') AS month",
+            default => "YEAR(zp_timesheets.{$wrappedWorkDate}) AS year,
+                        DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d') AS utc,
+                        DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%M') AS {$wrappedMonthName},
+                        DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%m') AS month",
         };
 
         $groupBySql = match ($this->dbHelper->getDriverName()) {
-            'mysql' => "DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d')",
-            'pgsql' => "TO_CHAR(zp_timesheets.\"workDate\", 'YYYY-MM-DD')",
-            default => "DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d')",
+            'mysql' => "DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d')",
+            'pgsql' => "TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'YYYY-MM-DD')",
+            default => "DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d')",
         };
 
         $results = $this->db->table('zp_timesheets')
@@ -492,25 +496,27 @@ class Timesheets extends Repository
 
     public function getTimesheetsByTicket($id)
     {
+        $wrappedWorkDate = $this->dbHelper->wrapColumn('workDate');
+        $wrappedMonthName = $this->dbHelper->wrapColumn('monthName');
         $dateFormatSql = match ($this->dbHelper->getDriverName()) {
-            'mysql' => "YEAR(zp_timesheets.\"workDate\") AS year,
-                        DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d') AS utc,
-                        DATE_FORMAT(zp_timesheets.\"workDate\", '%M') AS \"monthName\",
-                        DATE_FORMAT(zp_timesheets.\"workDate\", '%m') AS month",
-            'pgsql' => "EXTRACT(YEAR FROM zp_timesheets.\"workDate\")::integer AS year,
-                        TO_CHAR(zp_timesheets.\"workDate\", 'YYYY-MM-DD') AS utc,
-                        TO_CHAR(zp_timesheets.\"workDate\", 'Month') AS \"monthName\",
-                        TO_CHAR(zp_timesheets.\"workDate\", 'MM') AS month",
-            default => "YEAR(zp_timesheets.\"workDate\") AS year,
-                        DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d') AS utc,
-                        DATE_FORMAT(zp_timesheets.\"workDate\", '%M') AS \"monthName\",
-                        DATE_FORMAT(zp_timesheets.\"workDate\", '%m') AS month",
+            'mysql' => "YEAR(zp_timesheets.{$wrappedWorkDate}) AS year,
+                        DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d') AS utc,
+                        DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%M') AS {$wrappedMonthName},
+                        DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%m') AS month",
+            'pgsql' => "EXTRACT(YEAR FROM zp_timesheets.{$wrappedWorkDate})::integer AS year,
+                        TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'YYYY-MM-DD') AS utc,
+                        TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'Month') AS {$wrappedMonthName},
+                        TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'MM') AS month",
+            default => "YEAR(zp_timesheets.{$wrappedWorkDate}) AS year,
+                        DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d') AS utc,
+                        DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%M') AS {$wrappedMonthName},
+                        DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%m') AS month",
         };
 
         $groupBySql = match ($this->dbHelper->getDriverName()) {
-            'mysql' => "DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d')",
-            'pgsql' => "TO_CHAR(zp_timesheets.\"workDate\", 'YYYY-MM-DD')",
-            default => "DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d')",
+            'mysql' => "DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d')",
+            'pgsql' => "TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'YYYY-MM-DD')",
+            default => "DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d')",
         };
 
         $results = $this->db->table('zp_timesheets')
@@ -813,10 +819,11 @@ class Timesheets extends Repository
     public function updateHours(array $values): void
     {
         // TO_DAYS is MySQL-specific, use a workaround for PostgreSQL
+        $wrappedWorkDate = $this->dbHelper->wrapColumn('workDate');
         $toDaysSql = match ($this->dbHelper->getDriverName()) {
-            'mysql' => 'TO_DAYS("workDate") = TO_DAYS(?)',
-            'pgsql' => 'DATE("workDate") = DATE(?)',
-            default => 'TO_DAYS("workDate") = TO_DAYS(?)',
+            'mysql' => "TO_DAYS({$wrappedWorkDate}) = TO_DAYS(?)",
+            'pgsql' => "DATE({$wrappedWorkDate}) = DATE(?)",
+            default => "TO_DAYS({$wrappedWorkDate}) = TO_DAYS(?)",
         };
 
         $query = "UPDATE zp_timesheets
@@ -898,7 +905,7 @@ class Timesheets extends Repository
      */
     public function getTicketPlanHours(int $ticketId): float
     {
-        $query = 'SELECT "planHours" FROM zp_tickets WHERE id = :ticketId LIMIT 1';
+        $query = 'SELECT '.$this->dbHelper->wrapColumn('planHours').' FROM zp_tickets WHERE id = :ticketId LIMIT 1';
 
         $call = $this->dbcall(func_get_args());
 
