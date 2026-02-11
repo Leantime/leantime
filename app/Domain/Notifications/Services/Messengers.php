@@ -76,9 +76,28 @@ class Messengers
         $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
 
         $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.slackWebhookURL");
-        
+
         if ($slackWebhookURL !== '' && $slackWebhookURL !== false && !is_array($notification->entity) && (str_contains(strtolower($statusLabelsArray[$notification->entity->status]['name']), 'ready to test') || str_contains(strtolower($statusLabelsArray[$notification->entity->status]['name']), 'qa')) ) {
             $message = $this->prepareMessage($notification);
+
+            $entity = $notification->entity;
+
+            $ticketId     = $entity->id ?? '';
+            $projectKey   = trim($entity->projectKey ?? '');
+            $headline     = $entity->headline ?? '';
+            $ticketUrl    = $notification->url['url'] ?? '';
+
+            $ticketNumber = $projectKey ? $projectKey . '-' . $ticketId : ($ticketId ? '#' . $ticketId : '');
+
+            $title = $ticketNumber ? "$ticketNumber - $headline" : $headline;
+
+            $message[0] = [
+                'pretext'    => session('userdata.name') . " has the ticket ready to test",
+                'fallback'   => session('userdata.name') . " has the ticket ready to test",
+                'title'      => $title,
+                'title_link' => $ticketUrl,
+                'color'      => '#006d9f',
+            ];
 
             $data = [
                 'text' => '',

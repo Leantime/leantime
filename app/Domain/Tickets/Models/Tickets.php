@@ -66,6 +66,8 @@ class Tickets
 
     public ?string $projectName = '';
 
+    public ?string $projectKey = null;
+
     public ?string $clientName = '';
 
     public ?string $userFirstname = '';
@@ -122,6 +124,7 @@ class Tickets
             $this->dependingTicketId = $values['dependingTicketId'] ?? '';
             $this->milestoneid = $values['milestoneid'] ?? '';
             $this->projectName = $values['projectName'] ?? '';
+            $this->projectKey = $values['projectKey'] ?? null;
             $this->clientName = $values['clientName'] ?? '';
             $this->userFirstname = $values['userFirstname'] ?? '';
             $this->userLastname = $values['userLastname'] ?? '';
