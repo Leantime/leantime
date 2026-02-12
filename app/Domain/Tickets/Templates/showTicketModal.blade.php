@@ -32,15 +32,15 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         Updated: <?= format($ticket->date)->date(); ?> </small>
     <div class="title-button-wrapper">
         <h1 class="tw-mb-0" style="margin-bottom:0px;">
-            <i class="fa fa-clone"
-               style="cursor: pointer; margin-left: 10px; font-size: 0.8em; color: #666;"
-               title="Copy ticket URL"
-               onclick="navigator.clipboard.writeText('<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/tickets/showKanban?tab=ticketdetails#' . $_SERVER['REQUEST_URI']; ?>').then(()=>{this.className='fa fa-check';this.style.color='#28a745';setTimeout(()=>{this.className='fa fa-clone';this.style.color='#666'},2000)})"></i>
             <i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i>
             <?php
             $projectKey = $ticket->projectKey ?? $projectData['projectKey'] ?? '';
             echo !empty($projectKey) ? $projectKey . '-' : '#';
             ?><?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?>
+            <i class="fa fa-clone"
+               style="cursor: pointer; margin-left: 10px; font-size: 0.8em; color: #666;"
+               title="Copy ticket URL"
+               onclick="navigator.clipboard.writeText('<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/tickets/showKanban?tab=ticketdetails#' . $_SERVER['REQUEST_URI']; ?>').then(()=>{this.className='fa fa-check';this.style.color='#28a745';setTimeout(()=>{this.className='fa fa-clone';this.style.color='#666'},2000)})"></i>
         </h1>
     </div>
     <br/>
