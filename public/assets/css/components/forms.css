@@ -798,9 +798,8 @@ input[type=color] {
 
 
 body input[type=text].main-title-input.main-title-input {
-    border: 1px solid transparent;
-    border-bottom:1px solid var(--main-border-color);
-    border-radius:0px;
+    border: 1px solid var(--main-border-color);
+    border-radius:var(--box-radius);
     box-shadow:none;
     font-size:var(--font-size-xxxl);
     margin-bottom:5px;

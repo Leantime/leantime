@@ -66,8 +66,7 @@
 }
 
 .tiptap-editor:focus-within {
-    border-color: var(--main-border-color, #ccc);
-    box-shadow: 0 0 0 2px var(--dropdown-link-hover-bg, rgba(0, 0, 0, 0.05));
+    border-color: var(--main-border-color-hover, #ccc);
 }
 
 /* ==========================================================================
