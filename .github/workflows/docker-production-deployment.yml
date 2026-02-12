@@ -259,7 +259,7 @@ jobs:
           
           echo ""
           echo "[INFO] Testing endpoint..."
-          curl -I https://pearlog-prod.pearshadow.com || echo "Endpoint test failed"
+          curl -I https://pearlog.pearshadow.com || echo "Endpoint test failed"
           
           echo ""
           echo "[SUCCESS] Verification complete!"

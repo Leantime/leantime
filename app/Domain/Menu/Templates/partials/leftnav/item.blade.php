@@ -18,6 +18,9 @@
                @endforeach
            @endif
         >
+            @if(isset($menuItem['icon']) && !str_starts_with(trim((string)($menuItem['title'] ?? '')), '<'))
+                <span class="{{ $menuItem['icon'] }}"></span>
+            @endif
             {!! $menuItem['title'] !!}
         </a>
     </li>
