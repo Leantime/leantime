@@ -14,16 +14,16 @@ enum EditorTypeEnum: string
     /**
      * Shows a simplified editor used for comments
      */
-    case Simple = 'simpleEditor';
+    case Simple = 'tiptapSimple';
 
     /**
      * Shows a more complex editor for entity descriptions
      */
-    case Complex = 'complexEditor';
+    case Complex = 'tiptapComplex';
 
     /**
      * Shows the full editor with all features
      */
-    case Notes = 'notesEditor';
+    case Notes = 'tiptapNotes';
 
 }

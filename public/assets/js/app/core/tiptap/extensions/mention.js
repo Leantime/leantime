@@ -28,7 +28,7 @@ const LeantimeMention = Mention.extend({
         ];
     },
 
-    // Parse mentions from existing HTML (both old TinyMCE format and new format)
+    // Parse mentions from existing HTML (both legacy format and current format)
     parseHTML: function() {
         return [
             {

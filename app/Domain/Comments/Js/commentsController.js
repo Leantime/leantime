@@ -48,7 +48,7 @@ leantime.commentsController = (function () {
 
         jQuery('.commentBox').hide('fast', function () {});
 
-        jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="simpleEditor"></textarea>');
+        jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tiptapSimple"></textarea>');
         if (window.leantime && window.leantime.tiptapController) {
             leantime.tiptapController.initSimpleEditor();
         }

@@ -124,7 +124,7 @@ $moduleId = $_GET['id'] ?? '';
 
                     var url = jQuery(this).attr("href");
 
-                    //File picker upload callback from tinymce
+                    //File picker upload callback from editor
                     window.filePickerCallback(url, {text: "file"});
 
                     jQuery.nmTop().close();
