@@ -26,13 +26,13 @@
             </div>
         </div>
 
-        <div id="comment-{{ $formHash }}-0" class="commentBox-{{ $formHash }} commenterFields" style="display:none;">
+        <div id="comment-{{ $formHash }}-0" class="commentBox-{{ $formHash }} commenterFields tw:hidden">
             <div class="commentImage">
                 <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}" />
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
-                <input type="submit" value="{{ __('buttons.save') }}" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
+                <input type="submit" value="{{ __('buttons.save') }}" name="comment" class="btn btn-primary btn-success tw:ml-0"/>
             </div>
             <input type="hidden" name="comment" class="commenterField" value="1"/>
             <input type="hidden" name="father" class="commenterField" id="father-{{ $formHash }}" value="0"/>
@@ -57,7 +57,7 @@
                                     format($row['date'])->time()
                                 ) !!}
                                     @if($login::userIsAtLeast($roles::$editor))
-                                        <div class="inlineDropDownContainer" style="float:right; margin-left:10px;">
+                                        <div class="inlineDropDownContainer tw:float-right tw:ml-2.5">
                                             <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                             </a>
@@ -138,7 +138,7 @@
                                     </div>
                                 @endforeach
                             @endif
-                            <div style="display:none;" id="comment-{{ $formHash }}-{{ $row['id'] }}" class="commentBox">
+                            <div class="commentBox tw:hidden" id="comment-{{ $formHash }}-{{ $row['id'] }}">
                                 <div class="commentImage">
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}"/>
                                 </div>

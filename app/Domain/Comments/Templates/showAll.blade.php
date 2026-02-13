@@ -18,7 +18,7 @@
 <form method="post" accept-charset="utf-8" action="{{ $formUrl }}"
       id="commentForm">
     <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"
-       style="display:none;" id="mainToggler"><span
+       class="tw:hidden" id="mainToggler"><span
                 class="fa fa-plus-square"></span> {{ __('links.add_new_comment') }}
     </a>
 
@@ -26,8 +26,7 @@
         <textarea rows="5" cols="50" class="tinymceSimple"
                   name="text"></textarea><br/>
         <input type="submit" value="{{ __('buttons.save') }}"
-               name="comment" class="btn btn-default btn-success"
-               style="margin-left: 0px;"/>
+               name="comment" class="btn btn-default btn-success tw:ml-0"/>
         <input type="hidden" name="comment" value="1"/>
         <input type="hidden" name="father" id="father" value="0"/>
         <br/>
@@ -37,9 +36,9 @@
     <div id="comments">
         <div>
             @foreach($tpl->get('comments') as $row)
-                <div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #f0f0f0;">
+                <div class="tw:block tw:p-2.5 tw:mt-2.5 tw:border-b tw:border-solid tw:border-[#f0f0f0]">
                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $row['userId'] }}&v={{ format($row['userModified'])->timestamp() }}"
-                         style="float:left; width:50px; margin-right:10px; padding:2px;"/>
+                         class="tw:float-left tw:w-[50px] tw:mr-2.5 tw:p-0.5"/>
                     <div class="right">{!! sprintf(
                         __('text.written_on'),
                         format($row['date'])->date(),
@@ -48,9 +47,9 @@
                     <strong>
                     {{ sprintf(__('text.full_name'), e($row['firstname']), e($row['lastname'])) }}
                     </strong><br/>
-                    <div style="margin-left:60px;">{!! $row['text'] !!}</div>
-                    <div class="clear"></div>
-                    <div style="padding-left:60px">
+                    <div class="tw:ml-[60px]">{!! $row['text'] !!}</div>
+                    <div class="tw:clear-both"></div>
+                    <div class="tw:pl-[60px]">
                         <a href="javascript:void(0);" class="replyButton"
                            onclick="toggleCommentBoxes({{ $row['id'] }})">
                             <span class="fa fa-reply"></span> {{ __('links.reply') }}
@@ -63,7 +62,7 @@
                                 <span class="fa fa-trash"></span> {{ __('links.delete') }}
                             </a>
                         @endif
-                        <div style="display:none;"
+                        <div class="tw:hidden"
                              id="comment{{ $row['id'] }}"
                              class="commentBox">
                             <br/><input type="submit"
@@ -71,14 +70,14 @@
                                         name="comment" class="btn btn-default"/>
                         </div>
                     </div>
-                    <div class="clear"></div>
+                    <div class="tw:clear-both"></div>
                 </div>
 
                 @if($comments->getReplies($row['id']))
                     @foreach($comments->getReplies($row['id']) as $comment)
-                        <div style="display:block; padding:10px; padding-left: 60px; border-bottom:1px solid #f0f0f0;">
+                        <div class="tw:block tw:p-2.5 tw:pl-[60px] tw:border-b tw:border-solid tw:border-[#f0f0f0]">
                             <img src="{{ BASE_URL }}/api/users?profileImage={{ $comment['userId'] }}&v={{ $comment['userModified'] }}"
-                                 style="float:left; width:50px; margin-right:10px; padding:2px;"/>
+                                 class="tw:float-left tw:w-[50px] tw:mr-2.5 tw:p-0.5"/>
                             <div>
                                 <div class="right">
                                     {!! sprintf(
@@ -90,10 +89,10 @@
                                 <strong>
                                 {{ sprintf(__('text.full_name'), e($comment['firstname']), e($comment['lastname'])) }}
                                 </strong><br/>
-                                <p style="margin-left:60px;">{!! nl2br($comment['text']) !!}</p>
-                                <div class="clear"></div>
+                                <p class="tw:ml-[60px]">{!! nl2br($comment['text']) !!}</p>
+                                <div class="tw:clear-both"></div>
 
-                                <div style="padding-left:60px">
+                                <div class="tw:pl-[60px]">
                                     @if($comment['userId'] == session('userdata.id'))
                                         <a href="{{ $deleteUrlBase . $comment['id'] }}"
                                            class="deleteComment">
@@ -110,7 +109,7 @@
 
         @if(count($tpl->get('comments')) == 0)
             <div class="text-center">
-                <div style="width:33%" class="svgContainer">
+                <div class="svgContainer tw:w-1/3">
                     {!! file_get_contents(ROOT . '/dist/images/svg/undraw_real_time_collaboration_c62i.svg') !!}
                     {{ $language->__('text.no_comments') }}
                 </div>

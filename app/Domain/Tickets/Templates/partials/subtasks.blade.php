@@ -1,5 +1,5 @@
 
-<ul class="sortableTicketList" style="margin-bottom:120px;">
+<ul class="sortableTicketList tw:mb-[120px]">
     <li class="">
         <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> {{ __("links.add_task") }}</a>
         <div class="ticketBox hideOnLoad" id="subticket_new" >
@@ -10,7 +10,7 @@
                 hx-target="#ticketSubtasks">
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
-                <input name="headline" type="text" title="{{ __("label.headline") }}" style="width:100%" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
+                <input name="headline" type="text" title="{{ __("label.headline") }}" class="tw:w-full" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
                 <input type="submit" value="{{ __("buttons.save") }}" name="quickadd"  />
                 <div class="htmx-indicator-small">
                     <x-global::loader id="loadingthis" size="25px" />
@@ -54,7 +54,7 @@
         <div class="ticketBox fixed priority-border-{{ $subticket['priority'] }}" data-val="{{ $subticket['id'] }}" >
 
             <div class="row">
-                <div class="col-md-12" style="padding:0 15px;">
+                <div class="col-md-12" class="tw:px-4 tw:py-0">
                     @if($login::userIsAtLeast($roles::$editor))
                         <div class="inlineDropDownContainer" >
                             <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -71,7 +71,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-9" style="padding:0 15px;">
+                <div class="col-md-9" class="tw:px-4 tw:py-0">
                     <div class="row">
                         <div class="col-md-4">
                                 {{ __("label.due") }}<input type="text" title="{{ __("label.due") }}" value="{{ $date }}" class="duedates secretInput quickDueDates" data-id="{{ $subticket['id'] }}" name="date" />
@@ -84,7 +84,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3" style="padding-top:3px;" >
+                <div class="col-md-3 tw:pt-[3px]" >
                     <div class="right">
                         <div class="dropdown ticketDropdown effortDropdown show">
                             <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $subticket['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
