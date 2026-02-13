@@ -97,26 +97,47 @@
     </section>
 
     {{-- ============================================================ --}}
-    {{-- MODAL (native dialog) --}}
+    {{-- MODAL (x-global::actions.modal component) --}}
     {{-- ============================================================ --}}
     <section style="margin-bottom: 40px;">
-        <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Modal (native dialog)</h3>
-        <button class="tw:btn tw:btn-primary" onclick="document.getElementById('preview-modal').showModal()">Open Modal</button>
+        <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Modal Component</h3>
 
-        <dialog id="preview-modal" class="tw:modal">
-            <div class="tw:modal-box">
-                <h3 style="font-size: var(--font-size-l); font-weight: bold;">Hello!</h3>
-                <p style="padding: 15px 0;">This modal uses the native HTML &lt;dialog&gt; element with DaisyUI styling.</p>
-                <div class="tw:modal-action">
-                    <form method="dialog">
-                        <button class="tw:btn">Close</button>
-                    </form>
-                </div>
-            </div>
-            <form method="dialog" class="tw:modal-backdrop">
-                <button>close</button>
-            </form>
-        </dialog>
+        <h4 style="margin: 15px 0 10px;">Basic Modal</h4>
+        <button class="tw:btn tw:btn-primary" onclick="document.getElementById('basic-modal').showModal()">Open Basic Modal</button>
+
+        <x-global::actions.modal id="basic-modal" title="Basic Modal">
+            <p>This modal uses the <code>&lt;x-global::actions.modal&gt;</code> component with native <code>&lt;dialog&gt;</code> and DaisyUI styling.</p>
+            <x-slot:actions>
+                <form method="dialog">
+                    <button class="tw:btn">Close</button>
+                </form>
+            </x-slot:actions>
+        </x-global::actions.modal>
+
+        <h4 style="margin: 15px 0 10px;">Large Modal with HTMX</h4>
+        <button class="tw:btn tw:btn-secondary" onclick="document.getElementById('large-modal').showModal()">Open Large Modal</button>
+
+        <x-global::actions.modal id="large-modal" title="Large Modal" size="lg">
+            <p>A larger modal (<code>size="lg"</code>) suitable for forms and detailed content.</p>
+            <p style="margin-top: 10px;">Supports: <code>sm</code>, <code>md</code> (default), <code>lg</code>, <code>xl</code></p>
+            <x-slot:actions>
+                <form method="dialog">
+                    <button class="tw:btn tw:btn-ghost">Cancel</button>
+                    <button class="tw:btn tw:btn-primary">Save</button>
+                </form>
+            </x-slot:actions>
+        </x-global::actions.modal>
+
+        <h4 style="margin: 15px 0 10px;">Non-closeable Modal</h4>
+        <button class="tw:btn tw:btn-accent" onclick="document.getElementById('locked-modal').showModal()">Open Locked Modal</button>
+
+        <x-global::actions.modal id="locked-modal" title="Confirmation Required" :closeable="false">
+            <p>This modal has <code>:closeable="false"</code> — no X button and no backdrop dismiss. User must interact with the action buttons.</p>
+            <x-slot:actions>
+                <button class="tw:btn tw:btn-ghost" onclick="document.getElementById('locked-modal').close()">Cancel</button>
+                <button class="tw:btn tw:btn-primary" onclick="document.getElementById('locked-modal').close()">Confirm</button>
+            </x-slot:actions>
+        </x-global::actions.modal>
     </section>
 
     {{-- ============================================================ --}}
