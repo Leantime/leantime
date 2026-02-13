@@ -1,0 +1,258 @@
+@php
+    $ticket = $tpl->get('ticket');
+    $remainingHours = $tpl->get('remainingHours');
+    $statusLabels = $tpl->get('statusLabels');
+    $ticketTypes = $tpl->get('ticketTypes');
+@endphp
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="row marginBottom">
+            <div class="col-md-12">
+
+                {{-- Type --}}
+                <div class="form-group">
+                    <label class="control-label">{{ __('label.todo_type') }}</label>
+                    <div class="">
+                        <select id='type' name='type' class="span11">
+                            @foreach($ticketTypes as $types)
+                                <option value="{{ strtolower($types) }}"
+                                    {{ strtolower($types) == strtolower($ticket->type ?? '') ? "selected='selected'" : '' }}
+                                >{{ __('label.' . strtolower($types)) }}</option>
+                            @endforeach
+                        </select><br/>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row marginBottom">
+            <div class="col-md-12">
+                <h5 class="accordionTitle" id="accordion_link_tickets-organization" style="padding-bottom:15px; font-size:var(--font-size-l)">
+                    <a href="javascript:void(0)"
+                       class="accordion-toggle"
+                       id="accordion_toggle_tickets-organization"
+                       onclick="leantime.snippets.accordionToggle('tickets-organization');">
+                            <i class="fa fa-angle-down"></i>
+                            <span class="fa fa-folder-open"></span>
+                            {{ __('subtitles.organization') }}
+                    </a>
+                </h5>
+                <div class="simpleAccordionContainer" id="accordion_content-tickets-organization" style="padding-left:0">
+
+                    {{-- Project --}}
+                    <div class="form-group">
+                        <label class="control-label">{{ __('label.project') }}</label>
+                        <select name="projectId" class="tw:w-full">
+                            @foreach($allAssignedprojects as $project)
+                                <option value="{{ $project['id'] }}"
+                                    @if($ticket->projectId == $project['id'])
+                                        selected
+                                    @elseif(session('currentProject') == $project['id'])
+                                        selected
+                                    @endif
+                                >{{ e($project['name']) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Milestones --}}
+                    <div class="form-group">
+                        <label class="control-label">{{ __('label.milestone') }}</label>
+                        <div class="">
+                            <div class="form-group">
+                                <select name="milestoneid" class="span11">
+                                    <option value="">{{ __('label.not_assigned_to_milestone') }}</option>
+                                    @foreach($tpl->get('milestones') as $milestoneRow)
+                                        <option value="{{ $milestoneRow->id }}"
+                                            {{ ($ticket->milestoneid == $milestoneRow->id) ? "selected='selected'" : '' }}
+                                        >{{ e($milestoneRow->headline) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Sprint --}}
+                    <div class="form-group">
+                        <label class="control-label">{{ __('label.sprint') }}</label>
+                        <div class="">
+                            <select id="sprint-select" class="span11" name="sprint"
+                                    data-placeholder="{{ $ticket->sprint }}">
+                                <option value="">{{ __('label.backlog') }}</option>
+                                @if($tpl->get('sprints'))
+                                    @foreach($tpl->get('sprints') as $sprintRow)
+                                        <option value="{{ $sprintRow->id }}"
+                                            {{ $ticket->sprint == $sprintRow->id ? "selected='selected'" : '' }}
+                                        >{{ e($sprintRow->name) }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Related --}}
+                    <div class="form-group">
+                        <label class="control-label">{{ __('label.related_to') }}</label>
+                        <div class="">
+                            <div class="form-group">
+                                <select name="dependingTicketId" class="span11">
+                                    <option value="">{{ __('label.not_related') }}</option>
+                                    @if(is_array($tpl->get('ticketParents')))
+                                        @foreach($tpl->get('ticketParents') as $ticketRow)
+                                            <option value="{{ $ticketRow->id }}"
+                                                {{ ($ticket->dependingTicketId == $ticketRow->id) ? "selected='selected'" : '' }}
+                                            >{{ e($ticketRow->headline) }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row marginBottom">
+            <div class="col-md-12">
+                <h5 class="accordionTitle" id="accordion_link_tickets-dates" style="padding-bottom:15px; font-size:var(--font-size-l)">
+                    <a href="javascript:void(0)"
+                       class="accordion-toggle"
+                       id="accordion_toggle_tickets-dates"
+                       onclick="leantime.snippets.accordionToggle('tickets-dates');">
+                        <i class="fa fa-angle-down"></i>
+                        <span class="fa fa-calendar"></span>
+                        {{ __('subtitles.dates') }}
+                    </a>
+                </h5>
+                <div class="simpleAccordionContainer" id="accordion_content-tickets-dates" style="padding-left:0">
+                    <div class="form-group">
+                        <label class="control-label">{{ __('label.working_date_from') }}</label>
+                        <div class="">
+                            <input type="text" class="editFrom" style="width:100px;" name="editFrom" autocomplete="off"
+                                   value="{{ format($ticket->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}"/>
+                            <input type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
+                                   value="{{ format($ticket->editFrom)->time24() }}"
+                                   name="timeFrom"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">{{ __('label.working_date_to') }}</label>
+                        <div class="">
+                            <input type="text" class="editTo" style="width:100px;" name="editTo" autocomplete="off"
+                                   value="{{ format($ticket->editTo)->date() }}" placeholder="{{ __('language.dateformat') }}"/>
+                            <input type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
+                                   value="{{ format($ticket->editTo)->time24() }}"
+                                   name="timeTo"/>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row marginBottom">
+            <div class="col-md-12">
+
+                <h5 class="accordionTitle" id="accordion_link_tickets-timetracking" style="padding-bottom:15px; font-size:var(--font-size-l)">
+                    <a href="javascript:void(0)"
+                       class="accordion-toggle"
+                       id="accordion_toggle_tickets-timetracking"
+                       onclick="leantime.snippets.accordionToggle('tickets-timetracking');">
+                        <i class="fa fa-angle-down"></i>
+                        <span class="fa-regular fa-clock"></span>
+                        {{ __('subtitle.time_tracking') }}
+                    </a>
+                </h5>
+                <div class="simpleAccordionContainer" id="accordion_content-tickets-timetracking" style="padding-left:0">
+
+                    <div class="form-group">
+                        <label class="control-label">{{ __('label.planned_hours') }}</label>
+                        <div class="">
+                            <input type="text" value="{{ e($ticket->planHours) }}" name="planHours" style="width:90px;"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">{{ __('label.estimated_hours_remaining') }}</label>
+                        <div class="">
+                            <input type="text" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:90px;"/>
+                            <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
+                                &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">{{ __('label.booked_hours') }}</label>
+                        <div class="">
+                            <input type="text" disabled="disabled"
+                                   value="{{ $tpl->get('timesheetsAllHours') }}" style="width:90px;"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">{{ __('label.actual_hours_remaining') }}</label>
+                        <div class="">
+                            <input type="text" disabled="disabled" value="{{ $remainingHours }}" style="width:90px;"/>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        @dispatchEvent('beforeEndRightColumn', ['ticket' => $ticket])
+    </div>
+</div>
+
+<script>
+    jQuery(document).ready(function(){
+        leantime.editorController.initComplexEditor();
+        tinymce.activeEditor.hide()
+    });
+
+    leantime.editorController.initComplexEditor();
+
+    jQuery(".viewDescription").click(function(e){
+        if(!jQuery(e.target).is("a")) {
+            e.stopPropagation();
+            jQuery(this).hide();
+            jQuery('#descriptionEditor').show('fast',
+                function() {
+                    tinymce.activeEditor.show();
+                }
+            );
+        }
+    });
+
+    // Initialize recurring task dropdown
+    jQuery(document).ready(function($) {
+        $('.recurring-toggle').click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const $dropdown = $('#recurringTaskForm');
+            if (!$dropdown.hasClass('loaded')) {
+                $dropdown.load('{{ BASE_URL }}/hx/recurringTasks/form?entityId={{ $ticket->id }}&module=tickets', function() {
+                    $dropdown.addClass('loaded');
+                });
+            }
+
+            $dropdown.toggleClass('show');
+        });
+
+        $(document).click(function(e) {
+            if (!$(e.target).closest('.recurring-dropdown').length) {
+                $('.recurring-dropdown').removeClass('show');
+            }
+        });
+    });
+
+    Prism.highlightAll();
+</script>
