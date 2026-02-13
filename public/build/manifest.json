@@ -120,6 +120,10 @@
       "__baseUniq-CqbzQZKf.js"
     ]
   },
+  "_htmx.esm-KBlj935b.js": {
+    "file": "assets/htmx.esm-KBlj935b.js",
+    "name": "htmx.esm"
+  },
   "_init-Gi6I4Gst.js": {
     "file": "assets/init-Gi6I4Gst.js",
     "name": "init"
@@ -892,18 +896,21 @@
     ]
   },
   "resources/js/compiled-htmx-extensions.js": {
-    "file": "assets/compiled-htmx-extensions-D5jq-J_G.js",
+    "file": "assets/compiled-htmx-extensions-DpsZFE6P.js",
     "name": "compiled-htmx-extensions",
     "src": "resources/js/compiled-htmx-extensions.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_htmx.esm-KBlj935b.js"
+    ]
   },
   "resources/js/compiled-htmx.js": {
-    "file": "assets/compiled-htmx-BpIs081y.js",
+    "file": "assets/compiled-htmx-BdpZj6Pd.js",
     "name": "compiled-htmx",
     "src": "resources/js/compiled-htmx.js",
     "isEntry": true,
     "imports": [
-      "__commonjsHelpers-BosuxZz1.js"
+      "_htmx.esm-KBlj935b.js"
     ]
   },
   "resources/js/compiled-lottieplayer.js": {
