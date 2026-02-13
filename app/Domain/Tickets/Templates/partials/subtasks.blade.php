@@ -154,7 +154,7 @@
 
         <?php } else { ?>
 
-            leantime.authController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly("#global-modal-content");
 
         <?php } ?>
 

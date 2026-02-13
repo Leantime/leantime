@@ -137,7 +137,7 @@ $statusLabels = $tpl->get('statusLabels');
         leantime.ticketsController.initMilestoneDates();
 
         <?php if (! $login::userIsAtLeast($roles::$editor)) { ?>
-            leantime.authController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly("#global-modal-content");
         <?php } ?>
 
         <?php if ($login::userHasRole([$roles::$commenter])) { ?>

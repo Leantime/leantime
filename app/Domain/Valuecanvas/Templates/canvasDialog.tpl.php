@@ -252,7 +252,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         leantime.editorController.initSimpleEditor();
 
         <?php if (! $login::userIsAtLeast($roles::$editor)) { ?>
-            leantime.authController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly("#global-modal-content");
 
         <?php } ?>
 

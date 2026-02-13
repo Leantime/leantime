@@ -191,7 +191,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         leantime.ticketsController.initTagsInput();
 
         <?php if (! $login::userIsAtLeast($roles::$editor)) { ?>
-            leantime.authController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly("#global-modal-content");
 
 
         <?php } ?>

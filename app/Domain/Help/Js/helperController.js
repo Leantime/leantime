@@ -105,7 +105,7 @@ leantime.helperController = (function () {
                             leantime.replaceSVGColors();
                         },
                         afterShowCont: function() {
-                            htmx.process(".nyroModalCont");
+                            htmx.process("#global-modal-content");
                         }
                     }
                 }
