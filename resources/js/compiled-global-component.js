@@ -5,7 +5,8 @@ window.luxon = { DateTime, Duration, Interval, Info, Settings };
 import moment from 'moment';
 window.moment = moment;
 
-import '../../public/assets/js/libs/jquery.form.js';
+import flatpickr from 'flatpickr';
+window.flatpickr = flatpickr;
 
 import { createPopper } from '@popperjs/core';
 window.Popper = { createPopper };

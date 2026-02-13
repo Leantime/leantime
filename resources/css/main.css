@@ -12,6 +12,7 @@
 @import "../../public/assets/css/libs/slimselect.leantime.css";
 
 @import "../../public/assets/css/libs/jquery.ui.css";
+@import "flatpickr/dist/flatpickr.min.css";
 @import "../../public/assets/css/libs/animate.min.css";
 @import "../../public/assets/css/libs/animate.delay.css";
 
