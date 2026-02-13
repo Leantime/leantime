@@ -496,6 +496,9 @@
                 <button class="edit-slack-project" data-name="${key}" style="background: none; border: none; color: #004666; cursor: pointer; padding: 2px;" title="Set Slack Project">
                     <i class="fa fa-edit"></i>
                 </button>
+                <button class="edit-preference" data-name="${key}" style="background: none; border: none; color: #004666; cursor: pointer;" title="Edit">
+                    <i class="fa fa-edit"></i>
+                </button>
                 <button class="delete-preference" data-name="${key}" style="background: none; border: none; color: #dc3545; cursor: pointer;" title="Delete">
                     <i class="fa fa-trash"></i>
                 </button>
@@ -505,6 +508,28 @@
 
         return html;
     }
+
+    function editProfile(profileName) {
+        const pref = currentPreferences[profileName];
+        if (!pref) return;
+
+        const newName = prompt('Edit profile name:', profileName);
+        if (!newName || newName.trim() === '') return;
+        applyFilters(pref.filters);
+
+        savePreference(newName.trim()).then(success => {
+            if (success) {
+                if (newName.trim() !== profileName) {
+                    deletePreference(profileName).then(() => {
+                        updateDropdownContent();
+                    });
+                } else {
+                    updateDropdownContent();
+                }
+            }
+        });
+    }
+
 
     function initAutoExportListeners() {
         jQuery(document).on('change', '.auto-export', function () {
@@ -568,6 +593,12 @@
                     updateDropdownContent();
                 }
             });
+        });
+
+        jQuery('.edit-preference').off('click').on('click', function (e) {
+            e.stopPropagation();
+            const name = jQuery(this).data('name');
+            editProfile(name);
         });
 
         jQuery('.edit-slack-project').off('click').on('click', function (e) {
