@@ -114,18 +114,20 @@ leantime.projectsController = (function () {
 
     var initTodoStatusSortable = function (element) {
         var sortCounter = 1;
+        var el = typeof element === 'string' ? document.querySelector(element) : element;
 
-        jQuery(element).find("input.sorter").each(function (index) {
+        jQuery(el).find("input.sorter").each(function (index) {
 
             jQuery(this).val(sortCounter);
             sortCounter++;
         });
 
-        jQuery(element).sortable({
-            stop: function ( event, ui ) {
-
+        if (el._sortableInstance) el._sortableInstance.destroy();
+        el._sortableInstance = new Sortable(el, {
+            animation: 150,
+            onEnd: function () {
                 sortCounter = 1;
-                jQuery(element).find("input.sorter").each(function (index) {
+                jQuery(el).find("input.sorter").each(function (index) {
                     jQuery(this).val(sortCounter);
                     sortCounter++;
                 });
@@ -180,7 +182,8 @@ leantime.projectsController = (function () {
             if (el.slim) el.slim.destroy();
         });
         leantime.projectsController.initSelectFields();
-        jQuery("#todoStatusList").sortable("destroy");
+        var todoList = document.querySelector("#todoStatusList");
+        if (todoList && todoList._sortableInstance) todoList._sortableInstance.destroy();
         leantime.projectsController.initTodoStatusSortable("#todoStatusList");
 
     };
@@ -498,47 +501,64 @@ leantime.projectsController = (function () {
 
         var position_updated = false;
 
-        jQuery("#sortableProjectKanban .contentInner").sortable({
-            connectWith: ".contentInner",
-            items: "> .moveable",
-            tolerance: 'intersect',
-            placeholder: "ui-state-highlight",
-            forcePlaceholderSize: true,
-            cancel: ".portlet-toggle,:input,a,input",
-            distance: 25,
-
-            start: function (event, ui) {
-                ui.item.addClass('tilt');
-                tilt_direction(ui.item);
-            },
-            stop: function (event, ui) {
-                ui.item.removeClass("tilt");
-                jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
-                ui.item.removeData("move_handler");
-
-                countTickets();
-
-                var statusPostData = {
-                    action: "sortIndex",
-                    payload: {},
-                    handler: ui.item[0].id
-                };
-
-                for (var i = 0; i < statusList.length; i++) {
-                    if (jQuery(".contentInner.status_" + statusList[i]).length) {
-                        statusPostData.payload[statusList[i]] = jQuery(".contentInner.status_" + statusList[i]).sortable('serialize');
+        function serializeSortable(containerEl) {
+            var items = containerEl.querySelectorAll(':scope > .moveable');
+            var parts = [];
+            items.forEach(function (item) {
+                if (item.id) {
+                    var idx = item.id.indexOf('_');
+                    if (idx !== -1) {
+                        parts.push(item.id.substring(0, idx) + '[]=' + item.id.substring(idx + 1));
                     }
                 }
+            });
+            return parts.join('&');
+        }
 
-                // POST to server using $.post or $.ajax
-                jQuery.ajax({
-                    type: 'POST',
-                    url: leantime.appUrl + '/api/projects',
-                    data: statusPostData
+        document.querySelectorAll("#sortableProjectKanban .contentInner").forEach(function (contentInner) {
+            if (contentInner._sortableInstance) contentInner._sortableInstance.destroy();
+            contentInner._sortableInstance = new Sortable(contentInner, {
+                group: 'project-kanban',
+                draggable: '.moveable',
+                ghostClass: 'ui-state-highlight',
+                filter: '.portlet-toggle, input, a, select, textarea',
+                preventOnFilter: false,
+                animation: 150,
+                delay: 25,
+                delayOnTouchOnly: true,
 
-                });
+                onStart: function (evt) {
+                    evt.item.classList.add('tilt');
+                    tilt_direction(jQuery(evt.item));
+                },
 
-            }
+                onEnd: function (evt) {
+                    evt.item.classList.remove('tilt');
+                    jQuery("html").unbind('mousemove', jQuery(evt.item).data("move_handler"));
+                    jQuery(evt.item).removeData("move_handler");
+
+                    countTickets();
+
+                    var statusPostData = {
+                        action: "sortIndex",
+                        payload: {},
+                        handler: evt.item.id
+                    };
+
+                    for (var i = 0; i < statusList.length; i++) {
+                        var col = document.querySelector(".contentInner.status_" + statusList[i]);
+                        if (col) {
+                            statusPostData.payload[statusList[i]] = serializeSortable(col);
+                        }
+                    }
+
+                    jQuery.ajax({
+                        type: 'POST',
+                        url: leantime.appUrl + '/api/projects',
+                        data: statusPostData
+                    });
+                }
+            });
         });
 
         function tilt_direction(item)

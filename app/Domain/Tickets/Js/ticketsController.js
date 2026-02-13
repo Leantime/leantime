@@ -188,10 +188,7 @@ leantime.ticketsController = (function () {
             countTickets();
             updateSwimlaneCounts();
 
-            // Refresh sortable to recalculate positions
-            if ($targetColumn.sortable) {
-                $targetColumn.sortable('refresh');
-            }
+            // SortableJS auto-detects DOM changes, no refresh needed
 
             // Remove animation class after transition
             setTimeout(function() {
@@ -1281,271 +1278,261 @@ leantime.ticketsController = (function () {
 
         var position_updated = false;
 
-        jQuery(".sortableTicketList").each(function () {
+        function serializeSortable(containerEl) {
+            var items = containerEl.querySelectorAll(':scope > .moveable');
+            var parts = [];
+            items.forEach(function (item) {
+                if (item.id) {
+                    var idx = item.id.indexOf('_');
+                    if (idx !== -1) {
+                        parts.push(item.id.substring(0, idx) + '[]=' + item.id.substring(idx + 1));
+                    }
+                }
+            });
+            return parts.join('&');
+        }
 
-            var currentElement = this;
+        document.querySelectorAll(".sortableTicketList").forEach(function (currentElement) {
 
-            jQuery(currentElement).find(".contentInner").sortable({
-                connectWith: ".contentInner",
-                items: "> .moveable",
-                tolerance: 'intersect',
-                placeholder: "ui-state-highlight",
-                forcePlaceholderSize: true,
-                cancel: ".portlet-toggle,:input,a,input",
-                distance: 10,
+            currentElement.querySelectorAll(".contentInner").forEach(function (contentInner) {
+                if (contentInner._sortableInstance) contentInner._sortableInstance.destroy();
+                contentInner._sortableInstance = new Sortable(contentInner, {
+                    group: 'ticket-kanban',
+                    draggable: '.moveable',
+                    ghostClass: 'ui-state-highlight',
+                    filter: '.portlet-toggle, input, a, select, textarea',
+                    preventOnFilter: false,
+                    animation: 150,
+                    delay: 10,
+                    delayOnTouchOnly: true,
 
-                start: function (event, ui) {
-                    ui.item.addClass('tilt');
-                    tilt_direction(ui.item);
+                    onStart: function (evt) {
+                        evt.item.classList.add('tilt');
+                        tilt_direction(jQuery(evt.item));
 
-                    // Store original swimlane for cross-swimlane detection
-                    var $originalSwimlane = ui.item.closest('.sortableTicketList.kanbanBoard');
-                    ui.item.data('originalSwimlaneId', $originalSwimlane.attr('id'));
-                },
-                stop: function (event, ui) {
-                    ui.item.removeClass("tilt");
-                    jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
-                    ui.item.removeData("move_handler");
+                        // Store original swimlane for cross-swimlane detection
+                        var originalSwimlane = evt.item.closest('.sortableTicketList.kanbanBoard');
+                        evt.item.dataset.originalSwimlaneId = originalSwimlane ? originalSwimlane.id : '';
+                    },
 
-                    countTickets();
-                    updateSwimlaneCounts();
+                    onEnd: function (evt) {
+                        evt.item.classList.remove('tilt');
+                        jQuery("html").unbind('mousemove', jQuery(evt.item).data("move_handler"));
+                        jQuery(evt.item).removeData("move_handler");
 
-                    // Update empty state for all columns after drag-and-drop
-                    jQuery(".sortableTicketList").find(".contentInner").each(function() {
-                        var $container = jQuery(this);
-                        var hasTickets = $container.find(".moveable").length > 0;
+                        countTickets();
+                        updateSwimlaneCounts();
 
-                        if (hasTickets) {
-                            // Column has tickets - remove empty state
-                            $container.removeClass("empty-column");
-                            $container.attr("data-empty-text", "");
-                            var currentLabel = $container.attr("aria-label") || "";
-                            $container.attr("aria-label", currentLabel.replace("Empty column", "") + " column items");
-                        } else {
-                            // Column is empty - add empty state
-                            $container.addClass("empty-column");
-                            $container.attr("data-empty-text", "Empty");
-                            $container.attr("aria-label", "Empty column");
-                        }
-                    });
+                        // Update empty state for all columns after drag-and-drop
+                        document.querySelectorAll(".sortableTicketList .contentInner").forEach(function(container) {
+                            var hasTickets = container.querySelectorAll(".moveable").length > 0;
 
-                    // Detect cross-swimlane movement and update groupBy field
-                    var $newSwimlane = ui.item.closest('.sortableTicketList.kanbanBoard');
-                    var newSwimlaneId = $newSwimlane.attr('id');
-                    var originalSwimlaneId = ui.item.data('originalSwimlaneId');
-
-                    if (originalSwimlaneId && newSwimlaneId && originalSwimlaneId !== newSwimlaneId) {
-                        // Card moved to different swimlane - update the groupBy field
-                        var ticketId = ui.item[0].id.replace('ticket_', '');
-                        var newGroupValue = newSwimlaneId.replace('kanboard-', '');
-
-                        // Map groupBy values to API field names
-                        var groupByFieldMap = {
-                            'milestoneid': 'milestoneid',
-                            'editorId': 'editorId',
-                            'priority': 'priority',
-                            'storypoints': 'storypoints',
-                            'sprint': 'sprint',
-                            'dueDate': 'dateToFinish'
-                        };
-
-                        var groupBy = leantime.kanbanGroupBy;
-                        var fieldName = groupByFieldMap[groupBy];
-
-                        // Special handling for dueDate - calculate actual date from bucket ID
-                        if (groupBy === 'dueDate') {
-                            var today = new Date();
-                            today.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
-
-                            // Bucket IDs: 0=overdue, 1=due-this-week, 2=due-next-week, 3=due-later, 4=no-due-date
-                            switch (newGroupValue) {
-                                case '0': // Overdue - set to yesterday
-                                    var yesterday = new Date(today);
-                                    yesterday.setDate(yesterday.getDate() - 1);
-                                    newGroupValue = yesterday.toISOString().split('T')[0];
-                                    break;
-                                case '1': // Due This Week - set to end of this week (Saturday)
-                                    var endOfWeek = new Date(today);
-                                    var daysUntilSaturday = 6 - endOfWeek.getDay();
-                                    if (daysUntilSaturday < 0) daysUntilSaturday = 0;
-                                    endOfWeek.setDate(endOfWeek.getDate() + daysUntilSaturday);
-                                    newGroupValue = endOfWeek.toISOString().split('T')[0];
-                                    break;
-                                case '2': // Due Next Week - set to next week Saturday
-                                    var nextWeekEnd = new Date(today);
-                                    var daysUntilNextSaturday = 6 - nextWeekEnd.getDay() + 7;
-                                    nextWeekEnd.setDate(nextWeekEnd.getDate() + daysUntilNextSaturday);
-                                    newGroupValue = nextWeekEnd.toISOString().split('T')[0];
-                                    break;
-                                case '3': // Due Later - set to 3 weeks from now
-                                    var later = new Date(today);
-                                    later.setDate(later.getDate() + 21);
-                                    newGroupValue = later.toISOString().split('T')[0];
-                                    break;
-                                case '4': // No Due Date - clear the date
-                                    newGroupValue = '';
-                                    break;
+                            if (hasTickets) {
+                                container.classList.remove("empty-column");
+                                container.setAttribute("data-empty-text", "");
+                                var currentLabel = container.getAttribute("aria-label") || "";
+                                container.setAttribute("aria-label", currentLabel.replace("Empty column", "") + " column items");
+                            } else {
+                                container.classList.add("empty-column");
+                                container.setAttribute("data-empty-text", "Empty");
+                                container.setAttribute("aria-label", "Empty column");
                             }
-                        }
+                        });
 
-                        if (fieldName && ticketId) {
-                            var $card = jQuery('#ticket_' + ticketId);
+                        // Detect cross-swimlane movement and update groupBy field
+                        var newSwimlane = evt.item.closest('.sortableTicketList.kanbanBoard');
+                        var newSwimlaneId = newSwimlane ? newSwimlane.id : '';
+                        var originalSwimlaneId = evt.item.dataset.originalSwimlaneId;
 
-                            // OPTIMISTIC UI UPDATE - update visuals immediately before server confirms
-                            if (groupBy === 'milestoneid') {
-                                // Find the new swimlane's label for the milestone
-                                var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
-                                var newLabel = $newSwimlaneHeader.text() || leantime.i18n.__("label.no_milestone");
+                        if (originalSwimlaneId && newSwimlaneId && originalSwimlaneId !== newSwimlaneId) {
+                            // Card moved to different swimlane - update the groupBy field
+                            var ticketId = evt.item.id.replace('ticket_', '');
+                            var newGroupValue = newSwimlaneId.replace('kanboard-', '');
 
-                                // Update milestone dropdown on card
-                                var $milestoneDropdown = $card.find('.milestoneDropdown .dropdown-toggle .text');
-                                if ($milestoneDropdown.length) {
-                                    $milestoneDropdown.text(newLabel);
+                            // Map groupBy values to API field names
+                            var groupByFieldMap = {
+                                'milestoneid': 'milestoneid',
+                                'editorId': 'editorId',
+                                'priority': 'priority',
+                                'storypoints': 'storypoints',
+                                'sprint': 'sprint',
+                                'dueDate': 'dateToFinish'
+                            };
+
+                            var groupBy = leantime.kanbanGroupBy;
+                            var fieldName = groupByFieldMap[groupBy];
+
+                            // Special handling for dueDate - calculate actual date from bucket ID
+                            if (groupBy === 'dueDate') {
+                                var today = new Date();
+                                today.setHours(12, 0, 0, 0);
+
+                                switch (newGroupValue) {
+                                    case '0':
+                                        var yesterday = new Date(today);
+                                        yesterday.setDate(yesterday.getDate() - 1);
+                                        newGroupValue = yesterday.toISOString().split('T')[0];
+                                        break;
+                                    case '1':
+                                        var endOfWeek = new Date(today);
+                                        var daysUntilSaturday = 6 - endOfWeek.getDay();
+                                        if (daysUntilSaturday < 0) daysUntilSaturday = 0;
+                                        endOfWeek.setDate(endOfWeek.getDate() + daysUntilSaturday);
+                                        newGroupValue = endOfWeek.toISOString().split('T')[0];
+                                        break;
+                                    case '2':
+                                        var nextWeekEnd = new Date(today);
+                                        var daysUntilNextSaturday = 6 - nextWeekEnd.getDay() + 7;
+                                        nextWeekEnd.setDate(nextWeekEnd.getDate() + daysUntilNextSaturday);
+                                        newGroupValue = nextWeekEnd.toISOString().split('T')[0];
+                                        break;
+                                    case '3':
+                                        var later = new Date(today);
+                                        later.setDate(later.getDate() + 21);
+                                        newGroupValue = later.toISOString().split('T')[0];
+                                        break;
+                                    case '4':
+                                        newGroupValue = '';
+                                        break;
                                 }
+                            }
 
-                                // Get the milestone color from the dropdown menu item
-                                var $milestoneMenuItem = $card.find('.milestoneDropdown .dropdown-menu a[data-value^="' + ticketId + '_' + newGroupValue + '_"]');
-                                var milestoneColor = '#b0b0b0'; // Default gray for "No Milestone"
+                            if (fieldName && ticketId) {
+                                var $card = jQuery('#ticket_' + ticketId);
 
-                                if ($milestoneMenuItem.length && newGroupValue !== '0' && newGroupValue !== '') {
-                                    // Extract color from the data-value (format: ticketId_milestoneId_color)
-                                    var dataValue = $milestoneMenuItem.attr('data-value');
-                                    if (dataValue) {
-                                        var parts = dataValue.split('_');
-                                        if (parts.length >= 3) {
-                                            milestoneColor = parts.slice(2).join('_'); // Handle colors with underscores
-                                        }
+                                // OPTIMISTIC UI UPDATE - update visuals immediately before server confirms
+                                if (groupBy === 'milestoneid') {
+                                    var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
+                                    var newLabel = $newSwimlaneHeader.text() || leantime.i18n.__("label.no_milestone");
+
+                                    var $milestoneDropdown = $card.find('.milestoneDropdown .dropdown-toggle .text');
+                                    if ($milestoneDropdown.length) {
+                                        $milestoneDropdown.text(newLabel);
                                     }
-                                    // Also try getting from inline style
-                                    if (!milestoneColor || milestoneColor === '#b0b0b0') {
-                                        var inlineStyle = $milestoneMenuItem.attr('style');
-                                        if (inlineStyle) {
-                                            var colorMatch = inlineStyle.match(/background-color:\s*([^;]+)/i);
-                                            if (colorMatch) {
-                                                milestoneColor = colorMatch[1].trim();
+
+                                    var $milestoneMenuItem = $card.find('.milestoneDropdown .dropdown-menu a[data-value^="' + ticketId + '_' + newGroupValue + '_"]');
+                                    var milestoneColor = '#b0b0b0';
+
+                                    if ($milestoneMenuItem.length && newGroupValue !== '0' && newGroupValue !== '') {
+                                        var dataValue = $milestoneMenuItem.attr('data-value');
+                                        if (dataValue) {
+                                            var parts = dataValue.split('_');
+                                            if (parts.length >= 3) {
+                                                milestoneColor = parts.slice(2).join('_');
+                                            }
+                                        }
+                                        if (!milestoneColor || milestoneColor === '#b0b0b0') {
+                                            var inlineStyle = $milestoneMenuItem.attr('style');
+                                            if (inlineStyle) {
+                                                var colorMatch = inlineStyle.match(/background-color:\s*([^;]+)/i);
+                                                if (colorMatch) {
+                                                    milestoneColor = colorMatch[1].trim();
+                                                }
                                             }
                                         }
                                     }
+
+                                    $card.find('.milestoneDropdown .dropdown-toggle').css('background-color', milestoneColor);
+
+                                } else if (groupBy === 'priority') {
+                                    $card.removeClass(function(index, className) {
+                                        return (className.match(/(^|\s)priority-border-\S+/g) || []).join(' ');
+                                    }).addClass('priority-border-' + newGroupValue);
+
+                                    var priorityLabels = {'1': 'Critical', '2': 'High', '3': 'Medium', '4': 'Low', '5': 'Lowest'};
+                                    var $priorityDropdown = jQuery('#priorityDropdownMenuLink' + ticketId);
+                                    if ($priorityDropdown.length) {
+                                        $priorityDropdown.find('span.text').text(priorityLabels[newGroupValue] || newGroupValue);
+                                        $priorityDropdown.removeClass('priority-bg-1 priority-bg-2 priority-bg-3 priority-bg-4 priority-bg-5');
+                                        $priorityDropdown.addClass('priority-bg-' + newGroupValue);
+                                    }
+
+                                } else if (groupBy === 'editorId') {
+                                    var $userDropdown = jQuery('#userDropdownMenuLink' + ticketId);
+                                    if ($userDropdown.length) {
+                                        $userDropdown.find('span.text span img').attr('src', leantime.appUrl + '/api/users?profileImage=' + newGroupValue);
+
+                                        var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
+                                        var newUserName = $newSwimlaneHeader.text() || leantime.i18n.__("label.not_assigned");
+                                        $userDropdown.find('span.text span#user' + ticketId).text(newUserName);
+                                    }
+
+                                } else if (groupBy === 'storypoints') {
+                                    var storyPointLabels = {'0.5': '< 2min', '1': 'XS', '2': 'S', '3': 'M', '5': 'L', '8': 'XL', '13': 'XXL'};
+                                    var $effortDropdown = jQuery('#effortDropdownMenuLink' + ticketId);
+                                    if ($effortDropdown.length) {
+                                        $effortDropdown.find('span.text').text(storyPointLabels[newGroupValue] || newGroupValue);
+                                    }
+
+                                } else if (groupBy === 'sprint') {
+                                    var $sprintDropdown = jQuery('#sprintDropdownMenuLink' + ticketId);
+                                    if ($sprintDropdown.length) {
+                                        var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
+                                        var newSprintName = $newSwimlaneHeader.text() || leantime.i18n.__("label.backlog");
+                                        $sprintDropdown.find('span.text').text(newSprintName);
+                                    }
+
+                                } else if (groupBy === 'dueDate') {
+                                    var $dateDisplay = $card.find('.dues .fa-calendar').parent();
+                                    if ($dateDisplay.length && newGroupValue) {
+                                        var dateParts = newGroupValue.split('-');
+                                        var formattedDate = dateParts[1] + '/' + dateParts[2] + '/' + dateParts[0];
+                                        $dateDisplay.contents().filter(function() {
+                                            return this.nodeType === 3;
+                                        }).first().replaceWith(' ' + formattedDate);
+                                    } else if ($dateDisplay.length && !newGroupValue) {
+                                        $dateDisplay.contents().filter(function() {
+                                            return this.nodeType === 3;
+                                        }).first().replaceWith(' No due date');
+                                    }
                                 }
 
-                                // Update the dropdown toggle background color
-                                $card.find('.milestoneDropdown .dropdown-toggle').css('background-color', milestoneColor);
+                                jQuery.growl({message: "To-Do Updated", style: "success"});
 
-                            } else if (groupBy === 'priority') {
-                                // Update priority border and dropdown on card
-                                $card.removeClass(function(index, className) {
-                                    return (className.match(/(^|\s)priority-border-\S+/g) || []).join(' ');
-                                }).addClass('priority-border-' + newGroupValue);
+                                var patchData = {
+                                    id: ticketId
+                                };
+                                patchData[fieldName] = newGroupValue;
 
-                                // Update priority dropdown text and background
-                                var priorityLabels = {'1': 'Critical', '2': 'High', '3': 'Medium', '4': 'Low', '5': 'Lowest'};
-                                var $priorityDropdown = jQuery('#priorityDropdownMenuLink' + ticketId);
-                                if ($priorityDropdown.length) {
-                                    $priorityDropdown.find('span.text').text(priorityLabels[newGroupValue] || newGroupValue);
-                                    $priorityDropdown.removeClass('priority-bg-1 priority-bg-2 priority-bg-3 priority-bg-4 priority-bg-5');
-                                    $priorityDropdown.addClass('priority-bg-' + newGroupValue);
-                                }
-
-                            } else if (groupBy === 'editorId') {
-                                // Update user dropdown on card
-                                var $userDropdown = jQuery('#userDropdownMenuLink' + ticketId);
-                                if ($userDropdown.length) {
-                                    // Update user image
-                                    $userDropdown.find('span.text span img').attr('src', leantime.appUrl + '/api/users?profileImage=' + newGroupValue);
-
-                                    // Get the new user's name from swimlane header
-                                    var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
-                                    var newUserName = $newSwimlaneHeader.text() || leantime.i18n.__("label.not_assigned");
-                                    $userDropdown.find('span.text span#user' + ticketId).text(newUserName);
-                                }
-
-                            } else if (groupBy === 'storypoints') {
-                                // Update effort dropdown on card
-                                var storyPointLabels = {'0.5': '< 2min', '1': 'XS', '2': 'S', '3': 'M', '5': 'L', '8': 'XL', '13': 'XXL'};
-                                var $effortDropdown = jQuery('#effortDropdownMenuLink' + ticketId);
-                                if ($effortDropdown.length) {
-                                    $effortDropdown.find('span.text').text(storyPointLabels[newGroupValue] || newGroupValue);
-                                }
-
-                            } else if (groupBy === 'sprint') {
-                                // Update sprint dropdown on card
-                                var $sprintDropdown = jQuery('#sprintDropdownMenuLink' + ticketId);
-                                if ($sprintDropdown.length) {
-                                    // Get the new sprint's name from swimlane header
-                                    var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
-                                    var newSprintName = $newSwimlaneHeader.text() || leantime.i18n.__("label.backlog");
-                                    $sprintDropdown.find('span.text').text(newSprintName);
-                                }
-
-                            } else if (groupBy === 'dueDate') {
-                                // Update due date display on card
-                                var $dateDisplay = $card.find('.dues .fa-calendar').parent();
-                                if ($dateDisplay.length && newGroupValue) {
-                                    // Format the date for display (MM/DD/YYYY)
-                                    var dateParts = newGroupValue.split('-');
-                                    var formattedDate = dateParts[1] + '/' + dateParts[2] + '/' + dateParts[0];
-                                    $dateDisplay.contents().filter(function() {
-                                        return this.nodeType === 3; // Text nodes only
-                                    }).first().replaceWith(' ' + formattedDate);
-                                } else if ($dateDisplay.length && !newGroupValue) {
-                                    // Clear the date display for "No Due Date"
-                                    $dateDisplay.contents().filter(function() {
-                                        return this.nodeType === 3;
-                                    }).first().replaceWith(' No due date');
-                                }
+                                jQuery.ajax({
+                                    type: 'PATCH',
+                                    url: leantime.appUrl + '/api/tickets',
+                                    data: patchData
+                                }).fail(function() {
+                                    jQuery.growl({message: leantime.i18n.__("short_notifications.not_saved") || "Error updating ticket", style: "error"});
+                                    location.reload();
+                                });
                             }
-
-                            // Show success notification immediately for better perceived speed
-                            jQuery.growl({message: "To-Do Updated", style: "success"});
-
-                            var patchData = {
-                                id: ticketId
-                            };
-                            patchData[fieldName] = newGroupValue;
-
-                            // PATCH the ticket with the new swimlane value (confirmation happens in background)
-                            jQuery.ajax({
-                                type: 'PATCH',
-                                url: leantime.appUrl + '/api/tickets',
-                                data: patchData
-                            }).fail(function() {
-                                jQuery.growl({message: leantime.i18n.__("short_notifications.not_saved") || "Error updating ticket", style: "error"});
-                                // Reload on failure to restore correct state
-                                location.reload();
-                            });
                         }
-                    }
 
-                    // Clean up stored data
-                    ui.item.removeData('originalSwimlaneId');
+                        // Clean up stored data
+                        delete evt.item.dataset.originalSwimlaneId;
 
-                    // Get the new parent swimlane for status update
-                    var $targetSwimlane = ui.item.closest('.sortableTicketList');
+                        // Get the new parent swimlane for status update
+                        var targetSwimlane = evt.item.closest('.sortableTicketList');
 
-                    var statusPostData = {
-                        action: "kanbanSort",
-                        payload: {},
-                        handler: ui.item[0].id
-                    };
+                        var statusPostData = {
+                            action: "kanbanSort",
+                            payload: {},
+                            handler: evt.item.id
+                        };
 
-
-                    for (var i = 0; i < ticketStatusList.length; i++) {
-                        if ($targetSwimlane.find(".contentInner.status_" + ticketStatusList[i]).length) {
-                            statusPostData.payload[ticketStatusList[i]] = $targetSwimlane.find(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
+                        for (var i = 0; i < ticketStatusList.length; i++) {
+                            var col = targetSwimlane.querySelector(".contentInner.status_" + ticketStatusList[i]);
+                            if (col) {
+                                statusPostData.payload[ticketStatusList[i]] = serializeSortable(col);
+                            }
                         }
+
+                        jQuery.ajax({
+                            type: 'POST',
+                            url: leantime.appUrl + '/api/tickets',
+                            data: statusPostData
+                        }).done(function (response) {
+                            leantime.handleAsyncResponse(response);
+                        });
                     }
-
-                    // POST to server using $.post or $.ajax
-                    jQuery.ajax({
-                        type: 'POST',
-                        url: leantime.appUrl + '/api/tickets',
-                        data: statusPostData
-
-                    }).done(function (response) {
-                        leantime.handleAsyncResponse(response);
-                    });
-
-                }
+                });
             });
 
         });

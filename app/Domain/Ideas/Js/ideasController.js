@@ -236,52 +236,64 @@ leantime.ideasController = (function () {
 
     var initIdeaKanban = function (statusList) {
 
-        jQuery("#sortableIdeaKanban").disableSelection();
-
         jQuery("#sortableIdeaKanban .ticketBox").hover(function () {
             jQuery(this).css("background", "var(--kanban-card-hover)");
         },function () {
             jQuery(this).css("background", "var(--kanban-card-bg)");
         });
 
-        jQuery("#sortableIdeaKanban .contentInner").sortable({
-            connectWith: ".contentInner",
-            items: "> .moveable",
-            tolerance: 'pointer',
-            placeholder: "ui-state-highlight",
-            forcePlaceholderSize: true,
-            cancel: ".portlet-toggle",
-            start: function (event, ui) {
-                ui.item.addClass('tilt');
-                tilt_direction(ui.item);
-            },
-            stop: function (event, ui) {
-                ui.item.removeClass("tilt");
-                jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
-                ui.item.removeData("move_handler");
-            },
-            update: function (event, ui) {
-
-
-                var statusPostData = {
-                    action: "statusUpdate",
-                    payload: {}
-                };
-
-                for (var i = 0; i < statusList.length; i++) {
-                    if (jQuery(".contentInner.status_" + statusList[i]).length) {
-                        statusPostData.payload[statusList[i]] = jQuery(".contentInner.status_" + statusList[i]).sortable('serialize');
+        function serializeSortable(containerEl) {
+            var items = containerEl.querySelectorAll(':scope > .moveable');
+            var parts = [];
+            items.forEach(function (item) {
+                if (item.id) {
+                    var idx = item.id.indexOf('_');
+                    if (idx !== -1) {
+                        parts.push(item.id.substring(0, idx) + '[]=' + item.id.substring(idx + 1));
                     }
                 }
+            });
+            return parts.join('&');
+        }
 
-                // POST to server using $.post or $.ajax
-                jQuery.ajax({
-                    type: 'POST',
-                    url: leantime.appUrl + '/api/ideas',
-                    data:statusPostData
-                });
+        document.querySelectorAll("#sortableIdeaKanban .contentInner").forEach(function (contentInner) {
+            if (contentInner._sortableInstance) contentInner._sortableInstance.destroy();
+            contentInner._sortableInstance = new Sortable(contentInner, {
+                group: 'idea-kanban',
+                draggable: '.moveable',
+                ghostClass: 'ui-state-highlight',
+                filter: '.portlet-toggle',
+                animation: 150,
 
-            }
+                onStart: function (evt) {
+                    evt.item.classList.add('tilt');
+                    tilt_direction(jQuery(evt.item));
+                },
+
+                onEnd: function (evt) {
+                    evt.item.classList.remove('tilt');
+                    jQuery("html").unbind('mousemove', jQuery(evt.item).data("move_handler"));
+                    jQuery(evt.item).removeData("move_handler");
+
+                    var statusPostData = {
+                        action: "statusUpdate",
+                        payload: {}
+                    };
+
+                    for (var i = 0; i < statusList.length; i++) {
+                        var col = document.querySelector(".contentInner.status_" + statusList[i]);
+                        if (col) {
+                            statusPostData.payload[statusList[i]] = serializeSortable(col);
+                        }
+                    }
+
+                    jQuery.ajax({
+                        type: 'POST',
+                        url: leantime.appUrl + '/api/ideas',
+                        data: statusPostData
+                    });
+                }
+            });
         });
 
         function tilt_direction(item)
