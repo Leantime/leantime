@@ -248,7 +248,11 @@ class Template
         if (str_ends_with($path, 'blade.php')) {
             $view->with(array_merge(
                 $this->vars,
-                ['layout' => $layout]
+                [
+                    'layout' => $layout,
+                    'module' => strtolower($templateParts['module']),
+                    'action' => $templateParts['path'],
+                ]
             ));
         } else {
             $view = app('view')->make($layout, array_merge(
