@@ -65,10 +65,6 @@
             case 'Yesterday':
                 return lastAppliedDay.getTime() !== nowDay.getTime();
 
-            case 'Last 7 Days':
-            case 'Last 30 Days':
-                return lastAppliedDay.getTime() !== nowDay.getTime();
-
             case 'This Week':
                 const lastWeekStart = getStartOfWeek(lastApplied);
                 const nowWeekStart = getStartOfWeek(now);
@@ -98,13 +94,21 @@
         const dateInput = jQuery('input[name="dateFrom"]');
 
         if (dateInput.length && dateInput.data('daterangepicker')) {
+            const picker = dateInput.data('daterangepicker');
+            jQuery(document).on('click', '.daterangepicker .ranges li', function () {
+                const label = jQuery(this).text().trim();
+                selectedRangeName = label;
+                picker._storedChosenLabel = label;
+            });
+
             dateInput.on('apply.daterangepicker', function (ev, picker) {
-                if (picker.chosenLabel) {
+                if (picker.chosenLabel && picker.chosenLabel !== 'Custom Range') {
                     selectedRangeName = picker.chosenLabel;
+                    picker._storedChosenLabel = picker.chosenLabel;
                 }
             });
         } else {
-            setTimeout(initDateRangeTracking, 500);
+            setTimeout(initDateRangeTracking, 300);
         }
     }
 
@@ -222,82 +226,51 @@
         alert('Failed to save profile');
         return false;
     }
-function applyDateRange(rangeName) {
-    const dateInput = jQuery('input[name="dateFrom"]');
+    function applyDateRange(rangeName) {
 
-    if (!dateInput.length || !dateInput.data('daterangepicker')) {
-        console.log('[applyDateRange] Datepicker not found');
-        return false;
-    }
-
-    const picker = dateInput.data('daterangepicker');
-    
-    // Force fresh moment calculation - don't use picker.ranges
-    let startDate, endDate;
-    
-    switch(rangeName) {
-        case 'Today':
-            startDate = moment().startOf('day');
-            endDate = moment().endOf('day');
-            break;
-        case 'Yesterday':
-            startDate = moment().subtract(1, 'day').startOf('day');
-            endDate = moment().subtract(1, 'day').endOf('day');
-            break;
-        case 'This Week':
-            startDate = moment().startOf('week');
-            endDate = moment().endOf('week');
-            break;
-        case 'This Month':
-            startDate = moment().startOf('month');
-            endDate = moment().endOf('month');
-            break;
-        case 'Last 7 Days':
-            startDate = moment().subtract(6, 'days').startOf('day');
-            endDate = moment().endOf('day');
-            break;
-        case 'Last 30 Days':
-            startDate = moment().subtract(29, 'days').startOf('day');
-            endDate = moment().endOf('day');
-            break;
-        case 'Last Month':
-            startDate = moment().subtract(1, 'month').startOf('month');
-            endDate = moment().subtract(1, 'month').endOf('month');
-            break;
-        default:
-            console.log('[applyDateRange] Unknown range:', rangeName);
+        const dateInput = jQuery('input[name="dateFrom"]');
+        if (!dateInput.length || !dateInput.data('daterangepicker')) {
             return false;
+        }
+
+        const picker = dateInput.data('daterangepicker');
+
+        let startDate, endDate;
+
+        switch (rangeName) {
+            case 'Today':
+                startDate = moment().startOf('day');
+                endDate = moment().endOf('day');
+                break;
+            case 'This Week':
+                startDate = moment().startOf('isoWeek');
+                endDate = moment().endOf('isoWeek');
+                break;
+            case 'This Month':
+                startDate = moment().startOf('month');
+                endDate = moment().endOf('month');
+                break;
+            default:
+                return false;
+        }
+
+        picker.setStartDate(startDate);
+        picker.setEndDate(endDate);
+
+        picker.chosenLabel = rangeName;
+        picker._storedChosenLabel = rangeName;
+
+        jQuery('input[name="dateFrom"]').val(startDate.format('YYYY-MM-DD'));
+        jQuery('input[name="dateTo"]').val(endDate.format('YYYY-MM-DD'));
+
+        selectedRangeName = rangeName;
+
+        return true;
     }
-
-    console.log('[applyDateRange] Calculated dates for', rangeName, ':', {
-        start: startDate.format('YYYY-MM-DD'),
-        end: endDate.format('YYYY-MM-DD')
-    });
-
-    picker.setStartDate(startDate);
-    picker.setEndDate(endDate);
-    picker.chosenLabel = rangeName;
-
-    jQuery('input[name="dateFrom"]').val(startDate.format('YYYY-MM-DD'));
-    jQuery('input[name="dateTo"]').val(endDate.format('YYYY-MM-DD'));
-
-    selectedRangeName = rangeName;
-
-    return true;
-}
 
     async function applyFilters(filters) {
         if (!filters) {
             return;
-        }
-        if (filters.clientId) {
-            jQuery('select[name="clientId"]').val(filters.clientId);
-        }
-        if (filters.userId) {
-            jQuery('select[name="userId"]').val(filters.userId);
-        }
-        if (filters.kind) {
-            jQuery('select[name="kind"]').val(filters.kind);
         }
 
         if (filters.dateRange && filters.dateRange !== 'Custom') {
@@ -317,41 +290,6 @@ function applyDateRange(rangeName) {
             }
             if (filters.dateTo) {
                 jQuery('input[name="dateTo"]').val(filters.dateTo);
-            }
-        }
-
-        jQuery('input[name="invEmpl"]').prop('checked', filters.invEmpl === '1');
-        jQuery('input[name="invComp"]').prop('checked', filters.invComp === '1');
-        jQuery('input[name="paid"]').prop('checked', filters.paid === '1');
-
-        if (filters.projects && Array.isArray(filters.projects)) {
-            jQuery('input[name="project[]"]').prop('checked', false);
-
-            if (filters.projects.includes('-1') || filters.projects.length === 0) {
-                jQuery('#projectCheckboxAll').prop('checked', true);
-            } else {
-                filters.projects.forEach(function (projectId) {
-                    jQuery('input[name="project[]"][value="' + projectId + '"]').prop('checked', true);
-                });
-                jQuery('#projectCheckboxAll').prop('checked', false);
-            }
-
-            if (typeof updateProjectCountInline === 'function') {
-                updateProjectCountInline();
-            }
-        }
-
-        if (filters.columnState && dataTableInstance && typeof dataTableInstance.columns === 'function') {
-            dataTableInstance.columns().every(function (index) {
-                const column = this;
-                const columnName = jQuery(column.header()).data('column-name');
-                if (columnName && filters.columnState.hasOwnProperty(columnName)) {
-                    column.visible(filters.columnState[columnName]);
-                }
-            });
-
-            if (typeof window.leantimeDataTablesColumnState !== 'undefined') {
-                await window.leantimeDataTablesColumnState.save('allTimesheetsTable', filters.columnState, true);
             }
         }
     }
@@ -389,10 +327,14 @@ function applyDateRange(rangeName) {
 
         if (dateInput.length && dateInput.data('daterangepicker')) {
             const picker = dateInput.data('daterangepicker');
-            if (picker.chosenLabel) {
+            if (picker._storedChosenLabel && picker._storedChosenLabel !== 'Custom Range') {
+                dateRange = picker._storedChosenLabel;
+            } else if (picker.chosenLabel && picker.chosenLabel !== 'Custom Range') {
                 dateRange = picker.chosenLabel;
-            } else if (selectedRangeName) {
+            } else if (selectedRangeName && selectedRangeName !== 'Custom Range') {
                 dateRange = selectedRangeName;
+            } else {
+                dateRange = detectRangeFromDates(dateFrom, dateTo);
             }
         }
 
@@ -442,6 +384,31 @@ function applyDateRange(rangeName) {
         }
 
         return projectFilters;
+    }
+    function detectRangeFromDates(dateFrom, dateTo) {
+        if (!dateFrom || !dateTo) return 'Custom';
+
+        const from = moment(dateFrom, 'MM/DD/YYYY');
+        const to = moment(dateTo, 'MM/DD/YYYY');
+        const today = moment().startOf('day');
+
+        if (from.isSame(today, 'day') && to.isSame(today, 'day')) {
+            return 'Today';
+        }
+
+        const thisWeekStart = moment().startOf('isoWeek');
+        const thisWeekEnd = moment().endOf('isoWeek');
+        if (from.isSame(thisWeekStart, 'day') && to.isSame(thisWeekEnd, 'day')) {
+            return 'This Week';
+        }
+
+        const thisMonthStart = moment().startOf('month');
+        const thisMonthEnd = moment().endOf('month');
+        if (from.isSame(thisMonthStart, 'day') && to.isSame(thisMonthEnd, 'day')) {
+            return 'This Month';
+        }
+
+        return 'Custom';
     }
 
     async function deletePreference(name) {
@@ -621,13 +588,11 @@ function applyDateRange(rangeName) {
     }
 
     function showProjectSelector(profileName) {
-        // Remove existing modal if any
         jQuery('#slackProjectModal').remove();
 
         const pref = currentPreferences[profileName];
         const currentProjectId = pref ? pref.slackProjectId : '';
 
-        // Build project options
         let projectOptions = '<option value="">-- No Project (Disable Slack) --</option>';
         if (typeof projectNames !== 'undefined') {
             for (const [id, name] of Object.entries(projectNames)) {
