@@ -22,6 +22,7 @@
     "chosen-js": "^1.8.7",
     "composer": "^4.1.0",
     "croppie": "^2.6.5",
+    "daisyui": "^5.5.18",
     "datatables.net": "^1.13.11",
     "datatables.net-buttons": "^2.4.2",
     "datatables.net-rowgroup": "^1.4.1",
