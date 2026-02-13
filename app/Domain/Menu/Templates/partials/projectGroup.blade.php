@@ -32,7 +32,7 @@
                 @endif
                 @include('menu::partials.projectLink')
 
-                <div class="clear"></div>
+                <div class="tw:clear-both"></div>
 
                 @if(!empty($project['children']) && count($project['children']) >0)
                     @include('menu::partials.projectGroup', ['projects' => $project['children'], 'parent' => $project['id'], 'level'=> $level+1, 'prefx' => $prefix, "currentProject"=>$currentProject])

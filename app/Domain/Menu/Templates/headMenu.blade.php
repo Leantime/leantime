@@ -44,7 +44,7 @@
             data-tippy-content='{{ __('popover.latest_updates') }}'
         >
             <span class="fa-solid fa-bolt-lightning"></span>
-            <span hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
+            <span class="tw:inline-block" hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
 
         </a>
 
@@ -64,7 +64,7 @@
         >
             <span class="fa-solid fa-bell"></span>
             @if($newNotificationCount>0)
-                <span class='notificationCounter'>{{ $newNotificationCount }}</span>
+                <span class='notificationCounter tw:badge tw:badge-error tw:badge-xs'>{{ $newNotificationCount }}</span>
             @endif
         </a>
 
@@ -89,7 +89,7 @@
 
                 <ul id='notificationsList' class='notifcationViewLists'>
                     @if ($totalNotificationCount === 0)
-                        <p style='padding: 10px'>{{ __('text.no_notifications') }}</p>
+                        <p class="tw:p-2.5">{{ __('text.no_notifications') }}</p>
                     @endif
 
                     @foreach ($notifications as $notif)
@@ -118,9 +118,9 @@
                     @endforeach
                 </ul>
 
-                <ul id='mentionsList' style='display:none;' class='notificationViewLists'>
+                <ul id='mentionsList' class='notificationViewLists tw:hidden'>
                     @if ($totalMentionCount === 0)
-                        <p style="padding: 10px">{{ __('text.no_notifications') }}</p>
+                        <p class="tw:p-2.5">{{ __('text.no_notifications') }}</p>
                     @endif
 
                     @foreach ($notifications as $notif)
@@ -213,7 +213,7 @@
 
 </ul>
 
-<ul class="headmenu work-modes" style="height: 50px; float: left;">
+<ul class="headmenu work-modes tw:h-[50px] tw:float-left">
 
     @dispatchEvent('afterHeadMenuOpen')
     <li>

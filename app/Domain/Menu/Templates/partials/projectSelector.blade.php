@@ -11,7 +11,7 @@
                 <span class="title">{{ session("currentProjectName") }}</span>
             </div>
         @else
-            <div class="projectSelectorFooter" style="border:none; border-bottom:1px solid var(--main-border-color)">
+            <div class="projectSelectorFooter tw:border-none tw:border-b tw:border-solid tw:border-[var(--main-border-color)]">
             <ul class="selectorList projectList">
                 <li>
                     <a href="{{ BASE_URL }}/projects/showMy"><strong><i class="fa-solid fa-house-flag"></i> Open Project Hub</strong></a>
