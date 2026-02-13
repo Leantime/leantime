@@ -373,6 +373,10 @@ document.addEventListener('HTMX.closemodal', function () {
  * Opens a modal by URL — replaces nyroModal's static helper.
  */
 jQuery.nmManual = function (url, options) {
+    // Some callers pass a factory function instead of an options object
+    if (typeof options === 'function') {
+        options = options();
+    }
     if (options && options.callbacks && typeof options.callbacks.beforeClose === 'function') {
         window.globalModalCallback = options.callbacks.beforeClose;
     }
