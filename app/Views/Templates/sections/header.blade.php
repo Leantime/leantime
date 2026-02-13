@@ -30,7 +30,6 @@
     'resources/js/compiled-htmx.js',
     'resources/js/compiled-htmx-extensions.js',
     'resources/js/compiled-frameworks.js',
-    'resources/js/compiled-framework-plugins.js',
     'resources/js/compiled-global-component.js',
     'resources/js/compiled-calendar-component.js',
     'resources/js/compiled-table-component.js',
