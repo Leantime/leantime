@@ -8,6 +8,9 @@ window.moment = moment;
 import flatpickr from 'flatpickr';
 window.flatpickr = flatpickr;
 
+import Sortable from 'sortablejs';
+window.Sortable = Sortable;
+
 import { createPopper } from '@popperjs/core';
 window.Popper = { createPopper };
 
