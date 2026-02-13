@@ -964,20 +964,22 @@ leantime.ticketsController = (function () {
                 '#aaaaaa',
                 '#4c4c4c',
             ];
-            jQuery('input.simpleColorPicker').simpleColorPicker(
-                { colors: colors,
-                    onChangeColor: function (color) {
-                        jQuery(this).css('background', color);
-                        jQuery(this).css('color', "#fff");
-                    }
+            document.querySelectorAll('input.simpleColorPicker').forEach(function (input) {
+                // Convert text input to native color picker
+                input.type = 'color';
+                input.style.height = '34px';
+                input.style.padding = '2px';
+                input.style.cursor = 'pointer';
+                if (input.value && input.value.charAt(0) !== '#') {
+                    input.value = '#' + input.value;
                 }
-            );
-
-            var currentColor = jQuery('input.simpleColorPicker').val();
-
-        if (currentColor != '') {
-            jQuery('input.simpleColorPicker').css('background', currentColor);
-        }
+                if (!input.value) {
+                    input.value = '#1b75bb';
+                }
+                input.addEventListener('input', function () {
+                    this.style.background = this.value;
+                });
+            });
 
 
     };

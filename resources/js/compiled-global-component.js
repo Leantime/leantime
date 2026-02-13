@@ -41,7 +41,7 @@ import 'gridstack/dist/gridstack-all.js';
 import 'jstree';
 import '@assuradeurengilde/fontawesome-iconpicker';
 import 'leader-line/leader-line.min.js';
-import '../../public/assets/js/libs/simple-color-picker-master/jquery.simple-color-picker.js';
+// simple-color-picker removed — replaced by native <input type="color">
 import '../../public/assets/js/libs/emojipicker/vanillaEmojiPicker.js';
 
 import mermaid from 'mermaid';

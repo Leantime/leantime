@@ -36,7 +36,9 @@ leantime.menuController = (function () {
 
     var initProjectSelector = function () {
 
-        jQuery(".project-select").chosen();
+        document.querySelectorAll(".project-select").forEach(function (el) {
+            new SlimSelect({ select: el });
+        });
 
         jQuery(document).on('click', '.projectselector.dropdown-menu', function (e) {
             e.stopPropagation();
