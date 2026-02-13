@@ -1,8 +1,8 @@
 /**
  * Vanilla toast notification utility — replaces jQuery Growl.
  *
- * Exposes leantime.toast.show({ message, style }) and provides
- * a jQuery.growl() shim for backwards compatibility during migration.
+ * Exposes leantime.toast.show({ message, style }) as the public API.
+ * A window._growlShim fallback is provided for any remaining legacy callers.
  */
 (function () {
     'use strict';
@@ -107,33 +107,25 @@
     var leantime = window.leantime || (window.leantime = {});
     leantime.toast = { show: show };
 
-    // jQuery.growl shim — preserves backwards compat for the ~25 callsites
-    function shimGrowl(options) {
-        return show(options);
-    }
-    shimGrowl.error = function (options) {
+    // Global fallback for any remaining legacy callers
+    var growlShim = function (options) { return show(options); };
+    growlShim.error = function (options) {
         options = options || {};
         options.style = 'error';
         options.title = options.title || 'Error!';
         return show(options);
     };
-    shimGrowl.notice = function (options) {
+    growlShim.notice = function (options) {
         options = options || {};
         options.style = 'notice';
         options.title = options.title || 'Notice!';
         return show(options);
     };
-    shimGrowl.warning = function (options) {
+    growlShim.warning = function (options) {
         options = options || {};
         options.style = 'warning';
         options.title = options.title || 'Warning!';
         return show(options);
     };
-
-    // Install on jQuery if present, otherwise on window for later pickup
-    if (typeof jQuery !== 'undefined') {
-        jQuery.growl = shimGrowl;
-    }
-    // Always provide a global fallback
-    window._growlShim = shimGrowl;
+    window._growlShim = growlShim;
 })();

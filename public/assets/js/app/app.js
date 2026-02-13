@@ -1,34 +1,30 @@
 //Lets get this party started.
 var leantime = leantime || {};
 
-var themeColor = jQuery('meta[name=theme-color]').attr("content");
-leantime.companyColor = themeColor;
+var themeColorMeta = document.querySelector('meta[name=theme-color]');
+leantime.companyColor = themeColorMeta ? themeColorMeta.getAttribute("content") : null;
 
-var colorScheme = jQuery('meta[name=color-scheme]').attr("content");
-leantime.colorScheme = colorScheme;
+var colorSchemeMeta = document.querySelector('meta[name=color-scheme]');
+leantime.colorScheme = colorSchemeMeta ? colorSchemeMeta.getAttribute("content") : null;
 
-var theme = jQuery('meta[name=theme]').attr("content");
-leantime.theme = theme;
+var themeMeta = document.querySelector('meta[name=theme]');
+leantime.theme = themeMeta ? themeMeta.getAttribute("content") : null;
 
-var appURL = jQuery('meta[name=identifier-URL]').attr("content");
-leantime.appUrl = appURL;
+var appURLMeta = document.querySelector('meta[name=identifier-URL]');
+leantime.appUrl = appURLMeta ? appURLMeta.getAttribute("content") : null;
 
-var leantimeVersion = jQuery('meta[name=leantime-version]').attr("content");
-leantime.version = leantimeVersion;
+var leantimeVersionMeta = document.querySelector('meta[name=leantime-version]');
+leantime.version = leantimeVersionMeta ? leantimeVersionMeta.getAttribute("content") : null;
 
 leantime.replaceSVGColors = function () {
 
-    jQuery(document).ready(function () {
-
-        if (leantime.companyColor != "#1b75bb") {
-            jQuery("svg").children().each(function () {
-                if (jQuery(this).attr("fill") == "#1b75bb") {
-                    jQuery(this).attr("fill", leantime.companyColor);
-                }
-            });
-        }
-
-    });
+    if (leantime.companyColor != "#1b75bb") {
+        document.querySelectorAll("svg > *").forEach(function (child) {
+            if (child.getAttribute("fill") == "#1b75bb") {
+                child.setAttribute("fill", leantime.companyColor);
+            }
+        });
+    }
 
 };
 
@@ -36,29 +32,32 @@ leantime.handleAsyncResponse = function (response) {
 
     if (response !== undefined) {
         if (response.result !== undefined && response.result.html !== undefined) {
-            var content = jQuery(response.result.html);
-            jQuery("body").append(content);
+            document.body.insertAdjacentHTML('beforeend', response.result.html);
         }
     }
 };
 
-jQuery.noConflict();
-
-jQuery(document).ready(function () {
+document.addEventListener('DOMContentLoaded', function () {
 
     leantime.replaceSVGColors();
 
-    jQuery(".confetti").click(function () {
-        confetti.start();
+    document.querySelectorAll(".confetti").forEach(function (el) {
+        el.addEventListener("click", function () {
+            confetti.start();
+        });
     });
 
     tippy('[data-tippy-content]');
 
-    if (jQuery('.login-alert .alert').text() !== '') {
-        jQuery('.login-alert').fadeIn();
+    var loginAlertText = document.querySelector('.login-alert .alert');
+    if (loginAlertText && loginAlertText.textContent !== '') {
+        var loginAlert = document.querySelector('.login-alert');
+        if (loginAlert) {
+            loginAlert.style.display = '';
+        }
     }
 
-    document.addEventListener('scroll', () => {
+    document.addEventListener('scroll', function () {
         document.documentElement.dataset.scroll = window.scrollY;
     });
 
@@ -70,13 +69,20 @@ htmx.onLoad(function(element){
 });
 
 window.addEventListener("HTMX.ShowNotification", function(evt) {
-    jQuery.get(leantime.appUrl+"/notifications/getLatestGrowl", function(data){
-        let notification = JSON.parse(data);
+    fetch(leantime.appUrl + "/notifications/getLatestGrowl", {
+        credentials: 'include',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(function(response) { return response.text(); })
+    .then(function(data) {
+        var notification = JSON.parse(data);
 
         if(notification.notification && notification.notification !== "undefined") {
-            jQuery.growl({
+            leantime.toast.show({
                 message: notification.notification, style: notification.notificationType
             });
         }
-    })
+    });
 });

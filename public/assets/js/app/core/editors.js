@@ -37,9 +37,9 @@ leantime.editorController = (function () {
 
 
         {start: '---', replacement: '<hr/>'},
-        {start: '--', replacement: '—'},
-        {start: '-', replacement: '—'},
-        {start: '(c)', replacement: '©'}
+        {start: '--', replacement: '\u2014'},
+        {start: '-', replacement: '\u2014'},
+        {start: '(c)', replacement: '\u00a9'}
     ];
 
     var mentionsConfig = {
@@ -49,13 +49,17 @@ leantime.editorController = (function () {
             // Do your ajax call
             // When using multiple delimiters you can alter the query depending on the delimiter used
             if (delimiter === '@') {
-                jQuery.getJSON(leantime.appUrl + '/api/users', {
-                    projectUsersAccess: 'current',
-                    query: query
-                }, function (data) {
+                fetch(leantime.appUrl + '/api/users?projectUsersAccess=current&query=' + encodeURIComponent(query), {
+                    credentials: 'include',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
                     //call process to show the result
-                    let users = [];
-                    for (let i = 0; i < data.length; i++) {
+                    var users = [];
+                    for (var i = 0; i < data.length; i++) {
                         users[i] = {
                             "name": data[i].firstname + " " + data[i].lastname,
                             "id":  data[i].id,
@@ -181,8 +185,9 @@ leantime.editorController = (function () {
 
     var initSimpleEditor = function (callback) {
 
-        jQuery('textarea.tinymceSimple').tinymce(
+        tinymce.init(
             {
+                selector: 'textarea.tinymceSimple',
                 // General options
                 iframe_aria_text: '',
                 width: "100%",
@@ -213,7 +218,8 @@ leantime.editorController = (function () {
 
     var initComplexEditor = function () {
 
-        var entityId = jQuery("input[name=id]").val();
+        var entityIdEl = document.querySelector("input[name=id]");
+        var entityId = entityIdEl ? entityIdEl.value : null;
 
         if(!entityId) {
             entityId = "new";
@@ -229,8 +235,9 @@ leantime.editorController = (function () {
         var height = window.innerHeight - 50 - 205;
 
 
-        jQuery('textarea.complexEditor').tinymce(
+        tinymce.init(
             {
+                selector: 'textarea.complexEditor',
                 // General options
                 iframe_aria_text: '',
                 width: "100%",
@@ -293,9 +300,10 @@ leantime.editorController = (function () {
 
     var initNotesEditor = function (callback) {
 
-        var entityId = jQuery("input[name=id]").val();
+        var entityIdEl = document.querySelector("input[name=id]");
+        var entityId = entityIdEl ? entityIdEl.value : null;
 
-        if(entityId == undefined) {
+        if(entityId == undefined || entityId == null) {
             entityId = "new";
         }
 
@@ -308,8 +316,9 @@ leantime.editorController = (function () {
         //Then reduce headline, save button range padding from modal
         var height = window.innerHeight - 50 - 205;
 
-        jQuery('textarea.notesEditor').tinymce(
+        tinymce.init(
             {
+                selector: 'textarea.notesEditor',
                 // General options
                 iframe_aria_text: '',
                 width: "100%",
@@ -380,8 +389,9 @@ leantime.editorController = (function () {
 
     var initContentEditable = function (id) {
 
-        jQuery(id).tinymce(
+        tinymce.init(
             {
+                selector: id,
                 // General options
                 iframe_aria_text: '',
                 width: "100%",

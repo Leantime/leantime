@@ -58,7 +58,7 @@ leantime.helperController = (function () {
 
     var firstLoginModal = function () {
 
-        jQuery(document).ready(function () {
+        document.addEventListener('DOMContentLoaded', function () {
 
             var onboardingModal = {
                 sizes: {
@@ -69,7 +69,9 @@ leantime.helperController = (function () {
                 autoSizable: true,
                 callbacks: {
                     afterShowCont: function () {
-                        jQuery(".showDialogOnLoad").show();
+                        document.querySelectorAll(".showDialogOnLoad").forEach(function (el) {
+                            el.style.display = '';
+                        });
                         jQuery(".onboardingModal").nyroModal(onboardingModal);
                     },
                     beforeClose: function () {
@@ -91,7 +93,7 @@ leantime.helperController = (function () {
     //Functions
     var showHelperModal = function (module, minW, minH) {
 
-        jQuery(document).ready(function () {
+        document.addEventListener('DOMContentLoaded', function () {
             jQuery.nmManual(
                 leantime.appUrl + "/help/showOnboardingDialog?module=" + module,
                 {sizes: {

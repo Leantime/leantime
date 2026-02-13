@@ -48,9 +48,6 @@ leantime.widgetController = (function () {
             draggable: {
                 handle: '.grid-handler-top',
                 appendTo: 'body',
-                // scroll: true,
-                // scrollSensitivity: 20,
-                // scrollSpeed: 10
             },
             lazyLoad: false,
             columnOpts: {
@@ -67,17 +64,26 @@ leantime.widgetController = (function () {
             saveGrid();
         });
 
-        jQuery(".grid-stack-item").each(function(){
-            jQuery(this).find(".removeWidget").click(function(){
-                removeWidget(jQuery(this).closest(".grid-stack-item")[0]);
-            });
-            jQuery(this).find(".fitContent").click(function(){
-                resizeWidget(jQuery(this).closest(".grid-stack-item")[0]);
-            });
+        document.querySelectorAll(".grid-stack-item").forEach(function(item) {
+            var removeBtn = item.querySelector(".removeWidget");
+            if (removeBtn) {
+                removeBtn.addEventListener('click', function() {
+                    removeWidget(this.closest(".grid-stack-item"));
+                });
+            }
+            var fitBtn = item.querySelector(".fitContent");
+            if (fitBtn) {
+                fitBtn.addEventListener('click', function() {
+                    resizeWidget(this.closest(".grid-stack-item"));
+                });
+            }
         });
 
-        jQuery(document).ready(function(){
-            jQuery("#gridBoard").css("opacity", 1);
+        document.addEventListener('DOMContentLoaded', function() {
+            var gridBoard = document.querySelector("#gridBoard");
+            if (gridBoard) {
+                gridBoard.style.opacity = '1';
+            }
         });
 
     };
@@ -100,12 +106,14 @@ leantime.widgetController = (function () {
         }
 
         items.forEach(function(item) {
-            //get hx links
-            let htmxElement = jQuery(item.content).find("[hx-get]").first();
+            //get hx links - parse the content HTML string to find the hx-get element
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = item.content;
+            var htmxElement = tempDiv.querySelector("[hx-get]");
 
-            item.id = htmxElement.attr("id");
-            item.widgetUrl = htmxElement.attr("hx-get");
-            item.widgetTrigger = htmxElement.attr("hx-trigger");
+            item.id = htmxElement ? htmxElement.getAttribute("id") : null;
+            item.widgetUrl = htmxElement ? htmxElement.getAttribute("hx-get") : null;
+            item.widgetTrigger = htmxElement ? htmxElement.getAttribute("hx-trigger") : null;
 
             if(item.x == undefined) {
                 item.x = 0;
@@ -131,14 +139,32 @@ leantime.widgetController = (function () {
         });
 
 
-        jQuery.post(leantime.appUrl+"/widgets/widgetManager",
-            {
-                action: "saveGrid",
-                data: items,
-                visibilityData: visibilityData
-            },
-            function(data, status){
+        // Build form-encoded params matching jQuery.post's nested serialization
+        var params = new URLSearchParams();
+        params.append('action', 'saveGrid');
+        items.forEach(function(item, i) {
+            Object.keys(item).forEach(function(key) {
+                var val = item[key];
+                if (val !== null && val !== undefined) {
+                    params.append('data[' + i + '][' + key + ']', val);
+                }
             });
+        });
+        if (visibilityData) {
+            Object.keys(visibilityData).forEach(function(key) {
+                params.append('visibilityData[' + key + ']', visibilityData[key]);
+            });
+        }
+
+        fetch(leantime.appUrl + "/widgets/widgetManager", {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: params
+        });
     };
 
 
@@ -156,13 +182,16 @@ leantime.widgetController = (function () {
 
     var toggleWidgetVisibility = function(id, element, widget) {
         let grid = document.querySelector('.grid-stack').gridstack;
-        let visible = jQuery(element).is(":checked");
+        let visible = element.checked;
 
         // Find the next available position
         let position = findAvailablePosition(widget, grid);
 
         if (!visible) {
-            removeWidget(jQuery("#" + id).closest(".grid-stack-item")[0]);
+            var targetEl = document.getElementById(id);
+            if (targetEl) {
+                removeWidget(targetEl.closest(".grid-stack-item"));
+            }
         } else {
             // Create the widget structure using DOM methods
             const widgetNode = document.createElement('div');

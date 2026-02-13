@@ -10,149 +10,101 @@ leantime.calendarController = (function () {
         var m = date.getMonth();
         var y = date.getFullYear();
 
-        var heightWindow = jQuery("body").height() - 260;
+        var heightWindow = document.body.offsetHeight - 260;
 
-        var calendar = jQuery('#calendar').fullCalendar({
+        var calendarEl = document.querySelector('#calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
             timeZone: leantime.i18n.__("usersettings.timezone"),
             height: heightWindow,
-            header: {
+            headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'month,agendaWeek,agendaDay,listDay'
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listDay'
             },
             titleFormat: {
-                month: 'MMMM yyyy',
-                week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
-                day: 'dddd, MMM d, yyyy'
+                year: 'numeric',
+                month: 'long'
             },
-            columnFormat: {
-                month: leantime.i18n.__("language.columnFormatMonth"),
-                week: leantime.i18n.__("language.columnFormatWeek"),
-                day: leantime.i18n.__("language.columnFormatday")
+            dayHeaderFormat: {
+                weekday: 'short'
             },
-            timeFormat: { // for event elements
-                '': leantime.dateHelper.getFormatFromSettings("timeformat", "luxon")
-            },
+            eventTimeFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
             // locale
-            isRTL: leantime.i18n.__("language.isRTL") == "false" ? 0 : 1,
-            firstDay: leantime.i18n.__("language.firstDayOfWeek"),
-            monthNames: leantime.i18n.__("language.monthNames").split(","),
-            monthNamesShort: leantime.i18n.__("language.monthNamesShort").split(","),
-            dayNames: leantime.i18n.__("language.dayNames").split(","),
-            dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+            direction: leantime.i18n.__("language.isRTL") == "false" ? 'ltr' : 'rtl',
+            firstDay: parseInt(leantime.i18n.__("language.firstDayOfWeek"), 10),
+            locale: leantime.i18n.__("language.code"),
             buttonText: {
-                prev: '&laquo;',
-                next: '&raquo;',
-                prevYear: '&nbsp;&lt;&lt;&nbsp;',
-                nextYear: '&nbsp;&gt;&gt;&nbsp;',
                 today: leantime.i18n.__("buttons.today"),
                 month: leantime.i18n.__("buttons.month"),
                 week: leantime.i18n.__("buttons.week"),
                 day: leantime.i18n.__("buttons.day")
             },
-            select: function (start, end, allDay) {
+            selectable: true,
+            select: function (info) {
                 var title = prompt(leantime.i18n.__("label.event_title"));
                 if (title) {
-                    calendar.fullCalendar(
-                        'renderEvent',
-                        {
-                            title: title,
-                            start: start,
-                            end: end,
-                            allDay: allDay
-                        },
-                        true // make the event "stick"
-                    );
+                    calendar.addEvent({
+                        title: title,
+                        start: info.start,
+                        end: info.end,
+                        allDay: info.allDay
+                    });
                 }
-                calendar.fullCalendar('unselect');
+                calendar.unselect();
             },
             events: userEvents,
             eventColor: '#0866c6'
         });
+        calendar.render();
     };
 
     var initEventDatepickers = function () {
 
-        jQuery(document).ready(function () {
+        document.addEventListener('DOMContentLoaded', function () {
 
             Date.prototype.addDays = function (days) {
                 this.setDate(this.getDate() + days);
                 return this;
             };
-            jQuery.datepicker.setDefaults(
-                { beforeShow: function (i) {
-                    if (jQuery(i).attr('readonly')) {
-                        return false; } } }
-            );
 
-            var dateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "jquery");
+            var dateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "flatpickr");
+            var fromEl = document.querySelector("#event_date_from");
+            var toEl = document.querySelector("#event_date_to");
 
-            from = jQuery("#event_date_from")
-                .datepicker(
-                    {
-                        numberOfMonths: 1,
-                        dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
-                        dayNames: leantime.i18n.__("language.dayNames").split(","),
-                        dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
-                        dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
-                        monthNames: leantime.i18n.__("language.monthNames").split(","),
-                        currentText: leantime.i18n.__("language.currentText"),
-                        closeText: leantime.i18n.__("language.closeText"),
-                        buttonText: leantime.i18n.__("language.buttonText"),
-                        isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
-                        nextText: leantime.i18n.__("language.nextText"),
-                        prevText: leantime.i18n.__("language.prevText"),
-                        weekHeader: leantime.i18n.__("language.weekHeader"),
-                        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
+            var fromPicker = flatpickr(fromEl, {
+                dateFormat: dateFormat,
+                locale: {
+                    firstDayOfWeek: parseInt(leantime.i18n.__("language.firstDayOfWeek"), 10)
+                },
+                allowInput: true,
+                onOpen: function (selectedDates, dateStr, instance) {
+                    if (instance.element.hasAttribute('readonly')) {
+                        instance.close();
+                        return false;
                     }
-                )
-                .on(
-                    "change",
-                    function (date) {
-                        to.datepicker("option", "minDate", getDate(this));
-
-                        if (jQuery("#event_date_to").val() == '') {
-                            jQuery("#event_date_to").val(jQuery("#event_date_from").val());
-                        }
+                },
+                onChange: function (selectedDates, dateStr) {
+                    if (selectedDates.length > 0) {
+                        toPicker.set("minDate", selectedDates[0]);
                     }
-                ),
-
-            to = jQuery("#event_date_to").datepicker(
-                {
-                    numberOfMonths: 1,
-                    dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
-                    dayNames: leantime.i18n.__("language.dayNames").split(","),
-                    dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
-                    dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
-                    monthNames: leantime.i18n.__("language.monthNames").split(","),
-                    currentText: leantime.i18n.__("language.currentText"),
-                    closeText: leantime.i18n.__("language.closeText"),
-                    buttonText: leantime.i18n.__("language.buttonText"),
-                    isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
-                    nextText: leantime.i18n.__("language.nextText"),
-                    prevText: leantime.i18n.__("language.prevText"),
-                    weekHeader: leantime.i18n.__("language.weekHeader"),
-                    firstDay: leantime.i18n.__("language.firstDayOfWeek"),
+                    if (toEl.value === '') {
+                        toPicker.setDate(selectedDates[0], true);
+                    }
                 }
-            )
-                .on(
-                    "change",
-                    function () {
-                        from.datepicker("option", "maxDate", getDate(this));
-                    }
-                );
+            });
 
-            function getDate( element )
-            {
-                var date;
-                try {
-                    date = jQuery.datepicker.parseDate(dateFormat, element.value);
-                } catch ( error ) {
-                    date = null;
-                    console.log(error);
+            var toPicker = flatpickr(toEl, {
+                dateFormat: dateFormat,
+                locale: {
+                    firstDayOfWeek: parseInt(leantime.i18n.__("language.firstDayOfWeek"), 10)
+                },
+                allowInput: true,
+                onChange: function (selectedDates) {
+                    if (selectedDates.length > 0) {
+                        fromPicker.set("maxDate", selectedDates[0]);
+                    }
                 }
-                return date;
-            }
+            });
         });
 
 
@@ -169,7 +121,7 @@ leantime.calendarController = (function () {
             autoSizable: true,
             callbacks: {
                 afterShowCont: function () {
-
+                    // nyroModal is a jQuery plugin -- requires jQuery wrapper
                     jQuery(".formModal").nyroModal(exportModalConfig);
                 },
                 beforeClose: function () {
@@ -180,6 +132,7 @@ leantime.calendarController = (function () {
             },
             titleFromIframe: true
         };
+        // nyroModal is a jQuery plugin -- requires jQuery wrapper
         jQuery(".exportModal").nyroModal(exportModalConfig);
 
     }
@@ -230,69 +183,88 @@ leantime.calendarController = (function () {
             },
             eventDrop: function (event) {
                 if (event.event.extendedProps.enitityType == "ticket") {
-                    jQuery.ajax({
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data: {
+                    fetch(leantime.appUrl + '/api/tickets', {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams({
                             id: event.event.extendedProps.enitityId,
                             editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                             timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
                             editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                             timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
-                        }
+                        })
                     });
                 } else if (event.event.extendedProps.enitityType == "event") {
-                    jQuery.ajax({
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/calendar',
-                        data: {
+                    fetch(leantime.appUrl + '/api/calendar', {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams({
                             id: event.event.extendedProps.enitityId,
                             dateFrom: event.event.startStr,
                             dateTo: event.event.endStr
-                        }
-                    })
+                        })
+                    });
                 }
             },
             eventResize: function (event) {
                 if (event.event.extendedProps.enitityType == "ticket") {
-                    jQuery.ajax({
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data: {
+                    fetch(leantime.appUrl + '/api/tickets', {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams({
                             id: event.event.extendedProps.enitityId,
                             editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                             timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
                             editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                             timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
-                        }
-                    })
+                        })
+                    });
                 } else if (event.event.extendedProps.enitityType == "event") {
-                    jQuery.ajax({
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/calendar',
-                        data: {
+                    fetch(leantime.appUrl + '/api/calendar', {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams({
                             id: event.event.extendedProps.enitityId,
                             dateFrom: event.event.startStr,
                             dateTo: event.event.endStr
-                        }
-                    })
+                        })
+                    });
                 }
 
             },
             eventReceive: function (event) {
 
-                jQuery.ajax({
-                    type: 'PATCH',
-                    url: leantime.appUrl + '/api/tickets',
-                    data: {
+                fetch(leantime.appUrl + '/api/tickets', {
+                    method: 'PATCH',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: new URLSearchParams({
                         id: event.event.id,
                         editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                         timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
                         editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                         timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
-
-                    }
-                })
+                    })
+                });
 
             },
             eventDragStart: function (event) {
@@ -301,30 +273,28 @@ leantime.calendarController = (function () {
             eventDidMount: function (info) {
 
                 if (info.isDraggable === false) {
-                    jQuery(info.el).addClass("locked");
+                    info.el.classList.add("locked");
                 }
 
                 if (info.event.extendedProps.location != null
                     && info.event.extendedProps.location != ""
                     && info.event.extendedProps.location.indexOf("http") == 0
                 ) {
-                    //jQuery(info.el).prepend("<div class='pull-right'><a href='"+info.event.extendedProps.location+"'>Join Call</a></div>")
-                    jQuery(info.el).attr("href", info.event.extendedProps.location);
-                    jQuery(info.el).attr("target", "_blank");
+                    info.el.setAttribute("href", info.event.extendedProps.location);
+                    info.el.setAttribute("target", "_blank");
                 }
             }
         });
 
-        jQuery(document).ready(function () {
-            //let tickets = jQuery("#yourToDoContainer")[0];
-
+        document.addEventListener('DOMContentLoaded', function () {
             // Set up draggable for each ticket box
             // setupDraggableTickets();
             //
             // Initialize the ThirdPartyDraggable for the todo container
 
-            if(jQuery("#yourToDoContainer").length > 0) {
-                initializeThirdPartyDraggable(jQuery("#yourToDoContainer")[0]);
+            var todoContainer = document.querySelector("#yourToDoContainer");
+            if (todoContainer) {
+                initializeThirdPartyDraggable(todoContainer);
             }
 
             initButtons();
@@ -377,7 +347,7 @@ leantime.calendarController = (function () {
                     },
                     eventData: function (eventEl) {
 
-                        let ticketEventData = jQuery(eventEl).data("event");
+                        let ticketEventData = JSON.parse(eventEl.dataset.event);
 
                         return {
                             id: ticketEventData.id,
@@ -402,40 +372,59 @@ leantime.calendarController = (function () {
 
             calendar.scrollToTime(Date.now());
 
-            jQuery('.minCalendar .fc-prev-button').click(function () {
-                calendar.prev();
-                calendar.getCurrentData()
-            });
-            jQuery('.minCalendar .fc-next-button').click(function () {
-                calendar.next();
-            });
-            jQuery('.minCalendar .fc-today-button').click(function () {
-                calendar.today();
-            });
-            jQuery(".minCalendar .calendarViewSelect").on("click", function (e) {
-
-                console.log(jQuery(this).data("value"));
-                calendar.changeView(jQuery(this).data("value"));
-
-                jQuery.ajax({
-                    type: 'PATCH',
-                    url: leantime.appUrl + '/api/submenu',
-                    data: {
-                        submenu: "dashboardCalendarView",
-                        state: jQuery(this).data("value")
-                    }
+            var prevBtn = document.querySelector('.minCalendar .fc-prev-button');
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function () {
+                    calendar.prev();
+                    calendar.getCurrentData();
                 });
+            }
+            var nextBtn = document.querySelector('.minCalendar .fc-next-button');
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function () {
+                    calendar.next();
+                });
+            }
+            var todayBtn = document.querySelector('.minCalendar .fc-today-button');
+            if (todayBtn) {
+                todayBtn.addEventListener('click', function () {
+                    calendar.today();
+                });
+            }
+            document.querySelectorAll(".minCalendar .calendarViewSelect").forEach(function (el) {
+                el.addEventListener("click", function (e) {
 
+                    console.log(this.dataset.value);
+                    calendar.changeView(this.dataset.value);
+
+                    fetch(leantime.appUrl + '/api/submenu', {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams({
+                            submenu: "dashboardCalendarView",
+                            state: this.dataset.value
+                        })
+                    });
+
+                });
             });
 
             // Initialize day selector buttons
-            jQuery('.day-button').on('click', function() {
-                const date = jQuery(this).data('date');
-                calendar.gotoDate(date);
+            document.querySelectorAll('.day-button').forEach(function (el) {
+                el.addEventListener('click', function () {
+                    var date = this.dataset.date;
+                    calendar.gotoDate(date);
 
-                // Update active state
-                jQuery('.day-button').removeClass('active');
-                jQuery(this).addClass('active');
+                    // Update active state
+                    document.querySelectorAll('.day-button').forEach(function (btn) {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
             });
         }
 

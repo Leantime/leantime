@@ -2,20 +2,37 @@ leantime.commentsController = (function () {
 
     var enableCommenterForms = function () {
 
-        jQuery(".commentBox").show();
+        document.querySelectorAll(".commentBox").forEach(function (el) {
+            el.style.display = '';
+        });
 
         //Hide reply comment boxes
-        jQuery("#comments .replies .commentBox").hide();
-        jQuery(".deleteComment, .replyButton").show();
+        document.querySelectorAll("#comments .replies .commentBox").forEach(function (el) {
+            el.style.display = 'none';
+        });
+        document.querySelectorAll(".deleteComment, .replyButton").forEach(function (el) {
+            el.style.display = '';
+        });
 
-        jQuery(".commentReply .tinymceSimple").tinymce().getBody().setAttribute('contenteditable', "true");
-        jQuery(".commentReply .tox-editor-header").show();
+        document.querySelectorAll(".commentReply .tinymceSimple").forEach(function (el) {
+            var editor = tinymce.get(el.id);
+            if (editor) {
+                editor.getBody().setAttribute('contenteditable', "true");
+            }
+        });
+        document.querySelectorAll(".commentReply .tox-editor-header").forEach(function (el) {
+            el.style.display = '';
+        });
 
-        jQuery(".commenterFields input").prop("readonly", false);
-        jQuery(".commenterFields input").prop("disabled", false);
+        document.querySelectorAll(".commenterFields input").forEach(function (el) {
+            el.readOnly = false;
+            el.disabled = false;
+        });
 
-        jQuery(".commenterFields textarea").prop("readonly", false);
-        jQuery(".commenterFields textarea").prop("disabled", false);
+        document.querySelectorAll(".commenterFields textarea").forEach(function (el) {
+            el.readOnly = false;
+            el.disabled = false;
+        });
 
     };
 
@@ -23,19 +40,36 @@ leantime.commentsController = (function () {
 
 
         if (id == 0) {
-            jQuery('#mainToggler').hide();
+            var mainToggler = document.getElementById('mainToggler');
+            if (mainToggler) { mainToggler.style.display = 'none'; }
         } else {
-            jQuery('#mainToggler').show();
+            var mainToggler = document.getElementById('mainToggler');
+            if (mainToggler) { mainToggler.style.display = ''; }
         }
-        jQuery('.commentBox textarea').remove();
+        document.querySelectorAll('.commentBox textarea').forEach(function (el) {
+            el.remove();
+        });
 
-        jQuery('.commentBox').hide('fast', function () {});
+        document.querySelectorAll('.commentBox').forEach(function (el) {
+            el.style.display = 'none';
+        });
 
-        jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
+        var commentEl = document.getElementById('comment' + id);
+        if (commentEl) {
+            var replyEl = commentEl.querySelector('.commentReply');
+            if (replyEl) {
+                replyEl.insertAdjacentHTML('afterbegin', '<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
+            }
+        }
         leantime.editorController.initSimpleEditor();
 
-        jQuery('#comment' + id + '').show('fast');
-        jQuery('#father').val(id);
+        if (commentEl) {
+            commentEl.style.display = '';
+        }
+        var fatherEl = document.getElementById('father');
+        if (fatherEl) {
+            fatherEl.value = id;
+        }
 
     };
 

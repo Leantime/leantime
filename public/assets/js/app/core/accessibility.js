@@ -9,119 +9,80 @@
 leantime.accessibilityController = (function () {
 
     /**
-     * Enhance Chosen dropdowns with ARIA attributes
+     * Enhance SlimSelect dropdowns with ARIA attributes and keyboard support
      */
-    var enhanceChosenAccessibility = function() {
-        jQuery('.chosen-container').each(function() {
-            var $container = jQuery(this);
+    var enhanceSlimSelectAccessibility = function() {
+        var ssMainElements = document.querySelectorAll('.ss-main');
 
+        ssMainElements.forEach(function(ssMain) {
             // Skip if already enhanced
-            if ($container.data('a11y-enhanced')) {
+            if (ssMain.dataset.a11yEnhanced) {
                 return;
             }
 
-            var $originalSelect = null;
+            var originalSelect = ssMain.previousElementSibling;
 
-            // Try to find the original select element
-            var containerId = $container.attr('id');
-
-            if (containerId && containerId.indexOf('_chosen') > -1) {
-                // Standard case: container has ID like "status-select_chosen"
-                var selectId = containerId.replace('_chosen', '');
-                $originalSelect = jQuery('#' + selectId);
-            }
-
-            // Fallback: look for a hidden select element that precedes this container
-            if (!$originalSelect || !$originalSelect.length) {
-                $originalSelect = $container.prev('select[data-placeholder]');
-            }
-
-            // Second fallback: look for any hidden select near this container
-            if (!$originalSelect || !$originalSelect.length) {
-                $originalSelect = $container.siblings('select').first();
-            }
-
-            // If we still can't find the select, skip this container
-            if (!$originalSelect || !$originalSelect.length) {
+            // Verify we found a select element
+            if (!originalSelect || originalSelect.tagName !== 'SELECT') {
                 return;
             }
 
             // Get label text
             var labelText = '';
-            var selectId = $originalSelect.attr('id');
+            var selectId = originalSelect.getAttribute('id');
             if (selectId) {
-                var $label = jQuery('label[for="' + selectId + '"]');
-                if ($label.length) {
-                    labelText = $label.text().trim();
+                var label = document.querySelector('label[for="' + selectId + '"]');
+                if (label) {
+                    labelText = label.textContent.trim();
                 }
             }
 
-            // Set ARIA attributes on Chosen container
-            var $chosenSingle = $container.find('.chosen-single');
-            var $chosenChoices = $container.find('.chosen-choices');
+            var isMultiple = originalSelect.hasAttribute('multiple');
 
-            if ($chosenSingle.length) {
-                // Single select
-                $chosenSingle.attr({
-                    'role': 'combobox',
-                    'aria-haspopup': 'listbox',
-                    'aria-expanded': 'false',
-                    'aria-label': labelText || $originalSelect.attr('data-placeholder') || 'Select option',
-                    'tabindex': '0'
-                });
+            // Set ARIA attributes on the main container
+            ssMain.setAttribute('role', 'combobox');
+            ssMain.setAttribute('aria-haspopup', 'listbox');
+            ssMain.setAttribute('aria-expanded', 'false');
+            ssMain.setAttribute('aria-label',
+                labelText || originalSelect.getAttribute('data-placeholder') || (isMultiple ? 'Select options' : 'Select option')
+            );
+
+            if (isMultiple) {
+                ssMain.setAttribute('aria-multiselectable', 'true');
             }
 
-            if ($chosenChoices.length) {
-                // Multi-select
-                $chosenChoices.attr({
-                    'role': 'combobox',
-                    'aria-haspopup': 'listbox',
-                    'aria-expanded': 'false',
-                    'aria-label': labelText || $originalSelect.attr('data-placeholder') || 'Select options',
-                    'aria-multiselectable': 'true',
-                    'tabindex': '0'
-                });
+            // Set role on the dropdown list
+            var ssList = ssMain.parentElement
+                ? ssMain.parentElement.querySelector('.ss-content .ss-list')
+                : null;
+            if (ssList) {
+                ssList.setAttribute('role', 'listbox');
             }
 
-            // Update aria-expanded on open/close
-            $container.on('chosen:showing_dropdown', function() {
-                $chosenSingle.add($chosenChoices).attr('aria-expanded', 'true');
+            // Observe class changes to detect open/close and update aria-expanded
+            var observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === 'class') {
+                        var contentEl = ssMain.parentElement
+                            ? ssMain.parentElement.querySelector('.ss-content')
+                            : null;
+                        if (contentEl) {
+                            var isOpen = contentEl.classList.contains('ss-open');
+                            ssMain.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                        }
+                    }
+                });
             });
 
-            $container.on('chosen:hiding_dropdown', function() {
-                $chosenSingle.add($chosenChoices).attr('aria-expanded', 'false');
-            });
-
-            // Set role on dropdown
-            $container.find('.chosen-drop').attr('role', 'listbox');
-            $container.find('.chosen-results li').attr('role', 'option');
+            var contentEl = ssMain.parentElement
+                ? ssMain.parentElement.querySelector('.ss-content')
+                : null;
+            if (contentEl) {
+                observer.observe(contentEl, { attributes: true, attributeFilter: ['class'] });
+            }
 
             // Mark as enhanced
-            $container.data('a11y-enhanced', true);
-        });
-    };
-
-    /**
-     * Enhance SlimSelect with ARIA attributes
-     */
-    var enhanceSlimSelectAccessibility = function() {
-        jQuery('.ss-main').each(function() {
-            var $ssMain = jQuery(this);
-            var $originalSelect = $ssMain.prev('select');
-
-            if (!$originalSelect.length) {
-                return;
-            }
-
-            var $label = jQuery('label[for="' + $originalSelect.attr('id') + '"]');
-            var labelText = $label.length ? $label.text().trim() : '';
-
-            $ssMain.attr({
-                'role': 'combobox',
-                'aria-haspopup': 'listbox',
-                'aria-label': labelText || $originalSelect.attr('data-placeholder') || 'Select option',
-                'aria-multiselectable': $originalSelect.attr('multiple') ? 'true' : 'false'
-            });
+            ssMain.dataset.a11yEnhanced = 'true';
         });
     };
 
@@ -129,42 +90,50 @@ leantime.accessibilityController = (function () {
      * Enhance TagsInput with ARIA attributes
      */
     var enhanceTagsInputAccessibility = function() {
-        jQuery('div.tagsinput').each(function() {
-            var $tagsInput = jQuery(this);
-            var $originalInput = $tagsInput.next('input[type="text"]');
+        var tagsInputElements = document.querySelectorAll('div.tagsinput');
 
-            if (!$originalInput.length) {
+        tagsInputElements.forEach(function(tagsInput) {
+            var originalInput = tagsInput.nextElementSibling;
+
+            if (!originalInput || originalInput.type !== 'text') {
                 return;
             }
 
-            var inputId = $originalInput.attr('id');
-            var $label = jQuery('label[for="' + inputId + '"]');
-            var labelText = $label.length ? $label.text().trim() : 'Enter tags';
+            var inputId = originalInput.getAttribute('id');
+            var labelText = 'Enter tags';
 
-            $tagsInput.attr({
-                'role': 'list',
-                'aria-label': labelText
-            });
+            if (inputId) {
+                var label = document.querySelector('label[for="' + inputId + '"]');
+                if (label) {
+                    labelText = label.textContent.trim();
+                }
+            }
+
+            tagsInput.setAttribute('role', 'list');
+            tagsInput.setAttribute('aria-label', labelText);
 
             // Set role on individual tags
-            $tagsInput.find('span.tag').each(function() {
-                jQuery(this).attr('role', 'listitem');
+            var tags = tagsInput.querySelectorAll('span.tag');
+            tags.forEach(function(tag) {
+                tag.setAttribute('role', 'listitem');
             });
 
             // Make tag input accessible
-            var $input = $tagsInput.find('input');
-            $input.attr({
-                'aria-label': 'Add new tag',
-                'aria-describedby': inputId + '-help'
-            });
+            var innerInput = tagsInput.querySelector('input');
+            if (innerInput) {
+                innerInput.setAttribute('aria-label', 'Add new tag');
+                if (inputId) {
+                    innerInput.setAttribute('aria-describedby', inputId + '-help');
+                }
+            }
 
-            // Add help text if doesn't exist
-            if (inputId && !jQuery('#' + inputId + '-help').length) {
-                $tagsInput.after(
-                    '<span id="' + inputId + '-help" class="sr-only">' +
-                    'Type and press enter to add tags. Press backspace to remove the last tag.' +
-                    '</span>'
-                );
+            // Add help text if it does not exist
+            if (inputId && !document.getElementById(inputId + '-help')) {
+                var helpSpan = document.createElement('span');
+                helpSpan.id = inputId + '-help';
+                helpSpan.className = 'sr-only';
+                helpSpan.textContent = 'Type and press enter to add tags. Press backspace to remove the last tag.';
+                tagsInput.parentNode.insertBefore(helpSpan, tagsInput.nextSibling);
             }
         });
     };
@@ -173,41 +142,52 @@ leantime.accessibilityController = (function () {
      * Enhance Datepickers with ARIA attributes
      */
     var enhanceDatepickerAccessibility = function() {
-        jQuery('input.hasDatepicker').each(function() {
-            var $input = jQuery(this);
-            var inputId = $input.attr('id');
-            var $label = jQuery('label[for="' + inputId + '"]');
-            var labelText = $label.length ? $label.text().trim() : '';
+        var datepickerInputs = document.querySelectorAll('input.hasDatepicker');
 
-            $input.attr({
-                'role': 'textbox',
-                'aria-label': labelText || 'Select date',
-                'aria-describedby': inputId + '-help'
-            });
+        datepickerInputs.forEach(function(input) {
+            var inputId = input.getAttribute('id');
+            var labelText = '';
 
-            // Add help text if doesn't exist
-            if (inputId && !jQuery('#' + inputId + '-help').length) {
-                $input.after(
-                    '<span id="' + inputId + '-help" class="sr-only">' +
-                    'Date input. Use arrow keys to navigate calendar. Press enter to select date.' +
-                    '</span>'
-                );
+            if (inputId) {
+                var label = document.querySelector('label[for="' + inputId + '"]');
+                if (label) {
+                    labelText = label.textContent.trim();
+                }
+            }
+
+            input.setAttribute('role', 'textbox');
+            input.setAttribute('aria-label', labelText || 'Select date');
+
+            if (inputId) {
+                input.setAttribute('aria-describedby', inputId + '-help');
+
+                // Add help text if it does not exist
+                if (!document.getElementById(inputId + '-help')) {
+                    var helpSpan = document.createElement('span');
+                    helpSpan.id = inputId + '-help';
+                    helpSpan.className = 'sr-only';
+                    helpSpan.textContent = 'Date input. Use arrow keys to navigate calendar. Press enter to select date.';
+                    input.parentNode.insertBefore(helpSpan, input.nextSibling);
+                }
             }
         });
 
-        // Enhance datepicker widget when it opens
-        jQuery(document).on('focus', 'input.hasDatepicker', function() {
-            setTimeout(function() {
-                var $widget = jQuery('#ui-datepicker-div');
-                if ($widget.is(':visible')) {
-                    $widget.attr({
-                        'role': 'dialog',
-                        'aria-label': 'Choose date',
-                        'aria-modal': 'true'
-                    });
+        // Enhance datepicker widget when it opens (delegated event)
+        if (!document._a11yDatepickerBound) {
+            document.addEventListener('focusin', function(e) {
+                if (e.target && e.target.matches && e.target.matches('input.hasDatepicker')) {
+                    setTimeout(function() {
+                        var widget = document.getElementById('ui-datepicker-div');
+                        if (widget && widget.style.display !== 'none') {
+                            widget.setAttribute('role', 'dialog');
+                            widget.setAttribute('aria-label', 'Choose date');
+                            widget.setAttribute('aria-modal', 'true');
+                        }
+                    }, 100);
                 }
-            }, 100);
-        });
+            });
+            document._a11yDatepickerBound = true;
+        }
     };
 
     /**
@@ -218,22 +198,26 @@ leantime.accessibilityController = (function () {
         if (typeof tinymce !== 'undefined') {
             tinymce.on('AddEditor', function(e) {
                 var editor = e.editor;
-                var $textarea = jQuery('#' + editor.id);
-                var $label = jQuery('label[for="' + editor.id + '"]');
-                var labelText = $label.length ? $label.text().trim() : 'Rich text editor';
+                var labelText = 'Rich text editor';
+                var label = document.querySelector('label[for="' + editor.id + '"]');
+                if (label) {
+                    labelText = label.textContent.trim();
+                }
 
                 editor.on('init', function() {
                     // Set ARIA label on editor iframe
-                    var $iframe = jQuery('#' + editor.id + '_ifr');
-                    $iframe.attr('aria-label', labelText);
+                    var iframe = document.getElementById(editor.id + '_ifr');
+                    if (iframe) {
+                        iframe.setAttribute('aria-label', labelText);
 
-                    // Add help text
-                    if (!jQuery('#' + editor.id + '-help').length) {
-                        $iframe.after(
-                            '<span id="' + editor.id + '-help" class="sr-only">' +
-                            'Rich text editor. Press ALT+F10 to access toolbar. Press ESC to return to editing area.' +
-                            '</span>'
-                        );
+                        // Add help text if it does not exist
+                        if (!document.getElementById(editor.id + '-help')) {
+                            var helpSpan = document.createElement('span');
+                            helpSpan.id = editor.id + '-help';
+                            helpSpan.className = 'sr-only';
+                            helpSpan.textContent = 'Rich text editor. Press ALT+F10 to access toolbar. Press ESC to return to editing area.';
+                            iframe.parentNode.insertBefore(helpSpan, iframe.nextSibling);
+                        }
                     }
                 });
             });
@@ -244,25 +228,29 @@ leantime.accessibilityController = (function () {
      * Fix time picker label associations
      */
     var fixTimepickerLabels = function() {
-        jQuery('input[type="time"]').each(function() {
-            var $timeInput = jQuery(this);
-            var id = $timeInput.attr('id');
+        var timeInputs = document.querySelectorAll('input[type="time"]');
+
+        timeInputs.forEach(function(timeInput) {
+            var id = timeInput.getAttribute('id');
 
             if (!id) {
                 return;
             }
 
             // If no label exists, create ARIA label from context
-            if (!jQuery('label[for="' + id + '"]').length) {
+            if (!document.querySelector('label[for="' + id + '"]')) {
                 var labelText = 'Time';
 
                 // Try to infer from nearby elements
-                var $prevLabel = $timeInput.closest('.form-group').find('label').first();
-                if ($prevLabel.length) {
-                    labelText = $prevLabel.text().trim() + ' time';
+                var formGroup = timeInput.closest('.form-group');
+                if (formGroup) {
+                    var prevLabel = formGroup.querySelector('label');
+                    if (prevLabel) {
+                        labelText = prevLabel.textContent.trim() + ' time';
+                    }
                 }
 
-                $timeInput.attr('aria-label', labelText);
+                timeInput.setAttribute('aria-label', labelText);
             }
         });
     };
@@ -271,44 +259,54 @@ leantime.accessibilityController = (function () {
      * Make kanban cards keyboard accessible
      */
     var enhanceKanbanCardAccessibility = function() {
-        jQuery('.ticketBox').each(function() {
-            var $card = jQuery(this);
+        var cards = document.querySelectorAll('.ticketBox');
 
-            if (!$card.attr('tabindex')) {
-                $card.attr('tabindex', '0');
+        cards.forEach(function(card) {
+            if (!card.getAttribute('tabindex')) {
+                card.setAttribute('tabindex', '0');
             }
 
-            var headline = $card.find('.ticketHeadline').text().trim();
+            var headlineEl = card.querySelector('.ticketHeadline');
+            var headline = headlineEl ? headlineEl.textContent.trim() : '';
             if (headline) {
-                $card.attr({
-                    'role': 'article',
-                    'aria-label': 'Task: ' + headline
-                });
+                card.setAttribute('role', 'article');
+                card.setAttribute('aria-label', 'Task: ' + headline);
             }
 
             // Make card clickable with keyboard (only if not already bound)
-            if (!$card.data('keyboard-bound')) {
-                $card.on('keydown', function(e) {
+            if (!card.dataset.keyboardBound) {
+                card.addEventListener('keydown', function(e) {
                     // Only handle Enter/Space if the card itself has focus
-                    // Don't intercept events from interactive children (dropdowns, buttons, links, inputs)
-                    var $target = jQuery(e.target);
+                    // Do not intercept events from interactive children (dropdowns, buttons, links, inputs)
+                    var target = e.target;
 
                     // Check if the target is an interactive element
-                    var isInteractive = $target.is('a, button, input, select, textarea, [role="button"], [tabindex]') ||
-                                       $target.closest('.dropdown-toggle, .ticketDropdown, .inlineDropDownContainer').length > 0;
+                    var isInteractive = target.matches('a, button, input, select, textarea, [role="button"], [tabindex]') ||
+                                        target.closest('.dropdown-toggle, .ticketDropdown, .inlineDropDownContainer');
 
                     // Only handle the event if the card itself was focused and not an interactive child
-                    if ((e.key === 'Enter' || e.key === ' ') && !isInteractive && e.target === this) {
+                    if ((e.key === 'Enter' || e.key === ' ') && !isInteractive && e.target === card) {
                         e.preventDefault();
-                        var $link = $card.find('a').first();
-                        if ($link.length) {
-                            $link[0].click();
+                        var link = card.querySelector('a');
+                        if (link) {
+                            link.click();
                         }
                     }
                 });
-                $card.data('keyboard-bound', true);
+                card.dataset.keyboardBound = 'true';
             }
         });
+    };
+
+    /**
+     * Run all enhancement functions
+     */
+    var enhanceAll = function() {
+        enhanceSlimSelectAccessibility();
+        enhanceTagsInputAccessibility();
+        enhanceDatepickerAccessibility();
+        fixTimepickerLabels();
+        enhanceKanbanCardAccessibility();
     };
 
     /**
@@ -316,40 +314,25 @@ leantime.accessibilityController = (function () {
      */
     var init = function() {
         // Run immediately on page load
-        enhanceChosenAccessibility();
-        enhanceSlimSelectAccessibility();
-        enhanceTagsInputAccessibility();
-        enhanceDatepickerAccessibility();
+        enhanceAll();
         enhanceTinyMCEAccessibility();
-        fixTimepickerLabels();
-        enhanceKanbanCardAccessibility();
 
         // Re-run when new content is loaded (HTMX, modals, etc.)
-        jQuery(document).on('htmx:afterSwap shown.bs.modal', function() {
-            setTimeout(function() {
-                enhanceChosenAccessibility();
-                enhanceSlimSelectAccessibility();
-                enhanceTagsInputAccessibility();
-                enhanceDatepickerAccessibility();
-                fixTimepickerLabels();
-                enhanceKanbanCardAccessibility();
-            }, 100);
+        document.addEventListener('htmx:afterSwap', function() {
+            setTimeout(enhanceAll, 100);
         });
 
-        // Re-run when Chosen is re-initialized
-        jQuery(document).on('chosen:ready', function() {
-            // Wait a bit longer to ensure Chosen is fully ready
-            setTimeout(enhanceChosenAccessibility, 100);
+        document.addEventListener('shown.bs.modal', function() {
+            setTimeout(enhanceAll, 100);
         });
 
         // Single retry after initial page load to catch late-initializing dropdowns
-        setTimeout(enhanceChosenAccessibility, 1000);
+        setTimeout(enhanceSlimSelectAccessibility, 1000);
     };
 
     // Public API
     return {
         init: init,
-        enhanceChosenAccessibility: enhanceChosenAccessibility,
         enhanceSlimSelectAccessibility: enhanceSlimSelectAccessibility,
         enhanceTagsInputAccessibility: enhanceTagsInputAccessibility,
         enhanceDatepickerAccessibility: enhanceDatepickerAccessibility,
@@ -361,6 +344,6 @@ leantime.accessibilityController = (function () {
 })();
 
 // Initialize on page load
-jQuery(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     leantime.accessibilityController.init();
 });

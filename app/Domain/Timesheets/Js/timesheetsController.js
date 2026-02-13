@@ -2,7 +2,10 @@ leantime.timesheetsController = (function () {
     var closeModal = false;
 
     var initTimesheetsTable = function (groupBy) {
-        jQuery(document).ready(function () {
+        document.addEventListener('DOMContentLoaded', function () {
+            var tableEl = document.querySelector("#allTimesheetsTable");
+            if (!tableEl) return;
+
             var allTimesheets = jQuery("#allTimesheetsTable").DataTable({
                 "language": {
                     "decimal":        leantime.i18n.__("datatables.decimal"),
@@ -50,8 +53,8 @@ leantime.timesheetsController = (function () {
                         exportOptions: {
                             format: {
                                 body: function ( data, row, column, node ) {
-                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
-                                        data = jQuery(node).data('order');
+                                    if ( typeof node.dataset.order !== 'undefined') {
+                                        data = node.dataset.order;
                                     }
                                     return data;
                                 }
@@ -62,7 +65,12 @@ leantime.timesheetsController = (function () {
                     columns: ':not(.noVis)'
                 }
                 ]
-            }).container().appendTo(jQuery('#tableButtons'));
+            });
+
+            var tableButtonsEl = document.querySelector('#tableButtons');
+            if (tableButtonsEl) {
+                tableButtonsEl.appendChild(buttons.container()[0]);
+            }
 
             jQuery('#allTimesheetsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
                 allTimesheets.draw(false);
@@ -80,7 +88,9 @@ leantime.timesheetsController = (function () {
             autoSizable: true,
             callbacks: {
                 beforeShowCont: function () {
-                    jQuery(".showDialogOnLoad").show();
+                    document.querySelectorAll(".showDialogOnLoad").forEach(function (el) {
+                        el.style.display = '';
+                    });
                     if (closeModal === true) {
                         closeModal = false;
                         location.reload();

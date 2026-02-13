@@ -14,22 +14,22 @@ leantime.settingRepository = (function () {
     var saveLogo = function (photo) {
         var formData = new FormData();
         formData.append('file', photo);
-        jQuery.ajax(
-            {
-                type: 'POST',
-                url: leantime.appUrl + '/api/setting',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (resp) {
-                    jQuery('#save-logo').removeClass('running');
-                    location.reload();
-                },
-                error: function (err) {
-                    console.log(err);
-                }
+        fetch(leantime.appUrl + '/api/setting', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        }).then(function (resp) {
+            var saveLogoEl = document.querySelector('#save-logo');
+            if (saveLogoEl) {
+                saveLogoEl.classList.remove('running');
             }
-        );
+            location.reload();
+        }).catch(function (err) {
+            console.log(err);
+        });
     };
 
     // Make public what you want to have public, everything else is private

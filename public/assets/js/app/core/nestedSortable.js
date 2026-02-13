@@ -6,8 +6,7 @@
  * project boundary enforcement, drag-out detection (calendar, pomodoro),
  * and group change tracking.
  *
- * Public API: jQuery('.sortable-list').nestedSortable()
- * (preserved for backwards compatibility)
+ * Public API: leantime.nestedSortable.init(rootEl)
  */
 (function () {
     'use strict';
@@ -307,16 +306,6 @@
                 }
             });
         });
-    }
-
-    // jQuery plugin shim for backwards compatibility
-    if (typeof jQuery !== 'undefined') {
-        jQuery.fn.nestedSortable = function () {
-            this.each(function () {
-                initNestedSortable(this);
-            });
-            return this;
-        };
     }
 
     // Expose on leantime namespace

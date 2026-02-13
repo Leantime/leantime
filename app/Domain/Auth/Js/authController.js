@@ -1,49 +1,77 @@
 leantime.authController = (function () {
 
     var makeInputReadonly = function (container) {
-        if (typeof container === undefined) {
+        if (typeof container === "undefined" || !container) {
             container = "body";
         }
 
-        jQuery(container).find("input").not(".filterBar input").prop("readonly", true);
-        jQuery(container).find("input").not(".filterBar input").prop("disabled", true);
+        var containerEl = document.querySelector(container);
+        if (!containerEl) { return; }
 
-        jQuery(container).find("select").not(".filterBar select, .mainSprintSelector").prop("readonly", true);
-        jQuery(container).find("select").not(".filterBar select, .mainSprintSelector").prop("disabled", true);
+        containerEl.querySelectorAll("input").forEach(function (el) {
+            if (!el.closest(".filterBar")) {
+                el.readOnly = true;
+                el.disabled = true;
+            }
+        });
 
-        jQuery(container).find("textarea").not(".filterBar textarea").prop("disabled", true);
+        containerEl.querySelectorAll("select").forEach(function (el) {
+            if (!el.closest(".filterBar") && !el.classList.contains("mainSprintSelector")) {
+                el.readOnly = true;
+                el.disabled = true;
+            }
+        });
 
-        jQuery(container).find("a.delete").remove();
+        containerEl.querySelectorAll("textarea").forEach(function (el) {
+            if (!el.closest(".filterBar")) {
+                el.disabled = true;
+            }
+        });
 
-        jQuery(container).find(".quickAddLink").hide();
+        containerEl.querySelectorAll("a.delete").forEach(function (el) {
+            el.remove();
+        });
 
-        if (jQuery(container).find(".complexEditor").length) {
-            jQuery(container).find(".complexEditor").each(function (element) {
-                if (jQuery(this).tinymce()) {
-                    jQuery(this).tinymce().getBody().setAttribute('contenteditable', "false");
-                }
-            });
-        }
+        containerEl.querySelectorAll(".quickAddLink").forEach(function (el) {
+            el.style.display = 'none';
+        });
 
-        if (jQuery(container).find(".tinymceSimple").length) {
-            jQuery(container).find(".tinymceSimple").each(function (element) {
+        containerEl.querySelectorAll(".complexEditor").forEach(function (el) {
+            if (typeof tinymce !== 'undefined' && tinymce.get(el.id)) {
+                tinymce.get(el.id).getBody().setAttribute('contenteditable', "false");
+            }
+        });
 
-                if (jQuery(this).tinymce()) {
-                    jQuery(this).tinymce().getBody().setAttribute('contenteditable', "false");
-                }
-            });
-        }
+        containerEl.querySelectorAll(".tinymceSimple").forEach(function (el) {
+            if (typeof tinymce !== 'undefined' && tinymce.get(el.id)) {
+                tinymce.get(el.id).getBody().setAttribute('contenteditable', "false");
+            }
+        });
 
-        jQuery(container).find(".tox-editor-header").hide();
-        jQuery(container).find(".tox-statusbar").hide();
+        containerEl.querySelectorAll(".tox-editor-header").forEach(function (el) {
+            el.style.display = 'none';
+        });
+        containerEl.querySelectorAll(".tox-statusbar").forEach(function (el) {
+            el.style.display = 'none';
+        });
 
-        jQuery(container).find(".ticketDropdown a").removeAttr("data-toggle");
+        containerEl.querySelectorAll(".ticketDropdown a").forEach(function (el) {
+            el.removeAttribute("data-toggle");
+        });
 
-        jQuery("#mainToggler").hide();
-        jQuery(".commentBox").hide();
-        jQuery(".deleteComment, .replyButton").hide();
+        var mainToggler = document.getElementById("mainToggler");
+        if (mainToggler) { mainToggler.style.display = 'none'; }
 
-        jQuery(container).find(".dropdown i").removeClass('fa-caret-down');
+        document.querySelectorAll(".commentBox").forEach(function (el) {
+            el.style.display = 'none';
+        });
+        document.querySelectorAll(".deleteComment, .replyButton").forEach(function (el) {
+            el.style.display = 'none';
+        });
+
+        containerEl.querySelectorAll(".dropdown i").forEach(function (el) {
+            el.classList.remove('fa-caret-down');
+        });
     };
 
     // Make public what you want to have public, everything else is private

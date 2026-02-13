@@ -218,13 +218,17 @@ leantime.kanbanController = (function () {
         }
 
         // Persist state to session via AJAX
-        jQuery.ajax({
-            url: leantime.appUrl + '/api/submenu',
-            type: 'POST',
-            data: {
+        fetch(leantime.appUrl + '/api/submenu', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
                 submenu: 'swimlane_' + swimlaneId,
                 state: newExpanded ? 'open' : 'closed'
-            }
+            })
         });
     };
 

@@ -13,7 +13,7 @@ leantime.snippets = (function () {
         navigator.clipboard.writeText(copyText.value);
 
         // Alert the copied text
-        jQuery.growl({message: leantime.i18n.__("short_notifications.url_copied"), style: "success"});
+        leantime.toast.show({message: leantime.i18n.__("short_notifications.url_copied"), style: "success"});
 
     };
 
@@ -22,43 +22,55 @@ leantime.snippets = (function () {
         navigator.clipboard.writeText(content);
 
         // Alert the copied text
-        jQuery.growl({message: leantime.i18n.__("short_notifications.url_copied"), style: "success"});
+        leantime.toast.show({message: leantime.i18n.__("short_notifications.url_copied"), style: "success"});
 
     };
 
     var initConfettiClick = function() {
-        jQuery(".confetti").click(function(){
-            confetti.start();
+        document.querySelectorAll(".confetti").forEach(function(el) {
+            el.addEventListener("click", function() {
+                confetti.start();
+            });
         });
     };
 
     var accordionToggle = function (id) {
 
-        var currentLink = jQuery("#accordion_toggle_"+id).find("i.fa").first();
+        var toggleEl = document.getElementById("accordion_toggle_" + id);
+        var currentLink = toggleEl ? toggleEl.querySelector("i.fa") : null;
         var submenuName = 'accordion_content-'+id;
         var submenuState = "closed";
+        var contentEl = document.getElementById('accordion_content-' + id);
 
-        if(currentLink.hasClass("fa-angle-right")){
-            currentLink.removeClass("fa-angle-right");
-            currentLink.addClass("fa-angle-down");
-            jQuery('#accordion_content-'+id).slideDown("fast");
+        if(currentLink && currentLink.classList.contains("fa-angle-right")){
+            currentLink.classList.remove("fa-angle-right");
+            currentLink.classList.add("fa-angle-down");
+            if (contentEl) {
+                contentEl.style.display = '';
+            }
             submenuState = "open";
 
-        }else{
+        }else if(currentLink){
 
-            currentLink.removeClass("fa-angle-down");
-            currentLink.addClass("fa-angle-right");
+            currentLink.classList.remove("fa-angle-down");
+            currentLink.classList.add("fa-angle-right");
 
-            jQuery('#accordion_content-'+id).slideUp("fast");
+            if (contentEl) {
+                contentEl.style.display = 'none';
+            }
             submenuState = "closed";
         }
 
-        jQuery.ajax({
-            type : 'PATCH',
-            url  : leantime.appUrl + '/api/submenu',
-            data : {
-                submenu : submenuName,
-                state   : submenuState
+        var formData = new FormData();
+        formData.append('submenu', submenuName);
+        formData.append('state', submenuState);
+
+        fetch(leantime.appUrl + '/api/submenu', {
+            method: 'PATCH',
+            body: formData,
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
             }
         });
 
@@ -66,43 +78,43 @@ leantime.snippets = (function () {
 
     var toggleTheme = function (theme) {
 
-        var themeUrl = jQuery("#themeStyleSheet").attr("href");
+        var themeStyleSheet = document.getElementById("themeStyleSheet");
+        var themeUrl = themeStyleSheet.getAttribute("href");
 
         if(theme == "light"){
             themeUrl = themeUrl.replace("dark.css", "light.css");
-            jQuery("#themeStyleSheet").attr("href", themeUrl);
+            themeStyleSheet.setAttribute("href", themeUrl);
         }else if (theme == "dark"){
             themeUrl = themeUrl.replace("light.css", "dark.css");
-            jQuery("#themeStyleSheet").attr("href", themeUrl);
+            themeStyleSheet.setAttribute("href", themeUrl);
         }
 
     };
 
     var toggleBg = function (theme) {
 
-        var themeUrl = jQuery("#themeStyleSheet").attr("href");
+        var themeStyleSheet = document.getElementById("themeStyleSheet");
+        var themeUrl = themeStyleSheet.getAttribute("href");
 
         if(theme == "minimal"){
             themeUrl = themeUrl.replace("default", "minimal");
-            jQuery("#themeStyleSheet").attr("href", themeUrl);
+            themeStyleSheet.setAttribute("href", themeUrl);
         }else if (theme == "default"){
             themeUrl = themeUrl.replace("minimal", "default");
-            jQuery("#themeStyleSheet").attr("href", themeUrl);
+            themeStyleSheet.setAttribute("href", themeUrl);
         }
 
     };
 
     var toggleFont = function (font) {
 
-        jQuery("#fontStyleSetter").html(":root { --primary-font-family: '"+font+"', 'Helvetica Neue', Helvetica, sans-serif; }")
-
+        document.getElementById("fontStyleSetter").innerHTML = ":root { --primary-font-family: '" + font + "', 'Helvetica Neue', Helvetica, sans-serif; }";
 
     };
 
     var toggleColors = function (accent1, accent2) {
 
-        jQuery("#colorSchemeSetter").html(":root { --accent1: "+accent1+"; --accent2: "+accent2+"}")
-
+        document.getElementById("colorSchemeSetter").innerHTML = ":root { --accent1: " + accent1 + "; --accent2: " + accent2 + "}";
 
     };
 

@@ -14,131 +14,117 @@ leantime.ticketsRepository = (function () {
         let editTo = luxon.DateTime.fromSQL(end).toFormat(userDateFormat);
         let timeTo = luxon.DateTime.fromSQL(end).toFormat(userTimeFormat);
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                {
-                    id : id,
-                    editFrom:editFrom,
-                    editTo:editTo,
-                    timeFrom: timeFrom,
-                    timeTo: timeTo,
-                    sortIndex: sortIndex
-                }
-            }
-        ).done(
-            function () {
-                    //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
-
-            }
-        );
+        fetch(leantime.appUrl + '/api/tickets', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                id: id,
+                editFrom: editFrom,
+                editTo: editTo,
+                timeFrom: timeFrom,
+                timeTo: timeTo,
+                sortIndex: sortIndex
+            })
+        });
 
     };
 
     var updateRemainingHours = function (id, remaining, callbackSuccess) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                {
-                    id : id,
-                    hourRemaining:remaining
-                }
-            }
-        ).done(
-            function () {
-
-                    callbackSuccess();
-            }
-        );
+        fetch(leantime.appUrl + '/api/tickets', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                id: id,
+                hourRemaining: remaining
+            })
+        }).then(function () {
+            callbackSuccess();
+        });
 
     };
 
     var updatePlannedHours = function (id, planhours, callbackSuccess) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                    {
-                        id : id,
-                        planHours:planhours
-                }
-            }
-        ).done(
-            function () {
-
-                callbackSuccess();
-            }
-        );
+        fetch(leantime.appUrl + '/api/tickets', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                id: id,
+                planHours: planhours
+            })
+        }).then(function () {
+            callbackSuccess();
+        });
 
     };
 
     var updateDueDates = function (id, date, callbackSuccess) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                    {
-                        id : id,
-                        dateToFinish:date
-                }
-            }
-        ).done(
-            function () {
-
-                callbackSuccess();
-            }
-        );
+        fetch(leantime.appUrl + '/api/tickets', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                id: id,
+                dateToFinish: date
+            })
+        }).then(function () {
+            callbackSuccess();
+        });
 
     };
 
     var updateEditFromDates = function (id, date, callbackSuccess) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                    {
-                        id : id,
-                        editFrom:date
-                }
-            }
-        ).done(
-            function () {
-
-                callbackSuccess();
-            }
-        );
+        fetch(leantime.appUrl + '/api/tickets', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                id: id,
+                editFrom: date
+            })
+        }).then(function () {
+            callbackSuccess();
+        });
 
     };
 
     var updateEditToDates = function (id, date, callbackSuccess) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                    {
-                        id : id,
-                        editTo:date
-                }
-            }
-        ).done(
-            function () {
-
-                callbackSuccess();
-            }
-        );
+        fetch(leantime.appUrl + '/api/tickets', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                id: id,
+                editTo: date
+            })
+        }).then(function () {
+            callbackSuccess();
+        });
 
     };
 

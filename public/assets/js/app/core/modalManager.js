@@ -1,19 +1,17 @@
 /**
  * modalManager.js — Native <dialog> replacement for nyroModal
  *
- * Drop-in bridge that intercepts the same hashchange events and jQuery API calls
- * as the legacy nyroModal system, but renders content in a native <dialog> element.
+ * Drop-in bridge that intercepts the same hashchange events as the legacy
+ * nyroModal system, but renders content in a native <dialog> element.
  *
  * Public API (identical to legacy):
  *  - leantime.modals.openModal()
  *  - leantime.modals.closeModal()
  *  - leantime.modals.setCustomModalCallback(fn)
  *  - leantime.modals.openByUrl(url)          [new — for direct URL opens]
- *
- * jQuery shims (backward compatibility):
- *  - jQuery.nmManual(url, options)
- *  - jQuery.nmTop()
- *  - jQuery.fn.nyroModal(options)
+ *  - leantime.modals.nmManual(url, options)  [legacy shim]
+ *  - leantime.modals.nmTop()                 [legacy shim]
+ *  - leantime.modals.initNyroModal(elements, options) [legacy shim]
  */
 
 leantime.modals = (function () {
@@ -74,7 +72,9 @@ leantime.modals = (function () {
 
     // ── Post-Load Initialisation ───────────────────────────────────────
     function initContent(container) {
-        jQuery('.showDialogOnLoad', container).show();
+        container.querySelectorAll('.showDialogOnLoad').forEach(function (el) {
+            el.style.display = '';
+        });
         if (window.htmx) { window.htmx.process(container); }
         if (window.tippy) { tippy(container.querySelectorAll('[data-tippy-content]')); }
     }
@@ -241,7 +241,7 @@ leantime.modals = (function () {
 // Event Listeners
 // ═══════════════════════════════════════════════════════════════════════
 
-jQuery(document).ready(function () {
+document.addEventListener('DOMContentLoaded', function () {
 
     // ── Open modal on page load if hash present ────────────────────────
     leantime.modals.openModal();
@@ -339,7 +339,9 @@ jQuery(document).ready(function () {
                 s.parentNode.replaceChild(n, s);
             }
 
-            jQuery('.showDialogOnLoad', content).show();
+            content.querySelectorAll('.showDialogOnLoad').forEach(function (el) {
+                el.style.display = '';
+            });
             if (window.htmx) { window.htmx.process(content); }
             if (window.tippy) { tippy(content.querySelectorAll('[data-tippy-content]')); }
         }).catch(function (err) {
@@ -348,7 +350,7 @@ jQuery(document).ready(function () {
     }, true);
 });
 
-// Hash change → open modal
+// Hash change -> open modal
 window.addEventListener('hashchange', function () {
     leantime.modals.openModal();
 });
@@ -365,14 +367,15 @@ document.addEventListener('HTMX.closemodal', function () {
 
 
 // ═══════════════════════════════════════════════════════════════════════
-// jQuery Shims (backward compatibility)
+// Legacy Shims (backward compatibility — no jQuery dependency)
 // ═══════════════════════════════════════════════════════════════════════
 
 /**
- * jQuery.nmManual(url, options)
+ * leantime.modals.nmManual(url, options)
  * Opens a modal by URL — replaces nyroModal's static helper.
+ * Also installed on jQuery.nmManual if jQuery is present.
  */
-jQuery.nmManual = function (url, options) {
+leantime.modals.nmManual = function (url, options) {
     // Some callers pass a factory function instead of an options object
     if (typeof options === 'function') {
         options = options();
@@ -384,46 +387,54 @@ jQuery.nmManual = function (url, options) {
 };
 
 /**
- * jQuery.nmTop()
- * Returns a mock of nyroModal's top-modal object.
+ * leantime.modals.nmTop()
+ * Returns a mock of nyroModal's top-modal object with vanilla DOM elements.
+ * Also installed on jQuery.nmTop if jQuery is present.
  */
-jQuery.nmTop = function () {
+leantime.modals.nmTop = function () {
     return {
         close: function () {
             leantime.modals.closeModal();
         },
         elts: {
-            cont: jQuery('#global-modal-box'),
-            bg:   jQuery('#global-modal .tw\\:modal-backdrop'),
-            load: jQuery('#global-modal .tw\\:loading'),
-            all:  jQuery('#global-modal')
+            cont: document.getElementById('global-modal-box'),
+            bg:   document.querySelector('#global-modal .tw\\:modal-backdrop'),
+            load: document.querySelector('#global-modal .tw\\:loading'),
+            all:  document.getElementById('global-modal')
         }
     };
 };
 
 /**
- * jQuery.fn.nyroModal(options)
+ * leantime.modals.initNyroModal(elements, options)
  * Converts .nyroModal() init calls into native-dialog click handlers.
  * Hash links (href="#/...") already work via hashchange and are skipped.
+ * Also installed on jQuery.fn.nyroModal if jQuery is present.
+ *
+ * @param {NodeList|Array|HTMLElement} elements - DOM elements to initialize
+ * @param {Object} [options] - Options with optional callbacks
  */
-jQuery.fn.nyroModal = function (options) {
-    return this.each(function () {
-        var el = jQuery(this);
-        if (el.data('modalManager-init')) { return; }
-        el.data('modalManager-init', true);
+leantime.modals.initNyroModal = function (elements, options) {
+    if (elements instanceof HTMLElement) {
+        elements = [elements];
+    }
+    Array.prototype.forEach.call(elements, function (el) {
+        if (el.dataset.modalManagerInit) { return; }
+        el.dataset.modalManagerInit = 'true';
 
         if (options && options.callbacks) {
-            el.data('modalManager-opts', options);
+            // Store options reference on the element for later retrieval
+            el._modalManagerOpts = options;
         }
 
-        var href = el.attr('href');
+        var href = el.getAttribute('href');
 
         // Hash links are handled by the global hashchange listener
         if (href && href.indexOf('#') === 0) { return; }
 
         // Non-hash links: open in modal on click
         if (href) {
-            el.on('click.modalManager', function (e) {
+            el.addEventListener('click', function (e) {
                 e.preventDefault();
                 if (options && options.callbacks &&
                     typeof options.callbacks.beforeClose === 'function') {
@@ -434,3 +445,13 @@ jQuery.fn.nyroModal = function (options) {
         }
     });
 };
+
+// If jQuery is present, install shims on it for backward compatibility
+if (typeof jQuery !== 'undefined') {
+    jQuery.nmManual = leantime.modals.nmManual;
+    jQuery.nmTop = leantime.modals.nmTop;
+    jQuery.fn.nyroModal = function (options) {
+        leantime.modals.initNyroModal(this.toArray(), options);
+        return this;
+    };
+}

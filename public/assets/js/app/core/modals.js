@@ -17,7 +17,9 @@ leantime.modals = (function () {
             callbacks: {
                 beforePostSubmit: function () {
 
-                    jQuery(".showDialogOnLoad").show();
+                    document.querySelectorAll(".showDialogOnLoad").forEach(function (el) {
+                        el.style.display = '';
+                    });
                     console.log(tinymce.editors.length);
 
                     if(tinymce.editors.length>0) {
@@ -33,7 +35,9 @@ leantime.modals = (function () {
 
                 },
                 beforeShowCont: function () {
-                    jQuery(".showDialogOnLoad").show();
+                    document.querySelectorAll(".showDialogOnLoad").forEach(function (el) {
+                        el.style.display = '';
+                    });
 
                     if(tinymce.editors.length>0) {
 
@@ -103,7 +107,7 @@ leantime.modals = (function () {
 
 })();
 
-jQuery(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     leantime.modals.openModal();
 });
 
@@ -114,4 +118,3 @@ window.addEventListener("hashchange", function () {
 window.addEventListener("closeModal", function(evt) {
     leantime.modals.closeModal();
 });
-
