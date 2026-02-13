@@ -1,4 +1,5 @@
 // Core app files
+import '../../public/assets/js/app/core/toastNotifier.js';
 import '../../public/assets/js/app/app.js';
 import '../../public/assets/js/app/core/dropdownBridge.js';
 import '../../public/assets/js/app/core/editors.js';
