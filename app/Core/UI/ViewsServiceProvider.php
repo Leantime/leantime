@@ -62,10 +62,6 @@ class ViewsServiceProvider extends LaravelViewServiceProvider
 
             $factory = $this->createFactory($resolver, $finder, $app['events']);
 
-            // Backwards compatible view engine resolver
-            array_map(fn ($ext) => $factory->addExtension($ext, 'php'), ['inc.php', 'sub.php', 'tpl.php']);
-
-            // reprioritize blade
             // Use blade engine for all things blade
             $factory->addExtension('blade.php', 'blade');
 
