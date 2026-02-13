@@ -66,6 +66,7 @@ jQuery(document).ready(function () {
 
 htmx.onLoad(function(element){
     tippy('[data-tippy-content]');
+    leantime.replaceSVGColors();
 });
 
 window.addEventListener("HTMX.ShowNotification", function(evt) {

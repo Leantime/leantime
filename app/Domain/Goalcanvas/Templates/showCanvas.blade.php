@@ -59,7 +59,7 @@
                             </li>
                         @endif
                         <li><a
-                                href="{{ BASE_URL }}/goalcanvas/export/{{ $currentCanvas }}">{!! __('links.icon.export') !!}</a>
+                                href="{{ BASE_URL }}/goalcanvas/export/{{ $currentCanvas }}" hx-boost="false">{!! __('links.icon.export') !!}</a>
                         </li>
                         <li><a href="javascript:window.print();">{!! __('links.icon.print') !!}</a></li>
                         @if ($login::userIsAtLeast($roles::$editor))

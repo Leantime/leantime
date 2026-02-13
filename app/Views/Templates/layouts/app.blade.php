@@ -5,9 +5,13 @@
     @stack('styles')
 </head>
 
-<body class="" hx-ext="preload">
+<body class="" hx-ext="preload, head-support">
 
     @include('global::sections.appAnnouncement')
+
+    {{-- Loading indicator for SPA navigation --}}
+    <div id="page-loading" class="htmx-indicator"
+         style="position:fixed;top:0;left:0;z-index:9999;height:3px;width:100%;background:var(--accent1);pointer-events:none;"></div>
 
     <div class="mainwrapper menu{{ session("menuState") ?? "closed" }}">
 
@@ -40,7 +44,12 @@
                     @include('menu::menu')
                 </div><!-- leftmenu -->
             </div>
-            <div class="rightpanel {{ $section }}">
+            <div class="rightpanel {{ $section }}"
+                 hx-boost="true"
+                 hx-target=".primaryContent"
+                 hx-select=".primaryContent"
+                 hx-swap="outerHTML show:window:top"
+                 hx-indicator="#page-loading">
                 <div class="primaryContent">
                     @isset($action, $module)
                         @include("$module::$action")
