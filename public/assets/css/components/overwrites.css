@@ -32,8 +32,8 @@
 .nav-list > .active > a,
 .nav-list > .active > a:hover,
 .nav-list > .active > a:focus,
-.fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last, .chosen-container-multi .chosen-choices .search-choice,
-div.tagsinput span.tag, .chosen-container .chosen-results .highlighted
+.fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last,
+div.tagsinput span.tag
 { background-color: var(--primary-color) }
 
 
@@ -90,10 +90,6 @@ button
 input[type='submit']:hover,
 button:hover {
     background-color:  var(--main-action-hover-bg);
-    color:#fff;
-}
-
-.chosen-container-multi .chosen-choices .search-choice {
     color:#fff;
 }
 
@@ -313,56 +309,6 @@ body .tox .tox-toolbar-overlord{
 }
 
 
-div.growl,
-div.growl.growl-default,
-div.growl div.growl-closer {
-    background:var(--secondary-background);
-    color:var(--primary-font-color);
-    padding:20px;
-    font-size:var(--base-font-size);
-    width:250px;
-    opacity:1;
-    border-radius:var(--box-radius);
-    box-shadow: var(--regular-shadow);
-    border:0px;
-
-}
-
-div.growl growl-close {
-    color:var(--primary-font-color);
-    font-size:var(--base-font-size);
-}
-
-div.growl.growl-default,
-div.growl.growl-success{
-    border-left:5px solid var(--green);
-}
-
-div.growl.growl-notice {
-    border-left:5px solid var(--blue);
-}
-
-div.growl.growl-error {
-    border-left:5px solid var(--dark-red);
-}
-
-div.growl .growl-title {
-    font-size: 18px;
-    line-height: 24px;
-    display:none;
-}
-
-div.growl .growl-message {
-    font-size: var(--base-font-size);
-    line-height: 18px;
-    font-family: var(--primary-font-family);
-}
-
-div.growl.growl-medium {
-    width: 250px;
-    padding: 20px;
-    margin: 10px;
-}
 
 /* Playing with header */
 

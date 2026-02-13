@@ -12,9 +12,7 @@
 @import "../../public/assets/css/libs/animate.min.css";
 @import "../../public/assets/css/libs/animate.delay.css";
 
-@import "../../public/assets/css/libs/jquery.growl.css";
 @import "../../public/assets/css/libs/jquery.tagsinput.css";
-@import "../../public/assets/css/libs/jquery.chosen.css";
 @import "../../public/assets/css/libs/fullcalendar.css";
 @import "../../public/assets/css/libs/roboto.css";
 @import "../../public/assets/css/libs/atkinson.css";
@@ -22,7 +20,6 @@
 @import "../../public/assets/css/libs/fontawesome-free/css/all.css";
 @import "../../public/assets/css/libs/fontawesome-free/css/v4-shims.css";
 
-@import "../../public/assets/css/libs/jquery.simple-color-picker.css";
 @import "../../public/assets/css/libs/frappe_theme.css";
 @import "../../public/assets/css/libs/shepherd-theme-arrows.css";
 @import "../../public/assets/css/libs/jstree/style.css";
