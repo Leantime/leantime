@@ -226,6 +226,127 @@ leantime.canvasController = (function () {
 
     };
 
+    /**
+     * Factory: creates a domain-specific canvas controller.
+     *
+     * @param {string} name       Canvas domain name (e.g. 'lean', 'swot')
+     * @param {object} [config]   Optional overrides
+     * @param {number} [config.nbRows]          Number of numbered rows for setRowHeights
+     * @param {string[]} [config.rowSelectors]   Custom row selectors (e.g. ['stakeholderRow','financialsRow'])
+     * @param {object} [config.extras]           Extra methods to merge into the controller
+     * @returns {object} Controller with standard canvas methods
+     */
+    var createController = function (name, config) {
+        config = config || {};
+        var _name = name;
+        var _closeModal = false;
+
+        var _canvasoptions = function () {
+            return {
+                sizes: { minW: 700, minH: 1000 },
+                resizable: true,
+                autoSizable: true,
+                callbacks: {
+                    beforeShowCont: function () {
+                        jQuery(".showDialogOnLoad").show();
+                        if (_closeModal) {
+                            _closeModal = false;
+                            location.reload();
+                        }
+                    },
+                    afterShowCont: function () {
+                        window.htmx.process('#global-modal-content');
+                        jQuery("." + _name + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + _name + "CanvasMilestone .deleteMilestone").nyroModal(_canvasoptions());
+                    },
+                    beforeClose: function () {
+                        location.reload();
+                    }
+                },
+                titleFromIframe: true
+            };
+        };
+
+        var _initModals = function () {
+            jQuery("." + _name + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + _name + "CanvasMilestone .deleteMilestone").nyroModal(_canvasoptions());
+        };
+
+        // Build setRowHeights based on config
+        var _setRowHeights;
+        if (config.rowSelectors && config.rowSelectors.length > 0) {
+            // Custom named rows (e.g. sb canvas)
+            _setRowHeights = function () {
+                config.rowSelectors.forEach(function (selector) {
+                    var maxHeight = 0;
+                    jQuery("#" + selector + " div.contentInner").each(function () {
+                        if (jQuery(this).height() > maxHeight) {
+                            maxHeight = jQuery(this).height() + 35;
+                        }
+                    });
+                    jQuery("#" + selector + " .column .contentInner").css("height", maxHeight);
+                });
+            };
+        } else if (config.nbRows && config.nbRows > 0) {
+            // Standard numbered rows
+            _setRowHeights = function () {
+                var nbRows = config.nbRows;
+                var rowNames = ['firstRow', 'secondRow', 'thirdRow', 'fourthRow'];
+                var rowHeight = jQuery("html").height() - 320 - 20 * nbRows;
+                if (nbRows === 2) { rowHeight -= 25; }
+
+                for (var i = 0; i < nbRows && i < rowNames.length; i++) {
+                    var rowSelector = "#" + rowNames[i];
+                    var thisRowHeight = rowHeight / nbRows;
+                    if (nbRows >= 3) { thisRowHeight = rowHeight * 0.333; }
+                    jQuery(rowSelector + " div.contentInner").each(function () {
+                        if (jQuery(this).height() > thisRowHeight) {
+                            thisRowHeight = jQuery(this).height() + 50;
+                        }
+                    });
+                    jQuery(rowSelector + " .column .contentInner").css("height", thisRowHeight);
+                }
+            };
+        } else {
+            // No-op (sm, sq canvases)
+            _setRowHeights = function () {};
+        }
+
+        var controller = {
+            setCloseModal: function () { _closeModal = true; },
+            toggleMilestoneSelectors: function (trigger) {
+                if (trigger == 'existing') {
+                    jQuery('#newMilestone, #milestoneSelectors').hide('fast');
+                    jQuery('#existingMilestone').show();
+                    _initModals();
+                }
+                if (trigger == 'new') {
+                    jQuery('#newMilestone').show();
+                    jQuery('#existingMilestone, #milestoneSelectors').hide('fast');
+                    _initModals();
+                }
+                if (trigger == 'hide') {
+                    jQuery('#newMilestone, #existingMilestone').hide('fast');
+                    jQuery('#milestoneSelectors').show('fast');
+                }
+            },
+            openModalManually: function (url) { jQuery.nmManual(url, _canvasoptions); },
+            initUserDropdown: initUserDropdown,
+            initStatusDropdown: initStatusDropdown,
+            initRelatesDropdown: initRelatesDropdown,
+            setRowHeights: _setRowHeights
+        };
+
+        // Merge any extras (e.g. goalCanvasController.initProgressChart)
+        if (config.extras) {
+            for (var key in config.extras) {
+                if (config.extras.hasOwnProperty(key)) {
+                    controller[key] = config.extras[key];
+                }
+            }
+        }
+
+        return controller;
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         setCanvasName:setCanvasName,
@@ -236,7 +357,8 @@ leantime.canvasController = (function () {
         initRelatesDropdown:initRelatesDropdown,
         setCloseModal:setCloseModal,
         toggleMilestoneSelectors:toggleMilestoneSelectors,
-        openModalManually:openModalManually
+        openModalManually:openModalManually,
+        createController:createController
     };
 
 })();
