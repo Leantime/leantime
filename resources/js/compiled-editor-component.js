@@ -1,0 +1,39 @@
+// TinyMCE 5.10.9 + plugins (~3.6MB)
+import 'tinymce/tinymce.js';
+import 'tinymce/icons/default/icons.js';
+import 'tinymce/jquery.tinymce.js';
+import 'tinymce/themes/silver/theme.js';
+import 'tinymce/plugins/autolink/plugin.js';
+import 'tinymce/plugins/link/plugin.js';
+import 'tinymce/plugins/textcolor/plugin.js';
+import 'tinymce/plugins/image/plugin.js';
+import 'tinymce/plugins/imagetools/plugin.js';
+import 'tinymce/plugins/lists/plugin.js';
+import 'tinymce/plugins/save/plugin.js';
+import 'tinymce/plugins/autosave/plugin.js';
+import 'tinymce/plugins/media/plugin.js';
+import 'tinymce/plugins/searchreplace/plugin.js';
+import 'tinymce/plugins/paste/plugin.js';
+import 'tinymce/plugins/directionality/plugin.js';
+import 'tinymce/plugins/fullscreen/plugin.js';
+import 'tinymce/plugins/noneditable/plugin.js';
+import 'tinymce/plugins/visualchars/plugin.js';
+import 'tinymce/plugins/emoticons/plugin.js';
+import 'tinymce/plugins/emoticons/js/emojis.min.js';
+import 'tinymce/plugins/advlist/plugin.js';
+import 'tinymce/plugins/autoresize/plugin.js';
+import 'tinymce/plugins/codesample/plugin.js';
+import 'tinymce/plugins/textpattern/plugin.js';
+
+// Custom TinyMCE plugins
+import '../../public/assets/js/libs/tinymce-plugins/helper.js';
+import '../../public/assets/js/libs/tinymce-plugins/checklist/index.js';
+import '../../public/assets/js/libs/tinymce-plugins/shortlink/index.js';
+import '../../public/assets/js/libs/tinymce-plugins/table/plugin.js';
+import '../../public/assets/js/libs/tinymce-plugins/bettertable/index.js';
+import '../../public/assets/js/libs/tinymce-plugins/collapsibleheaders/index.js';
+import '../../public/assets/js/libs/tinymce-plugins/embed/index.js';
+import '../../public/assets/js/libs/tinymce-plugins/slashcommands/slashcommands.js';
+import '../../public/assets/js/libs/tinymce-plugins/mention/plugin.js';
+import '../../public/assets/js/libs/tinymce-plugins/advancedTemplate/plugin.js';
+import '../../public/assets/js/libs/tinymce-plugins/aiTools/plugin.js';

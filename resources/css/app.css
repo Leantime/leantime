@@ -1,0 +1,4 @@
+/* Tailwind CSS - base disabled to avoid Bootstrap conflicts */
+/* @tailwind base; */
+@tailwind components;
+@tailwind utilities;

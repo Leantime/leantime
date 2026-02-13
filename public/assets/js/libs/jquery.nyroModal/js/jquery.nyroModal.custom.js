@@ -1559,7 +1559,6 @@ jQuery(function($, undefined) {
                     if (inputSel) {
                         inputSel.remove();
                         inputSel = undefined;
-                        delete(inputSel);
                     }
                     nm.store.formFileIframe.attr('src', 'about:blank').remove();
                     nm.store.formFileIframe = undefined;

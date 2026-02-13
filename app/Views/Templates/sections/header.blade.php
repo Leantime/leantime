@@ -17,36 +17,33 @@
 <link rel="shortcut icon" href="{!! BASE_URL !!}/dist/images/favicon.png"/>
 <link rel="apple-touch-icon" href="{!! BASE_URL !!}/dist/images/apple-touch-icon.png">
 
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/main.{!! $version !!}.min.css"/>
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/app.{!! $version !!}.min.css"/>
+@vite([
+    'resources/css/main.css',
+    'resources/css/app.css',
+])
 
 @dispatchEvent('afterLinkTags')
 
 <script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
-<script src="{!! BASE_URL !!}/dist/js/compiled-htmx.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-htmx-extensions.{!! $version !!}.min.js"></script>
-
-<!-- libs -->
-<script src="{!! BASE_URL !!}/dist/js/compiled-frameworks.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-framework-plugins.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-global-component.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-calendar-component.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-table-component.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-editor-component.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-gantt-component.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-chart-component.{!! $version !!}.min.js"></script>
+@vite([
+    'resources/js/compiled-htmx.js',
+    'resources/js/compiled-htmx-extensions.js',
+    'resources/js/compiled-frameworks.js',
+    'resources/js/compiled-framework-plugins.js',
+    'resources/js/compiled-global-component.js',
+    'resources/js/compiled-calendar-component.js',
+    'resources/js/compiled-table-component.js',
+    'resources/js/compiled-editor-component.js',
+    'resources/js/compiled-gantt-component.js',
+    'resources/js/compiled-chart-component.js',
+])
 
 @dispatchEvent('afterScriptLibTags')
 
 <!-- app -->
-<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.min.js"></script>
+@vite(['resources/js/compiled-app.js'])
 @dispatchEvent('afterMainScriptTag')
-
-<!--
-//For future file based ref js loading
-<script src="{!! BASE_URL !!}/dist/js/{{ ucwords(\Leantime\Core\Controller\Frontcontroller::getModuleName()) }}/Js/{{ \Leantime\Core\Controller\Frontcontroller::getModuleName() }}Controller.js"></script>
--->
 
 <!-- theme & custom -->
 @foreach ($themeScripts as $script)

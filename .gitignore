@@ -127,6 +127,9 @@ config/.env
 .vscode
 .idea/codebuddy.xml
 
+# Vite dev server hot file
+public/hot
+
 **/.claude/settings.local.json
 .serena/project.yml
 /.serena

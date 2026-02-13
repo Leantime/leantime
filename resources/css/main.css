@@ -1,0 +1,69 @@
+/* CSS libs */
+@import "../../public/assets/css/libs/croppie.css";
+@import "../../public/assets/css/libs/loading.css";
+@import "../../public/assets/css/libs/loading-btn.css";
+
+@import "../../public/assets/css/libs/bootstrap.min.css";
+@import "../../public/assets/css/libs/bootstrap-responsive.min.css";
+@import "../../public/assets/css/libs/bootstrap-timepicker.min.css";
+@import "../../public/assets/css/libs/bootstrap-fileupload.min.css";
+
+@import "../../public/assets/css/libs/slimselect.min.css";
+@import "../../public/assets/css/libs/slimselect.leantime.css";
+
+@import "../../public/assets/css/libs/jquery.ui.css";
+@import "../../public/assets/css/libs/animate.min.css";
+@import "../../public/assets/css/libs/animate.delay.css";
+
+@import "../../public/assets/css/libs/jquery.growl.css";
+@import "../../public/assets/css/libs/jquery.alerts.css";
+@import "../../public/assets/css/libs/jquery.tagsinput.css";
+@import "../../public/assets/css/libs/jquery.chosen.css";
+@import "../../public/assets/css/libs/fullcalendar.css";
+@import "../../public/assets/css/libs/roboto.css";
+@import "../../public/assets/css/libs/atkinson.css";
+@import "../../public/assets/css/libs/shantell.css";
+@import "../../public/assets/css/libs/fontawesome-free/css/all.css";
+@import "../../public/assets/css/libs/fontawesome-free/css/v4-shims.css";
+
+@import "../../public/assets/css/libs/jquery.simple-color-picker.css";
+@import "../../public/assets/css/libs/frappe_theme.css";
+@import "../../public/assets/css/libs/shepherd-theme-arrows.css";
+@import "../../public/assets/css/libs/jstree/style.css";
+
+@import "../../public/assets/css/libs/uppy/style.css";
+@import "../../public/assets/css/libs/uppy/dashboard.css";
+
+@import "../../public/assets/css/libs/tippy.js/tippy.css";
+
+@import "../../public/assets/css/libs/prism.css";
+
+@import "../../public/assets/css/libs/iconpicker/css/fontawesome-iconpicker.css";
+
+@import "../../public/assets/css/libs/gridstack.min.css";
+
+
+/* Components */
+@import "../../public/assets/css/components/structure.css";
+@import "../../public/assets/css/components/nyroModal.css";
+@import "../../public/assets/css/components/dropdowns.css";
+@import "../../public/assets/css/components/kanban.css";
+@import "../../public/assets/css/components/tables.css";
+@import "../../public/assets/css/components/masonwall.css";
+@import "../../public/assets/css/components/wysiwyg-overrides.css";
+@import "../../public/assets/css/components/forms.css";
+@import "../../public/assets/css/components/gantt-overwrites.css";
+@import "../../public/assets/css/components/tree-overwrites.css";
+@import "../../public/assets/css/components/nav.css";
+@import "../../public/assets/css/components/style.default.css";
+@import "../../public/assets/css/components/calendar.css";
+@import "../../public/assets/css/components/text-styles.css";
+@import "../../public/assets/css/components/accessibility.css";
+@import "../../public/assets/css/components/progressbars.css";
+@import "../../public/assets/css/components/mediamanager.css";
+@import "../../public/assets/css/components/tourBoxes.css";
+@import "../../public/assets/css/components/sortableList.css";
+@import "../../public/assets/css/components/mobile.css";
+@import "../../public/assets/css/components/print.css";
+@import "../../public/assets/css/components/mermaid.css";
+@import "../../public/assets/css/components/overwrites.css";
