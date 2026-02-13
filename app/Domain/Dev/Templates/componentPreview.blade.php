@@ -141,6 +141,30 @@
     </section>
 
     {{-- ============================================================ --}}
+    {{-- GLOBAL MODAL (hash-based, powered by modalManager.js) --}}
+    {{-- ============================================================ --}}
+    <section style="margin-bottom: 40px;">
+        <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Global Modal (hash-based)</h3>
+        <p style="margin-bottom: 10px; color: var(--primary-font-color);">
+            Hash links like <code>href="#/module/action/id"</code> open content in the global
+            <code>&lt;dialog id="global-modal"&gt;</code> via <code>modalManager.js</code>.
+            Content is fetched with an <code>is-modal</code> header so the server returns just the template (blank layout).
+        </p>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="#/tickets/newTicket" class="tw:btn tw:btn-primary tw:btn-sm">Open New Ticket Modal</a>
+            <button class="tw:btn tw:btn-secondary tw:btn-sm" onclick="leantime.modals.openByUrl(leantime.appUrl + '/tickets/newTicket')">Open via JS API</button>
+            <button class="tw:btn tw:btn-ghost tw:btn-sm" onclick="leantime.modals.closeModal()">Close Modal</button>
+        </div>
+        <pre style="margin-top: 10px; padding: 12px; background: var(--secondary-background); border-radius: var(--box-radius-small); font-size: 12px; overflow-x: auto;"><code>{{-- Hash link (auto-detected by modalManager.js hashchange listener) --}}
+&lt;a href="#/tickets/newTicket"&gt;Open in modal&lt;/a&gt;
+
+{{-- JS API --}}
+leantime.modals.openByUrl(url)
+leantime.modals.closeModal()
+leantime.modals.setCustomModalCallback(fn)</code></pre>
+    </section>
+
+    {{-- ============================================================ --}}
     {{-- TABS --}}
     {{-- ============================================================ --}}
     <section style="margin-bottom: 40px;">
