@@ -245,7 +245,7 @@
     box-shadow: var(--regular-shadow);
 }
 
-.milestone-box .tw-flex {
+.milestone-box .tw:flex {
     /*color: var(--main-titles-color);*/
 }
 

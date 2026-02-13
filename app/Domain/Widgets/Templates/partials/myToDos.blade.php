@@ -149,7 +149,7 @@
 
     </div>
 
-    <div class="tw-flex tw-flex-col">
+    <div class="tw:flex tw:flex-col">
 
         <div class="">
             @if($tickets !== null && count($tickets) == 0)
@@ -169,8 +169,8 @@
                               hx-target="#yourToDoContainer"
                               hx-swap="outerHTML"
                               hx-indicator=".htmx-indicator">
-                            <div class="tw-flex tw-flex-row tw-gap-2">
-                                <div class="tw-flex-grow">
+                            <div class="tw:flex tw:flex-row tw:gap-2">
+                                <div class="tw:flex-grow">
                                     <input type="text" name="headline" class="main-title-input"
                                            style="font-size:var(--base-font-size)"
                                            placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
@@ -245,8 +245,8 @@
                                   hx-target="#yourToDoContainer"
                                   hx-swap="outerHTML"
                                   hx-indicator=".htmx-indicator">
-                                <div class="tw-flex tw-flex-row tw-gap-2">
-                                    <div class="tw-flex-grow">
+                                <div class="tw:flex tw:flex-row tw:gap-2">
+                                    <div class="tw:flex-grow">
                                         <input type="text" name="headline" class="main-title-input"
                                                style="font-size:var(--base-font-size)"
                                                placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
@@ -313,11 +313,11 @@
                  hx-target="#yourToDoContainer"
                  hx-swap="outerHTML"
                  hx-vals='{"limit": {{ $limit }}, "groupBy": "{{ $groupBy }}", "projectFilter": "{{ $projectFilter }}"}'>
-                <div class="tw-text-center tw-py-4">
+                <div class="tw:text-center tw:py-4">
                     <div class="htmx-indicator">
                         <div class="indeterminate"></div>
                     </div>
-                    <div class="tw-text-sm tw-text-gray-500">
+                    <div class="tw:text-sm tw:text-gray-500">
                         {{ __('text.loading_more_tasks') }}
                     </div>
                 </div>

@@ -23,7 +23,7 @@
                         @each('plugins::partials.plugin', $tpl->get("installedPlugins"), 'plugin')
 
                         @if ($tpl->get("installedPlugins") === false || count($tpl->get("installedPlugins")) == 0)
-                            <span class="tw-block tw-px-4 tw-mb-4">{{ __("text.no_plugins_activated") }}</span>
+                            <span class="tw:block tw:px-4 tw:mb-4">{{ __("text.no_plugins_activated") }}</span>
                         @endif
                     </div>
                 </div>
@@ -31,7 +31,7 @@
             <br />
             <div class="row">
                 <div class="col-lg-12">
-                    <h5 class="subtitle tw-mb-m" style="margin-bottom:15px;">
+                    <h5 class="subtitle tw:mb-m" style="margin-bottom:15px;">
                         {{ __("text.new_plugins") }}
                     </h5>
                     <ul class="sortableTicketList" >

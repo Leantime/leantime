@@ -17,7 +17,7 @@
 
         <div class="row">
             <div class="col-md-6">
-                <div class="ticketBox tw-p-[20px]">
+                <div class="ticketBox tw:p-[20px]">
                     <span class="fancyLink">Did you know?</span><br />
                     <span style="font-size:16px;">Setting Intentions has been shown to <strong>more than double the success rate</strong> of completing a task.</span>
                 </div>

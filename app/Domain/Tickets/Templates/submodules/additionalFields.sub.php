@@ -57,7 +57,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <!-- Project -->
                     <div class="form-group">
                         <label class="control-label"><?= $tpl->__('label.project') ?></label>
-                        <select name="projectId" class="tw-w-full">
+                        <select name="projectId" class="tw:w-full">
                             <?php foreach ($allAssignedprojects as $project) { ?>
                                 <option value="<?= $project['id'] ?>"
                                     <?php

@@ -233,7 +233,7 @@ $allTickets = $group['items'];
                                                         </div>
 
                                                     </div>
-                                                    <div class="tw-flex">
+                                                    <div class="tw:flex">
                                                     <?php if ($row['dateToFinish'] != '0000-00-00 00:00:00' && $row['dateToFinish'] != '1969-12-31 00:00:00') { ?>
                                                         <div>
                                                             <?php echo $tpl->__('label.due_icon'); ?>

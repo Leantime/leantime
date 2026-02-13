@@ -43,7 +43,7 @@
 
 </div>
 
-<div class="htmx-indicator tw-ml-m tw-mr-m tw-pt-l">
+<div class="htmx-indicator tw:ml-m tw:mr-m tw:pt-l">
     <x-global::loadingText type="project" count="5" includeHeadline="false"/>
 </div>
 

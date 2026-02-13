@@ -96,7 +96,7 @@
             </select>
         </div>
 
-        {{--        <div class="tw-flex">--}}
+        {{--        <div class="tw:flex">--}}
 {{--            @foreach([1,2,3,4,5,6,7] as $dayOfWeekIso)--}}
 {{--                <x-global::selectable type="checkbox" class="circle" selected="{{ isset($workdays[$dayOfWeekIso]) ? 'true' : '' }}" :id="'dayOfWeek-'.$dayOfWeekIso" :name="'dayOfWeek-'.$dayOfWeekIso" :value="$dayOfWeekIso" :label="''" onclick="showTimeForm({{$dayOfWeekIso}})">--}}
 {{--                    <label for="dayOfWeek-{{ $dayOfWeekIso }}" class="">--}}
@@ -107,18 +107,18 @@
 {{--        </div>--}}
 {{--        <div>--}}
 {{--            @foreach([1,2,3,4,5,6,7] as $dayOfWeekIso)--}}
-{{--                <div class="dayOfWeekInputs dayOfWeekInput-{{$dayOfWeekIso}} {{ isset($workdays[$dayOfWeekIso]) ? 'tw-flex' : 'tw-hidden' }}">--}}
-{{--                    <div class="tw-w-1/4 tw-leading-[32px]">--}}
+{{--                <div class="dayOfWeekInputs dayOfWeekInput-{{$dayOfWeekIso}} {{ isset($workdays[$dayOfWeekIso]) ? 'tw:flex' : 'tw:hidden' }}">--}}
+{{--                    <div class="tw:w-1/4 tw:leading-[32px]">--}}
 {{--                        {{ __('dates.day_of_week_iso-'.$dayOfWeekIso) }}--}}
 {{--                    </div>--}}
-{{--                    <div class="tw-w-1/4">--}}
+{{--                    <div class="tw:w-1/4">--}}
 {{--                        <input type="time" class="dayStart" name="dayOfWeek-{{$dayOfWeekIso}}-start" value='{{  isset($workdays[$dayOfWeekIso]) ? $workdays[$dayOfWeekIso]['start'] : '09:00'}}' step="1800"/>--}}
 {{--                    </div>--}}
-{{--                    <div class="tw-px-2 tw-leading-[32px]">to</div>--}}
-{{--                    <div class="tw-w-1/4">--}}
+{{--                    <div class="tw:px-2 tw:leading-[32px]">to</div>--}}
+{{--                    <div class="tw:w-1/4">--}}
 {{--                        <input type="time" class="dayEnd" name="dayOfWeek-{{$dayOfWeekIso}}-end" value='{{  isset($workdays[$dayOfWeekIso]) ? $workdays[$dayOfWeekIso]['end'] : '17:00'}}' step="1800"/>--}}
 {{--                    </div>--}}
-{{--                    <div class="tw-w tw-leading-[32px] tw-pl-2 applyBox">--}}
+{{--                    <div class="tw:w tw:leading-[32px] tw:pl-2 applyBox">--}}
 {{--                        @if($loop->index == 0)--}}
 {{--                            <a href="javascript:void(0)">Apply to all</a>--}}
 {{--                        @endif--}}
@@ -129,9 +129,9 @@
 
 {{--        </div>--}}
         <br /> <br />
-        <div class="tw-text-right">
+        <div class="tw:text-right">
             <a href="{{BASE_URL}}/auth/userInvite/{{$inviteId}}?step=3" class="btn btn-secondary" style="width:auto; margin-right:10px">Back</a>
-            <input type="submit" name="createAccount" class="tw-w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
+            <input type="submit" name="createAccount" class="tw:w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
         </div>
 
     </form>
@@ -173,17 +173,17 @@
     })
 
     function showTimeForm($id) {
-        let isVisible = jQuery('.dayOfWeekInput-'+$id).hasClass("tw-flex");
+        let isVisible = jQuery('.dayOfWeekInput-'+$id).hasClass("tw:flex");
         if(isVisible) {
-            jQuery('.dayOfWeekInput-'+$id).removeClass("tw-flex");
-            jQuery('.dayOfWeekInput-'+$id).addClass("tw-hidden");
+            jQuery('.dayOfWeekInput-'+$id).removeClass("tw:flex");
+            jQuery('.dayOfWeekInput-'+$id).addClass("tw:hidden");
         }else{
-            jQuery('.dayOfWeekInput-'+$id).addClass("tw-flex");
-            jQuery('.dayOfWeekInput-'+$id).removeClass("tw-hidden");
+            jQuery('.dayOfWeekInput-'+$id).addClass("tw:flex");
+            jQuery('.dayOfWeekInput-'+$id).removeClass("tw:hidden");
         }
 
         jQuery('.dayOfWeekInputs').find('.applyBox').html("");
-        jQuery('.dayOfWeekInputs.tw-flex').each(function(index){
+        jQuery('.dayOfWeekInputs.tw:flex').each(function(index){
 
             if(index == 0) {
                 jQuery(this).find('.applyBox').html("<a href='javascript:void(0);'>Apply to all")

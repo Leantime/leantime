@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12 tw-text-right">
+            <div class="col-md-12 tw:text-right">
                 <input type="submit" value="{{ __('buttons.next') }}" />
             </div>
         </div>

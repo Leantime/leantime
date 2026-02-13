@@ -9,7 +9,7 @@
     hx-trigger="timerUpdate from:body"
     hx-swap="outerHTML"
 
-    class="tw-relative timerContainer">
+    class="tw:relative timerContainer">
 
     @if ($onTheClock === false)
         <a href="javascript:void(0);" data-value="{{ $parentTicketId }}"

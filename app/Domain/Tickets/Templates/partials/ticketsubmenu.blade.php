@@ -30,7 +30,7 @@
 
             <li class="nav-header border">{{  __("subtitles.track_time") }}</li>
             @dispatchEvent("beforeTimer", ["ticket"=>$ticket])
-            <li class="timerContainer tw-px-[10px]">
+            <li class="timerContainer tw:px-[10px]">
                 @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock, 'style'=> 'full'])
             </li>
             @dispatchEvent("end")

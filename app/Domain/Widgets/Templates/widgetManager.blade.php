@@ -9,7 +9,7 @@
                 @php( $widget->name = __($widget->name))
                 @php( $widget->description = __($widget->description))
                 <div class="col-md-4">
-                    <div class="projectBox tw-p-m tw-min-w-[250px] @if(in_array($widgetId, array_keys($newWidgets)) && !isset($activeWidgets[$widgetId])) newWidget @endif">
+                    <div class="projectBox tw:p-m tw:min-w-[250px] @if(in_array($widgetId, array_keys($newWidgets)) && !isset($activeWidgets[$widgetId])) newWidget @endif">
                         <h5>{{ $widget->name }}</h5>
                         <p>{!! $widget->description !!} </p>
                         <div class="right">

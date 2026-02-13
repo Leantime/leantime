@@ -25,15 +25,15 @@
             </div>
             <br /><br />
             <div class="row">
-                <div class="col-md-12 tw-text-center">
+                <div class="col-md-12 tw:text-center">
                     <a href="javascript:void(0)" class="btn btn-secondary" onclick="leantime.helperController.closeModal()">I'll explore on my own</a>
                     <a href="javascript:void(0)" class="btn btn-primary" onclick="leantime.helperController.closeModal(); leantime.helperController.startGoalTour();">{{ __("buttons.start_tour") }} <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
             <div class="row mt-3">
-                <div class="col-md-12 tw-text-center">
+                <div class="col-md-12 tw:text-center">
                     <form hx-post="{{ BASE_URL }}/help/helperModal/dontShowAgain" hx-trigger="change" hx-swap="none">
-                        <label class="tw-text-sm tw-mt-sm" >
+                        <label class="tw:text-sm tw:mt-sm" >
                             <input type="hidden" name="modalId" value="goals" />
                             <input type="checkbox" id="dontShowAgain" name="hidePermanently"  style="margin-top:-2px;">
                             Don't show this again

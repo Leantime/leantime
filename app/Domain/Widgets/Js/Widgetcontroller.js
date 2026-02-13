@@ -170,7 +170,7 @@ leantime.widgetController = (function () {
 
             // Create the content container
             const contentDiv = document.createElement('div');
-            contentDiv.className = `grid-stack-item-content tw-p-none ${
+            contentDiv.className = `grid-stack-item-content tw:p-none ${
                 widget.widgetBackground == "default" ? "maincontentinner" : widget.background
             }`;
 
@@ -196,13 +196,13 @@ leantime.widgetController = (function () {
 
     var buildWidget = function(widget) {
         return '<div class="widgetInner">' +
-            '        <div class="' + (widget.widgetBackground == "default" ? "tw-pb-l" : "") + '">\n' +
+            '        <div class="' + (widget.widgetBackground == "default" ? "tw:pb-l" : "") + '">\n' +
             '            <div class="stickyHeader" style="padding:15px; height:50px;  width:100%;">\n' +
-            '               <div class="grid-handler-top tw-h-[40px] tw-cursor-grab tw-float-left tw-mr-sm">\n' +
+            '               <div class="grid-handler-top tw:h-[40px] tw:cursor-grab tw:float-left tw:mr-sm">\n' +
             '                    <i class="fa-solid fa-grip-vertical"></i>\n' +
             '                </div>\n' +
-            '           ' + (widget.name != '' ? '<h5 class="subtitle tw-pb-m tw-float-left tw-mr-sm">' + widget.name + '</h5>' : '') + '\n' +
-            '            <div class="inlineDropDownContainer tw-float-right">\n' +
+            '           ' + (widget.name != '' ? '<h5 class="subtitle tw:pb-m tw:float-left tw:mr-sm">' + widget.name + '</h5>' : '') + '\n' +
+            '            <div class="inlineDropDownContainer tw:float-right">\n' +
             '                <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">\n' +
             '                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>\n' +
             '                </a>\n' +
@@ -213,7 +213,7 @@ leantime.widgetController = (function () {
             '            </div>\n' +
             '\n' +
             '        </div>\n' +
-            ' <div class="widgetContent tw-px-l">\n' +
+            ' <div class="widgetContent tw:px-l">\n' +
             '             <div hx-get="'+widget.widgetUrl+'" hx-trigger="'+widget.widgetTrigger+'" id="'+widget.id+'"></div>\n' +
             '        </div>\n' +
             '       </div>\n' +

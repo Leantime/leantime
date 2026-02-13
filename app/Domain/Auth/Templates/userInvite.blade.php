@@ -35,8 +35,8 @@
         <div class="">
             <input type="hidden" name="saveAccount" value="1" />
             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
-            <div class="tw-text-right">
-                <input type="submit" name="createAccount" class="tw-w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
+            <div class="tw:text-right">
+                <input type="submit" name="createAccount" class="tw:w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
             </div>
 
         </div>

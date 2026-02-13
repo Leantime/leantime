@@ -33,14 +33,14 @@
     @endphp
 
     <div
-        class="tw-relative ticketBox {{ $ticket['type'] === 'milestone' ? 'milestone-box priority-border- ' : 'priority-border-'.$ticket['priority'] }} {{ $hasChildren ? 'has-children' : '' }}"
+        class="tw:relative ticketBox {{ $ticket['type'] === 'milestone' ? 'milestone-box priority-border- ' : 'priority-border-'.$ticket['priority'] }} {{ $hasChildren ? 'has-children' : '' }}"
         data-val="{{ $ticket['id'] }}"
         data-event='{!! $ticketDataJson !!}'
         @if($ticket['type'] === 'milestone')
             style="background: var(--secondary-background) linear-gradient(135deg, {{ $ticket['tags'] }} 0%, var(--accent1) 100%); background-repeat: no-repeat; background-size: 100% 5px; background-position: bottom;"
         @endif
     >
-        <div class="tw-absolute full-width-loader htmx-indicator-ticket-{{$ticket['id']}}">
+        <div class="tw:absolute full-width-loader htmx-indicator-ticket-{{$ticket['id']}}">
             <div class="indeterminate"></div>
         </div>
 
@@ -54,14 +54,14 @@
         @endif
 
         @if($ticket['type'] == 'milestone')
-            <div class="tw-flex tw-flex-row tw-items-center tw-gap-4">
-                <div class="tw-flex-grow">
+            <div class="tw:flex tw:flex-row tw:items-center tw:gap-4">
+                <div class="tw:flex-grow">
                     <small style="display:inline-block; ">{{ $ticket['projectName'] }}</small>
                     <h4><a href="#/tickets/editMilestone/{{ $ticket['id'] }}"
                            style="font-size:var(--font-size-l);">{{ $ticket['headline'] }}</a></h4>
 
                 </div>
-                <div class="tw-flex-grow">
+                <div class="tw:flex-grow">
                     <div hx-trigger="load"
                          hx-indicator=".htmx-indicator"
                          hx-get="<?=BASE_URL ?>/hx/tickets/milestones/progress?milestoneId=<?=$ticket['id'] ?>&progressColor={{ trim($ticket['tags'], "#") }}">
@@ -72,24 +72,24 @@
                 </div>
             </div>
         @else
-            <div class="tw-flex tw-flex-row">
-                <div class="tw-content-center">
-                    <div class="tw-content-center tw-mr-[10px]">
+            <div class="tw:flex tw:flex-row">
+                <div class="tw:content-center">
+                    <div class="tw:content-center tw:mr-[10px]">
                         @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock])
                     </div>
                 </div>
 
-                <div class="tw-flex-1 ticket-title ticket-title-wrapper">
+                <div class="tw:flex-1 ticket-title ticket-title-wrapper">
                     <div class="title-text">
                         <small style="display:inline-block; ">{{ $ticket['projectName'] }}</small> <br/>
                         <strong><a href="#/tickets/showTicket/{{ $ticket['id'] }}" preload="mouseover"
                                    class="ticket-headline-{{ $ticket['id'] }}">{{ $ticket['headline'] }}</a></strong>
-                        &nbsp;<a href="javascript:void(0);" class="tw-hidden edit-button"
+                        &nbsp;<a href="javascript:void(0);" class="tw:hidden edit-button"
                                  data-tippy-content="{{ __('text.edit_task_headline') }}"><i class="fa fa-edit"></i></a>
 
                     </div>
-                    <div class="tw-hidden edit-form">
-                        <form class="tw-flex tw-flex-row tw-items-center tw-gap-2"
+                    <div class="tw:hidden edit-form">
+                        <form class="tw:flex tw:flex-row tw:items-center tw:gap-2"
                               hx-post="{{ BASE_URL }}/hx/widgets/myToDos/updateTitle"
                               hx-target=".ticket-headline-{{ $ticket['id'] }}"
                               onsubmit="jQuery(this).closest('.edit-form').find('.cancel-edit-task').click();"
@@ -114,14 +114,14 @@
                 </div>
 
                 @dispatchEvent('beforePlaceholder', ['ticket' => (object)$ticket])
-                <div class="placeholder-container tw-flex-1 tw-flex tw-flex-row tw-content-center">
+                <div class="placeholder-container tw:flex-1 tw:flex tw:flex-row tw:content-center">
                     @dispatchEvent('placeholderContainer', ['ticket' => (object)$ticket])
                 </div>
 
                 @dispatchEvent('beforeDueDate', ['ticket' => (object)$ticket])
                 <div
-                    class="due-date-container tw-flex-1 tw-justify-right tw-flex tw-flex-row tw-justify-end tw-content-center due-date-wrapper">
-                    <div class="tw-content-center">
+                    class="due-date-container tw:flex-1 tw:justify-right tw:flex tw:flex-row tw:justify-end tw:content-center due-date-wrapper">
+                    <div class="tw:content-center">
                         <div class="date-picker-form-control">
                             <i class="fa-solid fa-business-time infoIcon"
                                data-tippy-content="{{ __("label.due") }}"></i>
@@ -150,15 +150,15 @@
                             </button>
                         </div>
                     </div>
-                    <div class="tw-content-center">
+                    <div class="tw:content-center">
                         @dispatchEvent('afterDueDate', ['ticket' => (object)$ticket])
                     </div>
                 </div>
 
                 @dispatchEvent('beforeStatusUpdate')
                 <div
-                    class="status-container tw-flex-1 tw-justify-items-end tw-flex tw-flex-row tw-justify-end tw-gap-2 tw-content-center">
-                    <div class="tw-content-center tw-mr-[10px] dropdown ticketDropdown statusDropdown colorized show">
+                    class="status-container tw:flex-1 tw:justify-items-end tw:flex tw:flex-row tw:justify-end tw:gap-2 tw:content-center">
+                    <div class="tw:content-center tw:mr-[10px] dropdown ticketDropdown statusDropdown colorized show">
                         <a class="dropdown-toggle f-left status {{ $statusLabels[$ticket['projectId']][$ticket['status']]["class"] ?? 'label-default' }}"
                            href="javascript:void(0);"
                            role="button"
@@ -195,7 +195,7 @@
                         </ul>
                     </div>
 
-                    <div class="tw-content-center">
+                    <div class="tw:content-center">
                         <div class="scheduler">
                             @if( $ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00")
                                 <i class="fa-solid fa-calendar-check infoIcon" style="color:var(--accent2)"
@@ -206,7 +206,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="tw-content-center">
+                    <div class="tw:content-center">
                         @include("tickets::partials.ticketsubmenu", ["ticket" => $ticket, "onTheClock" => $onTheClock, "allowSubtaskCreation" => true])
                     </div>
 
@@ -228,8 +228,8 @@
             <input type="hidden" value="new" name="subtaskId"/>
             <input type="hidden" value="1" name="subtaskSave"/>
             <input type="hidden" value="{{ format($ticket['dateToFinish'])->date() }}" name="dateToFinish"/>
-            <div class="tw-flex tw-flex-row tw-gap-2">
-                <div class="tw-flex-grow">
+            <div class="tw:flex tw:flex-row tw:gap-2">
+                <div class="tw:flex-grow">
                     <input name="headline" type="text" class="main-title-input"
                            style="font-size:var(--base-font-size)"
                            placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
@@ -286,8 +286,8 @@
                                value=""
                         @endif
                     />
-                    <div class="tw-flex tw-flex-row tw-gap-2">
-                        <div class="tw-flex-grow">
+                    <div class="tw:flex tw:flex-row tw:gap-2">
+                        <div class="tw:flex-grow">
                             <input name="headline" type="text" class="main-title-input"
                                    style="font-size:var(--base-font-size)"
                                    placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>

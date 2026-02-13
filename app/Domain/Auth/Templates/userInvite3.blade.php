@@ -21,14 +21,14 @@
                 <label for="colormode" >{{ __('label.colormode') }}</label>
 
                 <x-global::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
-                    <label for="colormode-light" class="tw-w-[200px]">
-                        <i class="fa-solid fa-sun tw-font-xxl"></i>
+                    <label for="colormode-light" class="tw:w-[200px]">
+                        <i class="fa-solid fa-sun tw:font-xxl"></i>
                     </label>
                 </x-global::selectable>
 
                 <x-global::selectable :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'" onclick="leantime.snippets.toggleTheme('dark')">
-                    <label for="colormode-light" class="tw-w-[200px]">
-                        <i class="fa-solid fa-moon tw-font-xxl"></i>
+                    <label for="colormode-light" class="tw:w-[200px]">
+                        <i class="fa-solid fa-moon tw:font-xxl"></i>
                     </label>
                 </x-global::selectable>
             </div>
@@ -48,9 +48,9 @@
             </div>
         </div>
         <br /> <br />
-        <div class="tw-text-right">
+        <div class="tw:text-right">
             <a href="{{BASE_URL}}/auth/userInvite/{{$inviteId}}?step=2" class="btn btn-secondary" style="width:auto; margin-right:10px">Back</a>
-            <input type="submit" name="createAccount" class="tw-w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
+            <input type="submit" name="createAccount" class="tw:w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
         </div>
 
 

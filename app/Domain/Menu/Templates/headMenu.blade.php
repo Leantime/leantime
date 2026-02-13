@@ -24,7 +24,7 @@
 
         </a>
 
-        <div class='dropdown-menu tw-p-m tw-h-screen tw-overflow-y-auto' id='pluginNewsDropdown'>
+        <div class='dropdown-menu tw:p-m tw:h-screen tw:overflow-y-auto' id='pluginNewsDropdown'>
             <div class="htmx-indicator htmx-news-indicator">
                 <x-global::loadingText type="text" count="3" includeHeadline="true" />
             </div>
@@ -48,7 +48,7 @@
 
         </a>
 
-        <div class='dropdown-menu tw-p-m tw-h-screen tw-overflow-y-auto' id='newsDropdown'>
+        <div class='dropdown-menu tw:p-m tw:h-screen tw:overflow-y-auto' id='newsDropdown'>
             <div class="htmx-indicator htmx-news-indicator">
                 <x-global::loadingText type="text" count="3" includeHeadline="true" />
             </div>

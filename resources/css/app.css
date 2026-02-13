@@ -1,4 +1,34 @@
-/* Tailwind CSS - base disabled to avoid Bootstrap conflicts */
-/* @tailwind base; */
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" prefix(tw);
+
+@source "../../app/{Views,Domain,Plugins}/**/*.{tpl,sub,inc,blade}.php";
+@source "../../app/Core/Template.php";
+@source "../../app/{Views,Domain,Plugins}/**/{Composers,Controllers}/**/*.php";
+
+@theme {
+    /* Map Leantime CSS variables to Tailwind theme */
+    --color-primary: var(--primary-color);
+    --color-secondary: var(--secondary-color);
+
+    /* Font sizes mapped from Leantime design tokens */
+    --font-size-sm: var(--font-size-sm);
+    --font-size-base: var(--base-font-size);
+    --font-size-l: var(--font-size-l);
+    --font-size-xl: var(--font-size-xl);
+    --font-size-2xl: var(--font-size-xxl);
+    --font-size-3xl: var(--font-size-xxxl);
+    --font-size-4xl: calc(var(--font-size-xxxl) * 1.2);
+    --font-size-5xl: calc(var(--font-size-xxxl) * 1.6);
+    --font-size-6xl: calc(var(--font-size-xxxl) * 2);
+    --font-size-7xl: calc(var(--font-size-xxxl) * 2.4);
+    --font-size-8xl: calc(var(--font-size-xxxl) * 3.2);
+    --font-size-9xl: calc(var(--font-size-xxxl) * 4.266);
+
+    /* Spacing mapped from Leantime design tokens */
+    --spacing-none: 0;
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-base: 15px;
+    --spacing-m: 15px;
+    --spacing-l: 20px;
+    --spacing-xl: 30px;
+}

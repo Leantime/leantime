@@ -19,8 +19,8 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <input type="text" value="<?php $tpl->e($ticket->headline); ?>" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="<?= $tpl->__('input.placeholders.enter_title_of_todo')?>"/>
                 </div>
                 <!-- Status -->
-                <div class="form-group tw-flex tw-w-3/5">
-                    <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.todo_status'); ?></label>
+                <div class="form-group tw:flex tw:w-3/5">
+                    <label class="control-label tw:mx-m tw:w-[100px]"><?php echo $tpl->__('label.todo_status'); ?></label>
                     <div class="">
                         <select
                             id="status-select"
@@ -40,8 +40,8 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
 
                 <!-- Priority -->
-                <div class="form-group tw-flex tw-w-3/5">
-                    <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.priority'); ?></label>
+                <div class="form-group tw:flex tw:w-3/5">
+                    <label class="control-label tw:mx-m tw:w-[100px]"><?php echo $tpl->__('label.priority'); ?></label>
                     <div class="">
                         <select id='priority' name='priority' class="">
                             <option value=""><?php echo $tpl->__('label.priority_not_defined'); ?></option>
@@ -57,8 +57,8 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
 
                 <!-- Effort -->
-                <div class="form-group tw-flex tw-w-3/5">
-                    <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.effort'); ?></label>
+                <div class="form-group tw:flex tw:w-3/5">
+                    <label class="control-label tw:mx-m tw:w-[100px]"><?php echo $tpl->__('label.effort'); ?></label>
                     <div class="">
                         <select id='storypoints' name='storypoints' class="">
                             <option value=""><?php echo $tpl->__('label.effort_not_defined'); ?></option>
@@ -74,12 +74,12 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
 
                 <!-- Editor -->
-                <div class="form-group tw-flex tw-w-3/5">
-                    <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.editor'); ?></label>
+                <div class="form-group tw:flex tw:w-3/5">
+                    <label class="control-label tw:mx-m tw:w-[100px]"><?php echo $tpl->__('label.editor'); ?></label>
                     <div class="">
 
                         <select data-placeholder="<?php echo $tpl->__('label.filter_by_user'); ?>" style="width:175px;"
-                                name="editorId" id="editorId" class="user-select tw-mr-sm">
+                                name="editorId" id="editorId" class="user-select tw:mr-sm">
                             <option value=""><?php echo $tpl->__('label.not_assigned_to_user'); ?></option>
                             <?php foreach ($tpl->get('users') as $userRow) { ?>
                                 <?php echo "<option value='".$userRow['id']."'";
@@ -101,14 +101,14 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
 
                 <!-- Collaborators -->
-                <div class="form-group tw-flex tw-w-3/5">
-                    <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.collaborators'); ?></label>
+                <div class="form-group tw:flex tw:w-3/5">
+                    <label class="control-label tw:mx-m tw:w-[100px]"><?php echo $tpl->__('label.collaborators'); ?></label>
                     <div class="">
                         <select data-placeholder="<?php echo $tpl->__('label.filter_by_user'); ?>" 
                                 style="width:175px;" 
                                 name="collaborators[]" 
                                 id="collaborators" 
-                                class="user-select tw-mr-sm" 
+                                class="user-select tw:mr-sm" 
                                 multiple>
                             <?php foreach ($tpl->get('users') as $userRow) { ?>
                                 <option value="<?php echo $userRow['id']; ?>"
@@ -124,14 +124,14 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
 
                 <!-- Due Date -->
-                <div class="form-group tw-flex tw-w-3/5">
-                    <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.due_date'); ?></label>
+                <div class="form-group tw:flex tw:w-3/5">
+                    <label class="control-label tw:mx-m tw:w-[100px]"><?php echo $tpl->__('label.due_date'); ?></label>
                     <div class="">
                         <input type="text" class="dates" style="width:110px;" id="deadline" autocomplete="off"
                                value="<?= format($ticket->dateToFinish)->date(); ?>"
                                name="dateToFinish" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
 
-                        <input type="time" class="timepicker tw-mr-sm" style="width:120px;" id="dueTime" autocomplete="off"
+                        <input type="time" class="timepicker tw:mr-sm" style="width:120px;" id="dueTime" autocomplete="off"
                                value="<?= format($ticket->dateToFinish)->time24(); ?>"
                                name="timeToFinish"/>
                     </div>
@@ -141,8 +141,8 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
                 </div>
 
-                <div class="form-group tw-flex tw-w-3/5">
-                    <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.tags'); ?></label>
+                <div class="form-group tw:flex tw:w-3/5">
+                    <label class="control-label tw:mx-m tw:w-[100px]"><?php echo $tpl->__('label.tags'); ?></label>
                     <div class="">
                         <input type="text" value="<?php $tpl->e($ticket->tags); ?>" name="tags" id="tags" />
                     </div>
@@ -237,7 +237,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <!-- Project -->
                     <div class="form-group">
                         <label class="control-label"><?= $tpl->__('label.project') ?></label>
-                        <select name="projectId" class="tw-w-full">
+                        <select name="projectId" class="tw:w-full">
                             <?php foreach ($allAssignedprojects as $project) { ?>
                                 <option value="<?= $project['id'] ?>"
                                     <?php
