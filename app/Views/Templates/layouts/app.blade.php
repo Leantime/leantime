@@ -5,7 +5,7 @@
     @stack('styles')
 </head>
 
-<body class="" hx-ext="preload, head-support">
+<body class="" hx-ext="preload, head-support" data-module="{{ $module ?? '' }}">
 
     @include('global::sections.appAnnouncement')
 
