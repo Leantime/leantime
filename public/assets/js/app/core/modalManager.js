@@ -104,11 +104,28 @@ leantime.modals = (function () {
         return response.text();
     }
 
+    // ── TinyMCE Cleanup ────────────────────────────────────────────────
+    // Destroy any TinyMCE editors inside the modal before replacing content
+    // to prevent orphaned instances that leak memory and misbehave.
+    function destroyModalEditors() {
+        if (typeof tinymce === 'undefined') { return; }
+        var c = getContent();
+        if (!c) { return; }
+        var editors = tinymce.get();
+        for (var i = editors.length - 1; i >= 0; i--) {
+            if (c.contains(editors[i].getElement())) {
+                try { editors[i].save(); } catch (e) { /* noop */ }
+                try { editors[i].destroy(false); } catch (e) { /* noop */ }
+            }
+        }
+    }
+
     // ── Render HTML into modal ─────────────────────────────────────────
     function renderContent(html) {
         if (html === null) { return; }
         var c = getContent();
         if (!c) { return; }
+        destroyModalEditors();
         c.innerHTML = extractContent(html);
         executeScripts(c);
         initContent(c);
@@ -172,6 +189,7 @@ leantime.modals = (function () {
         if (!isOpen) { return; }  // Prevent double-close
 
         isOpen = false;
+        destroyModalEditors();
 
         // Clear hash
         try {
@@ -245,6 +263,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ── Open modal on page load if hash present ────────────────────────
     leantime.modals.openModal();
+
+    // ── Wire .formModal links on the main page ──────────────────────────
+    // Links with class="formModal" and non-hash hrefs should open in the modal.
+    // Hash links are already handled by the hashchange listener.
+    leantime.modals.initNyroModal(
+        document.querySelectorAll('a.formModal'),
+        { callbacks: { beforeClose: function () { location.reload(); } } }
+    );
 
     // ── Handle the <dialog> native events ─────────────────────────────
     var dialog = document.getElementById('global-modal');
@@ -326,6 +352,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 var el = doc.querySelector('.primaryContent');
                 extracted = el ? el.innerHTML : (doc.body ? doc.body.innerHTML : html);
             }
+            destroyModalEditors();
             content.innerHTML = extracted;
 
             // Execute scripts

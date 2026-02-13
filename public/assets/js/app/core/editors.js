@@ -113,12 +113,14 @@ leantime.editorController = (function () {
 
         var shortOptions = {
             afterShowCont: function () {
-                jQuery(".fileModal").nyroModal({callbacks:shortOptions});
-
+                leantime.modals.initNyroModal(
+                    document.querySelectorAll('.fileModal'),
+                    { callbacks: shortOptions }
+                );
             }
         };
 
-        jQuery.nmManual(
+        leantime.modals.nmManual(
             leantime.appUrl + '/files/showAll?modalPopUp=true',
             {
                 stack: true,
@@ -129,10 +131,12 @@ leantime.editorController = (function () {
                 }
             }
         );
-        jQuery.nmTop().elts.cont.css("zIndex", "1000010");
-        jQuery.nmTop().elts.bg.css("zIndex", "1000010");
-        jQuery.nmTop().elts.load.css("zIndex", "1000010");
-        jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
+        // Raise the modal above TinyMCE's z-index so the file picker is visible
+        var nmElts = leantime.modals.nmTop().elts;
+        if (nmElts.cont) { nmElts.cont.style.zIndex = '1000010'; }
+        if (nmElts.bg)   { nmElts.bg.style.zIndex = '1000010'; }
+        if (nmElts.load) { nmElts.load.style.zIndex = '1000010'; }
+        if (nmElts.all)  { nmElts.all.style.zIndex = '1000010'; }
     }
 
     var editorSetup = function(editor, callback) {

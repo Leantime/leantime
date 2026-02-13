@@ -33,3 +33,226 @@ document.addEventListener('keydown', function (e) {
         });
     }
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Bootstrap Modal Bridge — replaces Bootstrap 2.x modal JS
+// Handles inline modals (<div class="modal">) used by Ideas/Canvas templates.
+// ═══════════════════════════════════════════════════════════════════════════
+
+(function () {
+    'use strict';
+
+    // Inject minimal modal positioning CSS (Bootstrap provided this before)
+    var css = document.createElement('style');
+    css.textContent =
+        '.modal.in {' +
+        '  display: block !important; position: fixed; top: 0; left: 0; right: 0; bottom: 0;' +
+        '  z-index: 100050; overflow-x: hidden; overflow-y: auto;' +
+        '}' +
+        '.modal .modal-dialog {' +
+        '  position: relative; margin: 60px auto; max-width: 600px;' +
+        '}' +
+        '.modal .modal-dialog.modal-lg { max-width: 900px; }' +
+        '.modal .modal-content {' +
+        '  background: var(--secondary-background, #fff); border-radius: var(--box-radius, 8px);' +
+        '  box-shadow: var(--large-shadow, 0 4px 20px rgba(0,0,0,.2)); padding: 20px;' +
+        '}' +
+        '.modal .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }' +
+        '.modal .modal-header .close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-font-color); }' +
+        '.modal .modal-body { margin-bottom: 15px; }' +
+        '.modal .modal-footer { display: flex; justify-content: flex-end; gap: 8px; }';
+    document.head.appendChild(css);
+
+    var activeBackdrop = null;
+
+    function showModal(modalEl) {
+        if (!modalEl) { return; }
+        modalEl.style.display = 'block';
+        // Force reflow before adding transition class
+        void modalEl.offsetHeight;
+        modalEl.classList.add('in');
+        document.body.classList.add('modal-open');
+
+        // Add backdrop
+        if (!activeBackdrop) {
+            activeBackdrop = document.createElement('div');
+            activeBackdrop.className = 'modal-backdrop fade in';
+            activeBackdrop.style.cssText = 'display:block;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:100049;';
+            document.body.appendChild(activeBackdrop);
+            activeBackdrop.addEventListener('click', function () {
+                var openModal = document.querySelector('.modal.in');
+                if (openModal) { hideModal(openModal); }
+            });
+        }
+    }
+
+    function hideModal(modalEl) {
+        if (!modalEl) { return; }
+        modalEl.classList.remove('in');
+        modalEl.style.display = 'none';
+        document.body.classList.remove('modal-open');
+
+        if (activeBackdrop && activeBackdrop.parentNode) {
+            activeBackdrop.parentNode.removeChild(activeBackdrop);
+            activeBackdrop = null;
+        }
+    }
+
+    // Handle data-dismiss="modal" clicks
+    document.addEventListener('click', function (e) {
+        var dismissBtn = e.target.closest('[data-dismiss="modal"]');
+        if (dismissBtn) {
+            var modal = dismissBtn.closest('.modal');
+            if (modal) { hideModal(modal); }
+        }
+    });
+
+    // Escape key closes inline modals too
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            var openModal = document.querySelector('.modal.in');
+            if (openModal) { hideModal(openModal); }
+        }
+    });
+
+    // Install jQuery.fn.modal shim if jQuery is present
+    if (typeof jQuery !== 'undefined') {
+        jQuery.fn.modal = function (action) {
+            this.each(function () {
+                if (action === 'show') {
+                    showModal(this);
+                } else if (action === 'hide') {
+                    hideModal(this);
+                } else if (action === 'toggle') {
+                    if (this.classList.contains('in')) {
+                        hideModal(this);
+                    } else {
+                        showModal(this);
+                    }
+                }
+            });
+            return this;
+        };
+    }
+
+    // Expose for vanilla JS callers
+    window.leantime = window.leantime || {};
+    leantime.bootstrapModal = { show: showModal, hide: hideModal };
+})();
+
+// ═══════════════════════════════════════════════════════════════════════════
+// jQuery UI Tabs Bridge — replaces jQuery UI .tabs() plugin
+// Provides the same click-to-switch tab behavior used by ticketTabs,
+// projectTabs, clientTabs, menuController projectSelectorTabs.
+// ═══════════════════════════════════════════════════════════════════════════
+
+(function () {
+    'use strict';
+
+    function initTabs(container, opts) {
+        opts = opts || {};
+        var tabLinks = container.querySelectorAll(':scope > ul > li > a');
+        var panels = [];
+
+        // Collect panels from tab link hrefs
+        tabLinks.forEach(function (link) {
+            var href = link.getAttribute('href');
+            if (href && href.charAt(0) === '#') {
+                var panel = container.querySelector(href);
+                if (panel) { panels.push(panel); }
+            }
+        });
+
+        if (panels.length === 0) { return; }
+
+        // Determine initial active tab
+        var activeIndex = opts.active || 0;
+        if (typeof activeIndex !== 'number' || activeIndex < 0 || activeIndex >= panels.length) {
+            activeIndex = 0;
+        }
+
+        // Hide all panels, show active
+        panels.forEach(function (p, i) {
+            p.style.display = (i === activeIndex) ? '' : 'none';
+        });
+
+        // Mark active tab link
+        tabLinks.forEach(function (link, i) {
+            if (i === activeIndex) {
+                link.parentElement.classList.add('ui-tabs-active', 'ui-state-active', 'active');
+            } else {
+                link.parentElement.classList.remove('ui-tabs-active', 'ui-state-active', 'active');
+            }
+        });
+
+        // Click handler for switching
+        tabLinks.forEach(function (link, i) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                panels.forEach(function (p) { p.style.display = 'none'; });
+                tabLinks.forEach(function (l) {
+                    l.parentElement.classList.remove('ui-tabs-active', 'ui-state-active', 'active');
+                });
+                if (panels[i]) { panels[i].style.display = ''; }
+                link.parentElement.classList.add('ui-tabs-active', 'ui-state-active', 'active');
+            });
+        });
+
+        // Fire create callback
+        if (opts.create) {
+            opts.create.call(container, {}, { tab: tabLinks[activeIndex], panel: panels[activeIndex] });
+        }
+    }
+
+    // Install jQuery.fn.tabs shim if jQuery is present
+    if (typeof jQuery !== 'undefined') {
+        jQuery.fn.tabs = function (opts) {
+            this.each(function () {
+                initTabs(this, opts);
+            });
+            return this;
+        };
+    }
+})();
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Chosen.js → SlimSelect Bridge
+// Replaces jQuery('.selector').chosen() with SlimSelect initialization.
+// Handles .chosen('destroy') by destroying the SlimSelect instance.
+// ═══════════════════════════════════════════════════════════════════════════
+
+(function () {
+    'use strict';
+
+    if (typeof jQuery === 'undefined') { return; }
+
+    jQuery.fn.chosen = function (action) {
+        this.each(function () {
+            var el = this;
+            if (el.tagName !== 'SELECT') { return; }
+
+            // Destroy existing SlimSelect instance if any
+            if (el._slimSelect) {
+                try { el._slimSelect.destroy(); } catch (e) { /* noop */ }
+                el._slimSelect = null;
+            }
+
+            // If action is 'destroy', just remove the instance
+            if (action === 'destroy') { return; }
+
+            // Initialize SlimSelect
+            if (typeof SlimSelect !== 'undefined') {
+                try {
+                    el._slimSelect = new SlimSelect({
+                        select: el,
+                        showSearch: (el.options && el.options.length > 8),
+                        allowDeselect: !el.hasAttribute('required')
+                    });
+                } catch (e) {
+                    // SlimSelect may throw on hidden/detached elements — safe to ignore
+                }
+            }
+        });
+        return this;
+    };
+})();

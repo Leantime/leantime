@@ -129,8 +129,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .ticketDropdown > a,
 .maincontent .ticketDropdown > a:link,
-.nyroModalCont .ticketDropdown > a,
-.nyroModalCont .ticketDropdown > a:link{
+#global-modal-content .ticketDropdown > a,
+#global-modal-content .ticketDropdown > a:link{
     color:#fff;
     padding:0px 10px;
     white-space: nowrap;
@@ -141,8 +141,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .ticketDropdown.userDropdown > a,
 .maincontent .ticketDropdown.userDropdown > a:link,
-.nyroModalCont .ticketDropdown.userDropdown > a,
-.nyroModalCont .ticketDropdown.userDropdown > a:link {
+#global-modal-content .ticketDropdown.userDropdown > a,
+#global-modal-content .ticketDropdown.userDropdown > a:link {
     padding-left:0px;
 }
 
@@ -161,7 +161,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 
 .maincontent .ticketDropdown.colorized li a,
-.nyroModalCont .ticketDropdown.colorized li a{
+#global-modal-content .ticketDropdown.colorized li a{
     color:#fff;
 }
 
@@ -197,13 +197,13 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .maincontent .ticketDropdown ul li a[class*="label-"],
-.nyroModalCont .ticketDropdown ul li a[class*="label-"] {
+#global-modal-content .ticketDropdown ul li a[class*="label-"] {
     padding: 5px 10px;
     display:block;
 }
 
 .maincontent .ticketDropdown a.label-warning,
-.nyroModalCont .ticketDropdown a.label-warning,
+#global-modal-content .ticketDropdown a.label-warning,
 .label-warning,
 .label-yellow{
     background:var(--yellow);
@@ -211,20 +211,20 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .maincontent .ticketDropdown a.label-info,
-.nyroModalCont .ticketDropdown a.label-info{
+#global-modal-content .ticketDropdown a.label-info{
     background:var(--dark-blue);
     color:var(--dark-blue-text-color);
 }
 
 .maincontent .ticketDropdown a.label-important,
-.nyroModalCont .ticketDropdown a.label-important,
+#global-modal-content .ticketDropdown a.label-important,
 .label-important{
     background:var(--red);
     color:var(--red-text-color);
 }
 
 .maincontent .ticketDropdown a.label-danger,
-.nyroModalCont .ticketDropdown a.label-danger,
+#global-modal-content .ticketDropdown a.label-danger,
 .label-danger,
 .label-red{
     background:var(--dark-red);
@@ -232,7 +232,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .maincontent .ticketDropdown a.label-success,
-.nyroModalCont .ticketDropdown a.label-success,
+#global-modal-content .ticketDropdown a.label-success,
 .label-success,
 .label-green {
     background:var(--green);
@@ -240,91 +240,91 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .maincontent .ticketDropdown a.label-default,
-.nyroModalCont .ticketDropdown a.label-default,
+#global-modal-content .ticketDropdown a.label-default,
 .label-default{
     background: var(--grey);
     color:var(--grey-text-color);
 }
 
 .maincontent .ticketDropdown a.label-default.milestone,
-.nyroModalCont .ticketDropdown a.label-default.milestone {
+#global-modal-content .ticketDropdown a.label-default.milestone {
     color:var(--blue-text-color);
 }
 
 .maincontent .ticketDropdown a.label-purple,
-.nyroModalCont .ticketDropdown a.label-purple{
+#global-modal-content .ticketDropdown a.label-purple{
     background:var(--purple);
     color:var(--purple-text-color);
 }
 
 .maincontent .ticketDropdown a.label-pink,
-.nyroModalCont .ticketDropdown a.label-pink{
+#global-modal-content .ticketDropdown a.label-pink{
     background:var(--pink);
     color:var(--pink-text-color);
 }
 
 .maincontent .ticketDropdown a.label-brown,
-.nyroModalCont .ticketDropdown a.label-brown{
+#global-modal-content .ticketDropdown a.label-brown{
     background:var(--brown);
     color:var(--brown-text-color);
 }
 
 .maincontent .ticketDropdown a.label-blue,
-.nyroModalCont .ticketDropdown a.label-blue{
+#global-modal-content .ticketDropdown a.label-blue{
     background:var(--blue);
     color:var(--blue-text-color);
 }
 
 .maincontent .ticketDropdown a.label-dark-blue,
-.nyroModalCont .ticketDropdown a.label-dark-blue{
+#global-modal-content .ticketDropdown a.label-dark-blue{
     background:var(--dark-blue);
     color:var(--dark-blue-text-color);
 }
 
 .maincontent .ticketDropdown a.label-darker-blue,
-.nyroModalCont .ticketDropdown a.label-darker-blue{
+#global-modal-content .ticketDropdown a.label-darker-blue{
     background:var(--darker-blue);
     color:var(--darker-blue-text-color);
 }
 
 .maincontent .ticketDropdown a.label-green,
-.nyroModalCont .ticketDropdown a.label-green{
+#global-modal-content .ticketDropdown a.label-green{
     background:var(--green);
     color:var(--green-text-color);
 }
 
 .maincontent .ticketDropdown a.label-dark-green,
-.nyroModalCont .ticketDropdown a.label-dark-green{
+#global-modal-content .ticketDropdown a.label-dark-green{
     background:var(--dark-green);
     color:var(--dark-green-text-color);
 }
 
 .maincontent .ticketDropdown a.label-red,
-.nyroModalCont .ticketDropdown a.label-red{
+#global-modal-content .ticketDropdown a.label-red{
     background:var(--red);
     color:var(--red-text-color);
 }
 
 .maincontent .ticketDropdown a.label-dark-red,
-.nyroModalCont .ticketDropdown a.label-dark-red{
+#global-modal-content .ticketDropdown a.label-dark-red{
     background:var(--dark-red);
     color:var(--dark-red-text-color);
 }
 
 .maincontent .ticketDropdown a.label-grey,
-.nyroModalCont .ticketDropdown a.label-grey{
+#global-modal-content .ticketDropdown a.label-grey{
     background:var(--grey);
     color:var(--grey-text-color);
 }
 
 .maincontent .ticketDropdown a.label-default.effort,
-.nyroModalCont .ticketDropdown a.label-default.effort{
+#global-modal-content .ticketDropdown a.label-default.effort{
     background:var(--secondary-background);
     color:var(--primary-font-color);
 }
 
 .maincontent .ticketDropdown ul li,
-.nyroModalCont .ticketDropdown ul li {
+#global-modal-content .ticketDropdown ul li {
     margin-bottom:1px;
     padding:0px 10px;
 }

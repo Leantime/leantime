@@ -333,9 +333,7 @@ leantime.dashboardController = (function () {
                     var newDate = dateTime;
 
                     leantime.ticketsRepository.updateDueDates(id, newDate, function () {
-                        if (typeof jQuery !== 'undefined' && jQuery.growl) {
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.duedate_updated")});
-                        }
+                        leantime.toast.show({message: leantime.i18n.__("short_notifications.duedate_updated")});
                     });
                 });
             });

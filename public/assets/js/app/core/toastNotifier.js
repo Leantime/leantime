@@ -3,6 +3,8 @@
  *
  * Exposes leantime.toast.show({ message, style }) as the public API.
  * A window._growlShim fallback is provided for any remaining legacy callers.
+ *
+ * Self-contained: all styling is applied inline, no external CSS required.
  */
 (function () {
     'use strict';
@@ -12,12 +14,79 @@
         close: '\u00d7',
         location: 'default',
         style: 'success',
-        size: 'medium',
-        namespace: 'growl'
+        size: 'medium'
+    };
+
+    // Style tokens for each notification type
+    var STYLE_MAP = {
+        success: {
+            bg: 'var(--green)',
+            color: '#fff',
+            border: 'var(--green)'
+        },
+        error: {
+            bg: 'var(--red)',
+            color: '#fff',
+            border: 'var(--red)'
+        },
+        warning: {
+            bg: 'var(--yellow)',
+            color: '#333',
+            border: 'var(--yellow)'
+        },
+        notice: {
+            bg: 'var(--accent1)',
+            color: '#fff',
+            border: 'var(--accent1)'
+        },
+        default: {
+            bg: 'var(--secondary-background)',
+            color: 'var(--primary-font-color)',
+            border: 'var(--main-border-color)'
+        }
     };
 
     /**
-     * Ensure the growl container exists for the given location.
+     * Inject the container styles once.
+     */
+    var stylesInjected = false;
+    function injectStyles() {
+        if (stylesInjected) { return; }
+        stylesInjected = true;
+        var css = document.createElement('style');
+        css.textContent =
+            '#growls-default {' +
+            '  position: fixed; top: 70px; right: 20px; z-index: 100060;' +
+            '  display: flex; flex-direction: column; gap: 8px;' +
+            '  pointer-events: none; max-width: 380px;' +
+            '}' +
+            '.lt-toast {' +
+            '  pointer-events: auto; padding: 12px 36px 12px 16px; border-radius: var(--box-radius, 8px);' +
+            '  box-shadow: var(--regular-shadow, 0 2px 8px rgba(0,0,0,.15)); font-size: var(--font-size-s, 13px);' +
+            '  line-height: 1.4; position: relative; overflow: hidden;' +
+            '  opacity: 0; transform: translateX(30px);' +
+            '  transition: opacity .25s ease, transform .25s ease;' +
+            '}' +
+            '.lt-toast.lt-toast-visible {' +
+            '  opacity: 1; transform: translateX(0);' +
+            '}' +
+            '.lt-toast.lt-toast-outgoing {' +
+            '  opacity: 0; transform: translateX(30px);' +
+            '}' +
+            '.lt-toast-close {' +
+            '  position: absolute; top: 8px; right: 10px; cursor: pointer;' +
+            '  font-size: 18px; line-height: 1; opacity: .7;' +
+            '}' +
+            '.lt-toast-close:hover { opacity: 1; }' +
+            '.lt-toast-title {' +
+            '  font-weight: 600; margin-bottom: 2px;' +
+            '}' +
+            '.lt-toast-message { word-break: break-word; }';
+        document.head.appendChild(css);
+    }
+
+    /**
+     * Ensure the toast container exists for the given location.
      */
     function ensureContainer(location) {
         var id = 'growls-' + location;
@@ -40,26 +109,31 @@
      * @param {number} [opts.duration] - Auto-dismiss in ms (default 3200)
      */
     function show(opts) {
+        injectStyles();
         opts = opts || {};
         var settings = {};
         for (var k in DEFAULTS) { settings[k] = DEFAULTS[k]; }
         for (var k2 in opts) { settings[k2] = opts[k2]; }
 
-        var ns = settings.namespace;
+        var colors = STYLE_MAP[settings.style] || STYLE_MAP['default'];
         var container = ensureContainer(settings.location);
 
-        // Build growl element (same markup as jQuery Growl for CSS compat)
+        // Build toast element
         var el = document.createElement('div');
-        el.className = ns + ' ' + ns + '-' + settings.style + ' ' + ns + '-' + settings.size + ' ' + ns + '-incoming';
+        el.className = 'lt-toast';
+        el.style.background = colors.bg;
+        el.style.color = colors.color;
+        el.style.borderLeft = '4px solid ' + colors.border;
+
         el.innerHTML =
-            '<div class="' + ns + '-close">' + settings.close + '</div>' +
-            (settings.title ? '<div class="' + ns + '-title">' + settings.title + '</div>' : '') +
-            '<div class="' + ns + '-message">' + (settings.message || '') + '</div>';
+            '<div class="lt-toast-close">' + settings.close + '</div>' +
+            (settings.title ? '<div class="lt-toast-title">' + settings.title + '</div>' : '') +
+            '<div class="lt-toast-message">' + (settings.message || '') + '</div>';
 
         container.appendChild(el);
 
         // Close handler
-        var closeBtn = el.querySelector('.' + ns + '-close');
+        var closeBtn = el.querySelector('.lt-toast-close');
         closeBtn.addEventListener('click', function (e) {
             e.stopPropagation();
             dismiss(el);
@@ -80,9 +154,9 @@
             startDismissTimer();
         });
 
-        // Present (trigger reflow then remove -incoming)
+        // Animate in (trigger reflow then add visible class)
         void el.offsetHeight;
-        el.classList.remove(ns + '-incoming');
+        el.classList.add('lt-toast-visible');
 
         function startDismissTimer() {
             timer = setTimeout(function () { dismiss(el); }, settings.duration);
@@ -90,7 +164,8 @@
 
         function dismiss(element) {
             if (timer) { clearTimeout(timer); timer = null; }
-            element.classList.add(ns + '-outgoing');
+            element.classList.remove('lt-toast-visible');
+            element.classList.add('lt-toast-outgoing');
             element.addEventListener('transitionend', function () {
                 if (element.parentNode) element.parentNode.removeChild(element);
             });

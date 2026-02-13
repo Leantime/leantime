@@ -261,7 +261,7 @@ body .widgettitle.title-light {
 
 }
 
-.nyroModalCont .widgettitle.title-light {
+#global-modal-content .widgettitle.title-light {
     padding-top: 5px;
     font-size:var(--font-size-l);
 }
