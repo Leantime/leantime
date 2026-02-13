@@ -57,6 +57,23 @@
 
     </div><!-- mainwrapper -->
 
+    {{-- Global modal (native <dialog>) — replaces nyroModal --}}
+    <dialog id="global-modal" class="tw:modal">
+        <div class="tw:modal-box tw:max-w-3xl tw:p-0" id="global-modal-box">
+            <form method="dialog" style="margin:0;position:absolute;right:8px;top:8px;z-index:10;">
+                <button class="tw:btn tw:btn-sm tw:btn-circle tw:btn-ghost" aria-label="Close">
+                    <i class="fa fa-xmark"></i>
+                </button>
+            </form>
+            <div id="global-modal-content" style="padding:20px;">
+                <div style="display:flex;justify-content:center;padding:40px;">
+                    <span class="tw:loading tw:loading-spinner tw:loading-lg"></span>
+                </div>
+            </div>
+        </div>
+        <form method="dialog" class="tw:modal-backdrop"><button>close</button></form>
+    </dialog>
+
     @include('global::sections.pageBottom')
     @stack('scripts')
     @include('help::helpermodal')

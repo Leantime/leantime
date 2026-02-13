@@ -18,7 +18,7 @@ import '../../public/assets/js/libs/slimselect.min.js';
 import confetti from 'canvas-confetti';
 window.confetti = confetti;
 
-import '../../public/assets/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js';
+// nyroModal removed — replaced by modalManager.js (native <dialog>)
 import '../../public/assets/js/libs/uppy/uppy.js';
 
 import Croppie from 'croppie';

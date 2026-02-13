@@ -2,7 +2,7 @@
 import '../../public/assets/js/app/app.js';
 import '../../public/assets/js/app/core/editors.js';
 import '../../public/assets/js/app/core/snippets.js';
-import '../../public/assets/js/app/core/modals.js';
+import '../../public/assets/js/app/core/modalManager.js';
 import '../../public/assets/js/app/core/tableHandling.js';
 import '../../public/assets/js/app/core/datePickers.js';
 import '../../public/assets/js/app/core/dateHelper.js';
