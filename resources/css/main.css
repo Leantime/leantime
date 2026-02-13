@@ -16,7 +16,6 @@
 @import "../../public/assets/css/libs/animate.delay.css";
 
 @import "../../public/assets/css/libs/jquery.growl.css";
-@import "../../public/assets/css/libs/jquery.alerts.css";
 @import "../../public/assets/css/libs/jquery.tagsinput.css";
 @import "../../public/assets/css/libs/jquery.chosen.css";
 @import "../../public/assets/css/libs/fullcalendar.css";
@@ -45,7 +44,6 @@
 
 /* Components */
 @import "../../public/assets/css/components/structure.css";
-@import "../../public/assets/css/components/nyroModal.css";
 @import "../../public/assets/css/components/dropdowns.css";
 @import "../../public/assets/css/components/kanban.css";
 @import "../../public/assets/css/components/tables.css";

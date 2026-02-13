@@ -74,7 +74,7 @@
                     <i class="fa fa-xmark"></i>
                 </button>
             </form>
-            <div id="global-modal-content" class="nyroModalCont" style="padding:20px;">
+            <div id="global-modal-content" style="padding:20px;">
                 <div style="display:flex;justify-content:center;padding:40px;">
                     <span class="tw:loading tw:loading-spinner tw:loading-lg"></span>
                 </div>
