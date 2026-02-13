@@ -1,11 +1,14 @@
 @props([
-    "size",
+    'size' => 'md',
 ])
 
-<div style="
-        display:inline-block;
-        width:{{ $size }};
-        height: {{ $size }};
-        vertical-align: middle;
-        background:url({{ BASE_URL }}/dist/images/loading-animation.svg);
-        background-size: contain;"></div>
+@php
+    $sizeClass = match($size) {
+        'xs' => 'tw:loading-xs',
+        'sm' => 'tw:loading-sm',
+        'lg' => 'tw:loading-lg',
+        default => 'tw:loading-md',
+    };
+@endphp
+
+<span {{ $attributes->merge(['class' => "tw:loading tw:loading-spinner $sizeClass"]) }}></span>
