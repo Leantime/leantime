@@ -8,7 +8,7 @@
 
     <br />
     <label>{{ __('label.goal_description') }}</label>
-    <input type="text" name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" style="width:100%;" /><br />
+    <input type="text" name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" class="tw:w-full" /><br />
 
     <br />
     <div class="row">

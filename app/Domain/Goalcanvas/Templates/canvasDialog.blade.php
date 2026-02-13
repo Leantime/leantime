@@ -9,7 +9,7 @@
         }
     </script>
 
-    <div style="width:1000px">
+    <div class="tw:w-[1000px]">
 
         <h1><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i>
             {{ $canvasTypes[$canvasItem['box']]['title'] }}</h1>
@@ -25,25 +25,25 @@
             <div class="row">
                 <div class="col-md-8">
                     <label>{{ __('label.what_is_your_goal') }}</label>
-                    <input type="text" name="title" value="{{ $canvasItem['title'] }}" style="width:100%"><br>
+                    <input type="text" name="title" value="{{ $canvasItem['title'] }}" class="tw:w-full"><br>
 
                     @if (!empty($relatesLabels))
                         <label>{{ __('label.relates') }}</label>
-                        <select name="relates" style="width: 50%" id="relatesCanvas">
+                        <select name="relates" class="tw:w-1/2" id="relatesCanvas">
                         </select><br>
                     @else
                         <input type="hidden" name="relates"
                             value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}">
                     @endif
                     <br>
-                    <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-ranking-star"></i>
+                    <h4 class="widgettitle title-light tw:mb-0"><i class="fa-solid fa-ranking-star"></i>
                         {{ __('Metrics') }}</h4>
 
                     @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
                     <div id="measureGoalContainer">
                         <label>{{ __('text.what_metric_will_you_be_using') }}</label>
                         <input type="text" name="description" value="{{ $canvasItem['description'] }}"
-                            style="width:100%"><br>
+                            class="tw:w-full"><br>
                     </div>
 
                     <div class="row">
@@ -99,13 +99,13 @@
                 <div class="col-md-4">
                     @if (!empty($statusLabels))
                         <label>{{ __("label.status") }}</label>
-                        <select name="status" style="width: 50%" id="statusCanvas">
+                        <select name="status" class="tw:w-1/2" id="statusCanvas">
                         </select><br /><br />
                     @else
                         <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
                     @endif
 
-                    <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-calendar"></i> {{ __('label.dates') }}</h4>
+                    <h4 class="widgettitle title-light tw:mb-0"><i class="fa-solid fa-calendar"></i> {{ __('label.dates') }}</h4>
 
                     <label>{{ __('label.start_date') }}</label>
                     <input type="text" autocomplete="off" value="{{ format($canvasItem['startDate'])->date() }}" name="startDate" class="startDate"/>
@@ -130,7 +130,7 @@
                                         </div>
                                     @endif
                                 </div>
-                                <div class="row" id="newMilestone" style="display:none;">
+                                <div class="row tw:hidden" id="newMilestone">
                                     <div class="col-md-12">
                                         <input type="text" width="50%" name="newMilestone"></textarea><br />
                                         <input type="hidden" name="type" value="milestone" />
@@ -140,7 +140,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row" id="existingMilestone" style="display:none;">
+                                <div class="row tw:hidden" id="existingMilestone">
                                     <div class="col-md-12">
                                         <select data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
                                             <option value=""></option>

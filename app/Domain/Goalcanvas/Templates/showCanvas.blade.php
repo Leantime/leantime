@@ -180,7 +180,7 @@
 
 
             @if (count($allCanvas) > 0)
-                <div id="sortableCanvasKanban" class="sortableTicketList disabled" style="padding-top:15px;">
+                <div id="sortableCanvasKanban" class="sortableTicketList disabled tw:pt-4">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row">
@@ -202,7 +202,7 @@
                                             <div class="ticketBox" id="item_{{ $row['id'] }}">
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        <div class="inlineDropDownContainer" style="float:right;">
+                                                        <div class="inlineDropDownContainer tw:float-right">
                                                             @if ($login::userIsAtLeast($roles::$editor))
                                                                 <a href="javascript:void(0)"
                                                                     class="dropdown-toggle ticketDropDown"
@@ -247,7 +247,7 @@
                                                 </div>
                                                 <div class="col-md-4"></div>
                                             </div>
-                                            <div class="progress" style="margin-bottom:0px;">
+                                            <div class="progress tw:mb-0">
                                                 <div class="progress-bar progress-bar-success"
                                                     role="progressbar" aria-valuenow="{{ $percentDone }}"
                                                     aria-valuemin="0" aria-valuemax="100"
@@ -256,19 +256,19 @@
                                                         class="sr-only">{{ sprintf(__('text.percent_complete'), $percentDone) }}</span>
                                                 </div>
                                             </div>
-                                            <div class="row" style="padding-bottom:0px;">
+                                            <div class="row tw:pb-0">
                                                 <div class="col-md-4">
                                                     <small>Start:<br />{{ $metricTypeFront . $row['startValue'] . $metricTypeBack }}</small>
                                                 </div>
                                                 <div class="col-md-4 center">
                                                     <small>{{ __('label.current') }}:<br />{{ $metricTypeFront . $row['currentValue'] . $metricTypeBack }}</small>
                                                 </div>
-                                                <div class="col-md-4" style="text-align:right">
+                                                <div class="col-md-4 tw:text-right">
                                                     <small>{{ __('label.goal') }}:<br />{{ $metricTypeFront . $row['endValue'] . $metricTypeBack }}</small>
                                                 </div>
                                             </div>
 
-                                            <div class="clearfix" style="padding-bottom: 8px;"></div>
+                                            <div class="clearfix tw:pb-2"></div>
 
                                             @if (!empty($statusLabels))
                                                 <div
@@ -344,14 +344,14 @@
                                                             <span id='userImage{{ $row['id'] }}'>
                                                                 <img src='{{ BASE_URL }}/api/users?profileImage={{ $row['author'] }}'
                                                                     width='25'
-                                                                    style='vertical-align: middle;' />
+                                                                    class="tw:align-middle" />
                                                             </span>
                                                             <span id='user{{ $row['id'] }}'></span>
                                                         @else
                                                             <span id='userImage{{ $row['id'] }}'>
                                                                 <img src='{{ BASE_URL }}/api/users?profileImage=false'
                                                                     width='25'
-                                                                    style='vertical-align: middle;' />
+                                                                    class="tw:align-middle" />
                                                             </span>
                                                             <span id='user{{ $row['id'] }}'></span>
                                                         @endif
@@ -369,7 +369,7 @@
                                                                 id='userStatusChange{{ $row['id'] . $user['id'] }}'>
                                                                 <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}'
                                                                     width='25'
-                                                                    style='vertical-align: middle; margin-right:5px;' />
+                                                                    class="tw:align-middle tw:mr-1" />
                                                                 {{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
                                                             </a>
                                                         </li>
@@ -377,7 +377,7 @@
                                                 </ul>
                                             </div>
 
-                                            <div class="right" style="margin-right:10px;">
+                                            <div class="right tw:mr-2.5">
                                                 <a href="#/goalcanvas/editCanvasComment/{{ $row['id'] }}"
                                                     class="commentCountLink"
                                                     data="item_{{ $row['id'] }}"><span

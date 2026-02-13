@@ -2,7 +2,7 @@
 @section('content')
 
 <h4 class="widgettitle title-light">{!! __("subtitles.delete") !!}</h4>
-<hr style="margin-top: 5px; margin-bottom: 15px;">
+<hr class="tw:mt-1 tw:mb-4">
 
 <form method="post" action="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}">
     <p>{{ __('text.confirm_board_item_deletion') }}</p><br />

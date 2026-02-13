@@ -63,12 +63,12 @@ foreach ($allCanvas as $canvasRow) {
 
 <div class="maincontent">
 
-<div class="row" style="margin-bottom:20px; ">
+<div class="row tw:mb-5">
     <div class="col-md-4">
-        <div class="bigNumberBox" style="padding: 29px 15px;">
+        <div class="bigNumberBox tw:py-7 tw:px-4">
             <h2>Progress: {{ round($goalStats['avgPercentComplete']) }}%</h2>
 
-            <div class="progress" style="margin-top:5px;">
+            <div class="progress tw:mt-1">
                 <div class="progress-bar progress-bar-success" role="progressbar"
                      aria-valuenow="{{ round($goalStats['avgPercentComplete']) }}" aria-valuemin="0" aria-valuemax="100"
                      style="width: {{ $goalStats['avgPercentComplete'] }}%">
@@ -111,12 +111,12 @@ foreach ($allCanvas as $canvasRow) {
                     <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>{{ $canvasRow["title"] }}</a></h5>
                 </div>
             </div>
-            <div class="row" style="border-bottom:1px solid var(--main-border-color); margin-bottom:20px">
+            <div class="row tw:border-b tw:border-solid tw:border-[var(--main-border-color)] tw:mb-5">
                 @php
                 $canvasSvc = app()->make(Goalcanvas::class);
                 $canvasItems = $canvasSvc->getCanvasItemsById($canvasRow["id"]);
                 @endphp
-                <div id="sortableCanvasKanban-{{ $canvasRow['id'] }}" class="sortableTicketList disabled col-md-12" style="padding-top:15px;">
+                <div id="sortableCanvasKanban-{{ $canvasRow['id'] }}" class="sortableTicketList disabled col-md-12 tw:pt-4">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row">
@@ -137,7 +137,7 @@ foreach ($allCanvas as $canvasRow) {
                                             <div class="ticketBox" id="item_{{ $row["id"] }}">
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        <div class="inlineDropDownContainer" style="float:right;">
+                                                        <div class="inlineDropDownContainer tw:float-right">
                                                             @if ($login::userIsAtLeast($roles::$editor))
                                                                 <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                                     <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
@@ -181,24 +181,24 @@ foreach ($allCanvas as $canvasRow) {
                                                             </div>
                                                             <div class="col-md-4"></div>
                                                         </div>
-                                                        <div class="progress" style="margin-bottom:0px;">
+                                                        <div class="progress tw:mb-0">
                                                             <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ $percentDone }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $percentDone }}%">
                                                                 <span class="sr-only">{{ sprintf(__("text.percent_complete"), $percentDone) }}</span>
                                                             </div>
                                                         </div>
-                                                        <div class="row" style="padding-bottom:0px;">
+                                                        <div class="row tw:pb-0">
                                                             <div class="col-md-4">
                                                                 <small>Start:<br />{{ $metricTypeFront . $row["startValue"] . $metricTypeBack }}</small>
                                                             </div>
                                                             <div class="col-md-4 center">
                                                                 <small>{{ __('label.current') }}:<br />{{ $metricTypeFront . $row["currentValue"] . $metricTypeBack }}</small>
                                                             </div>
-                                                            <div class="col-md-4" style="text-align:right">
+                                                            <div class="col-md-4 tw:text-right">
                                                                 <small>{{ __('label.goal') }}:<br />{{ $metricTypeFront . $row["endValue"] . $metricTypeBack }}</small>
                                                             </div>
                                                         </div>
 
-                                                        <div class="clearfix" style="padding-bottom: 8px;"></div>
+                                                        <div class="clearfix tw:pb-2"></div>
 
                                                         @if (!empty($statusLabels))
                                                             <div class="dropdown ticketDropdown statusDropdown colorized show firstDropdown">
@@ -241,12 +241,12 @@ foreach ($allCanvas as $canvasRow) {
                                                                 <span class="text">
                                                                     @if ($row["authorFirstname"] != "")
                                                                         <span id='userImage{{ $row['id'] }}'>
-                                                                            <img src='{{ BASE_URL }}/api/users?profileImage={{ $row['author'] }}' width='25' style='vertical-align: middle;'/>
+                                                                            <img src='{{ BASE_URL }}/api/users?profileImage={{ $row['author'] }}' width='25' class="tw:align-middle"/>
                                                                         </span>
                                                                         <span id='user{{ $row['id'] }}'></span>
                                                                     @else
                                                                         <span id='userImage{{ $row['id'] }}'>
-                                                                            <img src='{{ BASE_URL }}/api/users?profileImage=false' width='25' style='vertical-align: middle;'/>
+                                                                            <img src='{{ BASE_URL }}/api/users?profileImage=false' width='25' class="tw:align-middle"/>
                                                                         </span>
                                                                         <span id='user{{ $row['id'] }}'></span>
                                                                     @endif
@@ -257,7 +257,7 @@ foreach ($allCanvas as $canvasRow) {
                                                                 @foreach ($users as $user)
                                                                     <li class='dropdown-item'>
                                                                         <a href='javascript:void(0);' data-label='{{ sprintf(__("text.full_name"), $tpl->escape($user["firstname"]), $tpl->escape($user['lastname'])) }}' data-value='{{ $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] }}' id='userStatusChange{{ $row['id'] . $user['id'] }}'>
-                                                                            <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}' width='25' style='vertical-align: middle; margin-right:5px;'/>
+                                                                            <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}' width='25' class="tw:align-middle tw:mr-1"/>
                                                                             {{ sprintf(__("text.full_name"), $tpl->escape($user["firstname"]), $tpl->escape($user['lastname'])) }}
                                                                         </a>
                                                                     </li>
@@ -265,7 +265,7 @@ foreach ($allCanvas as $canvasRow) {
                                                             </ul>
                                                         </div>
 
-                                                        <div class="right" style="margin-right:10px;">
+                                                        <div class="right tw:mr-2.5">
                                                             <span class="fas fa-comments"></span>
                                                             <small>{{ $nbcomments }}</small>
                                                         </div>
