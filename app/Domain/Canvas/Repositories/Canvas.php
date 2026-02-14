@@ -417,7 +417,8 @@ class Canvas
             ->selectRaw('0 AS "percentDone"')
             ->leftJoin('zp_user as t1', 'zp_canvas_items.author', '=', 't1.id')
             ->leftJoin('zp_tickets as milestone', function ($join) {
-                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw('CAST("milestone"."id" AS TEXT)'));
+                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
+                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw("CAST(milestone.id AS {$castType})"));
             })
             ->leftJoin('zp_comment', function ($join) {
                 $join->on('zp_canvas_items.id', '=', 'zp_comment.moduleId')
@@ -527,7 +528,8 @@ class Canvas
             ->leftJoin('zp_canvas_items as parentKPI', 'zp_canvas_items.kpi', '=', 'parentKPI.id')
             ->leftJoin('zp_canvas_items as parentGoal', 'zp_canvas_items.parent', '=', 'parentGoal.id')
             ->leftJoin('zp_tickets as milestone', function ($join) {
-                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw('CAST("milestone"."id" AS TEXT)'));
+                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
+                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw("CAST(milestone.id AS {$castType})"));
             })
             ->leftJoin('zp_user as t1', 'zp_canvas_items.author', '=', 't1.id')
             ->where('board.projectId', $projectId)
@@ -641,7 +643,7 @@ class Canvas
                 'milestone.headline as milestoneHeadline',
                 'milestone.editTo as milestoneEditTo',
             ])
-            ->selectRaw('COUNT("progressTickets".id) AS "allTickets"')
+            ->selectRaw('COUNT(progressTickets.id) AS allTickets')
             ->selectSub(function ($query) use ($statusGroups) {
                 $query->from('zp_tickets as progressSub')
                     ->selectRaw('(
@@ -669,7 +671,8 @@ class Canvas
                     ->where('progressTickets.type', '<>', 'subtask');
             })
             ->leftJoin('zp_tickets as milestone', function ($join) {
-                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw('CAST("milestone"."id" AS TEXT)'));
+                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
+                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw("CAST(milestone.id AS {$castType})"));
             })
             ->leftJoin('zp_user as t1', 'zp_canvas_items.author', '=', 't1.id')
             ->where('zp_canvas_items.id', $id)

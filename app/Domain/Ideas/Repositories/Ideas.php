@@ -230,7 +230,8 @@ class Ideas
             ->selectRaw('COUNT(DISTINCT zp_comment.id) AS "commentCount"')
             ->leftJoin('zp_user AS t1', 'zp_canvas_items.author', '=', 't1.id')
             ->leftJoin('zp_tickets AS milestone', function ($join) {
-                $join->on('zp_canvas_items.milestoneId', '=', $this->db->raw('CAST("milestone"."id" AS TEXT)'));
+                $castType = $this->db->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
+                $join->on('zp_canvas_items.milestoneId', '=', $this->db->raw("CAST(milestone.id AS {$castType})"));
             })
             ->leftJoin('zp_comment', function ($join) {
                 $join->on('zp_canvas_items.id', '=', 'zp_comment.moduleId')
@@ -276,7 +277,8 @@ class Ideas
                 'milestone.editTo as milestoneEditTo'
             )
             ->leftJoin('zp_tickets AS milestone', function ($join) {
-                $join->on('zp_canvas_items.milestoneId', '=', $this->db->raw('CAST("milestone"."id" AS TEXT)'));
+                $castType = $this->db->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
+                $join->on('zp_canvas_items.milestoneId', '=', $this->db->raw("CAST(milestone.id AS {$castType})"));
             })
             ->leftJoin('zp_user AS t1', 'zp_canvas_items.author', '=', 't1.id')
             ->where('zp_canvas_items.id', $id)
