@@ -22,11 +22,76 @@
                 initUI();
                 initDateRangeTracking();
                 updateActiveProfileDisplay();
+                checkAndRefreshActiveProfile();
             }
 
         };
 
         setTimeout(checkAndInit, 100);
+    }
+
+    function checkAndRefreshActiveProfile() {
+        const activeProfile = localStorage.getItem('activeProfileName');
+        const dateRange = localStorage.getItem('activeProfileDateRange');
+        const lastApplied = localStorage.getItem('activeProfileLastApplied');
+
+        if (!activeProfile || !dateRange || !lastApplied || dateRange === 'Custom') {
+            return;
+        }
+
+        const lastAppliedDate = new Date(lastApplied);
+        const now = new Date();
+
+        if (shouldRefreshRange(dateRange, lastAppliedDate, now)) {
+
+            loadAllPreferences().then(function () {
+                const pref = currentPreferences[activeProfile];
+                if (pref && pref.filters) {
+                    applyFilters(pref.filters).then(function () {
+                        localStorage.setItem('activeProfileLastApplied', now.toISOString());
+                        jQuery('#form').submit();
+                    });
+                }
+            });
+        }
+    }
+
+    function shouldRefreshRange(rangeType, lastApplied, now) {
+        const lastAppliedDay = new Date(lastApplied.getFullYear(), lastApplied.getMonth(), lastApplied.getDate());
+        const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        switch (rangeType) {
+            case 'Today':
+            case 'Yesterday':
+                return lastAppliedDay.getTime() !== nowDay.getTime();
+
+            case 'Last 7 Days':
+            case 'Last 30 Days':
+                return lastAppliedDay.getTime() !== nowDay.getTime();
+
+            case 'This Week':
+                const lastWeekStart = getStartOfWeek(lastApplied);
+                const nowWeekStart = getStartOfWeek(now);
+                return lastWeekStart.getTime() !== nowWeekStart.getTime();
+
+            case 'This Month':
+                return lastApplied.getMonth() !== now.getMonth() ||
+                    lastApplied.getFullYear() !== now.getFullYear();
+
+            case 'Last Month':
+                return lastApplied.getMonth() !== now.getMonth() ||
+                    lastApplied.getFullYear() !== now.getFullYear();
+
+            default:
+                return false;
+        }
+    }
+
+    function getStartOfWeek(date) {
+        const d = new Date(date);
+        const day = d.getDay();
+        const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+        return new Date(d.setDate(diff));
     }
 
     function initDateRangeTracking() {
@@ -65,6 +130,8 @@
                     await applyFilters(data.preference.filters);
                     activeProfileName = name;
                     localStorage.setItem('activeProfileName', name);
+                    localStorage.setItem('activeProfileDateRange', data.preference.filters.dateRange || 'Custom');
+                    localStorage.setItem('activeProfileLastApplied', new Date().toISOString());
                     updateActiveProfileDisplay();
                     jQuery('#form').submit();
                     return true;
@@ -95,6 +162,8 @@
     function clearActiveProfile() {
         activeProfileName = null;
         localStorage.removeItem('activeProfileName');
+        localStorage.removeItem('activeProfileDateRange');
+        localStorage.removeItem('activeProfileLastApplied');
         updateActiveProfileDisplay();
     }
 
@@ -153,35 +222,69 @@
         alert('Failed to save profile');
         return false;
     }
-    function applyDateRange(rangeName) {
-        const dateInput = jQuery('input[name="dateFrom"]');
+function applyDateRange(rangeName) {
+    const dateInput = jQuery('input[name="dateFrom"]');
 
-        if (!dateInput.length || !dateInput.data('daterangepicker')) {
-            return false;
-        }
-
-        const picker = dateInput.data('daterangepicker');
-        const ranges = picker.ranges;
-
-        if (ranges && ranges[rangeName]) {
-            const range = ranges[rangeName];
-            const startDate = range[0];
-            const endDate = range[1];
-
-            picker.setStartDate(startDate);
-            picker.setEndDate(endDate);
-            picker.chosenLabel = rangeName;
-
-            jQuery('input[name="dateFrom"]').val(startDate.format('YYYY-MM-DD'));
-            jQuery('input[name="dateTo"]').val(endDate.format('YYYY-MM-DD'));
-
-            selectedRangeName = rangeName;
-
-            return true;
-        }
-
+    if (!dateInput.length || !dateInput.data('daterangepicker')) {
+        console.log('[applyDateRange] Datepicker not found');
         return false;
     }
+
+    const picker = dateInput.data('daterangepicker');
+    
+    // Force fresh moment calculation - don't use picker.ranges
+    let startDate, endDate;
+    
+    switch(rangeName) {
+        case 'Today':
+            startDate = moment().startOf('day');
+            endDate = moment().endOf('day');
+            break;
+        case 'Yesterday':
+            startDate = moment().subtract(1, 'day').startOf('day');
+            endDate = moment().subtract(1, 'day').endOf('day');
+            break;
+        case 'This Week':
+            startDate = moment().startOf('week');
+            endDate = moment().endOf('week');
+            break;
+        case 'This Month':
+            startDate = moment().startOf('month');
+            endDate = moment().endOf('month');
+            break;
+        case 'Last 7 Days':
+            startDate = moment().subtract(6, 'days').startOf('day');
+            endDate = moment().endOf('day');
+            break;
+        case 'Last 30 Days':
+            startDate = moment().subtract(29, 'days').startOf('day');
+            endDate = moment().endOf('day');
+            break;
+        case 'Last Month':
+            startDate = moment().subtract(1, 'month').startOf('month');
+            endDate = moment().subtract(1, 'month').endOf('month');
+            break;
+        default:
+            console.log('[applyDateRange] Unknown range:', rangeName);
+            return false;
+    }
+
+    console.log('[applyDateRange] Calculated dates for', rangeName, ':', {
+        start: startDate.format('YYYY-MM-DD'),
+        end: endDate.format('YYYY-MM-DD')
+    });
+
+    picker.setStartDate(startDate);
+    picker.setEndDate(endDate);
+    picker.chosenLabel = rangeName;
+
+    jQuery('input[name="dateFrom"]').val(startDate.format('YYYY-MM-DD'));
+    jQuery('input[name="dateTo"]').val(endDate.format('YYYY-MM-DD'));
+
+    selectedRangeName = rangeName;
+
+    return true;
+}
 
     async function applyFilters(filters) {
         if (!filters) {
