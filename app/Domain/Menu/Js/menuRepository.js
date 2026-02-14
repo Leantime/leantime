@@ -1,4 +1,4 @@
-var leantime = leantime || {};
+var leantime = window.leantime || (window.leantime = {});
 
 leantime.menuRepository = (function () {
 

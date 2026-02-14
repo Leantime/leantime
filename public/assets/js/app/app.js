@@ -1,20 +1,16 @@
 //Lets get this party started.
-var leantime = leantime || {};
+// Use window.leantime explicitly so Rollup doesn't constant-fold `var leantime = leantime || {}`
+// into a new empty object, losing properties when other modules reassign the variable.
+window.leantime = window.leantime || {};
 
-var themeColorMeta = document.querySelector('meta[name=theme-color]');
-leantime.companyColor = themeColorMeta ? themeColorMeta.getAttribute("content") : null;
+window.leantime.companyColor = (document.querySelector('meta[name=theme-color]') || {}).content || null;
+window.leantime.colorScheme = (document.querySelector('meta[name=color-scheme]') || {}).content || null;
+window.leantime.theme = (document.querySelector('meta[name=theme]') || {}).content || null;
+window.leantime.appUrl = (document.querySelector('meta[name=identifier-URL]') || {}).content || null;
+window.leantime.version = (document.querySelector('meta[name=leantime-version]') || {}).content || null;
 
-var colorSchemeMeta = document.querySelector('meta[name=color-scheme]');
-leantime.colorScheme = colorSchemeMeta ? colorSchemeMeta.getAttribute("content") : null;
-
-var themeMeta = document.querySelector('meta[name=theme]');
-leantime.theme = themeMeta ? themeMeta.getAttribute("content") : null;
-
-var appURLMeta = document.querySelector('meta[name=identifier-URL]');
-leantime.appUrl = appURLMeta ? appURLMeta.getAttribute("content") : null;
-
-var leantimeVersionMeta = document.querySelector('meta[name=leantime-version]');
-leantime.version = leantimeVersionMeta ? leantimeVersionMeta.getAttribute("content") : null;
+// Local alias — points to the same object, safe for Rollup bundling
+var leantime = window.leantime;
 
 leantime.replaceSVGColors = function () {
 

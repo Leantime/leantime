@@ -1,33 +1,8 @@
-/*global tinymce, module, require, define, global, self */
+/*global tinymce, jQuery */
 
-;(function (f) {
-  'use strict';
-
-  // CommonJS
-  if (typeof exports === 'object' && typeof module !== 'undefined') {
-    module.exports = f(require('jquery'));
-
-  // RequireJS
-  } else if (typeof define === 'function'  && define.amd) {
-    define(['jquery'], f);
-
-  // <script>
-  } else {
-    var g;
-    if (typeof window !== 'undefined') {
-      g = window;
-    } else if (typeof global !== 'undefined') {
-      g = global;
-    } else if (typeof self !== 'undefined') {
-      g = self;
-    } else {
-      g = this;
-    }
-
-    f(g.jQuery);
-  }
-
-})(function ($) {
+// UMD wrapper removed — jQuery is loaded globally, and CommonJS require('jquery')
+// breaks when bundled by Vite/Rollup with jQuery as an external dependency.
+;(function ($) {
     'use strict';
 
     var AutoComplete = function (ed, options) {
@@ -430,4 +405,4 @@
 
     tinymce.PluginManager.add('mention', tinymce.plugins.Mention);
 
-});
+})(jQuery);
