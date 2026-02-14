@@ -2,12 +2,15 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-import commonjs from '@rollup/plugin-commonjs';
 import path from 'path';
 
-// Virtual module: maps `import $ from 'jquery'` to the global window.jQuery
-// loaded by the classic <script> tag in header.blade.php. This avoids bare
-// module specifiers that browsers cannot resolve.
+// jQuery global shim: maps `import $ from 'jquery'` and `require('jquery')`
+// to window.jQuery which is loaded by a classic <script> tag in header.blade.php.
+//
+// Returns ESM with a default export of window.jQuery. For CJS libraries that
+// call require('jquery'), build.commonjsOptions.requireReturnsDefault: true
+// ensures they receive the default export (window.jQuery) directly — not a
+// namespace proxy that strips $.fn, $.extend, $.jstree, etc.
 function jqueryGlobalPlugin() {
     return {
         name: 'jquery-global',
@@ -17,7 +20,7 @@ function jqueryGlobalPlugin() {
         },
         load(id) {
             if (id === '\0jquery-global') {
-                return 'var jQ = window.jQuery || window.$; export default jQ; export { jQ as $ };';
+                return 'var jQ = window.jQuery; export default jQ; export { jQ as $ };';
             }
         },
     };
@@ -92,10 +95,16 @@ export default defineConfig({
     build: {
         // Output to public/build (Vite default with laravel plugin)
         // Keep public/dist intact for rollback
+
+        // Configure Vite's INTERNAL @rollup/plugin-commonjs (not a separate instance).
+        // requireReturnsDefault: true ensures that when CJS libraries require() our
+        // jQuery shim (which gets converted to ESM internally), they receive the
+        // default export (window.jQuery) directly — not a namespace proxy object.
+        commonjsOptions: {
+            requireReturnsDefault: true,
+        },
+
         rollupOptions: {
-            plugins: [
-                commonjs(),
-            ],
             output: {
                 // Preserve the same bundle names for clarity
                 entryFileNames: 'assets/[name]-[hash].js',

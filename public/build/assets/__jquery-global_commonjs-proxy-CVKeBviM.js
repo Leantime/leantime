@@ -1,1 +1,0 @@
-import{g as o}from"./_commonjsHelpers-C4iS2aBk.js";var e=window.jQuery||window.$;const r=Object.freeze(Object.defineProperty({__proto__:null,$:e,default:e},Symbol.toStringTag,{value:"Module"})),a=o(r);export{e as j,a as r};
