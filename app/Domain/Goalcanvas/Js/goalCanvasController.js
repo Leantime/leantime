@@ -1,3 +1,4 @@
+import '../../Canvas/Js/canvasController.js';
 leantime.goalCanvasController = leantime.canvasController.createController('goal', {
     extras: {
         initProgressChart: function (chartId, complete, incomplete) {

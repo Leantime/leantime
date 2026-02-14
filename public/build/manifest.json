@@ -1,14 +1,14 @@
 {
-  "__basePickBy-DGRd-4SK.js": {
-    "file": "assets/_basePickBy-DGRd-4SK.js",
+  "__basePickBy-lD_Ex9Zg.js": {
+    "file": "assets/_basePickBy-lD_Ex9Zg.js",
     "name": "_basePickBy",
     "imports": [
-      "__baseUniq-BkolfqdJ.js",
+      "__baseUniq-CzFlYJ7r.js",
       "resources/js/compiled-global-component.js"
     ]
   },
-  "__baseUniq-BkolfqdJ.js": {
-    "file": "assets/_baseUniq-BkolfqdJ.js",
+  "__baseUniq-CzFlYJ7r.js": {
+    "file": "assets/_baseUniq-CzFlYJ7r.js",
     "name": "_baseUniq",
     "imports": [
       "resources/js/compiled-global-component.js"
@@ -18,86 +18,86 @@
     "file": "assets/_jquery-global-BcA88QQ9.js",
     "name": "_jquery-global"
   },
-  "_arc-9W_BpX_6.js": {
-    "file": "assets/arc-9W_BpX_6.js",
+  "_arc-CP-HxgJZ.js": {
+    "file": "assets/arc-CP-HxgJZ.js",
     "name": "arc",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_channel-Dzh0HLMl.js": {
-    "file": "assets/channel-Dzh0HLMl.js",
+  "_channel-DhGBp5LW.js": {
+    "file": "assets/channel-DhGBp5LW.js",
     "name": "channel",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-ANTBXLJU-DnjxUnxP.js": {
-    "file": "assets/chunk-ANTBXLJU-DnjxUnxP.js",
+  "_chunk-ANTBXLJU-Cwl2ZTay.js": {
+    "file": "assets/chunk-ANTBXLJU-Cwl2ZTay.js",
     "name": "chunk-ANTBXLJU",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-FHKO5MBM-__wdXNII.js": {
-    "file": "assets/chunk-FHKO5MBM-__wdXNII.js",
+  "_chunk-FHKO5MBM-DoXxGT6P.js": {
+    "file": "assets/chunk-FHKO5MBM-DoXxGT6P.js",
     "name": "chunk-FHKO5MBM",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-GLLZNHP4-CcAAkECh.js": {
-    "file": "assets/chunk-GLLZNHP4-CcAAkECh.js",
+  "_chunk-GLLZNHP4-CWu6sisA.js": {
+    "file": "assets/chunk-GLLZNHP4-CWu6sisA.js",
     "name": "chunk-GLLZNHP4",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-JBRWN2VN-BGdTLXQT.js": {
-    "file": "assets/chunk-JBRWN2VN-BGdTLXQT.js",
+  "_chunk-JBRWN2VN--vo1VDv6.js": {
+    "file": "assets/chunk-JBRWN2VN--vo1VDv6.js",
     "name": "chunk-JBRWN2VN",
     "imports": [
-      "_chunk-GLLZNHP4-CcAAkECh.js",
-      "_chunk-WVR4S24B-9x0_AId3.js",
-      "_chunk-NRVI72HA-Ca-FKRPG.js",
+      "_chunk-GLLZNHP4-CWu6sisA.js",
+      "_chunk-WVR4S24B-D1Jj4mvD.js",
+      "_chunk-NRVI72HA-D5XhYe3f.js",
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-LXBSTHXV-C541KquX.js": {
-    "file": "assets/chunk-LXBSTHXV-C541KquX.js",
+  "_chunk-LXBSTHXV-CPvjBo82.js": {
+    "file": "assets/chunk-LXBSTHXV-CPvjBo82.js",
     "name": "chunk-LXBSTHXV",
     "imports": [
-      "_chunk-WVR4S24B-9x0_AId3.js",
-      "_chunk-NRVI72HA-Ca-FKRPG.js",
+      "_chunk-WVR4S24B-D1Jj4mvD.js",
+      "_chunk-NRVI72HA-D5XhYe3f.js",
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-NRVI72HA-Ca-FKRPG.js": {
-    "file": "assets/chunk-NRVI72HA-Ca-FKRPG.js",
+  "_chunk-NRVI72HA-D5XhYe3f.js": {
+    "file": "assets/chunk-NRVI72HA-D5XhYe3f.js",
     "name": "chunk-NRVI72HA",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-OMD6QJNC-6Ff1LAXp.js": {
-    "file": "assets/chunk-OMD6QJNC-6Ff1LAXp.js",
+  "_chunk-OMD6QJNC-Dapd3nyO.js": {
+    "file": "assets/chunk-OMD6QJNC-Dapd3nyO.js",
     "name": "chunk-OMD6QJNC",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-WVR4S24B-9x0_AId3.js": {
-    "file": "assets/chunk-WVR4S24B-9x0_AId3.js",
+  "_chunk-WVR4S24B-D1Jj4mvD.js": {
+    "file": "assets/chunk-WVR4S24B-D1Jj4mvD.js",
     "name": "chunk-WVR4S24B",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_clone-DlU3owJQ.js": {
-    "file": "assets/clone-DlU3owJQ.js",
+  "_clone-B5YzSdHd.js": {
+    "file": "assets/clone-B5YzSdHd.js",
     "name": "clone",
     "imports": [
-      "__baseUniq-BkolfqdJ.js"
+      "__baseUniq-CzFlYJ7r.js"
     ]
   },
   "_cytoscape.esm-BY7v1xhs.js": {
@@ -112,12 +112,12 @@
     "file": "assets/defaultLocale-C4B-KCzX.js",
     "name": "defaultLocale"
   },
-  "_graph-DyCsPMT2.js": {
-    "file": "assets/graph-DyCsPMT2.js",
+  "_graph-UeykvHYA.js": {
+    "file": "assets/graph-UeykvHYA.js",
     "name": "graph",
     "imports": [
       "resources/js/compiled-global-component.js",
-      "__baseUniq-BkolfqdJ.js"
+      "__baseUniq-CzFlYJ7r.js"
     ]
   },
   "_htmx.esm-KBlj935b.js": {
@@ -128,18 +128,18 @@
     "file": "assets/init-Gi6I4Gst.js",
     "name": "init"
   },
-  "_layout-brHHUNOZ.js": {
-    "file": "assets/layout-brHHUNOZ.js",
+  "_layout-DAT91pJT.js": {
+    "file": "assets/layout-DAT91pJT.js",
     "name": "layout",
     "imports": [
-      "_graph-DyCsPMT2.js",
-      "__baseUniq-BkolfqdJ.js",
-      "__basePickBy-DGRd-4SK.js",
+      "_graph-UeykvHYA.js",
+      "__baseUniq-CzFlYJ7r.js",
+      "__basePickBy-lD_Ex9Zg.js",
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_linear-Dkp7SHRv.js": {
-    "file": "assets/linear-Dkp7SHRv.js",
+  "_linear-DRhUOE-w.js": {
+    "file": "assets/linear-DRhUOE-w.js",
     "name": "linear",
     "imports": [
       "resources/js/compiled-global-component.js",
@@ -154,164 +154,15 @@
       "_init-Gi6I4Gst.js"
     ]
   },
-  "_preload-helper-DPi8upcZ.js": {
-    "file": "assets/preload-helper-DPi8upcZ.js",
-    "name": "preload-helper"
-  },
-  "_treemap-75Q7IDZK-CtiP_BLm.js": {
-    "file": "assets/treemap-75Q7IDZK-CtiP_BLm.js",
+  "_treemap-75Q7IDZK-DCWWH8xs.js": {
+    "file": "assets/treemap-75Q7IDZK-DCWWH8xs.js",
     "name": "treemap-75Q7IDZK",
     "imports": [
-      "_preload-helper-DPi8upcZ.js",
       "resources/js/compiled-global-component.js",
-      "__baseUniq-BkolfqdJ.js",
-      "__basePickBy-DGRd-4SK.js",
-      "_clone-DlU3owJQ.js"
+      "__baseUniq-CzFlYJ7r.js",
+      "__basePickBy-lD_Ex9Zg.js",
+      "_clone-B5YzSdHd.js"
     ]
-  },
-  "app/Domain/Clients/Js/clientsController.js": {
-    "file": "assets/clientsController-rJN37dRD.js",
-    "name": "clientsController",
-    "src": "app/Domain/Clients/Js/clientsController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Cpcanvas/Js/cpCanvasController.js": {
-    "file": "assets/cpCanvasController-Bk9nlIMp.js",
-    "name": "cpCanvasController",
-    "src": "app/Domain/Cpcanvas/Js/cpCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Dbmcanvas/Js/dbmCanvasController.js": {
-    "file": "assets/dbmCanvasController-BfisiC0W.js",
-    "name": "dbmCanvasController",
-    "src": "app/Domain/Dbmcanvas/Js/dbmCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Eacanvas/Js/eaCanvasController.js": {
-    "file": "assets/eaCanvasController-BBKpXTvo.js",
-    "name": "eaCanvasController",
-    "src": "app/Domain/Eacanvas/Js/eaCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Emcanvas/Js/emCanvasController.js": {
-    "file": "assets/emCanvasController-BeXTfudd.js",
-    "name": "emCanvasController",
-    "src": "app/Domain/Emcanvas/Js/emCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Gamecenter/Js/game-snake.js": {
-    "file": "assets/game-snake-CiPrYQqj.js",
-    "name": "game-snake",
-    "src": "app/Domain/Gamecenter/Js/game-snake.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Goalcanvas/Js/goalCanvasController.js": {
-    "file": "assets/goalCanvasController-Ln3cYq9R.js",
-    "name": "goalCanvasController",
-    "src": "app/Domain/Goalcanvas/Js/goalCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Ideas/Js/ideasController.js": {
-    "file": "assets/ideasController-B5tm3ndV.js",
-    "name": "ideasController",
-    "src": "app/Domain/Ideas/Js/ideasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Insightscanvas/Js/insightsCanvasController.js": {
-    "file": "assets/insightsCanvasController-D4xHaPBV.js",
-    "name": "insightsCanvasController",
-    "src": "app/Domain/Insightscanvas/Js/insightsCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Lbmcanvas/Js/lbmCanvasController.js": {
-    "file": "assets/lbmCanvasController-DWCLahfG.js",
-    "name": "lbmCanvasController",
-    "src": "app/Domain/Lbmcanvas/Js/lbmCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Leancanvas/Js/leanCanvasController.js": {
-    "file": "assets/leanCanvasController-B9aMTJng.js",
-    "name": "leanCanvasController",
-    "src": "app/Domain/Leancanvas/Js/leanCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Minempathycanvas/Js/risksCanvasController.js": {
-    "file": "assets/risksCanvasController-D76y0F1o.js",
-    "name": "risksCanvasController",
-    "src": "app/Domain/Minempathycanvas/Js/risksCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Obmcanvas/Js/obmCanvasController.js": {
-    "file": "assets/obmCanvasController-D3ulNdVa.js",
-    "name": "obmCanvasController",
-    "src": "app/Domain/Obmcanvas/Js/obmCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Projects/Js/projectsController.js": {
-    "file": "assets/projectsController-BY15Utrs.js",
-    "name": "projectsController",
-    "src": "app/Domain/Projects/Js/projectsController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Retroscanvas/Js/retroCanvasController.js": {
-    "file": "assets/retroCanvasController-Bdzr-tck.js",
-    "name": "retroCanvasController",
-    "src": "app/Domain/Retroscanvas/Js/retroCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Riskscanvas/Js/risksCanvasController.js": {
-    "file": "assets/risksCanvasController-yt1qFgdB.js",
-    "name": "risksCanvasController",
-    "src": "app/Domain/Riskscanvas/Js/risksCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Sbcanvas/Js/sbCanvasController.js": {
-    "file": "assets/sbCanvasController-FLgGdgM2.js",
-    "name": "sbCanvasController",
-    "src": "app/Domain/Sbcanvas/Js/sbCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Smcanvas/Js/smCanvasController.js": {
-    "file": "assets/smCanvasController-DjnDEowx.js",
-    "name": "smCanvasController",
-    "src": "app/Domain/Smcanvas/Js/smCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Sqcanvas/Js/sqCanvasController.js": {
-    "file": "assets/sqCanvasController-C8AMx8k5.js",
-    "name": "sqCanvasController",
-    "src": "app/Domain/Sqcanvas/Js/sqCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Swotcanvas/Js/swotCanvasController.js": {
-    "file": "assets/swotCanvasController-DM1_M8ZL.js",
-    "name": "swotCanvasController",
-    "src": "app/Domain/Swotcanvas/Js/swotCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Tickets/Js/kanbanController.js": {
-    "file": "assets/kanbanController-BaewnVvF.js",
-    "name": "kanbanController",
-    "src": "app/Domain/Tickets/Js/kanbanController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Timesheets/Js/timesheetsController.js": {
-    "file": "assets/timesheetsController-BQyLQw80.js",
-    "name": "timesheetsController",
-    "src": "app/Domain/Timesheets/Js/timesheetsController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Valuecanvas/Js/valueCanvasController.js": {
-    "file": "assets/valueCanvasController-7Q7wZw1F.js",
-    "name": "valueCanvasController",
-    "src": "app/Domain/Valuecanvas/Js/valueCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Wiki/Js/wikiController.js": {
-    "file": "assets/wikiController-BEslrRep.js",
-    "name": "wikiController",
-    "src": "app/Domain/Wiki/Js/wikiController.js",
-    "isDynamicEntry": true
   },
   "node_modules/katex/dist/katex.mjs": {
     "file": "assets/katex-ChWnQ-fc.js",
@@ -320,267 +171,251 @@
     "isDynamicEntry": true
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/architectureDiagram-KFL7JDKH.mjs": {
-    "file": "assets/architectureDiagram-KFL7JDKH-DmPQ41lj.js",
+    "file": "assets/architectureDiagram-KFL7JDKH-CCToVfZe.js",
     "name": "architectureDiagram-KFL7JDKH",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/architectureDiagram-KFL7JDKH.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/compiled-global-component.js",
-      "_chunk-ANTBXLJU-DnjxUnxP.js",
-      "_treemap-75Q7IDZK-CtiP_BLm.js",
+      "_chunk-ANTBXLJU-Cwl2ZTay.js",
+      "_treemap-75Q7IDZK-DCWWH8xs.js",
       "_cytoscape.esm-BY7v1xhs.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-BkolfqdJ.js",
-      "__basePickBy-DGRd-4SK.js",
-      "_clone-DlU3owJQ.js"
+      "__baseUniq-CzFlYJ7r.js",
+      "__basePickBy-lD_Ex9Zg.js",
+      "_clone-B5YzSdHd.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/blockDiagram-ZYB65J3Q.mjs": {
-    "file": "assets/blockDiagram-ZYB65J3Q-BhMYpaHY.js",
+    "file": "assets/blockDiagram-ZYB65J3Q-CQk-XKpI.js",
     "name": "blockDiagram-ZYB65J3Q",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/blockDiagram-ZYB65J3Q.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-GLLZNHP4-CcAAkECh.js",
+      "_chunk-GLLZNHP4-CWu6sisA.js",
       "resources/js/compiled-global-component.js",
-      "_clone-DlU3owJQ.js",
-      "_graph-DyCsPMT2.js",
-      "_channel-Dzh0HLMl.js",
+      "_clone-B5YzSdHd.js",
+      "_graph-UeykvHYA.js",
+      "_channel-DhGBp5LW.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-BkolfqdJ.js"
+      "__baseUniq-CzFlYJ7r.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/c4Diagram-AAMF2YG6.mjs": {
-    "file": "assets/c4Diagram-AAMF2YG6-CAr3S78g.js",
+    "file": "assets/c4Diagram-AAMF2YG6-BU1oSazh.js",
     "name": "c4Diagram-AAMF2YG6",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/c4Diagram-AAMF2YG6.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-OMD6QJNC-6Ff1LAXp.js",
+      "_chunk-OMD6QJNC-Dapd3nyO.js",
       "resources/js/compiled-global-component.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/classDiagram-3BZAVTQC.mjs": {
-    "file": "assets/classDiagram-3BZAVTQC-DtCByY7B.js",
+    "file": "assets/classDiagram-3BZAVTQC-DOkTcIoo.js",
     "name": "classDiagram-3BZAVTQC",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/classDiagram-3BZAVTQC.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-JBRWN2VN-BGdTLXQT.js",
+      "_chunk-JBRWN2VN--vo1VDv6.js",
       "resources/js/compiled-global-component.js",
-      "_chunk-GLLZNHP4-CcAAkECh.js",
-      "_chunk-WVR4S24B-9x0_AId3.js",
-      "_chunk-NRVI72HA-Ca-FKRPG.js",
+      "_chunk-GLLZNHP4-CWu6sisA.js",
+      "_chunk-WVR4S24B-D1Jj4mvD.js",
+      "_chunk-NRVI72HA-D5XhYe3f.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/classDiagram-v2-QTMF73CY.mjs": {
-    "file": "assets/classDiagram-v2-QTMF73CY-DtCByY7B.js",
+    "file": "assets/classDiagram-v2-QTMF73CY-DOkTcIoo.js",
     "name": "classDiagram-v2-QTMF73CY",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/classDiagram-v2-QTMF73CY.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-JBRWN2VN-BGdTLXQT.js",
+      "_chunk-JBRWN2VN--vo1VDv6.js",
       "resources/js/compiled-global-component.js",
-      "_chunk-GLLZNHP4-CcAAkECh.js",
-      "_chunk-WVR4S24B-9x0_AId3.js",
-      "_chunk-NRVI72HA-Ca-FKRPG.js",
+      "_chunk-GLLZNHP4-CWu6sisA.js",
+      "_chunk-WVR4S24B-D1Jj4mvD.js",
+      "_chunk-NRVI72HA-D5XhYe3f.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/dagre-2BBEFEWP.mjs": {
-    "file": "assets/dagre-2BBEFEWP-CZWFb8pe.js",
+    "file": "assets/dagre-2BBEFEWP-Bf2o9DSN.js",
     "name": "dagre-2BBEFEWP",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/dagre-2BBEFEWP.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/compiled-global-component.js",
-      "_graph-DyCsPMT2.js",
-      "_layout-brHHUNOZ.js",
-      "__baseUniq-BkolfqdJ.js",
-      "_clone-DlU3owJQ.js",
-      "__basePickBy-DGRd-4SK.js",
+      "_graph-UeykvHYA.js",
+      "_layout-DAT91pJT.js",
+      "__baseUniq-CzFlYJ7r.js",
+      "_clone-B5YzSdHd.js",
+      "__basePickBy-lD_Ex9Zg.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/diagram-4IRLE6MV.mjs": {
-    "file": "assets/diagram-4IRLE6MV-D_7m1eEa.js",
+    "file": "assets/diagram-4IRLE6MV-CBKSUlWk.js",
     "name": "diagram-4IRLE6MV",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/diagram-4IRLE6MV.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-NRVI72HA-Ca-FKRPG.js",
+      "_chunk-NRVI72HA-D5XhYe3f.js",
       "resources/js/compiled-global-component.js",
-      "_chunk-ANTBXLJU-DnjxUnxP.js",
-      "_treemap-75Q7IDZK-CtiP_BLm.js",
+      "_chunk-ANTBXLJU-Cwl2ZTay.js",
+      "_treemap-75Q7IDZK-DCWWH8xs.js",
       "_defaultLocale-C4B-KCzX.js",
       "_ordinal-Cboi1Yqb.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-BkolfqdJ.js",
-      "__basePickBy-DGRd-4SK.js",
-      "_clone-DlU3owJQ.js",
+      "__baseUniq-CzFlYJ7r.js",
+      "__basePickBy-lD_Ex9Zg.js",
+      "_clone-B5YzSdHd.js",
       "_init-Gi6I4Gst.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/diagram-GUPCWM2R.mjs": {
-    "file": "assets/diagram-GUPCWM2R-DRkN821L.js",
+    "file": "assets/diagram-GUPCWM2R-CpT8BYAa.js",
     "name": "diagram-GUPCWM2R",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/diagram-GUPCWM2R.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-ANTBXLJU-DnjxUnxP.js",
+      "_chunk-ANTBXLJU-Cwl2ZTay.js",
       "resources/js/compiled-global-component.js",
-      "_treemap-75Q7IDZK-CtiP_BLm.js",
+      "_treemap-75Q7IDZK-DCWWH8xs.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-BkolfqdJ.js",
-      "__basePickBy-DGRd-4SK.js",
-      "_clone-DlU3owJQ.js"
+      "__baseUniq-CzFlYJ7r.js",
+      "__basePickBy-lD_Ex9Zg.js",
+      "_clone-B5YzSdHd.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/diagram-RP2FKANI.mjs": {
-    "file": "assets/diagram-RP2FKANI-DxcsmpTx.js",
+    "file": "assets/diagram-RP2FKANI-Blv8Yw4t.js",
     "name": "diagram-RP2FKANI",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/diagram-RP2FKANI.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-ANTBXLJU-DnjxUnxP.js",
+      "_chunk-ANTBXLJU-Cwl2ZTay.js",
       "resources/js/compiled-global-component.js",
-      "_treemap-75Q7IDZK-CtiP_BLm.js",
+      "_treemap-75Q7IDZK-DCWWH8xs.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-BkolfqdJ.js",
-      "__basePickBy-DGRd-4SK.js",
-      "_clone-DlU3owJQ.js"
+      "__baseUniq-CzFlYJ7r.js",
+      "__basePickBy-lD_Ex9Zg.js",
+      "_clone-B5YzSdHd.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/erDiagram-HZWUO2LU.mjs": {
-    "file": "assets/erDiagram-HZWUO2LU-DHBTde18.js",
+    "file": "assets/erDiagram-HZWUO2LU-CR92Wz5Q.js",
     "name": "erDiagram-HZWUO2LU",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/erDiagram-HZWUO2LU.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-WVR4S24B-9x0_AId3.js",
-      "_chunk-NRVI72HA-Ca-FKRPG.js",
+      "_chunk-WVR4S24B-D1Jj4mvD.js",
+      "_chunk-NRVI72HA-D5XhYe3f.js",
       "resources/js/compiled-global-component.js",
-      "_channel-Dzh0HLMl.js",
+      "_channel-DhGBp5LW.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/flowDiagram-THRYKUMA.mjs": {
-    "file": "assets/flowDiagram-THRYKUMA-CPKPssU0.js",
+    "file": "assets/flowDiagram-THRYKUMA-BO47VlMJ.js",
     "name": "flowDiagram-THRYKUMA",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/flowDiagram-THRYKUMA.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-GLLZNHP4-CcAAkECh.js",
+      "_chunk-GLLZNHP4-CWu6sisA.js",
       "resources/js/compiled-global-component.js",
-      "_chunk-WVR4S24B-9x0_AId3.js",
-      "_chunk-NRVI72HA-Ca-FKRPG.js",
-      "_channel-Dzh0HLMl.js",
+      "_chunk-WVR4S24B-D1Jj4mvD.js",
+      "_chunk-NRVI72HA-D5XhYe3f.js",
+      "_channel-DhGBp5LW.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/ganttDiagram-WV7ZQ7D5.mjs": {
-    "file": "assets/ganttDiagram-WV7ZQ7D5-CgKgoN1w.js",
+    "file": "assets/ganttDiagram-WV7ZQ7D5-Bk2enxPG.js",
     "name": "ganttDiagram-WV7ZQ7D5",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/ganttDiagram-WV7ZQ7D5.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/compiled-global-component.js",
-      "_linear-Dkp7SHRv.js",
+      "_linear-DRhUOE-w.js",
       "_init-Gi6I4Gst.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
       "_defaultLocale-C4B-KCzX.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/gitGraphDiagram-OJR772UL.mjs": {
-    "file": "assets/gitGraphDiagram-OJR772UL-B1mY2UDr.js",
+    "file": "assets/gitGraphDiagram-OJR772UL-BmfRlbVF.js",
     "name": "gitGraphDiagram-OJR772UL",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/gitGraphDiagram-OJR772UL.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-ANTBXLJU-DnjxUnxP.js",
-      "_chunk-FHKO5MBM-__wdXNII.js",
+      "_chunk-ANTBXLJU-Cwl2ZTay.js",
+      "_chunk-FHKO5MBM-DoXxGT6P.js",
       "resources/js/compiled-global-component.js",
-      "_treemap-75Q7IDZK-CtiP_BLm.js",
+      "_treemap-75Q7IDZK-DCWWH8xs.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-BkolfqdJ.js",
-      "__basePickBy-DGRd-4SK.js",
-      "_clone-DlU3owJQ.js"
+      "__baseUniq-CzFlYJ7r.js",
+      "__basePickBy-lD_Ex9Zg.js",
+      "_clone-B5YzSdHd.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/infoDiagram-6WOFNB3A.mjs": {
-    "file": "assets/infoDiagram-6WOFNB3A-CrPRPInb.js",
+    "file": "assets/infoDiagram-6WOFNB3A-clBQCKnP.js",
     "name": "infoDiagram-6WOFNB3A",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/infoDiagram-6WOFNB3A.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/compiled-global-component.js",
-      "_treemap-75Q7IDZK-CtiP_BLm.js",
+      "_treemap-75Q7IDZK-DCWWH8xs.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-BkolfqdJ.js",
-      "__basePickBy-DGRd-4SK.js",
-      "_clone-DlU3owJQ.js"
+      "__baseUniq-CzFlYJ7r.js",
+      "__basePickBy-lD_Ex9Zg.js",
+      "_clone-B5YzSdHd.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/journeyDiagram-FFXJYRFH.mjs": {
-    "file": "assets/journeyDiagram-FFXJYRFH-CQx4ForE.js",
+    "file": "assets/journeyDiagram-FFXJYRFH-DBEnCq2P.js",
     "name": "journeyDiagram-FFXJYRFH",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/journeyDiagram-FFXJYRFH.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-OMD6QJNC-6Ff1LAXp.js",
-      "_chunk-GLLZNHP4-CcAAkECh.js",
+      "_chunk-OMD6QJNC-Dapd3nyO.js",
+      "_chunk-GLLZNHP4-CWu6sisA.js",
       "resources/js/compiled-global-component.js",
-      "_arc-9W_BpX_6.js",
+      "_arc-CP-HxgJZ.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/kanban-definition-KOZQBZVT.mjs": {
-    "file": "assets/kanban-definition-KOZQBZVT-CLgM-DC8.js",
+    "file": "assets/kanban-definition-KOZQBZVT-SLIF1x3I.js",
     "name": "kanban-definition-KOZQBZVT",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/kanban-definition-KOZQBZVT.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-GLLZNHP4-CcAAkECh.js",
+      "_chunk-GLLZNHP4-CWu6sisA.js",
       "resources/js/compiled-global-component.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/mindmap-definition-LNHGMQRG.mjs": {
-    "file": "assets/mindmap-definition-LNHGMQRG-BH6wDex9.js",
+    "file": "assets/mindmap-definition-LNHGMQRG-Ct189TK4.js",
     "name": "mindmap-definition-LNHGMQRG",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/mindmap-definition-LNHGMQRG.mjs",
     "isDynamicEntry": true,
@@ -588,61 +423,57 @@
       "resources/js/compiled-global-component.js",
       "_cytoscape.esm-BY7v1xhs.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/pieDiagram-DBDJKBY4.mjs": {
-    "file": "assets/pieDiagram-DBDJKBY4-CV1pqgN5.js",
+    "file": "assets/pieDiagram-DBDJKBY4-75YEhexC.js",
     "name": "pieDiagram-DBDJKBY4",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/pieDiagram-DBDJKBY4.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-ANTBXLJU-DnjxUnxP.js",
+      "_chunk-ANTBXLJU-Cwl2ZTay.js",
       "resources/js/compiled-global-component.js",
-      "_treemap-75Q7IDZK-CtiP_BLm.js",
-      "_arc-9W_BpX_6.js",
+      "_treemap-75Q7IDZK-DCWWH8xs.js",
+      "_arc-CP-HxgJZ.js",
       "_ordinal-Cboi1Yqb.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-BkolfqdJ.js",
-      "__basePickBy-DGRd-4SK.js",
-      "_clone-DlU3owJQ.js",
+      "__baseUniq-CzFlYJ7r.js",
+      "__basePickBy-lD_Ex9Zg.js",
+      "_clone-B5YzSdHd.js",
       "_init-Gi6I4Gst.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/quadrantDiagram-YPSRARAO.mjs": {
-    "file": "assets/quadrantDiagram-YPSRARAO-BVB671P1.js",
+    "file": "assets/quadrantDiagram-YPSRARAO-C8sCKgZZ.js",
     "name": "quadrantDiagram-YPSRARAO",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/quadrantDiagram-YPSRARAO.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/compiled-global-component.js",
-      "_linear-Dkp7SHRv.js",
+      "_linear-DRhUOE-w.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
       "_init-Gi6I4Gst.js",
       "_defaultLocale-C4B-KCzX.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/requirementDiagram-EGVEC5DT.mjs": {
-    "file": "assets/requirementDiagram-EGVEC5DT-GoHKoMLS.js",
+    "file": "assets/requirementDiagram-EGVEC5DT-t_0PGWPX.js",
     "name": "requirementDiagram-EGVEC5DT",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/requirementDiagram-EGVEC5DT.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-WVR4S24B-9x0_AId3.js",
-      "_chunk-NRVI72HA-Ca-FKRPG.js",
+      "_chunk-WVR4S24B-D1Jj4mvD.js",
+      "_chunk-NRVI72HA-D5XhYe3f.js",
       "resources/js/compiled-global-component.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/sankeyDiagram-HRAUVNP4.mjs": {
-    "file": "assets/sankeyDiagram-HRAUVNP4-DEmdiAUi.js",
+    "file": "assets/sankeyDiagram-HRAUVNP4-Mn4O5NOP.js",
     "name": "sankeyDiagram-HRAUVNP4",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/sankeyDiagram-HRAUVNP4.mjs",
     "isDynamicEntry": true,
@@ -651,73 +482,68 @@
       "_ordinal-Cboi1Yqb.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
       "_init-Gi6I4Gst.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/sequenceDiagram-WFGC7UMF.mjs": {
-    "file": "assets/sequenceDiagram-WFGC7UMF-DmPPSjUj.js",
+    "file": "assets/sequenceDiagram-WFGC7UMF-Ca1ACAEf.js",
     "name": "sequenceDiagram-WFGC7UMF",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/sequenceDiagram-WFGC7UMF.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-OMD6QJNC-6Ff1LAXp.js",
-      "_chunk-FHKO5MBM-__wdXNII.js",
+      "_chunk-OMD6QJNC-Dapd3nyO.js",
+      "_chunk-FHKO5MBM-DoXxGT6P.js",
       "resources/js/compiled-global-component.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-UUKSUZ4H.mjs": {
-    "file": "assets/stateDiagram-UUKSUZ4H-CDPdK0nI.js",
+    "file": "assets/stateDiagram-UUKSUZ4H-BFAU_6MM.js",
     "name": "stateDiagram-UUKSUZ4H",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-UUKSUZ4H.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-LXBSTHXV-C541KquX.js",
+      "_chunk-LXBSTHXV-CPvjBo82.js",
       "resources/js/compiled-global-component.js",
-      "_graph-DyCsPMT2.js",
-      "_layout-brHHUNOZ.js",
-      "_chunk-WVR4S24B-9x0_AId3.js",
-      "_chunk-NRVI72HA-Ca-FKRPG.js",
+      "_graph-UeykvHYA.js",
+      "_layout-DAT91pJT.js",
+      "_chunk-WVR4S24B-D1Jj4mvD.js",
+      "_chunk-NRVI72HA-D5XhYe3f.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-BkolfqdJ.js",
-      "__basePickBy-DGRd-4SK.js"
+      "__baseUniq-CzFlYJ7r.js",
+      "__basePickBy-lD_Ex9Zg.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-v2-EYPG3UTE.mjs": {
-    "file": "assets/stateDiagram-v2-EYPG3UTE-BsGpIe4O.js",
+    "file": "assets/stateDiagram-v2-EYPG3UTE-DJQDPzG8.js",
     "name": "stateDiagram-v2-EYPG3UTE",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-v2-EYPG3UTE.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-LXBSTHXV-C541KquX.js",
+      "_chunk-LXBSTHXV-CPvjBo82.js",
       "resources/js/compiled-global-component.js",
-      "_chunk-WVR4S24B-9x0_AId3.js",
-      "_chunk-NRVI72HA-Ca-FKRPG.js",
+      "_chunk-WVR4S24B-D1Jj4mvD.js",
+      "_chunk-NRVI72HA-D5XhYe3f.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/timeline-definition-3HZDQTIS.mjs": {
-    "file": "assets/timeline-definition-3HZDQTIS-BkNpN3j0.js",
+    "file": "assets/timeline-definition-3HZDQTIS-Bp3BGHYa.js",
     "name": "timeline-definition-3HZDQTIS",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/timeline-definition-3HZDQTIS.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/compiled-global-component.js",
-      "_arc-9W_BpX_6.js",
+      "_arc-CP-HxgJZ.js",
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/xychartDiagram-FDP5SA34.mjs": {
-    "file": "assets/xychartDiagram-FDP5SA34-Cg9ePGqP.js",
+    "file": "assets/xychartDiagram-FDP5SA34-D5N0tfAY.js",
     "name": "xychartDiagram-FDP5SA34",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/xychartDiagram-FDP5SA34.mjs",
     "isDynamicEntry": true,
@@ -725,10 +551,9 @@
       "resources/js/compiled-global-component.js",
       "_init-Gi6I4Gst.js",
       "_ordinal-Cboi1Yqb.js",
-      "_linear-Dkp7SHRv.js",
+      "_linear-DRhUOE-w.js",
       "_datetime-ChMPBVRm.js",
       "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js",
       "_defaultLocale-C4B-KCzX.js"
     ]
   },
@@ -896,39 +721,10 @@
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-D631MK0a.js",
+    "file": "assets/compiled-app-FFumzRvA.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
-    "isEntry": true,
-    "imports": [
-      "_preload-helper-DPi8upcZ.js"
-    ],
-    "dynamicImports": [
-      "app/Domain/Clients/Js/clientsController.js",
-      "app/Domain/Cpcanvas/Js/cpCanvasController.js",
-      "app/Domain/Dbmcanvas/Js/dbmCanvasController.js",
-      "app/Domain/Eacanvas/Js/eaCanvasController.js",
-      "app/Domain/Emcanvas/Js/emCanvasController.js",
-      "app/Domain/Gamecenter/Js/game-snake.js",
-      "app/Domain/Goalcanvas/Js/goalCanvasController.js",
-      "app/Domain/Ideas/Js/ideasController.js",
-      "app/Domain/Insightscanvas/Js/insightsCanvasController.js",
-      "app/Domain/Lbmcanvas/Js/lbmCanvasController.js",
-      "app/Domain/Leancanvas/Js/leanCanvasController.js",
-      "app/Domain/Minempathycanvas/Js/risksCanvasController.js",
-      "app/Domain/Obmcanvas/Js/obmCanvasController.js",
-      "app/Domain/Projects/Js/projectsController.js",
-      "app/Domain/Retroscanvas/Js/retroCanvasController.js",
-      "app/Domain/Riskscanvas/Js/risksCanvasController.js",
-      "app/Domain/Sbcanvas/Js/sbCanvasController.js",
-      "app/Domain/Smcanvas/Js/smCanvasController.js",
-      "app/Domain/Sqcanvas/Js/sqCanvasController.js",
-      "app/Domain/Swotcanvas/Js/swotCanvasController.js",
-      "app/Domain/Tickets/Js/kanbanController.js",
-      "app/Domain/Timesheets/Js/timesheetsController.js",
-      "app/Domain/Valuecanvas/Js/valueCanvasController.js",
-      "app/Domain/Wiki/Js/wikiController.js"
-    ]
+    "isEntry": true
   },
   "resources/js/compiled-calendar-component.js": {
     "file": "assets/compiled-calendar-component-4O2CCA1G.js",
@@ -967,14 +763,13 @@
     "isEntry": true
   },
   "resources/js/compiled-global-component.js": {
-    "file": "assets/compiled-global-component-Wbqhf0hA.js",
+    "file": "assets/compiled-global-component-DIhWA8LN.js",
     "name": "compiled-global-component",
     "src": "resources/js/compiled-global-component.js",
     "isEntry": true,
     "imports": [
       "_datetime-ChMPBVRm.js",
-      "__jquery-global-BcA88QQ9.js",
-      "_preload-helper-DPi8upcZ.js"
+      "__jquery-global-BcA88QQ9.js"
     ],
     "dynamicImports": [
       "node_modules/katex/dist/katex.mjs",

@@ -31,9 +31,10 @@ import '../../app/Domain/Setting/Js/settingService.js';
 import '../../app/Domain/Widgets/Js/Widgetcontroller.js';
 import '../../app/Domain/Calendar/Js/calendarController.js';
 
-// Domain-specific JS — lazy loaded based on current page.
-// Excludes globally-imported controllers above.
-const domainModules = import.meta.glob([
+// Domain-specific JS — eagerly loaded so all controllers are available
+// before DOMContentLoaded (when jQuery.ready callbacks fire).
+// Excludes globally-imported controllers above to avoid double-registration.
+import.meta.glob([
     '../../app/Domain/**/*.js',
     '!../../app/Domain/Auth/**',
     '!../../app/Domain/Comments/**',
@@ -48,73 +49,4 @@ const domainModules = import.meta.glob([
     '!../../app/Domain/Setting/**',
     '!../../app/Domain/Widgets/**',
     '!../../app/Domain/Calendar/**',
-]);
-
-// --- Domain JS loader (reusable for initial load + hx-boost navigation) ---
-
-const loadedDomains = new Set();
-
-/**
- * Load domain-specific JS modules by name.
- * Safe to call multiple times — already-loaded domains are skipped.
- *
- * @param {string} moduleName  Lowercase domain name (e.g. 'calendar', 'tickets')
- * @returns {Promise}
- */
-function loadDomainJs(moduleName) {
-    if (!moduleName || loadedDomains.has(moduleName)) return Promise.resolve();
-    loadedDomains.add(moduleName);
-
-    const loadPromises = [];
-    for (const [path, loader] of Object.entries(domainModules)) {
-        const match = path.match(/Domain\/([^/]+)\//);
-        if (match && match[1].toLowerCase() === moduleName) {
-            loadPromises.push(loader());
-        }
-    }
-    return Promise.all(loadPromises);
-}
-
-/**
- * Extract the domain module name from a URL path.
- * Handles: /module/action, /hx/module/action, /module/action/id
- *
- * @param {string} url  Full URL or pathname
- * @returns {string}    Lowercase module name or empty string
- */
-function getModuleFromUrl(url) {
-    try {
-        const path = new URL(url, window.location.origin).pathname;
-        const segments = path.replace(/^\/hx\//, '/').split('/').filter(Boolean);
-        return segments[0]?.toLowerCase() || '';
-    } catch (e) {
-        return '';
-    }
-}
-
-// Initial page load — use data-module from <body> (set by server)
-loadDomainJs(document.body?.dataset?.module?.toLowerCase());
-
-// --- hx-boost navigation support ---
-
-// Pre-load domain JS when a boosted request starts (runs in parallel with fetch)
-document.addEventListener('htmx:configRequest', function (evt) {
-    if (!evt.detail.boosted) return;
-    const module = getModuleFromUrl(evt.detail.path || '');
-    if (module) loadDomainJs(module);
-});
-
-// After boost swap: update data-module on <body> so subsequent code sees the right domain
-document.addEventListener('htmx:pushedIntoHistory', function () {
-    const module = getModuleFromUrl(window.location.pathname);
-    if (module) document.body.dataset.module = module;
-});
-
-// Back/forward browser navigation: update data-module + load domain JS
-document.addEventListener('htmx:historyRestore', function () {
-    const module = getModuleFromUrl(window.location.pathname);
-    if (module) {
-        document.body.dataset.module = module;
-        loadDomainJs(module);
-    }
-});
+], { eager: true });
