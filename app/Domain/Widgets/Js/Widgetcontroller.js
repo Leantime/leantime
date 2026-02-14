@@ -79,12 +79,13 @@ leantime.widgetController = (function () {
             }
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var gridBoard = document.querySelector("#gridBoard");
-            if (gridBoard) {
-                gridBoard.style.opacity = '1';
-            }
-        });
+        // Show the grid board now that GridStack is initialized.
+        // Note: DOMContentLoaded has already fired by the time initGrid() runs
+        // (called from jQuery(document).ready), so we set opacity directly.
+        var gridBoard = document.querySelector("#gridBoard");
+        if (gridBoard) {
+            gridBoard.style.opacity = '1';
+        }
 
     };
 
@@ -243,7 +244,7 @@ leantime.widgetController = (function () {
             '\n' +
             '        </div>\n' +
             ' <div class="widgetContent tw:px-l">\n' +
-            '             <div hx-get="'+widget.widgetUrl+'" hx-trigger="'+widget.widgetTrigger+'" id="'+widget.id+'"></div>\n' +
+            '             <div hx-get="'+widget.widgetUrl+'" hx-trigger="'+widget.widgetTrigger+'" hx-target="this" hx-swap="innerHTML" id="'+widget.id+'"></div>\n' +
             '        </div>\n' +
             '       </div>\n' +
             '        <div class="clear"></div>\n' +

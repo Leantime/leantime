@@ -65,6 +65,8 @@
                 <div class="tw:flex-grow">
                     <div hx-trigger="load"
                          hx-indicator=".htmx-indicator"
+                         hx-target="this"
+                         hx-swap="innerHTML"
                          hx-get="<?=BASE_URL ?>/hx/tickets/milestones/progress?milestoneId=<?=$ticket['id'] ?>&progressColor={{ trim($ticket['tags'], "#") }}">
                         <div class="htmx-indicator">
                                 <?= $tpl->__("label.loading_milestone") ?>

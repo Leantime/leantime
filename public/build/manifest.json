@@ -921,12 +921,12 @@
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-Ct7TbgFr.css",
+    "file": "assets/main-CSKpBcM-.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-CKSAkjrJ.js",
+    "file": "assets/compiled-app-DgPrUzVq.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,
@@ -1058,7 +1058,7 @@
     ]
   },
   "resources/js/compiled-htmx.js": {
-    "file": "assets/compiled-htmx-BdpZj6Pd.js",
+    "file": "assets/compiled-htmx-MPRRb12g.js",
     "name": "compiled-htmx",
     "src": "resources/js/compiled-htmx.js",
     "isEntry": true,

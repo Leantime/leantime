@@ -27,9 +27,10 @@
             >
                 <div hx-get="{{$widget->widgetUrl }}"
                      hx-trigger="revealed"
+                     hx-target="this"
+                     hx-swap="innerHTML"
                      id="{{ $widget->id }}"
-                     class="tw:h-full"
-                    hx-swap="#{{ $widget->id }}">
+                     class="tw:h-full">
                     <x-global::loadingText type="{{ $widget->widgetLoadingIndicator }}" count="1" includeHeadline="true" />
                 </div>
             </x-widgets::moveableWidget>

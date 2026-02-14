@@ -1,3 +1,7 @@
+/* Bootstrap foundation */
+@import "../../public/assets/css/libs/bootstrap.css";
+@import "../../public/assets/css/libs/bootstrap-responsive.min.css";
+
 /* CSS libs */
 @import "../../public/assets/css/libs/croppie.css";
 @import "../../public/assets/css/libs/loading.css";
