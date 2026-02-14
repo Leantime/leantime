@@ -269,7 +269,7 @@ class Reports
                 $this->db->raw('SUM(sum_todos_xl) AS sum_todos_xl'),
                 $this->db->raw('SUM(sum_todos_xxl) AS sum_todos_xxl'),
                 $this->db->raw('SUM(sum_todos_none) AS sum_todos_none'),
-                $this->db->raw('SUM(CAST(tickets AS SIGNED)) AS tickets'),
+                $this->db->raw('SUM('.$this->dbHelper->castAs('tickets', 'integer').') AS tickets'),
                 $this->db->raw('SUM(daily_avg_hours_booked_todo) AS daily_avg_hours_booked_todo'),
                 $this->db->raw('SUM(daily_avg_hours_booked_point) AS daily_avg_hours_booked_point'),
                 $this->db->raw('SUM(daily_avg_hours_planned_todo) AS daily_avg_hours_planned_todo'),
