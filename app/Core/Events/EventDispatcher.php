@@ -29,6 +29,26 @@ class EventDispatcher implements Dispatcher
     private static array $patternMatchCache = [];
 
     /**
+     * Hash of event registry keys (invalidated when registry changes)
+     */
+    private static ?string $eventRegistryHash = null;
+
+    /**
+     * Hash of filter registry keys (invalidated when registry changes)
+     */
+    private static ?string $filterRegistryHash = null;
+
+    /**
+     * Count of event registry entries (for change detection)
+     */
+    private static int $lastEventCount = 0;
+
+    /**
+     * Count of filter registry entries (for change detection)
+     */
+    private static int $lastFilterCount = 0;
+
+    /**
      * Registry of all events added to a hook
      */
     private static array $eventRegistry = [];
@@ -50,28 +70,32 @@ class EventDispatcher implements Dispatcher
      * Finds event listeners by event names,
      * Allows listeners with wildcards
      */
+    /**
+     * Compiled pattern cache (persists across calls)
+     */
+    private static array $compiledPatterns = [];
+
     public static function findEventListeners(string $eventName, array $registry): array
     {
-        // Check cache first
-        $cacheKey = $eventName.'_'.md5(serialize(array_keys($registry)));
+        // Use simple cache key - just the event name + registry count
+        // Registry only changes during boot (listener registration), not during dispatch
+        $registryCount = count($registry);
+        $cacheKey = $eventName . '_' . $registryCount;
+
         if (isset(self::$patternMatchCache[$cacheKey])) {
             return self::$patternMatchCache[$cacheKey];
         }
 
         $matches = [];
-        $patterns = [];
 
         foreach ($registry as $key => $value) {
-            // Skip if we've already compiled this pattern
-            if (! isset($patterns[$key])) {
+            // Use persistent compiled pattern cache
+            if (! isset(self::$compiledPatterns[$key])) {
                 preg_match_all('/\{RGX:(.*?):RGX\}/', $key, $regexMatches);
-                $pattern = self::compilePattern($key, $regexMatches);
-                $patterns[$key] = $pattern;
-            } else {
-                $pattern = $patterns[$key];
+                self::$compiledPatterns[$key] = self::compilePattern($key, $regexMatches);
             }
 
-            if (preg_match("/^$pattern$/", $eventName)) {
+            if (preg_match('/^' . self::$compiledPatterns[$key] . '$/', $eventName)) {
                 $matches = array_merge($matches, $value);
             }
         }
@@ -117,6 +141,7 @@ class EventDispatcher implements Dispatcher
         mixed $available_params = [],
         mixed $context = ''
     ): mixed {
+
         $filtername = "$context.$filtername";
 
         if (! in_array($filtername, self::$available_hooks['filters'])) {
@@ -124,6 +149,7 @@ class EventDispatcher implements Dispatcher
         }
 
         $matchedEvents = self::findEventListeners($filtername, self::$filterRegistry);
+
         if (count($matchedEvents) == 0) {
             return $payload;
         }
@@ -155,6 +181,7 @@ class EventDispatcher implements Dispatcher
         }
 
         $matchedEvents = self::findEventListeners($event, self::$eventRegistry);
+
         if (count($matchedEvents) == 0) {
             return;
         }
