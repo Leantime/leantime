@@ -26,21 +26,35 @@ leantime.modals = (function () {
     function getBox()     { return document.getElementById('global-modal-box'); }
 
     // ── Backdrop Overlay ─────────────────────────────────────────────
-    // A regular div (not top-layer) that provides the frosted-glass blur.
-    // Needed because backdrop-filter on a top-layer <dialog> or its
-    // ::backdrop pseudo-element doesn't reliably blur the page content
-    // across browsers.
+    // A regular div that provides the frosted-glass blur behind the modal.
+    // We use dialog.show() (not .showModal()) so the dialog stays in normal
+    // document flow where backdrop-filter composites correctly with the page.
+    // .showModal() puts the dialog in the browser's "top layer" where the
+    // ::backdrop pseudo-element blocks backdrop-filter from reaching the page.
     function getOverlay() {
         var el = document.getElementById('modal-blur-overlay');
         if (!el) {
             el = document.createElement('div');
             el.id = 'modal-blur-overlay';
+            el.addEventListener('click', function () {
+                leantime.modals.closeModal();
+            });
             document.body.appendChild(el);
         }
         return el;
     }
-    function showOverlay() { getOverlay().classList.add('active'); }
-    function hideOverlay() { getOverlay().classList.remove('active'); }
+    function showOverlay() {
+        getOverlay().classList.add('active');
+        // Mark the page content as inert so keyboard/screen-reader focus
+        // stays inside the dialog (replaces .showModal()'s built-in trap)
+        var wrapper = document.querySelector('.mainwrapper');
+        if (wrapper) { wrapper.setAttribute('inert', ''); }
+    }
+    function hideOverlay() {
+        getOverlay().classList.remove('active');
+        var wrapper = document.querySelector('.mainwrapper');
+        if (wrapper) { wrapper.removeAttribute('inert'); }
+    }
 
     // ── Size Determination ─────────────────────────────────────────────
     function isLargeModal(url) {
@@ -167,7 +181,7 @@ leantime.modals = (function () {
 
         if (!dialog.open) {
             showOverlay();
-            dialog.showModal();
+            dialog.show();
         }
         isOpen = true;
 
@@ -320,8 +334,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Handle the <dialog> native events ─────────────────────────────
     var dialog = document.getElementById('global-modal');
     if (dialog) {
-        // Intercept Escape key: prevent native close, use our doClose()
-        // so the callback/reload logic runs properly.
+        // Intercept Escape key: .show() doesn't fire 'cancel' like
+        // .showModal() does, so we listen for keydown on the dialog.
+        dialog.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                leantime.modals.closeModal();
+            }
+        });
+        // Keep the cancel listener as a safety net (e.g. if showModal is
+        // ever used somewhere else).
         dialog.addEventListener('cancel', function (e) {
             e.preventDefault();
             leantime.modals.closeModal();
