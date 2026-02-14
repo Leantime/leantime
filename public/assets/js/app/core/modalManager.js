@@ -261,17 +261,42 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Open modal on page load if hash present ────────────────────────
     leantime.modals.openModal();
 
-    // ── Wire modal links on the main page ──────────────────────────────
-    // Attach click handlers to all links that should open in a modal:
-    //   - a.formModal / a.ticketModal  (class-based, legacy convention)
-    //   - a[href^="#/"]                (hash-based modal URLs like #/tickets/showTicket/ID)
-    // Using explicit click handlers is more reliable than relying solely
-    // on the hashchange event, which can be intercepted by HTMX preload
-    // or other scripts.
-    leantime.modals.initNyroModal(
-        document.querySelectorAll('a.formModal, a.ticketModal, a[href^="#/"]'),
-        { callbacks: { beforeClose: function () { location.reload(); } } }
-    );
+    // ── Document-level event delegation for modal links ────────────────
+    // Instead of attaching handlers to individual links (which misses
+    // dynamically added content from hx-boost or HTMX swaps), we use a
+    // single delegated handler on the document that catches ALL clicks
+    // on hash-based modal links.
+    document.addEventListener('click', function (e) {
+        // Walk up from the click target to find the nearest <a>
+        var link = e.target.closest('a[href^="#/"], a.formModal, a.ticketModal');
+        if (!link) { return; }
+
+        var href = link.getAttribute('href');
+        if (!href) { return; }
+
+        // Only handle hash links (#/...) or links with modal classes
+        if (href.indexOf('#/') === 0) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.globalModalCallback = function () { location.reload(); };
+
+            var path = href.substring(1);
+            try {
+                history.pushState('', document.title,
+                    window.location.pathname + window.location.search + href);
+            } catch (ex) { /* noop */ }
+            leantime.modals.openByUrl(path);
+        } else if (link.classList.contains('formModal') || link.classList.contains('ticketModal')) {
+            // Non-hash modal links (full URLs with modal class)
+            if (href.indexOf('javascript:') === 0) { return; } // skip void links
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.globalModalCallback = function () { location.reload(); };
+            leantime.modals.openByUrl(href);
+        }
+    }, true); // Use capture phase to run before HTMX or other handlers
 
     // ── Handle the <dialog> native events ─────────────────────────────
     var dialog = document.getElementById('global-modal');
@@ -356,19 +381,6 @@ document.addEventListener('DOMContentLoaded', function () {
 // Hash change -> open modal
 window.addEventListener('hashchange', function () {
     leantime.modals.openModal();
-});
-
-// Re-initialise modal handlers after HTMX swaps (hx-boost navigation).
-// New content may contain hash links that missed the DOMContentLoaded pass.
-document.addEventListener('htmx:afterSettle', function (evt) {
-    var target = evt.detail.elt;
-    if (!target || !target.querySelectorAll) { return; }
-    var links = target.querySelectorAll('a.formModal, a.ticketModal, a[href^="#/"]');
-    if (links.length) {
-        leantime.modals.initNyroModal(links,
-            { callbacks: { beforeClose: function () { location.reload(); } } }
-        );
-    }
 });
 
 // Custom close events

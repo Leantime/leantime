@@ -160,12 +160,6 @@
 
 <script type="text/javascript">
 
-    jQuery(document).ready(function() {
-        if (window.leantime && window.leantime.tiptapController) {
-            leantime.tiptapController.initSimpleEditor();
-        }
-    });
-
     function toggleCommentBoxes(id, commentId, formHash, editComment = false, isReply = false) {
         @if($login::userIsAtLeast($roles::$commenter))
 
@@ -182,6 +176,13 @@
                 jQuery('#submit-reply-button').val('{{ __('buttons.save') }}');
             }
 
+            // Destroy existing tiptap editors and remove their wrappers
+            jQuery(`.commentBox-${formHash} .tiptap-wrapper`).each(function() {
+                if (window.leantime && window.leantime.tiptapController && window.leantime.tiptapController.registry) {
+                    leantime.tiptapController.registry.destroyWithin(this);
+                }
+                jQuery(this).remove();
+            });
             jQuery(`.commentBox-${formHash} textarea`).remove();
             jQuery(`.commentBox-${formHash}`).hide();
             jQuery(`#comment-${formHash}-${id} .commentReply`).prepend(`<textarea rows="5" cols="75" name="text" id="editor_${formHash}-${id}" class="tiptapSimple">${editComment ? jQuery(`#comment-text-to-hide-${isReply ? 'reply-' : ''}${formHash}-${commentId || id}`).html() : ''}</textarea>`);

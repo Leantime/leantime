@@ -78,6 +78,27 @@
     box-shadow: var(--large-shadow, 0 25px 50px -12px rgba(0,0,0,.25));
 }
 
+/* Native <dialog> ::backdrop — blur the page behind the modal so the
+   content underneath remains visible but softened.
+   Both ::backdrop and the dialog overlay contribute to the tint;
+   keep their combined alpha light (~0.30) for a frosted-glass look. */
+#global-modal::backdrop {
+    background-color: rgba(0, 0, 0, 0.1);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+
+/* The DaisyUI .modal class fills the viewport as an overlay.
+   Keep it very light — the blur does the heavy lifting. */
+#global-modal {
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* DaisyUI .modal-backdrop form (click-to-close overlay behind the box) */
+#global-modal > .tw\:modal-backdrop {
+    background-color: transparent;
+}
+
 /* ── Tabbed widget tabs ───────────────────────────────────────────────
    jQuery UI was removed; the bridge in dropdownBridge.js handles
    tab switching but needs basic horizontal-tab CSS.

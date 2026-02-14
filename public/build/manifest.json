@@ -891,12 +891,12 @@
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-2SD5F_CZ.css",
+    "file": "assets/main-DFyjng4E.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-qOdkxCOR.js",
+    "file": "assets/compiled-app-CQtG60Xw.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,
@@ -1042,7 +1042,7 @@
     ]
   },
   "resources/js/compiled-tiptap-editor.js": {
-    "file": "assets/compiled-tiptap-editor-CZD6FGTC.js",
+    "file": "assets/compiled-tiptap-editor-CkInWZZQ.js",
     "name": "compiled-tiptap-editor",
     "src": "resources/js/compiled-tiptap-editor.js",
     "isEntry": true,

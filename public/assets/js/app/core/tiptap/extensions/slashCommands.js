@@ -4,9 +4,9 @@
  * Provides Notion-style "/" commands for quick content insertion
  */
 
-const { Extension } = require('@tiptap/core');
-const { PluginKey, Plugin } = require('@tiptap/pm/state');
-const Suggestion = require('@tiptap/suggestion').default;
+import { Extension } from '@tiptap/core';
+import { PluginKey, Plugin } from '@tiptap/pm/state';
+import Suggestion from '@tiptap/suggestion';
 
 /**
  * Default slash commands available in the editor
@@ -425,7 +425,13 @@ function createSuggestionPopup() {
     var popup = document.createElement('div');
     popup.className = 'tiptap-slash-popup';
     popup.style.display = 'none';
-    document.body.appendChild(popup);
+    // Append inside open <dialog> if present (top-layer stacking context)
+    var dialog = document.querySelector('dialog[open]');
+    if (dialog) {
+        dialog.appendChild(popup);
+    } else {
+        document.body.appendChild(popup);
+    }
     return popup;
 }
 
@@ -774,7 +780,4 @@ function createSlashCommandsExtension(customCommands) {
 }
 
 // Export
-module.exports = {
-    createSlashCommandsExtension: createSlashCommandsExtension,
-    defaultCommands: defaultCommands
-};
+export { createSlashCommandsExtension, defaultCommands };
