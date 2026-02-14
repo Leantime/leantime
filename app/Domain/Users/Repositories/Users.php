@@ -113,7 +113,7 @@ class Users
     public function getNumberOfUsers($activeOnly = false, $includeApi = true): int
     {
         $query = $this->connection->table('zp_user')
-            ->selectRaw('COUNT(id) AS "userCount"');
+            ->selectRaw('COUNT(id) AS '.$this->dbHelper->wrapColumn('userCount'));
 
         if ($activeOnly) {
             $query->where('status', 'a');
@@ -302,7 +302,7 @@ class Users
     public function usernameExist($username, string $userId = ''): bool
     {
         $query = $this->connection->table('zp_user')
-            ->selectRaw('COUNT(username) AS "numUser"')
+            ->selectRaw('COUNT(username) AS '.$this->dbHelper->wrapColumn('numUser'))
             ->where('username', $username);
 
         if ($userId != '') {

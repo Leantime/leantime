@@ -303,6 +303,10 @@ class ShowProject extends Controller
             $this->tpl->assign('state', $this->projectRepo->state);
             $this->tpl->assign('role', session('userdata.role'));
 
+            // Notification mute count for Integrations tab
+            $muteCount = $this->projectService->getMuteCountForProject($id);
+            $this->tpl->assign('projectMuteCount', $muteCount);
+
             return $this->tpl->display('projects.showProject');
         } else {
             return $this->tpl->display('errors.error404', responseCode: 404);

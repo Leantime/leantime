@@ -224,6 +224,12 @@ class Projects
     /**
      * Notifies the users associated with a project about a notification.
      *
+     * Applies two-layer filtering before sending:
+     * 1. Per-project mute — users who muted this project are excluded
+     * 2. Event-type preference — users who disabled this event category are excluded
+     *
+     * @mentions always bypass both layers.
+     *
      * @param  Notification  $notification  The notification object to send.
      *
      * @api
@@ -238,9 +244,34 @@ class Projects
         $users = $this->getUsersToNotify($notification->projectId);
         $projectName = $this->getProjectName($notification->projectId);
 
+        // Exclude the author
         $users = array_filter($users, function ($user) use ($notification) {
             return $user != $notification->authorId;
         }, ARRAY_FILTER_USE_BOTH);
+        $users = array_values($users);
+
+        // Batch-load notification preferences for all candidate users
+        $settingKeys = [];
+        foreach ($users as $userId) {
+            $settingKeys[] = 'usersettings.'.$userId.'.projectMutedNotifications';
+            $settingKeys[] = 'usersettings.'.$userId.'.notificationEventTypes';
+        }
+        $settingKeys[] = 'companysettings.defaultNotificationEventTypes';
+        $preloadedSettings = $this->settingsRepo->getSettingsForKeys($settingKeys);
+
+        // Layer 2: Remove users who muted this project
+        $users = $this->filterUsersByProjectMute($users, $notification->projectId, $preloadedSettings);
+
+        // Layer 1: Remove users who disabled this event type
+        $users = $this->filterUsersByEventType($users, $notification->module, $preloadedSettings);
+
+        // Extract mentioned user IDs and re-add them (mentions bypass filters)
+        $mentionedUserIds = $this->extractMentionedUserIds($notification);
+        foreach ($mentionedUserIds as $mentionedId) {
+            if ($mentionedId != $notification->authorId && ! in_array($mentionedId, $users)) {
+                $users[] = $mentionedId;
+            }
+        }
 
         $emailMessage = $notification->message;
         if ($notification->url !== false) {
@@ -305,6 +336,21 @@ class Projects
             );
         }
 
+        // Apply same two-layer filtering to in-app notification users
+        $allUsersToNotify = $this->getAllUserInfoToNotify($notification->projectId);
+        $allUserIds = array_map(fn ($u) => $u['id'], $allUsersToNotify);
+        $filteredIds = $this->filterUsersByProjectMute($allUserIds, $notification->projectId, $preloadedSettings);
+        $filteredIds = $this->filterUsersByEventType($filteredIds, $notification->module, $preloadedSettings);
+
+        // Re-add mentioned users for in-app notifications too
+        foreach ($mentionedUserIds as $mentionedId) {
+            if ($mentionedId != $notification->authorId && ! in_array($mentionedId, $filteredIds)) {
+                $filteredIds[] = $mentionedId;
+            }
+        }
+
+        $filteredUsersToNotify = array_filter($allUsersToNotify, fn ($u) => in_array($u['id'], $filteredIds));
+
         /**
          * This event is fired to notify project users of important updates.
          * An event "notifyProjectUsers" is dispatched with an array of variables required for the notification.
@@ -318,12 +364,168 @@ class Projects
          * @param  int  $moduleId  The ID of the entity affected by the update.
          * @param  string  $message  The content of the notification message.
          * @param  string  $subject  The subject of the notification message.
-         * @param  array  $users  The users to be notified about this update. Retrieved by the 'getAllUserInfoToNotify' method.
+         * @param  array  $users  The users to be notified about this update (filtered by notification preferences).
          * @param  string|null  $url  The url leading to the update if any.
          *
          * @context domain.services.projects
          */
-        self::dispatch_event('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => $this->getAllUserInfoToNotify($notification->projectId), 'url' => $notification->url['url']], 'leantime.domain.projects.services.projects.notifyProjectUsers');
+        self::dispatch_event('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => array_values($filteredUsersToNotify), 'url' => $notification->url['url']], 'leantime.domain.projects.services.projects.notifyProjectUsers');
+    }
+
+    /**
+     * Filters out users who have muted notifications for a specific project.
+     *
+     * @param  array<int>  $userIds  User IDs to filter.
+     * @param  int  $projectId  The project ID to check mute status for.
+     * @param  array<string, mixed>  $preloadedSettings  Pre-fetched settings map.
+     * @return array<int> Filtered user IDs.
+     */
+    private function filterUsersByProjectMute(array $userIds, int $projectId, array $preloadedSettings): array
+    {
+        return array_values(array_filter($userIds, function (int $userId) use ($projectId, $preloadedSettings) {
+            $key = 'usersettings.'.$userId.'.projectMutedNotifications';
+            $setting = $preloadedSettings[$key] ?? false;
+
+            if (empty($setting) || $setting === false) {
+                return true;
+            }
+
+            $mutedProjects = json_decode($setting, true);
+            if (! is_array($mutedProjects)) {
+                return true;
+            }
+
+            return ! in_array($projectId, $mutedProjects);
+        }));
+    }
+
+    /**
+     * Filters out users who have disabled the notification category for a given module.
+     *
+     * Falls back to company defaults if the user has no personal preference, and treats
+     * missing company defaults as all-enabled.
+     *
+     * @param  array<int>  $userIds  User IDs to filter.
+     * @param  string  $module  The notification module value (e.g. 'tickets', 'comments').
+     * @param  array<string, mixed>  $preloadedSettings  Pre-fetched settings map.
+     * @return array<int> Filtered user IDs.
+     */
+    private function filterUsersByEventType(array $userIds, string $module, array $preloadedSettings): array
+    {
+        $category = Notification::getCategoryForModule($module);
+
+        // Unknown module category — let notification through
+        if ($category === null) {
+            return $userIds;
+        }
+
+        $companyDefault = $preloadedSettings['companysettings.defaultNotificationEventTypes'] ?? false;
+        $companyEnabledTypes = null;
+        if (! empty($companyDefault) && $companyDefault !== false) {
+            $companyEnabledTypes = json_decode($companyDefault, true);
+            if (! is_array($companyEnabledTypes)) {
+                $companyEnabledTypes = null;
+            }
+        }
+
+        return array_values(array_filter($userIds, function (int $userId) use ($category, $preloadedSettings, $companyEnabledTypes) {
+            $key = 'usersettings.'.$userId.'.notificationEventTypes';
+            $setting = $preloadedSettings[$key] ?? false;
+
+            if (! empty($setting) && $setting !== false) {
+                $enabledTypes = json_decode($setting, true);
+                if (is_array($enabledTypes)) {
+                    return in_array($category, $enabledTypes);
+                }
+            }
+
+            // Fall back to company default
+            if ($companyEnabledTypes !== null) {
+                return in_array($category, $companyEnabledTypes);
+            }
+
+            // No preferences set anywhere — all enabled
+            return true;
+        }));
+    }
+
+    /**
+     * Extracts user IDs mentioned in the notification entity content.
+     *
+     * @param  Notification  $notification  The notification to scan for mentions.
+     * @return array<int> Array of mentioned user IDs.
+     */
+    private function extractMentionedUserIds(Notification $notification): array
+    {
+        $mentionFields = [
+            'comments' => ['text'],
+            'projects' => ['details'],
+            'tickets' => ['description'],
+            'canvas' => ['description', 'data', 'conclusion', 'assumptions'],
+        ];
+
+        $contentToCheck = '';
+        if (isset($notification->entity) && is_array($notification->entity)) {
+            if (isset($mentionFields[$notification->module])) {
+                foreach ($mentionFields[$notification->module] as $field) {
+                    if (isset($notification->entity[$field])) {
+                        $contentToCheck .= $notification->entity[$field];
+                    }
+                }
+            }
+        } elseif (isset($notification->entity) && is_object($notification->entity)) {
+            if (isset($mentionFields[$notification->module])) {
+                foreach ($mentionFields[$notification->module] as $field) {
+                    if (isset($notification->entity->$field)) {
+                        $contentToCheck .= $notification->entity->$field;
+                    }
+                }
+            }
+        }
+
+        if (empty($contentToCheck)) {
+            return [];
+        }
+
+        $userIds = [];
+        $dom = new \DOMDocument;
+        @$dom->loadHTML($contentToCheck);
+        $links = $dom->getElementsByTagName('a');
+
+        for ($i = 0; $i < $links->count(); $i++) {
+            $taggedUser = $links->item($i)->getAttribute('data-tagged-user-id');
+            if ($taggedUser !== '' && is_numeric($taggedUser)) {
+                $userIds[] = (int) $taggedUser;
+            }
+        }
+
+        return array_unique($userIds);
+    }
+
+    /**
+     * Gets the count of users who have muted notifications for a specific project.
+     *
+     * @param  int  $projectId  The project ID.
+     * @return int Number of users who have muted this project.
+     *
+     * @api
+     */
+    public function getMuteCountForProject(int $projectId): int
+    {
+        $rows = app()->make(\Illuminate\Database\ConnectionInterface::class)
+            ->table('zp_settings')
+            ->where('key', 'LIKE', 'usersettings.%.projectMutedNotifications')
+            ->get(['value']);
+
+        $count = 0;
+        foreach ($rows as $row) {
+            $mutedProjects = json_decode($row->value, true);
+            if (is_array($mutedProjects) && in_array($projectId, $mutedProjects)) {
+                $count++;
+            }
+        }
+
+        return $count;
     }
 
     /**

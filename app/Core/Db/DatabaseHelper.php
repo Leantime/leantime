@@ -347,6 +347,26 @@ class DatabaseHelper
     }
 
     /**
+     * Wrap a column or alias identifier with the correct quoting for the current database
+     *
+     * Uses the connection grammar to produce the correct identifier quoting:
+     * - MySQL: backticks (`identifier`)
+     * - PostgreSQL: double quotes ("identifier")
+     * - MS SQL: square brackets ([identifier])
+     *
+     * Supports dotted notation for table-qualified columns (e.g. 'table.column').
+     *
+     * @param  string  $identifier  The column, alias, or table.column identifier to wrap
+     * @return string The properly quoted identifier
+     *
+     * @api
+     */
+    public function wrapColumn(string $identifier): string
+    {
+        return $this->db->getQueryGrammar()->wrap($identifier);
+    }
+
+    /**
      * Generate cross-database CAST expression
      *
      * Maps abstract type names to database-specific CAST target types:
