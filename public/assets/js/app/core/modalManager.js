@@ -264,11 +264,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Open modal on page load if hash present ────────────────────────
     leantime.modals.openModal();
 
-    // ── Wire .formModal links on the main page ──────────────────────────
-    // Links with class="formModal" and non-hash hrefs should open in the modal.
-    // Hash links are already handled by the hashchange listener.
+    // ── Wire modal links on the main page ──────────────────────────────
+    // Attach click handlers to all links that should open in a modal:
+    //   - a.formModal / a.ticketModal  (class-based, legacy convention)
+    //   - a[href^="#/"]                (hash-based modal URLs like #/tickets/showTicket/ID)
+    // Using explicit click handlers is more reliable than relying solely
+    // on the hashchange event, which can be intercepted by HTMX preload
+    // or other scripts.
     leantime.modals.initNyroModal(
-        document.querySelectorAll('a.formModal'),
+        document.querySelectorAll('a.formModal, a.ticketModal, a[href^="#/"]'),
         { callbacks: { beforeClose: function () { location.reload(); } } }
     );
 
@@ -410,7 +414,7 @@ leantime.modals.nmTop = function () {
 /**
  * leantime.modals.initNyroModal(elements, options)
  * Converts .nyroModal() init calls into native-dialog click handlers.
- * Hash links (href="#/...") already work via hashchange and are skipped.
+ * Handles both hash links (href="#/...") and full URL links.
  * Also installed on jQuery.fn.nyroModal if jQuery is present.
  *
  * @param {NodeList|Array|HTMLElement} elements - DOM elements to initialize
@@ -430,21 +434,30 @@ leantime.modals.initNyroModal = function (elements, options) {
         }
 
         var href = el.getAttribute('href');
+        if (!href) { return; }
 
-        // Hash links are handled by the global hashchange listener
-        if (href && href.indexOf('#') === 0) { return; }
+        el.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
 
-        // Non-hash links: open in modal on click
-        if (href) {
-            el.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (options && options.callbacks &&
-                    typeof options.callbacks.beforeClose === 'function') {
-                    window.globalModalCallback = options.callbacks.beforeClose;
-                }
+            if (options && options.callbacks &&
+                typeof options.callbacks.beforeClose === 'function') {
+                window.globalModalCallback = options.callbacks.beforeClose;
+            }
+
+            // Hash links: extract the path from the hash fragment
+            if (href.indexOf('#') === 0) {
+                var path = href.substring(1);
+                // Update the URL hash for bookmarkability
+                try {
+                    history.pushState('', document.title,
+                        window.location.pathname + window.location.search + href);
+                } catch (ex) { /* noop */ }
+                leantime.modals.openByUrl(path);
+            } else {
                 leantime.modals.openByUrl(href);
-            });
-        }
+            }
+        });
     });
 };
 
