@@ -270,6 +270,7 @@ class ShowProject extends Controller
                         ];
                         $notification->entity = $project;
                         $notification->module = 'projects';
+                        $notification->action = 'updated';
                         $notification->projectId = session('currentProject');
                         $notification->subject = $subject;
                         $notification->authorId = session('userdata.id');

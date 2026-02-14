@@ -107,6 +107,12 @@ class EditCompanySettings extends Controller
             $defaultNotificationTypes = $allCategories;
         }
 
+        // Load default notification relevance level
+        $defaultRelevance = $this->settingsRepo->getSetting('companysettings.defaultNotificationRelevance');
+        if (! $defaultRelevance || ! Notification::isValidRelevanceLevel($defaultRelevance)) {
+            $defaultRelevance = Notification::RELEVANCE_ALL;
+        }
+
         $apiKeys = $this->APIService->getAPIKeys();
 
         $this->tpl->assign('apiKeys', $apiKeys);
@@ -114,6 +120,11 @@ class EditCompanySettings extends Controller
         $this->tpl->assign('companySettings', $companySettings);
         $this->tpl->assign('notificationCategories', Notification::NOTIFICATION_CATEGORIES);
         $this->tpl->assign('defaultNotificationTypes', $defaultNotificationTypes);
+        $this->tpl->assign('defaultRelevance', $defaultRelevance);
+        $this->tpl->assign('relevanceLevels', [
+            Notification::RELEVANCE_ALL => 'label.notifications_all_activity',
+            Notification::RELEVANCE_MY_WORK => 'label.notifications_my_work',
+        ]);
 
         return $this->tpl->display('setting.editCompanySettings');
     }
@@ -158,6 +169,13 @@ class EditCompanySettings extends Controller
                 'companysettings.defaultNotificationEventTypes',
                 json_encode($defaultEventTypes)
             );
+
+            // Save default notification relevance level
+            $defaultRelevance = $params['defaultNotificationRelevance'] ?? Notification::RELEVANCE_ALL;
+            if (! Notification::isValidRelevanceLevel($defaultRelevance)) {
+                $defaultRelevance = Notification::RELEVANCE_ALL;
+            }
+            $this->settingsRepo->saveSetting('companysettings.defaultNotificationRelevance', $defaultRelevance);
 
             session(['companysettings.sitename' => htmlspecialchars(addslashes($params['name']))]);
             session(['companysettings.language' => htmlentities(addslashes($params['language']))]);

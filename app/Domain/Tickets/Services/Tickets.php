@@ -1835,6 +1835,7 @@ class Tickets
             ];
             $notification->entity = $values;
             $notification->module = 'tickets';
+            $notification->action = 'created';
             $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;
             $notification->subject = $subject;
             $notification->authorId = session('userdata.id') ?? -1;
@@ -1995,6 +1996,7 @@ class Tickets
                 ];
                 $notification->entity = $values;
                 $notification->module = 'tickets';
+                $notification->action = 'created';
                 $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;
                 $notification->subject = $subject;
                 $notification->authorId = session('userdata.id') ?? -1;
@@ -2104,6 +2106,7 @@ class Tickets
             ];
             $notification->entity = $values;
             $notification->module = 'tickets';
+            $notification->action = 'updated';
             $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;
             $notification->subject = $subject;
             $notification->authorId = session('userdata.id') ?? -1;
@@ -2120,7 +2123,7 @@ class Tickets
     }
 
     /**
-     * Updates an existing task with the provided parameters.
+     * Adds a new ticket and optionally associates tags with it.
      *
      * @param  int  $id  The unique identifier of the task to be updated.
      * @param  array  $params  An associative array containing the updated task details.
@@ -2189,38 +2192,13 @@ class Tickets
             ];
             $notification->entity = $ticket;
             $notification->module = 'tickets';
+            $notification->action = 'status_changed';
             $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
             $notification->subject = $subject;
             $notification->authorId = session('userdata.id');
             $notification->message = $message;
 
             $this->projectService->notifyProjectUsers($notification);
-        }
-
-        return $return;
-    }
-
-    /**
-     * moveTicket - Moves a ticket from one project to another. Milestone children will be moved as well
-     *
-     * @throws BindingResolutionException
-     *
-     * @api
-     */
-    public function moveTicket(int $id, int $projectId): bool
-    {
-
-        $ticket = $this->getTicket($id);
-
-        if ($ticket) {
-            // If milestone, move child todos
-            if ($ticket->type == 'milestone') {
-                $milestoneTickets = $this->getAll(['milestone' => $ticket->id]);
-                // Update child todos
-                foreach ($milestoneTickets as $childTicket) {
-                    $this->patch($childTicket['id'], ['projectId' => $projectId, 'sprint' => '']);
-                }
-            }
 
             self::dispatchEvent('ticket_updated');
 
@@ -2476,6 +2454,7 @@ class Tickets
                 ];
                 $notification->entity = $ticket;
                 $notification->module = 'tickets';
+                $notification->action = 'status_changed';
                 $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
                 $notification->subject = $subject;
                 $notification->authorId = session('userdata.id') ?? -1;

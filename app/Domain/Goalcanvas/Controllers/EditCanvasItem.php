@@ -156,6 +156,7 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                 ];
                 $notification->entity = $values;
                 $notification->module = 'goalcanvas';
+                $notification->action = 'commented';
                 $notification->projectId = session('currentProject');
                 $notification->subject = $subject;
                 $notification->authorId = session('userdata.id');
@@ -237,6 +238,7 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                     ];
                     $notification->entity = $canvasItem;
                     $notification->module = 'goalcanvas';
+                    $notification->action = 'updated';
                     $notification->projectId = session('currentProject');
                     $notification->subject = $subject;
                     $notification->authorId = session('userdata.id');
@@ -291,6 +293,7 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
 
                     $notification->entity = $canvasItem;
                     $notification->module = 'goalcanvas';
+                    $notification->action = 'created';
                     $notification->projectId = session('currentProject');
                     $notification->subject = $subject;
                     $notification->authorId = session('userdata.id');

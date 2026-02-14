@@ -253,16 +253,18 @@ class Projects
         // Batch-load notification preferences for all candidate users
         $settingKeys = [];
         foreach ($users as $userId) {
-            $settingKeys[] = 'usersettings.'.$userId.'.projectMutedNotifications';
+            $settingKeys[] = 'usersettings.'.$userId.'.projectNotificationLevels';
+            $settingKeys[] = 'usersettings.'.$userId.'.projectMutedNotifications'; // legacy format
             $settingKeys[] = 'usersettings.'.$userId.'.notificationEventTypes';
         }
         $settingKeys[] = 'companysettings.defaultNotificationEventTypes';
+        $settingKeys[] = 'companysettings.defaultNotificationRelevance';
         $preloadedSettings = $this->settingsRepo->getSettingsForKeys($settingKeys);
 
-        // Layer 2: Remove users who muted this project
-        $users = $this->filterUsersByProjectMute($users, $notification->projectId, $preloadedSettings);
+        // Layer 1: Filter by per-project relevance level (all / my_work / muted)
+        $users = $this->filterUsersByProjectRelevance($users, $notification, $preloadedSettings);
 
-        // Layer 1: Remove users who disabled this event type
+        // Layer 2: Remove users who disabled this event type category
         $users = $this->filterUsersByEventType($users, $notification->module, $preloadedSettings);
 
         // Extract mentioned user IDs and re-add them (mentions bypass filters)
@@ -339,7 +341,7 @@ class Projects
         // Apply same two-layer filtering to in-app notification users
         $allUsersToNotify = $this->getAllUserInfoToNotify($notification->projectId);
         $allUserIds = array_map(fn ($u) => $u['id'], $allUsersToNotify);
-        $filteredIds = $this->filterUsersByProjectMute($allUserIds, $notification->projectId, $preloadedSettings);
+        $filteredIds = $this->filterUsersByProjectRelevance($allUserIds, $notification, $preloadedSettings);
         $filteredIds = $this->filterUsersByEventType($filteredIds, $notification->module, $preloadedSettings);
 
         // Re-add mentioned users for in-app notifications too
@@ -373,30 +375,126 @@ class Projects
     }
 
     /**
-     * Filters out users who have muted notifications for a specific project.
+     * Filters users by their per-project notification relevance level.
+     *
+     * Supports three levels:
+     * - 'all':     User receives all notifications from this project (default).
+     * - 'my_work': User only receives notifications for items they are assigned to,
+     *              created, or are directly involved in.
+     * - 'muted':   User receives no notifications from this project.
+     *
+     * Performs lazy migration from the old binary mute format (projectMutedNotifications)
+     * to the new three-level format (projectNotificationLevels).
      *
      * @param  array<int>  $userIds  User IDs to filter.
-     * @param  int  $projectId  The project ID to check mute status for.
+     * @param  Notification  $notification  The notification being dispatched.
      * @param  array<string, mixed>  $preloadedSettings  Pre-fetched settings map.
      * @return array<int> Filtered user IDs.
      */
-    private function filterUsersByProjectMute(array $userIds, int $projectId, array $preloadedSettings): array
+    private function filterUsersByProjectRelevance(array $userIds, Notification $notification, array $preloadedSettings): array
     {
-        return array_values(array_filter($userIds, function (int $userId) use ($projectId, $preloadedSettings) {
-            $key = 'usersettings.'.$userId.'.projectMutedNotifications';
-            $setting = $preloadedSettings[$key] ?? false;
+        $projectId = $notification->projectId;
 
-            if (empty($setting) || $setting === false) {
-                return true;
+        $companyDefault = $preloadedSettings['companysettings.defaultNotificationRelevance'] ?? Notification::RELEVANCE_ALL;
+        if (! Notification::isValidRelevanceLevel($companyDefault)) {
+            $companyDefault = Notification::RELEVANCE_ALL;
+        }
+
+        return array_values(array_filter($userIds, function (int $userId) use ($projectId, $notification, $preloadedSettings, $companyDefault) {
+            $level = $this->getProjectRelevanceLevel($userId, $projectId, $preloadedSettings, $companyDefault);
+
+            if ($level === Notification::RELEVANCE_MUTED) {
+                return false;
             }
 
-            $mutedProjects = json_decode($setting, true);
-            if (! is_array($mutedProjects)) {
-                return true;
+            if ($level === Notification::RELEVANCE_MY_WORK) {
+                return $this->isUserInvolvedInNotification($userId, $notification);
             }
 
-            return ! in_array($projectId, $mutedProjects);
+            // RELEVANCE_ALL: keep the user
+            return true;
         }));
+    }
+
+    /**
+     * Determines the notification relevance level for a user on a specific project.
+     *
+     * Checks the new projectNotificationLevels format first, falls back to
+     * the legacy projectMutedNotifications format, then to company default.
+     *
+     * @param  int  $userId  The user ID.
+     * @param  int  $projectId  The project ID.
+     * @param  array<string, mixed>  $preloadedSettings  Pre-fetched settings map.
+     * @param  string  $companyDefault  The company-level default relevance.
+     * @return string The relevance level constant.
+     */
+    private function getProjectRelevanceLevel(int $userId, int $projectId, array $preloadedSettings, string $companyDefault): string
+    {
+        // Check new format first
+        $newKey = 'usersettings.'.$userId.'.projectNotificationLevels';
+        $newSetting = $preloadedSettings[$newKey] ?? false;
+        if (! empty($newSetting) && $newSetting !== false) {
+            $levels = json_decode($newSetting, true);
+            if (is_array($levels) && isset($levels[$projectId])) {
+                $level = $levels[$projectId];
+                if (Notification::isValidRelevanceLevel($level)) {
+                    return $level;
+                }
+            }
+        }
+
+        // Lazy migration: check old muted-projects format
+        $oldKey = 'usersettings.'.$userId.'.projectMutedNotifications';
+        $oldSetting = $preloadedSettings[$oldKey] ?? false;
+        if (! empty($oldSetting) && $oldSetting !== false) {
+            $mutedIds = json_decode($oldSetting, true);
+            if (is_array($mutedIds) && in_array($projectId, $mutedIds)) {
+                return Notification::RELEVANCE_MUTED;
+            }
+        }
+
+        return $companyDefault;
+    }
+
+    /**
+     * Checks whether a user is directly involved in the entity being notified about.
+     *
+     * A user is considered "involved" if they are the assignee (editorId),
+     * the creator (userId), or otherwise linked to the entity.
+     *
+     * @param  int  $userId  The user to check.
+     * @param  Notification  $notification  The notification with entity data.
+     * @return bool True if the user is involved.
+     */
+    private function isUserInvolvedInNotification(int $userId, Notification $notification): bool
+    {
+        $entity = $notification->entity;
+
+        if (is_array($entity)) {
+            // Ticket/item: editorId is the assignee, userId is the creator
+            if (isset($entity['editorId']) && (int) $entity['editorId'] === $userId) {
+                return true;
+            }
+            if (isset($entity['userId']) && (int) $entity['userId'] === $userId) {
+                return true;
+            }
+            // Canvas items: author field
+            if (isset($entity['author']) && (int) $entity['author'] === $userId) {
+                return true;
+            }
+        } elseif (is_object($entity)) {
+            if (isset($entity->editorId) && (int) $entity->editorId === $userId) {
+                return true;
+            }
+            if (isset($entity->userId) && (int) $entity->userId === $userId) {
+                return true;
+            }
+            if (isset($entity->author) && (int) $entity->author === $userId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -448,6 +546,15 @@ class Projects
             return true;
         }));
     }
+
+    /**
+     * Gets the count of users who have muted or reduced notifications for a project.
+     *
+     * Checks both new (projectNotificationLevels) and legacy (projectMutedNotifications) formats.
+     *
+     * @param  int  $projectId  The project ID.
+     * @return int The number of users who have muted this project.
+     */
 
     /**
      * Extracts user IDs mentioned in the notification entity content.
@@ -512,13 +619,27 @@ class Projects
      */
     public function getMuteCountForProject(int $projectId): int
     {
-        $rows = app()->make(\Illuminate\Database\ConnectionInterface::class)
-            ->table('zp_settings')
+        $db = app()->make(\Illuminate\Database\ConnectionInterface::class);
+        $count = 0;
+
+        // Check new format: projectNotificationLevels
+        $newRows = $db->table('zp_settings')
+            ->where('key', 'LIKE', 'usersettings.%.projectNotificationLevels')
+            ->get(['value']);
+
+        foreach ($newRows as $row) {
+            $levels = json_decode($row->value, true);
+            if (is_array($levels) && isset($levels[$projectId]) && $levels[$projectId] === Notification::RELEVANCE_MUTED) {
+                $count++;
+            }
+        }
+
+        // Also check legacy format: projectMutedNotifications
+        $oldRows = $db->table('zp_settings')
             ->where('key', 'LIKE', 'usersettings.%.projectMutedNotifications')
             ->get(['value']);
 
-        $count = 0;
-        foreach ($rows as $row) {
+        foreach ($oldRows as $row) {
             $mutedProjects = json_decode($row->value, true);
             if (is_array($mutedProjects) && in_array($projectId, $mutedProjects)) {
                 $count++;
