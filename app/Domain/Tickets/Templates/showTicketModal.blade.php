@@ -9,11 +9,13 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
 
 ?>
 <script type="text/javascript">
-    window.onload = function() {
-        if (!window.jQuery) {
-            //It's not a modal
-            location.href="<?= BASE_URL ?>/tickets/showKanban?showTicketModal=<?php echo $ticket->id; ?>";
-        }
+    if (!window.jQuery) {
+        // Not inside a modal — redirect to the full kanban view which will
+        // open the ticket in a modal. Replace the document to prevent further
+        // inline scripts from executing and throwing ReferenceErrors.
+        location.replace("<?= BASE_URL ?>/tickets/showKanban?showTicketModal=<?php echo $ticket->id; ?>");
+        document.write('');
+        document.close();
     }
 </script>
 

@@ -59,11 +59,26 @@ leantime.dateController = (function () {
     };
 
     var initDatePicker = function (element, callback) {
-        var el = typeof element === 'string' ? document.querySelector(element) : element;
-        if (!el) return;
-        if (el.hasAttribute('readonly')) return;
+        var elements = typeof element === 'string'
+            ? document.querySelectorAll(element)
+            : (element ? [element] : []);
 
-        flatpickr(el, getBaseDatePickerConfig(callback));
+        elements.forEach(function (el) {
+            if (!el) return;
+            if (el.hasAttribute('readonly')) return;
+
+            // Sentinel values like "Anytime" are not valid dates — clear them
+            // before flatpickr init to avoid "Invalid date provided" warnings.
+            // Store the placeholder so it can be restored if the user clears the date.
+            var val = (el.value || '').trim();
+            var sentinel = val && !/\d/.test(val);
+            if (sentinel) {
+                el.setAttribute('placeholder', val);
+                el.value = '';
+            }
+
+            flatpickr(el, getBaseDatePickerConfig(callback));
+        });
     };
 
     // Make public what you want to have public, everything else is private

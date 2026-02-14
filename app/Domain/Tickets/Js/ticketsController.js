@@ -1186,53 +1186,49 @@ leantime.ticketsController = (function () {
 
     var initTicketTabs = function () {
 
-        document.addEventListener('DOMContentLoaded', function () {
+        // Note: DOMContentLoaded has already fired by the time this runs
+        // (called from inline <script> after page load), so run directly.
+        var url = new URL(window.location.href);
+        var tab = url.searchParams.get("tab");
 
-
-            let url = new URL(window.location.href);
-            let tab = url.searchParams.get("tab");
-
-            let activeTabIndex = 0;
-            if (tab) {
-                var tabsContainer = document.querySelector('.ticketTabs');
-                if (tabsContainer) {
-                    var tabLink = tabsContainer.querySelector('a[href="#' + tab + '"]');
-                    if (tabLink && tabLink.parentElement) {
-                        activeTabIndex = Array.prototype.indexOf.call(tabLink.parentElement.parentElement.children, tabLink.parentElement);
-                    }
+        var activeTabIndex = 0;
+        if (tab) {
+            var tabsContainer = document.querySelector('.ticketTabs');
+            if (tabsContainer) {
+                var tabLink = tabsContainer.querySelector('a[href="#' + tab + '"]');
+                if (tabLink && tabLink.parentElement) {
+                    activeTabIndex = Array.prototype.indexOf.call(tabLink.parentElement.parentElement.children, tabLink.parentElement);
                 }
             }
+        }
 
-            // jQuery UI tabs() requires jQuery - use jQuery if available
-            if (typeof jQuery !== 'undefined' && jQuery.fn.tabs) {
-                jQuery('.ticketTabs').tabs({
-                    create: function ( event, ui ) {
-                        document.querySelectorAll('.ticketTabs').forEach(function(el) {
-                            el.style.visibility = "visible";
-                        });
-                    },
-                    activate: function (event, ui) {
+        // jQuery UI tabs() requires jQuery - use jQuery if available
+        if (typeof jQuery !== 'undefined' && jQuery.fn.tabs) {
+            jQuery('.ticketTabs').tabs({
+                create: function ( event, ui ) {
+                    document.querySelectorAll('.ticketTabs').forEach(function(el) {
+                        el.style.visibility = "visible";
+                    });
+                },
+                activate: function (event, ui) {
 
-                        url = new URL(window.location.href);
+                    url = new URL(window.location.href);
 
-                        url.searchParams.set('tab', ui.newPanel[0].id);
+                    url.searchParams.set('tab', ui.newPanel[0].id);
 
-                        window.history.replaceState(null, null, url);
+                    window.history.replaceState(null, null, url);
 
-                    },
-                    load: function () {
+                },
+                load: function () {
 
-                    },
-                    enable: function () {
+                },
+                enable: function () {
 
-                    },
-                    active: activeTabIndex
+                },
+                active: activeTabIndex
 
-                });
-            }
-
-
-        });
+            });
+        }
 
     };
 
@@ -2252,6 +2248,11 @@ leantime.ticketsController = (function () {
         loadTicketToContainer:loadTicketToContainer,
         initTicketSearchUrlBuilder:initTicketSearchUrlBuilder,
         initSprintDates:initSprintDates,
-        initSimpleColorPicker:initSimpleColorPicker
+        initSimpleColorPicker:initSimpleColorPicker,
+        openTicketModalManually: function (url) {
+            if (leantime.modals && leantime.modals.openByUrl) {
+                leantime.modals.openByUrl(url);
+            }
+        }
     };
 })();

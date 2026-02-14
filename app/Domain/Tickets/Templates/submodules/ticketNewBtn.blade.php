@@ -5,7 +5,7 @@
 @if($login::userIsAtLeast($roles::$editor) && !empty($newField))
     <div class="btn-group pull-left" style="margin-right:5px;">
         <button class="btn btn-primary tw:btn tw:btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-            {{ __('links.new_with_icon') }} <span class="caret"></span>
+            {!! __('links.new_with_icon') !!} <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
             @foreach($newField as $option)

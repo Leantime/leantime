@@ -34,8 +34,8 @@
                 <div class="fileUploadDrop">
                     <p><i>{{ __('text.drop_files') }}</i></p>
                     <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
-                    <a href="javascript:void(0);" id="webcamClick">{{ __('label.webcam') }}</a>
-                    <a href="javascript:void(0);" id="screencaptureLink">{{ __('label.screen_recording') }}</a>
+                    <a href="javascript:void(0);" id="webcamClick">{!! __('label.webcam') !!}</a>
+                    <a href="javascript:void(0);" id="screencaptureLink">{!! __('label.screen_recording') !!}</a>
                 </div>
 
                 <!-- Progress bar #1 -->

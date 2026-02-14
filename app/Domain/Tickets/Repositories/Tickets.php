@@ -372,13 +372,13 @@ class Tickets
             ->selectRaw('COALESCE(ROUND(CAST(timesheet_agg.total_hours AS DECIMAL(10,2)), 2), 0) AS bookedHours');
 
         if ($includeCounts) {
-            $query->selectRaw('COALESCE(comment_agg.comment_count, 0) AS "commentCount"')
-                ->selectRaw('COALESCE(file_agg.file_count, 0) AS "fileCount"')
-                ->selectRaw('COALESCE(subtask_agg.subtask_count, 0) AS "subtaskCount"');
+            $query->selectRaw('COALESCE(comment_agg.comment_count, 0) AS `commentCount`')
+                ->selectRaw('COALESCE(file_agg.file_count, 0) AS `fileCount`')
+                ->selectRaw('COALESCE(subtask_agg.subtask_count, 0) AS `subtaskCount`');
         } else {
-            $query->selectRaw('0 AS "commentCount"')
-                ->selectRaw('0 AS "fileCount"')
-                ->selectRaw('0 AS "subtaskCount"');
+            $query->selectRaw('0 AS `commentCount`')
+                ->selectRaw('0 AS `fileCount`')
+                ->selectRaw('0 AS `subtaskCount`');
         }
 
         $query->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
@@ -605,7 +605,7 @@ class Tickets
             $query->orderBy('zp_tickets.kanbanSortIndex', 'ASC')
                 ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'duedate') {
-            $query->orderByRaw('("zp_tickets"."dateToFinish" IS NULL)')
+            $query->orderByRaw('(`zp_tickets`.`dateToFinish` IS NULL)')
                 ->orderBy('zp_tickets.dateToFinish', 'ASC')
                 ->orderBy('zp_tickets.sortindex', 'ASC')
                 ->orderByDesc('zp_tickets.id');
@@ -919,9 +919,9 @@ class Tickets
         };
 
         $dateToFinishFormatSql = match ($this->dbHelper->getDriverName()) {
-            'mysql' => "DATE_FORMAT(zp_tickets.\"dateToFinish\", '%Y,%m,%e')",
+            'mysql' => "DATE_FORMAT(zp_tickets.`dateToFinish`, '%Y,%m,%e')",
             'pgsql' => "TO_CHAR(zp_tickets.\"dateToFinish\", 'YYYY,MM,DD')",
-            default => "DATE_FORMAT(zp_tickets.\"dateToFinish\", '%Y,%m,%e')",
+            default => "DATE_FORMAT(zp_tickets.`dateToFinish`, '%Y,%m,%e')",
         };
 
         $results = $this->connection->table('zp_tickets')
@@ -953,8 +953,8 @@ class Tickets
                 't3.lastname as editorLastname',
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
-            ->selectRaw("{$dateFormatSql} AS \"timelineDate\"")
-            ->selectRaw("{$dateToFinishFormatSql} AS \"timelineDateToFinish\"")
+            ->selectRaw("{$dateFormatSql} AS `timelineDate`")
+            ->selectRaw("{$dateToFinishFormatSql} AS `timelineDateToFinish`")
             ->selectRaw('COALESCE(zp_tickets.hourRemaining, 0) AS hourRemaining')
             ->selectRaw('COALESCE(zp_tickets.planHours, 0) AS planHours')
             ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
@@ -1238,7 +1238,7 @@ class Tickets
             $query->orderBy('zp_tickets.kanbanSortIndex', 'ASC')
                 ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'duedate') {
-            $query->orderByRaw('("zp_tickets"."dateToFinish" IS NULL)')
+            $query->orderByRaw('(`zp_tickets`.`dateToFinish` IS NULL)')
                 ->orderBy('zp_tickets.dateToFinish', 'ASC')
                 ->orderBy('zp_tickets.sortindex', 'ASC')
                 ->orderByDesc('zp_tickets.id');
@@ -1383,7 +1383,7 @@ class Tickets
         $statusGroups = $this->dbHelper->parseStatusGroups($statusGroupsSQL);
 
         $query = $this->connection->table('zp_tickets')
-            ->selectRaw('SUM(CASE WHEN zp_tickets.storypoints IS NOT NULL AND zp_tickets.storypoints <> 0 THEN zp_tickets.storypoints ELSE ? END) AS "allEffort"', [$averageStorySize])
+            ->selectRaw('SUM(CASE WHEN zp_tickets.storypoints IS NOT NULL AND zp_tickets.storypoints <> 0 THEN zp_tickets.storypoints ELSE ? END) AS `allEffort`', [$averageStorySize])
             ->where('zp_tickets.type', '<>', 'milestone')
             ->where('zp_tickets.projectId', $projectId);
 
@@ -1401,7 +1401,7 @@ class Tickets
     public function getEffortOfAllTickets($projectId, $averageStorySize): mixed
     {
         $result = $this->connection->table('zp_tickets')
-            ->selectRaw('SUM(CASE WHEN zp_tickets.storypoints IS NOT NULL AND zp_tickets.storypoints <> 0 THEN zp_tickets.storypoints ELSE ? END) AS "allEffort"', [$averageStorySize])
+            ->selectRaw('SUM(CASE WHEN zp_tickets.storypoints IS NOT NULL AND zp_tickets.storypoints <> 0 THEN zp_tickets.storypoints ELSE ? END) AS `allEffort`', [$averageStorySize])
             ->where('zp_tickets.type', '<>', 'milestone')
             ->where('zp_tickets.projectId', $projectId)
             ->first();
@@ -1412,7 +1412,7 @@ class Tickets
     public function getAverageTodoSize($projectId): mixed
     {
         $result = $this->connection->table('zp_tickets')
-            ->selectRaw('AVG(zp_tickets.storypoints) as "avgSize"')
+            ->selectRaw('AVG(zp_tickets.storypoints) as `avgSize`')
             ->where('zp_tickets.type', '<>', 'milestone')
             ->where('zp_tickets.storypoints', '<>', 0)
             ->whereNotNull('zp_tickets.storypoints')

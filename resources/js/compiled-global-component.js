@@ -44,7 +44,11 @@ import GridStackAll from 'gridstack/dist/gridstack-all.js';
 window.GridStack = GridStackAll.GridStack || GridStackAll;
 import 'jstree';
 import '@assuradeurengilde/fontawesome-iconpicker';
-import 'leader-line/leader-line.min.js';
+// LeaderLine uses `var LeaderLine = function(){...}()` — a plain script global.
+// Vite wraps it as a module, making the var local. Use indirect eval to run
+// the source in the global scope so `var LeaderLine` becomes `window.LeaderLine`.
+import leaderLineSrc from 'leader-line/leader-line.min.js?raw';
+(0, eval)(leaderLineSrc);
 // simple-color-picker removed — replaced by native <input type="color">
 import '../../public/assets/js/libs/emojipicker/vanillaEmojiPicker.js';
 

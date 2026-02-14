@@ -150,7 +150,7 @@
                                     $swimlaneKey = $group['id'] ?? null;
                                     $isEmpty = isset($emptyColumns[$key]);
                                     $currentGroupBy = $searchCriteria['groupBy'] ?? null;
-                                    include __DIR__ . '/partials/quickadd-form.inc.php';
+                                    include app('path') . '/Domain/Tickets/Templates/partials/quickadd-form.inc.php';
                                 @endphp
 
                                 @foreach($allTickets as $row)
@@ -176,7 +176,7 @@
                                                     <div class="tw:flex">
                                                         @if($row['dateToFinish'] != '0000-00-00 00:00:00' && $row['dateToFinish'] != '1969-12-31 00:00:00')
                                                             <div>
-                                                                {{ __('label.due_icon') }}
+                                                                {!! __('label.due_icon') !!}
                                                                 <input type="text" title="{{ __('label.due') }}" value="{{ format($row['dateToFinish'])->date() }}" class="duedates secretInput" style="margin-left:0px;" data-id="{{ $row['id'] }}" name="date" />
                                                             </div>
                                                             <div>
