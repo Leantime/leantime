@@ -92,6 +92,19 @@ $bootstrapper = get_class(new class
             '-e',
             'CREATE DATABASE IF NOT EXISTS leantime_test;',
         ], ['cwd' => DEV_ROOT]);
+
+        $this->createStep('Clearing Application Cache');
+        $this->executeCommand(
+            'find '.PROJECT_ROOT.'storage/framework/cache/ -type f ! -name ".gitignore" -delete && '.
+            'find '.PROJECT_ROOT.'storage/framework/sessions/ -type f ! -name ".gitignore" -delete && '.
+            'find '.PROJECT_ROOT.'storage/framework/views/ -type f ! -name ".gitignore" -delete',
+            ['cwd' => PROJECT_ROOT],
+            false,
+        );
+
+        // Restart Apache to clear OPcache and any in-memory state
+        $this->executeCommand('apache2ctl graceful', ['cwd' => PROJECT_ROOT], false);
+        sleep(2);
     }
 
     protected function setFolderPermissions(): void

@@ -289,8 +289,7 @@ class Tickets
             ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id')
             ->leftJoin('zp_user as t1', 'ticket.userId', '=', 't1.id')
             ->leftJoin('zp_user as t2', function ($join) {
-                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
-                $join->on('ticket.editorId', '=', $this->connection->raw("CAST(\"t2\".\"id\" AS {$castType})"));
+                $join->on('ticket.editorId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('t2.id'), 'text')));
             })
             ->where(function ($q) use ($id, $user) {
                 $q->whereIn('ticket.projectId', function ($subquery) use ($id) {
@@ -385,8 +384,7 @@ class Tickets
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_user as t1', 'zp_tickets.userId', '=', 't1.id')
             ->leftJoin('zp_user as t2', function ($join) {
-                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
-                $join->on('zp_tickets.editorId', '=', $this->connection->raw("CAST(\"t2\".\"id\" AS {$castType})"));
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('t2.id'), 'text')));
             })
             ->leftJoin('zp_user as requestor', function ($join) use ($requestorId) {
                 $join->on('requestor.id', '=', $this->connection->raw((int) $requestorId));
@@ -811,8 +809,7 @@ class Tickets
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
             ->leftJoin('zp_user as t3', function ($join) {
-                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
-                $join->on('zp_tickets.editorId', '=', $this->connection->raw("CAST(\"t3\".\"id\" AS {$castType})"));
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('t3.id'), 'text')));
             })
             ->where('zp_tickets.projectId', $projectId)
             ->get();
@@ -887,8 +884,7 @@ class Tickets
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
             ->leftJoin('zp_user as t3', function ($join) {
-                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
-                $join->on('zp_tickets.editorId', '=', $this->connection->raw("CAST(\"t3\".\"id\" AS {$castType})"));
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('t3.id'), 'text')));
             })
             ->leftJoin('zp_tickets as parent', 'zp_tickets.dependingTicketId', '=', 'parent.id')
             ->leftJoin('zp_tickets as milestones', 'zp_tickets.milestoneid', '=', 'milestones.id')
@@ -961,8 +957,7 @@ class Tickets
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
             ->leftJoin('zp_user as t3', function ($join) {
-                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
-                $join->on('zp_tickets.editorId', '=', $this->connection->raw("CAST(\"t3\".\"id\" AS {$castType})"));
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('t3.id'), 'text')));
             })
             ->where('zp_tickets.dependingTicketId', $id)
             ->orderByDesc('zp_tickets.date')
@@ -1010,8 +1005,7 @@ class Tickets
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
             ->leftJoin('zp_user as t3', function ($join) {
-                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
-                $join->on('zp_tickets.editorId', '=', $this->connection->raw("CAST(\"t3\".\"id\" AS {$castType})"));
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('t3.id'), 'text')));
             })
             ->where('zp_tickets.id', '<>', $ticket->id ?? 0)
             ->where('zp_tickets.type', '<>', 'milestone')
@@ -1094,8 +1088,7 @@ class Tickets
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
             ->leftJoin('zp_user as t3', function ($join) {
-                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
-                $join->on('zp_tickets.editorId', '=', $this->connection->raw("CAST(\"t3\".\"id\" AS {$castType})"));
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('t3.id'), 'text')));
             })
             ->leftJoin('zp_user as requestor', function ($join) use ($requestorId) {
                 $join->on('requestor.id', '=', $this->connection->raw((int) $requestorId));

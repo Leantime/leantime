@@ -56,7 +56,7 @@
                         class="dropdown-toggle btn round-button"
                         data-toggle="dropdown"
                         data-tippy-content="{{ __('label.copy_url_tooltip') }}"
-                        href="{{ BASE_URL }}/project/changeCurrentProject/{{ $project['id'] }}"
+                        href="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}"
                     ><i class="fa fa-link"></i></a>
                     <div class="dropdown-menu padding-md">
                         <input type="text" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
