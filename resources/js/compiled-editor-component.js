@@ -1,7 +1,6 @@
 // TinyMCE 5.10.9 + plugins (~3.6MB)
 import 'tinymce/tinymce.js';
 import 'tinymce/icons/default/icons.js';
-import 'tinymce/jquery.tinymce.js';
 import 'tinymce/themes/silver/theme.js';
 import 'tinymce/plugins/autolink/plugin.js';
 import 'tinymce/plugins/link/plugin.js';

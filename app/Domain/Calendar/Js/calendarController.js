@@ -174,13 +174,6 @@ leantime.calendarController = (function () {
             editable: true,
             headerToolbar: false,
             nowIndicator: true,
-            bootstrapFontAwesome: {
-                close: 'fa-times',
-                prev: 'fa-chevron-left',
-                next: 'fa-chevron-right',
-                prevYear: 'fa-angle-double-left',
-                nextYear: 'fa-angle-double-right'
-            },
             eventDrop: function (event) {
                 if (event.event.extendedProps.enitityType == "ticket") {
                     fetch(leantime.appUrl + '/api/tickets', {

@@ -1,3 +1,2 @@
-// Gantt chart — Snap.svg + custom Frappe Gantt
-import '../../public/assets/js/libs/simpleGantt/snap.svg-min.js';
+// Gantt chart — custom Frappe Gantt (snap.svg removed; frappe-gantt no longer uses it)
 import '../../public/assets/js/libs/simpleGantt/frappe-gantt.js';

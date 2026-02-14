@@ -497,7 +497,7 @@
 </div>
 
 @once @push('scripts')
-<script type='text/javascript'>
+<script type="module">
     leantime.editorController.initSimpleEditor();
 </script>
 @endpush @endonce

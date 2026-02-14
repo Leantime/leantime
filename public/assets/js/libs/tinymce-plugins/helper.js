@@ -1,5 +1,9 @@
 
 
+window.addPluginToPluginManager = addPluginToPluginManager;
+window.getWindow = getWindow;
+window.notifyEditorChange = notifyEditorChange;
+
 function addPluginToPluginManager(name, register) {
     // tinymce puts itself in the global namespace
     if (!globalThis.tinymce)

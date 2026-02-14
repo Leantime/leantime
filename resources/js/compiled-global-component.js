@@ -40,7 +40,8 @@ window.Shepherd = Shepherd;
 import Isotope from 'isotope-layout';
 window.Isotope = Isotope;
 
-import 'gridstack/dist/gridstack-all.js';
+import GridStackAll from 'gridstack/dist/gridstack-all.js';
+window.GridStack = GridStackAll.GridStack || GridStackAll;
 import 'jstree';
 import '@assuradeurengilde/fontawesome-iconpicker';
 import 'leader-line/leader-line.min.js';
