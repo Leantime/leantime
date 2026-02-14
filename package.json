@@ -55,6 +55,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",
+    "@rollup/plugin-commonjs": "^29.0.0",
     "dotenv": "^16.4.5",
     "eslint": "^8.50.0",
     "eslint-plugin-vue": "^9.17.0",
