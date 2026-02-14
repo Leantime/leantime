@@ -1,14 +1,14 @@
 {
-  "__basePickBy-C-n_UUfZ.js": {
-    "file": "assets/_basePickBy-C-n_UUfZ.js",
+  "__basePickBy-7pa6kxN5.js": {
+    "file": "assets/_basePickBy-7pa6kxN5.js",
     "name": "_basePickBy",
     "imports": [
-      "__baseUniq-CnGpQBp2.js",
+      "__baseUniq-B-h_cd3m.js",
       "resources/js/compiled-global-component.js"
     ]
   },
-  "__baseUniq-CnGpQBp2.js": {
-    "file": "assets/_baseUniq-CnGpQBp2.js",
+  "__baseUniq-B-h_cd3m.js": {
+    "file": "assets/_baseUniq-B-h_cd3m.js",
     "name": "_baseUniq",
     "imports": [
       "resources/js/compiled-global-component.js"
@@ -18,86 +18,86 @@
     "file": "assets/_commonjsHelpers-BosuxZz1.js",
     "name": "_commonjsHelpers"
   },
-  "_arc-BjydlYEs.js": {
-    "file": "assets/arc-BjydlYEs.js",
+  "_arc-DUXgTtE5.js": {
+    "file": "assets/arc-DUXgTtE5.js",
     "name": "arc",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_channel-CzvquRDJ.js": {
-    "file": "assets/channel-CzvquRDJ.js",
+  "_channel-Bp1HI4ay.js": {
+    "file": "assets/channel-Bp1HI4ay.js",
     "name": "channel",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-ANTBXLJU-DRfOQmJw.js": {
-    "file": "assets/chunk-ANTBXLJU-DRfOQmJw.js",
+  "_chunk-ANTBXLJU-BAECvG-X.js": {
+    "file": "assets/chunk-ANTBXLJU-BAECvG-X.js",
     "name": "chunk-ANTBXLJU",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-FHKO5MBM-Bi_4BM-z.js": {
-    "file": "assets/chunk-FHKO5MBM-Bi_4BM-z.js",
+  "_chunk-FHKO5MBM-BlqKE9EF.js": {
+    "file": "assets/chunk-FHKO5MBM-BlqKE9EF.js",
     "name": "chunk-FHKO5MBM",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-GLLZNHP4-BsC5qdZD.js": {
-    "file": "assets/chunk-GLLZNHP4-BsC5qdZD.js",
+  "_chunk-GLLZNHP4-DDvw5XIY.js": {
+    "file": "assets/chunk-GLLZNHP4-DDvw5XIY.js",
     "name": "chunk-GLLZNHP4",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-JBRWN2VN-TT9Q6AF_.js": {
-    "file": "assets/chunk-JBRWN2VN-TT9Q6AF_.js",
+  "_chunk-JBRWN2VN-Cy3KtQ1V.js": {
+    "file": "assets/chunk-JBRWN2VN-Cy3KtQ1V.js",
     "name": "chunk-JBRWN2VN",
     "imports": [
-      "_chunk-GLLZNHP4-BsC5qdZD.js",
-      "_chunk-WVR4S24B-DYy13UXw.js",
-      "_chunk-NRVI72HA-bklmMrHB.js",
+      "_chunk-GLLZNHP4-DDvw5XIY.js",
+      "_chunk-WVR4S24B-BbyL68aT.js",
+      "_chunk-NRVI72HA-MabuAkeY.js",
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-LXBSTHXV-B_2ueAD6.js": {
-    "file": "assets/chunk-LXBSTHXV-B_2ueAD6.js",
+  "_chunk-LXBSTHXV-BqV_r9zw.js": {
+    "file": "assets/chunk-LXBSTHXV-BqV_r9zw.js",
     "name": "chunk-LXBSTHXV",
     "imports": [
-      "_chunk-WVR4S24B-DYy13UXw.js",
-      "_chunk-NRVI72HA-bklmMrHB.js",
+      "_chunk-WVR4S24B-BbyL68aT.js",
+      "_chunk-NRVI72HA-MabuAkeY.js",
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-NRVI72HA-bklmMrHB.js": {
-    "file": "assets/chunk-NRVI72HA-bklmMrHB.js",
+  "_chunk-NRVI72HA-MabuAkeY.js": {
+    "file": "assets/chunk-NRVI72HA-MabuAkeY.js",
     "name": "chunk-NRVI72HA",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-OMD6QJNC-BEa4QhbS.js": {
-    "file": "assets/chunk-OMD6QJNC-BEa4QhbS.js",
+  "_chunk-OMD6QJNC-BLiWZVd7.js": {
+    "file": "assets/chunk-OMD6QJNC-BLiWZVd7.js",
     "name": "chunk-OMD6QJNC",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_chunk-WVR4S24B-DYy13UXw.js": {
-    "file": "assets/chunk-WVR4S24B-DYy13UXw.js",
+  "_chunk-WVR4S24B-BbyL68aT.js": {
+    "file": "assets/chunk-WVR4S24B-BbyL68aT.js",
     "name": "chunk-WVR4S24B",
     "imports": [
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_clone-Bd0ejU97.js": {
-    "file": "assets/clone-Bd0ejU97.js",
+  "_clone-BfsnoLTm.js": {
+    "file": "assets/clone-BfsnoLTm.js",
     "name": "clone",
     "imports": [
-      "__baseUniq-CnGpQBp2.js"
+      "__baseUniq-B-h_cd3m.js"
     ]
   },
   "_cytoscape.esm-BY7v1xhs.js": {
@@ -112,12 +112,20 @@
     "file": "assets/defaultLocale-C4B-KCzX.js",
     "name": "defaultLocale"
   },
-  "_graph-_SNCmLtW.js": {
-    "file": "assets/graph-_SNCmLtW.js",
+  "_game-snake-BiB7-ObF.js": {
+    "file": "assets/game-snake-BiB7-ObF.js",
+    "name": "game-snake",
+    "isDynamicEntry": true,
+    "imports": [
+      "__commonjsHelpers-BosuxZz1.js"
+    ]
+  },
+  "_graph-DjD3e1DL.js": {
+    "file": "assets/graph-DjD3e1DL.js",
     "name": "graph",
     "imports": [
       "resources/js/compiled-global-component.js",
-      "__baseUniq-CnGpQBp2.js"
+      "__baseUniq-B-h_cd3m.js"
     ]
   },
   "_htmx.esm-KBlj935b.js": {
@@ -128,38 +136,44 @@
     "file": "assets/init-Gi6I4Gst.js",
     "name": "init"
   },
-  "_jquery-CED9k22g.js": {
-    "file": "assets/jquery-CED9k22g.js",
-    "name": "jquery",
-    "imports": [
-      "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js"
-    ]
-  },
-  "_jquery-Czc5UB_B.js": {
-    "file": "assets/jquery-Czc5UB_B.js",
-    "name": "jquery",
-    "imports": [
-      "__commonjsHelpers-BosuxZz1.js"
-    ]
-  },
-  "_layout-NMAkCORN.js": {
-    "file": "assets/layout-NMAkCORN.js",
+  "_layout-D7-FEci3.js": {
+    "file": "assets/layout-D7-FEci3.js",
     "name": "layout",
     "imports": [
-      "_graph-_SNCmLtW.js",
-      "__baseUniq-CnGpQBp2.js",
-      "__basePickBy-C-n_UUfZ.js",
+      "_graph-DjD3e1DL.js",
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_linear-DZZRkika.js": {
-    "file": "assets/linear-DZZRkika.js",
+  "_linear-DM9SXQBK.js": {
+    "file": "assets/linear-DM9SXQBK.js",
     "name": "linear",
     "imports": [
       "resources/js/compiled-global-component.js",
       "_init-Gi6I4Gst.js",
       "_defaultLocale-C4B-KCzX.js"
+    ]
+  },
+  "_mermaid-parser.core-DttNodbt.js": {
+    "file": "assets/mermaid-parser.core-DttNodbt.js",
+    "name": "mermaid-parser.core",
+    "imports": [
+      "_preload-helper-DPi8upcZ.js",
+      "resources/js/compiled-global-component.js",
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js",
+      "__commonjsHelpers-BosuxZz1.js"
+    ],
+    "dynamicImports": [
+      "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/info-63CPKGFF.mjs",
+      "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/packet-HUATNLJX.mjs",
+      "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/pie-WTHONI2E.mjs",
+      "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/architecture-O4VJ6CD3.mjs",
+      "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/gitGraph-ZV4HHKMB.mjs",
+      "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/radar-NJJJXTRR.mjs",
+      "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/treemap-75Q7IDZK.mjs"
     ]
   },
   "_ordinal-Cboi1Yqb.js": {
@@ -173,19 +187,8 @@
     "file": "assets/preload-helper-DPi8upcZ.js",
     "name": "preload-helper"
   },
-  "_treemap-75Q7IDZK-CRptoI3J.js": {
-    "file": "assets/treemap-75Q7IDZK-CRptoI3J.js",
-    "name": "treemap-75Q7IDZK",
-    "imports": [
-      "_preload-helper-DPi8upcZ.js",
-      "resources/js/compiled-global-component.js",
-      "__baseUniq-CnGpQBp2.js",
-      "__basePickBy-C-n_UUfZ.js",
-      "_clone-Bd0ejU97.js"
-    ]
-  },
   "app/Domain/Calendar/Js/calendarController.js": {
-    "file": "assets/calendarController-DwSRQU4Z.js",
+    "file": "assets/calendarController-Dt74k-h2.js",
     "name": "calendarController",
     "src": "app/Domain/Calendar/Js/calendarController.js",
     "isDynamicEntry": true
@@ -218,12 +221,6 @@
     "file": "assets/emCanvasController-BeXTfudd.js",
     "name": "emCanvasController",
     "src": "app/Domain/Emcanvas/Js/emCanvasController.js",
-    "isDynamicEntry": true
-  },
-  "app/Domain/Gamecenter/Js/game-snake.js": {
-    "file": "assets/game-snake-CiPrYQqj.js",
-    "name": "game-snake",
-    "src": "app/Domain/Gamecenter/Js/game-snake.js",
     "isDynamicEntry": true
   },
   "app/Domain/Goalcanvas/Js/goalCanvasController.js": {
@@ -334,6 +331,118 @@
     "src": "app/Domain/Wiki/Js/wikiController.js",
     "isDynamicEntry": true
   },
+  "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/architecture-O4VJ6CD3.mjs": {
+    "file": "assets/architecture-O4VJ6CD3-5haUM_8k.js",
+    "name": "architecture-O4VJ6CD3",
+    "src": "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/architecture-O4VJ6CD3.mjs",
+    "isDynamicEntry": true,
+    "imports": [
+      "_mermaid-parser.core-DttNodbt.js",
+      "_preload-helper-DPi8upcZ.js",
+      "resources/js/compiled-global-component.js",
+      "_datetime-CncuFZOB.js",
+      "__commonjsHelpers-BosuxZz1.js",
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js"
+    ]
+  },
+  "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/gitGraph-ZV4HHKMB.mjs": {
+    "file": "assets/gitGraph-ZV4HHKMB-hx8y_yHv.js",
+    "name": "gitGraph-ZV4HHKMB",
+    "src": "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/gitGraph-ZV4HHKMB.mjs",
+    "isDynamicEntry": true,
+    "imports": [
+      "_mermaid-parser.core-DttNodbt.js",
+      "_preload-helper-DPi8upcZ.js",
+      "resources/js/compiled-global-component.js",
+      "_datetime-CncuFZOB.js",
+      "__commonjsHelpers-BosuxZz1.js",
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js"
+    ]
+  },
+  "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/info-63CPKGFF.mjs": {
+    "file": "assets/info-63CPKGFF-L1-0M5vG.js",
+    "name": "info-63CPKGFF",
+    "src": "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/info-63CPKGFF.mjs",
+    "isDynamicEntry": true,
+    "imports": [
+      "_mermaid-parser.core-DttNodbt.js",
+      "_preload-helper-DPi8upcZ.js",
+      "resources/js/compiled-global-component.js",
+      "_datetime-CncuFZOB.js",
+      "__commonjsHelpers-BosuxZz1.js",
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js"
+    ]
+  },
+  "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/packet-HUATNLJX.mjs": {
+    "file": "assets/packet-HUATNLJX-D4NcAfr4.js",
+    "name": "packet-HUATNLJX",
+    "src": "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/packet-HUATNLJX.mjs",
+    "isDynamicEntry": true,
+    "imports": [
+      "_mermaid-parser.core-DttNodbt.js",
+      "_preload-helper-DPi8upcZ.js",
+      "resources/js/compiled-global-component.js",
+      "_datetime-CncuFZOB.js",
+      "__commonjsHelpers-BosuxZz1.js",
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js"
+    ]
+  },
+  "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/pie-WTHONI2E.mjs": {
+    "file": "assets/pie-WTHONI2E-DZM4a92b.js",
+    "name": "pie-WTHONI2E",
+    "src": "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/pie-WTHONI2E.mjs",
+    "isDynamicEntry": true,
+    "imports": [
+      "_mermaid-parser.core-DttNodbt.js",
+      "_preload-helper-DPi8upcZ.js",
+      "resources/js/compiled-global-component.js",
+      "_datetime-CncuFZOB.js",
+      "__commonjsHelpers-BosuxZz1.js",
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js"
+    ]
+  },
+  "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/radar-NJJJXTRR.mjs": {
+    "file": "assets/radar-NJJJXTRR-Czb5cKjP.js",
+    "name": "radar-NJJJXTRR",
+    "src": "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/radar-NJJJXTRR.mjs",
+    "isDynamicEntry": true,
+    "imports": [
+      "_mermaid-parser.core-DttNodbt.js",
+      "_preload-helper-DPi8upcZ.js",
+      "resources/js/compiled-global-component.js",
+      "_datetime-CncuFZOB.js",
+      "__commonjsHelpers-BosuxZz1.js",
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js"
+    ]
+  },
+  "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/treemap-75Q7IDZK.mjs": {
+    "file": "assets/treemap-75Q7IDZK-LtXJQmIb.js",
+    "name": "treemap-75Q7IDZK",
+    "src": "node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.core/treemap-75Q7IDZK.mjs",
+    "isDynamicEntry": true,
+    "imports": [
+      "_mermaid-parser.core-DttNodbt.js",
+      "_preload-helper-DPi8upcZ.js",
+      "resources/js/compiled-global-component.js",
+      "_datetime-CncuFZOB.js",
+      "__commonjsHelpers-BosuxZz1.js",
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js"
+    ]
+  },
   "node_modules/katex/dist/katex.mjs": {
     "file": "assets/katex-ChWnQ-fc.js",
     "name": "katex",
@@ -341,283 +450,267 @@
     "isDynamicEntry": true
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/architectureDiagram-KFL7JDKH.mjs": {
-    "file": "assets/architectureDiagram-KFL7JDKH-CoJ2Ocg6.js",
+    "file": "assets/architectureDiagram-KFL7JDKH-C9SdyKG7.js",
     "name": "architectureDiagram-KFL7JDKH",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/architectureDiagram-KFL7JDKH.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/compiled-global-component.js",
-      "_chunk-ANTBXLJU-DRfOQmJw.js",
-      "_treemap-75Q7IDZK-CRptoI3J.js",
+      "_chunk-ANTBXLJU-BAECvG-X.js",
+      "_mermaid-parser.core-DttNodbt.js",
       "_cytoscape.esm-BY7v1xhs.js",
       "__commonjsHelpers-BosuxZz1.js",
       "_datetime-CncuFZOB.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-CnGpQBp2.js",
-      "__basePickBy-C-n_UUfZ.js",
-      "_clone-Bd0ejU97.js"
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/blockDiagram-ZYB65J3Q.mjs": {
-    "file": "assets/blockDiagram-ZYB65J3Q-CdaxuQOs.js",
+    "file": "assets/blockDiagram-ZYB65J3Q-B_fRsU4i.js",
     "name": "blockDiagram-ZYB65J3Q",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/blockDiagram-ZYB65J3Q.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-GLLZNHP4-BsC5qdZD.js",
+      "_chunk-GLLZNHP4-DDvw5XIY.js",
       "resources/js/compiled-global-component.js",
-      "_clone-Bd0ejU97.js",
-      "_graph-_SNCmLtW.js",
-      "_channel-CzvquRDJ.js",
+      "_clone-BfsnoLTm.js",
+      "_graph-DjD3e1DL.js",
+      "_channel-Bp1HI4ay.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-CnGpQBp2.js"
+      "__baseUniq-B-h_cd3m.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/c4Diagram-AAMF2YG6.mjs": {
-    "file": "assets/c4Diagram-AAMF2YG6-B6A4Dasf.js",
+    "file": "assets/c4Diagram-AAMF2YG6-YP20hQbU.js",
     "name": "c4Diagram-AAMF2YG6",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/c4Diagram-AAMF2YG6.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-OMD6QJNC-BEa4QhbS.js",
+      "_chunk-OMD6QJNC-BLiWZVd7.js",
       "resources/js/compiled-global-component.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/classDiagram-3BZAVTQC.mjs": {
-    "file": "assets/classDiagram-3BZAVTQC-DgonDr0Z.js",
+    "file": "assets/classDiagram-3BZAVTQC-Ch5KQvrn.js",
     "name": "classDiagram-3BZAVTQC",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/classDiagram-3BZAVTQC.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-JBRWN2VN-TT9Q6AF_.js",
+      "_chunk-JBRWN2VN-Cy3KtQ1V.js",
       "resources/js/compiled-global-component.js",
-      "_chunk-GLLZNHP4-BsC5qdZD.js",
-      "_chunk-WVR4S24B-DYy13UXw.js",
-      "_chunk-NRVI72HA-bklmMrHB.js",
+      "_chunk-GLLZNHP4-DDvw5XIY.js",
+      "_chunk-WVR4S24B-BbyL68aT.js",
+      "_chunk-NRVI72HA-MabuAkeY.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/classDiagram-v2-QTMF73CY.mjs": {
-    "file": "assets/classDiagram-v2-QTMF73CY-DgonDr0Z.js",
+    "file": "assets/classDiagram-v2-QTMF73CY-Ch5KQvrn.js",
     "name": "classDiagram-v2-QTMF73CY",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/classDiagram-v2-QTMF73CY.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-JBRWN2VN-TT9Q6AF_.js",
+      "_chunk-JBRWN2VN-Cy3KtQ1V.js",
       "resources/js/compiled-global-component.js",
-      "_chunk-GLLZNHP4-BsC5qdZD.js",
-      "_chunk-WVR4S24B-DYy13UXw.js",
-      "_chunk-NRVI72HA-bklmMrHB.js",
+      "_chunk-GLLZNHP4-DDvw5XIY.js",
+      "_chunk-WVR4S24B-BbyL68aT.js",
+      "_chunk-NRVI72HA-MabuAkeY.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/dagre-2BBEFEWP.mjs": {
-    "file": "assets/dagre-2BBEFEWP-CsfjqBym.js",
+    "file": "assets/dagre-2BBEFEWP-DrI3ZI_-.js",
     "name": "dagre-2BBEFEWP",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/dagre-2BBEFEWP.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/compiled-global-component.js",
-      "_graph-_SNCmLtW.js",
-      "_layout-NMAkCORN.js",
-      "__baseUniq-CnGpQBp2.js",
-      "_clone-Bd0ejU97.js",
-      "__basePickBy-C-n_UUfZ.js",
+      "_graph-DjD3e1DL.js",
+      "_layout-D7-FEci3.js",
+      "__baseUniq-B-h_cd3m.js",
+      "_clone-BfsnoLTm.js",
+      "__basePickBy-7pa6kxN5.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/diagram-4IRLE6MV.mjs": {
-    "file": "assets/diagram-4IRLE6MV-DTIe37TA.js",
+    "file": "assets/diagram-4IRLE6MV-DT3KhEmN.js",
     "name": "diagram-4IRLE6MV",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/diagram-4IRLE6MV.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-NRVI72HA-bklmMrHB.js",
+      "_chunk-NRVI72HA-MabuAkeY.js",
       "resources/js/compiled-global-component.js",
-      "_chunk-ANTBXLJU-DRfOQmJw.js",
-      "_treemap-75Q7IDZK-CRptoI3J.js",
+      "_chunk-ANTBXLJU-BAECvG-X.js",
+      "_mermaid-parser.core-DttNodbt.js",
       "_defaultLocale-C4B-KCzX.js",
       "_ordinal-Cboi1Yqb.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-CnGpQBp2.js",
-      "__basePickBy-C-n_UUfZ.js",
-      "_clone-Bd0ejU97.js",
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js",
       "_init-Gi6I4Gst.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/diagram-GUPCWM2R.mjs": {
-    "file": "assets/diagram-GUPCWM2R-oZ4SKgip.js",
+    "file": "assets/diagram-GUPCWM2R-DleAKbdO.js",
     "name": "diagram-GUPCWM2R",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/diagram-GUPCWM2R.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-ANTBXLJU-DRfOQmJw.js",
+      "_chunk-ANTBXLJU-BAECvG-X.js",
       "resources/js/compiled-global-component.js",
-      "_treemap-75Q7IDZK-CRptoI3J.js",
+      "_mermaid-parser.core-DttNodbt.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-CnGpQBp2.js",
-      "__basePickBy-C-n_UUfZ.js",
-      "_clone-Bd0ejU97.js"
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/diagram-RP2FKANI.mjs": {
-    "file": "assets/diagram-RP2FKANI-Cu11sDwX.js",
+    "file": "assets/diagram-RP2FKANI-C_1yJ35r.js",
     "name": "diagram-RP2FKANI",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/diagram-RP2FKANI.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-ANTBXLJU-DRfOQmJw.js",
+      "_chunk-ANTBXLJU-BAECvG-X.js",
       "resources/js/compiled-global-component.js",
-      "_treemap-75Q7IDZK-CRptoI3J.js",
+      "_mermaid-parser.core-DttNodbt.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-CnGpQBp2.js",
-      "__basePickBy-C-n_UUfZ.js",
-      "_clone-Bd0ejU97.js"
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/erDiagram-HZWUO2LU.mjs": {
-    "file": "assets/erDiagram-HZWUO2LU-BTFnE7wA.js",
+    "file": "assets/erDiagram-HZWUO2LU-Bcmb0bjG.js",
     "name": "erDiagram-HZWUO2LU",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/erDiagram-HZWUO2LU.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-WVR4S24B-DYy13UXw.js",
-      "_chunk-NRVI72HA-bklmMrHB.js",
+      "_chunk-WVR4S24B-BbyL68aT.js",
+      "_chunk-NRVI72HA-MabuAkeY.js",
       "resources/js/compiled-global-component.js",
-      "_channel-CzvquRDJ.js",
+      "_channel-Bp1HI4ay.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/flowDiagram-THRYKUMA.mjs": {
-    "file": "assets/flowDiagram-THRYKUMA-B3fEDBbQ.js",
+    "file": "assets/flowDiagram-THRYKUMA-DtZ02Ld1.js",
     "name": "flowDiagram-THRYKUMA",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/flowDiagram-THRYKUMA.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-GLLZNHP4-BsC5qdZD.js",
+      "_chunk-GLLZNHP4-DDvw5XIY.js",
       "resources/js/compiled-global-component.js",
-      "_chunk-WVR4S24B-DYy13UXw.js",
-      "_chunk-NRVI72HA-bklmMrHB.js",
-      "_channel-CzvquRDJ.js",
+      "_chunk-WVR4S24B-BbyL68aT.js",
+      "_chunk-NRVI72HA-MabuAkeY.js",
+      "_channel-Bp1HI4ay.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/ganttDiagram-WV7ZQ7D5.mjs": {
-    "file": "assets/ganttDiagram-WV7ZQ7D5-D3d98b5z.js",
+    "file": "assets/ganttDiagram-WV7ZQ7D5-DL8vYKhg.js",
     "name": "ganttDiagram-WV7ZQ7D5",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/ganttDiagram-WV7ZQ7D5.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/compiled-global-component.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_linear-DZZRkika.js",
+      "_linear-DM9SXQBK.js",
       "_init-Gi6I4Gst.js",
       "_datetime-CncuFZOB.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
       "_defaultLocale-C4B-KCzX.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/gitGraphDiagram-OJR772UL.mjs": {
-    "file": "assets/gitGraphDiagram-OJR772UL-Do-0vd-R.js",
+    "file": "assets/gitGraphDiagram-OJR772UL-DHPJ3uyp.js",
     "name": "gitGraphDiagram-OJR772UL",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/gitGraphDiagram-OJR772UL.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-ANTBXLJU-DRfOQmJw.js",
-      "_chunk-FHKO5MBM-Bi_4BM-z.js",
+      "_chunk-ANTBXLJU-BAECvG-X.js",
+      "_chunk-FHKO5MBM-BlqKE9EF.js",
       "resources/js/compiled-global-component.js",
-      "_treemap-75Q7IDZK-CRptoI3J.js",
+      "_mermaid-parser.core-DttNodbt.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-CnGpQBp2.js",
-      "__basePickBy-C-n_UUfZ.js",
-      "_clone-Bd0ejU97.js"
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/infoDiagram-6WOFNB3A.mjs": {
-    "file": "assets/infoDiagram-6WOFNB3A-B8t6wjf1.js",
+    "file": "assets/infoDiagram-6WOFNB3A-Bo2qUbIE.js",
     "name": "infoDiagram-6WOFNB3A",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/infoDiagram-6WOFNB3A.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/compiled-global-component.js",
-      "_treemap-75Q7IDZK-CRptoI3J.js",
+      "_mermaid-parser.core-DttNodbt.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-CnGpQBp2.js",
-      "__basePickBy-C-n_UUfZ.js",
-      "_clone-Bd0ejU97.js"
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/journeyDiagram-FFXJYRFH.mjs": {
-    "file": "assets/journeyDiagram-FFXJYRFH-tcin2bYP.js",
+    "file": "assets/journeyDiagram-FFXJYRFH-Dy48RN00.js",
     "name": "journeyDiagram-FFXJYRFH",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/journeyDiagram-FFXJYRFH.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-OMD6QJNC-BEa4QhbS.js",
-      "_chunk-GLLZNHP4-BsC5qdZD.js",
+      "_chunk-OMD6QJNC-BLiWZVd7.js",
+      "_chunk-GLLZNHP4-DDvw5XIY.js",
       "resources/js/compiled-global-component.js",
-      "_arc-BjydlYEs.js",
+      "_arc-DUXgTtE5.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/kanban-definition-KOZQBZVT.mjs": {
-    "file": "assets/kanban-definition-KOZQBZVT-B8RIB4TC.js",
+    "file": "assets/kanban-definition-KOZQBZVT-r_6OKy9p.js",
     "name": "kanban-definition-KOZQBZVT",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/kanban-definition-KOZQBZVT.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-GLLZNHP4-BsC5qdZD.js",
+      "_chunk-GLLZNHP4-DDvw5XIY.js",
       "resources/js/compiled-global-component.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/mindmap-definition-LNHGMQRG.mjs": {
-    "file": "assets/mindmap-definition-LNHGMQRG-DjXb2Lbn.js",
+    "file": "assets/mindmap-definition-LNHGMQRG-DIKKiL8H.js",
     "name": "mindmap-definition-LNHGMQRG",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/mindmap-definition-LNHGMQRG.mjs",
     "isDynamicEntry": true,
@@ -626,64 +719,60 @@
       "_cytoscape.esm-BY7v1xhs.js",
       "__commonjsHelpers-BosuxZz1.js",
       "_datetime-CncuFZOB.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/pieDiagram-DBDJKBY4.mjs": {
-    "file": "assets/pieDiagram-DBDJKBY4-CdsReZjL.js",
+    "file": "assets/pieDiagram-DBDJKBY4-qAQ5WCwE.js",
     "name": "pieDiagram-DBDJKBY4",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/pieDiagram-DBDJKBY4.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-ANTBXLJU-DRfOQmJw.js",
+      "_chunk-ANTBXLJU-BAECvG-X.js",
       "resources/js/compiled-global-component.js",
-      "_treemap-75Q7IDZK-CRptoI3J.js",
-      "_arc-BjydlYEs.js",
+      "_mermaid-parser.core-DttNodbt.js",
+      "_arc-DUXgTtE5.js",
       "_ordinal-Cboi1Yqb.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-CnGpQBp2.js",
-      "__basePickBy-C-n_UUfZ.js",
-      "_clone-Bd0ejU97.js",
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js",
+      "_clone-BfsnoLTm.js",
       "_init-Gi6I4Gst.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/quadrantDiagram-YPSRARAO.mjs": {
-    "file": "assets/quadrantDiagram-YPSRARAO-DahAEPkp.js",
+    "file": "assets/quadrantDiagram-YPSRARAO-Cc_ToHs0.js",
     "name": "quadrantDiagram-YPSRARAO",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/quadrantDiagram-YPSRARAO.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/compiled-global-component.js",
-      "_linear-DZZRkika.js",
+      "_linear-DM9SXQBK.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
       "_init-Gi6I4Gst.js",
       "_defaultLocale-C4B-KCzX.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/requirementDiagram-EGVEC5DT.mjs": {
-    "file": "assets/requirementDiagram-EGVEC5DT-BSUBf0Up.js",
+    "file": "assets/requirementDiagram-EGVEC5DT-Cr6G-BDY.js",
     "name": "requirementDiagram-EGVEC5DT",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/requirementDiagram-EGVEC5DT.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-WVR4S24B-DYy13UXw.js",
-      "_chunk-NRVI72HA-bklmMrHB.js",
+      "_chunk-WVR4S24B-BbyL68aT.js",
+      "_chunk-NRVI72HA-MabuAkeY.js",
       "resources/js/compiled-global-component.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/sankeyDiagram-HRAUVNP4.mjs": {
-    "file": "assets/sankeyDiagram-HRAUVNP4-CCa6icyU.js",
+    "file": "assets/sankeyDiagram-HRAUVNP4-DI2S74Qj.js",
     "name": "sankeyDiagram-HRAUVNP4",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/sankeyDiagram-HRAUVNP4.mjs",
     "isDynamicEntry": true,
@@ -692,78 +781,73 @@
       "_ordinal-Cboi1Yqb.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
       "_init-Gi6I4Gst.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/sequenceDiagram-WFGC7UMF.mjs": {
-    "file": "assets/sequenceDiagram-WFGC7UMF-II2Q0sMG.js",
+    "file": "assets/sequenceDiagram-WFGC7UMF-CNds8ob7.js",
     "name": "sequenceDiagram-WFGC7UMF",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/sequenceDiagram-WFGC7UMF.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-OMD6QJNC-BEa4QhbS.js",
-      "_chunk-FHKO5MBM-Bi_4BM-z.js",
+      "_chunk-OMD6QJNC-BLiWZVd7.js",
+      "_chunk-FHKO5MBM-BlqKE9EF.js",
       "resources/js/compiled-global-component.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-UUKSUZ4H.mjs": {
-    "file": "assets/stateDiagram-UUKSUZ4H-DgAYu3k4.js",
+    "file": "assets/stateDiagram-UUKSUZ4H-BugroEzf.js",
     "name": "stateDiagram-UUKSUZ4H",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-UUKSUZ4H.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-LXBSTHXV-B_2ueAD6.js",
+      "_chunk-LXBSTHXV-BqV_r9zw.js",
       "resources/js/compiled-global-component.js",
-      "_graph-_SNCmLtW.js",
-      "_layout-NMAkCORN.js",
-      "_chunk-WVR4S24B-DYy13UXw.js",
-      "_chunk-NRVI72HA-bklmMrHB.js",
+      "_graph-DjD3e1DL.js",
+      "_layout-D7-FEci3.js",
+      "_chunk-WVR4S24B-BbyL68aT.js",
+      "_chunk-NRVI72HA-MabuAkeY.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
-      "__baseUniq-CnGpQBp2.js",
-      "__basePickBy-C-n_UUfZ.js"
+      "__baseUniq-B-h_cd3m.js",
+      "__basePickBy-7pa6kxN5.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-v2-EYPG3UTE.mjs": {
-    "file": "assets/stateDiagram-v2-EYPG3UTE-D-3ID_8I.js",
+    "file": "assets/stateDiagram-v2-EYPG3UTE-DvN-AFPI.js",
     "name": "stateDiagram-v2-EYPG3UTE",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-v2-EYPG3UTE.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-LXBSTHXV-B_2ueAD6.js",
+      "_chunk-LXBSTHXV-BqV_r9zw.js",
       "resources/js/compiled-global-component.js",
-      "_chunk-WVR4S24B-DYy13UXw.js",
-      "_chunk-NRVI72HA-bklmMrHB.js",
+      "_chunk-WVR4S24B-BbyL68aT.js",
+      "_chunk-NRVI72HA-MabuAkeY.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/timeline-definition-3HZDQTIS.mjs": {
-    "file": "assets/timeline-definition-3HZDQTIS-BmCWGHCA.js",
+    "file": "assets/timeline-definition-3HZDQTIS-Bg54b9z_.js",
     "name": "timeline-definition-3HZDQTIS",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/timeline-definition-3HZDQTIS.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/compiled-global-component.js",
-      "_arc-BjydlYEs.js",
+      "_arc-DUXgTtE5.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/xychartDiagram-FDP5SA34.mjs": {
-    "file": "assets/xychartDiagram-FDP5SA34-DCh486qe.js",
+    "file": "assets/xychartDiagram-FDP5SA34-CfJVn1H_.js",
     "name": "xychartDiagram-FDP5SA34",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/xychartDiagram-FDP5SA34.mjs",
     "isDynamicEntry": true,
@@ -771,10 +855,9 @@
       "resources/js/compiled-global-component.js",
       "_init-Gi6I4Gst.js",
       "_ordinal-Cboi1Yqb.js",
-      "_linear-DZZRkika.js",
+      "_linear-DM9SXQBK.js",
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js",
       "_defaultLocale-C4B-KCzX.js"
     ]
@@ -943,7 +1026,7 @@
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-DQ74Y-1l.js",
+    "file": "assets/compiled-app-CSM9_og3.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,
@@ -957,7 +1040,7 @@
       "app/Domain/Dbmcanvas/Js/dbmCanvasController.js",
       "app/Domain/Eacanvas/Js/eaCanvasController.js",
       "app/Domain/Emcanvas/Js/emCanvasController.js",
-      "app/Domain/Gamecenter/Js/game-snake.js",
+      "_game-snake-BiB7-ObF.js",
       "app/Domain/Goalcanvas/Js/goalCanvasController.js",
       "app/Domain/Ideas/Js/ideasController.js",
       "app/Domain/Insightscanvas/Js/insightsCanvasController.js",
@@ -994,7 +1077,7 @@
     ]
   },
   "resources/js/compiled-editor-component.js": {
-    "file": "assets/compiled-editor-component-DFobYHcw.js",
+    "file": "assets/compiled-editor-component-CO5W2reV.js",
     "name": "compiled-editor-component",
     "src": "resources/js/compiled-editor-component.js",
     "isEntry": true,
@@ -1003,37 +1086,34 @@
     ]
   },
   "resources/js/compiled-footer.js": {
-    "file": "assets/compiled-footer-D__utb57.js",
+    "file": "assets/compiled-footer-D5_8s4qg.js",
     "name": "compiled-footer",
     "src": "resources/js/compiled-footer.js",
-    "isEntry": true
-  },
-  "resources/js/compiled-frameworks.js": {
-    "file": "assets/compiled-frameworks-B2sUffwD.js",
-    "name": "compiled-frameworks",
-    "src": "resources/js/compiled-frameworks.js",
     "isEntry": true,
     "imports": [
-      "_jquery-CED9k22g.js",
-      "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js"
+      "__commonjsHelpers-BosuxZz1.js"
     ]
   },
+  "resources/js/compiled-frameworks.js": {
+    "file": "assets/compiled-frameworks-aJb_XGCJ.js",
+    "name": "compiled-frameworks",
+    "src": "resources/js/compiled-frameworks.js",
+    "isEntry": true
+  },
   "resources/js/compiled-gantt-component.js": {
-    "file": "assets/compiled-gantt-component-BSsYnUm3.js",
+    "file": "assets/compiled-gantt-component-l0sNRNKZ.js",
     "name": "compiled-gantt-component",
     "src": "resources/js/compiled-gantt-component.js",
     "isEntry": true
   },
   "resources/js/compiled-global-component.js": {
-    "file": "assets/compiled-global-component-CcceZb_O.js",
+    "file": "assets/compiled-global-component-CiDq251i.js",
     "name": "compiled-global-component",
     "src": "resources/js/compiled-global-component.js",
     "isEntry": true,
     "imports": [
       "_datetime-CncuFZOB.js",
       "__commonjsHelpers-BosuxZz1.js",
-      "_jquery-Czc5UB_B.js",
       "_preload-helper-DPi8upcZ.js"
     ],
     "dynamicImports": [
@@ -1093,13 +1173,11 @@
     "isEntry": true
   },
   "resources/js/compiled-table-component.js": {
-    "file": "assets/compiled-table-component-B8oPaYPu.js",
+    "file": "assets/compiled-table-component-Vu4DI_fF.js",
     "name": "compiled-table-component",
     "src": "resources/js/compiled-table-component.js",
     "isEntry": true,
     "imports": [
-      "_jquery-Czc5UB_B.js",
-      "_jquery-CED9k22g.js",
       "__commonjsHelpers-BosuxZz1.js"
     ]
   }
