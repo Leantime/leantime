@@ -358,6 +358,19 @@ window.addEventListener('hashchange', function () {
     leantime.modals.openModal();
 });
 
+// Re-initialise modal handlers after HTMX swaps (hx-boost navigation).
+// New content may contain hash links that missed the DOMContentLoaded pass.
+document.addEventListener('htmx:afterSettle', function (evt) {
+    var target = evt.detail.elt;
+    if (!target || !target.querySelectorAll) { return; }
+    var links = target.querySelectorAll('a.formModal, a.ticketModal, a[href^="#/"]');
+    if (links.length) {
+        leantime.modals.initNyroModal(links,
+            { callbacks: { beforeClose: function () { location.reload(); } } }
+        );
+    }
+});
+
 // Custom close events
 window.addEventListener('closeModal', function () {
     leantime.modals.closeModal();

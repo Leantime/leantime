@@ -107,9 +107,9 @@
 
                             <td data-order="{{ e($row['headline']) }}">
                                 @if($row['dependingTicketId'] > 0)
-                                    <small><a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}" preload="mouseover">{{ e($row['parentHeadline']) }}</a></small> //<br />
+                                    <small><a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}">{{ e($row['parentHeadline']) }}</a></small> //<br />
                                 @endif
-                                <a class="ticketModal" href="#/tickets/showTicket/{{ e($row['id']) }}" preload="mouseover">{{ e($row['headline']) }}</a>
+                                <a class="ticketModal" href="#/tickets/showTicket/{{ e($row['id']) }}">{{ e($row['headline']) }}</a>
                             </td>
 
                             @php

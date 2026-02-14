@@ -85,7 +85,7 @@
                 <div class="tw:flex-1 ticket-title ticket-title-wrapper">
                     <div class="title-text">
                         <small style="display:inline-block; ">{{ $ticket['projectName'] }}</small> <br/>
-                        <strong><a href="#/tickets/showTicket/{{ $ticket['id'] }}" preload="mouseover"
+                        <strong><a href="#/tickets/showTicket/{{ $ticket['id'] }}"
                                    class="ticket-headline-{{ $ticket['id'] }}">{{ $ticket['headline'] }}</a></strong>
                         &nbsp;<a href="javascript:void(0);" class="tw:hidden edit-button"
                                  data-tippy-content="{{ __('text.edit_task_headline') }}"><i class="fa fa-edit"></i></a>
