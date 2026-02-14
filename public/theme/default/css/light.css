@@ -394,13 +394,6 @@ input[type="checkbox"].toggle:focus-visible + .toggle-label {
     outline-offset: -2px;
 }
 
-/* TinyMCE Editor - Focus on iframe container */
-.tox-edit-area__iframe:focus-visible,
-.mce-content-body:focus-visible {
-    outline: 2px solid var(--accent1);
-    outline-offset: 2px;
-}
-
 /* Upload Buttons */
 .uppy-FileInput-btn:focus-visible,
 .date-picker-form-control .reset-button:focus-visible {

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiptap Editor Test Page</title>
+    <link rel="stylesheet" href="dist/css/tiptap-editor.3.6.0.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .test-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        button {
+            background: #5a67d8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #4c51bf; }
+        .output {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .status { padding: 10px; border-radius: 4px; margin-bottom: 20px; }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>Tiptap Editor Test Page</h1>
+    <p>This page tests the Tiptap editor implementation for Leantime.</p>
+
+    <div id="load-status" class="status info">Loading Tiptap editor...</div>
+
+    <div class="test-section">
+        <h2>1. Complex Editor (Tickets, Wiki, Projects)</h2>
+        <label for="complex-editor">Full-featured editor with tables, code blocks, etc.</label>
+        <textarea id="complex-editor" class="tiptapComplex"><p>This is <strong>bold</strong> and <em>italic</em> text.</p><ul><li>List item 1</li><li>List item 2</li></ul></textarea>
+        <div style="margin-top: 10px;">
+            <button onclick="getEditorContent('complex-editor')">Get HTML</button>
+            <button onclick="getEditorText('complex-editor')">Get Text</button>
+            <button onclick="insertContent('complex-editor', '<p>Inserted content!</p>')">Insert Content</button>
+        </div>
+        <div id="complex-editor-output" class="output"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Simple Editor (Comments)</h2>
+        <label for="simple-editor">Minimal editor for comments and quick notes.</label>
+        <textarea id="simple-editor" class="tiptapSimple"><p>A simple comment...</p></textarea>
+        <div style="margin-top: 10px;">
+            <button onclick="getEditorContent('simple-editor')">Get HTML</button>
+        </div>
+        <div id="simple-editor-output" class="output"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Notes Editor</h2>
+        <label for="notes-editor">Note-taking editor with autosave.</label>
+        <textarea id="notes-editor" class="tiptapNotes"><h2>My Note</h2><p>This is a note with a heading.</p></textarea>
+        <div style="margin-top: 10px;">
+            <button onclick="getEditorContent('notes-editor')">Get HTML</button>
+        </div>
+        <div id="notes-editor-output" class="output"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Test Controls</h2>
+        <button onclick="runTests()">Run All Tests</button>
+        <button onclick="destroyAll()">Destroy All Editors</button>
+        <button onclick="reinitialize()">Reinitialize Editors</button>
+        <button onclick="checkRegistry()">Check Registry</button>
+        <div id="test-output" class="output"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Form Submission Test</h2>
+        <form id="test-form" onsubmit="return handleFormSubmit(event)">
+            <label for="form-editor">Editor content syncs to textarea for form submission:</label>
+            <textarea id="form-editor" name="content" class="tiptapComplex"><p>Edit this and submit the form.</p></textarea>
+            <div style="margin-top: 10px;">
+                <button type="submit">Submit Form</button>
+            </div>
+        </form>
+        <div id="form-output" class="output"></div>
+    </div>
+
+    <!-- Load Tiptap -->
+    <script src="dist/js/compiled-tiptap-editor.3.6.0.min.js"></script>
+    <script src="dist/js/compiled-tiptap-tests.3.6.0.min.js"></script>
+
+    <script>
+        // Wait for DOM and Tiptap to load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var statusEl = document.getElementById('load-status');
+
+                if (window.leantime && window.leantime.tiptapController) {
+                    // Initialize editors
+                    var editors = window.leantime.tiptapController.initEditors(document);
+                    statusEl.className = 'status success';
+                    statusEl.textContent = 'Tiptap loaded successfully! Initialized ' + editors.length + ' editor(s).';
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = 'Error: Tiptap controller not found. Check console for errors.';
+                }
+            }, 100);
+        });
+
+        function getEditorContent(textareaId) {
+            var textarea = document.getElementById(textareaId);
+            var wrapper = textarea.nextElementSibling;
+            if (wrapper && wrapper.querySelector) {
+                var editorEl = wrapper.querySelector('.tiptap-editor');
+                if (editorEl) {
+                    var editor = window.leantime.tiptapController.registry.get(editorEl);
+                    if (editor) {
+                        var html = editor.getHTML();
+                        document.getElementById(textareaId + '-output').textContent = html;
+                        return;
+                    }
+                }
+            }
+            document.getElementById(textareaId + '-output').textContent = 'Editor not found';
+        }
+
+        function getEditorText(textareaId) {
+            var textarea = document.getElementById(textareaId);
+            var wrapper = textarea.nextElementSibling;
+            if (wrapper && wrapper.querySelector) {
+                var editorEl = wrapper.querySelector('.tiptap-editor');
+                if (editorEl) {
+                    var editor = window.leantime.tiptapController.registry.get(editorEl);
+                    if (editor) {
+                        var text = editor.getText();
+                        document.getElementById(textareaId + '-output').textContent = text;
+                        return;
+                    }
+                }
+            }
+            document.getElementById(textareaId + '-output').textContent = 'Editor not found';
+        }
+
+        function insertContent(textareaId, content) {
+            var textarea = document.getElementById(textareaId);
+            var wrapper = textarea.nextElementSibling;
+            if (wrapper && wrapper.querySelector) {
+                var editorEl = wrapper.querySelector('.tiptap-editor');
+                if (editorEl) {
+                    var editor = window.leantime.tiptapController.registry.get(editorEl);
+                    if (editor) {
+                        editor.commands.insertContent(content);
+                        document.getElementById(textareaId + '-output').textContent = 'Content inserted!';
+                        return;
+                    }
+                }
+            }
+            document.getElementById(textareaId + '-output').textContent = 'Editor not found';
+        }
+
+        function runTests() {
+            var output = document.getElementById('test-output');
+            output.textContent = 'Running tests...\n';
+
+            if (window.leantime && window.leantime.tiptapTests) {
+                var results = window.leantime.tiptapTests.runAll();
+                output.textContent = 'Tests complete!\n\n' +
+                    'Passed: ' + results.passed + '\n' +
+                    'Failed: ' + results.failed + '\n' +
+                    'Total: ' + results.total + '\n\n' +
+                    'Check browser console for detailed results.';
+            } else {
+                output.textContent = 'Test utilities not loaded';
+            }
+        }
+
+        function destroyAll() {
+            var output = document.getElementById('test-output');
+            var count = window.leantime.tiptapController.destroyAll();
+            output.textContent = 'Destroyed ' + count + ' editor(s)';
+        }
+
+        function reinitialize() {
+            var output = document.getElementById('test-output');
+            // Reset textareas
+            document.querySelectorAll('.tiptap-wrapper').forEach(function(wrapper) {
+                var textarea = wrapper.querySelector('textarea');
+                if (textarea) {
+                    textarea.removeAttribute('data-tiptap-initialized');
+                    textarea.style.display = '';
+                    wrapper.parentNode.insertBefore(textarea, wrapper);
+                    wrapper.remove();
+                }
+            });
+            // Reinitialize
+            var editors = window.leantime.tiptapController.initEditors(document);
+            output.textContent = 'Reinitialized ' + editors.length + ' editor(s)';
+        }
+
+        function checkRegistry() {
+            var output = document.getElementById('test-output');
+            var all = window.leantime.tiptapController.registry.getAll();
+            output.textContent = 'Registry contains ' + all.length + ' editor(s):\n\n';
+            all.forEach(function(item, i) {
+                output.textContent += (i + 1) + '. ' + (item.element.getAttribute('data-textarea-id') || 'unknown') + '\n';
+            });
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            var output = document.getElementById('form-output');
+            var textarea = document.getElementById('form-editor');
+            output.textContent = 'Form submitted!\n\nTextarea value:\n' + textarea.value;
+            return false;
+        }
+    </script>
+</body>
+</html>

@@ -248,11 +248,17 @@ $ticketTypes = $tpl->get('ticketTypes');
     jQuery(document).ready(function(){
         //Set accordion states
         //All accordions start open
-        leantime.editorController.initComplexEditor();
-        tinymce.activeEditor.hide()
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initComplexEditor();
+            // Hide the editor wrapper initially
+            jQuery('#descriptionEditor .tiptap-wrapper').hide();
+        }
     });
 
-    leantime.editorController.initComplexEditor();
+    // Initialize Tiptap complex editor
+    if (window.leantime && window.leantime.tiptapController) {
+        leantime.tiptapController.initComplexEditor();
+    }
 
     jQuery(".viewDescription").click(function(e){
 
@@ -261,7 +267,8 @@ $ticketTypes = $tpl->get('ticketTypes');
             jQuery(this).hide();
             jQuery('#descriptionEditor').show('fast',
                 function() {
-                    tinymce.activeEditor.show();
+                    // Show the Tiptap editor wrapper
+                    jQuery('#descriptionEditor .tiptap-wrapper').show();
                 }
             );
         }

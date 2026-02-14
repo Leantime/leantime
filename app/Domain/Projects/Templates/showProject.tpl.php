@@ -487,7 +487,9 @@ $state = $tpl->get('state');
         leantime.projectsController.initSelectFields();
         leantime.usersController.initUserEditModal();
 
-        leantime.editorController.initComplexEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initComplexEditor();
+        }
 
     });
 

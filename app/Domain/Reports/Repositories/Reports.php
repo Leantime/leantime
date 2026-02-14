@@ -112,9 +112,9 @@ class Reports
 
         // Timesheet Reports using query builder
         $timesheetQuery = $this->db->table('zp_tickets')
-            ->selectRaw('ROUND(CAST(SUM(zp_timesheets.hours) AS NUMERIC), 2) AS sum_logged_hours')
-            ->selectRaw('ROUND(CAST(SUM(zp_timesheets.hours) / NULLIF(COUNT(DISTINCT zp_tickets.id), 0) AS NUMERIC), 2) AS daily_avg_hours_booked_todo')
-            ->selectRaw('ROUND(CAST(SUM(zp_timesheets.hours) / ? AS NUMERIC), 2) AS daily_avg_hours_booked_point', [$storyPoints])
+            ->selectRaw('ROUND(CAST(SUM(zp_timesheets.hours) AS DECIMAL(10,2)), 2) AS sum_logged_hours')
+            ->selectRaw('ROUND(CAST(SUM(zp_timesheets.hours) / NULLIF(COUNT(DISTINCT zp_tickets.id), 0) AS DECIMAL(10,2)), 2) AS daily_avg_hours_booked_todo')
+            ->selectRaw('ROUND(CAST(SUM(zp_timesheets.hours) / ? AS DECIMAL(10,2)), 2) AS daily_avg_hours_booked_point', [$storyPoints])
             ->leftJoin('zp_timesheets', 'zp_tickets.id', '=', 'zp_timesheets.ticketId')
             ->where('projectId', $projectId)
             ->where('zp_tickets.type', '<>', 'subtask')
@@ -257,7 +257,7 @@ class Reports
                 $this->db->raw('SUM(sum_closed_todos) AS sum_closed_todos'),
                 $this->db->raw('SUM(sum_planned_hours) AS sum_planned_hours'),
                 $this->db->raw('SUM(sum_estremaining_hours) AS sum_estremaining_hours'),
-                $this->db->raw('ROUND(CAST(SUM(sum_logged_hours) AS NUMERIC), 2) AS sum_logged_hours'),
+                $this->db->raw('ROUND(CAST(SUM(sum_logged_hours) AS DECIMAL(10,2)), 2) AS sum_logged_hours'),
                 $this->db->raw('SUM(sum_points) AS sum_points'),
                 $this->db->raw('SUM(sum_points_done) AS sum_points_done'),
                 $this->db->raw('SUM(sum_points_progress) AS sum_points_progress'),
@@ -269,7 +269,7 @@ class Reports
                 $this->db->raw('SUM(sum_todos_xl) AS sum_todos_xl'),
                 $this->db->raw('SUM(sum_todos_xxl) AS sum_todos_xxl'),
                 $this->db->raw('SUM(sum_todos_none) AS sum_todos_none'),
-                $this->db->raw('SUM(CAST(tickets AS INTEGER)) AS tickets'),
+                $this->db->raw('SUM(CAST(tickets AS SIGNED)) AS tickets'),
                 $this->db->raw('SUM(daily_avg_hours_booked_todo) AS daily_avg_hours_booked_todo'),
                 $this->db->raw('SUM(daily_avg_hours_booked_point) AS daily_avg_hours_booked_point'),
                 $this->db->raw('SUM(daily_avg_hours_planned_todo) AS daily_avg_hours_planned_todo'),

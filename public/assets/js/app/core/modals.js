@@ -18,32 +18,22 @@ leantime.modals = (function () {
                 beforePostSubmit: function () {
 
                     jQuery(".showDialogOnLoad").show();
-                    console.log(tinymce.editors.length);
 
-                    if(tinymce.editors.length>0) {
-
-                        tinymce.editors.forEach(function(editor) {
-                            editor.save();
-                            editor.destroy();
-                            editor.remove();
-                        });
-
-                        tinymce.EditorManager.remove();
+                    // Destroy Tiptap editors
+                    if(window.leantime?.tiptapController?.registry) {
+                        var count = window.leantime.tiptapController.registry.destroyAll();
+                        if(count > 0) {
+                            console.log('[Modal] Destroyed', count, 'Tiptap editor(s)');
+                        }
                     }
 
                 },
                 beforeShowCont: function () {
                     jQuery(".showDialogOnLoad").show();
 
-                    if(tinymce.editors.length>0) {
-
-                        tinymce.editors.forEach(function(editor) {
-                            editor.save();
-                            editor.destroy();
-                            editor.remove();
-                        });
-
-                        tinymce.EditorManager.remove();
+                    // Destroy Tiptap editors
+                    if(window.leantime?.tiptapController?.registry) {
+                        window.leantime.tiptapController.registry.destroyAll();
                     }
 
                 },
@@ -51,6 +41,16 @@ leantime.modals = (function () {
                     window.htmx.process('.nyroModalCont');
                     jQuery(".formModal, .modal").nyroModal(modalOptions);
                     tippy('[data-tippy-content]');
+
+                    // Initialize Tiptap editors in modal (after small delay for DOM settlement)
+                    setTimeout(function() {
+                        if(window.leantime?.tiptapController?.initEditors) {
+                            var modalContent = document.querySelector('.nyroModalCont');
+                            if(modalContent) {
+                                window.leantime.tiptapController.initEditors(modalContent);
+                            }
+                        }
+                    }, 100);
                 },
                 beforeClose: function () {
                     try{

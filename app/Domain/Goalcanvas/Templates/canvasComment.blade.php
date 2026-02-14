@@ -49,7 +49,9 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 
-   leantime.editorController.initSimpleEditor();
+   if (window.leantime && window.leantime.tiptapController) {
+       leantime.tiptapController.initSimpleEditor();
+   }
 
    @if(!$login::userIsAtLeast($roles::$editor))
        leantime.authController.makeInputReadonly(".nyroModalCont");

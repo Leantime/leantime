@@ -1,27 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Leantime\Core\Support;
 
 /**
- * Enum class FromFormat
+ * Enum representing the available editor types in Leantime.
  *
- * An enumeration class representing various formats for date and time values.
+ * Each case maps to a specific editor configuration with varying feature sets.
  */
 enum EditorTypeEnum: string
 {
     /**
      * Shows a simplified editor used for comments
      */
-    case Simple = 'tinymceSimple';
+    case Simple = 'tiptapSimple';
 
     /**
      * Shows a more complex editor for entity descriptions
      */
-    case Complex = 'tinymceComplex';
+    case Complex = 'tiptapComplex';
 
     /**
-     * Shows the full editor with all featuers
+     * Shows the full editor with all features
      */
-    case Notes = 'tinymceNotes';
+    case Notes = 'tiptapNotes';
 
 }

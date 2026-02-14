@@ -151,7 +151,7 @@ $ticketTypes = $tpl->get('ticketTypes');
 
                 <div class="form-group" id="descriptionEditor">
                     <textarea name="description" id="ticketDescription"
-                              class="complexEditor"><?php echo $ticket->description !== null ? htmlentities($ticket->description) : ''; ?></textarea><br/>
+                              class="tiptapComplex"><?php echo $ticket->description !== null ? htmlentities($ticket->description) : ''; ?></textarea><br/>
                 </div>
                 <input type="hidden" name="acceptanceCriteria" value=""/>
 
@@ -389,12 +389,11 @@ $ticketTypes = $tpl->get('ticketTypes');
     jQuery(document).ready(function(){
         //Set accordion states
         //All accordions start open
-        leantime.editorController.initComplexEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initComplexEditor();
+        }
 
+        Prism.highlightAll();
     });
-
-    leantime.editorController.initComplexEditor();
-
-    Prism.highlightAll();
 
 </script>

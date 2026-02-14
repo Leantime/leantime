@@ -31,7 +31,7 @@ $menuTypes = $tpl->get('menuTypes');
                         <?php echo $tpl->__('label.accomplish'); ?>
                         <br /><br />
                     </p>
-                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
+                    <textarea name="details" id="details" class="tiptapComplex" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
                 </div>
             </div>
             <div class="row padding-top">
