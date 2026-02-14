@@ -24,6 +24,10 @@
 
 @dispatchEvent('afterLinkTags')
 
+{{-- jQuery must load as a classic (non-module) script so inline scripts can use it.
+     Vite outputs type="module" which is deferred, causing "jQuery is not defined" errors. --}}
+<script src="{!! BASE_URL !!}/dist/jquery.min.js"></script>
+
 <script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
 @vite([
@@ -97,5 +101,6 @@
 
 
 <script>
+    window.leantime = window.leantime || {};
     window.leantime.currentProject = '{{ session("currentProject") }}';
 </script>

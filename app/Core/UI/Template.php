@@ -246,14 +246,29 @@ class Template
 
         /** @todo this can be reduced to just the 'if' code after removal of php template support */
         if (str_ends_with($path, 'blade.php')) {
-            $view->with(array_merge(
-                $this->vars,
-                [
-                    'layout' => $layout,
-                    'module' => strtolower($templateParts['module']),
-                    'action' => $templateParts['path'],
-                ]
-            ));
+            // Detect if template uses @extends (Blade inheritance).
+            // Templates WITH @extends handle their own layout wrapping via Blade sections.
+            // Templates WITHOUT @extends need the layout to @include them.
+            $usesExtends = str_contains(file_get_contents($path), '@extends');
+
+            if ($usesExtends) {
+                // Template manages its own layout — pass $layout for @extends($layout)
+                // but do NOT pass $module/$action so the layout won't re-include this template.
+                $view->with(array_merge(
+                    $this->vars,
+                    ['layout' => $layout]
+                ));
+            } else {
+                // Template has no @extends — render the LAYOUT as the main view
+                // and let it @include the template via $module/$action.
+                $view = app('view')->make($layout, array_merge(
+                    $this->vars,
+                    [
+                        'module' => strtolower($templateParts['module']),
+                        'action' => $templateParts['path'],
+                    ]
+                ));
+            }
         } else {
             $view = app('view')->make($layout, array_merge(
                 $this->vars,
