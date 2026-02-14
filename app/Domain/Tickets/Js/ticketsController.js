@@ -1938,9 +1938,9 @@ leantime.ticketsController = (function () {
 
     var loadTicketToContainer = function (id, element) {
 
-        if (jQuery('textarea.complexEditor').length > 0 && jQuery('textarea.complexEditor').tinymce() !== null) {
-            jQuery('textarea.complexEditor').tinymce().save();
-            jQuery('textarea.complexEditor').tinymce().remove();
+        // Destroy any Tiptap editors before loading new content
+        if (window.leantime && window.leantime.tiptapController && window.leantime.tiptapController.registry) {
+            leantime.tiptapController.registry.destroyAll();
         }
 
         jQuery(".ticketRows").removeClass("active");
@@ -1957,9 +1957,9 @@ leantime.ticketsController = (function () {
 
                     e.preventDefault();
 
-                    if (jQuery('textarea.complexEditor').length > 0 && jQuery('textarea.complexEditor').tinymce() !== null) {
-                        jQuery('textarea.complexEditor').tinymce().save();
-                        jQuery('textarea.complexEditor').tinymce().remove();
+                    // Destroy any Tiptap editors before submitting
+                    if (window.leantime && window.leantime.tiptapController && window.leantime.tiptapController.registry) {
+                        leantime.tiptapController.registry.destroyAll();
                     }
 
                     jQuery(element).html("<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px'/></div>");

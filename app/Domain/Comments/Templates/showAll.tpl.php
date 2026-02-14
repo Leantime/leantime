@@ -26,7 +26,7 @@ if (str_contains($formUrl, '?delComment=')) {
     </a>
 
     <div id="comment0" class="commentBox">
-        <textarea rows="5" cols="50" class="tinymceSimple"
+        <textarea rows="5" cols="50" class="tiptapSimple"
                   name="text"></textarea><br/>
         <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>"
                name="comment" class="btn btn-default btn-success"
@@ -53,19 +53,23 @@ if (str_contains($formUrl, '?delComment=')) {
                     </strong><br/>
                     <div style="margin-left:60px;"><?php echo $row['text']; ?></div>
                     <div class="clear"></div>
-                    <div style="padding-left:60px">
+                    <div style="padding-left:60px" class="commentLinks">
                         <a href="javascript:void(0);" class="replyButton"
                            onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
                             <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                         </a>
 
                         <?php if ($row['userId'] == session('userdata.id')) { ?>
-                            |
                             <a href="<?php echo $deleteUrlBase.$row['id'] ?>"
                                class="deleteComment">
                                 <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                             </a>
                         <?php } ?>
+                        <span class="comment-reactions" id="reactions-<?= $row['id'] ?>"
+                             hx-get="<?= BASE_URL ?>/hx/comments/reactions/get?commentId=<?= $row['id'] ?>"
+                             hx-trigger="load"
+                             hx-swap="outerHTML">
+                        </span>
                         <div style="display:none;"
                              id="comment<?php echo $row['id']; ?>"
                              class="commentBox">
@@ -96,13 +100,18 @@ if (str_contains($formUrl, '?delComment=')) {
                                 <p style="margin-left:60px;"><?php echo nl2br($comment['text']); ?></p>
                                 <div class="clear"></div>
 
-                                <div style="padding-left:60px">
+                                <div style="padding-left:60px" class="commentLinks">
                                     <?php if ($comment['userId'] == session('userdata.id')) { ?>
                                         <a href="<?php echo $deleteUrlBase.$comment['id'] ?>"
                                            class="deleteComment">
                                             <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                         </a>
                                     <?php } ?>
+                                    <span class="comment-reactions" id="reactions-<?= $comment['id'] ?>"
+                                         hx-get="<?= BASE_URL ?>/hx/comments/reactions/get?commentId=<?= $comment['id'] ?>"
+                                         hx-trigger="load"
+                                         hx-swap="outerHTML">
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -124,8 +133,10 @@ if (str_contains($formUrl, '?delComment=')) {
 
 <script type='text/javascript'>
 
-
-    leantime.editorController.initSimpleEditor();
+    // Initialize Tiptap simple editor
+    if (window.leantime && window.leantime.tiptapController) {
+        leantime.tiptapController.initSimpleEditor();
+    }
 
     function toggleCommentBoxes(id) {
         <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
@@ -134,10 +145,27 @@ if (str_contains($formUrl, '?delComment=')) {
             } else {
                 jQuery('#mainToggler').show();
             }
+
+            // Destroy existing Tiptap editors before removing textareas
+            jQuery('.commentBox').each(function() {
+                var wrapper = jQuery(this).find('.tiptap-wrapper');
+                if (wrapper.length && window.leantime && window.leantime.tiptapController) {
+                    leantime.tiptapController.registry.destroyWithin(wrapper[0]);
+                }
+            });
+
             jQuery('.commentBox').hide('fast', function () {
+                // Remove both textarea and any tiptap wrapper
                 jQuery('.commentBox textarea').remove();
-                jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-                leantime.editorController.initSimpleEditor();
+                jQuery('.commentBox .tiptap-wrapper').remove();
+
+                // Create new textarea with tiptapSimple class
+                jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tiptapSimple"></textarea>');
+
+                // Initialize Tiptap editor on the new textarea
+                if (window.leantime && window.leantime.tiptapController) {
+                    leantime.tiptapController.initSimpleEditor();
+                }
             });
 
             jQuery('#comment' + id + '').show('fast');
@@ -145,7 +173,70 @@ if (str_contains($formUrl, '?delComment=')) {
         <?php } ?>
     }
 
+    // Reaction emoji picker - uses keys that map to the Reactions model
+    var reactionOptions = [
+        { key: 'like', emoji: '👍' },
+        { key: 'love', emoji: '❤️' },
+        { key: 'celebrate', emoji: '🎉' },
+        { key: 'funny', emoji: '😄' },
+        { key: 'interesting', emoji: '🤔' },
+        { key: 'support', emoji: '💯' }
+    ];
+    var activeReactionPicker = null;
 
+    function toggleReactionPicker(btn, commentId) {
+        // Close any existing picker
+        if (activeReactionPicker) {
+            activeReactionPicker.remove();
+            activeReactionPicker = null;
+        }
 
+        // Create picker element
+        var picker = document.createElement('div');
+        picker.className = 'reaction-emoji-picker show';
+        picker.innerHTML = '<div class="reaction-emoji-picker__grid">' +
+            reactionOptions.map(function(r) {
+                return '<button type="button" class="reaction-emoji-picker__btn" ' +
+                    'onclick="addReaction(\'' + r.key + '\', ' + commentId + ')">' +
+                    r.emoji + '</button>';
+            }).join('') +
+        '</div>';
+
+        // Position the picker near the button
+        var btnRect = btn.getBoundingClientRect();
+        picker.style.position = 'fixed';
+        picker.style.left = btnRect.left + 'px';
+        picker.style.top = (btnRect.bottom + 5) + 'px';
+
+        document.body.appendChild(picker);
+        activeReactionPicker = picker;
+
+        // Close on click outside
+        setTimeout(function() {
+            document.addEventListener('click', closeReactionPicker);
+        }, 0);
+    }
+
+    function closeReactionPicker(e) {
+        if (activeReactionPicker && !activeReactionPicker.contains(e.target) && !e.target.classList.contains('add-reaction-btn')) {
+            activeReactionPicker.remove();
+            activeReactionPicker = null;
+            document.removeEventListener('click', closeReactionPicker);
+        }
+    }
+
+    function addReaction(reactionKey, commentId) {
+        if (activeReactionPicker) {
+            activeReactionPicker.remove();
+            activeReactionPicker = null;
+        }
+
+        // Make HTMX request to toggle reaction
+        htmx.ajax('POST', '<?= BASE_URL ?>/hx/comments/reactions/toggle?commentId=' + commentId, {
+            values: { reaction: reactionKey },
+            target: '#reactions-' + commentId,
+            swap: 'outerHTML'
+        });
+    }
 
 </script>

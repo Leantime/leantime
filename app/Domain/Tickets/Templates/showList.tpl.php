@@ -69,7 +69,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
 
                     <?php foreach ($allTicketGroups as $group) {?>
                         <?php if ($group['label'] != 'all') { ?>
-                            <h5 class="accordionTitle <?= $group['class']?>" id="accordion_link_<?= $group['id'] ?>">
+                            <h5 class="accordionTitle <?= $group['class']?>" <?php if (! empty($group['color'])) { ?>style="color:<?= htmlspecialchars($group['color']) ?>"<?php } ?> id="accordion_link_<?= $group['id'] ?>">
                                 <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?= $group['id'] ?>" onclick="leantime.snippets.accordionToggle('<?= $group['id'] ?>');">
                                     <i class="fa fa-angle-down"></i><?= $group['label'] ?> (<?= count($group['items']) ?>)
                                 </a>

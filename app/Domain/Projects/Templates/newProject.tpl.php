@@ -53,7 +53,7 @@ $project = $tpl->get('project');
                                         <?php echo $tpl->__('label.describe_outcome'); ?>
                                         <br /><br />
                                     </p>
-                                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
+                                    <textarea name="details" id="details" class="tiptapComplex" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
 
                                 </div>
                             </div>
@@ -163,7 +163,9 @@ $project = $tpl->get('project');
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
 
         leantime.projectsController.initProjectTabs();
-        leantime.editorController.initComplexEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initComplexEditor();
+        }
 
         }
     );

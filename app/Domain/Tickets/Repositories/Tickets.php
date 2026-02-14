@@ -288,7 +288,10 @@ class Tickets
             ->leftJoin('zp_projects as project', 'ticket.projectId', '=', 'project.id')
             ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id')
             ->leftJoin('zp_user as t1', 'ticket.userId', '=', 't1.id')
-            ->leftJoin('zp_user as t2', 'ticket.editorId', '=', 't2.id')
+            ->leftJoin('zp_user as t2', function ($join) {
+                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
+                $join->on('ticket.editorId', '=', $this->connection->raw("CAST(\"t2\".\"id\" AS {$castType})"));
+            })
             ->where(function ($q) use ($id, $user) {
                 $q->whereIn('ticket.projectId', function ($subquery) use ($id) {
                     $subquery->select('projectId')
@@ -365,23 +368,26 @@ class Tickets
                 'parent.headline as parentHeadline',
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
-            ->selectRaw("CASE WHEN (milestone.tags IS NULL OR milestone.tags = '') THEN 'var(--grey)' ELSE milestone.tags END AS milestoneColor")
-            ->selectRaw('COALESCE(ROUND(timesheet_agg.total_hours, 2), 0) AS bookedHours');
+            ->selectRaw("CASE WHEN (\"milestone\".\"tags\" IS NULL OR \"milestone\".\"tags\" = '') THEN 'var(--grey)' ELSE \"milestone\".\"tags\" END AS \"milestoneColor\"")
+            ->selectRaw('COALESCE(ROUND(CAST(timesheet_agg.total_hours AS DECIMAL(10,2)), 2), 0) AS "bookedHours"');
 
         if ($includeCounts) {
-            $query->selectRaw('COALESCE(comment_agg.comment_count, 0) AS commentCount')
-                ->selectRaw('COALESCE(file_agg.file_count, 0) AS fileCount')
-                ->selectRaw('COALESCE(subtask_agg.subtask_count, 0) AS subtaskCount');
+            $query->selectRaw('COALESCE(comment_agg.comment_count, 0) AS "commentCount"')
+                ->selectRaw('COALESCE(file_agg.file_count, 0) AS "fileCount"')
+                ->selectRaw('COALESCE(subtask_agg.subtask_count, 0) AS "subtaskCount"');
         } else {
-            $query->selectRaw('0 AS commentCount')
-                ->selectRaw('0 AS fileCount')
-                ->selectRaw('0 AS subtaskCount');
+            $query->selectRaw('0 AS "commentCount"')
+                ->selectRaw('0 AS "fileCount"')
+                ->selectRaw('0 AS "subtaskCount"');
         }
 
         $query->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_user as t1', 'zp_tickets.userId', '=', 't1.id')
-            ->leftJoin('zp_user as t2', 'zp_tickets.editorId', '=', 't2.id')
+            ->leftJoin('zp_user as t2', function ($join) {
+                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw("CAST(\"t2\".\"id\" AS {$castType})"));
+            })
             ->leftJoin('zp_user as requestor', function ($join) use ($requestorId) {
                 $join->on('requestor.id', '=', $this->connection->raw((int) $requestorId));
             })
@@ -507,8 +513,21 @@ class Tickets
                         $query->whereIn('zp_tickets.status', $statusList);
                     }
                 }
+            } elseif (array_search('done', $statusArray) !== false) {
+                if ($searchCriteria['currentProject'] != '') {
+                    $statusLabels = $this->getStateLabels($searchCriteria['currentProject']);
+                    $statusList = [];
+                    foreach ($statusLabels as $key => $status) {
+                        if ($status['statusType'] === 'DONE') {
+                            $statusList[] = $key;
+                        }
+                    }
+                    if (! empty($statusList)) {
+                        $query->whereIn('zp_tickets.status', $statusList);
+                    }
+                }
             } else {
-                $statuses = explode(',', $searchCriteria['status']);
+                $statuses = array_map('intval', explode(',', $searchCriteria['status']));
                 $query->whereIn('zp_tickets.status', $statuses);
             }
         } else {
@@ -545,12 +564,38 @@ class Tickets
         if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] == 'backlog') {
             $query->where(function ($q) {
                 $q->whereNull('zp_tickets.sprint')
-                    ->orWhere('zp_tickets.sprint', '')
+                    ->orWhere('zp_tickets.sprint', 0)
                     ->orWhere('zp_tickets.sprint', -1);
             });
         }
 
-        $query->groupBy('zp_tickets.id');
+        $groupByColumns = [
+            'zp_tickets.id',
+            'zp_sprints.name',
+            'zp_projects.name',
+            'zp_clients.name',
+            'zp_clients.id',
+            't1.id',
+            't1.lastname',
+            't1.firstname',
+            't1.profileId',
+            't2.firstname',
+            't2.lastname',
+            't2.profileId',
+            'milestone.headline',
+            'milestone.tags',
+            'parent.headline',
+            'zp_tickets.type',
+            'timesheet_agg.total_hours',
+        ];
+
+        if ($includeCounts) {
+            $groupByColumns[] = 'comment_agg.comment_count';
+            $groupByColumns[] = 'file_agg.file_count';
+            $groupByColumns[] = 'subtask_agg.subtask_count';
+        }
+
+        $query->groupBy($groupByColumns);
 
         // Apply sorting
         if ($sort == 'standard') {
@@ -560,7 +605,7 @@ class Tickets
             $query->orderBy('zp_tickets.kanbanSortIndex', 'ASC')
                 ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'duedate') {
-            $query->orderByRaw("(zp_tickets.dateToFinish = '0000-00-00 00:00:00')")
+            $query->orderByRaw('("zp_tickets"."dateToFinish" IS NULL)')
                 ->orderBy('zp_tickets.dateToFinish', 'ASC')
                 ->orderBy('zp_tickets.sortindex', 'ASC')
                 ->orderByDesc('zp_tickets.id');
@@ -650,7 +695,7 @@ class Tickets
 
         if (isset($userId) && $userId > 0) {
             $query->where(function ($q) use ($userId) {
-                $q->where('zp_tickets.editorId', $userId)
+                $q->where('zp_tickets.editorId', (string) $userId)
                     ->orWhere('er.entityB', $userId);
             });
         }
@@ -716,7 +761,7 @@ class Tickets
             ->where('zp_tickets.type', '<>', 'milestone');
 
         if (isset($userId)) {
-            $query->where('zp_tickets.editorId', $userId);
+            $query->where('zp_tickets.editorId', (string) $userId);
         }
 
         $query->where(function ($q) use ($dateFrom, $dateTo) {
@@ -765,7 +810,10 @@ class Tickets
             ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
-            ->leftJoin('zp_user as t3', 'zp_tickets.editorId', '=', 't3.id')
+            ->leftJoin('zp_user as t3', function ($join) {
+                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw("CAST(\"t3\".\"id\" AS {$castType})"));
+            })
             ->where('zp_tickets.projectId', $projectId)
             ->get();
 
@@ -838,7 +886,10 @@ class Tickets
             ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
-            ->leftJoin('zp_user as t3', 'zp_tickets.editorId', '=', 't3.id')
+            ->leftJoin('zp_user as t3', function ($join) {
+                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw("CAST(\"t3\".\"id\" AS {$castType})"));
+            })
             ->leftJoin('zp_tickets as parent', 'zp_tickets.dependingTicketId', '=', 'parent.id')
             ->leftJoin('zp_tickets as milestones', 'zp_tickets.milestoneid', '=', 'milestones.id')
             ->where('zp_tickets.id', $id)
@@ -868,9 +919,9 @@ class Tickets
         };
 
         $dateToFinishFormatSql = match ($this->dbHelper->getDriverName()) {
-            'mysql' => "DATE_FORMAT(zp_tickets.dateToFinish, '%Y,%m,%e')",
-            'pgsql' => "TO_CHAR(zp_tickets.dateToFinish, 'YYYY,MM,DD')",
-            default => "DATE_FORMAT(zp_tickets.dateToFinish, '%Y,%m,%e')",
+            'mysql' => "DATE_FORMAT(zp_tickets.\"dateToFinish\", '%Y,%m,%e')",
+            'pgsql' => "TO_CHAR(zp_tickets.\"dateToFinish\", 'YYYY,MM,DD')",
+            default => "DATE_FORMAT(zp_tickets.\"dateToFinish\", '%Y,%m,%e')",
         };
 
         $results = $this->connection->table('zp_tickets')
@@ -902,14 +953,17 @@ class Tickets
                 't3.lastname as editorLastname',
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
-            ->selectRaw("{$dateFormatSql} AS timelineDate")
-            ->selectRaw("{$dateToFinishFormatSql} AS timelineDateToFinish")
-            ->selectRaw('COALESCE(zp_tickets.hourRemaining, 0) AS hourRemaining')
-            ->selectRaw('COALESCE(zp_tickets.planHours, 0) AS planHours')
+            ->selectRaw("{$dateFormatSql} AS \"timelineDate\"")
+            ->selectRaw("{$dateToFinishFormatSql} AS \"timelineDateToFinish\"")
+            ->selectRaw('COALESCE("zp_tickets"."hourRemaining", 0) AS "hourRemaining"')
+            ->selectRaw('COALESCE("zp_tickets"."planHours", 0) AS "planHours"')
             ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
-            ->leftJoin('zp_user as t3', 'zp_tickets.editorId', '=', 't3.id')
+            ->leftJoin('zp_user as t3', function ($join) {
+                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw("CAST(\"t3\".\"id\" AS {$castType})"));
+            })
             ->where('zp_tickets.dependingTicketId', $id)
             ->orderByDesc('zp_tickets.date')
             ->get();
@@ -948,14 +1002,17 @@ class Tickets
                 't3.lastname as editorLastname',
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
-            ->selectRaw($this->dbHelper->formatDate('zp_tickets.date', '%Y,%m,%e').' AS timelineDate')
-            ->selectRaw($this->dbHelper->formatDate('zp_tickets.dateToFinish', '%Y,%m,%e').' AS timelineDateToFinish')
-            ->selectRaw('COALESCE(zp_tickets.hourRemaining, 0) AS hourRemaining')
-            ->selectRaw('COALESCE(zp_tickets.planHours, 0) AS planHours')
+            ->selectRaw($this->dbHelper->formatDate('zp_tickets.date', '%Y,%m,%e').' AS "timelineDate"')
+            ->selectRaw($this->dbHelper->formatDate('"zp_tickets"."dateToFinish"', '%Y,%m,%e').' AS "timelineDateToFinish"')
+            ->selectRaw('COALESCE("zp_tickets"."hourRemaining", 0) AS "hourRemaining"')
+            ->selectRaw('COALESCE("zp_tickets"."planHours", 0) AS "planHours"')
             ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
-            ->leftJoin('zp_user as t3', 'zp_tickets.editorId', '=', 't3.id')
+            ->leftJoin('zp_user as t3', function ($join) {
+                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw("CAST(\"t3\".\"id\" AS {$castType})"));
+            })
             ->where('zp_tickets.id', '<>', $ticket->id ?? 0)
             ->where('zp_tickets.type', '<>', 'milestone')
             ->where(function ($q) use ($ticket) {
@@ -1015,7 +1072,7 @@ class Tickets
                 'zp_tickets.url',
                 'zp_tickets.editFrom',
                 'zp_tickets.editTo',
-                'zp_tickets.sortIndex',
+                'zp_tickets.sortindex',
                 'zp_tickets.dependingTicketId',
                 'zp_tickets.milestoneid',
                 'zp_projects.name as projectName',
@@ -1028,15 +1085,18 @@ class Tickets
                 'depMilestone.headline as milestoneHeadline',
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
-            ->selectRaw($this->dbHelper->formatDate('zp_tickets.date', '%Y,%m,%e').' AS timelineDate')
-            ->selectRaw($this->dbHelper->formatDate('zp_tickets.dateToFinish', '%Y,%m,%e').' AS timelineDateToFinish')
-            ->selectRaw("CASE WHEN (depMilestone.tags IS NULL OR depMilestone.tags = '') THEN 'var(--grey)' ELSE depMilestone.tags END AS milestoneColor")
+            ->selectRaw($this->dbHelper->formatDate('zp_tickets.date', '%Y,%m,%e').' AS "timelineDate"')
+            ->selectRaw($this->dbHelper->formatDate('"zp_tickets"."dateToFinish"', '%Y,%m,%e').' AS "timelineDateToFinish"')
+            ->selectRaw("CASE WHEN (\"depMilestone\".\"tags\" IS NULL OR \"depMilestone\".\"tags\" = '') THEN 'var(--grey)' ELSE \"depMilestone\".\"tags\" END AS \"milestoneColor\"")
             ->selectRaw("CASE WHEN (zp_tickets.tags IS NULL OR zp_tickets.tags = '') THEN 'var(--grey)' ELSE zp_tickets.tags END AS tags")
             ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
             ->leftJoin('zp_tickets as depMilestone', 'zp_tickets.milestoneid', '=', 'depMilestone.id')
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
-            ->leftJoin('zp_user as t3', 'zp_tickets.editorId', '=', 't3.id')
+            ->leftJoin('zp_user as t3', function ($join) {
+                $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw("CAST(\"t3\".\"id\" AS {$castType})"));
+            })
             ->leftJoin('zp_user as requestor', function ($join) use ($requestorId) {
                 $join->on('requestor.id', '=', $this->connection->raw((int) $requestorId));
             })
@@ -1096,8 +1156,21 @@ class Tickets
                         $query->whereIn('zp_tickets.status', $statusList);
                     }
                 }
+            } elseif (array_search('done', $statusArray) !== false) {
+                if ($searchCriteria['currentProject'] != '') {
+                    $statusLabels = $this->getStateLabels($searchCriteria['currentProject']);
+                    $statusList = [];
+                    foreach ($statusLabels as $key => $status) {
+                        if ($status['statusType'] === 'DONE') {
+                            $statusList[] = $key;
+                        }
+                    }
+                    if (! empty($statusList)) {
+                        $query->whereIn('zp_tickets.status', $statusList);
+                    }
+                }
             } else {
-                $statuses = explode(',', $searchCriteria['status']);
+                $statuses = array_map('intval', explode(',', $searchCriteria['status']));
                 $query->whereIn('zp_tickets.status', $statuses);
             }
         } else {
@@ -1137,13 +1210,24 @@ class Tickets
         if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] == 'backlog') {
             $query->where(function ($q) {
                 $q->whereNull('zp_tickets.sprint')
-                    ->orWhere('zp_tickets.sprint', '')
+                    ->orWhere('zp_tickets.sprint', 0)
                     ->orWhere('zp_tickets.sprint', -1)
                     ->orWhere('zp_tickets.type', 'milestone');
             });
         }
 
-        $query->groupBy('zp_tickets.id');
+        $query->groupBy([
+            'zp_tickets.id',
+            'zp_projects.name',
+            'zp_clients.name',
+            'zp_user.firstname',
+            'zp_user.lastname',
+            't3.firstname',
+            't3.lastname',
+            't3.profileId',
+            'depMilestone.headline',
+            'depMilestone.tags',
+        ]);
 
         // Apply sorting
         if ($sort == 'standard') {
@@ -1154,7 +1238,7 @@ class Tickets
             $query->orderBy('zp_tickets.kanbanSortIndex', 'ASC')
                 ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'duedate') {
-            $query->orderByRaw("(zp_tickets.dateToFinish = '0000-00-00 00:00:00')")
+            $query->orderByRaw('("zp_tickets"."dateToFinish" IS NULL)')
                 ->orderBy('zp_tickets.dateToFinish', 'ASC')
                 ->orderBy('zp_tickets.sortindex', 'ASC')
                 ->orderByDesc('zp_tickets.id');
@@ -1229,8 +1313,8 @@ class Tickets
                 'zp_tickets.milestoneid',
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
-            ->selectRaw($this->dbHelper->formatDate('zp_tickets.date', '%Y,%m,%e').' AS timelineDate')
-            ->selectRaw($this->dbHelper->formatDate('zp_tickets.dateToFinish', '%Y,%m,%e').' AS timelineDateToFinish')
+            ->selectRaw($this->dbHelper->formatDate('zp_tickets.date', '%Y,%m,%e').' AS "timelineDate"')
+            ->selectRaw($this->dbHelper->formatDate('"zp_tickets"."dateToFinish"', '%Y,%m,%e').' AS "timelineDateToFinish"')
             ->where('zp_tickets.type', '<>', 'milestone')
             ->where('zp_tickets.projectId', $projectId)
             ->orderBy('zp_tickets.date', 'ASC')
@@ -1299,7 +1383,7 @@ class Tickets
         $statusGroups = $this->dbHelper->parseStatusGroups($statusGroupsSQL);
 
         $query = $this->connection->table('zp_tickets')
-            ->selectRaw("SUM(CASE WHEN zp_tickets.storypoints <> '' THEN zp_tickets.storypoints ELSE ? END) AS allEffort", [$averageStorySize])
+            ->selectRaw('SUM(CASE WHEN zp_tickets.storypoints IS NOT NULL AND zp_tickets.storypoints <> 0 THEN zp_tickets.storypoints ELSE ? END) AS "allEffort"', [$averageStorySize])
             ->where('zp_tickets.type', '<>', 'milestone')
             ->where('zp_tickets.projectId', $projectId);
 
@@ -1317,7 +1401,7 @@ class Tickets
     public function getEffortOfAllTickets($projectId, $averageStorySize): mixed
     {
         $result = $this->connection->table('zp_tickets')
-            ->selectRaw("SUM(CASE WHEN zp_tickets.storypoints <> '' THEN zp_tickets.storypoints ELSE ? END) AS allEffort", [$averageStorySize])
+            ->selectRaw('SUM(CASE WHEN zp_tickets.storypoints IS NOT NULL AND zp_tickets.storypoints <> 0 THEN zp_tickets.storypoints ELSE ? END) AS "allEffort"', [$averageStorySize])
             ->where('zp_tickets.type', '<>', 'milestone')
             ->where('zp_tickets.projectId', $projectId)
             ->first();
@@ -1328,9 +1412,9 @@ class Tickets
     public function getAverageTodoSize($projectId): mixed
     {
         $result = $this->connection->table('zp_tickets')
-            ->selectRaw('AVG(zp_tickets.storypoints) as avgSize')
+            ->selectRaw('AVG(zp_tickets.storypoints) as "avgSize"')
             ->where('zp_tickets.type', '<>', 'milestone')
-            ->where('zp_tickets.storypoints', '<>', '')
+            ->where('zp_tickets.storypoints', '<>', 0)
             ->whereNotNull('zp_tickets.storypoints')
             ->where('zp_tickets.projectId', $projectId)
             ->first();
@@ -1362,10 +1446,10 @@ class Tickets
             'editFrom' => $values['editFrom'],
             'editTo' => $values['editTo'],
             'editorId' => $values['editorId'],
-            'dependingTicketId' => $values['dependingTicketId'] ?? '',
-            'milestoneid' => $values['milestoneid'] ?? '',
-            'sortindex' => $values['sortIndex'] ?? '',
-            'kanbanSortindex' => 0,
+            'dependingTicketId' => $values['dependingTicketId'] ?? null,
+            'milestoneid' => $values['milestoneid'] ?? null,
+            'sortindex' => $values['sortIndex'] ?? null,
+            'kanbanSortIndex' => 0,
             'modified' => dtHelper()->userNow()->formatDateTimeForDb(),
         ]);
 

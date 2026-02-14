@@ -49,13 +49,13 @@ class Reports
 
         // Select sprint column or -1 based on whether sprintId is provided
         if ($sprintId !== '') {
-            $query->selectRaw('sprint AS sprintId');
+            $query->selectRaw('sprint AS "sprintId"');
         } else {
-            $query->selectRaw('-1 AS sprintId');
+            $query->selectRaw('-1 AS "sprintId"');
         }
 
         // Build the select statement with cross-database functions
-        $query->selectRaw('projectId')
+        $query->selectRaw('"projectId"')
             ->selectRaw("{$yesterdayDate} AS date")
             ->selectRaw('COUNT(DISTINCT zp_tickets.id) AS sum_todos')
             ->selectRaw(
@@ -67,8 +67,8 @@ class Reports
             ->selectRaw(
                 'SUM(CASE WHEN status IN ('.implode(',', $statusGroups['DONE'] ?: [0]).') THEN 1 ELSE 0 END) AS sum_closed_todos'
             )
-            ->selectRaw('SUM(planHours) AS sum_planned_hours')
-            ->selectRaw('SUM(hourRemaining) AS sum_estremaining_hours')
+            ->selectRaw('SUM("planHours") AS sum_planned_hours')
+            ->selectRaw('SUM("hourRemaining") AS sum_estremaining_hours')
             ->selectRaw('SUM(zp_tickets.storypoints) AS sum_points')
             ->selectRaw(
                 'SUM(CASE WHEN status IN ('.implode(',', $statusGroups['NEW'] ?: [0]).') THEN zp_tickets.storypoints ELSE 0 END) AS sum_points_open'
@@ -85,12 +85,12 @@ class Reports
             ->selectRaw('SUM(CASE WHEN zp_tickets.storypoints = 5 THEN 1 ELSE 0 END) AS sum_todos_l')
             ->selectRaw('SUM(CASE WHEN zp_tickets.storypoints = 8 THEN 1 ELSE 0 END) AS sum_todos_xl')
             ->selectRaw('SUM(CASE WHEN zp_tickets.storypoints = 13 THEN 1 ELSE 0 END) AS sum_todos_xxl')
-            ->selectRaw("SUM(CASE WHEN zp_tickets.storypoints = '' OR zp_tickets.storypoints IS NULL THEN 1 ELSE 0 END) AS sum_todos_none")
+            ->selectRaw('SUM(CASE WHEN zp_tickets.storypoints IS NULL OR zp_tickets.storypoints = 0 THEN 1 ELSE 0 END) AS sum_todos_none')
             ->selectRaw("{$ticketIds} AS tickets")
-            ->selectRaw('SUM(planHours) / COUNT(zp_tickets.id) AS daily_avg_hours_planned_todo')
-            ->selectRaw('SUM(planHours) / NULLIF(SUM(zp_tickets.storypoints), 0) AS daily_avg_hours_planned_point')
-            ->selectRaw('SUM(hourRemaining) / COUNT(zp_tickets.id) AS daily_avg_hours_remaining_todo')
-            ->selectRaw('SUM(hourRemaining) / NULLIF(SUM(zp_tickets.storypoints), 0) AS daily_avg_hours_remaining_point')
+            ->selectRaw('SUM("planHours") / COUNT(zp_tickets.id) AS daily_avg_hours_planned_todo')
+            ->selectRaw('SUM("planHours") / NULLIF(SUM(zp_tickets.storypoints), 0) AS daily_avg_hours_planned_point')
+            ->selectRaw('SUM("hourRemaining") / COUNT(zp_tickets.id) AS daily_avg_hours_remaining_todo')
+            ->selectRaw('SUM("hourRemaining") / NULLIF(SUM(zp_tickets.storypoints), 0) AS daily_avg_hours_remaining_point')
             ->where('projectId', $projectId)
             ->where('zp_tickets.type', '<>', 'subtask')
             ->where('zp_tickets.type', '<>', 'milestone');
@@ -112,9 +112,9 @@ class Reports
 
         // Timesheet Reports using query builder
         $timesheetQuery = $this->db->table('zp_tickets')
-            ->selectRaw('ROUND(SUM(zp_timesheets.hours), 2) AS sum_logged_hours')
-            ->selectRaw('ROUND(SUM(zp_timesheets.hours) / NULLIF(COUNT(DISTINCT zp_tickets.id), 0), 2) AS daily_avg_hours_booked_todo')
-            ->selectRaw('ROUND(SUM(zp_timesheets.hours) / ?, 2) AS daily_avg_hours_booked_point', [$storyPoints])
+            ->selectRaw('ROUND(CAST(SUM(zp_timesheets.hours) AS DECIMAL(10,2)), 2) AS sum_logged_hours')
+            ->selectRaw('ROUND(CAST(SUM(zp_timesheets.hours) / NULLIF(COUNT(DISTINCT zp_tickets.id), 0) AS DECIMAL(10,2)), 2) AS daily_avg_hours_booked_todo')
+            ->selectRaw('ROUND(CAST(SUM(zp_timesheets.hours) / ? AS DECIMAL(10,2)), 2) AS daily_avg_hours_booked_point', [$storyPoints])
             ->leftJoin('zp_timesheets', 'zp_tickets.id', '=', 'zp_timesheets.ticketId')
             ->where('projectId', $projectId)
             ->where('zp_tickets.type', '<>', 'subtask')
@@ -257,7 +257,7 @@ class Reports
                 $this->db->raw('SUM(sum_closed_todos) AS sum_closed_todos'),
                 $this->db->raw('SUM(sum_planned_hours) AS sum_planned_hours'),
                 $this->db->raw('SUM(sum_estremaining_hours) AS sum_estremaining_hours'),
-                $this->db->raw('ROUND(SUM(sum_logged_hours), 2) AS sum_logged_hours'),
+                $this->db->raw('ROUND(CAST(SUM(sum_logged_hours) AS DECIMAL(10,2)), 2) AS sum_logged_hours'),
                 $this->db->raw('SUM(sum_points) AS sum_points'),
                 $this->db->raw('SUM(sum_points_done) AS sum_points_done'),
                 $this->db->raw('SUM(sum_points_progress) AS sum_points_progress'),
@@ -269,7 +269,7 @@ class Reports
                 $this->db->raw('SUM(sum_todos_xl) AS sum_todos_xl'),
                 $this->db->raw('SUM(sum_todos_xxl) AS sum_todos_xxl'),
                 $this->db->raw('SUM(sum_todos_none) AS sum_todos_none'),
-                $this->db->raw('SUM(tickets) AS tickets'),
+                $this->db->raw('SUM(CAST(tickets AS SIGNED)) AS tickets'),
                 $this->db->raw('SUM(daily_avg_hours_booked_todo) AS daily_avg_hours_booked_todo'),
                 $this->db->raw('SUM(daily_avg_hours_booked_point) AS daily_avg_hours_booked_point'),
                 $this->db->raw('SUM(daily_avg_hours_planned_todo) AS daily_avg_hours_planned_todo'),

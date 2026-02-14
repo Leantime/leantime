@@ -220,7 +220,7 @@ class UserInvite extends Controller
             $userInvite['firstname'] = $name[0];
             $userInvite['lastname'] = $name[1] ?? '';
             $userInvite['jobTitle'] = $_POST['jobTitle'] ?? '';
-            $userInvite['status'] = 'I';
+            $userInvite['status'] = 'i';
             $userInvite['user'] = $userInvite['username'];
             $userInvite['password'] = $_POST['password'];
             session(['tempPassword' => $_POST['password']]);

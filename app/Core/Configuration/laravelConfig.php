@@ -570,6 +570,9 @@ return [
                 'prefix' => '',
                 'prefix_indexes' => true,
                 'strict' => false,
+                'modes' => [
+                    'ANSI_QUOTES',
+                ],
                 'engine' => 'InnoDB',
                 'sslmode' => env('LEAN_DB_SSLMODE', ''),
                 'options' => extension_loaded('pdo_mysql') ? array_filter([
