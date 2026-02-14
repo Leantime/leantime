@@ -249,7 +249,8 @@ leantime.modals = (function () {
         openModal: openModal,
         setCustomModalCallback: setCustomModalCallback,
         closeModal: closeModal,
-        openByUrl: openByUrl
+        openByUrl: openByUrl,
+        renderContent: renderContent
     };
 
 })();
@@ -345,32 +346,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             return response.text();
         }).then(function (html) {
-            if (html === null) { return; }
-            var extracted = html;
-            if (/<html[\s>]/i.test(html) || /<!DOCTYPE/i.test(html)) {
-                var doc = new DOMParser().parseFromString(html, 'text/html');
-                var el = doc.querySelector('.primaryContent');
-                extracted = el ? el.innerHTML : (doc.body ? doc.body.innerHTML : html);
-            }
-            destroyModalEditors();
-            content.innerHTML = extracted;
-
-            // Execute scripts
-            var scripts = content.querySelectorAll('script');
-            for (var i = 0; i < scripts.length; i++) {
-                var s = scripts[i], n = document.createElement('script');
-                for (var j = 0; j < s.attributes.length; j++) {
-                    n.setAttribute(s.attributes[j].name, s.attributes[j].value);
-                }
-                n.textContent = s.textContent;
-                s.parentNode.replaceChild(n, s);
-            }
-
-            content.querySelectorAll('.showDialogOnLoad').forEach(function (el) {
-                el.style.display = '';
-            });
-            if (window.htmx) { window.htmx.process(content); }
-            if (window.tippy) { tippy(content.querySelectorAll('[data-tippy-content]')); }
+            leantime.modals.renderContent(html);
         }).catch(function (err) {
             console.error('modalManager: form submit error', err);
         });

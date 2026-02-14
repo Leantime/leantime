@@ -167,7 +167,7 @@
                                                     <small><i class="fa {{ $todoTypeIcons[strtolower($row['type'])] }}"></i> {{ __('label.' . strtolower($row['type'])) }}</small>
                                                     <small>#{{ $row['id'] }}</small>
                                                     <div class="kanbanCardContent">
-                                                        <h4><a href="#/tickets/showTicket/{{ $row['id'] }}" hx-get="{{ BASE_URL }}/tickets/showTicket/{{ $row['id'] }}" hx-swap="none" preload="mouseover">{{ e($row['headline']) }}</a></h4>
+                                                        <h4><a href="#/tickets/showTicket/{{ $row['id'] }}" preload="mouseover">{{ e($row['headline']) }}</a></h4>
 
                                                         <div class="kanbanContent" style="margin-bottom: 20px">
                                                             {!! $tpl->escapeMinimal($row['description']) !!}
