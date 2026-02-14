@@ -2,10 +2,30 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import commonjs from '@rollup/plugin-commonjs';
 import path from 'path';
+
+// Virtual module: maps `import $ from 'jquery'` to the global window.jQuery
+// loaded by the classic <script> tag in header.blade.php. This avoids bare
+// module specifiers that browsers cannot resolve.
+function jqueryGlobalPlugin() {
+    return {
+        name: 'jquery-global',
+        enforce: 'pre',
+        resolveId(id) {
+            if (id === 'jquery') return '\0jquery-global';
+        },
+        load(id) {
+            if (id === '\0jquery-global') {
+                return 'var jQ = window.jQuery || window.$; export default jQ; export { jQ as $ };';
+            }
+        },
+    };
+}
 
 export default defineConfig({
     plugins: [
+        jqueryGlobalPlugin(),
         tailwindcss(),
 
         laravel({
@@ -73,6 +93,9 @@ export default defineConfig({
         // Output to public/build (Vite default with laravel plugin)
         // Keep public/dist intact for rollback
         rollupOptions: {
+            plugins: [
+                commonjs(),
+            ],
             output: {
                 // Preserve the same bundle names for clarity
                 entryFileNames: 'assets/[name]-[hash].js',

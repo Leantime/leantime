@@ -62,7 +62,10 @@ class ViewsServiceProvider extends LaravelViewServiceProvider
 
             $factory = $this->createFactory($resolver, $finder, $app['events']);
 
-            // Use blade engine for all things blade
+            // Legacy template extensions — still needed for plugins with .tpl.php/.sub.php/.inc.php
+            array_map(fn ($ext) => $factory->addExtension($ext, 'php'), ['inc.php', 'sub.php', 'tpl.php']);
+
+            // Use blade engine for all things blade (registered last to take priority)
             $factory->addExtension('blade.php', 'blade');
 
             // We will also set the container instance on this view environment since the
