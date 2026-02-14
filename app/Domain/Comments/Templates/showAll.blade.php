@@ -23,7 +23,7 @@
     </a>
 
     <div id="comment0" class="commentBox">
-        <textarea rows="5" cols="50" class="tinymceSimple"
+        <textarea rows="5" cols="50" class="tiptapSimple"
                   name="text"></textarea><br/>
         <input type="submit" value="{{ __('buttons.save') }}"
                name="comment" class="btn btn-default btn-success tw:ml-0"/>
@@ -120,7 +120,9 @@
 
 <script type="text/javascript">
 
-    leantime.editorController.initSimpleEditor();
+    if (window.leantime && window.leantime.tiptapController) {
+        leantime.tiptapController.initSimpleEditor();
+    }
 
     function toggleCommentBoxes(id) {
         @if($login::userIsAtLeast($roles::$commenter))
@@ -131,8 +133,10 @@
             }
             jQuery('.commentBox').hide('fast', function () {
                 jQuery('.commentBox textarea').remove();
-                jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-                leantime.editorController.initSimpleEditor();
+                jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tiptapSimple"></textarea>');
+                if (window.leantime && window.leantime.tiptapController) {
+                    leantime.tiptapController.initSimpleEditor();
+                }
             });
 
             jQuery('#comment' + id + '').show('fast');

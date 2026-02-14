@@ -59,7 +59,7 @@
             @elseif (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string')
                 <input type="text" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" style="width:100%" /><br />
             @else
-                <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[1]['field'] }}" class="modalTextArea tinymceSimple">{{ $canvasItem[$dataLabels[1]['field']] }}</textarea><br />
+                <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[1]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[1]['field']] }}</textarea><br />
             @endif
         @else
             <input type="hidden" name="{{ $dataLabels[1]['field'] }}" value="" />
@@ -72,7 +72,7 @@
             @elseif (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string')
                 <input type="text" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" style="width:100%" /><br />
             @else
-                <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}" class="modalTextArea tinymceSimple">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea><br />
+                <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea><br />
             @endif
         @else
             <input type="hidden" name="{{ $dataLabels[2]['field'] }}" value="" />
@@ -85,7 +85,7 @@
             @elseif (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string')
                 <input type="text" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}" /><br />
             @else
-                <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[3]['field'] }}" class="modalTextArea tinymceSimple">{{ $canvasItem[$dataLabels[3]['field']] }}</textarea><br />
+                <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[3]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[3]['field']] }}</textarea><br />
             @endif
         @else
             <input type="hidden" name="{{ $dataLabels[3]['field'] }}" value="" />
@@ -206,7 +206,9 @@
             });
         @endif
 
-        leantime.editorController.initSimpleEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initSimpleEditor();
+        }
 
         @if (! $login::userIsAtLeast($roles::$editor))
             leantime.authController.makeInputReadonly("#global-modal-content");

@@ -213,21 +213,16 @@
 
 <script>
     jQuery(document).ready(function(){
-        leantime.editorController.initComplexEditor();
-        tinymce.activeEditor.hide()
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initComplexEditor();
+        }
     });
-
-    leantime.editorController.initComplexEditor();
 
     jQuery(".viewDescription").click(function(e){
         if(!jQuery(e.target).is("a")) {
             e.stopPropagation();
             jQuery(this).hide();
-            jQuery('#descriptionEditor').show('fast',
-                function() {
-                    tinymce.activeEditor.show();
-                }
-            );
+            jQuery('#descriptionEditor').show('fast');
         }
     });
 

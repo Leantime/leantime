@@ -38,7 +38,7 @@
 
         <input type="text" value="{{ $tpl->escape($canvasItem['tags']) }}" name="tags" id="tags" />
 
-        <textarea rows="3" cols="10" name="data" class="complexEditor"
+        <textarea rows="3" cols="10" name="data" class="tiptapComplex"
                   placeholder="">{!! $tpl->escapeMinimal($canvasItem['data']) !!}</textarea><br/>
 
         <input type="submit" value="{{ $tpl->__('buttons.save') }}" id="primaryCanvasSubmitButton"/>
@@ -149,7 +149,9 @@
 <script type="text/javascript">
     jQuery(document).ready(function(){
 
-        leantime.editorController.initComplexEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initComplexEditor();
+        }
         leantime.ticketsController.initTagsInput();
 
         @if (! $login::userIsAtLeast($roles::$editor))

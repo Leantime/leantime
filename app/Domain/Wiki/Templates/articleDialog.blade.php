@@ -172,7 +172,7 @@
             <br />
             <input type="text" value="{{ e($currentArticle->tags) }}" name="tags" id="tags" />
 
-            <textarea class="complexEditor" rows="20" cols="80" id="wikiArticleContentEditor"  name="description">{{ htmlentities($currentArticle->description ?? '') }}</textarea>
+            <textarea class="tiptapComplex" rows="20" cols="80" id="wikiArticleContentEditor"  name="description">{{ htmlentities($currentArticle->description ?? '') }}</textarea>
 
 
                 <div class="row">
@@ -208,7 +208,9 @@
 
     jQuery(document).ready(function(){
 
-        leantime.editorController.initComplexEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initComplexEditor();
+        }
 
         @if (isset($_GET['closeModal']))
             jQuery.nmTop().close();

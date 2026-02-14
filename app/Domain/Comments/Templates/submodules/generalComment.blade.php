@@ -31,7 +31,7 @@
                 <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}" />
             </div>
             <div class="commentReply">
-                <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
+                <textarea rows="5" cols="50" class="tiptapSimple" name="text"></textarea>
                 <input type="submit" value="{{ __('buttons.save') }}" name="comment" class="btn btn-primary btn-success tw:ml-0"/>
             </div>
             <input type="hidden" name="comment" class="commenterField" value="1"/>
@@ -161,7 +161,9 @@
 <script type="text/javascript">
 
     jQuery(document).ready(function() {
-        leantime.editorController.initSimpleEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initSimpleEditor();
+        }
     });
 
     function toggleCommentBoxes(id, commentId, formHash, editComment = false, isReply = false) {
@@ -182,9 +184,10 @@
 
             jQuery(`.commentBox-${formHash} textarea`).remove();
             jQuery(`.commentBox-${formHash}`).hide();
-            jQuery(`#comment-${formHash}-${id} .commentReply`).prepend(`<textarea rows="5" cols="75" name="text" id="editor_${formHash}-${id}" class="tinymceSimple">${editComment ? jQuery(`#comment-text-to-hide-${isReply ? 'reply-' : ''}${formHash}-${commentId || id}`).html() : ''}</textarea>`);
-            leantime.editorController.initSimpleEditor();
-            tinyMCE.get(`editor_${formHash}-${id}`).focus();
+            jQuery(`#comment-${formHash}-${id} .commentReply`).prepend(`<textarea rows="5" cols="75" name="text" id="editor_${formHash}-${id}" class="tiptapSimple">${editComment ? jQuery(`#comment-text-to-hide-${isReply ? 'reply-' : ''}${formHash}-${commentId || id}`).html() : ''}</textarea>`);
+            if (window.leantime && window.leantime.tiptapController) {
+                leantime.tiptapController.initSimpleEditor();
+            }
             jQuery(`#comment-${formHash}-${id}`).show();
             jQuery(`#father-${formHash}`).val(id);
 

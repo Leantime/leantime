@@ -45,7 +45,7 @@
                                         {{ __('label.describe_outcome') }}
                                         <br /><br />
                                     </p>
-                                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50">{!! htmlentities($project['details']) !!}</textarea>
+                                    <textarea name="details" id="details" class="tiptapComplex" rows="5" cols="50">{!! htmlentities($project['details']) !!}</textarea>
 
                                 </div>
                             </div>
@@ -139,6 +139,8 @@
         jQuery("#projectdetails select").chosen();
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
         leantime.projectsController.initProjectTabs();
-        leantime.editorController.initComplexEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initComplexEditor();
+        }
     });
 </script>

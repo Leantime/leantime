@@ -23,7 +23,7 @@
                         {{ __('label.accomplish') }}
                         <br /><br />
                     </p>
-                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50">{!! htmlentities($project['details']) !!}</textarea>
+                    <textarea name="details" id="details" class="tiptapComplex" rows="5" cols="50">{!! htmlentities($project['details']) !!}</textarea>
                 </div>
             </div>
             <div class="row padding-top">
