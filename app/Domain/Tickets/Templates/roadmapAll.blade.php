@@ -93,8 +93,6 @@
         window.history.pushState({},document.title, '{{ BASE_URL }}/tickets/roadmap');
     @endif
 
-    });
-
     @if(count($milestones) > 0)
         var tasks = [
             @php
@@ -147,5 +145,7 @@
         leantime.ticketsController.initGanttChart(tasks, '{{ $roadmapView }}', true);
         @endif
     @endif
+
+    });
 
 </script>
