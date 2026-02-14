@@ -233,7 +233,7 @@ class Canvas
                 't1.firstname as authorFirstname',
                 't1.lastname as authorLastname',
             ])
-            ->selectRaw('COUNT(zp_canvas_items.id) AS "boxItems"')
+            ->selectRaw('COUNT(zp_canvas_items.id) AS '.$this->dbHelper->wrapColumn('boxItems'))
             ->leftJoin('zp_user as t1', 'zp_canvas.author', '=', 't1.id')
             ->leftJoin('zp_canvas_items', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
             ->where('type', $canvasType)
@@ -413,11 +413,11 @@ class Canvas
                 'milestone.headline as milestoneHeadline',
                 'milestone.editTo as milestoneEditTo',
             ])
-            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS "commentCount"')
-            ->selectRaw('0 AS "percentDone"')
+            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS '.$this->dbHelper->wrapColumn('commentCount'))
+            ->selectRaw('0 AS '.$this->dbHelper->wrapColumn('percentDone'))
             ->leftJoin('zp_user as t1', 'zp_canvas_items.author', '=', 't1.id')
             ->leftJoin('zp_tickets as milestone', function ($join) {
-                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw('CAST("milestone"."id" AS CHAR)'));
+                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('milestone.id'), 'text')));
             })
             ->leftJoin('zp_comment', function ($join) {
                 $join->on('zp_canvas_items.id', '=', 'zp_comment.moduleId')
@@ -527,7 +527,7 @@ class Canvas
             ->leftJoin('zp_canvas_items as parentKPI', 'zp_canvas_items.kpi', '=', 'parentKPI.id')
             ->leftJoin('zp_canvas_items as parentGoal', 'zp_canvas_items.parent', '=', 'parentGoal.id')
             ->leftJoin('zp_tickets as milestone', function ($join) {
-                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw('CAST("milestone"."id" AS CHAR)'));
+                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('milestone.id'), 'text')));
             })
             ->leftJoin('zp_user as t1', 'zp_canvas_items.author', '=', 't1.id')
             ->where('board.projectId', $projectId)
@@ -641,17 +641,20 @@ class Canvas
                 'milestone.headline as milestoneHeadline',
                 'milestone.editTo as milestoneEditTo',
             ])
-            ->selectRaw('COUNT("progressTickets".id) AS "allTickets"')
+            ->selectRaw('COUNT('.$this->dbHelper->wrapColumn('progressTickets.id').') AS '.$this->dbHelper->wrapColumn('allTickets'))
             ->selectSub(function ($query) use ($statusGroups) {
+                $progressSubId = $this->dbHelper->wrapColumn('progressSub.id');
+                $progressSubStatus = $this->dbHelper->wrapColumn('progressSub.status');
+                $progressSubStorypoints = $this->dbHelper->wrapColumn('progressSub.storypoints');
                 $query->from('zp_tickets as progressSub')
                     ->selectRaw('(
                         CASE WHEN
-                          COUNT(DISTINCT "progressSub".id) > 0
+                          COUNT(DISTINCT '.$progressSubId.') > 0
                         THEN
                           ROUND(
                             (
-                              SUM(CASE WHEN "progressSub".status '.$statusGroups['DONE'].' THEN CASE WHEN "progressSub".storypoints = 0 THEN 3 ELSE "progressSub".storypoints END ELSE 0 END) /
-                              SUM(CASE WHEN "progressSub".storypoints = 0 THEN 3 ELSE "progressSub".storypoints END)
+                              SUM(CASE WHEN '.$progressSubStatus.' '.$statusGroups['DONE'].' THEN CASE WHEN '.$progressSubStorypoints.' = 0 THEN 3 ELSE '.$progressSubStorypoints.' END ELSE 0 END) /
+                              SUM(CASE WHEN '.$progressSubStorypoints.' = 0 THEN 3 ELSE '.$progressSubStorypoints.' END)
                             ) *100)
                         ELSE
                           0
@@ -669,7 +672,7 @@ class Canvas
                     ->where('progressTickets.type', '<>', 'subtask');
             })
             ->leftJoin('zp_tickets as milestone', function ($join) {
-                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw('CAST("milestone"."id" AS CHAR)'));
+                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('milestone.id'), 'text')));
             })
             ->leftJoin('zp_user as t1', 'zp_canvas_items.author', '=', 't1.id')
             ->where('zp_canvas_items.id', $id)
@@ -736,7 +739,7 @@ class Canvas
     public function getNumberOfCanvasItems($projectId = null): mixed
     {
         $query = $this->connection->table('zp_canvas_items')
-            ->selectRaw('COUNT(zp_canvas_items.id) AS "canvasCount"')
+            ->selectRaw('COUNT(zp_canvas_items.id) AS '.$this->dbHelper->wrapColumn('canvasCount'))
             ->leftJoin('zp_canvas as canvasBoard', 'zp_canvas_items.canvasId', '=', 'canvasBoard.id')
             ->where('canvasBoard.type', static::CANVAS_NAME.'canvas');
 
@@ -758,7 +761,7 @@ class Canvas
     public function getNumberOfBoards($projectId = null): mixed
     {
         $query = $this->connection->table('zp_canvas')
-            ->selectRaw('COUNT(zp_canvas.id) AS "boardCount"')
+            ->selectRaw('COUNT(zp_canvas.id) AS '.$this->dbHelper->wrapColumn('boardCount'))
             ->where('zp_canvas.type', static::CANVAS_NAME.'canvas');
 
         if (! is_null($projectId)) {
@@ -780,7 +783,7 @@ class Canvas
     public function existCanvas(int $projectId, string $canvasTitle): bool
     {
         $result = $this->connection->table('zp_canvas')
-            ->selectRaw('COUNT(id) as "nbCanvas"')
+            ->selectRaw('COUNT(id) as '.$this->dbHelper->wrapColumn('nbCanvas'))
             ->where('projectId', $projectId)
             ->where('title', $canvasTitle)
             ->where('type', static::CANVAS_NAME.'canvas')
@@ -819,9 +822,9 @@ class Canvas
             ])
             ->selectRaw($this->dbHelper->currentTimestamp().' as created')
             ->selectRaw($this->dbHelper->currentTimestamp().' as modified')
-            ->selectRaw('? as "canvasId"', [$newCanvasId])
+            ->selectRaw('? as '.$this->dbHelper->wrapColumn('canvasId'), [$newCanvasId])
             ->select(['status', 'relates'])
-            ->selectRaw("'' as \"milestoneId\"")
+            ->selectRaw("'' as ".$this->dbHelper->wrapColumn('milestoneId'))
             ->select([
                 'kpi', 'data1', 'startDate', 'endDate', 'setting', 'metricType', 'impact',
                 'effort', 'probability', 'action', 'assignedTo', 'startValue', 'currentValue', 'endValue',
@@ -857,9 +860,9 @@ class Canvas
             ])
             ->selectRaw($this->dbHelper->currentTimestamp().' as created')
             ->selectRaw($this->dbHelper->currentTimestamp().' as modified')
-            ->selectRaw('? as "canvasId"', [$canvasId])
+            ->selectRaw('? as '.$this->dbHelper->wrapColumn('canvasId'), [$canvasId])
             ->select(['status', 'relates'])
-            ->selectRaw("'' as \"milestoneId\"")
+            ->selectRaw("'' as ".$this->dbHelper->wrapColumn('milestoneId'))
             ->select([
                 'kpi', 'data1', 'startDate', 'endDate', 'setting', 'metricType', 'impact',
                 'effort', 'probability', 'action', 'assignedTo', 'startValue', 'currentValue', 'endValue',
@@ -887,7 +890,7 @@ class Canvas
                 'zp_canvas.type as canvasType',
                 'zp_canvas_items.box',
             ])
-            ->selectRaw('COUNT(zp_canvas_items.id) AS "boxItems"')
+            ->selectRaw('COUNT(zp_canvas_items.id) AS '.$this->dbHelper->wrapColumn('boxItems'))
             ->leftJoin('zp_canvas_items', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId');
 
         if ($projectId != '') {

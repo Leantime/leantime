@@ -359,14 +359,14 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="notifications" >{{ __('label.receive_notifications') }}</label>
-                                    <span>
+                                    <label for="notifications" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
                                         <input type="checkbox" value="on" name="notifications" class="input"
                                                id="notifications"
                                                @if ($values['notifications'] == "1" )
                                                    checked='checked'
-                                               @endif/> <br/>
-                                    </span>
+                                               @endif/>
+                                        {{ __('label.receive_notifications') }}
+                                    </label>
                                 </div>
                                 <div class="form-group">
                                     <label for="messagesfrequency" >{{ __('label.messages_frequency') }}</label>
@@ -411,6 +411,68 @@
                                     </span>
                                 </div>
                             </div>
+
+                            <hr />
+
+                            <h4 class="widgettitle title-light">{{ __('label.notification_event_types') }}</h4>
+                            <p><small>{{ __('label.notification_event_types_description') }}</small></p>
+                            <div style="margin-bottom: 15px;">
+                                @php
+                                    $categoryLabels = [
+                                        'tasks' => 'label.notification_category_tasks',
+                                        'comments' => 'label.notification_category_comments',
+                                        'goals' => 'label.notification_category_goals',
+                                        'ideas' => 'label.notification_category_ideas',
+                                        'projects' => 'label.notification_category_projects',
+                                        'boards' => 'label.notification_category_boards',
+                                    ];
+                                @endphp
+                                @foreach ($notificationCategories as $categoryKey => $modules)
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; padding: 4px 0;">
+                                        <input type="checkbox"
+                                               name="enabledEventTypes[]"
+                                               value="{{ $categoryKey }}"
+                                               class="input"
+                                               @if (in_array($categoryKey, $enabledEventTypes))
+                                                   checked="checked"
+                                               @endif
+                                        />
+                                        {{ __($categoryLabels[$categoryKey] ?? $categoryKey) }}
+                                    </label>
+                                @endforeach
+                            </div>
+
+                            <hr />
+
+                            <h4 class="widgettitle title-light">{{ __('label.project_notifications') }}</h4>
+                            <p><small>{{ __('label.project_notifications_description') }}</small></p>
+                            <div style="max-width: 450px; max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+                                @if (count($userProjects) > 0)
+                                    @foreach ($userProjects as $project)
+                                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f0f0f0;">
+                                            <span>
+                                                {{ $project['name'] }}
+                                                @if (!empty($project['clientName']))
+                                                    <span style="color: #999;">({{ $project['clientName'] }})</span>
+                                                @endif
+                                            </span>
+                                            <label style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer; margin: 0; white-space: nowrap; padding-left: 12px;">
+                                                <input type="checkbox"
+                                                       name="mutedProjects[]"
+                                                       value="{{ $project['id'] }}"
+                                                       @if (in_array($project['id'], $mutedProjectIds))
+                                                           checked="checked"
+                                                       @endif
+                                                />
+                                                {{ __('label.mute') }}
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <p style="color: #999; padding: 8px;">{{ __('label.no_projects') }}</p>
+                                @endif
+                            </div>
+
                             <input type="hidden" name="savenotifications" value="1" />
                             <input type="submit" name="save" value="{{ __('buttons.save') }}" class="button"/>
                         </form>

@@ -83,6 +83,58 @@ class Setting
         return $return;
     }
 
+    /**
+     * Retrieves multiple settings in a single query.
+     *
+     * @param  array<string>  $keys  The setting keys to fetch.
+     * @return array<string, mixed> Map of key => value for found settings.
+     */
+    public function getSettingsForKeys(array $keys): array
+    {
+        if (empty($keys) || $this->checkIfInstalled() === false) {
+            return [];
+        }
+
+        $results = [];
+
+        // Check cache first for all keys
+        $uncachedKeys = [];
+        foreach ($keys as $key) {
+            $cachedValue = $this->cache->get($key);
+            if ($cachedValue !== null) {
+                $results[$key] = $cachedValue;
+            } else {
+                $uncachedKeys[] = $key;
+            }
+        }
+
+        if (empty($uncachedKeys)) {
+            return $results;
+        }
+
+        try {
+            $rows = $this->db->table('zp_settings')
+                ->whereIn('key', $uncachedKeys)
+                ->get(['key', 'value']);
+
+            $foundKeys = [];
+            foreach ($rows as $row) {
+                $results[$row->key] = $row->value;
+                $this->cache->set($row->key, $row->value);
+                $foundKeys[] = $row->key;
+            }
+
+            // Cache misses as false
+            foreach (array_diff($uncachedKeys, $foundKeys) as $missingKey) {
+                $this->cache->set($missingKey, false);
+            }
+        } catch (Exception $e) {
+            report($e);
+        }
+
+        return $results;
+    }
+
     public function deleteSetting(string $type): void
     {
         $this->db->table('zp_settings')

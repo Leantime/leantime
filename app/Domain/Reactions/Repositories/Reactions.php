@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Reactions\Repositories;
 
 use Illuminate\Database\ConnectionInterface;
+use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 
 /**
@@ -12,9 +13,12 @@ class Reactions
 {
     private ConnectionInterface $db;
 
-    public function __construct(DbCore $db)
+    private DatabaseHelper $dbHelper;
+
+    public function __construct(DbCore $db, DatabaseHelper $dbHelper)
     {
         $this->db = $db->getConnection();
+        $this->dbHelper = $dbHelper;
     }
 
     /**
@@ -39,7 +43,7 @@ class Reactions
     public function getGroupedEntityReactions(string $module, int $moduleId): array|false
     {
         $results = $this->db->table('zp_reactions')
-            ->selectRaw('COUNT(reaction) AS "reactionCount", reaction')
+            ->selectRaw('COUNT(reaction) AS '.$this->dbHelper->wrapColumn('reactionCount').', reaction')
             ->where('module', $module)
             ->where('moduleId', $moduleId)
             ->groupBy('reaction')
@@ -103,7 +107,7 @@ class Reactions
     public function getReactionsByModule(string $module, ?int $moduleId = null): array|false
     {
         $query = $this->db->table('zp_reactions')
-            ->selectRaw('reaction, COUNT(reaction) as "reactionCount"')
+            ->selectRaw('reaction, COUNT(reaction) as '.$this->dbHelper->wrapColumn('reactionCount'))
             ->where('module', $module);
 
         if ($moduleId !== null) {

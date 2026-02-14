@@ -136,6 +136,40 @@ $companySettings = $tpl->get('companySettings');
                                                             </span>
                                         </div>
                                     </div>
+                                    <br />
+                                    <h4 class="widgettitle title-light"><span
+                                            class="fa fa-bell"></span><?php echo $tpl->__('label.default_notification_types'); ?>
+                                    </h4>
+                                    <p><?php echo $tpl->__('label.default_notification_types_description'); ?></p>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <?php
+                                            $categoryLabels = [
+                                                'tasks' => 'label.notification_category_tasks',
+                                                'comments' => 'label.notification_category_comments',
+                                                'goals' => 'label.notification_category_goals',
+                                                'ideas' => 'label.notification_category_ideas',
+                                                'projects' => 'label.notification_category_projects',
+                                                'boards' => 'label.notification_category_boards',
+                                            ];
+                                            $defaultNotificationTypes = $tpl->get('defaultNotificationTypes');
+                                            $notificationCategories = $tpl->get('notificationCategories');
+                                            foreach ($notificationCategories as $categoryKey => $modules) { ?>
+                                                <div class="form-group">
+                                                    <label style="display:inline-flex; align-items:center; gap:8px; cursor:pointer;">
+                                                        <input type="checkbox"
+                                                               name="defaultNotificationEventTypes[]"
+                                                               value="<?= $categoryKey ?>"
+                                                               <?php if (in_array($categoryKey, $defaultNotificationTypes)) {
+                                                                   echo 'checked="checked"';
+                                                               } ?>
+                                                        />
+                                                        <?= $tpl->__($categoryLabels[$categoryKey] ?? $categoryKey) ?>
+                                                    </label>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
                                     <input type="submit" value="<?= $tpl->__('buttons.save')?>" id="saveBtn"/>
                                 </form>
                             </div>

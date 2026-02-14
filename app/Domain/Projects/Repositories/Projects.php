@@ -283,7 +283,7 @@ class Projects
                 'parent.id as parentId',
                 'parent.name as parentName',
             ])
-            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as "isFavorite"')
+            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as '.$this->dbHelper->wrapColumn('isFavorite'))
             ->leftJoin('zp_relationuserproject as relation', 'project.id', '=', 'relation.projectId')
             ->leftJoin('zp_projects as parent', 'parent.id', '=', 'project.parent')
             ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id')
@@ -396,7 +396,7 @@ class Projects
                 'client.name as clientName',
                 'client.id as clientId',
             ])
-            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as "isFavorite"')
+            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as '.$this->dbHelper->wrapColumn('isFavorite'))
             ->leftJoin('zp_relationuserproject as relation', 'project.id', '=', 'relation.projectId')
             ->leftJoin('zp_clients as client', 'project.clientId', '=', 'client.id')
             ->leftJoin('zp_reactions as favorite', function ($join) use ($userId) {
@@ -525,7 +525,7 @@ class Projects
                 'zp_user.lastname',
             ])
             ->leftJoin('zp_user', function ($join) {
-                $join->on('zp_tickets.editorId', '=', $this->connection->raw('CAST("zp_user"."id" AS CHAR)'));
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('zp_user.id'), 'text')));
             })
             ->where('projectId', $projectId)
             ->orderBy('zp_tickets.editFrom')
@@ -561,7 +561,7 @@ class Projects
                 'zp_projects.start',
                 'zp_projects.end',
             ])
-            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as "isFavorite"')
+            ->selectRaw('CASE WHEN favorite.id IS NULL THEN false ELSE true END as '.$this->dbHelper->wrapColumn('isFavorite'))
             ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
             ->leftJoin('zp_reactions as favorite', function ($join) use ($userId) {
                 $join->on('zp_projects.id', '=', 'favorite.moduleId')
@@ -602,7 +602,7 @@ class Projects
     public function getProjectBookedHours($id): array|bool
     {
         $result = $this->connection->table('zp_tickets')
-            ->selectRaw('"zp_tickets"."projectId", SUM(zp_timesheets.hours) AS "totalHours"')
+            ->selectRaw($this->dbHelper->wrapColumn('zp_tickets.projectId').', SUM(zp_timesheets.hours) AS '.$this->dbHelper->wrapColumn('totalHours'))
             ->join('zp_timesheets', 'zp_timesheets.ticketId', '=', 'zp_tickets.id')
             ->where('projectId', $id)
             ->first();
@@ -624,18 +624,19 @@ class Projects
 
     public function getProjectBookedHoursArray($id): array|bool
     {
+        $wrappedWorkDate = $this->dbHelper->wrapColumn('workDate');
         $dateFormatSql = match ($this->dbHelper->getDriverName()) {
-            'mysql' => "DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d')",
-            'pgsql' => "TO_CHAR(zp_timesheets.\"workDate\", 'YYYY-MM-DD')",
-            default => "DATE_FORMAT(zp_timesheets.\"workDate\", '%Y-%m-%d')",
+            'mysql' => "DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d')",
+            'pgsql' => "TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'YYYY-MM-DD')",
+            default => "DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d')",
         };
 
         $results = $this->connection->table('zp_tickets')
             ->select([
                 'zp_tickets.projectId',
             ])
-            ->selectRaw('SUM(zp_timesheets.hours) AS "totalHours"')
-            ->selectRaw("{$dateFormatSql} AS \"workDate\"")
+            ->selectRaw('SUM(zp_timesheets.hours) AS '.$this->dbHelper->wrapColumn('totalHours'))
+            ->selectRaw("{$dateFormatSql} AS ".$this->dbHelper->wrapColumn('workDate'))
             ->join('zp_timesheets', 'zp_timesheets.ticketId', '=', 'zp_tickets.id')
             ->where('projectId', $id)
             ->groupByRaw($dateFormatSql)
@@ -682,7 +683,7 @@ class Projects
     public function getProjectBookedDollars($id): mixed
     {
         $result = $this->connection->table('zp_tickets')
-            ->selectRaw('"zp_tickets"."projectId", SUM(zp_timesheets.hours * zp_timesheets.rate) AS "totalDollars"')
+            ->selectRaw($this->dbHelper->wrapColumn('zp_tickets.projectId').', SUM(zp_timesheets.hours * zp_timesheets.rate) AS '.$this->dbHelper->wrapColumn('totalDollars'))
             ->join('zp_timesheets', 'zp_timesheets.ticketId', '=', 'zp_tickets.id')
             ->where('projectId', $id)
             ->first();

@@ -5,6 +5,8 @@ namespace Leantime\Domain\Users\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\UI\Theme as ThemeCore;
+use Leantime\Domain\Notifications\Models\Notification;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Users\Services\Users as UserService;
@@ -20,6 +22,8 @@ class EditOwn extends Controller
 
     private UserService $userService;
 
+    private ProjectService $projectService;
+
     private int $userId;
 
     /**
@@ -29,12 +33,14 @@ class EditOwn extends Controller
         ThemeCore $themeCore,
         UserRepository $userRepo,
         SettingService $settingsService,
-        UserService $userService
+        UserService $userService,
+        ProjectService $projectService
     ): void {
         $this->themeCore = $themeCore;
         $this->userRepo = $userRepo;
         $this->settingsService = $settingsService;
         $this->userService = $userService;
+        $this->projectService = $projectService;
 
         $this->userId = session('userdata.id');
     }
@@ -127,6 +133,36 @@ class EditOwn extends Controller
         $this->tpl->assign('timezoneOptions', $timezonesAvailable);
 
         $this->tpl->assign('user', $row);
+
+        // Notification preferences: event-type categories
+        $notificationCategories = Notification::NOTIFICATION_CATEGORIES;
+        $enabledEventTypes = $this->settingsService->getSetting('usersettings.'.$this->userId.'.notificationEventTypes');
+        if (! $enabledEventTypes) {
+            $enabledEventTypes = $this->settingsService->getSetting('companysettings.defaultNotificationEventTypes');
+        }
+        if ($enabledEventTypes) {
+            $enabledEventTypes = json_decode($enabledEventTypes, true);
+        }
+        if (! is_array($enabledEventTypes)) {
+            $enabledEventTypes = array_keys($notificationCategories);
+        }
+
+        // Notification preferences: per-project muting
+        $mutedProjectsSetting = $this->settingsService->getSetting('usersettings.'.$this->userId.'.projectMutedNotifications');
+        $mutedProjectIds = [];
+        if ($mutedProjectsSetting) {
+            $decoded = json_decode($mutedProjectsSetting, true);
+            if (is_array($decoded)) {
+                $mutedProjectIds = $decoded;
+            }
+        }
+
+        $userProjects = $this->projectService->getProjectsAssignedToUser($this->userId);
+
+        $this->tpl->assign('notificationCategories', $notificationCategories);
+        $this->tpl->assign('enabledEventTypes', $enabledEventTypes);
+        $this->tpl->assign('mutedProjectIds', $mutedProjectIds);
+        $this->tpl->assign('userProjects', $userProjects);
 
         return $this->tpl->display('users.editOwn');
     }
@@ -303,6 +339,29 @@ class EditOwn extends Controller
 
                 // Storing option messagefrequency
                 $this->settingsService->saveSetting('usersettings.'.$this->userId.'.messageFrequency', (int) ($_POST['messagesfrequency'] ?? 3600));
+
+                // Save event-type preferences
+                $enabledEventTypes = $_POST['enabledEventTypes'] ?? [];
+                if (! is_array($enabledEventTypes)) {
+                    $enabledEventTypes = [];
+                }
+                $validCategories = array_keys(Notification::NOTIFICATION_CATEGORIES);
+                $enabledEventTypes = array_values(array_intersect($enabledEventTypes, $validCategories));
+                $this->settingsService->saveSetting(
+                    'usersettings.'.$this->userId.'.notificationEventTypes',
+                    json_encode($enabledEventTypes)
+                );
+
+                // Save per-project mute preferences
+                $mutedProjects = $_POST['mutedProjects'] ?? [];
+                if (! is_array($mutedProjects)) {
+                    $mutedProjects = [];
+                }
+                $mutedProjects = array_map('intval', $mutedProjects);
+                $this->settingsService->saveSetting(
+                    'usersettings.'.$this->userId.'.projectMutedNotifications',
+                    json_encode(array_values($mutedProjects))
+                );
 
                 $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');
             }
