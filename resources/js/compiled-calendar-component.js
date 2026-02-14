@@ -1,8 +1,17 @@
-// Calendar — FullCalendar with plugins (global UMD builds)
-// These need to be imported via direct file paths because the packages'
-// exports maps don't expose the .global.min.js files to Vite's resolver.
+// Calendar — FullCalendar with plugins (ESM imports)
+// UMD .global.min.js builds don't set window globals when processed by Vite,
+// so we import the ESM versions and expose FullCalendar as a global namespace.
 import '../../node_modules/ical.js/build/ical.min.js';
-import '../../node_modules/fullcalendar/index.global.min.js';
-import '../../node_modules/@fullcalendar/icalendar/index.global.min.js';
-import '../../node_modules/@fullcalendar/google-calendar/index.global.min.js';
-import '../../node_modules/@fullcalendar/luxon3/index.global.min.js';
+import * as FullCalendar from 'fullcalendar';
+import * as ICalendarPlugin from '@fullcalendar/icalendar';
+import * as GoogleCalendarPlugin from '@fullcalendar/google-calendar';
+import * as Luxon3Plugin from '@fullcalendar/luxon3';
+
+// Expose FullCalendar on window for inline scripts (e.g. calendarController.js)
+window.FullCalendar = Object.assign(
+    {},
+    FullCalendar,
+    ICalendarPlugin,
+    GoogleCalendarPlugin,
+    Luxon3Plugin
+);

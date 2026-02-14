@@ -24,6 +24,7 @@
      data-id="{{ $ticket['id'] }}"
      data-project="{{ $ticket['projectId'] }}"
      data-draggable="true"
+     draggable="true"
      data-sort-index="{{ $ticket['sortIndex'] ?? 10 }}"
      data-event='{!! $ticketDataJson !!}'>
 

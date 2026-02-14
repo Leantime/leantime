@@ -316,4 +316,13 @@
         isNestingAllowed: isNestingAllowed
     };
 
+    // jQuery bridge — allows legacy template calls like jQuery('.sortable-list').nestedSortable()
+    if (typeof jQuery !== 'undefined') {
+        jQuery.fn.nestedSortable = function () {
+            return this.each(function () {
+                initNestedSortable(this);
+            });
+        };
+    }
+
 })();

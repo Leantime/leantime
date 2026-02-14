@@ -31,6 +31,7 @@ import '../../app/Domain/Setting/Js/settingController.js';
 import '../../app/Domain/Setting/Js/settingRepository.js';
 import '../../app/Domain/Setting/Js/settingService.js';
 import '../../app/Domain/Widgets/Js/Widgetcontroller.js';
+import '../../app/Domain/Calendar/Js/calendarController.js';
 
 // Domain-specific JS — lazy loaded based on current page.
 // Excludes globally-imported controllers above.
@@ -48,6 +49,7 @@ const domainModules = import.meta.glob([
     '!../../app/Domain/Menu/**',
     '!../../app/Domain/Setting/**',
     '!../../app/Domain/Widgets/**',
+    '!../../app/Domain/Calendar/**',
 ]);
 
 // --- Domain JS loader (reusable for initial load + hx-boost navigation) ---
