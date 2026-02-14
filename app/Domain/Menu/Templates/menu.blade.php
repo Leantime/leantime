@@ -25,7 +25,7 @@
 
         <li class="dropdown scrollableMenu">
 
-            <ul class="tw:block">
+            <ul style="display:block;">
 
                 @foreach ($menuStructure as $key => $menuItem)
 
