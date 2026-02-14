@@ -12,4 +12,5 @@ window.autocomplete_options = window.autocomplete_options || {};
 window.attrname = window.attrname || '';
 
 import '../../public/assets/js/libs/jquery.tagsinput.min.js';
+import '../../public/assets/js/app/core/jqueryUiSortableBridge.js';
 import '../../public/assets/js/app/core/nestedSortable.js';
