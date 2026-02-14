@@ -25,6 +25,23 @@ leantime.modals = (function () {
     function getContent() { return document.getElementById('global-modal-content'); }
     function getBox()     { return document.getElementById('global-modal-box'); }
 
+    // ── Backdrop Overlay ─────────────────────────────────────────────
+    // A regular div (not top-layer) that provides the frosted-glass blur.
+    // Needed because backdrop-filter on a top-layer <dialog> or its
+    // ::backdrop pseudo-element doesn't reliably blur the page content
+    // across browsers.
+    function getOverlay() {
+        var el = document.getElementById('modal-blur-overlay');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'modal-blur-overlay';
+            document.body.appendChild(el);
+        }
+        return el;
+    }
+    function showOverlay() { getOverlay().classList.add('active'); }
+    function hideOverlay() { getOverlay().classList.remove('active'); }
+
     // ── Size Determination ─────────────────────────────────────────────
     function isLargeModal(url) {
         return /showTicket|ideaDialog|articleDialog/.test(url);
@@ -149,6 +166,7 @@ leantime.modals = (function () {
         showLoading();
 
         if (!dialog.open) {
+            showOverlay();
             dialog.showModal();
         }
         isOpen = true;
@@ -186,6 +204,7 @@ leantime.modals = (function () {
 
         isOpen = false;
         destroyModalEditors();
+        hideOverlay();
 
         // Clear hash
         try {
