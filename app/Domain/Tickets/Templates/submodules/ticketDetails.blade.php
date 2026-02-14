@@ -132,7 +132,7 @@
 
                 <div class="form-group" id="descriptionEditor">
                     <textarea name="description" id="ticketDescription"
-                              class="complexEditor">{!! $ticket->description !== null ? htmlentities($ticket->description) : '' !!}</textarea><br/>
+                              class="tiptapComplex">{!! $ticket->description !== null ? htmlentities($ticket->description) : '' !!}</textarea><br/>
                 </div>
                 <input type="hidden" name="acceptanceCriteria" value=""/>
 
@@ -342,10 +342,10 @@
 
 <script>
     jQuery(document).ready(function(){
-        leantime.editorController.initComplexEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initComplexEditor();
+        }
     });
-
-    leantime.editorController.initComplexEditor();
 
     Prism.highlightAll();
 </script>

@@ -104,19 +104,16 @@ leantime.modals = (function () {
         return response.text();
     }
 
-    // ── TinyMCE Cleanup ────────────────────────────────────────────────
-    // Destroy any TinyMCE editors inside the modal before replacing content
+    // ── Editor Cleanup ───────────────────────────────────────────────
+    // Destroy any Tiptap editors inside the modal before replacing content
     // to prevent orphaned instances that leak memory and misbehave.
     function destroyModalEditors() {
-        if (typeof tinymce === 'undefined') { return; }
         var c = getContent();
         if (!c) { return; }
-        var editors = tinymce.get();
-        for (var i = editors.length - 1; i >= 0; i--) {
-            if (c.contains(editors[i].getElement())) {
-                try { editors[i].save(); } catch (e) { /* noop */ }
-                try { editors[i].destroy(false); } catch (e) { /* noop */ }
-            }
+        // Tiptap cleanup via registry
+        if (window.leantime && window.leantime.tiptapController &&
+            window.leantime.tiptapController.registry) {
+            try { window.leantime.tiptapController.registry.destroyWithin(c); } catch (e) { /* noop */ }
         }
     }
 

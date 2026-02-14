@@ -21,15 +21,15 @@
     }
 </script>
 
-<div class="showDialogOnLoad tw:hidden">
+<div class="showDialogOnLoad" style="display:none;">
 
-    <h4 class="widgettitle title-light tw:pb-0">
+    <h4 class="widgettitle title-light" style="padding-bottom: 0">
         <i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i>
         {{ $canvasTypes[$canvasItem['box']]['title'] }}
     </h4>
-    <hr class="tw:mt-1 tw:mb-4">
+    <hr style="margin-top: 5px; margin-bottom: 15px;">
 
-    <h5 class="tw:pl-10"><strong>{{ $canvasItem['description'] }}</strong></h5>
+    <h5 style="padding-left: 40px"><strong>{{ $canvasItem['description'] }}</strong></h5>
 
     @if ($id !== '')
     <br />
@@ -49,10 +49,12 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 
-   leantime.editorController.initSimpleEditor();
+   if (window.leantime && window.leantime.tiptapController) {
+       leantime.tiptapController.initSimpleEditor();
+   }
 
    @if(!$login::userIsAtLeast($roles::$editor))
-       leantime.authController.makeInputReadonly("#global-modal-content");
+       leantime.authController.makeInputReadonly(".nyroModalCont");
 
    @endif;
 

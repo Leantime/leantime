@@ -8,22 +8,22 @@ leantime.ticketsController = (function () {
     {
 
         let ticketCounts = [];
-        document.querySelectorAll(".sortableTicketList").forEach(function (listEl) {
-            listEl.querySelectorAll(".column").forEach(function (colEl, indexCol) {
+        jQuery(".sortableTicketList").each(function (indexList) {
+            jQuery(this).find(".column").each(function (indexCol) {
 
                 if (ticketCounts[indexCol] === undefined) {
                     ticketCounts[indexCol] = 0;
                 }
 
-                var counting = colEl.querySelectorAll('.moveable').length;
+                var counting = jQuery(this).find('.moveable').length;
                 ticketCounts[indexCol] += counting;
 
             });
 
         });
 
-        document.querySelectorAll(".widgettitle .count").forEach(function (el, index) {
-            el.textContent = ticketCounts[index];
+        jQuery(".widgettitle .count").each(function (index) {
+            jQuery(this).text(ticketCounts[index]);
         });
 
     }
@@ -34,8 +34,9 @@ leantime.ticketsController = (function () {
      */
     function updateSwimlaneCounts()
     {
-        document.querySelectorAll(".kanban-swimlane-row").forEach(function(row) {
-            var swimlaneId = row.id;
+        jQuery(".kanban-swimlane-row").each(function() {
+            var $row = jQuery(this);
+            var swimlaneId = $row.attr('id');
 
             if (!swimlaneId) return;
 
@@ -43,21 +44,17 @@ leantime.ticketsController = (function () {
             var swimlaneKey = swimlaneId.replace('swimlane-row-', '');
 
             // Find the swimlane content area and count tickets
-            var content = row.querySelector('.kanban-swimlane-content');
-            var ticketCount = content ? content.querySelectorAll('.moveable').length : 0;
+            var $content = $row.find('.kanban-swimlane-content');
+            var ticketCount = $content.find('.moveable').length;
 
             // Update all count badges in this swimlane's sidebar
-            var sidebar = row.querySelector('.kanban-swimlane-sidebar');
-            if (sidebar) {
-                sidebar.querySelectorAll('.kanban-lane-count').forEach(function(el) {
-                    el.textContent = ticketCount;
-                });
+            var $sidebar = $row.find('.kanban-swimlane-sidebar');
+            $sidebar.find('.kanban-lane-count').text(ticketCount);
 
-                // Update the aria-label for accessibility
-                var currentLabel = sidebar.getAttribute('aria-label') || '';
-                var newLabel = currentLabel.replace(/\d+ tasks/, ticketCount + ' tasks');
-                sidebar.setAttribute('aria-label', newLabel);
-            }
+            // Update the aria-label for accessibility
+            var currentLabel = $sidebar.attr('aria-label') || '';
+            var newLabel = currentLabel.replace(/\d+ tasks/, ticketCount + ' tasks');
+            $sidebar.attr('aria-label', newLabel);
         });
 
         // Also update the progress bars
@@ -70,48 +67,45 @@ leantime.ticketsController = (function () {
      */
     function updateSwimlaneProgressBars()
     {
-        document.querySelectorAll(".kanban-swimlane-row").forEach(function(row) {
-            var content = row.querySelector('.kanban-swimlane-content');
-            var progressBar = row.querySelector('.micro-progress-bar .progress-segments');
+        jQuery(".kanban-swimlane-row").each(function() {
+            var $row = jQuery(this);
+            var $content = $row.find('.kanban-swimlane-content');
+            var $progressBar = $row.find('.micro-progress-bar .progress-segments');
 
-            if (!progressBar) return;
+            if (!$progressBar.length) return;
 
             // Count tickets per status in this swimlane
             var statusCounts = {};
             var totalCount = 0;
 
-            if (content) {
-                content.querySelectorAll('.contentInner').forEach(function(column) {
-                    var classAttr = column.getAttribute('class') || '';
-                    var statusMatch = classAttr.match(/status_(-?\d+)/);
-                    if (statusMatch) {
-                        var statusId = statusMatch[1];
-                        var ticketCount = column.querySelectorAll('.moveable').length;
-                        if (ticketCount > 0) {
-                            statusCounts[statusId] = ticketCount;
-                            totalCount += ticketCount;
-                        }
+            $content.find('.contentInner').each(function() {
+                var $column = jQuery(this);
+                var classAttr = $column.attr('class') || '';
+                var statusMatch = classAttr.match(/status_(-?\d+)/);
+                if (statusMatch) {
+                    var statusId = statusMatch[1];
+                    var ticketCount = $column.find('.moveable').length;
+                    if (ticketCount > 0) {
+                        statusCounts[statusId] = ticketCount;
+                        totalCount += ticketCount;
                     }
-                });
-            }
+                }
+            });
 
             // Get existing segments and their status IDs
-            var segments = progressBar.querySelectorAll('.status-segment');
+            var $segments = $progressBar.find('.status-segment');
 
             if (totalCount === 0) {
                 // No tickets - hide all segments
-                segments.forEach(function(seg) {
-                    seg.style.flex = '0 1 0%';
-                    var countEl = seg.querySelector('.segment-count');
-                    if (countEl) countEl.textContent = '';
-                    seg.setAttribute('data-tippy-content', '');
-                });
+                $segments.css('flex', '0 1 0%').find('.segment-count').text('');
+                $segments.attr('data-tippy-content', '');
                 return;
             }
 
             // Update each segment's flex-grow proportionally
-            segments.forEach(function(segment) {
-                var classAttr = segment.getAttribute('class');
+            $segments.each(function() {
+                var $segment = jQuery(this);
+                var classAttr = $segment.attr('class');
                 if (!classAttr) return;
 
                 var statusMatch = classAttr.match(/status-(-?\d+)/);
@@ -121,19 +115,19 @@ leantime.ticketsController = (function () {
                     var percentage = (count / totalCount) * 100;
 
                     // Use flex-grow proportionally so segments fill 100% without gaps
-                    segment.style.flex = percentage + ' 1 0%';
+                    $segment.css('flex', percentage + ' 1 0%');
 
                     // Update count text
-                    var countSpan = segment.querySelector('.segment-count');
-                    if (countSpan) {
-                        countSpan.textContent = count > 0 ? count : '';
+                    var $countSpan = $segment.find('.segment-count');
+                    if ($countSpan.length) {
+                        $countSpan.text(count > 0 ? count : '');
                     }
 
                     // Update tooltip - only show if count > 0
-                    var currentTooltip = segment.getAttribute('data-tippy-content') || '';
+                    var currentTooltip = $segment.attr('data-tippy-content') || '';
                     var labelMatch = currentTooltip.match(/^([^:]+):/);
                     var label = labelMatch ? labelMatch[1] : 'Status ' + statusId;
-                    segment.setAttribute('data-tippy-content', count > 0 ? label + ': ' + count : '');
+                    $segment.attr('data-tippy-content', count > 0 ? label + ': ' + count : '');
                 }
             });
         });
@@ -146,16 +140,16 @@ leantime.ticketsController = (function () {
      */
     var moveCardToSwimlane = function(ticketId, newSwimlaneValue) {
         // Find the card element
-        var card = document.getElementById("ticket_" + ticketId);
+        var $card = jQuery("#ticket_" + ticketId);
 
-        if (!card) {
+        if (!$card.length) {
             console.warn("Card not found for ticket ID:", ticketId);
             return;
         }
 
         // Get current status from card's column
-        var currentColumn = card.closest('.contentInner');
-        var classAttr = currentColumn ? currentColumn.getAttribute('class') || '' : '';
+        var $currentColumn = $card.closest('.contentInner');
+        var classAttr = $currentColumn.attr('class') || '';
         var statusMatch = classAttr.match(/status_(\d+)/);
 
         if (!statusMatch) {
@@ -167,65 +161,65 @@ leantime.ticketsController = (function () {
         var statusId = statusMatch[1];
 
         // Find target swimlane column
-        var targetColumn = document.querySelector("#kanboard-" + newSwimlaneValue + " .contentInner.status_" + statusId);
+        var $targetColumn = jQuery("#kanboard-" + newSwimlaneValue + " .contentInner.status_" + statusId);
 
-        if (!targetColumn) {
+        if (!$targetColumn.length) {
             console.warn("Target swimlane not found:", newSwimlaneValue, statusId);
             location.reload(); // Fallback to reload
             return;
         }
 
         // Don't move if already in correct location
-        if (currentColumn === targetColumn) {
+        if ($currentColumn[0] === $targetColumn[0]) {
             return;
         }
 
         // Add exit animation
-        card.classList.add('card-moving-out');
+        $card.addClass('card-moving-out');
 
         setTimeout(function() {
             // Move card to new swimlane
-            targetColumn.appendChild(card);
+            $card.detach().appendTo($targetColumn);
 
             // Add entrance animation
-            card.classList.remove('card-moving-out');
-            card.classList.add('card-moving-in');
+            $card.removeClass('card-moving-out').addClass('card-moving-in');
 
             // Update ticket counts
             countTickets();
             updateSwimlaneCounts();
 
-            // SortableJS auto-detects DOM changes, no refresh needed
+            // Refresh sortable to recalculate positions
+            if ($targetColumn.sortable) {
+                $targetColumn.sortable('refresh');
+            }
 
             // Remove animation class after transition
             setTimeout(function() {
-                card.classList.remove('card-moving-in');
+                $card.removeClass('card-moving-in');
             }, 300);
         }, 200);
     };
 
 
     var updateRemainingHours = function (element, id) {
-        var el = typeof element === 'string' ? document.querySelector(element) : element;
-        var value = el.value;
+        var value = jQuery(element).val();
         leantime.ticketsRepository.updateRemainingHours(
             id,
             value,
             function () {
-                leantime.toast.show({message: leantime.i18n.__("short_notifications.remaining_hours_updated"), style: "success"});
+                jQuery.growl({message: leantime.i18n.__("short_notifications.remaining_hours_updated"), style: "success"});
             }
         );
 
     };
 
     var updatePlannedHours = function (element, id) {
-        var el = typeof element === 'string' ? document.querySelector(element) : element;
-        var value = el.value;
+        var value = jQuery(element).val();
         leantime.ticketsRepository.updatePlannedHours(
             id,
             value,
             function () {
-                leantime.toast.show({message: leantime.i18n.__("short_notifications.planned_hours_updated"), style: "success"});
+                jQuery.growl({message: leantime.i18n.__("short_notifications.planned_hours_updated"), style: "success"});
             }
         );
 
@@ -233,9 +227,7 @@ leantime.ticketsController = (function () {
 
 
     var toggleFilterBar = function () {
-        document.querySelectorAll(".filterBar").forEach(function(el) {
-            el.style.display = el.style.display === 'none' ? '' : 'none';
-        });
+        jQuery(".filterBar").toggle();
 
     };
 
@@ -246,16 +238,8 @@ leantime.ticketsController = (function () {
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
-        document.addEventListener('DOMContentLoaded',
+        jQuery(document).ready(
             function () {
-
-                // Helper to format date for gantt popups using jQuery datepicker if available, else ISO string
-                function formatGanttDate(dateVal) {
-                    if (typeof jQuery !== 'undefined' && jQuery.datepicker && jQuery.datepicker.formatDate) {
-                        return jQuery.datepicker.formatDate(leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"), new Date(dateVal));
-                    }
-                    return new Date(dateVal).toLocaleDateString();
-                }
 
                 if (readonly === false) {
                     var gantt_chart = new Gantt(
@@ -280,7 +264,8 @@ leantime.ticketsController = (function () {
                                 // the task object will contain the updated
                                 // dates and progress value
                                 var end_date = task._end;
-                                var dateTime = formatGanttDate(end_date);
+                                var dateObject = new Date(end_date);
+                                var dateTime = jQuery.datepicker.formatDate(leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),  new Date(end_date));
 
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
@@ -324,20 +309,12 @@ leantime.ticketsController = (function () {
                                         statusPostData.payload[tasks[i].id] = tasks[i]._index+1;
                                 }
 
-                                // POST to server
-                                var formData = new URLSearchParams();
-                                formData.append('action', statusPostData.action);
-                                for (var key in statusPostData.payload) {
-                                    formData.append('payload[' + key + ']', statusPostData.payload[key]);
-                                }
+                                // POST to server using $.post or $.ajax
+                                jQuery.ajax({
+                                    type: 'POST',
+                                    url: leantime.appUrl + '/api/tickets',
+                                    data: statusPostData
 
-                                fetch(leantime.appUrl + '/api/tickets', {
-                                    method: 'POST',
-                                    body: formData,
-                                    credentials: 'include',
-                                    headers: {
-                                        'X-Requested-With': 'XMLHttpRequest'
-                                    }
                                 });
                             },
                             on_progress_change: function (task, progress) {
@@ -367,7 +344,8 @@ leantime.ticketsController = (function () {
 
 
                                 var end_date = task._end;
-                                var dateTime = formatGanttDate(end_date);
+                                var dateObject = new Date(end_date);
+                                var dateTime = jQuery.datepicker.formatDate(leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),  new Date(end_date));
 
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
@@ -411,20 +389,20 @@ leantime.ticketsController = (function () {
                     );
                 }
 
-                var ganttTimeControl = document.getElementById("ganttTimeControl");
-                if (ganttTimeControl) {
-                    ganttTimeControl.addEventListener("click", function (e) {
-                        var btn = e.target.closest("a");
-                        if (!btn) return;
+                jQuery("#ganttTimeControl").on(
+                    "click",
+                    "a",
+                    function () {
 
-                        var mode = btn.getAttribute("data-value");
+                        var $btn = jQuery(this);
+                        var mode = $btn.attr("data-value");
                         gantt_chart.change_view_mode(mode);
-                        ganttTimeControl.querySelectorAll('a').forEach(function(a) { a.classList.remove('active'); });
-                        btn.classList.add('active');
-                        var label = btn.textContent;
-                        document.querySelectorAll(".viewText").forEach(function(el) { el.textContent = label; });
-                    });
-                }
+                        $btn.parent().parent().find('a').removeClass('active');
+                        $btn.addClass('active');
+                        var label = $btn.text();
+                        jQuery(".viewText").text(label);
+                    }
+                );
 
                 gantt_chart.change_view_mode(viewMode);
 
@@ -441,7 +419,7 @@ leantime.ticketsController = (function () {
         };
         jQuery.datepicker.setDefaults(
             { beforeShow: function (i) {
-                if (i.hasAttribute('readonly')) {
+                if (jQuery(i).attr('readonly')) {
                     return false; } } }
         );
 
@@ -609,14 +587,16 @@ leantime.ticketsController = (function () {
                     "change",
                     function () {
 
-                        var date = this.value;
-                        var id = this.getAttribute("data-id");
+                        var date = jQuery(this).val();
+                        var id = jQuery(this).attr("data-id");
 
                         var toDatePicker = jQuery(".toDateTicket-" + id);
                         toDatePicker.datepicker("option", "minDate", getDate(this));
 
+                        var dateTo = jQuery(".toDateTicket-" + id).val();
+
                         leantime.ticketsRepository.updateEditFromDates(id, date, function() {
-                            leantime.toast.show({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
                         });
 
 
@@ -648,14 +628,16 @@ leantime.ticketsController = (function () {
                     "change",
                     function () {
 
-                        var id = this.getAttribute("data-id");
+                        var id = jQuery(this).attr("data-id");
                         var fromDateTicket = jQuery(".fromDateTicket-" + id);
                         fromDateTicket.datepicker("option", "maxDate", getDate(this));
 
-                        var date = this.value;
+                        var date = jQuery(this).val();
+
+                        var dateFrom = jQuery(".fromDateTicket-" + id).val();
 
                         leantime.ticketsRepository.updateEditToDates(id, date, function() {
-                            leantime.toast.show({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
                         });
 
                     }
@@ -676,10 +658,7 @@ leantime.ticketsController = (function () {
     };
 
     var initToolTips = function () {
-        // tooltip() is a Bootstrap/jQuery UI plugin - use jQuery if available
-        if (typeof jQuery !== 'undefined' && jQuery.fn.tooltip) {
-            jQuery('[data-toggle="tooltip"]').tooltip();
-        }
+        jQuery('[data-toggle="tooltip"]').tooltip();
     };
 
     var initEffortDropdown = function () {
@@ -694,44 +673,39 @@ leantime.ticketsController = (function () {
             '13': "XXL"
         };
 
-        document.querySelectorAll(".effortDropdown .dropdown-menu a").forEach(function (link) {
-            link.replaceWith(link.cloneNode(true));
-        });
-        document.querySelectorAll(".effortDropdown .dropdown-menu a").forEach(function (link) {
-            link.addEventListener("click", function () {
+        jQuery(".effortDropdown .dropdown-menu a").unbind().on("click", function () {
 
-                var dataValue = this.getAttribute("data-value").split("_");
+            var dataValue = jQuery(this).attr("data-value").split("_");
 
-                if (dataValue.length === 2) {
-                    var ticketId = dataValue[0];
-                    var effortId = dataValue[1];
+            if (dataValue.length === 2) {
+                var ticketId = dataValue[0];
+                var effortId = dataValue[1];
 
-                    var formData = new URLSearchParams();
-                    formData.append('id', ticketId);
-                    formData.append('storypoints', effortId);
-
-                    fetch(leantime.appUrl + '/api/tickets', {
-                        method: 'PATCH',
-                        body: formData,
-                        credentials: 'include',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data:
+                            {
+                                id: ticketId,
+                                storypoints: effortId
                         }
-                    }).then(function () {
-                        var textEl = document.querySelector("#effortDropdownMenuLink" + ticketId + " span.text");
-                        if (textEl) textEl.textContent = storyPointLabels[effortId];
-                        leantime.toast.show({message: leantime.i18n.__("short_notifications.effort_updated"), style: "success"});
+                    }
+                ).done(
+                    function () {
+                        jQuery("#effortDropdownMenuLink" + ticketId + " span.text").text(storyPointLabels[effortId]);
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.effort_updated"), style: "success"});
 
                         // Move card to correct swimlane if grouped by effort
                         if (leantime.kanbanGroupBy === 'storypoints') {
                             moveCardToSwimlane(ticketId, effortId);
                         }
 
-                    });
-                } else {
-                    console.log("Ticket Controller: Effort data value not set correctly");
-                }
-            });
+                    }
+                );
+            } else {
+                console.log("Ticket Controller: Effort data value not set correctly");
+            }
         });
 
     };
@@ -746,96 +720,79 @@ leantime.ticketsController = (function () {
             '5': "Lowest"
         };
 
-        document.querySelectorAll(".priorityDropdown .dropdown-menu a").forEach(function (link) {
-            link.replaceWith(link.cloneNode(true));
-        });
-        document.querySelectorAll(".priorityDropdown .dropdown-menu a").forEach(function (link) {
-            link.addEventListener("click", function () {
+        jQuery(".priorityDropdown .dropdown-menu a").unbind().on("click", function () {
 
-                var dataValue = this.getAttribute("data-value").split("_");
+            var dataValue = jQuery(this).attr("data-value").split("_");
 
-                if (dataValue.length === 2) {
-                    var ticketId = dataValue[0];
-                    var priorityId = dataValue[1];
+            if (dataValue.length === 2) {
+                var ticketId = dataValue[0];
+                var priorityId = dataValue[1];
 
-                    var formData = new URLSearchParams();
-                    formData.append('id', ticketId);
-                    formData.append('priority', priorityId);
-
-                    fetch(leantime.appUrl + '/api/tickets', {
-                        method: 'PATCH',
-                        body: formData,
-                        credentials: 'include',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data:
+                            {
+                                id: ticketId,
+                                priority: priorityId
                         }
-                    }).then(function () {
-                        var dropdownLink = document.getElementById("priorityDropdownMenuLink" + ticketId);
-                        if (dropdownLink) {
-                            var textEl = dropdownLink.querySelector("span.text");
-                            if (textEl) textEl.textContent = priorityLabels[priorityId];
-                            dropdownLink.classList.remove("priority-bg-1", "priority-bg-2", "priority-bg-3", "priority-bg-4", "priority-bg-5");
-                            dropdownLink.classList.add("priority-bg-" + priorityId);
+                    }
+                ).done(
+                    function () {
+                        jQuery("#priorityDropdownMenuLink" + ticketId + " span.text").text(priorityLabels[priorityId]);
+                        jQuery("#priorityDropdownMenuLink" + ticketId + "").removeClass("priority-bg-1 priority-bg-2 priority-bg-3 priority-bg-4 priority-bg-5");
+                        jQuery("#priorityDropdownMenuLink" + ticketId + "").addClass("priority-bg-" + priorityId);
 
-                            var ticketBox = dropdownLink.closest(".ticketBox");
-                            if (ticketBox) {
-                                ticketBox.classList.remove("priority-border-1", "priority-border-2", "priority-border-3", "priority-border-4", "priority-border-5");
-                                ticketBox.classList.add("priority-border-" + priorityId);
-                            }
-                        }
+                        jQuery("#priorityDropdownMenuLink" + ticketId + "").parents(".ticketBox").removeClass("priority-border-1 priority-border-2 priority-border-3 priority-border-4 priority-border-5");
+                        jQuery("#priorityDropdownMenuLink" + ticketId + "").parents(".ticketBox").addClass("priority-border-" + priorityId);
 
-                        leantime.toast.show({message: leantime.i18n.__("short_notifications.priority_updated"), style: "success"});
+
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.priority_updated"), style: "success"});
 
                         // Move card to correct swimlane if grouped by priority
                         if (leantime.kanbanGroupBy === 'priority') {
                             moveCardToSwimlane(ticketId, priorityId);
                         }
 
-                    });
-                } else {
-                    console.log("Ticket Controller: Priority data value not set correctly");
-                }
-            });
+                    }
+                );
+            } else {
+                console.log("Ticket Controller: Priority data value not set correctly");
+            }
         });
 
     };
 
     var initMilestoneDropdown = function () {
 
-        document.querySelectorAll(".milestoneDropdown .dropdown-menu a").forEach(function (link) {
-            link.replaceWith(link.cloneNode(true));
-        });
-        document.querySelectorAll(".milestoneDropdown .dropdown-menu a").forEach(function (link) {
-            link.addEventListener("click", function () {
+        jQuery(".milestoneDropdown .dropdown-menu a").unbind().on("click", function () {
 
-                var dataValue = this.getAttribute("data-value").split("_");
-                var dataLabel = this.getAttribute('data-label');
+                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataLabel = jQuery(this).attr('data-label');
 
             if (dataValue.length === 3) {
                 var ticketId = dataValue[0];
                 var milestoneId = dataValue[1];
                 var color = dataValue[2];
 
-                var textEl = document.querySelector("#milestoneDropdownMenuLink" + ticketId + " span.text");
-                if (textEl) textEl.insertAdjacentHTML('beforeend', " ...");
+                jQuery("#milestoneDropdownMenuLink" + ticketId + " span.text").append(" ...");
 
-                var formData = new URLSearchParams();
-                formData.append('id', ticketId);
-                formData.append('milestoneid', milestoneId);
-
-                fetch(leantime.appUrl + '/api/tickets', {
-                    method: 'PATCH',
-                    body: formData,
-                    credentials: 'include',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                }).then(function () {
-                        var textEl = document.querySelector("#milestoneDropdownMenuLink" + ticketId + " span.text");
-                        if (textEl) textEl.textContent = dataLabel;
-                        var linkEl = document.getElementById("milestoneDropdownMenuLink" + ticketId);
-                        if (linkEl) linkEl.style.backgroundColor = color;
-                        leantime.toast.show({message: leantime.i18n.__("short_notifications.milestone_updated"), style: "success"});
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data:
+                            {
+                                id : ticketId,
+                                milestoneid:milestoneId
+                        }
+                        }
+                ).done(
+                    function () {
+                        jQuery("#milestoneDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
+                        jQuery("#milestoneDropdownMenuLink" + ticketId).css("backgroundColor", color);
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.milestone_updated"), style: "success"});
 
                         // Move card to correct swimlane if grouped by milestone
                         if (leantime.kanbanGroupBy === 'milestoneid') {
@@ -844,88 +801,73 @@ leantime.ticketsController = (function () {
                     }
                 );
             }
-            });
         });
     };
 
     var initStatusDropdown = function () {
 
-        document.querySelectorAll(".statusDropdown .dropdown-menu a").forEach(function (link) {
-            link.replaceWith(link.cloneNode(true));
-        });
-        document.querySelectorAll(".statusDropdown .dropdown-menu a").forEach(function (link) {
-            link.addEventListener("click", function () {
+        jQuery(".statusDropdown .dropdown-menu a").unbind().on("click", function () {
 
-                var dataValue = this.getAttribute("data-value").split("_");
-                var dataLabel = this.getAttribute('data-label');
+                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataLabel = jQuery(this).attr('data-label');
 
             if (dataValue.length == 3) {
                 var ticketId = dataValue[0];
                 var statusId = dataValue[1];
                 var className = dataValue[2];
 
-                var formData = new URLSearchParams();
-                formData.append('id', ticketId);
-                formData.append('status', statusId);
-
-                fetch(leantime.appUrl + '/api/tickets', {
-                    method: 'PATCH',
-                    body: formData,
-                    credentials: 'include',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                }).then(function (response) { return response.json(); })
-                .then(function (response) {
-                        var textEl = document.querySelector("#statusDropdownMenuLink" + ticketId + " span.text");
-                        if (textEl) textEl.textContent = dataLabel;
-                        var linkEl = document.getElementById("statusDropdownMenuLink" + ticketId);
-                        if (linkEl) linkEl.className = className + " dropdown-toggle f-left status ";
-                        leantime.toast.show({message: leantime.i18n.__("short_notifications.status_updated"), style: "success"});
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data:
+                            {
+                                id : ticketId,
+                                status:statusId
+                        }
+                        }
+                ).done(
+                    function (response) {
+                        jQuery("#statusDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
+                        jQuery("#statusDropdownMenuLink" + ticketId).removeClass().addClass(className + " dropdown-toggle f-left status ");
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated"), style: "success"});
 
                         leantime.handleAsyncResponse(response);
 
                     }
                 );
             }
-            });
         });
 
     };
 
     var initUserDropdown = function () {
 
-        document.querySelectorAll(".userDropdown .dropdown-menu a").forEach(function (link) {
-            link.replaceWith(link.cloneNode(true));
-        });
-        document.querySelectorAll(".userDropdown .dropdown-menu a").forEach(function (link) {
-            link.addEventListener("click", function () {
+        jQuery(".userDropdown .dropdown-menu a").unbind().on("click", function () {
 
-                var dataValue = this.getAttribute("data-value").split("_");
-                var dataLabel = this.getAttribute('data-label');
+                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataLabel = jQuery(this).attr('data-label');
 
             if (dataValue.length === 3) {
                 var ticketId = dataValue[0];
                 var userId = dataValue[1];
                 var profileImageId = dataValue[2];
 
-                var formData = new URLSearchParams();
-                formData.append('id', ticketId);
-                formData.append('editorId', userId);
-
-                fetch(leantime.appUrl + '/api/tickets', {
-                    method: 'PATCH',
-                    body: formData,
-                    credentials: 'include',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                }).then(function () {
-                        var imgEl = document.querySelector("#userDropdownMenuLink" + ticketId + " span.text span#userImage" + ticketId + " img");
-                        if (imgEl) imgEl.setAttribute("src", leantime.appUrl + "/api/users?profileImage=" + userId);
-                        var userEl = document.querySelector("#userDropdownMenuLink" + ticketId + " span.text span#user" + ticketId);
-                        if (userEl) userEl.textContent = dataLabel;
-                        leantime.toast.show({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data:
+                            {
+                                id : ticketId,
+                                editorId:userId
+                        }
+                        }
+                ).done(
+                    function () {
+                        jQuery("#userDropdownMenuLink" + ticketId + " span.text span#userImage" + ticketId + " img").attr("src", leantime.appUrl + "/api/users?profileImage=" + userId);
+                        jQuery("#userDropdownMenuLink" + ticketId + " span.text span#user" + ticketId).text(dataLabel);
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
 
                         // Move card to correct swimlane if grouped by user
                         if (leantime.kanbanGroupBy === 'editorId') {
@@ -934,72 +876,65 @@ leantime.ticketsController = (function () {
                     }
                 );
             }
-            });
         });
     };
 
     var initAsyncInputChange = function () {
 
-        document.querySelectorAll(".asyncInputUpdate").forEach(function (input) {
-            input.addEventListener("change", function () {
-                var dataLabel = this.getAttribute('data-label').split("-");
+        jQuery(".asyncInputUpdate").on("change", function () {
+            var dataLabel = jQuery(this).attr('data-label').split("-");
 
-                if (dataLabel.length == 2) {
-                    var fieldName = dataLabel[0];
-                    var entityId = dataLabel[1];
-                    var value = this.value;
+            if (dataLabel.length == 2) {
+                var fieldName = dataLabel[0];
+                var entityId = dataLabel[1];
+                var value = jQuery(this).val();
 
-                    var formData = new URLSearchParams();
-                    formData.append('id', entityId);
-                    formData.append(fieldName, value);
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data:
+                            {
+                                id : entityId,
+                                [fieldName]:value,
 
-                    fetch(leantime.appUrl + '/api/tickets', {
-                        method: 'PATCH',
-                        body: formData,
-                        credentials: 'include',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
                         }
-                    }).then(function () {
-                            leantime.toast.show({message: leantime.i18n.__("notifications.subtask_saved"), style: "success"});
-                        }
-                    );
-                }
+                    }
+                ).done(
+                    function () {
+                        jQuery.growl({message: leantime.i18n.__("notifications.subtask_saved"), style: "success"});
+                    }
+                );
+            }
 
-            });
         });
     };
 
     var initSprintDropdown = function () {
 
-        document.querySelectorAll(".sprintDropdown .dropdown-menu a").forEach(function (link) {
-            link.replaceWith(link.cloneNode(true));
-        });
-        document.querySelectorAll(".sprintDropdown .dropdown-menu a").forEach(function (link) {
-            link.addEventListener("click", function () {
+        jQuery(".sprintDropdown .dropdown-menu a").unbind().on("click", function () {
 
-                var dataValue = this.getAttribute("data-value").split("_");
-                var dataLabel = this.getAttribute('data-label');
+                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataLabel = jQuery(this).attr('data-label');
 
             if (dataValue.length == 2) {
                 var ticketId = dataValue[0];
                 var sprintId = dataValue[1];
 
-                var formData = new URLSearchParams();
-                formData.append('id', ticketId);
-                formData.append('sprint', sprintId);
-
-                fetch(leantime.appUrl + '/api/tickets', {
-                    method: 'PATCH',
-                    body: formData,
-                    credentials: 'include',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                }).then(function () {
-                        var textEl = document.querySelector("#sprintDropdownMenuLink" + ticketId + " span.text");
-                        if (textEl) textEl.textContent = dataLabel;
-                        leantime.toast.show({message: leantime.i18n.__("short_notifications.sprint_updated"), style: "success"});
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data:
+                            {
+                                id : ticketId,
+                                sprint:sprintId
+                        }
+                        }
+                ).done(
+                    function () {
+                        jQuery("#sprintDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.sprint_updated"), style: "success"});
 
                         // Move card to correct swimlane if grouped by sprint
                         if (leantime.kanbanGroupBy === 'sprint') {
@@ -1008,7 +943,6 @@ leantime.ticketsController = (function () {
                     }
                 );
             }
-            });
         });
     };
 
@@ -1030,42 +964,37 @@ leantime.ticketsController = (function () {
                 '#aaaaaa',
                 '#4c4c4c',
             ];
-            document.querySelectorAll('input.simpleColorPicker').forEach(function (input) {
-                // Convert text input to native color picker
-                input.type = 'color';
-                input.style.height = '34px';
-                input.style.padding = '2px';
-                input.style.cursor = 'pointer';
-                if (input.value && input.value.charAt(0) !== '#') {
-                    input.value = '#' + input.value;
+            jQuery('input.simpleColorPicker').simpleColorPicker(
+                { colors: colors,
+                    onChangeColor: function (color) {
+                        jQuery(this).css('background', color);
+                        jQuery(this).css('color', "#fff");
+                    }
                 }
-                if (!input.value) {
-                    input.value = '#1b75bb';
-                }
-                input.addEventListener('input', function () {
-                    this.style.background = this.value;
-                });
-            });
+            );
+
+            var currentColor = jQuery('input.simpleColorPicker').val();
+
+        if (currentColor != '') {
+            jQuery('input.simpleColorPicker').css('background', currentColor);
+        }
 
 
     };
 
     var initDueDateTimePickers = function () {
         // Reset due date by clicking a button on the task in the dashboard
-        document.querySelectorAll(".date-picker-form-control .reset-button").forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                // Ticket id for api patch call
-                var id = this.getAttribute("data-id");
+        jQuery(".date-picker-form-control .reset-button").on('click', function () {
+            // Ticket id for api patch call
+            const id = jQuery(this).attr("data-id");
 
-                // Update date input to have "text-anytime" instead of old date
-                var dateInput = document.getElementById("due-date-picker-" + id);
-                if (dateInput) dateInput.value = leantime.i18n.__("text.anytime");
+            // Update date input to have "text-anytime" instead of old date
+            jQuery("#due-date-picker-"+id).val(leantime.i18n.__("text.anytime"));
 
-                // Set date to null to reset
-                leantime.ticketsRepository.updateDueDates(id, null, function () {
-                    // Notify user that due date is updated
-                    leantime.toast.show({message: leantime.i18n.__("short_notifications.duedate_updated"), style: "success"});
-                });
+            // Set date to null to reset
+            leantime.ticketsRepository.updateDueDates(id, null, function () {
+                // Notify user that due date is updated
+                jQuery.growl({message: leantime.i18n.__("short_notifications.duedate_updated"), style: "success"});
             });
         });
 
@@ -1076,15 +1005,12 @@ leantime.ticketsController = (function () {
             var year = instance.currentYear;
 
             var dateObject = new Date(year, month, day);
-            // jQuery.datepicker.formatDate is a jQuery UI dependency - use if available
-            var parsed = (typeof jQuery !== 'undefined' && jQuery.datepicker && jQuery.datepicker.formatDate)
-                ? jQuery.datepicker.formatDate(leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"), dateObject)
-                : dateObject.toLocaleDateString();
+            var parsed = jQuery.datepicker.formatDate(leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"), dateObject);
 
-            var id = this.getAttribute("data-id");
+            var id = jQuery(this).attr("data-id");
 
             leantime.ticketsRepository.updateDueDates(id, parsed, function () {
-                leantime.toast.show({message: leantime.i18n.__("short_notifications.duedate_updated"), style: "success"});
+                jQuery.growl({message: leantime.i18n.__("short_notifications.duedate_updated"), style: "success"});
             });
 
         });
@@ -1142,10 +1068,9 @@ leantime.ticketsController = (function () {
     var colorTicketBoxes = function (currentBox) {
 
         var color = "#fff";
-        document.querySelectorAll(".ticketBox").forEach(function (box) {
+        jQuery(".ticketBox").each(function (index) {
 
-            var linkEl = box.querySelector(".statusDropdown > a");
-            var value = linkEl ? linkEl.getAttribute("class") : undefined;
+            var value = jQuery(this).find(".statusDropdown > a").attr("class");
 
             if (value != undefined) {
                 if (value.indexOf("important") > -1) {
@@ -1162,20 +1087,11 @@ leantime.ticketsController = (function () {
                     color = "#999999";
                 }
 
-                box.style.borderLeft = "5px solid " + color;
+                jQuery(this).css("borderLeft", "5px solid " + color);
 
                 if (currentBox != null) {
-                    if (box.getAttribute("data-val") == currentBox) {
-                        // Simple highlight flash without jQuery animate
-                        var targetBox = document.querySelector("#ticket_" + currentBox + " .ticketBox");
-                        if (targetBox) {
-                            targetBox.style.transition = 'background-color 0.2s ease';
-                            targetBox.style.backgroundColor = color;
-                            setTimeout(function() {
-                                targetBox.style.transition = 'background-color 0.6s ease';
-                                targetBox.style.backgroundColor = "#fff";
-                            }, 200);
-                        }
+                    if (jQuery(this).attr("data-val") == currentBox) {
+                        jQuery("#ticket_" + currentBox + " .ticketBox").animate({backgroundColor: color}, 'fast').animate({backgroundColor: "#fff"}, 'slow');
                     }
                 }
             }
@@ -1186,33 +1102,26 @@ leantime.ticketsController = (function () {
 
     var initTicketTabs = function () {
 
-        // Note: DOMContentLoaded has already fired by the time this runs
-        // (called from inline <script> after page load), so run directly.
-        var url = new URL(window.location.href);
-        var tab = url.searchParams.get("tab");
+        jQuery(document).ready(function () {
 
-        var activeTabIndex = 0;
-        if (tab) {
-            var tabsContainer = document.querySelector('.ticketTabs');
-            if (tabsContainer) {
-                var tabLink = tabsContainer.querySelector('a[href="#' + tab + '"]');
-                if (tabLink && tabLink.parentElement) {
-                    activeTabIndex = Array.prototype.indexOf.call(tabLink.parentElement.parentElement.children, tabLink.parentElement);
-                }
+
+            let url = new URL(window.location.href);
+            let tab = url.searchParams.get("tab");
+
+            let activeTabIndex = 0;
+            if (tab) {
+                activeTabIndex = jQuery('.ticketTabs').find('a[href="#' + tab + '"]').parent().index();
             }
-        }
 
-        // jQuery UI tabs() requires jQuery - use jQuery if available
-        if (typeof jQuery !== 'undefined' && jQuery.fn.tabs) {
             jQuery('.ticketTabs').tabs({
                 create: function ( event, ui ) {
-                    document.querySelectorAll('.ticketTabs').forEach(function(el) {
-                        el.style.visibility = "visible";
-                    });
+                    jQuery('.ticketTabs').css("visibility", "visible");
+
                 },
                 activate: function (event, ui) {
 
                     url = new URL(window.location.href);
+
 
                     url.searchParams.set('tab', ui.newPanel[0].id);
 
@@ -1228,79 +1137,72 @@ leantime.ticketsController = (function () {
                 active: activeTabIndex
 
             });
-        }
+
+
+        });
 
     };
 
     var initTicketSearchSubmit = function (url) {
 
-        var searchForm = document.getElementById("ticketSearch");
-        if (searchForm) {
-            searchForm.addEventListener('submit', function (e) {
-                e.preventDefault();
+        jQuery("#ticketSearch").on('submit', function (e) {
+            e.preventDefault();
 
-                var getVal = function(id) { var el = document.getElementById(id); return el ? el.value : undefined; };
-                var getChecked = function(name) { var el = document.querySelector("input[name='" + name + "']:checked"); return el ? el.value : undefined; };
+            var project = jQuery("#projectIdInput").val();
+            var users = jQuery("#userSelect").val();
+            var milestones = jQuery("#milestoneSelect").val();
+            var term = jQuery("#termInput").val();
+            var sprints = jQuery("#sprintSelect").val();
+            var types = jQuery("#typeSelect").val();
+            var priority = jQuery("#prioritySelect").val();
+            var status = jQuery("#statusSelect").val();
+            var sort = jQuery("#sortBySelect").val();
+            var groupBy = jQuery("input[name='groupBy']:checked").val();
+            var showTasks = jQuery("input[name='showTasks']:checked").val();
 
-                var project = getVal("projectIdInput");
-                var users = getVal("userSelect");
-                var milestones = getVal("milestoneSelect");
-                var term = getVal("termInput");
-                var sprints = getVal("sprintSelect");
-                var types = getVal("typeSelect");
-                var priority = getVal("prioritySelect");
-                var status = getVal("statusSelect");
-                var sort = getVal("sortBySelect");
-                var groupBy = getChecked("groupBy");
-                var showTasks = getChecked("showTasks");
+            var query = "?search=true";
+            if (project != "" && project != undefined) {
+                query = query + "&projectId=" + project}
+            if (users != "" && users != undefined) {
+                query = query + "&users=" + users}
+            if (milestones != ""  && milestones != undefined) {
+                query = query + "&milestone=" + milestones}
+            if (term != ""  && term != undefined) {
+                query = query + "&term=" + term;}
+            if (sprints != ""  && sprints != undefined) {
+                query = query + "&sprint=" + sprints;}
+            if (types != "" && types != undefined) {
+                query = query + "&type=" + types;}
+            if (priority != "" && priority != undefined) {
+                query = query + "&priority=" + priority;}
+            if (status != "" && status != undefined) {
+                query = query + "&status=" + status;}
+            if (sort != "" && sort != undefined) {
+                query = query + "&sort=" + sort;}
+            if (groupBy != "" && groupBy != undefined) {
+                query = query + "&groupBy=" + groupBy;}
+            if (showTasks != "" && showTasks != undefined) {
+                query = query + "&showTasks=" + showTasks;}
 
-                var query = "?search=true";
-                if (project != "" && project != undefined) {
-                    query = query + "&projectId=" + project}
-                if (users != "" && users != undefined) {
-                    query = query + "&users=" + users}
-                if (milestones != ""  && milestones != undefined) {
-                    query = query + "&milestone=" + milestones}
-                if (term != ""  && term != undefined) {
-                    query = query + "&term=" + term;}
-                if (sprints != ""  && sprints != undefined) {
-                    query = query + "&sprint=" + sprints;}
-                if (types != "" && types != undefined) {
-                    query = query + "&type=" + types;}
-                if (priority != "" && priority != undefined) {
-                    query = query + "&priority=" + priority;}
-                if (status != "" && status != undefined) {
-                    query = query + "&status=" + status;}
-                if (sort != "" && sort != undefined) {
-                    query = query + "&sort=" + sort;}
-                if (groupBy != "" && groupBy != undefined) {
-                    query = query + "&groupBy=" + groupBy;}
-                if (showTasks != "" && showTasks != undefined) {
-                    query = query + "&showTasks=" + showTasks;}
+            var rediredirectUrl = url + query;
 
-                var rediredirectUrl = url + query;
+            window.location.href = rediredirectUrl;
 
-                window.location.href = rediredirectUrl;
-
-            });
-        }
+        });
     };
 
     var initTicketSearchUrlBuilder = function (url) {
 
-            var getVal = function(id) { var el = document.getElementById(id); return el ? el.value : undefined; };
-            var getChecked = function(name) { var el = document.querySelector("input[name='" + name + "']:checked"); return el ? el.value : undefined; };
-
-            var project = getVal("projectIdInput");
-            var users = getVal("userSelect");
-            var milestones = getVal("milestoneSelect");
-            var term = getVal("termInput");
-            var sprints = getVal("sprintSelect");
-            var types = getVal("typeSelect");
-            var priority = getVal("prioritySelect");
-            var status = getVal("statusSelect");
-            var sort = getVal("sortBySelect");
-            var groupBy = getChecked("groupBy");
+            var project = jQuery("#projectIdInput").val();
+            var users = jQuery("#userSelect").val();
+            var milestones = jQuery("#milestoneSelect").val();
+            var term = jQuery("#termInput").val();
+            var sprints = jQuery("#sprintSelect").val();
+            var types = jQuery("#typeSelect").val();
+            var priority = jQuery("#prioritySelect").val();
+            var status = jQuery("#statusSelect").val();
+            var sort = jQuery("#sortBySelect").val();
+            var groupBy = jQuery("input[name='groupBy']:checked").val();
 
             var query = "?search=true";
         if (project != "" && project != undefined) {
@@ -1332,36 +1234,32 @@ leantime.ticketsController = (function () {
 
     var setUpKanbanColumns = function () {
 
-        document.addEventListener('DOMContentLoaded', function () {
+        jQuery(document).ready(function () {
 
             countTickets();
             updateSwimlaneCounts();
 
-            document.querySelectorAll(".filterBar .row-fluid").forEach(function(el) {
-                el.style.opacity = "1";
-            });
+            jQuery(".filterBar .row-fluid").css("opacity", "1");
 
-            document.querySelectorAll(".sortableTicketList").forEach(function(listEl) {
+            jQuery(".sortableTicketList").each(function(){
 
-                var kanbanLaneId = listEl.id;
+                let kanbanLaneId = jQuery(this).attr("id");
 
                 // Skip collapsed swimlanes - let CSS handle their height
-                var swimlaneRow = listEl.closest('.kanban-swimlane-row');
-                if (swimlaneRow && swimlaneRow.getAttribute('data-expanded') === 'false') {
+                var swimlaneRow = jQuery(this).closest('.kanban-swimlane-row');
+                if (swimlaneRow.length && swimlaneRow.attr('data-expanded') === 'false') {
                     return;
                 }
 
-                var height = 250;
+                let height = 250;
 
-                listEl.querySelectorAll(".column .contentInner").forEach(function (innerEl) {
-                    if (innerEl.offsetHeight > height) {
-                        height = innerEl.offsetHeight;
+                jQuery(this).find(".column .contentInner").each(function () {
+                    if (jQuery(this).height() > height) {
+                        height = jQuery(this).height();
                     }
                 });
 
-                document.querySelectorAll("#" + kanbanLaneId + " .column .contentInner").forEach(function(innerEl) {
-                    innerEl.style.height = height + "px";
-                });
+                jQuery("#"+kanbanLaneId+" .column .contentInner").css("height", height);
 
             });
 
@@ -1373,352 +1271,316 @@ leantime.ticketsController = (function () {
 
         var ticketStatusList = ticketStatusListParameter;
 
-        document.querySelectorAll(".sortableTicketList.kanbanBoard .ticketBox").forEach(function (box) {
-            box.addEventListener("mouseenter", function () {
-                this.style.background = "var(--kanban-card-hover)";
-            });
-            box.addEventListener("mouseleave", function () {
-                this.style.background = "var(--kanban-card-bg)";
-            });
+        jQuery(".sortableTicketList.kanbanBoard .ticketBox").hover(function () {
+            jQuery(this).css("background", "var(--kanban-card-hover)");
+        },function () {
+            jQuery(this).css("background", "var(--kanban-card-bg)");
         });
 
         var position_updated = false;
 
-        function serializeSortable(containerEl) {
-            var items = containerEl.querySelectorAll(':scope > .moveable');
-            var parts = [];
-            items.forEach(function (item) {
-                if (item.id) {
-                    var idx = item.id.indexOf('_');
-                    if (idx !== -1) {
-                        parts.push(item.id.substring(0, idx) + '[]=' + item.id.substring(idx + 1));
-                    }
-                }
-            });
-            return parts.join('&');
-        }
+        jQuery(".sortableTicketList").each(function () {
 
-        document.querySelectorAll(".sortableTicketList").forEach(function (currentElement) {
+            var currentElement = this;
 
-            currentElement.querySelectorAll(".contentInner").forEach(function (contentInner) {
-                if (contentInner._sortableInstance) contentInner._sortableInstance.destroy();
-                contentInner._sortableInstance = new Sortable(contentInner, {
-                    group: 'ticket-kanban',
-                    draggable: '.moveable',
-                    ghostClass: 'ui-state-highlight',
-                    filter: '.portlet-toggle, input, a, select, textarea',
-                    preventOnFilter: false,
-                    animation: 150,
-                    delay: 10,
-                    delayOnTouchOnly: true,
+            jQuery(currentElement).find(".contentInner").sortable({
+                connectWith: ".contentInner",
+                items: "> .moveable",
+                tolerance: 'intersect',
+                placeholder: "ui-state-highlight",
+                forcePlaceholderSize: true,
+                cancel: ".portlet-toggle,:input,a,input",
+                distance: 10,
 
-                    onStart: function (evt) {
-                        evt.item.classList.add('tilt');
-                        tilt_direction(evt.item);
+                start: function (event, ui) {
+                    ui.item.addClass('tilt');
+                    tilt_direction(ui.item);
 
-                        // Store original swimlane for cross-swimlane detection
-                        var originalSwimlane = evt.item.closest('.sortableTicketList.kanbanBoard');
-                        evt.item.dataset.originalSwimlaneId = originalSwimlane ? originalSwimlane.id : '';
-                    },
+                    // Store original swimlane for cross-swimlane detection
+                    var $originalSwimlane = ui.item.closest('.sortableTicketList.kanbanBoard');
+                    ui.item.data('originalSwimlaneId', $originalSwimlane.attr('id'));
+                },
+                stop: function (event, ui) {
+                    ui.item.removeClass("tilt");
+                    jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
+                    ui.item.removeData("move_handler");
 
-                    onEnd: function (evt) {
-                        evt.item.classList.remove('tilt');
-                        if (evt.item._moveHandler) {
-                            document.removeEventListener('mousemove', evt.item._moveHandler);
-                            delete evt.item._moveHandler;
+                    countTickets();
+                    updateSwimlaneCounts();
+
+                    // Update empty state for all columns after drag-and-drop
+                    jQuery(".sortableTicketList").find(".contentInner").each(function() {
+                        var $container = jQuery(this);
+                        var hasTickets = $container.find(".moveable").length > 0;
+
+                        if (hasTickets) {
+                            // Column has tickets - remove empty state
+                            $container.removeClass("empty-column");
+                            $container.attr("data-empty-text", "");
+                            var currentLabel = $container.attr("aria-label") || "";
+                            $container.attr("aria-label", currentLabel.replace("Empty column", "") + " column items");
+                        } else {
+                            // Column is empty - add empty state
+                            $container.addClass("empty-column");
+                            $container.attr("data-empty-text", "Empty");
+                            $container.attr("aria-label", "Empty column");
                         }
+                    });
 
-                        countTickets();
-                        updateSwimlaneCounts();
+                    // Detect cross-swimlane movement and update groupBy field
+                    var $newSwimlane = ui.item.closest('.sortableTicketList.kanbanBoard');
+                    var newSwimlaneId = $newSwimlane.attr('id');
+                    var originalSwimlaneId = ui.item.data('originalSwimlaneId');
 
-                        // Update empty state for all columns after drag-and-drop
-                        document.querySelectorAll(".sortableTicketList .contentInner").forEach(function(container) {
-                            var hasTickets = container.querySelectorAll(".moveable").length > 0;
+                    if (originalSwimlaneId && newSwimlaneId && originalSwimlaneId !== newSwimlaneId) {
+                        // Card moved to different swimlane - update the groupBy field
+                        var ticketId = ui.item[0].id.replace('ticket_', '');
+                        var newGroupValue = newSwimlaneId.replace('kanboard-', '');
 
-                            if (hasTickets) {
-                                container.classList.remove("empty-column");
-                                container.setAttribute("data-empty-text", "");
-                                var currentLabel = container.getAttribute("aria-label") || "";
-                                container.setAttribute("aria-label", currentLabel.replace("Empty column", "") + " column items");
-                            } else {
-                                container.classList.add("empty-column");
-                                container.setAttribute("data-empty-text", "Empty");
-                                container.setAttribute("aria-label", "Empty column");
-                            }
-                        });
-
-                        // Detect cross-swimlane movement and update groupBy field
-                        var newSwimlane = evt.item.closest('.sortableTicketList.kanbanBoard');
-                        var newSwimlaneId = newSwimlane ? newSwimlane.id : '';
-                        var originalSwimlaneId = evt.item.dataset.originalSwimlaneId;
-
-                        if (originalSwimlaneId && newSwimlaneId && originalSwimlaneId !== newSwimlaneId) {
-                            // Card moved to different swimlane - update the groupBy field
-                            var ticketId = evt.item.id.replace('ticket_', '');
-                            var newGroupValue = newSwimlaneId.replace('kanboard-', '');
-
-                            // Map groupBy values to API field names
-                            var groupByFieldMap = {
-                                'milestoneid': 'milestoneid',
-                                'editorId': 'editorId',
-                                'priority': 'priority',
-                                'storypoints': 'storypoints',
-                                'sprint': 'sprint',
-                                'dueDate': 'dateToFinish'
-                            };
-
-                            var groupBy = leantime.kanbanGroupBy;
-                            var fieldName = groupByFieldMap[groupBy];
-
-                            // Special handling for dueDate - calculate actual date from bucket ID
-                            if (groupBy === 'dueDate') {
-                                var today = new Date();
-                                today.setHours(12, 0, 0, 0);
-
-                                switch (newGroupValue) {
-                                    case '0':
-                                        var yesterday = new Date(today);
-                                        yesterday.setDate(yesterday.getDate() - 1);
-                                        newGroupValue = yesterday.toISOString().split('T')[0];
-                                        break;
-                                    case '1':
-                                        var endOfWeek = new Date(today);
-                                        var daysUntilSaturday = 6 - endOfWeek.getDay();
-                                        if (daysUntilSaturday < 0) daysUntilSaturday = 0;
-                                        endOfWeek.setDate(endOfWeek.getDate() + daysUntilSaturday);
-                                        newGroupValue = endOfWeek.toISOString().split('T')[0];
-                                        break;
-                                    case '2':
-                                        var nextWeekEnd = new Date(today);
-                                        var daysUntilNextSaturday = 6 - nextWeekEnd.getDay() + 7;
-                                        nextWeekEnd.setDate(nextWeekEnd.getDate() + daysUntilNextSaturday);
-                                        newGroupValue = nextWeekEnd.toISOString().split('T')[0];
-                                        break;
-                                    case '3':
-                                        var later = new Date(today);
-                                        later.setDate(later.getDate() + 21);
-                                        newGroupValue = later.toISOString().split('T')[0];
-                                        break;
-                                    case '4':
-                                        newGroupValue = '';
-                                        break;
-                                }
-                            }
-
-                            if (fieldName && ticketId) {
-                                var card = document.getElementById('ticket_' + ticketId);
-
-                                // OPTIMISTIC UI UPDATE - update visuals immediately before server confirms
-                                if (groupBy === 'milestoneid') {
-                                    var swimlaneHeader = document.querySelector('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
-                                    var newLabel = (swimlaneHeader ? swimlaneHeader.textContent : '') || leantime.i18n.__("label.no_milestone");
-
-                                    var milestoneDropdown = card ? card.querySelector('.milestoneDropdown .dropdown-toggle .text') : null;
-                                    if (milestoneDropdown) {
-                                        milestoneDropdown.textContent = newLabel;
-                                    }
-
-                                    var milestoneMenuItem = card ? card.querySelector('.milestoneDropdown .dropdown-menu a[data-value^="' + ticketId + '_' + newGroupValue + '_"]') : null;
-                                    var milestoneColor = '#b0b0b0';
-
-                                    if (milestoneMenuItem && newGroupValue !== '0' && newGroupValue !== '') {
-                                        var dataValue = milestoneMenuItem.getAttribute('data-value');
-                                        if (dataValue) {
-                                            var parts = dataValue.split('_');
-                                            if (parts.length >= 3) {
-                                                milestoneColor = parts.slice(2).join('_');
-                                            }
-                                        }
-                                        if (!milestoneColor || milestoneColor === '#b0b0b0') {
-                                            var inlineStyle = milestoneMenuItem.getAttribute('style');
-                                            if (inlineStyle) {
-                                                var colorMatch = inlineStyle.match(/background-color:\s*([^;]+)/i);
-                                                if (colorMatch) {
-                                                    milestoneColor = colorMatch[1].trim();
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    var milestoneToggle = card ? card.querySelector('.milestoneDropdown .dropdown-toggle') : null;
-                                    if (milestoneToggle) milestoneToggle.style.backgroundColor = milestoneColor;
-
-                                } else if (groupBy === 'priority') {
-                                    if (card) {
-                                        card.className = card.className.replace(/(^|\s)priority-border-\S+/g, '');
-                                        card.classList.add('priority-border-' + newGroupValue);
-                                    }
-
-                                    var priorityLabels = {'1': 'Critical', '2': 'High', '3': 'Medium', '4': 'Low', '5': 'Lowest'};
-                                    var priorityDropdown = document.getElementById('priorityDropdownMenuLink' + ticketId);
-                                    if (priorityDropdown) {
-                                        var prioText = priorityDropdown.querySelector('span.text');
-                                        if (prioText) prioText.textContent = priorityLabels[newGroupValue] || newGroupValue;
-                                        priorityDropdown.classList.remove('priority-bg-1', 'priority-bg-2', 'priority-bg-3', 'priority-bg-4', 'priority-bg-5');
-                                        priorityDropdown.classList.add('priority-bg-' + newGroupValue);
-                                    }
-
-                                } else if (groupBy === 'editorId') {
-                                    var userDropdown = document.getElementById('userDropdownMenuLink' + ticketId);
-                                    if (userDropdown) {
-                                        var userImg = userDropdown.querySelector('span.text span img');
-                                        if (userImg) userImg.setAttribute('src', leantime.appUrl + '/api/users?profileImage=' + newGroupValue);
-
-                                        var swimlaneHeader = document.querySelector('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
-                                        var newUserName = (swimlaneHeader ? swimlaneHeader.textContent : '') || leantime.i18n.__("label.not_assigned");
-                                        var userNameEl = userDropdown.querySelector('span.text span#user' + ticketId);
-                                        if (userNameEl) userNameEl.textContent = newUserName;
-                                    }
-
-                                } else if (groupBy === 'storypoints') {
-                                    var storyPointLabels = {'0.5': '< 2min', '1': 'XS', '2': 'S', '3': 'M', '5': 'L', '8': 'XL', '13': 'XXL'};
-                                    var effortDropdown = document.getElementById('effortDropdownMenuLink' + ticketId);
-                                    if (effortDropdown) {
-                                        var effortText = effortDropdown.querySelector('span.text');
-                                        if (effortText) effortText.textContent = storyPointLabels[newGroupValue] || newGroupValue;
-                                    }
-
-                                } else if (groupBy === 'sprint') {
-                                    var sprintDropdown = document.getElementById('sprintDropdownMenuLink' + ticketId);
-                                    if (sprintDropdown) {
-                                        var swimlaneHeader = document.querySelector('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
-                                        var newSprintName = (swimlaneHeader ? swimlaneHeader.textContent : '') || leantime.i18n.__("label.backlog");
-                                        var sprintText = sprintDropdown.querySelector('span.text');
-                                        if (sprintText) sprintText.textContent = newSprintName;
-                                    }
-
-                                } else if (groupBy === 'dueDate') {
-                                    var calIcon = card ? card.querySelector('.dues .fa-calendar') : null;
-                                    var dateDisplay = calIcon ? calIcon.parentElement : null;
-                                    if (dateDisplay && newGroupValue) {
-                                        var dateParts = newGroupValue.split('-');
-                                        var formattedDate = dateParts[1] + '/' + dateParts[2] + '/' + dateParts[0];
-                                        // Replace first text node
-                                        var textNodes = [];
-                                        dateDisplay.childNodes.forEach(function(node) {
-                                            if (node.nodeType === 3) textNodes.push(node);
-                                        });
-                                        if (textNodes.length > 0) {
-                                            textNodes[0].textContent = ' ' + formattedDate;
-                                        }
-                                    } else if (dateDisplay && !newGroupValue) {
-                                        var textNodes = [];
-                                        dateDisplay.childNodes.forEach(function(node) {
-                                            if (node.nodeType === 3) textNodes.push(node);
-                                        });
-                                        if (textNodes.length > 0) {
-                                            textNodes[0].textContent = ' No due date';
-                                        }
-                                    }
-                                }
-
-                                leantime.toast.show({message: "To-Do Updated", style: "success"});
-
-                                var formData = new URLSearchParams();
-                                formData.append('id', ticketId);
-                                formData.append(fieldName, newGroupValue);
-
-                                fetch(leantime.appUrl + '/api/tickets', {
-                                    method: 'PATCH',
-                                    body: formData,
-                                    credentials: 'include',
-                                    headers: {
-                                        'X-Requested-With': 'XMLHttpRequest'
-                                    }
-                                }).then(function(response) {
-                                    if (!response.ok) throw new Error('Request failed');
-                                }).catch(function() {
-                                    leantime.toast.show({message: leantime.i18n.__("short_notifications.not_saved") || "Error updating ticket", style: "error"});
-                                    location.reload();
-                                });
-                            }
-                        }
-
-                        // Clean up stored data
-                        delete evt.item.dataset.originalSwimlaneId;
-
-                        // Get the new parent swimlane for status update
-                        var targetSwimlane = evt.item.closest('.sortableTicketList');
-
-                        var statusPostData = {
-                            action: "kanbanSort",
-                            payload: {},
-                            handler: evt.item.id
+                        // Map groupBy values to API field names
+                        var groupByFieldMap = {
+                            'milestoneid': 'milestoneid',
+                            'editorId': 'editorId',
+                            'priority': 'priority',
+                            'storypoints': 'storypoints',
+                            'sprint': 'sprint',
+                            'dueDate': 'dateToFinish'
                         };
 
-                        for (var i = 0; i < ticketStatusList.length; i++) {
-                            var col = targetSwimlane.querySelector(".contentInner.status_" + ticketStatusList[i]);
-                            if (col) {
-                                statusPostData.payload[ticketStatusList[i]] = serializeSortable(col);
+                        var groupBy = leantime.kanbanGroupBy;
+                        var fieldName = groupByFieldMap[groupBy];
+
+                        // Special handling for dueDate - calculate actual date from bucket ID
+                        if (groupBy === 'dueDate') {
+                            var today = new Date();
+                            today.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
+
+                            // Bucket IDs: 0=overdue, 1=due-this-week, 2=due-next-week, 3=due-later, 4=no-due-date
+                            switch (newGroupValue) {
+                                case '0': // Overdue - set to yesterday
+                                    var yesterday = new Date(today);
+                                    yesterday.setDate(yesterday.getDate() - 1);
+                                    newGroupValue = yesterday.toISOString().split('T')[0];
+                                    break;
+                                case '1': // Due This Week - set to end of this week (Saturday)
+                                    var endOfWeek = new Date(today);
+                                    var daysUntilSaturday = 6 - endOfWeek.getDay();
+                                    if (daysUntilSaturday < 0) daysUntilSaturday = 0;
+                                    endOfWeek.setDate(endOfWeek.getDate() + daysUntilSaturday);
+                                    newGroupValue = endOfWeek.toISOString().split('T')[0];
+                                    break;
+                                case '2': // Due Next Week - set to next week Saturday
+                                    var nextWeekEnd = new Date(today);
+                                    var daysUntilNextSaturday = 6 - nextWeekEnd.getDay() + 7;
+                                    nextWeekEnd.setDate(nextWeekEnd.getDate() + daysUntilNextSaturday);
+                                    newGroupValue = nextWeekEnd.toISOString().split('T')[0];
+                                    break;
+                                case '3': // Due Later - set to 3 weeks from now
+                                    var later = new Date(today);
+                                    later.setDate(later.getDate() + 21);
+                                    newGroupValue = later.toISOString().split('T')[0];
+                                    break;
+                                case '4': // No Due Date - clear the date
+                                    newGroupValue = '';
+                                    break;
                             }
                         }
 
-                        var sortFormData = new URLSearchParams();
-                        sortFormData.append('action', statusPostData.action);
-                        sortFormData.append('handler', statusPostData.handler);
-                        for (var statusKey in statusPostData.payload) {
-                            sortFormData.append('payload[' + statusKey + ']', statusPostData.payload[statusKey]);
-                        }
+                        if (fieldName && ticketId) {
+                            var $card = jQuery('#ticket_' + ticketId);
 
-                        fetch(leantime.appUrl + '/api/tickets', {
-                            method: 'POST',
-                            body: sortFormData,
-                            credentials: 'include',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
+                            // OPTIMISTIC UI UPDATE - update visuals immediately before server confirms
+                            if (groupBy === 'milestoneid') {
+                                // Find the new swimlane's label for the milestone
+                                var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
+                                var newLabel = $newSwimlaneHeader.text() || leantime.i18n.__("label.no_milestone");
+
+                                // Update milestone dropdown on card
+                                var $milestoneDropdown = $card.find('.milestoneDropdown .dropdown-toggle .text');
+                                if ($milestoneDropdown.length) {
+                                    $milestoneDropdown.text(newLabel);
+                                }
+
+                                // Get the milestone color from the dropdown menu item
+                                var $milestoneMenuItem = $card.find('.milestoneDropdown .dropdown-menu a[data-value^="' + ticketId + '_' + newGroupValue + '_"]');
+                                var milestoneColor = '#b0b0b0'; // Default gray for "No Milestone"
+
+                                if ($milestoneMenuItem.length && newGroupValue !== '0' && newGroupValue !== '') {
+                                    // Extract color from the data-value (format: ticketId_milestoneId_color)
+                                    var dataValue = $milestoneMenuItem.attr('data-value');
+                                    if (dataValue) {
+                                        var parts = dataValue.split('_');
+                                        if (parts.length >= 3) {
+                                            milestoneColor = parts.slice(2).join('_'); // Handle colors with underscores
+                                        }
+                                    }
+                                    // Also try getting from inline style
+                                    if (!milestoneColor || milestoneColor === '#b0b0b0') {
+                                        var inlineStyle = $milestoneMenuItem.attr('style');
+                                        if (inlineStyle) {
+                                            var colorMatch = inlineStyle.match(/background-color:\s*([^;]+)/i);
+                                            if (colorMatch) {
+                                                milestoneColor = colorMatch[1].trim();
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Update the dropdown toggle background color
+                                $card.find('.milestoneDropdown .dropdown-toggle').css('background-color', milestoneColor);
+
+                            } else if (groupBy === 'priority') {
+                                // Update priority border and dropdown on card
+                                $card.removeClass(function(index, className) {
+                                    return (className.match(/(^|\s)priority-border-\S+/g) || []).join(' ');
+                                }).addClass('priority-border-' + newGroupValue);
+
+                                // Update priority dropdown text and background
+                                var priorityLabels = {'1': 'Critical', '2': 'High', '3': 'Medium', '4': 'Low', '5': 'Lowest'};
+                                var $priorityDropdown = jQuery('#priorityDropdownMenuLink' + ticketId);
+                                if ($priorityDropdown.length) {
+                                    $priorityDropdown.find('span.text').text(priorityLabels[newGroupValue] || newGroupValue);
+                                    $priorityDropdown.removeClass('priority-bg-1 priority-bg-2 priority-bg-3 priority-bg-4 priority-bg-5');
+                                    $priorityDropdown.addClass('priority-bg-' + newGroupValue);
+                                }
+
+                            } else if (groupBy === 'editorId') {
+                                // Update user dropdown on card
+                                var $userDropdown = jQuery('#userDropdownMenuLink' + ticketId);
+                                if ($userDropdown.length) {
+                                    // Update user image
+                                    $userDropdown.find('span.text span img').attr('src', leantime.appUrl + '/api/users?profileImage=' + newGroupValue);
+
+                                    // Get the new user's name from swimlane header
+                                    var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
+                                    var newUserName = $newSwimlaneHeader.text() || leantime.i18n.__("label.not_assigned");
+                                    $userDropdown.find('span.text span#user' + ticketId).text(newUserName);
+                                }
+
+                            } else if (groupBy === 'storypoints') {
+                                // Update effort dropdown on card
+                                var storyPointLabels = {'0.5': '< 2min', '1': 'XS', '2': 'S', '3': 'M', '5': 'L', '8': 'XL', '13': 'XXL'};
+                                var $effortDropdown = jQuery('#effortDropdownMenuLink' + ticketId);
+                                if ($effortDropdown.length) {
+                                    $effortDropdown.find('span.text').text(storyPointLabels[newGroupValue] || newGroupValue);
+                                }
+
+                            } else if (groupBy === 'sprint') {
+                                // Update sprint dropdown on card
+                                var $sprintDropdown = jQuery('#sprintDropdownMenuLink' + ticketId);
+                                if ($sprintDropdown.length) {
+                                    // Get the new sprint's name from swimlane header
+                                    var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
+                                    var newSprintName = $newSwimlaneHeader.text() || leantime.i18n.__("label.backlog");
+                                    $sprintDropdown.find('span.text').text(newSprintName);
+                                }
+
+                            } else if (groupBy === 'dueDate') {
+                                // Update due date display on card
+                                var $dateDisplay = $card.find('.dues .fa-calendar').parent();
+                                if ($dateDisplay.length && newGroupValue) {
+                                    // Format the date for display (MM/DD/YYYY)
+                                    var dateParts = newGroupValue.split('-');
+                                    var formattedDate = dateParts[1] + '/' + dateParts[2] + '/' + dateParts[0];
+                                    $dateDisplay.contents().filter(function() {
+                                        return this.nodeType === 3; // Text nodes only
+                                    }).first().replaceWith(' ' + formattedDate);
+                                } else if ($dateDisplay.length && !newGroupValue) {
+                                    // Clear the date display for "No Due Date"
+                                    $dateDisplay.contents().filter(function() {
+                                        return this.nodeType === 3;
+                                    }).first().replaceWith(' No due date');
+                                }
                             }
-                        }).then(function (response) { return response.json(); })
-                        .then(function (response) {
-                            leantime.handleAsyncResponse(response);
-                        });
+
+                            // Show success notification immediately for better perceived speed
+                            jQuery.growl({message: "To-Do Updated", style: "success"});
+
+                            var patchData = {
+                                id: ticketId
+                            };
+                            patchData[fieldName] = newGroupValue;
+
+                            // PATCH the ticket with the new swimlane value (confirmation happens in background)
+                            jQuery.ajax({
+                                type: 'PATCH',
+                                url: leantime.appUrl + '/api/tickets',
+                                data: patchData
+                            }).fail(function() {
+                                jQuery.growl({message: leantime.i18n.__("short_notifications.not_saved") || "Error updating ticket", style: "error"});
+                                // Reload on failure to restore correct state
+                                location.reload();
+                            });
+                        }
                     }
-                });
+
+                    // Clean up stored data
+                    ui.item.removeData('originalSwimlaneId');
+
+                    // Get the new parent swimlane for status update
+                    var $targetSwimlane = ui.item.closest('.sortableTicketList');
+
+                    var statusPostData = {
+                        action: "kanbanSort",
+                        payload: {},
+                        handler: ui.item[0].id
+                    };
+
+
+                    for (var i = 0; i < ticketStatusList.length; i++) {
+                        if ($targetSwimlane.find(".contentInner.status_" + ticketStatusList[i]).length) {
+                            statusPostData.payload[ticketStatusList[i]] = $targetSwimlane.find(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
+                        }
+                    }
+
+                    // POST to server using $.post or $.ajax
+                    jQuery.ajax({
+                        type: 'POST',
+                        url: leantime.appUrl + '/api/tickets',
+                        data: statusPostData
+
+                    }).done(function (response) {
+                        leantime.handleAsyncResponse(response);
+                    });
+
+                }
             });
 
         });
 
         function tilt_direction(item)
         {
-            var left_pos = item.getBoundingClientRect().left,
+            var left_pos = item.position().left,
                 move_handler = function (e) {
 
                     if ((e.pageX + 5) > left_pos) {
-                        item.classList.add("right");
-                        item.classList.remove("left");
+                        item.addClass("right");
+                        item.removeClass("left");
                     } else if (e.pageX < (left_pos + 5)) {
-                        item.classList.add("left");
-                        item.classList.remove("right");
+                        item.addClass("left");
+                        item.removeClass("right");
                     } else {
-                        item.classList.remove("left");
-                        item.classList.remove("right");
+                        item.removeClass("left");
+                        item.removeClass("right");
                     }
 
                     left_pos = e.pageX;
 
                 };
-            document.addEventListener("mousemove", move_handler);
-            item._moveHandler = move_handler;
+            jQuery("html").bind("mousemove", move_handler);
+            item.data("move_handler", move_handler);
         }
 
-        document.querySelectorAll(".portlet").forEach(function(portlet) {
-            portlet.classList.add("ui-widget", "ui-widget-content", "ui-helper-clearfix", "ui-corner-all");
-            portlet.querySelectorAll(".portlet-header").forEach(function(header) {
-                header.classList.add("ui-widget-header", "ui-corner-all");
-                header.insertAdjacentHTML("afterbegin", "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
-            });
-        });
+        jQuery(".portlet")
+            .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+            .find(".portlet-header")
+            .addClass("ui-widget-header ui-corner-all")
+            .prepend("<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
 
-        document.querySelectorAll(".portlet-toggle").forEach(function(toggle) {
-            toggle.addEventListener("click", function () {
-                this.classList.toggle("ui-icon-minusthick");
-                this.classList.toggle("ui-icon-plusthick");
-                var portlet = this.closest(".portlet");
-                if (portlet) {
-                    portlet.querySelectorAll(".portlet-content").forEach(function(content) {
-                        content.style.display = content.style.display === 'none' ? '' : 'none';
-                    });
-                }
-            });
+        jQuery(".portlet-toggle").click(function () {
+            var icon = jQuery(this);
+            icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
+            icon.closest(".portlet").find(".portlet-content").toggle();
         });
 
     };
@@ -1730,8 +1592,7 @@ leantime.ticketsController = (function () {
             return !isNaN(parseFloat(n)) && isFinite(n);
         }
 
-        // DataTables requires jQuery - wrap in DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function () {
+        jQuery(document).ready(function () {
 
             var size = 100;
             var columnIndex = false;
@@ -1739,18 +1600,6 @@ leantime.ticketsController = (function () {
 
             var defaultOrder = [];
 
-            // Helper to extract value from HTML string that may contain an input
-            function extractInputValue(htmlStr) {
-                if (typeof htmlStr === 'string' && htmlStr.indexOf('<') !== -1) {
-                    var tmp = document.createElement('div');
-                    tmp.innerHTML = htmlStr;
-                    var input = tmp.querySelector('input');
-                    return input ? input.value : htmlStr;
-                }
-                return htmlStr;
-            }
-
-            // DataTables init must use jQuery
             var allTickets = jQuery(".ticketTable").DataTable({
                 "language": {
                     "decimal":        leantime.i18n.__("datatables.decimal"),
@@ -1811,11 +1660,11 @@ leantime.ticketsController = (function () {
                         .reduce(function (a, b) {
 
                             if (isNumeric(a) === false) {
-                                a = extractInputValue(a);
+                                a = jQuery(a).val();
                             }
 
                             if (isNumeric(b) === false) {
-                                b = extractInputValue(b);
+                                b = jQuery(b).val();
                             }
 
                             if (isNaN(a)) {
@@ -1833,11 +1682,11 @@ leantime.ticketsController = (function () {
                         .reduce(function (a, b) {
 
                             if (isNumeric(a) === false) {
-                                a = extractInputValue(a);
+                                a = jQuery(a).val();
                             }
 
                             if (isNumeric(b) === false) {
-                                b = extractInputValue(b);
+                                b = jQuery(b).val();
                             }
 
                             if (isNaN(a)) {
@@ -1858,20 +1707,15 @@ leantime.ticketsController = (function () {
 
 
                     // Update footer by showing the total with the reference of the column index
-                    var col9Footer = api.column(9).footer();
-                    if (col9Footer) col9Footer.innerHTML = 'Total';
-                    var col10Footer = api.column(10).footer();
-                    if (col10Footer) col10Footer.innerHTML = plannedHours;
-                    var col11Footer = api.column(11).footer();
-                    if (col11Footer) col11Footer.innerHTML = hoursLeft;
-                    var col12Footer = api.column(12).footer();
-                    if (col12Footer) col12Footer.innerHTML = loggedHours;
+                    jQuery(api.column(9).footer()).html('Total');
+                    jQuery(api.column(10).footer()).html(plannedHours);
+                    jQuery(api.column(11).footer()).html(hoursLeft);
+                    jQuery(api.column(12).footer()).html(loggedHours);
 
                 },
 
             });
 
-            // DataTables Buttons API requires jQuery
             var buttons = new jQuery.fn.dataTable.Buttons(allTickets.table(0), {
                 buttons: [
                     {
@@ -1883,8 +1727,8 @@ leantime.ticketsController = (function () {
                             format: {
                                 body: function ( data, row, column, node ) {
 
-                                    if ( typeof node.dataset.order !== 'undefined' && node.dataset.order !== undefined) {
-                                        data = node.dataset.order;
+                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
+                                        data = jQuery(node).data('order');
                                     }
                                     return data;
                                 }
@@ -1896,7 +1740,7 @@ leantime.ticketsController = (function () {
                     columns: ':not(.noVis)'
                 }
                 ]
-            }).container().appendTo(document.getElementById('tableButtons'));
+            }).container().appendTo(jQuery('#tableButtons'));
 
             // When the column visibility changes on the firs table, also change it on // the others tables.
             allTickets.table(0).on(
@@ -1913,19 +1757,18 @@ leantime.ticketsController = (function () {
                 }
             );
 
-            document.querySelectorAll('.ticketTable input').forEach(function (input) {
-                input.addEventListener('change', function () {
-                    this.parentElement.setAttribute('data-order', this.value);
-                    allTickets.draw();
-                });
+            jQuery('.ticketTable input').on('change', function ( e, settings, column, state ) {
+
+                jQuery(this).parent().attr('data-order',jQuery(this).val());
+                allTickets.draw();
+
             });
         });
     };
 
     var initTicketsList = function (groupBy) {
 
-        // DataTables requires jQuery - wrap in DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function () {
+        jQuery(document).ready(function () {
 
             var size = 50;
             var columnIndex = false;
@@ -1934,7 +1777,6 @@ leantime.ticketsController = (function () {
             var defaultOrder = [];
 
 
-            // DataTables init must use jQuery
             var allTickets = jQuery(".listStyleTable").DataTable({
                 "language": {
                     "decimal":        leantime.i18n.__("datatables.decimal"),
@@ -1973,11 +1815,9 @@ leantime.ticketsController = (function () {
                 "fnDrawCallback": function (oSettings) {
 
                     if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
-                        var paginateEl = oSettings.nTableWrapper.querySelector('.dataTables_paginate');
-                        if (paginateEl) paginateEl.style.display = 'none';
+                        jQuery(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
                     } else {
-                        var paginateEl = oSettings.nTableWrapper.querySelector('.dataTables_paginate');
-                        if (paginateEl) paginateEl.style.display = '';
+                        jQuery(oSettings.nTableWrapper).find('.dataTables_paginate').show();
                     }
 
                 }
@@ -1994,8 +1834,7 @@ leantime.ticketsController = (function () {
             return !isNaN(parseFloat(n)) && isFinite(n);
         }
 
-        // DataTables requires jQuery - wrap in DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function () {
+        jQuery(document).ready(function () {
 
             var size = 100;
             var columnIndex = false;
@@ -2003,7 +1842,6 @@ leantime.ticketsController = (function () {
 
             var defaultOrder = [];
 
-            // DataTables init must use jQuery
             var allTickets = jQuery(".ticketTable").DataTable({
                 "language": {
                     "decimal":        leantime.i18n.__("datatables.decimal"),
@@ -2047,7 +1885,6 @@ leantime.ticketsController = (function () {
 
             });
 
-            // DataTables Buttons API requires jQuery
             var buttons = new jQuery.fn.dataTable.Buttons(allTickets.table(0), {
                 buttons: [
                     {
@@ -2059,8 +1896,8 @@ leantime.ticketsController = (function () {
                             format: {
                                 body: function ( data, row, column, node ) {
 
-                                    if ( typeof node.dataset.order !== 'undefined' && node.dataset.order !== undefined) {
-                                        data = node.dataset.order;
+                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
+                                        data = jQuery(node).data('order');
                                     }
                                     return data;
                                 }
@@ -2072,7 +1909,7 @@ leantime.ticketsController = (function () {
                         columns: ':not(.noVis)'
                 }
                 ]
-            }).container().appendTo(document.getElementById('tableButtons'));
+            }).container().appendTo(jQuery('#tableButtons'));
 
             // When the column visibility changes on the firs table, also change it on // the others tables.
             allTickets.table(0).on(
@@ -2089,11 +1926,11 @@ leantime.ticketsController = (function () {
                 }
             );
 
-            document.querySelectorAll('.ticketTable input').forEach(function (input) {
-                input.addEventListener('change', function () {
-                    this.parentElement.setAttribute('data-order', this.value);
-                    allTickets.draw();
-                });
+            jQuery('.ticketTable input').on('change', function ( e, settings, column, state ) {
+
+                jQuery(this).parent().attr('data-order',jQuery(this).val());
+                allTickets.draw();
+
             });
 
         });
@@ -2101,61 +1938,47 @@ leantime.ticketsController = (function () {
 
     var loadTicketToContainer = function (id, element) {
 
-        var containerEl = typeof element === 'string' ? document.querySelector(element) : element;
-
-        // Save and remove TinyMCE editors if present (TinyMCE requires jQuery)
-        if (typeof jQuery !== 'undefined') {
-            var editors = document.querySelectorAll('textarea.complexEditor');
-            if (editors.length > 0 && jQuery('textarea.complexEditor').tinymce() !== null) {
-                jQuery('textarea.complexEditor').tinymce().save();
-                jQuery('textarea.complexEditor').tinymce().remove();
-            }
+        // Destroy any Tiptap editors before loading new content
+        if (window.leantime && window.leantime.tiptapController && window.leantime.tiptapController.registry) {
+            leantime.tiptapController.registry.destroyAll();
         }
 
-        document.querySelectorAll(".ticketRows").forEach(function(row) {
-            row.classList.remove("active");
-        });
-        var activeRow = document.getElementById("row-" + id);
-        if (activeRow) activeRow.classList.add("active");
+        jQuery(".ticketRows").removeClass("active");
+        jQuery("#row-" + id).addClass("active");
 
-        containerEl.innerHTML = "<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px' /></div>";
+        jQuery(element).html("<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px' /></div>");
 
-        function formSubmitHandler(containerEl)
+        function formSubmitHandler(element)
         {
 
-            containerEl.querySelectorAll("form").forEach(function (form) {
+            jQuery(element).find("form").each(function () {
 
-                form.addEventListener("submit", function (e) {
+                jQuery(this).on("submit", function (e) {
 
                     e.preventDefault();
 
-                    // Save and remove TinyMCE editors if present
-                    if (typeof jQuery !== 'undefined') {
-                        var editors = document.querySelectorAll('textarea.complexEditor');
-                        if (editors.length > 0 && jQuery('textarea.complexEditor').tinymce() !== null) {
-                            jQuery('textarea.complexEditor').tinymce().save();
-                            jQuery('textarea.complexEditor').tinymce().remove();
-                        }
+                    // Destroy any Tiptap editors before submitting
+                    if (window.leantime && window.leantime.tiptapController && window.leantime.tiptapController.registry) {
+                        leantime.tiptapController.registry.destroyAll();
                     }
 
-                    containerEl.innerHTML = "<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px'/></div>";
+                    jQuery(element).html("<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px'/></div>");
 
-                    var formData = new FormData(this);
-                    var actionUrl = this.getAttribute("action");
+                    var data = jQuery(this).serialize();
 
-                    fetch(actionUrl, {
-                        method: "POST",
-                        body: formData,
-                        credentials: 'include',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
+                    jQuery.ajax({
+                        url: jQuery(this).attr("action"),
+                        data: data,
+                        type: "post",
+                        success: function (data) {
+
+                            jQuery(element).html(data);
+                            formSubmitHandler(element);
+
+                        },
+                        error: function () {
+
                         }
-                    }).then(function (response) { return response.text(); })
-                    .then(function (data) {
-
-                            containerEl.innerHTML = data;
-                            formSubmitHandler(containerEl);
-
                     });
                 });
 
@@ -2164,56 +1987,38 @@ leantime.ticketsController = (function () {
 
 
 
-        fetch(leantime.appUrl + '/tickets/showTicket/' + id, {
-            credentials: 'include',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        }).then(function (response) { return response.text(); })
-        .then(function (data) {
+        jQuery.get(leantime.appUrl + '/tickets/showTicket/' + id, function ( data ) {
 
-            containerEl.innerHTML = data;
-            formSubmitHandler(containerEl);
+            jQuery(element).html(data);
+            formSubmitHandler(element);
 
         });
 
     };
 
     var initTagsInput = function ( ) {
-        // tagsInput() is a jQuery plugin - must use jQuery
-        if (typeof jQuery !== 'undefined' && jQuery.fn.tagsInput) {
-            jQuery("#tags").tagsInput({
-                'autocomplete_url': leantime.appUrl + '/api/tags',
-            });
-        }
+        jQuery("#tags").tagsInput({
+            'autocomplete_url': leantime.appUrl + '/api/tags',
+        });
 
-        var tagsTagEl = document.getElementById("tags_tag");
-        if (tagsTagEl) {
-            tagsTagEl.addEventListener("focusout", function () {
-                var tag = this.value;
+        jQuery("#tags_tag").on("focusout", function () {
+            let tag = jQuery(this).val();
 
-                if (tag != '') {
-                    // addTag is a tagsInput jQuery plugin method
-                    if (typeof jQuery !== 'undefined') {
-                        jQuery("#tags").addTag(tag);
-                    }
-                }
-            });
-        }
+            if (tag != '') {
+                jQuery("#tags").addTag(tag);
+            }
+        });
 
     };
 
     var addCommentTimesheetContent = function (commentId, taskId) {
-        var commentEl = document.getElementById("commentText-" + commentId);
         var content = "Discussion on To-Do #" + taskId + ":"
         + "\n\r"
-        + (commentEl ? commentEl.textContent : '');
+        + jQuery("#commentText-" + commentId).text();
 
-        var timesheetLink = document.querySelector('li a[href*="timesheet"]');
-        if (timesheetLink) timesheetLink.click();
+        jQuery('li a[href*="timesheet"]').click();
 
-        var descriptionEl = document.querySelector("#timesheet #description");
-        if (descriptionEl) descriptionEl.value = content;
+        jQuery("#timesheet #description").val(content);
 
     };
 
@@ -2248,11 +2053,6 @@ leantime.ticketsController = (function () {
         loadTicketToContainer:loadTicketToContainer,
         initTicketSearchUrlBuilder:initTicketSearchUrlBuilder,
         initSprintDates:initSprintDates,
-        initSimpleColorPicker:initSimpleColorPicker,
-        openTicketModalManually: function (url) {
-            if (leantime.modals && leantime.modals.openByUrl) {
-                leantime.modals.openByUrl(url);
-            }
-        }
+        initSimpleColorPicker:initSimpleColorPicker
     };
 })();

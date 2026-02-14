@@ -1,77 +1,42 @@
 leantime.authController = (function () {
 
     var makeInputReadonly = function (container) {
-        if (typeof container === "undefined" || !container) {
+        if (typeof container === undefined) {
             container = "body";
         }
 
-        var containerEl = document.querySelector(container);
-        if (!containerEl) { return; }
+        jQuery(container).find("input").not(".filterBar input").prop("readonly", true);
+        jQuery(container).find("input").not(".filterBar input").prop("disabled", true);
 
-        containerEl.querySelectorAll("input").forEach(function (el) {
-            if (!el.closest(".filterBar")) {
-                el.readOnly = true;
-                el.disabled = true;
-            }
-        });
+        jQuery(container).find("select").not(".filterBar select, .mainSprintSelector").prop("readonly", true);
+        jQuery(container).find("select").not(".filterBar select, .mainSprintSelector").prop("disabled", true);
 
-        containerEl.querySelectorAll("select").forEach(function (el) {
-            if (!el.closest(".filterBar") && !el.classList.contains("mainSprintSelector")) {
-                el.readOnly = true;
-                el.disabled = true;
-            }
-        });
+        jQuery(container).find("textarea").not(".filterBar textarea").prop("disabled", true);
 
-        containerEl.querySelectorAll("textarea").forEach(function (el) {
-            if (!el.closest(".filterBar")) {
-                el.disabled = true;
-            }
-        });
+        jQuery(container).find("a.delete").remove();
 
-        containerEl.querySelectorAll("a.delete").forEach(function (el) {
-            el.remove();
-        });
+        jQuery(container).find(".quickAddLink").hide();
 
-        containerEl.querySelectorAll(".quickAddLink").forEach(function (el) {
-            el.style.display = 'none';
-        });
+        // Make Tiptap editors readonly
+        if (jQuery(container).find(".tiptap-editor").length && window.leantime && window.leantime.tiptapController) {
+            jQuery(container).find(".tiptap-editor").each(function () {
+                var editor = leantime.tiptapController.registry.get(this);
+                if (editor) {
+                    editor.setEditable(false);
+                }
+            });
+        }
 
-        containerEl.querySelectorAll(".complexEditor").forEach(function (el) {
-            if (typeof tinymce !== 'undefined' && tinymce.get(el.id)) {
-                tinymce.get(el.id).getBody().setAttribute('contenteditable', "false");
-            }
-        });
+        // Hide Tiptap toolbar
+        jQuery(container).find(".tiptap-toolbar").hide();
 
-        containerEl.querySelectorAll(".tinymceSimple").forEach(function (el) {
-            if (typeof tinymce !== 'undefined' && tinymce.get(el.id)) {
-                tinymce.get(el.id).getBody().setAttribute('contenteditable', "false");
-            }
-        });
+        jQuery(container).find(".ticketDropdown a").removeAttr("data-toggle");
 
-        containerEl.querySelectorAll(".tox-editor-header").forEach(function (el) {
-            el.style.display = 'none';
-        });
-        containerEl.querySelectorAll(".tox-statusbar").forEach(function (el) {
-            el.style.display = 'none';
-        });
+        jQuery("#mainToggler").hide();
+        jQuery(".commentBox").hide();
+        jQuery(".deleteComment, .replyButton").hide();
 
-        containerEl.querySelectorAll(".ticketDropdown a").forEach(function (el) {
-            el.removeAttribute("data-toggle");
-        });
-
-        var mainToggler = document.getElementById("mainToggler");
-        if (mainToggler) { mainToggler.style.display = 'none'; }
-
-        document.querySelectorAll(".commentBox").forEach(function (el) {
-            el.style.display = 'none';
-        });
-        document.querySelectorAll(".deleteComment, .replyButton").forEach(function (el) {
-            el.style.display = 'none';
-        });
-
-        containerEl.querySelectorAll(".dropdown i").forEach(function (el) {
-            el.classList.remove('fa-caret-down');
-        });
+        jQuery(container).find(".dropdown i").removeClass('fa-caret-down');
     };
 
     // Make public what you want to have public, everything else is private

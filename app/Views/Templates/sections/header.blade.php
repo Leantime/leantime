@@ -37,7 +37,8 @@
     'resources/js/compiled-global-component.js',
     'resources/js/compiled-calendar-component.js',
     'resources/js/compiled-table-component.js',
-    'resources/js/compiled-editor-component.js',
+    'resources/js/compiled-tiptap-toolbar.js',
+    'resources/js/compiled-tiptap-editor.js',
     'resources/js/compiled-gantt-component.js',
     'resources/js/compiled-chart-component.js',
 ])

@@ -46,7 +46,8 @@
 @import "../../public/assets/css/components/kanban.css";
 @import "../../public/assets/css/components/tables.css";
 @import "../../public/assets/css/components/masonwall.css";
-@import "../../public/assets/css/components/wysiwyg-overrides.css";
+@import "../../public/assets/css/components/tiptap-editor.css";
+@import "../../public/assets/css/components/wiki.css";
 @import "../../public/assets/css/components/forms.css";
 @import "../../public/assets/css/components/gantt-overwrites.css";
 @import "../../public/assets/css/components/tree-overwrites.css";

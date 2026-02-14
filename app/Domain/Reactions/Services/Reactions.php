@@ -94,14 +94,24 @@ class Reactions
     }
 
     /**
-     * addReaction - adds a reaction to an entity, checks if a user has already reacted the same way
-     *
-     *
+     * removeReaction - removes a user's reaction from an entity
      *
      * @api
      */
     public function removeReaction(int $userId, string $module, int $moduleId, string $reaction): bool
     {
         return $this->reactionsRepo->removeUserReaction($userId, $module, $moduleId, $reaction);
+    }
+
+    /**
+     * getEntityReactionsWithUsers - gets all reactions for an entity with user names
+     *
+     * @return array returns array grouped by reaction with user info
+     *
+     * @api
+     */
+    public function getEntityReactionsWithUsers(string $module, int $moduleId): array
+    {
+        return $this->reactionsRepo->getEntityReactionsWithUsers($module, $moduleId);
     }
 }

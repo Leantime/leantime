@@ -5,7 +5,7 @@
     @if (count($allUsers) == 1)
         <a href="#/users/newUser" class="headerCTA">
             <i class="fa fa-users"></i>
-            <span class="tw:text-[14px] tw:leading-[25px]">
+            <span class="tw-text-[14px] tw-leading-[25px]">
                 {{ __('links.dont_do_it_alone') }}
             </span>
         </a>
@@ -22,7 +22,7 @@
 
         <div class="col-md-8">
 
-            <div class="maincontentinner tw:z-20">
+            <div class="maincontentinner tw-z-20">
 
                 @if ($login::userIsAtLeast($roles::$admin))
                     <div class="pull-right dropdownWrapper">
@@ -51,7 +51,7 @@
                     </div>
                 @endif
 
-                <div class="pull-right dropdownWrapper tw:mr-[5px]">
+                <div class="pull-right dropdownWrapper tw-mr-[5px]">
                     <a
                         class="dropdown-toggle btn round-button"
                         data-toggle="dropdown"
@@ -67,7 +67,7 @@
                 <a
                     href="javascript:void(0);"
                     id="favoriteProject"
-                    class="btn pull-right margin-right {{ $isFavorite ? 'isFavorite' : ''}} tw:mr-[5px] round-button"
+                    class="btn pull-right margin-right {{ $isFavorite ? 'isFavorite' : ''}} tw-mr-[5px] round-button"
                     data-tippy-content="{{ __('label.favorite_tooltip') }}"
                 ><i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-star"></i></a>
 
@@ -88,7 +88,7 @@
 
                     <strong>{{ __('label.background') }}</strong><br/>
                 <div class="readMoreBox">
-                    <div class="mce-content-body kanbanContent closed tw:max-h-[200px] readMoreContent tw:pb-[30px]" id="projectDescription">
+                    <div class="tiptap-content kanbanContent closed tw-max-h-[200px] readMoreContent tw-pb-[30px]" id="projectDescription">
                         {!! $tpl->escapeMinimal($project['details']) !!}
                     </div>
 
@@ -102,7 +102,7 @@
 
             </div>
 
-            <div class="maincontentinner tw:z-10 latest-todos">
+            <div class="maincontentinner tw-z-10 latest-todos">
                 <a href="#/tickets/newTicket" class="btn btn-link action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> Create To-Do</a>
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
@@ -115,7 +115,7 @@
                         <li class="ui-state-default" id="ticket_{!! $row['id'] !!}">
                             <div class="ticketBox fixed priority-border-{!! $row['priority'] !!}" data-val="{!! $row['id'] !!}">
                                 <div class="row">
-                                    <div class="col-md-12 timerContainer tw:py-[5px] tw:px-[15px]" id="timerContainer-{!! $row['id'] !!}">
+                                    <div class="col-md-12 timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{!! $row['id'] !!}">
                                         @if($row['dependingTicketId'] > 0)
                                         <a href="#/tickets/showTicket/{{  $row['dependingTicketId'] }}">
                                             {{ $row['parentHeadline'] }}
@@ -132,7 +132,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-4 tw:px-[15px] tw:py-0">
+                                    <div class="col-md-4 tw-px-[15px] tw-py-0">
 
                                         <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
 
@@ -145,7 +145,7 @@
                                             name="date"
                                         />
                                     </div>
-                                    <div class="col-md-8 tw:mt-[3px]">
+                                    <div class="col-md-8 tw-mt-[3px]">
                                         <div class="right">
                                             <div class="dropdown ticketDropdown effortDropdown show">
                                                 <a
@@ -201,7 +201,7 @@
                                                             href="javascript:void(0);"
                                                             data-label="{{ __('label.no_milestone') }}"
                                                             data-value="{{ $row['id'] }}_0_#b0b0b0"
-                                                            class="tw:bg-[#b0b0b0]"
+                                                            class="tw-bg-[#b0b0b0]"
                                                         >{{ __('label.no_milestone') }}</a>
                                                     </li>
                                                     @foreach ($milestones as $milestone)
@@ -321,27 +321,27 @@
                 <form method="post" action="{{ BASE_URL }}/dashboard/show">
                     <input type="hidden" name="comment" value="1" />
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <div id="comment0" class="commentBox tw:hidden">
-                                <label for="projectStatus tw:inline">{{ __('label.project_status_is') }}</label>
+                            <div id="comment0" class="commentBox tw-hidden">
+                                <label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</label>
 
-                                <select name="status" id="projectStatus" class="tw:ml-0 tw:mb-[10px]">
+                                <select name="status" id="projectStatus" class="tw-ml-0 tw-mb-[10px]">
                                     <option value="green">{{ __('label.project_status_green') }}</option>
                                     <option value="yellow">{{ __('label.project_status_yellow') }}</option>
                                     <option value="red">{{ __('label.project_status_red') }}</option>
                                 </select>
 
                                 <div class="commentReply">
-                                    <textarea rows="5" cols="50" class="tinymceSimple tw:w-full" name="text"></textarea>
+                                    <textarea rows="5" cols="50" class="tiptapSimple tw-w-full" name="text"></textarea>
                                     <input
                                         type="submit"
                                         value="{{ __('buttons.save') }}"
                                         name="comment"
-                                        class="btn btn-primary btn-success tw:ml-0"
+                                        class="btn btn-primary btn-success tw-ml-0"
                                     />
                                     <a
                                         href="javascript:void(0);"
                                         onclick="leantime.commentsController.toggleCommentBoxes(-1);jQuery('.noCommentsMessage').toggle();"
-                                        class="tw:leading-[50px]"
+                                        class="tw-leading-[50px]"
                                     >{{ __('links.cancel') }}</a>
                                     <input type="hidden" name="comment" value="1"/>
                                     <input type="hidden" name="father" id="father" value="0"/>
@@ -355,7 +355,7 @@
                                     <a href="javascript:void(0);" onclick="jQuery('.readMore').toggle('fast')">
                                         {{ __('links.read_more') }}
                                     </a>
-                                    <div class="readMore tw:hidden tw:mt-[20px]">
+                                    <div class="readMore tw-hidden tw-mt-[20px]">
                                 @endif
                                 <div class="clearall">
                                     <div>
@@ -368,7 +368,7 @@
                                                 ) }}
                                             </strong>
                                                 @if ($login::userIsAtLeast($roles::$editor))
-                                                    <div class="inlineDropDownContainer tw:float-right tw:ml-[10px]">
+                                                    <div class="inlineDropDownContainer tw-float-right tw-ml-[10px]">
                                                         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
                                                             <i class="fa fa-ellipsis-v"></i>
                                                         </a>
@@ -449,7 +449,7 @@
                     <div class="col-md-12">
                         <h5 class="subtitle">{{ __('subtitles.project_progress') }}</h5>
 
-                        <div id="canvas-holder" class="tw:w-full tw:h-[250px]">
+                        <div id="canvas-holder" class="tw-w-full tw-h-[250px]">
                             <canvas id="chart-area"></canvas>
                         </div>
 
@@ -480,9 +480,9 @@
 
                                     <div hx-trigger="load"
                                          hx-indicator=".htmx-indicator"
-                                         hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$row->id ?>">
+                                         hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $row->id ?>">
                                         <div class="htmx-indicator">
-                                                <?=$tpl->__("label.loading_milestone") ?>
+                                                <?= $tpl->__('label.loading_milestone') ?>
                                         </div>
                                     </div>
 
@@ -497,8 +497,10 @@
 </div>
 
 @once @push('scripts')
-<script type="module">
-    leantime.editorController.initSimpleEditor();
+<script type='text/javascript'>
+    if (window.leantime && window.leantime.tiptapController) {
+        leantime.tiptapController.initSimpleEditor();
+    }
 </script>
 @endpush @endonce
 

@@ -2,37 +2,29 @@ leantime.commentsController = (function () {
 
     var enableCommenterForms = function () {
 
-        document.querySelectorAll(".commentBox").forEach(function (el) {
-            el.style.display = '';
-        });
+        jQuery(".commentBox").show();
 
         //Hide reply comment boxes
-        document.querySelectorAll("#comments .replies .commentBox").forEach(function (el) {
-            el.style.display = 'none';
-        });
-        document.querySelectorAll(".deleteComment, .replyButton").forEach(function (el) {
-            el.style.display = '';
-        });
+        jQuery("#comments .replies .commentBox").hide();
+        jQuery(".deleteComment, .replyButton").show();
 
-        document.querySelectorAll(".commentReply .tinymceSimple").forEach(function (el) {
-            var editor = tinymce.get(el.id);
-            if (editor) {
-                editor.getBody().setAttribute('contenteditable', "true");
+        // Enable Tiptap editors
+        jQuery(".commentReply .tiptap-wrapper").each(function() {
+            var editorEl = jQuery(this).find('.tiptap-editor')[0];
+            if (editorEl && window.leantime && window.leantime.tiptapController) {
+                var editor = leantime.tiptapController.registry.get(editorEl);
+                if (editor) {
+                    editor.setEditable(true);
+                }
             }
         });
-        document.querySelectorAll(".commentReply .tox-editor-header").forEach(function (el) {
-            el.style.display = '';
-        });
+        jQuery(".commentReply .tiptap-toolbar").show();
 
-        document.querySelectorAll(".commenterFields input").forEach(function (el) {
-            el.readOnly = false;
-            el.disabled = false;
-        });
+        jQuery(".commenterFields input").prop("readonly", false);
+        jQuery(".commenterFields input").prop("disabled", false);
 
-        document.querySelectorAll(".commenterFields textarea").forEach(function (el) {
-            el.readOnly = false;
-            el.disabled = false;
-        });
+        jQuery(".commenterFields textarea").prop("readonly", false);
+        jQuery(".commenterFields textarea").prop("disabled", false);
 
     };
 
@@ -40,36 +32,29 @@ leantime.commentsController = (function () {
 
 
         if (id == 0) {
-            var mainToggler = document.getElementById('mainToggler');
-            if (mainToggler) { mainToggler.style.display = 'none'; }
+            jQuery('#mainToggler').hide();
         } else {
-            var mainToggler = document.getElementById('mainToggler');
-            if (mainToggler) { mainToggler.style.display = ''; }
+            jQuery('#mainToggler').show();
         }
-        document.querySelectorAll('.commentBox textarea').forEach(function (el) {
-            el.remove();
-        });
 
-        document.querySelectorAll('.commentBox').forEach(function (el) {
-            el.style.display = 'none';
-        });
+        // Destroy existing Tiptap editors in comment boxes
+        if (window.leantime && window.leantime.tiptapController && window.leantime.tiptapController.registry) {
+            jQuery('.commentBox .tiptap-editor').each(function() {
+                leantime.tiptapController.registry.destroy(this);
+            });
+        }
+        jQuery('.commentBox .tiptap-wrapper').remove();
+        jQuery('.commentBox textarea').remove();
 
-        var commentEl = document.getElementById('comment' + id);
-        if (commentEl) {
-            var replyEl = commentEl.querySelector('.commentReply');
-            if (replyEl) {
-                replyEl.insertAdjacentHTML('afterbegin', '<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-            }
-        }
-        leantime.editorController.initSimpleEditor();
+        jQuery('.commentBox').hide('fast', function () {});
 
-        if (commentEl) {
-            commentEl.style.display = '';
+        jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tiptapSimple"></textarea>');
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initSimpleEditor();
         }
-        var fatherEl = document.getElementById('father');
-        if (fatherEl) {
-            fatherEl.value = id;
-        }
+
+        jQuery('#comment' + id + '').show('fast');
+        jQuery('#father').val(id);
 
     };
 

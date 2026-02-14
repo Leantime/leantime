@@ -2,12 +2,10 @@
 import '../../public/assets/js/app/core/toastNotifier.js';
 import '../../public/assets/js/app/app.js';
 import '../../public/assets/js/app/core/dropdownBridge.js';
-import '../../public/assets/js/app/core/editors.js';
 import '../../public/assets/js/app/core/snippets.js';
 import '../../public/assets/js/app/core/modalManager.js';
 import '../../public/assets/js/app/core/datePickers.js';
 import '../../public/assets/js/app/core/dateHelper.js';
-import '../../public/assets/js/app/core/accessibility.js';
 
 // Cross-domain controllers — needed on every page
 import '../../app/Domain/Auth/Js/authController.js';

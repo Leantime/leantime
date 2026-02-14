@@ -811,7 +811,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .timerContainer,
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .border-top,
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .clearfix,
-.kanban-swimlane-row[data-expanded="false"] .ticketBox .tw:flex:not(.tw:items-center),
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .tw-flex:not(.tw-items-center),
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .inlineDropDownContainer {
     display: none !important;
 }
@@ -924,7 +924,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-content.collapsed .ticketBox .timerContainer,
 .kanban-swimlane-content.collapsed .ticketBox .border-top,
 .kanban-swimlane-content.collapsed .ticketBox .clearfix,
-.kanban-swimlane-content.collapsed .ticketBox .tw:flex,
+.kanban-swimlane-content.collapsed .ticketBox .tw-flex,
 .kanban-swimlane-content.collapsed .ticketBox .inlineDropDownContainer {
     display: none !important;
 }
@@ -1396,4 +1396,64 @@ body .maincontent .priority-text-5 a:link {
 
 .kanban-swimlane-content .sortableTicketList {
     overflow: visible;
+}
+
+/* ==========================================================================
+   Task Lists (Tiptap checklists) - Styling for rendered content
+   ========================================================================== */
+
+.kanbanContent ul[data-type="taskList"],
+.ticketBox ul[data-type="taskList"],
+ul[data-type="taskList"] {
+    list-style: none !important;
+    padding-left: 0 !important;
+    margin: 0.5em 0 !important;
+}
+
+.kanbanContent ul[data-type="taskList"] li,
+.ticketBox ul[data-type="taskList"] li,
+ul[data-type="taskList"] li {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-bottom: 4px !important;
+}
+
+.kanbanContent ul[data-type="taskList"] li > label,
+.ticketBox ul[data-type="taskList"] li > label,
+ul[data-type="taskList"] li > label {
+    flex: 0 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+}
+
+.kanbanContent ul[data-type="taskList"] li > div,
+.ticketBox ul[data-type="taskList"] li > div,
+ul[data-type="taskList"] li > div {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+}
+
+.kanbanContent ul[data-type="taskList"] li > div > p,
+.ticketBox ul[data-type="taskList"] li > div > p,
+ul[data-type="taskList"] li > div > p {
+    margin: 0 !important;
+    display: inline !important;
+}
+
+.kanbanContent ul[data-type="taskList"] input[type="checkbox"],
+.ticketBox ul[data-type="taskList"] input[type="checkbox"],
+ul[data-type="taskList"] input[type="checkbox"] {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    margin: 0 !important;
+    accent-color: var(--primary-color, #5a67d8);
+}
+
+ul[data-type="taskList"] li[data-checked="true"] > div {
+    text-decoration: line-through;
+    color: var(--muted-text-color, #999);
 }
