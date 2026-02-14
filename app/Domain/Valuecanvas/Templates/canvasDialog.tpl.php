@@ -81,7 +81,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             <?php } elseif (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string') { ?>
                 <input type="text" name="<?= $dataLabels[1]['field'] ?>" value="<?= $canvasItem[$dataLabels[1]['field']] ?>" style="width:100%"/><br />
             <?php } else { ?>
-                <textarea style="width:100%" rows="3" cols="10" name="<?= $dataLabels[1]['field'] ?>" class="modalTextArea tinymceSimple"><?= $canvasItem[$dataLabels[1]['field']] ?></textarea><br />
+                <textarea style="width:100%" rows="3" cols="10" name="<?= $dataLabels[1]['field'] ?>" class="modalTextArea tiptapSimple"><?= $canvasItem[$dataLabels[1]['field']] ?></textarea><br />
             <?php } ?>
         <?php } else { ?>
             <input type="hidden" name="<?= $dataLabels[1]['field'] ?>" value="" />
@@ -94,7 +94,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             <?php } elseif (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string') { ?>
                 <input type="text" name="<?= $dataLabels[2]['field'] ?>" value="<?= $canvasItem[$dataLabels[2]['field']] ?>" style="width:100%"/><br />
             <?php } else { ?>
-                <textarea style="width:100%" rows="3" cols="10" name="<?= $dataLabels[2]['field'] ?>" class="modalTextArea tinymceSimple"><?= $canvasItem[$dataLabels[2]['field']] ?></textarea><br />
+                <textarea style="width:100%" rows="3" cols="10" name="<?= $dataLabels[2]['field'] ?>" class="modalTextArea tiptapSimple"><?= $canvasItem[$dataLabels[2]['field']] ?></textarea><br />
             <?php } ?>
         <?php } else { ?>
             <input type="hidden" name="<?= $dataLabels[2]['field'] ?>" value="" />
@@ -107,7 +107,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             <?php } elseif (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string') { ?>
                 <input type="text" name="<?= $dataLabels[3]['field'] ?>" value="<?= $canvasItem[$dataLabels[2]['field']] ?>"/><br />
             <?php } else { ?>
-                <textarea style="width:100%" rows="3" cols="10" name="<?= $dataLabels[3]['field'] ?>" class="modalTextArea tinymceSimple"><?= $canvasItem[$dataLabels[3]['field']] ?></textarea><br />
+                <textarea style="width:100%" rows="3" cols="10" name="<?= $dataLabels[3]['field'] ?>" class="modalTextArea tiptapSimple"><?= $canvasItem[$dataLabels[3]['field']] ?></textarea><br />
             <?php } ?>
         <?php } else { ?>
             <input type="hidden" name="<?= $dataLabels[3]['field'] ?>" value="" />
@@ -249,7 +249,9 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             });
         <?php } ?>
 
-        leantime.editorController.initSimpleEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initSimpleEditor();
+        }
 
         <?php if (! $login::userIsAtLeast($roles::$editor)) { ?>
             leantime.authController.makeInputReadonly(".nyroModalCont");

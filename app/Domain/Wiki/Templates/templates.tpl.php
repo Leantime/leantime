@@ -8,7 +8,7 @@ foreach ($__data as $var => $val) {
 $today = date($tpl->__('language.dateformat'));
 $author = session('userdata.name').' ('.session('userdata.mail').')';
 
-// Templates for tinymce templates
+// Document templates for the editor
 // All Templates require title, description, content
 
 $templates = [];
@@ -33,9 +33,9 @@ $pmeetingNotes->content = '
 <li><span>Notes here</span></li></ul>
 <p><span><br></span></p>
 <p><span><strong>Action Items</strong><br></span></p>
-<ul style="list-style-type: none;" class="tox-checklist">
-<li><span >Action Item 1</span></li>
-<li><span >Action Item 1</span><span ><br ></span>
+<ul data-type="taskList">
+<li data-type="taskItem" data-checked="false"><span >Action Item 1</span></li>
+<li data-type="taskItem" data-checked="false"><span >Action Item 1</span><span ><br ></span>
 </li>
 </ul>
 ';
@@ -168,19 +168,19 @@ $prdTpl->content = '
 </table>
 <h2>PRD Checklist</span></h2>
 <p class="c8">Here&rsquo;s a list of topics you must include in your PRD:</p>
-<ul class="tox-checklist" style="list-style-type: none;">
-<li>Title</li>
-<li>Author</li>
-<li>Decision Log</li>
-<li>Change History</li>
-<li>Overview</li>
-<li>Messaging</li>
-<li>Personas</li>
-<li>User Scenarios</li>
-<li>User Stories/Features/Requirements</li>
-<li>Design</li>
-<li>Open Issues</li>
-<li>Q&amp;A</li>
+<ul data-type="taskList">
+<li data-type="taskItem" data-checked="false">Title</li>
+<li data-type="taskItem" data-checked="false">Author</li>
+<li data-type="taskItem" data-checked="false">Decision Log</li>
+<li data-type="taskItem" data-checked="false">Change History</li>
+<li data-type="taskItem" data-checked="false">Overview</li>
+<li data-type="taskItem" data-checked="false">Messaging</li>
+<li data-type="taskItem" data-checked="false">Personas</li>
+<li data-type="taskItem" data-checked="false">User Scenarios</li>
+<li data-type="taskItem" data-checked="false">User Stories/Features/Requirements</li>
+<li data-type="taskItem" data-checked="false">Design</li>
+<li data-type="taskItem" data-checked="false">Open Issues</li>
+<li data-type="taskItem" data-checked="false">Q&amp;A</li>
 </ul>
 ';
 $templates[] = $prdTpl;
@@ -252,7 +252,7 @@ Status: <span class="label label-default">Draft</span><br />
 <td style="height: 17px; width: 82.6214%;" colspan="3">
 <table style="border-collapse: collapse; width: 99.9991%; height: 68.875px;" border="1">
 <thead>
-<tr style="height: 51.875px;" data-mce-active="1">
+<tr style="height: 51.875px;">
 <td style="width: 17.5448%; height: 51.875px;">
 <h5>Cost Item</h5>
 </td>
@@ -265,7 +265,7 @@ Status: <span class="label label-default">Draft</span><br />
 <td style="width: 17.5448%; height: 51.875px;">
 <h5>Cost Until Completion</h5>
 </td>
-<td style="width: 17.5475%; height: 51.875px;" data-mce-active="1">
+<td style="width: 17.5475%; height: 51.875px;">
 <h5>Variance</h5>
 </td>
 </tr>
@@ -325,9 +325,9 @@ $bugTpl->category = $tpl->__('templates.todos');
 $bugTpl->description = 'A template for a bug report';
 $bugTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" border="1">
  <tbody>
- <tr data-mce-active="1">
+ <tr>
  <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Summary</strong></span></td>
- <td style="width: 82.7562%;" data-mce-active="1">summarize the issue your are experiencing</td>
+ <td style="width: 82.7562%;">summarize the issue your are experiencing</td>
  </tr>
  <tr>
  <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Environment</strong></span></td>
@@ -389,77 +389,6 @@ $featureTpl->content = '<table style="border-collapse: collapse; width: 100.051%
 </table>';
 
 $templates[] = $featureTpl;
-
-$layout48 = app()->make(Template::class);
-$layout48->title = $tpl->__('templates.side_left');
-$layout48->category = $tpl->__('templates.layouts');
-$layout48->description = $tpl->__('templates.titles.side_left_description');
-
-$layout48->content = '
-<div class="row">
-<div class="col-md-4"><p>Sidebar Left</p></div>
-<div class="col-md-8"><p>Content Right</p></div>
-</div>';
-$templates[] = $layout48;
-
-$layout84 = app()->make(Template::class);
-$layout84->title = $tpl->__('templates.side_right');
-$layout84->category = $tpl->__('templates.layouts');
-$layout84->description = $tpl->__('templates.titles.side_right_description');
-$layout84->content = '
-<div class="row">
-<div class="col-md-8"><p>Content Left</p></div>
-<div class="col-md-4"><p>Sidebar Right</p></div>
-</div>';
-$templates[] = $layout84;
-
-$layout363 = app()->make(Template::class);
-$layout363->title = $tpl->__('templates.side_m_side');
-$layout363->category = $tpl->__('templates.layouts');
-$layout363->description = $tpl->__('templates.titles.side_m_side_description');
-$layout363->content = '
-<div class="row">
-<div class="col-md-3"><p>Sidebar Left</p></div>
-<div class="col-md-6"><p>Content Center</p> </div>
-<div class="col-md-3"><p>Sidebar Right</p></div>
-</div>';
-$templates[] = $layout363;
-
-$layout66 = app()->make(Template::class);
-$layout66->title = $tpl->__('templates.titles.2_col');
-$layout66->category = $tpl->__('templates.layouts');
-$layout66->description = $tpl->__('templates.titles.2_col_description');
-$layout66->content = '
-<div class="row">
-<div class="col-md-6"><p>Column 1</div>
-<div class="col-md-6"><p>Column 2</div>
-</div>';
-$templates[] = $layout66;
-
-$layout444 = app()->make(Template::class);
-$layout444->title = $tpl->__('templates.titles.3_col');
-$layout444->category = $tpl->__('templates.layouts');
-$layout444->description = $tpl->__('templates.titles.3_col_description');
-$layout444->content = '
-<div class="row">
-<div class="col-md-4"><p>Column 1</p></div>
-<div class="col-md-4"><p>Column 2</p></div>
-<div class="col-md-4"><p>Column 3</p></div>
-</div>';
-$templates[] = $layout444;
-
-$layout3333 = app()->make(Template::class);
-$layout3333->title = $tpl->__('templates.titles.4_col');
-$layout3333->category = $tpl->__('templates.layouts');
-$layout3333->description = $tpl->__('templates.titles.4_col_description');
-$layout3333->content = '
-<div class="row">
-<div class="col-md-3"><p>Column 1</p></div>
-<div class="col-md-3"><p>Column 2</p></div>
-<div class="col-md-3"><p>Column 3</p></div>
-<div class="col-md-3"><p>Column 4</p></div>
-</div>';
-$templates[] = $layout3333;
 
 $labelGreen = app()->make(Template::class);
 $labelGreen->title = $tpl->__('templates.titles.green_status');

@@ -127,6 +127,20 @@ div.tagsinput span.tag a {
     vertical-align: text-bottom;
 }
 
+/* Tags input in article/wiki dialogs - proper spacing */
+.formModal div.tagsinput {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    display: block;
+    clear: both;
+}
+
+/* Ensure tags input doesn't overlap with Tiptap editor */
+.formModal div.tagsinput + .tiptap-wrapper,
+.formModal div.tagsinput + .tiptap-editor {
+    clear: both;
+}
+
 .ss-main .ss-multi-selected {
     padding:var(--input-padding);
 }
@@ -784,12 +798,17 @@ input[type=color] {
 
 
 body input[type=text].main-title-input.main-title-input {
-    border: 1px solid transparent;
-    border-bottom:1px solid var(--main-border-color);
-    border-radius:0px;
+    border: 1px solid var(--main-border-color);
+    border-radius:var(--box-radius);
     box-shadow:none;
     font-size:var(--font-size-xxxl);
     margin-bottom:5px;
+}
+
+/* Title input after icon picker - prevent overlap */
+.formModal .inlineDropDownContainerLeft + input[type="hidden"] + input.main-title-input,
+.formModal .inlineDropDownContainerLeft ~ input.main-title-input {
+    margin-left: 10px;
 }
 
 

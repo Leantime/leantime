@@ -34,7 +34,7 @@ if (str_contains($formUrl, '?delComment=')) {
                 <img src="<?= BASE_URL ?>/api/users?profileImage=<?= session('userdata.id')?>&v=<?= format(session('userdata.modified'))->timestamp() ?>" />
             </div>
             <div class="commentReply">
-                <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
+                <textarea rows="5" cols="50" class="tiptapSimple" name="text"></textarea>
                 <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
             </div>
             <input type="hidden" name="comment" class="commenterField" value="1"/>
@@ -87,7 +87,7 @@ if (str_contains($formUrl, '?delComment=')) {
                                     <?php } ?>
                             </div>
                             <span class="name"><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></span>
-                            <div class="text mce-content-body" id="commentText-<?= $formHash ?>-<?= $row['id']?>">
+                            <div class="text tiptap-content" id="commentText-<?= $formHash ?>-<?= $row['id']?>">
                                 <div id="comment-text-to-hide-<?= $formHash ?>-<?= $row['id']?>"><?php echo $tpl->escapeMinimal($row['text']); ?></div>
                             </div>
                         </div>
@@ -98,6 +98,11 @@ if (str_contains($formUrl, '?delComment=')) {
                                     <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                                 </a>
                             <?php } ?>
+                            <span class="comment-reactions" id="reactions-<?= $row['id'] ?>"
+                                 hx-get="<?= BASE_URL ?>/hx/comments/reactions/get?commentId=<?= $row['id'] ?>"
+                                 hx-trigger="load"
+                                 hx-swap="outerHTML">
+                            </span>
                         </div>
 
                         <div class="replies">
@@ -117,7 +122,7 @@ if (str_contains($formUrl, '?delComment=')) {
                                                     ); ?>
                                                 </div>
                                                 <span class="name"><?php printf($tpl->__('text.full_name'), $tpl->escape($comment['firstname']), $tpl->escape($comment['lastname'])); ?></span>
-                                                <div class="text mce-content-body" id="comment-text-to-hide-reply-<?= $formHash ?>-<?= $comment['id']?>"><?php echo $tpl->escapeMinimal($comment['text']); ?></div>
+                                                <div class="text tiptap-content" id="comment-text-to-hide-reply-<?= $formHash ?>-<?= $comment['id']?>"><?php echo $tpl->escapeMinimal($comment['text']); ?></div>
                                             </div>
 
                                             <div class="commentLinks">
@@ -136,6 +141,11 @@ if (str_contains($formUrl, '?delComment=')) {
                                                         </a>
                                                     <?php } ?>
                                                 <?php } ?>
+                                                <span class="comment-reactions" id="reactions-<?= $comment['id'] ?>"
+                                                     hx-get="<?= BASE_URL ?>/hx/comments/reactions/get?commentId=<?= $comment['id'] ?>"
+                                                     hx-trigger="load"
+                                                     hx-swap="outerHTML">
+                                                </span>
                                             </div>
                                         </div>
                                         <div class="clearall"></div>
@@ -165,15 +175,16 @@ if (str_contains($formUrl, '?delComment=')) {
 <script type='text/javascript'>
 
     jQuery(document).ready(function() {
-        leantime.editorController.initSimpleEditor();
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initSimpleEditor();
+        }
     });
 
-    function toggleCommentBoxes(id, commentId, formHash,editComment = false, isReply = false) {
+    function toggleCommentBoxes(id, commentId, formHash, editComment = false, isReply = false) {
         <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
 
-
             if (parseInt(id, 10) === 0) {
-                    jQuery(`.mainToggler-${formHash}`).hide();
+                jQuery(`.mainToggler-${formHash}`).hide();
             } else {
                 jQuery(`.mainToggler-${formHash}`).show();
             }
@@ -185,11 +196,37 @@ if (str_contains($formUrl, '?delComment=')) {
                 jQuery('#submit-reply-button').val('<?php echo $tpl->__('buttons.save') ?>');
             }
 
+            // Destroy existing Tiptap editors before removing textareas
+            jQuery(`.commentBox-${formHash}`).each(function() {
+                var wrapper = jQuery(this).find('.tiptap-wrapper');
+                if (wrapper.length && window.leantime && window.leantime.tiptapController) {
+                    leantime.tiptapController.registry.destroyWithin(wrapper[0]);
+                }
+            });
+
             jQuery(`.commentBox-${formHash} textarea`).remove();
+            jQuery(`.commentBox-${formHash} .tiptap-wrapper`).remove();
             jQuery(`.commentBox-${formHash}`).hide();
-            jQuery(`#comment-${formHash}-${id} .commentReply`).prepend(`<textarea rows="5" cols="75" name="text" id="editor_${formHash}-${id}" class="tinymceSimple">${editComment ? jQuery(`#comment-text-to-hide-${isReply ? 'reply-' : ''}${formHash}-${commentId || id}`).html() : ''}</textarea>`);
-            leantime.editorController.initSimpleEditor();
-            tinyMCE.get(`editor_${formHash}-${id}`).focus();
+
+            // Create textarea with tiptapSimple class
+            var initialContent = editComment ? jQuery(`#comment-text-to-hide-${isReply ? 'reply-' : ''}${formHash}-${commentId || id}`).html() : '';
+            jQuery(`#comment-${formHash}-${id} .commentReply`).prepend(`<textarea rows="5" cols="75" name="text" id="editor_${formHash}-${id}" class="tiptapSimple">${initialContent}</textarea>`);
+
+            // Initialize Tiptap editor
+            if (window.leantime && window.leantime.tiptapController) {
+                leantime.tiptapController.initSimpleEditor();
+                // Focus the editor after a short delay to allow initialization
+                setTimeout(function() {
+                    var editorEl = document.querySelector(`#comment-${formHash}-${id} .tiptap-editor`);
+                    if (editorEl) {
+                        var editor = leantime.tiptapController.registry.get(editorEl);
+                        if (editor) {
+                            editor.commands.focus('end');
+                        }
+                    }
+                }, 100);
+            }
+
             jQuery(`#comment-${formHash}-${id}`).show();
             jQuery(`#father-${formHash}`).val(id);
 
@@ -224,5 +261,71 @@ if (str_contains($formUrl, '?delComment=')) {
         }, options);
 
         observer.observe(element);
+    }
+
+    // Reaction emoji picker - uses keys that map to the Reactions model
+    var reactionOptions = [
+        { key: 'like', emoji: '👍' },
+        { key: 'love', emoji: '❤️' },
+        { key: 'celebrate', emoji: '🎉' },
+        { key: 'funny', emoji: '😄' },
+        { key: 'interesting', emoji: '🤔' },
+        { key: 'support', emoji: '💯' }
+    ];
+    var activeReactionPicker = null;
+
+    function toggleReactionPicker(btn, commentId) {
+        // Close any existing picker
+        if (activeReactionPicker) {
+            activeReactionPicker.remove();
+            activeReactionPicker = null;
+        }
+
+        // Create picker element
+        var picker = document.createElement('div');
+        picker.className = 'reaction-emoji-picker show';
+        picker.innerHTML = '<div class="reaction-emoji-picker__grid">' +
+            reactionOptions.map(function(r) {
+                return '<button type="button" class="reaction-emoji-picker__btn" ' +
+                    'onclick="addReaction(\'' + r.key + '\', ' + commentId + ')">' +
+                    r.emoji + '</button>';
+            }).join('') +
+        '</div>';
+
+        // Position the picker near the button
+        var btnRect = btn.getBoundingClientRect();
+        picker.style.position = 'fixed';
+        picker.style.left = btnRect.left + 'px';
+        picker.style.top = (btnRect.bottom + 5) + 'px';
+
+        document.body.appendChild(picker);
+        activeReactionPicker = picker;
+
+        // Close on click outside
+        setTimeout(function() {
+            document.addEventListener('click', closeReactionPicker);
+        }, 0);
+    }
+
+    function closeReactionPicker(e) {
+        if (activeReactionPicker && !activeReactionPicker.contains(e.target) && !e.target.classList.contains('add-reaction-btn')) {
+            activeReactionPicker.remove();
+            activeReactionPicker = null;
+            document.removeEventListener('click', closeReactionPicker);
+        }
+    }
+
+    function addReaction(reactionKey, commentId) {
+        if (activeReactionPicker) {
+            activeReactionPicker.remove();
+            activeReactionPicker = null;
+        }
+
+        // Make HTMX request to toggle reaction
+        htmx.ajax('POST', '<?= BASE_URL ?>/hx/comments/reactions/toggle?commentId=' + commentId, {
+            values: { reaction: reactionKey },
+            target: '#reactions-' + commentId,
+            swap: 'outerHTML'
+        });
     }
 </script>

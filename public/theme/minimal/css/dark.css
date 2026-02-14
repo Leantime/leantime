@@ -203,57 +203,13 @@
 }
 
 
-body .tox .tox-edit-area__iframe,
-body .tox .tox-toolbar-overlord {
-
-}
-
-.tox .tox-tbtn svg {
-    fill:var(--primary-font-color) !important;
-}
-
-
-.tox .tox-tbtn:hover,
-.tox .tox-tbtn--enabled, .tox .tox-tbtn--enabled:hover,
-.tox .tox-menu{
-    background: var(--secondary-background) !important;
-}
-
-.tox-tinymce,
-.tox .tox-menu{
-    border-color:var(--neutral) !important;
-}
-
-.tox:not([dir=rtl]) .tox-toolbar__group:not(:last-of-type),
 .chzn-container .chzn-drop{
     border-color:var(--neutral) !important;
 }
 
-.mce-content-body,
-.tox .tox-tbtn,
-.tox .tox-collection__item,
-.tox .tox-statusbar,
-.tox .tox-statusbar a, .tox .tox-statusbar__path-item, .tox .tox-statusbar__wordcount{
-    color:var(--primary-font-color) !important;
-}
-
-.tox .tox-split-button:hover {
-    box-shadow: 0 0 0 1px var(--neutral) inset !important;
-}
-
-.tox .tox-statusbar,
-.tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled),
 .chzn-container .chzn-drop,
 .progress{
     background: var(--secondary-background) !important;
-}
-
-.tox-collection__item-label > * {
-    background: transparent !important;
-}
-
-.tox .tox-statusbar {
-    border-top:1px solid var(--neutral) !important;
 }
 
 body .chzn-container-single .chzn-single {

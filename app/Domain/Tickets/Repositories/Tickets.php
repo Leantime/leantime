@@ -369,7 +369,7 @@ class Tickets
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
             ->selectRaw("CASE WHEN (\"milestone\".\"tags\" IS NULL OR \"milestone\".\"tags\" = '') THEN 'var(--grey)' ELSE \"milestone\".\"tags\" END AS \"milestoneColor\"")
-            ->selectRaw('COALESCE(ROUND(CAST(timesheet_agg.total_hours AS NUMERIC), 2), 0) AS "bookedHours"');
+            ->selectRaw('COALESCE(ROUND(CAST(timesheet_agg.total_hours AS DECIMAL(10,2)), 2), 0) AS "bookedHours"');
 
         if ($includeCounts) {
             $query->selectRaw('COALESCE(comment_agg.comment_count, 0) AS "commentCount"')

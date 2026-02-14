@@ -88,7 +88,7 @@
 
                     <strong>{{ __('label.background') }}</strong><br/>
                 <div class="readMoreBox">
-                    <div class="mce-content-body kanbanContent closed tw-max-h-[200px] readMoreContent tw-pb-[30px]" id="projectDescription">
+                    <div class="tiptap-content kanbanContent closed tw-max-h-[200px] readMoreContent tw-pb-[30px]" id="projectDescription">
                         {!! $tpl->escapeMinimal($project['details']) !!}
                     </div>
 
@@ -331,7 +331,7 @@
                                 </select>
 
                                 <div class="commentReply">
-                                    <textarea rows="5" cols="50" class="tinymceSimple tw-w-full" name="text"></textarea>
+                                    <textarea rows="5" cols="50" class="tiptapSimple tw-w-full" name="text"></textarea>
                                     <input
                                         type="submit"
                                         value="{{ __('buttons.save') }}"
@@ -480,9 +480,9 @@
 
                                     <div hx-trigger="load"
                                          hx-indicator=".htmx-indicator"
-                                         hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$row->id ?>">
+                                         hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $row->id ?>">
                                         <div class="htmx-indicator">
-                                                <?=$tpl->__("label.loading_milestone") ?>
+                                                <?= $tpl->__('label.loading_milestone') ?>
                                         </div>
                                     </div>
 
@@ -498,7 +498,9 @@
 
 @once @push('scripts')
 <script type='text/javascript'>
-    leantime.editorController.initSimpleEditor();
+    if (window.leantime && window.leantime.tiptapController) {
+        leantime.tiptapController.initSimpleEditor();
+    }
 </script>
 @endpush @endonce
 

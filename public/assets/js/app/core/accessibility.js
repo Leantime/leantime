@@ -211,36 +211,6 @@ leantime.accessibilityController = (function () {
     };
 
     /**
-     * Enhance TinyMCE editors with ARIA attributes
-     */
-    var enhanceTinyMCEAccessibility = function() {
-        // Wait for TinyMCE to initialize
-        if (typeof tinymce !== 'undefined') {
-            tinymce.on('AddEditor', function(e) {
-                var editor = e.editor;
-                var $textarea = jQuery('#' + editor.id);
-                var $label = jQuery('label[for="' + editor.id + '"]');
-                var labelText = $label.length ? $label.text().trim() : 'Rich text editor';
-
-                editor.on('init', function() {
-                    // Set ARIA label on editor iframe
-                    var $iframe = jQuery('#' + editor.id + '_ifr');
-                    $iframe.attr('aria-label', labelText);
-
-                    // Add help text
-                    if (!jQuery('#' + editor.id + '-help').length) {
-                        $iframe.after(
-                            '<span id="' + editor.id + '-help" class="sr-only">' +
-                            'Rich text editor. Press ALT+F10 to access toolbar. Press ESC to return to editing area.' +
-                            '</span>'
-                        );
-                    }
-                });
-            });
-        }
-    };
-
-    /**
      * Fix time picker label associations
      */
     var fixTimepickerLabels = function() {
@@ -320,7 +290,6 @@ leantime.accessibilityController = (function () {
         enhanceSlimSelectAccessibility();
         enhanceTagsInputAccessibility();
         enhanceDatepickerAccessibility();
-        enhanceTinyMCEAccessibility();
         fixTimepickerLabels();
         enhanceKanbanCardAccessibility();
 
@@ -353,7 +322,6 @@ leantime.accessibilityController = (function () {
         enhanceSlimSelectAccessibility: enhanceSlimSelectAccessibility,
         enhanceTagsInputAccessibility: enhanceTagsInputAccessibility,
         enhanceDatepickerAccessibility: enhanceDatepickerAccessibility,
-        enhanceTinyMCEAccessibility: enhanceTinyMCEAccessibility,
         fixTimepickerLabels: fixTimepickerLabels,
         enhanceKanbanCardAccessibility: enhanceKanbanCardAccessibility
     };
