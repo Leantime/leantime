@@ -137,17 +137,16 @@ leantime.modals = (function () {
         var box    = getBox();
         if (!dialog) { return; }
 
-        // Resize
-        box.className = box.className
-            .replace(/tw:max-w-\S+/g, '')
-            .trim();
-        box.style.minHeight = '';
-
+        // Resize — use inline styles instead of Tailwind utilities to
+        // avoid CSS @layer conflicts (unlayered reset beats layered DaisyUI).
         if (isLargeModal(url)) {
-            box.classList.add('tw:max-w-5xl');
+            box.style.maxWidth = '1024px';
+            box.style.width = '95vw';
             box.style.minHeight = '80vh';
         } else {
-            box.classList.add('tw:max-w-3xl');
+            box.style.maxWidth = '48rem';
+            box.style.width = '';
+            box.style.minHeight = '';
         }
 
         showLoading();

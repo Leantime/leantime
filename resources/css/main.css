@@ -63,3 +63,58 @@
 @import "../../public/assets/css/components/print.css";
 @import "../../public/assets/css/components/mermaid.css";
 @import "../../public/assets/css/components/overwrites.css";
+
+/* ── Modal dialog ─────────────────────────────────────────────────────
+   Override the CSS-reset rule (div { background: transparent }) which
+   wins over DaisyUI's layered .tw:modal-box because unlayered CSS
+   always beats @layer CSS in the cascade.
+   ──────────────────────────────────────────────────────────────────── */
+#global-modal-box {
+    background-color: var(--color-base-100, #fff);
+    border-radius: var(--radius-box, 0.5rem);
+    max-height: calc(100vh - 5em);
+    overflow-y: auto;
+    box-shadow: var(--large-shadow, 0 25px 50px -12px rgba(0,0,0,.25));
+}
+
+/* ── Tabbed widget tabs ───────────────────────────────────────────────
+   jQuery UI was removed; the bridge in dropdownBridge.js handles
+   tab switching but needs basic horizontal-tab CSS.
+   ──────────────────────────────────────────────────────────────────── */
+.tabbedwidget > ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border-bottom: 1px solid var(--neutral-border, #ddd);
+    padding: 0;
+    margin: 0 0 15px 0;
+}
+
+.tabbedwidget > ul > li {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tabbedwidget > ul > li > a {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    color: var(--primary-font-color, #555);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+}
+
+.tabbedwidget > ul > li > a:hover {
+    color: var(--accent1, #1b75bb);
+    text-decoration: none;
+}
+
+.tabbedwidget > ul > li.active > a,
+.tabbedwidget > ul > li.ui-tabs-active > a,
+.tabbedwidget > ul > li.ui-state-active > a {
+    border-bottom-color: var(--accent1, #1b75bb);
+    color: var(--accent1, #1b75bb);
+}
