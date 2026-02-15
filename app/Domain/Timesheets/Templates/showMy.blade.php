@@ -211,11 +211,11 @@ jQuery(document).ready(function(){
         <form action="{{ BASE_URL }}/timesheets/showMy" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
                 <button class="btn dropdown-toggle" data-toggle="dropdown">
-                    {{ __('links.week_view') }} {{ __('links.view') }}
+                    {!! __('links.week_view') !!} {!! __('links.view') !!}
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{{ __('links.week_view') }}</a></li>
-                    <li><a href="{{ BASE_URL }}/timesheets/showMyList" >{{ __('links.list_view') }}</a></li>
+                    <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
+                    <li><a href="{{ BASE_URL }}/timesheets/showMyList" >{!! __('links.list_view') !!}</a></li>
                 </ul>
             </div>
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">

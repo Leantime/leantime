@@ -125,7 +125,7 @@
                                 @else
                                     <button class="btn dropdown-toggle" data-toggle="dropdown"><i
                                             class="fas fa-fw {{ __($statusLabels[$filterStatus]['icon']) }}"></i>
-                                        {{ $statusLabels[$filterStatus]['title'] }} {{ __('links.view') }}</button>
+                                        {{ $statusLabels[$filterStatus]['title'] }} {!! __('links.view') !!}</button>
                                 @endif
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all')
@@ -152,11 +152,11 @@
                                 @if ($filterRelates == 'all')
                                     <button class="btn dropdown-toggle" data-toggle="dropdown"><i
                                             class="fas fa-fw fa-globe"></i> {{ __('relates.all') }}
-                                        {{ __('links.view') }}</button>
+                                        {!! __('links.view') !!}</button>
                                 @else
                                     <button class="btn dropdown-toggle" data-toggle="dropdown"><i
                                             class="fas fa-fw {{ __($relatesLabels[$filterRelates]['icon']) }}"></i>
-                                        {{ $relatesLabels[$filterRelates]['title'] }} {{ __('links.view') }}</button>
+                                        {{ $relatesLabels[$filterRelates]['title'] }} {!! __('links.view') !!}</button>
                                 @endif
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all')

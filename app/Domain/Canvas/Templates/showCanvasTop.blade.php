@@ -91,9 +91,9 @@
                     <div class="btn-group viewDropDown">
                         @if (count($allCanvas) > 0 && ! empty($statusLabels))
                             @if ($filter['status'] == 'all')
-                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-filter"></i> {{ $tpl->__('status.all') }} {{ $tpl->__('links.view') }}</button>
+                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-filter"></i> {{ $tpl->__('status.all') }} {!! $tpl->__('links.view') !!}</button>
                             @else
-                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw {{ $tpl->__($statusLabels[$filter['status']]['icon']) }}"></i> {{ $statusLabels[$filter['status']]['title'] }} {{ $tpl->__('links.view') }}</button>
+                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw {{ $tpl->__($statusLabels[$filter['status']]['icon']) }}"></i> {{ $statusLabels[$filter['status']]['title'] }} {!! $tpl->__('links.view') !!}</button>
                             @endif
                             <ul class="dropdown-menu">
                                 <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
@@ -107,9 +107,9 @@
                     <div class="btn-group viewDropDown">
                         @if (count($allCanvas) > 0 && ! empty($relatesLabels))
                             @if ($filter['relates'] == 'all')
-                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw fa-globe"></i> {{ $tpl->__('relates.all') }} {{ $tpl->__('links.view') }}</button>
+                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw fa-globe"></i> {{ $tpl->__('relates.all') }} {!! $tpl->__('links.view') !!}</button>
                             @else
-                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw {{ $tpl->__($relatesLabels[$filter['relates']]['icon']) }}"></i> {{ $relatesLabels[$filter['relates']]['title'] }} {{ $tpl->__('links.view') }}</button>
+                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw {{ $tpl->__($relatesLabels[$filter['relates']]['icon']) }}"></i> {{ $relatesLabels[$filter['relates']]['title'] }} {!! $tpl->__('links.view') !!}</button>
                             @endif
                             <ul class="dropdown-menu">
                                 <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates=all" @if ($filter['relates'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('relates.all') }}</a></li>

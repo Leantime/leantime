@@ -26,7 +26,7 @@
         <h5 class="subtitle">New Integration</h5>
 
         {{ $provider->name }}<br />
-        {{ $provider->description }}<br /><br />
+        {!! $provider->description !!}<br /><br />
 
         <a class="btn btn-primary" href="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=connect">Click Here to Connect</a>
 

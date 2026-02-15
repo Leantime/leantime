@@ -23,7 +23,7 @@
                             <strong>{{ $provider->name }}</strong>
                             <br /><small>Available methods: {{ implode(', ', $provider->methods) }}</small>
                             <br /><br />
-                            {{ $provider->description }}
+                            {!! $provider->description !!}
                         </span>
                         <br />
 
