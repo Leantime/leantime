@@ -108,6 +108,11 @@ leantime.modals = (function () {
         });
         if (window.htmx) { window.htmx.process(container); }
         if (window.tippy) { tippy(container.querySelectorAll('[data-tippy-content]')); }
+        // Initialize TipTap editors within the modal content
+        if (window.leantime && window.leantime.tiptapController &&
+            typeof window.leantime.tiptapController.initEditors === 'function') {
+            window.leantime.tiptapController.initEditors(container);
+        }
     }
 
     // ── Response Handler (shared by open + form submit) ────────────────
