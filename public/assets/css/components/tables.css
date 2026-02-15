@@ -8,8 +8,7 @@
     font-size: var(--font-size-s);
     border-top: 0;
     color: var(--kanban-col-title-color);
-    background:var(--col-content-bg);
-
+    background:transparent;
 }
 
 .table th.centeralign, .table td.centeralign {
@@ -182,13 +181,12 @@
 
 .maincontentinner .table,
 .maincontentinner table{
-    border:1px solid var(--col-content-bg);
-
+    border:none;
 }
 
 .table-bordered {
-    border-top-left-radius:var(--box-radius);
-    border-top-right-radius:var(--box-radius);
+    border-radius:0;
+    border:none;
 }
 
 .maincontentinner .table th,
@@ -211,24 +209,24 @@
     line-height: 17px;
 
     color: var(--kanban-col-title-color);
-    background:var(--secondary-background);
+    background:transparent;
 }
 
 .maincontentinner .table th,
 .maincontentinner table thead td,
 .maincontentinner .table.table-bordered th,
 .maincontentinner table th {
-    background:var(--col-title-bg);
+    background:transparent;
     padding: 10px 10px;
     font-weight:bold;
 }
 
 .table-bordered colgroup+thead tr:first-child th:first-child {
-    border-top-left-radius:var(--box-radius);
+    border-top-left-radius:0;
 }
 
 .table-bordered colgroup+thead tr:last-child th:last-child {
-    border-top-right-radius:var(--box-radius);
+    border-top-right-radius:0;
 }
 
 .maincontentinner .table th:last-child,
@@ -258,7 +256,7 @@
     padding:5px 10px 3px 10px;
     vertical-align: middle;
     min-height:17px;
-    border-right:1px solid var(--secondary-background);
+    border-right:1px solid var(--neutral);
 }
 
 .maincontentinner .listStyleTable td {
