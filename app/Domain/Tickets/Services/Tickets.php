@@ -2203,7 +2203,7 @@ class Tickets
             self::dispatchEvent('ticket_updated');
 
             // Update ticket
-            return $this->patch($ticket->id, ['projectId' => $projectId, 'sprint' => '', 'dependingTicketId' => '', 'milestoneid' => '']);
+            return $this->patch($ticket->id, ['projectId' => $ticket->projectId, 'sprint' => '', 'dependingTicketId' => '', 'milestoneid' => '']);
         }
 
         return false;
