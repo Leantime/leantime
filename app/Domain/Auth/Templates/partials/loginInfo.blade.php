@@ -1,6 +1,6 @@
 @dispatchEvent('beforeUserinfoMenuOpen')
 
-<div class="userinfo">
+<div class="dropdown userinfo">
     @dispatchEvent('afterUserinfoMenuOpen')
     @if(session()->exists("companysettings.logoPath") && session("companysettings.logoPath") !== false && session("companysettings.logoPath") !== '')
         <a href='{{ BASE_URL }}/users/editOwn/' preload="mouseover" class="dropdown-toggle profileHandler includeLogo" data-toggle="dropdown">

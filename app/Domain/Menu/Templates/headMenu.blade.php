@@ -9,7 +9,7 @@
            ])
 
     @if ($login::userIsAtLeast("manager", true))
-        <li class="notificationDropdown appsLink">
+        <li class="dropdown notificationDropdown appsLink">
         <a
             class="dropdown-toggle profileHandler newsDropDownHandler"
             hx-get="{{ BASE_URL }}/plugins/marketplaceplugins/getLatest"
@@ -32,7 +32,7 @@
     </li>
     @endif
 
-    <li class="notificationDropdown">
+    <li class="dropdown notificationDropdown">
         <a
             class="dropdown-toggle profileHandler newsDropDownHandler"
             hx-get="{{ BASE_URL }}/notifications/news/get"
@@ -55,7 +55,7 @@
         </div>
     </li>
 
-    <li class="notificationDropdown">
+    <li class="dropdown notificationDropdown">
         <a
             href='javascript:void(0);'
             class="dropdown-toggle profileHandler notificationHandler"
@@ -154,7 +154,7 @@
 
     </li>
 
-    <li class="userloggedinfo">
+    <li class="dropdown userloggedinfo">
         <a
             href='javascript:void(0);'
             class="dropdown-toggle"
@@ -216,7 +216,7 @@
 <ul class="headmenu work-modes tw:h-[50px] tw:float-left">
 
     @dispatchEvent('afterHeadMenuOpen')
-    <li>
+    <li class="dropdown">
         @include('menu::projectSelector')
     </li>
     <li>
