@@ -23,19 +23,22 @@
                 <div class="filterBar" style="display:none; top:30px;">
 
                     <div class="filterBoxLeft">
-                        <label for="dateFrom">{{ __('label.date_from') }} {{ __('label.date_to') }}</label>
+                        <label for="dateFrom">{{ __('label.date_from') }}</label>
                         <input type="text"
                                id="dateFrom"
                                class="dateFrom"
                                name="dateFrom"
                                value="{{ $tpl->get('dateFrom')->formatDateForUser() }}"
-                               style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
+                               style="width:110px"/>
+                    </div>
+                    <div class="filterBoxLeft">
+                        <label for="dateTo">{{ __('label.date_to') }}</label>
                         <input type="text"
                                id="dateTo"
                                class="dateTo"
                                name="dateTo"
                                value="{{ $tpl->get('dateTo')->formatDateForUser() }}"
-                               style="margin-bottom:10px; width:90px" />
+                               style="width:110px" />
                     </div>
 
                     <div class="filterBoxLeft">
@@ -53,10 +56,8 @@
                         </select>
                     </div>
                     <div class="filterBoxLeft">
-                        <label>&nbsp;</label>
                         <input type="submit" value="{{ __('buttons.search') }}" class="reload" />
                     </div>
-                    <div class="clearall"></div>
                 </div>
             </div>
             <div class="pull-right">

@@ -200,11 +200,9 @@ div.tagsinput span.tag
 }
 
 .filterBar {
-
     border:0px solid var(--main-border-color);
-    padding:10px;
+    padding:15px 20px;
     margin-bottom:5px;
-    padding-top:5px;
     margin-top: 10px;
     background:var(--secondary-background);
     border-radius:var(--box-radius);
@@ -212,10 +210,17 @@ div.tagsinput span.tag
     position: absolute;
     left: 0px;
     box-shadow: var(--large-shadow);
+    display:flex;
+    align-items:flex-end;
+    gap:15px;
+    flex-wrap:wrap;
 }
 
 .filterBar label {
     font-weight:normal;
+    display:block;
+    margin-bottom:5px;
+    font-size:var(--font-size-s);
 }
 
 .headtitle {
@@ -225,14 +230,12 @@ div.tagsinput span.tag
 }
 
 .filterBar .filterBoxLeft {
-    float:left;
-    margin-right:15px;
     min-width:50px;
 }
 
 .filterBar .filterBoxLeft input,
 .filterBar .filterBoxLeft select {
-    float:left;
+    display:block;
 }
 
 label.inline {
