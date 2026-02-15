@@ -120,6 +120,8 @@
 
                         <div hx-trigger="load"
                              hx-indicator=".htmx-indicator"
+                             hx-target="this"
+                             hx-swap="innerHTML"
                              hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $canvasItem['milestoneId'] }}">
                             <div class="htmx-indicator">
                                 {{ $tpl->__('label.loading_milestone') }}

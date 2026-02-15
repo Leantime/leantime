@@ -68,10 +68,10 @@
             <div class="col-md-4">
                 <div class="pull-right">
                     <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown">{{ $tpl->__('buttons.idea_wall') }} {{ $tpl->__('links.view') }}</button>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown">{!! $tpl->__('buttons.idea_wall') !!} {!! $tpl->__('links.view') !!}</button>
                         <ul class="dropdown-menu">
-                            <li><a href="{{ BASE_URL }}/ideas/showBoards" class="active">{{ $tpl->__('buttons.idea_wall') }}</a></li>
-                            <li><a href="{{ BASE_URL }}/ideas/advancedBoards" class="">{{ $tpl->__('buttons.idea_kanban') }}</a></li>
+                            <li><a href="{{ BASE_URL }}/ideas/showBoards" class="active">{!! $tpl->__('buttons.idea_wall') !!}</a></li>
+                            <li><a href="{{ BASE_URL }}/ideas/advancedBoards" class="">{!! $tpl->__('buttons.idea_kanban') !!}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -166,6 +166,8 @@
                             <br/>
                             <div hx-trigger="load"
                                  hx-indicator=".htmx-indicator"
+                                 hx-target="this"
+                                 hx-swap="innerHTML"
                                  hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $row['milestoneId'] }}">
                                 <div class="htmx-indicator">
                                     {{ $tpl->__('label.loading_milestone') }}

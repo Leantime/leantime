@@ -105,6 +105,8 @@
                             <td>
                                 @if($row['type'] == 'milestone')
                                     <div hx-trigger="load"
+                                         hx-target="this"
+                                         hx-swap="innerHTML"
                                          hx-get="{{ BASE_URL }}/hx/tickets/milestones/progress?milestoneId={{ $row['id'] }}&view=Progress">
                                         <div class="htmx-indicator">
                                             {{ __('label.calculating_progress') }}
