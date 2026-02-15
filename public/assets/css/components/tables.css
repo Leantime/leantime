@@ -260,7 +260,7 @@
 
 .maincontentinner .table {
     clear:both;
-    margin-top:20px;
+    margin-top:25px;
 }
 
 .maincontentinner .table td,
@@ -422,6 +422,15 @@
 .timesheetTable td.active,
 .timesheetTable th.active{
    background:var(--col-title-bg);
+   box-shadow: inset 2px 0 0 var(--accent1), inset -2px 0 0 var(--accent1);
+}
+
+.timesheetTable thead th.active {
+   box-shadow: inset 2px 0 0 var(--accent1), inset -2px 0 0 var(--accent1), inset 0 2px 0 var(--accent1);
+}
+
+.timesheetTable tfoot td.active {
+   box-shadow: inset 2px 0 0 var(--accent1), inset -2px 0 0 var(--accent1), inset 0 -2px 0 var(--accent1);
 }
 
 .maincontentinner .timesheetTable td input {
