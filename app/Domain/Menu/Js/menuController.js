@@ -50,7 +50,9 @@ leantime.menuController = (function () {
     var initProjectSelector = function () {
 
         document.querySelectorAll(".project-select").forEach(function (el) {
-            new SlimSelect({ select: el });
+            if (!el.dataset.ssid) {
+                new SlimSelect({ select: el });
+            }
         });
 
         document.addEventListener('click', function (e) {

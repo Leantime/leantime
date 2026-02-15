@@ -10,6 +10,8 @@ import '../../public/assets/js/libs/bootstrap-fileupload.min.js';
 // fails in ES module strict mode without these).
 window.autocomplete_options = window.autocomplete_options || {};
 window.attrname = window.attrname || '';
+window.i = window.i || 0;
+window.str = window.str || '';
 
 import '../../public/assets/js/libs/jquery.tagsinput.min.js';
 import '../../public/assets/js/app/core/jqueryUiSortableBridge.js';
