@@ -33,7 +33,7 @@
 <div class="tw:h-full tw:flex tw:flex-col minCalendar">
     <div class="fc-toolbar tw:z-10">
         <div class="fc-left tw:flex">
-            <div class="day-selector tw:w-full tw:flex tw:gap-2 tw:mb-4 tw:justify-between">
+            <div class="day-selector" style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:8px; width:100%; box-sizing:border-box;">
                 @php
                     $today = dtHelper()->userNow();
                     $startOfWeek = dtHelper()->userNow()->startOf("week");
@@ -44,7 +44,7 @@
                     }
                 @endphp
                 @foreach($week as $day)
-                    <button class="day-button tw:rounded-md tw:w-12 tw:h-12 tw:flex tw:flex-col tw:items-center tw:justify-center tw:text-sm {{ $day->format('Y-m-d') === $today->format('Y-m-d') ? 'today active' : '' }}" data-date="{{ $day->format('Y-m-d') }}">
+                    <button class="day-button tw:rounded-md tw:flex tw:flex-col tw:items-center tw:justify-center tw:text-sm {{ $day->format('Y-m-d') === $today->format('Y-m-d') ? 'today active' : '' }}" style="min-height:42px;" data-date="{{ $day->format('Y-m-d') }}">
                         <span class="tw:text-xs">{{ $day->format('D') }}</span>
                         <span class="tw:font-medium">{{ $day->format('d') }}</span>
                     </button>

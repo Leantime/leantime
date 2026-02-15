@@ -4,20 +4,31 @@
 }
 
 .day-button {
-    border:none;
-    background:var(--secondary-background);
+    border: 2px solid transparent;
+    background: var(--secondary-background);
     box-shadow: var(--min-shadow);
-}
-
-.day-button.today {
-    background-color: var(--interactive-icon-color);
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    color: var(--primary-font-color);
+    cursor: pointer;
 }
 
 .day-button:hover {
-    background-color: var(--interactive-icon-color);
+    background-color: var(--dropdown-link-hover-bg);
+}
+
+.day-button.today:not(.active) {
+    border-color: var(--main-action-bg);
+    background: var(--secondary-background);
 }
 
 .day-button.active {
+    background-color: var(--main-action-bg);
+    color: var(--main-action-hover-color);
+    border-color: var(--main-action-bg);
+    box-shadow: none;
+}
+
+.day-button.today.active {
     background-color: var(--main-action-bg);
     color: var(--main-action-hover-color);
 }

@@ -160,6 +160,9 @@ leantime.calendarController = (function () {
                     multiMonthTitleFormat: {month: 'long', year: 'numeric'},
                     dayHeaderFormat: {weekday: 'short'},
                 },
+                timeGridWeek: {
+                    dayHeaders: false,
+                },
                 timeGridDay: {
                     dayHeaders: false
                 },
@@ -265,6 +268,11 @@ leantime.calendarController = (function () {
             },
             eventDidMount: function (info) {
 
+                // Show full title on hover
+                if (info.event.title) {
+                    info.el.setAttribute("title", info.event.title);
+                }
+
                 if (info.isDraggable === false) {
                     info.el.classList.add("locked");
                 }
@@ -360,6 +368,23 @@ leantime.calendarController = (function () {
 
             calendar.setOption('locale', leantime.i18n.__("language.code"));
             calendar.render();
+
+            // Align day-selector grid with the time grid columns
+            var axis = calendarEl.querySelector('.fc-timegrid-axis');
+            var scroller = calendarEl.querySelector('.fc-scroller');
+            var daySelector = calendarEl.closest('.minCalendar')
+                           ? calendarEl.closest('.minCalendar').querySelector('.day-selector')
+                           : null;
+            if (axis && daySelector) {
+                daySelector.style.paddingLeft = axis.offsetWidth + 'px';
+                // Account for scrollbar width
+                if (scroller) {
+                    var scrollbarW = scroller.offsetWidth - scroller.clientWidth;
+                    if (scrollbarW > 0) {
+                        daySelector.style.paddingRight = scrollbarW + 'px';
+                    }
+                }
+            }
 
             calendar.scrollToTime(Date.now());
 
