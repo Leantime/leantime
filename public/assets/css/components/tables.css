@@ -420,7 +420,7 @@
 
 
 .timesheetTable td.active {
-   background:var(--col-title-bg);
+   background:transparent;
 }
 
 .timesheetTable th.active {
