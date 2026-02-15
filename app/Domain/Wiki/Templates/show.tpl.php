@@ -242,6 +242,9 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                             <div class="wiki-milestone-card">
                                 <div hx-trigger="load"
                                      hx-indicator=".htmx-indicator"
+                                     hx-target="closest .wiki-milestone-card"
+                                     hx-select="unset"
+                                     hx-swap="innerHTML"
                                      hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $currentArticle->milestoneId ?>">
                                     <div class="htmx-indicator">
                                         <?= $tpl->__('label.loading_milestone') ?>
@@ -441,6 +444,8 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                         <div id="wikiActivityContainer"
                              hx-get="<?= BASE_URL ?>/hx/wiki/articleActivity?articleId=<?= $currentArticle->id ?>"
                              hx-trigger="load, refreshActivity from:body"
+                             hx-target="this"
+                             hx-select="unset"
                              hx-swap="innerHTML">
                             <div class="wiki-activity-loading">
                                 <i class="fa fa-circle-notch fa-spin"></i> Loading activity...
