@@ -28,6 +28,8 @@ leantime.dashboardController = (function () {
 
     var _burndownConfig = '';
 
+    var _burndownChart = '';
+
     var _progressChart = '';
 
     //Functions
