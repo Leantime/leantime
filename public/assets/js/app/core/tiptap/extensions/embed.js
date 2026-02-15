@@ -13,7 +13,7 @@
  * - Calendly
  */
 
-const { Node, mergeAttributes } = require('@tiptap/core');
+import { Node, mergeAttributes } from '@tiptap/core';
 
 /**
  * URL patterns for various services
@@ -553,10 +553,4 @@ window.leantime.tiptapEmbed = {
 };
 
 // Export
-module.exports = {
-    EmbedNode: EmbedNode,
-    showEmbedDialog: showEmbedDialog,
-    detectEmbedType: detectEmbedType,
-    getEmbedUrl: getEmbedUrl,
-    patterns: patterns,
-};
+export { EmbedNode, showEmbedDialog, detectEmbedType, getEmbedUrl, patterns };
