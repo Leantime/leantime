@@ -464,7 +464,7 @@ body {
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     position:relative;
-    padding:14px; /* account for 1px border */
+    padding:20px;
     margin-bottom:10px;
     box-shadow: var(--large-shadow);
 
