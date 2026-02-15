@@ -195,7 +195,8 @@
 }
 
 .table-bordered {
-    border-radius:0;
+    border-top-left-radius:var(--box-radius);
+    border-top-right-radius:var(--box-radius);
     border:none;
 }
 
@@ -232,11 +233,11 @@
 }
 
 .table-bordered colgroup+thead tr:first-child th:first-child {
-    border-top-left-radius:0;
+    border-top-left-radius:var(--box-radius);
 }
 
 .table-bordered colgroup+thead tr:last-child th:last-child {
-    border-top-right-radius:0;
+    border-top-right-radius:var(--box-radius);
 }
 
 .maincontentinner .table th:last-child,
@@ -258,6 +259,7 @@
 }
 
 .maincontentinner .table {
+    clear:both;
     margin-top:20px;
 }
 
