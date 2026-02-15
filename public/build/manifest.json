@@ -706,7 +706,7 @@
     "src": "public/assets/images/svg/loading-animation.svg"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BsTAy8NY.css",
+    "file": "assets/app-BFXMNJqT.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -721,13 +721,13 @@
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-DCnbOELU.js",
+    "file": "assets/compiled-app-DMAiF-XZ.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true
   },
   "resources/js/compiled-calendar-component.js": {
-    "file": "assets/compiled-calendar-component-4O2CCA1G.js",
+    "file": "assets/compiled-calendar-component-Lz0njGTF.js",
     "name": "compiled-calendar-component",
     "src": "resources/js/compiled-calendar-component.js",
     "isEntry": true,

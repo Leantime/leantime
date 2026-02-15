@@ -30,8 +30,7 @@
 
 </div>
 
-<div class="tw:h-full minCalendar">
-    <div class="clear"></div>
+<div class="tw:h-full tw:flex tw:flex-col minCalendar">
     <div class="fc-toolbar tw:z-10">
         <div class="fc-left tw:flex">
             <div class="day-selector tw:w-full tw:flex tw:gap-2 tw:mb-4 tw:justify-between">
@@ -54,8 +53,7 @@
         </div>
         <div class="clear"></div>
     </div>
-    <div class="clear"></div>
-    <div class="minCalendarWrapper">
+    <div class="minCalendarWrapper tw:flex-1 tw:min-h-0">
     </div>
 </div>
 

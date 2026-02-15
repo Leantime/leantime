@@ -15,3 +15,12 @@ window.FullCalendar = Object.assign(
     GoogleCalendarPlugin,
     Luxon3Plugin
 );
+
+// Register add-on plugins globally so all Calendar instances can use them.
+// The `fullcalendar` bundle already registers core plugins (daygrid, timegrid,
+// list, etc.) but Luxon3, iCalendar and Google Calendar are separate packages.
+[ICalendarPlugin, GoogleCalendarPlugin, Luxon3Plugin].forEach(function (mod) {
+    if (mod.default && mod.default.id) {
+        window.FullCalendar.globalPlugins.push(mod.default);
+    }
+});

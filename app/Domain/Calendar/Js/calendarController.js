@@ -146,7 +146,7 @@ leantime.calendarController = (function () {
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
             timeZone: leantime.i18n.__("usersettings.timezone"),
-            height: 'calc(100% - 65px)',
+            height: '100%',
             stickyHeaderDates: true,
             initialView: initialView,
             eventStartEditable: true,
@@ -279,23 +279,16 @@ leantime.calendarController = (function () {
             }
         });
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Set up draggable for each ticket box
-            // setupDraggableTickets();
-            //
-            // Initialize the ThirdPartyDraggable for the todo container
+        // Initialize immediately — DOMContentLoaded has already fired
+        // when this runs inside HTMX-loaded widget content.
+        var todoContainer = document.querySelector("#yourToDoContainer");
+        if (todoContainer) {
+            initializeThirdPartyDraggable(todoContainer);
+        }
 
-            var todoContainer = document.querySelector("#yourToDoContainer");
-            if (todoContainer) {
-                initializeThirdPartyDraggable(todoContainer);
-            }
+        initButtons();
 
-            initButtons();
-
-            calendar.scrollToTime(Date.now());
-
-
-        });
+        calendar.scrollToTime(Date.now());
 
         // function setupDraggableTickets() {
         //     jQuery("#yourToDoContainer").find(".ticketBox").each(function () {
