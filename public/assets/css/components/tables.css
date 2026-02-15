@@ -8,7 +8,7 @@
     font-size: var(--font-size-s);
     border-top: 0;
     color: var(--kanban-col-title-color);
-    background:transparent;
+    background:var(--col-content-bg);
 }
 
 .table th.centeralign, .table td.centeralign {
@@ -219,14 +219,14 @@
     line-height: 17px;
 
     color: var(--kanban-col-title-color);
-    background:transparent;
+    background:var(--secondary-background);
 }
 
 .maincontentinner .table th,
 .maincontentinner table thead td,
 .maincontentinner .table.table-bordered th,
 .maincontentinner table th {
-    background:transparent;
+    background:var(--col-title-bg);
     padding: 10px 10px;
     font-weight:bold;
 }
