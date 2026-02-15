@@ -57,9 +57,11 @@
             setSelectables();
         });
 
-        htmx.onLoad(function(){
-            setSelectables();
-        });
+        if (typeof htmx !== 'undefined') {
+            htmx.onLoad(function(){
+                setSelectables();
+            });
+        }
 
 
     </script>
