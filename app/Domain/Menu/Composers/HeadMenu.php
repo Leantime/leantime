@@ -56,15 +56,14 @@ class HeadMenu extends Composer
      */
     public function with(): array
     {
-        $notificationService = $this->notificationService;
+        // Fetch all notifications once, then filter for unread in PHP
+        // instead of making two separate DB queries
         $notifications = [];
-        $newnotificationCount = 0;
         if (session()->exists('userdata')) {
-            $notifications = $notificationService->getAllNotifications(session('userdata.id'));
-            $newnotificationCount = $notificationService->getAllNotifications(session('userdata.id'), true);
+            $notifications = $this->notificationService->getAllNotifications(session('userdata.id'));
         }
 
-        $nCount = is_array($newnotificationCount) ? count($newnotificationCount) : 0;
+        $nCount = is_array($notifications) ? count(array_filter($notifications, fn ($n) => ($n['read'] ?? 1) == 0)) : 0;
         $totalNotificationCount =
         $totalMentionCount =
         $totalNewMentions =

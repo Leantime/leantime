@@ -9,6 +9,7 @@ parameters:
         - ../.phpstan/Rules
     excludePaths:
         - ../app/Plugins/*/vendor/*
+        - ../app/Plugins/GoogleCalendar/*
     scanDirectories:
         - ../vendor
         - ../config

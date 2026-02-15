@@ -310,6 +310,9 @@ class EditOwn extends Controller
                 session(['usersettings.time_format' => $timeFormat]);
                 session(['usersettings.timezone' => $tz]);
 
+                // Clear the localization cache so middleware re-fetches on next request
+                session()->forget('localization.cached');
+
                 $this->language->setLanguage($postLang);
 
                 $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');

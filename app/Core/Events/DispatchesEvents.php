@@ -2,8 +2,6 @@
 
 namespace Leantime\Core\Events;
 
-use Exception;
-
 trait DispatchesEvents
 {
     private static string $event_context = '';
@@ -75,22 +73,18 @@ trait DispatchesEvents
     }
 
     /**
-     * Gets the caller function name
+     * Gets the caller function name.
      *
-     * This way we don't have to use much memory by using debug_backtrace
+     * Uses debug_backtrace with limited depth and no args instead of
+     * Exception::getTrace() to avoid the overhead of creating a full
+     * exception object on every event dispatch (~60 times per request).
      */
     private static function get_function_context(?int $functionInt = null): string
     {
         $tracePointer = is_int($functionInt) ? $functionInt : 3;
 
-        // Create an exception
-        $ex = new Exception;
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $tracePointer + 1);
 
-        // Call getTrace() function
-        $trace = $ex->getTrace();
-
-        // Position 0 would be the line
-        // that called this function
-        return $trace[$tracePointer]['function'];
+        return $trace[$tracePointer]['function'] ?? '';
     }
 }

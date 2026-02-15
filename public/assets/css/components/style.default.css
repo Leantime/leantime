@@ -2710,6 +2710,106 @@ h3.todaysDate {
     opacity:0;
 }
 
+/* ==============================================================
+ * Styles originally in wysiwyg-overrides.css, accidentally removed
+ * during TinyMCE cleanup (9264d8e2). Restored here.
+ * ============================================================== */
+
+/* User mentions - used by Tiptap mention extension */
+.userMention {
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight:bold;
+    white-space: nowrap;
+}
+
+.userMention img {
+    width: 17px;
+    border-radius: 10px;
+    vertical-align: text-bottom;
+    margin-right: 3px;
+}
+
+a.userMention {
+    color: var(--primary-color);
+    font-weight:bold;
+}
+
+a.userMention:hover,
+a.userMention:focus {
+    text-decoration: none;
+}
+
+/* Confetti link styling - used in notifications and billing */
+a.confetti {
+    cursor:pointer;
+    color:var(--primary-color);
+    font-weight:bold;
+}
+
+/* Mirror transform utility - used for mirrored emoji in notifications */
+.mirrorElement {
+    transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    -ms-transform: scale(-1, 1);
+    transform: scale(-1, 1);
+    display: inline-block;
+}
+
+/* Legacy TinyMCE checklist styling - needed for existing content stored in DB */
+.tox-checklist>li:not(.tox-checklist--hidden) {
+    list-style: none;
+    margin: 10px 0;
+}
+.tox-checklist>li:not(.tox-checklist--hidden)::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='16' width='16' viewBox='0 0 512 512'%3E%3Cpath d='M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z'/%3E%3C/svg%3E");
+    background-size:100%;
+    content:'';
+    cursor:pointer;
+    margin-left:-25px;
+    margin-top: 1px;
+    position:absolute;
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.5;
+}
+.tox-checklist li:not(.tox-checklist--hidden).tox-checklist--checked::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='16' width='16' viewBox='0 0 512 512'%3E%3Cpath d='M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z'/%3E%3C/svg%3E");
+}
+.tox-checklist {
+    margin-left: 25px;
+    line-height: 20px;
+}
+.tox-checklist li:not(.tox-checklist--hidden).tox-checklist--checked {
+    text-decoration:line-through;
+}
+
+/* Skeleton loading placeholder - used by <x-global::loadingText> component. */
+.loading-text p {
+    color: transparent;
+    height: 16px;
+    width: 100%;
+    background: linear-gradient(100deg, var(--col-title-bg) 30%, var(--neutral) 50%, var(--col-title-bg)  70%);
+    background-size: 400% 100%;
+    animation: loadingTextAnimation 1.2s ease-in-out infinite;
+    margin-bottom: 10px;
+    border-radius: var(--box-radius);
+}
+
+@keyframes loadingTextAnimation {
+    0% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 h4 .helperTooltip,
 .helperTooltip {
     float:right;

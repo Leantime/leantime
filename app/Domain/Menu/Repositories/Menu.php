@@ -398,8 +398,24 @@ class Menu
         return $url;
     }
 
+    /**
+     * Request-level cache for getSectionMenuType results.
+     * Prevents redundant computation when called from multiple composers (App, Menu, HeadMenu).
+     * Keyed by route+default since different callers may pass different defaults.
+     *
+     * @var array<string, string>
+     */
+    private static array $sectionMenuTypeCache = [];
+
     public function getSectionMenuType($currentRoute, $default = 'default')
     {
+        // Cache key includes both route and default since the result depends on both.
+        // Different composers may pass different defaults for routes not in the sections map.
+        $cacheKey = $currentRoute.'|'.$default;
+        if (isset(self::$sectionMenuTypeCache[$cacheKey])) {
+            return self::$sectionMenuTypeCache[$cacheKey];
+        }
+
         $sections = [
             'dashboard.home' => 'personal',
             'projects.showMy' => 'personal',
@@ -430,10 +446,10 @@ class Menu
 
         $sections = self::dispatch_filter('menuSections', $sections, ['currentRoute' => $currentRoute, 'default' => $default]);
 
-        if (isset($sections[$currentRoute])) {
-            return $sections[$currentRoute];
-        } else {
-            return $default;
-        }
+        $result = $sections[$currentRoute] ?? $default;
+
+        self::$sectionMenuTypeCache[$cacheKey] = $result;
+
+        return $result;
     }
 }

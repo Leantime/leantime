@@ -158,6 +158,9 @@ class EditCompanySettings extends Controller
             $this->settingsRepo->saveSetting('companysettings.language', htmlentities(addslashes($params['language'])));
             $this->settingsRepo->saveSetting('companysettings.messageFrequency', (int) $params['messageFrequency']);
 
+            // Clear the localization cache so middleware re-fetches on next request
+            session()->forget('localization.cached');
+
             // Save default notification event types
             $defaultEventTypes = $params['defaultNotificationEventTypes'] ?? [];
             if (! is_array($defaultEventTypes)) {

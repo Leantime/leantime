@@ -1542,6 +1542,14 @@ class Tickets
             ->update($updates);
     }
 
+    /**
+     * Records ticket field changes in the history table.
+     * Uses a single batch insert instead of individual inserts per changed field.
+     *
+     * @param  int  $userId  The user making the change.
+     * @param  int  $ticketId  The ticket being changed.
+     * @param  array  $values  The new values being applied.
+     */
     public function addTicketChange($userId, $ticketId, $values): void
     {
         if (empty($ticketId)) {
@@ -1564,9 +1572,10 @@ class Tickets
             'status' => 'status',
         ];
 
-        $changedFields = [];
-
+        // Only select the columns we actually need to compare, not the entire row
+        $trackedColumns = array_unique(array_values($fields));
         $oldValues = $this->connection->table('zp_tickets')
+            ->select($trackedColumns)
             ->where('id', $ticketId)
             ->first();
 
@@ -1575,28 +1584,30 @@ class Tickets
         }
 
         $oldValues = (array) $oldValues;
+        $now = date('Y-m-d H:i:s');
+        $historyRows = [];
 
-        // compare table
+        // Compare tracked fields
         foreach ($fields as $enum => $dbTable) {
             if (
                 isset($values[$dbTable]) === true &&
                 isset($oldValues[$dbTable]) === true &&
-
                 ($oldValues[$dbTable] != $values[$dbTable]) &&
                 ($values[$dbTable] != '')
             ) {
-                $changedFields[$enum] = $values[$dbTable];
+                $historyRows[] = [
+                    'userId' => $userId,
+                    'ticketId' => $ticketId,
+                    'changeType' => $enum,
+                    'changeValue' => $values[$dbTable],
+                    'dateModified' => $now,
+                ];
             }
         }
 
-        foreach ($changedFields as $field => $value) {
-            $this->connection->table('zp_tickethistory')->insert([
-                'userId' => $userId,
-                'ticketId' => $ticketId,
-                'changeType' => $field,
-                'changeValue' => $value,
-                'dateModified' => date('Y-m-d H:i:s'),
-            ]);
+        // Single batch insert instead of N individual inserts
+        if (! empty($historyRows)) {
+            $this->connection->table('zp_tickethistory')->insert($historyRows);
         }
     }
 
@@ -1688,19 +1699,33 @@ class Tickets
      * @param  int  $createdBy  The ID of the user adding the collaborators.
      * @return bool Returns true if the operation is successful.
      */
+    /**
+     * Adds collaborators to a ticket using a single batch insert.
+     *
+     * @param  int  $ticketId  The ID of the ticket.
+     * @param  array  $collaborators  An array of user IDs to add as collaborators.
+     * @param  int  $createdBy  The ID of the user adding the collaborators.
+     * @return bool Returns true if the operation is successful.
+     */
     public function addCollaborators(int $ticketId, array $collaborators, int $createdBy): bool
     {
-        foreach ($collaborators as $userId) {
-            $this->connection->table('zp_entity_relationship')->insert([
-                'entityA' => $ticketId,
-                'entityAType' => 'Ticket',
-                'entityB' => $userId,
-                'entityBType' => 'User',
-                'relationship' => EntityRelationshipEnum::Collaborator->value,
-                'createdOn' => now(),
-                'createdBy' => $createdBy,
-            ]);
+        if (empty($collaborators)) {
+            return true;
         }
+
+        $now = now();
+        $rows = array_map(fn ($userId) => [
+            'entityA' => $ticketId,
+            'entityAType' => 'Ticket',
+            'entityB' => $userId,
+            'entityBType' => 'User',
+            'relationship' => EntityRelationshipEnum::Collaborator->value,
+            'createdOn' => $now,
+            'createdBy' => $createdBy,
+        ], $collaborators);
+
+        // Single batch insert instead of N individual inserts
+        $this->connection->table('zp_entity_relationship')->insert($rows);
 
         return true;
     }

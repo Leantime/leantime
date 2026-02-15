@@ -118,11 +118,27 @@ class Users
     }
 
     /**
+     * Request-level cache for getUser() results.
+     * Prevents duplicate DB queries when the same user is fetched
+     * multiple times within a single request (common in view composers).
+     *
+     * @var array<int|string, array|bool>
+     */
+    private array $userCache = [];
+
+    /**
      * @api
      */
     public function getUser($id): array|bool
     {
-        return $this->userRepo->getUser($id);
+        if (isset($this->userCache[$id])) {
+            return $this->userCache[$id];
+        }
+
+        $user = $this->userRepo->getUser($id);
+        $this->userCache[$id] = $user;
+
+        return $user;
     }
 
     /**

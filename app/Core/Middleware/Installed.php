@@ -23,6 +23,13 @@ class Installed
     public function handle(IncomingRequest $request, Closure $next): Response
     {
         $session_says = session()->exists('isInstalled') && session('isInstalled');
+
+        // For HTMX and API requests, trust the session -- install state can't change mid-session.
+        // This avoids a cache/DB lookup on every partial request.
+        if ($session_says && ($request->isHtmxRequest() || $request->isApiOrCronRequest())) {
+            return $next($request);
+        }
+
         $config_says = app()->make(SettingRepository::class)->checkIfInstalled();
 
         if (! $session_says && ! $config_says) {

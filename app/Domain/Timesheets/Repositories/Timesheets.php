@@ -854,14 +854,23 @@ class Timesheets extends Repository
     /**
      * updateInvoices
      */
+    /**
+     * Updates invoice and payment status for timesheet entries.
+     * Uses batch whereIn() queries instead of individual updates per row.
+     *
+     * @param  array  $invEmpl  IDs of timesheets to mark as invoiced to employee.
+     * @param  array  $invComp  IDs of timesheets to mark as invoiced to company.
+     * @param  array  $paid  IDs of timesheets to mark as paid.
+     * @return bool Returns true on success.
+     */
     public function updateInvoices(array $invEmpl, array $invComp = [], array $paid = []): bool
     {
         $now = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC')->format('Y-m-d H:i:s');
         $modified = date('Y-m-d H:i:s');
 
-        foreach ($invEmpl as $row1) {
+        if (! empty($invEmpl)) {
             $this->db->table('zp_timesheets')
-                ->where('id', $row1)
+                ->whereIn('id', $invEmpl)
                 ->update([
                     'invoicedEmpl' => 1,
                     'invoicedEmplDate' => $now,
@@ -869,9 +878,9 @@ class Timesheets extends Repository
                 ]);
         }
 
-        foreach ($invComp as $row2) {
+        if (! empty($invComp)) {
             $this->db->table('zp_timesheets')
-                ->where('id', $row2)
+                ->whereIn('id', $invComp)
                 ->update([
                     'invoicedComp' => 1,
                     'invoicedCompDate' => $now,
@@ -879,9 +888,9 @@ class Timesheets extends Repository
                 ]);
         }
 
-        foreach ($paid as $row3) {
+        if (! empty($paid)) {
             $this->db->table('zp_timesheets')
-                ->where('id', $row3)
+                ->whereIn('id', $paid)
                 ->update([
                     'paid' => 1,
                     'paidDate' => $now,

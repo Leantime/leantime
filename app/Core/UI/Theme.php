@@ -204,7 +204,47 @@ class Theme
         $this->language = $language;
         $this->appSettings = $appSettings;
         $this->fileManager = $fileManager;
+    }
 
+    /**
+     * Batch-preload all user theme settings into the SettingCache in a single query.
+     * Called once on first page load after login to avoid 8-11 individual getSetting() calls
+     * as each theme getter (getActive, getColorMode, getColorScheme, getFont, etc.) fires.
+     *
+     * The preloaded values are cached by SettingCache's in-memory tier, so subsequent
+     * individual getSetting() calls within the same request are instant.
+     */
+    public function preloadUserSettings(): void
+    {
+        if (! Auth::isLoggedIn()) {
+            return;
+        }
+
+        $userId = session('userdata.id');
+        if (! $userId) {
+            return;
+        }
+
+        // If session already has theme data, skip preloading
+        if (session()->exists('usersettings.theme')) {
+            return;
+        }
+
+        $keys = [
+            "usersettings.$userId.theme",
+            "usersettings.$userId.colorMode",
+            "usersettings.$userId.colorScheme",
+            "usersettings.$userId.themeFont",
+            "usersettings.$userId.backgroundType",
+            "usersettings.$userId.backgroundImage",
+            'companysettings.primarycolor',
+            'companysettings.secondarycolor',
+            'companysettings.sitename',
+            'companysettings.logoPath',
+        ];
+
+        // Single batch query -- results are stored in SettingCache's in-memory tier
+        $this->settingsRepo->getSettingsForKeys($keys);
     }
 
     /**
@@ -257,10 +297,23 @@ class Theme
         return self::dispatchFilter('fonts', $this->fonts);
     }
 
+    /**
+     * Retrieves the user's background image URL.
+     * Caches the result in session to avoid a DB query on every page load.
+     *
+     * @return string|null The background image URL, or null if not logged in.
+     */
     public function getBackgroundImage(): ?string
     {
         if (Auth::isLoggedIn()) {
-            return $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.backgroundImage');
+            if (session()->exists('usersettings.backgroundImage')) {
+                return session('usersettings.backgroundImage') ?: null;
+            }
+
+            $image = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.backgroundImage');
+            session(['usersettings.backgroundImage' => $image ?: '']);
+
+            return $image ?: null;
         }
 
         return null;
@@ -271,13 +324,28 @@ class Theme
         if (Auth::isLoggedIn()) {
             $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundType', 'image');
             $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundImage', $url);
+            session(['usersettings.backgroundType' => 'image']);
+            session(['usersettings.backgroundImage' => $url]);
         }
     }
 
+    /**
+     * Retrieves the user's background type (gradient or image).
+     * Caches the result in session to avoid a DB query on every page load.
+     *
+     * @return string The background type.
+     */
     public function getBackgroundType(): string
     {
         if (Auth::isLoggedIn()) {
-            return $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.backgroundType') ?? 'gradient';
+            if (session()->exists('usersettings.backgroundType')) {
+                return session('usersettings.backgroundType') ?: 'gradient';
+            }
+
+            $type = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.backgroundType');
+            session(['usersettings.backgroundType' => $type ?: 'gradient']);
+
+            return $type ?: 'gradient';
         }
 
         return 'gradient';
@@ -287,10 +355,11 @@ class Theme
     {
         if (Auth::isLoggedIn()) {
             $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundType', $type);
+            session(['usersettings.backgroundType' => $type]);
             if ($type == 'gradient') {
                 $this->settingsRepo->deleteSetting('usersettings.'.session('userdata.id').'.backgroundImage');
+                session(['usersettings.backgroundImage' => '']);
             }
-
         }
     }
 
@@ -1036,5 +1105,7 @@ class Theme
         session()->forget('usersettings.colorScheme');
         session()->forget('usersettings.themeFont');
         session()->forget('usersettings.theme');
+        session()->forget('usersettings.backgroundType');
+        session()->forget('usersettings.backgroundImage');
     }
 }

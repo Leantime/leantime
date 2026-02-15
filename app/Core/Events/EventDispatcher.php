@@ -29,6 +29,15 @@ class EventDispatcher implements Dispatcher
     private static array $patternMatchCache = [];
 
     /**
+     * Version counters for registry change tracking.
+     * Incremented when listeners are added, used for cache key generation
+     * instead of expensive md5(serialize(array_keys($registry))) on every dispatch.
+     */
+    private static int $eventRegistryVersion = 0;
+
+    private static int $filterRegistryVersion = 0;
+
+    /**
      * Registry of all events added to a hook
      */
     private static array $eventRegistry = [];
@@ -52,8 +61,12 @@ class EventDispatcher implements Dispatcher
      */
     public static function findEventListeners(string $eventName, array $registry): array
     {
-        // Check cache first
-        $cacheKey = $eventName.'_'.md5(serialize(array_keys($registry)));
+        // Use version counters for cache key instead of expensive md5(serialize(array_keys()))
+        $registryVersion = ($registry === self::$eventRegistry)
+            ? self::$eventRegistryVersion
+            : self::$filterRegistryVersion;
+        $cacheKey = $eventName.'_'.$registryVersion;
+
         if (isset(self::$patternMatchCache[$cacheKey])) {
             return self::$patternMatchCache[$cacheKey];
         }
@@ -173,11 +186,12 @@ class EventDispatcher implements Dispatcher
      */
     private static function defineParams(mixed $paramAttr, string $eventName): array|object
     {
-        // make this static so we only have to call once
-        // static $default_params;
+        // Cache the current route for the duration of the request since it doesn't change
+        static $current_route = null;
+        $current_route ??= Frontcontroller::getCurrentRoute();
 
         $default_params = [
-            'current_route' => Frontcontroller::getCurrentRoute(),
+            'current_route' => $current_route,
             'currentEvent' => $eventName,
         ];
 
@@ -577,6 +591,7 @@ class EventDispatcher implements Dispatcher
 
         // Laravel adds the listener directly without having priority. Keep that in mind!!
         self::$eventRegistry[$event][] = ['listener' => $listener, 'priority' => $priority, 'source' => $listenerSource];
+        self::$eventRegistryVersion++;
     }
 
     public static function addEventListener($event, $listener, $priority = 10, $source = 'leantime')
@@ -594,6 +609,7 @@ class EventDispatcher implements Dispatcher
             self::$filterRegistry[$filtername] = [];
         }
         self::$filterRegistry[$filtername][] = ['listener' => $listener, 'priority' => $priority, 'source' => $listenerSource];
+        self::$filterRegistryVersion++;
     }
 
     public static function addFilterListener(
