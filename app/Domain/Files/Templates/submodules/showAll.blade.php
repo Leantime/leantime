@@ -144,6 +144,7 @@
 
 
 <script>
+jQuery(document).ready(function(){
 
     if (typeof uppy === 'undefined') {
 
@@ -270,4 +271,5 @@
 
     }
 
+});
 </script>

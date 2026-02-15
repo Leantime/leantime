@@ -152,6 +152,7 @@ $moduleId = $_GET['id'] ?? '';
 
 
 <script>
+jQuery(document).ready(function(){
 
     if (typeof uppy === 'undefined') {
 
@@ -308,5 +309,6 @@ $moduleId = $_GET['id'] ?? '';
 
     }
 
+});
 </script>
 

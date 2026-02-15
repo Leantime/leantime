@@ -180,6 +180,7 @@ $moduleId = session('currentProject');
 
 
 <script>
+jQuery(document).ready(function(){
 
     if (typeof uppy === 'undefined') {
 
@@ -337,5 +338,6 @@ $moduleId = session('currentProject');
 
     }
 
+});
 </script>
 
