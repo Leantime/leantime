@@ -89,7 +89,7 @@
                     <li class='nav-header border'></li>
                     @foreach ($wikis as $wiki)
                         <li>
-                            <a href="{{ BASE_URL }}/wiki/show?setWiki={{ $wiki->id }}">{{ $tpl->escape($wiki->title) }}</a>
+                            <a href="{{ BASE_URL }}/wiki/show?setWiki={{ $wiki->id }}">{{ $wiki->title }}</a>
                         </li>
                     @endforeach
                 </ul>
@@ -182,7 +182,7 @@
                                             id="wikiTitleEditable"
                                             contenteditable="true"
                                             data-placeholder="Untitled"
-                                            data-original="{{ $tpl->escape($currentArticle->title) }}">{{ $tpl->escape($currentArticle->title) }}</h1>
+                                            data-original="{{ $currentArticle->title }}">{{ $currentArticle->title }}</h1>
                                     </div>
 
                                     {{-- Editable Tags --}}
@@ -197,7 +197,7 @@
                                 @else
                                     <h1 class="wiki-document-title">
                                         <i class="article-icon {{ $tpl->escape($currentArticle->data) }}"></i>
-                                        {{ $tpl->escape($currentArticle->title) }}
+                                        {{ $currentArticle->title }}
                                     </h1>
 
                                     @php
@@ -208,7 +208,7 @@
                                             @foreach ($tagsArray as $tag)
                                                 @php $tag = trim($tag); @endphp
                                                 @if (! empty($tag))
-                                                    <span class="wiki-document-tag">{{ $tpl->escape($tag) }}</span>
+                                                    <span class="wiki-document-tag">{{ $tag }}</span>
                                                 @endif
                                             @endforeach
                                         </div>
@@ -349,7 +349,7 @@
                                                                 <a href="javascript:void(0)"
                                                                    class="wiki-parent-option{{ $currentArticle->parent == $headline->id ? ' active' : '' }}"
                                                                    data-value="{{ $headline->id }}">
-                                                                    <i class="{{ $tpl->escape($headline->data ?: 'fa fa-file-alt') }}"></i> {{ $tpl->escape($headline->title) }}@if ($headline->status === 'draft') <span class="wiki-tree-draft">({{ __('label.draft') }})</span>@endif
+                                                                    <i class="{{ $headline->data ?: 'fa fa-file-alt' }}"></i> {{ $headline->title }}@if ($headline->status === 'draft') <span class="wiki-tree-draft">({{ __('label.draft') }})</span>@endif
                                                                 </a>
                                                             </li>
                                                         @endforeach
@@ -376,7 +376,7 @@
                                     <span class="wiki-property-value">
                                         <div class="wiki-author">
                                             <span class="wiki-author-avatar">{{ $authorInitials }}</span>
-                                            {{ $tpl->escape($currentArticle->firstname) }} {{ $tpl->escape($currentArticle->lastname) }}
+                                            {{ $currentArticle->firstname }} {{ $currentArticle->lastname }}
                                         </div>
                                     </span>
                                 </div>
@@ -391,7 +391,7 @@
                                             <div class="wiki-milestone-dropdown dropdown" id="wikiMilestoneDropdown">
                                                 <button class="wiki-milestone-btn" data-toggle="dropdown">
                                                     @if (! empty($currentArticle->milestoneHeadline))
-                                                        <span class="milestone-text">{{ $tpl->escape($currentArticle->milestoneHeadline) }}</span>
+                                                        <span class="milestone-text">{{ $currentArticle->milestoneHeadline }}</span>
                                                     @else
                                                         <span class="milestone-text none">None</span>
                                                     @endif
@@ -406,7 +406,7 @@
                                                                 <a href="javascript:void(0)"
                                                                    class="wiki-milestone-option{{ $currentArticle->milestoneId == $milestone->id ? ' active' : '' }}"
                                                                    data-value="{{ $milestone->id }}">
-                                                                    <i class="fa fa-flag"></i> {{ $tpl->escape($milestone->headline) }}
+                                                                    <i class="fa fa-flag"></i> {{ $milestone->headline }}
                                                                 </a>
                                                             </li>
                                                         @endforeach
@@ -416,7 +416,7 @@
                                         @else
                                             @if (! empty($currentArticle->milestoneHeadline))
                                                 <a href="{{ BASE_URL }}/tickets/roadmap#/tickets/editMilestone/{{ $currentArticle->milestoneId }}" class="wiki-milestone-link">
-                                                    {{ $tpl->escape($currentArticle->milestoneHeadline) }}
+                                                    {{ $currentArticle->milestoneHeadline }}
                                                 </a>
                                             @else
                                                 <span class="wiki-no-milestone">None</span>
