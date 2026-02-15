@@ -49,12 +49,6 @@ leantime.menuController = (function () {
 
     var initProjectSelector = function () {
 
-        document.querySelectorAll(".project-select").forEach(function (el) {
-            if (!el.dataset.ssid) {
-                new SlimSelect({ select: el });
-            }
-        });
-
         document.addEventListener('click', function (e) {
             if (e.target.closest('.projectselector.dropdown-menu')) {
                 e.stopPropagation();
