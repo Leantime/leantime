@@ -3059,9 +3059,14 @@ body a.btn-link.btn-fancy:hover {
     overflow-y: hidden;
 }
 
+.grid-stack-item > .ui-resizable-se {
+    bottom: calc(var(--gs-item-margin-bottom) + 10px);
+    right: calc(var(--gs-item-margin-right) + 10px);
+}
+
 .widgetContent {
     padding:0px 2px;
-    height: calc(100% - 40px);
+    height: calc(100% - 46px);
     overflow: auto;
 }
 

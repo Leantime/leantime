@@ -9,9 +9,10 @@ document.addEventListener('click', function (e) {
     var toggle = e.target.closest('[data-toggle="dropdown"]');
 
     // Close all open dropdowns that don't contain the clicked toggle
-    document.querySelectorAll('.dropdown.open, .btn-group.open').forEach(function (el) {
-        if (!toggle || !el.contains(toggle)) {
-            el.classList.remove('open');
+    document.querySelectorAll('.dropdown.open, .btn-group.open, .inlineDropDownContainer.open, .open > .dropdown-menu').forEach(function (el) {
+        var container = el.classList.contains('dropdown-menu') ? el.parentElement : el;
+        if (!toggle || !container.contains(toggle)) {
+            container.classList.remove('open');
         }
     });
 
@@ -19,7 +20,8 @@ document.addEventListener('click', function (e) {
     if (toggle) {
         e.preventDefault();
         e.stopPropagation();
-        var parent = toggle.closest('.dropdown, .btn-group');
+        var parent = toggle.closest('.dropdown, .btn-group, .inlineDropDownContainer')
+                  || toggle.parentElement;
         if (parent) {
             parent.classList.toggle('open');
         }
@@ -28,7 +30,7 @@ document.addEventListener('click', function (e) {
 
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
-        document.querySelectorAll('.dropdown.open, .btn-group.open').forEach(function (el) {
+        document.querySelectorAll('.dropdown.open, .btn-group.open, .inlineDropDownContainer.open').forEach(function (el) {
             el.classList.remove('open');
         });
     }

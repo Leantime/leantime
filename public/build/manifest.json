@@ -706,22 +706,22 @@
     "src": "public/assets/images/svg/loading-animation.svg"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BFXMNJqT.css",
+    "file": "assets/app-DvPIS7gX.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/editor.css": {
-    "file": "assets/editor-CrRI5Shr.css",
+    "file": "assets/editor-BzKIsZgV.css",
     "src": "resources/css/editor.css",
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-D9miHV0s.css",
+    "file": "assets/main-Q_KVf8eu.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-BYaOqHcp.js",
+    "file": "assets/compiled-app-CDP5sPNm.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true

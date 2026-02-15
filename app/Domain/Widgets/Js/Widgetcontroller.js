@@ -40,7 +40,7 @@ leantime.widgetController = (function () {
 
     var initGrid = function () {
         grid = GridStack.init({
-            margin: '0px 15px 15px 0px',
+            margin: '8px 15px 15px 0px',
             handle: ".grid-handler-top",
             minRow: 2,
             cellHeight: '30px',

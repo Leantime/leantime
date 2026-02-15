@@ -39,7 +39,7 @@
      data-group-by="{{ $groupBy }}"
 >
 
-    <div class="clear" style="position:absolute; top:10px; right:35px;">
+    <div class="clear" style="position:absolute; top:22px; right:40px;">
 
         @dispatchEvent("beforeTodoWidgetGroupByDropdown")
 
