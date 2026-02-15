@@ -270,6 +270,7 @@ class ShowProject extends Controller
                         ];
                         $notification->entity = $project;
                         $notification->module = 'projects';
+                        $notification->action = 'updated';
                         $notification->projectId = session('currentProject');
                         $notification->subject = $subject;
                         $notification->authorId = session('userdata.id');
@@ -302,6 +303,10 @@ class ShowProject extends Controller
 
             $this->tpl->assign('state', $this->projectRepo->state);
             $this->tpl->assign('role', session('userdata.role'));
+
+            // Notification mute count for Integrations tab
+            $muteCount = $this->projectService->getMuteCountForProject($id);
+            $this->tpl->assign('projectMuteCount', $muteCount);
 
             return $this->tpl->display('projects.showProject');
         } else {

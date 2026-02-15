@@ -5,6 +5,8 @@ namespace Leantime\Domain\Users\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\UI\Theme as ThemeCore;
+use Leantime\Domain\Notifications\Models\Notification;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Users\Services\Users as UserService;
@@ -20,6 +22,8 @@ class EditOwn extends Controller
 
     private UserService $userService;
 
+    private ProjectService $projectService;
+
     private int $userId;
 
     /**
@@ -29,12 +33,14 @@ class EditOwn extends Controller
         ThemeCore $themeCore,
         UserRepository $userRepo,
         SettingService $settingsService,
-        UserService $userService
+        UserService $userService,
+        ProjectService $projectService
     ): void {
         $this->themeCore = $themeCore;
         $this->userRepo = $userRepo;
         $this->settingsService = $settingsService;
         $this->userService = $userService;
+        $this->projectService = $projectService;
 
         $this->userId = session('userdata.id');
     }
@@ -127,6 +133,40 @@ class EditOwn extends Controller
         $this->tpl->assign('timezoneOptions', $timezonesAvailable);
 
         $this->tpl->assign('user', $row);
+
+        // Notification preferences: event-type categories
+        $notificationCategories = Notification::NOTIFICATION_CATEGORIES;
+        $enabledEventTypes = $this->settingsService->getSetting('usersettings.'.$this->userId.'.notificationEventTypes');
+        if (! $enabledEventTypes) {
+            $enabledEventTypes = $this->settingsService->getSetting('companysettings.defaultNotificationEventTypes');
+        }
+        if ($enabledEventTypes) {
+            $enabledEventTypes = json_decode($enabledEventTypes, true);
+        }
+        if (! is_array($enabledEventTypes)) {
+            $enabledEventTypes = Notification::getCategoryKeys();
+        }
+
+        // Notification preferences: per-project notification levels
+        $projectNotificationLevels = $this->loadProjectNotificationLevels();
+
+        // Use the same access-aware project list as the navigation project dropdown
+        // This respects direct assignment, org-wide (psettings='all'), and client-scoped access
+        // but does NOT include the admin bypass that shows all projects unconditionally
+        $projectData = $this->projectService->getProjectHierarchyAvailableToUser($this->userId);
+        $userProjects = $projectData['allAvailableProjects'] ?? [];
+
+        $companyDefaultRelevance = $this->settingsService->getSetting('companysettings.defaultNotificationRelevance');
+        if (! $companyDefaultRelevance || ! Notification::isValidRelevanceLevel($companyDefaultRelevance)) {
+            $companyDefaultRelevance = Notification::RELEVANCE_ALL;
+        }
+
+        $this->tpl->assign('notificationCategories', $notificationCategories);
+        $this->tpl->assign('enabledEventTypes', $enabledEventTypes);
+        $this->tpl->assign('projectNotificationLevels', $projectNotificationLevels);
+        $this->tpl->assign('companyDefaultRelevance', $companyDefaultRelevance);
+        $this->tpl->assign('relevanceLevels', Notification::RELEVANCE_LEVELS);
+        $this->tpl->assign('userProjects', $userProjects);
 
         return $this->tpl->display('users.editOwn');
     }
@@ -270,6 +310,9 @@ class EditOwn extends Controller
                 session(['usersettings.time_format' => $timeFormat]);
                 session(['usersettings.timezone' => $tz]);
 
+                // Clear the localization cache so middleware re-fetches on next request
+                session()->forget('localization.cached');
+
                 $this->language->setLanguage($postLang);
 
                 $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');
@@ -303,6 +346,42 @@ class EditOwn extends Controller
 
                 // Storing option messagefrequency
                 $this->settingsService->saveSetting('usersettings.'.$this->userId.'.messageFrequency', (int) ($_POST['messagesfrequency'] ?? 3600));
+
+                // Save event-type preferences
+                $enabledEventTypes = $_POST['enabledEventTypes'] ?? [];
+                if (! is_array($enabledEventTypes)) {
+                    $enabledEventTypes = [];
+                }
+                $validCategories = array_keys(Notification::NOTIFICATION_CATEGORIES);
+                $enabledEventTypes = array_values(array_intersect($enabledEventTypes, $validCategories));
+                $this->settingsService->saveSetting(
+                    'usersettings.'.$this->userId.'.notificationEventTypes',
+                    json_encode($enabledEventTypes)
+                );
+
+                // Save per-project notification levels
+                $projectLevels = $_POST['projectNotificationLevel'] ?? [];
+                if (! is_array($projectLevels)) {
+                    $projectLevels = [];
+                }
+                $validatedLevels = [];
+                foreach ($projectLevels as $projectId => $level) {
+                    if (Notification::isValidRelevanceLevel($level)) {
+                        $validatedLevels[(int) $projectId] = $level;
+                    }
+                }
+                $this->settingsService->saveSetting(
+                    'usersettings.'.$this->userId.'.projectNotificationLevels',
+                    json_encode($validatedLevels)
+                );
+                // Clean up old format if it exists
+                $oldSetting = $this->settingsService->getSetting('usersettings.'.$this->userId.'.projectMutedNotifications');
+                if ($oldSetting !== false && $oldSetting !== null) {
+                    $this->settingsService->saveSetting(
+                        'usersettings.'.$this->userId.'.projectMutedNotifications',
+                        ''
+                    );
+                }
 
                 $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');
             }
@@ -346,5 +425,52 @@ class EditOwn extends Controller
                 'H:i',
             ],
         ];
+    }
+
+    /**
+     * Loads per-project notification levels for the current user.
+     *
+     * Performs lazy migration from the old binary mute format
+     * (projectMutedNotifications: JSON array of project IDs)
+     * to the new three-level format
+     * (projectNotificationLevels: JSON map of projectId -> relevance level).
+     *
+     * @return array<int, string> Map of project ID to relevance level.
+     */
+    private function loadProjectNotificationLevels(): array
+    {
+        $newSetting = $this->settingsService->getSetting('usersettings.'.$this->userId.'.projectNotificationLevels');
+        if ($newSetting) {
+            $decoded = json_decode($newSetting, true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        // Lazy migration: convert old muted-projects array to new format
+        $oldSetting = $this->settingsService->getSetting('usersettings.'.$this->userId.'.projectMutedNotifications');
+        if ($oldSetting) {
+            $mutedIds = json_decode($oldSetting, true);
+            if (is_array($mutedIds) && count($mutedIds) > 0) {
+                $migrated = [];
+                foreach ($mutedIds as $projectId) {
+                    $migrated[(int) $projectId] = Notification::RELEVANCE_MUTED;
+                }
+                // Save in new format
+                $this->settingsService->saveSetting(
+                    'usersettings.'.$this->userId.'.projectNotificationLevels',
+                    json_encode($migrated)
+                );
+                // Clear old format
+                $this->settingsService->saveSetting(
+                    'usersettings.'.$this->userId.'.projectMutedNotifications',
+                    ''
+                );
+
+                return $migrated;
+            }
+        }
+
+        return [];
     }
 }

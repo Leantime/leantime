@@ -345,4 +345,69 @@ class DatabaseHelper
         // CASE WHEN is ANSI SQL standard and works on all databases
         return "CASE WHEN {$condition} THEN {$then} ELSE {$else} END";
     }
+
+    /**
+     * Wrap a column or alias identifier with the correct quoting for the current database
+     *
+     * Uses the connection grammar to produce the correct identifier quoting:
+     * - MySQL: backticks (`identifier`)
+     * - PostgreSQL: double quotes ("identifier")
+     * - MS SQL: square brackets ([identifier])
+     *
+     * Supports dotted notation for table-qualified columns (e.g. 'table.column').
+     *
+     * @param  string  $identifier  The column, alias, or table.column identifier to wrap
+     * @return string The properly quoted identifier
+     *
+     * @api
+     */
+    public function wrapColumn(string $identifier): string
+    {
+        return $this->db->getQueryGrammar()->wrap($identifier);
+    }
+
+    /**
+     * Generate cross-database CAST expression
+     *
+     * Maps abstract type names to database-specific CAST target types:
+     * - 'text':    MySQL -> CHAR, PostgreSQL -> TEXT, MS SQL -> NVARCHAR(MAX)
+     * - 'integer': MySQL -> SIGNED, PostgreSQL -> INTEGER, MS SQL -> INT
+     * - 'decimal': MySQL -> DECIMAL(precision,scale), PostgreSQL/MS SQL -> NUMERIC(precision,scale)
+     *
+     * @param  string  $expression  The SQL expression to cast
+     * @param  string  $type  The abstract type: 'text', 'integer', or 'decimal'
+     * @param  int  $precision  Precision for decimal type (default: 10)
+     * @param  int  $scale  Scale for decimal type (default: 2)
+     * @return string The database-specific CAST expression
+     *
+     * @api
+     */
+    public function castAs(string $expression, string $type, int $precision = 10, int $scale = 2): string
+    {
+        $driver = $this->db->getDriverName();
+
+        $targetType = match ($type) {
+            'text' => match ($driver) {
+                'mysql' => 'CHAR',
+                'pgsql' => 'TEXT',
+                'sqlsrv' => 'NVARCHAR(MAX)',
+                default => 'CHAR',
+            },
+            'integer' => match ($driver) {
+                'mysql' => 'SIGNED',
+                'pgsql' => 'INTEGER',
+                'sqlsrv' => 'INT',
+                default => 'SIGNED',
+            },
+            'decimal' => match ($driver) {
+                'mysql' => "DECIMAL({$precision},{$scale})",
+                'pgsql' => "NUMERIC({$precision},{$scale})",
+                'sqlsrv' => "DECIMAL({$precision},{$scale})",
+                default => "DECIMAL({$precision},{$scale})",
+            },
+            default => throw new \InvalidArgumentException("Unsupported cast type: {$type}. Use 'text', 'integer', or 'decimal'."),
+        };
+
+        return "CAST({$expression} AS {$targetType})";
+    }
 }

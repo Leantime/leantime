@@ -8,6 +8,7 @@ use Leantime\Core\UI\Theme;
 use Leantime\Domain\Api\Services\Api as ApiService;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
@@ -96,11 +97,34 @@ class EditCompanySettings extends Controller
             $companySettings['messageFrequency'] = $messageFrequency;
         }
 
+        // Load default notification event types
+        $defaultNotificationTypes = $this->settingsRepo->getSetting('companysettings.defaultNotificationEventTypes');
+        $allCategories = array_keys(Notification::NOTIFICATION_CATEGORIES);
+        if ($defaultNotificationTypes) {
+            $defaultNotificationTypes = json_decode($defaultNotificationTypes, true);
+        }
+        if (! is_array($defaultNotificationTypes)) {
+            $defaultNotificationTypes = $allCategories;
+        }
+
+        // Load default notification relevance level
+        $defaultRelevance = $this->settingsRepo->getSetting('companysettings.defaultNotificationRelevance');
+        if (! $defaultRelevance || ! Notification::isValidRelevanceLevel($defaultRelevance)) {
+            $defaultRelevance = Notification::RELEVANCE_ALL;
+        }
+
         $apiKeys = $this->APIService->getAPIKeys();
 
         $this->tpl->assign('apiKeys', $apiKeys);
         $this->tpl->assign('languageList', $this->language->getLanguageList());
         $this->tpl->assign('companySettings', $companySettings);
+        $this->tpl->assign('notificationCategories', Notification::NOTIFICATION_CATEGORIES);
+        $this->tpl->assign('defaultNotificationTypes', $defaultNotificationTypes);
+        $this->tpl->assign('defaultRelevance', $defaultRelevance);
+        $this->tpl->assign('relevanceLevels', [
+            Notification::RELEVANCE_ALL => 'label.notifications_all_activity',
+            Notification::RELEVANCE_MY_WORK => 'label.notifications_my_work',
+        ]);
 
         return $this->tpl->display('setting.editCompanySettings');
     }
@@ -133,6 +157,28 @@ class EditCompanySettings extends Controller
             $this->settingsRepo->saveSetting('companysettings.sitename', htmlspecialchars(addslashes($params['name'])));
             $this->settingsRepo->saveSetting('companysettings.language', htmlentities(addslashes($params['language'])));
             $this->settingsRepo->saveSetting('companysettings.messageFrequency', (int) $params['messageFrequency']);
+
+            // Clear the localization cache so middleware re-fetches on next request
+            session()->forget('localization.cached');
+
+            // Save default notification event types
+            $defaultEventTypes = $params['defaultNotificationEventTypes'] ?? [];
+            if (! is_array($defaultEventTypes)) {
+                $defaultEventTypes = [];
+            }
+            $validCategories = array_keys(Notification::NOTIFICATION_CATEGORIES);
+            $defaultEventTypes = array_values(array_intersect($defaultEventTypes, $validCategories));
+            $this->settingsRepo->saveSetting(
+                'companysettings.defaultNotificationEventTypes',
+                json_encode($defaultEventTypes)
+            );
+
+            // Save default notification relevance level
+            $defaultRelevance = $params['defaultNotificationRelevance'] ?? Notification::RELEVANCE_ALL;
+            if (! Notification::isValidRelevanceLevel($defaultRelevance)) {
+                $defaultRelevance = Notification::RELEVANCE_ALL;
+            }
+            $this->settingsRepo->saveSetting('companysettings.defaultNotificationRelevance', $defaultRelevance);
 
             session(['companysettings.sitename' => htmlspecialchars(addslashes($params['name']))]);
             session(['companysettings.language' => htmlentities(addslashes($params['language']))]);

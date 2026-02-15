@@ -151,6 +151,7 @@ class EditCanvasComment extends Controller
                     ];
                     $notification->entity = $canvasItem;
                     $notification->module = static::CANVAS_NAME.'canvas';
+                    $notification->action = 'updated';
                     $notification->projectId = session('currentProject');
                     $notification->subject = $this->language->__('email_notifications.canvas_board_edited');
                     $notification->authorId = session('userdata.id');
@@ -197,6 +198,7 @@ class EditCanvasComment extends Controller
                     ];
                     $notification->entity = $canvasItem;
                     $notification->module = static::CANVAS_NAME.'canvas';
+                    $notification->action = 'created';
                     $notification->projectId = session('currentProject');
                     $notification->subject = $this->language->__('email_notifications.canvas_board_item_created');
                     $notification->authorId = session('userdata.id');
@@ -236,6 +238,7 @@ class EditCanvasComment extends Controller
             ];
             $notification->entity = $values;
             $notification->module = static::CANVAS_NAME.'canvas';
+            $notification->action = 'commented';
             $notification->projectId = session('currentProject');
             $notification->subject = $this->language->__('email_notifications.canvas_board_comment_created');
             $notification->authorId = session('userdata.id');

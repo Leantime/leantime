@@ -7,6 +7,7 @@
 namespace Leantime\Domain\Clients\Repositories;
 
 use Illuminate\Database\ConnectionInterface;
+use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Db\Repository;
 
@@ -20,12 +21,15 @@ class Clients extends Repository
 
     private ConnectionInterface $db;
 
+    private DatabaseHelper $dbHelper;
+
     /**
      * __construct - get database connection
      */
-    public function __construct(DbCore $db)
+    public function __construct(DbCore $db, DatabaseHelper $dbHelper)
     {
         $this->db = $db->getConnection();
+        $this->dbHelper = $dbHelper;
     }
 
     /**
@@ -46,7 +50,7 @@ class Clients extends Repository
                 'zp_clients.internet',
                 'zp_clients.email'
             )
-            ->selectRaw('COUNT(`zp_projects`.`clientId`) AS `numberOfProjects`')
+            ->selectRaw('COUNT('.$this->dbHelper->wrapColumn('zp_projects.clientId').') AS '.$this->dbHelper->wrapColumn('numberOfProjects'))
             ->leftJoin('zp_projects', 'zp_clients.id', '=', 'zp_projects.clientId')
             ->where('zp_clients.id', $id)
             ->groupBy(
@@ -87,7 +91,7 @@ class Clients extends Repository
                 'zp_clients.name',
                 'zp_clients.internet'
             )
-            ->selectRaw('COUNT(`zp_projects`.`clientId`) AS `numberOfProjects`')
+            ->selectRaw('COUNT('.$this->dbHelper->wrapColumn('zp_projects.clientId').') AS '.$this->dbHelper->wrapColumn('numberOfProjects'))
             ->leftJoin('zp_projects', 'zp_clients.id', '=', 'zp_projects.clientId')
             ->groupBy(
                 'zp_clients.id',

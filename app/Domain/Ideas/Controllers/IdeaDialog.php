@@ -126,6 +126,7 @@ class IdeaDialog extends Controller
                 ];
                 $notification->entity = $values;
                 $notification->module = 'comments';
+                $notification->action = 'commented';
                 $notification->projectId = session('currentProject');
                 $notification->subject = $subject;
                 $notification->authorId = session('userdata.id');
@@ -204,6 +205,7 @@ class IdeaDialog extends Controller
 
                     $notification->entity = $canvasItem;
                     $notification->module = 'ideas';
+                    $notification->action = 'updated';
                     $notification->projectId = session('currentProject');
                     $notification->subject = $subject;
                     $notification->authorId = session('userdata.id');
@@ -246,6 +248,7 @@ class IdeaDialog extends Controller
                     ];
                     $notification->entity = $canvasItem;
                     $notification->module = 'ideas';
+                    $notification->action = 'created';
                     $notification->projectId = session('currentProject');
                     $notification->subject = $subject;
                     $notification->authorId = session('userdata.id');

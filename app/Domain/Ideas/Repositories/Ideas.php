@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Ideas\Repositories;
 
 use Illuminate\Database\ConnectionInterface;
+use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Tickets\Repositories\Tickets;
@@ -30,16 +31,19 @@ class Ideas
 
     private Tickets $ticketRepo;
 
+    private DatabaseHelper $dbHelper;
+
     /**
      * __construct - get db connection
      *
      * @return void
      */
-    public function __construct(DbCore $db, LanguageCore $language, Tickets $ticketRepo)
+    public function __construct(DbCore $db, LanguageCore $language, Tickets $ticketRepo, DatabaseHelper $dbHelper)
     {
         $this->db = $db->getConnection();
         $this->language = $language;
         $this->ticketRepo = $ticketRepo;
+        $this->dbHelper = $dbHelper;
     }
 
     public function getSingleCanvas(int $canvasId): false|array
@@ -227,11 +231,10 @@ class Ideas
                 'milestone.editTo as milestoneEditTo'
             )
             ->selectRaw("CASE WHEN zp_canvas_items.status IS NULL THEN 'idea' ELSE zp_canvas_items.status END as status")
-            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS `commentCount`')
+            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS '.$this->dbHelper->wrapColumn('commentCount'))
             ->leftJoin('zp_user AS t1', 'zp_canvas_items.author', '=', 't1.id')
             ->leftJoin('zp_tickets AS milestone', function ($join) {
-                $castType = $this->db->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
-                $join->on('zp_canvas_items.milestoneId', '=', $this->db->raw("CAST(milestone.id AS {$castType})"));
+                $join->on('zp_canvas_items.milestoneId', '=', $this->db->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('milestone.id'), 'text')));
             })
             ->leftJoin('zp_comment', function ($join) {
                 $join->on('zp_canvas_items.id', '=', 'zp_comment.moduleId')
@@ -277,8 +280,7 @@ class Ideas
                 'milestone.editTo as milestoneEditTo'
             )
             ->leftJoin('zp_tickets AS milestone', function ($join) {
-                $castType = $this->db->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
-                $join->on('zp_canvas_items.milestoneId', '=', $this->db->raw("CAST(milestone.id AS {$castType})"));
+                $join->on('zp_canvas_items.milestoneId', '=', $this->db->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('milestone.id'), 'text')));
             })
             ->leftJoin('zp_user AS t1', 'zp_canvas_items.author', '=', 't1.id')
             ->where('zp_canvas_items.id', $id)

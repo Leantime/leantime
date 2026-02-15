@@ -139,6 +139,7 @@ class EditMilestone extends Controller
                     ];
                     $notification->entity = $values;
                     $notification->module = 'comments';
+                    $notification->action = 'commented';
                     $notification->projectId = session('currentProject');
                     $notification->subject = $subject;
                     $notification->authorId = session('userdata.id');
@@ -167,6 +168,7 @@ class EditMilestone extends Controller
                     ];
                     $notification->entity = $params;
                     $notification->module = 'tickets';
+                    $notification->action = 'updated';
                     $notification->projectId = session('currentProject');
                     $notification->subject = $subject;
                     $notification->authorId = session('userdata.id');
@@ -200,6 +202,7 @@ class EditMilestone extends Controller
                 ];
                 $notification->entity = $params;
                 $notification->module = 'tickets';
+                $notification->action = 'created';
                 $notification->projectId = session('currentProject');
                 $notification->subject = $subject;
                 $notification->authorId = session('userdata.id');

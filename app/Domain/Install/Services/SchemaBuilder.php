@@ -260,6 +260,7 @@ class SchemaBuilder
 
             $table->index(['moduleId', 'module', 'commentParent'], 'idx_comment_moduleId_module_commentParent');
             $table->index(['userId', 'module'], 'idx_comment_userId_module');
+            $table->index(['moduleId', 'module', 'date'], 'idx_comment_moduleId_module_date');
         });
     }
 
@@ -377,6 +378,8 @@ class SchemaBuilder
             $table->string('module', 50)->nullable();
             $table->integer('moduleId')->nullable();
             $table->integer('userId')->nullable();
+
+            $table->index(['userId', 'module', 'moduleId'], 'idx_read_userId_module_moduleId');
         });
     }
 
@@ -394,6 +397,7 @@ class SchemaBuilder
 
             $table->index(['projectId'], 'zp_relationuserproject_projectId_index');
             $table->index(['userId'], 'zp_relationuserproject_userId_index');
+            $table->index(['userId', 'projectId'], 'idx_relationuserproject_userId_projectId');
         });
     }
 
@@ -409,6 +413,8 @@ class SchemaBuilder
             $table->string('changeType', 255)->nullable();
             $table->string('changeValue', 150)->nullable();
             $table->dateTime('dateModified')->nullable();
+
+            $table->index(['ticketId'], 'idx_tickethistory_ticketId');
         });
     }
 
@@ -467,6 +473,7 @@ class SchemaBuilder
             $table->index(['projectId', 'status'], 'idx_tickets_projectId_status');
             $table->index(['projectId', 'type'], 'idx_tickets_projectId_type');
             $table->index(['status', 'type'], 'idx_tickets_status_type');
+            $table->index(['dependingTicketId'], 'idx_tickets_dependingTicketId');
         });
     }
 

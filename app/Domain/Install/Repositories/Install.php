@@ -5,8 +5,10 @@ namespace Leantime\Domain\Install\Repositories;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings as AppSettingCore;
 use Leantime\Core\Configuration\Environment;
@@ -77,6 +79,7 @@ class Install
         30411,
         30412,
         30413,
+        30500,
     ];
 
     /**
@@ -2418,6 +2421,49 @@ class Install
 
         } catch (\Exception $e) {
             Log::error('Migration 30413: '.$e->getMessage());
+        }
+
+        return true;
+    }
+
+    /**
+     * Add performance indexes for frequently-queried columns.
+     *
+     * - zp_tickets.dependingTicketId: Used in every subtask query (was full table scan)
+     * - zp_tickethistory.ticketId: Used in ticket history lookups
+     * - zp_read (userId, module, moduleId): Table had zero indexes
+     * - zp_relationuserproject (userId, projectId): Used in auth checks
+     * - zp_comment (moduleId, module, date): Used in "latest comment" queries
+     */
+    public function update_sql_30500(): bool|array
+    {
+        $indexes = [
+            ['table' => 'zp_tickets', 'columns' => ['dependingTicketId'], 'name' => 'idx_tickets_dependingTicketId'],
+            ['table' => 'zp_tickethistory', 'columns' => ['ticketId'], 'name' => 'idx_tickethistory_ticketId'],
+            ['table' => 'zp_read', 'columns' => ['userId', 'module', 'moduleId'], 'name' => 'idx_read_userId_module_moduleId'],
+            ['table' => 'zp_relationuserproject', 'columns' => ['userId', 'projectId'], 'name' => 'idx_relationuserproject_userId_projectId'],
+            ['table' => 'zp_comment', 'columns' => ['moduleId', 'module', 'date'], 'name' => 'idx_comment_moduleId_module_date'],
+        ];
+
+        foreach ($indexes as $index) {
+            try {
+                if (! Schema::hasTable($index['table'])) {
+                    continue;
+                }
+
+                // Check if index already exists before adding
+                $existingIndexes = collect(
+                    $this->connection->select("SHOW INDEX FROM `{$index['table']}`")
+                )->pluck('Key_name')->unique()->toArray();
+
+                if (! in_array($index['name'], $existingIndexes)) {
+                    Schema::table($index['table'], function (Blueprint $table) use ($index) {
+                        $table->index($index['columns'], $index['name']);
+                    });
+                }
+            } catch (\Exception $e) {
+                Log::error("Migration 30500: Failed to add index {$index['name']} on {$index['table']}: ".$e->getMessage());
+            }
         }
 
         return true;

@@ -29,24 +29,13 @@ class EventDispatcher implements Dispatcher
     private static array $patternMatchCache = [];
 
     /**
-     * Hash of event registry keys (invalidated when registry changes)
+     * Version counters for registry change tracking.
+     * Incremented when listeners are added, used for cache key generation
+     * instead of expensive md5(serialize(array_keys($registry))) on every dispatch.
      */
-    private static ?string $eventRegistryHash = null;
+    private static int $eventRegistryVersion = 0;
 
-    /**
-     * Hash of filter registry keys (invalidated when registry changes)
-     */
-    private static ?string $filterRegistryHash = null;
-
-    /**
-     * Count of event registry entries (for change detection)
-     */
-    private static int $lastEventCount = 0;
-
-    /**
-     * Count of filter registry entries (for change detection)
-     */
-    private static int $lastFilterCount = 0;
+    private static int $filterRegistryVersion = 0;
 
     /**
      * Registry of all events added to a hook
@@ -70,32 +59,32 @@ class EventDispatcher implements Dispatcher
      * Finds event listeners by event names,
      * Allows listeners with wildcards
      */
-    /**
-     * Compiled pattern cache (persists across calls)
-     */
-    private static array $compiledPatterns = [];
-
     public static function findEventListeners(string $eventName, array $registry): array
     {
-        // Use simple cache key - just the event name + registry count
-        // Registry only changes during boot (listener registration), not during dispatch
-        $registryCount = count($registry);
-        $cacheKey = $eventName . '_' . $registryCount;
+        // Use version counters for cache key instead of expensive md5(serialize(array_keys()))
+        $registryVersion = ($registry === self::$eventRegistry)
+            ? self::$eventRegistryVersion
+            : self::$filterRegistryVersion;
+        $cacheKey = $eventName.'_'.$registryVersion;
 
         if (isset(self::$patternMatchCache[$cacheKey])) {
             return self::$patternMatchCache[$cacheKey];
         }
 
         $matches = [];
+        $patterns = [];
 
         foreach ($registry as $key => $value) {
-            // Use persistent compiled pattern cache
-            if (! isset(self::$compiledPatterns[$key])) {
+            // Skip if we've already compiled this pattern
+            if (! isset($patterns[$key])) {
                 preg_match_all('/\{RGX:(.*?):RGX\}/', $key, $regexMatches);
-                self::$compiledPatterns[$key] = self::compilePattern($key, $regexMatches);
+                $pattern = self::compilePattern($key, $regexMatches);
+                $patterns[$key] = $pattern;
+            } else {
+                $pattern = $patterns[$key];
             }
 
-            if (preg_match('/^' . self::$compiledPatterns[$key] . '$/', $eventName)) {
+            if (preg_match("/^$pattern$/", $eventName)) {
                 $matches = array_merge($matches, $value);
             }
         }
@@ -141,7 +130,6 @@ class EventDispatcher implements Dispatcher
         mixed $available_params = [],
         mixed $context = ''
     ): mixed {
-
         $filtername = "$context.$filtername";
 
         if (! in_array($filtername, self::$available_hooks['filters'])) {
@@ -149,7 +137,6 @@ class EventDispatcher implements Dispatcher
         }
 
         $matchedEvents = self::findEventListeners($filtername, self::$filterRegistry);
-
         if (count($matchedEvents) == 0) {
             return $payload;
         }
@@ -181,7 +168,6 @@ class EventDispatcher implements Dispatcher
         }
 
         $matchedEvents = self::findEventListeners($event, self::$eventRegistry);
-
         if (count($matchedEvents) == 0) {
             return;
         }
@@ -200,11 +186,12 @@ class EventDispatcher implements Dispatcher
      */
     private static function defineParams(mixed $paramAttr, string $eventName): array|object
     {
-        // make this static so we only have to call once
-        // static $default_params;
+        // Cache the current route for the duration of the request since it doesn't change
+        static $current_route = null;
+        $current_route ??= Frontcontroller::getCurrentRoute();
 
         $default_params = [
-            'current_route' => Frontcontroller::getCurrentRoute(),
+            'current_route' => $current_route,
             'currentEvent' => $eventName,
         ];
 
@@ -604,6 +591,7 @@ class EventDispatcher implements Dispatcher
 
         // Laravel adds the listener directly without having priority. Keep that in mind!!
         self::$eventRegistry[$event][] = ['listener' => $listener, 'priority' => $priority, 'source' => $listenerSource];
+        self::$eventRegistryVersion++;
     }
 
     public static function addEventListener($event, $listener, $priority = 10, $source = 'leantime')
@@ -621,6 +609,7 @@ class EventDispatcher implements Dispatcher
             self::$filterRegistry[$filtername] = [];
         }
         self::$filterRegistry[$filtername][] = ['listener' => $listener, 'priority' => $priority, 'source' => $listenerSource];
+        self::$filterRegistryVersion++;
     }
 
     public static function addFilterListener(

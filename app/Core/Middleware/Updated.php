@@ -23,6 +23,11 @@ class Updated
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
+        // For HTMX and API requests, trust the session -- DB version can't change mid-session.
+        if (session('isUpdated') && ($request->isHtmxRequest() || $request->isApiOrCronRequest())) {
+            return $next($request);
+        }
+
         $dbVersion = session('dbVersion') ?? app()->make(SettingRepository::class)->getSetting('db-version');
         $settingsDbVersion = app()->make(AppSettings::class)->dbVersion;
 

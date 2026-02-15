@@ -165,27 +165,37 @@ class Helper
     }
 
     /**
-     * Checks if this is the user's first login
+     * Checks if this is the user's first login.
+     *
+     * NOTE: This is now a pure check with no side effects.
+     * Default project creation has been moved to ensureDefaultProject()
+     * which is called from the CurrentProject middleware, not from view composers.
      *
      * @param  int  $userId  The user ID to check
      * @return bool True if this is the first login, false otherwise
      */
     public function isFirstLogin(int $userId): bool
     {
-
-        // We don't have a project right now. Let's set it up
-        if (session('currentProject') === null ||
-            session('currentProject') === 0 ||
-            session('currentProject') === '' ||
-            session('currentProject') === false) {
-
-            $this->createDefaultProject($userId);
-
-        }
-
         $onboardingComplete = $this->settingsRepo->getSetting('user.'.$userId.'.firstLoginCompleted');
 
         return ! isset($onboardingComplete) || $onboardingComplete === false;
+    }
+
+    /**
+     * Ensures the user has a default project.
+     * Creates one if the user has no current project set.
+     * Called from middleware (not from view composers) to avoid
+     * write operations during template rendering.
+     *
+     * @param  int  $userId  The user ID to check.
+     * @param  string  $role  The user's role for determining task content.
+     */
+    public function ensureDefaultProject(int $userId, string $role = 'editor'): void
+    {
+        $currentProject = session('currentProject');
+        if ($currentProject === null || $currentProject === 0 || $currentProject === '' || $currentProject === false) {
+            $this->createDefaultProject($userId, $role);
+        }
     }
 
     /**

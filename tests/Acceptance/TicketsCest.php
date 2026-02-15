@@ -28,13 +28,10 @@ class TicketsCest
         $I->clickWithRetry('.tagsinput', 90);
         $I->wait(2);
         $I->type('test-tag,');
-        $I->waitForElementClickable('#ticketDescription_ifr', 120);
-        $I->switchToIFrame('#ticketDescription_ifr');
-        $I->waitForElementVisible('#tinymce', 120);
-        $I->wait(5);
-        $I->clickWithRetry('body');
+        $I->waitForElementClickable('[data-tiptap-editor] .ProseMirror', 120);
+        $I->wait(2);
+        $I->clickWithRetry('[data-tiptap-editor] .ProseMirror');
         $I->type('Test Description');
-        $I->switchToIFrame();
         $I->waitForElementClickable('.saveTicketBtn', 120);
         $I->clickWithRetry('.saveTicketBtn');
         $I->waitForElement('.growl', 120);
@@ -55,13 +52,10 @@ class TicketsCest
         // Currently (and only in tests) the editor is not loaded when clicked on less the page is reloaded first.
         $I->reloadPage();
         $I->waitForElementVisible('.main-title-input', 120);
-        $I->waitForElementClickable('#ticketDescription_ifr', 120);
-        $I->switchToIFrame('#ticketDescription_ifr');
-        $I->waitForElementVisible('#tinymce', 120);
-        $I->wait(5);
-        $I->clickWithRetry('body');
+        $I->waitForElementClickable('[data-tiptap-editor] .ProseMirror', 120);
+        $I->wait(2);
+        $I->clickWithRetry('[data-tiptap-editor] .ProseMirror');
         $I->type('Test Description Edited');
-        $I->switchToIFrame();
         $I->waitForElementClickable('.saveTicketBtn', 120);
         $I->clickWithRetry('.saveTicketBtn');
         $I->waitForElement('.growl', 120);

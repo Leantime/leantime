@@ -213,6 +213,13 @@ $state = $tpl->get('state');
 
             <div id="integrations">
 
+                <?php if ($tpl->get('projectMuteCount') > 0) { ?>
+                    <div class="alert alert-info" style="margin-bottom: 20px;">
+                        <i class="fa fa-bell-slash"></i>
+                        <?= sprintf($tpl->__('label.project_mute_count'), $tpl->get('projectMuteCount')); ?>
+                    </div>
+                <?php } ?>
+
                 <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Mattermost</h4>
                 <div class="row">
                     <div class="col-md-3">

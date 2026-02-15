@@ -100,6 +100,53 @@ class Template
     }
 
     /**
+     * List of all optional JS component bundles that can be conditionally loaded.
+     * By default all are enabled for backward compatibility.
+     */
+    public const OPTIONAL_COMPONENTS = [
+        'calendar',
+        'table',
+        'tiptap',
+        'gantt',
+        'chart',
+    ];
+
+    /**
+     * Components required by the current page.
+     * Defaults to all components for backward compatibility.
+     *
+     * @var array<string>
+     */
+    private array $requiredComponents = [];
+
+    /**
+     * Declare which optional JS component bundles are needed for the current page.
+     * Call from controllers before rendering to reduce JS payload.
+     *
+     * @param  array<string>  $components  Array of component names (calendar, table, tiptap, gantt, chart)
+     */
+    public function requireComponents(array $components): void
+    {
+        $this->requiredComponents = array_merge($this->requiredComponents, $components);
+    }
+
+    /**
+     * Check if a specific optional component should be loaded on this page.
+     *
+     * @param  string  $component  The component name to check.
+     * @return bool True if the component should be loaded.
+     */
+    public function needsComponent(string $component): bool
+    {
+        // If no components were explicitly required, load everything for backward compatibility
+        if (empty($this->requiredComponents)) {
+            return true;
+        }
+
+        return in_array($component, $this->requiredComponents);
+    }
+
+    /**
      * setupGlobalVars - setup global vars
      */
     public function setupGlobalVars(): void

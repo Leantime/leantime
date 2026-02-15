@@ -359,14 +359,14 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="notifications" >{{ __('label.receive_notifications') }}</label>
-                                    <span>
+                                    <label for="notifications" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
                                         <input type="checkbox" value="on" name="notifications" class="input"
                                                id="notifications"
                                                @if ($values['notifications'] == "1" )
                                                    checked='checked'
-                                               @endif/> <br/>
-                                    </span>
+                                               @endif/>
+                                        {{ __('label.receive_notifications') }}
+                                    </label>
                                 </div>
                                 <div class="form-group">
                                     <label for="messagesfrequency" >{{ __('label.messages_frequency') }}</label>
@@ -411,6 +411,72 @@
                                     </span>
                                 </div>
                             </div>
+
+                            <hr />
+
+                            <h4 class="widgettitle title-light">{{ __('label.notification_event_types') }}</h4>
+                            <p><small>{{ __('label.notification_event_types_description') }}</small></p>
+                            <div class="tw-mb-4">
+                                @php
+                                    $categoryLabels = [
+                                        'tasks' => 'label.notification_category_tasks',
+                                        'comments' => 'label.notification_category_comments',
+                                        'goals' => 'label.notification_category_goals',
+                                        'ideas' => 'label.notification_category_ideas',
+                                        'projects' => 'label.notification_category_projects',
+                                        'boards' => 'label.notification_category_boards',
+                                    ];
+                                @endphp
+                                @foreach ($notificationCategories as $categoryKey => $config)
+                                    <label class="tw-flex tw-items-start tw-gap-2 tw-cursor-pointer tw-m-0 tw-py-1.5">
+                                        <input type="checkbox"
+                                               name="enabledEventTypes[]"
+                                               value="{{ $categoryKey }}"
+                                               class="input tw-mt-0.5"
+                                               @if (in_array($categoryKey, $enabledEventTypes))
+                                                   checked="checked"
+                                               @endif
+                                        />
+                                        <span>
+                                            <strong>{{ __($categoryLabels[$categoryKey] ?? $categoryKey) }}</strong><br />
+                                            <small class="tw-text-gray-500">{{ __($config['description'] ?? '') }}</small>
+                                        </span>
+                                    </label>
+                                @endforeach
+                            </div>
+
+                            <hr />
+
+                            <h4 class="widgettitle title-light">{{ __('label.project_notifications') }}</h4>
+                            <p><small>{{ __('label.project_notifications_description') }}</small></p>
+                            <div class="tw-max-w-lg tw-max-h-[350px] tw-overflow-y-auto tw-mb-5">
+                                @if (count($userProjects) > 0)
+                                    @foreach ($userProjects as $project)
+                                        @php
+                                            $currentLevel = $projectNotificationLevels[$project['id']] ?? $companyDefaultRelevance;
+                                        @endphp
+                                        <div class="tw-flex tw-items-center tw-justify-between tw-py-1.5 tw-border-b tw-border-gray-100">
+                                            <span class="tw-truncate tw-mr-3">
+                                                {{ $project['name'] }}
+                                                @if (!empty($project['clientName']))
+                                                    <span class="tw-text-gray-400 tw-text-xs">({{ $project['clientName'] }})</span>
+                                                @endif
+                                            </span>
+                                            <select name="projectNotificationLevel[{{ $project['id'] }}]"
+                                                    class="tw-text-sm tw-border tw-border-gray-300 tw-rounded tw-px-2 tw-py-1 tw-min-w-[140px]">
+                                                @foreach ($relevanceLevels as $level => $labelKey)
+                                                    <option value="{{ $level }}"
+                                                            @if ($currentLevel === $level) selected @endif
+                                                    >{{ __($labelKey) }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <p class="tw-text-gray-400 tw-p-2">{{ __('label.no_projects') }}</p>
+                                @endif
+                            </div>
+
                             <input type="hidden" name="savenotifications" value="1" />
                             <input type="submit" name="save" value="{{ __('buttons.save') }}" class="button"/>
                         </form>

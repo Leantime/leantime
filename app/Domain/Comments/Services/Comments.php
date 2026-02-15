@@ -90,6 +90,7 @@ class Comments
 
                 $notification->entity = $mapper;
                 $notification->module = 'comments';
+                $notification->action = 'commented';
                 $notification->projectId = session('currentProject');
                 $notification->subject = $subject;
                 $notification->authorId = session('userdata.id');

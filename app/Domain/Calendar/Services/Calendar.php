@@ -516,9 +516,12 @@ class Calendar
      */
     public function getExternalCalendarEvents(null|string|CarbonImmutable $from = null, null|string|CarbonImmutable $until = null): array
     {
-        //        if (Cache::has('calendar.external.'.session('userdata.id'))) {
-        //            return Cache::get('calendar.external.'.session('userdata.id'));
-        //        }
+        $cacheKey = 'calendar.external.'.session('userdata.id');
+        $cached = Cache::get($cacheKey);
+        if (is_array($cached) && ! empty($cached)) {
+            return $cached;
+        }
+
         // Get all external calendars for the user
         $externalCalendars = $this->calendarRepo->getMyExternalCalendars(session('userdata.id'));
 
