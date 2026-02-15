@@ -288,17 +288,20 @@ leantime.calendarController = (function () {
         // may not exist yet when the calendar initialises. We use a
         // MutationObserver to detect it reliably — htmx.onLoad callbacks
         // do not fire for the dashboard widget innerHTML swaps.
-        var draggableInitialised = false;
+        var currentDraggable = null;
 
-        function initializeThirdPartyDraggable(element) {
+        function initializeDraggable(element) {
             if (!element) {
                 return;
             }
-            draggableInitialised = true;
+            // Destroy any previous instance to avoid duplicate drops.
+            if (currentDraggable) {
+                currentDraggable.destroy();
+            }
             // Use Draggable (not ThirdPartyDraggable) because there is no
             // third-party drag library (jQuery UI draggable was removed).
             // Draggable handles its own pointer-based drag detection.
-            new FullCalendar.Draggable(element, {
+            currentDraggable = new FullCalendar.Draggable(element, {
                 itemSelector: '.draggable-todo',
                 eventData: function (eventEl) {
                     let ticketEventData = JSON.parse(eventEl.dataset.event);
@@ -318,23 +321,28 @@ leantime.calendarController = (function () {
         // Try immediately in case the todo widget loaded first.
         var todoContainer = document.querySelector("#yourToDoContainer");
         if (todoContainer && todoContainer.querySelectorAll('.draggable-todo').length > 0) {
-            initializeThirdPartyDraggable(todoContainer);
+            initializeDraggable(todoContainer);
         }
 
         // Watch for the todo container to appear (or be replaced) in the DOM.
-        if (!draggableInitialised) {
+        if (!currentDraggable) {
             var observer = new MutationObserver(function () {
+                if (currentDraggable) {
+                    observer.disconnect();
+                    return;
+                }
                 var el = document.querySelector("#yourToDoContainer");
                 if (el && el.querySelectorAll('.draggable-todo').length > 0) {
-                    initializeThirdPartyDraggable(el);
+                    initializeDraggable(el);
                     observer.disconnect();
                 }
             });
             observer.observe(document.body, { childList: true, subtree: true });
         }
 
-        // Also re-initialise when the todo widget refreshes itself
-        // (outerHTML swap on ticket_update / subtask_update events).
+        // Re-initialise when the todo widget refreshes itself
+        // (outerHTML swap on ticket_update / subtask_update events
+        // replaces the container element, orphaning the old Draggable).
         document.body.addEventListener('htmx:afterSwap', function (e) {
             var target = e.detail?.target || e.target;
             var el;
@@ -344,7 +352,7 @@ leantime.calendarController = (function () {
                 el = target.querySelector('#yourToDoContainer');
             }
             if (el && el.querySelectorAll('.draggable-todo').length > 0) {
-                initializeThirdPartyDraggable(el);
+                initializeDraggable(el);
             }
         });
 
