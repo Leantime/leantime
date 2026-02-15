@@ -1148,6 +1148,15 @@ a.barmenu:hover {
     display:none;
 }
 
+/* Keep the dropdown caret visible so users know it's a selector */
+.mainwrapper.menuclosed .bigProjectSelector i.fa.fa-caret-down {
+    display:inline;
+    font-size: var(--font-size-s);
+    position: static;
+    vertical-align: middle;
+    margin-left: 2px;
+}
+
 .mainwrapper.menuclosed .bigProjectSelector {
     font-size: 0;
     width:auto;
