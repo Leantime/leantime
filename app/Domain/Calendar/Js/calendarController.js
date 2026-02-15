@@ -279,77 +279,74 @@ leantime.calendarController = (function () {
             }
         });
 
-        // Initialize immediately — DOMContentLoaded has already fired
-        // when this runs inside HTMX-loaded widget content.
-        var todoContainer = document.querySelector("#yourToDoContainer");
-        if (todoContainer) {
-            initializeThirdPartyDraggable(todoContainer);
-        }
-
         initButtons();
 
         calendar.scrollToTime(Date.now());
 
-        // function setupDraggableTickets() {
-        //     jQuery("#yourToDoContainer").find(".ticketBox").each(function () {
-        //         setupTicketDraggable(jQuery(this));
-        //     });
-        // }
-        //
-        // function setupTicketDraggable(ticketElement) {
-        //     var currentTicket = ticketElement;
-        //     currentTicket.data('event', {
-        //         id: currentTicket.attr("data-val"),
-        //         title: currentTicket.find(".titleContainer strong").text(),
-        //         color: 'var(--accent2)',
-        //         enitityType: "ticket",
-        //         url: '#/tickets/showTicket/' + currentTicket.attr("data-val"),
-        //     });
-        //
-        //     currentTicket.draggable({
-        //
-        //         zIndex: 999999,
-        //         revert: true,      // will cause the event to go back to its
-        //         revertDuration: 0,  //  original position after the drag
-        //         helper: "clone",
-        //         appendTo: '.maincontent',
-        //         cursor: "grab",
-        //         cursorAt: {bottom: 5, right: 5},
-        //         distance: 10,       // Minimum distance before drag starts
-        //         delay: 150,         // Small delay to allow for sortable to initialize first
-        //     });
-        // }
+        // Set up drag-and-drop from the todo widget onto the calendar.
+        // Both widgets load independently via HTMX, so the todo container
+        // may not exist yet when the calendar initialises. We use a
+        // MutationObserver to detect it reliably — htmx.onLoad callbacks
+        // do not fire for the dashboard widget innerHTML swaps.
+        var draggableInitialised = false;
 
         function initializeThirdPartyDraggable(element) {
-
-            var tickets = element;
-            if (tickets) {
-                new FullCalendar.ThirdPartyDraggable(tickets, {
-                    itemSelector: '.draggable-todo',
-                    mirrorClass: 'dragging-mirror',
-                    eventDragMinDistance: 10,
-                    mirrorSelector: function (el) {
-                        return el.closest('.ticketBox');
-                    },
-                    eventData: function (eventEl) {
-
-                        let ticketEventData = JSON.parse(eventEl.dataset.event);
-
-                        return {
-                            id: ticketEventData.id,
-                            title:  ticketEventData.title,
-                            color: ticketEventData.color,
-                            enitityType: "ticket",
-                            duration: '01:00',
-                            url: ticketEventData.url,
-                        };
-
-                    }
-                });
+            if (!element) {
+                return;
             }
-
+            draggableInitialised = true;
+            // Use Draggable (not ThirdPartyDraggable) because there is no
+            // third-party drag library (jQuery UI draggable was removed).
+            // Draggable handles its own pointer-based drag detection.
+            new FullCalendar.Draggable(element, {
+                itemSelector: '.draggable-todo',
+                eventData: function (eventEl) {
+                    let ticketEventData = JSON.parse(eventEl.dataset.event);
+                    return {
+                        id: ticketEventData.id,
+                        title: ticketEventData.title,
+                        color: ticketEventData.color,
+                        enitityType: "ticket",
+                        duration: '01:00',
+                        url: ticketEventData.url,
+                    };
+                }
+            });
             calendar.scrollToTime(Date.now());
-        };
+        }
+
+        // Try immediately in case the todo widget loaded first.
+        var todoContainer = document.querySelector("#yourToDoContainer");
+        if (todoContainer && todoContainer.querySelectorAll('.draggable-todo').length > 0) {
+            initializeThirdPartyDraggable(todoContainer);
+        }
+
+        // Watch for the todo container to appear (or be replaced) in the DOM.
+        if (!draggableInitialised) {
+            var observer = new MutationObserver(function () {
+                var el = document.querySelector("#yourToDoContainer");
+                if (el && el.querySelectorAll('.draggable-todo').length > 0) {
+                    initializeThirdPartyDraggable(el);
+                    observer.disconnect();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+
+        // Also re-initialise when the todo widget refreshes itself
+        // (outerHTML swap on ticket_update / subtask_update events).
+        document.body.addEventListener('htmx:afterSwap', function (e) {
+            var target = e.detail?.target || e.target;
+            var el;
+            if (target && target.id === 'yourToDoContainer') {
+                el = target;
+            } else if (target) {
+                el = target.querySelector('#yourToDoContainer');
+            }
+            if (el && el.querySelectorAll('.draggable-todo').length > 0) {
+                initializeThirdPartyDraggable(el);
+            }
+        });
 
         function initButtons() {
 
@@ -414,17 +411,8 @@ leantime.calendarController = (function () {
             });
         }
 
-        htmx.onLoad(function (content) {
-
-
-
-            // Find any todo containers that were loaded via HTMX
-            if(content.id == "yourToDoContainer") {
-                initializeThirdPartyDraggable(content);
-            }
-
-            return calendarEl;
-        });
+        // Return the calendar element for external use.
+        return calendarEl;
     };
 
     // Make public what you want to have public, everything else is private
