@@ -40,12 +40,12 @@
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
                     @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/{{ $canvasName }}canvas/boardDialog/{{ $tpl->get('currentCanvas') }}" class="editCanvasLink">{{ $tpl->__('links.icon.edit') }}</a></li>
+                        <li><a href="#/{{ $canvasName }}canvas/boardDialog/{{ $tpl->get('currentCanvas') }}" class="editCanvasLink">{!! $tpl->__('links.icon.edit') !!}</a></li>
                     @endif
-                    <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/export/{{ $tpl->get('currentCanvas') }}" hx-boost="false">{{ $tpl->__('links.icon.export') }}</a></li>
-                    <li><a href="javascript:window.print();">{{ $tpl->__('links.icon.print') }}</a></li>
+                    <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/export/{{ $tpl->get('currentCanvas') }}" hx-boost="false">{!! $tpl->__('links.icon.export') !!}</a></li>
+                    <li><a href="javascript:window.print();">{!! $tpl->__('links.icon.print') !!}</a></li>
                     @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{{ $tpl->__('links.icon.delete') }}</a></li>
+                        <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
                     @endif
                 </ul>
             </span>
@@ -58,7 +58,7 @@
                     </a>
                     <ul class="dropdown-menu canvasSelector">
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/{{ $canvasName }}canvas/boardDialog">{{ $tpl->__('links.icon.create_new_board') }}</a></li>
+                            <li><a href="#/{{ $canvasName }}canvas/boardDialog">{!! $tpl->__('links.icon.create_new_board') !!}</a></li>
                         @endif
                         <li class="border"></li>
                         @foreach ($tpl->get('allCanvas') as $canvasRow)
@@ -80,7 +80,7 @@
             <div class="col-md-3">
                 @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
                     <a href="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $elementName }}"
-                       class="btn btn-primary" id="{{ $elementName }}">{{ $tpl->__('links.add_new_canvas_item' . $canvasName) }}</a>
+                       class="btn btn-primary" id="{{ $elementName }}">{!! $tpl->__('links.add_new_canvas_item' . $canvasName) !!}</a>
                 @endif
             </div>
 

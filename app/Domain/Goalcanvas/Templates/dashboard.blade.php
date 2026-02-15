@@ -317,7 +317,7 @@ foreach ($allCanvas as $canvasRow) {
         @if ($login::userIsAtLeast($roles::$editor))
             <br><br>
             <a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
-                {{ __("links.icon.create_new_board") }}
+                {!! __("links.icon.create_new_board") !!}
             </a>
         @endif
     </div>

@@ -25,8 +25,8 @@
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
                     @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="javascript:void(0)" class="editCanvasLink ">{{ $tpl->__('links.icon.edit') }}</a></li>
-                        <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{{ $tpl->__('links.icon.delete') }}</a></li>
+                        <li><a href="javascript:void(0)" class="editCanvasLink ">{!! $tpl->__('links.icon.edit') !!}</a></li>
+                        <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
                     @endif
                 </ul>
             </span>
@@ -41,7 +41,7 @@
 
                     <ul class="dropdown-menu canvasSelector">
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="javascript:void(0)" class="addCanvasLink">{{ $tpl->__('links.icon.create_new_board') }}</a></li>
+                            <li><a href="javascript:void(0)" class="addCanvasLink">{!! $tpl->__('links.icon.create_new_board') !!}</a></li>
                         @endif
                         <li class="border"></li>
                         @foreach ($tpl->get('allCanvas') as $canvasRow)

@@ -156,6 +156,6 @@
     @if ($login::userIsAtLeast($roles::$editor))
         <a href="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $elementName }}"
            class="" id="{{ $elementName }}"
-           style="padding-bottom: 10px;">{{ $tpl->__('links.add_new_canvas_item') }}</a>
+           style="padding-bottom: 10px;">{!! $tpl->__('links.add_new_canvas_item') !!}</a>
     @endif
 </div>
