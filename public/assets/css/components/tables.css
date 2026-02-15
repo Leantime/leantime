@@ -34,7 +34,17 @@
 .table-bordered td {
     border-right: 0px solid var(--neutral);
     border-left:0px;
-    box-shadow: 0px 1px 1px var(--neutral);
+    box-shadow: none;
+}
+
+.table-bordered > thead > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > th,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > th,
+.table-bordered > tfoot > tr > td {
+    border: none;
+    border-bottom: 1px solid var(--neutral);
 }
 
 .table-bordered th:last-child,
@@ -248,7 +258,7 @@
 }
 
 .maincontentinner .table {
-    margin-top:10px;
+    margin-top:20px;
 }
 
 .maincontentinner .table td,
