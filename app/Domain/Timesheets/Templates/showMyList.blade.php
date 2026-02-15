@@ -19,7 +19,7 @@
 
         <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="form" name="form">
             <div class="filterWrapper tw:relative">
-                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left">{{ __('links.filter') }} (1)</a>
+                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left">{!! __('links.filter') !!} (1)</a>
                 <div class="filterBar" style="display:none; top:30px;">
 
                     <div class="filterBoxLeft">
