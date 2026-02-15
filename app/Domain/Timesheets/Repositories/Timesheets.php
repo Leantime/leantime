@@ -268,7 +268,7 @@ class Timesheets extends Repository
     public function getHoursBooked(): mixed
     {
         $result = $this->db->table('zp_timesheets')
-            ->selectRaw('SUM(hours) AS "hoursBooked"')
+            ->selectRaw('SUM(hours) AS `hoursBooked`')
             ->first();
 
         return $result->hoursBooked ?? 0;

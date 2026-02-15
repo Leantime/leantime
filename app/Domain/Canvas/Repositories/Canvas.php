@@ -233,7 +233,7 @@ class Canvas
                 't1.firstname as authorFirstname',
                 't1.lastname as authorLastname',
             ])
-            ->selectRaw('COUNT(zp_canvas_items.id) AS "boxItems"')
+            ->selectRaw('COUNT(zp_canvas_items.id) AS `boxItems`')
             ->leftJoin('zp_user as t1', 'zp_canvas.author', '=', 't1.id')
             ->leftJoin('zp_canvas_items', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
             ->where('type', $canvasType)
@@ -413,8 +413,8 @@ class Canvas
                 'milestone.headline as milestoneHeadline',
                 'milestone.editTo as milestoneEditTo',
             ])
-            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS "commentCount"')
-            ->selectRaw('0 AS "percentDone"')
+            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS `commentCount`')
+            ->selectRaw('0 AS `percentDone`')
             ->leftJoin('zp_user as t1', 'zp_canvas_items.author', '=', 't1.id')
             ->leftJoin('zp_tickets as milestone', function ($join) {
                 $castType = $this->connection->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';
@@ -739,7 +739,7 @@ class Canvas
     public function getNumberOfCanvasItems($projectId = null): mixed
     {
         $query = $this->connection->table('zp_canvas_items')
-            ->selectRaw('COUNT(zp_canvas_items.id) AS "canvasCount"')
+            ->selectRaw('COUNT(zp_canvas_items.id) AS `canvasCount`')
             ->leftJoin('zp_canvas as canvasBoard', 'zp_canvas_items.canvasId', '=', 'canvasBoard.id')
             ->where('canvasBoard.type', static::CANVAS_NAME.'canvas');
 
@@ -761,7 +761,7 @@ class Canvas
     public function getNumberOfBoards($projectId = null): mixed
     {
         $query = $this->connection->table('zp_canvas')
-            ->selectRaw('COUNT(zp_canvas.id) AS "boardCount"')
+            ->selectRaw('COUNT(zp_canvas.id) AS `boardCount`')
             ->where('zp_canvas.type', static::CANVAS_NAME.'canvas');
 
         if (! is_null($projectId)) {
@@ -783,7 +783,7 @@ class Canvas
     public function existCanvas(int $projectId, string $canvasTitle): bool
     {
         $result = $this->connection->table('zp_canvas')
-            ->selectRaw('COUNT(id) as "nbCanvas"')
+            ->selectRaw('COUNT(id) as `nbCanvas`')
             ->where('projectId', $projectId)
             ->where('title', $canvasTitle)
             ->where('type', static::CANVAS_NAME.'canvas')
@@ -822,9 +822,9 @@ class Canvas
             ])
             ->selectRaw($this->dbHelper->currentTimestamp().' as created')
             ->selectRaw($this->dbHelper->currentTimestamp().' as modified')
-            ->selectRaw('? as "canvasId"', [$newCanvasId])
+            ->selectRaw('? as `canvasId`', [$newCanvasId])
             ->select(['status', 'relates'])
-            ->selectRaw("'' as \"milestoneId\"")
+            ->selectRaw("'' as `milestoneId`")
             ->select([
                 'kpi', 'data1', 'startDate', 'endDate', 'setting', 'metricType', 'impact',
                 'effort', 'probability', 'action', 'assignedTo', 'startValue', 'currentValue', 'endValue',
@@ -860,9 +860,9 @@ class Canvas
             ])
             ->selectRaw($this->dbHelper->currentTimestamp().' as created')
             ->selectRaw($this->dbHelper->currentTimestamp().' as modified')
-            ->selectRaw('? as "canvasId"', [$canvasId])
+            ->selectRaw('? as `canvasId`', [$canvasId])
             ->select(['status', 'relates'])
-            ->selectRaw("'' as \"milestoneId\"")
+            ->selectRaw("'' as `milestoneId`")
             ->select([
                 'kpi', 'data1', 'startDate', 'endDate', 'setting', 'metricType', 'impact',
                 'effort', 'probability', 'action', 'assignedTo', 'startValue', 'currentValue', 'endValue',
@@ -890,7 +890,7 @@ class Canvas
                 'zp_canvas.type as canvasType',
                 'zp_canvas_items.box',
             ])
-            ->selectRaw('COUNT(zp_canvas_items.id) AS "boxItems"')
+            ->selectRaw('COUNT(zp_canvas_items.id) AS `boxItems`')
             ->leftJoin('zp_canvas_items', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId');
 
         if ($projectId != '') {

@@ -227,7 +227,7 @@ class Ideas
                 'milestone.editTo as milestoneEditTo'
             )
             ->selectRaw("CASE WHEN zp_canvas_items.status IS NULL THEN 'idea' ELSE zp_canvas_items.status END as status")
-            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS "commentCount"')
+            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS `commentCount`')
             ->leftJoin('zp_user AS t1', 'zp_canvas_items.author', '=', 't1.id')
             ->leftJoin('zp_tickets AS milestone', function ($join) {
                 $castType = $this->db->getDriverName() === 'pgsql' ? 'TEXT' : 'CHAR';

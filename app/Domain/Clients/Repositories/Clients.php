@@ -46,7 +46,7 @@ class Clients extends Repository
                 'zp_clients.internet',
                 'zp_clients.email'
             )
-            ->selectRaw('COUNT("zp_projects"."clientId") AS "numberOfProjects"')
+            ->selectRaw('COUNT(`zp_projects`.`clientId`) AS `numberOfProjects`')
             ->leftJoin('zp_projects', 'zp_clients.id', '=', 'zp_projects.clientId')
             ->where('zp_clients.id', $id)
             ->groupBy(
@@ -87,7 +87,7 @@ class Clients extends Repository
                 'zp_clients.name',
                 'zp_clients.internet'
             )
-            ->selectRaw('COUNT("zp_projects"."clientId") AS "numberOfProjects"')
+            ->selectRaw('COUNT(`zp_projects`.`clientId`) AS `numberOfProjects`')
             ->leftJoin('zp_projects', 'zp_clients.id', '=', 'zp_projects.clientId')
             ->groupBy(
                 'zp_clients.id',
