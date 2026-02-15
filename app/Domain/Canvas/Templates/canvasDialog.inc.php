@@ -33,7 +33,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     }
 </script>
 
-<div class="" style="width:900px;">
+<div class="" style="max-width:900px; width:100%;">
 
   <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas <?= $canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?= $canvasTypes[$canvasItem['box']]['title']; ?></h4>
   <hr style="margin-top: 5px; margin-bottom: 15px;">

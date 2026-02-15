@@ -125,6 +125,27 @@
     display: none;
 }
 
+/* ── Bootstrap grid safety net inside modals ─────────────────────────
+   Force Bootstrap float-grid to flex-wrap so columns don't overflow
+   the constrained modal width.
+   ──────────────────────────────────────────────────────────────────── */
+#global-modal-content .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 0;
+    margin-right: 0;
+}
+#global-modal-content .row > [class*="col-"] {
+    float: none;
+    flex: 0 0 auto;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+/* Prevent hardcoded widths from overflowing the modal box */
+#global-modal-content > div {
+    max-width: 100%;
+}
+
 /* ── Tabbed widget tabs ───────────────────────────────────────────────
    jQuery UI was removed; the bridge in dropdownBridge.js handles
    tab switching but needs basic horizontal-tab CSS.
