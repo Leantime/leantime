@@ -228,7 +228,7 @@
 .maincontentinner .table.table-bordered th,
 .maincontentinner table th {
     background:var(--col-title-bg);
-    padding: 10px 10px;
+    padding: 12px 10px;
     font-weight:bold;
 }
 
@@ -260,12 +260,12 @@
 
 .maincontentinner .table {
     clear:both;
-    margin-top:25px;
+    margin-top:30px;
 }
 
 .maincontentinner .table td,
 .maincontentinner table td{
-    padding:5px 10px 3px 10px;
+    padding:10px 10px;
     vertical-align: middle;
     min-height:17px;
     border-right:1px solid var(--neutral);
