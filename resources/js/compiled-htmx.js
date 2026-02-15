@@ -45,6 +45,26 @@ document.addEventListener('htmx:beforeSwap', function (evt) {
         target.appendChild(doc.body.firstChild);
     }
 
+    // Execute inline <script> tags that DOMParser rendered inert.
+    // DOMParser sets the "already started" flag on script elements, so they
+    // won't run when moved into the live document. We replace each inert
+    // script with a fresh clone so the browser treats it as newly inserted.
+    if (htmx.config.allowScriptTags) {
+        target.querySelectorAll('script').forEach(function (inert) {
+            // Honor nonce requirement if configured
+            if (htmx.config.inlineScriptNonce && htmx.config.inlineScriptNonce.length > 0) {
+                if (inert.nonce !== htmx.config.inlineScriptNonce) return;
+            }
+            var fresh = document.createElement('script');
+            // Copy all attributes (type, nonce, src, etc.)
+            Array.from(inert.attributes).forEach(function (attr) {
+                fresh.setAttribute(attr.name, attr.value);
+            });
+            fresh.textContent = inert.textContent;
+            inert.parentNode.replaceChild(fresh, inert);
+        });
+    }
+
     // Let HTMX process the new content for hx-* attributes
     htmx.process(target);
 });
