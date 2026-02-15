@@ -419,8 +419,9 @@
 }
 
 
-.timesheetTable td.active {
-   background:transparent;
+.timesheetTable > tbody > tr > td.active,
+.timesheetTable > tfoot > tr > td.active {
+   background-color:transparent;
 }
 
 .timesheetTable th.active {
@@ -434,6 +435,10 @@
 
 .maincontentinner .timesheetTable tfoot td {
     padding:10px;
+}
+
+.timesheetTable td .form-group {
+    margin-bottom:0;
 }
 
 .maincontentinner .headtitle table,
