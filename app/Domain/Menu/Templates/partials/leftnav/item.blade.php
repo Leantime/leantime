@@ -18,6 +18,9 @@
                @endforeach
            @endif
         >
+            @if(!empty($menuItem['icon']))
+                <span class="{{ $menuItem['icon'] }}"></span>
+            @endif
             {!! $menuItem['title'] !!}
         </a>
     </li>
