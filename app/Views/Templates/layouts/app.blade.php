@@ -69,8 +69,8 @@
     {{-- Global modal (native <dialog>) — replaces nyroModal --}}
     <dialog id="global-modal" class="tw:modal">
         <div class="tw:modal-box tw:max-w-3xl tw:p-0" id="global-modal-box">
-            <form method="dialog" style="margin:0;position:absolute;right:8px;top:8px;z-index:10;">
-                <button class="tw:btn tw:btn-sm tw:btn-circle tw:btn-ghost" aria-label="Close">
+            <form method="dialog" style="margin:0;position:absolute;right:-10px;top:-10px;z-index:10;">
+                <button class="tw:btn tw:btn-sm tw:btn-circle" style="background:var(--color-base-100, #fff);box-shadow:0 1px 4px rgba(0,0,0,.2);" aria-label="Close">
                     <i class="fa fa-xmark"></i>
                 </button>
             </form>
