@@ -18,8 +18,10 @@
 {!! $tpl->displayNotification() !!}
 
 <script>
+jQuery(document).ready(function(){
     // Expose current groupBy setting to JavaScript
     leantime.kanbanGroupBy = '{{ e($currentGroupBy) }}';
+});
 </script>
 
 @php $tpl->displaySubmodule('tickets-ticketHeader') @endphp

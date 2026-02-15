@@ -42,7 +42,9 @@
 </div>
 
 <script>
+jQuery(document).ready(function(){
     leantime.usersController.checkPWStrength('password');
+});
 </script>
 
 @endsection

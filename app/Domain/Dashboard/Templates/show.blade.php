@@ -498,9 +498,11 @@
 
 @once @push('scripts')
 <script type='text/javascript'>
+jQuery(document).ready(function(){
     if (window.leantime && window.leantime.tiptapController) {
         leantime.tiptapController.initSimpleEditor();
     }
+});
 </script>
 @endpush @endonce
 
