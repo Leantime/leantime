@@ -813,8 +813,15 @@
         jQuery('.preference-name').off('click').on('click', function (e) {
             e.stopPropagation();
             const name = jQuery(this).data('name');
-            loadPreference(name);
-            jQuery('#filterPreferencesDropdown').hide();
+            if (name === activeProfileName) {
+                clearActiveProfile();
+                resetToDefaultFilters();
+                updateDropdownContent();
+                jQuery('#filterPreferencesDropdown').hide();
+            } else {
+                loadPreference(name);
+                jQuery('#filterPreferencesDropdown').hide();
+            }
         });
 
         jQuery('.delete-preference').off('click').on('click', function (e) {
@@ -855,6 +862,18 @@
                 }
             }
         );
+    }
+
+    function resetToDefaultFilters() {
+        applyDateRange('This Month');
+        jQuery('select[name="clientId"]').val('-1');
+        jQuery('select[name="userId"]').val('all');
+        jQuery('select[name="kind"]').val('all');
+        jQuery('input[name="invEmpl"]').prop('checked', false);
+        jQuery('input[name="invComp"]').prop('checked', false);
+        jQuery('input[name="paid"]').prop('checked', false);
+        jQuery('#projectCheckboxAll').prop('checked', true);
+        jQuery('#form').submit();
     }
 
     function showProjectSelector(profileName) {
