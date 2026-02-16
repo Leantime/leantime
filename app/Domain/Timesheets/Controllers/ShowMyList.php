@@ -139,25 +139,39 @@ class ShowMyList extends Controller
         $newHours = (float) ($postData['newHours'] ?? 0);
         $newTicketId = (int) ($postData['newTicketId'] ?? 0);
         $newKind = $postData['newKindId'] ?? 'GENERAL_BILLABLE';
+        $newDescription = trim($postData['newDescription'] ?? '');
 
-        // Skip if no hours or no date entered
-        if ($newHours <= 0 || $newDate === '') {
+        // Skip silently only if the user didn't touch the new entry row at all
+        if ($newHours <= 0 && $newDate === '' && $newTicketId === 0) {
             return;
         }
 
+        // Validate required fields and give specific feedback
+        $missing = [];
+        if ($newDate === '') {
+            $missing[] = 'date';
+        }
         if ($newTicketId === 0) {
-            $this->tpl->setNotification('Please select a to-do for the new entry', 'error', 'save_timesheet');
+            $missing[] = 'to-do';
+        }
+        if ($newHours <= 0) {
+            $missing[] = 'hours';
+        }
+
+        if (! empty($missing)) {
+            $this->tpl->setNotification('Please fill in: '.implode(', ', $missing), 'error', 'save_timesheet');
 
             return;
         }
 
         try {
-            $this->timesheetService->upsertTime($newTicketId, [
+            $this->timesheetService->logTime($newTicketId, [
                 'userId' => session('userdata.id'),
                 'ticket' => $newTicketId,
                 'dateString' => $newDate,
                 'hours' => $newHours,
                 'kind' => $newKind,
+                'description' => $newDescription,
             ]);
             $this->tpl->setNotification('Timesheet saved successfully', 'success', 'save_timesheet');
         } catch (\Exception $e) {

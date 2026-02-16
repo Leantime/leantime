@@ -115,7 +115,7 @@
                             @php
                                 $sum += $row['hours'];
                                 $isLocked = ($row['invoicedComp'] == '1' || $row['paid'] == '1');
-                                $inputNameKey = $row['ticketId'] . '|' . $row['kind'] . '|' . format($row['workDate'])->formatDateForUser() . '|' . format($row['workDate'])->getTimestamp();
+                                $inputNameKey = $row['ticketId'] . '|' . $row['kind'] . '|' . format($row['workDate'])->date() . '|' . format($row['workDate'])->timestamp();
                             @endphp
                             <tr class="timesheetRow">
                                 <td>{{ format($row['workDate'])->date() }}</td>
@@ -233,7 +233,7 @@
                 <tfoot>
                     <tr style="font-weight:bold;">
                         <td colspan="4" style="text-align:right; padding-right:10px;">{{ __('label.total') }}</td>
-                        <td id="listTotalHours" style="text-align:center;">{{ $sum }}</td>
+                        <td id="listTotalHours" style="text-align:right; padding-right:12px;">{{ $sum }}</td>
                         <td colspan="2"></td>
                     </tr>
                 </tfoot>
@@ -251,8 +251,9 @@
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1);
 
         // Init Chosen.js for project and ticket selectors
+        var chosenTicketOpts = { no_results_text: "No to-dos found for this project" };
         jQuery(".project-select").chosen();
-        jQuery(".ticket-select").chosen();
+        jQuery(".ticket-select").chosen(chosenTicketOpts);
 
         // Add Hours button scrolls to and highlights the new entry row
         jQuery("#addHoursBtn").click(function () {
@@ -275,7 +276,7 @@
                 jQuery(".ticket-select option").not(".project_" + selectedValue).not('[value=""]').hide();
                 jQuery("#ticketSelect .chosen-results li").not(".project_" + selectedValue).hide();
             }
-            jQuery(".ticket-select").chosen("destroy").chosen();
+            jQuery(".ticket-select").chosen("destroy").chosen(chosenTicketOpts);
         });
 
         // Selecting a ticket auto-selects its project
@@ -284,7 +285,7 @@
             if (projectId) {
                 jQuery(".project-select").val(projectId);
                 jQuery(".project-select").chosen("destroy").chosen();
-                jQuery(".ticket-select").chosen("destroy").chosen();
+                jQuery(".ticket-select").chosen("destroy").chosen(chosenTicketOpts);
             }
         });
 
