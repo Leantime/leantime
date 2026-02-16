@@ -6,7 +6,7 @@
 @dispatchEvent('beforeCalendar')
 
 
-<div class="clear minCalendar" style="position:absolute; top:22px; right:40px;">
+<div class="widget-slot-actions minCalendar">
 
     <button class="btn btn-link btn-round-icon dropdown-toggle f-right" type="button" data-tippy-content="{{ __('text.calendar_view') }}"
             data-toggle="dropdown"> <i class="fa-solid fa-calendar-week"></i></button>
