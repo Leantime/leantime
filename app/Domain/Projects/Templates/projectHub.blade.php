@@ -49,7 +49,12 @@
                     </a>
 
                     <ul class="dropdown-menu">
-                        <li><a href="{{ CURRENT_URL }}">{{ __("headline.all_clients") }}</a></li>
+                        <li>
+                            <a href="javascript:void(0);"
+                               hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
+                               hx-target="#myProjectsHub"
+                               hx-swap="outerHTML">{{ __("headline.all_clients") }}</a>
+                        </li>
                         @foreach ($clients as $key => $value)
                             <li>
                                 <a  href="javascript:void(0);"

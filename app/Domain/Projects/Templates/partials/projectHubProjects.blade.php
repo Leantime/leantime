@@ -17,7 +17,12 @@
             </a>
 
             <ul class="dropdown-menu">
-                <li><a href="{{ BASE_URL }}/projects/showMy">{{ __("headline.all_clients") }}</a></li>
+                <li>
+                    <a href="javascript:void(0);"
+                       hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
+                       hx-target="#myProjectsHub"
+                       hx-swap="outerHTML">{{ __("headline.all_clients") }}</a>
+                </li>
                 @foreach ($clients as $key => $value)
                     @if(! empty($key))
                         <li>
@@ -35,7 +40,7 @@
     @if (count($allProjects) == 0)
         <br /><br />
         <div class='center'>
-            <div style='width:70%; color:var(--main-action-color)' class='svgContainer'>
+            <div style='width:70%; color:var(--main-titles-color)' class='svgContainer'>
                 {{ __('notifications.not_assigned_to_any_project') }}
                 @if($login::userIsAtLeast($roles::$manager))
                     <br />
@@ -65,8 +70,8 @@
                     @endif
                 @endforeach
                 @if($hasFavorites === false)
-                    <div style="color:var(--main-action-color)">
-                        You don't have any favorites. 😿
+                    <div style="color:var(--main-titles-color)">
+                        {{ __("text.no_favorites") }}
                     </div>
                 @endif
             </div>

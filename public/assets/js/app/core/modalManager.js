@@ -58,7 +58,7 @@ leantime.modals = (function () {
 
     // ── Size Determination ─────────────────────────────────────────────
     function isLargeModal(url) {
-        return /showTicket|ideaDialog|articleDialog/.test(url);
+        return /showTicket|ideaDialog|articleDialog|notesDialog|notebookDialog/.test(url);
     }
 
     // ── Loading Spinner ────────────────────────────────────────────────
