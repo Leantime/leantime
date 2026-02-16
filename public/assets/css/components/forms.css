@@ -1502,8 +1502,8 @@ body .croppie-container {
 
 .selectable.circle .selectableContent {
     border-radius: 50%;
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
 }
 
 .selectable.circle .selectableContent label {

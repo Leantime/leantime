@@ -282,12 +282,12 @@
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="themeSelect">Optimal Stimulation</label>
-                                    <span class='field tw:flex tw:w-80'>
+                                    <span class='field tw:flex' style="gap:10px;">
 
                                          <?php
                                          foreach ($availableThemes as $key => $theme) { ?>
-                                             <x-global::selectable selected="{{ ($userTheme == $key ? 'true' : 'false') }}" :id="''" :name="'theme'" :value="$key" :label="''" class="tw:w-1/2" onclick="leantime.snippets.toggleBg('{{ $key }}')">
-                                                <img src="{{ BASE_URL }}/dist/images/background-{{$key}}.png" style="margin:0; border-radius:10px;" />
+                                             <x-global::selectable selected="{{ ($userTheme == $key ? 'true' : 'false') }}" :id="''" :name="'theme'" :value="$key" :label="''" onclick="leantime.snippets.toggleBg('{{ $key }}')">
+                                                <img src="{{ BASE_URL }}/dist/images/background-{{$key}}.png" style="margin:0; border-radius:10px; width:180px;" />
                                                      <br /><?= $tpl->__($theme['name']) ?>
                                              </x-global::selectable>
 
@@ -302,15 +302,15 @@
                                         <label for="colormode" >{{ __('label.colormode') }}</label>
 
                                         <x-global::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
-                                            <label for="colormode-light" class="tw:w-[100px]">
-                                                <i class="fa-solid fa-sun tw:font-xxl"></i>
-                                            </label>
+                                            <div style="width:80px; height:60px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #fffbe6 0%, #ffe8a0 100%); border-radius:var(--element-radius);">
+                                                <span style="font-size:30px; color:#f5a623; line-height:1;">&#9679;</span>
+                                            </div>
                                         </x-global::selectable>
 
                                         <x-global::selectable :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'" onclick="leantime.snippets.toggleTheme('dark')">
-                                            <label for="colormode-light" class="tw:w-[100px]">
-                                                <i class="fa-solid fa-moon tw:font-xxl"></i>
-                                            </label>
+                                            <div style="width:80px; height:60px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #1a2332 0%, #2c3e50 100%); border-radius:var(--element-radius);">
+                                                <i class="fa-solid fa-moon" style="font-size:26px; color:#c4cfe0; line-height:1;"></i>
+                                            </div>
                                         </x-global::selectable>
 
                                     </div>
@@ -492,8 +492,7 @@
 
 <script type="text/javascript">
 
-    jQuery(document).ready(function(){
-
+    function initAccountSettings() {
         leantime.usersController.checkPWStrength('newPassword');
 
         jQuery('.accountTabs').tabs();
@@ -501,8 +500,19 @@
         jQuery("#messagesfrequency").chosen();
         jQuery("#language").chosen();
         jQuery("#themeSelect").chosen();
+    }
 
+    jQuery(document).ready(function(){
+        initAccountSettings();
     });
+
+    if (typeof htmx !== 'undefined') {
+        htmx.onLoad(function(){
+            if (document.querySelector('.accountTabs')) {
+                initAccountSettings();
+            }
+        });
+    }
 </script>
 
 @endsection
