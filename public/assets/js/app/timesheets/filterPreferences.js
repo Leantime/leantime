@@ -7,6 +7,8 @@
     let dataTableInstance = null;
     let selectedRangeName = null;
     let activeProfileName = localStorage.getItem('activeProfileName') || null;
+    let isEditMode = false;
+    let isApplyingFilters = false;
 
 
     function init(dataTable) {
@@ -113,6 +115,12 @@
     }
 
     async function loadPreference(name) {
+        // Don't load if we're in edit mode
+        if (isEditMode) {
+            console.log('[Profiles] Load blocked - edit mode active');
+            return false;
+        }
+        
         try {
             const response = await fetch(leantime.appUrl + PROFILE_ENDPOINT, {
                 method: 'POST',
@@ -131,12 +139,20 @@
                 const data = await response.json();
 
                 if (data.status === 'success' && data.preference) {
+                    // Apply filters and wait for completion
                     await applyFilters(data.preference.filters);
+                    
+                    // Wait a bit more to ensure all async operations complete
+                    await new Promise(resolve => setTimeout(resolve, 400));
+                    
+                    // Now it's safe to update state and submit
                     activeProfileName = name;
                     localStorage.setItem('activeProfileName', name);
                     localStorage.setItem('activeProfileDateRange', data.preference.filters.dateRange || 'Custom');
                     localStorage.setItem('activeProfileLastApplied', new Date().toISOString());
                     updateActiveProfileDisplay();
+                    
+                    console.log('[Profiles] Submitting form after profile load');
                     jQuery('#form').submit();
                     return true;
                 } else {
@@ -172,7 +188,8 @@
     }
 
     function onFilterChange() {
-        if (activeProfileName) {
+        // Don't clear active profile if we're applying filters or in edit mode
+        if (activeProfileName && !isEditMode && !isApplyingFilters) {
             clearActiveProfile();
         }
     }
@@ -182,6 +199,27 @@
         jQuery('input[name="invEmpl"], input[name="invComp"], input[name="paid"]').on('change', onFilterChange);
         jQuery('input[name="project[]"]').on('change', onFilterChange);
         jQuery('input[name="dateFrom"]').on('apply.daterangepicker', onFilterChange);
+    }
+    
+    function setupFormSubmitInterceptor() {
+        // Remove any existing handler to avoid duplicates
+        jQuery('#form').off('submit.editMode');
+        
+        // Intercept form submission to check edit mode and filter application
+        jQuery('#form').on('submit.editMode', function(e) {
+            if (isEditMode) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                console.log('[Profiles] Form submit blocked - edit mode active');
+                return false;
+            }
+            if (isApplyingFilters) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                console.log('[Profiles] Form submit blocked - applying filters');
+                return false;
+            }
+        });
     }
 
     async function savePreference(name) {
@@ -273,10 +311,24 @@
             return;
         }
 
-        if (filters.dateRange && filters.dateRange !== 'Custom') {
-            const applied = applyDateRange(filters.dateRange);
+        // Set flag to prevent change listeners from firing
+        isApplyingFilters = true;
+        console.log('[Profiles] Started applying filters');
+        
+        try {
+            // Apply date range
+            if (filters.dateRange && filters.dateRange !== 'Custom') {
+                const applied = applyDateRange(filters.dateRange);
 
-            if (!applied) {
+                if (!applied) {
+                    if (filters.dateFrom) {
+                        jQuery('input[name="dateFrom"]').val(filters.dateFrom);
+                    }
+                    if (filters.dateTo) {
+                        jQuery('input[name="dateTo"]').val(filters.dateTo);
+                    }
+                }
+            } else {
                 if (filters.dateFrom) {
                     jQuery('input[name="dateFrom"]').val(filters.dateFrom);
                 }
@@ -284,13 +336,44 @@
                     jQuery('input[name="dateTo"]').val(filters.dateTo);
                 }
             }
-        } else {
-            if (filters.dateFrom) {
-                jQuery('input[name="dateFrom"]').val(filters.dateFrom);
+
+            // Apply other filters
+            if (filters.clientId) {
+                jQuery('select[name="clientId"]').val(filters.clientId);
             }
-            if (filters.dateTo) {
-                jQuery('input[name="dateTo"]').val(filters.dateTo);
+            if (filters.userId) {
+                jQuery('select[name="userId"]').val(filters.userId);
             }
+            if (filters.kind) {
+                jQuery('select[name="kind"]').val(filters.kind);
+            }
+            
+            // Apply checkboxes
+            jQuery('input[name="invEmpl"]').prop('checked', filters.invEmpl === '1');
+            jQuery('input[name="invComp"]').prop('checked', filters.invComp === '1');
+            jQuery('input[name="paid"]').prop('checked', filters.paid === '1');
+
+            // Apply project filters
+            if (filters.projects) {
+                // First uncheck all projects
+                jQuery('input[name="project[]"]').prop('checked', false);
+                
+                if (filters.projects.includes('-1')) {
+                    // Check "All Projects"
+                    jQuery('#projectCheckboxAll').prop('checked', true);
+                } else {
+                    // Check specific projects
+                    filters.projects.forEach(function(projectId) {
+                        jQuery(`input[name="project[]"][value="${projectId}"]`).prop('checked', true);
+                    });
+                }
+            }
+        } finally {
+            // Always reset the flag after a delay to ensure all async changes complete
+            setTimeout(function() {
+                isApplyingFilters = false;
+                console.log('[Profiles] Finished applying filters');
+            }, 300);
         }
     }
 
@@ -494,10 +577,10 @@
                     <input type="checkbox" class="auto-export" data-preference-name="${key}" ${checked} ${disabled} style="margin: 0; vertical-align: middle;"/>
                 </div>
                 <button class="edit-slack-project" data-name="${key}" style="background: none; border: none; color: #004666; cursor: pointer; padding: 2px;" title="Set Slack Project">
-                    <i class="fa fa-edit"></i>
+                    <i class="fa fa-cog"></i>
                 </button>
                 <button class="edit-preference" data-name="${key}" style="background: none; border: none; color: #004666; cursor: pointer;" title="Edit">
-                    <i class="fa fa-edit"></i>
+                    <i class="fas fa-edit"></i>
                 </button>
                 <button class="delete-preference" data-name="${key}" style="background: none; border: none; color: #dc3545; cursor: pointer;" title="Delete">
                     <i class="fa fa-trash"></i>
@@ -513,19 +596,119 @@
         const pref = currentPreferences[profileName];
         if (!pref) return;
 
-        const newName = prompt('Edit profile name:', profileName);
-        if (!newName || newName.trim() === '') return;
-        applyFilters(pref.filters);
+        // Enable edit mode
+        isEditMode = true;
+        
+        // First, apply the profile's filters to the form
+        applyFilters(pref.filters).then(function() {
+            // Close the dropdown
+            jQuery('#filterPreferencesDropdown').hide();
+            
+            // Show edit mode banner
+            showEditModeBanner(profileName);
+            
+            // Optionally scroll to the filters section
+            jQuery('html, body').animate({
+                scrollTop: jQuery('#form').offset().top - 100
+            }, 500);
+        });
+    }
 
-        savePreference(newName.trim()).then(success => {
-            if (success) {
-                if (newName.trim() !== profileName) {
-                    deletePreference(profileName).then(() => {
-                        updateDropdownContent();
+    function showEditModeBanner(profileName) {
+        // Remove any existing banner
+        jQuery('#editModeBanner').remove();
+        
+        const banner = jQuery(`
+            <div id="editModeBanner" style="
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #fff3cd;
+                border: 2px solid #ffc107;
+                border-radius: 8px;
+                padding: 15px 20px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 9999;
+                max-width: 400px;
+            ">
+                <div style="display: flex; align-items: start; gap: 10px;">
+                    <i class="fa fa-edit" style="color: #856404; margin-top: 2px;"></i>
+                    <div style="flex: 1;">
+                        <strong style="color: #856404; display: block; margin-bottom: 5px;">
+                            Editing: ${profileName}
+                        </strong>
+                        <p style="margin: 0 0 5px 0; font-size: 13px; color: #856404;">
+                            Make your changes, then click "Save Changes" to update this profile.
+                        </p>
+                        <p style="margin: 0 0 10px 0; font-size: 12px; color: #856404; font-style: italic;">
+                            ⚠️ Auto-save is disabled
+                        </p>
+                        <div style="display: flex; gap: 8px;">
+                            <button id="saveEditedProfile" class="btn btn-sm btn-success" style="padding: 4px 12px; font-size: 12px;">
+                                <i class="fa fa-save"></i> Save Changes
+                            </button>
+                            <button id="cancelEditMode" class="btn btn-sm btn-secondary" style="padding: 4px 12px; font-size: 12px;">
+                                <i class="fa fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+        
+        jQuery('body').append(banner);
+        
+        // Prevent banner from being affected by clicks
+        banner.on('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Save button handler
+        jQuery('#saveEditedProfile').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const wasActiveProfile = (activeProfileName === profileName);
+            
+            savePreference(profileName).then(function(success) {
+                if (success) {
+                    // Disable edit mode first
+                    isEditMode = false;
+                    
+                    // Remove banner
+                    jQuery('#editModeBanner').fadeOut(300, function() {
+                        jQuery(this).remove();
                     });
-                } else {
-                    updateDropdownContent();
+                    
+                    // If this was the active profile, reload it to apply changes
+                    if (wasActiveProfile) {
+                        // Update the stored profile name in case filters changed
+                        activeProfileName = profileName;
+                        localStorage.setItem('activeProfileName', profileName);
+                        updateActiveProfileDisplay();
+                        
+                        alert('Profile updated successfully! Click "Apply" or refresh to see changes.');
+                        updateDropdownContent();
+                    } else {
+                        alert('Profile updated successfully!');
+                        updateDropdownContent();
+                    }
                 }
+            });
+        });
+        
+        // Cancel button handler
+        jQuery('#cancelEditMode').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            isEditMode = false;
+            jQuery('#editModeBanner').fadeOut(300, function() {
+                jQuery(this).remove();
+            });
+            
+            // Optionally reload the original profile if it was active
+            if (activeProfileName === profileName) {
+                loadPreference(profileName);
             }
         });
     }
@@ -557,11 +740,23 @@
         if (name && name.trim() !== '') {
             savePreference(name.trim()).then(function (success) {
                 if (success) {
+                    // Disable edit mode
+                    isEditMode = false;
+                    
+                    // Remove edit banner if it exists
+                    jQuery('#editModeBanner').fadeOut(300, function() {
+                        jQuery(this).remove();
+                    });
+                    
                     alert('Profile saved successfully!')
                     updateDropdownContent()
                 }
             })
+        } else if (name !== null) {
+            // User clicked OK but entered empty name, stay in edit mode
+            alert('Please enter a valid profile name');
         }
+        // If user clicked Cancel on prompt, stay in edit mode
     }
 
     function updateDropdownContent() {
@@ -590,6 +785,9 @@
             const name = jQuery(this).data('name');
             deletePreference(name).then(function (success) {
                 if (success) {
+                    if (activeProfileName === name) {
+                        clearActiveProfile();
+                    }
                     updateDropdownContent();
                 }
             });
@@ -613,7 +811,10 @@
                 jQuery(this).css('background-color', '#f8f9fa');
             },
             function () {
-                jQuery(this).css('background-color', 'transparent');
+                const isActive = jQuery(this).find('.preference-name').data('name') === activeProfileName;
+                if (!isActive) {
+                    jQuery(this).css('background-color', 'transparent');
+                }
             }
         );
     }
@@ -741,6 +942,7 @@
 
         jQuery('body').append(dropdownHTML);
         attachFilterChangeListeners();
+        setupFormSubmitInterceptor();
 
         jQuery(document).on('click', '#filterPreferencesBtn', function (e) {
             e.stopPropagation();
@@ -770,7 +972,7 @@
         });
 
         jQuery(document).on('click', function (e) {
-            if (!jQuery(e.target).closest('#filterPreferencesBtn, #filterPreferencesDropdown').length) {
+            if (!jQuery(e.target).closest('#filterPreferencesBtn, #filterPreferencesDropdown, #editModeBanner').length) {
                 jQuery('#filterPreferencesDropdown').hide()
             }
         });
