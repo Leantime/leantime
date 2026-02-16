@@ -115,7 +115,6 @@
     }
 
     async function loadPreference(name) {
-        // Don't load if we're in edit mode
         if (isEditMode) {
             console.log('[Profiles] Load blocked - edit mode active');
             return false;
@@ -139,13 +138,10 @@
                 const data = await response.json();
 
                 if (data.status === 'success' && data.preference) {
-                    // Apply filters and wait for completion
                     await applyFilters(data.preference.filters);
                     
-                    // Wait a bit more to ensure all async operations complete
                     await new Promise(resolve => setTimeout(resolve, 400));
                     
-                    // Now it's safe to update state and submit
                     activeProfileName = name;
                     localStorage.setItem('activeProfileName', name);
                     localStorage.setItem('activeProfileDateRange', data.preference.filters.dateRange || 'Custom');
@@ -188,38 +184,129 @@
     }
 
     function onFilterChange() {
-        // Don't clear active profile if we're applying filters or in edit mode
         if (activeProfileName && !isEditMode && !isApplyingFilters) {
             clearActiveProfile();
         }
     }
 
     function attachFilterChangeListeners() {
-        jQuery('select[name="clientId"], select[name="userId"], select[name="kind"]').on('change', onFilterChange);
-        jQuery('input[name="invEmpl"], input[name="invComp"], input[name="paid"]').on('change', onFilterChange);
-        jQuery('input[name="project[]"]').on('change', onFilterChange);
-        jQuery('input[name="dateFrom"]').on('apply.daterangepicker', onFilterChange);
+        // Intercept filter changes and prevent propagation during edit mode
+        jQuery('select[name="clientId"], select[name="userId"], select[name="kind"]').on('change', function(e) {
+            if (isEditMode) {
+                console.log('[Profiles] Filter change detected in EDIT MODE - stopping propagation');
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            }
+            onFilterChange();
+        });
+        
+        jQuery('input[name="invEmpl"], input[name="invComp"], input[name="paid"]').on('change', function(e) {
+            if (isEditMode) {
+                console.log('[Profiles] Checkbox change detected in EDIT MODE - stopping propagation');
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            }
+            onFilterChange();
+        });
+        
+        jQuery('input[name="project[]"]').on('change', function(e) {
+            if (isEditMode) {
+                console.log('[Profiles] Project change detected in EDIT MODE - stopping propagation');
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            }
+            onFilterChange();
+        });
+        
+        jQuery('input[name="dateFrom"]').on('apply.daterangepicker', function(e) {
+            if (isEditMode) {
+                console.log('[Profiles] Date change detected in EDIT MODE - stopping propagation');
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            }
+            onFilterChange();
+        });
     }
     
     function setupFormSubmitInterceptor() {
-        // Remove any existing handler to avoid duplicates
+        // Remove any existing jQuery handler
         jQuery('#form').off('submit.editMode');
         
-        // Intercept form submission to check edit mode and filter application
+        // Add jQuery event handler
         jQuery('#form').on('submit.editMode', function(e) {
+            console.log('[Profiles] jQuery submit event - isEditMode:', isEditMode, 'isApplyingFilters:', isApplyingFilters);
+            
             if (isEditMode) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                console.log('[Profiles] Form submit blocked - edit mode active');
+                console.log('[Profiles] Form submit BLOCKED by jQuery handler - edit mode active');
                 return false;
             }
             if (isApplyingFilters) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                console.log('[Profiles] Form submit blocked - applying filters');
+                console.log('[Profiles] Form submit BLOCKED by jQuery handler - applying filters');
                 return false;
             }
         });
+        
+        // Add native DOM capture phase listener (runs BEFORE all other handlers)
+        const formElement = document.getElementById('form');
+        if (formElement) {
+            formElement.addEventListener('submit', function(e) {
+                console.log('[Profiles] Native capture phase - isEditMode:', isEditMode, 'isApplyingFilters:', isApplyingFilters);
+                
+                if (isEditMode) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    console.log('[Profiles] Form submit BLOCKED by capture phase - edit mode active');
+                    return false;
+                }
+                if (isApplyingFilters) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    console.log('[Profiles] Form submit BLOCKED by capture phase - applying filters');
+                    return false;
+                }
+            }, true); // TRUE = capture phase (highest priority)
+            
+            // Also add capture phase listeners for change events on filter elements
+            const filterSelectors = [
+                'select[name="clientId"]',
+                'select[name="userId"]',
+                'select[name="kind"]',
+                'input[name="invEmpl"]',
+                'input[name="invComp"]',
+                'input[name="paid"]'
+            ];
+            
+            filterSelectors.forEach(function(selector) {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(function(element) {
+                    element.addEventListener('change', function(e) {
+                        if (isEditMode) {
+                            console.log('[Profiles] CAPTURE PHASE: Change event blocked on', selector);
+                            e.stopPropagation();
+                            e.stopImmediatePropagation();
+                        }
+                    }, true); // Capture phase
+                });
+            });
+            
+            // Handle project checkboxes
+            const projectCheckboxes = document.querySelectorAll('input[name="project[]"]');
+            projectCheckboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function(e) {
+                    if (isEditMode) {
+                        console.log('[Profiles] CAPTURE PHASE: Project checkbox change blocked');
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                    }
+                }, true);
+            });
+        }
     }
 
     async function savePreference(name) {
@@ -264,6 +351,7 @@
         alert('Failed to save profile');
         return false;
     }
+    
     function applyDateRange(rangeName) {
 
         const dateInput = jQuery('input[name="dateFrom"]');
@@ -311,12 +399,10 @@
             return;
         }
 
-        // Set flag to prevent change listeners from firing
         isApplyingFilters = true;
         console.log('[Profiles] Started applying filters');
         
         try {
-            // Apply date range
             if (filters.dateRange && filters.dateRange !== 'Custom') {
                 const applied = applyDateRange(filters.dateRange);
 
@@ -337,7 +423,6 @@
                 }
             }
 
-            // Apply other filters
             if (filters.clientId) {
                 jQuery('select[name="clientId"]').val(filters.clientId);
             }
@@ -348,28 +433,22 @@
                 jQuery('select[name="kind"]').val(filters.kind);
             }
             
-            // Apply checkboxes
             jQuery('input[name="invEmpl"]').prop('checked', filters.invEmpl === '1');
             jQuery('input[name="invComp"]').prop('checked', filters.invComp === '1');
             jQuery('input[name="paid"]').prop('checked', filters.paid === '1');
 
-            // Apply project filters
             if (filters.projects) {
-                // First uncheck all projects
                 jQuery('input[name="project[]"]').prop('checked', false);
                 
                 if (filters.projects.includes('-1')) {
-                    // Check "All Projects"
                     jQuery('#projectCheckboxAll').prop('checked', true);
                 } else {
-                    // Check specific projects
                     filters.projects.forEach(function(projectId) {
                         jQuery(`input[name="project[]"][value="${projectId}"]`).prop('checked', true);
                     });
                 }
             }
         } finally {
-            // Always reset the flag after a delay to ensure all async changes complete
             setTimeout(function() {
                 isApplyingFilters = false;
                 console.log('[Profiles] Finished applying filters');
@@ -468,6 +547,7 @@
 
         return projectFilters;
     }
+    
     function detectRangeFromDates(dateFrom, dateTo) {
         if (!dateFrom || !dateTo) return 'Custom';
 
@@ -596,18 +676,18 @@
         const pref = currentPreferences[profileName];
         if (!pref) return;
 
-        // Enable edit mode
+        // Enter edit mode - this flag stays true until save/cancel
         isEditMode = true;
+        console.log('[Profiles] ========================================');
+        console.log('[Profiles] Edit mode ENABLED for:', profileName);
+        console.log('[Profiles] isEditMode is now:', isEditMode);
+        console.log('[Profiles] ========================================');
         
-        // First, apply the profile's filters to the form
         applyFilters(pref.filters).then(function() {
-            // Close the dropdown
             jQuery('#filterPreferencesDropdown').hide();
             
-            // Show edit mode banner
             showEditModeBanner(profileName);
             
-            // Optionally scroll to the filters section
             jQuery('html, body').animate({
                 scrollTop: jQuery('#form').offset().top - 100
             }, 500);
@@ -615,7 +695,6 @@
     }
 
     function showEditModeBanner(profileName) {
-        // Remove any existing banner
         jQuery('#editModeBanner').remove();
         
         const banner = jQuery(`
@@ -641,7 +720,7 @@
                             Make your changes, then click "Save Changes" to update this profile.
                         </p>
                         <p style="margin: 0 0 10px 0; font-size: 12px; color: #856404; font-style: italic;">
-                            ⚠️ Auto-save is disabled
+                            ⚠️ Auto-submit is disabled
                         </p>
                         <div style="display: flex; gap: 8px;">
                             <button id="saveEditedProfile" class="btn btn-sm btn-success" style="padding: 4px 12px; font-size: 12px;">
@@ -658,12 +737,10 @@
         
         jQuery('body').append(banner);
         
-        // Prevent banner from being affected by clicks
         banner.on('click', function(e) {
             e.stopPropagation();
         });
         
-        // Save button handler
         jQuery('#saveEditedProfile').on('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -672,23 +749,28 @@
             
             savePreference(profileName).then(function(success) {
                 if (success) {
-                    // Disable edit mode first
+                    // Exit edit mode FIRST
                     isEditMode = false;
+                    console.log('[Profiles] Edit mode DISABLED - saved');
                     
-                    // Remove banner
                     jQuery('#editModeBanner').fadeOut(300, function() {
                         jQuery(this).remove();
                     });
                     
-                    // If this was the active profile, reload it to apply changes
                     if (wasActiveProfile) {
-                        // Update the stored profile name in case filters changed
+                        // Profile was active - update and reload to show changes
                         activeProfileName = profileName;
                         localStorage.setItem('activeProfileName', profileName);
                         updateActiveProfileDisplay();
                         
-                        alert('Profile updated successfully! Click "Apply" or refresh to see changes.');
+                        alert('Profile updated successfully!');
                         updateDropdownContent();
+                        
+                        // Submit form to apply the changes
+                        console.log('[Profiles] Submitting form to apply updated profile');
+                        setTimeout(function() {
+                            jQuery('#form').submit();
+                        }, 100);
                     } else {
                         alert('Profile updated successfully!');
                         updateDropdownContent();
@@ -697,16 +779,18 @@
             });
         });
         
-        // Cancel button handler
         jQuery('#cancelEditMode').on('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
+            
+            // Exit edit mode
             isEditMode = false;
+            console.log('[Profiles] Edit mode DISABLED - cancelled');
+            
             jQuery('#editModeBanner').fadeOut(300, function() {
                 jQuery(this).remove();
             });
             
-            // Optionally reload the original profile if it was active
             if (activeProfileName === profileName) {
                 loadPreference(profileName);
             }
@@ -740,10 +824,10 @@
         if (name && name.trim() !== '') {
             savePreference(name.trim()).then(function (success) {
                 if (success) {
-                    // Disable edit mode
+                    // Exit edit mode if we were in it
                     isEditMode = false;
+                    console.log('[Profiles] Edit mode DISABLED - new profile saved');
                     
-                    // Remove edit banner if it exists
                     jQuery('#editModeBanner').fadeOut(300, function() {
                         jQuery(this).remove();
                     });
@@ -753,10 +837,8 @@
                 }
             })
         } else if (name !== null) {
-            // User clicked OK but entered empty name, stay in edit mode
             alert('Please enter a valid profile name');
         }
-        // If user clicked Cancel on prompt, stay in edit mode
     }
 
     function updateDropdownContent() {
