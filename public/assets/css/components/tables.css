@@ -399,6 +399,19 @@
     background:var(--secondary-action-hover-bg);
     color:var(--secondary-action-hover-color);
 }
+
+.maincontentinner .dt-buttons>.dt-button.btn-primary {
+    color: var(--main-action-color);
+    background: var(--main-action-bg);
+    border: 1px solid var(--main-action-bg);
+}
+
+.maincontentinner .dt-buttons>.dt-button.btn-primary:hover {
+    background: var(--main-action-hover-bg);
+    color: var(--main-action-hover-color);
+    border: 1px solid var(--main-action-hover-bg);
+}
+
 .maincontentinner .dt-buttons .dt-button-collection button {
     border-radius:0px;
 }
@@ -427,6 +440,36 @@
 .maincontentinner .headtitle .table td{
     border:none;
     margin-top:0px;
+}
+
+/* Filter table (Project, Date, Type, Search) */
+.maincontentinner table.filterTable,
+.maincontentinner table.filterTable td,
+.maincontentinner table.filterTable th {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+.maincontentinner table.filterTable td {
+    border-right: none !important;
+    border-top: none !important;
+}
+
+/* Filter table checkboxes (showAll & showMyList) */
+.maincontentinner table.filterTable input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0 6px 0 0;
+    vertical-align: middle;
+    cursor: pointer;
+}
+.maincontentinner table.filterTable input[type="checkbox"] + label {
+    display: inline;
+    margin: 0;
+    vertical-align: middle;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--main-font-color, #333);
 }
 
 .table th,

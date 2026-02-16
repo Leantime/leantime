@@ -239,6 +239,7 @@ button:hover span {
                     <li><a href="<?php echo BASE_URL ?>/timesheets/showMyList"><?php echo $tpl->__('links.list_view') ?></a></li>
                 </ul>
             </div>
+            <div class="clearfix"></div>
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
 
                 <div class="padding-top-sm">
@@ -253,7 +254,7 @@ button:hover span {
 
             </div>
             <div style=" width: 100%; overflow-x:scroll;">
-                <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX" data-hours-format="<?= $tpl->escape($hoursFormat); ?>" data-days-in-month="<?= $daysInMonth ?>">
+                <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="monthlyTimesheetsTable" data-hours-format="<?= $tpl->escape($hoursFormat); ?>" data-days-in-month="<?= $daysInMonth ?>">
                     <thead>
                         <tr>
                             <th><?php echo $tpl->__('label.client_product') ?></th>

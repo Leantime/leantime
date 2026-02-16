@@ -8,7 +8,44 @@ foreach ($__data as $var => $val) {
 }
 $hoursFormat = session('usersettings.hours_format', 'decimal');
 ?>
+<script src="<?= BASE_URL ?>/assets/js/app/core/moment.min.js"></script>
+<link rel="stylesheet" type="text/css" href="<?= BASE_URL ?>/assets/css/daterangepicker.css" />
+<script type="text/javascript" src="<?= BASE_URL ?>/assets/js/app/core/daterangepicker.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/app/core/datePickers.js"></script>
 
+<style>
+/* Match All Timesheets filter bar: same height and pill styling */
+.maincontentinner .filterTable .filter-select,
+.maincontentinner .filterTable .filter-input {
+    height: 30px;
+    min-height: 30px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--neutral, #d0d5dd);
+    font-size: 14px;
+    line-height: 20px;
+    background: var(--secondary-background, #fff);
+    color: var(--main-font-color, #333);
+    max-width: 200px;
+    box-sizing: border-box;
+}
+.maincontentinner .filterTable .filter-select {
+    cursor: pointer;
+    appearance: auto;
+}
+.maincontentinner .filterTable .filter-input {
+    max-width: 120px;
+}
+.maincontentinner .filterTable label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: var(--main-font-color, #333);
+}
+.maincontentinner .filterTable td {
+    vertical-align: top;
+}
+</style>
 <!-- page header -->
 <div class="pageheader">
     <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
@@ -27,48 +64,6 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 ?>
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
-            <div class="filterWrapper tw-relative">
-                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left"><?php echo $tpl->__('links.filter') ?> (1)</a>
-                <div class="filterBar" style="display:none; top:30px;">
-
-                    <div class="filterBoxLeft">
-                        <label for="dateFrom"><?php echo $tpl->__('label.date_from'); ?> <?php echo $tpl->__('label.date_to'); ?></label>
-                        <input type="text"
-                               id="dateFrom"
-                               class="dateFrom"
-                               name="dateFrom"
-                               value="<?php echo $tpl->get('dateFrom')->formatDateForUser(); ?>"
-                               style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
-                        <input type="text"
-                               id="dateTo"
-                               class="dateTo"
-                               name="dateTo"
-                               value="<?php echo $tpl->get('dateTo')->formatDateForUser(); ?>"
-                               style="margin-bottom:10px; width:90px" />
-                    </div>
-
-                    <div class="filterBoxLeft">
-                        <label for="kind"><?php echo $tpl->__('label.type')?></label>
-                        <select id="kind" name="kind" onchange="submit();">
-                            <option value="all"><?php echo $tpl->__('label.all_types'); ?></option>
-                            <?php foreach ($tpl->get('kind') as $key => $row) {
-                                echo '<option value="'.$key.'"';
-                                if ($key == $tpl->get('actKind')) {
-                                    echo ' selected="selected"';
-                                }
-                                echo '>'.$tpl->__($row).'</option>';
-                            }
-?>
-
-                        </select>
-                    </div>
-                    <div class="filterBoxLeft">
-                        <label>&nbsp;</label>
-                        <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="reload" />
-                    </div>
-                    <div class="clearall"></div>
-                </div>
-            </div>
             <div class="pull-right">
                 <div class="btn-group viewDropDown">
                     <button class="btn dropdown-toggle" data-toggle="dropdown"><?= $tpl->__('links.list_view') ?> <?= $tpl->__('links.view') ?></button>
@@ -84,7 +79,81 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
                 <div id="tableButtons" style="display:inline-block"></div>
             </div>
 
+            <div class="pull-right" style="margin-right:8px; vertical-align: middle;">
+                <input type="submit" value="<?php echo $tpl->__('buttons.search'); ?>" class="reload btn btn-primary" style="vertical-align: middle; margin-bottom: 0;" />
+            </div>
+
             <div class="clearfix"></div>
+            <div class="headtitle">
+            <table cellpadding="10" cellspacing="0" width="100%" class="table dataTable filterTable" style="margin-bottom: 15px;">
+                <tr>
+                    <td style="vertical-align: top;">
+                        <label for="clientId"><?php echo $tpl->__('label.client'); ?></label>
+                        <select name="clientId" id="clientId" class="filter-select" onchange="this.form.submit();">
+                            <option value="-1"><?php echo strip_tags($tpl->__('menu.all_clients')); ?></option>
+                            <?php foreach ($tpl->get('allClients') as $client) { ?>
+                                <option value="<?= (int) $client['id'] ?>"
+                                    <?php if ($tpl->get('clientFilter') == $client['id']) {
+                                        echo ' selected="selected"';
+                                    } ?>><?= $tpl->escape($client['name']) ?></option>
+                            <?php } ?>
+                        </select>
+                    </td>
+                    <td style="vertical-align: top;">
+                        <label for="projectId"><?php echo $tpl->__('label.project'); ?></label>
+                        <select name="projectId" id="projectId" class="filter-select" onchange="this.form.submit();">
+                            <option value="-1"><?php echo strip_tags($tpl->__('menu.all_projects')); ?></option>
+                            <?php foreach ($tpl->get('allProjects') as $project) { ?>
+                                <option value="<?= (int) $project['id'] ?>"
+                                    <?php if ($tpl->get('projectFilter') == $project['id']) {
+                                        echo ' selected="selected"';
+                                    } ?>><?= $tpl->escape($project['name']) ?></option>
+                            <?php } ?>
+                        </select>
+                    </td>
+                    <td style="vertical-align: top;">
+                        <label for="dateFrom"><?php echo $tpl->__('label.date_from'); ?></label>
+                        <input type="text" id="dateFrom" class="dateFrom filter-input" name="dateFrom" autocomplete="off"
+                            value="<?php echo $tpl->get('dateFrom')->formatDateForUser(); ?>"
+                            style="max-width:120px; margin-bottom:10px;" />
+                    </td>
+                    <td style="vertical-align: top;">
+                        <label for="dateTo"><?php echo $tpl->__('label.date_to'); ?></label>
+                        <input type="text" id="dateTo" class="dateTo filter-input" name="dateTo" autocomplete="off"
+                            value="<?php echo $tpl->get('dateTo')->formatDateForUser(); ?>"
+                            style="max-width:120px; margin-bottom:10px;" />
+                    </td>
+                    <td style="vertical-align: top;">
+                        <label for="kind"><?php echo $tpl->__('label.type'); ?></label>
+                        <select id="kind" name="kind" class="filter-select" onchange="this.form.submit();">
+                            <option value="all"><?php echo $tpl->__('label.all_types'); ?></option>
+                            <?php foreach ($tpl->get('kind') as $key => $row) {
+                                echo '<option value="' . $tpl->escape($key) . '"';
+                                if ($key == $tpl->get('actKind')) {
+                                    echo ' selected="selected"';
+                                }
+                                echo '>' . $tpl->escape($tpl->__($row)) . '</option>';
+                            } ?>
+                        </select>
+                    </td>
+                    <td style="vertical-align: top;">
+                        <input type="checkbox" value="1" name="invEmpl" id="invEmpl" onclick="this.form.submit();"
+                            <?php if ($tpl->get('invEmpl') == '1') { echo ' checked="checked"'; } ?> />
+                        <label for="invEmpl"><?php echo $tpl->__('label.invoiced'); ?></label>
+                    </td>
+                    <td style="vertical-align: top;">
+                        <input type="checkbox" value="on" name="invComp" id="invComp" onclick="this.form.submit();"
+                            <?php if ($tpl->get('invComp') == '1') { echo ' checked="checked"'; } ?> />
+                        <label for="invComp"><?php echo $tpl->__('label.invoiced_comp'); ?></label>
+                    </td>
+                    <td style="vertical-align: top;">
+                        <input type="checkbox" value="on" name="paid" id="paid" onclick="this.form.submit();"
+                            <?php if ($tpl->get('paid') == '1') { echo ' checked="checked"'; } ?> />
+                        <label for="paid"><?php echo $tpl->__('label.paid'); ?></label>
+                    </td>
+                </tr>
+            </table>
+            </div>
 
             <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable" data-hours-format="<?= $tpl->escape($hoursFormat); ?>">
                 <colgroup>
@@ -254,6 +323,6 @@ foreach ($tpl->get('allTimesheets') as $row) {
     jQuery(document).ready(function(){
         leantime.timesheetsController.initTimesheetsTable();
         leantime.timesheetsController.initEditTimeModal();
-        leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1);
+        leantime.dateController.initModernDateRangePicker(".dateFrom", ".dateTo", 1);
     });
 </script>

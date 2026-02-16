@@ -113,24 +113,24 @@ document.addEventListener('click', function(e) {
     if (target && !isReady) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         target.style.opacity = '0.5';
         target.style.cursor = 'wait';
-        
+
         pendingClick = target;
     }
 }, true);
 
 function initWhenReady() {
-    
+
     if (typeof jQuery.fn.nyroModal === 'undefined') {
         setTimeout(initWhenReady, 100);
         return;
     }
-    
+
     initEditTimeModal();
     isReady = true;
-    
+
     if (pendingClick) {
         var $pending = jQuery(pendingClick);
         pendingClick.style.opacity = '';
@@ -166,7 +166,7 @@ var initEditTimeModal = function () {
     };
 
     jQuery(document).on('click', '.editTimeModal', function (e) {
-        if (!isReady) return; 
+        if (!isReady) return;
         e.preventDefault();
         jQuery(this).nyroModal(canvasoptions);
     });
