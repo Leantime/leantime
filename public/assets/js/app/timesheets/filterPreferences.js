@@ -630,7 +630,7 @@
 
             html += `
             <div class="preference-item" style="display: flex; align-items: center; justify-content: space-between;flex-wrap:wrap; padding: 10px 12px; border-bottom: 1px solid #eee; ${activeStyle}">
-                <div class="preference-name" data-name="${key}" style="flex: 1; font-weight: 500; color: #333;">
+                <div class="preference-name" data-name="${key}" style="flex: 1; font-weight: 500; color: #333; cursor: pointer;">
                     ${activeIcon}${key}
                     ${dateInfo}
                 </div>
@@ -697,9 +697,6 @@
                         </strong>
                         <p style="margin: 0 0 5px 0; font-size: 13px; color: #856404;">
                             Make your changes, then click "Save Changes" to update this profile.
-                        </p>
-                        <p style="margin: 0 0 10px 0; font-size: 12px; color: #856404; font-style: italic;">
-                            ⚠️ Auto-submit is disabled
                         </p>
                         <div style="display: flex; gap: 8px;">
                             <button id="saveEditedProfile" class="btn btn-sm btn-success" style="padding: 4px 12px; font-size: 12px;">
@@ -860,7 +857,7 @@
 
         jQuery('.preference-item').hover(
             function () {
-                jQuery(this).css('background-color', '#f8f9fa');
+                jQuery(this).css('background-color', '#d5e7f8ff');
             },
             function () {
                 const isActive = jQuery(this).find('.preference-name').data('name') === activeProfileName;
