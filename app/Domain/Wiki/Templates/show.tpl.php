@@ -133,7 +133,7 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                         <!-- Left: Contents Sidebar -->
                         <div class="wiki-contents-panel" id="contentsPanel">
                             <div class="wiki-panel-header">
-                                <h5 class="wiki-panel-title">Contents</h5>
+                                <h4 class="widgettitle title-light"><i class="fa fa-list"></i> Contents</h4>
                                 <button class="wiki-collapse-btn" id="toggleContents" title="Collapse">
                                     <i class="fa fa-chevron-left"></i>
                                 </button>
@@ -169,23 +169,24 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                             <header class="wiki-document-header">
                                 <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <!-- Editable Title with Icon Picker -->
-                                    <div class="wiki-title-wrapper" id="wikiTitleWrapper">
-                                        <div class="wiki-icon-picker">
-                                            <button type="button"
-                                                    class="wiki-icon-btn icp icp-dd btn btn-default dropdown-toggle iconpicker-container"
-                                                    data-toggle="dropdown"
-                                                    title="Change icon">
+                                    <div class="form-group" id="wikiTitleWrapper">
+                                        <div class="btn-group inlineDropDownContainerLeft">
+                                            <button data-selected="graduation-cap" type="button"
+                                                    class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker"
+                                                    data-toggle="dropdown">
                                                 <span class="iconPlaceholder"><i class="<?= $tpl->escape($currentArticle->data ?: 'fa fa-file-alt') ?>"></i></span>
-                                                <span class="wiki-icon-caret"><i class="fa fa-chevron-down"></i></span>
+                                                <span class="caret"></span>
                                             </button>
                                             <div class="dropdown-menu"></div>
-                                            <input type="hidden" id="wikiArticleIcon" class="articleIcon" value="<?= $tpl->escape($currentArticle->data) ?>" />
                                         </div>
-                                        <h1 class="wiki-title-editable"
-                                            id="wikiTitleEditable"
-                                            contenteditable="true"
-                                            data-placeholder="Untitled"
-                                            data-original="<?= $tpl->escape($currentArticle->title) ?>"><?= $tpl->escape($currentArticle->title) ?></h1>
+                                        <input type="hidden" id="wikiArticleIcon" class="articleIcon" value="<?= $tpl->escape($currentArticle->data) ?>" />
+                                        <input type="text"
+                                               id="wikiTitleEditable"
+                                               class="main-title-input"
+                                               value="<?= $tpl->escape($currentArticle->title) ?>"
+                                               data-original="<?= $tpl->escape($currentArticle->title) ?>"
+                                               placeholder="<?= $tpl->__('input.placeholders.wiki_title') ?>"
+                                               style="width:80%" autocomplete="off" />
                                     </div>
 
                                     <!-- Editable Tags -->
@@ -252,10 +253,7 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
 
                         <!-- Comments Section -->
                         <section class="wiki-comments-section" id="comments">
-                            <h4 class="wiki-comments-title">
-                                <i class="fa fa-comments"></i>
-                                <?= $tpl->__('subtitles.discussion') ?>
-                            </h4>
+                            <h4 class="widgettitle title-light"><span class="fa-solid fa-comments"></span> <?= $tpl->__('subtitles.discussion') ?></h4>
 
                             <form method="post" action="<?= BASE_URL ?>/wiki/show/<?= $currentArticle->id; ?>#comment">
                                 <input type="hidden" name="comment" value="1" />
@@ -271,7 +269,7 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                         <!-- Properties Panel (inside content area) -->
                         <div class="wiki-properties-panel" id="propertiesPanel">
                             <div class="wiki-panel-header">
-                                <h5 class="wiki-panel-title">Details</h5>
+                                <h4 class="widgettitle title-light"><i class="fa fa-info-circle"></i> Details</h4>
                                 <button class="wiki-collapse-btn" id="collapseProperties" title="Collapse">
                                     <i class="fa fa-chevron-right"></i>
                                 </button>
@@ -281,32 +279,18 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
                     <div class="wiki-properties-section">
 
                         <!-- Status Dropdown -->
-                        <div class="wiki-property-row">
-                            <span class="wiki-property-label">
-                                <i class="fa fa-circle-dot"></i> Status
-                            </span>
-                            <span class="wiki-property-value">
+                        <div class="form-group">
+                            <label class="control-label"><?= $tpl->__('label.status') ?></label>
+                            <div class="">
                                 <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                    <div class="wiki-status-dropdown dropdown" id="wikiStatusDropdown">
-                                        <button class="wiki-status-pill <?= $currentArticle->status ?>" data-toggle="dropdown">
-                                            <?php if ($currentArticle->status === 'draft') { ?>
-                                                <i class="fa fa-pencil"></i> Draft
-                                            <?php } else { ?>
-                                                <i class="fa fa-check"></i> Published
-                                            <?php } ?>
-                                            <i class="fa fa-chevron-down"></i>
-                                        </button>
-                                        <ul class="dropdown-menu wiki-status-menu">
-                                            <li><a href="javascript:void(0)" class="wiki-status-option draft-option" data-value="draft"><i class="fa fa-pencil"></i> Draft</a></li>
-                                            <li><a href="javascript:void(0)" class="wiki-status-option published-option" data-value="published"><i class="fa fa-check"></i> Published</a></li>
-                                        </ul>
-                                    </div>
+                                    <select id="wikiStatusSelect" class="span11">
+                                        <option value="draft" <?= $currentArticle->status === 'draft' ? "selected='selected'" : '' ?>>Draft</option>
+                                        <option value="published" <?= $currentArticle->status !== 'draft' ? "selected='selected'" : '' ?>>Published</option>
+                                    </select>
                                 <?php } else { ?>
-                                    <span class="wiki-status-badge <?= $currentArticle->status ?>">
-                                        <?= ucfirst($currentArticle->status) ?>
-                                    </span>
+                                    <?= ucfirst($currentArticle->status) ?>
                                 <?php } ?>
-                            </span>
+                            </div>
                         </div>
 
                         <?php
@@ -322,121 +306,79 @@ if ($currentArticle && ! empty($currentArticle->firstname)) {
             }
             ?>
                         <!-- Parent -->
-                        <div class="wiki-property-row">
-                            <span class="wiki-property-label">
-                                <i class="fa fa-folder-tree"></i> Parent
-                            </span>
-                            <span class="wiki-property-value">
+                        <div class="form-group">
+                            <label class="control-label">Parent</label>
+                            <div class="">
                                 <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                    <div class="wiki-parent-dropdown dropdown" id="wikiParentDropdown">
-                                        <button class="wiki-milestone-btn" data-toggle="dropdown">
-                                            <span class="parent-text<?= (! $currentArticle->parent || $currentArticle->parent == 0) ? ' none' : '' ?>"><?= $parentName ?></span>
-                                            <i class="fa fa-chevron-down"></i>
-                                        </button>
-                                        <ul class="dropdown-menu wiki-milestone-menu">
-                                            <li><a href="javascript:void(0)" class="wiki-parent-option<?= (! $currentArticle->parent || $currentArticle->parent == 0) ? ' active' : '' ?>" data-value="0"><i class="fa fa-times"></i> None</a></li>
-                                            <?php
-                                // Filter out current article from the list
-                                $parentOptions = array_filter($wikiHeadlines, function ($h) use ($currentArticle) {
-                                    return $h->id != $currentArticle->id;
-                                });
-                                    if (count($parentOptions) > 0) { ?>
-                                                <li class="divider"></li>
-                                                <?php foreach ($parentOptions as $headline) { ?>
-                                                    <li>
-                                                        <a href="javascript:void(0)"
-                                                           class="wiki-parent-option<?= $currentArticle->parent == $headline->id ? ' active' : '' ?>"
-                                                           data-value="<?= $headline->id ?>">
-                                                            <i class="<?= $tpl->escape($headline->data ?: 'fa fa-file-alt') ?>"></i> <?= $tpl->escape($headline->title) ?><?php if ($headline->status === 'draft') { ?> <span class="wiki-tree-draft">(<?= $tpl->__('label.draft') ?>)</span><?php } ?>
-                                                        </a>
-                                                    </li>
-                                                <?php } ?>
-                                            <?php } ?>
-                                        </ul>
-                                    </div>
+                                    <?php
+                                    $parentOptions = array_filter($wikiHeadlines, function ($h) use ($currentArticle) {
+                                        return $h->id != $currentArticle->id;
+                                    });
+                                    ?>
+                                    <select id="wikiParentSelect" class="span11">
+                                        <option value="0" <?= (! $currentArticle->parent || $currentArticle->parent == 0) ? "selected='selected'" : '' ?>>None</option>
+                                        <?php foreach ($parentOptions as $headline) { ?>
+                                            <option value="<?= $headline->id ?>" <?= $currentArticle->parent == $headline->id ? "selected='selected'" : '' ?>><?= $tpl->escape($headline->title) ?><?php if ($headline->status === 'draft') { ?> (<?= $tpl->__('label.draft') ?>)<?php } ?></option>
+                                        <?php } ?>
+                                    </select>
                                 <?php } else { ?>
                                     <?php if ($currentArticle->parent && $currentArticle->parent > 0) { ?>
-                                        <a href="<?= BASE_URL ?>/wiki/show/<?= $currentArticle->parent ?>" class="wiki-parent-link">
+                                        <a href="<?= BASE_URL ?>/wiki/show/<?= $currentArticle->parent ?>">
                                             <?= $parentName ?>
                                         </a>
                                     <?php } else { ?>
-                                        <span class="wiki-no-parent"><?= $parentName ?></span>
+                                        <span><?= $parentName ?></span>
                                     <?php } ?>
                                 <?php } ?>
-                            </span>
+                            </div>
+                        </div>
+
+                        <!-- Milestone -->
+                        <div class="form-group">
+                            <label class="control-label"><?= $tpl->__('label.milestone') ?></label>
+                            <div class="">
+                                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                    <select id="wikiMilestoneSelect" class="span11">
+                                        <option value=""><?= $tpl->__('label.not_assigned_to_milestone') ?></option>
+                                        <?php foreach ($milestones as $milestone) { ?>
+                                            <option value="<?= $milestone->id ?>" <?= $currentArticle->milestoneId == $milestone->id ? "selected='selected'" : '' ?>><?= $tpl->escape($milestone->headline) ?></option>
+                                        <?php } ?>
+                                    </select>
+                                <?php } else { ?>
+                                    <?php if (! empty($currentArticle->milestoneHeadline)) { ?>
+                                        <a href="<?= BASE_URL ?>/tickets/roadmap#/tickets/editMilestone/<?= $currentArticle->milestoneId ?>">
+                                            <?= $tpl->escape($currentArticle->milestoneHeadline) ?>
+                                        </a>
+                                    <?php } else { ?>
+                                        <span><?= $tpl->__('label.not_assigned_to_milestone') ?></span>
+                                    <?php } ?>
+                                <?php } ?>
+                            </div>
                         </div>
 
                         <!-- Author -->
-                        <div class="wiki-property-row">
-                            <span class="wiki-property-label">
-                                <i class="fa fa-user"></i> Author
-                            </span>
-                            <span class="wiki-property-value">
+                        <div class="form-group">
+                            <label class="control-label"><?= $tpl->__('label.author') ?></label>
+                            <div class="">
                                 <div class="wiki-author">
                                     <span class="wiki-author-avatar"><?= $authorInitials ?></span>
                                     <?= $tpl->escape($currentArticle->firstname) ?> <?= $tpl->escape($currentArticle->lastname) ?>
                                 </div>
-                            </span>
-                        </div>
-
-                        <!-- Milestone -->
-                        <div class="wiki-property-row">
-                            <span class="wiki-property-label">
-                                <i class="fa fa-flag"></i> Milestone
-                            </span>
-                            <span class="wiki-property-value">
-                                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                    <div class="wiki-milestone-dropdown dropdown" id="wikiMilestoneDropdown">
-                                        <button class="wiki-milestone-btn" data-toggle="dropdown">
-                                            <?php if (! empty($currentArticle->milestoneHeadline)) { ?>
-                                                <span class="milestone-text"><?= $tpl->escape($currentArticle->milestoneHeadline) ?></span>
-                                            <?php } else { ?>
-                                                <span class="milestone-text none">None</span>
-                                            <?php } ?>
-                                            <i class="fa fa-chevron-down"></i>
-                                        </button>
-                                        <ul class="dropdown-menu wiki-milestone-menu">
-                                            <li><a href="javascript:void(0)" class="wiki-milestone-option" data-value="0"><i class="fa fa-times"></i> None</a></li>
-                                            <?php if (count($milestones) > 0) { ?>
-                                                <li class="divider"></li>
-                                                <?php foreach ($milestones as $milestone) { ?>
-                                                    <li>
-                                                        <a href="javascript:void(0)"
-                                                           class="wiki-milestone-option<?= $currentArticle->milestoneId == $milestone->id ? ' active' : '' ?>"
-                                                           data-value="<?= $milestone->id ?>">
-                                                            <i class="fa fa-flag"></i> <?= $tpl->escape($milestone->headline) ?>
-                                                        </a>
-                                                    </li>
-                                                <?php } ?>
-                                            <?php } ?>
-                                        </ul>
-                                    </div>
-                                <?php } else { ?>
-                                    <?php if (! empty($currentArticle->milestoneHeadline)) { ?>
-                                        <a href="<?= BASE_URL ?>/tickets/roadmap#/tickets/editMilestone/<?= $currentArticle->milestoneId ?>" class="wiki-milestone-link">
-                                            <?= $tpl->escape($currentArticle->milestoneHeadline) ?>
-                                        </a>
-                                    <?php } else { ?>
-                                        <span class="wiki-no-milestone">None</span>
-                                    <?php } ?>
-                                <?php } ?>
-                            </span>
+                            </div>
                         </div>
 
                         <!-- Last Saved -->
-                        <div class="wiki-property-row">
-                            <span class="wiki-property-label">
-                                <i class="fa fa-clock"></i> Last Saved
-                            </span>
-                            <span class="wiki-property-value" id="wikiLastSaved" data-timestamp="<?= $currentArticle->modified ?>">
+                        <div class="form-group">
+                            <label class="control-label"><?= $tpl->__('label.last_updated') ?></label>
+                            <div class="" id="wikiLastSaved" data-timestamp="<?= $currentArticle->modified ?>">
                                 <?= format($currentArticle->modified)->diffForHumans() ?>
-                            </span>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Activity Section -->
                     <div class="wiki-properties-section wiki-activity-section">
-                        <h6 class="wiki-properties-section-title">Activity</h6>
+                        <h4 class="widgettitle title-light"><i class="fa fa-clock-rotate-left"></i> Activity</h4>
 
                         <div id="wikiActivityContainer"
                              hx-get="<?= BASE_URL ?>/hx/wiki/articleActivity?articleId=<?= $currentArticle->id ?>"
@@ -577,6 +519,15 @@ jQuery(document).ready(function() {
         var isEditing = false;
         var saveTimeout = null;
         var lastSavedContent = textarea.value;
+        var toolbarClicking = false;
+
+        // Track mousedown on the wrapper so we know if a blur was caused
+        // by clicking within the editing UI (toolbar buttons, etc.)
+        wrapper.addEventListener('mousedown', function(e) {
+            if (isEditing && !editorEl.contains(e.target)) {
+                toolbarClicking = true;
+            }
+        });
 
         // Initialize Tiptap in read mode
         var tiptapInstance = leantime.tiptapController.initComplex(textarea, {
@@ -599,12 +550,31 @@ jQuery(document).ready(function() {
                 }
             },
             onBlur: function(params) {
-                // Small delay to allow for toolbar clicks
+                // If the blur was caused by clicking toolbar/wrapper elements, skip
+                if (toolbarClicking) {
+                    toolbarClicking = false;
+                    return;
+                }
+
+                // Delay to allow for toolbar popover clicks (color, heading, font
+                // pickers are appended to document.body outside the wrapper)
                 setTimeout(function() {
-                    if (isEditing && !editorEl.contains(document.activeElement)) {
-                        exitEditMode();
-                    }
-                }, 200);
+                    if (!isEditing) return;
+
+                    var active = document.activeElement;
+
+                    // Check if focus moved to something inside the wrapper
+                    if (wrapper.contains(active)) return;
+
+                    // Check if a tiptap popover is currently open (they are
+                    // appended to document.body so won't be inside wrapper)
+                    var openPopover = document.querySelector(
+                        '.tiptap-color-popover, .tiptap-font-popover, .tiptap-heading-popover, .tiptap-image-popover'
+                    );
+                    if (openPopover) return;
+
+                    exitEditMode();
+                }, 300);
             }
         });
 
@@ -800,7 +770,7 @@ jQuery(document).ready(function() {
         var originalTitle = titleEditable.dataset.original;
 
         titleEditable.addEventListener('blur', function() {
-            var newTitle = titleEditable.textContent.trim();
+            var newTitle = titleEditable.value.trim();
             if (newTitle && newTitle !== originalTitle) {
                 saveField('title', newTitle, function() {
                     originalTitle = newTitle;
@@ -822,16 +792,9 @@ jQuery(document).ready(function() {
                 titleEditable.blur();
             }
             if (e.key === 'Escape') {
-                titleEditable.textContent = originalTitle;
+                titleEditable.value = originalTitle;
                 titleEditable.blur();
             }
-        });
-
-        // Prevent pasting rich text
-        titleEditable.addEventListener('paste', function(e) {
-            e.preventDefault();
-            var text = (e.clipboardData || window.clipboardData).getData('text/plain');
-            document.execCommand('insertText', false, text);
         });
     }
 
@@ -841,7 +804,7 @@ jQuery(document).ready(function() {
 
     var iconInput = document.getElementById('wikiArticleIcon');
     if (iconInput && jQuery.fn.iconpicker) {
-        jQuery('.wiki-icon-btn').iconpicker({
+        jQuery('.titleIconPicker').iconpicker({
             component: '.btn > .iconPlaceholder',
             input: '.articleIcon',
             inputSearch: true,
@@ -918,10 +881,10 @@ jQuery(document).ready(function() {
             ]
         });
 
-        jQuery('.wiki-icon-btn').on('iconpickerSelected', function(event) {
+        jQuery('.titleIconPicker').on('iconpickerSelected', function(event) {
             var newIcon = event.iconpickerValue;
             jQuery('.articleIcon').val(newIcon);
-            jQuery('.wiki-icon-btn .iconPlaceholder > i').attr('class', newIcon);
+            jQuery('.titleIconPicker .iconPlaceholder > i').attr('class', newIcon);
 
             saveField('icon', newIcon, function() {
                 // Update sidebar tree icon
@@ -954,111 +917,60 @@ jQuery(document).ready(function() {
     }
 
     // ==========================================
-    // Status Dropdown
+    // Status Select
     // ==========================================
 
-    var statusDropdown = document.getElementById('wikiStatusDropdown');
-    if (statusDropdown) {
-        var statusOptions = statusDropdown.querySelectorAll('.wiki-status-option');
-        var statusPill = statusDropdown.querySelector('.wiki-status-pill');
-
-        statusOptions.forEach(function(option) {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                var newStatus = option.dataset.value;
-                var currentClass = statusPill.classList.contains('draft') ? 'draft' : 'published';
-
-                if (newStatus !== currentClass) {
-                    saveField('status', newStatus, function() {
-                        // Update pill appearance
-                        statusPill.classList.remove('draft', 'published');
-                        statusPill.classList.add(newStatus);
-
-                        // Update pill content
-                        if (newStatus === 'draft') {
-                            statusPill.innerHTML = '<i class="fa fa-pencil"></i> Draft <i class="fa fa-chevron-down"></i>';
-                        } else {
-                            statusPill.innerHTML = '<i class="fa fa-check"></i> Published <i class="fa fa-chevron-down"></i>';
+    var statusSelect = document.getElementById('wikiStatusSelect');
+    if (statusSelect) {
+        statusSelect.addEventListener('change', function() {
+            var newStatus = statusSelect.value;
+            saveField('status', newStatus, function() {
+                // Update sidebar tree draft indicator
+                var activeLink = document.querySelector('.wiki-tree-link.active');
+                if (activeLink) {
+                    var draftLabel = activeLink.querySelector('.wiki-tree-draft');
+                    if (newStatus === 'draft') {
+                        if (!draftLabel) {
+                            draftLabel = document.createElement('span');
+                            draftLabel.className = 'wiki-tree-draft';
+                            activeLink.appendChild(draftLabel);
                         }
-
-                        // Update sidebar tree draft indicator
-                        var activeLink = document.querySelector('.wiki-tree-link.active');
-                        if (activeLink) {
-                            var draftLabel = activeLink.querySelector('.wiki-tree-draft');
-                            if (newStatus === 'draft') {
-                                if (!draftLabel) {
-                                    draftLabel = document.createElement('span');
-                                    draftLabel.className = 'wiki-tree-draft';
-                                    activeLink.appendChild(draftLabel);
-                                }
-                                draftLabel.textContent = '(<?= $tpl->__('label.draft') ?>)';
-                            } else if (draftLabel) {
-                                draftLabel.remove();
-                            }
-                        }
-
-                        updateLastSaved();
-                    });
+                        draftLabel.textContent = '(<?= $tpl->__('label.draft') ?>)';
+                    } else if (draftLabel) {
+                        draftLabel.remove();
+                    }
                 }
+                updateLastSaved();
             });
         });
     }
 
     // ==========================================
-    // Milestone Dropdown
+    // Milestone Select
     // ==========================================
 
-    var milestoneDropdown = document.getElementById('wikiMilestoneDropdown');
-    if (milestoneDropdown) {
-        var milestoneOptions = milestoneDropdown.querySelectorAll('.wiki-milestone-option');
-        var milestoneBtn = milestoneDropdown.querySelector('.wiki-milestone-btn');
-        var milestoneText = milestoneBtn.querySelector('.milestone-text');
-
-        milestoneOptions.forEach(function(option) {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                var newMilestoneId = option.dataset.value;
-                var newMilestoneText = option.textContent.trim();
-
-                // Remove active class from all options
-                milestoneOptions.forEach(function(opt) {
-                    opt.classList.remove('active');
-                });
-                option.classList.add('active');
-
-                saveField('milestoneId', newMilestoneId, function() {
-                    // Reload page to update milestone card
-                    window.location.reload();
-                });
+    var milestoneSelect = document.getElementById('wikiMilestoneSelect');
+    if (milestoneSelect) {
+        milestoneSelect.addEventListener('change', function() {
+            var newMilestoneId = milestoneSelect.value;
+            saveField('milestoneId', newMilestoneId, function() {
+                // Reload page to update milestone card
+                window.location.reload();
             });
         });
     }
 
     // ==========================================
-    // Parent Dropdown
+    // Parent Select
     // ==========================================
 
-    var parentDropdown = document.getElementById('wikiParentDropdown');
-    if (parentDropdown) {
-        var parentOptions = parentDropdown.querySelectorAll('.wiki-parent-option');
-        var parentBtn = parentDropdown.querySelector('.wiki-milestone-btn');
-        var parentText = parentBtn.querySelector('.parent-text');
-
-        parentOptions.forEach(function(option) {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                var newParentId = option.dataset.value;
-                var newParentText = option.textContent.trim();
-
-                parentOptions.forEach(function(opt) {
-                    opt.classList.remove('active');
-                });
-                option.classList.add('active');
-
-                saveField('parent', newParentId, function() {
-                    // Reload page to update tree hierarchy
-                    window.location.reload();
-                });
+    var parentSelect = document.getElementById('wikiParentSelect');
+    if (parentSelect) {
+        parentSelect.addEventListener('change', function() {
+            var newParentId = parentSelect.value;
+            saveField('parent', newParentId, function() {
+                // Reload page to update tree hierarchy
+                window.location.reload();
             });
         });
     }

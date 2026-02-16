@@ -10,11 +10,27 @@
 @if(count($externalCalendars) > 0)
     <ul class="simpleList" style="margin-bottom: 20px;">
         @foreach($externalCalendars as $calendar)
-            <li style="padding: 10px; background: var(--secondary-background); border-radius: var(--box-radius-small); margin-bottom: 8px;">
-                <span class="indicatorCircle" style="background-color: {{ e($calendar['colorClass']) }};"></span>
-                <strong>{{ $calendar['name'] }}</strong>
-                @if(empty($calendar['managedByPlugin']))
-                    <span style="float: right;">
+            <li style="padding: 10px; background: var(--secondary-background); border-radius: var(--box-radius-small); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <span>
+                    <span class="indicatorCircle" style="background-color: {{ e($calendar['colorClass']) }};"></span>
+                    <strong>{{ $calendar['name'] }}</strong>
+                    @if(!empty($calendar['subtitle']))
+                        <br><small class="text-muted">{!! $calendar['subtitle'] !!}</small>
+                    @endif
+                </span>
+                <span style="white-space: nowrap;">
+                    @if(!empty($calendar['actions']))
+                        {{-- Plugin-provided per-calendar actions --}}
+                        @foreach($calendar['actions'] as $action)
+                            <a href="{{ $action['url'] }}"
+                               class="{{ ($action['type'] ?? 'link') === 'modal' ? 'formModal' : '' }}"
+                               data-tippy-content="{{ $action['tooltip'] ?? '' }}">
+                                <i class="{{ e($action['icon']) }}"></i>
+                            </a>
+                            &nbsp;
+                        @endforeach
+                    @elseif(empty($calendar['managedByPlugin']))
+                        {{-- Default iCal calendar actions --}}
                         <a href="#/calendar/editExternal/{{ $calendar['id'] }}" class="formModal" data-tippy-content="{{ __('label.edit') }}">
                             <i class="fa fa-pen"></i>
                         </a>
@@ -22,8 +38,8 @@
                         <a href="#/calendar/delExternalCalendar/{{ $calendar['id'] }}" class="delete" data-tippy-content="{{ __('label.delete') }}">
                             <i class="fa fa-trash"></i>
                         </a>
-                    </span>
-                @endif
+                    @endif
+                </span>
             </li>
         @endforeach
     </ul>

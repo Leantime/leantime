@@ -153,7 +153,12 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
     <?php
     $externalCalendars = $tpl->get('externalCalendars');
 
-foreach ($externalCalendars as $externalCalendar) { ?>
+foreach ($externalCalendars as $externalCalendar) {
+    // Skip plugin-managed calendars (e.g. CalDAV) -- their events are already in Leantime's calendar
+    if (! empty($externalCalendar['managedByPlugin'])) {
+        continue;
+    }
+    ?>
         eventSources.push(
             {
                 url: '<?= BASE_URL ?>/calendar/externalCal/<?= $externalCalendar['id'] ?>',

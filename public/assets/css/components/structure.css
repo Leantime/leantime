@@ -461,8 +461,6 @@ body {
 .maincontentinner {
     border-radius:var(--box-radius);
     background:var(--glass-background);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
     position:relative;
     padding:14px; /* account for 1px border */
     margin-bottom:10px;
