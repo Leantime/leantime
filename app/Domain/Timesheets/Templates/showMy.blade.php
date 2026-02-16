@@ -209,17 +209,7 @@ jQuery(document).ready(function(){
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMy" method="post" id="timesheetList">
-            <div class="btn-group viewDropDown pull-right">
-                <button class="btn dropdown-toggle" data-toggle="dropdown">
-                    {!! __('links.week_view') !!} {!! __('links.view') !!}
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
-                    <li><a href="{{ BASE_URL }}/timesheets/showMyList" >{!! __('links.list_view') !!}</a></li>
-                </ul>
-            </div>
-            <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
-
+            <div class="tw:flex tw:items-center tw:justify-between tw:flex-wrap tw:gap-2">
                 <div class="padding-top-sm">
                     <span>{{ __('label.week_from') }}</span>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
@@ -229,7 +219,15 @@ jQuery(document).ready(function(){
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
                 </div>
-
+                <div class="btn-group viewDropDown">
+                    <button class="btn dropdown-toggle" data-toggle="dropdown">
+                        {!! __('links.week_view') !!} {!! __('links.view') !!}
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
+                        <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
+                    </ul>
+                </div>
             </div>
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
                 <colgroup>
@@ -400,7 +398,7 @@ jQuery(document).ready(function(){
 
                 <tfoot>
                     <tr style="font-weight:bold;">
-                        <td colspan="3">{{ __('label.total') }}</td>
+                        <td colspan="3" style="text-align:right; padding-right:10px;">{{ __('label.total') }}</td>
                         @php $totalHours = 0; @endphp
                         @foreach ($colSum as $key => $col)
                             @php $totalHours += $col; @endphp

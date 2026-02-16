@@ -67,12 +67,30 @@
                 #myTimesheetList .form-group { margin: 0; }
                 #myTimesheetList .newEntryRow input[type="text"],
                 #myTimesheetList .newEntryRow select { margin: 0; }
+                /* Constrain Chosen.js dropdowns so long names truncate */
+                #myTimesheetList #projectSelect .chzn-container,
+                #myTimesheetList #ticketSelect .chzn-container { max-width: 100%; }
+                #myTimesheetList #projectSelect .chzn-single span,
+                #myTimesheetList #ticketSelect .chzn-single span {
+                    max-width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    display: block;
+                }
+                /* Also truncate existing-row project/ticket links */
+                #myTimesheetList td a {
+                    display: block;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
             </style>
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="myTimesheetList">
                 <colgroup>
                     <col width="110px" />
-                    <col />
-                    <col />
+                    <col width="200px" />
+                    <col width="200px" />
                     <col width="160px" />
                     <col width="70px" />
                     <col width="140px" />
