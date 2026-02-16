@@ -369,24 +369,20 @@ leantime.calendarController = (function () {
             calendar.setOption('locale', leantime.i18n.__("language.code"));
             calendar.render();
 
-            // Align day-selector grid with the time grid columns
-            var axis = calendarEl.querySelector('.fc-timegrid-axis');
-            var scroller = calendarEl.querySelector('.fc-scroller');
+            calendar.scrollToTime(Date.now());
+
+            // Scroll the day-selector so today is visible and centered
             var daySelector = calendarEl.closest('.minCalendar')
-                           ? calendarEl.closest('.minCalendar').querySelector('.day-selector')
-                           : null;
-            if (axis && daySelector) {
-                daySelector.style.paddingLeft = axis.offsetWidth + 'px';
-                // Account for scrollbar width
-                if (scroller) {
-                    var scrollbarW = scroller.offsetWidth - scroller.clientWidth;
-                    if (scrollbarW > 0) {
-                        daySelector.style.paddingRight = scrollbarW + 'px';
-                    }
+                ? calendarEl.closest('.minCalendar').querySelector('.day-selector')
+                : null;
+            if (daySelector) {
+                var todayEl = daySelector.querySelector('.day-button.today');
+                if (todayEl) {
+                    var containerWidth = daySelector.clientWidth;
+                    var scrollTarget = todayEl.offsetLeft - (containerWidth / 2) + (todayEl.offsetWidth / 2);
+                    daySelector.scrollLeft = Math.max(0, scrollTarget);
                 }
             }
-
-            calendar.scrollToTime(Date.now());
 
             var prevBtn = document.querySelector('.minCalendar .fc-prev-button');
             if (prevBtn) {

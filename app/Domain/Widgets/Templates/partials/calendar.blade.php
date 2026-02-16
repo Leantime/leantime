@@ -31,27 +31,23 @@
 </div>
 
 <div class="tw:h-full tw:flex tw:flex-col minCalendar">
-    <div class="fc-toolbar tw:z-10">
-        <div class="fc-left tw:flex">
-            <div class="day-selector" style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:8px; width:100%; box-sizing:border-box;">
-                @php
-                    $today = dtHelper()->userNow();
-                    $startOfWeek = dtHelper()->userNow()->startOf("week");
-                    $week = [];
-                    for($i = 0; $i < 7; $i++) {
-                        $date = $startOfWeek->modify("+$i days");
-                        $week[] = $date;
-                    }
-                @endphp
-                @foreach($week as $day)
-                    <button class="day-button tw:rounded-md tw:flex tw:flex-col tw:items-center tw:justify-center tw:text-sm {{ $day->format('Y-m-d') === $today->format('Y-m-d') ? 'today active' : '' }}" style="min-height:42px;" data-date="{{ $day->format('Y-m-d') }}">
-                        <span class="tw:text-xs">{{ $day->format('D') }}</span>
-                        <span class="tw:font-medium">{{ $day->format('d') }}</span>
-                    </button>
-                @endforeach
-            </div>
-        </div>
-        <div class="clear"></div>
+    <div class="day-selector">
+        @php
+            $today = dtHelper()->userNow();
+            $startOfWeek = dtHelper()->userNow()->startOf("week");
+            $startDate = $startOfWeek->modify("-14 days");
+            $dates = [];
+            for($i = 0; $i < 35; $i++) {
+                $date = $startDate->modify("+$i days");
+                $dates[] = $date;
+            }
+        @endphp
+        @foreach($dates as $day)
+            <button class="day-button {{ $day->format('Y-m-d') === $today->format('Y-m-d') ? 'today active' : '' }}" data-date="{{ $day->format('Y-m-d') }}">
+                <span class="day-name">{{ $day->format('D') }}</span>
+                <span class="day-num">{{ $day->format('d') }}</span>
+            </button>
+        @endforeach
     </div>
     <div class="minCalendarWrapper tw:flex-1 tw:min-h-0">
     </div>
