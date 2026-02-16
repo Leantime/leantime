@@ -137,16 +137,13 @@
                 const data = await response.json();
 
                 if (data.status === 'success' && data.preference) {
-                    await applyFilters(data.preference.filters);
-                    
-                    await new Promise(resolve => setTimeout(resolve, 400));
-                    
+                    await applyFilters(data.preference.filters);                    
+                    await new Promise(resolve => setTimeout(resolve, 400));                
                     activeProfileName = name;
                     localStorage.setItem('activeProfileName', name);
                     localStorage.setItem('activeProfileDateRange', data.preference.filters.dateRange || 'Custom');
                     localStorage.setItem('activeProfileLastApplied', new Date().toISOString());
                     updateActiveProfileDisplay();
-                    
                     jQuery('#form').submit();
                     return true;
                 } else {
@@ -188,7 +185,6 @@
     }
 
     function attachFilterChangeListeners() {
-        // Intercept filter changes and prevent propagation during edit mode
         jQuery('select[name="clientId"], select[name="userId"], select[name="kind"]').on('change', function(e) {
             if (isEditMode) {
                 e.stopPropagation();
@@ -223,12 +219,8 @@
     }
     
     function setupFormSubmitInterceptor() {
-        // Remove any existing jQuery handler
         jQuery('#form').off('submit.editMode');
-        
-        // Add jQuery event handler
         jQuery('#form').on('submit.editMode', function(e) {
-            
             if (isEditMode) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
@@ -337,7 +329,6 @@
         alert('Failed to save profile');
         return false;
     }
-    
     function applyDateRange(rangeName) {
 
         const dateInput = jQuery('input[name="dateFrom"]');
@@ -386,7 +377,6 @@
         }
 
         isApplyingFilters = true;
-        
         try {
             if (filters.dateRange && filters.dateRange !== 'Custom') {
                 const applied = applyDateRange(filters.dateRange);
@@ -417,7 +407,6 @@
             if (filters.kind) {
                 jQuery('select[name="kind"]').val(filters.kind);
             }
-            
             jQuery('input[name="invEmpl"]').prop('checked', filters.invEmpl === '1');
             jQuery('input[name="invComp"]').prop('checked', filters.invComp === '1');
             jQuery('input[name="paid"]').prop('checked', filters.paid === '1');
