@@ -12,185 +12,296 @@
 </div>
 <!-- page header -->
 
-
 <div class="maincontent">
     <div class="maincontentinner">
         {!! $tpl->displayNotification() !!}
 
-        <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="form" name="form">
-            <div class="filterWrapper tw:relative">
-                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left">{!! __('links.filter') !!} (1)</a>
-                <div class="filterBar" style="display:none; top:30px;">
-
-                    <div class="filterBoxLeft">
-                        <label for="dateFrom">{{ __('label.date_from') }}</label>
-                        <input type="text"
-                               id="dateFrom"
-                               class="dateFrom"
-                               name="dateFrom"
-                               value="{{ $tpl->get('dateFrom')->formatDateForUser() }}"
-                               style="width:110px"/>
-                    </div>
-                    <div class="filterBoxLeft">
-                        <label for="dateTo">{{ __('label.date_to') }}</label>
-                        <input type="text"
-                               id="dateTo"
-                               class="dateTo"
-                               name="dateTo"
-                               value="{{ $tpl->get('dateTo')->formatDateForUser() }}"
-                               style="width:110px" />
-                    </div>
-
-                    <div class="filterBoxLeft">
-                        <label for="kind">{{ __('label.type') }}</label>
-                        <select id="kind" name="kind" onchange="submit();">
-                            <option value="all">{{ __('label.all_types') }}</option>
-                            @foreach ($tpl->get('kind') as $key => $row)
-                                <option value="{{ $key }}"
-                                    @if ($key == $tpl->get('actKind'))
-                                        selected="selected"
-                                    @endif
-                                >{{ __($row) }}</option>
-                            @endforeach
-
-                        </select>
-                    </div>
-                    <div class="filterBoxLeft">
-                        <input type="submit" value="{{ __('buttons.search') }}" class="reload" />
+        <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="timesheetListForm" name="timesheetListForm">
+            <div class="tw:flex tw:items-center tw:justify-between tw:flex-wrap tw:gap-2">
+                <div class="padding-top-sm tw:flex tw:items-center tw:gap-2 tw:flex-wrap">
+                    <span>{{ __('label.date_from') }}</span>
+                    <input type="text"
+                           id="dateFrom"
+                           class="dateFrom"
+                           name="dateFrom"
+                           autocomplete="off"
+                           value="{{ $tpl->get('dateFrom')->formatDateForUser() }}"
+                           style="width:110px; margin-top:5px;" />
+                    <span>{{ __('label.until') }}</span>
+                    <input type="text"
+                           id="dateTo"
+                           class="dateTo"
+                           name="dateTo"
+                           autocomplete="off"
+                           value="{{ $tpl->get('dateTo')->formatDateForUser() }}"
+                           style="width:110px; margin-top:5px;" />
+                    <select id="kind" name="kind" onchange="submit();" style="margin-top:5px;">
+                        <option value="all">{{ __('label.all_types') }}</option>
+                        @foreach ($tpl->get('kind') as $key => $row)
+                            <option value="{{ $key }}"
+                                @if ($key == $tpl->get('actKind'))
+                                    selected="selected"
+                                @endif
+                            >{{ __($row) }}</option>
+                        @endforeach
+                    </select>
+                    <input type="submit" value="{{ __('buttons.search') }}" class="reload" style="margin-top:5px;" />
+                </div>
+                <div class="tw:flex tw:items-center tw:gap-2">
+                    <a href="javascript:void(0);" id="addHoursBtn" class="btn btn-primary"><i class="fa fa-plus"></i> {{ __('label.add_hours') }}</a>
+                    <div class="btn-group viewDropDown">
+                        <button class="btn dropdown-toggle" data-toggle="dropdown">
+                            {!! __('links.list_view') !!} {!! __('links.view') !!}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ BASE_URL }}/timesheets/showMy">{!! __('links.week_view') !!}</a></li>
+                            <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="pull-right">
-                <div class="btn-group viewDropDown">
-                    <button class="btn dropdown-toggle" data-toggle="dropdown">{!! __('links.list_view') !!} {!! __('links.view') !!}</button>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ BASE_URL }}/timesheets/showMy" >{!! __('links.week_view') !!}</a></li>
-                        <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
-                    </ul>
-                </div>
-            </div>
 
-            <div class="pull-right" style="margin-right:3px;">
-                <div id="tableButtons" style="display:inline-block"></div>
-            </div>
-
-            <div class="clearfix"></div>
-
-            <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
+            <style>
+                #myTimesheetList th,
+                #myTimesheetList td { padding: 8px; vertical-align: middle; }
+                #myTimesheetList .form-group { margin: 0; }
+                #myTimesheetList .newEntryRow input[type="text"],
+                #myTimesheetList .newEntryRow select { margin: 0; }
+            </style>
+            <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="myTimesheetList">
                 <colgroup>
-                      <col class="con0" width="100px"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1"/>
+                    <col width="110px" />
+                    <col />
+                    <col />
+                    <col width="160px" />
+                    <col width="70px" />
+                    <col width="140px" />
+                    <col width="90px" />
                 </colgroup>
                 <thead>
                     <tr>
-                        <th>{{ __('label.id') }}</th>
                         <th>{{ __('label.date') }}</th>
-                        <th>{{ __('label.hours') }}</th>
-                        <th>{{ __('label.plan_hours') }}</th>
-                        <th>{{ __('label.difference') }}</th>
-                        <th>{{ __('label.ticket') }}</th>
                         <th>{{ __('label.project') }}</th>
-                        <th>{{ __('label.employee') }}</th>
+                        <th>{{ __('label.ticket') }}</th>
                         <th>{{ __('label.type') }}</th>
+                        <th>{{ __('label.hours') }}</th>
                         <th>{{ __('label.description') }}</th>
-                        <th>{{ __('label.invoiced') }}</th>
-                        <th>{{ __('label.invoiced_comp') }}</th>
-                        <th>{{ __('label.paid') }}</th>
+                        <th>{{ __('label.billing') }}</th>
                     </tr>
-
                 </thead>
                 <tbody>
+                    {{-- Existing timesheet entries --}}
+                    @php $sum = 0; @endphp
+                    @if (is_array($tpl->get('allTimesheets')))
+                        @foreach ($tpl->get('allTimesheets') as $row)
+                            @php
+                                $sum += $row['hours'];
+                                $isLocked = ($row['invoicedComp'] == '1' || $row['paid'] == '1');
+                                $inputNameKey = $row['ticketId'] . '|' . $row['kind'] . '|' . format($row['workDate'])->formatDateForUser() . '|' . format($row['workDate'])->getTimestamp();
+                            @endphp
+                            <tr class="timesheetRow">
+                                <td>{{ format($row['workDate'])->date() }}</td>
+                                <td>
+                                    <a href="{{ BASE_URL }}/projects/showProject/{{ $row['projectId'] }}">{{ e($row['name']) }}</a>
+                                </td>
+                                <td>
+                                    <a href="#/tickets/showTicket/{{ $row['ticketId'] }}">{{ e($row['headline']) }}</a>
+                                </td>
+                                <td>{{ __($tpl->get('kind')[$row['kind']] ?? '') }}</td>
+                                <td>
+                                    <input type="text"
+                                           class="hourCell"
+                                           name="{{ $inputNameKey }}"
+                                           value="{{ e($row['hours'] ?: 0) }}"
+                                           style="width:50px; text-align:right;"
+                                           @if ($isLocked) disabled="disabled" @endif
+                                    />
+                                </td>
+                                <td style="max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+                                    @if (!empty($row['description'])) data-tippy-content="{{ e($row['description']) }}" @endif
+                                >{{ e($row['description']) }}</td>
+                                <td>
+                                    @if ($row['paid'] == '1')
+                                        <span class="badge badge-success">{{ __('label.paid') }}</span>
+                                    @elseif ($row['invoicedComp'] == '1')
+                                        <span class="badge badge-info">{{ __('label.approved') }}</span>
+                                    @elseif ($row['invoicedEmpl'] == '1')
+                                        <span class="badge badge-warning">{{ __('label.invoiced') }}</span>
+                                    @else
+                                        <span class="badge">{{ __('label.pending') }}</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
 
-                @php
-                    $sum = 0;
-                    $billableSum = 0;
-                @endphp
-
-                @foreach ($tpl->get('allTimesheets') as $row)
-                    @php $sum = $sum + $row['hours']; @endphp
-                    <tr>
-                        <td data-order="{{ e($row['id']) }}">
-                            <a href="{{ BASE_URL }}/timesheets/editTime/{{ $row['id'] }}" class="editTimeModal" id="editTimesheet-{{ $row['id'] }}">#{{ $row['id'] }} - {{ __('label.edit') }} </a></td>
-                        <td data-order="{{ format($row['workDate'])->isoDateTime() }}">
-                            {{ format($row['workDate'])->date() }}
-                            {{ format($row['workDate'])->time() }}
-                        </td>
-                        <td data-order="{{ e($row['hours']) }}">
-                            {{ e($row['hours'] ?: 0) }}
-                        </td>
-                        <td data-order="{{ e($row['planHours']) }}">
-                            {{ e($row['planHours'] ?: 0) }}
-                        </td>
-                        @php $diff = ($row['planHours'] ?: 0) - ($row['hours'] ?: 0); @endphp
-                        <td data-order="{{ $diff }}">
-                            {{ $diff }}
-                        </td>
-                        <td data-order="{{ e($row['headline']) }}">
-                            <a href="#/tickets/showTicket/{{ $row['ticketId'] }}">{{ e($row['headline']) }}</a>
-                        </td>
-
-                        <td data-order="{{ e($row['name']) }}">
-                            <a href="{{ BASE_URL }}/projects/showProject/{{ $row['projectId'] }}">{{ e($row['name']) }}</a>
+                    {{-- New entry row (always visible at bottom, like week view) --}}
+                    <tr class="timesheetRow newEntryRow" id="newEntryRow">
+                        <td>
+                            <input type="text"
+                                   id="newEntryDate"
+                                   name="newDate"
+                                   placeholder="{{ __('language.dateformat') }}"
+                                   autocomplete="off"
+                                   style="width:100px" />
                         </td>
                         <td>
-                            {{ sprintf(__('text.full_name'), e($row['firstname']), e($row['lastname'])) }}
+                            <div class="form-group" id="projectSelect">
+                                <select data-placeholder="{{ __('input.placeholders.choose_project') }}" class="project-select" style="width:100%;">
+                                    <option value=""></option>
+                                    @foreach ($tpl->get('allProjects') as $projectRow)
+                                        {!! sprintf(
+                                            $tpl->dispatchTplFilter(
+                                                'client_product_format',
+                                                '<option value="%s">%s / %s</option>'
+                                            ),
+                                            ...$tpl->dispatchTplFilter(
+                                                'client_product_values',
+                                                [
+                                                    $projectRow['id'],
+                                                    $tpl->escape($projectRow['clientName']),
+                                                    $tpl->escape($projectRow['name']),
+                                                ]
+                                            )
+                                        ) !!}
+                                    @endforeach
+                                </select>
+                            </div>
                         </td>
                         <td>
-                            {{ __($tpl->get('kind')[$row['kind']]) }}
+                            <div class="form-group" id="ticketSelect">
+                                <select data-placeholder="{{ __('input.placeholders.choose_todo') }}" class="ticket-select" name="newTicketId" style="width:100%;">
+                                    <option value=""></option>
+                                    @foreach ($tpl->get('allTickets') as $ticketRow)
+                                        {!! sprintf(
+                                            $tpl->dispatchTplFilter(
+                                                'todo_format',
+                                                '<option value="%1$s" data-value="%2$s" class="project_%2$s">%1$s / %3$s</option>'
+                                            ),
+                                            ...$tpl->dispatchTplFilter(
+                                                'todo_values',
+                                                [
+                                                    $ticketRow['id'],
+                                                    $ticketRow['projectId'],
+                                                    $tpl->escape($ticketRow['headline']),
+                                                ]
+                                            )
+                                        ) !!}
+                                    @endforeach
+                                </select>
+                            </div>
                         </td>
                         <td>
-                            {{ e($row['description']) }}
+                            <select class="kind-select" name="newKindId" style="width:100%;">
+                                @foreach ($tpl->get('kind') as $key => $kindRow)
+                                    <option value="{{ $key }}">{{ __($kindRow) }}</option>
+                                @endforeach
+                            </select>
                         </td>
-                        <td data-order="@if ($row['invoicedEmpl'] == '1'){{ format(value: $row['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date() }}@endif">
-                            @if ($row['invoicedEmpl'] == '1')
-                                {{ format(value: $row['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date() }}
-                            @else
-                                {{ __('label.pending') }}
-                            @endif
+                        <td>
+                            <input type="text"
+                                   class="hourCell"
+                                   id="newEntryHours"
+                                   name="newHours"
+                                   value="0"
+                                   style="width:50px; text-align:right;" />
                         </td>
-                        <td data-order="@if ($row['invoicedComp'] == '1'){{ format(value: $row['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date() }}@endif">
-                            @if ($row['invoicedComp'] == '1')
-                                {{ format(value: $row['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date() }}
-                            @else
-                                {{ __('label.pending') }}
-                            @endif
+                        <td>
+                            <input type="text" name="newDescription" placeholder="{{ __('label.description') }}" style="width:100%;" />
                         </td>
-                        <td data-order="@if ($row['paid'] == '1'){{ format(value: $row['paidDate'], fromFormat: FromFormat::DbDate)->date() }}@endif">
-                            @if ($row['paid'] == '1')
-                                {{ format(value: $row['paidDate'], fromFormat: FromFormat::DbDate)->date() }}
-                            @else
-                                {{ __('label.pending') }}
-                            @endif
-                        </td>
+                        <td>--</td>
                     </tr>
-                @endforeach
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <td></td>
-                        <td colspan="1"><strong>{{ __('label.total_hours') }}</strong></td>
-                        <td colspan="11"><strong>{{ $sum }}</strong></td>
+                    <tr style="font-weight:bold;">
+                        <td colspan="4" style="text-align:right; padding-right:10px;">{{ __('label.total') }}</td>
+                        <td id="listTotalHours" style="text-align:center;">{{ $sum }}</td>
+                        <td colspan="2"></td>
                     </tr>
                 </tfoot>
             </table>
+            <div class="right">
+                <input type="submit" name="saveTimeSheet" class="saveTimesheetBtn btn btn-primary" value="{{ __('buttons.save') }}" />
+            </div>
+            <div class="clearall"></div>
         </form>
     </div>
 </div>
 
 <script type="text/javascript">
     jQuery(document).ready(function(){
-        leantime.timesheetsController.initTimesheetsTable();
-        leantime.timesheetsController.initEditTimeModal();
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1);
+
+        // Init Chosen.js for project and ticket selectors
+        jQuery(".project-select").chosen();
+        jQuery(".ticket-select").chosen();
+
+        // Add Hours button scrolls to and highlights the new entry row
+        jQuery("#addHoursBtn").click(function () {
+            var $row = jQuery("#newEntryRow");
+            jQuery("html, body").animate({ scrollTop: $row.offset().top - 100 }, 200);
+            $row.css("background-color", "var(--accent1)");
+            setTimeout(function () {
+                $row.css("background-color", "");
+            }, 800);
+            jQuery("#newEntryDate").focus();
+        });
+
+        // Project filters ticket list
+        jQuery(".project-select").change(function () {
+            jQuery(".ticket-select").val("");
+            jQuery(".ticket-select option").show();
+            jQuery("#ticketSelect .chosen-results li").show();
+            var selectedValue = jQuery(this).find("option:selected").val();
+            if (selectedValue) {
+                jQuery(".ticket-select option").not(".project_" + selectedValue).not('[value=""]').hide();
+                jQuery("#ticketSelect .chosen-results li").not(".project_" + selectedValue).hide();
+            }
+            jQuery(".ticket-select").chosen("destroy").chosen();
+        });
+
+        // Selecting a ticket auto-selects its project
+        jQuery(".ticket-select").change(function () {
+            var projectId = jQuery(this).find("option:selected").attr("data-value");
+            if (projectId) {
+                jQuery(".project-select").val(projectId);
+                jQuery(".project-select").chosen("destroy").chosen();
+                jQuery(".ticket-select").chosen("destroy").chosen();
+            }
+        });
+
+        // Date picker for new entry row
+        jQuery("#newEntryDate").datepicker({
+            dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
+            dayNames: leantime.i18n.__("language.dayNames").split(","),
+            dayNamesMin: leantime.i18n.__("language.dayNamesMin").split(","),
+            dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+            monthNames: leantime.i18n.__("language.monthNames").split(","),
+            monthNamesShort: leantime.i18n.__("language.monthNamesShort").split(","),
+            currentText: leantime.i18n.__("language.currentText"),
+            closeText: leantime.i18n.__("language.closeText"),
+            buttonText: leantime.i18n.__("language.buttonText"),
+            isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+            nextText: leantime.i18n.__("language.nextText"),
+            prevText: leantime.i18n.__("language.prevText"),
+            weekHeader: leantime.i18n.__("language.weekHeader"),
+            firstDay: 1
+        });
+
+        // Live total calculation
+        function updateTotal() {
+            var total = 0;
+            jQuery("#myTimesheetList .hourCell").each(function () {
+                var val = parseFloat(jQuery(this).val());
+                if (!isNaN(val)) {
+                    total = Math.round((total + val) * 100) / 100;
+                }
+            });
+            jQuery("#listTotalHours").text(total);
+        }
+
+        jQuery("#myTimesheetList").on("change keyup", ".hourCell", function () {
+            updateTotal();
+        });
     });
 </script>

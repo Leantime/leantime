@@ -110,9 +110,107 @@ leantime.timesheetsController = (function () {
         jQuery(".editTimeModal").nyroModal(canvasoptions);
     };
 
+    var initMyListEditable = function () {
+        // Toggle new entry row
+        jQuery("#toggleAddHours").click(function () {
+            var $row = jQuery(".newEntryRow");
+            $row.toggle();
+            if ($row.is(":visible")) {
+                jQuery("#newEntryDate").focus();
+            }
+        });
+
+        // Chosen.js for project and ticket selectors
+        jQuery(".project-select").chosen();
+        jQuery(".ticket-select").chosen();
+
+        // Project filters ticket list
+        jQuery(".project-select").change(function () {
+            jQuery(".ticket-select").removeAttr("selected");
+            jQuery(".ticket-select").val("");
+            jQuery(".ticket-select").trigger("liszt:updated");
+
+            jQuery(".ticket-select option").show();
+            jQuery("#ticketSelect .chosen-results li").show();
+            var selectedValue = jQuery(this).find("option:selected").val();
+            if (selectedValue) {
+                jQuery(".ticket-select option").not(".project_" + selectedValue).not('[value=""]').hide();
+                jQuery("#ticketSelect .chosen-results li").not(".project_" + selectedValue).hide();
+            }
+            jQuery(".ticket-select").chosen("destroy").chosen();
+        });
+
+        // Selecting a ticket auto-selects its project
+        jQuery(".ticket-select").change(function () {
+            var selectedValue = jQuery(this).find("option:selected").attr("data-value");
+            if (selectedValue) {
+                jQuery(".project-select option[value=" + selectedValue + "]").attr("selected", "selected");
+                jQuery(".project-select").trigger("liszt:updated");
+                jQuery(".ticket-select").chosen("destroy").chosen();
+            }
+        });
+
+        // Date picker for new entry row
+        jQuery("#newEntryDate").datepicker({
+            dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
+            dayNames: leantime.i18n.__("language.dayNames").split(","),
+            dayNamesMin: leantime.i18n.__("language.dayNamesMin").split(","),
+            dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+            monthNames: leantime.i18n.__("language.monthNames").split(","),
+            monthNamesShort: leantime.i18n.__("language.monthNamesShort").split(","),
+            currentText: leantime.i18n.__("language.currentText"),
+            closeText: leantime.i18n.__("language.closeText"),
+            buttonText: leantime.i18n.__("language.buttonText"),
+            isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+            nextText: leantime.i18n.__("language.nextText"),
+            prevText: leantime.i18n.__("language.prevText"),
+            weekHeader: leantime.i18n.__("language.weekHeader"),
+            firstDay: 1,
+            onSelect: function (dateText, inst) {
+                updateNewEntryInputName();
+            }
+        });
+
+        // Update the hidden name on the new entry hours input when date changes
+        function updateNewEntryInputName() {
+            var dateVal = jQuery("#newEntryDate").val();
+            var kindVal = jQuery(".kind-select").val() || "GENERAL_BILLABLE";
+
+            if (dateVal) {
+                var dateObj = jQuery("#newEntryDate").datepicker("getDate");
+                var timestamp = Math.floor(dateObj.getTime() / 1000);
+                jQuery("#newEntryHours").attr("name", "new|" + kindVal + "|" + dateVal + "|" + timestamp);
+            } else {
+                jQuery("#newEntryHours").attr("name", "new|" + kindVal + "|false|false");
+            }
+        }
+
+        // Update name when kind changes
+        jQuery(".kind-select").change(function () {
+            updateNewEntryInputName();
+        });
+
+        // Live total calculation
+        function updateTotal() {
+            var total = 0;
+            jQuery("#myTimesheetList .hourCell").each(function () {
+                var val = parseFloat(jQuery(this).val());
+                if (!isNaN(val)) {
+                    total = Math.round((total + val) * 100) / 100;
+                }
+            });
+            jQuery("#listTotalHours").text(total);
+        }
+
+        jQuery("#myTimesheetList").on("change keyup", ".hourCell", function () {
+            updateTotal();
+        });
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         initTimesheetsTable:initTimesheetsTable,
         initEditTimeModal:initEditTimeModal,
+        initMyListEditable:initMyListEditable,
     };
 })();
