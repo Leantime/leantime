@@ -1,8 +1,8 @@
 <div style="max-width:900px;">
     <form class="onboardingModal" method="post" action="{{ BASE_URL }}/help/firstLogin?step={{ $nextStep }}">
         <input type="hidden" name="currentStep" value="{{ $currentStep }}" />
-        <div class="row">
-            <div class="col-md-8">
+        <div class="tw:grid tw:grid-cols-[2fr_1fr] tw:gap-6">
+            <div>
                 <h1>{{  __('headlines.make_it_happen') }}</h1>
                 <p>{!!  __('text.structured_project_thinking') !!}</p>
                 <br />
@@ -16,16 +16,14 @@
                 <textarea id="whyImportant" name="whyImportant" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></textarea>
 
             </div>
-            <div class="col-md-4">
+            <div>
                 <div class='svgContainer' style="width:400px; margin-top:40px;">
                     {!! file_get_contents(ROOT . "/dist/images/svg/undraw_goals_re_lu76.svg") !!}
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12 tw:text-right">
-                <input type="submit" value="{{ __('buttons.next') }}" />
-            </div>
+        <div class="tw:text-right">
+            <input type="submit" value="{{ __('buttons.next') }}" />
         </div>
     </form>
 </div>
