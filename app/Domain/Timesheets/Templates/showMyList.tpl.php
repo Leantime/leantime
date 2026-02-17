@@ -14,18 +14,17 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 <script src="<?= BASE_URL ?>/assets/js/app/core/datePickers.js"></script>
 
 <style>
-/* Match All Timesheets filter bar: same height and pill styling */
 .maincontentinner .filterTable .filter-select,
 .maincontentinner .filterTable .filter-input {
     height: 30px;
     min-height: 30px;
     padding: 4px 14px;
     border-radius: 20px;
-    border: 1px solid var(--neutral, #d0d5dd);
+    border: 1px solid var(--main-border-color);
     font-size: 14px;
     line-height: 20px;
-    background: var(--secondary-background, #fff);
-    color: var(--main-font-color, #333);
+    background-color: var(--secondary-background);
+    color: var(--primary-font-color);
     max-width: 200px;
     box-sizing: border-box;
 }
@@ -40,7 +39,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
     display: block;
     font-weight: bold;
     margin-bottom: 4px;
-    color: var(--main-font-color, #333);
+    color: var(--primary-font-color);
 }
 .maincontentinner .filterTable td {
     vertical-align: top;
