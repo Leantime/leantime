@@ -147,13 +147,12 @@ jQuery(document).ready(function(){
                                  aria-label="{{ isset($emptyColumns[$key]) ? 'Empty column' : htmlspecialchars($statusRow['name']) . ' column items' }}"
                                  role="list">
 
-                                @php
-                                    $statusId = $key;
-                                    $swimlaneKey = $group['id'] ?? null;
-                                    $isEmpty = isset($emptyColumns[$key]);
-                                    $currentGroupBy = $searchCriteria['groupBy'] ?? null;
-                                    include app('path') . '/Domain/Tickets/Templates/partials/quickadd-form.inc.php';
-                                @endphp
+                                @include('tickets::partials.quickadd-form', [
+                                    'statusId' => $key,
+                                    'swimlaneKey' => $group['id'] ?? null,
+                                    'isEmpty' => isset($emptyColumns[$key]),
+                                    'currentGroupBy' => $searchCriteria['groupBy'] ?? null,
+                                ])
 
                                 @foreach($allTickets as $row)
                                     @if($row['status'] == $key)
