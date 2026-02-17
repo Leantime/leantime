@@ -99,19 +99,19 @@
 
             <?php echo $tpl->displayNotification(); ?>
 
-            <div class="row">
-                <div class="col-md-3">
+            <div class="tw:flex tw:justify-between tw:items-center">
+                <div>
                     @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
                         <a href="#/goalcanvas/editCanvasItem?type={{ $elementName }}" class="btn btn-primary"
                             id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</a>
                     @endif
                 </div>
 
-                <div class="col-md-6 center">
+                <div>
                 </div>
 
-                <div class="col-md-3">
-                    <div class="pull-right">
+                <div>
+                    <div class="tw:float-right">
                         <div class="btn-group viewDropDown">
                             @if (count($allCanvas) > 0 && !empty($statusLabels))
                                 @php
@@ -181,9 +181,7 @@
 
             @if (count($allCanvas) > 0)
                 <div id="sortableCanvasKanban" class="sortableTicketList disabled tw:pt-4">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row">
+                    <div class="tw:grid tw:grid-cols-3 tw:gap-4">
                                 @foreach ($canvasItems as $row)
                                     @php
                                         $filterStatus = $filter['status'] ?? 'all';
@@ -198,10 +196,8 @@
                                             $comments = app()->make(\Leantime\Domain\Comments\Repositories\Comments::class);
                                             $nbcomments = $comments->countComments(moduleId: $row['id']);
                                         @endphp
-                                        <div class="col-md-4">
+                                        <div>
                                             <div class="ticketBox" id="item_{{ $row['id'] }}">
-                                                <div class="row">
-                                                    <div class="col-md-12">
                                                         <div class="inlineDropDownContainer tw:float-right">
                                                             @if ($login::userIsAtLeast($roles::$editor))
                                                                 <a href="javascript:void(0)"
@@ -240,12 +236,8 @@
                                                 }
                                             @endphp
 
-                                            <div class="row">
-                                                <div class="col-md-4"></div>
-                                                <div class="col-md4 center">
-                                                    <small>{{ sprintf(__('text.percent_complete'), $percentDone) }}</small>
-                                                </div>
-                                                <div class="col-md-4"></div>
+                                            <div class="tw:text-center">
+                                                <small>{{ sprintf(__('text.percent_complete'), $percentDone) }}</small>
                                             </div>
                                             <div class="progress tw:mb-0">
                                                 <div class="progress-bar progress-bar-success"
@@ -256,14 +248,14 @@
                                                         class="sr-only">{{ sprintf(__('text.percent_complete'), $percentDone) }}</span>
                                                 </div>
                                             </div>
-                                            <div class="row tw:pb-0">
-                                                <div class="col-md-4">
+                                            <div class="tw:grid tw:grid-cols-3 tw:pb-0">
+                                                <div>
                                                     <small>Start:<br />{{ $metricTypeFront . $row['startValue'] . $metricTypeBack }}</small>
                                                 </div>
-                                                <div class="col-md-4 center">
+                                                <div class="tw:text-center">
                                                     <small>{{ __('label.current') }}:<br />{{ $metricTypeFront . $row['currentValue'] . $metricTypeBack }}</small>
                                                 </div>
-                                                <div class="col-md-4 tw:text-right">
+                                                <div class="tw:text-right">
                                                     <small>{{ __('label.goal') }}:<br />{{ $metricTypeFront . $row['endValue'] . $metricTypeBack }}</small>
                                                 </div>
                                             </div>
@@ -385,9 +377,6 @@
                                                 <small>{{ $nbcomments }}</small>
                                             </div>
 
-                                        </div>
-                                    </div>
-
                                     @if ($row['milestoneHeadline'] != '')
                                         <br />
                                         <div hx-trigger="load" hx-indicator=".htmx-indicator"
@@ -405,12 +394,10 @@
                 </div>
                 <br />
             </div>
-        </div>
-    </div>
 
     @if (count($canvasItems) == 0)
         <br /><br />
-        <div class='center'>
+        <div class='tw:text-center'>
             <div class='svgContainer'>
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
                         </div>
@@ -431,7 +418,7 @@
             @if (count($allCanvas) > 0)
             @else
                 <br /><br />
-                <div class='center'>
+                <div class='tw:text-center'>
                     <div class='svgContainer'>
                         {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
                     </div>
@@ -449,7 +436,7 @@
             @endif
 
             @if (!empty($disclaimer) && count($allCanvas) > 0)
-                <small class="align-center">{{ $disclaimer }}</small>
+                <small class="tw:text-center">{{ $disclaimer }}</small>
             @endif
 
             {!! $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render() !!}

@@ -22,8 +22,8 @@
             <input type="hidden" name="milestoneId" value="{{ $canvasItem['milestoneId'] ?? '' }}">
             <input type="hidden" name="changeItem" value="1">
 
-            <div class="row">
-                <div class="col-md-8">
+            <div class="tw:grid tw:grid-cols-[2fr_1fr] tw:gap-6">
+                <div>
                     <label>{{ __('label.what_is_your_goal') }}</label>
                     <input type="text" name="title" value="{{ $canvasItem['title'] }}" style="width:100%"><br>
 
@@ -46,25 +46,25 @@
                             style="width:100%"><br>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-3">
+                    <div class="tw:grid tw:grid-cols-4 tw:gap-4">
+                        <div>
                             <label>{{ __('label.starting_value') }}</label>
                             <input type="number" step="0.01" name="startValue" value="{{ $canvasItem['startValue'] }}"
                                 style="width:105px">
                         </div>
-                        <div class="col-md-3">
+                        <div>
                             <label>{{ __('label.current_value') }}</label>
                             <input type="number" step="0.01" name="currentValue" id="currentValueField"
                                 value="{{ $canvasItem['currentValue'] }}"
                                 @if ($canvasItem['setting'] == 'linkAndReport') readonly data-tippy-content="Current value calculated from child goals" @endif
                                 style="width:105px">
                         </div>
-                        <div class="col-md-3">
+                        <div>
                             <label>{{ __('label.goal_value') }}</label>
                             <input type="number" step="0.01" name="endValue" value="{{ $canvasItem['endValue'] }}"
                                 style="width:105px">
                         </div>
-                        <div class="col-md-3">
+                        <div>
                             <label>{{ __('label.type') }}</label>
                             <select name="metricType">
                                 <option value="number" @if ($canvasItem['metricType'] == 'number') selected @endif>
@@ -96,7 +96,7 @@
                     @endif
                 </div>
 
-                <div class="col-md-4">
+                <div>
                     @if (!empty($statusLabels))
                         <label>{{ __("label.status") }}</label>
                         <select name="status" style="width: 50%" id="statusCanvas">
@@ -120,41 +120,35 @@
                         @if ($canvasItem['milestoneId'] == '')
                             <center>
                                 <h4>{{ __("headlines.no_milestone_link") }}</h4>
-                                <div class="row" id="milestoneSelectors">
+                                <div id="milestoneSelectors">
                                     @if ($login::userIsAtLeast($roles::$editor))
-                                        <div class="col-md-12">
-                                            <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('new');">{{ __("links.create_link_milestone") }}</a>
-                                            @if (count($tpl->get('milestones')) > 0)
-                                                | <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('existing');">{{ __("links.link_existing_milestone") }}</a>
-                                            @endif
-                                        </div>
+                                        <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('new');">{{ __("links.create_link_milestone") }}</a>
+                                        @if (count($tpl->get('milestones')) > 0)
+                                            | <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('existing');">{{ __("links.link_existing_milestone") }}</a>
+                                        @endif
                                     @endif
                                 </div>
-                                <div class="row" id="newMilestone" style="display:none;">
-                                    <div class="col-md-12">
-                                        <input type="text" width="50%" name="newMilestone"></textarea><br />
-                                        <input type="hidden" name="type" value="milestone" />
-                                        <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
-                                        <input type="button" value="{{ __("buttons.save") }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                        <input type="button" value="{{ __("buttons.cancel") }}" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
-                                    </div>
+                                <div id="newMilestone" style="display:none;">
+                                    <input type="text" width="50%" name="newMilestone"></textarea><br />
+                                    <input type="hidden" name="type" value="milestone" />
+                                    <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
+                                    <input type="button" value="{{ __("buttons.save") }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
+                                    <input type="button" value="{{ __("buttons.cancel") }}" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                                 </div>
 
-                                <div class="row" id="existingMilestone" style="display:none;">
-                                    <div class="col-md-12">
-                                        <select data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
-                                            <option value=""></option>
-                                            @foreach ($tpl->get('milestones') as $milestoneRow)
-                                                <option value="{{ $milestoneRow->id }}" {{ isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id) ? 'selected' : '' }}>
-                                                    {{ $milestoneRow->headline }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <input type="hidden" name="type" value="milestone" />
-                                        <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
-                                        <input type="button" value="{{ __("buttons.save") }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                        <input type="button" value="{{ __("buttons.cancel") }}" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
-                                    </div>
+                                <div id="existingMilestone" style="display:none;">
+                                    <select data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
+                                        <option value=""></option>
+                                        @foreach ($tpl->get('milestones') as $milestoneRow)
+                                            <option value="{{ $milestoneRow->id }}" {{ isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id) ? 'selected' : '' }}>
+                                                {{ $milestoneRow->headline }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <input type="hidden" name="type" value="milestone" />
+                                    <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
+                                    <input type="button" value="{{ __("buttons.save") }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
+                                    <input type="button" value="{{ __("buttons.cancel") }}" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                                 </div>
                             </center>
                         @else

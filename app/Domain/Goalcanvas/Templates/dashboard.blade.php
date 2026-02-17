@@ -63,8 +63,8 @@ foreach ($allCanvas as $canvasRow) {
 
 <div class="maincontent">
 
-<div class="row tw:mb-5">
-    <div class="col-md-4">
+<div class="tw:grid tw:grid-cols-[2fr_1fr_1fr_1fr] tw:gap-4 tw:mb-5">
+    <div>
         <div class="bigNumberBox tw:py-7 tw:px-4">
             <h2>Progress: {{ round($goalStats['avgPercentComplete']) }}%</h2>
 
@@ -77,20 +77,19 @@ foreach ($allCanvas as $canvasRow) {
             </div>
         </div>
     </div>
-    <div class="col-md-2"></div>
-    <div class="col-md-2">
+    <div>
         <div class="bigNumberBox priority-border-4">
             <h2>On Track</h2>
             <span class="content">{{ $goalStats['goalsOnTrack'] }}</span>
         </div>
     </div>
-    <div class="col-md-2">
+    <div>
         <div class="bigNumberBox priority-border-3">
             <h2>At Risk</h2>
             <span class="content">{{ $goalStats['goalsAtRisk'] }}</span>
         </div>
     </div>
-    <div class="col-md-2">
+    <div>
         <div class="bigNumberBox priority-border-1">
             <h2>Miss</h2>
             <span class="content">{{ $goalStats['goalsMiss'] }}</span>
@@ -99,29 +98,22 @@ foreach ($allCanvas as $canvasRow) {
 </div>
 
 <div class="maincontentinner">
-    <div class="row">
-        <div class="col-md-6"></div>
-    </div>
     @if (count($allCanvas) > 0)
         @foreach ($allCanvas as $canvasRow)
-            <div class="row">
-                <div class="col-md-12">
-                    <a href='#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow["id"] }}' class='btn btn-primary pull-right'><i class="fa fa-plus"></i> Create New Goal</a>
+            <div>
+                <a href='#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow["id"] }}' class='btn btn-primary tw:float-right'><i class="fa fa-plus"></i> Create New Goal</a>
 
-                    <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>{{ $canvasRow["title"] }}</a></h5>
-                </div>
+                <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>{{ $canvasRow["title"] }}</a></h5>
             </div>
-            <div class="row tw:border-b tw:border-solid tw:border-[var(--main-border-color)] tw:mb-5">
+            <div class="tw:border-b tw:border-solid tw:border-[var(--main-border-color)] tw:mb-5">
                 @php
                 $canvasSvc = app()->make(Goalcanvas::class);
                 $canvasItems = $canvasSvc->getCanvasItemsById($canvasRow["id"]);
                 @endphp
-                <div id="sortableCanvasKanban-{{ $canvasRow['id'] }}" class="sortableTicketList disabled col-md-12 tw:pt-4">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row">
+                <div id="sortableCanvasKanban-{{ $canvasRow['id'] }}" class="sortableTicketList disabled tw:pt-4">
+                    <div class="tw:grid tw:grid-cols-3 tw:gap-4">
                                 @if (!is_countable($canvasItems) || count($canvasItems) == 0)
-                                    <div class='col-md-12'>No goals on this board yet. Open the <a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>board</a> to start adding goals</div>
+                                    <div class="tw:col-span-3">No goals on this board yet. Open the <a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>board</a> to start adding goals</div>
                                 @endif
                                 @foreach ($canvasItems as $row)
                                     @php
@@ -133,10 +125,8 @@ foreach ($allCanvas as $canvasRow) {
                                         $comments = app()->make(Comments::class);
                                         $nbcomments = $comments->countComments(moduleId: $row['id']);
                                         @endphp
-                                        <div class="col-md-4">
+                                        <div>
                                             <div class="ticketBox" id="item_{{ $row["id"] }}">
-                                                <div class="row">
-                                                    <div class="col-md-12">
                                                         <div class="inlineDropDownContainer tw:float-right">
                                                             @if ($login::userIsAtLeast($roles::$editor))
                                                                 <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -174,26 +164,22 @@ foreach ($allCanvas as $canvasRow) {
                                                         }
                                                         @endphp
 
-                                                        <div class="row">
-                                                            <div class="col-md-4"></div>
-                                                            <div class="col-md4 center">
-                                                                <small>{{ sprintf(__("text.percent_complete"), $percentDone) }}</small>
-                                                            </div>
-                                                            <div class="col-md-4"></div>
+                                                        <div class="tw:text-center">
+                                                            <small>{{ sprintf(__("text.percent_complete"), $percentDone) }}</small>
                                                         </div>
                                                         <div class="progress tw:mb-0">
                                                             <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ $percentDone }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $percentDone }}%">
                                                                 <span class="sr-only">{{ sprintf(__("text.percent_complete"), $percentDone) }}</span>
                                                             </div>
                                                         </div>
-                                                        <div class="row tw:pb-0">
-                                                            <div class="col-md-4">
+                                                        <div class="tw:grid tw:grid-cols-3 tw:pb-0">
+                                                            <div>
                                                                 <small>Start:<br />{{ $metricTypeFront . $row["startValue"] . $metricTypeBack }}</small>
                                                             </div>
-                                                            <div class="col-md-4 center">
+                                                            <div class="tw:text-center">
                                                                 <small>{{ __('label.current') }}:<br />{{ $metricTypeFront . $row["currentValue"] . $metricTypeBack }}</small>
                                                             </div>
-                                                            <div class="col-md-4 tw:text-right">
+                                                            <div class="tw:text-right">
                                                                 <small>{{ __('label.goal') }}:<br />{{ $metricTypeFront . $row["endValue"] . $metricTypeBack }}</small>
                                                             </div>
                                                         </div>
@@ -269,8 +255,6 @@ foreach ($allCanvas as $canvasRow) {
                                                             <span class="fas fa-comments"></span>
                                                             <small>{{ $nbcomments }}</small>
                                                         </div>
-                                                    </div>
-                                                </div>
 
                                                 @if ($row['milestoneHeadline'] != '')
                                                     <br/>
@@ -286,8 +270,6 @@ foreach ($allCanvas as $canvasRow) {
                                 @endforeach
                             </div>
                             <br />
-                        </div>
-                    </div>
                 </div>
             </div>
         @endforeach
@@ -307,7 +289,7 @@ foreach ($allCanvas as $canvasRow) {
     {{--  --}}
 @else
     <br><br>
-    <div class='center'>
+    <div class='tw:text-center'>
         <div class='svgContainer'>
             {!! file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg") !!}
         </div>
@@ -324,7 +306,7 @@ foreach ($allCanvas as $canvasRow) {
 @endif
 
 @if (!empty($disclaimer) && count($allCanvas) > 0)
-    <small class="align-center">{{ $disclaimer }}</small>
+    <small class="tw:text-center">{{ $disclaimer }}</small>
 @endif
 
 {!! $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render() !!}

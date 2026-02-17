@@ -76,53 +76,50 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="row">
-            <div class="col-md-3">
+        <div class="tw:flex tw:justify-between tw:items-center">
+            <div>
                 @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
                     <a href="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $elementName }}"
                        class="btn btn-primary" id="{{ $elementName }}">{!! $tpl->__('links.add_new_canvas_item' . $canvasName) !!}</a>
                 @endif
             </div>
 
-            <div class="col-md-6 center"></div>
+            <div></div>
 
-            <div class="col-md-3">
-                <div class="pull-right">
-                    <div class="btn-group viewDropDown">
-                        @if (count($allCanvas) > 0 && ! empty($statusLabels))
-                            @if ($filter['status'] == 'all')
-                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-filter"></i> {{ $tpl->__('status.all') }} {!! $tpl->__('links.view') !!}</button>
-                            @else
-                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw {{ $tpl->__($statusLabels[$filter['status']]['icon']) }}"></i> {{ $statusLabels[$filter['status']]['title'] }} {!! $tpl->__('links.view') !!}</button>
-                            @endif
-                            <ul class="dropdown-menu">
-                                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
-                                @foreach ($statusLabels as $key => $data)
-                                    <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}" @if ($filter['status'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
-                                @endforeach
-                            </ul>
+            <div class="tw:float-right">
+                <div class="btn-group viewDropDown">
+                    @if (count($allCanvas) > 0 && ! empty($statusLabels))
+                        @if ($filter['status'] == 'all')
+                            <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-filter"></i> {{ $tpl->__('status.all') }} {!! $tpl->__('links.view') !!}</button>
+                        @else
+                            <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw {{ $tpl->__($statusLabels[$filter['status']]['icon']) }}"></i> {{ $statusLabels[$filter['status']]['title'] }} {!! $tpl->__('links.view') !!}</button>
                         @endif
-                    </div>
-
-                    <div class="btn-group viewDropDown">
-                        @if (count($allCanvas) > 0 && ! empty($relatesLabels))
-                            @if ($filter['relates'] == 'all')
-                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw fa-globe"></i> {{ $tpl->__('relates.all') }} {!! $tpl->__('links.view') !!}</button>
-                            @else
-                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw {{ $tpl->__($relatesLabels[$filter['relates']]['icon']) }}"></i> {{ $relatesLabels[$filter['relates']]['title'] }} {!! $tpl->__('links.view') !!}</button>
-                            @endif
-                            <ul class="dropdown-menu">
-                                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates=all" @if ($filter['relates'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('relates.all') }}</a></li>
-                                @foreach ($relatesLabels as $key => $data)
-                                    <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates={{ $key }}" @if ($filter['relates'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
-                                @endforeach
-                            </ul>
-                        @endif
-                    </div>
-
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
+                            @foreach ($statusLabels as $key => $data)
+                                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}" @if ($filter['status'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
+                            @endforeach
+                        </ul>
+                    @endif
                 </div>
-            </div>
 
+                <div class="btn-group viewDropDown">
+                    @if (count($allCanvas) > 0 && ! empty($relatesLabels))
+                        @if ($filter['relates'] == 'all')
+                            <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw fa-globe"></i> {{ $tpl->__('relates.all') }} {!! $tpl->__('links.view') !!}</button>
+                        @else
+                            <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw {{ $tpl->__($relatesLabels[$filter['relates']]['icon']) }}"></i> {{ $relatesLabels[$filter['relates']]['title'] }} {!! $tpl->__('links.view') !!}</button>
+                        @endif
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates=all" @if ($filter['relates'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('relates.all') }}</a></li>
+                            @foreach ($relatesLabels as $key => $data)
+                                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates={{ $key }}" @if ($filter['relates'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </div>
+
+            </div>
         </div>
 
         <div class="clearfix"></div>

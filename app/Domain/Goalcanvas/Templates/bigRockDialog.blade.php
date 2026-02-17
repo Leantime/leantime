@@ -11,13 +11,8 @@
     <input type="text" name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" class="tw:w-full" /><br />
 
     <br />
-    <div class="row">
-        <div class="col-md-6">
-            <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn" />
-        </div>
-        <div class="col-md-6 align-right padding-top-sm">
-
-        </div>
+    <div class="tw:flex tw:justify-between tw:items-center">
+        <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn" />
     </div>
 
 </form>
