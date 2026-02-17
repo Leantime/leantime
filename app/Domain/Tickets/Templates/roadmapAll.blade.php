@@ -26,11 +26,11 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="row">
-            <div class="col-md-6">
+        <div class="tw:flex tw:justify-between tw:items-start">
+            <div>
             </div>
-            <div class="col-md-6">
-                <div class="pull-right">
+            <div>
+                <div class="tw:float-right">
 
                     <div class="btn-group viewDropDown">
                         <button class="btn dropdown-toggle" data-toggle="dropdown">{{ __('label.roles.client') }}: <span class="viewText">{{ $clientNameSelected }}</span><span class="caret"></span></button>

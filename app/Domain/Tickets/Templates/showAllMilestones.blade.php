@@ -22,8 +22,8 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="row">
-            <div class="col-md-6">
+        <div class="tw:flex tw:justify-between tw:items-start">
+            <div>
                 @dispatchEvent('filters.afterLefthandSectionOpen')
                 @php
                     $tpl->displaySubmodule('tickets-ticketNewBtn');
@@ -32,8 +32,8 @@
                 @dispatchEvent('filters.beforeLefthandSectionClose')
             </div>
 
-            <div class="col-md-6">
-                <div class="pull-right">
+            <div>
+                <div class="tw:float-right">
                     @dispatchEvent('filters.afterRighthandSectionOpen')
                     <div id="tableButtons" style="display:inline-block"></div>
                     @dispatchEvent('filters.beforeRighthandSectionClose')

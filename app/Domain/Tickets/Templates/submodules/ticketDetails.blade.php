@@ -7,10 +7,9 @@
 
 <input type="hidden" value="{{ e($ticket->id) }}" name="id" autocomplete="off" readonly/>
 
-<div class="row">
-    <div class="col-md-9">
-        <div class="row marginBottom">
-            <div class="col-md-12">
+<div class="tw:grid tw:grid-cols-12 tw:gap-4">
+    <div class="tw:col-span-9">
+        <div class="marginBottom">
 
                 <div class="form-group">
                     <input type="text" value="{{ e($ticket->headline) }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}"/>
@@ -136,18 +135,15 @@
                 </div>
                 <input type="hidden" name="acceptanceCriteria" value=""/>
 
-            </div>
         </div>
 
         <div class="sticky-modal-footer">
-            <div class="row">
-                <div class="col-md-12" style="margin-top:15px;">
-                    <input type="hidden" name="saveTicket" value="1" />
-                    <input type="hidden" id="saveAndCloseButton" name="saveAndCloseTicket" value="0" />
+            <div style="margin-top:15px;">
+                <input type="hidden" name="saveTicket" value="1" />
+                <input type="hidden" id="saveAndCloseButton" name="saveAndCloseTicket" value="0" />
 
-                    <input type="submit" name="saveTicket" class="saveTicketBtn" value="{{ __('buttons.save') }}"/>
-                    <input type="submit" name="saveAndCloseTicket" class="btn btn-outline" onclick="jQuery('#saveAndCloseButton').val('1');" value="{{ __('buttons.save_and_close') }}"/>
-                </div>
+                <input type="submit" name="saveTicket" class="saveTicketBtn" value="{{ __('buttons.save') }}"/>
+                <input type="submit" name="saveAndCloseTicket" class="btn btn-outline" onclick="jQuery('#saveAndCloseButton').val('1');" value="{{ __('buttons.save_and_close') }}"/>
             </div>
         </div>
 
@@ -180,10 +176,9 @@
             </div>
         @endif
     </div>
-    <div class="col-md-3">
+    <div class="tw:col-span-3">
 
-        <div class="row marginBottom">
-            <div class="col-md-12">
+        <div class="marginBottom">
                 <h5 class="accordionTitle" id="accordion_link_tickets-organization" style="padding-bottom:15px; font-size:var(--font-size-l)">
                     <a href="javascript:void(0)"
                        class="accordion-toggle"
@@ -282,11 +277,9 @@
 
                 </div>
 
-            </div>
         </div>
 
-        <div class="row marginBottom">
-            <div class="col-md-12">
+        <div class="marginBottom">
                 <h5 class="accordionTitle" id="accordion_link_tickets-dates" style="padding-bottom:15px; font-size:var(--font-size-l)">
                     <a href="javascript:void(0)"
                        class="accordion-toggle"
@@ -333,7 +326,6 @@
 
                 </div>
 
-            </div>
         </div>
 
         @dispatchEvent('beforeEndRightColumn', ['ticket' => $ticket])

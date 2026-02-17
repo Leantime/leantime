@@ -16,8 +16,7 @@
 
 
 
-        <div class="row">
-            <div class="col-md-12">
+        <div>
                 <label for="colormode" >{{ __('label.colormode') }}</label>
 
                 <x-global::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
@@ -31,11 +30,9 @@
                         <i class="fa-solid fa-moon tw:font-xxl"></i>
                     </label>
                 </x-global::selectable>
-            </div>
         </div>
         <br />
-        <div class="row">
-            <div class="col-md-12">
+        <div>
                 <label>Color Scheme</label>
                 @foreach($availableColorSchemes as $key => $scheme )
                     <x-global::selectable class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])"  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
@@ -45,7 +42,6 @@
                     </x-global::selectable>
                 @endforeach
 
-            </div>
         </div>
         <br /> <br />
         <div class="tw:text-right">

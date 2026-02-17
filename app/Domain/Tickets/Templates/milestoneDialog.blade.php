@@ -85,11 +85,11 @@
     <label>{{ __('label.planned_end_date') }}</label>
     <input type="text" name="editTo" autocomplete="off" value="{{ format($currentMilestone->editTo)->date() }}" placeholder="{{ __('language.dateformat') }}" id="milestoneEditTo" /><br />
 
-    <div class="row">
-        <div class="col-md-6">
+    <div class="tw:flex tw:justify-between tw:items-start">
+        <div>
             <input type="submit" value="{{ __('buttons.save') }}" class="btn btn-primary tw:btn tw:btn-primary"/>
         </div>
-        <div class="col-md-6 align-right padding-top-sm">
+        <div class="tw:text-right padding-top-sm">
         </div>
     </div>
 </form>

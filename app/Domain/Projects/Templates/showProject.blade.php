@@ -38,24 +38,22 @@
                 <form method="post" action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#team">
                     <input type="hidden" name="saveUsers" value="1" />
 
-                    <div class="row-fluid">
-                    <div class="span12">
+                    <div>
+                    <div>
 
                          <div class="form-group">
                              <br />{{ __('text.choose_access_for_users') }}<br />
                              <br />
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h4 class="widgettitle title-light">
-                                        <span class="fa fa-users"></span>{{ __('headlines.team_member') }}
-                                    </h4>
-                                </div>
+                            <div>
+                                <h4 class="widgettitle title-light">
+                                    <span class="fa fa-users"></span>{{ __('headlines.team_member') }}
+                                </h4>
                             </div>
 
-                             <div class="row">
+                             <div class="tw:grid tw:grid-cols-3 tw:gap-6">
                                 @foreach($project['assignedUsers'] as $userId => $assignedUser)
-                                    <div class="col-md-4">
+                                    <div>
                                         <div class="userBox">
                                             <input type='checkbox' name='editorId[]' id="user-{{ $assignedUser['id'] }}" value='{{ $assignedUser['id'] }}'
                                                 checked="checked"
@@ -101,18 +99,16 @@
                                 @endforeach
                              </div>
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h4 class="widgettitle title-light">
-                                        <span class="fa fa-user-friends "></span>{{ __('headlines.assign_users_to_project') }}
-                                    </h4>
-                                </div>
+                            <div>
+                                <h4 class="widgettitle title-light">
+                                    <span class="fa fa-user-friends "></span>{{ __('headlines.assign_users_to_project') }}
+                                </h4>
                             </div>
 
-                             <div class="row">
+                             <div class="tw:grid tw:grid-cols-3 tw:gap-6">
                                 @foreach($tpl->get('availableUsers') as $row)
                                     @if(collect($project['assignedUsers'])->where('id', $row['id'])->isEmpty())
-                                        <div class="col-md-4">
+                                        <div>
                                             <div class="userBox">
                                                 <input type='checkbox' name='editorId[]' id="user-{{ $row['id'] }}" value='{{ $row['id'] }}' />
 
@@ -142,7 +138,7 @@
                                     @endif
                                 @endforeach
                                 @if($login::userIsAtLeast($roles::$manager))
-                                    <div class="col-md-4">
+                                    <div>
                                         <div class="userBox">
                                             <a class="userEditModal" href="{{ BASE_URL }}/users/newUser?preSelectProjectId={{ $project['id'] }}" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> {{ __('links.create_user') }}</a>
                                             <div class="clearall"></div>
@@ -150,9 +146,7 @@
                                     </div>
                                 @endif
                             </div>
-                             <div class="row">
-                                 <div class="col-md-12">
-                                 </div>
+                             <div>
                              </div>
                         </div>
                     </div>
@@ -167,14 +161,14 @@
             <div id="integrations">
 
                 <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Mattermost</h4>
-                <div class="row">
-                    <div class="col-md-3">
+                <div class="tw:grid tw:grid-cols-[3fr_5fr_4fr] tw:gap-6">
+                    <div>
                         <img src="{{ BASE_URL }}/dist/images/mattermost-logoHorizontal.png" width="200" />
                     </div>
-                    <div class="col-md-5">
+                    <div>
                         {{ __('text.mattermost_instructions') }}
                     </div>
-                    <div class="col-md-4">
+                    <div>
                         <strong>{{ __('label.webhook_url') }}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="{{ e($tpl->get('mattermostWebhookURL')) }}"/>
@@ -185,15 +179,15 @@
                 </div>
                 <br />
                 <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Slack</h4>
-                <div class="row">
-                    <div class="col-md-3">
+                <div class="tw:grid tw:grid-cols-[3fr_5fr_4fr] tw:gap-6">
+                    <div>
                         <img src="https://cdn.cdnlogo.com/logos/s/52/slack.svg" width="200"/>
                     </div>
 
-                    <div class="col-md-5">
+                    <div>
                         {{ __('text.slack_instructions') }}
                     </div>
-                    <div class="col-md-4">
+                    <div>
                         <strong>{{ __('label.webhook_url') }}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="{{ e($tpl->get('slackWebhookURL')) }}"/>
@@ -204,15 +198,15 @@
                 </div>
 
                 <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Zulip</h4>
-                <div class="row">
-                    <div class="col-md-3">
+                <div class="tw:grid tw:grid-cols-[3fr_5fr_4fr] tw:gap-6">
+                    <div>
                         <img src="{{ BASE_URL }}/dist/images/zulip-org-logo.png" width="200"/>
                     </div>
 
-                    <div class="col-md-5">
+                    <div>
                         {{ __('text.zulip_instructions') }}
                     </div>
-                    <div class="col-md-4">
+                    <div>
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             <strong>{{ __('label.base_url') }}</strong><br />
                             <input type="text" name="zulipURL" id="zulipURL" placeholder="{{ __('input.placeholders.zulip_url') }}" value="{{ $tpl->get('zulipHook')['zulipURL'] }}"/>
@@ -235,15 +229,15 @@
                 </div>
 
                 <h4 class='widgettitle title-light'><span class='fa fa-leaf'></span>Discord</h4>
-                <div class='row'>
-                    <div class='col-md-3'>
+                <div class='tw:grid tw:grid-cols-[3fr_5fr_4fr] tw:gap-6'>
+                    <div>
                         <img src='{{ BASE_URL }}/dist/images/discord-logo.png' width='200'/>
                     </div>
 
-                    <div class='col-md-5'>
+                    <div>
                       {{ __('text.discord_instructions') }}
                     </div>
-                    <div class="col-md-4">
+                    <div>
                         <strong>{{ __('label.webhook_url') }}</strong><br/>
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             @for($i = 1; $i <= 3; $i++)
@@ -263,22 +257,22 @@
                             <li>
                                 <div class="ticketBox">
 
-                                    <div class="row statusList" id="todostatus-{{ $key }}">
+                                    <div class="tw:grid tw:grid-cols-[auto_1fr_2fr_2fr_2fr_2fr_auto] tw:gap-4 tw:items-start statusList" id="todostatus-{{ $key }}">
 
                                         <input type="hidden" name="labelKeys[]" id="labelKey-{{ $key }}" class='labelKey' value="{{ $key }}"/>
                                         <div class="sortHandle">
                                             <br />
                                             <span class="fa fa-sort"></span>
                                         </div>
-                                        <div class="col-md-1">
+                                        <div>
                                             <label>{{ __('label.sortindex') }}</label>
                                             <input type="text" name="labelSort-{{ $key }}" class="sorter" id="labelSort-{{ $key }}" value="{{ e($ticketStatus['sortKey']) }}" style="width:50px;"/>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div>
                                             <label>{{ __('label.label') }}</label>
                                             <input type="text" name="label-{{ $key }}" {{ $key == -1 ? 'readonly' : '' }} id="label-{{ $key }}" value="{{ e($ticketStatus['name']) }}" />
                                         </div>
-                                        <div class="col-md-2">
+                                        <div>
                                             <label>{{ __('label.color') }}</label>
                                             <select name="labelClass-{{ $key }}" id="labelClass-{{ $key }}" class="colorChosen">
                                                 <option value="label-purple" class="label-purple" {{ $ticketStatus['class'] == 'label-purple' ? 'selected="selected"' : '' }}><span class="label-purple">{{ __('label.purple') }}</span></option>
@@ -295,7 +289,7 @@
                                                 <option value="label-default" class="label-default" {{ $ticketStatus['class'] == 'label-default' ? 'selected="selected"' : '' }}><span class="label-default">{{ __('label.grey') }}</span></option>
                                             </select>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div>
                                             <label>{{ __('label.reportType') }}</label>
                                             <select name="labelType-{{ $key }}" id="labelType-{{ $key }}">
                                                 <option value="NEW" {{ ($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : '' }}>{{ __('status.new') }}</option>
@@ -304,7 +298,7 @@
                                                 <option value="NONE" {{ ($ticketStatus['statusType'] == 'NONE') ? 'selected="selected"' : '' }}>{{ __('status.dont_report') }}</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div>
                                             <label for="">{{ __('label.showInKanban') }}</label>
                                             <input type="checkbox" name="labelKanbanCol-{{ $key }}" id="labelKanbanCol-{{ $key }}" {{ $ticketStatus['kanbanCol'] ? 'checked="checked"' : '' }}/>
                                         </div>
@@ -339,21 +333,21 @@
 <!-- New Status Template -->
 <div class="newStatusTpl" style="display:none;">
     <div class="ticketBox">
-    <div class="row statusList" id="todostatus-XXNEWKEYXX">
+    <div class="tw:grid tw:grid-cols-[auto_1fr_2fr_2fr_2fr_2fr_auto] tw:gap-4 tw:items-start statusList" id="todostatus-XXNEWKEYXX">
         <input type="hidden" name="labelKeys[]" id="labelKey-XXNEWKEYXX" class='labelKey' value="XXNEWKEYXX"/>
         <div class="sortHandle">
             <br />
             <span class="fa fa-sort"></span>
         </div>
-        <div class="col-md-1">
+        <div>
             <label>{{ __('label.sortindex') }}</label>
             <input type="text" name="labelSort-XXNEWKEYXX" class="sorter" id="labelSort-XXNEWKEYXX" value="" style="width:50px;"/>
         </div>
-        <div class="col-md-2">
+        <div>
             <label>{{ __('label.label') }}</label>
             <input type="text" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
         </div>
-        <div class="col-md-2">
+        <div>
             <label>{{ __('label.color') }}</label>
             <select name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen">
                 <option value="label-blue" class="label-blue"><span class="label-blue">{{ __('label.blue') }}</span></option>
@@ -370,7 +364,7 @@
                 <option value="label-default" class="label-default"><span class="label-default">{{ __('label.grey') }}</span></option>
             </select>
         </div>
-        <div class="col-md-2">
+        <div>
             <label>{{ __('label.reportType') }}</label>
             <select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX">
                 <option value="NEW">{{ __('status.new') }}</option>
@@ -379,7 +373,7 @@
                 <option value="NONE">{{ __('status.dont_report') }}</option>
             </select>
         </div>
-        <div class="col-md-2">
+        <div>
             <label for="">{{ __('label.showInKanban') }}</label>
             <input type="checkbox" name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX"/>
         </div>

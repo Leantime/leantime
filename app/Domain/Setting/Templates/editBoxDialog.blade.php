@@ -11,10 +11,6 @@
     <label>{{ __('label.label') }}</label>
     <input type="text" name="newLabel" value="{{ $currentLabel }}" /><br />
 
-    <div class="row">
-        <div class="col-md-6">
-            <input type="submit" value="{{ __('buttons.save') }}"/>
-        </div>
-    </div>
+    <input type="submit" value="{{ __('buttons.save') }}"/>
 
 </form>

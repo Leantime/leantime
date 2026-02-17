@@ -13,8 +13,8 @@
     @php $tpl->displaySubmodule('tickets-timelineTabs') @endphp
     <div class="maincontentinner">
 
-        <div class="row">
-            <div class="col-md-4">
+        <div class="tw:grid tw:grid-cols-3">
+            <div>
                 @dispatchEvent('filters.afterLefthandSectionOpen')
                 @php
                     $tpl->displaySubmodule('tickets-ticketNewBtn');
@@ -22,12 +22,12 @@
                 @endphp
                 @dispatchEvent('filters.beforeLefthandSectionClose')
             </div>
-            <div class="col-md-4">
-                <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
+            <div>
+                <div class="fc-center tw:text-center" id="calendarTitle" style="padding-top:5px;">
                     <h2>..</h2>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div>
 
                 <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
                     <span class="fc-icon fc-icon-chevron-right"></span>

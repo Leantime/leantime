@@ -17,8 +17,8 @@
 <form action="" method="post" class="stdform userEditModal">
         <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
         <div class="maincontent">
-            <div class="row">
-                <div class="col-md-7">
+            <div class="tw:grid tw:grid-cols-[7fr_5fr] tw:gap-6">
+                <div>
                     <div class="maincontentinner">
                     <h4 class="widgettitle title-light">{{ __('label.profile_information') }}</h4>
 
@@ -41,7 +41,7 @@
                     </select> <br />
 
                     <label for="status">{{ __('label.status') }}</label>
-                    <select name="status" id="status" class="pull-left">
+                    <select name="status" id="status" class="tw:float-left">
                         <option value="a"
                             {{ strtolower($values['status']) == 'a' ? 'selected="selected"' : '' }}>
                             {{ __('label.active') }}
@@ -56,7 +56,7 @@
                         </option>
                     </select>
                         @if($values['status'] == 'i')
-                        <div class="pull-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
+                        <div class="tw:float-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
                             <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}"><i class="fa fa-link"></i> {{ __('label.copyinviteLink') }}</a>
                             <div class="dropdown-menu padding-md noClickProp">
                                 <input type="text" id="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
@@ -102,7 +102,7 @@
                     </p>
                     </div>
                 </div>
-                <div class="col-md-5">
+                <div>
                     <div class="maincontentinner">
                     <h4 class="widgettitle title-light">{{ __('label.project_assignment') }}</h4>
 

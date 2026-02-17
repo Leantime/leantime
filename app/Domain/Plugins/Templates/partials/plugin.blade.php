@@ -2,10 +2,10 @@
     'plugin'
 ])
 
-<div class="col-md-4">
+<div>
     <div class="ticketBox fixed" style="padding-top:0px; overflow: hidden; margin-bottom: 25px;">
-        <div class="row">
-            <div class="col-md-12 tw:overflow-hidden tw:mb-m">
+        <div>
+            <div class="tw:overflow-hidden tw:mb-m">
                 <img src="{{ $plugin->getPluginImageData() }}" width="75" height="75" class="tw:rounded tw:mt-base"/>
 
                 @if($plugin instanceof \Leantime\Domain\Plugins\Models\MarketplacePlugin)
@@ -26,8 +26,8 @@
                 </div>
             </div>
         </div>
-        <div class="row tw:mb-base">
-            <div class="col tw:flex tw:flex-col tw:gap-base">
+        <div class="tw:mb-base">
+            <div class="tw:flex tw:flex-col tw:gap-base">
 
                 @if (! empty($desc = $plugin->getCardDesc()))
                     <p>{!! $desc !!}</p>

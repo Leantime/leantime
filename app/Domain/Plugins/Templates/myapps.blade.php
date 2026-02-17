@@ -14,23 +14,20 @@
 
         <div class="maincontentinner">
 
-            <div class="row">
-                <div class="col-lg-12">
+            <div>
                     <h5 class="subtitle" style="margin-bottom:15px;">
                         {{ __("text.installed_plugins") }}
                     </h5>
-                    <div class="row sortableTicketList">
+                    <div class="tw:grid tw:grid-cols-3 tw:gap-6 sortableTicketList">
                         @each('plugins::partials.plugin', $tpl->get("installedPlugins"), 'plugin')
 
                         @if ($tpl->get("installedPlugins") === false || count($tpl->get("installedPlugins")) == 0)
                             <span class="tw:block tw:px-4 tw:mb-4">{{ __("text.no_plugins_activated") }}</span>
                         @endif
                     </div>
-                </div>
             </div>
             <br />
-            <div class="row">
-                <div class="col-lg-12">
+            <div>
                     <h5 class="subtitle tw:mb-m" style="margin-bottom:15px;">
                         {{ __("text.new_plugins") }}
                     </h5>
@@ -39,12 +36,12 @@
                             @foreach ($tpl->get("newPlugins") as $newplugin)
                                 <li>
                                     <div class="ticketBox fixed">
-                                        <div class="row">
+                                        <div class="tw:grid tw:grid-cols-3 tw:gap-6">
 
-                                            <div class="col-md-4">
+                                            <div>
                                                 <strong>{{ $newplugin->name }}<br /></strong>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div>
                                                 {{ $newplugin->description }}<br />
                                                 {{ $tpl->__("text.version") }} {{ $newplugin->version }}
                                                 @if (is_array($newplugin->authors) && count($newplugin->authors) > 0)
@@ -52,8 +49,8 @@
                                                 @endif
                                                | <a href="{{ $newplugin->homepage }}"> {{ $tpl->__("text.visit_site") }} </a>
                                             </div>
-                                            <div class="col-md-4" style="padding-top:5px;">
-                                                <a href="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" class="btn btn-default pull-right">{{ $tpl->__('buttons.activate') }}</a>
+                                            <div style="padding-top:5px;">
+                                                <a href="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" class="btn btn-default tw:float-right">{{ $tpl->__('buttons.activate') }}</a>
 
                                             </div>
 
@@ -67,7 +64,6 @@
                             </x-global::undrawSvg>
                         @endif
                     </ul>
-                </div>
             </div>
         </div>
     </div>

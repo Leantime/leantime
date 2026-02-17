@@ -20,8 +20,8 @@
 
 <div class="maincontent">
 
-    <div class="row">
-        <div class="col-md-2">
+    <div class="tw:grid tw:grid-cols-12 tw:gap-4">
+        <div class="tw:col-span-2">
             <div class="maincontentinner">
                 <h5 class="subtitle tw:pb-m">Calendars</h5>
 
@@ -56,18 +56,18 @@
                 <a href="#/calendar/calendarSettings" class="formModal" style="margin-left:-5px;"><i class="fa fa-cog" style="width:16px;"></i> {{ __('label.calendar_settings') }}</a>
             </div>
         </div>
-        <div class="col-md-10">
+        <div class="tw:col-span-10">
             <div class="maincontentinner">
-                <div class="row">
-                    <div class="col-md-4">
+                <div class="tw:grid tw:grid-cols-3 tw:gap-4">
+                    <div>
                         <a href="#/calendar/addEvent" class="btn btn-primary formModal"><i class="fa fa-plus"></i> {{ __('buttons.add_event') }}</a>
                     </div>
-                    <div class="col-md-4">
-                        <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
+                    <div>
+                        <div class="fc-center tw:text-center" id="calendarTitle" style="padding-top:5px;">
                             <h2>..</h2>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div>
                         <a href="#/calendar/export" class="btn btn-default right">Export</a>
                         <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
                             <span class="fc-icon fc-icon-chevron-right"></span>

@@ -14,11 +14,7 @@
 <div class="pageheader">
     <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
     <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}</h1>
-            </div>
-        </div>
+        <h1>{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}</h1>
     </div>
 </div>
 
@@ -26,9 +22,9 @@
     <div class="maincontentinner">
         @php $tpl->displaySubmodule('connector-importProgress') @endphp
     </div>
-    <div class="row">
-        <div class="col-md-9">
-            <div class="maincontentinner center">
+    <div class="tw:grid tw:grid-cols-[3fr_1fr] tw:gap-6">
+        <div>
+            <div class="maincontentinner tw:text-center">
 
                 {!! $tpl->displayNotification() !!}
                 <h5 class="subtitle">Match Fields</h5>
@@ -38,15 +34,15 @@
                     <table class="table table-bordered">
                         <thead>
                         <tr>
-                            <th class="center">Source Field</th>
-                            <th class="center">Leantime Field</th>
+                            <th class="tw:text-center">Source Field</th>
+                            <th class="tw:text-center">Leantime Field</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach ($providerFields as $key => $entity)
                             <tr>
-                                <td class="center">{{ $entity }}</td>
-                                <td class="center">
+                                <td class="tw:text-center">{{ $entity }}</td>
+                                <td class="tw:text-center">
                                     <select class="form-control" name="field_{{ md5($entity) }}">
                                         @foreach ($leantimeFields as $key2 => $fields)
                                             <option value="{{ $entity }}|{{ $key2 }}" {{ ($entity == $fields['name'] && ! in_array($key2, ['id', 'itemId'])) ? "selected='selected'" : '' }}>
@@ -61,7 +57,7 @@
                         </tbody>
                     </table>
                     <div class="left">
-                        <a href="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" class="btn btn-default pull-left">Back</a>
+                        <a href="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" class="btn btn-default tw:float-left">Back</a>
                     </div>
                     <div class="right">
                         <button type="submit" class="btn btn-primary">Next</button>
@@ -70,7 +66,7 @@
                 </form>
             </div>
         </div>
-        <div class="col-md-3">
+        <div>
             <div class="maincontentinner">
             <h5 class="subtitle">Requirements for a successful import</h5>
             <p>Please review these requirements and make sure your import and mapping covers everything.</p>

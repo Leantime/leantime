@@ -3,7 +3,7 @@
 @endphp
 
 @if($login::userIsAtLeast($roles::$editor) && !empty($newField))
-    <div class="btn-group pull-left" style="margin-right:5px;">
+    <div class="btn-group tw:float-left" style="margin-right:5px;">
         <button class="btn btn-primary tw:btn tw:btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
             {!! __('links.new_with_icon') !!} <span class="caret"></span>
         </button>

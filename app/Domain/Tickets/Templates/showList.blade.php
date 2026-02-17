@@ -20,8 +20,8 @@
 
     <div class="maincontentinner">
 
-        <div class="row">
-            <div class="col-md-4">
+        <div class="tw:grid tw:grid-cols-3">
+            <div>
                 @dispatchEvent('filters.afterLefthandSectionOpen')
                 @php
                     $tpl->displaySubmodule('tickets-ticketNewBtn');
@@ -30,9 +30,9 @@
                 @dispatchEvent('filters.beforeLefthandSectionClose')
             </div>
 
-            <div class="col-md-4 center">
+            <div class="tw:text-center">
             </div>
-            <div class="col-md-4">
+            <div>
             </div>
         </div>
 
@@ -40,8 +40,8 @@
 
         @dispatchEvent('allTicketsTable.before', ['tickets' => $allTickets])
 
-        <div class="row">
-            <div class="col-md-3">
+        <div class="tw:grid tw:grid-cols-4 tw:gap-4">
+            <div>
                 <div class="quickAddForm" style="margin-top:15px;">
                     <form action="" method="post">
                         <input type="text" name="headline" autofocus placeholder="{{ __('input.placeholders.create_task') }}" style="width: 100%;"/>
@@ -113,9 +113,9 @@
 
                 </div>
             </div>
-            <div class="col-md-9 hidden-sm">
+            <div class="tw:col-span-3 hidden-sm">
                 <div id="ticketContent">
-                    <div class="center">
+                    <div class="tw:text-center">
                         <div class='svgContainer'>
                             {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
                         </div>

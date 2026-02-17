@@ -5,11 +5,9 @@
     $ticketTypes = $tpl->get('ticketTypes');
 @endphp
 
-<div class="row">
-    <div class="col-md-12">
+<div>
 
-        <div class="row marginBottom">
-            <div class="col-md-12">
+        <div class="marginBottom">
 
                 {{-- Type --}}
                 <div class="form-group">
@@ -25,11 +23,9 @@
                     </div>
                 </div>
 
-            </div>
         </div>
 
-        <div class="row marginBottom">
-            <div class="col-md-12">
+        <div class="marginBottom">
                 <h5 class="accordionTitle" id="accordion_link_tickets-organization" style="padding-bottom:15px; font-size:var(--font-size-l)">
                     <a href="javascript:void(0)"
                        class="accordion-toggle"
@@ -113,11 +109,9 @@
                     </div>
                 </div>
 
-            </div>
         </div>
 
-        <div class="row marginBottom">
-            <div class="col-md-12">
+        <div class="marginBottom">
                 <h5 class="accordionTitle" id="accordion_link_tickets-dates" style="padding-bottom:15px; font-size:var(--font-size-l)">
                     <a href="javascript:void(0)"
                        class="accordion-toggle"
@@ -153,11 +147,9 @@
 
                 </div>
 
-            </div>
         </div>
 
-        <div class="row marginBottom">
-            <div class="col-md-12">
+        <div class="marginBottom">
 
                 <h5 class="accordionTitle" id="accordion_link_tickets-timetracking" style="padding-bottom:15px; font-size:var(--font-size-l)">
                     <a href="javascript:void(0)"
@@ -204,11 +196,9 @@
                     </div>
 
                 </div>
-            </div>
         </div>
 
         @dispatchEvent('beforeEndRightColumn', ['ticket' => $ticket])
-    </div>
 </div>
 
 <script>

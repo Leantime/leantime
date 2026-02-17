@@ -1,6 +1,6 @@
 <div class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
-    <div class="row">
-        <div class="col-md-8 titleContainer">
+    <div class="tw:grid tw:grid-cols-12">
+        <div class="tw:col-span-8 titleContainer">
             @if($cardType == "full")
                 <small>{{ $row['projectName'] }}</small><br />
                 @if($row['dependingTicketId'] > 0)
@@ -10,11 +10,11 @@
             <strong><a href="#/tickets/showTicket/{{ $row['id'] }}" >{{ $row['headline'] }}</a></strong>
 
         </div>
-        <div class="col-md-4 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
+        <div class="tw:col-span-4 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
 
             @include("tickets::partials.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
             @if($cardType == "full")
-                <div class="scheduler pull-right">
+                <div class="scheduler tw:float-right">
                     @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
                         <i class="fa-solid fa-calendar-check infoIcon tw:mr-xs" style="color:var(--accent2)" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>
                     @else
@@ -24,16 +24,16 @@
             @endif
         </div>
     </div>
-    <div class="row">
+    <div class="tw:grid tw:grid-cols-12">
 
-            <div class="col-md-4" style="padding:0 15px;">
+            <div class="tw:col-span-4" style="padding:0 15px;">
                 @if($cardType == "full")
                     <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
                     <input type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" style="margin-left:0px;" data-id="{{ $row['id'] }}" name="date" />
                 @endif
             </div>
 
-        <div class="col-md-8 dropdownContainer" style="padding-top:5px;">
+        <div class="tw:col-span-8 dropdownContainer" style="padding-top:5px;">
             <div class="dropdown ticketDropdown statusDropdown colorized show right ">
                 <a class="dropdown-toggle f-left status {{ $statusLabels[$row['status']]["class"] }}" href="javascript:void(0);" role="button" id="statusDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text">
@@ -45,7 +45,7 @@
                                                             </span>
                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                 </a>
-                <ul class="dropdown-menu pull-right" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
+                <ul class="dropdown-menu tw:float-right" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
                     <li class="nav-header border">{{ __("dropdown.choose_status") }}</li>
 
                     @foreach ($statusLabels as $key => $label)
@@ -106,7 +106,7 @@
                                                                 </span>
                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                 </a>
-                <ul class="dropdown-menu pull-right" aria-labelledby="milestoneDropdownMenuLink{{ $row['id'] }}">
+                <ul class="dropdown-menu tw:float-right" aria-labelledby="milestoneDropdownMenuLink{{ $row['id'] }}">
                     <li class="nav-header border">{{ __("dropdown.choose_milestone") }}</li>
                     <li class='dropdown-item'>
                         <a style='background-color:#b0b0b0'

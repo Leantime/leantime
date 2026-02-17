@@ -178,7 +178,7 @@
                             </span>
                             &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                         </a>
-                        <ul class="dropdown-menu pull-right"
+                        <ul class="dropdown-menu tw:float-right"
                             aria-labelledby="statusDropdownMenuLink{{ $ticket['id'] }}">
                             <li class="nav-header border">{{ __("dropdown.choose_status") }}</li>
                             @foreach ($statusLabels[$ticket['projectId']] as $key => $label)

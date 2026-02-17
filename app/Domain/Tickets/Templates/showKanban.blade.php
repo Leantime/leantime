@@ -32,8 +32,8 @@ jQuery(document).ready(function(){
 
     <div class="maincontentinner kanban-board-wrapper">
 
-        <div class="row">
-            <div class="col-md-4">
+        <div class="tw:grid tw:grid-cols-3">
+            <div>
                 @dispatchEvent('filters.afterLefthandSectionOpen')
                 @php
                     $tpl->displaySubmodule('tickets-ticketNewBtn');
@@ -42,9 +42,9 @@ jQuery(document).ready(function(){
                 @dispatchEvent('filters.beforeLefthandSectionClose')
             </div>
 
-            <div class="col-md-4 center">
+            <div class="tw:text-center">
             </div>
-            <div class="col-md-4">
+            <div>
             </div>
         </div>
 
@@ -157,8 +157,6 @@ jQuery(document).ready(function(){
                                 @foreach($allTickets as $row)
                                     @if($row['status'] == $key)
                                         <div class="ticketBox moveable container priority-border-{{ $row['priority'] }}" id="ticket_{{ $row['id'] }}">
-                                            <div class="row">
-                                                <div class="col-md-12">
 
                                                     @include('tickets::partials.ticketsubmenu', ['ticket' => $row, 'onTheClock' => $tpl->get('onTheClock')])
 
@@ -185,8 +183,6 @@ jQuery(document).ready(function(){
                                                             </div>
                                                         @endif
                                                     </div>
-                                                </div>
-                                            </div>
 
                                             <div class="clearfix" style="padding-bottom: 8px;"></div>
 
@@ -264,30 +260,28 @@ jQuery(document).ready(function(){
                                             <div class="clearfix"></div>
 
                                             @if($row['commentCount'] > 0 || $row['subtaskCount'] > 0 || $row['tags'] != '')
-                                                <div class="row">
-                                                    <div class="col-md-12 border-top" style="white-space: nowrap;">
-                                                        @if($row['commentCount'] > 0)
-                                                            <a href="#/tickets/showTicket/{{ $row['id'] }}"><span class="fa-regular fa-comments"></span> {{ $row['commentCount'] }}</a>&nbsp;
-                                                        @endif
+                                                <div class="border-top" style="white-space: nowrap;">
+                                                    @if($row['commentCount'] > 0)
+                                                        <a href="#/tickets/showTicket/{{ $row['id'] }}"><span class="fa-regular fa-comments"></span> {{ $row['commentCount'] }}</a>&nbsp;
+                                                    @endif
 
-                                                        @if($row['subtaskCount'] > 0)
-                                                            <a id="subtaskLink_{{ $row['id'] }}" href="#/tickets/showTicket/{{ $row['id'] }}" class="subtaskLineLink"> <span class="fa fa-diagram-successor"></span> {{ $row['subtaskCount'] }}</a>&nbsp;
-                                                        @endif
+                                                    @if($row['subtaskCount'] > 0)
+                                                        <a id="subtaskLink_{{ $row['id'] }}" href="#/tickets/showTicket/{{ $row['id'] }}" class="subtaskLineLink"> <span class="fa fa-diagram-successor"></span> {{ $row['subtaskCount'] }}</a>&nbsp;
+                                                    @endif
 
-                                                        @if($row['tags'] != '')
-                                                            @php $tagsArray = explode(',', $row['tags']); @endphp
-                                                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
-                                                                <i class="fa fa-tags" aria-hidden="true"></i> {{ count($tagsArray) }}
-                                                            </a>
-                                                            <ul class="dropdown-menu">
-                                                                <li style="padding:10px"><div class="tagsinput readonly">
-                                                                    @foreach($tagsArray as $tag)
-                                                                        <span class="tag"><span>{{ e($tag) }}</span></span>
-                                                                    @endforeach
-                                                                </div></li>
-                                                            </ul>
-                                                        @endif
-                                                    </div>
+                                                    @if($row['tags'] != '')
+                                                        @php $tagsArray = explode(',', $row['tags']); @endphp
+                                                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                                                            <i class="fa fa-tags" aria-hidden="true"></i> {{ count($tagsArray) }}
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <li style="padding:10px"><div class="tagsinput readonly">
+                                                                @foreach($tagsArray as $tag)
+                                                                    <span class="tag"><span>{{ e($tag) }}</span></span>
+                                                                @endforeach
+                                                            </div></li>
+                                                        </ul>
+                                                    @endif
                                                 </div>
                                             @endif
                                         </div>

@@ -112,42 +112,36 @@
             <ul class="sortableTicketList" style="width: 100%">
 
             @if ($canvasItem['milestoneId'] == '')
-                <li class="ui-state-default center" id="milestone_0">
+                <li class="ui-state-default tw:text-center" id="milestone_0">
                     <h4>{{ $tpl->__('headlines.no_milestone_link') }}</h4>
-                    <div class="row" id="milestoneSelectors">
+                    <div id="milestoneSelectors">
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <div class="col-md-12">
-                                <a href="javascript:void(0);" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('new');">{{ $tpl->__('links.create_link_milestone') }}</a>
-                                @if (count($tpl->get('milestones')) > 0)
-                                    | <a href="javascript:void(0);" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('existing');">{{ $tpl->__('links.link_existing_milestone') }}</a>
-                                @endif
-                            </div>
+                            <a href="javascript:void(0);" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('new');">{{ $tpl->__('links.create_link_milestone') }}</a>
+                            @if (count($tpl->get('milestones')) > 0)
+                                | <a href="javascript:void(0);" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('existing');">{{ $tpl->__('links.link_existing_milestone') }}</a>
+                            @endif
                         @endif
                     </div>
-                    <div class="row" id="newMilestone" style="display:none;">
-                        <div class="col-md-12">
-                            <input type="text" width="50%" name="newMilestone" /><br />
-                            <input type="hidden" name="type" value="milestone" />
-                            <input type="hidden" name="{{ $canvasName }}canvasitemid" value="{{ $id }} " />
-                            <input type="button" value="{{ $tpl->__('buttons.save') }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                            <input type="button" value="{{ $tpl->__('buttons.cancel') }}" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
-                        </div>
+                    <div id="newMilestone" style="display:none;">
+                        <input type="text" width="50%" name="newMilestone" /><br />
+                        <input type="hidden" name="type" value="milestone" />
+                        <input type="hidden" name="{{ $canvasName }}canvasitemid" value="{{ $id }} " />
+                        <input type="button" value="{{ $tpl->__('buttons.save') }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
+                        <input type="button" value="{{ $tpl->__('buttons.cancel') }}" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                     </div>
-                    <div class="row" id="existingMilestone" style="display:none;">
-                        <div class="col-md-12">
-                            <select data-placeholder="{{ $tpl->__('input.placeholders.filter_by_milestone') }}" name="existingMilestone" class="user-select">
-                                <option value=""></option>
-                                @foreach ($tpl->get('milestones') as $milestoneRow)
-                                    <option value="{{ $milestoneRow->id }}"
-                                        @if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] == $milestoneRow->id) selected="selected" @endif
-                                    >{{ $milestoneRow->headline }}</option>
-                                @endforeach
-                            </select>
-                            <input type="hidden" name="type" value="milestone" />
-                            <input type="hidden" name="{{ $canvasName }}canvasitemid" value="{{ $id }} " />
-                            <input type="button" value="{{ $tpl->__('buttons.save') }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                            <input type="button" value="{{ $tpl->__('buttons.cancel') }}" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
-                        </div>
+                    <div id="existingMilestone" style="display:none;">
+                        <select data-placeholder="{{ $tpl->__('input.placeholders.filter_by_milestone') }}" name="existingMilestone" class="user-select">
+                            <option value=""></option>
+                            @foreach ($tpl->get('milestones') as $milestoneRow)
+                                <option value="{{ $milestoneRow->id }}"
+                                    @if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] == $milestoneRow->id) selected="selected" @endif
+                                >{{ $milestoneRow->headline }}</option>
+                            @endforeach
+                        </select>
+                        <input type="hidden" name="type" value="milestone" />
+                        <input type="hidden" name="{{ $canvasName }}canvasitemid" value="{{ $id }} " />
+                        <input type="button" value="{{ $tpl->__('buttons.save') }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
+                        <input type="button" value="{{ $tpl->__('buttons.cancel') }}" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                     </div>
                 </li>
             @else

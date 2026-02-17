@@ -17,10 +17,10 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="pull-right">
+        <div class="tw:float-right">
             <form action="" method="post">
                 <input type="hidden" name="hideClosedProjects" value="1" />
-                <input type="checkbox" name="showClosedProjects" onclick="form.submit();" id="showClosed" {{ $showClosedProjects ? "checked='checked'" : '' }} />&nbsp;<label for="showClosed" class="pull-right">Show Closed Projects</label>
+                <input type="checkbox" name="showClosedProjects" onclick="form.submit();" id="showClosed" {{ $showClosedProjects ? "checked='checked'" : '' }} />&nbsp;<label for="showClosed" class="tw:float-right">Show Closed Projects</label>
             </form>
         </div>
 
@@ -63,8 +63,8 @@
                                 {{ __('label.open') }}
                             @endif
                         </td>
-                        <td class="center">{{ e($row['hourBudget']) }}</td>
-                        <td class="center">{{ e($row['dollarBudget']) }}</td>
+                        <td class="tw:text-center">{{ e($row['hourBudget']) }}</td>
+                        <td class="tw:text-center">{{ e($row['dollarBudget']) }}</td>
                     </tr>
                 @endforeach
             </tbody>

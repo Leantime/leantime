@@ -23,8 +23,8 @@
 
     <div class="maincontentinner">
 
-        <div class="row">
-            <div class="col-md-4">
+        <div class="tw:grid tw:grid-cols-3">
+            <div>
                 @dispatchEvent('filters.afterLefthandSectionOpen')
                 @php
                     $tpl->displaySubmodule('tickets-ticketNewBtn');
@@ -33,10 +33,10 @@
                 @dispatchEvent('filters.beforeLefthandSectionClose')
             </div>
 
-            <div class="col-md-4 center">
+            <div class="tw:text-center">
             </div>
-            <div class="col-md-4">
-                <div class="pull-right">
+            <div>
+                <div class="tw:float-right">
                     @dispatchEvent('filters.afterRighthandSectionOpen')
                     <div id="tableButtons" style="display:inline-block"></div>
                     @dispatchEvent('filters.beforeRighthandSectionClose')

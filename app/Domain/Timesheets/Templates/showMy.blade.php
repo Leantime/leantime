@@ -288,7 +288,7 @@ jQuery(document).ready(function(){
                                 <td width="10%">
                                 {{ __($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']) }}
                             @if ($timeRow['hasTimesheetOffset'])
-                                    <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
+                                    <i class="fa-solid fa-clock-rotate-left tw:float-right label-blue"
                                        data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone">
                                     </i>
                             @endif

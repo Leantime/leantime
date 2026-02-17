@@ -11,7 +11,7 @@
      hx-swap="outerHTML">
     @if (count($allProjects) == 0)
             <br /><br />
-            <div class='center'>
+            <div class='tw:text-center'>
                 <div style='width:70%' class='svgContainer'>
                     {{ __('notifications.not_assigned_to_any_project') }}
                     @if($login::userIsAtLeast($roles::$manager))
@@ -29,13 +29,13 @@
         </x-slot>
         <x-slot name="content">
 
-            <div class="row">
+            <div class="tw:grid tw:grid-cols-12 tw:gap-4">
                 @php
                     $hasFavorites = false;
                 @endphp
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == true)
-                        <div class="col-md-4">
+                        <div class="tw:col-span-4">
                             @include("projects::partials.projectCard", ["project" => $project, "type" => $type])
                         </div>
                         @php
@@ -57,11 +57,11 @@
         </x-slot>
         <x-slot name="content">
 
-            <div class="row">
+            <div class="tw:grid tw:grid-cols-12 tw:gap-4">
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == false)
 
-                        <div class="col-md-4">
+                        <div class="tw:col-span-4">
                             @include("projects::partials.projectCard", ["project" => $project, "type" => $type])
                         </div>
 

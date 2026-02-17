@@ -28,11 +28,11 @@
 
     <br />
 
-    <div class="row">
-        <div class="col-md-6">
+    <div class="tw:grid tw:grid-cols-2 tw:gap-6">
+        <div>
             <input type="submit" value="{{ __('buttons.duplicate') }}"/>
         </div>
-        <div class="col-md-6 align-right padding-top-sm">
+        <div class="tw:text-right padding-top-sm">
         </div>
     </div>
 

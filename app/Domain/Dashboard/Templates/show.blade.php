@@ -18,14 +18,14 @@
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
 
-    <div class="row">
+    <div class="tw:grid tw:grid-cols-12 tw:gap-4">
 
-        <div class="col-md-8">
+        <div class="tw:col-span-8">
 
             <div class="maincontentinner tw-z-20">
 
                 @if ($login::userIsAtLeast($roles::$admin))
-                    <div class="pull-right dropdownWrapper">
+                    <div class="tw:float-right dropdownWrapper">
                         <a
                             class="dropdown-toggle btn round-button"
                             data-toggle="dropdown"
@@ -51,7 +51,7 @@
                     </div>
                 @endif
 
-                <div class="pull-right dropdownWrapper tw-mr-[5px]">
+                <div class="tw:float-right dropdownWrapper tw-mr-[5px]">
                     <a
                         class="dropdown-toggle btn round-button"
                         data-toggle="dropdown"
@@ -67,7 +67,7 @@
                 <a
                     href="javascript:void(0);"
                     id="favoriteProject"
-                    class="btn pull-right margin-right {{ $isFavorite ? 'isFavorite' : ''}} tw-mr-[5px] round-button"
+                    class="btn tw:float-right margin-right {{ $isFavorite ? 'isFavorite' : ''}} tw-mr-[5px] round-button"
                     data-tippy-content="{{ __('label.favorite_tooltip') }}"
                 ><i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-star"></i></a>
 
@@ -92,7 +92,7 @@
                         {!! $tpl->escapeMinimal($project['details']) !!}
                     </div>
 
-                    <div class="center readMoreToggle" style="display:none;">
+                    <div class="tw:text-center readMoreToggle" style="display:none;">
                         <a href="javascript:void(0)" id="descriptionReadMoreToggle">{{ __('label.read_more') }}</a>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
             </div>
 
             <div class="maincontentinner tw-z-10 latest-todos">
-                <a href="#/tickets/newTicket" class="btn btn-link action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> Create To-Do</a>
+                <a href="#/tickets/newTicket" class="btn btn-link action-link tw:float-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> Create To-Do</a>
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
                 <ul class="sortableTicketList">
@@ -114,8 +114,7 @@
                     @foreach($tickets as $row)
                         <li class="ui-state-default" id="ticket_{!! $row['id'] !!}">
                             <div class="ticketBox fixed priority-border-{!! $row['priority'] !!}" data-val="{!! $row['id'] !!}">
-                                <div class="row">
-                                    <div class="col-md-12 timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{!! $row['id'] !!}">
+                                                    <div class="timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{!! $row['id'] !!}">
                                         @if($row['dependingTicketId'] > 0)
                                         <a href="#/tickets/showTicket/{{  $row['dependingTicketId'] }}">
                                             {{ $row['parentHeadline'] }}
@@ -129,10 +128,9 @@
 
                                         @include("tickets::partials.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])
                                     </div>
-                                </div>
 
-                                <div class="row">
-                                    <div class="col-md-4 tw-px-[15px] tw-py-0">
+                                <div class="tw:grid tw:grid-cols-12">
+                                    <div class="tw:col-span-4 tw-px-[15px] tw-py-0">
 
                                         <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
 
@@ -145,7 +143,7 @@
                                             name="date"
                                         />
                                     </div>
-                                    <div class="col-md-8 tw-mt-[3px]">
+                                    <div class="tw:col-span-8 tw-mt-[3px]">
                                         <div class="right">
                                             <div class="dropdown ticketDropdown effortDropdown show">
                                                 <a
@@ -259,9 +257,9 @@
 
                 <h5 class="subtitle">{{ __('tabs.team') }}</h5>
 
-                <div class="row teamBox">
+                <div class="tw:grid tw:grid-cols-12 tw:gap-4 teamBox">
                     @foreach ($project['assignedUsers'] as $userId => $assignedUser)
-                        <div class="col-md-3">
+                        <div class="tw:col-span-3">
                             <x-users::profile-box :user="$assignedUser">
                                 @spaceless
                                     @php $hasName = $assignedUser['firstname'] != '' || $assignedUser['lastname'] != ''; @endphp
@@ -288,7 +286,7 @@
                     @endforeach
 
                     @if ($login::userIsAtLeast($roles::$manager))
-                        <div class="col-md-3">
+                        <div class="tw:col-span-3">
                             <x-users::profile-box>
                                 <a href="#/users/newUser?preSelectProjectId={{ $project['id'] }}">
                                     {{ __('links.invite_user') }}
@@ -301,10 +299,10 @@
 
         </div>
 
-        <div class="col-md-4">
+        <div class="tw:col-span-4">
 
             <div class="maincontentinner project-updates">
-                <div class="pull-right">
+                <div class="tw:float-right">
                     @if ($login::userIsAtLeast($roles::$editor))
                         <a
                             href="javascript:void(0);"
@@ -445,8 +443,7 @@
             </div>
 
             <div class="maincontentinner project-progress">
-                <div class="row" id="projectProgressContainer">
-                    <div class="col-md-12">
+                <div id="projectProgressContainer">
                         <h5 class="subtitle">{{ __('subtitles.project_progress') }}</h5>
 
                         <div id="canvas-holder" class="tw-w-full tw-h-[250px]">
@@ -454,15 +451,13 @@
                         </div>
 
                         <br/><br/>
-                    </div>
                 </div>
 
-                <div class="row" id="milestoneProgressContainer">
-                    <div class="col-md-12">
+                <div id="milestoneProgressContainer">
                         <h5 class="subtitle">{{ __('headline.milestones') }}</h5>
                         <ul class="sortableTicketList">
                             @if (count($milestones) == 0)
-                                <div class="center">
+                                <div class="tw:text-center">
                                     <br/>
                                     <h4>{{ __('headlines.no_milestones') }}</h4>
                                     {{ __('text.milestones_help_organize_projects') }}
@@ -491,7 +486,6 @@
                                 </li>
                             @endforeach
                         </ul>
-                    </div>
                 </div>
             </div>
         </div>

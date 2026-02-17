@@ -14,8 +14,8 @@
         <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
         <input type="hidden" name="save" value="1" />
 
-        <div class="row">
-            <div class="col-md-6">
+        <div class="tw:grid tw:grid-cols-2 tw:gap-6">
+            <div>
 
                 <h4 class="widgettitle title-light">{{ $tpl->__('label.basic_information') }}</h4>
 
@@ -58,7 +58,7 @@
                 </p>
 
             </div>
-            <div class="col-md-6">
+            <div>
 
                 <h4 class="widgettitle title-light">{{ $tpl->__('label.project_access') }}</h4>
 

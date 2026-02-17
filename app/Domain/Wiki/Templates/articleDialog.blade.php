@@ -54,9 +54,9 @@
 
 <form class="formModal" method="post" action="{{ CURRENT_URL }}">
 
-    <div class="row">
-        <div class="col-md-2">
-            <div class="row-fluid marginBottom">
+    <div class="tw:grid tw:grid-cols-12 tw:gap-4">
+        <div class="tw:col-span-2">
+            <div class="marginBottom">
                 <h4 class="widgettitle title-light">
                     <span class="fa fa-folder"></span>{{ __('subtitles.organization') }}
                 </h4>
@@ -83,49 +83,42 @@
 
                 <ul class="sortableTicketList" style="width:99%">
                     @if ($currentArticle->milestoneId == '')
-                        <li class="ui-state-default center" id="milestone_0">
+                        <li class="ui-state-default tw:text-center" id="milestone_0">
                             <h4>{{ __('headlines.no_milestone_link') }}</h4>
                             {{ __('text.use_milestone_to_track_leancanvas') }}<br />
-                            <div class="row" id="milestoneSelectors">
+                            <div id="milestoneSelectors">
                                 @if ($login::userIsAtLeast($roles::$editor))
-                                    <div class="col-md-12">
-                                        <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');">{{ __('links.create_link_milestone') }}</a>
-                                        | <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');">{{ __('links.link_existing_milestone') }}</a>
-
-                                    </div>
+                                    <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');">{{ __('links.create_link_milestone') }}</a>
+                                    | <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');">{{ __('links.link_existing_milestone') }}</a>
                                 @endif
                             </div>
-                            <div class="row" id="newMilestone" style="display:none;">
-                                <div class="col-md-12">
-                                    <textarea name="newMilestone"></textarea><br />
-                                    <input type="hidden" name="type" value="milestone" />
-                                    <input type="hidden" name="leancanvasitemid" value="{{ $id }} " />
-                                    <input type="button" value="{{ __('buttons.save') }}" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
-                                    <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" class="btn btn-secondary">
-                                        <i class="fas fa-times"></i> {{ __('links.cancel') }}
-                                    </a>
-                                </div>
+                            <div id="newMilestone" style="display:none;">
+                                <textarea name="newMilestone"></textarea><br />
+                                <input type="hidden" name="type" value="milestone" />
+                                <input type="hidden" name="leancanvasitemid" value="{{ $id }} " />
+                                <input type="button" value="{{ __('buttons.save') }}" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
+                                <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> {{ __('links.cancel') }}
+                                </a>
                             </div>
 
-                            <div class="row" id="existingMilestone" style="display:none;">
-                                <div class="col-md-12">
-                                    <select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" name="existingMilestone"  class="user-select">
-                                        <option value="">{{ __('label.all_milestones') }}</option>
-                                        @foreach ($tpl->get('milestones') as $milestoneRow)
-                                            <option value="{{ $milestoneRow->id }}"
-                                                @if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id))
-                                                    selected='selected'
-                                                @endif
-                                            >{{ $milestoneRow->headline }}</option>
-                                        @endforeach
-                                    </select>
-                                    <input type="hidden" name="type" value="milestone" />
-                                    <input type="hidden" name="articleId" value="{{ $id }} " />
-                                    <input type="button" value="Save" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
-                                    <a href="javascript:void(0);"  onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
-                                        <i class="fas fa-times"></i> {{ __('links.cancel') }}
-                                    </a>
-                                </div>
+                            <div id="existingMilestone" style="display:none;">
+                                <select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" name="existingMilestone"  class="user-select">
+                                    <option value="">{{ __('label.all_milestones') }}</option>
+                                    @foreach ($tpl->get('milestones') as $milestoneRow)
+                                        <option value="{{ $milestoneRow->id }}"
+                                            @if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id))
+                                                selected='selected'
+                                            @endif
+                                        >{{ $milestoneRow->headline }}</option>
+                                    @endforeach
+                                </select>
+                                <input type="hidden" name="type" value="milestone" />
+                                <input type="hidden" name="articleId" value="{{ $id }} " />
+                                <input type="button" value="Save" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
+                                <a href="javascript:void(0);"  onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
+                                    <i class="fas fa-times"></i> {{ __('links.cancel') }}
+                                </a>
                             </div>
 
                         </li>
@@ -153,7 +146,7 @@
             <br />
 
         </div>
-        <div class="col-md-8">
+        <div class="tw:col-span-8">
 
 
             <div class="btn-group inlineDropDownContainerLeft">
@@ -177,8 +170,8 @@
             <textarea class="tiptapComplex" rows="20" cols="80" id="wikiArticleContentEditor"  name="description">{{ htmlentities($currentArticle->description ?? '') }}</textarea>
 
 
-                <div class="row">
-                    <div class="col-md-10 padding-top-sm">
+                <div class="tw:flex tw:justify-between tw:items-center tw:gap-4 padding-top-sm">
+                    <div>
                         <br />
                         <input type="hidden" name="saveTicket" value="1" />
                         <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
@@ -186,7 +179,7 @@
                         <input type="submit" class="btn btn-outline" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="{{ __('buttons.save_and_close') }}"/>
 
                     </div>
-                    <div class="col-md-2 align-right padding-top-sm">
+                    <div class="tw:text-right padding-top-sm">
                         @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))
                             <br />
                             <a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete_article') }}</a>
@@ -198,7 +191,7 @@
 
 
         </div>
-        <div class="col-md-2"></div>
+        <div class="tw:col-span-2"></div>
     </div>
 
 

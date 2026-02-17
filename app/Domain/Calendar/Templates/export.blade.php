@@ -20,8 +20,8 @@
         {{ __('text.no_url') }}
     @endif
 
-    <div class="row">
-        <div class="col-md-6">
+    <div class="tw:flex tw:justify-between tw:items-center tw:gap-4">
+        <div>
             <input type="hidden" value="1" name="generateUrl" />
 
             @dispatchEvent('beforeSubmitButton')
@@ -29,7 +29,7 @@
             <br /><input type="submit" value="{{ __('buttons.generate_ical_url') }}" />
 
         </div>
-        <div class="col-md-6 align-right">
+        <div class="tw:text-right">
             @if($url)
                 <a href="{{ BASE_URL }}/calendar/export?remove=1" class="delete formModal"><i class="fa fa-trash"></i> {{ __('links.remove_access') }}</a>
             @endif

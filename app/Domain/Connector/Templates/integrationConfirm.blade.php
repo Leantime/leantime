@@ -12,11 +12,7 @@
 <div class="pageheader">
     <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
     <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}</h1>
-            </div>
-        </div>
+        <h1>{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}</h1>
     </div>
 </div>
 
@@ -27,7 +23,7 @@
         @php $tpl->displaySubmodule('connector-importProgress') @endphp
     </div>
     <div class="maincontentinner">
-        <div class="center">
+        <div class="tw:text-center">
             <div style="width:30%" class="svgContainer">
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_party_re_nmwj.svg') !!}
             </div>

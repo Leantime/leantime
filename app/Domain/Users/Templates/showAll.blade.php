@@ -15,11 +15,11 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="row">
-            <div class="col-md-6">
+        <div class="tw:grid tw:grid-cols-2 tw:gap-6">
+            <div>
                 <a href="{{ BASE_URL }}/users/newUser" class="btn btn-primary userEditModal"><i class='fa fa-plus'></i> {{ __('buttons.add_user') }} </a>
             </div>
-            <div class="col-md-6 align-right">
+            <div class="tw:text-right">
             </div>
         </div>
 

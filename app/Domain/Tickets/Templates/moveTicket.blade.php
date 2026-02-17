@@ -38,7 +38,7 @@
     </select><br /><br /><br /><br />
     <br />
     <input type="submit" value="{{ __('buttons.move') }}" name="move" class="btn btn-primary tw:btn tw:btn-primary" />
-    <a class="pull-right" href="javascript:void(0);" onclick="leantime.modals.closeModal();">{{ __('buttons.back') }}</a>
+    <a class="tw:float-right" href="javascript:void(0);" onclick="leantime.modals.closeModal();">{{ __('buttons.back') }}</a>
     <div class="clearall"></div>
     <br />
 </form>

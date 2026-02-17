@@ -13,11 +13,7 @@
 <div class="pageheader">
     <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
     <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}</h1>
-            </div>
-        </div>
+        <h1>{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}</h1>
     </div>
 </div>
 
@@ -25,7 +21,7 @@
         <div class="maincontentinner">
             @php $tpl->displaySubmodule('connector-importProgress') @endphp
         </div>
-        <div class="maincontentinner center">
+        <div class="maincontentinner tw:text-center">
 
         {!! $tpl->displayNotification() !!}
 
@@ -36,9 +32,9 @@
 
             <form method="post" action="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}&step=fields{{ $urlAppend }}">
 
-                <div class="row">
-                    <div class="col-md-3"></div>
-                    <div class="col-md-2 right">
+                <div class="tw:grid tw:grid-cols-[3fr_2fr_2fr_2fr_3fr] tw:gap-6">
+                    <div></div>
+                    <div class="right">
                         <h1>From (your integration)</h1>
                         <label for="providerEntities">{{ $provider->name }}</label>
                         <select name="providerEntities" id="providerEntities" style="width:100%;">
@@ -47,10 +43,10 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2" style="padding-top:50px;">
+                    <div style="padding-top:50px;">
                         <i class="fa fa-arrow-right"></i>
                     </div>
-                    <div class="col-md-2">
+                    <div>
                         <h1>To (Leantime)</h1>
 
                         <label for="leantimeEntities">Leantime</label>
@@ -60,11 +56,11 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3"></div>
+                    <div></div>
                 </div>
 
                 <div class="left">
-                    <a href="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" class="btn btn-default pull-left">Back</a>
+                    <a href="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" class="btn btn-default tw:float-left">Back</a>
                 </div>
 
                 <div class="right">

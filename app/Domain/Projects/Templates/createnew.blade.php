@@ -1,20 +1,18 @@
-<div class="center padding-lg" style="max-width:1200px;">
+<div class="tw:text-center padding-lg" style="max-width:1200px;">
 
-    <div class="row">
-        <div class="col-md-12">
-            <h1 style="font-size:var(--font-size-xxxl);">Create something new</h1><br />
-            {!!  __("text.creation_hub") !!}
+    <div>
+        <h1 style="font-size:var(--font-size-xxxl);">Create something new</h1><br />
+        {!!  __("text.creation_hub") !!}
 
-            <br />
-            <br />
-        </div>
+        <br />
+        <br />
     </div>
 
 
-    <div class="row">
+    <div class="tw:grid tw:grid-cols-3 tw:gap-6">
 
         @foreach($projectTypes as $projectType)
-        <div class="col-md-4 {{ $projectType["active"] !== true ? "disabled" : "" }}"  >
+        <div class="{{ $projectType["active"] !== true ? "disabled" : "" }}"  >
             <div class="profileBox">
 
                 <x-global::undrawSvg image="{{ $projectType['image'] }}" headline="{{  __($projectType['label'])  }}" maxWidth="50%" height="150px"></x-global::undrawSvg>

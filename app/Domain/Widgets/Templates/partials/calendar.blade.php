@@ -10,7 +10,7 @@
 
     <button class="btn btn-link btn-round-icon dropdown-toggle f-right" type="button" data-tippy-content="{{ __('text.calendar_view') }}"
             data-toggle="dropdown"> <i class="fa-solid fa-calendar-week"></i></button>
-    <ul class="dropdown-menu pull-right">
+    <ul class="dropdown-menu tw:float-right">
         <li>
             <a class="fc-agendaDay-button fc-button fc-state-default fc-corner-right calendarViewSelect" href="javascript:void(0);"
                data-value="multiMonthOneMonth"

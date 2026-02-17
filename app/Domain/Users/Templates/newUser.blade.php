@@ -47,8 +47,8 @@
 {!! $tpl->displayNotification() !!}
 
 <form action="{{ BASE_URL }}/users/newUser" method="post" class="stdform userEditModal formModal">
-    <div class="row" style="width:800px;">
-        <div class="col-md-7">
+    <div class="tw:grid tw:grid-cols-[7fr_5fr] tw:gap-6" style="width:800px;">
+        <div>
 
                 <h4 class="widgettitle title-light">{{ __('label.profile_information') }}</h4>
 
@@ -114,7 +114,7 @@
                     </p>
 
         </div>
-        <div class="col-md-5">
+        <div>
 
                 <h4 class="widgettitle title-light">{{ __('label.project_assignment') }}</h4>
 

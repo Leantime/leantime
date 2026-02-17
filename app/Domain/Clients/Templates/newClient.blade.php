@@ -27,8 +27,8 @@
 
                     @dispatchEvent('afterFormOpen')
 
-                    <div class="row row-fluid">
-                        <div class="col-md-6">
+                    <div>
+                        <div>
                             <div class="form-group">
                                 <label class="span4 control-label">{{ __('label.name') }}</label>
                                 <div class="span6">

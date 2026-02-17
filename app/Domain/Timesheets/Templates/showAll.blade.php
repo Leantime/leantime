@@ -110,7 +110,7 @@
     <div class="maincontentinner">
         <form action="{{ BASE_URL }}/timesheets/showAll" method="post" id="form" name="form">
 
-            <div class="pull-right">
+            <div class="tw:float-right">
                 <div id="tableButtons" style="display:inline-block"></div>
             </div>
             <div class="clearfix"></div>

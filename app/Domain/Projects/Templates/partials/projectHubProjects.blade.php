@@ -5,7 +5,7 @@
      hx-swap="outerHTML">
 
     @if (count($clients) > 0)
-        <div class="dropdown dropdownWrapper pull-right">
+        <div class="dropdown dropdownWrapper tw:float-right">
             <a href="javascript:void(0)" class="btn btn-default dropdown-toggle header-title-dropdown" data-toggle="dropdown">
                 @if ($currentClientName != '')
                     {{ $currentClientName }}
@@ -39,7 +39,7 @@
 
     @if (count($allProjects) == 0)
         <br /><br />
-        <div class='center'>
+        <div class='tw:text-center'>
             <div style='width:70%; color:var(--main-titles-color)' class='svgContainer'>
                 {{ __('notifications.not_assigned_to_any_project') }}
                 @if($login::userIsAtLeast($roles::$manager))
@@ -55,13 +55,13 @@
             ⭐ My Favorites
         </x-slot>
         <x-slot name="content">
-            <div class="row">
+            <div class="tw:grid tw:grid-cols-3 tw:gap-6">
                 @php
                     $hasFavorites = false;
                 @endphp
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == true)
-                        <div class="col-md-4">
+                        <div>
                             @include("projects::partials.projectCard", ["project" => $project,  "type" => "detailed"])
                         </div>
                         @php
@@ -85,11 +85,11 @@
         </x-slot>
         <x-slot name="content">
 
-            <div class="row">
+            <div class="tw:grid tw:grid-cols-4 tw:gap-4">
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == false)
 
-                        <div class="col-md-3">
+                        <div>
                             @include("projects::partials.projectCard", ["project" => $project, "type" => "detailed"])
                         </div>
 

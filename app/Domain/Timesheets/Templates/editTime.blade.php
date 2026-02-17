@@ -182,7 +182,7 @@
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <a class="delete editTimeModal pull-right" href="{{ BASE_URL }}/timesheets/delTime/{{ e($_GET['id']) }}">{{ __('links.delete') }}</a>
+        <a class="delete editTimeModal tw:float-right" href="{{ BASE_URL }}/timesheets/delTime/{{ e($_GET['id']) }}">{{ __('links.delete') }}</a>
         <input type="submit" value="{{ __('buttons.save') }}" name="save" class="button" />
     </p>
 </form>

@@ -54,8 +54,8 @@
     <div class="maincontentinner" id="ideaBoards" style="min-height:350px;">
         {!! $tpl->displayNotification() !!}
 
-        <div class="row">
-            <div class="col-md-4">
+        <div class="tw:flex tw:justify-between tw:items-center tw:flex-wrap tw:gap-2">
+            <div>
                 @if ($login::userIsAtLeast($roles::$editor))
                     @if (count($tpl->get('allCanvas')) > 0)
                         <a href="#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment"><span class="far fa-lightbulb"></span>{{ $tpl->__('buttons.add_idea') }}</a>
@@ -63,17 +63,13 @@
                 @endif
             </div>
 
-            <div class="col-md-4 center">
-            </div>
-            <div class="col-md-4">
-                <div class="pull-right">
-                    <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown">{!! $tpl->__('buttons.idea_wall') !!} {!! $tpl->__('links.view') !!}</button>
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ BASE_URL }}/ideas/showBoards" class="active">{!! $tpl->__('buttons.idea_wall') !!}</a></li>
-                            <li><a href="{{ BASE_URL }}/ideas/advancedBoards" class="">{!! $tpl->__('buttons.idea_kanban') !!}</a></li>
-                        </ul>
-                    </div>
+            <div>
+                <div class="btn-group viewDropDown">
+                    <button class="btn dropdown-toggle" data-toggle="dropdown">{!! $tpl->__('buttons.idea_wall') !!} {!! $tpl->__('links.view') !!}</button>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ BASE_URL }}/ideas/showBoards" class="active">{!! $tpl->__('buttons.idea_wall') !!}</a></li>
+                        <li><a href="{{ BASE_URL }}/ideas/advancedBoards" class="">{!! $tpl->__('buttons.idea_kanban') !!}</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -85,9 +81,6 @@
 
                 @foreach ($tpl->get('canvasItems') as $row)
                     <div class="ticketBox" id="item_{{ $row['id'] }}" data-value="{{ $row['id'] }}">
-
-                        <div class="row">
-                            <div class="col-md-12">
 
                                 @if ($login::userIsAtLeast($roles::$editor))
                                     <div class="inlineDropDownContainer" style="float:right;">
@@ -152,15 +145,12 @@
                                     </ul>
                                 </div>
 
-                                <div class="pull-right" style="margin-right:10px;">
+                                <div class="tw:float-right" style="margin-right:10px;">
                                     <a href="#/ideas/ideaDialog/{{ $row['id'] }}"
                                        class="" data="item_{{ $row['id'] }}"
                                         {!! $row['commentCount'] == 0 ? 'style="color: grey;"' : '' !!}>
                                         <span class="fas fa-comments"></span></a> <small>{{ $row['commentCount'] }}</small>
                                 </div>
-
-                            </div>
-                        </div>
 
                         @if ($row['milestoneHeadline'] != '')
                             <br/>
@@ -179,7 +169,7 @@
 
             </div>
             @if (count($tpl->get('canvasItems')) == 0)
-                <div class="center">
+                <div class="tw:text-center">
                     <div style="width:30%" class="svgContainer">
                         {!! file_get_contents(ROOT . '/dist/images/svg/undraw_new_ideas_jdea.svg') !!}
                     </div>
@@ -192,7 +182,7 @@
 
         @else
             <br/><br/>
-            <div class="center">
+            <div class="tw:text-center">
                 <div style="width:30%" class="svgContainer">
                     {!! file_get_contents(ROOT . '/dist/images/svg/undraw_new_ideas_jdea.svg') !!}
                 </div>

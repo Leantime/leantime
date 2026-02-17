@@ -30,8 +30,8 @@
             <div id='clientDetails'>
                 <form action="" method="post">
 
-                    <div class="row row-fluid">
-                        <div class="col-md-6">
+                    <div class="tw:grid tw:grid-cols-2 tw:gap-6">
+                        <div>
                             <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> {{ __('subtitle.details') }}</h4>
 
                             <div class="form-group">
@@ -106,7 +106,7 @@
 
                         </div>
 
-                        <div class="col-md-6">
+                        <div>
                             <h4 class="widgettitle title-light"><span class="fa fa-users"></span> {{ __('subtitles.users_assigned_to_this_client') }}</h4>
                             <a href="#/users/newUser?preSelectedClient={{ $values['id'] }}" class="btn btn-primary"><i class='fa fa-plus'></i> {{ __('buttons.add_user') }} </a>
                             <table class='table table-bordered'>
@@ -155,12 +155,12 @@
 
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
+                    <div class="tw:grid tw:grid-cols-2 tw:gap-6">
+                        <div>
                             <input type="submit" name="save" id="save"
                                    value="{{ __('buttons.save') }}" class="btn btn-primary" />
                         </div>
-                        <div class="col-md-6 align-right">
+                        <div class="tw:text-right">
                             <a href="{{ BASE_URL }}/clients/delClient/{{ e($_GET['id']) }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a>
                         </div>
                     </div>

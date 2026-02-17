@@ -14,8 +14,8 @@
 
     <div class="maincontentinner">
 
-        <div class="row">
-            <div class="col-md-4">
+        <div class="tw:grid tw:grid-cols-3">
+            <div>
                 @dispatchEvent('filters.afterLefthandSectionOpen')
                 @php
                     $tpl->displaySubmodule('tickets-ticketNewBtn');
@@ -23,10 +23,10 @@
                 @endphp
                 @dispatchEvent('filters.beforeLefthandSectionClose')
             </div>
-            <div class="col-md-4">
+            <div>
             </div>
-            <div class="col-md-4">
-                <div class="pull-right">
+            <div>
+                <div class="tw:float-right">
                     <div class="btn-group dropRight">
                         @php
                             $currentView = '';

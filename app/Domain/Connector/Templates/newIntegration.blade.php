@@ -5,11 +5,7 @@
 <div class="pageheader">
     <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
     <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>{{ $tpl->__('headlines.integrations') }} // {{ $provider->name }}</h1>
-            </div>
-        </div>
+        <h1>{{ $tpl->__('headlines.integrations') }} // {{ $provider->name }}</h1>
     </div>
 </div>
 
@@ -18,7 +14,7 @@
         @php $tpl->displaySubmodule('connector-importProgress') @endphp
     </div>
 
-    <div class="maincontentinner center">
+    <div class="maincontentinner tw:text-center">
 
         {!! $tpl->displayNotification() !!}
 

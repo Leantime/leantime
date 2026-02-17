@@ -46,7 +46,7 @@
         <div class="btn-group left">
             <button class="btn btn-link btn-round-icon dropdown-toggle f-right" type="button" data-tippy-content="{{ __('text.group_by') }}"
                     data-toggle="dropdown"><span class="fa-solid fa-diagram-project"></span></button>
-            <ul class="dropdown-menu pull-right">
+            <ul class="dropdown-menu tw:float-right">
                 <li class="nav-header">{!! __("text.group_by") !!}</li>
                 <li>
                     <span class="radio">
@@ -107,7 +107,7 @@
                     <span class='badge badge-primary'>1</span>
                 @endif
             </button>
-            <ul class="dropdown-menu pull-right">
+            <ul class="dropdown-menu tw:float-right">
                 <li class="nav-header">{!! __("text.filter") !!}</li>
                 <li
                     @if($projectFilter == '')
@@ -154,7 +154,7 @@
         <div class="">
             @if($tickets !== null && count($tickets) == 0)
 
-                <div class='center'>
+                <div class='tw:text-center'>
                     <div style='width:30%' class='svgContainer'>
                         {!! file_get_contents(ROOT . "/dist/images/svg/undraw_a_moment_to_relax_bbpa.svg") !!}
                     </div>

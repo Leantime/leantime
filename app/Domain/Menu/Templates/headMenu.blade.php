@@ -1,7 +1,7 @@
 @php use Leantime\Domain\Auth\Models\Roles; @endphp
 @dispatchEvent('beforeHeadMenu')
 
-<ul class="headmenu pull-right">
+<ul class="headmenu tw:float-right">
     @dispatchEvent('insideHeadMenu')
 
     @include('timesheets::partials.stopwatch', [
@@ -163,7 +163,7 @@
         >
             <span class="fa-solid fa-question-circle"></span>
         </a>
-        <ul class="dropdown-menu pull-right">
+        <ul class="dropdown-menu tw:float-right">
             <li class="nav-header">
                 {{ __("headline.support") }}
             </li>

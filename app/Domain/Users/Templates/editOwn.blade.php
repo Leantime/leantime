@@ -12,10 +12,8 @@
 
     {!! $tpl->displayNotification() !!}
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="maincontentinner">
-                <div class="tabbedwidget tab-primary accountTabs">
+    <div class="maincontentinner">
+        <div class="tabbedwidget tab-primary accountTabs">
 
                     <ul>
                         <li><a href="#myProfile">{!! __('tabs.myProfile') !!}</a></li>
@@ -27,8 +25,8 @@
                     </ul>
 
                     <div id="myProfile">
-                        <div class="row">
-                            <div class="col-md-8">
+                        <div class="tw:grid tw:grid-cols-[2fr_1fr] tw:gap-6">
+                            <div>
                                 <form action="" method="post">
                                     <h4 class="widgettitle title-light"><?php echo $tpl->__('label.profile_information'); ?></h4>
                                     <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
@@ -101,8 +99,8 @@
 
                                 </form>
                             </div>
-                            <div class="col-md-4">
-                                <div class="center">
+                            <div>
+                                <div class="tw:text-center">
                                     <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}?v={{ format($user['modified'])->timestamp() }}'  class='profileImg tw:rounded-full' alt='Profile Picture' id="previousImage"/>
                                     <div id="profileImg">
                                     </div>
@@ -295,8 +293,7 @@
                                     </span>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-12">
+                                <div>
 
                                         <hr />
                                         <label for="colormode" >{{ __('label.colormode') }}</label>
@@ -313,10 +310,8 @@
                                             </div>
                                         </x-global::selectable>
 
-                                    </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
+                                <div>
                                         <hr />
                                         <label>Font</label>
                                         @foreach($availableFonts as $key => $font)
@@ -330,10 +325,8 @@
 
                                         @endforeach
 
-                                    </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
+                                <div>
                                         <hr />
                                         <label>Color Scheme</label>
                                         @foreach($availableColorSchemes as $key => $scheme )
@@ -343,7 +336,6 @@
                                                 </label>
                                             </x-global::selectable>
                                         @endforeach
-                                    </div>
                                 </div>
                             </div>
                             <br /><br />
@@ -484,8 +476,6 @@
 
                     @dispatchEvent('tabsContent')
                 </div>
-            </div>
-        </div>
     </div>
 </div>
 

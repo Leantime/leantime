@@ -12,9 +12,9 @@
         <h5 class="subtitle">Sync Leantime with your external applications</h5>
         <p>Available Integrations</p>
 
-        <div class="row">
+        <div class="tw:grid tw:grid-cols-4 tw:gap-6">
             @foreach ($tpl->get('providers') as $provider)
-                <div class="col-md-3">
+                <div>
                     <div class="profileBox">
                         <div class="commentImage gradient">
                             <img src="{{ BASE_URL }}/{{ $provider->image }}"/>

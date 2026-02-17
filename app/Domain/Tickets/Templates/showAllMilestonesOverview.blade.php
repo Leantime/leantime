@@ -24,8 +24,8 @@
             @dispatchEvent('filters.afterFormOpen')
 
             <input type="hidden" value="1" name="search"/>
-            <div class="row">
-                <div class="col-md-5">
+            <div class="tw:flex tw:justify-between tw:items-start">
+                <div>
                     @dispatchEvent('filters.afterLefthandSectionOpen')
                     @php
                         $tpl->displaySubmodule('tickets-ticketNewBtn');
@@ -34,12 +34,12 @@
                     @dispatchEvent('filters.beforeLefthandSectionClose')
                 </div>
 
-                <div class="col-md-2 center">
+                <div class="tw:text-center">
                     @dispatchEvent('filters.afterCenterSectionOpen')
                     @dispatchEvent('filters.beforeCenterSectionClose')
                 </div>
-                <div class="col-md-5">
-                    <div class="pull-right">
+                <div>
+                    <div class="tw:float-right">
                         @dispatchEvent('filters.afterRighthandSectionOpen')
                         <div id="tableButtons" style="display:inline-block"></div>
                         @dispatchEvent('filters.beforeRighthandSectionClose')

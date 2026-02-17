@@ -13,9 +13,6 @@
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
     <div class="maincontentinner">
-        <div class="row">
-            <div class="col-md-12">
-
                 <div class="tabbedwidget tab-primary companyTabs">
 
                     <ul>
@@ -26,8 +23,8 @@
 
                     <div id="details">
 
-                        <div class="row">
-                            <div class="col-md-8">
+                        <div class="tw:grid tw:grid-cols-[2fr_1fr] tw:gap-6">
+                            <div>
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings#details">
                                     <p>{{ __('text.these_are_system_wide_settings') }}</p>
                                     <br />
@@ -36,11 +33,11 @@
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-building"></span>{{ __('subtitles.companydetails') }}
                                     </h4>
-                                    <div class="row">
-                                        <div class="col-md-2">
+                                    <div class="tw:grid tw:grid-cols-[1fr_4fr] tw:gap-6">
+                                        <div>
                                             <label>{{ __('label.language') }}</label>
                                         </div>
-                                        <div class="col-md-8">
+                                        <div>
                                             <select name="language" id="language">
                                                 @foreach($tpl->get('languageList') as $languagKey => $languageValue)
                                                     <option value="{{ $languagKey }}"
@@ -50,12 +47,12 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-md-2">
+                                    <div class="tw:grid tw:grid-cols-[1fr_4fr] tw:gap-6">
+                                        <div>
                                             <label>{{ __('label.company_name') }}</label>
                                         </div>
-                                        <div class="col-md-8">
-                                            <input type="text" name="name" id="companyName" value="{{ $companySettings['name'] }}" class="pull-left"/>
+                                        <div>
+                                            <input type="text" name="name" id="companyName" value="{{ $companySettings['name'] }}" class="tw:float-left"/>
                                             <small>{{ __('text.company_name_helper') }}</small>
                                         </div>
                                     </div>
@@ -63,11 +60,11 @@
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-cog"></span>{{ __('subtitles.defaults') }}
                                     </h4>
-                                    <div class="row">
-                                        <div class="col-md-2">
+                                    <div class="tw:grid tw:grid-cols-[1fr_4fr] tw:gap-6">
+                                        <div>
                                             <label for="messageFrequency">{{ __('label.messages_frequency') }}</label>
                                         </div>
-                                        <div class="col-md-8">
+                                        <div>
                                             <span class='field'>
                                                 <select name="messageFrequency" class="input" id="messageFrequency" style="width: 220px">
                                                     <option value="">--{{ __('label.choose_option') }}--</option>
@@ -88,15 +85,14 @@
                                     <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn"/>
                                 </form>
                             </div>
-                            <div class="col-md-4">
+                            <div>
 
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings">
                                     <input type="hidden" value="1" name="saveLogo" />
                                     <h5 class="widgettitle title-light">{{ __('headlines.logo') }}</h5>
                                     <br />
 
-                                    <div class="row">
-                                        <div class="col-md-12">
+                                    <div>
                                             @if($companySettings['logo'] != '')
                                                 <img src='{{ $companySettings['logo'] }}' class='logoImg' alt='Logo' id="previousImage" width="260"/>
                                             @else
@@ -134,7 +130,6 @@
                                                     </p>
                                                 </div>
                                             </div>
-                                        </div>
                                     </div>
                                 </form>
                                 <hr />
@@ -172,8 +167,6 @@
                     @dispatchEvent('tabsContent')
 
                 </div>
-            </div>
-        </div>
     </div>
 </div>
 

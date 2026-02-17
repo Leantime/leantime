@@ -24,11 +24,11 @@
 
     <br />
 
-    <div class="row">
-        <div class="col-md-6">
+    <div class="tw:flex tw:justify-between tw:items-center tw:gap-4">
+        <div>
             <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn"/>
         </div>
-        <div class="col-md-6 align-right padding-top-sm">
+        <div class="tw:text-right padding-top-sm">
             @if (isset($currentWiki->id) && $currentWiki->id != '' && $login::userIsAtLeast($roles::$editor))
                 <a href="{{ BASE_URL }}/wiki/delWiki/{{ $currentWiki->id }}" class="delete formModal"><i class="fa fa-trash"></i> {{ __('links.delete_wiki') }}</a>
             @endif

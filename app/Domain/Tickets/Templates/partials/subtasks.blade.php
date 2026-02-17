@@ -53,8 +53,7 @@
     <li class="ui-state-default" id="ticket_{{ $subticket['id'] }}" >
         <div class="ticketBox fixed priority-border-{{ $subticket['priority'] }}" data-val="{{ $subticket['id'] }}" >
 
-            <div class="row">
-                <div class="col-md-12" class="tw:px-4 tw:py-0">
+            <div class="tw:px-4 tw:py-0">
                     @if($login::userIsAtLeast($roles::$editor))
                         <div class="inlineDropDownContainer" >
                             <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -68,23 +67,22 @@
 
                     <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>
 
-                </div>
             </div>
-            <div class="row">
-                <div class="col-md-9" class="tw:px-4 tw:py-0">
-                    <div class="row">
-                        <div class="col-md-4">
+            <div class="tw:grid tw:grid-cols-12 tw:gap-2">
+                <div class="tw:col-span-9 tw:px-4 tw:py-0">
+                    <div class="tw:grid tw:grid-cols-3">
+                        <div>
                                 {{ __("label.due") }}<input type="text" title="{{ __("label.due") }}" value="{{ $date }}" class="duedates secretInput quickDueDates" data-id="{{ $subticket['id'] }}" name="date" />
                         </div>
-                        <div class="col-md-4">
+                        <div>
                                 {{ __("label.planned_hours") }}<input type="text" value="{{ $subticket['planHours'] }}" name="planHours" data-label="planHours-{{ $subticket['id'] }}" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
                         </div>
-                        <div class="col-md-4">
+                        <div>
                                 {{ __("label.estimated_hours_remaining") }}<input type="text" value="{{ $subticket['hourRemaining'] }}" name="hourRemaining" data-label="hourRemaining-{{ $subticket['id'] }}" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 tw:pt-[3px]" >
+                <div class="tw:col-span-3 tw:pt-[3px]" >
                     <div class="right">
                         <div class="dropdown ticketDropdown effortDropdown show">
                             <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $subticket['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
