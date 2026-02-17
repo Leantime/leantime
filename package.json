@@ -41,7 +41,7 @@
     "@tiptap/pm": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
     "@tiptap/suggestion": "^2.11.5",
-    "ajv": "^8.13.0",
+    "ajv": "^8.18.0",
     "canvas-confetti": "^1.9.3",
     "chart.js": "^3.6.0",
     "chartjs-adapter-luxon": "^1.3.1",
