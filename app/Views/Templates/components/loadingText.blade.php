@@ -15,13 +15,13 @@
 @if($type == 'card')
     @for ($i = 0; $i < $count; $i++)
         <div class="loading-text tw:w-full">
-            <div class="row tw:mb-l">
-                <div class="col-md-6">
+            <div class="tw:grid tw:grid-cols-2 tw:gap-4 tw:mb-l">
+                <div>
                     <p style="width:30%">Loading...</p>
                     <p style="width:60%">Loading...</p>
                     <p style="width:20%">Loading...</p>
                 </div>
-                <div class="col-md-6 tw:text-right">
+                <div class="tw:text-right">
                     <p style="width:5%" class="tw:float-right">Loading...</p><div class="clearall"></div>
                     <div class="clearall"></div><br />
                     <p style="width:20%" class="tw:float-right tw:ml-sm">Loading...</p>&nbsp;<p style="width:25%" class="tw:float-right tw:ml-sm">Loading...</p>&nbsp;<p style="width:10%" class="tw:float-right tw:ml-sm">Loading...</p>
@@ -109,21 +109,19 @@
 @endif
 
 @if($type == 'plugincard')
-    <div class="row">
+    <div class="tw:grid tw:grid-cols-3 tw:gap-4">
     @for ($i = 0; $i < $count; $i++)
-        <div class="col-md-4">
+        <div>
             <div class="loading-text">
-                <div class="row tw:mb-l">
-                    <div class="col-md-12">
-                        <p style="width:100%; height:80px;">Loading...</p>
-                    </div>
+                <div class="tw:mb-l">
+                    <p style="width:100%; height:80px;">Loading...</p>
                 </div>
-                <div class="row tw:mb-l">
-                    <div class="col-md-6">
+                <div class="tw:grid tw:grid-cols-2 tw:gap-4 tw:mb-l">
+                    <div>
                         <p style="width:60%">Loading...</p>
                         <p style="width:20%">Loading...</p>
                     </div>
-                    <div class="col-md-6 tw:text-right">
+                    <div class="tw:text-right">
                         <p style="width:5%" class="tw:float-right">Loading...</p><div class="clearall"></div>
                         <div class="clearall"></div><br />
                         <p style="width:20%" class="tw:float-right tw:ml-sm">Loading...</p>&nbsp;<p style="width:25%" class="tw:float-right tw:ml-sm">Loading...</p>&nbsp;<p style="width:10%" class="tw:float-right tw:ml-sm">Loading...</p>
