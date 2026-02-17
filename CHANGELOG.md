@@ -1,3 +1,156 @@
+# Version: 3.7.0
+
+## Highlights
+
+### New Rich Text Editor — TinyMCE Replaced by Tiptap
+The legacy TinyMCE editor has been completely removed and replaced with a modern Tiptap-based editor across all rich text areas including ticket descriptions, comments, wiki articles, and notes.
+
+- **Slash commands** — type `/` for quick access to headings, lists, tables, columns, and more
+- **@mentions** — tag team members directly in any editor with automatic notifications
+- **Column layouts** — multi-column content with sidebar layouts
+- **Font family & size selection** in the toolbar
+- **Text color & highlighting** on the main toolbar
+- **Math formula support** via bundled KaTeX
+- **Code blocks** with syntax highlighting
+- **Tables, task lists, subscript/superscript, typography** extensions
+- **Full mobile responsiveness** — touch-optimized editing on all devices
+- **Copilot extension hooks** — foundation for AI-assisted writing
+- Modern Apple-like toolbar styling
+
+### Wiki Redesign
+- **New 3-panel layout** — modern navigation, content, and properties panels
+- **Audit-based activity feed** — track article changes with scrollable history
+- **Milestone dropdown** — assign articles to milestones directly from the wiki view
+- **Icon picker & tags** — improved alignment and usability
+- Standardized font sizes and polished status pills
+- Improved responsive layout
+
+### Notification Improvements
+- **Per-project muting** — silence notifications for specific projects
+- **Event-type filtering** — choose which notification categories you receive
+- Improved notification delivery and performance
+
+### Calendar Extensibility
+- **Connect Calendar modal** — extensible UI for linking external calendars
+- **Calendar Settings modal** — centralized calendar configuration
+- Updated modals to match system UI conventions
+- Improved security and extensibility hooks
+
+### PostgreSQL Support (Experimental)
+- Initial PostgreSQL compatibility alongside MySQL/MariaDB
+- New SchemaBuilder for cross-database schema management
+- `castAs()` helper for cross-database CAST operations
+- `wrapColumn()` helper replacing double-quoted SQL identifiers
+- Fixed MySQL-specific CAST types across repositories
+
+## New Features
+- **Group by Parent Task** — new grouping option in To-Do views with root parent resolution for ticket hierarchy
+- **Comment Reactions** — HTMX-based emoji reactions on comments (like, love, celebrate, funny, etc.)
+- **Strategy module** relabeled to mission-driven language
+
+## Performance
+- Event dispatcher and filter pipeline optimizations
+- Template and theme rendering caching improvements
+- Localization middleware performance gains
+- Install/update check short-circuits for faster page loads
+
+## Bug Fixes
+- Fixed idea board internationalization issues
+- Fixed goal KPI progress calculation
+- Fixed milestone collapse behavior
+- Fixed calendar duplicate events
+- Fixed editor toolbar and border-radius inconsistencies
+- Fixed slash menu viewport positioning at screen edges
+- Fixed @mention notification delivery
+
+## Localization
+- Updated Czech (cs-CZ) translations
+- Updated German (de-DE) translations
+
+## Dependency Updates
+- katex 0.16.9 → 0.16.21
+- lodash 4.17.21 → 4.17.23
+- markdown-it 14.1.0 → 14.1.1
+- qs 6.14.1 → 6.14.2
+- webpack 5.99.7 → 5.105.0
+- Added 27 Tiptap packages + lowlight for the new editor
+
+## Breaking Changes
+- **TinyMCE removed** — all rich text editing now uses Tiptap. Existing content renders without changes, but any custom TinyMCE plugins or editor extensions will need to be rewritten for the Tiptap API.
+
+---
+
+## All Changes
+
+* [22792d90e](https://github.com/Leantime/leantime/commit/22792d90ec81167ec6bff602c19b0db1c2a968d2): Expand blocklist with Tailwind classes
+* [3d8cd65f6](https://github.com/Leantime/leantime/commit/3d8cd65f6229e7cab92b2b8c27239c49e3e7e486): Refactor Calendar & Wiki UIs; add calendar hook
+* [61d244d9f](https://github.com/Leantime/leantime/commit/61d244d9f78e3f5e4fe7c96c273b70113a362726): speed improvements
+* [366631d58](https://github.com/Leantime/leantime/commit/366631d58eab2efcdb70f18966861f9450dfd118): Update Tickets.php
+* [e879f4e8d](https://github.com/Leantime/leantime/commit/e879f4e8d99ef2692c3bc8f0aa8d2cc2e8a31b9b): improved notifications
+* [b062a0a73](https://github.com/Leantime/leantime/commit/b062a0a7339a071b747fbc9c81bf2775a6333961): manifest and plugin index
+* [8576fafb9](https://github.com/Leantime/leantime/commit/8576fafb9): fix(db): add cross-database castAs() helper and fix MySQL/PostgreSQL CAST incompatibilities
+* [1b2f54474](https://github.com/Leantime/leantime/commit/1b2f544747ae3103bf30cd3ff6c6739591f42626): fixes
+* [85946b821](https://github.com/Leantime/leantime/commit/85946b821f21041fd1782f8570ee9f1028c51151): bug fixes
+* [400361778](https://github.com/Leantime/leantime/commit/4003617786c77b9ed5a73eb2288273bcb9dacc3c): build(deps): bump qs from 6.14.1 to 6.14.2
+* [631588752](https://github.com/Leantime/leantime/commit/631588752949858cce9ba44d6a533b4272919894): chore(deps): bump markdown-it from 14.1.0 to 14.1.1
+* [cd2fcff8d](https://github.com/Leantime/leantime/commit/cd2fcff8dc2aa27f22f157c40a484877e05df316): chore(deps): bump katex from 0.16.9 to 0.16.21
+* [bdfdfd048](https://github.com/Leantime/leantime/commit/bdfdfd04830a46c1b077a0bbd58e4a95834695b3): build(deps-dev): bump webpack from 5.99.7 to 5.105.0
+* [cff6ca0d9](https://github.com/Leantime/leantime/commit/cff6ca0d90cb2477672cdbdb902d4091ced91739): style: round title input corners and remove editor double-box on focus
+* [c90027082](https://github.com/Leantime/leantime/commit/c90027082ed97e4e4321ea729e91b6967292f067): chore: update Plugins submodule (Tiptap editor migration)
+* [2b9073d3e](https://github.com/Leantime/leantime/commit/2b9073d3e153ee72ae32907721ad69f623e40c1b): refactor(editor): remove all TinyMCE references from core domains
+* [3ad52b074](https://github.com/Leantime/leantime/commit/3ad52b07420dd6939cf23f9822b4ebfed0927d52): fix(db): replace double-quoted SQL identifiers with cross-database wrapColumn()
+* [3f9f899e7](https://github.com/Leantime/leantime/commit/3f9f899e781c5be348e1f39dae255ffab7e43ae5): feat(strategy): relabel StrategyPro plugin to mission-driven language
+* [77f63d26b](https://github.com/Leantime/leantime/commit/77f63d26bf93abfdecbe5da62cc994ee65fd61b4): feat(notifications): add per-project muting and event-type filtering
+* [8d24c2568](https://github.com/Leantime/leantime/commit/8d24c2568f2249b6e7909621044857c93e74869e): chore: Update Plugins submodule (notes widget button restyle)
+* [4f8612dfd](https://github.com/Leantime/leantime/commit/4f8612dfdc831e437f162e6cba1fddfb8076306c): fix(tiptap): Enable toolbar and polish styling for Notes editor
+* [4430f1ba1](https://github.com/Leantime/leantime/commit/4430f1ba14e4e227a539124d10df1799ad3bf96b): fix(tiptap): Fix wiki toolbar attachment and comment editor border-radius
+* [d453a0c50](https://github.com/Leantime/leantime/commit/d453a0c50f012b2e67de3f4dacbbaca46be2d7a7): style(tiptap): Polish editor borders, spacing, and variant classes
+* [3295901f1](https://github.com/Leantime/leantime/commit/3295901f10a0468599e1386af176c0485887670f): fix: Replace CAST AS TEXT/INTEGER with MySQL-compatible types
+* [047299177](https://github.com/Leantime/leantime/commit/04729917722b1222f67c1061eb2b9e396ea49a8f): fix: MySQL compatibility for dual-database support
+* [7ae97f836](https://github.com/Leantime/leantime/commit/7ae97f836d08ad7b9a82e522c16264cd452a75a2): fix: security, architecture, and code quality improvements for Tiptap PR
+* [d6467c6b6](https://github.com/Leantime/leantime/commit/d6467c6b6822dbf67cb82610092858dd3e3eff9c): fix(calendar): improve security, controller patterns, and extensibility
+* [7866d5001](https://github.com/Leantime/leantime/commit/7866d5001613b54e3e3c181ea95aeaf18568d371): Add PostgreSQL compatibility & DB query fixes
+* [54fa56de9](https://github.com/Leantime/leantime/commit/54fa56de94dcb3914246c073fa8f07530debeb8b): Fix image tag in README.md
+* [7f469e7cc](https://github.com/Leantime/leantime/commit/7f469e7ccef4a1ee98c6ff26ae9e35de0c1b5946): Implement root parent resolution for ticket grouping
+* [ccba534cb](https://github.com/Leantime/leantime/commit/ccba534cbde881a107b411f61ee2f3531b69e045): Fix multiple bugs: idea board i18n, goal KPI progress, milestone collapse, calendar duplicates
+* [b18aa49c5](https://github.com/Leantime/leantime/commit/b18aa49c559208e4684a3df6c3245f7520535136): Update cs-CZ.ini
+* [641947538](https://github.com/Leantime/leantime/commit/641947538a4a0214c9c64a4d536854bad158a1d5): Add "Group by Parent Task" option to To-Do views
+* [88951d977](https://github.com/Leantime/leantime/commit/88951d977608225a5dedeeb90bd2a76851a87f4d): Update German translations for various phrases
+* [6a44aca84](https://github.com/Leantime/leantime/commit/6a44aca84c1997808ca16989ef657bcf2ec39e12): Add PostgreSQL support and SchemaBuilder
+* [41bb2b5b3](https://github.com/Leantime/leantime/commit/41bb2b5b3a316dbebaacd7cdc138644cb58c6260): style(wiki): Standardize font sizes, polish status pills, and fix milestone dropdown
+* [0f366ce60](https://github.com/Leantime/leantime/commit/0f366ce60fbf501508eab0b78b25ed40c2d0c3e0): feat(tiptap): Add column slash commands, sidebar layouts, and delete controls
+* [e25a01fc2](https://github.com/Leantime/leantime/commit/e25a01fc25689d27d32bf08cbf6575fe4ba1199f): feat(wiki): Fix icon picker, tags alignment, and activity feed scroll
+* [a35b715fa](https://github.com/Leantime/leantime/commit/a35b715fadd1508b377aa082a01f12ff396f038a): feat(wiki): Add audit-based activity feed, polish properties panel
+* [211bde1bb](https://github.com/Leantime/leantime/commit/211bde1bb7a982bb5db3a02311db2e536d260f49): feat(wiki): Add milestone dropdown and improve responsive layout
+* [4e8ed01aa](https://github.com/Leantime/leantime/commit/4e8ed01aa3bba67f1f279aeb4667ac3e62ed571f): feat(wiki): Redesign wiki view with modern 3-panel layout
+* [3c8549b40](https://github.com/Leantime/leantime/commit/3c8549b4095071cfd3803fbdea493f9d861edba8): fix(wiki): Improve article dialog form spacing
+* [c6e12c303](https://github.com/Leantime/leantime/commit/c6e12c303689fbce08d18913808d5afc654ec278): Update KaTeX font and CSS asset paths in manifest
+* [5948fbfb3](https://github.com/Leantime/leantime/commit/5948fbfb37500ca84f81a33b889908bd3c16628a): fix(tiptap): Improve heading visibility, slash command keyboard navigation
+* [e51bfc31f](https://github.com/Leantime/leantime/commit/e51bfc31f15c254326388a6e82d5e2036d996332): fix(tiptap): Fix text color button not appearing in toolbar
+* [6de1fda8b](https://github.com/Leantime/leantime/commit/6de1fda8bc6e2e6d2ce9bf1147ca871822c0c666): feat(tiptap): Move text color and highlight to main toolbar
+* [ef1ced86b](https://github.com/Leantime/leantime/commit/ef1ced86bedad4ad63a2621224aa77e768fb47f2): feat(tiptap): Add font family and font size buttons to toolbar
+* [3c851918e](https://github.com/Leantime/leantime/commit/3c851918e5722f73ce62e1acd2bfefdf0c276759): style(tiptap): Increase math formula font sizes for better readability
+* [4580c3537](https://github.com/Leantime/leantime/commit/4580c3537a1e5111aadd184645e128c5b052c600): fix(tiptap): Bundle KaTeX locally instead of loading from CDN
+* [b528dc9b5](https://github.com/Leantime/leantime/commit/b528dc9b545518dc13fdf3eff34f210b75195c88): fix(tiptap): Fix @mention notifications and KaTeX loading
+* [a4a43acd8](https://github.com/Leantime/leantime/commit/a4a43acd8337069dcdcb0637e35dbea0d0e204b6): feat(tiptap): add comprehensive mobile responsiveness
+* [25c118cbf](https://github.com/Leantime/leantime/commit/25c118cbf71618d17afb81bad94945309a51697a): fix(tiptap): improve slash menu viewport positioning
+* [9264d8e22](https://github.com/Leantime/leantime/commit/9264d8e22025a2e79e1c738ce2fa25d0acf09d99): chore: remove TinyMCE and complete migration to Tiptap
+* [181466829](https://github.com/Leantime/leantime/commit/181466829b27727592629e1551c3df8219dbea2f): feat(comments): add HTMX-based comment reactions component
+* [0e0c35c8d](https://github.com/Leantime/leantime/commit/0e0c35c8d36471c07c0d7b25080ce6abd15a4e04): style(calendar): update modals to match system UI conventions
+* [eaae5fff0](https://github.com/Leantime/leantime/commit/eaae5fff03b98fa89774d55771f22ec37a89d882): feat(tiptap): Add Phase 6 extensions and enhanced toolbar
+* [8d039a519](https://github.com/Leantime/leantime/commit/8d039a51953cb969f0826146cf726cf4dd50f4e7): feat(calendar): add extensible Connect Calendar and Calendar Settings modals
+* [07e5aa865](https://github.com/Leantime/leantime/commit/07e5aa865083ffa1f43bfa9f93c15304ebfc52c1): feat(tiptap): complete Phase 6 & 7 - @mentions, Copilot hooks, cleanup
+* [b27769a38](https://github.com/Leantime/leantime/commit/b27769a38874f83f63e59ebfcd2eba609abb70aa): feat(calendar): add extensible Connect Calendar modal
+* [916dce838](https://github.com/Leantime/leantime/commit/916dce8386e160e5a1cea8af078b544c36afcfce): feat(wiki): Migrate Wiki article editor to Tiptap (Phase 3)
+* [9650e10cf](https://github.com/Leantime/leantime/commit/9650e10cf5290757cfc827bc661233ae62721ada): feat(comments): Migrate comments to Tiptap editor (Phase 2)
+* [64e9f315d](https://github.com/Leantime/leantime/commit/64e9f315d20996842aa1411d6ed0b06bef558abc): feat(tiptap): add toolbar extension with modern Apple-like styling
+* [73013373c](https://github.com/Leantime/leantime/commit/73013373c951d0b76afa6bdbcdc0ed8b69cfaade): feat(header): add tiptap bundle to global page header
+* [b80647218](https://github.com/Leantime/leantime/commit/b806472182229a57699df30fbfb4f990afc75057): feat(modals): add tiptap cleanup callbacks
+* [46f1fb866](https://github.com/Leantime/leantime/commit/46f1fb8664ebd054f4510e02a277f89306336130): feat(tiptap): create base editor with HTMX integration
+* [927f07864](https://github.com/Leantime/leantime/commit/927f0786419357f87ee39dd8097d89d6fdab6b70): build(deps): bump lodash from 4.17.21 to 4.17.23
+
+---
+
 # Version: 3.6.1
 
 ## Bug Fixes
