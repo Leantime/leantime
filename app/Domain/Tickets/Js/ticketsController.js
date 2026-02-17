@@ -227,8 +227,7 @@ leantime.ticketsController = (function () {
 
 
     var toggleFilterBar = function () {
-        jQuery(".filterBar").toggle();
-
+        jQuery(".filterBar").toggleClass("hideOnLoad");
     };
 
     var initGanttChart = function (tasks, viewMode, readonly) {

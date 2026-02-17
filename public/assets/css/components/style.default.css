@@ -1781,7 +1781,7 @@ a.filter-term {
 
 
 .hideOnLoad {
-    display: none;
+    display: none !important;
 }
 
 .formLink {

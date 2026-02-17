@@ -811,7 +811,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .timerContainer,
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .border-top,
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .clearfix,
-.kanban-swimlane-row[data-expanded="false"] .ticketBox .tw-flex:not(.tw-items-center),
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .tw\:flex:not(.tw\:items-center),
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .inlineDropDownContainer {
     display: none !important;
 }
@@ -924,7 +924,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-content.collapsed .ticketBox .timerContainer,
 .kanban-swimlane-content.collapsed .ticketBox .border-top,
 .kanban-swimlane-content.collapsed .ticketBox .clearfix,
-.kanban-swimlane-content.collapsed .ticketBox .tw-flex,
+.kanban-swimlane-content.collapsed .ticketBox .tw\:flex,
 .kanban-swimlane-content.collapsed .ticketBox .inlineDropDownContainer {
     display: none !important;
 }
