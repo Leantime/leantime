@@ -7,13 +7,13 @@
                 <p>{!!  __('text.structured_project_thinking') !!}</p>
                 <br />
                 <label><strong>{{ __('label.what_are_you_trying_to_accomplish') }}</strong></label>
-                <textarea id="accomplish" name="accomplish" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></textarea>
+                <x-global::forms.textarea name="accomplish" id="accomplish" rows="3" style="width:99%; overflow-x: hidden;" />
                 <br />
                 <label><strong>{{ __('label.how_does_the_world_look_like') }}</strong></label>
-                <textarea id="wordlview" name="worldview" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></textarea>
+                <x-global::forms.textarea name="worldview" id="wordlview" rows="3" style="width:99%; overflow-x: hidden;" />
                 <br />
                 <label><strong>{{ __('label.why_is_this_important') }}</strong></label>
-                <textarea id="whyImportant" name="whyImportant" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></textarea>
+                <x-global::forms.textarea name="whyImportant" id="whyImportant" rows="3" style="width:99%; overflow-x: hidden;" />
 
             </div>
             <div>

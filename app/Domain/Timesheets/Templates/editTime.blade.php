@@ -125,8 +125,9 @@
 <label for="hours">{{ __('label.hours') }}</label> <x-global::forms.input
     name="hours" id="hours"
     value="{{ $values['hours'] }}" size="7" /> <br />
-<label for="description">{{ __('label.description') }}</label> <textarea
-    rows="5" cols="50" id="description" name="description">{{ $values['description'] }}</textarea><br />
+<label for="description">{{ __('label.description') }}</label> <x-global::forms.textarea
+    name="description" id="description" rows="5"
+    value="{{ $values['description'] }}" /><br />
 
 
 

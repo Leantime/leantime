@@ -78,7 +78,7 @@
                             @endif
                         </div>
                         <div id="newMilestone" style="display:none;">
-                            <textarea name="newMilestone"></textarea><br/>
+                            <x-global::forms.textarea name="newMilestone" /><br/>
                             <input type="hidden" name="type" value="milestone"/>
                             <input type="hidden" name="leancanvasitemid" value="{{ $id }} "/>
                             <x-global::button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-global::button>

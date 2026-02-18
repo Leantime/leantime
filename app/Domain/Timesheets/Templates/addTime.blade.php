@@ -109,9 +109,9 @@
                             <label for="hours">{{ __('HOURS') }}</label> <x-global::forms.input
                                     name="hours" id="hours"
                                     value="{{ $values['hours'] }}" size="7" /> <br/>
-                            <label for="description">{{ __('DESCRIPTION') }}</label> <textarea
-                                    rows="5" cols="50" id="description"
-                                    name="description">{{ $values['description'] }}</textarea><br/>
+                            <label for="description">{{ __('DESCRIPTION') }}</label> <x-global::forms.textarea
+                                    name="description" id="description" rows="5"
+                                    value="{{ $values['description'] }}" /><br/>
                             <br/>
                             <br/>
                             <label for="invoicedEmpl">{{ __('INVOICED') }}</label> <input

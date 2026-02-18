@@ -36,7 +36,7 @@
 
             <label for="description">{{ __('label.description') }}</label>
             <span class="field">
-                <textarea rows="5" cols="50" id="description" name="description">{{ $values['description'] }}</textarea><br />
+                <x-global::forms.textarea name="description" id="description" rows="5" value="{{ $values['description'] }}" /><br />
             </span>
 
             <input type="hidden" name="saveTimes" value="1" />

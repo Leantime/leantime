@@ -193,8 +193,8 @@
                                            value=""/>
                                     <input type="hidden" name="dateToFinish"
                                            value="{{ date('Y-m-d', strtotime('next friday'))}}"/>
-                                    <textarea name="description" class="description-input" style="display:none;"
-                                              placeholder="{{ __('input.placeholders.description') }}"></textarea>
+                                    <x-global::forms.textarea name="description" class="description-input" style="display:none;"
+                                              placeholder="{{ __('input.placeholders.description') }}" />
                                 </div>
                                 <div>
                                     <x-global::button submit type="primary" name="create">{{ __('buttons.save') }}</x-global::button>
@@ -275,8 +275,8 @@
                                         @endphp
                                         <input type="hidden" name="dateToFinish"
                                                value="{{ $dueDate }}"/>
-                                        <textarea name="description" class="description-input" style="display:none;"
-                                                  placeholder="{{ __('input.placeholders.description') }}"></textarea>
+                                        <x-global::forms.textarea name="description" class="description-input" style="display:none;"
+                                                  placeholder="{{ __('input.placeholders.description') }}" />
                                     </div>
                                     <div>
                                         <x-global::button submit type="primary" name="create">{{ __('buttons.save') }}</x-global::button>
