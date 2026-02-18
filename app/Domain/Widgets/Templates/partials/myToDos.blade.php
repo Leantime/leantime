@@ -50,9 +50,8 @@
                 <li class="nav-header">{!! __("text.group_by") !!}</li>
                 <li>
                     <span class="radio">
-                        <input type="radio" name="groupBy"
-                               @if($groupBy == "time") checked='checked' @endif
-                               value="time" id="groupByDate"
+                        <x-global::forms.radio name="groupBy" value="time" id="groupByDate"
+                               :checked="$groupBy == 'time'"
                                hx-get="{{BASE_URL}}/widgets/myToDos/get"
                                hx-trigger="click"
                                hx-target="#yourToDoContainer"
@@ -66,10 +65,8 @@
                 </li>
                 <li>
                     <span class="radio">
-                        <input type="radio"
-                               name="groupBy"
-                               @if($groupBy == "project") checked='checked' @endif
-                               value="project" id="groupByProject"
+                        <x-global::forms.radio name="groupBy" value="project" id="groupByProject"
+                               :checked="$groupBy == 'project'"
                                hx-get="{{BASE_URL}}/widgets/myToDos/get"
                                hx-trigger="click"
                                hx-target="#yourToDoContainer"
@@ -83,10 +80,8 @@
                 </li>
                 <li>
                     <span class="radio">
-                        <input type="radio"
-                               name="groupBy"
-                               @if($groupBy == "priority") checked='checked' @endif
-                               value="priority" id="groupByPriority"
+                        <x-global::forms.radio name="groupBy" value="priority" id="groupByPriority"
+                               :checked="$groupBy == 'priority'"
                                hx-get="{{BASE_URL}}/widgets/myToDos/get"
                                hx-trigger="click"
                                hx-target="#yourToDoContainer"

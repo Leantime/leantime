@@ -32,12 +32,8 @@
                     @endif
                     <li>
                         <span class="radio">
-                            <input
-                                type="radio"
-                                name="groupBy"
-                                {{ $searchCriteria['groupBy'] == $input['field'] ? "checked='checked'" : '' }}
-                                value="{{ $input['field'] }}"
-                                id="{{ $input['id'] }}"
+                            <x-global::forms.radio name="groupBy" value="{{ $input['field'] }}" id="{{ $input['id'] }}"
+                                :checked="$searchCriteria['groupBy'] == $input['field']"
                                 onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')"
                             />
                             <label for="{{ $input['id'] }}">{{ __("label.{$input['label']}") }}</label>
