@@ -59,41 +59,25 @@
 
         <h5>{{ e(session('currentProjectClient')) }}</h5>
 
-        @if (count($wikis) > 0)
-            <span class="dropdown dropdownWrapper headerEditDropdown">
-                <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
-                <ul class="dropdown-menu editCanvasDropdown">
-                    @if ($login::userIsAtLeast($roles::$editor) && $currentWiki)
-                        <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{{ __('link.edit_wiki') }}</a></li>
-                        <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i> {{ __('links.delete_wiki') }}</a></li>
-                    @endif
-                </ul>
-            </span>
+        @if (count($wikis) > 0 && $login::userIsAtLeast($roles::$editor) && $currentWiki)
+            <x-global::elements.dropdown containerClass="headerEditDropdown">
+                <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{{ __('link.edit_wiki') }}</a></li>
+                <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i> {{ __('links.delete_wiki') }}</a></li>
+            </x-global::elements.dropdown>
         @endif
 
         <h1>{{ __('headlines.documents') }}
          @if (count($wikis) > 0)
              //
-            <span class="dropdown dropdownWrapper">
-                <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                    @if ($currentWiki !== false)
-                        {{ e($currentWiki->title) }}
-                    @else
-                        {{ __('label.select_board') }}
-                    @endif
-                    <i class="fa fa-caret-down"></i>
-                </a>
-
-                <ul class="dropdown-menu">
-                    <li><a class="inlineEdit" href="#/wiki/wikiModal/">{{ __('link.new_wiki') }}</a></li>
-                    <li class='nav-header border'></li>
-                    @foreach ($wikis as $wiki)
-                        <li>
-                            <a href="{{ BASE_URL }}/wiki/show?setWiki={{ $wiki->id }}">{{ $wiki->title }}</a>
-                        </li>
-                    @endforeach
-                </ul>
-            </span>
+            <x-global::elements.link-dropdown :label="$currentWiki !== false ? e($currentWiki->title) : __('label.select_board')" triggerClass="header-title-dropdown">
+                <li><a class="inlineEdit" href="#/wiki/wikiModal/">{{ __('link.new_wiki') }}</a></li>
+                <li class="tw:menu-title"></li>
+                @foreach ($wikis as $wiki)
+                    <li>
+                        <a href="{{ BASE_URL }}/wiki/show?setWiki={{ $wiki->id }}">{{ $wiki->title }}</a>
+                    </li>
+                @endforeach
+            </x-global::elements.link-dropdown>
          @endif
         </h1>
     </div>

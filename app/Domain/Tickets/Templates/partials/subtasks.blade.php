@@ -55,14 +55,9 @@
 
             <div class="tw:px-4 tw:py-0">
                     @if($login::userIsAtLeast($roles::$editor))
-                        <div class="inlineDropDownContainer" >
-                            <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                            </a>
-                            <ul class="dropdown-menu">
+                        <x-global::elements.dropdown>
                                 <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete_todo") }}</a></li>
-                            </ul>
-                        </div>
+                        </x-global::elements.dropdown>
                    @endif
 
                     <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>

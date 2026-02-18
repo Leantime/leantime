@@ -219,15 +219,10 @@ jQuery(document).ready(function(){
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
                 </div>
-                <div class="btn-group viewDropDown">
-                    <button class="btn dropdown-toggle" data-toggle="dropdown">
-                        {!! __('links.week_view') !!} {!! __('links.view') !!}
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
-                        <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
-                    </ul>
-                </div>
+                <x-global::elements.button-dropdown :label="__('links.week_view') . ' ' . __('links.view')" type="default">
+                    <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
+                    <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
+                </x-global::elements.button-dropdown>
             </div>
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
                 <colgroup>

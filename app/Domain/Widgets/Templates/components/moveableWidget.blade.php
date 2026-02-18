@@ -14,17 +14,12 @@
                     <div style="flex:1;"></div>
                 @endif
                 <div class="widget-header-actions" style="flex-shrink:0; display:flex; align-items:center; gap:2px;"></div>
-                <div class="inlineDropDownContainer" style="flex-shrink:0; display:flex; align-items:center;">
-                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
-                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Resize to fit content</a></li>
-                        @if(empty($alwaysVisible))
-                            <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> Hide</a></li>
-                        @endif
-                    </ul>
-                </div>
+                <x-global::elements.dropdown containerClass="tw:flex-shrink-0 tw:flex tw:items-center">
+                    <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Resize to fit content</a></li>
+                    @if(empty($alwaysVisible))
+                        <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> Hide</a></li>
+                    @endif
+                </x-global::elements.dropdown>
             </div>
             @endif
             <span class="clearall"></span>

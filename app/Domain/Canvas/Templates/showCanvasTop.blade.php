@@ -36,36 +36,28 @@
     <div class="pagetitle">
         <h5>{!! e(session('currentProjectClient') . ' // ' . session('currentProjectName')) !!}</h5>
         @if (count($allCanvas) > 0)
-            <span class="dropdown dropdownWrapper headerEditDropdown">
-                <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
-                <ul class="dropdown-menu editCanvasDropdown">
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/{{ $canvasName }}canvas/boardDialog/{{ $tpl->get('currentCanvas') }}" class="editCanvasLink">{!! $tpl->__('links.icon.edit') !!}</a></li>
-                    @endif
-                    <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/export/{{ $tpl->get('currentCanvas') }}" hx-boost="false">{!! $tpl->__('links.icon.export') !!}</a></li>
-                    <li><a href="javascript:window.print();">{!! $tpl->__('links.icon.print') !!}</a></li>
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
-                    @endif
-                </ul>
-            </span>
+            <x-global::elements.dropdown containerClass="headerEditDropdown">
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <li><a href="#/{{ $canvasName }}canvas/boardDialog/{{ $tpl->get('currentCanvas') }}" class="editCanvasLink">{!! $tpl->__('links.icon.edit') !!}</a></li>
+                @endif
+                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/export/{{ $tpl->get('currentCanvas') }}" hx-boost="false">{!! $tpl->__('links.icon.export') !!}</a></li>
+                <li><a href="javascript:window.print();">{!! $tpl->__('links.icon.print') !!}</a></li>
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
+                @endif
+            </x-global::elements.dropdown>
         @endif
         <h1>{{ $tpl->__("headline.$canvasName.board") }} //
             @if (count($allCanvas) > 0)
-                <span class="dropdown dropdownWrapper">
-                    <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                        {{ $tpl->escape($canvasTitle) }}&nbsp;<i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="dropdown-menu canvasSelector">
-                        @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/{{ $canvasName }}canvas/boardDialog">{!! $tpl->__('links.icon.create_new_board') !!}</a></li>
-                        @endif
-                        <li class="border"></li>
-                        @foreach ($tpl->get('allCanvas') as $canvasRow)
-                            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
-                        @endforeach
-                    </ul>
-                </span>
+                <x-global::elements.link-dropdown :label="$tpl->escape($canvasTitle)" triggerClass="header-title-dropdown">
+                    @if ($login::userIsAtLeast($roles::$editor))
+                        <li><a href="#/{{ $canvasName }}canvas/boardDialog">{!! $tpl->__('links.icon.create_new_board') !!}</a></li>
+                    @endif
+                    <li class="border"></li>
+                    @foreach ($tpl->get('allCanvas') as $canvasRow)
+                        <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
+                    @endforeach
+                </x-global::elements.link-dropdown>
             @endif
         </h1>
     </div>
@@ -86,37 +78,33 @@
             <div></div>
 
             <div class="tw:float-right">
-                <div class="btn-group viewDropDown">
-                    @if (count($allCanvas) > 0 && ! empty($statusLabels))
-                        @if ($filter['status'] == 'all')
-                            <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-filter"></i> {{ $tpl->__('status.all') }} {!! $tpl->__('links.view') !!}</button>
-                        @else
-                            <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw {{ $tpl->__($statusLabels[$filter['status']]['icon']) }}"></i> {{ $statusLabels[$filter['status']]['title'] }} {!! $tpl->__('links.view') !!}</button>
-                        @endif
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
-                            @foreach ($statusLabels as $key => $data)
-                                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}" @if ($filter['status'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
+                @if (count($allCanvas) > 0 && ! empty($statusLabels))
+                    @php
+                        $statusFilterLabel = $filter['status'] == 'all'
+                            ? '<i class="fas fa-filter"></i> ' . $tpl->__('status.all') . ' ' . $tpl->__('links.view')
+                            : '<i class="fas fa-fw ' . $tpl->__($statusLabels[$filter['status']]['icon']) . '"></i> ' . $statusLabels[$filter['status']]['title'] . ' ' . $tpl->__('links.view');
+                    @endphp
+                    <x-global::elements.button-dropdown :label="$statusFilterLabel" type="default">
+                        <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
+                        @foreach ($statusLabels as $key => $data)
+                            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}" @if ($filter['status'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
+                        @endforeach
+                    </x-global::elements.button-dropdown>
+                @endif
 
-                <div class="btn-group viewDropDown">
-                    @if (count($allCanvas) > 0 && ! empty($relatesLabels))
-                        @if ($filter['relates'] == 'all')
-                            <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw fa-globe"></i> {{ $tpl->__('relates.all') }} {!! $tpl->__('links.view') !!}</button>
-                        @else
-                            <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw {{ $tpl->__($relatesLabels[$filter['relates']]['icon']) }}"></i> {{ $relatesLabels[$filter['relates']]['title'] }} {!! $tpl->__('links.view') !!}</button>
-                        @endif
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates=all" @if ($filter['relates'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('relates.all') }}</a></li>
-                            @foreach ($relatesLabels as $key => $data)
-                                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates={{ $key }}" @if ($filter['relates'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
+                @if (count($allCanvas) > 0 && ! empty($relatesLabels))
+                    @php
+                        $relatesFilterLabel = $filter['relates'] == 'all'
+                            ? '<i class="fas fa-fw fa-globe"></i> ' . $tpl->__('relates.all') . ' ' . $tpl->__('links.view')
+                            : '<i class="fas fa-fw ' . $tpl->__($relatesLabels[$filter['relates']]['icon']) . '"></i> ' . $relatesLabels[$filter['relates']]['title'] . ' ' . $tpl->__('links.view');
+                    @endphp
+                    <x-global::elements.button-dropdown :label="$relatesFilterLabel" type="default">
+                        <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates=all" @if ($filter['relates'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('relates.all') }}</a></li>
+                        @foreach ($relatesLabels as $key => $data)
+                            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates={{ $key }}" @if ($filter['relates'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
+                        @endforeach
+                    </x-global::elements.button-dropdown>
+                @endif
 
             </div>
         </div>

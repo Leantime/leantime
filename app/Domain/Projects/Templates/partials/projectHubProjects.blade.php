@@ -5,18 +5,7 @@
      hx-swap="outerHTML">
 
     @if (count($clients) > 0)
-        <div class="dropdown dropdownWrapper tw:float-right">
-            <a href="javascript:void(0)" class="btn btn-default dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                @if ($currentClientName != '')
-                    {{ $currentClientName }}
-                @else
-                    {{ __("headline.all_clients") }}
-                @endif
-
-                <i class="fa fa-caret-down"></i>
-            </a>
-
-            <ul class="dropdown-menu">
+        <x-global::elements.link-dropdown :label="$currentClientName != '' ? $currentClientName : __('headline.all_clients')" triggerClass="btn btn-default header-title-dropdown" class="tw:float-right">
                 <li>
                     <a href="javascript:void(0);"
                        hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
@@ -33,8 +22,7 @@
                         </li>
                     @endif
                 @endforeach
-            </ul>
-        </div>
+        </x-global::elements.link-dropdown>
     @endif
 
     @if (count($allProjects) == 0)

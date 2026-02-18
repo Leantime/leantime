@@ -49,15 +49,10 @@
                 </div>
                 <div class="tw:flex tw:items-center tw:gap-2">
                     <x-global::button link="javascript:void(0);" type="primary" id="addHoursBtn"><i class="fa fa-plus"></i> {{ __('label.add_hours') }}</x-global::button>
-                    <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown">
-                            {!! __('links.list_view') !!} {!! __('links.view') !!}
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ BASE_URL }}/timesheets/showMy">{!! __('links.week_view') !!}</a></li>
-                            <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
-                        </ul>
-                    </div>
+                    <x-global::elements.button-dropdown :label="__('links.list_view') . ' ' . __('links.view')" type="default">
+                        <li><a href="{{ BASE_URL }}/timesheets/showMy">{!! __('links.week_view') !!}</a></li>
+                        <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
+                    </x-global::elements.button-dropdown>
                 </div>
             </div>
 

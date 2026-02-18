@@ -29,25 +29,15 @@
             @endphp
 
             <div class="ticketBox" id="item_{{ $row['id'] }}">
-                <div class="inlineDropDownContainer" style="float:right;">
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                        </a>
-                    @endif
-
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        &nbsp;&nbsp;&nbsp;
-                        <ul class="dropdown-menu">
-                            <li class="nav-header">{{ $tpl->__('subtitles.edit') }}</li>
-                            <li><a href="#/{{ $canvasName }}canvas/editCanvasItem/{{ $row['id'] }}"
-                                   data="item_{{ $row['id'] }}"> {{ $tpl->__('links.edit_canvas_item') }}</a></li>
-                            <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $row['id'] }}"
-                                   class="delete"
-                                   data="item_{{ $row['id'] }}"> {{ $tpl->__('links.delete_canvas_item') }}</a></li>
-                        </ul>
-                    @endif
-                </div>
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <x-global::elements.dropdown style="float:right;">
+                        <li><a href="#/{{ $canvasName }}canvas/editCanvasItem/{{ $row['id'] }}"
+                               data="item_{{ $row['id'] }}"> {{ $tpl->__('links.edit_canvas_item') }}</a></li>
+                        <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $row['id'] }}"
+                               class="delete"
+                               data="item_{{ $row['id'] }}"> {{ $tpl->__('links.delete_canvas_item') }}</a></li>
+                    </x-global::elements.dropdown>
+                @endif
 
                 <h4><a href="#/{{ $canvasName }}canvas/editCanvasItem/{{ $row['id'] }}"
                        data="item_{{ $row['id'] }}">{{ $tpl->escape($row['description']) }}</a></h4>

@@ -32,18 +32,12 @@
                 @foreach($tpl->get('externalCalendars') as $calendars)
                     <li>
                         @if(empty($calendars['managedByPlugin']))
-                        <div class="inlineDropDownContainer" style="float:right;">
-                            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
-                                <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
-                            </a>
-
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="#/calendar/editExternal/{{ $calendars['id'] }}"><i class="fa-solid fa-pen-to-square"></i> {{ __('links.edit_calendar') }}</a>
-                                </li>
-                                <li><a href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete_external_calendar') }}</a></li>
-                            </ul>
-                        </div>
+                        <x-global::elements.dropdown style="float:right;" icon="fa fa-ellipsis-h">
+                            <li>
+                                <a href="#/calendar/editExternal/{{ $calendars['id'] }}"><i class="fa-solid fa-pen-to-square"></i> {{ __('links.edit_calendar') }}</a>
+                            </li>
+                            <li><a href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete_external_calendar') }}</a></li>
+                        </x-global::elements.dropdown>
                         @endif
                         <span class="indicatorCircle" style="background:{{ $calendars['colorClass'] }}"></span>{{ $calendars['name'] }}
 

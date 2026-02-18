@@ -32,16 +32,11 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
     <?php if ($login::userIsAtLeast($roles::$editor)) {
         $onTheClock = $tpl->get('onTheClock');
         ?>
-        <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px; padding-right:10px;">
-
-            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-            </a>
-            <ul class="dropdown-menu">
-                <li class="nav-header"><?php echo $tpl->__('subtitles.todo'); ?></li>
+        <x-global::elements.dropdown containerClass="tw:float-right tw:z-50" style="padding-top:10px; padding-right:10px;">
+                <li class="tw:menu-title"><?php echo $tpl->__('subtitles.todo'); ?></li>
                 <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
                 <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
-                <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
+                <li class="tw:menu-title"><?php echo $tpl->__('subtitles.track_time'); ?></li>
                 <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
                     hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
                     hx-trigger="timerUpdate from:body"
@@ -79,8 +74,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         </span>
                     @endif
                 </li>
-            </ul>
-        </div>
+        </x-global::elements.dropdown>
     <?php } ?>
     <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
 

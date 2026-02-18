@@ -188,19 +188,13 @@
                         </td>
                         <td>
                             @if($login::userIsAtLeast($roles::$editor))
-                                <div class="inlineDropDownContainer">
-                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li class="nav-header">{{ __('subtitles.todo') }}</li>
-                                        <li><a href="#/tickets/editMilestone/{{ $row->id }}" class="ticketModal"><i class="fa fa-edit"></i> {{ __('links.edit_milestone') }}</a></li>
-                                        <li><a href="#/tickets/moveTicket/{{ $row->id }}" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> {{ __('links.move_milestone') }}</a></li>
-                                        <li><a href="#/tickets/delMilestone/{{ $row->id }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
-                                        <li class="nav-header border"></li>
-                                        <li><a href="{{ BASE_URL }}/tickets/showAll?search=true&milestone={{ $row->id }}">{{ __('links.view_todos') }}</a></li>
-                                    </ul>
-                                </div>
+                                <x-global::elements.dropdown>
+                                    <li class="tw:menu-title">{{ __('subtitles.todo') }}</li>
+                                    <li><a href="#/tickets/editMilestone/{{ $row->id }}" class="ticketModal"><i class="fa fa-edit"></i> {{ __('links.edit_milestone') }}</a></li>
+                                    <li><a href="#/tickets/moveTicket/{{ $row->id }}" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> {{ __('links.move_milestone') }}</a></li>
+                                    <li><a href="#/tickets/delMilestone/{{ $row->id }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
+                                    <li><a href="{{ BASE_URL }}/tickets/showAll?search=true&milestone={{ $row->id }}">{{ __('links.view_todos') }}</a></li>
+                                </x-global::elements.dropdown>
                             @endif
                         </td>
                         @dispatchEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum])

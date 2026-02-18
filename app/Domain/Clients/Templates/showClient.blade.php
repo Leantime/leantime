@@ -204,18 +204,13 @@
                     <ul id='medialist' class='listfile'>
                         @foreach($tpl->get('files') as $file)
                             <li class="{{ $file['moduleId'] }}">
-                                <div class="inlineDropDownContainer" style="float:right;">
-                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li class="nav-header">{{ __('subtitles.file') }}</li>
-                                        <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{{ __('links.download') }}</a></li>
-                                        @if($login::userIsAtLeast($roles::$admin))
-                                            <li><a href="{{ BASE_URL }}/clients/showClient/{{ e($_GET['id']) }}?delFile={{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
-                                        @endif
-                                    </ul>
-                                </div>
+                                <x-global::elements.dropdown style="float:right;">
+                                    <li class="tw:menu-title">{{ __('subtitles.file') }}</li>
+                                    <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{{ __('links.download') }}</a></li>
+                                    @if($login::userIsAtLeast($roles::$admin))
+                                        <li><a href="{{ BASE_URL }}/clients/showClient/{{ e($_GET['id']) }}?delFile={{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
+                                    @endif
+                                </x-global::elements.dropdown>
                                 <a class="cboxElement" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ e($file['extension']) }}&realName={{ e($file['realName']) }}">
                                     @if(in_array(strtolower($file['extension']), $tpl->get('imgExtensions')))
                                         <img style='max-height: 50px; max-width: 70px;' src="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ e($file['extension']) }}&realName={{ e($file['realName']) }}" alt="" />

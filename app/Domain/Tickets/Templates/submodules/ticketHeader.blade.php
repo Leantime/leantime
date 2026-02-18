@@ -50,34 +50,27 @@
             && count($tpl->get('sprints')) > 0
             && $currentSprintId != 'all'
             && $currentSprintId != 'backlog'
+            && $login::userIsAtLeast($roles::$editor)
         )
-            <span class="dropdown dropdownWrapper headerEditDropdown">
-                <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
-                <ul class="dropdown-menu editCanvasDropdown">
-                    @if($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/sprints/editSprint/{{ $tpl->get('currentSprint') }}">{{ __('link.edit_sprint') }}</a></li>
-                        <li><a href="#/sprints/delSprint/{{ $tpl->get('currentSprint') }}" class="delete">{{ __('links.delete_sprint') }}</a></li>
-                    @endif
-                </ul>
-            </span>
+            <x-global::elements.dropdown containerClass="headerEditDropdown">
+                <li><a href="#/sprints/editSprint/{{ $tpl->get('currentSprint') }}">{{ __('link.edit_sprint') }}</a></li>
+                <li><a href="#/sprints/delSprint/{{ $tpl->get('currentSprint') }}" class="delete">{{ __('links.delete_sprint') }}</a></li>
+            </x-global::elements.dropdown>
         @endif
 
         <h1>
             {{ __('headlines.todos') }}
             //
-            <span class="dropdown dropdownWrapper">
-                <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
+            <x-global::elements.link-dropdown triggerClass="header-title-dropdown" align="end">
+                <x-slot:label>
                     @if($sprint !== false)
                         {{ e($sprint->name) }}
                     @else
                         {{ __('label.select_sprint') }}
                     @endif
-                    <i class="fa fa-caret-down"></i>
-                </a>
-
-                <ul class="dropdown-menu">
+                </x-slot:label>
                     <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> {{ __('links.create_sprint_no_icon') }}</a></li>
-                    <li class='nav-header border'></li>
+                    <li class="tw:menu-title border"></li>
                     <li>
                         <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ __('links.all_todos') }}</a>
                     </li>
@@ -89,8 +82,7 @@
                             <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ e($sprintRow->name) }}<br /><small>{{ sprintf(__('label.date_from_date_to'), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) }}</small></a>
                         </li>
                     @endforeach
-                </ul>
-            </span>
+            </x-global::elements.link-dropdown>
         </h1>
         <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
     </div>

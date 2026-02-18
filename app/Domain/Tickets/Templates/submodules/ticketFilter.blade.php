@@ -18,14 +18,13 @@
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
         <x-global::button tag="button" type="link" onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;" data-tippy-content="{{ __('popover.filter') }}">
             <i class="fas fa-filter"></i> Filter{!! $tpl->get('numOfFilters') > 0 ? "  <span class='badge badge-primary'>" . $tpl->get('numOfFilters') . '</span> ' : '' !!}
-        </x-global::button>@if($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<div class="btn-group viewDropDown">
-<button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="{{ __('popover.group_by') }}">
-                <span class="fa-solid fa-diagram-project"></span> Group By
-                @if($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
-                    <span class="badge badge-primary">1</span>
-                @endif
-            </button>
-            <ul class="dropdown-menu">
+        </x-global::button>@if($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<x-global::elements.link-dropdown triggerClass="btn btn-link" align="end" data-tippy-content="{{ __('popover.group_by') }}">
+                <x-slot:label>
+                    <span class="fa-solid fa-diagram-project"></span> Group By
+                    @if($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
+                        <span class="badge badge-primary">1</span>
+                    @endif
+                </x-slot:label>
                 @foreach($groupBy as $input)
                     @if($input['field'] === 'status' && $currentRoute === 'tickets.showKanban')
                         @continue
@@ -40,8 +39,7 @@
                         </span>
                     </li>
                 @endforeach
-            </ul>
-        </div>
+            </x-global::elements.link-dropdown>
         @endif
 
         <div class="filterBar hideOnLoad" style="width:250px;">

@@ -43,19 +43,15 @@ foreach ($allCanvas as $canvasRow) {
 
         <h1>{{ __("headline.goal.dashboardboard") }} //
             @if (count($allCanvas) > 0)
-                <span class="dropdown dropdownWrapper">
-                    <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">All Goal Groups&nbsp;<i class="fa fa-caret-down"></i></a>
-
-                    <ul class="dropdown-menu canvasSelector">
-                        @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/goalcanvas/bigRock">{!! __("links.icon.create_new_board") !!}</a></li>
-                        @endif
-                        <li class="border"></li>
-                        @foreach ($allCanvas as $canvasRow)
-                            <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $canvasRow['title'] }}</a></li>
-                        @endforeach
-                    </ul>
-                </span>
+                <x-global::elements.link-dropdown label="All Goal Groups" triggerClass="header-title-dropdown">
+                    @if ($login::userIsAtLeast($roles::$editor))
+                        <li><a href="#/goalcanvas/bigRock">{!! __("links.icon.create_new_board") !!}</a></li>
+                    @endif
+                    <li class="border"></li>
+                    @foreach ($allCanvas as $canvasRow)
+                        <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $canvasRow['title'] }}</a></li>
+                    @endforeach
+                </x-global::elements.link-dropdown>
             @endif
         </h1>
     </div>
@@ -127,21 +123,12 @@ foreach ($allCanvas as $canvasRow) {
                                         @endphp
                                         <div>
                                             <div class="ticketBox" id="item_{{ $row["id"] }}">
-                                                        <div class="inlineDropDownContainer tw:float-right">
-                                                            @if ($login::userIsAtLeast($roles::$editor))
-                                                                <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                                                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                                                </a>
-                                                            @endif
-                                                            @if ($login::userIsAtLeast($roles::$editor))
-                                                                &nbsp;&nbsp;&nbsp;
-                                                                <ul class="dropdown-menu">
-                                                                    <li class="nav-header">{{ __("subtitles.edit") }}</li>
-                                                                    <li><a href="#/goalcanvas/editCanvasItem/{{ $row["id"] }}" class="goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.edit_canvas_item") !!}</a></li>
-                                                                    <li><a href="#/goalcanvas/delCanvasItem/{{ $row["id"] }}" class="delete goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.delete_canvas_item") !!}</a></li>
-                                                                </ul>
-                                                            @endif
-                                                        </div>
+                                                        @if ($login::userIsAtLeast($roles::$editor))
+                                                            <x-global::elements.dropdown class="tw:float-right">
+                                                                <li><a href="#/goalcanvas/editCanvasItem/{{ $row["id"] }}" class="goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.edit_canvas_item") !!}</a></li>
+                                                                <li><a href="#/goalcanvas/delCanvasItem/{{ $row["id"] }}" class="delete goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.delete_canvas_item") !!}</a></li>
+                                                            </x-global::elements.dropdown>
+                                                        @endif
 
                                                         <h4>
                                                             <strong>Goal:</strong>

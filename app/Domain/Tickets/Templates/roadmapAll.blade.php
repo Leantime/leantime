@@ -32,13 +32,10 @@
             <div>
                 <div class="tw:float-right">
 
-                    <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown">{{ __('label.roles.client') }}: <span class="viewText">{{ $clientNameSelected }}</span><span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ BASE_URL }}/tickets/roadmapAll" {!! empty($labelActive) ? "class='active'" : '' !!}> {{ __('headline.all_clients') }} </a></li>
-                            {!! $htmlDropdownClients !!}
-                        </ul>
-                    </div>
+                    <x-global::elements.button-dropdown :label="__('label.roles.client') . ': ' . $clientNameSelected" type="default">
+                        <li><a href="{{ BASE_URL }}/tickets/roadmapAll" {!! empty($labelActive) ? "class='active'" : '' !!}> {{ __('headline.all_clients') }} </a></li>
+                        {!! $htmlDropdownClients !!}
+                    </x-global::elements.button-dropdown>
 
                     <div class="btn-group dropRight">
                         @php

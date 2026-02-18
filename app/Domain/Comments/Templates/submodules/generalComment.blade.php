@@ -57,29 +57,23 @@
                                     format($row['date'])->time()
                                 ) !!}
                                     @if($login::userIsAtLeast($roles::$editor))
-                                        <div class="inlineDropDownContainer tw:float-right tw:ml-2.5">
-                                            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                            </a>
-
-                                            <ul class="dropdown-menu">
-                                                @if(($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
-                                                    <li><a href="{{ $deleteUrlBase . $row['id'] }}" class="deleteComment formModal">
-                                                        <span class="fa fa-trash"></span> {{ __('links.delete') }}
-                                                    </a></li>
-                                                @endif
-                                                @if(($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
-                                                    <li>
-                                                        <a href="javascript:void(0);" onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}', true)">
-                                                            <span class="fa fa-edit"></span> {{ __('label.edit') }}
-                                                        </a>
-                                                    </li>
-                                                @endif
-                                                @if(isset($tpl->get('ticket')->id))
-                                                    <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $tpl->get('ticket')->id }});">{{ __('links.add_to_timesheets') }}</a></li>
-                                                @endif
-                                            </ul>
-                                        </div>
+                                        <x-global::elements.dropdown containerClass="tw:float-right tw:ml-2.5">
+                                            @if(($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
+                                                <li><a href="{{ $deleteUrlBase . $row['id'] }}" class="deleteComment formModal">
+                                                    <span class="fa fa-trash"></span> {{ __('links.delete') }}
+                                                </a></li>
+                                            @endif
+                                            @if(($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
+                                                <li>
+                                                    <a href="javascript:void(0);" onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}', true)">
+                                                        <span class="fa fa-edit"></span> {{ __('label.edit') }}
+                                                    </a>
+                                                </li>
+                                            @endif
+                                            @if(isset($tpl->get('ticket')->id))
+                                                <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $tpl->get('ticket')->id }});">{{ __('links.add_to_timesheets') }}</a></li>
+                                            @endif
+                                        </x-global::elements.dropdown>
                                     @endif
                             </div>
                             <span class="name">{{ sprintf(__('text.full_name'), e($row['firstname']), e($row['lastname'])) }}</span>

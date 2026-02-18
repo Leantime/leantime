@@ -32,19 +32,14 @@
     <ul id='medialist' class='listfile'>
         @foreach($tpl->get('files') as $file)
             <li class="{{ $file['moduleId'] }}">
-                <div class="inlineDropDownContainer dropright" style="float:right;">
-                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li class="nav-header">{{ __('subtitles.file') }}</li>
-                        <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">{{ __('links.download') }}</a></li>
+                <x-global::elements.dropdown style="float:right;">
+                    <li class="tw:menu-title">{{ __('subtitles.file') }}</li>
+                    <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">{{ __('links.download') }}</a></li>
 
-                        @if($login::userIsAtLeast($roles::$editor))
-                            <li><a href="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}?delFile={{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
-                        @endif
-                    </ul>
-                </div>
+                    @if($login::userIsAtLeast($roles::$editor))
+                        <li><a href="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}?delFile={{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
+                    @endif
+                </x-global::elements.dropdown>
 
                 <a class="cboxElement" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">
                     @if(in_array(strtolower($file['extension']), $tpl->get('imgExtensions')))

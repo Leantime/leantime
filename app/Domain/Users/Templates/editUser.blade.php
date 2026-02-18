@@ -52,12 +52,13 @@
                         </option>
                     </x-global::forms.select>
                         @if($values['status'] == 'i')
-                        <div class="tw:float-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
-                            <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}"><i class="fa fa-link"></i> {{ __('label.copyinviteLink') }}</a>
-                            <div class="dropdown-menu padding-md noClickProp">
-                                <x-global::forms.input :bare="true" type="text" id="inviteURL" name="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
-                                <x-global::button tag="button" type="primary" onclick="leantime.snippets.copyUrl('inviteURL');">{{ __('links.copy_url') }}</x-global::button>
-                            </div>
+                        <div class="tw:float-left" style="padding-left:5px; line-height: 29px;">
+                            <x-global::elements.button-dropdown :label="'<i class=&quot;fa fa-link&quot;></i> ' . __('label.copyinviteLink')" type="default" align="start" menuClass="tw:p-4 tw:min-w-72">
+                                <li class="noClickProp" onclick="event.stopPropagation()">
+                                    <x-global::forms.input :bare="true" type="text" id="inviteURL" name="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
+                                    <x-global::button tag="button" type="primary" onclick="leantime.snippets.copyUrl('inviteURL');">{{ __('links.copy_url') }}</x-global::button>
+                                </li>
+                            </x-global::elements.button-dropdown>
                             <x-global::button link="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite" type="secondary" style="margin-left:5px;" icon="fa fa-envelope">{{ __('buttons.resend_invite') }}</x-global::button>
                         </div>
                         @endif
@@ -139,10 +140,6 @@
 </form>
 
 <script>
-    jQuery(".noClickProp.dropdown-menu").on("click", function(e) {
-        e.stopPropagation();
-    });
-
     function accordionToggle(id) {
         let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
         if(currentLink.hasClass("fa-angle-right")){
