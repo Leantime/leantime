@@ -366,13 +366,176 @@ body {
 .pull-right { float: right !important }
 .pull-left  { float: left !important }
 .clearfix::after, .clearall::after { content: ""; display: table; clear: both }
-.row-fluid { display: flex; flex-wrap: wrap; margin-right: -5px; margin-left: -5px }
+.row-fluid { display: block }
 .row-fluid::after { content: ""; display: table; clear: both }
 .center { text-align: center }
 .hidden { display: none !important }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0 }
 .input-append, .input-prepend { display: inline-flex; align-items: stretch }
 .input-append .add-on, .input-prepend .add-on { display: flex; align-items: center; padding: 4px 8px; background: var(--secondary-background, #eee); border: 1px solid var(--main-border-color, #ccc) }
+
+/* ── Bootstrap component structural shims ────────────────────────────
+   Base structural rules that Bootstrap provided but our component CSS
+   files (dropdowns.css, forms.css, etc.) only override visually.
+   ──────────────────────────────────────────────────────────────────── */
+
+/* Dropdown menus: hidden by default, shown when parent has .open */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    list-style: none;
+    background-clip: padding-box;
+}
+.open > .dropdown-menu { display: block }
+.open > a { outline: 0 }
+.dropdown-menu.pull-right { right: 0; left: auto }
+
+/* Dropdown divider */
+.dropdown-menu .divider {
+    height: 1px;
+    margin: 9px 0;
+    overflow: hidden;
+    background-color: var(--main-border-color, #e5e5e5);
+}
+
+/* Dropdown links base (display + clear) */
+.dropdown-menu > li > a {
+    display: block;
+    clear: both;
+    font-weight: normal;
+    white-space: nowrap;
+}
+
+/* Button groups */
+.btn-group {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+.btn-group > .btn { position: relative; float: left }
+.btn-group > .btn:first-child { margin-left: 0 }
+.btn-group > .btn + .btn { margin-left: -1px }
+.btn-group > .dropdown-menu { top: 100%; left: 0 }
+.btn-group > .btn + .dropdown-toggle { padding-left: 8px; padding-right: 8px }
+
+/* Caret (dropdown arrow) */
+.caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 4px solid;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+
+/* Form group spacing */
+.form-group { margin-bottom: 15px }
+
+/* Form control base */
+.form-control {
+    display: block;
+    width: 100%;
+    padding: var(--input-padding, 6px 12px);
+    font-size: var(--base-font-size, 14px);
+    line-height: 1.5;
+    color: var(--primary-font-color, #555);
+    background-color: var(--input-bg, #fff);
+    border: 1px solid var(--main-border-color, #ccc);
+    border-radius: var(--input-radius, 4px);
+}
+.form-control:focus {
+    border-color: var(--accent1, #66afe9);
+    outline: 0;
+}
+
+/* Control labels */
+.control-label { font-weight: bold }
+
+/* Input group */
+.input-group {
+    position: relative;
+    display: table;
+    border-collapse: separate;
+}
+.input-group .form-control { position: relative; z-index: 2; float: left; width: 100% }
+.input-group-addon, .input-group-btn { display: table-cell; width: 1%; white-space: nowrap; vertical-align: middle }
+
+/* Close button */
+.close {
+    float: right;
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 1;
+    opacity: 0.4;
+    cursor: pointer;
+}
+.close:hover, .close:focus { opacity: 0.7; text-decoration: none }
+
+/* Label base (inline badge-like) */
+.label {
+    display: inline;
+    font-size: 75%;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}
+
+/* Badge */
+.badge {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 10px;
+}
+
+/* Alert base */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: var(--box-radius-small, 4px);
+}
+
+/* Well */
+.well {
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: var(--secondary-background, #f5f5f5);
+    border: 1px solid var(--main-border-color, #e3e3e3);
+    border-radius: var(--box-radius, 4px);
+}
+
+/* Nav header (section labels in dropdown menus / sidebar) */
+.nav-header {
+    display: block;
+    padding: 3px 15px;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1.5;
+    text-transform: uppercase;
+    color: var(--secondary-font-color, #999);
+}
+
+/* Dropup (menus that open upward) */
+.dropup .dropdown-menu { top: auto; bottom: 100%; margin-bottom: 1px }
+.dropup .caret { border-top: 0; border-bottom: 4px solid }
 
 .mainwrapper {
     background:var(--header-gradient);
