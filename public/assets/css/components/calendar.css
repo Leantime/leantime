@@ -158,23 +158,23 @@
 /*    border-radius:0px 10px 0px 0px;*/
 /*}*/
 
-/*.fc-theme-standard .fc-popover {*/
-/*    border-radius:var(--box-radius);*/
-/*    max-width: 60%;*/
-/*}*/
+.fc-theme-standard .fc-popover {
+    border-radius:var(--box-radius);
+    max-width: 60%;
+}
 
-/*.fc-popover-body  .fc-h-event .fc-event-title-container {*/
-/*    padding-left:5px;*/
-/*}*/
+.fc-popover-body  .fc-h-event .fc-event-title-container {
+    padding-left:5px;
+}
 
-/*.fc-popover-body  .fc-event {*/
-/*    margin-bottom:2px;*/
-/*    margin-left:0px !important;*/
-/*}*/
+.fc-popover-body  .fc-event {
+    margin-bottom:2px;
+    margin-left:0px !important;
+}
 
-/*.fc-popover-body .fc-daygrid-event {*/
-/*    border-radius:0px !important;*/
-/*}*/
+.fc-popover-body .fc-daygrid-event {
+    border-radius:0px !important;
+}
 
 /*.fc .fc-daygrid-day.fc-day-today {*/
 /*    border-radius:var(--element-radius);*/
