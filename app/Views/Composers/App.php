@@ -39,6 +39,7 @@ class App extends Composer
         $announcement = self::dispatch_filter('appAnnouncement', $announcement);
 
         return [
+            'module' => strtolower(FrontcontrollerCore::getModuleName()),
             'section' => $menuType,
             'appAnnouncement' => $announcement,
         ];

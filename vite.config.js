@@ -94,6 +94,9 @@ export default defineConfig({
     },
 
     build: {
+        // es2022 enables top-level await (used for lazy-loading domain JS)
+        target: 'es2022',
+
         // Output to public/build (Vite default with laravel plugin)
         // Keep public/dist intact for rollback
 

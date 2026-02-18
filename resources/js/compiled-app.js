@@ -31,10 +31,12 @@ import '../../app/Domain/Setting/Js/settingService.js';
 import '../../app/Domain/Widgets/Js/Widgetcontroller.js';
 import '../../app/Domain/Calendar/Js/calendarController.js';
 
-// Domain-specific JS — eagerly loaded so all controllers are available
-// before DOMContentLoaded (when jQuery.ready callbacks fire).
+// Domain-specific JS — lazy-loaded based on the current module.
+// Only the JS for the active page's domain is fetched, reducing initial
+// payload. Top-level await ensures modules are registered before
+// DOMContentLoaded (and thus before jQuery.ready callbacks fire).
 // Excludes globally-imported controllers above to avoid double-registration.
-import.meta.glob([
+const domainModules = import.meta.glob([
     '../../app/Domain/**/*.js',
     '!../../app/Domain/Auth/**',
     '!../../app/Domain/Comments/**',
@@ -49,4 +51,15 @@ import.meta.glob([
     '!../../app/Domain/Setting/**',
     '!../../app/Domain/Widgets/**',
     '!../../app/Domain/Calendar/**',
-], { eager: true });
+]);
+
+const currentModule = (document.body?.dataset?.module || '').toLowerCase();
+if (currentModule) {
+    const loads = [];
+    for (const [path, loader] of Object.entries(domainModules)) {
+        if (path.toLowerCase().includes(`/${currentModule}/`)) {
+            loads.push(loader());
+        }
+    }
+    await Promise.all(loads);
+}
