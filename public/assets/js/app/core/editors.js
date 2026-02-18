@@ -256,6 +256,7 @@ leantime.editorController = (function () {
                 templates : leantime.appUrl + "/wiki/templates",
                 body_class: 'mce-content-body',
                 paste_data_images: true,
+                toolbar_mode: 'sliding',
                 relative_urls : true,
                 document_base_url: leantime.appUrl + "/",
                 table_appearance_options: false,
