@@ -66,7 +66,7 @@
     </x-global::forms.select>
 
     <label>{{ __('label.owner') }}</label>
-    <select data-placeholder="{{ __('input.placeholders.filter_by_user') }}"
+    <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.filter_by_user') }}"
             name="editorId" class="user-select span11">
         <option value="">{{ __('dropdown.not_assigned') }}</option>
         @foreach($tpl->get('users') as $userRow)
@@ -74,10 +74,10 @@
                 {{ $currentMilestone->editorId == $userRow['id'] ? "selected='selected'" : '' }}
             >{{ e($userRow['firstname']) }} {{ e($userRow['lastname']) }}</option>
         @endforeach
-    </select>
+    </x-global::forms.select>
 
     <label>{{ __('label.color') }}</label>
-    <input type="text" name="tags" autocomplete="off" value="{{ $currentMilestone->tags }}" placeholder="{{ __('input.placeholders.pick_a_color') }}" class="simpleColorPicker" /><br />
+    <x-global::forms.input :bare="true" type="text" name="tags" autocomplete="off" value="{{ $currentMilestone->tags }}" placeholder="{{ __('input.placeholders.pick_a_color') }}" class="simpleColorPicker" /><br />
 
     <label>{{ __('label.planned_start_date') }}</label>
     <x-global::forms.date name="editFrom" id="milestoneEditFrom" value="{{ format($currentMilestone->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}" /><br />

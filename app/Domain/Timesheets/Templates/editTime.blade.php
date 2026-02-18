@@ -74,12 +74,12 @@
 <form action="{{ BASE_URL }}/timesheets/editTime/{{ (int) $_GET['id'] }}" method="post" class="editTimeModal">
 
 <label for="clients">{{ __('label.client') }}</label>
-<select name="clients" id="clients" class="client-select" onchange="filterProjectsByClient();">
+<x-global::forms.select :bare="true" name="clients" id="clients" class="client-select" onchange="filterProjectsByClient();">
     <option value="all">{{ __('headline.all_clients') }}</option>
     @foreach ($tpl->get('allClients') as $client)
         <option value="{{ $client['id'] }}">{{ $tpl->escape($client['name']) }}</option>
     @endforeach
-</select> <br />
+</x-global::forms.select> <br />
 
 <label for="projects">{{ __('label.project') }}</label>
 <x-global::forms.select name="projects" id="projects" class="project-select">
@@ -119,7 +119,7 @@
     @endforeach
 
 </x-global::forms.select><br />
-<label for="date">{{ __('label.date') }}</label> <input type="text" autocomplete="off"
+<label for="date">{{ __('label.date') }}</label> <x-global::forms.input :bare="true" type="text" autocomplete="off"
     id="datepicker" name="date" value="{{ format(value: $values['date'], fromFormat: FromFormat::DbDate)->date() }}" size="7" />
 <br />
 <label for="hours">{{ __('label.hours') }}</label> <x-global::forms.input
@@ -142,7 +142,7 @@
 
             <label for="invoicedEmpl">{{ __('label.invoiced') }}</label>
 
-            {{ __('label.date') }}&nbsp;<input type="text" autocomplete="off"
+            {{ __('label.date') }}&nbsp;<x-global::forms.input :bare="true" type="text" autocomplete="off"
                                                   id="invoicedEmplDate" name="invoicedEmplDate"
                                                   value="{{ format(value: $values['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date() }}"
                                                   size="7"/><br/>
@@ -157,7 +157,7 @@
             />
 
         <label for="invoicedComp">{{ __('label.invoiced_comp') }}</label>
-        {{ __('label.date') }}&nbsp;<input type="text" autocomplete="off"
+        {{ __('label.date') }}&nbsp;<x-global::forms.input :bare="true" type="text" autocomplete="off"
                                                       id="invoicedCompDate"
                                                       name="invoicedCompDate"
                                                       value="{{ format(value: $values['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date() }}"
@@ -172,7 +172,7 @@
             />
 
         <label for="paid">{{ __('label.paid') }}</label>
-        {{ __('label.date') }}&nbsp;<input type="text" autocomplete="off"
+        {{ __('label.date') }}&nbsp;<x-global::forms.input :bare="true" type="text" autocomplete="off"
                                                           id="paidDate"
                                                           name="paidDate"
                                                           value="{{ format(value: $values['paidDate'], fromFormat: FromFormat::DbDate)->date() }}"

@@ -38,14 +38,14 @@
                         <div class="widgetcontent" style="min-height: 460px">
 
                             <label for="clients">{{ __('label.client') }}</label>
-                            <select name="clients" id="clients" onchange="filterProjectsByClient();">
+                            <x-global::forms.select :bare="true" name="clients" id="clients" onchange="filterProjectsByClient();">
                                 <option value="all">{{ __('headline.all_clients') }}</option>
                                 @foreach ($tpl->get('allClients') as $client)
                                     <option value="{{ $client['id'] }}">{{ $tpl->escape($client['name']) }}</option>
                                 @endforeach
-                            </select> <br/>
+                            </x-global::forms.select> <br/>
 
-                            <label for="projects">{{ __('PROJECT') }}</label> <select
+                            <label for="projects">{{ __('PROJECT') }}</label> <x-global::forms.select :bare="true"
                                     name="projects" id="projects"
                                     onchange="removeOptions($('select#projects option:selected').val());">
 
@@ -75,7 +75,7 @@
                                         @endphp
                                     @endforeach
                                 </optgroup>
-                            </select> <br/>
+                            </x-global::forms.select> <br/>
 
                             <label for="tickets">{{ __('TICKET') }}</label>
                             <x-global::forms.select name="tickets" id="tickets">
@@ -101,7 +101,7 @@
                                 @endforeach
 
                             </x-global::forms.select><br/>
-                            <label for="date">{{ __('DATE') }}</label> <input type="text" autocomplete="off"
+                            <label for="date">{{ __('DATE') }}</label> <x-global::forms.input :bare="true" type="text" autocomplete="off"
                                                                                              id="date" name="date"
                                                                                              value="{{ $values['date'] }}"
                                                                                              size="7"/>
@@ -120,7 +120,7 @@
                                     checked="checked"
                                 @endif
                                 />
-                            {{ __('ONDATE') }}&nbsp;<input type="text"
+                            {{ __('ONDATE') }}&nbsp;<x-global::forms.input :bare="true" type="text"
                                                                           id="invoicedEmplDate" name="invoicedEmplDate"
                                                                           value="{{ $values['invoicedEmplDate'] }}"
                                                                           size="7"/><br/>
@@ -134,7 +134,7 @@
                                         checked="checked"
                                     @endif
                                     />
-                                {{ __('ONDATE') }}&nbsp;<input type="text" autocomplete="off"
+                                {{ __('ONDATE') }}&nbsp;<x-global::forms.input :bare="true" type="text" autocomplete="off"
                                                                               id="invoicedCompDate"
                                                                               name="invoicedCompDate"
                                                                               value="{{ $values['invoicedCompDate'] }}"
@@ -146,7 +146,7 @@
                                         checked="checked"
                                     @endif
                                     />
-                                {{ __('ONDATE') }}&nbsp;<input type="text" autocomplete="off"
+                                {{ __('ONDATE') }}&nbsp;<x-global::forms.input :bare="true" type="text" autocomplete="off"
                                                                               id="paidDate"
                                                                               name="paidDate"
                                                                               value="{{ $values['paidDate'] }}"

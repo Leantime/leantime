@@ -19,11 +19,11 @@
 
             <label for="kind">{{ __('label.timesheet_kind') }}</label>
             <span class="field">
-                <select id="kind" name="kind">
+                <x-global::forms.select :bare="true" id="kind" name="kind">
                     @foreach($tpl->get('kind') as $key => $row)
                         <option value="{{ $key }}" {{ $row == $values['kind'] ? 'selected="selected"' : '' }}>{{ __(strtolower($row)) }}</option>
                     @endforeach
-                </select>
+                </x-global::forms.select>
             </span>
 
             <label for="timesheetdate">{{ __('label.date') }}:</label>

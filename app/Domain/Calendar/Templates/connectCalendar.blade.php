@@ -19,7 +19,7 @@
         <x-global::forms.input name="url" id="ical_url" autocomplete="off" style="width:100%;" placeholder="https://example.com/calendar.ics" /><br />
 
         <label for="ical_color">{{ __('label.color') }}:</label>
-        <input type="text" id="ical_color" name="colorClass" autocomplete="off" value="#082236" class="simpleColorPicker"/>
+        <x-global::forms.input :bare="true" type="text" id="ical_color" name="colorClass" autocomplete="off" value="#082236" class="simpleColorPicker"/>
 
         <br /><br />
         <x-global::button submit type="primary" name="save">{{ __('label.import_ical_button') }}</x-global::button>

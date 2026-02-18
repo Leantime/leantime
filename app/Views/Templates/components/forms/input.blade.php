@@ -17,6 +17,7 @@
     'step' => null,
     'autocomplete' => null,
     'inputSize' => null,
+    'bare' => false,
 ])
 
 @php
@@ -28,10 +29,12 @@
         default => '',
     };
 
-    $inputClasses = 'tw:input tw:input-bordered tw:w-full' . $sizeClass
-        . ($error ? ' tw:input-error' : '')
-        . ($disabled ? ' tw:input-disabled' : '')
-        . ($readonly ? ' tw:input-bordered' : '');
+    $inputClasses = $bare
+        ? ''
+        : 'tw:input tw:input-bordered tw:w-full' . $sizeClass
+            . ($error ? ' tw:input-error' : '')
+            . ($disabled ? ' tw:input-disabled' : '')
+            . ($readonly ? ' tw:input-bordered' : '');
 
     $extraAttrs = [];
     if ($min !== null) $extraAttrs['min'] = $min;
@@ -47,6 +50,18 @@
         id="{{ $inputId }}"
         value="{{ old($name, $value) }}"
         {{ $attributes }}
+    />
+@elseif($bare)
+    <input
+        type="{{ $type }}"
+        name="{{ $name }}"
+        id="{{ $inputId }}"
+        value="{{ old($name, $value) }}"
+        placeholder="{{ $placeholder }}"
+        {{ $required ? 'required' : '' }}
+        {{ $disabled ? 'disabled' : '' }}
+        {{ $readonly ? 'readonly' : '' }}
+        {{ $attributes->merge($extraAttrs) }}
     />
 @else
     <div class="tw:form-control tw:w-full{{ $inline ? ' tw:flex tw:flex-row tw:items-center tw:gap-4' : '' }}">

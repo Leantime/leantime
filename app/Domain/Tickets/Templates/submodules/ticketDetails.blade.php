@@ -12,7 +12,7 @@
         <div class="marginBottom">
 
                 <div class="form-group">
-                    <input type="text" value="{{ e($ticket->headline) }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
+                    <x-global::forms.input :bare="true" type="text" value="{{ e($ticket->headline) }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
                 </div>
 
                 {{-- Status --}}
@@ -67,7 +67,7 @@
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.editor') }}</label>
                     <div class="">
-                        <select data-placeholder="{{ __('label.filter_by_user') }}" style="width:175px;"
+                        <x-global::forms.select :bare="true" data-placeholder="{{ __('label.filter_by_user') }}" style="width:175px;"
                                 name="editorId" id="editorId" class="user-select tw:mr-sm">
                             <option value="">{{ __('label.not_assigned_to_user') }}</option>
                             @foreach($tpl->get('users') as $userRow)
@@ -75,7 +75,7 @@
                                     {{ $ticket->editorId == $userRow['id'] ? "selected='selected'" : '' }}
                                 >{{ e($userRow['firstname'] . ' ' . $userRow['lastname']) }}</option>
                             @endforeach
-                        </select>&nbsp;
+                        </x-global::forms.select>&nbsp;
                     </div>
                     <div style="padding-top:6px;">
                         @if($login::userIsAtLeast($roles::$editor))
@@ -88,7 +88,7 @@
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.collaborators') }}</label>
                     <div class="">
-                        <select data-placeholder="{{ __('label.filter_by_user') }}"
+                        <x-global::forms.select :bare="true" data-placeholder="{{ __('label.filter_by_user') }}"
                                 style="width:175px;"
                                 name="collaborators[]"
                                 id="collaborators"
@@ -99,7 +99,7 @@
                                     {{ in_array($userRow['id'], $ticket->collaborators ?? []) ? "selected='selected'" : '' }}
                                 >{{ e($userRow['firstname'] . ' ' . $userRow['lastname']) }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
@@ -291,9 +291,9 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.working_date_from') }}</label>
                         <div class="">
-                            <input type="text" class="editFrom" style="width:100px;" name="editFrom" autocomplete="off"
+                            <x-global::forms.input :bare="true" type="text" class="editFrom" style="width:100px;" name="editFrom" autocomplete="off"
                                    value="{{ format($ticket->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}"/>
-                            <input type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
+                            <x-global::forms.input :bare="true" type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
                                    value="{{ format($ticket->editFrom)->time24() }}"
                                    name="timeFrom"/>
                         </div>
@@ -302,9 +302,9 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.working_date_to') }}</label>
                         <div class="">
-                            <input type="text" class="editTo" style="width:100px;" name="editTo" autocomplete="off"
+                            <x-global::forms.input :bare="true" type="text" class="editTo" style="width:100px;" name="editTo" autocomplete="off"
                                    value="{{ format($ticket->editTo)->date() }}" placeholder="{{ __('language.dateformat') }}"/>
-                            <input type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
+                            <x-global::forms.input :bare="true" type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
                                    value="{{ format($ticket->editTo)->time24() }}"
                                    name="timeTo"/>
                         </div>
@@ -313,8 +313,8 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.planned_hours') }} / {{ __('label.estimated_hours_remaining') }}</label>
                         <div class="">
-                            <x-global::forms.input value="{{ e($ticket->planHours) }}" name="planHours" style="width:45px;" />&nbsp;/&nbsp;
-                            <x-global::forms.input value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:45px;" />
+                            <x-global::forms.input :bare="true" value="{{ e($ticket->planHours) }}" name="planHours" style="width:45px;" />&nbsp;/&nbsp;
+                            <x-global::forms.input :bare="true" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:45px;" />
                             <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
                                 &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
                             </a>

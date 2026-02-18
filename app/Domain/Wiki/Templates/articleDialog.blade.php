@@ -101,7 +101,7 @@
                             </div>
 
                             <div id="existingMilestone" style="display:none;">
-                                <select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" name="existingMilestone"  class="user-select">
+                                <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" name="existingMilestone"  class="user-select">
                                     <option value="">{{ __('label.all_milestones') }}</option>
                                     @foreach ($tpl->get('milestones') as $milestoneRow)
                                         <option value="{{ $milestoneRow->id }}"
@@ -110,7 +110,7 @@
                                             @endif
                                         >{{ $milestoneRow->headline }}</option>
                                     @endforeach
-                                </select>
+                                </x-global::forms.select>
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="articleId" value="{{ $id }} " />
                                 <x-global::button tag="button" type="primary" onclick="jQuery('#primaryArticleSubmitButton').click()">Save</x-global::button>
@@ -160,10 +160,10 @@
             </div>
             <input type="hidden" class="articleIcon" value="{{ $currentArticle->data }}" name="articleIcon"/>
 
-            <input type="text" name="title" class="main-title-input" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" style="width:80%" />
+            <x-global::forms.input :bare="true" type="text" name="title" class="main-title-input" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" style="width:80%" />
 
             <br />
-            <input type="text" value="{{ e($currentArticle->tags) }}" name="tags" id="tags" />
+            <x-global::forms.input :bare="true" type="text" value="{{ e($currentArticle->tags) }}" name="tags" id="tags" />
 
             <textarea class="tiptapComplex" rows="20" cols="80" id="wikiArticleContentEditor"  name="description">{{ htmlentities($currentArticle->description ?? '') }}</textarea>
 

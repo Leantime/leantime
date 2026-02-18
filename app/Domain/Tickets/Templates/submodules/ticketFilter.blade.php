@@ -52,21 +52,21 @@
                 <div class="">
                     <label class="inline">{{ __('label.user') }}</label>
                     <div class="form-group">
-                        <select data-placeholder="{{ __('input.placeholders.filter_by_user') }}" title="{{ __('input.placeholders.filter_by_user') }}" name="users" multiple="multiple" class="user-select" id="userSelect">
+                        <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.filter_by_user') }}" title="{{ __('input.placeholders.filter_by_user') }}" name="users" multiple="multiple" class="user-select" id="userSelect">
                             <option value="" data-placeholder="true">All Users</option>
                             @foreach($tpl->get('users') as $userRow)
                                 <option value="{{ $userRow['id'] }}"
                                     {{ ($searchCriteria['users'] !== false && $searchCriteria['users'] !== null && array_search($userRow['id'], explode(',', $searchCriteria['users'])) !== false) ? "selected='selected'" : '' }}
                                 >{{ sprintf(__('text.full_name'), e($userRow['firstname']), e($userRow['lastname'])) }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
                 <div class="">
                     <label class="inline">{{ __('label.milestone') }}</label>
                     <div class="form-group">
-                        <select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" multiple="multiple" title="{{ __('input.placeholders.filter_by_milestone') }}" name="milestone" id="milestoneSelect">
+                        <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" multiple="multiple" title="{{ __('input.placeholders.filter_by_milestone') }}" name="milestone" id="milestoneSelect">
                             <option value="" data-placeholder="true">{{ __('label.all_milestones') }}</option>
                             @if(is_array($tpl->get('milestones')))
                                 @foreach($tpl->get('milestones') as $milestoneRow)
@@ -75,42 +75,42 @@
                                     >{{ e($milestoneRow->headline) }}</option>
                                 @endforeach
                             @endif
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
                 <div class="">
                     <label class="inline">{{ __('label.todo_type') }}</label>
                     <div class="form-group">
-                        <select multiple="multiple" data-placeholder="{{ __('input.placeholders.filter_by_type') }}" title="{{ __('input.placeholders.filter_by_type') }}" name="type" id="typeSelect">
+                        <x-global::forms.select :bare="true" multiple="multiple" data-placeholder="{{ __('input.placeholders.filter_by_type') }}" title="{{ __('input.placeholders.filter_by_type') }}" name="type" id="typeSelect">
                             <option value="" data-placeholder="true">{{ __('label.all_types') }}</option>
                             @foreach($tpl->get('types') as $type)
                                 <option value="{{ $type }}"
                                     {{ (isset($searchCriteria['type']) && array_search($type, explode(',', $searchCriteria['type'])) !== false) ? "selected='selected'" : '' }}
                                 >{{ $type }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
                 <div class="">
                     <label class="inline">{{ __('label.todo_priority') }}</label>
                     <div class="form-group">
-                        <select multiple="multiple" data-placeholder="{{ __('input.placeholders.filter_by_priority') }}" title="{{ __('input.placeholders.filter_by_priority') }}" name="priority" id="prioritySelect">
+                        <x-global::forms.select :bare="true" multiple="multiple" data-placeholder="{{ __('input.placeholders.filter_by_priority') }}" title="{{ __('input.placeholders.filter_by_priority') }}" name="priority" id="prioritySelect">
                             <option value="" data-placeholder="true">{{ __('label.all_priorities') }}</option>
                             @foreach($tpl->get('priorities') as $priorityKey => $priorityValue)
                                 <option value="{{ $priorityKey }}"
                                     {{ (isset($searchCriteria['priority']) && array_search($priorityKey, explode(',', $searchCriteria['priority'])) !== false) ? "selected='selected'" : '' }}
                                 >{{ $priorityValue }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
                 <div class="">
                     <label class="inline">{{ __('label.todo_status') }}</label>
                     <div class="form-group">
-                        <select multiple="multiple" data-placeholder="{{ __('input.placeholders.filter_by_status') }}" name="status" class="status-select" id="statusSelect">
+                        <x-global::forms.select :bare="true" multiple="multiple" data-placeholder="{{ __('input.placeholders.filter_by_status') }}" name="status" class="status-select" id="statusSelect">
                             <option value="" data-placeholder="true">All Statuses</option>
                             <option value="not_done" {{ ($searchCriteria['status'] !== false && str_contains($searchCriteria['status'], 'not_done')) ? "selected='selected'" : '' }}>{{ __('label.not_done') }}</option>
                             @foreach($statusLabels as $key => $label)
@@ -118,14 +118,14 @@
                                     {{ ($searchCriteria['status'] !== false && array_search((string) $key, explode(',', $searchCriteria['status'])) !== false) ? "selected='selected'" : '' }}
                                 >{{ e($label['name']) }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
                 <div class="">
                     <div class="form-group">
                         <label class="inline">{{ __('label.search_term') }}</label>
-                        <input type="text" name="termInput" id="termInput"
+                        <x-global::forms.input :bare="true" type="text" name="termInput" id="termInput"
                                style="width: 230px"
                                value="{{ $searchCriteria['term'] }}"
                                placeholder="{{ __('label.search_term') }}" />

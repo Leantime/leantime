@@ -33,10 +33,10 @@
         <input type="hidden" name="milestoneId" value="{{ $canvasItem['milestoneId'] }}"/>
         <input type="hidden" name="changeItem" value="1"/>
 
-        <input type="text" name="description" class="main-title-input" style="width:99%;" value="{{ $tpl->escape($canvasItem['description']) }}"
+        <x-global::forms.input :bare="true" type="text" name="description" class="main-title-input" style="width:99%;" value="{{ $tpl->escape($canvasItem['description']) }}"
                placeholder="{{ $tpl->__('input.placeholders.short_name') }}" /><br/>
 
-        <input type="text" value="{{ $tpl->escape($canvasItem['tags']) }}" name="tags" id="tags" />
+        <x-global::forms.input :bare="true" type="text" value="{{ $tpl->escape($canvasItem['tags']) }}" name="tags" id="tags" />
 
         <textarea rows="3" cols="10" name="data" class="tiptapComplex"
                   placeholder="">{!! $tpl->escapeMinimal($canvasItem['data']) !!}</textarea><br/>
@@ -89,7 +89,7 @@
                         </div>
 
                         <div id="existingMilestone" style="display:none;">
-                            <select data-placeholder="{{ $tpl->__('input.placeholders.filter_by_milestone') }}"
+                            <x-global::forms.select :bare="true" data-placeholder="{{ $tpl->__('input.placeholders.filter_by_milestone') }}"
                                     name="existingMilestone" class="user-select">
                                 <option value="">{{ $tpl->__('text.all_milestones') }}</option>
                                 @foreach ($tpl->get('milestones') as $milestoneRow)
@@ -97,7 +97,7 @@
                                         @if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] == $milestoneRow->id) selected="selected" @endif
                                     >{{ $tpl->escape($milestoneRow->headline) }}</option>
                                 @endforeach
-                            </select>
+                            </x-global::forms.select>
                             <input type="hidden" name="type" value="milestone"/>
                             <input type="hidden" name="leancanvasitemid" value="{{ $id }} "/>
                             <x-global::button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-global::button>
