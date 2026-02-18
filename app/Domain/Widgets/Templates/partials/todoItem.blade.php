@@ -158,41 +158,19 @@
                 @dispatchEvent('beforeStatusUpdate')
                 <div
                     class="status-container tw:flex-1 tw:justify-items-end tw:flex tw:flex-row tw:justify-end tw:gap-2 tw:content-center">
-                    <div class="tw:content-center tw:mr-[10px] dropdown ticketDropdown statusDropdown colorized show">
-                        <a class="dropdown-toggle f-left status {{ $statusLabels[$ticket['projectId']][$ticket['status']]["class"] ?? 'label-default' }}"
-                           href="javascript:void(0);"
-                           role="button"
-                           id="statusDropdownMenuLink{{ $ticket['id'] }}"
-                           data-toggle="dropdown"
-                           aria-haspopup="true"
-                           aria-expanded="false">
-                            <span class="text">
-                                @if(isset($statusLabels[$ticket['projectId']][$ticket['status']]))
-                                    {{ $statusLabels[$ticket['projectId']][$ticket['status']]["name"] }}
-                                @else
-                                    unknown
-                                @endif
-                            </span>
-                            &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                        </a>
-                        <ul class="dropdown-menu tw:float-right"
-                            aria-labelledby="statusDropdownMenuLink{{ $ticket['id'] }}">
-                            <li class="nav-header border">{{ __("dropdown.choose_status") }}</li>
-                            @foreach ($statusLabels[$ticket['projectId']] as $key => $label)
-                                <li class='dropdown-item'>
-                                    <a href='javascript:void(0);'
-                                       class='{{ $label["class"] }}'
-                                       data-label='{{ $label["name"] }}'
-                                       data-value='{{ $ticket['id'] }}_{{ $key }}_{{ $label["class"] }}'
-                                       id='ticketStatusChange{{$ticket['id'] . $key }}'
-                                       hx-post="{{ BASE_URL }}/widgets/myToDos/updateStatus"
-                                       hx-swap="none"
-                                       hx-vals='{"id": "{{ $ticket['id'] }}", "status": "{{ $key }}"}'>
-                                        {{ $label["name"] }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
+                    <div class="tw:content-center tw:mr-[10px]">
+                        <x-global::dropdownPill
+                            type="status"
+                            :parentId="$ticket['id']"
+                            :selectedClass="$statusLabels[$ticket['projectId']][$ticket['status']]['class'] ?? 'label-default'"
+                            :selectedKey="$ticket['status']"
+                            :options="$statusLabels[$ticket['projectId']]"
+                            :colorized="true"
+                            align="end"
+                            headerLabel="{{ __('dropdown.choose_status') }}"
+                            hxPost="{{ BASE_URL }}/widgets/myToDos/updateStatus"
+                            hxSwap="none"
+                        />
                     </div>
 
                     <div class="tw:content-center">

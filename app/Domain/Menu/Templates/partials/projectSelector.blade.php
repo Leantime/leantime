@@ -3,7 +3,7 @@
     'currentProject'
 ])
 
-<div class="dropdown-menu projectselector" id="mainProjectSelector">
+<div tabindex="0" class="dropdown-menu tw:dropdown-content tw:bg-base-100 tw:rounded-box tw:z-50 tw:shadow-sm projectselector" id="mainProjectSelector">
 
         @if ($menuType == 'project' || $menuType == 'default')
             <div class="head">

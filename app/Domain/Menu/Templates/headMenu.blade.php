@@ -9,22 +9,23 @@
            ])
 
     @if ($login::userIsAtLeast("manager", true))
-        <li class="dropdown notificationDropdown appsLink">
-        <a
+        <li class="tw:dropdown tw:dropdown-end notificationDropdown appsLink">
+        <div
+            tabindex="0"
+            role="button"
             class="dropdown-toggle profileHandler newsDropDownHandler"
             hx-get="{{ BASE_URL }}/plugins/marketplaceplugins/getLatest"
             hx-target="#pluginNewsDropdown"
             hx-indicator=".htmx-news-indicator"
             hx-trigger="click"
             preload="mouseover"
-            data-toggle='dropdown'
             data-tippy-content='{{ __('popover.latest_plugins') }}'
         >
             <i class="fa-solid fa-puzzle-piece"></i>
 
-        </a>
+        </div>
 
-        <div class='dropdown-menu tw:p-m tw:h-screen tw:overflow-y-auto' id='pluginNewsDropdown'>
+        <div tabindex="0" class='dropdown-menu tw:dropdown-content tw:bg-base-100 tw:rounded-box tw:z-50 tw:shadow-sm tw:p-m tw:h-screen tw:overflow-y-auto' id='pluginNewsDropdown'>
             <div class="htmx-indicator htmx-news-indicator">
                 <x-global::loadingText type="text" count="3" includeHeadline="true" />
             </div>
@@ -32,43 +33,44 @@
     </li>
     @endif
 
-    <li class="dropdown notificationDropdown">
-        <a
+    <li class="tw:dropdown tw:dropdown-end notificationDropdown">
+        <div
+            tabindex="0"
+            role="button"
             class="dropdown-toggle profileHandler newsDropDownHandler"
             hx-get="{{ BASE_URL }}/notifications/news/get"
             hx-target="#newsDropdown"
             hx-indicator=".htmx-news-indicator"
             hx-trigger="click"
             preload="mouseover"
-            data-toggle='dropdown'
             data-tippy-content='{{ __('popover.latest_updates') }}'
         >
             <span class="fa-solid fa-bolt-lightning"></span>
             <span class="tw:inline-block" hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
 
-        </a>
+        </div>
 
-        <div class='dropdown-menu tw:p-m tw:h-screen tw:overflow-y-auto' id='newsDropdown'>
+        <div tabindex="0" class='dropdown-menu tw:dropdown-content tw:bg-base-100 tw:rounded-box tw:z-50 tw:shadow-sm tw:p-m tw:h-screen tw:overflow-y-auto' id='newsDropdown'>
             <div class="htmx-indicator htmx-news-indicator">
                 <x-global::loadingText type="text" count="3" includeHeadline="true" />
             </div>
         </div>
     </li>
 
-    <li class="dropdown notificationDropdown">
-        <a
-            href='javascript:void(0);'
+    <li class="tw:dropdown tw:dropdown-end notificationDropdown">
+        <div
+            tabindex="0"
+            role="button"
             class="dropdown-toggle profileHandler notificationHandler"
-            data-toggle='dropdown'
             data-tippy-content='{{ __('popover.notifications') }}'
         >
             <span class="fa-solid fa-bell"></span>
             @if($newNotificationCount>0)
                 <span class='notificationCounter tw:badge tw:badge-error tw:badge-xs'>{{ $newNotificationCount }}</span>
             @endif
-        </a>
+        </div>
 
-        <div class='dropdown-menu' id='notificationsDropdown'>
+        <div tabindex="0" class='dropdown-menu tw:dropdown-content tw:bg-base-100 tw:rounded-box tw:z-50 tw:shadow-sm' id='notificationsDropdown'>
 
             <div class='dropdownTabs'>
                 <a
@@ -154,16 +156,16 @@
 
     </li>
 
-    <li class="dropdown userloggedinfo">
-        <a
-            href='javascript:void(0);'
+    <li class="tw:dropdown tw:dropdown-end userloggedinfo">
+        <div
+            tabindex="0"
+            role="button"
             class="dropdown-toggle"
-            data-toggle='dropdown'
             data-tippy-content='{{ __('popover.help') }}'
         >
             <span class="fa-solid fa-question-circle"></span>
-        </a>
-        <ul class="dropdown-menu tw:float-right">
+        </div>
+        <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm tw:float-right">
             <li class="nav-header">
                 {{ __("headline.support") }}
             </li>
@@ -216,7 +218,7 @@
 <ul class="headmenu work-modes tw:h-[50px] tw:float-left">
 
     @dispatchEvent('afterHeadMenuOpen')
-    <li class="dropdown">
+    <li class="tw:dropdown dropdown">
         @include('menu::projectSelector')
     </li>
     <li>

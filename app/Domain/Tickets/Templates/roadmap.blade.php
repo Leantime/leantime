@@ -27,7 +27,7 @@
             </div>
             <div>
                 <div class="tw:float-right">
-                    <div class="btn-group dropRight">
+                    <div class="tw:dropdown btn-group dropRight">
                         @php
                             $currentView = '';
                             if ($roadmapView == 'Day') {
@@ -38,11 +38,11 @@
                                 $currentView = __('buttons.month');
                             }
                         @endphp
-                        <button class="btn dropdown-toggle" data-toggle="dropdown">{{ __('buttons.timeframe') }}: <span class="viewText">{{ $currentView }}</span><span class="caret"></span></button>
-                        <ul class="dropdown-menu" id="ganttTimeControl">
-                            <li><a href="javascript:void(0);" data-value="Day" class="{{ $roadmapView == 'Day' ? 'active' : '' }}"> {{ __('buttons.day') }}</a></li>
-                            <li><a href="javascript:void(0);" data-value="Week" class="{{ $roadmapView == 'Week' ? 'active' : '' }}">{{ __('buttons.week') }}</a></li>
-                            <li><a href="javascript:void(0);" data-value="Month" class="{{ $roadmapView == 'Month' ? 'active' : '' }}">{{ __('buttons.month') }}</a></li>
+                        <div tabindex="0" role="button" class="btn dropdown-toggle">{{ __('buttons.timeframe') }}: <span class="viewText">{{ $currentView }}</span><span class="caret"></span></div>
+                        <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" id="ganttTimeControl">
+                            <li><a href="javascript:void(0);" onclick="document.activeElement.blur();" data-value="Day" class="{{ $roadmapView == 'Day' ? 'active' : '' }}"> {{ __('buttons.day') }}</a></li>
+                            <li><a href="javascript:void(0);" onclick="document.activeElement.blur();" data-value="Week" class="{{ $roadmapView == 'Week' ? 'active' : '' }}">{{ __('buttons.week') }}</a></li>
+                            <li><a href="javascript:void(0);" onclick="document.activeElement.blur();" data-value="Month" class="{{ $roadmapView == 'Month' ? 'active' : '' }}">{{ __('buttons.month') }}</a></li>
                         </ul>
                     </div>
                 </div>

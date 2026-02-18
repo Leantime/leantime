@@ -214,15 +214,15 @@ jQuery(document).ready(function(){
         if(response.hasOwnProperty("moduleId")){
 
             let html = '<li class="file-module-'+response.moduleId+'">' +
-                            '<div class="inlineDropDownContainer dropright" style="float:right;">' +
-                                '<a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">' +
+                            '<div class="tw:dropdown tw:dropdown-end" style="float:right;">' +
+                                '<div tabindex="0" role="button" class="dropdown-toggle ticketDropDown">' +
                                     '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
-                                '</a>' +
-                                '<ul class="dropdown-menu">' +
-                                    '<li class="nav-header">{{ __("subtitles.file") }}</li>' +
-                                    '<li><a target="_blank" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">{{ str_replace("'", '"', __("links.download")) }}</a></li>'+
+                                '</div>' +
+                                '<ul tabindex="0" class="tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm">' +
+                                    '<li class="tw:menu-title">{{ __("subtitles.file") }}</li>' +
+                                    '<li><a onclick="document.activeElement.blur();" target="_blank" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">{{ str_replace("'", '"', __("links.download")) }}</a></li>'+
                                     @if($login::userIsAtLeast($roles::$editor))
-                                        '<li><a href="{{ BASE_URL }}/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><i class="fa fa-trash"></i> {{ str_replace("'", '"', __("links.delete")) }}</a></li>'+
+                                        '<li><a onclick="document.activeElement.blur();" href="{{ BASE_URL }}/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><i class="fa fa-trash"></i> {{ str_replace("'", '"', __("links.delete")) }}</a></li>'+
                                     @endif
                                 '</ul>'+
                             '</div>'+

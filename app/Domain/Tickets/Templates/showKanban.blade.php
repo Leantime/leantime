@@ -182,56 +182,46 @@ jQuery(document).ready(function(){
                                             <div class="clearfix" style="padding-bottom: 8px;"></div>
 
                                             <div class="timerContainer" id="timerContainer-{{ $row['id'] }}">
-                                                <div class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown">
-                                                    <a style="background-color:{{ e($row['milestoneColor']) }}" class="dropdown-toggle f-left label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        <span class="text">@if($row['milestoneid'] != '' && $row['milestoneid'] != 0){{ e($row['milestoneHeadline']) }}@else{{ __('label.no_milestone') }}@endif</span>
-                                                        &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                    </a>
-                                                    <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink{{ $row['id'] }}">
-                                                        <li class="nav-header border">{{ __('dropdown.choose_milestone') }}</li>
-                                                        <li class="dropdown-item"><a style="background-color:#b0b0b0" href="javascript:void(0);" data-label="{{ __('label.no_milestone') }}" data-value="{{ $row['id'] }}_0_#b0b0b0"> {{ __('label.no_milestone') }} </a></li>
-                                                        @foreach($tpl->get('milestones') as $milestone)
-                                                            <li class="dropdown-item">
-                                                                <a href="javascript:void(0);" data-label="{{ e($milestone->headline) }}" data-value="{{ $row['id'] }}_{{ $milestone->id }}_{{ e($milestone->tags) }}" id="ticketMilestoneChange{{ $row['id'] }}{{ $milestone->id }}" style="background-color:{{ e($milestone->tags) }}">{{ e($milestone->headline) }}</a>
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
+                                                @php
+                                                    $milestoneOptions = [0 => ['name' => __('label.no_milestone'), 'class' => '#b0b0b0']];
+                                                    foreach ($tpl->get('milestones') as $ms) {
+                                                        $milestoneOptions[$ms->id] = ['name' => $ms->headline, 'class' => $ms->tags];
+                                                    }
+                                                @endphp
+                                                <x-global::dropdownPill
+                                                    type="milestone"
+                                                    :parentId="$row['id']"
+                                                    selectedClass="label-default"
+                                                    linkStyle="background-color:{{ e($row['milestoneColor']) }}"
+                                                    :selectedKey="$row['milestoneid'] ?: 0"
+                                                    :options="$milestoneOptions"
+                                                    :colorized="true"
+                                                    extraClass="firstDropdown"
+                                                    headerLabel="{{ __('dropdown.choose_milestone') }}"
+                                                />
 
                                                 @if($row['storypoints'] != '' && $row['storypoints'] > 0)
-                                                    <div class="dropdown ticketDropdown effortDropdown show">
-                                                        <a class="dropdown-toggle f-left label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            <span class="text">{{ $efforts['' . $row['storypoints']] ?? $row['storypoints'] }}</span>
-                                                            &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                        </a>
-                                                        <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink{{ $row['id'] }}">
-                                                            <li class="nav-header border">{{ __('dropdown.how_big_todo') }}</li>
-                                                            @foreach($efforts as $effortKey => $effortValue)
-                                                                <li class="dropdown-item">
-                                                                    <a href="javascript:void(0);" data-value="{{ $row['id'] }}_{{ $effortKey }}" id="ticketEffortChange{{ $row['id'] }}{{ $effortKey }}">{{ $effortValue }}</a>
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    </div>
+                                                    <x-global::dropdownPill
+                                                        type="effort"
+                                                        :parentId="$row['id']"
+                                                        selectedClass="label-default"
+                                                        :selectedKey="'' . $row['storypoints']"
+                                                        :options="$efforts"
+                                                        headerLabel="{{ __('dropdown.how_big_todo') }}"
+                                                    />
                                                 @endif
 
-                                                <div class="dropdown ticketDropdown priorityDropdown show">
-                                                    <a class="dropdown-toggle f-left label-default priority priority-bg-{{ $row['priority'] }}" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        <span class="text">@if($row['priority'] != '' && $row['priority'] > 0){{ $priorities[$row['priority']] ?? __('label.priority_unkown') }}@else{{ __('label.priority_unkown') }}@endif</span>
-                                                        &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                    </a>
-                                                    <ul class="dropdown-menu" aria-labelledby="priorityDropdownMenuLink{{ $row['id'] }}">
-                                                        <li class="nav-header border">{{ __('dropdown.select_priority') }}</li>
-                                                        @foreach($priorities as $priorityKey => $priorityValue)
-                                                            <li class="dropdown-item">
-                                                                <a href="javascript:void(0);" class="priority-bg-{{ $priorityKey }}" data-value="{{ $row['id'] }}_{{ $priorityKey }}" id="ticketPriorityChange{{ $row['id'] }}{{ $priorityKey }}">{{ $priorityValue }}</a>
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
+                                                <x-global::dropdownPill
+                                                    type="priority"
+                                                    :parentId="$row['id']"
+                                                    selectedClass="label-default priority-bg-{{ $row['priority'] }}"
+                                                    :selectedKey="$row['priority']"
+                                                    :options="$priorities"
+                                                    headerLabel="{{ __('dropdown.select_priority') }}"
+                                                />
 
-                                                <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
-                                                    <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <div class="tw:dropdown tw:dropdown-end ticketDropdown userDropdown noBg lastDropdown dropRight">
+                                                    <div tabindex="0" role="button" class="dropdown-toggle f-left" id="userDropdownMenuLink{{ $row['id'] }}" aria-haspopup="true" aria-expanded="false">
                                                         <span class="text">
                                                             @if($row['editorFirstname'] != '')
                                                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['editorId'] }}" width="25" style="vertical-align: middle;"/></span>
@@ -239,13 +229,13 @@ jQuery(document).ready(function(){
                                                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle;"/></span>
                                                             @endif
                                                         </span>
-                                                    </a>
-                                                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
+                                                    </div>
+                                                    <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                                         <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>
                                                         @if(is_array($tpl->get('users')))
                                                             @foreach($tpl->get('users') as $user)
                                                                 <li class="dropdown-item">
-                                                                    <a href="javascript:void(0);" data-label="{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}" data-value="{{ $row['id'] }}_{{ $user['id'] }}_{{ $user['profileId'] }}" id="userStatusChange{{ $row['id'] }}{{ $user['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" width="25" style="vertical-align: middle; margin-right:5px;"/>{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}</a>
+                                                                    <a href="javascript:void(0);" onclick="document.activeElement.blur();" data-label="{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}" data-value="{{ $row['id'] }}_{{ $user['id'] }}_{{ $user['profileId'] }}" id="userStatusChange{{ $row['id'] }}{{ $user['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" width="25" style="vertical-align: middle; margin-right:5px;"/>{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}</a>
                                                                 </li>
                                                             @endforeach
                                                         @endif
@@ -266,16 +256,18 @@ jQuery(document).ready(function(){
 
                                                     @if($row['tags'] != '')
                                                         @php $tagsArray = explode(',', $row['tags']); @endphp
-                                                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                                                        <div class="tw:dropdown">
+                                                        <div tabindex="0" role="button">
                                                             <i class="fa fa-tags" aria-hidden="true"></i> {{ count($tagsArray) }}
-                                                        </a>
-                                                        <ul class="dropdown-menu">
+                                                        </div>
+                                                        <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm">
                                                             <li style="padding:10px"><div class="tagsinput readonly">
                                                                 @foreach($tagsArray as $tag)
                                                                     <span class="tag"><span>{{ e($tag) }}</span></span>
                                                                 @endforeach
                                                             </div></li>
                                                         </ul>
+                                                        </div>
                                                     @endif
                                                 </div>
                                             @endif

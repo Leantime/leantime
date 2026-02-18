@@ -32,11 +32,16 @@ leantime.authController = (function () {
 
         jQuery(container).find(".ticketDropdown a").removeAttr("data-toggle");
 
+        // Disable DaisyUI dropdowns by removing tabindex from triggers
+        document.querySelectorAll((container || 'body') + ' .tw\\:dropdown [tabindex]').forEach(function(el) {
+            el.removeAttribute('tabindex');
+        });
+
         jQuery("#mainToggler").hide();
         jQuery(".commentBox").hide();
         jQuery(".deleteComment, .replyButton").hide();
 
-        jQuery(container).find(".dropdown i").removeClass('fa-caret-down');
+        jQuery(container).find(".dropdown i, .tw\\:dropdown i").removeClass('fa-caret-down');
     };
 
     // Make public what you want to have public, everything else is private

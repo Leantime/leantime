@@ -98,23 +98,22 @@
                         @endphp
 
                         <td class="dropdown-cell" data-order="{{ $milestoneHeadline }}">
-                            <div class="dropdown ticketDropdown milestoneDropdown colorized show">
-                                <a style="background-color:{{ e($row->milestoneColor) }}" class="dropdown-toggle label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink{{ $row->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="text">{{ $milestoneHeadline }}</span>
-                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink{{ $row->id }}">
-                                    <li class="nav-header border">{{ __('dropdown.choose_milestone') }}</li>
-                                    <li class="dropdown-item"><a style="background-color:#b0b0b0" href="javascript:void(0);" data-label="{{ __('label.no_milestone') }}" data-value="{{ $row->id }}_0_#b0b0b0"> {{ __('label.no_milestone') }} </a></li>
-                                    @foreach($tpl->get('milestones') as $milestone)
-                                        @if($milestone->id != $row->id)
-                                            <li class="dropdown-item">
-                                                <a href="javascript:void(0);" data-label="{{ e($milestone->headline) }}" data-value="{{ $row->id }}_{{ $milestone->id }}_{{ e($milestone->tags) }}" id="ticketMilestoneChange{{ $row->id }}{{ $milestone->id }}" style="background-color:{{ e($milestone->tags) }}">{{ e($milestone->headline) }}</a>
-                                            </li>
-                                        @endif
-                                    @endforeach
-                                </ul>
-                            </div>
+                            @php
+                                $milestoneOptions = [0 => ['name' => __('label.no_milestone'), 'class' => '#b0b0b0']];
+                                foreach ($tpl->get('milestones') as $ms) {
+                                    $milestoneOptions[$ms->id] = ['name' => $ms->headline, 'class' => $ms->tags];
+                                }
+                            @endphp
+                            <x-global::dropdownPill
+                                type="milestone"
+                                :parentId="$row->id"
+                                selectedClass="label-default"
+                                linkStyle="background-color:{{ e($row->milestoneColor) }}"
+                                :selectedKey="$row->milestoneid ?: 0"
+                                :options="$milestoneOptions"
+                                :colorized="true"
+                                headerLabel="{{ __('dropdown.choose_milestone') }}"
+                            />
                         </td>
 
                         @php
@@ -128,25 +127,20 @@
                         @endphp
 
                         <td class="dropdown-cell" data-order="{{ $name }}">
-                            <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                <a class="dropdown-toggle status {{ $class }}" href="javascript:void(0);" role="button" id="statusDropdownMenuLink{{ $row->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="text">{{ $name }}</span>
-                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row->id }}">
-                                    <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
-                                    @foreach($statusLabels as $key => $label)
-                                        <li class="dropdown-item">
-                                            <a href="javascript:void(0);" class="{{ $label['class'] }}" data-label="{{ e($label['name']) }}" data-value="{{ $row->id }}_{{ $key }}_{{ $label['class'] }}" id="ticketStatusChange{{ $row->id }}{{ $key }}">{{ e($label['name']) }}</a>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
+                            <x-global::dropdownPill
+                                type="status"
+                                :parentId="$row->id"
+                                :selectedClass="$class"
+                                :selectedKey="$row->status"
+                                :options="$statusLabels"
+                                :colorized="true"
+                                headerLabel="{{ __('dropdown.choose_status') }}"
+                            />
                         </td>
 
                         <td class="dropdown-cell" data-order="{{ $row->editorFirstname != '' ? e($row->editorFirstname) : __('dropdown.not_assigned') }}">
-                            <div class="dropdown ticketDropdown userDropdown noBg show">
-                                <a class="dropdown-toggle" href="javascript:void(0);" role="button" id="userDropdownMenuLink{{ $row->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div class="tw:dropdown ticketDropdown userDropdown noBg">
+                                <div tabindex="0" role="button" class="dropdown-toggle" id="userDropdownMenuLink{{ $row->id }}" aria-haspopup="true" aria-expanded="false">
                                     <span class="text">
                                         @if($row->editorFirstname != '')
                                             <span id="userImage{{ $row->id }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row->editorId }}" width="25" style="vertical-align: middle; margin-right:5px;"/></span><span id="user{{ $row->id }}"> {{ e($row->editorFirstname) }}</span>
@@ -155,12 +149,12 @@
                                         @endif
                                     </span>
                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row->id }}">
+                                </div>
+                                <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="userDropdownMenuLink{{ $row->id }}">
                                     <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>
                                     @foreach($tpl->get('users') as $user)
                                         <li class="dropdown-item">
-                                            <a href="javascript:void(0);" data-label="{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}" data-value="{{ $row->id }}_{{ $user['id'] }}_{{ $user['profileId'] }}" id="userStatusChange{{ $row->id }}{{ $user['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" width="25" style="vertical-align: middle; margin-right:5px;"/>{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}</a>
+                                            <a href="javascript:void(0);" onclick="document.activeElement.blur();" data-label="{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}" data-value="{{ $row->id }}_{{ $user['id'] }}_{{ $user['profileId'] }}" id="userStatusChange{{ $row->id }}{{ $user['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" width="25" style="vertical-align: middle; margin-right:5px;"/>{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}</a>
                                         </li>
                                     @endforeach
                                 </ul>

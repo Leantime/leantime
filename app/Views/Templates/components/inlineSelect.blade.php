@@ -6,13 +6,12 @@
     'noSelection' => ''
 ])
 
-<span class="dropdown">
-    <a
-       href="javascript:void(0);"
+<span class="tw:dropdown">
+    <div
+       tabindex="0"
        role="button"
        id="{{ $id }}-link"
-       {{ $attributes->merge(["class" => "dropdown-toggle"]) }}
-       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+       {{ $attributes->merge(["class" => "dropdown-toggle"]) }}>
         <span class="text">
            @if(empty($selected['value']))
                <span style="opacity:0.4">{{ $noSelection }}</span>
@@ -23,28 +22,18 @@
         <i class="fa fa-chevron-down"
            style="font-size: 10px;
                 vertical-align: middle;"></i>
-    </a>
-    <ul class="dropdown-menu" id="{{ $id }}-options">
+    </div>
+    <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" id="{{ $id }}-options">
         @foreach($options as $key => $option)
-            <li><a href="javascript:void(0);" data-id="{{ $key }}">{{ $option }}</a></li>
+            <li><a href="javascript:void(0);" data-id="{{ $key }}"
+                   onclick="document.querySelector('#{{ $id }}-link .text').textContent = this.textContent.trim();
+                            var field = document.getElementById('{{ $id }}-formField');
+                            field.value = this.getAttribute('data-id');
+                            field.dispatchEvent(new Event('change', {bubbles: true}));
+                            htmx.trigger(field, 'change');
+                            document.activeElement.blur();"
+                >{{ $option }}</a></li>
         @endforeach
     </ul>
 </span>
 <input type="hidden" name="{{ $formName }}" id="{{ $id }}-formField" value="{{ $selected['key'] }}" />
-
-<script>
-    jQuery("#{{ $id }}-options li a").each(function() {
-
-        jQuery(this).click(function() {
-            var newText = jQuery(this).text();
-            var id = jQuery(this).attr("data-id");
-            jQuery('#{{ $id }}-link .text').text(newText);
-            jQuery("#{{ $id }}-formField").val(id).trigger("change");
-            htmx.trigger("#{{ $id }}-formField", "change");
-
-        });
-    });
-
-
-
-</script>

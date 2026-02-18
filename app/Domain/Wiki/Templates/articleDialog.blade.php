@@ -147,15 +147,14 @@
         <div class="tw:md:col-span-8">
 
 
-            <div class="btn-group inlineDropDownContainerLeft">
-                <button data-selected="graduation-cap" type="button"
-                        class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker"
-                        data-toggle="dropdown">
+            <div class="btn-group inlineDropDownContainerLeft tw:dropdown">
+                <div tabindex="0" role="button" data-selected="graduation-cap"
+                        class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker">
                     <span class="iconPlaceholder">
                         <i class="fa fa-file"></i>
                     </span>
                     <span class="caret"></span>
-                </button>
+                </div>
                 <div class="dropdown-menu"></div>
             </div>
             <input type="hidden" class="articleIcon" value="{{ $currentArticle->data }}" name="articleIcon"/>

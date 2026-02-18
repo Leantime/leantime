@@ -123,103 +123,42 @@
                                     </div>
                                     <div class="tw:md:col-span-8 tw-mt-[3px]">
                                         <div class="right">
-                                            <div class="dropdown ticketDropdown effortDropdown show">
-                                                <a
-                                                    class="dropdown-toggle f-left label-default effort"
-                                                    href="javascript:void(0);"
-                                                    role="button"
-                                                    id="effortDropdownMenuLink{{ $row['id'] }}"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                ><span class="text">
-                                                     {{ $row['storypoints'] != '' && $row['storypoints'] > 0
-                                                            ? $efforts[''.$row['storypoints'].'']
-                                                            : __('label.story_points_unkown')
-                                                        }}
-                                                </span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                                            <x-global::dropdownPill
+                                                type="effort"
+                                                :parentId="$row['id']"
+                                                selectedClass="label-default"
+                                                :selectedKey="$row['storypoints'] != '' && $row['storypoints'] > 0 ? ''.$row['storypoints'].'' : ''"
+                                                :options="$efforts"
+                                                :colorized="false"
+                                                headerLabel="{{ __('dropdown.how_big_todo') }}"
+                                            />
 
-                                                <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink{{ $row['id'] }}">
-                                                    <li class="nav-header border">{{ __('dropdown.how_big_todo') }}</li>
-                                                    @foreach ($efforts as $effortKey => $effortValue)
-                                                        <li class="dropdown-item">
-                                                            <a
-                                                                href="javascript:void(0)"
-                                                                data-value="{{ $row['id'] }}_{{ $effortKey}}"
-                                                                id="ticketEffortChange_{{ $row['id'] . $effortKey }}"
-                                                            >{{ $effortValue }}</a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
+                                            @php
+                                                $milestoneOptions = [0 => ['name' => __('label.no_milestone'), 'class' => '#b0b0b0']];
+                                                foreach ($milestones as $ms) {
+                                                    $milestoneOptions[$ms->id] = ['name' => $ms->headline, 'class' => $ms->tags];
+                                                }
+                                            @endphp
+                                            <x-global::dropdownPill
+                                                type="milestone"
+                                                :parentId="$row['id']"
+                                                selectedClass="label-default"
+                                                linkStyle="background-color:{{ e($row['milestoneColor']) }}"
+                                                :selectedKey="$row['milestoneid'] ?: 0"
+                                                :options="$milestoneOptions"
+                                                :colorized="true"
+                                                headerLabel="{{ __('dropdown.choose_milestone') }}"
+                                            />
 
-                                            <div class="dropdown ticketDropdown milestoneDropdown colorized show">
-                                                <a
-                                                    style="background-color:{{ __($row['milestoneColor']) }}"
-                                                    class="dropdown-toggle f-left label-default milestone"
-                                                    href="javascript:void(0);"
-                                                    role="button"
-                                                    id="milestoneDropdownMenuLink{{ $row['id'] }}"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                ><span class="text">
-                                                    {{ $row['milestoneid'] != '' && $row['milestoneid'] != 0
-                                                        ? $row['milestoneHeadline']
-                                                        : __('label.no_milestone')
-                                                    }}
-                                                </span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></a>
-
-                                                <ul class="dropdown-menu" aria-labeledby="milestoneDropdownMenuLink{{ $row['id'] }}">
-                                                    <li class="nav-header border">{{ __('dropdown.choose_milestone') }}</li>
-                                                    <li class="dropdown-item">
-                                                        <a
-                                                            href="javascript:void(0);"
-                                                            data-label="{{ __('label.no_milestone') }}"
-                                                            data-value="{{ $row['id'] }}_0_#b0b0b0"
-                                                            class="tw-bg-[#b0b0b0]"
-                                                        >{{ __('label.no_milestone') }}</a>
-                                                    </li>
-                                                    @foreach ($milestones as $milestone)
-                                                        <li class="dropdown-item">
-                                                            <a
-                                                                href="javascript:void(0);"
-                                                                data-label="{{ $milestone->headline }}"
-                                                                data-value="{{ $row['id'] }}_{!! $milestone->id !!}_{{ $milestone->tags }}"
-                                                                id="ticketMilestoneChange_{{ $row['id'] . $milestone->id }}"
-                                                                style="background-color:{{ $milestone->tags }}"
-                                                            >{{ $milestone->headline }}</a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-
-                                            <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                                <a
-                                                    class="dropdown-toggle f-left status {!! $statusLabels[$row['status']]['class'] !!}"
-                                                    href="javascript:void(0);"
-                                                    role="button"
-                                                    id="statusDropdownMenuLink{{ $row['id'] }}"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                ><span class="text">{!! $statusLabels[$row['status']]['name'] !!}</span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></a>
-
-                                                <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{!! $row['id'] !!}">
-                                                    <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
-                                                    @foreach ($statusLabels as $key => $label)
-                                                        <li class="dropdown-item">
-                                                            <a
-                                                                href="javascript:void(0);"
-                                                                class="{!! $label['class'] !!}"
-                                                                data-label="{{ $label['name'] }}"
-                                                                data-value="{{ $row['id'] }}_{{ $key }}_{!! $label['class'] !!}"
-                                                                id="ticketStatusChange{{ $row['id'] . $key }}"
-                                                            >{{ $label['name'] }}</a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
+                                            <x-global::dropdownPill
+                                                type="status"
+                                                :parentId="$row['id']"
+                                                :selectedClass="$statusLabels[$row['status']]['class']"
+                                                :selectedKey="$row['status']"
+                                                :options="$statusLabels"
+                                                :colorized="true"
+                                                headerLabel="{{ __('dropdown.choose_status') }}"
+                                            />
                                         </div>
                                     </div>
                                 </div>

@@ -80,18 +80,15 @@
                                 <tr onclick="leantime.ticketsController.loadTicketToContainer('{{ $row['id'] }}', '#ticketContent')" id="row-{{ $row['id'] }}" class="ticketRows">
                                     @dispatchEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets])
                                     <td data-order="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['sortKey'] : '' }}" data-search="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['name'] : '' }}" class="roundStatusBtn" style="width:20px">
-                                        <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                            <a class="dropdown-toggle status {{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['class'] : '' }}" href="javascript:void(0);" role="button" id="statusDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-caret-down" aria-hidden="true"></i>
-                                            </a>
-                                            <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
-                                                <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
-                                                @foreach($statusLabels as $key => $label)
-                                                    <li class="dropdown-item">
-                                                        <a href="javascript:void(0);" class="{{ $label['class'] }}" data-label="{{ e($label['name']) }}" data-value="{{ $row['id'] }}_{{ $key }}_{{ $label['class'] }}" id="ticketStatusChange{{ $row['id'] }}{{ $key }}">{{ e($label['name']) }}</a>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
+                                        <x-global::dropdownPill
+                                            type="status"
+                                            :parentId="$row['id']"
+                                            selectedClass="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['class'] : '' }}"
+                                            :selectedKey="$row['status']"
+                                            :options="$statusLabels"
+                                            :colorized="true"
+                                            headerLabel="{{ __('dropdown.choose_status') }}"
+                                        />
                                     </td>
 
                                     <td data-search="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['name'] : '' }}" data-order="{{ e($row['headline']) }}">

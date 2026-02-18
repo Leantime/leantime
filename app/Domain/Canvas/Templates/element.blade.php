@@ -49,18 +49,17 @@
                 <div class="clearfix" style="padding-bottom: 8px;"></div>
 
                 @if (! empty($statusLabels))
-                    <div class="dropdown ticketDropdown statusDropdown colorized show firstDropdown">
-                        <a class="dropdown-toggle f-left status label-{{ $statusLabels[$row['status']]['dropdown'] }}"
-                           href="javascript:void(0);" role="button"
-                           id="statusDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <div class="tw:dropdown ticketDropdown statusDropdown colorized firstDropdown">
+                        <div tabindex="0" role="button" class="dropdown-toggle f-left status label-{{ $statusLabels[$row['status']]['dropdown'] }}"
+                           id="statusDropdownMenuLink{{ $row['id'] }}">
                             <span class="text">{{ $statusLabels[$row['status']]['title'] }}</span> <i class="fa fa-caret-down" aria-hidden="true"></i>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
+                        </div>
+                        <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
                             <li class="nav-header border">{{ $tpl->__('dropdown.choose_status') }}</li>
                             @foreach ($statusLabels as $key => $data)
                                 @if ($data['active'] || true)
                                     <li class="dropdown-item">
-                                        <a href="javascript:void(0);" class="label-{{ $data['dropdown'] }}"
+                                        <a href="javascript:void(0);" onclick="document.activeElement.blur();" class="label-{{ $data['dropdown'] }}"
                                            data-label="{{ $data['title'] }}" data-value="{{ $row['id'] }}/{{ $key }}"
                                            id="ticketStatusChange{{ $row['id'] }}{{ $key }}">{{ $data['title'] }}</a>
                                     </li>
@@ -71,19 +70,17 @@
                 @endif
 
                 @if (! empty($relatesLabels))
-                    <div class="dropdown ticketDropdown relatesDropdown colorized show firstDropdown">
-                        <a class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}"
-                           href="javascript:void(0);" role="button"
-                           id="relatesDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true"
-                           aria-expanded="false">
+                    <div class="tw:dropdown ticketDropdown relatesDropdown colorized firstDropdown">
+                        <div tabindex="0" role="button" class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}"
+                           id="relatesDropdownMenuLink{{ $row['id'] }}">
                             <span class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span> <i class="fa fa-caret-down" aria-hidden="true"></i>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
+                        </div>
+                        <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
                             <li class="nav-header border">{{ $tpl->__('dropdown.choose_relates') }}</li>
                             @foreach ($relatesLabels as $key => $data)
                                 @if ($data['active'] || true)
                                     <li class="dropdown-item">
-                                        <a href="javascript:void(0);" class="label-{{ $data['dropdown'] }}"
+                                        <a href="javascript:void(0);" onclick="document.activeElement.blur();" class="label-{{ $data['dropdown'] }}"
                                            data-label="{{ $data['title'] }}"
                                            data-value="{{ $row['id'] }}/{{ $key }}"
                                            id="ticketRelatesChange{{ $row['id'] }}{{ $key }}">{{ $data['title'] }}</a>
@@ -94,9 +91,8 @@
                     </div>
                 @endif
 
-                <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
-                    <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink{{ $row['id'] }}"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="tw:dropdown ticketDropdown userDropdown noBg right lastDropdown dropRight">
+                    <div tabindex="0" role="button" class="dropdown-toggle f-left" id="userDropdownMenuLink{{ $row['id'] }}">
                         <span class="text">
                             @if ($row['authorFirstname'] != '')
                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['author'] }}" width="25" style="vertical-align: middle;" /></span><span id="user{{ $row['id'] }}"></span>
@@ -104,12 +100,12 @@
                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle;" /></span><span id="user{{ $row['id'] }}"></span>
                             @endif
                         </span>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
+                    </div>
+                    <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                         <li class="nav-header border">{{ $tpl->__('dropdown.choose_user') }}</li>
                         @foreach ($tpl->get('users') as $user)
                             <li class="dropdown-item">
-                                <a href="javascript:void(0);"
+                                <a href="javascript:void(0);" onclick="document.activeElement.blur();"
                                    data-label="{{ sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}"
                                    data-value="{{ $row['id'] }}_{{ $user['id'] }}_{{ $user['profileId'] }}"
                                    id="userStatusChange{{ $row['id'] }}{{ $user['id'] }}">
