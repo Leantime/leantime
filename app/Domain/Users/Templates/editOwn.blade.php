@@ -112,7 +112,7 @@
                                                 <span class="btn btn-file">
                                         <span class="fileupload-new">{{ __('buttons.select_file') }}</span>
                                         <span class='fileupload-exists'>{{ __('buttons.change') }}</span>
-                                        <input type='file' name='file' onchange="leantime.usersController.readURL(this)" accept=".jpg,.png,.gif,.webp"/>
+                                        <x-global::forms.file :bare="true" name="file" accept=".jpg,.png,.gif,.webp" onchange="leantime.usersController.readURL(this)" />
                                     </span>
 
                                                 <x-global::button link="#" type="secondary" class="fileupload-exists" data-dismiss="fileupload" onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</x-global::button>

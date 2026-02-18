@@ -38,12 +38,12 @@
 
                 <x-global::button tag="button" type="secondary" class="fc-today-button right" style="margin-right:5px;">today</x-global::button>
 
-                <select id="my-select" style="margin-right:5px;" class="right">
+                <x-global::forms.select :bare="true" id="my-select" style="margin-right:5px;" class="right">
                     <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'timeGridDay' ? 'selected' : '' }}>Day</option>
                     <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'timeGridWeek' ? 'selected' : '' }}>Week</option>
                     <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'dayGridMonth' ? 'selected' : '' }}>Month</option>
                     <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'multiMonthYear' ? 'selected' : '' }}>Year</option>
-                </select>
+                </x-global::forms.select>
 
             </div>
         </div>

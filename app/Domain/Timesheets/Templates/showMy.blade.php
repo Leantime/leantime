@@ -331,7 +331,7 @@ jQuery(document).ready(function(){
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
                                 <div class="form-group" id="projectSelect">
-                                    <select data-placeholder="{{ __('input.placeholders.choose_project') }}" style="" class="project-select" >
+                                    <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_project') }}" style="" class="project-select" >
                                         <option value=""></option>
                                         @foreach ($tpl->get('allProjects') as $projectRow)
                                             {!! sprintf(
@@ -349,12 +349,12 @@ jQuery(document).ready(function(){
                                                 )
                                             ) !!}
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                                 </div>
                             </td>
                             <td width="14%">
                                 <div class="form-group" id="ticketSelect">
-                                    <select data-placeholder="{{ __('input.placeholders.choose_todo') }}" style="" class="ticket-select" name="ticketId">
+                                    <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" style="" class="ticket-select" name="ticketId">
                                         <option value=""></option>
                                         @foreach ($tpl->get('allTickets') as $ticketRow)
                                             @if (in_array($ticketRow['id'], $tpl->get('existingTicketIds')))
@@ -375,15 +375,15 @@ jQuery(document).ready(function(){
                                                 )
                                             ) !!}
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                                 </div>
                             </td>
                             <td width="14%">
-                                <select class="kind-select" name="kindId">
+                                <x-global::forms.select :bare="true" class="kind-select" name="kindId">
                                         @foreach ($tpl->get('kind') as $key => $kindRow)
                                             <option value="{{ $key }}">{{ __($kindRow) }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                             </td>
 
                             @php $i = 0; @endphp

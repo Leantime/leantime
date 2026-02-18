@@ -137,14 +137,14 @@
                                 </div>
 
                                 <div id="existingMilestone" style="display:none;">
-                                    <select data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
+                                    <x-global::forms.select :bare="true" data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
                                         <option value=""></option>
                                         @foreach ($tpl->get('milestones') as $milestoneRow)
                                             <option value="{{ $milestoneRow->id }}" {{ isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id) ? 'selected' : '' }}>
                                                 {{ $milestoneRow->headline }}
                                             </option>
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
                                     <x-global::button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ __("buttons.save") }}</x-global::button>

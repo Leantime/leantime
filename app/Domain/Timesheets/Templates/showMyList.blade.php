@@ -35,7 +35,7 @@
                            autocomplete="off"
                            value="{{ $tpl->get('dateTo')->formatDateForUser() }}"
                            style="width:110px; margin-top:5px;" />
-                    <select id="kind" name="kind" onchange="submit();" style="margin-top:5px;">
+                    <x-global::forms.select :bare="true" id="kind" name="kind" onchange="submit();" style="margin-top:5px;">
                         <option value="all">{{ __('label.all_types') }}</option>
                         @foreach ($tpl->get('kind') as $key => $row)
                             <option value="{{ $key }}"
@@ -44,7 +44,7 @@
                                 @endif
                             >{{ __($row) }}</option>
                         @endforeach
-                    </select>
+                    </x-global::forms.select>
                     <x-global::button submit type="primary" class="reload" style="margin-top:5px;">{{ __('buttons.search') }}</x-global::button>
                 </div>
                 <div class="tw:flex tw:items-center tw:gap-2">
@@ -165,7 +165,7 @@
                         </td>
                         <td>
                             <div class="form-group" id="projectSelect">
-                                <select data-placeholder="{{ __('input.placeholders.choose_project') }}" class="project-select" style="width:100%;">
+                                <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_project') }}" class="project-select" style="width:100%;">
                                     <option value=""></option>
                                     @foreach ($tpl->get('allProjects') as $projectRow)
                                         {!! sprintf(
@@ -183,12 +183,12 @@
                                             )
                                         ) !!}
                                     @endforeach
-                                </select>
+                                </x-global::forms.select>
                             </div>
                         </td>
                         <td>
                             <div class="form-group" id="ticketSelect">
-                                <select data-placeholder="{{ __('input.placeholders.choose_todo') }}" class="ticket-select" name="newTicketId" style="width:100%;">
+                                <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" class="ticket-select" name="newTicketId" style="width:100%;">
                                     <option value=""></option>
                                     @foreach ($tpl->get('allTickets') as $ticketRow)
                                         {!! sprintf(
@@ -206,15 +206,15 @@
                                             )
                                         ) !!}
                                     @endforeach
-                                </select>
+                                </x-global::forms.select>
                             </div>
                         </td>
                         <td>
-                            <select class="kind-select" name="newKindId" style="width:100%;">
+                            <x-global::forms.select :bare="true" class="kind-select" name="newKindId" style="width:100%;">
                                 @foreach ($tpl->get('kind') as $key => $kindRow)
                                     <option value="{{ $key }}">{{ __($kindRow) }}</option>
                                 @endforeach
-                            </select>
+                            </x-global::forms.select>
                         </td>
                         <td>
                             <input type="text"

@@ -130,14 +130,14 @@
                         <x-global::button tag="button" type="primary" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')">{{ $tpl->__('buttons.cancel') }}</x-global::button>
                     </div>
                     <div id="existingMilestone" style="display:none;">
-                        <select data-placeholder="{{ $tpl->__('input.placeholders.filter_by_milestone') }}" name="existingMilestone" class="user-select">
+                        <x-global::forms.select :bare="true" data-placeholder="{{ $tpl->__('input.placeholders.filter_by_milestone') }}" name="existingMilestone" class="user-select">
                             <option value=""></option>
                             @foreach ($tpl->get('milestones') as $milestoneRow)
                                 <option value="{{ $milestoneRow->id }}"
                                     @if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] == $milestoneRow->id) selected="selected" @endif
                                 >{{ $milestoneRow->headline }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                         <input type="hidden" name="type" value="milestone" />
                         <input type="hidden" name="{{ $canvasName }}canvasitemid" value="{{ $id }} " />
                         <x-global::button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-global::button>

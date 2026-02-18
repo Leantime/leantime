@@ -15,7 +15,7 @@
                     <span class="btn btn-file">
                         <span class="fileupload-new">{{ __('buttons.select_file') }}</span>
                         <span class='fileupload-exists'>{{ __('buttons.change') }}</span>
-                        <input type='file' name='file' />
+                        <x-global::forms.file :bare="true" name="file" />
                     </span>
                     <x-global::button link="#" type="secondary" data-dismiss="fileupload">{{ __('buttons.remove') }}</x-global::button>
                 </div>

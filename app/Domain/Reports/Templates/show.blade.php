@@ -61,7 +61,7 @@
                                 <br />
                                 <span class="tw:float-left">
                                 @if ($tpl->get('allSprints') !== false && count($tpl->get('allSprints')) > 0)
-                                    <select data-placeholder="{{ $tpl->__('input.placeholders.filter_by_sprint') }}" title="{{ $tpl->__('input.placeholders.filter_by_sprint') }}" name="sprint" class="mainSprintSelector" onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
+                                    <x-global::forms.select :bare="true" data-placeholder="{{ $tpl->__('input.placeholders.filter_by_sprint') }}" title="{{ $tpl->__('input.placeholders.filter_by_sprint') }}" name="sprint" class="mainSprintSelector" onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
                                         <option value="">{{ $tpl->__('input.placeholders.filter_by_sprint') }}</option>
                                         @php $dates = ''; @endphp
                                         @foreach ($tpl->get('allSprints') as $sprintRow)
@@ -72,7 +72,7 @@
                                                 @endif
                                             >{{ $tpl->escape($sprintRow->name) }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                                 @endif
                             </span>
 

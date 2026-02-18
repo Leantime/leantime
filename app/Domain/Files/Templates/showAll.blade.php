@@ -19,7 +19,7 @@
                                     <span class="btn btn-file">
                                     <span class="fileupload-new">Select file</span>
                                     <span class="fileupload-exists">Change</span>
-                                    <input type="file" name="file" />
+                                    <x-global::forms.file :bare="true" name="file" />
                                 </span>
 
                                     <x-global::button link="#" type="secondary" class="fileupload-exists" data-dismiss="fileupload">Remove</x-global::button>
