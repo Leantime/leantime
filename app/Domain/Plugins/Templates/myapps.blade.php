@@ -50,7 +50,7 @@
                                                | <a href="{{ $newplugin->homepage }}"> {{ $tpl->__("text.visit_site") }} </a>
                                             </div>
                                             <div style="padding-top:5px;">
-                                                <a href="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" class="btn btn-default tw:float-right">{{ $tpl->__('buttons.activate') }}</a>
+                                                <x-global::button link="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" type="secondary" class="tw:float-right">{{ $tpl->__('buttons.activate') }}</x-global::button>
 
                                             </div>
 

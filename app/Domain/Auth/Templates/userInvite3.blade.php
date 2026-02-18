@@ -45,8 +45,8 @@
         </div>
         <br /> <br />
         <div class="tw:text-right">
-            <a href="{{BASE_URL}}/auth/userInvite/{{$inviteId}}?step=2" class="btn btn-secondary" style="width:auto; margin-right:10px">Back</a>
-            <input type="submit" name="createAccount" class="tw:w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
+            <x-global::button link="{{ BASE_URL }}/auth/userInvite/{{ $inviteId }}?step=2" type="secondary" style="width:auto; margin-right:10px">Back</x-global::button>
+            <x-global::button submit type="primary" name="createAccount" class="tw:w-auto" style="width:auto">{{ __("buttons.next") }}</x-global::button>
         </div>
 
 

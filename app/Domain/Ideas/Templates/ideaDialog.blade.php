@@ -33,16 +33,16 @@
         <input type="hidden" name="milestoneId" value="{{ $canvasItem['milestoneId'] }}"/>
         <input type="hidden" name="changeItem" value="1"/>
 
-        <input type="text" name="description" class="main-title-input" style="width:99%;" value="{{ $tpl->escape($canvasItem['description']) }}"
-               placeholder="{{ $tpl->__('input.placeholders.short_name') }}"/><br/>
+        <x-global::forms.input name="description" class="main-title-input" style="width:99%;" value="{{ $tpl->escape($canvasItem['description']) }}"
+               placeholder="{{ $tpl->__('input.placeholders.short_name') }}" /><br/>
 
         <input type="text" value="{{ $tpl->escape($canvasItem['tags']) }}" name="tags" id="tags" />
 
         <textarea rows="3" cols="10" name="data" class="tiptapComplex"
                   placeholder="">{!! $tpl->escapeMinimal($canvasItem['data']) !!}</textarea><br/>
 
-        <input type="submit" value="{{ $tpl->__('buttons.save') }}" id="primaryCanvasSubmitButton"/>
-        <button class="btn btn-primary" type="submit" value="closeModal" id="saveAndClose">{{ $tpl->__('buttons.save_and_close') }}</button>
+        <x-global::button submit type="primary" id="primaryCanvasSubmitButton">{{ $tpl->__('buttons.save') }}</x-global::button>
+        <x-global::button tag="button" type="primary" id="saveAndClose">{{ $tpl->__('buttons.save_and_close') }}</x-global::button>
 
         @if ($id !== '')
             <br/>
@@ -81,8 +81,7 @@
                             <textarea name="newMilestone"></textarea><br/>
                             <input type="hidden" name="type" value="milestone"/>
                             <input type="hidden" name="leancanvasitemid" value="{{ $id }} "/>
-                            <input type="button" value="{{ $tpl->__('buttons.save') }}" onclick="jQuery('#primaryCanvasSubmitButton').click()"
-                                   class="btn btn-primary"/>
+                            <x-global::button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-global::button>
                             <a href="javascript:void(0);"
                                onclick="leantime.ideasController.toggleMilestoneSelectors('hide');">
                                 <i class="fas fa-times"></i> {{ $tpl->__('links.cancel') }}
@@ -101,8 +100,7 @@
                             </select>
                             <input type="hidden" name="type" value="milestone"/>
                             <input type="hidden" name="leancanvasitemid" value="{{ $id }} "/>
-                            <input type="button" value="{{ $tpl->__('buttons.save') }}" onclick="jQuery('#primaryCanvasSubmitButton').click()"
-                                   class="btn btn-primary"/>
+                            <x-global::button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-global::button>
                             <a href="javascript:void(0);"
                                onclick="leantime.ideasController.toggleMilestoneSelectors('hide');">
                                 <i class="fas fa-times"></i> {{ $tpl->__('links.cancel') }}

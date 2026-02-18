@@ -101,7 +101,7 @@ foreach ($allCanvas as $canvasRow) {
     @if (count($allCanvas) > 0)
         @foreach ($allCanvas as $canvasRow)
             <div>
-                <a href='#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow["id"] }}' class='btn btn-primary tw:float-right'><i class="fa fa-plus"></i> Create New Goal</a>
+                <x-global::button link="#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow["id"] }}" type="primary" class="tw:float-right" icon="fa fa-plus">Create New Goal</x-global::button>
 
                 <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>{{ $canvasRow["title"] }}</a></h5>
             </div>
@@ -298,9 +298,9 @@ foreach ($allCanvas as $canvasRow) {
 
         @if ($login::userIsAtLeast($roles::$editor))
             <br><br>
-            <a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
+            <x-global::button link="javascript:void(0)" type="primary" class="addCanvasLink">
                 {!! __("links.icon.create_new_board") !!}
-            </a>
+            </x-global::button>
         @endif
     </div>
 @endif

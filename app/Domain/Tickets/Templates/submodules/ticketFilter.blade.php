@@ -16,10 +16,9 @@
     <input type="hidden" value="{{ session('currentProject') }}" name="projectId" id="projectIdInput"/>
 
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
-        <a onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
-           class="btn btn-link" data-tippy-content="{{ __('popover.filter') }}">
+        <x-global::button tag="button" type="link" onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;" data-tippy-content="{{ __('popover.filter') }}">
             <i class="fas fa-filter"></i> Filter{!! $tpl->get('numOfFilters') > 0 ? "  <span class='badge badge-primary'>" . $tpl->get('numOfFilters') . '</span> ' : '' !!}
-        </a>@if($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<div class="btn-group viewDropDown">
+        </x-global::button>@if($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<div class="btn-group viewDropDown">
 <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="{{ __('popover.group_by') }}">
                 <span class="fa-solid fa-diagram-project"></span> Group By
                 @if($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
@@ -130,15 +129,15 @@
                 <div class="">
                     <div class="form-group">
                         <label class="inline">{{ __('label.search_term') }}</label>
-                        <input type="text" name="termInput" id="termInput"
+                        <x-global::forms.input name="termInput" id="termInput"
                                style="width: 230px"
                                value="{{ $searchCriteria['term'] }}"
-                               placeholder="{{ __('label.search_term') }}">
+                               placeholder="{{ __('label.search_term') }}" />
                     </div>
                 </div>
 
                 <div class="" style="margin-top:15px;">
-                    <input type="submit" value="{{ __('buttons.search') }}" name="search" class="form-control btn btn-primary" />
+                    <x-global::button submit type="primary" name="search" class="form-control">{{ __('buttons.search') }}</x-global::button>
                 </div>
 
             </div>

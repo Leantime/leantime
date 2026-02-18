@@ -11,7 +11,7 @@
 
         <div>
             <div class="form-group">
-                <input type="text" name="name" id="name" class="main-title-input" style="width:99%" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}"/>
+                <x-global::forms.input name="name" id="name" class="main-title-input" style="width:99%" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
             </div>
 
             <p>
@@ -21,7 +21,7 @@
             <textarea name="details" id="details" class="tiptapComplex" rows="5" cols="50">{!! htmlentities($project['details']) !!}</textarea>
 
             <div class="padding-top">
-                <input type="submit" name="save" id="save" class="button" value="{{ __('buttons.save') }}" />
+                <x-global::button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-global::button>
             </div>
         </div>
         <div>
@@ -32,12 +32,12 @@
                 <div class="tw:text-center">
                     <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
                     <p>The type of the project. This will determine which features are available.</p>
-                    <select name="type">
+                    <x-global::forms.select name="type">
                         @foreach($tpl->get('projectTypes') as $key => $type)
                             <option value="{{ e($key) }}"
                                 {{ $project['type'] == $key ? "selected='selected'" : '' }}>{{ __( e($type)) }}</option>
                         @endforeach
-                    </select>
+                    </x-global::forms.select>
                     <br /><br />
                 </div>
                 @endif
@@ -69,13 +69,10 @@
                                     <input type='file' name='file' onchange="leantime.projectsController.readURL(this)" accept=".jpg,.png,.gif,.webp"/>
                                 </span>
 
-                                <a href='#' class='btn fileupload-exists' data-dismiss='fileupload' onclick="leantime.projectsController.clearCroppie()">{{ __('buttons.remove') }}</a>
+                                <x-global::button link="#" type="secondary" class="fileupload-exists" data-dismiss="fileupload" onclick="leantime.projectsController.clearCroppie()">{{ __('buttons.remove') }}</x-global::button>
                             </div>
 
-                            <span id="save-picture" class="btn btn-primary fileupload-exists ld-ext-right">
-                                <span onclick="leantime.projectsController.saveCroppie()">{{ __('buttons.save') }}</span>
-                                <span class="ld ld-ring ld-spin"></span>
-                            </span>
+                            <x-global::button tag="button" type="primary" id="save-picture" class="fileupload-exists ld-ext-right" onclick="leantime.projectsController.saveCroppie()">{{ __('buttons.save') }}<span class="ld ld-ring ld-spin"></span></x-global::button>
                         <input type="hidden" name="profileImage" value="1" />
                         <input id="picSubmit" type="submit" name="savePic" class="hidden"
                                value="{{ __('buttons.upload') }}"/>
@@ -107,12 +104,12 @@
             <div style="margin-bottom: 30px;">
                 <h4 class="widgettitle title-light"><span
                         class="fa fa-building"></span>{{ __('label.client_product') }}</h4>
-                <select name="clientId" id="clientId">
+                <x-global::forms.select name="clientId" id="clientId">
                     @foreach($tpl->get('clients') as $row)
                         <option value="{{ $row['id'] }}"
                             {{ $project['clientId'] == $row['id'] ? 'selected=selected' : '' }}>{{ e($row['name']) }}</option>
                     @endforeach
-                </select>
+                </x-global::forms.select>
                 @if($login::userIsAtLeast('manager'))
                     <br /><a href="{{ BASE_URL }}/clients/newClient" target="_blank">{{ __('label.client_not_listed') }}</a>
                 @endif
@@ -128,10 +125,10 @@
                 <div class="form-group">
                     <label class="control-label" for="projectState">{{ __('label.project_state') }}</label>
                     <div>
-                        <select name="projectState" id="projectState">
+                        <x-global::forms.select name="projectState" id="projectState">
                             <option value="0" {{ $project['state'] == 0 ? 'selected=selected' : '' }}>{{ __('label.open') }}</option>
                             <option value="-1" {{ $project['state'] == -1 ? 'selected=selected' : '' }}>{{ __('label.closed') }}</option>
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
@@ -143,11 +140,11 @@
                 {{ __('text.who_can_access') }}
                 <br /><br />
 
-                <select name="globalProjectUserAccess" style="max-width:300px;">
+                <x-global::forms.select name="globalProjectUserAccess" style="max-width:300px;">
                     <option value="restricted" {{ $project['psettings'] == 'restricted' ? "selected='selected'" : '' }}>{{ __('labels.only_chose') }}</option>
                     <option value="clients" {{ $project['psettings'] == 'clients' ? "selected='selected'" : '' }}>{{ __('labels.everyone_in_client') }}</option>
                     <option value="all" {{ $project['psettings'] == 'all' ? "selected='selected'" : '' }}>{{ __('labels.everyone_in_org') }}</option>
-                </select>
+                </x-global::forms.select>
 
             </div>
 
@@ -157,14 +154,14 @@
                 <div class="form-group">
                     <label class="control-label" for="hourBudget">{{ __('label.hourly_budget') }}</label>
                     <div>
-                        <input type="text" name="hourBudget" class="input-large" id="hourBudget" value="{{ e($project['hourBudget']) }}" />
+                        <x-global::forms.input name="hourBudget" id="hourBudget" value="{{ e($project['hourBudget']) }}" />
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label" for="dollarBudget">{{ __('label.budget_cost') }}</label>
                     <div>
-                        <input type="text" name="dollarBudget" class="input-large" id="dollarBudget" value="{{ e($project['dollarBudget']) }}" />
+                        <x-global::forms.input name="dollarBudget" id="dollarBudget" value="{{ e($project['dollarBudget']) }}" />
                     </div>
                 </div>
 

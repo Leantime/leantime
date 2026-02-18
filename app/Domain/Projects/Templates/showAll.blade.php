@@ -24,7 +24,7 @@
             </form>
         </div>
 
-        <a class="btn btn-primary" href="{{ BASE_URL }}/projects/newProject"><i class='fa fa-plus'></i> {{ __('link.new_project') }}</a>
+        <x-global::button link="{{ BASE_URL }}/projects/newProject" type="primary" icon="fa fa-plus">{{ __('link.new_project') }}</x-global::button>
         <div class="clearall"></div>
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">
 

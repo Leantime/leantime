@@ -160,7 +160,7 @@
                     </div>
                     <br/>
                     <h4>{{ __("text.no_tasks_assigned") }}</h4>
-                    <a href="javascript:void(0);" class="add-task-button btn btn-link" style="margin-left:0px;" data-group="emptyGroup"><i class="fa-solid fa-circle-plus"></i> {{ __('links.add_task') }}</a>
+                    <x-global::button link="javascript:void(0);" type="link" icon="fa-solid fa-circle-plus" class="add-task-button" style="margin-left:0px;" data-group="emptyGroup">{{ __('links.add_task') }}</x-global::button>
 
                     <div class="quickAddForm" id="quickAddForm-emptyGroup"
                          style="display:none; margin-bottom:15px; padding-bottom:5px; padding-left:5px;">
@@ -171,20 +171,20 @@
                               hx-indicator=".htmx-indicator">
                             <div class="tw:flex tw:flex-row tw:gap-2">
                                 <div class="tw:flex-grow">
-                                    <input type="text" name="headline" class="main-title-input"
+                                    <x-global::forms.input name="headline" class="main-title-input"
                                            style="font-size:var(--base-font-size)"
-                                           placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
+                                           placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                                     <input type="hidden" name="quickadd" value="true"/>
                                 </div>
                                 <div>
-                                    <select name="projectId">
+                                    <x-global::forms.select name="projectId">
                                         @foreach($allAssignedprojects as $project)
                                             <option value="{{ $project['id']  }}"
 
                                                 {{ (session('currentProject') == $project['id'] ) ? 'selected' : '' }}
                                             >{{ $project["name"]  }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                                 </div>
                                 <div>
                                     <input type="hidden" name="milestone" value=""/>
@@ -197,10 +197,8 @@
                                               placeholder="{{ __('input.placeholders.description') }}"></textarea>
                                 </div>
                                 <div>
-                                    <input type="submit" value="{{ __('buttons.save') }}" name="create"
-                                           class="btn btn-primary"/>
-                                    <a href="javascript:void(0);" class="btn cancel-add-task"
-                                       data-group="emptyGroup">{{ __('buttons.cancel') }}</a>
+                                    <x-global::button submit type="primary" name="create">{{ __('buttons.save') }}</x-global::button>
+                                    <x-global::button link="javascript:void(0);" type="secondary" class="cancel-add-task" data-group="emptyGroup">{{ __('buttons.cancel') }}</x-global::button>
                                 </div>
                             </div>
                         </form>
@@ -233,8 +231,7 @@
                         </span>
                     </x-slot>
                     <x-slot name="actionlink">
-                        <a href="javascript:void(0);" class="add-task-button btn btn-link" style="padding:0px; padding-left:1px; width:31px; line-height:31px; height:31px; font-weight:bold; text-align: center; font-size:var(--font-size-l);" data-group="{{ $groupKey }}">
-                            <i class="fa-solid fa-circle-plus"></i></a>
+                        <x-global::button link="javascript:void(0);" type="link" icon="fa-solid fa-circle-plus" class="add-task-button" style="padding:0px; padding-left:1px; width:31px; line-height:31px; height:31px; font-weight:bold; text-align: center; font-size:var(--font-size-l);" data-group="{{ $groupKey }}"></x-global::button>
                     </x-slot>
                     <x-slot name="content">
                         <!-- Quick Add Form for this group -->
@@ -247,20 +244,20 @@
                                   hx-indicator=".htmx-indicator">
                                 <div class="tw:flex tw:flex-row tw:gap-2">
                                     <div class="tw:flex-grow">
-                                        <input type="text" name="headline" class="main-title-input"
+                                        <x-global::forms.input name="headline" class="main-title-input"
                                                style="font-size:var(--base-font-size)"
-                                               placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
+                                               placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                                         <input type="hidden" name="quickadd" value="true"/>
                                     </div>
                                     <div>
-                                        <select name="projectId">
+                                        <x-global::forms.select name="projectId">
                                             @foreach($allAssignedprojects as $project)
                                                 <option value="{{ $project['id']  }}"
 
                                                     {{ (($groupBy === "project" && $project['id'] == $groupKey) || ($groupBy !== "project" && session('currentProject') == $groupKey)) ? 'selected' : '' }}
                                                 >{{ $project["name"]  }}</option>
                                             @endforeach
-                                        </select>
+                                        </x-global::forms.select>
                                     </div>
                                     <div>
                                         <input type="hidden" name="milestone" value=""/>
@@ -282,10 +279,8 @@
                                                   placeholder="{{ __('input.placeholders.description') }}"></textarea>
                                     </div>
                                     <div>
-                                        <input type="submit" value="{{ __('buttons.save') }}" name="create"
-                                               class="btn btn-primary"/>
-                                        <a href="javascript:void(0);" class="btn cancel-add-task"
-                                           data-group="{{ $groupKey }}">{{ __('buttons.cancel') }}</a>
+                                        <x-global::button submit type="primary" name="create">{{ __('buttons.save') }}</x-global::button>
+                                        <x-global::button link="javascript:void(0);" type="secondary" class="cancel-add-task" data-group="{{ $groupKey }}">{{ __('buttons.cancel') }}</x-global::button>
                                     </div>
                                 </div>
                             </form>

@@ -38,12 +38,12 @@
                                             <label>{{ __('label.language') }}</label>
                                         </div>
                                         <div>
-                                            <select name="language" id="language">
+                                            <x-global::forms.select name="language" id="language">
                                                 @foreach($tpl->get('languageList') as $languagKey => $languageValue)
                                                     <option value="{{ $languagKey }}"
                                                         {{ $companySettings['language'] == $languagKey ? "selected='selected'" : '' }}>{{ $languageValue }}</option>
                                                 @endforeach
-                                            </select>
+                                            </x-global::forms.select>
                                         </div>
                                     </div>
 
@@ -52,7 +52,7 @@
                                             <label>{{ __('label.company_name') }}</label>
                                         </div>
                                         <div>
-                                            <input type="text" name="name" id="companyName" value="{{ $companySettings['name'] }}" class="tw:float-left"/>
+                                            <x-global::forms.input name="name" id="companyName" value="{{ $companySettings['name'] }}" class="tw:float-left" />
                                             <small>{{ __('text.company_name_helper') }}</small>
                                         </div>
                                     </div>
@@ -66,7 +66,7 @@
                                         </div>
                                         <div>
                                             <span class='field'>
-                                                <select name="messageFrequency" class="input" id="messageFrequency" style="width: 220px">
+                                                <x-global::forms.select name="messageFrequency" id="messageFrequency" style="width: 220px">
                                                     <option value="">--{{ __('label.choose_option') }}--</option>
                                                     <option value="300" {{ $companySettings['messageFrequency'] == '300' ? ' selected ' : '' }}>{{ __('label.5min') }}</option>
                                                     <option value="900" {{ $companySettings['messageFrequency'] == '900' ? ' selected ' : '' }}>{{ __('label.15min') }}</option>
@@ -78,11 +78,11 @@
                                                     <option value="86400" {{ $companySettings['messageFrequency'] == '86400' ? ' selected ' : '' }}>{{ __('label.24h') }}</option>
                                                     <option value="172800" {{ $companySettings['messageFrequency'] == '172800' ? ' selected ' : '' }}>{{ __('label.48h') }}</option>
                                                     <option value="604800" {{ $companySettings['messageFrequency'] == '604800' ? ' selected ' : '' }}>{{ __('label.1w') }}</option>
-                                                </select> <br/>
+                                                </x-global::forms.select> <br/>
                                             </span>
                                         </div>
                                     </div>
-                                    <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn"/>
+                                    <x-global::button submit type="primary" id="saveBtn">{{ __('buttons.save') }}</x-global::button>
                                 </form>
                             </div>
                             <div>
@@ -118,13 +118,10 @@
                                                             <input type='file' name='file' onchange="leantime.settingController.readURL(this)" />
                                                         </span>
 
-                                                        <a href='#' style="margin-left:5px;" class='btn btn-default fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</a>
+                                                        <x-global::button link="#" type="secondary" class="fileupload-exists" style="margin-left:5px;" data-dismiss="fileupload" onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</x-global::button>
                                                     </div>
                                                     <p class='stdformbutton'>
-                                                        <span id="save-logo" class="btn btn-primary fileupload-exists ld-ext-right">
-                                                            <span onclick="leantime.settingController.saveCroppie()">{{ __('buttons.save') }}</span>
-                                                            <span class="ld ld-ring ld-spin"> </span>
-                                                        </span>
+                                                        <x-global::button tag="button" type="primary" id="save-logo" class="fileupload-exists ld-ext-right" onclick="leantime.settingController.saveCroppie()">{{ __('buttons.save') }}<span class="ld ld-ring ld-spin"> </span></x-global::button>
 
                                                         <input id="picSubmit" type="submit" name="savePic" class="hidden" value="{{ __('buttons.upload') }}" />
                                                     </p>
@@ -134,13 +131,13 @@
                                 </form>
                                 <hr />
                                 {{ __('text.logo_reset') }}<br /><br />
-                                <a href="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" class="btn btn-default">{{ __('buttons.reset_logo') }}</a>
+                                <x-global::button link="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" type="secondary">{{ __('buttons.reset_logo') }}</x-global::button>
                             </div>
                         </div>
                     </div>
 
                     <div id="apiKeys">
-                        <a href="#/api/newApiKey" class="btn btn-primary">Generate API Key</a>
+                        <x-global::button link="#/api/newApiKey" type="primary">Generate API Key</x-global::button>
                         <br /> <br />
                         <ul class="sortableTicketList">
                             @foreach($tpl->get('apiKeys') as $apiKey)

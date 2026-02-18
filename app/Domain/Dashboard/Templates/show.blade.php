@@ -59,8 +59,8 @@
                         href="{{ BASE_URL }}/project/changeCurrentProject/{{ $project['id'] }}"
                     ><i class="fa fa-link"></i></a>
                     <div class="dropdown-menu padding-md">
-                        <input type="text" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
-                        <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</button>
+                        <x-global::forms.input name="projectUrl" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
+                        <x-global::button tag="button" type="primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</x-global::button>
                     </div>
                 </div>
 
@@ -103,7 +103,7 @@
             </div>
 
             <div class="maincontentinner tw-z-10 latest-todos">
-                <a href="#/tickets/newTicket" class="btn btn-link action-link tw:float-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> Create To-Do</a>
+                <x-global::button link="#/tickets/newTicket" type="link" icon="fa fa-plus" class="action-link tw:float-right" style="margin-top:-7px;">Create To-Do</x-global::button>
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
                 <ul class="sortableTicketList">
@@ -304,13 +304,15 @@
             <div class="maincontentinner project-updates">
                 <div class="tw:float-right">
                     @if ($login::userIsAtLeast($roles::$editor))
-                        <a
-                            href="javascript:void(0);"
+                        <x-global::button
+                            link="javascript:void(0);"
+                            type="link"
+                            icon="fa fa-plus"
                             onclick="leantime.commentsController.toggleCommentBoxes(0);jQuery('.noCommentsMessage').toggle();"
                             id="mainToggler"
-                            class="btn btn-link action-link"
+                            class="action-link"
                             style="margin-top:-7px;"
-                        ><span class="fa fa-plus"></span> {{ __('links.add_new_report') }}</a>
+                        >{{ __('links.add_new_report') }}</x-global::button>
                     @endif
                 </div>
 
@@ -322,20 +324,15 @@
                             <div id="comment0" class="commentBox tw-hidden">
                                 <label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</label>
 
-                                <select name="status" id="projectStatus" class="tw-ml-0 tw-mb-[10px]">
+                                <x-global::forms.select name="status" id="projectStatus" class="tw-ml-0 tw-mb-[10px]">
                                     <option value="green">{{ __('label.project_status_green') }}</option>
                                     <option value="yellow">{{ __('label.project_status_yellow') }}</option>
                                     <option value="red">{{ __('label.project_status_red') }}</option>
-                                </select>
+                                </x-global::forms.select>
 
                                 <div class="commentReply">
                                     <textarea rows="5" cols="50" class="tiptapSimple tw-w-full" name="text"></textarea>
-                                    <input
-                                        type="submit"
-                                        value="{{ __('buttons.save') }}"
-                                        name="comment"
-                                        class="btn btn-primary btn-success tw-ml-0"
-                                    />
+                                    <x-global::button submit type="success" tag="button" class="tw-ml-0" name="comment">{{ __('buttons.save') }}</x-global::button>
                                     <a
                                         href="javascript:void(0);"
                                         onclick="leantime.commentsController.toggleCommentBoxes(-1);jQuery('.noCommentsMessage').toggle();"

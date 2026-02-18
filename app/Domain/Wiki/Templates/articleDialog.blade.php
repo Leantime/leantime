@@ -61,7 +61,7 @@
                     <span class="fa fa-folder"></span>{{ __('subtitles.organization') }}
                 </h4>
                 <label>Parent</label>
-                <select name="parent" style="width:100%;">
+                <x-global::forms.select name="parent" style="width:100%;">
                     <option value="0">None</option>
                     @foreach ($wikiHeadlines as $parent)
                         @if ($id != $parent->id)
@@ -69,13 +69,13 @@
                                     {{ ($parent->id == $currentArticle->parent) ? "selected='selected'" : '' }} >{{ e($parent->title) }}</option>
                         @endif
                     @endforeach
-                </select>
+                </x-global::forms.select>
 
                 <label>{{ __('label.status') }}</label>
-                <select name="status" style="width:100%;">
+                <x-global::forms.select name="status" style="width:100%;">
                     <option value="draft" {{ $currentArticle->status == 'draft' ? "selected='selected'" : '' }}>{{ __('label.draft') }}</option>
                     <option value="published" {{ $currentArticle->status == 'published' ? "selected='selected'" : '' }}>{{ __('label.published') }}</option>
-                </select>
+                </x-global::forms.select>
             </div>
 
             @if ($id !== '')
@@ -96,10 +96,8 @@
                                 <textarea name="newMilestone"></textarea><br />
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="leancanvasitemid" value="{{ $id }} " />
-                                <input type="button" value="{{ __('buttons.save') }}" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
-                                <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" class="btn btn-secondary">
-                                    <i class="fas fa-times"></i> {{ __('links.cancel') }}
-                                </a>
+                                <x-global::button tag="button" type="primary" onclick="jQuery('#primaryArticleSubmitButton').click()">{{ __('buttons.save') }}</x-global::button>
+                                <x-global::button link="javascript:void(0);" type="secondary" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" icon="fas fa-times">{{ __('links.cancel') }}</x-global::button>
                             </div>
 
                             <div id="existingMilestone" style="display:none;">
@@ -115,7 +113,7 @@
                                 </select>
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="articleId" value="{{ $id }} " />
-                                <input type="button" value="Save" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
+                                <x-global::button tag="button" type="primary" onclick="jQuery('#primaryArticleSubmitButton').click()">Save</x-global::button>
                                 <a href="javascript:void(0);"  onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
                                     <i class="fas fa-times"></i> {{ __('links.cancel') }}
                                 </a>
@@ -162,7 +160,7 @@
             </div>
             <input type="hidden" class="articleIcon" value="{{ $currentArticle->data }}" name="articleIcon"/>
 
-            <input type="text" name="title" class="main-title-input" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" style="width:80%"/>
+            <x-global::forms.input name="title" class="main-title-input" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" style="width:80%" />
 
             <br />
             <input type="text" value="{{ e($currentArticle->tags) }}" name="tags" id="tags" />
@@ -175,8 +173,8 @@
                         <br />
                         <input type="hidden" name="saveTicket" value="1" />
                         <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
-                        <input type="submit" name="saveArticle" value="{{ __('buttons.save') }}" id="primaryArticleSubmitButton"/>
-                        <input type="submit" class="btn btn-outline" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="{{ __('buttons.save_and_close') }}"/>
+                        <x-global::button submit type="primary" name="saveArticle" id="primaryArticleSubmitButton">{{ __('buttons.save') }}</x-global::button>
+                        <x-global::button submit type="primary" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" outline>{{ __('buttons.save_and_close') }}</x-global::button>
 
                     </div>
                     <div class="tw:text-right padding-top-sm">

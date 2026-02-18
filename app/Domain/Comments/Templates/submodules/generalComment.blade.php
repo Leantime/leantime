@@ -32,7 +32,7 @@
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tiptapSimple" name="text"></textarea>
-                <input type="submit" value="{{ __('buttons.save') }}" name="comment" class="btn btn-primary btn-success tw:ml-0"/>
+                <x-global::button submit type="success" name="comment" class="tw:ml-0">{{ __('buttons.save') }}</x-global::button>
             </div>
             <input type="hidden" name="comment" class="commenterField" value="1"/>
             <input type="hidden" name="father" class="commenterField" id="father-{{ $formHash }}" value="0"/>
@@ -143,8 +143,8 @@
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}"/>
                                 </div>
                                 <div class="commentReply">
-                                    <input type="submit" value="{{ __('links.reply') }}" name="comment" id="submit-reply-button" class="btn btn-primary"/>
-                                    <input type="button" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')" value="{{ __('links.cancel') }}" class="btn btn-primary"/>
+                                    <x-global::button submit type="primary" name="comment" id="submit-reply-button">{{ __('links.reply') }}</x-global::button>
+                                    <x-global::button tag="button" type="primary" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')">{{ __('links.cancel') }}</x-global::button>
                                 </div>
                                 <div class="clearall"></div>
                             </div>

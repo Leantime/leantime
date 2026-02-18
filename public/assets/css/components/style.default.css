@@ -339,7 +339,7 @@ body.loginpage {
     margin-left:55px;
 
     background:rgba(255,255,255, 0.3);
-    border-radius:10px;
+    border-radius:var(--box-radius);
     padding:20px;
 }
 
@@ -654,8 +654,6 @@ body.loginpage {
     border-style: solid;
     border-color:var(--main-titles-color);
     display: inline-block;
-    -moz-border-radius: 30px;
-    -webkit-border-radius: 30px;
     border-radius: 30px;
     float: left;
     text-align: center;
@@ -1347,8 +1345,6 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .fileupload-new .input-append .btn-file {
-    -moz-border-radius: 0 !important;
-    -webkit-border-radius: 0 !important;
     border-radius: 0 !important;
 }
 
@@ -1371,8 +1367,6 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .bootstrap-timepicker-widget a.btn, .bootstrap-timepicker-widget input {
-    -moz-border-radius: 0 !important;
-    -webkit-border-radius: 0 !important;
     border-radius: 0 !important;
 }
 
@@ -1394,8 +1388,6 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     color: #fff;
     border: 0;
     padding: 10px 20px;
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: 0;
     margin: 0;
 }
@@ -1421,8 +1413,6 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 
 .nav-tabs.nav-stacked > li:first-child > a,
 .nav-tabs.nav-stacked > li:last-child > a {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: 0;
 }
 
@@ -1477,8 +1467,6 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 .pagination-large ul > li:first-child > span,
 .pagination-large ul > li:last-child > a,
 .pagination-large ul > li:last-child > span {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: 0;
 }
 
@@ -1492,15 +1480,11 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 
 .pager li > a, .pager li > span {
     color: #666;
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: 0;
     border-width: 2px;
 }
 
 .label {
-    -moz-border-radius: var(--box-radius-small);
-    -webkit-border-radius: var(--box-radius-small);
     border-radius:  var(--box-radius-small);
     font-size: var(--font-size-xs);
     text-shadow: none;
@@ -1514,15 +1498,11 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     text-shadow: none;
     font-weight: normal;
     line-height: 19px;
-    -moz-border-radius: 50px;
-    -webkit-border-radius: 50px;
     border-radius: 50px;
 }
 
 .modal {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
-    border-radius: 20px;
+    border-radius: var(--box-radius-large);
     padding: 34px 40px 20px 35px;
 }
 
@@ -1549,7 +1529,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .modal-footer {
-    border-radius: 0px 0px 20px 20px;
+    border-radius: 0px 0px var(--box-radius-large) var(--box-radius-large);
     border:none;
     background:var(--secondary-background);
     text-align:left;
@@ -1569,8 +1549,6 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .popover, .popover-title {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: 0;
 }
 
@@ -1739,7 +1717,7 @@ a.filter-term {
 
 .noteForm {
     background: var(--secondary-background, #f5f5f5);
-    border-radius: 15px;
+    border-radius: var(--element-radius);
     padding: 20px;
     padding-bottom: 10px;
 }
@@ -2081,7 +2059,7 @@ body::after {
     line-height: 20px;
     text-align: center;
     padding-top: 1px;
-    border-radius: 5px;
+    border-radius: var(--box-radius-small);
 }
 
 body .widgettitle .editHeadline:hover {
@@ -2520,7 +2498,7 @@ h3.todaysDate {
     height: 100%;
     min-height: 600px;
     background: var(--secondary-background);
-    border-radius: 10px;
+    border-radius: var(--box-radius);
 }
 
 .stickyRow {
@@ -2600,7 +2578,7 @@ h3.todaysDate {
     background: #000;
     color: #fff;
     padding: 5px;
-    border-radius: 5px;
+    border-radius: var(--box-radius-small);
     position: absolute;
     top: -38px;
     text-align: center;
@@ -2717,7 +2695,7 @@ h3.todaysDate {
 
 /* User mentions - used by Tiptap mention extension */
 .userMention {
-    border-radius: 10px;
+    border-radius: var(--box-radius);
     text-decoration: none;
     color: var(--primary-color);
     font-weight:bold;
@@ -2726,7 +2704,7 @@ h3.todaysDate {
 
 .userMention img {
     width: 17px;
-    border-radius: 10px;
+    border-radius: var(--box-radius);
     vertical-align: text-bottom;
     margin-right: 3px;
 }
@@ -2833,7 +2811,7 @@ h4 .helperTooltip,
 }
 
 .bigNumberBox {
-    border-radius: 10px;
+    border-radius: var(--box-radius);
     background: linear-gradient(135deg, var(--col-row-striped) -50%, transparent 100%);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
@@ -2986,7 +2964,7 @@ body a.btn-link.btn-fancy:hover {
     margin-bottom: 10px;
     background-image: var(--element-gradient);
     padding: 2px;
-    border-radius: 7px;
+    border-radius: var(--box-radius);
     box-shadow: 0 7px 0 rgba(54, 45, 89, 0.15), -3px -3px 0 0px var(--accent1), 0 0 0 3px var(--accent2);
 }
 
@@ -3007,7 +2985,7 @@ body a.btn-link.btn-fancy:hover {
     font-size: var(--font-size-xxl);
     text-indent: 0;
     color: #aaa !important;
-    border-radius: 5px;
+    border-radius: var(--box-radius-small);
     height: 25px;
     line-height: 26px;
     text-align: center;

@@ -70,7 +70,7 @@
                 </div>
                 <h4>{{ __('headlines.no_milestones') }}<br/>
                 <br />
-                <a href="{{ BASE_URL }}/tickets/editMilestone" class="milestoneModal addCanvasLink btn btn-primary">{{ __('links.add_milestone') }}</a></h4>
+                <x-global::button link="{{ BASE_URL }}/tickets/editMilestone" type="primary" class="milestoneModal addCanvasLink">{{ __('links.add_milestone') }}</x-global::button></h4>
             </div>
         @endif
 

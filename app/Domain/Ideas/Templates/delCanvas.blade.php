@@ -12,8 +12,8 @@
         <div class="widgetcontent">
             <form method="post" action="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->escape($_GET['id']) }}">
                 <p>{{ $tpl->__('text.are_you_sure_delete_idea_board') }}</p>
-                <input type="submit" value="{{ $tpl->__('buttons.yes_delete') }}" name="del" class="button" />
-                <a class="btn btn-secondary" href="{{ BASE_URL }}/ideas/showBoards">{{ $tpl->__('buttons.back') }}</a>
+                <x-global::button submit type="danger" name="del">{{ $tpl->__('buttons.yes_delete') }}</x-global::button>
+                <x-global::button link="{{ BASE_URL }}/ideas/showBoards" type="secondary">{{ $tpl->__('buttons.back') }}</x-global::button>
             </form>
         </div>
     </div>

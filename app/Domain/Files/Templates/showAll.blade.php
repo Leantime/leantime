@@ -22,12 +22,12 @@
                                     <input type="file" name="file" />
                                 </span>
 
-                                    <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+                                    <x-global::button link="#" type="secondary" class="fileupload-exists" data-dismiss="fileupload">Remove</x-global::button>
                                 </div>
                             </div>
                         </div>
 
-                        <input type="submit" name="upload" class="button" value="{{ __('UPLOAD') }}" />
+                        <x-global::button submit type="primary" name="upload">{{ __('UPLOAD') }}</x-global::button>
 
                     </form>
 

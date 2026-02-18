@@ -78,9 +78,9 @@
 
                                 <div class="tw:float-right">
                                     <div class="btn-group mt-1 mx-auto" role="group">
-                                        <a href="javascript:void(0)" id="NumChartButtonSprint" class="btn btn-sm btn-secondary active chartButtons">{{ $tpl->__('label.num_tickets') }}</a>
-                                        <a href="javascript:void(0)" id="EffortChartButtonSprint" class="btn btn-sm btn-secondary chartButtons">{{ $tpl->__('label.effort') }}</a>
-                                        <a href="javascript:void(0)" id="HourlyChartButtonSprint" class="btn btn-sm btn-secondary chartButtons">{{ $tpl->__('label.hours') }}</a>
+                                        <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="NumChartButtonSprint" class="active chartButtons">{{ $tpl->__('label.num_tickets') }}</x-global::button>
+                                        <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="EffortChartButtonSprint" class="chartButtons">{{ $tpl->__('label.effort') }}</x-global::button>
+                                        <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="HourlyChartButtonSprint" class="chartButtons">{{ $tpl->__('label.hours') }}</x-global::button>
                                     </div>
                                 </div>
 
@@ -96,9 +96,9 @@
 
                         <div class="tw:float-right">
                             <div class="btn-group mt-1 mx-auto" role="group">
-                                <a href="javascript:void(0)" id="NumChartButtonBacklog" class="btn btn-sm btn-secondary active backlogChartButtons">{{ $tpl->__('label.num_tickets') }}</a>
-                                <a href="javascript:void(0)" id="EffortChartButtonBacklog" class="btn btn-sm btn-secondary backlogChartButtons">{{ $tpl->__('label.effort') }}</a>
-                                <a href="javascript:void(0)" id="HourlyChartButtonBacklog" class="btn btn-sm btn-secondary backlogChartButtons">{{ $tpl->__('label.hours') }}</a>
+                                <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="NumChartButtonBacklog" class="active backlogChartButtons">{{ $tpl->__('label.num_tickets') }}</x-global::button>
+                                <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="EffortChartButtonBacklog" class="backlogChartButtons">{{ $tpl->__('label.effort') }}</x-global::button>
+                                <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="HourlyChartButtonBacklog" class="backlogChartButtons">{{ $tpl->__('label.hours') }}</x-global::button>
                             </div>
                         </div>
                         <div style="width:100%; height:350px;">

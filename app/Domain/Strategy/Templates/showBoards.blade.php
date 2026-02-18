@@ -58,7 +58,7 @@
                 </div>
                 <h3>{{ $tpl->__('headline.no_blueprints_yet') }}</h3>
                 <br />{{ $tpl->__('text.no_blueprints_yet') }}
-                <br /><a href="{{ BASE_URL }}/valuecanvas/showCanvas" class="btn btn-primary">{{ $tpl->__('button.start_here_project_value') }}</a>
+                <br /><x-global::button link="{{ BASE_URL }}/valuecanvas/showCanvas" type="primary">{{ $tpl->__('button.start_here_project_value') }}</x-global::button>
             </div>
         @endif
 

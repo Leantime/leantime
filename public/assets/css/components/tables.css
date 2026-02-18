@@ -277,6 +277,11 @@
 
 
 
+.table tbody tr:hover td,
+.table-hover tbody tr:hover td {
+    background: var(--col-hover-bg);
+}
+
 .dataTable tr:hover {
     box-shadow:var(--regular-shadow);
 }
@@ -342,9 +347,7 @@
     list-style: none;
     background-color: var(--secondary-background);
     margin-top: 10px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
+    border-radius: var(--box-radius-small);
     border: 0px;
     -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
     -moz-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
@@ -541,7 +544,7 @@ table td{
 
 
 .maincontentinner .table.listStyleTable td.roundStatusBtn .statusDropdown > a {
-    border-radius: 15px;
+    border-radius: var(--element-radius);
     padding: 0px;
     width: 30px;
     height: 30px;

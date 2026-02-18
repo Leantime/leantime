@@ -22,26 +22,22 @@
                     <div class="maincontentinner">
                     <h4 class="widgettitle title-light">{{ __('label.profile_information') }}</h4>
 
-                    <label for="firstname">{{ __('label.firstname') }}</label> <input
-                        type="text" name="firstname" id="firstname"
-                        value="{{ e($values['firstname']) }}" /><br />
+                    <label for="firstname">{{ __('label.firstname') }}</label> <x-global::forms.input name="firstname" id="firstname" value="{{ e($values['firstname']) }}" /><br />
 
-                    <label for="lastname">{{ __('label.lastname') }}</label> <input
-                        type="text" name="lastname" id="lastname"
-                        value="{{ e($values['lastname']) }}" /><br />
+                    <label for="lastname">{{ __('label.lastname') }}</label> <x-global::forms.input name="lastname" id="lastname" value="{{ e($values['lastname']) }}" /><br />
 
                     <label for="role">{{ __('label.role') }}</label>
-                    <select name="role" id="role">
+                    <x-global::forms.select name="role" id="role">
                         @foreach($tpl->get('roles') as $key => $role)
                             <option value="{{ $key }}"
                                 {{ $key == $values['role'] ? 'selected="selected"' : '' }}>
                                 {{ __('label.roles.' . $role) }}
                             </option>
                         @endforeach
-                    </select> <br />
+                    </x-global::forms.select> <br />
 
                     <label for="status">{{ __('label.status') }}</label>
-                    <select name="status" id="status" class="tw:float-left">
+                    <x-global::forms.select name="status" id="status" class="tw:float-left">
                         <option value="a"
                             {{ strtolower($values['status']) == 'a' ? 'selected="selected"' : '' }}>
                             {{ __('label.active') }}
@@ -54,51 +50,45 @@
                             {{ strtolower($values['status']) === '' || $values['status'] === 0 || $values['status'] === '0' ? 'selected="selected"' : '' }}>
                             {{ __('label.deactivated') }}
                         </option>
-                    </select>
+                    </x-global::forms.select>
                         @if($values['status'] == 'i')
                         <div class="tw:float-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
                             <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}"><i class="fa fa-link"></i> {{ __('label.copyinviteLink') }}</a>
                             <div class="dropdown-menu padding-md noClickProp">
                                 <input type="text" id="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
-                                <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('inviteURL');">{{ __('links.copy_url') }}</button>
+                                <x-global::button tag="button" type="primary" onclick="leantime.snippets.copyUrl('inviteURL');">{{ __('links.copy_url') }}</x-global::button>
                             </div>
-                            <a href="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite" class="btn btn-default" style="margin-left:5px;"><i class="fa fa-envelope"></i> {{ __('buttons.resend_invite') }}</a>
+                            <x-global::button link="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite" type="secondary" style="margin-left:5px;" icon="fa fa-envelope">{{ __('buttons.resend_invite') }}</x-global::button>
                         </div>
                         @endif
                         <div class="clearfix"></div>
 
                     <label for="client">{{ __('label.client') }}</label>
-                    <select name='client' id="client">
+                    <x-global::forms.select name="client" id="client">
                         @if($login::userIsAtLeast('manager'))
                             <option value="0" selected="selected">{{ __('label.no_clients') }}</option>
                         @endif
                         @foreach($tpl->get('clients') as $client)
                             <option value="{{ $client['id'] }}" {{ $client['id'] == $values['clientId'] ? 'selected="selected"' : '' }}>{{ e($client['name']) }}</option>
                         @endforeach
-                    </select><br/>
+                    </x-global::forms.select><br/>
                         <br/>
 
                         <h4 class="widgettitle title-light">{{ __('label.contact_information') }}</h4>
 
-                        <label for="user">{{ __('label.email') }}</label> <input
-                            type="text" name="user" id="user" value="{{ e($values['user']) }}" /><br />
+                        <label for="user">{{ __('label.email') }}</label> <x-global::forms.input name="user" id="user" value="{{ e($values['user']) }}" /><br />
 
-                        <label for="phone">{{ __('label.phone') }}</label> <input
-                            type="text" name="phone" id="phone"
-                            value="{{ e($values['phone']) }}" /><br /><br />
+                        <label for="phone">{{ __('label.phone') }}</label> <x-global::forms.input name="phone" id="phone" value="{{ e($values['phone']) }}" /><br /><br />
 
                         <h4 class="widgettitle title-light">{{ __('label.employee_information') }}</h4>
-                        <label for="jobTitle">{{ __('label.jobTitle') }}</label> <input
-                            type="text" name="jobTitle" id="jobTitle" value="{{ e($values['jobTitle']) }}" /><br />
+                        <label for="jobTitle">{{ __('label.jobTitle') }}</label> <x-global::forms.input name="jobTitle" id="jobTitle" value="{{ e($values['jobTitle']) }}" /><br />
 
-                        <label for="jobLevel">{{ __('label.jobLevel') }}</label> <input
-                            type="text" name="jobLevel" id="jobLevel" value="{{ e($values['jobLevel']) }}" /><br />
+                        <label for="jobLevel">{{ __('label.jobLevel') }}</label> <x-global::forms.input name="jobLevel" id="jobLevel" value="{{ e($values['jobLevel']) }}" /><br />
 
-                        <label for="department">{{ __('label.department') }}</label> <input
-                            type="text" name="department" id="department" value="{{ e($values['department']) }}" /><br />
+                        <label for="department">{{ __('label.department') }}</label> <x-global::forms.input name="department" id="department" value="{{ e($values['department']) }}" /><br />
 
                     <p class="stdformbutton">
-                        <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="button" />
+                        <x-global::button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-global::button>
                     </p>
                     </div>
                 </div>

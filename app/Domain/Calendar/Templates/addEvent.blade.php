@@ -11,7 +11,7 @@
     @dispatchEvent('afterFormOpen')
 
     <label for="description">{{ __('label.title') }}</label>
-    <input type="text" id="description" name="description" value="{{ e($values['description']) }}" /><br />
+    <x-global::forms.input name="description" id="description" value="{{ e($values['description']) }}" /><br />
 
     <div class="par">
         <label for="dateFrom">{{ __('label.start_date') }}</label>
@@ -43,7 +43,7 @@
 
     <p class="stdformbutton">
         <input type="hidden" value="1" name="save" />
-        <input type="submit" name="saveEvent" id="saveEvent" value="{{ __('buttons.save') }}" class="button" />
+        <x-global::button submit type="primary" name="saveEvent" id="saveEvent">{{ __('buttons.save') }}</x-global::button>
     </p>
 
     @dispatchEvent('beforeFormClose')

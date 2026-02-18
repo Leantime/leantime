@@ -37,11 +37,11 @@
                     <div class="right">
                         <h1>From (your integration)</h1>
                         <label for="providerEntities">{{ $provider->name }}</label>
-                        <select name="providerEntities" id="providerEntities" style="width:100%;">
+                        <x-global::forms.select name="providerEntities" id="providerEntities" style="width:100%;">
                             @foreach ($providerEntities as $key => $entity)
                                 <option value="{{ $key }}">{{ $entity['name'] }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                     <div style="padding-top:50px;">
                         <i class="fa fa-arrow-right"></i>
@@ -50,21 +50,21 @@
                         <h1>To (Leantime)</h1>
 
                         <label for="leantimeEntities">Leantime</label>
-                        <select name="leantimeEntities" id="leantimeEntities" style="width:100%;">
+                        <x-global::forms.select name="leantimeEntities" id="leantimeEntities" style="width:100%;">
                             @foreach ($leantimeEntities as $key => $entity)
                                 <option value="{{ $key }}">{{ $entity['name'] }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                     <div></div>
                 </div>
 
                 <div class="left">
-                    <a href="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" class="btn btn-default tw:float-left">Back</a>
+                    <x-global::button link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" type="secondary" class="tw:float-left">Back</x-global::button>
                 </div>
 
                 <div class="right">
-                    <input type="submit" value="Next" class="btn" />
+                    <x-global::button submit type="secondary">Next</x-global::button>
                 </div>
                 <div class="clearall"></div>
             </form>

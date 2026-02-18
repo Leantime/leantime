@@ -19,7 +19,7 @@
         <br /><br />
     </p>
 
-    <select id="projectSelector" name="projectId">
+    <x-global::forms.select id="projectSelector" name="projectId">
         @php
             $lastClient = '';
             $i = 0;
@@ -35,9 +35,9 @@
             <option value="{{ $projectRow['id'] }}">{{ e($projectRow['name']) }}</option>
             @php $i++; @endphp
         @endforeach
-    </select><br /><br /><br /><br />
+    </x-global::forms.select><br /><br /><br /><br />
     <br />
-    <input type="submit" value="{{ __('buttons.move') }}" name="move" class="btn btn-primary tw:btn tw:btn-primary" />
+    <x-global::button submit type="primary" name="move">{{ __('buttons.move') }}</x-global::button>
     <a class="tw:float-right" href="javascript:void(0);" onclick="leantime.modals.closeModal();">{{ __('buttons.back') }}</a>
     <div class="clearall"></div>
     <br />

@@ -58,7 +58,7 @@
             <div>
                 @if ($login::userIsAtLeast($roles::$editor))
                     @if (count($tpl->get('allCanvas')) > 0)
-                        <a href="#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment"><span class="far fa-lightbulb"></span>{{ $tpl->__('buttons.add_idea') }}</a>
+                        <x-global::button link="#/ideas/ideaDialog?type=idea" type="primary" id="customersegment" icon="far fa-lightbulb">{{ $tpl->__('buttons.add_idea') }}</x-global::button>
                     @endif
                 @endif
             </div>
@@ -190,8 +190,7 @@
                 <h3>{{ $tpl->__('headlines.have_an_idea') }}</h3><br />
                 {{ $tpl->__('subtitles.start_collecting_ideas') }}<br/><br/>
                 @if ($login::userIsAtLeast($roles::$editor))
-                    <a href="javascript:void(0)"
-                       class="addCanvasLink btn btn-primary">{!! $tpl->__('links.icon.create_new_board') !!}</a>
+                    <x-global::button link="javascript:void(0)" type="primary" class="addCanvasLink">{!! $tpl->__('links.icon.create_new_board') !!}</x-global::button>
                 @endif
             </div>
 
@@ -208,13 +207,12 @@
                         </div>
                         <div class="modal-body">
                             <label>{{ $tpl->__('label.topic_idea_board') }}</label>
-                            <input type="text" name="canvastitle" placeholder="{{ $tpl->__('input.placeholders.name_for_idea_board') }}"
-                                   style="width:90%"/>
+                            <x-global::forms.input name="canvastitle" placeholder="{{ $tpl->__('input.placeholders.name_for_idea_board') }}"
+                                   style="width:90%" />
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">{{ $tpl->__('buttons.close') }}</button>
-                            <input type="submit" class="btn btn-default" value="{{ $tpl->__('buttons.create_board') }}" name="newCanvas"/>
+                            <x-global::button tag="button" type="secondary" data-dismiss="modal">{{ $tpl->__('buttons.close') }}</x-global::button>
+                            <x-global::button submit type="secondary" name="newCanvas">{{ $tpl->__('buttons.create_board') }}</x-global::button>
                         </div>
                     </form>
                 </div>
@@ -231,13 +229,12 @@
                         </div>
                         <div class="modal-body">
                             <label>{{ $tpl->__('label.title_idea_board') }}</label>
-                            <input type="text" name="canvastitle" value="{{ $tpl->escape($canvasTitle) }}"
-                                   style="width:90%"/>
+                            <x-global::forms.input name="canvastitle" value="{{ $tpl->escape($canvasTitle) }}"
+                                   style="width:90%" />
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">{{ $tpl->__('buttons.close') }}</button>
-                            <input type="submit" class="btn btn-default" value="{{ $tpl->__('buttons.save') }}" name="editCanvas"/>
+                            <x-global::button tag="button" type="secondary" data-dismiss="modal">{{ $tpl->__('buttons.close') }}</x-global::button>
+                            <x-global::button submit type="secondary" name="editCanvas">{{ $tpl->__('buttons.save') }}</x-global::button>
                         </div>
                     </form>
                 </div>

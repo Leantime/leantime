@@ -120,7 +120,7 @@
                 <tr>
                     <td>
                         <label for="clients">{{ __('label.client') }}</label>
-                        <select name="clientId">
+                        <x-global::forms.select name="clientId">
                             <option value="-1">{{ strip_tags(__('menu.all_clients')) }}</option>
                             @foreach ($tpl->get('allClients') as $client)
                                 <option value="{{ $client['id'] }}"
@@ -129,11 +129,11 @@
                                     @endif
                                 >{{ e($client['name']) }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </td>
                     <td>
                         <label for="projects">{{ __('label.project') }}</label>
-                        <select name="project" style="max-width:120px;">
+                        <x-global::forms.select name="project" style="max-width:120px;">
                             <option value="-1">{{ strip_tags(__('menu.all_projects')) }}</option>
                             @foreach ($tpl->get('allProjects') as $project)
                                 <option value="{{ $project['id'] }}" data-client-id="{{ $project['clientId'] }}"
@@ -142,12 +142,12 @@
                                     @endif
                                 >{{ e($project['name']) }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </td>
                     @if (! empty($tpl->get('allTickets')))
                     <td>
                         <label for="ticket">{{ __('label.ticket') }}</label>
-                            <select name="ticket" style="max-width:120px;">
+                            <x-global::forms.select name="ticket" style="max-width:120px;">
                                 <option value="-1">{{ strip_tags(__('menu.all_tickets')) }}</option>
                                 @foreach ($tpl->get('allTickets') as $ticket)
                                     <option value="{{ $ticket['id'] }}" data-project-id="{{ $ticket['projectId'] }}"
@@ -156,7 +156,7 @@
                                         @endif
                                     >{{ e($ticket['headline']) }}</option>
                                 @endforeach
-                            </select>
+                            </x-global::forms.select>
                     </td>
                     @endif
 
@@ -198,7 +198,7 @@
                     </td>
                     <td>
                         <label for="invEmpl">{{ __('label.invoiced') }}</label>
-                        <select name="invEmpl" id="invEmpl" style="max-width:120px;">
+                        <x-global::forms.select name="invEmpl" id="invEmpl" style="max-width:120px;">
                             <option value="all"
                                 @if ($tpl->get('invEmpl') == 'all' || ! $tpl->get('invEmpl'))
                                     selected="selected"
@@ -214,7 +214,7 @@
                                     selected="selected"
                                 @endif
                             >{{ __('label.invoiced_not') }}</option>
-                        </select>
+                        </x-global::forms.select>
                     </td>
                     <td>
                         <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
@@ -235,7 +235,7 @@
                     </td>
                     <td>
                         <input type="hidden" name='filterSubmit' value="1"/>
-                        <input type="submit" value="{{ __('buttons.search') }}" class="reload" />
+                        <x-global::button submit type="primary" class="reload">{{ __('buttons.search') }}</x-global::button>
                     </td>
                 </tr>
             </table>
@@ -357,7 +357,7 @@
 
                         <td>
                             @if ($login::userIsAtLeast($roles::$manager))
-                            <input type="submit" class="button" value="{{ __('buttons.save') }}" name="saveInvoice" />
+                            <x-global::button submit type="primary" name="saveInvoice">{{ __('buttons.save') }}</x-global::button>
                             @endif
                         </td>
                         <td>

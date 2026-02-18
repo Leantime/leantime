@@ -16,8 +16,8 @@
             <form method="post">
                 <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
                 <p>{{ $tpl->__('text.confirm_key_deletion') }}</p><br />
-                <input type="submit" value="{{ $tpl->__('buttons.yes_delete') }}" name="del" class="button" />
-                <a class="btn btn-primary" href="{{ BASE_URL }}/setting/editCompanySettings/#apiKeys">{{ $tpl->__('buttons.back') }}</a>
+                <x-global::button submit type="danger" name="del">{{ $tpl->__('buttons.yes_delete') }}</x-global::button>
+                <x-global::button link="{{ BASE_URL }}/setting/editCompanySettings/#apiKeys" type="primary">{{ $tpl->__('buttons.back') }}</x-global::button>
             </form>
 
     </div>

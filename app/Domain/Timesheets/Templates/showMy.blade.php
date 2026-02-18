@@ -379,11 +379,11 @@ jQuery(document).ready(function(){
                                 </div>
                             </td>
                             <td width="14%">
-                                <select class="kind-select" name="kindId">
+                                <x-global::forms.select class="kind-select" name="kindId">
                                         @foreach ($tpl->get('kind') as $key => $kindRow)
                                             <option value="{{ $key }}">{{ __($kindRow) }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                             </td>
 
                             @php $i = 0; @endphp
@@ -409,7 +409,7 @@ jQuery(document).ready(function(){
                 </tfoot>
             </table>
             <div class="right">
-                <input type="submit" name="saveTimeSheet" class="saveTimesheetBtn" value="Save" />
+                <x-global::button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">Save</x-global::button>
             </div>
             <div class="clearall"></div>
         </form>

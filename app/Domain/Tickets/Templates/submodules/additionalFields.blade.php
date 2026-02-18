@@ -13,13 +13,13 @@
                 <div class="form-group">
                     <label class="control-label">{{ __('label.todo_type') }}</label>
                     <div class="">
-                        <select id='type' name='type' class="span11">
+                        <x-global::forms.select id="type" name="type">
                             @foreach($ticketTypes as $types)
                                 <option value="{{ strtolower($types) }}"
                                     {{ strtolower($types) == strtolower($ticket->type ?? '') ? "selected='selected'" : '' }}
                                 >{{ __('label.' . strtolower($types)) }}</option>
                             @endforeach
-                        </select><br/>
+                        </x-global::forms.select><br/>
                     </div>
                 </div>
 
@@ -41,7 +41,7 @@
                     {{-- Project --}}
                     <div class="form-group">
                         <label class="control-label">{{ __('label.project') }}</label>
-                        <select name="projectId" class="tw:w-full">
+                        <x-global::forms.select name="projectId" class="tw:w-full">
                             @foreach($allAssignedprojects as $project)
                                 <option value="{{ $project['id'] }}"
                                     @if($ticket->projectId == $project['id'])
@@ -51,7 +51,7 @@
                                     @endif
                                 >{{ e($project['name']) }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
 
                     {{-- Milestones --}}
@@ -59,14 +59,14 @@
                         <label class="control-label">{{ __('label.milestone') }}</label>
                         <div class="">
                             <div class="form-group">
-                                <select name="milestoneid" class="span11">
+                                <x-global::forms.select name="milestoneid">
                                     <option value="">{{ __('label.not_assigned_to_milestone') }}</option>
                                     @foreach($tpl->get('milestones') as $milestoneRow)
                                         <option value="{{ $milestoneRow->id }}"
                                             {{ ($ticket->milestoneid == $milestoneRow->id) ? "selected='selected'" : '' }}
                                         >{{ e($milestoneRow->headline) }}</option>
                                     @endforeach
-                                </select>
+                                </x-global::forms.select>
                             </div>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.sprint') }}</label>
                         <div class="">
-                            <select id="sprint-select" class="span11" name="sprint"
+                            <x-global::forms.select id="sprint-select" name="sprint"
                                     data-placeholder="{{ $ticket->sprint }}">
                                 <option value="">{{ __('label.backlog') }}</option>
                                 @if($tpl->get('sprints'))
@@ -85,7 +85,7 @@
                                         >{{ e($sprintRow->name) }}</option>
                                     @endforeach
                                 @endif
-                            </select>
+                            </x-global::forms.select>
                         </div>
                     </div>
 
@@ -94,7 +94,7 @@
                         <label class="control-label">{{ __('label.related_to') }}</label>
                         <div class="">
                             <div class="form-group">
-                                <select name="dependingTicketId" class="span11">
+                                <x-global::forms.select name="dependingTicketId">
                                     <option value="">{{ __('label.not_related') }}</option>
                                     @if(is_array($tpl->get('ticketParents')))
                                         @foreach($tpl->get('ticketParents') as $ticketRow)
@@ -103,7 +103,7 @@
                                             >{{ e($ticketRow->headline) }}</option>
                                         @endforeach
                                     @endif
-                                </select>
+                                </x-global::forms.select>
                             </div>
                         </div>
                     </div>
@@ -166,14 +166,14 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.planned_hours') }}</label>
                         <div class="">
-                            <input type="text" value="{{ e($ticket->planHours) }}" name="planHours" style="width:90px;"/>
+                            <x-global::forms.input value="{{ e($ticket->planHours) }}" name="planHours" style="width:90px;" />
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label">{{ __('label.estimated_hours_remaining') }}</label>
                         <div class="">
-                            <input type="text" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:90px;"/>
+                            <x-global::forms.input value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:90px;" />
                             <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
                                 &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
                             </a>
@@ -183,15 +183,15 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.booked_hours') }}</label>
                         <div class="">
-                            <input type="text" disabled="disabled"
-                                   value="{{ $tpl->get('timesheetsAllHours') }}" style="width:90px;"/>
+                            <x-global::forms.input :disabled="true"
+                                   name="bookedHours" value="{{ $tpl->get('timesheetsAllHours') }}" style="width:90px;" />
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label">{{ __('label.actual_hours_remaining') }}</label>
                         <div class="">
-                            <input type="text" disabled="disabled" value="{{ $remainingHours }}" style="width:90px;"/>
+                            <x-global::forms.input :disabled="true" name="actualHoursRemaining" value="{{ $remainingHours }}" style="width:90px;" />
                         </div>
                     </div>
 

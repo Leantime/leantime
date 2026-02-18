@@ -11,15 +11,15 @@
 
     <form action="{{ BASE_URL }}/install" method="post" class="registrationForm">
         <h3 class="subtitle">{{ $tpl->language->__('subtitles.login_info') }}</h3>
-        <input type="email" name="email" class="form-control" placeholder="{{ $tpl->language->__('label.email') }}" value=""/><br />
+        <x-global::forms.input type="email" name="email" placeholder="{{ $tpl->language->__('label.email') }}" value="" /><br />
         <br /><br />
         <h3 class="subtitle">{{ $tpl->language->__('subtitles.user_info') }}</h3>
-        <input type="text" name="firstname" class="form-control" placeholder="{{ $tpl->language->__('label.firstname') }}" value=""/><br />
-        <input type="text" name="lastname" class="form-control" placeholder="{{ $tpl->language->__('label.lastname') }}" value=""/>
-        <input type="text" name="company" class="form-control" placeholder="{{ $tpl->language->__('label.company_name') }}" value=""/>
+        <x-global::forms.input name="firstname" placeholder="{{ $tpl->language->__('label.firstname') }}" value="" /><br />
+        <x-global::forms.input name="lastname" placeholder="{{ $tpl->language->__('label.lastname') }}" value="" />
+        <x-global::forms.input name="company" placeholder="{{ $tpl->language->__('label.company_name') }}" value="" />
         <br /><br />
         <input type="hidden" name="install" value="Install" />
-        <p><input type="submit" name="installAction" class="btn btn-primary" value="{{ $tpl->language->__('buttons.install') }}" onClick="this.form.submit(); this.disabled=true; this.value='{{ $tpl->language->__('buttons.install') }}'; "/></p>
+        <p><x-global::button submit type="primary" name="installAction" onClick="this.form.submit(); this.disabled=true; this.value='{{ $tpl->language->__('buttons.install') }}';">{{ $tpl->language->__('buttons.install') }}</x-global::button></p>
     </form>
 
 </div>

@@ -102,8 +102,7 @@
             <div class="tw:flex tw:justify-between tw:items-center">
                 <div>
                     @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
-                        <a href="#/goalcanvas/editCanvasItem?type={{ $elementName }}" class="btn btn-primary"
-                            id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</a>
+                        <x-global::button link="#/goalcanvas/editCanvasItem?type={{ $elementName }}" type="primary" id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</x-global::button>
                     @endif
                 </div>
 
@@ -428,9 +427,9 @@
 
                     @if ($login::userIsAtLeast($roles::$editor))
                         <br /><br />
-                        <a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
+                        <x-global::button link="javascript:void(0)" type="primary" class="addCanvasLink">
                             {!! __('links.icon.create_new_board') !!}
-                        </a>
+                        </x-global::button>
                     @endif
                 </div>
             @endif

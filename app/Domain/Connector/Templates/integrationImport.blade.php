@@ -39,9 +39,9 @@
                     @endif
                 @endforeach
             </ul>
-            <a class="btn btn-primary tw:float-left" href="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}">Go Back</a>
+            <x-global::button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" type="primary" class="tw:float-left">Go Back</x-global::button>
         @else
-            <a class="btn btn-primary right" href="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import">Confirm</a>
+            <x-global::button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import" type="primary" class="right">Confirm</x-global::button>
         @endif
         <div class="clearall"></div>
 

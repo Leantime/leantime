@@ -19,8 +19,8 @@
         </div>
         <br /><br />
         <div class="tw:text-center">
-            <a href="javascript:void(0)" class="btn btn-secondary" onclick="leantime.helperController.closeModal()">I'll explore on my own</a>
-            <a href="javascript:void(0)" class="btn btn-primary" onclick="leantime.helperController.closeModal(); leantime.helperController.startMilestoneTour();">{{ __("buttons.start_tour") }} <i class="fa-solid fa-arrow-right"></i></a>
+            <x-global::button link="javascript:void(0)" type="secondary" onclick="leantime.helperController.closeModal()">I'll explore on my own</x-global::button>
+            <x-global::button link="javascript:void(0)" type="primary" onclick="leantime.helperController.closeModal(); leantime.helperController.startMilestoneTour();">{{ __("buttons.start_tour") }} <i class="fa-solid fa-arrow-right"></i></x-global::button>
         </div>
         <div class="tw:mt-3 tw:text-center">
             <form hx-post="{{ BASE_URL }}/help/helperModal/dontShowAgain" hx-trigger="change" hx-swap="none">

@@ -1,12 +1,25 @@
 @props([
     'id' => null,
     'striped' => false,
+    'bordered' => false,
+    'hover' => false,
+    'compact' => false,
+    'datatable' => false,
 ])
+
+@php
+    $tableClasses = 'tw:table tw:table-auto tw:w-full table'
+        . ($striped ? ' tw:table-zebra table-striped' : '')
+        . ($bordered ? ' table-bordered' : '')
+        . ($hover ? ' table-hover' : '')
+        . ($compact ? ' tw:table-xs table-condensed' : '')
+        . ($datatable ? ' dataTable' : '');
+@endphp
 
 <div style="overflow-x: auto;">
     <table {{ $attributes->merge([
         'id' => $id,
-        'class' => 'tw:table tw:table-auto tw:w-full' . ($striped ? ' tw:table-zebra' : ''),
+        'class' => $tableClasses,
     ]) }}>
         @isset($head)
             <thead>

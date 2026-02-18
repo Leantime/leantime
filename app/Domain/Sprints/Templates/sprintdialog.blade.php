@@ -11,15 +11,15 @@
 <form class="formModal" method="post" action="{{ BASE_URL }}/sprints/editSprint/{{ $id }}">
 
     <label>{{ __('label.sprint_name') }}</label>
-    <input type="text" name="name" value="{{ $currentSprint->name }}" placeholder="{{ __('label.sprint_name') }}"/><br />
+    <x-global::forms.input name="name" value="{{ $currentSprint->name }}" placeholder="{{ __('label.sprint_name') }}" /><br />
 
     <label>{{ __('label.project') }}</label>
-    <select name="projectId">
+    <x-global::forms.select name="projectId">
         @foreach($allAssignedprojects as $project)
             <option value="{{ $project['id'] }}"
                 {{ (isset($currentSprint) && ($currentSprint->projectId == $project['id'] || $currentProject == $project['id'])) || (!isset($currentSprint) && $currentProject == $project['id']) ? 'selected' : '' }}>{{ e($project['name']) }}</option>
         @endforeach
-    </select><br />
+    </x-global::forms.select><br />
 
     <br /><br />
     <p>{{ __('label.sprint_dates') }}</p><br/>
@@ -33,7 +33,7 @@
 
     <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
         <div>
-            <input type="submit" value="{{ __('buttons.save') }}"/>
+            <x-global::button submit type="primary">{{ __('buttons.save') }}</x-global::button>
         </div>
         <div class="tw:text-right padding-top-sm">
             @if(isset($currentSprint->id) && $currentSprint->id != '' && $login::userIsAtLeast($roles::$editor))

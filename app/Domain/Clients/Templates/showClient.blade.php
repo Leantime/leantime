@@ -37,70 +37,70 @@
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.client_id') }}</label>
                                 <div class="">
-                                    <input type="text" name="id" id="id" value="{{ e($values['id']) }}" readonly />
+                                    <x-global::forms.input name="id" id="id" value="{{ e($values['id']) }}" :readonly="true" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.name') }}</label>
                                 <div class="">
-                                    <input type="text" name="name" id="name" value="{{ e($values['name']) }}" />
+                                    <x-global::forms.input name="name" id="name" value="{{ e($values['name']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.email') }}</label>
                                 <div class="">
-                                    <input type="text" name="email" id="email" value="{{ e($values['email']) }}" />
+                                    <x-global::forms.input name="email" id="email" value="{{ e($values['email']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.url') }}</label>
                                 <div class="">
-                                    <input type="text" name="internet" id="internet" value="{{ e($values['internet']) }}" />
+                                    <x-global::forms.input name="internet" id="internet" value="{{ e($values['internet']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.street') }}</label>
                                 <div class="">
-                                    <input type="text" name="street" id="street" value="{{ e($values['street']) }}" />
+                                    <x-global::forms.input name="street" id="street" value="{{ e($values['street']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.zip') }}</label>
                                 <div class="">
-                                    <input type="text" name="zip" id="zip" value="{{ e($values['zip']) }}" />
+                                    <x-global::forms.input name="zip" id="zip" value="{{ e($values['zip']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.city') }}</label>
                                 <div class="">
-                                    <input type="text" name="city" id="city" value="{{ e($values['city']) }}" />
+                                    <x-global::forms.input name="city" id="city" value="{{ e($values['city']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.state') }}</label>
                                 <div class="">
-                                    <input type="text" name="state" id="state" value="{{ e($values['state']) }}" />
+                                    <x-global::forms.input name="state" id="state" value="{{ e($values['state']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.country') }}</label>
                                 <div class="">
-                                    <input type="text" name="country" id="country" value="{{ e($values['country']) }}" />
+                                    <x-global::forms.input name="country" id="country" value="{{ e($values['country']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.phone') }}</label>
                                 <div class="">
-                                    <input type="text" name="phone" id="phone" value="{{ e($values['phone']) }}" />
+                                    <x-global::forms.input name="phone" id="phone" value="{{ e($values['phone']) }}" />
                                 </div>
                             </div>
 
@@ -108,7 +108,7 @@
 
                         <div>
                             <h4 class="widgettitle title-light"><span class="fa fa-users"></span> {{ __('subtitles.users_assigned_to_this_client') }}</h4>
-                            <a href="#/users/newUser?preSelectedClient={{ $values['id'] }}" class="btn btn-primary"><i class='fa fa-plus'></i> {{ __('buttons.add_user') }} </a>
+                            <x-global::button link="#/users/newUser?preSelectedClient={{ $values['id'] }}" type="primary" icon="fa fa-plus">{{ __('buttons.add_user') }}</x-global::button>
                             <table class='table table-bordered'>
                                 <colgroup>
                                     <col class="con1" />
@@ -157,8 +157,7 @@
 
                     <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
                         <div>
-                            <input type="submit" name="save" id="save"
-                                   value="{{ __('buttons.save') }}" class="btn btn-primary" />
+                            <x-global::button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-global::button>
                         </div>
                         <div class="tw:text-right">
                             <a href="{{ BASE_URL }}/clients/delClient/{{ e($_GET['id']) }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a>
@@ -193,11 +192,11 @@
                                         <span class='fileupload-exists'>{{ __('label.change') }}</span>
                                         <input type='file' name='file' />
                                     </span>
-                                    <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>{{ __('buttons.remove') }}</a>
+                                    <x-global::button link="#" type="secondary" class="fileupload-exists" data-dismiss="fileupload">{{ __('buttons.remove') }}</x-global::button>
                                 </div>
                             </div>
                         </div>
-                        <input type="submit" name="upload" class="button" value="{{ __('buttons.upload') }}" />
+                        <x-global::button submit type="primary" name="upload">{{ __('buttons.upload') }}</x-global::button>
                     </form>
                 </div>
 

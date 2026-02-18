@@ -2,6 +2,6 @@
 
 <form method="post" action="{{ BASE_URL }}/timesheets/delTime/{{ $tpl->get('id') }}">
     <p>{{ __('text.confirm_delete_timesheet') }}</p><br />
-    <input type="submit" value="{{ __('buttons.yes_delete') }}" name="del" class="button" />
-    <a class="btn btn-secondary" href="{{ session('lastPage') }}">{{ __('buttons.back') }}</a>
+    <x-global::button submit type="danger" name="del">{{ __('buttons.yes_delete') }}</x-global::button>
+    <x-global::button link="{{ session('lastPage') }}" type="secondary">{{ __('buttons.back') }}</x-global::button>
 </form>

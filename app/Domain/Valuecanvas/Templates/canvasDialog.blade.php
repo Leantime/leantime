@@ -36,20 +36,20 @@
         <input type="hidden" value="{{ $id }}" name="itemId" id="itemId"/>
 
         <label>{{ $tpl->__('label.description') }}</label>
-        <input type="text" name="description" value="{{ $tpl->escape($canvasItem['description']) }}" style="width:100%" /><br />
+        <x-global::forms.input name="description" value="{{ $tpl->escape($canvasItem['description']) }}" style="width:100%" /><br />
 
         @if (! empty($statusLabels))
             <label>{{ $tpl->__('label.status') }}</label>
-            <select name="status" style="width: 50%" id="statusCanvas">
-            </select><br /><br />
+            <x-global::forms.select name="status" style="width: 50%" id="statusCanvas">
+            </x-global::forms.select><br /><br />
         @else
             <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
         @endif
 
         @if (! empty($relatesLabels))
             <label>{{ $tpl->__('label.relates') }}</label>
-            <select name="relates" style="width: 50%" id="relatesCanvas">
-            </select><br />
+            <x-global::forms.select name="relates" style="width: 50%" id="relatesCanvas">
+            </x-global::forms.select><br />
         @else
             <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}" />
         @endif
@@ -57,9 +57,9 @@
         @if ($dataLabels[1]['active'])
             <label>{{ $tpl->__($dataLabels[1]['title'] . '.' . $tpl->escape($canvasItem['box'])) }}</label>
             @if (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int')
-                <input type="number" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" /><br />
+                <x-global::forms.input type="number" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" /><br />
             @elseif (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string')
-                <input type="text" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" style="width:100%" /><br />
+                <x-global::forms.input name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" style="width:100%" /><br />
             @else
                 <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[1]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[1]['field']] }}</textarea><br />
             @endif
@@ -70,9 +70,9 @@
         @if ($dataLabels[2]['active'])
             <label>{{ $tpl->__($dataLabels[2]['title'] . '.' . $tpl->escape($canvasItem['box'])) }}</label>
             @if (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int')
-                <input type="number" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" /><br />
+                <x-global::forms.input type="number" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" /><br />
             @elseif (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string')
-                <input type="text" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" style="width:100%" /><br />
+                <x-global::forms.input name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" style="width:100%" /><br />
             @else
                 <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea><br />
             @endif
@@ -83,9 +83,9 @@
         @if ($dataLabels[3]['active'])
             <label>{{ $tpl->__($dataLabels[3]['title'] . '.' . $tpl->escape($canvasItem['box'])) }}</label>
             @if (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int')
-                <input type="number" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}" /><br />
+                <x-global::forms.input type="number" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}" /><br />
             @elseif (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string')
-                <input type="text" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}" /><br />
+                <x-global::forms.input name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}" /><br />
             @else
                 <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[3]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[3]['field']] }}</textarea><br />
             @endif
@@ -101,8 +101,8 @@
         @endif
 
         @if ($login::userIsAtLeast($roles::$editor))
-            <input type="submit" value="{{ $tpl->__('buttons.save') }}" id="primaryCanvasSubmitButton"/>
-            <button type="submit" class="btn btn-default" value="closeModal" id="saveAndClose" onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();">{{ $tpl->__('buttons.save_and_close') }}</button>
+            <x-global::button submit type="primary" id="primaryCanvasSubmitButton">{{ $tpl->__('buttons.save') }}</x-global::button>
+            <x-global::button tag="button" type="secondary" id="saveAndClose" onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();">{{ $tpl->__('buttons.save_and_close') }}</x-global::button>
         @endif
 
         @if ($id !== '')
@@ -123,11 +123,11 @@
                         @endif
                     </div>
                     <div id="newMilestone" style="display:none;">
-                        <input type="text" width="50%" name="newMilestone" /><br />
+                        <x-global::forms.input name="newMilestone" style="width:50%" /><br />
                         <input type="hidden" name="type" value="milestone" />
                         <input type="hidden" name="{{ $canvasName }}canvasitemid" value="{{ $id }} " />
-                        <input type="button" value="{{ $tpl->__('buttons.save') }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                        <input type="button" value="{{ $tpl->__('buttons.cancel') }}" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                        <x-global::button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-global::button>
+                        <x-global::button tag="button" type="primary" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')">{{ $tpl->__('buttons.cancel') }}</x-global::button>
                     </div>
                     <div id="existingMilestone" style="display:none;">
                         <select data-placeholder="{{ $tpl->__('input.placeholders.filter_by_milestone') }}" name="existingMilestone" class="user-select">
@@ -140,8 +140,8 @@
                         </select>
                         <input type="hidden" name="type" value="milestone" />
                         <input type="hidden" name="{{ $canvasName }}canvasitemid" value="{{ $id }} " />
-                        <input type="button" value="{{ $tpl->__('buttons.save') }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                        <input type="button" value="{{ $tpl->__('buttons.cancel') }}" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                        <x-global::button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-global::button>
+                        <x-global::button tag="button" type="primary" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')">{{ $tpl->__('buttons.cancel') }}</x-global::button>
                     </div>
                 </li>
             @else

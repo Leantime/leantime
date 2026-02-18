@@ -34,38 +34,34 @@
                                         <div class="form-group">
                                             <label for="firstname" >{{ __('label.firstname') }}</label>
                                             <span>
-                                                <input type="text" class="input" name="firstname" id="firstname" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                                value="{{ $values['firstname'] }}"/><br/>
+                                                <x-global::forms.input name="firstname" id="firstname" :disabled="session('userdata.isExternalAuth')" value="{{ $values['firstname'] }}" /><br/>
                                             </span>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="lastname" >{{ __('label.lastname') }}</label>
                                             <span>
-                                                <input type="text" name="lastname" class="input" id="lastname" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                                value="{{ $values['lastname']  }}"/><br/>
+                                                <x-global::forms.input name="lastname" id="lastname" :disabled="session('userdata.isExternalAuth')" value="{{ $values['lastname'] }}" /><br/>
                                             </span>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="user" >{{ __('label.email') }}</label>
                                             <span>
-                                                <input type="text" name="user" class="input" id="user" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                                value="{{ $values['user']  }}"/><br/>
+                                                <x-global::forms.input name="user" id="user" :disabled="session('userdata.isExternalAuth')" value="{{ $values['user'] }}" /><br/>
                                             </span>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="phone" >{{ __('label.phone') }}</label>
                                             <span>
-                                                <input type="text" name="phone" class="input" id="phone" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                                value="{{ $values['phone']  }}"/><br/>
+                                                <x-global::forms.input name="phone" id="phone" :disabled="session('userdata.isExternalAuth')" value="{{ $values['phone'] }}" /><br/>
                                             </span>
                                         </div>
                                         <p class='stdformbutton'>
                                             <input type="hidden" name="profileInfo" value="1" />
 
-                                            <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="button"/>
+                                            <x-global::button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-global::button>
                                         </p>
                                         <br />
                                         <h4 class="widgettitle title-light">{{ __('label.employee_information') }}</h4>
@@ -73,24 +69,21 @@
                                         <div class="form-group">
                                             <label for="phone" >{{ __('label.jobTitle') }}</label>
                                             <span>
-                                                <input type="text" name="jobTitle" readonly class="input" id="jobTitle"}}
-                                                value="{{ $values['jobTitle']  }}"/><br/>
+                                                <x-global::forms.input name="jobTitle" id="jobTitle" :readonly="true" value="{{ $values['jobTitle'] }}" /><br/>
                                             </span>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="phone" >{{ __('label.jobLevel') }}</label>
                                             <span>
-                                                <input type="text" name="jobLevel" readonly class="input" id="jobLevel"}}
-                                                       value="{{ $values['jobLevel']  }}"/><br/>
+                                                <x-global::forms.input name="jobLevel" id="jobLevel" :readonly="true" value="{{ $values['jobLevel'] }}" /><br/>
                                             </span>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="phone" >{{ __('label.department') }}</label>
                                             <span>
-                                                <input type="text" name="department" readonly class="input" id="department"}}
-                                                       value="{{ $values['department']  }}"/><br/>
+                                                <x-global::forms.input name="department" id="department" :readonly="true" value="{{ $values['department'] }}" /><br/>
                                             </span>
                                         </div>
 
@@ -122,13 +115,10 @@
                                         <input type='file' name='file' onchange="leantime.usersController.readURL(this)" accept=".jpg,.png,.gif,.webp"/>
                                     </span>
 
-                                                <a href='#' class='btn fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</a>
+                                                <x-global::button link="#" type="secondary" class="fileupload-exists" data-dismiss="fileupload" onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</x-global::button>
                                             </div>
                                             <p class='stdformbutton'>
-                                    <span id="save-picture" class="btn btn-primary fileupload-exists ld-ext-right">
-                                        <span onclick="leantime.usersController.saveCroppie()">{{ __('buttons.save') }}</span>
-                                        <span class="ld ld-ring ld-spin"></span>
-                                    </span>
+                                    <x-global::button tag="button" type="primary" id="save-picture" class="fileupload-exists ld-ext-right" onclick="leantime.usersController.saveCroppie()">{{ __('buttons.save') }}<span class="ld ld-ring ld-spin"></span></x-global::button>
                                                 <input type="hidden" name="profileImage" value="1" />
                                                 <input id="picSubmit" type="submit" name="savePic" class="hidden"
                                                        value="{{ __('buttons.upload') }}"/>
@@ -154,16 +144,14 @@
                                 <div class="form-group">
                                     <label for="currentPassword" >{{ __('label.old_password') }}</label>
                                     <span>
-                                        <input type='password' value="" name="currentPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                               id="currentPassword"/><br/>
+                                        <x-global::forms.input type="password" value="" name="currentPassword" :disabled="session('userdata.isExternalAuth')" id="currentPassword" /><br/>
                                     </span>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="newPassword" >{{ __('label.new_password') }}</label>
                                     <span>
-                                        <input type='password' value="" name="newPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                               id="newPassword"/>
+                                        <x-global::forms.input type="password" value="" name="newPassword" :disabled="session('userdata.isExternalAuth')" id="newPassword" />
                                         <span id="pwStrength"></span>
 
                                     </span>
@@ -172,8 +160,7 @@
                                 <div class="form-group">
                                     <label for="confirmPassword" >{{ __('label.password_repeat') }}</label>
                                     <span>
-                                        <input type="password" value="" name="confirmPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                               id="confirmPassword"/><br/>
+                                        <x-global::forms.input type="password" value="" name="confirmPassword" :disabled="session('userdata.isExternalAuth')" id="confirmPassword" /><br/>
                                         @if (!session("userdata.isExternalAuth") )
                                         <small>{{ __('label.passwordRequirements') }}</small>
                                        @endif
@@ -183,7 +170,7 @@
                             </div>
                             @if (!session("userdata.isExternalAuth") )
                                 <input type="hidden" name="savepw" value="1" />
-                                <input type="submit" name="save" id="savePw" value="{{ __('buttons.save') }}" class="button"/>
+                                <x-global::button submit type="primary" name="save" id="savePw">{{ __('buttons.save') }}</x-global::button>
                             @endif
                         </form>
                         <br /><br />
@@ -205,20 +192,20 @@
                                 <div class="form-group">
                                     <label for="language" >{{ __('label.language') }}</label>
                                     <span class='field'>
-                                        <select name="language" id="language" style="width: 220px">
+                                        <x-global::forms.select name="language" id="language" style="width: 220px">
                                             @foreach ($languageList as $languagKey => $languageValue )
                                                 <option value="{{ $languagKey }}"
                                                         @if ($userLang == $languagKey )
                                                             selected='selected'
                                                          @endif >{{ $languageValue }}</option>
                                              @endforeach
-                                        </select>
+                                        </x-global::forms.select>
                                     </span>
                                 </div>
                                 <div class="form-group">
                                     <label for="date_format" >{{ __('label.date_format') }}</label>
                                     <span>
-                                        <select name="date_format" id="date_format" style="width: 220px">
+                                        <x-global::forms.select name="date_format" id="date_format" style="width: 220px">
                                            @php
                                             $dateFormats = $dateTimeValues['dates'];
                                             $dateTimeNow = date_create();
@@ -231,13 +218,13 @@
                                                             selected='selected'
                                                         @endif >{{ date_format($dateTimeNow, $format) }}</option>
                                             @endforeach
-                                        </select>
+                                        </x-global::forms.select>
                                     </span>
                                 </div>
                                 <div class="form-group">
                                     <label for="time_format" >{{ __('label.time_format') }}</label>
                                     <span>
-                                        <select name="time_format" id="time_format" style="width: 220px">
+                                        <x-global::forms.select name="time_format" id="time_format" style="width: 220px">
                                             @php
                                                 $timeFormats = $dateTimeValues['times'];
                                                 $dateTimeNow = date_create();
@@ -250,13 +237,13 @@
                                                             selected='selected'
                                                         @endif>{{ date_format($dateTimeNow, $format) }}</option>
                                             @endforeach
-                                        </select>
+                                        </x-global::forms.select>
                                     </span>
                                 </div>
                                 <div class="form-group">
                                     <label for="timezone" >{{ __('label.timezone') }}</label>
                                     <span>
-                                        <select name="timezone" id="timezone" style="width: 220px">
+                                        <x-global::forms.select name="timezone" id="timezone" style="width: 220px">
 
                                             @foreach ($timezoneOptions as $tz)
                                                 <option value="{{ $tz }}"
@@ -265,12 +252,12 @@
                                                         @endif
                                                         >{{ $tz }}</option>
                                             @endforeach
-                                        </select>
+                                        </x-global::forms.select>
                                     </span>
                                 </div>
                             </div>
                             <input type="hidden" name="saveSettings" value="1" />
-                            <input type="submit" name="save" id="saveSettings" value="{{ __('buttons.save') }}" class="button"/>
+                            <x-global::button submit type="primary" name="save" id="saveSettings">{{ __('buttons.save') }}</x-global::button>
                         </form>
                     </div>
 
@@ -340,7 +327,7 @@
                             </div>
                             <br /><br />
                             <input type="hidden" name="saveTheme" value="1" />
-                            <input type="submit" name="save" id="saveTheme" value="{{ __('buttons.save') }}" class="button"/>
+                            <x-global::button submit type="primary" name="save" id="saveTheme">{{ __('buttons.save') }}</x-global::button>
                         </form>
 
                         @dispatchEvent('themecontent')
@@ -363,7 +350,7 @@
                                 <div class="form-group">
                                     <label for="messagesfrequency" >{{ __('label.messages_frequency') }}</label>
                                     <span>
-                                        <select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
+                                        <x-global::forms.select name="messagesfrequency" id="messagesfrequency" style="width: 220px">
                                             <option value="">--{{ __('label.choose_option') }}--</option>
                                              <option value="60"
                                                      @if ($values['messagesfrequency'] == "60" )
@@ -399,7 +386,7 @@
                                             <option value="604800" @if ($values['messagesfrequency'] == "604800" )
                                                 selected="selected"
                                                                    @endif>{{ __('label.1w') }}</option>
-                                        </select> <br/>
+                                        </x-global::forms.select> <br/>
                                     </span>
                                 </div>
                             </div>
@@ -454,14 +441,14 @@
                                                     <span class="tw-text-gray-400 tw-text-xs">({{ $project['clientName'] }})</span>
                                                 @endif
                                             </span>
-                                            <select name="projectNotificationLevel[{{ $project['id'] }}]"
+                                            <x-global::forms.select name="projectNotificationLevel[{{ $project['id'] }}]"
                                                     class="tw-text-sm tw-border tw-border-gray-300 tw-rounded tw-px-2 tw-py-1 tw-min-w-[140px]">
                                                 @foreach ($relevanceLevels as $level => $labelKey)
                                                     <option value="{{ $level }}"
                                                             @if ($currentLevel === $level) selected @endif
                                                     >{{ __($labelKey) }}</option>
                                                 @endforeach
-                                            </select>
+                                            </x-global::forms.select>
                                         </div>
                                     @endforeach
                                 @else
@@ -470,7 +457,7 @@
                             </div>
 
                             <input type="hidden" name="savenotifications" value="1" />
-                            <input type="submit" name="save" value="{{ __('buttons.save') }}" class="button"/>
+                            <x-global::button submit type="primary" name="save">{{ __('buttons.save') }}</x-global::button>
                         </form>
                     </div>
 

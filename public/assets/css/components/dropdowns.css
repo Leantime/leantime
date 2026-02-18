@@ -181,7 +181,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .dropdown img {
     width:23px;
-    border-radius: 12px;
+    border-radius: var(--input-radius);
     border: 1px solid var(--neutral);
     margin-top:1px;
     padding:1px;
@@ -353,7 +353,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     width:15px;
     text-align:center;
     margin-right:5px;
-    border-radius:5px;
+    border-radius:var(--box-radius-small);
 }
 
 .maincontent .accordionTitle:hover i,
@@ -506,7 +506,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     color: var(--primary-font-color);
     background-color: var(--secondary-background);
     border: 1px solid var(--secondary-background);
-    border-radius: 3px;
+    border-radius: var(--box-radius-small);
 }
 
 .btn-group .btn.titleIconPicker:hover {
@@ -604,7 +604,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     line-height: 20px;
     text-align: center;
     padding-top: 1px;
-    border-radius: 5px;
+    border-radius: var(--box-radius-small);
 }
 
 .inlineDropDownContainer > a.btn {

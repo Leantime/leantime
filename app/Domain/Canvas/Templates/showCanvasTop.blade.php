@@ -79,8 +79,7 @@
         <div class="tw:flex tw:justify-between tw:items-center">
             <div>
                 @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
-                    <a href="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $elementName }}"
-                       class="btn btn-primary" id="{{ $elementName }}">{!! $tpl->__('links.add_new_canvas_item' . $canvasName) !!}</a>
+                    <x-global::button link="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $elementName }}" type="primary" id="{{ $elementName }}">{!! $tpl->__('links.add_new_canvas_item' . $canvasName) !!}</x-global::button>
                 @endif
             </div>
 

@@ -16,7 +16,7 @@
                 <span style="font-size:18px; color:var(--main-titles-color););">
                    {{ __("text.project_hub_intro") }}
                     @if ($login::userIsAtLeast("manager"))
-                        <br /><br /><a class="btn btn-default" href="#/projects/createnew">{!! __("menu.create_something_new") !!}</a>
+                        <br /><br /><x-global::button link="#/projects/createnew" type="secondary">{!! __("menu.create_something_new") !!}</x-global::button>
                     @endif
                 </span>
                 <br />
@@ -74,7 +74,7 @@
                         {{ __('notifications.not_assigned_to_any_project') }}
                         @if($login::userIsAtLeast($roles::$manager))
                             <br /><br />
-                            <a href='{{ BASE_URL }}/projects/newProject' class='btn btn-primary'>{{ __('link.new_project') }}</a>
+                            <x-global::button link="{{ BASE_URL }}/projects/newProject" type="primary">{{ __('link.new_project') }}</x-global::button>
                         @endif
                     </div>
                 </div>

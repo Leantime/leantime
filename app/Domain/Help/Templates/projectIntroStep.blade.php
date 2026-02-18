@@ -7,7 +7,7 @@
                 <p>{!!  __('text.get_organized_with_projects') !!}</p>
                 <br />
                 <label>{{ __('label.start_with_project_title') }}</label>
-                <input type="text" id="projectName" name="projectname" value="" placeholder="" style="width:100%;"/><br />
+                <x-global::forms.input id="projectName" name="projectname" value="" placeholder="" style="width:100%;" /><br />
 
             </div>
             <div>
@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="tw:text-right">
-            <input type="submit" value="{{ __('buttons.next') }}" />
+            <x-global::button submit type="primary">{{ __('buttons.next') }}</x-global::button>
         </div>
     </form>
 </div>

@@ -17,7 +17,7 @@
         {!! $tpl->displayNotification() !!}
 
         @if($login::userIsAtLeast('manager'))
-             <a class="btn btn-primary" href="{{ BASE_URL }}/clients/newClient"><i class='fa fa-plus'></i> {{ __('link.new_client') }}</a>
+             <x-global::button link="{{ BASE_URL }}/clients/newClient" type="primary" icon="fa fa-plus">{{ __('link.new_client') }}</x-global::button>
         @endif
 
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allClientsTable">

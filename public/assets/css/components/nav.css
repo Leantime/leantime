@@ -412,8 +412,6 @@ a.barmenu:hover {
 }
 
 .nav-tabs > li > a {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: 0;
 }
 
@@ -775,7 +773,7 @@ a.barmenu:hover {
     float:left;
     margin-right:10px;
 
-    border-radius:5px;
+    border-radius:var(--box-radius-small);
 }
 
 .projectselector ul.selectorList li .fas {
@@ -828,7 +826,7 @@ a.barmenu:hover {
     margin-left: 9px;
     margin-right: 3px;
     margin-top: 15px;
-    border-radius: 5px;
+    border-radius: var(--box-radius-small);
     min-height: 20px;
 }
 
@@ -1255,14 +1253,14 @@ a.barmenu:hover {
 
 .maincontentinner.tabs ul li.active {
     box-shadow: var(--regular-shadow);
-    border-radius: 5px;
+    border-radius: var(--box-radius-small);
     background:var(--secondary-background);
 }
 
 .maincontentinner.tabs ul li a {
     font-weight:bold;
     padding:5px 16px; /*Other buttons have 1px borders so this makes up for it */
-    border-radius: 5px;
+    border-radius: var(--box-radius-small);
     line-height:21px;
     display:block;
     color:var(--primary-font-color);
@@ -1304,7 +1302,7 @@ a.barmenu:hover {
 .headerinner .bigProjectSelector .projectAvatar img{
     max-height:30px;
     margin:10px 5px 0px 0px;
-    border-radius:3px;
+    border-radius:var(--box-radius-small);
     float:left;
 }
 
@@ -1409,8 +1407,6 @@ a.barmenu:hover {
 }
 
 .navbar-search .search-query {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: 0;
 }
 

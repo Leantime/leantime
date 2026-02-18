@@ -45,10 +45,10 @@
                             >{{ __($row) }}</option>
                         @endforeach
                     </select>
-                    <input type="submit" value="{{ __('buttons.search') }}" class="reload" style="margin-top:5px;" />
+                    <x-global::button submit type="primary" class="reload" style="margin-top:5px;">{{ __('buttons.search') }}</x-global::button>
                 </div>
                 <div class="tw:flex tw:items-center tw:gap-2">
-                    <a href="javascript:void(0);" id="addHoursBtn" class="btn btn-primary"><i class="fa fa-plus"></i> {{ __('label.add_hours') }}</a>
+                    <x-global::button link="javascript:void(0);" type="primary" id="addHoursBtn"><i class="fa fa-plus"></i> {{ __('label.add_hours') }}</x-global::button>
                     <div class="btn-group viewDropDown">
                         <button class="btn dropdown-toggle" data-toggle="dropdown">
                             {!! __('links.list_view') !!} {!! __('links.view') !!}
@@ -210,11 +210,11 @@
                             </div>
                         </td>
                         <td>
-                            <select class="kind-select" name="newKindId" style="width:100%;">
+                            <x-global::forms.select class="kind-select" name="newKindId" style="width:100%;">
                                 @foreach ($tpl->get('kind') as $key => $kindRow)
                                     <option value="{{ $key }}">{{ __($kindRow) }}</option>
                                 @endforeach
-                            </select>
+                            </x-global::forms.select>
                         </td>
                         <td>
                             <input type="text"
@@ -225,7 +225,7 @@
                                    style="width:50px; text-align:right;" />
                         </td>
                         <td>
-                            <input type="text" name="newDescription" placeholder="{{ __('label.description') }}" style="width:100%;" />
+                            <x-global::forms.input name="newDescription" placeholder="{{ __('label.description') }}" style="width:100%;" />
                         </td>
                         <td>--</td>
                     </tr>
@@ -239,7 +239,7 @@
                 </tfoot>
             </table>
             <div class="right">
-                <input type="submit" name="saveTimeSheet" class="saveTimesheetBtn btn btn-primary" value="{{ __('buttons.save') }}" />
+                <x-global::button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">{{ __('buttons.save') }}</x-global::button>
             </div>
             <div class="clearall"></div>
         </form>

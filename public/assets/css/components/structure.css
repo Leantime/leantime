@@ -501,7 +501,7 @@ body {
     text-align: center;
     white-space: nowrap;
     vertical-align: baseline;
-    border-radius: 10px;
+    border-radius: var(--box-radius);
 }
 
 /* Alert base */

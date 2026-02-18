@@ -47,10 +47,10 @@ $hasError = $isActive && ! empty($reopenState['error']);
 
         <div class="form-group">
             <label for="headline-{{ $statusId }}-{{ $swimlaneKey ?? 'default' }}" class="sr-only">Task name</label>
-            <input type="text"
+            <x-global::forms.input
                    name="headline"
                    id="headline-{{ $statusId }}-{{ $swimlaneKey ?? 'default' }}"
-                   class="form-control quickAddInput {{ $hasError ? 'error' : '' }}"
+                   class="quickAddInput {{ $hasError ? 'error' : '' }}"
                    placeholder="What are you working on? ↵"
                    value="{{ e($savedHeadline) }}"
                    {{ $isActive ? 'autofocus' : '' }}
@@ -66,11 +66,11 @@ $hasError = $isActive && ! empty($reopenState['error']);
         </div>
 
         <div class="formButtonContainer">
-            <button type="submit" class="btn btn-primary" onclick="this.closest('form').dataset.submitting = 'true'; this.closest('form').querySelector('[data-stay-open-input]').value = '0';">Save</button>
-            <button type="button" class="btn btn-secondary"
+            <x-global::button submit type="primary" onclick="this.closest('form').dataset.submitting = 'true'; this.closest('form').querySelector('[data-stay-open-input]').value = '0';">Save</x-global::button>
+            <x-global::button tag="button" type="secondary"
                     onclick="leantime.kanbanController.toggleQuickAdd(this.closest('.quickaddContainer').querySelector('.quickAddLink'))">
                 Cancel
-            </button>
+            </x-global::button>
             <i class="fa fa-circle-question quickAddHelp"
                tabindex="0"
                title="Enter: Save and close&#10;Shift+Enter: Save and add another&#10;Esc: Cancel"

@@ -82,7 +82,7 @@
 </select> <br />
 
 <label for="projects">{{ __('label.project') }}</label>
-<select name="projects" id="projects" class="project-select">
+<x-global::forms.select name="projects" id="projects" class="project-select">
     <option value="all">{{ __('headline.all_projects') }}</option>
 
     @foreach ($tpl->get('allProjects') as $row)
@@ -92,11 +92,11 @@
             @endif
         >{{ $row['name'] }}</option>
     @endforeach
-</select> <br />
+</x-global::forms.select> <br />
 
 <div id="ticketSelect">
 <label for="tickets">{{ __('label.ticket') }}</label>
-<select name="tickets" id="tickets" class="ticket-select">
+<x-global::forms.select name="tickets" id="tickets" class="ticket-select">
 
     @foreach ($tpl->get('allTickets') as $row)
         <option class="project_{{ $row['projectId'] }}" data-value="{{ $row['projectId'] }}" value="{{ $row['id'] }}"
@@ -106,9 +106,9 @@
         >{{ $row['headline'] }}</option>
     @endforeach
 
-</select> <br />
+</x-global::forms.select> <br />
 </div>
-    <label for="kind">{{ __('label.kind') }}</label> <select id="kind"
+    <label for="kind">{{ __('label.kind') }}</label> <x-global::forms.select id="kind"
     name="kind">
     @foreach ($tpl->get('kind') as $key => $row)
         <option value="{{ $key }}"
@@ -118,12 +118,12 @@
         >{{ __($row) }}</option>
     @endforeach
 
-</select><br />
+</x-global::forms.select><br />
 <label for="date">{{ __('label.date') }}</label> <input type="text" autocomplete="off"
     id="datepicker" name="date" value="{{ format(value: $values['date'], fromFormat: FromFormat::DbDate)->date() }}" size="7" />
 <br />
-<label for="hours">{{ __('label.hours') }}</label> <input
-    type="text" id="hours" name="hours"
+<label for="hours">{{ __('label.hours') }}</label> <x-global::forms.input
+    name="hours" id="hours"
     value="{{ $values['hours'] }}" size="7" /> <br />
 <label for="description">{{ __('label.description') }}</label> <textarea
     rows="5" cols="50" id="description" name="description">{{ $values['description'] }}</textarea><br />
@@ -183,6 +183,6 @@
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
         <a class="delete editTimeModal tw:float-right" href="{{ BASE_URL }}/timesheets/delTime/{{ e($_GET['id']) }}">{{ __('links.delete') }}</a>
-        <input type="submit" value="{{ __('buttons.save') }}" name="save" class="button" />
+        <x-global::button submit type="primary" name="save">{{ __('buttons.save') }}</x-global::button>
     </p>
 </form>

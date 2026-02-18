@@ -78,7 +78,7 @@
                             </select> <br/>
 
                             <label for="tickets">{{ __('TICKET') }}</label>
-                            <select name="tickets" id="tickets">
+                            <x-global::forms.select name="tickets" id="tickets">
 
                                 @foreach ($tpl->get('allTickets') as $row)
                                     <option class="{{ $row['projectId'] }}" value="{{ $row['projectId'] }}|{{ $row['id'] }}"
@@ -88,9 +88,9 @@
                                     >{{ $row['headline'] }}</option>
                                 @endforeach
 
-                            </select> <br/>
+                            </x-global::forms.select> <br/>
                             <br/>
-                            <label for="kind">{{ __('KIND') }}</label> <select id="kind"
+                            <label for="kind">{{ __('KIND') }}</label> <x-global::forms.select id="kind"
                                                                                               name="kind">
                                 @foreach ($tpl->get('kind') as $row)
                                     <option value="{{ $row }}"
@@ -100,15 +100,15 @@
                                     >{{ __($row) }}</option>
                                 @endforeach
 
-                            </select><br/>
+                            </x-global::forms.select><br/>
                             <label for="date">{{ __('DATE') }}</label> <input type="text" autocomplete="off"
                                                                                              id="date" name="date"
                                                                                              value="{{ $values['date'] }}"
                                                                                              size="7"/>
                             <br/>
-                            <label for="hours">{{ __('HOURS') }}</label> <input
-                                    type="text" id="hours" name="hours"
-                                    value="{{ $values['hours'] }}" size="7"/> <br/>
+                            <label for="hours">{{ __('HOURS') }}</label> <x-global::forms.input
+                                    name="hours" id="hours"
+                                    value="{{ $values['hours'] }}" size="7" /> <br/>
                             <label for="description">{{ __('DESCRIPTION') }}</label> <textarea
                                     rows="5" cols="50" id="description"
                                     name="description">{{ $values['description'] }}</textarea><br/>
@@ -155,10 +155,7 @@
 
 
                             @endif
-                            <input type="submit" value="{{ __('SAVE') }}"
-                                              name="save" class="button"/> <input type="submit"
-                                                                                  value="{{ __('SAVE_NEW') }}"
-                                                                                  name="saveNew" class="button"/>
+                            <x-global::button submit type="primary" name="save">{{ __('SAVE') }}</x-global::button> <x-global::button submit type="primary" name="saveNew">{{ __('SAVE_NEW') }}</x-global::button>
 
 
         </form>

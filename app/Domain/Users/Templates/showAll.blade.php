@@ -17,7 +17,7 @@
 
         <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
             <div>
-                <a href="{{ BASE_URL }}/users/newUser" class="btn btn-primary userEditModal"><i class='fa fa-plus'></i> {{ __('buttons.add_user') }} </a>
+                <x-global::button link="{{ BASE_URL }}/users/newUser" type="primary" class="userEditModal" icon="fa fa-plus">{{ __('buttons.add_user') }}</x-global::button>
             </div>
             <div class="tw:text-right">
             </div>

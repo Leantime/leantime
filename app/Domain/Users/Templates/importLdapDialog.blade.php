@@ -15,14 +15,14 @@
             @endforeach
             <br />
             <input type="hidden" name="importSubmit" value="1"/>
-            <input type="submit" value="{{ __('buttons.import') }}" />
+            <x-global::button submit type="primary">{{ __('buttons.import') }}</x-global::button>
         </form>
     @else
         <form class="importModal userImportModal" method="post" action="{{ BASE_URL }}/users/import">
             <label>{{ __('label.please_enter_password') }} </label>
-            <input type="password" name="password" />
+            <x-global::forms.input type="password" name="password" />
             <input type="hidden" name="pwSubmit" value="1"/>
-            <input type="submit" value="{{ __('buttons.find_users') }}" />
+            <x-global::button submit type="primary">{{ __('buttons.find_users') }}</x-global::button>
         </form>
     @endif
 

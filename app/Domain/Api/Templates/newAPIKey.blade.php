@@ -12,8 +12,8 @@
 {!! $tpl->displayNotification() !!}
     @if ($apiKeyValues !== false && isset($apiKeyValues['id']))
         <p>Your API Key was successfully created. Please copy the key below. This is your only chance to copy it.</p>
-        <input type="text" id="apiKey" value="lt_{{ $apiKeyValues['user'] }}_{{ $apiKeyValues['passwordClean'] }}"  style="width:100%;"/>
-        <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('apiKey');">{{ $tpl->__('links.copy_key') }}</button>
+        <x-global::forms.input id="apiKey" name="apiKey" value="lt_{{ $apiKeyValues['user'] }}_{{ $apiKeyValues['passwordClean'] }}" style="width:100%;" />
+        <x-global::button tag="button" type="primary" onclick="leantime.snippets.copyUrl('apiKey');">{{ $tpl->__('links.copy_key') }}</x-global::button>
     @else
     <form action="{{ BASE_URL }}/api/newApiKey" method="post" class="stdform formModal">
 
@@ -25,23 +25,21 @@
                 <h4 class="widgettitle title-light">{{ $tpl->__('label.basic_information') }}</h4>
 
                 <label for="firstname">{{ $tpl->__('label.key_name') }}</label><div class="clearfix"></div>
-                    <input
-                    type="text" name="firstname" id="firstname"
-                    value="" /><br />
+                    <x-global::forms.input name="firstname" id="firstname" value="" /><br />
 
 
                 <label for="role">{{ $tpl->__('label.role') }}</label><div class="clearfix"></div>
-                <select name="role" id="role">
+                <x-global::forms.select name="role" id="role">
                     @foreach ($tpl->get('roles') as $key => $role)
                         <option value="{{ $key }}"
                             @if ($key == $values['role']) selected="selected" @endif>
                             {{ $tpl->__('label.roles.' . $role) }}
                         </option>
                     @endforeach
-                </select> <br />
+                </x-global::forms.select> <br />
 
                 <label for="status">{{ $tpl->__('label.status') }}</label><div class="clearfix"></div>
-                <select name="status" id="status">
+                <x-global::forms.select name="status" id="status">
                     <option value="a"
                         @if (strtolower($values['status']) == 'a') selected="selected" @endif>
                         {{ $tpl->__('label.active') }}
@@ -51,12 +49,12 @@
                         @if (strtolower($values['status']) == '') selected="selected" @endif>
                         {{ $tpl->__('label.deactivated') }}
                     </option>
-                </select>
+                </x-global::forms.select>
 
                     <div class="clearfix"></div>
 
                 <p class="stdformbutton">
-                    <input type="submit" name="save" id="save" value="{{ $tpl->__('buttons.save') }}" class="button" />
+                    <x-global::button submit type="primary" name="save" id="save">{{ $tpl->__('buttons.save') }}</x-global::button>
                 </p>
 
             </div>

@@ -28,7 +28,7 @@
 
                         <div>
                             <div class="form-group">
-                                <input type="text" name="name" id="name" class="main-title-input" style="width:99%" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}"/>
+                                <x-global::forms.input name="name" id="name" class="main-title-input" style="width:99%" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
                             </div>
                             <input type="hidden" name="projectState" id="projectState" value="0" />
 
@@ -46,7 +46,7 @@
                                         <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('buttons.delete') }}</a>
                                     </div>
                                 @endif
-                                <input type="submit" name="save" id="save" class="button" value="{{ __('buttons.save') }}" />
+                                <x-global::button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-global::button>
                             </div>
                         </div>
 
@@ -55,12 +55,12 @@
                             @if($tpl->get('projectTypes') && count($tpl->get('projectTypes')) > 1)
                                 <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
                                 <p>The type of the project. This will determine which features are available.</p>
-                                <select name="type">
+                                <x-global::forms.select name="type">
                                     @foreach($tpl->get('projectTypes') as $key => $type)
                                         <option value="{{ e($key) }}"
                                             {{ $project['type'] == $key ? "selected='selected'" : '' }}>{{ __(e($type)) }}</option>
                                     @endforeach
-                                </select>
+                                </x-global::forms.select>
                                 <br /><br />
                             @endif
 
@@ -87,12 +87,12 @@
                                 <div class="">
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-building"></span>{{ __('label.client_product') }}</h4>
-                                    <select name="clientId" id="clientId">
+                                    <x-global::forms.select name="clientId" id="clientId">
                                         @foreach($tpl->get('clients') as $row)
                                             <option value="{{ $row['id'] }}"
                                                 {{ $project['clientId'] == $row['id'] ? 'selected=selected' : '' }}>{{ e($row['name']) }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                                     @if($login::userIsAtLeast('manager'))
                                         <br /><a href="{{ BASE_URL }}/clients/newClient" target="_blank">{{ __('label.client_not_listed') }}</a>
                                     @endif
@@ -106,11 +106,11 @@
                                     {{ __('text.who_can_access') }}
                                     <br /><br />
 
-                                    <select name="globalProjectUserAccess" style="max-width:300px;">
+                                    <x-global::forms.select name="globalProjectUserAccess" style="max-width:300px;">
                                         <option value="restricted" {{ $project['psettings'] == 'restricted' ? "selected='selected'" : '' }}>{{ __('labels.only_chose') }}</option>
                                         <option value="clients" {{ $project['psettings'] == 'clients' ? "selected='selected'" : '' }}>{{ __('labels.everyone_in_client') }}</option>
                                         <option value="all" {{ $project['psettings'] == 'all' ? "selected='selected'" : '' }}>{{ __('labels.everyone_in_org') }}</option>
-                                    </select>
+                                    </x-global::forms.select>
 
                                 </div>
                             </div>

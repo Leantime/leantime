@@ -129,11 +129,11 @@
                                 @foreach ((array) $plugin as $prop => $value)
                                     <input type="hidden" name="plugin[{{ $prop }}]" value="{{ is_array($value) || is_object($value) ? json_encode($value) : $value }}" />
                                 @endforeach
-                                <select class="!tw:mb-none !tw:p-[4px]" name="plugin[version]">
+                                <x-global::forms.select class="!tw:mb-none !tw:p-[4px]" name="plugin[version]">
                                     @foreach ($plugin->compatibility as $compatibility)
                                         <option value="{{ $compatibility['version_number'] }}">{{ $compatibility['version_number'] }}</option>
                                     @endforeach
-                                </select>
+                                </x-global::forms.select>
                                 <input class="!tw:mb-none !tw:p-[4px]" type="text" name="plugin[license]" placeholder="License Key" />
                                 <x-global::button
                                     :tag="'button'"

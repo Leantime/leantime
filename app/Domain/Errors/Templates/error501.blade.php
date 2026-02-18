@@ -5,8 +5,8 @@
     <span class="animate2 bounceIn">0</span>
     <span class="animate3 bounceIn">1</span>
     <div class="errorbtns animate4 fadeInUp">
-        <a onclick="history.back()" class="btn btn-default">{{ $tpl->__('buttons.back') }}</a>
-        <a href="{{ BASE_URL }}" class="btn btn-primary">{{ $tpl->__('links.dashboard') }}</a>
+        <x-global::button link="#" type="secondary" onclick="history.back()">{{ $tpl->__('buttons.back') }}</x-global::button>
+        <x-global::button link="{{ BASE_URL }}" type="primary">{{ $tpl->__('links.dashboard') }}</x-global::button>
     </div><br/><br/><br/><br/>
 
 </div>

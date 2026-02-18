@@ -5,9 +5,9 @@
             <h1>{{ __('headlines.invite_crew') }}</h1>
             <p>{{ __('text.invite_team') }}</p>
             <br />
-            <input type="email" name="email1" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;"/><br />
-            <input type="email" name="email2" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;"/><br />
-            <input type="email" name="email3" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;"/><br />
+            <x-global::forms.input type="email" name="email1" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;" /><br />
+            <x-global::forms.input type="email" name="email2" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;" /><br />
+            <x-global::forms.input type="email" name="email3" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;" /><br />
             <br />
         </div>
         <div>
@@ -17,8 +17,8 @@
         </div>
     </div>
     <div class="tw:text-right">
-        <a href="javascript:void(0);"  class="btn btn-secondary" onclick="jQuery.nmTop().close();">{{ __('links.skip_for_now') }}</a>
-        <input type="submit" value="{{ __('buttons.lets_go') }}"/>
+        <x-global::button link="javascript:void(0);" type="secondary" onclick="jQuery.nmTop().close();">{{ __('links.skip_for_now') }}</x-global::button>
+        <x-global::button submit type="primary">{{ __('buttons.lets_go') }}</x-global::button>
     </div>
 
 </form>

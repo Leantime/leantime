@@ -29,14 +29,14 @@
             </div>
             <div>
 
-                <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
+                <x-global::button tag="button" type="secondary" class="fc-next-button right" style="margin-right:5px;">
                     <span class="fc-icon fc-icon-chevron-right"></span>
-                </button>
-                <button class="fc-prev-button btn btn-default right" type="button" style="margin-right:5px;">
+                </x-global::button>
+                <x-global::button tag="button" type="secondary" class="fc-prev-button right" style="margin-right:5px;">
                     <span class="fc-icon fc-icon-chevron-left"></span>
-                </button>
+                </x-global::button>
 
-                <button class="fc-today-button btn btn-default right" style="margin-right:5px;">today</button>
+                <x-global::button tag="button" type="secondary" class="fc-today-button right" style="margin-right:5px;">today</x-global::button>
 
                 <select id="my-select" style="margin-right:5px;" class="right">
                     <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'timeGridDay' ? 'selected' : '' }}>Day</option>

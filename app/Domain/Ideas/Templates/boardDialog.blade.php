@@ -10,17 +10,17 @@
     </div>
     <div class="modal-body">
         <label>{{ $tpl->__('label.title_new') }}</label><br />
-        <input type="text" name="canvastitle" value="{{ $tpl->escape($canvasTitle) }}" placeholder="{{ $tpl->__('input.placeholders.enter_title_for_board') }}"
-               style="width: 100%"/>
+        <x-global::forms.input name="canvastitle" value="{{ $tpl->escape($canvasTitle) }}" placeholder="{{ $tpl->__('input.placeholders.enter_title_for_board') }}"
+               style="width: 100%" />
     </div>
     <div class="modal-footer">
         @if (isset($_GET['id']))
-            <input type="submit" class="btn btn-primary" value="{{ $tpl->__('buttons.save_board') }}" name="newCanvas" />
+            <x-global::button submit type="primary" name="newCanvas">{{ $tpl->__('buttons.save_board') }}</x-global::button>
             <input type="hidden" name="editCanvas" value="{{ (int) ($_GET['id'] ?? '') }}">
         @else
             <input type="hidden" name="newCanvas" value="true">
-            <input type="submit" class="btn btn-primary" value="{{ $tpl->__('buttons.create_board') }}" name="newCanvas" />
+            <x-global::button submit type="primary" name="newCanvas">{{ $tpl->__('buttons.create_board') }}</x-global::button>
         @endif
-        <button type="button" class="btn btn-default" onclick="jQuery.nmTop().close();">{{ $tpl->__('buttons.close') }}</button>
+        <x-global::button tag="button" type="secondary" onclick="jQuery.nmTop().close();">{{ $tpl->__('buttons.close') }}</x-global::button>
     </div>
 </form>

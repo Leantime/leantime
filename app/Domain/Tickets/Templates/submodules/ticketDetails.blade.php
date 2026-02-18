@@ -12,16 +12,15 @@
         <div class="marginBottom">
 
                 <div class="form-group">
-                    <input type="text" value="{{ e($ticket->headline) }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}"/>
+                    <x-global::forms.input value="{{ e($ticket->headline) }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
                 </div>
 
                 {{-- Status --}}
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.todo_status') }}</label>
                     <div class="">
-                        <select
+                        <x-global::forms.select
                             id="status-select"
-                            class=""
                             name="status"
                             data-placeholder="{{ isset($ticket->status) ? ($statusLabels[$ticket->status]['name'] ?? '') : '' }}"
                         >
@@ -30,7 +29,7 @@
                                     {{ $ticket->status == $key ? "selected='selected'" : '' }}
                                 >{{ e($label['name']) }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
@@ -38,14 +37,14 @@
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.priority') }}</label>
                     <div class="">
-                        <select id='priority' name='priority' class="">
+                        <x-global::forms.select id="priority" name="priority">
                             <option value="">{{ __('label.priority_not_defined') }}</option>
                             @foreach($tpl->get('priorities') as $priorityKey => $priorityValue)
                                 <option value="{{ $priorityKey }}"
                                     {{ $priorityKey == $ticket->priority ? "selected='selected'" : '' }}
                                 >{{ $priorityValue }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
@@ -53,14 +52,14 @@
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.effort') }}</label>
                     <div class="">
-                        <select id='storypoints' name='storypoints' class="">
+                        <x-global::forms.select id="storypoints" name="storypoints">
                             <option value="">{{ __('label.effort_not_defined') }}</option>
                             @foreach($tpl->get('efforts') as $effortKey => $effortValue)
                                 <option value="{{ $effortKey }}"
                                     {{ $effortKey == $ticket->storypoints ? "selected='selected'" : '' }}
                                 >{{ $effortValue }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
@@ -124,7 +123,7 @@
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.tags') }}</label>
                     <div class="">
-                        <input type="text" value="{{ e($ticket->tags) }}" name="tags" id="tags" />
+                        <x-global::forms.input value="{{ e($ticket->tags) }}" name="tags" id="tags" />
                     </div>
                 </div>
                 <br />
@@ -142,8 +141,8 @@
                 <input type="hidden" name="saveTicket" value="1" />
                 <input type="hidden" id="saveAndCloseButton" name="saveAndCloseTicket" value="0" />
 
-                <input type="submit" name="saveTicket" class="saveTicketBtn" value="{{ __('buttons.save') }}"/>
-                <input type="submit" name="saveAndCloseTicket" class="btn btn-outline" onclick="jQuery('#saveAndCloseButton').val('1');" value="{{ __('buttons.save_and_close') }}"/>
+                <x-global::button submit type="primary" name="saveTicket" class="saveTicketBtn">{{ __('buttons.save') }}</x-global::button>
+                <x-global::button submit type="primary" :outline="true" name="saveAndCloseTicket" onclick="jQuery('#saveAndCloseButton').val('1');">{{ __('buttons.save_and_close') }}</x-global::button>
             </div>
         </div>
 
@@ -195,20 +194,20 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.todo_type') }}</label>
                         <div class="">
-                            <select id='type' name='type' class="span11">
+                            <x-global::forms.select id="type" name="type">
                                 @foreach($ticketTypes as $types)
                                     <option value="{{ strtolower($types) }}"
                                         {{ strtolower($types) == strtolower($ticket->type ?? '') ? "selected='selected'" : '' }}
                                     >{{ __('label.' . strtolower($types)) }}</option>
                                 @endforeach
-                            </select><br/>
+                            </x-global::forms.select><br/>
                         </div>
                     </div>
 
                     {{-- Project --}}
                     <div class="form-group">
                         <label class="control-label">{{ __('label.project') }}</label>
-                        <select name="projectId" class="tw:w-full">
+                        <x-global::forms.select name="projectId" class="tw:w-full">
                             @foreach($allAssignedprojects as $project)
                                 <option value="{{ $project['id'] }}"
                                     @if($ticket->projectId == $project['id'])
@@ -218,7 +217,7 @@
                                     @endif
                                 >{{ e($project['name']) }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
 
                     {{-- Milestones --}}
@@ -226,14 +225,14 @@
                         <label class="control-label">{{ __('label.milestone') }}</label>
                         <div class="">
                             <div class="form-group">
-                                <select name="milestoneid" class="span11">
+                                <x-global::forms.select name="milestoneid">
                                     <option value="">{{ __('label.not_assigned_to_milestone') }}</option>
                                     @foreach($tpl->get('milestones') as $milestoneRow)
                                         <option value="{{ $milestoneRow->id }}"
                                             {{ ($ticket->milestoneid == $milestoneRow->id) ? "selected='selected'" : '' }}
                                         >{{ e($milestoneRow->headline) }}</option>
                                     @endforeach
-                                </select>
+                                </x-global::forms.select>
                             </div>
                         </div>
                     </div>
@@ -242,7 +241,7 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.sprint') }}</label>
                         <div class="">
-                            <select id="sprint-select" class="span11" name="sprint"
+                            <x-global::forms.select id="sprint-select" name="sprint"
                                     data-placeholder="{{ $ticket->sprint }}">
                                 <option value="">{{ __('label.backlog') }}</option>
                                 @if($tpl->get('sprints'))
@@ -252,7 +251,7 @@
                                         >{{ e($sprintRow->name) }}</option>
                                     @endforeach
                                 @endif
-                            </select>
+                            </x-global::forms.select>
                         </div>
                     </div>
 
@@ -261,7 +260,7 @@
                         <label class="control-label">{{ __('label.related_to') }}</label>
                         <div class="">
                             <div class="form-group">
-                                <select name="dependingTicketId" class="span11">
+                                <x-global::forms.select name="dependingTicketId">
                                     <option value="">{{ __('label.not_related') }}</option>
                                     @if(is_array($tpl->get('ticketParents')))
                                         @foreach($tpl->get('ticketParents') as $ticketRow)
@@ -270,7 +269,7 @@
                                             >{{ e($ticketRow->headline) }}</option>
                                         @endforeach
                                     @endif
-                                </select>
+                                </x-global::forms.select>
                             </div>
                         </div>
                     </div>
@@ -316,8 +315,8 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.planned_hours') }} / {{ __('label.estimated_hours_remaining') }}</label>
                         <div class="">
-                            <input type="text" value="{{ e($ticket->planHours) }}" name="planHours" style="width:45px;"/>&nbsp;/&nbsp;
-                            <input type="text" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:45px;"/>
+                            <x-global::forms.input value="{{ e($ticket->planHours) }}" name="planHours" style="width:45px;" />&nbsp;/&nbsp;
+                            <x-global::forms.input value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:45px;" />
                             <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
                                 &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
                             </a>

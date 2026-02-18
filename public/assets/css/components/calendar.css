@@ -20,7 +20,7 @@
     align-items: center;
     justify-content: center;
     padding: 5px 4px;
-    border-radius: 8px;
+    border-radius: var(--box-radius);
     border: 2px solid transparent;
     background: var(--secondary-background);
     box-shadow: var(--min-shadow);
@@ -413,7 +413,7 @@
 
 .fc-timegrid-event,
 .fc-timegrid-more-link {
-    border-radius: 5px;
+    border-radius: var(--box-radius-small);
     font-size: var(--fc-small-font-size);
 }
 

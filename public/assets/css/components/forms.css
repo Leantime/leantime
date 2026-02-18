@@ -66,7 +66,7 @@ body input:focus {
 /* Tags */
 
 body div.tagsinput {
-    border:1px solid transparent;
+    border:1px solid var(--main-border-color);
     overflow:hidden;
 }
 
@@ -114,7 +114,7 @@ body div.tagsinput input {
 }
 
 body div.tagsinput span.tag {
-    border-radius: 12px;
+    border-radius: var(--input-radius);
     padding: 0px 10px;
     border: 0px solid var(--primary-color);
 }
@@ -152,7 +152,7 @@ div.tagsinput span.tag a {
 }
 
 .ss-main .ss-multi-selected .ss-values .ss-value {
-    border-radius: 12px;
+    border-radius: var(--input-radius);
     padding: 0px 10px;
     margin: 0px;
     border: 0px solid var(--primary-color);
@@ -470,7 +470,7 @@ body input[type='submit'].btn-primary .caret,
     padding: 6px 20px 6px 5px;
     border: 0px solid #aaa;
     max-width: 100%;
-    border-radius: 3px;
+    border-radius: var(--box-radius-small);
     background-color: var(--accent1);
     color: var(--accent1-color);
     background-image: none;
@@ -506,16 +506,12 @@ a:link.btn{
 }
 
 .btn-small {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: var(--element-radius);
     font-size: var(--base-font-size);
     text-transform: uppercase;
 }
 
 .btn-large {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: var(--element-radius);
     font-size: var(--font-size-l);
     padding: 10px 20px !important;
@@ -678,7 +674,7 @@ select,
     margin: 3px 0 2px 3px;
     position: relative;
     cursor: default;
-    border-radius:12px;
+    border-radius:var(--input-radius);
     font-size:var(--font-size-s);
 }
 
@@ -768,7 +764,7 @@ input[type=color] {
     background-color: var(--input-background);
     line-height:21px;
     border: 1px solid var(--main-border-color);
-    border-radius: 3px;
+    border-radius: var(--box-radius-small);
     padding: 6px 12px;
     color:var(--primary-font-color);
 }
@@ -1820,7 +1816,7 @@ input[type=number].hide-controls {
     text-align:center;
     padding: 4px 8px;
     background: #f5f5f5;
-    border-radius: 4px;
+    border-radius: var(--box-radius-small);
     cursor: pointer;
 }
 
@@ -1850,7 +1846,7 @@ input[type=number].hide-controls {
 .dropdown-form {
     background: white;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: var(--box-radius-small);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     min-width: 300px;
     position: absolute;

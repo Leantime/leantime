@@ -36,12 +36,12 @@
                     <div class="tw:flex-1" style="background:var(--header-gradient); color:var(--main-titles-color); padding:15px; border-radius:var(--box-radius);">
                         <strong style="margin-bottom:5px;  display:block; color:var(--main-titles-color);">Direct Sponsorship through Github</strong>
                         Fund open source development that benefits everyone<br /><br />
-                        <a href="https://github.com/sponsors/Leantime" class="btn btn-primary" target="_blank" style="background:var(--main-titles-color); color:var(--accent1);">Sponsor Leantime</a>
+                        <x-global::button link="https://github.com/sponsors/Leantime" type="primary" target="_blank" style="background:var(--main-titles-color); color:var(--accent1);">Sponsor Leantime</x-global::button>
                     </div>
                     <div class="tw:flex-1" style="background:var(--header-gradient); color:var(--main-titles-color); padding:15px; border-radius:var(--box-radius);">
                         <strong style="margin-bottom:5px;  display:block; color:var(--main-titles-color);">Purchase Plugins</strong>
                         Get advanced features while supporting development<br /><br />
-                        <a href="{{ BASE_URL }}/plugins/marketplace" class="btn btn-primary" style="background:var(--main-titles-color); color:var(--accent1);" target="_blank">Browse Marketplace</a>
+                        <x-global::button link="{{ BASE_URL }}/plugins/marketplace" type="primary" style="background:var(--main-titles-color); color:var(--accent1);" target="_blank">Browse Marketplace</x-global::button>
                     </div>
                 </div>
 
@@ -145,7 +145,7 @@
                         <h1 class="fancyLink">Ready to make a direct impact?</h1><p>Every contribution—from $1 to $100—goes directly to making Leantime better for everyone.</p>
                         <br />
                         <div class="tw:text-center">
-                            <a href="https://github.com/sponsors/Leantime" class="btn btn-primary btn-lg" target="_blank">Start Sponsoring Today</a>
+                            <x-global::button link="https://github.com/sponsors/Leantime" type="primary" size="lg" target="_blank">Start Sponsoring Today</x-global::button>
                         </div>
                     </center>
                 </div>

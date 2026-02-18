@@ -26,10 +26,10 @@
 <form class="formModal" method="post" action="{{ BASE_URL }}/tickets/editMilestone/{{ $currentMilestone->id }}" style="min-width: 250px;">
 
     <label>{{ __('label.milestone_title') }}</label>
-    <input type="text" name="headline" value="{{ e($currentMilestone->headline) }}" placeholder="{{ __('label.milestone_title') }}"/><br />
+    <x-global::forms.input name="headline" value="{{ e($currentMilestone->headline) }}" placeholder="{{ __('label.milestone_title') }}" /><br />
 
     <label class="control-label">{{ __('label.project') }}</label>
-    <select name="projectId" class="tw:w-full">
+    <x-global::forms.select name="projectId" class="tw:w-full">
         @foreach($allAssignedprojects as $project)
             @if(empty($project['type']) || $project['type'] == 'project')
                 <option value="{{ $project['id'] }}"
@@ -41,20 +41,20 @@
                 >{{ e($project['name']) }}</option>
             @endif
         @endforeach
-    </select>
+    </x-global::forms.select>
 
     <label>{{ __('label.todo_status') }}</label>
-    <select id="status-select" name="status" class="span11"
+    <x-global::forms.select id="status-select" name="status"
             data-placeholder="{{ isset($statusLabels[$currentMilestone->status]) ? $statusLabels[$currentMilestone->status]['name'] : '' }}">
         @foreach($statusLabels as $key => $label)
             <option value="{{ $key }}"
                 {{ $currentMilestone->status == $key ? "selected='selected'" : '' }}
             >{{ e($label['name']) }}</option>
         @endforeach
-    </select>
+    </x-global::forms.select>
 
     <label>{{ __('label.dependent_on') }}</label>
-    <select name="dependentMilestone" class="span11">
+    <x-global::forms.select name="dependentMilestone">
         <option value="">{{ __('label.no_dependency') }}</option>
         @foreach($tpl->get('milestones') as $milestoneRow)
             @if($milestoneRow->id !== $currentMilestone->id)
@@ -63,7 +63,7 @@
                 >{{ e($milestoneRow->headline) }}</option>
             @endif
         @endforeach
-    </select>
+    </x-global::forms.select>
 
     <label>{{ __('label.owner') }}</label>
     <select data-placeholder="{{ __('input.placeholders.filter_by_user') }}"
@@ -77,7 +77,7 @@
     </select>
 
     <label>{{ __('label.color') }}</label>
-    <input type="text" name="tags" autocomplete="off" value="{{ $currentMilestone->tags }}" placeholder="{{ __('input.placeholders.pick_a_color') }}" class="simpleColorPicker"/><br />
+    <x-global::forms.input name="tags" autocomplete="off" value="{{ $currentMilestone->tags }}" placeholder="{{ __('input.placeholders.pick_a_color') }}" class="simpleColorPicker" /><br />
 
     <label>{{ __('label.planned_start_date') }}</label>
     <input type="text" name="editFrom" autocomplete="off" value="{{ format($currentMilestone->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}" id="milestoneEditFrom" /><br />
@@ -87,7 +87,7 @@
 
     <div class="tw:flex tw:justify-between tw:items-start">
         <div>
-            <input type="submit" value="{{ __('buttons.save') }}" class="btn btn-primary tw:btn tw:btn-primary"/>
+            <x-global::button submit type="primary">{{ __('buttons.save') }}</x-global::button>
         </div>
         <div class="tw:text-right padding-top-sm">
         </div>

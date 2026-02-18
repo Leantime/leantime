@@ -8,7 +8,7 @@
     @dispatchEvent('afterFormOpen')
     <p>{{ __('text.confirm_calendar_deletion') }}</p><br />
     @dispatchEvent('beforeSubmitButton')
-    <button type="submit" class="btn btn-primary" id="saveAndClose" value="closeModal">{{ __('buttons.yes_delete') }}</button>
-    <a class="btn btn-primary" href="{{ BASE_URL }}/calendar/showMyCalendar">{{ __('buttons.back') }}</a>
+    <x-global::button submit type="danger" id="saveAndClose" value="closeModal">{{ __('buttons.yes_delete') }}</x-global::button>
+    <x-global::button link="{{ BASE_URL }}/calendar/showMyCalendar" type="primary">{{ __('buttons.back') }}</x-global::button>
     @dispatchEvent('beforeFormClose')
 </form>

@@ -2,6 +2,9 @@
     'asLink' => false,
     'color' => 'gray',
     'size' => null,
+    'icon' => null,
+    'bgColor' => null,
+    'dot' => false,
 ])
 
 @php
@@ -23,19 +26,29 @@
         'lg' => 'tw:badge-lg',
         default => '',
     };
+
+    $badgeClasses = 'tw:badge ' . $colorClass . ($sizeClass ? " $sizeClass" : '');
+    $inlineStyle = $bgColor ? "background-color: {$bgColor}; border-color: {$bgColor};" : '';
 @endphp
 
-@if ($asLink)
+@if($dot)
+    <span {{ $attributes->merge(['class' => 'tw:inline-flex tw:items-center tw:gap-1.5']) }}>
+        <span class="tw:inline-block tw:w-2.5 tw:h-2.5 tw:rounded-full {{ $colorClass }}" @if($inlineStyle) style="{{ $inlineStyle }}" @endif></span>
+        {{ $slot }}
+    </span>
+@elseif($asLink)
     <a {{ $attributes->merge([
-        'class' => 'tw:badge ' . $colorClass . ($sizeClass ? " $sizeClass" : ''),
+        'class' => $badgeClasses,
         'href' => $url ?? '#',
-    ]) }}>
+    ] + ($inlineStyle ? ['style' => $inlineStyle] : [])) }}>
+        @if($icon)<i class="{{ $icon }}"></i> @endif
         {{ $slot }}
     </a>
 @else
     <span {{ $attributes->merge([
-        'class' => 'tw:badge ' . $colorClass . ($sizeClass ? " $sizeClass" : ''),
-    ]) }}>
+        'class' => $badgeClasses,
+    ] + ($inlineStyle ? ['style' => $inlineStyle] : [])) }}>
+        @if($icon)<i class="{{ $icon }}"></i> @endif
         {{ $slot }}
     </span>
 @endif

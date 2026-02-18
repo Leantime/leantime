@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="tw:text-right">
-            <input type="submit" value="{{ __('buttons.next') }}" />
+            <x-global::button submit type="primary">{{ __('buttons.next') }}</x-global::button>
         </div>
     </form>
 </div>

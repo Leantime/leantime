@@ -14,7 +14,7 @@
             <h3>{{ $tpl->__("headlines.$canvasName.analysis") }}</h3>
             <br />{{ $tpl->__("text.$canvasName.helper_content") }}
             @if ($login::userIsAtLeast($roles::$editor))
-                <br /><br /><a href="javascript:void(0)" class="addCanvasLink btn btn-primary">{!! $tpl->__('links.icon.create_new_board') !!}</a>.
+                <br /><br /><x-global::button link="javascript:void(0)" type="primary" class="addCanvasLink">{!! $tpl->__('links.icon.create_new_board') !!}</x-global::button>.
             @endif
         </div>
     @endif

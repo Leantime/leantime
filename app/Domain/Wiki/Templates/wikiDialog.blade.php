@@ -20,13 +20,13 @@
 <form class="formModal" method="post" action="{{ BASE_URL }}/wiki/wikiModal/{{ $id }}">
 
     <label>{{ __('label.wiki_title') }}</label>
-    <input type="text" name="title" id="wikiTitle" value="{{ $tpl->escape($currentWiki->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}"/><br />
+    <x-global::forms.input name="title" id="wikiTitle" value="{{ $tpl->escape($currentWiki->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" /><br />
 
     <br />
 
     <div class="tw:flex tw:justify-between tw:items-center tw:gap-4">
         <div>
-            <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn"/>
+            <x-global::button submit type="primary" id="saveBtn">{{ __('buttons.save') }}</x-global::button>
         </div>
         <div class="tw:text-right padding-top-sm">
             @if (isset($currentWiki->id) && $currentWiki->id != '' && $login::userIsAtLeast($roles::$editor))

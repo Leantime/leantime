@@ -19,6 +19,6 @@
     </p>
     <br /><br />
 
-    <a href="{{ BASE_URL }}/valuecanvas/showCanvas" class="btn btn-primary">Create a Project Value Canvas</a><br />
+    <x-global::button link="{{ BASE_URL }}/valuecanvas/showCanvas" type="primary">Create a Project Value Canvas</x-global::button><br />
 
 </div>

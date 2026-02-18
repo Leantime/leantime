@@ -25,8 +25,7 @@
     <div id="comment0" class="commentBox">
         <textarea rows="5" cols="50" class="tiptapSimple"
                   name="text"></textarea><br/>
-        <input type="submit" value="{{ __('buttons.save') }}"
-               name="comment" class="btn btn-default btn-success tw:ml-0"/>
+        <x-global::button submit type="success" name="comment" class="tw:ml-0">{{ __('buttons.save') }}</x-global::button>
         <input type="hidden" name="comment" value="1"/>
         <input type="hidden" name="father" id="father" value="0"/>
         <br/>
@@ -65,9 +64,7 @@
                         <div class="tw:hidden"
                              id="comment{{ $row['id'] }}"
                              class="commentBox">
-                            <br/><input type="submit"
-                                        value="{{ __('links.reply') }}"
-                                        name="comment" class="btn btn-default"/>
+                            <br/><x-global::button submit type="secondary" name="comment">{{ __('links.reply') }}</x-global::button>
                         </div>
                     </div>
                     <div class="tw:clear-both"></div>
