@@ -77,7 +77,7 @@
     </select>
 
     <label>{{ __('label.color') }}</label>
-    <x-global::forms.input name="tags" autocomplete="off" value="{{ $currentMilestone->tags }}" placeholder="{{ __('input.placeholders.pick_a_color') }}" class="simpleColorPicker" /><br />
+    <input type="text" name="tags" autocomplete="off" value="{{ $currentMilestone->tags }}" placeholder="{{ __('input.placeholders.pick_a_color') }}" class="simpleColorPicker" /><br />
 
     <label>{{ __('label.planned_start_date') }}</label>
     <x-global::forms.date name="editFrom" id="milestoneEditFrom" value="{{ format($currentMilestone->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}" /><br />

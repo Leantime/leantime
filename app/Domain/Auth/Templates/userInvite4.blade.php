@@ -34,13 +34,13 @@
                     <i class="fa fa-clock"></i> Select my own
                 </label>
             </x-global::selectable>
-            <x-global::forms.select name="daySchedule-workStart" id="daySchedule-workStart" style="display:none; vertical-align: top;">
+            <select name="daySchedule-workStart" id="daySchedule-workStart" style="display:none; vertical-align: top;">
                 @foreach($dayHourOptions as $key => $value)
                     <option value="{{ $key }}">
                         {{ format($value['start'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time() }} - {{  format($value['end'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time()}}
                     </option>
                 @endforeach
-            </x-global::forms.select>
+            </select>
         </div>
         <br />
         <label>When do you normally take a lunch break from work?</label>
@@ -60,13 +60,13 @@
                     <i class="fa fa-clock"></i> Select my own
                 </label>
             </x-global::selectable>
-            <x-global::forms.select name="daySchedule-lunch" id="daySchedule-lunch" style="display:none; vertical-align: top;">
+            <select name="daySchedule-lunch" id="daySchedule-lunch" style="display:none; vertical-align: top;">
                 @foreach($dayHourOptions as $key => $value)
                     <option value="{{ $key }}">
                         {{ format($value['start'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time() }} - {{  format($value['end'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time()}}
                     </option>
                 @endforeach
-            </x-global::forms.select>
+            </select>
         </div>
         <br />
         <label>When do you normally end your work day? 🥳</label>
@@ -87,13 +87,13 @@
                     <i class="fa fa-clock"></i> Select my own
                 </label>
             </x-global::selectable>
-            <x-global::forms.select name="daySchedule-workEnd" id="daySchedule-workEnd" style="display:none; vertical-align: top;">
+            <select name="daySchedule-workEnd" id="daySchedule-workEnd" style="display:none; vertical-align: top;">
                 @foreach($dayHourOptions as $key => $value)
                     <option value="{{ $key }}">
                         {{ format($value['start'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time() }} - {{  format($value['end'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time()}}
                     </option>
                 @endforeach
-            </x-global::forms.select>
+            </select>
         </div>
 
         {{--        <div class="tw:flex">--}}

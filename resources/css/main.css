@@ -92,9 +92,9 @@
     position: fixed;
     inset: 0;
     z-index: 998;
-    background-color: rgba(0, 0, 0, 0.2);
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
+    background-color: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     cursor: pointer;
 }
 #modal-blur-overlay.active {

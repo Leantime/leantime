@@ -12,7 +12,7 @@
         <div class="marginBottom">
 
                 <div class="form-group">
-                    <x-global::forms.input value="{{ e($ticket->headline) }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
+                    <input type="text" value="{{ e($ticket->headline) }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
                 </div>
 
                 {{-- Status --}}
@@ -121,7 +121,7 @@
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.tags') }}</label>
                     <div class="">
-                        <x-global::forms.input value="{{ e($ticket->tags) }}" name="tags" id="tags" />
+                        <input type="text" value="{{ e($ticket->tags) }}" name="tags" id="tags" />
                     </div>
                 </div>
                 <br />

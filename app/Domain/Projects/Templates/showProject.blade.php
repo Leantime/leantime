@@ -265,7 +265,7 @@
                                         </div>
                                         <div>
                                             <label>{{ __('label.sortindex') }}</label>
-                                            <x-global::forms.input name="labelSort-{{ $key }}" id="labelSort-{{ $key }}" value="{{ e($ticketStatus['sortKey']) }}" class="sorter" style="width:50px;" />
+                                            <input type="text" name="labelSort-{{ $key }}" id="labelSort-{{ $key }}" value="{{ e($ticketStatus['sortKey']) }}" class="sorter" style="width:50px;" />
                                         </div>
                                         <div>
                                             <label>{{ __('label.label') }}</label>
@@ -340,7 +340,7 @@
         </div>
         <div>
             <label>{{ __('label.sortindex') }}</label>
-            <x-global::forms.input name="labelSort-XXNEWKEYXX" id="labelSort-XXNEWKEYXX" value="" class="sorter" style="width:50px;" />
+            <input type="text" name="labelSort-XXNEWKEYXX" id="labelSort-XXNEWKEYXX" value="" class="sorter" style="width:50px;" />
         </div>
         <div>
             <label>{{ __('label.label') }}</label>

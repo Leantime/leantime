@@ -3022,8 +3022,16 @@ body a.btn-link.btn-fancy:hover {
 
 
 .modal-backdrop {
-    display:none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100049;
 }
+.modal-backdrop.fade { opacity: 0; }
+.modal-backdrop.in { opacity: 1; }
 
 .projectBox {
     color:var(--primary-font-color);

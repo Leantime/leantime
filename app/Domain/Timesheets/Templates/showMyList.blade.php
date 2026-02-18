@@ -210,11 +210,11 @@
                             </div>
                         </td>
                         <td>
-                            <x-global::forms.select class="kind-select" name="newKindId" style="width:100%;">
+                            <select class="kind-select" name="newKindId" style="width:100%;">
                                 @foreach ($tpl->get('kind') as $key => $kindRow)
                                     <option value="{{ $key }}">{{ __($kindRow) }}</option>
                                 @endforeach
-                            </x-global::forms.select>
+                            </select>
                         </td>
                         <td>
                             <input type="text"
@@ -225,7 +225,7 @@
                                    style="width:50px; text-align:right;" />
                         </td>
                         <td>
-                            <x-global::forms.input name="newDescription" placeholder="{{ __('label.description') }}" style="width:100%;" />
+                            <input type="text" name="newDescription" placeholder="{{ __('label.description') }}" style="width:100%;" />
                         </td>
                         <td>--</td>
                     </tr>

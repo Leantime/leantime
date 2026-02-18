@@ -379,11 +379,11 @@ jQuery(document).ready(function(){
                                 </div>
                             </td>
                             <td width="14%">
-                                <x-global::forms.select class="kind-select" name="kindId">
+                                <select class="kind-select" name="kindId">
                                         @foreach ($tpl->get('kind') as $key => $kindRow)
                                             <option value="{{ $key }}">{{ __($kindRow) }}</option>
                                         @endforeach
-                                    </x-global::forms.select>
+                                    </select>
                             </td>
 
                             @php $i = 0; @endphp

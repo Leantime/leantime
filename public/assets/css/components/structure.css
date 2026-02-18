@@ -602,6 +602,8 @@ body {
     padding-bottom:10px;
     position: relative;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 
@@ -646,12 +648,14 @@ body {
 }
 
 .maincontent {
-    float: left;
     width: 100%;
     padding: 10px 15px;
     margin-top:-95px;
     position:relative;
     z-index:5;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
 }
 
 .maincontentinner {
@@ -663,8 +667,8 @@ body {
     padding:20px;
     margin-bottom:10px;
     box-shadow: var(--large-shadow);
-
     border: var(--glass-border);
+    flex: 1 1 auto;
 }
 
 .footer {

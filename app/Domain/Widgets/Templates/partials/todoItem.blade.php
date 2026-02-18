@@ -99,7 +99,7 @@
                         >
                             <input type="hidden" name="id" value="{{ $ticket['id'] }}"/>
                             <div>
-                                <x-global::forms.input name="headline" class="main-title-input"
+                                <input type="text" name="headline" class="main-title-input"
                                        style="font-size:var(--base-font-size); margin-bottom:0px"
                                        value="{{ $ticket['headline'] }}" />
                             </div>
@@ -230,7 +230,7 @@
             <input type="hidden" value="{{ format($ticket['dateToFinish'])->date() }}" name="dateToFinish"/>
             <div class="tw:flex tw:flex-row tw:gap-2">
                 <div class="tw:flex-grow">
-                    <x-global::forms.input name="headline" class="main-title-input"
+                    <input type="text" name="headline" class="main-title-input"
                            style="font-size:var(--base-font-size)"
                            placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                 </div>
@@ -286,7 +286,7 @@
                     />
                     <div class="tw:flex tw:flex-row tw:gap-2">
                         <div class="tw:flex-grow">
-                            <x-global::forms.input name="headline" class="main-title-input"
+                            <input type="text" name="headline" class="main-title-input"
                                    style="font-size:var(--base-font-size)"
                                    placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                         </div>

@@ -166,14 +166,14 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.planned_hours') }}</label>
                         <div class="">
-                            <x-global::forms.input value="{{ e($ticket->planHours) }}" name="planHours" style="width:90px;" />
+                            <input type="text" value="{{ e($ticket->planHours) }}" name="planHours" style="width:90px;" />
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label">{{ __('label.estimated_hours_remaining') }}</label>
                         <div class="">
-                            <x-global::forms.input value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:90px;" />
+                            <input type="text" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:90px;" />
                             <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
                                 &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
                             </a>
@@ -183,7 +183,7 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.booked_hours') }}</label>
                         <div class="">
-                            <x-global::forms.input :disabled="true"
+                            <input type="text" disabled
                                    name="bookedHours" value="{{ $tpl->get('timesheetsAllHours') }}" style="width:90px;" />
                         </div>
                     </div>
@@ -191,7 +191,7 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.actual_hours_remaining') }}</label>
                         <div class="">
-                            <x-global::forms.input :disabled="true" name="actualHoursRemaining" value="{{ $remainingHours }}" style="width:90px;" />
+                            <input type="text" disabled name="actualHoursRemaining" value="{{ $remainingHours }}" style="width:90px;" />
                         </div>
                     </div>
 

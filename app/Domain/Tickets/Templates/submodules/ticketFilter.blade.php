@@ -125,7 +125,7 @@
                 <div class="">
                     <div class="form-group">
                         <label class="inline">{{ __('label.search_term') }}</label>
-                        <x-global::forms.input name="termInput" id="termInput"
+                        <input type="text" name="termInput" id="termInput"
                                style="width: 230px"
                                value="{{ $searchCriteria['term'] }}"
                                placeholder="{{ __('label.search_term') }}" />

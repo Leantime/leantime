@@ -120,7 +120,7 @@
                 <tr>
                     <td>
                         <label for="clients">{{ __('label.client') }}</label>
-                        <x-global::forms.select name="clientId">
+                        <select name="clientId">
                             <option value="-1">{{ strip_tags(__('menu.all_clients')) }}</option>
                             @foreach ($tpl->get('allClients') as $client)
                                 <option value="{{ $client['id'] }}"
@@ -129,11 +129,11 @@
                                     @endif
                                 >{{ e($client['name']) }}</option>
                             @endforeach
-                        </x-global::forms.select>
+                        </select>
                     </td>
                     <td>
                         <label for="projects">{{ __('label.project') }}</label>
-                        <x-global::forms.select name="project" style="max-width:120px;">
+                        <select name="project" style="max-width:120px;">
                             <option value="-1">{{ strip_tags(__('menu.all_projects')) }}</option>
                             @foreach ($tpl->get('allProjects') as $project)
                                 <option value="{{ $project['id'] }}" data-client-id="{{ $project['clientId'] }}"
@@ -142,12 +142,12 @@
                                     @endif
                                 >{{ e($project['name']) }}</option>
                             @endforeach
-                        </x-global::forms.select>
+                        </select>
                     </td>
                     @if (! empty($tpl->get('allTickets')))
                     <td>
                         <label for="ticket">{{ __('label.ticket') }}</label>
-                            <x-global::forms.select name="ticket" style="max-width:120px;">
+                            <select name="ticket" style="max-width:120px;">
                                 <option value="-1">{{ strip_tags(__('menu.all_tickets')) }}</option>
                                 @foreach ($tpl->get('allTickets') as $ticket)
                                     <option value="{{ $ticket['id'] }}" data-project-id="{{ $ticket['projectId'] }}"
@@ -156,7 +156,7 @@
                                         @endif
                                     >{{ e($ticket['headline']) }}</option>
                                 @endforeach
-                            </x-global::forms.select>
+                            </select>
                     </td>
                     @endif
 
@@ -198,7 +198,7 @@
                     </td>
                     <td>
                         <label for="invEmpl">{{ __('label.invoiced') }}</label>
-                        <x-global::forms.select name="invEmpl" id="invEmpl" style="max-width:120px;">
+                        <select name="invEmpl" id="invEmpl" style="max-width:120px;">
                             <option value="all"
                                 @if ($tpl->get('invEmpl') == 'all' || ! $tpl->get('invEmpl'))
                                     selected="selected"
@@ -214,7 +214,7 @@
                                     selected="selected"
                                 @endif
                             >{{ __('label.invoiced_not') }}</option>
-                        </x-global::forms.select>
+                        </select>
                     </td>
                     <td>
                         <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
