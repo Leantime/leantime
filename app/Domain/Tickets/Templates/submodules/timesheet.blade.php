@@ -27,7 +27,7 @@
             </span>
 
             <label for="timesheetdate">{{ __('label.date') }}:</label>
-            <input type="text" id="timesheetdate" name="date" class="dates" value="{{ format($values['date'])->date() }}" /><br/>
+            <x-global::forms.date name="date" id="timesheetdate" value="{{ format($values['date'])->date() }}" /><br/>
 
             <label for="hours">{{ __('label.hours') }}</label>
             <span class="field">

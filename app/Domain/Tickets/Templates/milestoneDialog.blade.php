@@ -80,10 +80,10 @@
     <x-global::forms.input name="tags" autocomplete="off" value="{{ $currentMilestone->tags }}" placeholder="{{ __('input.placeholders.pick_a_color') }}" class="simpleColorPicker" /><br />
 
     <label>{{ __('label.planned_start_date') }}</label>
-    <input type="text" name="editFrom" autocomplete="off" value="{{ format($currentMilestone->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}" id="milestoneEditFrom" /><br />
+    <x-global::forms.date name="editFrom" id="milestoneEditFrom" value="{{ format($currentMilestone->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}" /><br />
 
     <label>{{ __('label.planned_end_date') }}</label>
-    <input type="text" name="editTo" autocomplete="off" value="{{ format($currentMilestone->editTo)->date() }}" placeholder="{{ __('language.dateformat') }}" id="milestoneEditTo" /><br />
+    <x-global::forms.date name="editTo" id="milestoneEditTo" value="{{ format($currentMilestone->editTo)->date() }}" placeholder="{{ __('language.dateformat') }}" /><br />
 
     <div class="tw:flex tw:justify-between tw:items-start">
         <div>

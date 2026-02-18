@@ -107,9 +107,7 @@
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.due_date') }}</label>
                     <div class="">
-                        <input type="text" class="dates" style="width:110px;" id="deadline" autocomplete="off"
-                               value="{{ format($ticket->dateToFinish)->date() }}"
-                               name="dateToFinish" placeholder="{{ __('language.dateformat') }}"/>
+                        <x-global::forms.date name="dateToFinish" id="deadline" value="{{ format($ticket->dateToFinish)->date() }}" placeholder="{{ __('language.dateformat') }}" style="width:110px;" />
 
                         <input type="time" class="timepicker tw:mr-sm" style="width:120px;" id="dueTime" autocomplete="off"
                                value="{{ format($ticket->dateToFinish)->time24() }}"

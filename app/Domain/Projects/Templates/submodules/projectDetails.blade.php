@@ -91,13 +91,11 @@
 
                 <label class="control-label">{{ __('label.project_start') }}</label>
                 <div class="">
-                    <input type="text" class="dates" style="width:100px;" name="start" autocomplete="off"
-                           value="{{ format($project['start'])->date() }}" placeholder="{{ __('language.dateformat') }}"/>
+                    <x-global::forms.date name="start" value="{{ format($project['start'])->date() }}" placeholder="{{ __('language.dateformat') }}" style="width:100px;" />
                 </div>
                 <label class="control-label">{{ __('label.project_end') }}</label>
                 <div class="">
-                    <input type="text" class="dates" style="width:100px;" name="end" autocomplete="off"
-                           value="{{ format($project['end'])->date() }}" placeholder="{{ __('language.dateformat') }}"/>
+                    <x-global::forms.date name="end" value="{{ format($project['end'])->date() }}" placeholder="{{ __('language.dateformat') }}" style="width:100px;" />
                 </div>
             </div>
 

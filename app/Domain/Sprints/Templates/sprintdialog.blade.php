@@ -24,10 +24,10 @@
     <br /><br />
     <p>{{ __('label.sprint_dates') }}</p><br/>
     <label>{{ __('label.first_day') }}</label>
-    <input type="text" name="startDate" autocomplete="off" value="{{ format($currentSprint->startDate)->date() }}" placeholder="{{ __('language.dateformat') }}" id="sprintStart" /><br />
+    <x-global::forms.date name="startDate" id="sprintStart" value="{{ format($currentSprint->startDate)->date() }}" placeholder="{{ __('language.dateformat') }}" /><br />
 
     <label>{{ __('label.last_day') }}</label>
-    <input type="text" name="endDate" autocomplete="off" value="{{ format($currentSprint->endDate)->date() }} " placeholder="{{ __('language.dateformat') }}" id="sprintEnd" />
+    <x-global::forms.date name="endDate" id="sprintEnd" value="{{ format($currentSprint->endDate)->date() }}" placeholder="{{ __('language.dateformat') }}" />
 
     <br />
 

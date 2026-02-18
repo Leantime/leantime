@@ -15,7 +15,7 @@
 
     <div class="par">
         <label for="dateFrom">{{ __('label.start_date') }}</label>
-        <input type="text" id="event_date_from" name="dateFrom" value="" autocomplete="off" /><br/>
+        <x-global::forms.date name="dateFrom" id="event_date_from" value="" /><br/>
     </div>
     <div class="par">
         <label for="">{{ __('label.start_time') }}</label>
@@ -25,7 +25,7 @@
     </div>
     <div class="par">
         <label for="dateTo">{{ __('label.end_date') }}</label>
-        <input type="text" id="event_date_to" name="dateTo" value="" autocomplete="off" /><br/>
+        <x-global::forms.date name="dateTo" id="event_date_to" value="" /><br/>
     </div>
     <div class="par">
         <label for="">{{ __('label.end_time') }} </label>
