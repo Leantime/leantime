@@ -55,59 +55,6 @@ leantime.menuController = (function () {
             }
         });
 
-        // Vanilla tabs implementation (replaces jQuery UI tabs)
-        var tabsEl = document.querySelector('.projectSelectorTabs');
-        if (tabsEl) {
-            var tabLinks = tabsEl.querySelectorAll('ul > li > a');
-            var currentTab = localStorage.getItem("currentMenuTab");
-            var activeTabIndex = 0;
-
-            // Find the saved tab index
-            if (currentTab) {
-                tabLinks.forEach(function (link, index) {
-                    if (link.getAttribute('href') === '#' + currentTab) {
-                        activeTabIndex = index;
-                    }
-                });
-            }
-
-            // Initialize: hide all panels, show the active one
-            tabLinks.forEach(function (link, index) {
-                var panelId = link.getAttribute('href');
-                if (!panelId || panelId.charAt(0) !== '#') return;
-                var panel = document.querySelector(panelId);
-                if (!panel) return;
-
-                if (index === activeTabIndex) {
-                    panel.style.display = '';
-                    link.parentElement.classList.add('ui-tabs-active');
-                } else {
-                    panel.style.display = 'none';
-                    link.parentElement.classList.remove('ui-tabs-active');
-                }
-
-                // Tab click handler
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    // Hide all panels, deactivate all tabs
-                    tabLinks.forEach(function (otherLink) {
-                        var otherPanelId = otherLink.getAttribute('href');
-                        if (otherPanelId && otherPanelId.charAt(0) === '#') {
-                            var otherPanel = document.querySelector(otherPanelId);
-                            if (otherPanel) otherPanel.style.display = 'none';
-                        }
-                        otherLink.parentElement.classList.remove('ui-tabs-active');
-                    });
-                    // Show this panel
-                    if (panel) panel.style.display = '';
-                    link.parentElement.classList.add('ui-tabs-active');
-                    // Save to localStorage
-                    var tabId = panelId.replace('#', '');
-                    localStorage.setItem("currentMenuTab", tabId);
-                });
-            });
-        }
-
     };
 
     var initLeftMenuHamburgerButton = function () {

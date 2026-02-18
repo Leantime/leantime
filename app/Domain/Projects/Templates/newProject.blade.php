@@ -15,9 +15,9 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="tabbedwidget tab-primary projectTabs">
+        <div class="lt-tabs tabbedwidget projectTabs" data-tabs>
 
-            <ul>
+            <ul role="tablist">
                 <li><a href="#projectdetails">{{ __('tabs.projectdetails') }}</a></li>
             </ul>
 
@@ -127,7 +127,7 @@
     jQuery(document).ready(function() {
         jQuery("#projectdetails select").chosen();
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
-        leantime.projectsController.initProjectTabs();
+
         if (window.leantime && window.leantime.tiptapController) {
             leantime.tiptapController.initComplexEditor();
         }

@@ -13,9 +13,9 @@
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
     <div class="maincontentinner">
-                <div class="tabbedwidget tab-primary companyTabs">
+                <div class="lt-tabs tabbedwidget companyTabs" data-tabs data-tabs-persist="hash">
 
-                    <ul>
+                    <ul role="tablist">
                         <li><a href="#details"><span class="fa fa-building"></span> {{ __('tabs.details') }}</a></li>
                         <li><a href="#apiKeys"><i class="fa-solid fa-key"></i> {{ __('tabs.apiKeys') }}</a></li>
                         @dispatchEvent('tabs')
@@ -162,12 +162,3 @@
     </div>
 </div>
 
-<script>
-    jQuery(document).ready(function() {
-        jQuery(".companyTabs").tabs({
-            activate: function (event, ui) {
-                window.location.hash = ui.newPanel.selector;
-            }
-        });
-    });
-</script>

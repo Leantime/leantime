@@ -1099,49 +1099,6 @@ leantime.ticketsController = (function () {
 
     };
 
-    var initTicketTabs = function () {
-
-        jQuery(document).ready(function () {
-
-
-            let url = new URL(window.location.href);
-            let tab = url.searchParams.get("tab");
-
-            let activeTabIndex = 0;
-            if (tab) {
-                activeTabIndex = jQuery('.ticketTabs').find('a[href="#' + tab + '"]').parent().index();
-            }
-
-            jQuery('.ticketTabs').tabs({
-                create: function ( event, ui ) {
-                    jQuery('.ticketTabs').css("visibility", "visible");
-
-                },
-                activate: function (event, ui) {
-
-                    url = new URL(window.location.href);
-
-
-                    url.searchParams.set('tab', ui.newPanel[0].id);
-
-                    window.history.replaceState(null, null, url);
-
-                },
-                load: function () {
-
-                },
-                enable: function () {
-
-                },
-                active: activeTabIndex
-
-            });
-
-
-        });
-
-    };
-
     var initTicketSearchSubmit = function (url) {
 
         jQuery("#ticketSearch").on('submit', function (e) {
@@ -2039,7 +1996,6 @@ leantime.ticketsController = (function () {
         updateRemainingHours:updateRemainingHours,
         updatePlannedHours:updatePlannedHours,
         initTimeSheetChart:initTimeSheetChart,
-        initTicketTabs:initTicketTabs,
         initTicketSearchSubmit:initTicketSearchSubmit,
         initTicketKanban:initTicketKanban,
         initTicketsTable:initTicketsTable,

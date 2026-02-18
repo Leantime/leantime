@@ -76,9 +76,9 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
                 </li>
         </x-global::elements.dropdown>
     <?php } ?>
-    <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
+    <div class="lt-tabs tabbedwidget ticketTabs" style="visibility:hidden;" data-tabs data-tabs-persist="url">
 
-        <ul>
+        <ul role="tablist">
             <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
             <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__('tabs.files') ?> (<?php echo $tpl->get('numFiles'); ?>)</a></li>
             <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
@@ -115,8 +115,6 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         <?php if (isset($_GET['closeModal'])) { ?>
             jQuery.nmTop().close();
         <?php } ?>
-
-        leantime.ticketsController.initTicketTabs();
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.ticketsController.initAsyncInputChange();

@@ -152,9 +152,10 @@
 }
 
 /* ── Tabbed widget tabs ───────────────────────────────────────────────
-   jQuery UI was removed; the bridge in dropdownBridge.js handles
-   tab switching but needs basic horizontal-tab CSS.
+   Vanilla tabsController.js handles switching; these rules style the
+   tab strip.  .tabbedwidget kept as alias for backward compat.
    ──────────────────────────────────────────────────────────────────── */
+.lt-tabs > ul[role="tablist"],
 .tabbedwidget > ul {
     list-style: none;
     display: flex;
@@ -165,6 +166,7 @@
     margin: 0 0 15px 0;
 }
 
+.lt-tabs > ul[role="tablist"] > li,
 .tabbedwidget > ul > li {
     display: block;
     margin: 0;
@@ -172,6 +174,7 @@
     list-style: none;
 }
 
+.lt-tabs > ul[role="tablist"] > li > a,
 .tabbedwidget > ul > li > a {
     display: block;
     padding: 8px 15px;
@@ -181,12 +184,16 @@
     white-space: nowrap;
 }
 
+.lt-tabs > ul[role="tablist"] > li > a:hover,
 .tabbedwidget > ul > li > a:hover {
     color: var(--accent1, #1b75bb);
     text-decoration: none;
 }
 
+.lt-tabs > ul[role="tablist"] > li.tw\:tab-active > a,
+.lt-tabs > ul[role="tablist"] > li.active > a,
 .tabbedwidget > ul > li.active > a,
+.tabbedwidget > ul > li.tw\:tab-active > a,
 .tabbedwidget > ul > li.ui-tabs-active > a,
 .tabbedwidget > ul > li.ui-state-active > a {
     border-bottom-color: var(--accent1, #1b75bb);

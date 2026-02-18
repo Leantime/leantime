@@ -20,9 +20,9 @@
             <x-global::button link="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}" type="secondary" class="duplicateProjectModal" data-tippy-content="{{ __('link.duplicate_project') }}" icon="fa-regular fa-copy">Copy</x-global::button>
             <x-global::button link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" type="danger" class="delete" data-tippy-content="{{ __('link.delete_project') }}" outline icon="fa fa-trash">Delete</x-global::button>
         </div>
-        <div class="tabbedwidget tab-primary projectTabs">
+        <div class="lt-tabs tabbedwidget projectTabs" data-tabs>
 
-            <ul>
+            <ul role="tablist">
                 <li><a href="#projectdetails"><span class="fa fa-leaf"></span> {{ __('tabs.projectdetails') }}</a></li>
                 <li><a href="#team"><span class="fa fa-group"></span> {{ __('tabs.team') }}</a></li>
                 <li><a href="#integrations"> <span class="fa fa-asterisk"></span> {{ __('tabs.Integrations') }}</a></li>
@@ -411,7 +411,6 @@
             }
         );
 
-        leantime.projectsController.initProjectTabs();
         leantime.projectsController.initDuplicateProjectModal();
         leantime.projectsController.initTodoStatusSortable("#todoStatusList");
         leantime.projectsController.initSelectFields();

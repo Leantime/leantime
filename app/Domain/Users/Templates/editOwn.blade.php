@@ -13,9 +13,9 @@
     {!! $tpl->displayNotification() !!}
 
     <div class="maincontentinner">
-        <div class="tabbedwidget tab-primary accountTabs">
+        <div class="lt-tabs tabbedwidget accountTabs" data-tabs>
 
-                    <ul>
+                    <ul role="tablist">
                         <li><a href="#myProfile">{!! __('tabs.myProfile') !!}</a></li>
                         <li><a href="#security">{!! __('tabs.security') !!}</a></li>
                         <li><a href="#settings">{!! __('tabs.settings') !!}</a></li>
@@ -458,8 +458,6 @@
     function initAccountSettings() {
         leantime.usersController.checkPWStrength('newPassword');
 
-        jQuery('.accountTabs').tabs();
-
         jQuery("#messagesfrequency").chosen();
         jQuery("#language").chosen();
         jQuery("#themeSelect").chosen();
@@ -468,14 +466,6 @@
     jQuery(document).ready(function(){
         initAccountSettings();
     });
-
-    if (typeof htmx !== 'undefined') {
-        htmx.onLoad(function(){
-            if (document.querySelector('.accountTabs')) {
-                initAccountSettings();
-            }
-        });
-    }
 </script>
 
 @endsection

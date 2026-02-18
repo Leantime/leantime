@@ -23,9 +23,9 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
+        <div class="lt-tabs tabbedwidget ticketTabs" style="visibility:hidden;" data-tabs data-tabs-persist="url">
 
-            <ul>
+            <ul role="tablist">
                 <li><a href="#ticketdetails">{{ __('tabs.ticketDetails') }}</a></li>
                 <li><a href="#subtasks">{{ __('tabs.subtasks') }} ({{ $tpl->get('numSubTasks') }})</a></li>
                 <li><a href="#files">{{ __('tabs.files') }} ({{ $tpl->get('numFiles') }})</a></li>
@@ -74,10 +74,7 @@
 <script type="text/javascript">
 
     jQuery(window).load(function () {
-        leantime.ticketsController.initTicketTabs();
-
         jQuery(window).resize();
-
     });
 
 </script>

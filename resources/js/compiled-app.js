@@ -2,6 +2,7 @@
 import '../../public/assets/js/app/core/toastNotifier.js';
 import '../../public/assets/js/app/app.js';
 import '../../public/assets/js/app/core/dropdownBridge.js';
+import '../../public/assets/js/app/core/tabsController.js';
 import '../../public/assets/js/app/core/snippets.js';
 import '../../public/assets/js/app/core/modalManager.js';
 import '../../public/assets/js/app/core/datePickers.js';

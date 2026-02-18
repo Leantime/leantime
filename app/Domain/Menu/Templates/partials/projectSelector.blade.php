@@ -33,8 +33,8 @@
         @endif
 
 
-    <div class="tabbedwidget tab-primary projectSelectorTabs">
-        <ul class="tabs">
+    <div class="lt-tabs tabbedwidget projectSelectorTabs" data-tabs data-tabs-persist="localStorage" data-tabs-persist-key="currentMenuTab">
+        <ul class="tabs" role="tablist">
             <li><a href="#myProjects">{{ __('menu.projectselector.my_projects') }}</a></li>
             <li><a href="#favorites">{{ __('menu.projectselector.favorites') }}</a></li>
             <li><a href="#recentProjects">{{ __('menu.projectselector.recent') }}</a></li>

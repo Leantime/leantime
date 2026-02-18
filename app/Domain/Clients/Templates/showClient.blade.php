@@ -19,9 +19,9 @@
     <div class="maincontentinner">
         {!! $tpl->displayNotification() !!}
 
-        <div class="tabbedwidget tab-primary clientTabs">
+        <div class="lt-tabs tabbedwidget clientTabs" data-tabs>
 
-            <ul>
+            <ul role="tablist">
                 <li><a href="#clientDetails">{{ __('label.client_details') }}</a></li>
                 <li><a href="#comment">{{ sprintf(__('tabs.discussion_with_count'), count($tpl->get('comments'))) }}</a></li>
                 <li><a href="#files">{{ sprintf(__('tabs.files_with_count'), count($tpl->get('files'))) }}</a></li>
@@ -236,7 +236,6 @@
     @dispatchEvent('scripts.afterOpen')
 
     jQuery(document).ready(function($) {
-        leantime.clientsController.initClientTabs();
     });
 
     @dispatchEvent('scripts.beforeClose')

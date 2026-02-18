@@ -174,7 +174,7 @@
     ]
   },
   "app/Domain/Clients/Js/clientsController.js": {
-    "file": "assets/clientsController-rJN37dRD.js",
+    "file": "assets/clientsController--qgiYeFs.js",
     "name": "clientsController",
     "src": "app/Domain/Clients/Js/clientsController.js",
     "isDynamicEntry": true
@@ -282,7 +282,7 @@
     ]
   },
   "app/Domain/Projects/Js/projectsController.js": {
-    "file": "assets/projectsController-BY15Utrs.js",
+    "file": "assets/projectsController-kUCbx_Fv.js",
     "name": "projectsController",
     "src": "app/Domain/Projects/Js/projectsController.js",
     "isDynamicEntry": true
@@ -936,7 +936,7 @@
     "src": "public/assets/images/svg/loading-animation.svg"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BHawgU9A.css",
+    "file": "assets/app-lB7_WHHg.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -946,12 +946,12 @@
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-DqM7sP6d.css",
+    "file": "assets/main-GUNWmCsU.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-pTrvvFoo.js",
+    "file": "assets/compiled-app-BEI0OM2k.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,

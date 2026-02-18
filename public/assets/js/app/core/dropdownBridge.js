@@ -143,79 +143,16 @@ document.addEventListener('keydown', function (e) {
 })();
 
 // ═══════════════════════════════════════════════════════════════════════════
-// jQuery UI Tabs Bridge — replaces jQuery UI .tabs() plugin
-// Provides the same click-to-switch tab behavior used by ticketTabs,
-// projectTabs, clientTabs, menuController projectSelectorTabs.
+// jQuery UI Tabs Bridge — thin shim delegating to tabsController.
+// Keeps legacy jQuery('.tabs').tabs() calls working during migration.
 // ═══════════════════════════════════════════════════════════════════════════
 
-(function () {
-    'use strict';
-
-    function initTabs(container, opts) {
-        opts = opts || {};
-        var tabLinks = container.querySelectorAll(':scope > ul > li > a');
-        var panels = [];
-
-        // Collect panels from tab link hrefs
-        tabLinks.forEach(function (link) {
-            var href = link.getAttribute('href');
-            if (href && href.charAt(0) === '#') {
-                var panel = container.querySelector(href);
-                if (panel) { panels.push(panel); }
-            }
-        });
-
-        if (panels.length === 0) { return; }
-
-        // Determine initial active tab
-        var activeIndex = opts.active || 0;
-        if (typeof activeIndex !== 'number' || activeIndex < 0 || activeIndex >= panels.length) {
-            activeIndex = 0;
-        }
-
-        // Hide all panels, show active
-        panels.forEach(function (p, i) {
-            p.style.display = (i === activeIndex) ? '' : 'none';
-        });
-
-        // Mark active tab link
-        tabLinks.forEach(function (link, i) {
-            if (i === activeIndex) {
-                link.parentElement.classList.add('ui-tabs-active', 'ui-state-active', 'active');
-            } else {
-                link.parentElement.classList.remove('ui-tabs-active', 'ui-state-active', 'active');
-            }
-        });
-
-        // Click handler for switching
-        tabLinks.forEach(function (link, i) {
-            link.addEventListener('click', function (e) {
-                e.preventDefault();
-                panels.forEach(function (p) { p.style.display = 'none'; });
-                tabLinks.forEach(function (l) {
-                    l.parentElement.classList.remove('ui-tabs-active', 'ui-state-active', 'active');
-                });
-                if (panels[i]) { panels[i].style.display = ''; }
-                link.parentElement.classList.add('ui-tabs-active', 'ui-state-active', 'active');
-            });
-        });
-
-        // Fire create callback
-        if (opts.create) {
-            opts.create.call(container, {}, { tab: tabLinks[activeIndex], panel: panels[activeIndex] });
-        }
-    }
-
-    // Install jQuery.fn.tabs shim if jQuery is present
-    if (typeof jQuery !== 'undefined') {
-        jQuery.fn.tabs = function (opts) {
-            this.each(function () {
-                initTabs(this, opts);
-            });
-            return this;
-        };
-    }
-})();
+if (typeof jQuery !== 'undefined') {
+    jQuery.fn.tabs = function (opts) {
+        this.each(function () { leantime.tabsController.initTabs(this, opts); });
+        return this;
+    };
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Chosen.js → SlimSelect Bridge

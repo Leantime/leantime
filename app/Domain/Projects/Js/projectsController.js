@@ -34,10 +34,6 @@ leantime.projectsController = (function () {
         );
     };
 
-    var initProjectTabs = function () {
-        jQuery('.projectTabs').tabs();
-    };
-
     var initDuplicateProjectModal = function () {
 
         var regularModelConfig = {
@@ -673,7 +669,6 @@ leantime.projectsController = (function () {
     // Make public what you want to have public, everything else is private
     return {
         initDates:initDates,
-        initProjectTabs:initProjectTabs,
         initProgressBar:initProgressBar,
         initProjectTable:initProjectTable,
         initDuplicateProjectModal:initDuplicateProjectModal,

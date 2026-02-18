@@ -20,9 +20,9 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="tabbedwidget tab-primary ticketTabs">
+        <div class="lt-tabs tabbedwidget ticketTabs" data-tabs>
 
-            <ul>
+            <ul role="tablist">
                 <li>
                     <a href="#ticketdetails">{{ __('tabs.ticketDetails') }}</a>
                 </li>
@@ -41,7 +41,6 @@
 <script type="text/javascript">
 
     jQuery(document).ready(function() {
-        leantime.ticketsController.initTicketTabs();
         leantime.ticketsController.initTagsInput();
     });
 

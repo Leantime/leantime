@@ -9,8 +9,8 @@
 
     {!! $tpl->displayNotification() !!}
 
-    <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
-        <ul>
+    <div class="lt-tabs tabbedwidget ticketTabs" style="visibility:hidden;" data-tabs>
+        <ul role="tablist">
             <li><a href="#ticketdetails">{{ __('tabs.ticketDetails') }}</a></li>
         </ul>
 
@@ -29,8 +29,6 @@
         @if(isset($_GET['closeModal']))
             leantime.modals.closeModal();
         @endif
-
-        leantime.ticketsController.initTicketTabs();
 
         @if($login::userIsAtLeast($roles::$editor))
 
