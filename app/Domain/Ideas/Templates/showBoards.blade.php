@@ -171,56 +171,36 @@
                 <h3>{{ $tpl->__('headlines.have_an_idea') }}</h3><br />
                 {{ $tpl->__('subtitles.start_collecting_ideas') }}<br/><br/>
                 @if ($login::userIsAtLeast($roles::$editor))
-                    <x-global::button link="javascript:void(0)" type="primary" class="addCanvasLink">{!! $tpl->__('links.icon.create_new_board') !!}</x-global::button>
+                    <x-global::button link="javascript:void(0)" type="primary" onclick="document.getElementById('addCanvas').showModal();">{!! $tpl->__('links.icon.create_new_board') !!}</x-global::button>
                 @endif
             </div>
 
         @endif
         <!-- Modals -->
 
-        <div class="modal fade bs-example-modal-lg" id="addCanvas">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <form action="" method="post">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">{{ $tpl->__('headlines.start_new_idea_board') }}</h4>
-                        </div>
-                        <div class="modal-body">
-                            <label>{{ $tpl->__('label.topic_idea_board') }}</label>
-                            <x-global::forms.input name="canvastitle" placeholder="{{ $tpl->__('input.placeholders.name_for_idea_board') }}"
-                                   style="width:90%" />
-                        </div>
-                        <div class="modal-footer">
-                            <x-global::button tag="button" type="secondary" data-dismiss="modal">{{ $tpl->__('buttons.close') }}</x-global::button>
-                            <x-global::button submit type="secondary" name="newCanvas">{{ $tpl->__('buttons.create_board') }}</x-global::button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <x-global::actions.modal id="addCanvas" :title="$tpl->__('headlines.start_new_idea_board')">
+            <form action="" method="post">
+                <label>{{ $tpl->__('label.topic_idea_board') }}</label>
+                <x-global::forms.input name="canvastitle" placeholder="{{ $tpl->__('input.placeholders.name_for_idea_board') }}"
+                       style="width:90%" />
+                <x-slot name="actions">
+                    <x-global::button tag="button" type="secondary" onclick="document.getElementById('addCanvas').close();">{{ $tpl->__('buttons.close') }}</x-global::button>
+                    <x-global::button submit type="secondary" name="newCanvas">{{ $tpl->__('buttons.create_board') }}</x-global::button>
+                </x-slot>
+            </form>
+        </x-global::actions.modal>
 
-        <div class="modal fade bs-example-modal-lg" id="editCanvas">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <form action="" method="post">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">{{ $tpl->__('headlines.edit_board_name') }}</h4>
-                        </div>
-                        <div class="modal-body">
-                            <label>{{ $tpl->__('label.title_idea_board') }}</label>
-                            <x-global::forms.input name="canvastitle" value="{{ $tpl->escape($canvasTitle) }}"
-                                   style="width:90%" />
-                        </div>
-                        <div class="modal-footer">
-                            <x-global::button tag="button" type="secondary" data-dismiss="modal">{{ $tpl->__('buttons.close') }}</x-global::button>
-                            <x-global::button submit type="secondary" name="editCanvas">{{ $tpl->__('buttons.save') }}</x-global::button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <x-global::actions.modal id="editCanvas" :title="$tpl->__('headlines.edit_board_name')">
+            <form action="" method="post">
+                <label>{{ $tpl->__('label.title_idea_board') }}</label>
+                <x-global::forms.input name="canvastitle" value="{{ $tpl->escape($canvasTitle) }}"
+                       style="width:90%" />
+                <x-slot name="actions">
+                    <x-global::button tag="button" type="secondary" onclick="document.getElementById('editCanvas').close();">{{ $tpl->__('buttons.close') }}</x-global::button>
+                    <x-global::button submit type="secondary" name="editCanvas">{{ $tpl->__('buttons.save') }}</x-global::button>
+                </x-slot>
+            </form>
+        </x-global::actions.modal>
 
         <div class="clearfix"></div>
 
@@ -232,7 +212,6 @@
     jQuery(document).ready(function () {
 
         leantime.ideasController.initMasonryWall();
-        leantime.ideasController.initBoardControlModal();
         leantime.ideasController.initWallImageModals();
 
         @if ($login::userIsAtLeast($roles::$editor))

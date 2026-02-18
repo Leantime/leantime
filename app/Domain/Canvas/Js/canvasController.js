@@ -20,33 +20,8 @@ leantime.canvasController = (function () {
     };
 
     var initCanvasLinks = function () {
-
-        jQuery(".addCanvasLink").nyroModal();
-
-        document.querySelectorAll(".editCanvasLink").forEach(function (el) {
-            el.addEventListener("click", function () {
-                jQuery('#editCanvas').modal('show');
-            });
-        });
-
-        document.querySelectorAll(".cloneCanvasLink").forEach(function (el) {
-            el.addEventListener("click", function () {
-                jQuery('#cloneCanvas').modal('show');
-            });
-        });
-
-        document.querySelectorAll(".mergeCanvasLink").forEach(function (el) {
-            el.addEventListener("click", function () {
-                jQuery('#mergeCanvas').modal('show');
-            });
-        });
-
-        document.querySelectorAll(".importCanvasLink").forEach(function (el) {
-            el.addEventListener("click", function () {
-                jQuery('#importCanvas').modal('show');
-            });
-        });
-
+        // No-op: inline modals now use native <dialog> with onclick handlers.
+        // Generic canvas templates use modalManager hash-link delegation.
     };
 
     var closeModal = false;
