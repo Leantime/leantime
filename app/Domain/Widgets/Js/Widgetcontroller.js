@@ -52,7 +52,7 @@ leantime.widgetController = (function () {
             lazyLoad: false,
             columnOpts: {
                 breakpointForWindow: true,  // test window vs grid size
-                breakpoints: [{w:700, c:1},{w:950, c:6}]
+                breakpoints: [{w:0, c:1},{w:768, c:3},{w:1200, c:6}]
             },
         });
 

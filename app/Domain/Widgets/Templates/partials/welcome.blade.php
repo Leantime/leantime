@@ -29,32 +29,30 @@
             </div>
         </div>
 
-        <div class="tw:flex tw:gap-x-[10px]">
+        <div class="tw:grid tw:grid-cols-2 tw:md:grid-cols-4 tw:gap-[10px]">
 
-            <div class="bigNumberBox tw:flex-1 tw:flex-grow">
+            <div class="bigNumberBox">
                 <div class="bigNumberBoxInner">
                     <div class="bigNumberBoxNumber">⏱️ {{ $doneTodayCount }}/{{ $totalTodayCount }} </div>
                     <div class="bigNumberBoxText">{{ __("welcome_widget.timeboxed_completed") }}</div>
                 </div>
             </div>
 
-            <div class="bigNumberBox tw:flex-1 tw:flex-grow">
+            <div class="bigNumberBox">
                 <div class="bigNumberBoxInner">
                     <div class="bigNumberBoxNumber">🥳 {{ $closedTicketsCount }} </div>
                     <div class="bigNumberBoxText">{{ __("welcome_widget.tasks_completed") }}</div>
                 </div>
             </div>
 
-            <div class="bigNumberBox tw:flex-1 tw:flex-grow ">
-
+            <div class="bigNumberBox">
                 <div class="bigNumberBoxInner">
                     <div class="bigNumberBoxNumber">📥 {{ $totalTickets }} </div>
                     <div class="bigNumberBoxText">{{ __("welcome_widget.tasks_left") }}</div>
                 </div>
             </div>
 
-            <div class="bigNumberBox tw:flex-1 tw:flex-grow">
-
+            <div class="bigNumberBox">
                 <div class="bigNumberBoxInner">
                     <div class="bigNumberBoxNumber">🎯 {{ $ticketsInGoals }} </div>
                     <div class="bigNumberBoxText">{{ __("welcome_widget.goals_contributing_to") }}</div>

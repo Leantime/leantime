@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="{{ __('language.direction') }}" lang="{{ __('language.code') }}">
+<html dir="{{ __('language.direction') }}" lang="{{ __('language.code') }}" data-theme="{{ session('usersettings.colorMode', 'light') }}">
 <head>
     @include('global::sections.header')
 

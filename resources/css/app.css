@@ -1,7 +1,7 @@
 @import "tailwindcss" prefix(tw);
 
 @plugin "daisyui" {
-    themes: light --default, dark --prefersdark;
+    themes: light --default, dark;
 }
 
 @source "../../app/{Views,Domain,Plugins}/**/*.{tpl,sub,inc,blade}.php";

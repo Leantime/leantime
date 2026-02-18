@@ -18,9 +18,9 @@
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
 
-    <div class="tw:grid tw:grid-cols-12 tw:gap-4">
+    <div class="tw:grid tw:md:grid-cols-12 tw:gap-4">
 
-        <div class="tw:col-span-8">
+        <div class="tw:md:col-span-8">
 
             <div class="maincontentinner tw-z-20">
 
@@ -129,8 +129,8 @@
                                         @include("tickets::partials.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])
                                     </div>
 
-                                <div class="tw:grid tw:grid-cols-12">
-                                    <div class="tw:col-span-4 tw-px-[15px] tw-py-0">
+                                <div class="tw:grid tw:md:grid-cols-12">
+                                    <div class="tw:md:col-span-4 tw-px-[15px] tw-py-0">
 
                                         <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
 
@@ -143,7 +143,7 @@
                                             name="date"
                                         />
                                     </div>
-                                    <div class="tw:col-span-8 tw-mt-[3px]">
+                                    <div class="tw:md:col-span-8 tw-mt-[3px]">
                                         <div class="right">
                                             <div class="dropdown ticketDropdown effortDropdown show">
                                                 <a
@@ -257,9 +257,9 @@
 
                 <h5 class="subtitle">{{ __('tabs.team') }}</h5>
 
-                <div class="tw:grid tw:grid-cols-12 tw:gap-4 teamBox">
+                <div class="tw:grid tw:md:grid-cols-12 tw:gap-4 teamBox">
                     @foreach ($project['assignedUsers'] as $userId => $assignedUser)
-                        <div class="tw:col-span-3">
+                        <div class="tw:md:col-span-3">
                             <x-users::profile-box :user="$assignedUser">
                                 @spaceless
                                     @php $hasName = $assignedUser['firstname'] != '' || $assignedUser['lastname'] != ''; @endphp
@@ -286,7 +286,7 @@
                     @endforeach
 
                     @if ($login::userIsAtLeast($roles::$manager))
-                        <div class="tw:col-span-3">
+                        <div class="tw:md:col-span-3">
                             <x-users::profile-box>
                                 <a href="#/users/newUser?preSelectProjectId={{ $project['id'] }}">
                                     {{ __('links.invite_user') }}
@@ -299,7 +299,7 @@
 
         </div>
 
-        <div class="tw:col-span-4">
+        <div class="tw:md:col-span-4">
 
             <div class="maincontentinner project-updates">
                 <div class="tw:float-right">

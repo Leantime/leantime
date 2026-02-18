@@ -55,7 +55,7 @@
             ⭐ My Favorites
         </x-slot>
         <x-slot name="content">
-            <div class="tw:grid tw:grid-cols-3 tw:gap-6">
+            <div class="tw:grid tw:md:grid-cols-3 tw:gap-6">
                 @php
                     $hasFavorites = false;
                 @endphp
@@ -85,7 +85,7 @@
         </x-slot>
         <x-slot name="content">
 
-            <div class="tw:grid tw:grid-cols-4 tw:gap-4">
+            <div class="tw:grid tw:md:grid-cols-4 tw:gap-4">
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == false)
 

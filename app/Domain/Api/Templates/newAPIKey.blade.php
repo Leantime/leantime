@@ -19,7 +19,7 @@
 
         <input type="hidden" name="save" value="1" />
 
-        <div class="tw:grid tw:grid-cols-2 tw:gap-6">
+        <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
             <div>
 
                 <h4 class="widgettitle title-light">{{ $tpl->__('label.basic_information') }}</h4>

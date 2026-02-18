@@ -18,7 +18,7 @@
                     <h5 class="subtitle" style="margin-bottom:15px;">
                         {{ __("text.installed_plugins") }}
                     </h5>
-                    <div class="tw:grid tw:grid-cols-3 tw:gap-6 sortableTicketList">
+                    <div class="tw:grid tw:md:grid-cols-3 tw:gap-6 sortableTicketList">
                         @each('plugins::partials.plugin', $tpl->get("installedPlugins"), 'plugin')
 
                         @if ($tpl->get("installedPlugins") === false || count($tpl->get("installedPlugins")) == 0)
@@ -36,7 +36,7 @@
                             @foreach ($tpl->get("newPlugins") as $newplugin)
                                 <li>
                                     <div class="ticketBox fixed">
-                                        <div class="tw:grid tw:grid-cols-3 tw:gap-6">
+                                        <div class="tw:grid tw:md:grid-cols-3 tw:gap-6">
 
                                             <div>
                                                 <strong>{{ $newplugin->name }}<br /></strong>

@@ -1114,6 +1114,10 @@ min-width: 1200px
 
     }
 
+    /* TODO: rightpanel leaves a 63px gap on the right edge because margin-left
+       is missing. Adding margin-left breaks the open-menu state (content shifts
+       right and overlaps). Needs a menu-state-aware fix, e.g. different margins
+       for .menuclosed vs .menuopen. */
     .rightpanel {
         width:calc(100% - 63px);
 

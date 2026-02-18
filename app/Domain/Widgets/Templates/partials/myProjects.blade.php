@@ -29,13 +29,13 @@
         </x-slot>
         <x-slot name="content">
 
-            <div class="tw:grid tw:grid-cols-12 tw:gap-4">
+            <div class="tw:grid tw:md:grid-cols-12 tw:gap-4">
                 @php
                     $hasFavorites = false;
                 @endphp
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == true)
-                        <div class="tw:col-span-4">
+                        <div class="tw:md:col-span-4">
                             @include("projects::partials.projectCard", ["project" => $project, "type" => $type])
                         </div>
                         @php
@@ -57,11 +57,11 @@
         </x-slot>
         <x-slot name="content">
 
-            <div class="tw:grid tw:grid-cols-12 tw:gap-4">
+            <div class="tw:grid tw:md:grid-cols-12 tw:gap-4">
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == false)
 
-                        <div class="tw:col-span-4">
+                        <div class="tw:md:col-span-4">
                             @include("projects::partials.projectCard", ["project" => $project, "type" => $type])
                         </div>
 

@@ -6,13 +6,8 @@
  ])
 
 <div class="ticketBox fixed">
-    <div class="tw:grid tw:grid-cols-12">
-        <div class="tw:col-span-8" style="margin-bottom:5px;">
-            <strong><a href="<?=BASE_URL ?>/tickets/showKanban?milestone={{ $milestone->id }}" >{{ $milestone->headline  }}</a></strong>
-        </div>
-        <div class="tw:col-span-4 tw:text-right">
-
-        </div>
+    <div style="margin-bottom:5px;">
+        <strong><a href="<?=BASE_URL ?>/tickets/showKanban?milestone={{ $milestone->id }}" >{{ $milestone->headline  }}</a></strong>
     </div>
     @fragment('progress')
 

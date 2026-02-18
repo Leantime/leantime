@@ -30,7 +30,7 @@
             <div id='clientDetails'>
                 <form action="" method="post">
 
-                    <div class="tw:grid tw:grid-cols-2 tw:gap-6">
+                    <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
                         <div>
                             <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> {{ __('subtitle.details') }}</h4>
 
@@ -155,7 +155,7 @@
 
                     </div>
 
-                    <div class="tw:grid tw:grid-cols-2 tw:gap-6">
+                    <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
                         <div>
                             <input type="submit" name="save" id="save"
                                    value="{{ __('buttons.save') }}" class="btn btn-primary" />

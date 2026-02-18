@@ -68,8 +68,8 @@
                     <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>
 
             </div>
-            <div class="tw:grid tw:grid-cols-12 tw:gap-2">
-                <div class="tw:col-span-9 tw:px-4 tw:py-0">
+            <div class="tw:grid tw:md:grid-cols-12 tw:gap-2">
+                <div class="tw:md:col-span-9 tw:px-4 tw:py-0">
                     <div class="tw:grid tw:grid-cols-3">
                         <div>
                                 {{ __("label.due") }}<input type="text" title="{{ __("label.due") }}" value="{{ $date }}" class="duedates secretInput quickDueDates" data-id="{{ $subticket['id'] }}" name="date" />
@@ -82,7 +82,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tw:col-span-3 tw:pt-[3px]" >
+                <div class="tw:md:col-span-3 tw:pt-[3px]" >
                     <div class="right">
                         <div class="dropdown ticketDropdown effortDropdown show">
                             <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $subticket['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

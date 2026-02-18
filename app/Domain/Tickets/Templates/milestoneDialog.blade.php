@@ -19,7 +19,7 @@
     @endif
 </div>
 
-<h4 class="widgettitle title-light">{{ __('headline.milestone') }}</h4>
+<h4 class="widgettitle title-light">{!! __('headline.milestone') !!}</h4>
 
 {!! $tpl->displayNotification() !!}
 

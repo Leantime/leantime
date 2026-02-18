@@ -31,7 +31,7 @@
 
     <br />
 
-    <div class="tw:grid tw:grid-cols-2 tw:gap-6">
+    <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
         <div>
             <input type="submit" value="{{ __('buttons.save') }}"/>
         </div>

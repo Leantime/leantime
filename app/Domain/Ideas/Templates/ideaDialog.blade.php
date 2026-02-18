@@ -20,9 +20,9 @@
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}">
 
-<div class="tw:grid tw:grid-cols-12 tw:gap-4">
+<div class="tw:grid tw:md:grid-cols-12 tw:gap-4">
 
-    <div class="tw:col-span-8">
+    <div class="tw:md:col-span-8">
 
         <input type="hidden" value="{{ $tpl->get('currentCanvas') }}" name="canvasId"/>
         <input type="hidden" value="{{ $tpl->escape($canvasItem['box']) }}" name="box" id="box"/>
@@ -58,7 +58,7 @@
 
     </div>
 
-    <div class="tw:col-span-4">
+    <div class="tw:md:col-span-4">
         @if ($id !== '')
             <br/><br/>
             <h4 class="widgettitle title-light"><span

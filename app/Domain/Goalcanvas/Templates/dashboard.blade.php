@@ -111,7 +111,7 @@ foreach ($allCanvas as $canvasRow) {
                 $canvasItems = $canvasSvc->getCanvasItemsById($canvasRow["id"]);
                 @endphp
                 <div id="sortableCanvasKanban-{{ $canvasRow['id'] }}" class="sortableTicketList disabled tw:pt-4">
-                    <div class="tw:grid tw:grid-cols-3 tw:gap-4">
+                    <div class="tw:grid tw:md:grid-cols-3 tw:gap-4">
                                 @if (!is_countable($canvasItems) || count($canvasItems) == 0)
                                     <div class="tw:col-span-3">No goals on this board yet. Open the <a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>board</a> to start adding goals</div>
                                 @endif

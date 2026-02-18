@@ -181,7 +181,7 @@
 
             @if (count($allCanvas) > 0)
                 <div id="sortableCanvasKanban" class="sortableTicketList disabled tw:pt-4">
-                    <div class="tw:grid tw:grid-cols-3 tw:gap-4">
+                    <div class="tw:grid tw:md:grid-cols-3 tw:gap-4">
                                 @foreach ($canvasItems as $row)
                                     @php
                                         $filterStatus = $filter['status'] ?? 'all';

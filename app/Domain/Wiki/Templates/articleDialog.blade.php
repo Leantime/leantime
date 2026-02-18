@@ -54,8 +54,8 @@
 
 <form class="formModal" method="post" action="{{ CURRENT_URL }}">
 
-    <div class="tw:grid tw:grid-cols-12 tw:gap-4">
-        <div class="tw:col-span-2">
+    <div class="tw:grid tw:md:grid-cols-12 tw:gap-4">
+        <div class="tw:md:col-span-2">
             <div class="marginBottom">
                 <h4 class="widgettitle title-light">
                     <span class="fa fa-folder"></span>{{ __('subtitles.organization') }}
@@ -146,7 +146,7 @@
             <br />
 
         </div>
-        <div class="tw:col-span-8">
+        <div class="tw:md:col-span-8">
 
 
             <div class="btn-group inlineDropDownContainerLeft">
@@ -191,7 +191,7 @@
 
 
         </div>
-        <div class="tw:col-span-2"></div>
+        <div class="tw:md:col-span-2"></div>
     </div>
 
 

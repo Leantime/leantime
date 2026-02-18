@@ -22,13 +22,13 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="tw:grid tw:grid-cols-12 tw:gap-4">
-            <div class="tw:col-span-8">
+        <div class="tw:grid tw:md:grid-cols-12 tw:gap-4">
+            <div class="tw:md:col-span-8">
 
                 <div id="yourToDoContainer">
 
                             <h5 class="subtitle">{{ $tpl->__('subtitles.summary') }} @if ($fullReportLatest)({{ format($fullReportLatest['date'])->date() }})@endif </h5>
-                            <div class="tw:grid tw:grid-cols-4 tw:gap-4">
+                            <div class="tw:grid tw:md:grid-cols-4 tw:gap-4">
                                 <div>
                                     <div class="boxedHighlight">
                                         <span class="headline">{{ $tpl->__('label.planned_hours') }}</span>
@@ -111,7 +111,7 @@
 
             </div>
 
-            <div class="tw:col-span-4">
+            <div class="tw:md:col-span-4">
 
                 <div id="projectProgressContainer">
 

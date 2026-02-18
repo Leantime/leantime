@@ -15,7 +15,7 @@
 
         {{  $tpl->displayInlineNotification() }}
 
-        <div class="tw:grid tw:grid-cols-2 tw:gap-6">
+        <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
             <div>
                 <div class="ticketBox tw:p-[20px]">
                     <span class="fancyLink">Did you know?</span><br />

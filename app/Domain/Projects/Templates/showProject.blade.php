@@ -51,7 +51,7 @@
                                 </h4>
                             </div>
 
-                             <div class="tw:grid tw:grid-cols-3 tw:gap-6">
+                             <div class="tw:grid tw:md:grid-cols-3 tw:gap-6">
                                 @foreach($project['assignedUsers'] as $userId => $assignedUser)
                                     <div>
                                         <div class="userBox">
@@ -105,7 +105,7 @@
                                 </h4>
                             </div>
 
-                             <div class="tw:grid tw:grid-cols-3 tw:gap-6">
+                             <div class="tw:grid tw:md:grid-cols-3 tw:gap-6">
                                 @foreach($tpl->get('availableUsers') as $row)
                                     @if(collect($project['assignedUsers'])->where('id', $row['id'])->isEmpty())
                                         <div>
