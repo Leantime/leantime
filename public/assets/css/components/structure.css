@@ -341,6 +341,39 @@ body {
     margin-left: 91.666667%
 }
 
+/* ── Bootstrap-compatible responsive grid (col-md-*) ──────────────────
+   At 768px+ these behave like the old Bootstrap col-md-N classes.
+   Below 768px all columns stack to full width.
+   ──────────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    .col-md-1  { flex: 0 0 8.333333%;  max-width: 8.333333%  }
+    .col-md-2  { flex: 0 0 16.666667%; max-width: 16.666667% }
+    .col-md-3  { flex: 0 0 25%;        max-width: 25%        }
+    .col-md-4  { flex: 0 0 33.333333%; max-width: 33.333333% }
+    .col-md-5  { flex: 0 0 41.666667%; max-width: 41.666667% }
+    .col-md-6  { flex: 0 0 50%;        max-width: 50%        }
+    .col-md-7  { flex: 0 0 58.333333%; max-width: 58.333333% }
+    .col-md-8  { flex: 0 0 66.666667%; max-width: 66.666667% }
+    .col-md-9  { flex: 0 0 75%;        max-width: 75%        }
+    .col-md-10 { flex: 0 0 83.333333%; max-width: 83.333333% }
+    .col-md-11 { flex: 0 0 91.666667%; max-width: 91.666667% }
+    .col-md-12 { flex: 0 0 100%;       max-width: 100%       }
+}
+
+/* ── Bootstrap utility shims ──────────────────────────────────────────
+   Minimal set still referenced by templates and component CSS.
+   ──────────────────────────────────────────────────────────────────── */
+.pull-right { float: right !important }
+.pull-left  { float: left !important }
+.clearfix::after, .clearall::after { content: ""; display: table; clear: both }
+.row-fluid { display: flex; flex-wrap: wrap; margin-right: -5px; margin-left: -5px }
+.row-fluid::after { content: ""; display: table; clear: both }
+.center { text-align: center }
+.hidden { display: none !important }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0 }
+.input-append, .input-prepend { display: inline-flex; align-items: stretch }
+.input-append .add-on, .input-prepend .add-on { display: flex; align-items: center; padding: 4px 8px; background: var(--secondary-background, #eee); border: 1px solid var(--main-border-color, #ccc) }
+
 .mainwrapper {
     background:var(--header-gradient);
     background-size: 100vw 100vh;
