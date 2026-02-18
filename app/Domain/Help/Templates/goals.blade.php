@@ -26,11 +26,8 @@
         </div>
         <div class="tw:mt-3 tw:text-center">
             <form hx-post="{{ BASE_URL }}/help/helperModal/dontShowAgain" hx-trigger="change" hx-swap="none">
-                <label class="tw:text-sm tw:mt-sm" >
-                    <input type="hidden" name="modalId" value="goals" />
-                    <input type="checkbox" id="dontShowAgain" name="hidePermanently"  style="margin-top:-2px;">
-                    Don't show this again
-                </label>
+                <input type="hidden" name="modalId" value="goals" />
+                <x-global::forms.checkbox name="hidePermanently" id="dontShowAgain" label="Don't show this again" />
             </form>
         </div>
     </div>

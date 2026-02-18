@@ -33,10 +33,8 @@
         </div>
     </div>
 
-    <label for="allDay">{{ __('label.all_day') }}</label>
-    <input type="checkbox" id="allDay" name="allDay"
-        @if($values['allDay'] === 'true') checked="checked" @endif
-    />
+    <x-global::forms.checkbox name="allDay" label="{{ __('label.all_day') }}"
+        :checked="$values['allDay'] === 'true'" />
 
     @dispatchEvent('beforeSubmitButton')
 

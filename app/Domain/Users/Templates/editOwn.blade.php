@@ -338,14 +338,9 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="notifications" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
-                                        <input type="checkbox" value="on" name="notifications" class="input"
-                                               id="notifications"
-                                               @if ($values['notifications'] == "1" )
-                                                   checked='checked'
-                                               @endif/>
-                                        {{ __('label.receive_notifications') }}
-                                    </label>
+                                    <x-global::forms.checkbox name="notifications" id="notifications" value="on"
+                                        :checked="$values['notifications'] == '1'"
+                                        label="{{ __('label.receive_notifications') }}" />
                                 </div>
                                 <div class="form-group">
                                     <label for="messagesfrequency" >{{ __('label.messages_frequency') }}</label>
@@ -407,20 +402,11 @@
                                     ];
                                 @endphp
                                 @foreach ($notificationCategories as $categoryKey => $config)
-                                    <label class="tw-flex tw-items-start tw-gap-2 tw-cursor-pointer tw-m-0 tw-py-1.5">
-                                        <input type="checkbox"
-                                               name="enabledEventTypes[]"
-                                               value="{{ $categoryKey }}"
-                                               class="input tw-mt-0.5"
-                                               @if (in_array($categoryKey, $enabledEventTypes))
-                                                   checked="checked"
-                                               @endif
-                                        />
-                                        <span>
-                                            <strong>{{ __($categoryLabels[$categoryKey] ?? $categoryKey) }}</strong><br />
-                                            <small class="tw-text-gray-500">{{ __($config['description'] ?? '') }}</small>
-                                        </span>
-                                    </label>
+                                    <x-global::forms.checkbox name="enabledEventTypes[]" value="{{ $categoryKey }}"
+                                        :checked="in_array($categoryKey, $enabledEventTypes)">
+                                        <strong>{{ __($categoryLabels[$categoryKey] ?? $categoryKey) }}</strong><br />
+                                        <small class="tw-text-gray-500">{{ __($config['description'] ?? '') }}</small>
+                                    </x-global::forms.checkbox>
                                 @endforeach
                             </div>
 

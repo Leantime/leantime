@@ -10,7 +10,7 @@
     @if($tpl->get('confirmUsers'))
         <form class="importModal userImportModal" method="post" action="{{ BASE_URL }}/users/import">
             @foreach($tpl->get('allLdapUsers') as $user)
-                <input type="checkbox" value="{{ e($user['user']) }}" id="{{ e($user['user']) }}" name="users[]" checked="checked"/>
+                <x-global::forms.checkbox value="{{ e($user['user']) }}" id="{{ e($user['user']) }}" name="users[]" :checked="true" />
                 <label for="{{ e($user['user']) }}" style="display:inline;">{{ e($user['user']) }} - {{ e($user['firstname']) }}, {{ e($user['lastname']) }}<br />
             @endforeach
             <br />

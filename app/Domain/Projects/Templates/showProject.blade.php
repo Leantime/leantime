@@ -55,9 +55,8 @@
                                 @foreach($project['assignedUsers'] as $userId => $assignedUser)
                                     <div>
                                         <div class="userBox">
-                                            <input type='checkbox' name='editorId[]' id="user-{{ $assignedUser['id'] }}" value='{{ $assignedUser['id'] }}'
-                                                checked="checked"
-                                                />
+                                            <x-global::forms.checkbox name="editorId[]" id="user-{{ $assignedUser['id'] }}" value="{{ $assignedUser['id'] }}"
+                                                :checked="true" />
                                             <div class="commentImage">
                                                 <img src="{{ BASE_URL }}/api/users?profileImage={{ $assignedUser['id'] }}&v={{ format($assignedUser['modified'])->timestamp() }}"/>
                                             </div>
@@ -110,7 +109,7 @@
                                     @if(collect($project['assignedUsers'])->where('id', $row['id'])->isEmpty())
                                         <div>
                                             <div class="userBox">
-                                                <input type='checkbox' name='editorId[]' id="user-{{ $row['id'] }}" value='{{ $row['id'] }}' />
+                                                <x-global::forms.checkbox name="editorId[]" id="user-{{ $row['id'] }}" value="{{ $row['id'] }}" />
 
                                                 <div class="commentImage">
                                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}"/>
@@ -300,7 +299,7 @@
                                         </div>
                                         <div>
                                             <label for="">{{ __('label.showInKanban') }}</label>
-                                            <input type="checkbox" name="labelKanbanCol-{{ $key }}" id="labelKanbanCol-{{ $key }}" {{ $ticketStatus['kanbanCol'] ? 'checked="checked"' : '' }}/>
+                                            <x-global::forms.checkbox name="labelKanbanCol-{{ $key }}" id="labelKanbanCol-{{ $key }}" :checked="(bool) $ticketStatus['kanbanCol']" />
                                         </div>
                                         <div class="remove">
                                             <br />
@@ -375,7 +374,7 @@
         </div>
         <div>
             <label for="">{{ __('label.showInKanban') }}</label>
-            <input type="checkbox" name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX"/>
+            <x-global::forms.checkbox name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX" />
         </div>
         <div class="remove">
             <br />

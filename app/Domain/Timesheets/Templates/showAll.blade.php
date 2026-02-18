@@ -322,7 +322,7 @@
                                 {{ format($row['invoicedEmplDate'])->date() }}
                             @else
                                 @if ($login::userIsAtLeast($roles::$manager))
-                                    <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
+                                    <x-global::forms.checkbox name="invoicedEmpl[]" class="invoicedEmpl"
                                         value="{{ $row['id'] }}" />
                                 @endif
                             @endif
@@ -333,7 +333,7 @@
                                 {{ format($row['invoicedCompDate'])->date() }}
                             @else
                                 @if ($login::userIsAtLeast($roles::$manager))
-                                <input type="checkbox" name="invoicedComp[]" class="invoicedComp" value="{{ $row['id'] }}" />
+                                <x-global::forms.checkbox name="invoicedComp[]" class="invoicedComp" value="{{ $row['id'] }}" />
                                 @endif
                             @endif
                         </td>
@@ -343,7 +343,7 @@
                                 {{ format($row['paidDate'])->date() }}
                             @else
                                 @if ($login::userIsAtLeast($roles::$manager))
-                                    <input type="checkbox" name="paid[]" class="paid" value="{{ $row['id'] }}" />
+                                    <x-global::forms.checkbox name="paid[]" class="paid" value="{{ $row['id'] }}" />
                                 @endif
                             @endif
                         </td>

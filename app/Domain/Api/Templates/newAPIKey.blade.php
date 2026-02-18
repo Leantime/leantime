@@ -86,9 +86,9 @@
                         @endif
 
                         <div class="item">
-                            <input type="checkbox" name="projects[]" id="project_{{ $row['id'] }}" value="{{ $row['id'] }}"
-                                @if (is_array($projects) === true && in_array($row['id'], $projects) === true) checked="checked" @endif
-                            /><label for="project_{{ $row['id'] }}">{{ $tpl->escape($row['name']) }}</label>
+                            <x-global::forms.checkbox name="projects[]" id="project_{{ $row['id'] }}" value="{{ $row['id'] }}"
+                                :checked="is_array($projects) === true && in_array($row['id'], $projects) === true"
+                                label="{{ $tpl->escape($row['name']) }}" />
                             <div class="clearall"></div>
                         </div>
                         @php $i++; @endphp

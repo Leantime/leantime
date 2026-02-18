@@ -22,9 +22,7 @@
         @endforeach
     </x-global::forms.select>
     <br />
-    <input style="float:left; margin-right:5px;"
-           type="checkbox" name="assignSameUsers" id="assignSameUsers"/>
-    <label for="assignSameUsers">{{ __('label.assignSameUsers') }}</label>
+    <x-global::forms.checkbox name="assignSameUsers" label="{{ __('label.assignSameUsers') }}" />
 
     <br />
 
