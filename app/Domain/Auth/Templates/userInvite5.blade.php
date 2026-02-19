@@ -15,14 +15,14 @@
 
         {{  $tpl->displayInlineNotification() }}
 
-        <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
-            <div>
+        <div class="row">
+            <div class="col-md-6">
                 <div class="ticketBox tw:p-[20px]">
                     <span class="fancyLink">Did you know?</span><br />
                     <span style="font-size:16px;">Setting Intentions has been shown to <strong>more than double the success rate</strong> of completing a task.</span>
                 </div>
             </div>
-            <div>
+            <div class="col-md-6">
                 <x-global::undrawSvg image="undraw_adventure_map_hnin.svg" maxWidth="60%" maxHeight="300px"></x-global::undrawSvg>
             </div>
         </div>

@@ -1,7 +1,7 @@
 
 <div clas="clear"></div>
 
-<div class="tw:float-left">
+<div class="pull-left">
     <x-global::undrawSvg
         image="undraw_game_day_ucx9.svg"
         maxWidth="auto"

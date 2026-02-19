@@ -1,8 +1,8 @@
 <div style="max-width:700px;">
     <form class="onboardingModal" method="post" id="projectTitleOnboarding" action="{{ BASE_URL }}/help/firstLogin?step={{ $nextStep }}">
         <input type="hidden" name="currentStep" value="{{ $currentStep }}" />
-        <div class="tw:grid tw:grid-cols-[2fr_1fr] tw:gap-6">
-            <div>
+        <div class="row">
+            <div class="col-md-8">
                 <h1>{{  __('headlines.hi_there') }}</h1>
                 <p>{!!  __('text.get_organized_with_projects') !!}</p>
                 <br />
@@ -10,13 +10,13 @@
                 <x-global::forms.input id="projectName" name="projectname" value="" placeholder="" style="width:100%;" /><br />
 
             </div>
-            <div>
+            <div class="col-md-4">
                 <div class='svgContainer' style="width:300px; margin-top:40px;">
                     {!! file_get_contents(ROOT . "/dist/images/svg/undraw_game_day_ucx9.svg") !!}
                 </div>
             </div>
         </div>
-        <div class="tw:text-right">
+        <div class="align-right">
             <x-global::button submit type="primary">{{ __('buttons.next') }}</x-global::button>
         </div>
     </form>

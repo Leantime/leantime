@@ -23,7 +23,7 @@
     <div class="maincontentinner">
         @php $tpl->displaySubmodule('connector-importProgress') @endphp
     </div>
-    <div class="maincontentinner tw:text-center">
+    <div class="maincontentinner center">
         {!! $tpl->displayNotification() !!}
 
         <h5 class="subtitle">Review</h5>
@@ -39,7 +39,7 @@
                     @endif
                 @endforeach
             </ul>
-            <x-global::button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" type="primary" class="tw:float-left">Go Back</x-global::button>
+            <x-global::button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" type="primary" class="pull-left">Go Back</x-global::button>
         @else
             <x-global::button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import" type="primary" class="right">Confirm</x-global::button>
         @endif

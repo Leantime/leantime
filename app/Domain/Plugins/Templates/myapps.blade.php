@@ -18,7 +18,7 @@
                     <h5 class="subtitle" style="margin-bottom:15px;">
                         {{ __("text.installed_plugins") }}
                     </h5>
-                    <div class="tw:grid tw:md:grid-cols-3 tw:gap-6 sortableTicketList">
+                    <div class="row sortableTicketList">
                         @each('plugins::partials.plugin', $tpl->get("installedPlugins"), 'plugin')
 
                         @if ($tpl->get("installedPlugins") === false || count($tpl->get("installedPlugins")) == 0)
@@ -36,12 +36,12 @@
                             @foreach ($tpl->get("newPlugins") as $newplugin)
                                 <li>
                                     <div class="ticketBox fixed">
-                                        <div class="tw:grid tw:md:grid-cols-3 tw:gap-6">
+                                        <div class="row">
 
-                                            <div>
+                                            <div class="col-md-4">
                                                 <strong>{{ $newplugin->name }}<br /></strong>
                                             </div>
-                                            <div>
+                                            <div class="col-md-4">
                                                 {{ $newplugin->description }}<br />
                                                 {{ $tpl->__("text.version") }} {{ $newplugin->version }}
                                                 @if (is_array($newplugin->authors) && count($newplugin->authors) > 0)
@@ -49,8 +49,8 @@
                                                 @endif
                                                | <a href="{{ $newplugin->homepage }}"> {{ $tpl->__("text.visit_site") }} </a>
                                             </div>
-                                            <div style="padding-top:5px;">
-                                                <x-global::button link="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" type="secondary" class="tw:float-right">{{ $tpl->__('buttons.activate') }}</x-global::button>
+                                            <div class="col-md-4" style="padding-top:5px;">
+                                                <x-global::button link="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" type="secondary" class="pull-right">{{ $tpl->__('buttons.activate') }}</x-global::button>
 
                                             </div>
 

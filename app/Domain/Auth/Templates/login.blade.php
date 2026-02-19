@@ -23,18 +23,18 @@
 
             <div class="">
                 <label for="username">Email</label>
-                <x-global::forms.input name="username" id="username" placeholder="{{ __($tpl->get('inputPlaceholder')) }}" value="" />
+                <input type="text" name="username" id="username" class="form-control" placeholder="{{ __($tpl->get('inputPlaceholder')) }}" value=""/>
             </div>
             <div class="">
                 <label for="password">Password</label>
-                <x-global::forms.input type="password" name="password" id="password" autocomplete="off" placeholder="{{ __('input.placeholders.enter_password') }}" value="" />
+                <input type="password" name="password" id="password" autocomplete="off" class="form-control" placeholder="{{ __('input.placeholders.enter_password') }}" value=""/>
                 <div class="forgotPwContainer">
                     <a href="{{ BASE_URL }}/auth/resetPw" class="forgotPw">{{ __('links.forgot_password') }}</a>
                 </div>
             </div>
             @dispatchEvent('beforeSubmitButton')
             <div class="">
-                <x-global::button submit type="primary" name="login">{{ __('buttons.login') }}</x-global::button>
+                <input type="submit" name="login" value="{{ __('buttons.login') }}" class="btn btn-primary"/>
             </div>
             <div>
             </div>
@@ -50,9 +50,9 @@
             <div style="margin-top:20px; border-bottom:1px solid #ccc; width:100%; height:10px; overflow:show; text-align:center; margin-bottom:40px;">
                 <p style="text-align:center; display:inline-block; background:var(--secondary-background); padding:0px 5px;">{{ __('label.or_login_with') }}</p>
             </div>
-            <x-global::button link="{{ BASE_URL }}/oidc/login" type="primary" style="width:100%;">
+            <a href="{{ BASE_URL }}/oidc/login" style="width:100%;" class="btn btn-primary">
                 {{ __('buttons.oidclogin') }}
-            </x-global::button>
+            </a>
         </div>
     @endif
 

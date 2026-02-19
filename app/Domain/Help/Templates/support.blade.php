@@ -95,19 +95,19 @@
                 <br /><br /><br />
                 <h1 class="fancyLink">Your impact in numbers</h1>
                 <div class="tw:flex tw:w-full tw:justify-center tw:gap-4">
-                    <div class="tw:text-center tw:flex-1" style="background:#D6F3FF; padding:15px; border-radius:var(--box-radius); ">
+                    <div class="center tw:flex-1" style="background:#D6F3FF; padding:15px; border-radius:var(--box-radius); ">
                         <span style="color:var(--accent1); font-weight:bold; font-size:var(--font-size-xl);">50,000+</span>
                         <p>Installations you're supporting</p>
                     </div>
-                    <div class="tw:text-center tw:flex-1" style="background:#EBF9FF; padding:15px; border-radius:var(--box-radius); ">
+                    <div class="center tw:flex-1" style="background:#EBF9FF; padding:15px; border-radius:var(--box-radius); ">
                         <span style="color:var(--accent1); font-weight:bold; font-size:var(--font-size-xl);">200+</span>
                         <p>Closed Bugs in 2024</p>
                     </div>
-                    <div class="tw:text-center tw:flex-1" style="background:#FEEBF3; padding:15px; border-radius:var(--box-radius); ">
+                    <div class="center tw:flex-1" style="background:#FEEBF3; padding:15px; border-radius:var(--box-radius); ">
                         <span style="color:var(--accent1); font-weight:bold; font-size:var(--font-size-xl);">40+</span>
                         <p>Languages translated by the community</p>
                     </div>
-                    <div class="tw:text-center tw:flex-1" style="background:#FBFDED; padding:15px; border-radius:var(--box-radius); ">
+                    <div class="center tw:flex-1" style="background:#FBFDED; padding:15px; border-radius:var(--box-radius); ">
                         <span style="color:var(--accent1); font-weight:bold; font-size:var(--font-size-xl);">100%</span>
                         <p>Of sponsorship goes to development</p>
                     </div>
@@ -144,7 +144,7 @@
                         <p>We can create a world where no one has to fight their tools to do great work. Your sponsorship funds a future where software adapts to human diversity, not the other way around.</p><br /> <br />
                         <h1 class="fancyLink">Ready to make a direct impact?</h1><p>Every contribution—from $1 to $100—goes directly to making Leantime better for everyone.</p>
                         <br />
-                        <div class="tw:text-center">
+                        <div class="center">
                             <x-global::button link="https://github.com/sponsors/Leantime" type="primary" size="lg" target="_blank">Start Sponsoring Today</x-global::button>
                         </div>
                     </center>

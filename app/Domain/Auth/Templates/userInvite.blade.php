@@ -35,7 +35,7 @@
         <div class="">
             <input type="hidden" name="saveAccount" value="1" />
             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
-            <div class="tw:text-right">
+            <div class="align-right">
                 <x-global::button submit type="primary" name="createAccount" class="tw:w-auto" style="width:auto">{{ __("buttons.next") }}</x-global::button>
             </div>
 

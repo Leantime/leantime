@@ -14,7 +14,7 @@
         @php $tpl->displaySubmodule('connector-importProgress') @endphp
     </div>
 
-    <div class="maincontentinner tw:text-center">
+    <div class="maincontentinner center">
 
         {!! $tpl->displayNotification() !!}
 

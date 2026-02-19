@@ -50,7 +50,7 @@
 
         </div>
         <br />
-        <div class="tw:text-right">
+        <div class="align-right">
             <x-global::button link="{{ BASE_URL }}/auth/userInvite/{{ $inviteId }}" type="secondary" style="width:auto; margin-right:10px">Back</x-global::button>
             <x-global::button submit type="primary" name="createAccount" class="tw:w-auto" style="width:auto">{{ __("buttons.next") }}</x-global::button>
         </div>

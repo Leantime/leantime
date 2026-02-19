@@ -11,7 +11,7 @@
     <br />
     {!! __('text.new_project_helper_content') !!}
 
-    <div class="tw:text-center">
+    <div class="center">
         <a href="javascript:void(0);" onclick="leantime.helperController.closeModal()">{{ __('links.close') }}</a><br />
     </div>
 

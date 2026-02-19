@@ -21,7 +21,7 @@
         <div class="maincontentinner">
             @php $tpl->displaySubmodule('connector-importProgress') @endphp
         </div>
-        <div class="maincontentinner tw:text-center">
+        <div class="maincontentinner center">
 
         {!! $tpl->displayNotification() !!}
 
@@ -32,9 +32,9 @@
 
             <form method="post" action="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}&step=fields{{ $urlAppend }}">
 
-                <div class="tw:grid tw:grid-cols-[3fr_2fr_2fr_2fr_3fr] tw:gap-6">
-                    <div></div>
-                    <div class="right">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-2 right">
                         <h1>From (your integration)</h1>
                         <label for="providerEntities">{{ $provider->name }}</label>
                         <x-global::forms.select name="providerEntities" id="providerEntities" style="width:100%;">
@@ -43,10 +43,10 @@
                             @endforeach
                         </x-global::forms.select>
                     </div>
-                    <div style="padding-top:50px;">
+                    <div class="col-md-2" style="padding-top:50px;">
                         <i class="fa fa-arrow-right"></i>
                     </div>
-                    <div>
+                    <div class="col-md-2">
                         <h1>To (Leantime)</h1>
 
                         <label for="leantimeEntities">Leantime</label>
@@ -56,11 +56,11 @@
                             @endforeach
                         </x-global::forms.select>
                     </div>
-                    <div></div>
+                    <div class="col-md-3"></div>
                 </div>
 
                 <div class="left">
-                    <x-global::button link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" type="secondary" class="tw:float-left">Back</x-global::button>
+                    <x-global::button link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" type="secondary" class="pull-left">Back</x-global::button>
                 </div>
 
                 <div class="right">

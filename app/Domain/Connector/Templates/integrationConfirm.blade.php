@@ -23,7 +23,7 @@
         @php $tpl->displaySubmodule('connector-importProgress') @endphp
     </div>
     <div class="maincontentinner">
-        <div class="tw:text-center">
+        <div class="center">
             <div style="width:30%" class="svgContainer">
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_party_re_nmwj.svg') !!}
             </div>
