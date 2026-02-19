@@ -128,12 +128,13 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
     public function post($params): Response
     {
 
-        if (isset($params['comment'])) {
+        if (isset($params['comment']) && isset($params['id'])) {
+            $itemId = (int) $params['id'];
             $values = [
                 'text' => $params['text'],
                 'date' => date('Y-m-d H:i:s'),
                 'userId' => (session('userdata.id')),
-                'moduleId' => $_GET['id'],
+                'moduleId' => $itemId,
                 'commentParent' => ($params['father']),
             ];
 
@@ -143,7 +144,7 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                 $values['id'] = $commentId;
 
                 $subject = $this->language->__('email_notifications.canvas_board_comment_created');
-                $actual_link = BASE_URL.'#/goalcanvas/editCanvasItem/'.(int) $_GET['id'];
+                $actual_link = BASE_URL.'#/goalcanvas/editCanvasItem/'.$itemId;
                 $message = sprintf(
                     $this->language->__('email_notifications.canvas_item__comment_created_message'),
                     session('userdata.name')
@@ -164,7 +165,7 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
 
                 $this->projectService->notifyProjectUsers($notification);
 
-                return Frontcontroller::redirect(BASE_URL.'/goalcanvas/editCanvasItem/'.$_GET['id']);
+                return Frontcontroller::redirect(BASE_URL.'/goalcanvas/editCanvasItem/'.$itemId);
             }
         }
 
@@ -316,9 +317,9 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
 
         $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
 
-        if (isset($_GET['id'])) {
-            $comments = $this->commentsRepo->getComments('goalcanvasitem', $_GET['id']);
-            $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem($_GET['id']));
+        if (isset($params['id']) && ! empty($params['id'])) {
+            $comments = $this->commentsRepo->getComments('goalcanvasitem', (int) $params['id']);
+            $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem((int) $params['id']));
         } else {
             $value = [
                 'id' => '',

@@ -94,14 +94,15 @@
                 </div>
 
                 <div>
-                    <div class="tw:float-right">
+                    <div class="pull-right">
                         @if (count($allCanvas) > 0 && !empty($statusLabels))
                             @php
                                 $filterStatus = $filter['status'] ?? 'all';
+                                if ($filterStatus != 'all' && !isset($statusLabels[$filterStatus])) { $filterStatus = 'all'; }
                                 $filterRelates = $filter['relates'] ?? 'all';
                                 $statusFilterLabel = $filterStatus == 'all'
-                                    ? '<i class="fas fa-filter"></i> ' . __('status.all') . ' ' . __('links.view')
-                                    : '<i class="fas fa-fw ' . __($statusLabels[$filterStatus]['icon']) . '"></i> ' . $statusLabels[$filterStatus]['title'] . ' ' . __('links.view');
+                                    ? '<i class="fas fa-filter"></i> ' . __('status.all')
+                                    : '<i class="fas fa-fw ' . __($statusLabels[$filterStatus]['icon']) . '"></i> ' . $statusLabels[$filterStatus]['title'];
                             @endphp
                             <x-global::elements.button-dropdown :label="$statusFilterLabel" type="default">
                                 <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all') class="active" @endif><i class="fas fa-globe"></i> {!! __('status.all') !!}</a></li>
@@ -114,9 +115,10 @@
                         @if (count($allCanvas) > 0 && !empty($relatesLabels))
                             @php
                                 $filterRelates = $filter['relates'] ?? 'all';
+                                if ($filterRelates != 'all' && !isset($relatesLabels[$filterRelates])) { $filterRelates = 'all'; }
                                 $relatesFilterLabel = $filterRelates == 'all'
-                                    ? '<i class="fas fa-fw fa-globe"></i> ' . __('relates.all') . ' ' . __('links.view')
-                                    : '<i class="fas fa-fw ' . __($relatesLabels[$filterRelates]['icon']) . '"></i> ' . $relatesLabels[$filterRelates]['title'] . ' ' . __('links.view');
+                                    ? '<i class="fas fa-fw fa-globe"></i> ' . __('relates.all')
+                                    : '<i class="fas fa-fw ' . __($relatesLabels[$filterRelates]['icon']) . '"></i> ' . $relatesLabels[$filterRelates]['title'];
                             @endphp
                             <x-global::elements.button-dropdown :label="$relatesFilterLabel" type="default">
                                 <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ __('relates.all') }}</a></li>
@@ -134,7 +136,7 @@
 
             @if (count($allCanvas) > 0)
                 <div id="sortableCanvasKanban" class="sortableTicketList disabled tw:pt-4">
-                    <div class="tw:grid tw:md:grid-cols-3 tw:gap-4">
+                    <div class="row">
                                 @foreach ($canvasItems as $row)
                                     @php
                                         $filterStatus = $filter['status'] ?? 'all';
@@ -149,10 +151,10 @@
                                             $comments = app()->make(\Leantime\Domain\Comments\Repositories\Comments::class);
                                             $nbcomments = $comments->countComments(moduleId: $row['id']);
                                         @endphp
-                                        <div>
+                                        <div class="col-md-4">
                                             <div class="ticketBox" id="item_{{ $row['id'] }}">
                                                         @if ($login::userIsAtLeast($roles::$editor))
-                                                <x-global::elements.dropdown class="tw:float-right">
+                                                <x-global::elements.dropdown class="pull-right">
                                                     <li><a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
                                                             data="item_{{ $row['id'] }}">
                                                             {!! __('links.edit_canvas_item') !!}</a></li>
@@ -181,7 +183,7 @@
                                                 }
                                             @endphp
 
-                                            <div class="tw:text-center">
+                                            <div class="center">
                                                 <small>{{ sprintf(__('text.percent_complete'), $percentDone) }}</small>
                                             </div>
                                             <div class="progress tw:mb-0">
@@ -193,14 +195,14 @@
                                                         class="sr-only">{{ sprintf(__('text.percent_complete'), $percentDone) }}</span>
                                                 </div>
                                             </div>
-                                            <div class="tw:grid tw:grid-cols-3 tw:pb-0">
-                                                <div>
+                                            <div class="row tw:pb-0">
+                                                <div class="col-md-4">
                                                     <small>Start:<br />{{ $metricTypeFront . $row['startValue'] . $metricTypeBack }}</small>
                                                 </div>
-                                                <div class="tw:text-center">
+                                                <div class="col-md-4 center">
                                                     <small>{{ __('label.current') }}:<br />{{ $metricTypeFront . $row['currentValue'] . $metricTypeBack }}</small>
                                                 </div>
-                                                <div class="tw:text-right">
+                                                <div class="col-md-4 align-right">
                                                     <small>{{ __('label.goal') }}:<br />{{ $metricTypeFront . $row['endValue'] . $metricTypeBack }}</small>
                                                 </div>
                                             </div>
@@ -209,14 +211,14 @@
 
                                             @if (!empty($statusLabels))
                                                 <div
-                                                    class="tw:dropdown ticketDropdown statusDropdown colorized firstDropdown">
-                                                    <div tabindex="0" role="button" class="dropdown-toggle f-left status label-{{ $row['status'] != '' ? $statusLabels[$row['status']]['dropdown'] : '' }}"
+                                                    class="dropdown ticketDropdown statusDropdown colorized firstDropdown">
+                                                    <a href="javascript:void(0)" class="dropdown-toggle f-left status label-{{ $row['status'] != '' ? $statusLabels[$row['status']]['dropdown'] : '' }}" data-toggle="dropdown"
                                                         id="statusDropdownMenuLink{{ $row['id'] }}">
                                                         <span
                                                             class="text">{{ $row['status'] != '' ? $statusLabels[$row['status']]['title'] : '' }}</span>
                                                         <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                    </div>
-                                                    <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm"
+                                                    </a>
+                                                    <ul class="dropdown-menu"
                                                         aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
                                                         <li class="nav-header border">
                                                             {{ __('dropdown.choose_status') }}</li>
@@ -238,14 +240,14 @@
 
                                             @if (!empty($relatesLabels))
                                                 <div
-                                                    class="tw:dropdown ticketDropdown relatesDropdown colorized firstDropdown">
-                                                    <div tabindex="0" role="button" class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}"
+                                                    class="dropdown ticketDropdown relatesDropdown colorized firstDropdown">
+                                                    <a href="javascript:void(0)" class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}" data-toggle="dropdown"
                                                         id="relatesDropdownMenuLink{{ $row['id'] }}">
                                                         <span
                                                             class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span>
                                                         <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                    </div>
-                                                    <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm"
+                                                    </a>
+                                                    <ul class="dropdown-menu"
                                                         aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
                                                         <li class="nav-header border">
                                                             {{ __('dropdown.choose_relates') }}</li>
@@ -266,8 +268,8 @@
                                             @endif
 
                                             <div
-                                                class="tw:dropdown ticketDropdown userDropdown noBg right lastDropdown dropRight">
-                                                <div tabindex="0" role="button" class="dropdown-toggle f-left"
+                                                class="dropdown ticketDropdown userDropdown noBg right lastDropdown dropRight">
+                                                <a href="javascript:void(0)" class="dropdown-toggle f-left" data-toggle="dropdown"
                                                     id="userDropdownMenuLink{{ $row['id'] }}">
                                                     <span class="text">
                                                         @if ($row['authorFirstname'] != '')
@@ -286,8 +288,8 @@
                                                             <span id='user{{ $row['id'] }}'></span>
                                                         @endif
                                                     </span>
-                                                </div>
-                                                <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm"
+                                                </a>
+                                                <ul class="dropdown-menu"
                                                     aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                                     <li class="nav-header border">
                                                         {{ __('dropdown.choose_user') }}</li>
@@ -336,7 +338,7 @@
 
     @if (count($canvasItems) == 0)
         <br /><br />
-        <div class='tw:text-center'>
+        <div class='center'>
             <div class='svgContainer'>
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
                         </div>
@@ -357,7 +359,7 @@
             @if (count($allCanvas) > 0)
             @else
                 <br /><br />
-                <div class='tw:text-center'>
+                <div class='center'>
                     <div class='svgContainer'>
                         {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
                     </div>
@@ -375,7 +377,7 @@
             @endif
 
             @if (!empty($disclaimer) && count($allCanvas) > 0)
-                <small class="tw:text-center">{{ $disclaimer }}</small>
+                <small class="center">{{ $disclaimer }}</small>
             @endif
 
             {!! $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render() !!}

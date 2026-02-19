@@ -203,7 +203,7 @@ class EditCanvasItem extends Controller
                     $this->projectService->notifyProjectUsers($notification);
 
                     $closeModal = '';
-                    if (isset($_POST['submitAction']) && $_POST['submitAction'] == 'closeModal') {
+                    if (isset($_POST['save']) && $_POST['save'] == 'closeModal') {
                         $closeModal = '?closeModal=true';
                     }
 
@@ -259,7 +259,7 @@ class EditCanvasItem extends Controller
                     $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
 
                     $closeModal = '';
-                    if (isset($_POST['submitAction']) && $_POST['submitAction'] == 'closeModal') {
+                    if (isset($_POST['save']) && $_POST['save'] == 'closeModal') {
                         $closeModal = '?closeModal=true';
                     }
 
@@ -270,12 +270,13 @@ class EditCanvasItem extends Controller
             }
         }
 
-        if (isset($params['comment'])) {
+        if (isset($params['comment']) && isset($params['id'])) {
+            $itemId = (int) $params['id'];
             $values = [
                 'text' => $params['text'],
                 'date' => date('Y-m-d H:i:s'),
                 'userId' => (session('userdata.id')),
-                'moduleId' => $_GET['id'],
+                'moduleId' => $itemId,
                 'commentParent' => ($params['father']),
             ];
 
@@ -284,7 +285,7 @@ class EditCanvasItem extends Controller
             $values['id'] = $commentId;
 
             $subject = $this->language->__('email_notifications.canvas_board_comment_created');
-            $actual_link = BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'#/editCanvasItem/'.(int) $_GET['id'];
+            $actual_link = BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'#/editCanvasItem/'.$itemId;
             $message = sprintf(
                 $this->language->__('email_notifications.canvas_item__comment_created_message'),
                 session('userdata.name')
@@ -305,7 +306,7 @@ class EditCanvasItem extends Controller
 
             $this->projectService->notifyProjectUsers($notification);
 
-            return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasItem/'.$_GET['id']);
+            return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasItem/'.$itemId);
         }
 
         $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
@@ -314,9 +315,9 @@ class EditCanvasItem extends Controller
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
         $this->tpl->assign('relatesLabels', $this->canvasRepo->getRelatesLabels());
         $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
-        if (isset($_GET['id'])) {
-            $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvas'.'item', $_GET['id']);
-            $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem($_GET['id']));
+        if (isset($params['id']) && ! empty($params['id'])) {
+            $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvas'.'item', (int) $params['id']);
+            $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem((int) $params['id']));
         } else {
             $value = [
                 'id' => '',

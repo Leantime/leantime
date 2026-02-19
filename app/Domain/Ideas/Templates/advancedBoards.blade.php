@@ -59,7 +59,7 @@
             </div>
 
             <div>
-                <x-global::elements.button-dropdown :label="$tpl->__('buttons.idea_kanban') . ' ' . $tpl->__('links.view')" type="default">
+                <x-global::elements.button-dropdown :label="$tpl->__('buttons.idea_kanban')" type="default">
                     <li><a href="{{ BASE_URL }}/ideas/showBoards">{!! $tpl->__('buttons.idea_wall') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/ideas/advancedBoards" class="active">{!! $tpl->__('buttons.idea_kanban') !!}</a></li>
                 </x-global::elements.button-dropdown>

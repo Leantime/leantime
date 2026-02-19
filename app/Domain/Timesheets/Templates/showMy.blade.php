@@ -209,7 +209,11 @@ jQuery(document).ready(function(){
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMy" method="post" id="timesheetList">
-            <div class="tw:flex tw:items-center tw:justify-between tw:flex-wrap tw:gap-2">
+            <x-global::elements.button-dropdown :label="__('links.week_view')" type="default" class="pull-right">
+                    <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
+                    <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
+                </x-global::elements.button-dropdown>
+            <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
                 <div class="padding-top-sm">
                     <span>{{ __('label.week_from') }}</span>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
@@ -219,10 +223,6 @@ jQuery(document).ready(function(){
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
                 </div>
-                <x-global::elements.button-dropdown :label="__('links.week_view') . ' ' . __('links.view')" type="default">
-                    <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
-                    <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
-                </x-global::elements.button-dropdown>
             </div>
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
                 <colgroup>
@@ -283,7 +283,7 @@ jQuery(document).ready(function(){
                                 <td width="10%">
                                 {{ __($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']) }}
                             @if ($timeRow['hasTimesheetOffset'])
-                                    <i class="fa-solid fa-clock-rotate-left tw:float-right label-blue"
+                                    <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
                                        data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone">
                                     </i>
                             @endif

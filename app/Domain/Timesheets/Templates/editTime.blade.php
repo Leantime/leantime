@@ -82,7 +82,7 @@
 </x-global::forms.select> <br />
 
 <label for="projects">{{ __('label.project') }}</label>
-<x-global::forms.select name="projects" id="projects" class="project-select">
+<x-global::forms.select :bare="true" name="projects" id="projects" class="project-select">
     <option value="all">{{ __('headline.all_projects') }}</option>
 
     @foreach ($tpl->get('allProjects') as $row)
@@ -96,7 +96,7 @@
 
 <div id="ticketSelect">
 <label for="tickets">{{ __('label.ticket') }}</label>
-<x-global::forms.select name="tickets" id="tickets" class="ticket-select">
+<x-global::forms.select :bare="true" name="tickets" id="tickets" class="ticket-select">
 
     @foreach ($tpl->get('allTickets') as $row)
         <option class="project_{{ $row['projectId'] }}" data-value="{{ $row['projectId'] }}" value="{{ $row['id'] }}"
@@ -108,7 +108,7 @@
 
 </x-global::forms.select> <br />
 </div>
-    <label for="kind">{{ __('label.kind') }}</label> <x-global::forms.select id="kind"
+    <label for="kind">{{ __('label.kind') }}</label> <x-global::forms.select :bare="true" id="kind"
     name="kind">
     @foreach ($tpl->get('kind') as $key => $row)
         <option value="{{ $key }}"
@@ -183,7 +183,7 @@
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <a class="delete editTimeModal tw:float-right" href="{{ BASE_URL }}/timesheets/delTime/{{ e($_GET['id']) }}">{{ __('links.delete') }}</a>
+        <a class="delete editTimeModal pull-right" href="{{ BASE_URL }}/timesheets/delTime/{{ e($_GET['id']) }}">{{ __('links.delete') }}</a>
         <x-global::button submit type="primary" name="save">{{ __('buttons.save') }}</x-global::button>
     </p>
 </form>
