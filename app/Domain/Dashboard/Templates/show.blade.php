@@ -5,7 +5,7 @@
     @if (count($allUsers) == 1)
         <a href="#/users/newUser" class="headerCTA">
             <i class="fa fa-users"></i>
-            <span class="tw-text-[14px] tw-leading-[25px]">
+            <span class="tw:text-[14px] tw:leading-[25px]">
                 {{ __('links.dont_do_it_alone') }}
             </span>
         </a>
@@ -18,14 +18,14 @@
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
 
-    <div class="tw:grid tw:md:grid-cols-12 tw:gap-4">
+    <div class="row">
 
-        <div class="tw:md:col-span-8">
+        <div class="col-md-8">
 
-            <div class="maincontentinner tw-z-20">
+            <div class="maincontentinner tw:z-20">
 
                 @if ($login::userIsAtLeast($roles::$admin))
-                    <x-global::elements.dropdown containerClass="tw:float-right" data-tippy-content="{{ __('label.edit_project') }}">
+                    <x-global::elements.dropdown containerClass="pull-right" data-tippy-content="{{ __('label.edit_project') }}">
                         <li>
                             <a href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"><i class="fa fa-edit"></i> Edit Project</a>
                         </li>
@@ -35,7 +35,7 @@
                     </x-global::elements.dropdown>
                 @endif
 
-                <x-global::elements.dropdown icon="fa fa-link" containerClass="tw:float-right tw-mr-[5px]" data-tippy-content="{{ __('label.copy_url_tooltip') }}">
+                <x-global::elements.dropdown icon="fa fa-link" containerClass="pull-right tw:mr-[5px]" data-tippy-content="{{ __('label.copy_url_tooltip') }}">
                     <li class="tw:p-2">
                         <x-global::forms.input name="projectUrl" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
                         <x-global::button tag="button" type="primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</x-global::button>
@@ -45,7 +45,7 @@
                 <a
                     href="javascript:void(0);"
                     id="favoriteProject"
-                    class="btn tw:float-right margin-right {{ $isFavorite ? 'isFavorite' : ''}} tw-mr-[5px] round-button"
+                    class="btn pull-right margin-right {{ $isFavorite ? 'isFavorite' : ''}} tw:mr-[5px] round-button"
                     data-tippy-content="{{ __('label.favorite_tooltip') }}"
                 ><i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-star"></i></a>
 
@@ -66,11 +66,11 @@
 
                     <strong>{{ __('label.background') }}</strong><br/>
                 <div class="readMoreBox">
-                    <div class="tiptap-content kanbanContent closed tw-max-h-[200px] readMoreContent tw-pb-[30px]" id="projectDescription">
+                    <div class="tiptap-content kanbanContent closed tw:max-h-[200px] readMoreContent tw:pb-[30px]" id="projectDescription">
                         {!! $tpl->escapeMinimal($project['details']) !!}
                     </div>
 
-                    <div class="tw:text-center readMoreToggle" style="display:none;">
+                    <div class="center readMoreToggle" style="display:none;">
                         <a href="javascript:void(0)" id="descriptionReadMoreToggle">{{ __('label.read_more') }}</a>
                     </div>
                 </div>
@@ -80,8 +80,8 @@
 
             </div>
 
-            <div class="maincontentinner tw-z-10 latest-todos">
-                <x-global::button link="#/tickets/newTicket" type="link" icon="fa fa-plus" class="action-link tw:float-right" style="margin-top:-7px;">Create To-Do</x-global::button>
+            <div class="maincontentinner tw:z-10 latest-todos">
+                <x-global::button link="#/tickets/newTicket" type="link" icon="fa fa-plus" class="action-link pull-right" style="margin-top:-7px;">Create To-Do</x-global::button>
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
                 <ul class="sortableTicketList">
@@ -92,7 +92,7 @@
                     @foreach($tickets as $row)
                         <li class="ui-state-default" id="ticket_{!! $row['id'] !!}">
                             <div class="ticketBox fixed priority-border-{!! $row['priority'] !!}" data-val="{!! $row['id'] !!}">
-                                                    <div class="timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{!! $row['id'] !!}">
+                                                    <div class="timerContainer tw:py-[5px] tw:px-[15px]" id="timerContainer-{!! $row['id'] !!}">
                                         @if($row['dependingTicketId'] > 0)
                                         <a href="#/tickets/showTicket/{{  $row['dependingTicketId'] }}">
                                             {{ $row['parentHeadline'] }}
@@ -107,8 +107,8 @@
                                         @include("tickets::partials.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])
                                     </div>
 
-                                <div class="tw:grid tw:md:grid-cols-12">
-                                    <div class="tw:md:col-span-4 tw-px-[15px] tw-py-0">
+                                <div class="row">
+                                    <div class="col-md-4 tw:px-[15px] tw:py-0">
 
                                         <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
 
@@ -121,7 +121,7 @@
                                             name="date"
                                         />
                                     </div>
-                                    <div class="tw:md:col-span-8 tw-mt-[3px]">
+                                    <div class="col-md-8 tw:mt-[3px]">
                                         <div class="right">
                                             <x-global::dropdownPill
                                                 type="effort"
@@ -174,9 +174,9 @@
 
                 <h5 class="subtitle">{{ __('tabs.team') }}</h5>
 
-                <div class="tw:grid tw:md:grid-cols-12 tw:gap-4 teamBox">
+                <div class="row teamBox">
                     @foreach ($project['assignedUsers'] as $userId => $assignedUser)
-                        <div class="tw:md:col-span-3">
+                        <div class="col-md-3">
                             <x-users::profile-box :user="$assignedUser">
                                 @spaceless
                                     @php $hasName = $assignedUser['firstname'] != '' || $assignedUser['lastname'] != ''; @endphp
@@ -203,7 +203,7 @@
                     @endforeach
 
                     @if ($login::userIsAtLeast($roles::$manager))
-                        <div class="tw:md:col-span-3">
+                        <div class="col-md-3">
                             <x-users::profile-box>
                                 <a href="#/users/newUser?preSelectProjectId={{ $project['id'] }}">
                                     {{ __('links.invite_user') }}
@@ -216,10 +216,10 @@
 
         </div>
 
-        <div class="tw:md:col-span-4">
+        <div class="col-md-4">
 
             <div class="maincontentinner project-updates">
-                <div class="tw:float-right">
+                <div class="pull-right">
                     @if ($login::userIsAtLeast($roles::$editor))
                         <x-global::button
                             link="javascript:void(0);"
@@ -238,22 +238,22 @@
                 <form method="post" action="{{ BASE_URL }}/dashboard/show">
                     <input type="hidden" name="comment" value="1" />
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <div id="comment0" class="commentBox tw-hidden">
-                                <label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</label>
+                            <div id="comment0" class="commentBox tw:hidden">
+                                <label for="projectStatus tw:inline">{{ __('label.project_status_is') }}</label>
 
-                                <x-global::forms.select name="status" id="projectStatus" class="tw-ml-0 tw-mb-[10px]">
+                                <x-global::forms.select name="status" id="projectStatus" class="tw:ml-0 tw:mb-[10px]">
                                     <option value="green">{{ __('label.project_status_green') }}</option>
                                     <option value="yellow">{{ __('label.project_status_yellow') }}</option>
                                     <option value="red">{{ __('label.project_status_red') }}</option>
                                 </x-global::forms.select>
 
                                 <div class="commentReply">
-                                    <textarea rows="5" cols="50" class="tiptapSimple tw-w-full" name="text"></textarea>
-                                    <x-global::button submit type="success" tag="button" class="tw-ml-0" name="comment">{{ __('buttons.save') }}</x-global::button>
+                                    <textarea rows="5" cols="50" class="tiptapSimple tw:w-full" name="text"></textarea>
+                                    <x-global::button submit type="success" tag="button" class="tw:ml-0" name="comment">{{ __('buttons.save') }}</x-global::button>
                                     <a
                                         href="javascript:void(0);"
                                         onclick="leantime.commentsController.toggleCommentBoxes(-1);jQuery('.noCommentsMessage').toggle();"
-                                        class="tw-leading-[50px]"
+                                        class="tw:leading-[50px]"
                                     >{{ __('links.cancel') }}</a>
                                     <input type="hidden" name="comment" value="1"/>
                                     <input type="hidden" name="father" id="father" value="0"/>
@@ -267,7 +267,7 @@
                                     <a href="javascript:void(0);" onclick="jQuery('.readMore').toggle('fast')">
                                         {{ __('links.read_more') }}
                                     </a>
-                                    <div class="readMore tw-hidden tw-mt-[20px]">
+                                    <div class="readMore tw:hidden tw:mt-[20px]">
                                 @endif
                                 <div class="clearall">
                                     <div>
@@ -280,7 +280,7 @@
                                                 ) }}
                                             </strong>
                                                 @if ($login::userIsAtLeast($roles::$editor))
-                                                    <x-global::elements.dropdown containerClass="tw-float-right tw-ml-[10px]">
+                                                    <x-global::elements.dropdown containerClass="tw:float-right tw:ml-[10px]">
                                                         @if ($row['userId'] == session("userdata.id"))
                                                             <li>
                                                                 <a href="{!! $delUrlBase . $row['id'] !!}" class="deleteComment">
@@ -354,7 +354,7 @@
                 <div id="projectProgressContainer">
                         <h5 class="subtitle">{{ __('subtitles.project_progress') }}</h5>
 
-                        <div id="canvas-holder" class="tw-w-full tw-h-[250px]">
+                        <div id="canvas-holder" class="tw:w-full tw:h-[250px]">
                             <canvas id="chart-area"></canvas>
                         </div>
 
@@ -365,7 +365,7 @@
                         <h5 class="subtitle">{{ __('headline.milestones') }}</h5>
                         <ul class="sortableTicketList">
                             @if (count($milestones) == 0)
-                                <div class="tw:text-center">
+                                <div class="center">
                                     <br/>
                                     <h4>{{ __('headlines.no_milestones') }}</h4>
                                     {{ __('text.milestones_help_organize_projects') }}

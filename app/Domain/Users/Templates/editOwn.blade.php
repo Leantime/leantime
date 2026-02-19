@@ -25,8 +25,8 @@
                     </ul>
 
                     <div id="myProfile">
-                        <div class="tw:grid tw:grid-cols-[2fr_1fr] tw:gap-6">
-                            <div>
+                        <div class="row">
+                            <div class="col-md-8">
                                 <form action="" method="post">
                                     <h4 class="widgettitle title-light"><?php echo $tpl->__('label.profile_information'); ?></h4>
                                     <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
@@ -92,8 +92,8 @@
 
                                 </form>
                             </div>
-                            <div>
-                                <div class="tw:text-center">
+                            <div class="col-md-4">
+                                <div class="center">
                                     <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}?v={{ format($user['modified'])->timestamp() }}'  class='profileImg tw:rounded-full' alt='Profile Picture' id="previousImage"/>
                                     <div id="profileImg">
                                     </div>
@@ -390,7 +390,7 @@
 
                             <h4 class="widgettitle title-light">{{ __('label.notification_event_types') }}</h4>
                             <p><small>{{ __('label.notification_event_types_description') }}</small></p>
-                            <div class="tw-mb-4">
+                            <div class="tw:mb-4">
                                 @php
                                     $categoryLabels = [
                                         'tasks' => 'label.notification_category_tasks',
@@ -405,7 +405,7 @@
                                     <x-global::forms.checkbox name="enabledEventTypes[]" value="{{ $categoryKey }}"
                                         :checked="in_array($categoryKey, $enabledEventTypes)">
                                         <strong>{{ __($categoryLabels[$categoryKey] ?? $categoryKey) }}</strong><br />
-                                        <small class="tw-text-gray-500">{{ __($config['description'] ?? '') }}</small>
+                                        <small class="tw:text-gray-500">{{ __($config['description'] ?? '') }}</small>
                                     </x-global::forms.checkbox>
                                 @endforeach
                             </div>
@@ -414,21 +414,21 @@
 
                             <h4 class="widgettitle title-light">{{ __('label.project_notifications') }}</h4>
                             <p><small>{{ __('label.project_notifications_description') }}</small></p>
-                            <div class="tw-max-w-lg tw-max-h-[350px] tw-overflow-y-auto tw-mb-5">
+                            <div class="tw:max-w-lg tw:max-h-[350px] tw:overflow-y-auto tw:mb-5">
                                 @if (count($userProjects) > 0)
                                     @foreach ($userProjects as $project)
                                         @php
                                             $currentLevel = $projectNotificationLevels[$project['id']] ?? $companyDefaultRelevance;
                                         @endphp
-                                        <div class="tw-flex tw-items-center tw-justify-between tw-py-1.5 tw-border-b tw-border-gray-100">
-                                            <span class="tw-truncate tw-mr-3">
+                                        <div class="tw:flex tw:items-center tw:justify-between tw:py-1.5 tw:border-b tw:border-gray-100">
+                                            <span class="tw:truncate tw:mr-3">
                                                 {{ $project['name'] }}
                                                 @if (!empty($project['clientName']))
-                                                    <span class="tw-text-gray-400 tw-text-xs">({{ $project['clientName'] }})</span>
+                                                    <span class="tw:text-gray-400 tw:text-xs">({{ $project['clientName'] }})</span>
                                                 @endif
                                             </span>
                                             <x-global::forms.select name="projectNotificationLevel[{{ $project['id'] }}]"
-                                                    class="tw-text-sm tw-border tw-border-gray-300 tw-rounded tw-px-2 tw-py-1 tw-min-w-[140px]">
+                                                    class="tw:text-sm tw:border tw:border-gray-300 tw:rounded tw:px-2 tw:py-1 tw:min-w-[140px]">
                                                 @foreach ($relevanceLevels as $level => $labelKey)
                                                     <option value="{{ $level }}"
                                                             @if ($currentLevel === $level) selected @endif
@@ -438,7 +438,7 @@
                                         </div>
                                     @endforeach
                                 @else
-                                    <p class="tw-text-gray-400 tw-p-2">{{ __('label.no_projects') }}</p>
+                                    <p class="tw:text-gray-400 tw:p-2">{{ __('label.no_projects') }}</p>
                                 @endif
                             </div>
 

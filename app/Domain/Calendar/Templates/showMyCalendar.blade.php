@@ -20,8 +20,8 @@
 
 <div class="maincontent">
 
-    <div class="tw:grid tw:md:grid-cols-12 tw:gap-4">
-        <div class="tw:md:col-span-2">
+    <div class="row">
+        <div class="col-md-2">
             <div class="maincontentinner">
                 <h5 class="subtitle tw:pb-m">Calendars</h5>
 
@@ -50,18 +50,18 @@
                 <a href="#/calendar/calendarSettings" class="formModal" style="margin-left:-5px;"><i class="fa fa-cog" style="width:16px;"></i> {{ __('label.calendar_settings') }}</a>
             </div>
         </div>
-        <div class="tw:md:col-span-10">
+        <div class="col-md-10">
             <div class="maincontentinner">
-                <div class="tw:grid tw:md:grid-cols-3 tw:gap-4">
-                    <div>
+                <div class="row">
+                    <div class="col-md-4">
                         <x-global::button link="#/calendar/addEvent" type="primary" formModal><i class="fa fa-plus"></i> {{ __('buttons.add_event') }}</x-global::button>
                     </div>
-                    <div>
-                        <div class="fc-center tw:text-center" id="calendarTitle" style="padding-top:5px;">
+                    <div class="col-md-4">
+                        <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
                             <h2>..</h2>
                         </div>
                     </div>
-                    <div>
+                    <div class="col-md-4">
                         <x-global::button link="#/calendar/export" type="secondary" class="right">Export</x-global::button>
                         <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
                             <span class="fc-icon fc-icon-chevron-right"></span>

@@ -17,8 +17,17 @@
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="timesheetListForm" name="timesheetListForm">
-            <div class="tw:flex tw:items-center tw:justify-between tw:flex-wrap tw:gap-2">
-                <div class="padding-top-sm tw:flex tw:items-center tw:gap-2 tw:flex-wrap">
+            <div class="pull-right">
+                <x-global::elements.button-dropdown :label="__('links.list_view') . ' ' . __('links.view')" type="default">
+                    <li><a href="{{ BASE_URL }}/timesheets/showMy">{!! __('links.week_view') !!}</a></li>
+                    <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
+                </x-global::elements.button-dropdown>
+            </div>
+            <div class="pull-right" style="margin-right:3px;">
+                <x-global::button link="javascript:void(0);" type="primary" id="addHoursBtn"><i class="fa fa-plus"></i> {{ __('label.add_hours') }}</x-global::button>
+            </div>
+            <div class="filterWrapper tw:relative">
+                <div class="padding-top-sm">
                     <span>{{ __('label.date_from') }}</span>
                     <input type="text"
                            id="dateFrom"
@@ -47,14 +56,8 @@
                     </x-global::forms.select>
                     <x-global::button submit type="primary" class="reload" style="margin-top:5px;">{{ __('buttons.search') }}</x-global::button>
                 </div>
-                <div class="tw:flex tw:items-center tw:gap-2">
-                    <x-global::button link="javascript:void(0);" type="primary" id="addHoursBtn"><i class="fa fa-plus"></i> {{ __('label.add_hours') }}</x-global::button>
-                    <x-global::elements.button-dropdown :label="__('links.list_view') . ' ' . __('links.view')" type="default">
-                        <li><a href="{{ BASE_URL }}/timesheets/showMy">{!! __('links.week_view') !!}</a></li>
-                        <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
-                    </x-global::elements.button-dropdown>
-                </div>
             </div>
+            <div class="clearfix"></div>
 
             <style>
                 #myTimesheetList th,
