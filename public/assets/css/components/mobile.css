@@ -1438,13 +1438,6 @@ min-width: 1200px
         box-sizing: border-box;
     }
 
-    /* Ensure modal close button stays visible */
-    .nyroModalCloseButton {
-        right: 15px !important;
-        top: 15px !important;
-        z-index: 101;
-    }
-
     /* Make modal content scrollable if needed */
     #global-modal-content .modal-icons {
         margin-right: 40px;
