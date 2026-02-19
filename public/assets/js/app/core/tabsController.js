@@ -220,6 +220,30 @@ leantime.tabsController = (function () {
         initAll(e.detail.elt);
     });
 
+    // Watch for dynamically injected [data-tabs] (e.g. nyroModal AJAX content)
+    if (typeof MutationObserver !== 'undefined') {
+        var observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                mutation.addedNodes.forEach(function (node) {
+                    if (node.nodeType === 1) {
+                        if (node.hasAttribute && node.hasAttribute('data-tabs') && !node._tabsInitialized) {
+                            initTabs(node);
+                        }
+                        if (node.querySelectorAll) {
+                            var nested = node.querySelectorAll('[data-tabs]');
+                            nested.forEach(function (el) {
+                                if (!el._tabsInitialized) {
+                                    initTabs(el);
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
     return {
         initTabs: initTabs,
         initAll: initAll

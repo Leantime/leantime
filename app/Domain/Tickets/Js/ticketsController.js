@@ -1664,9 +1664,9 @@ leantime.ticketsController = (function () {
 
                     // Update footer by showing the total with the reference of the column index
                     jQuery(api.column(9).footer()).html('Total');
-                    jQuery(api.column(10).footer()).html(plannedHours);
-                    jQuery(api.column(11).footer()).html(hoursLeft);
-                    jQuery(api.column(12).footer()).html(loggedHours);
+                    jQuery(api.column(10).footer()).html(parseFloat(plannedHours).toFixed(2));
+                    jQuery(api.column(11).footer()).html(parseFloat(hoursLeft).toFixed(2));
+                    jQuery(api.column(12).footer()).html(parseFloat(loggedHours).toFixed(2));
 
                 },
 
@@ -1978,6 +1978,15 @@ leantime.ticketsController = (function () {
 
     };
 
+    var openTicketModalManually = function (url) {
+        jQuery.nmManual(url, {
+            sizes: {
+                minW: 500,
+                minH: 500
+            }
+        });
+    };
+
     var openMilestoneModalManually = function (url) {
         jQuery.nmManual(url, {
             stack: true,
@@ -2019,6 +2028,7 @@ leantime.ticketsController = (function () {
         initTicketSearchUrlBuilder:initTicketSearchUrlBuilder,
         initSprintDates:initSprintDates,
         initSimpleColorPicker:initSimpleColorPicker,
+        openTicketModalManually:openTicketModalManually,
         openMilestoneModalManually:openMilestoneModalManually
     };
 })();
