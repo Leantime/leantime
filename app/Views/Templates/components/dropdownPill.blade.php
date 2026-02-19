@@ -17,8 +17,8 @@
 ])
 
 <div {{ $attributes->merge(['class' => '']) }}>
-    <div class="tw:dropdown tw:dropdown-{{ $align }} ticketDropdown {{ $type }}Dropdown {{ $colorized ? 'colorized' : '' }} {{ $noBg ? 'noBg' : '' }} {{ $extraClass }}">
-        <div tabindex="0" role="button" style="{{ $linkStyle }}" class="dropdown-toggle f-left {{ $type }} {{ $selectedClass }}" id="{{ $type }}DropdownMenuLink{{ $parentId }}" aria-haspopup="true" aria-expanded="false">
+    <div class="dropdown ticketDropdown {{ $type }}Dropdown {{ $colorized ? 'colorized' : '' }} {{ $noBg ? 'noBg' : '' }} show {{ $extraClass }}">
+        <a href="javascript:void(0)" style="{{ $linkStyle }}" class="dropdown-toggle f-left {{ $type }} {{ $selectedClass }}" id="{{ $type }}DropdownMenuLink{{ $parentId }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="text">
                 @if(isset($options[$selectedKey]))
                     @if(is_array($options[$selectedKey]))
@@ -31,8 +31,8 @@
                 @endif
             </span>
             &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-        </div>
-        <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="{{ $type }}DropdownMenuLink{{ $parentId }}">
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="{{ $type }}DropdownMenuLink{{ $parentId }}">
             <li class="nav-header border">{{ $headerLabel ?: __("label.select_".$type) }}</li>
             @foreach ($options as $key => $value)
                 @php
