@@ -26,11 +26,11 @@
 
     <br />
 
-    <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
-        <div>
+    <div class="row">
+        <div class="col-md-6">
             <x-global::button submit type="primary">{{ __('buttons.duplicate') }}</x-global::button>
         </div>
-        <div class="tw:text-right padding-top-sm">
+        <div class="col-md-6 align-right padding-top-sm">
         </div>
     </div>
 

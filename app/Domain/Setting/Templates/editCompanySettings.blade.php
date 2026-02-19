@@ -13,7 +13,8 @@
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
     <div class="maincontentinner">
-                <div class="lt-tabs tabbedwidget companyTabs" data-tabs data-tabs-persist="hash">
+                <div class="row"><div class="col-md-12">
+                <div class="tabbedwidget tab-primary companyTabs">
 
                     <ul role="tablist">
                         <li><a href="#details"><span class="fa fa-building"></span> {{ __('tabs.details') }}</a></li>
@@ -23,8 +24,8 @@
 
                     <div id="details">
 
-                        <div class="tw:grid tw:grid-cols-[2fr_1fr] tw:gap-6">
-                            <div>
+                        <div class="row">
+                            <div class="col-md-8">
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings#details">
                                     <p>{{ __('text.these_are_system_wide_settings') }}</p>
                                     <br />
@@ -33,11 +34,11 @@
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-building"></span>{{ __('subtitles.companydetails') }}
                                     </h4>
-                                    <div class="tw:grid tw:grid-cols-[1fr_4fr] tw:gap-6">
-                                        <div>
+                                    <div class="row">
+                                        <div class="col-md-2">
                                             <label>{{ __('label.language') }}</label>
                                         </div>
-                                        <div>
+                                        <div class="col-md-8">
                                             <x-global::forms.select name="language" id="language">
                                                 @foreach($tpl->get('languageList') as $languagKey => $languageValue)
                                                     <option value="{{ $languagKey }}"
@@ -47,12 +48,12 @@
                                         </div>
                                     </div>
 
-                                    <div class="tw:grid tw:grid-cols-[1fr_4fr] tw:gap-6">
-                                        <div>
+                                    <div class="row">
+                                        <div class="col-md-2">
                                             <label>{{ __('label.company_name') }}</label>
                                         </div>
-                                        <div>
-                                            <x-global::forms.input name="name" id="companyName" value="{{ $companySettings['name'] }}" class="tw:float-left" />
+                                        <div class="col-md-8">
+                                            <x-global::forms.input name="name" id="companyName" value="{{ $companySettings['name'] }}" class="pull-left" />
                                             <small>{{ __('text.company_name_helper') }}</small>
                                         </div>
                                     </div>
@@ -60,11 +61,11 @@
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-cog"></span>{{ __('subtitles.defaults') }}
                                     </h4>
-                                    <div class="tw:grid tw:grid-cols-[1fr_4fr] tw:gap-6">
-                                        <div>
+                                    <div class="row">
+                                        <div class="col-md-2">
                                             <label for="messageFrequency">{{ __('label.messages_frequency') }}</label>
                                         </div>
-                                        <div>
+                                        <div class="col-md-8">
                                             <span class='field'>
                                                 <x-global::forms.select name="messageFrequency" id="messageFrequency" style="width: 220px">
                                                     <option value="">--{{ __('label.choose_option') }}--</option>
@@ -85,14 +86,14 @@
                                     <x-global::button submit type="primary" id="saveBtn">{{ __('buttons.save') }}</x-global::button>
                                 </form>
                             </div>
-                            <div>
+                            <div class="col-md-4">
 
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings">
                                     <input type="hidden" value="1" name="saveLogo" />
                                     <h5 class="widgettitle title-light">{{ __('headlines.logo') }}</h5>
                                     <br />
 
-                                    <div>
+                                    <div class="row"><div class="col-md-12">
                                             @if($companySettings['logo'] != '')
                                                 <img src='{{ $companySettings['logo'] }}' class='logoImg' alt='Logo' id="previousImage" width="260"/>
                                             @else
@@ -127,6 +128,7 @@
                                                     </p>
                                                 </div>
                                             </div>
+                                        </div>
                                     </div>
                                 </form>
                                 <hr />
@@ -159,6 +161,8 @@
                     @dispatchEvent('tabsContent')
 
                 </div>
+            </div>
+        </div>
     </div>
 </div>
 

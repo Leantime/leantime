@@ -30,8 +30,8 @@
             <div id='clientDetails'>
                 <form action="" method="post">
 
-                    <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
-                        <div>
+                    <div class="row row-fluid">
+                        <div class="col-md-6">
                             <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> {{ __('subtitle.details') }}</h4>
 
                             <div class="form-group">
@@ -106,7 +106,7 @@
 
                         </div>
 
-                        <div>
+                        <div class="col-md-6">
                             <h4 class="widgettitle title-light"><span class="fa fa-users"></span> {{ __('subtitles.users_assigned_to_this_client') }}</h4>
                             <x-global::button link="#/users/newUser?preSelectedClient={{ $values['id'] }}" type="primary" icon="fa fa-plus">{{ __('buttons.add_user') }}</x-global::button>
                             <table class='table table-bordered'>
@@ -155,11 +155,11 @@
 
                     </div>
 
-                    <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
-                        <div>
+                    <div class="row">
+                        <div class="col-md-6">
                             <x-global::button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-global::button>
                         </div>
-                        <div class="tw:text-right">
+                        <div class="col-md-6 align-right">
                             <a href="{{ BASE_URL }}/clients/delClient/{{ e($_GET['id']) }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a>
                         </div>
                     </div>
@@ -205,7 +205,7 @@
                         @foreach($tpl->get('files') as $file)
                             <li class="{{ $file['moduleId'] }}">
                                 <x-global::elements.dropdown style="float:right;">
-                                    <li class="tw:menu-title">{{ __('subtitles.file') }}</li>
+                                    <li class="nav-header border">{{ __('subtitles.file') }}</li>
                                     <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{{ __('links.download') }}</a></li>
                                     @if($login::userIsAtLeast($roles::$admin))
                                         <li><a href="{{ BASE_URL }}/clients/showClient/{{ e($_GET['id']) }}?delFile={{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>

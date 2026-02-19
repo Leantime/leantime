@@ -7,9 +7,9 @@
 
 <form action="" method="post" class="stdform">
 
-    <div class="tw:grid tw:grid-cols-[2fr_1fr] tw:gap-6">
+    <div class="row">
 
-        <div>
+        <div class="col-md-8">
             <div class="form-group">
                 <x-global::forms.input :bare="true" type="text" name="name" id="name" class="main-title-input" style="width:99%" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
             </div>
@@ -24,12 +24,12 @@
                 <x-global::button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-global::button>
             </div>
         </div>
-        <div>
+        <div class="col-md-4">
 
             <div class="marginBottom">
 
                 @if($tpl->get('projectTypes') && count($tpl->get('projectTypes')) > 1)
-                <div class="tw:text-center">
+                <div class="text-center">
                     <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
                     <p>The type of the project. This will determine which features are available.</p>
                     <x-global::forms.select name="type">
@@ -45,7 +45,7 @@
             </div>
             <div class="marginBottom">
 
-                <div class="tw:text-center">
+                <div class="text-center">
 
                     <h4 class="widgettitle title-light"><span
                             class="fa fa-picture-o"></span>{{ __('label.project_avatar') }}</h4>

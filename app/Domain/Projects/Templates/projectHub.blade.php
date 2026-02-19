@@ -9,7 +9,7 @@
 
     <div class="maincontent" style="margin-top:0px">
         <div style="padding:10px 0px">
-            <div class="tw:text-center">
+            <div class="center">
                 <span style="font-size:38px; color:var(--main-titles-color););">
                     {{ __("headline.project_hub") }}
                 </span><br />
@@ -37,7 +37,7 @@
              hx-swap="outerHTML">
 
             @if (count($clients) > 0)
-                <x-global::elements.link-dropdown :label="$currentClientName != '' ? $currentClientName : __('headline.all_clients')" triggerClass="btn btn-default header-title-dropdown" class="tw:float-right">
+                <x-global::elements.link-dropdown :label="$currentClientName != '' ? $currentClientName : __('headline.all_clients')" triggerClass="btn btn-default header-title-dropdown" class="pull-right">
                         <li>
                             <a href="javascript:void(0);"
                                hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
@@ -57,7 +57,7 @@
 
             @if (count($allProjects) == 0)
                 <br /><br />
-                <div class='tw:text-center'>
+                <div class='center'>
                     <div style='width:70%; color:var(--main-titles-color)' class='svgContainer'>
                         {{ __('notifications.not_assigned_to_any_project') }}
                         @if($login::userIsAtLeast($roles::$manager))
@@ -73,13 +73,13 @@
                     ⭐ My Favorites
                 </x-slot>
                 <x-slot name="content">
-                    <div class="tw:grid tw:md:grid-cols-3 tw:gap-6">
+                    <div class="row">
                         @php
                             $hasFavorites = false;
                         @endphp
                         @foreach ($allProjects as $project)
                             @if($project['isFavorite'] == true)
-                                <div>
+                                <div class="col-md-4">
                                     @include("projects::partials.projectCard", ["project" => $project,  "type" => "detailed"])
                                 </div>
                                 @php
@@ -103,11 +103,11 @@
                 </x-slot>
                 <x-slot name="content">
 
-                    <div class="tw:grid tw:md:grid-cols-4 tw:gap-4">
+                    <div class="row">
                         @foreach ($allProjects as $project)
                             @if($project['isFavorite'] == false)
 
-                                <div>
+                                <div class="col-md-3">
                                     @include("projects::partials.projectCard", ["project" => $project, "type" => "detailed"])
                                 </div>
 

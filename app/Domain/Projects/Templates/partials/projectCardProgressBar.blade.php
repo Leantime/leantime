@@ -1,10 +1,10 @@
 @php( $percentDone = format($project['progress']['percent'])->decimal())
 
-    <div class="tw:grid tw:grid-cols-[7fr_5fr] tw:gap-4">
-        <div>
+    <div class="row">
+        <div class="col-md-7">
             {{ __("subtitles.project_progress") }}
         </div>
-        <div style="text-align:right">
+        <div class="col-md-5" style="text-align:right">
             {{ sprintf(__("text.percent_complete"), $percentDone) }}
         </div>
     </div>

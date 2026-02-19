@@ -17,8 +17,8 @@
 <form action="" method="post" class="stdform userEditModal">
         <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
         <div class="maincontent">
-            <div class="tw:grid tw:grid-cols-[7fr_5fr] tw:gap-6">
-                <div>
+            <div class="row">
+                <div class="col-md-7">
                     <div class="maincontentinner">
                     <h4 class="widgettitle title-light">{{ __('label.profile_information') }}</h4>
 
@@ -37,7 +37,7 @@
                     </x-global::forms.select> <br />
 
                     <label for="status">{{ __('label.status') }}</label>
-                    <x-global::forms.select :bare="true" name="status" id="status" class="tw:float-left">
+                    <x-global::forms.select :bare="true" name="status" id="status" class="pull-left">
                         <option value="a"
                             {{ strtolower($values['status']) == 'a' ? 'selected="selected"' : '' }}>
                             {{ __('label.active') }}
@@ -52,7 +52,7 @@
                         </option>
                     </x-global::forms.select>
                         @if($values['status'] == 'i')
-                        <div class="tw:float-left" style="padding-left:5px; line-height: 29px;">
+                        <div class="pull-left" style="padding-left:5px; line-height: 29px;">
                             <x-global::elements.button-dropdown :label="'<i class=&quot;fa fa-link&quot;></i> ' . __('label.copyinviteLink')" type="default" align="start" menuClass="tw:p-4 tw:min-w-72">
                                 <li class="noClickProp" onclick="event.stopPropagation()">
                                     <x-global::forms.input :bare="true" type="text" id="inviteURL" name="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
@@ -93,7 +93,7 @@
                     </p>
                     </div>
                 </div>
-                <div>
+                <div class="col-md-5">
                     <div class="maincontentinner">
                     <h4 class="widgettitle title-light">{{ __('label.project_assignment') }}</h4>
 

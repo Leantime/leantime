@@ -5,8 +5,8 @@
 
 <div class="projectBox" id="projectBox-{{ $project['id'] }}">
     <div class="fixed">
-        <div class="tw:grid tw:grid-cols-[1fr_auto] tw:gap-4 tw:pb-sm">
-            <div>
+        <div class="row" style="padding-bottom:var(--base-spacing-sm);">
+            <div class="col-md-10">
                 <a href="{{ BASE_URL }}/dashboard/show?projectId={{ $project['id'] }}">
                     <span class="projectAvatar">
                         @if(isset($projectTypeAvatars[$project["type"]]) && $projectTypeAvatars[$project["type"]] != "avatar")
@@ -23,14 +23,14 @@
                     <strong>{{ $project['name'] }} <i class="fa-solid fa-up-right-from-square"></i></strong>
                 </a>
             </div>
-            <div class="tw:text-right">
+            <div class="col-md-2 align-right">
                 <a  href="javascript:void(0);"
                     hx-patch="{{ BASE_URL }}/hx/projects/projectCard/toggleFavorite"
                     hx-vals='{"isFavorite": {{ $project['isFavorite'] }}, "projectId": {{ $project['id'] }}}'
                     hx-target="#projectBox-{{ $project['id'] }}"
                     onclick="jQuery(this).addClass('go')"
                     hx-swap="none"
-                    class="favoriteClick favoriteStar tw:float-right margin-right {{ $project['isFavorite'] ? 'isFavorite' : ''}} tw:mr-[5px]"
+                    class="favoriteClick favoriteStar pull-right margin-right {{ $project['isFavorite'] ? 'isFavorite' : ''}} tw:mr-[5px]"
                     data-tippy-content="{{ __('label.favorite_tooltip') }}">
                         <i class="{{ $project['isFavorite'] ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
                 </a>

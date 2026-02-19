@@ -13,7 +13,7 @@
     {!! $tpl->displayNotification() !!}
 
     <div class="maincontentinner">
-        <div class="lt-tabs tabbedwidget accountTabs" data-tabs>
+        <div class="lt-tabs tabbedwidget accountTabs" data-tabs data-tabs-persist="hash">
 
                     <ul role="tablist">
                         <li><a href="#myProfile">{!! __('tabs.myProfile') !!}</a></li>

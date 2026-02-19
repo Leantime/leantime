@@ -38,22 +38,24 @@
                 <form method="post" action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#team">
                     <input type="hidden" name="saveUsers" value="1" />
 
-                    <div>
-                    <div>
+                    <div class="row-fluid">
+                    <div class="span12">
 
                          <div class="form-group">
                              <br />{{ __('text.choose_access_for_users') }}<br />
                              <br />
 
-                            <div>
-                                <h4 class="widgettitle title-light">
-                                    <span class="fa fa-users"></span>{{ __('headlines.team_member') }}
-                                </h4>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4 class="widgettitle title-light">
+                                        <span class="fa fa-users"></span>{{ __('headlines.team_member') }}
+                                    </h4>
+                                </div>
                             </div>
 
-                             <div class="tw:grid tw:md:grid-cols-3 tw:gap-6">
+                             <div class="row">
                                 @foreach($project['assignedUsers'] as $userId => $assignedUser)
-                                    <div>
+                                    <div class="col-md-4">
                                         <div class="userBox">
                                             <x-global::forms.checkbox name="editorId[]" id="user-{{ $assignedUser['id'] }}" value="{{ $assignedUser['id'] }}"
                                                 :checked="true" />
@@ -98,16 +100,18 @@
                                 @endforeach
                              </div>
 
-                            <div>
-                                <h4 class="widgettitle title-light">
-                                    <span class="fa fa-user-friends "></span>{{ __('headlines.assign_users_to_project') }}
-                                </h4>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4 class="widgettitle title-light">
+                                        <span class="fa fa-user-friends "></span>{{ __('headlines.assign_users_to_project') }}
+                                    </h4>
+                                </div>
                             </div>
 
-                             <div class="tw:grid tw:md:grid-cols-3 tw:gap-6">
+                             <div class="row">
                                 @foreach($tpl->get('availableUsers') as $row)
                                     @if(collect($project['assignedUsers'])->where('id', $row['id'])->isEmpty())
-                                        <div>
+                                        <div class="col-md-4">
                                             <div class="userBox">
                                                 <x-global::forms.checkbox name="editorId[]" id="user-{{ $row['id'] }}" value="{{ $row['id'] }}" />
 
@@ -137,7 +141,7 @@
                                     @endif
                                 @endforeach
                                 @if($login::userIsAtLeast($roles::$manager))
-                                    <div>
+                                    <div class="col-md-4">
                                         <div class="userBox">
                                             <a class="userEditModal" href="{{ BASE_URL }}/users/newUser?preSelectProjectId={{ $project['id'] }}" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> {{ __('links.create_user') }}</a>
                                             <div class="clearall"></div>
@@ -145,7 +149,10 @@
                                     </div>
                                 @endif
                             </div>
-                             <div>
+                             <div class="row">
+                                 <div class="col-md-12">
+
+                                 </div>
                              </div>
                         </div>
                     </div>
@@ -160,14 +167,14 @@
             <div id="integrations">
 
                 <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Mattermost</h4>
-                <div class="tw:grid tw:grid-cols-[3fr_5fr_4fr] tw:gap-6">
-                    <div>
+                <div class="row">
+                    <div class="col-md-3">
                         <img src="{{ BASE_URL }}/dist/images/mattermost-logoHorizontal.png" width="200" />
                     </div>
-                    <div>
+                    <div class="col-md-5">
                         {{ __('text.mattermost_instructions') }}
                     </div>
-                    <div>
+                    <div class="col-md-4">
                         <strong>{{ __('label.webhook_url') }}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             <x-global::forms.input name="mattermostWebhookURL" id="mattermostWebhookURL" value="{{ e($tpl->get('mattermostWebhookURL')) }}" />
@@ -178,15 +185,15 @@
                 </div>
                 <br />
                 <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Slack</h4>
-                <div class="tw:grid tw:grid-cols-[3fr_5fr_4fr] tw:gap-6">
-                    <div>
+                <div class="row">
+                    <div class="col-md-3">
                         <img src="https://cdn.cdnlogo.com/logos/s/52/slack.svg" width="200"/>
                     </div>
 
-                    <div>
+                    <div class="col-md-5">
                         {{ __('text.slack_instructions') }}
                     </div>
-                    <div>
+                    <div class="col-md-4">
                         <strong>{{ __('label.webhook_url') }}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             <x-global::forms.input name="slackWebhookURL" id="slackWebhookURL" value="{{ e($tpl->get('slackWebhookURL')) }}" />
@@ -197,15 +204,15 @@
                 </div>
 
                 <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Zulip</h4>
-                <div class="tw:grid tw:grid-cols-[3fr_5fr_4fr] tw:gap-6">
-                    <div>
+                <div class="row">
+                    <div class="col-md-3">
                         <img src="{{ BASE_URL }}/dist/images/zulip-org-logo.png" width="200"/>
                     </div>
 
-                    <div>
+                    <div class="col-md-5">
                         {{ __('text.zulip_instructions') }}
                     </div>
-                    <div>
+                    <div class="col-md-4">
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             <strong>{{ __('label.base_url') }}</strong><br />
                             <x-global::forms.input name="zulipURL" id="zulipURL" placeholder="{{ __('input.placeholders.zulip_url') }}" value="{{ $tpl->get('zulipHook')['zulipURL'] }}" />
@@ -228,15 +235,15 @@
                 </div>
 
                 <h4 class='widgettitle title-light'><span class='fa fa-leaf'></span>Discord</h4>
-                <div class='tw:grid tw:grid-cols-[3fr_5fr_4fr] tw:gap-6'>
-                    <div>
+                <div class='row'>
+                    <div class='col-md-3'>
                         <img src='{{ BASE_URL }}/dist/images/discord-logo.png' width='200'/>
                     </div>
 
-                    <div>
+                    <div class='col-md-5'>
                       {{ __('text.discord_instructions') }}
                     </div>
-                    <div>
+                    <div class="col-md-4">
                         <strong>{{ __('label.webhook_url') }}</strong><br/>
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             @for($i = 1; $i <= 3; $i++)
@@ -256,22 +263,22 @@
                             <li>
                                 <div class="ticketBox">
 
-                                    <div class="tw:grid tw:grid-cols-[auto_1fr_2fr_2fr_2fr_2fr_auto] tw:gap-4 tw:items-start statusList" id="todostatus-{{ $key }}">
+                                    <div class="row statusList" id="todostatus-{{ $key }}">
 
                                         <input type="hidden" name="labelKeys[]" id="labelKey-{{ $key }}" class='labelKey' value="{{ $key }}"/>
                                         <div class="sortHandle">
                                             <br />
                                             <span class="fa fa-sort"></span>
                                         </div>
-                                        <div>
+                                        <div class="col-md-1">
                                             <label>{{ __('label.sortindex') }}</label>
                                             <x-global::forms.input :bare="true" type="text" name="labelSort-{{ $key }}" id="labelSort-{{ $key }}" value="{{ e($ticketStatus['sortKey']) }}" class="sorter" style="width:50px;" />
                                         </div>
-                                        <div>
+                                        <div class="col-md-2">
                                             <label>{{ __('label.label') }}</label>
                                             <x-global::forms.input name="label-{{ $key }}" id="label-{{ $key }}" value="{{ e($ticketStatus['name']) }}" :readonly="$key == -1" />
                                         </div>
-                                        <div>
+                                        <div class="col-md-2">
                                             <label>{{ __('label.color') }}</label>
                                             <x-global::forms.select :bare="true" name="labelClass-{{ $key }}" id="labelClass-{{ $key }}" class="colorChosen">
                                                 <option value="label-purple" class="label-purple" {{ $ticketStatus['class'] == 'label-purple' ? 'selected="selected"' : '' }}><span class="label-purple">{{ __('label.purple') }}</span></option>
@@ -288,7 +295,7 @@
                                                 <option value="label-default" class="label-default" {{ $ticketStatus['class'] == 'label-default' ? 'selected="selected"' : '' }}><span class="label-default">{{ __('label.grey') }}</span></option>
                                             </x-global::forms.select>
                                         </div>
-                                        <div>
+                                        <div class="col-md-2">
                                             <label>{{ __('label.reportType') }}</label>
                                             <x-global::forms.select name="labelType-{{ $key }}" id="labelType-{{ $key }}">
                                                 <option value="NEW" {{ ($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : '' }}>{{ __('status.new') }}</option>
@@ -297,7 +304,7 @@
                                                 <option value="NONE" {{ ($ticketStatus['statusType'] == 'NONE') ? 'selected="selected"' : '' }}>{{ __('status.dont_report') }}</option>
                                             </x-global::forms.select>
                                         </div>
-                                        <div>
+                                        <div class="col-md-2">
                                             <label for="">{{ __('label.showInKanban') }}</label>
                                             <x-global::forms.checkbox name="labelKanbanCol-{{ $key }}" id="labelKanbanCol-{{ $key }}" :checked="(bool) $ticketStatus['kanbanCol']" />
                                         </div>
@@ -332,21 +339,21 @@
 <!-- New Status Template -->
 <div class="newStatusTpl" style="display:none;">
     <div class="ticketBox">
-    <div class="tw:grid tw:grid-cols-[auto_1fr_2fr_2fr_2fr_2fr_auto] tw:gap-4 tw:items-start statusList" id="todostatus-XXNEWKEYXX">
+    <div class="row statusList" id="todostatus-XXNEWKEYXX">
         <input type="hidden" name="labelKeys[]" id="labelKey-XXNEWKEYXX" class='labelKey' value="XXNEWKEYXX"/>
         <div class="sortHandle">
             <br />
             <span class="fa fa-sort"></span>
         </div>
-        <div>
+        <div class="col-md-1">
             <label>{{ __('label.sortindex') }}</label>
             <x-global::forms.input :bare="true" type="text" name="labelSort-XXNEWKEYXX" id="labelSort-XXNEWKEYXX" value="" class="sorter" style="width:50px;" />
         </div>
-        <div>
+        <div class="col-md-2">
             <label>{{ __('label.label') }}</label>
             <x-global::forms.input name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
         </div>
-        <div>
+        <div class="col-md-2">
             <label>{{ __('label.color') }}</label>
             <x-global::forms.select :bare="true" name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen">
                 <option value="label-blue" class="label-blue"><span class="label-blue">{{ __('label.blue') }}</span></option>
@@ -363,7 +370,7 @@
                 <option value="label-default" class="label-default"><span class="label-default">{{ __('label.grey') }}</span></option>
             </x-global::forms.select>
         </div>
-        <div>
+        <div class="col-md-2">
             <label>{{ __('label.reportType') }}</label>
             <x-global::forms.select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX">
                 <option value="NEW">{{ __('status.new') }}</option>
@@ -372,7 +379,7 @@
                 <option value="NONE">{{ __('status.dont_report') }}</option>
             </x-global::forms.select>
         </div>
-        <div>
+        <div class="col-md-2">
             <label for="">{{ __('label.showInKanban') }}</label>
             <x-global::forms.checkbox name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX" />
         </div>
