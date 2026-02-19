@@ -23,8 +23,8 @@
 
     <div class="maincontentinner">
 
-        <div class="tw:grid tw:grid-cols-3">
-            <div>
+        <div class="row">
+            <div class="col-md-4">
                 @dispatchEvent('filters.afterLefthandSectionOpen')
                 @php
                     $tpl->displaySubmodule('tickets-ticketNewBtn');
@@ -33,10 +33,10 @@
                 @dispatchEvent('filters.beforeLefthandSectionClose')
             </div>
 
-            <div class="tw:text-center">
+            <div class="col-md-4 center">
             </div>
-            <div>
-                <div class="tw:float-right">
+            <div class="col-md-4">
+                <div class="pull-right">
                     @dispatchEvent('filters.afterRighthandSectionOpen')
                     <div id="tableButtons" style="display:inline-block"></div>
                     @dispatchEvent('filters.beforeRighthandSectionClose')
@@ -188,8 +188,8 @@
                             </td>
 
                             <td data-order="{{ $row['editorFirstname'] != '' ? e($row['editorFirstname']) : __('dropdown.not_assigned') }}">
-                                <div class="tw:dropdown ticketDropdown userDropdown noBg f-left">
-                                    <div tabindex="0" role="button" class="dropdown-toggle" id="userDropdownMenuLink{{ $row['id'] }}" aria-haspopup="true" aria-expanded="false">
+                                <div class="dropdown ticketDropdown userDropdown noBg show f-left">
+                                    <a class="dropdown-toggle" href="javascript:void(0);" role="button" id="userDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="text">
                                             @if($row['editorFirstname'] != '')
                                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['editorId'] }}" width="25" style="vertical-align: middle; margin-right:5px;"/></span><span id="user{{ $row['id'] }}">{{ e($row['editorFirstname']) }}</span>
@@ -198,8 +198,8 @@
                                             @endif
                                         </span>
                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                    </div>
-                                    <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                         <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>
                                         <li class="dropdown-item">
                                             <a href="javascript:void(0);" onclick="document.activeElement.blur();" data-label="{{ __('label.not_assigned_to_user') }}" data-value="{{ $row['id'] }}_0_0" id="userStatusChange{{ $row['id'] }}0">{{ __('label.not_assigned_to_user') }}</a>

@@ -71,7 +71,7 @@
                     @endif
                 </x-slot:label>
                     <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> {{ __('links.create_sprint_no_icon') }}</a></li>
-                    <li class="tw:menu-title border"></li>
+                    <li class="nav-header border"></li>
                     <li>
                         <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ __('links.all_todos') }}</a>
                     </li>

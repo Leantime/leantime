@@ -31,11 +31,11 @@
 
     <br />
 
-    <div class="tw:grid tw:md:grid-cols-2 tw:gap-6">
-        <div>
+    <div class="row">
+        <div class="col-md-6">
             <x-global::button submit type="primary">{{ __('buttons.save') }}</x-global::button>
         </div>
-        <div class="tw:text-right padding-top-sm">
+        <div class="col-md-6 align-right padding-top-sm">
             @if(isset($currentSprint->id) && $currentSprint->id != '' && $login::userIsAtLeast($roles::$editor))
                 <a href="{{ BASE_URL }}/sprints/delSprint/{{ $currentSprint->id }}" class="delete formModal sprintModal"><i class="fa fa-trash"></i> {{ __('links.delete_sprint') }}</a>
             @endif

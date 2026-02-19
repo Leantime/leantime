@@ -7,8 +7,8 @@
 
 <input type="hidden" value="{{ e($ticket->id) }}" name="id" autocomplete="off" readonly/>
 
-<div class="tw:grid tw:md:grid-cols-12 tw:gap-4">
-    <div class="tw:md:col-span-9">
+<div class="row-fluid">
+    <div class="col-md-9">
         <div class="marginBottom">
 
                 <div class="form-group">
@@ -173,7 +173,7 @@
             </div>
         @endif
     </div>
-    <div class="tw:md:col-span-3">
+    <div class="col-md-3">
 
         <div class="marginBottom">
                 <h5 class="accordionTitle" id="accordion_link_tickets-organization" style="padding-bottom:15px; font-size:var(--font-size-l)">

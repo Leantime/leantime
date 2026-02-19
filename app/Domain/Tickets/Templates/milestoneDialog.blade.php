@@ -89,7 +89,7 @@
         <div>
             <x-global::button submit type="primary">{{ __('buttons.save') }}</x-global::button>
         </div>
-        <div class="tw:text-right padding-top-sm">
+        <div class="align-right padding-top-sm">
         </div>
     </div>
 </form>

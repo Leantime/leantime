@@ -5,7 +5,7 @@
 
 <div class="pageheader">
 
-    <div class="tw:float-right padding-top">
+    <div class="pull-right padding-top">
         <a href="{{ session('lastPage') }}" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> {{ __('links.go_back') }}</a>
     </div>
 

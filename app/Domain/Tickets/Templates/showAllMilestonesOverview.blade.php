@@ -34,12 +34,12 @@
                     @dispatchEvent('filters.beforeLefthandSectionClose')
                 </div>
 
-                <div class="tw:text-center">
+                <div class="center">
                     @dispatchEvent('filters.afterCenterSectionOpen')
                     @dispatchEvent('filters.beforeCenterSectionClose')
                 </div>
                 <div>
-                    <div class="tw:float-right">
+                    <div class="pull-right">
                         @dispatchEvent('filters.afterRighthandSectionOpen')
                         <div id="tableButtons" style="display:inline-block"></div>
                         @dispatchEvent('filters.beforeRighthandSectionClose')
@@ -139,8 +139,8 @@
                         </td>
 
                         <td class="dropdown-cell" data-order="{{ $row->editorFirstname != '' ? e($row->editorFirstname) : __('dropdown.not_assigned') }}">
-                            <div class="tw:dropdown ticketDropdown userDropdown noBg">
-                                <div tabindex="0" role="button" class="dropdown-toggle" id="userDropdownMenuLink{{ $row->id }}" aria-haspopup="true" aria-expanded="false">
+                            <div class="dropdown ticketDropdown userDropdown noBg">
+                                <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="userDropdownMenuLink{{ $row->id }}" aria-haspopup="true" aria-expanded="false">
                                     <span class="text">
                                         @if($row->editorFirstname != '')
                                             <span id="userImage{{ $row->id }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row->editorId }}" width="25" style="vertical-align: middle; margin-right:5px;"/></span><span id="user{{ $row->id }}"> {{ e($row->editorFirstname) }}</span>
@@ -149,8 +149,8 @@
                                         @endif
                                     </span>
                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                </div>
-                                <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="userDropdownMenuLink{{ $row->id }}">
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row->id }}">
                                     <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>
                                     @foreach($tpl->get('users') as $user)
                                         <li class="dropdown-item">
@@ -183,7 +183,7 @@
                         <td>
                             @if($login::userIsAtLeast($roles::$editor))
                                 <x-global::elements.dropdown>
-                                    <li class="tw:menu-title">{{ __('subtitles.todo') }}</li>
+                                    <li class="nav-header border">{{ __('subtitles.todo') }}</li>
                                     <li><a href="#/tickets/editMilestone/{{ $row->id }}" class="ticketModal"><i class="fa fa-edit"></i> {{ __('links.edit_milestone') }}</a></li>
                                     <li><a href="#/tickets/moveTicket/{{ $row->id }}" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> {{ __('links.move_milestone') }}</a></li>
                                     <li><a href="#/tickets/delMilestone/{{ $row->id }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>

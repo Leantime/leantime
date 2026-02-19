@@ -32,8 +32,8 @@ jQuery(document).ready(function(){
 
     <div class="maincontentinner kanban-board-wrapper">
 
-        <div class="tw:grid tw:grid-cols-3">
-            <div>
+        <div class="row">
+            <div class="col-md-4">
                 @dispatchEvent('filters.afterLefthandSectionOpen')
                 @php
                     $tpl->displaySubmodule('tickets-ticketNewBtn');
@@ -42,7 +42,7 @@ jQuery(document).ready(function(){
                 @dispatchEvent('filters.beforeLefthandSectionClose')
             </div>
 
-            <div class="tw:text-center">
+            <div class="center">
             </div>
             <div>
             </div>
@@ -70,7 +70,7 @@ jQuery(document).ready(function(){
             <div class="column">
                 <h4 class="widgettitle title-primary title-border-{{ $statusRow['class'] }}">
                     @if($login::userIsAtLeast($roles::$manager))
-                        <x-global::elements.dropdown containerClass="tw:float-right">
+                        <x-global::elements.dropdown containerClass="pull-right">
                             <li><a href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}" class="editLabelModal">{{ __('headlines.edit_label') }}</a></li>
                             <li><a href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings">{{ __('links.add_remove_col') }}</a></li>
                         </x-global::elements.dropdown>
@@ -220,8 +220,8 @@ jQuery(document).ready(function(){
                                                     headerLabel="{{ __('dropdown.select_priority') }}"
                                                 />
 
-                                                <div class="tw:dropdown tw:dropdown-end ticketDropdown userDropdown noBg lastDropdown dropRight">
-                                                    <div tabindex="0" role="button" class="dropdown-toggle f-left" id="userDropdownMenuLink{{ $row['id'] }}" aria-haspopup="true" aria-expanded="false">
+                                                <div class="dropdown ticketDropdown userDropdown noBg lastDropdown dropRight">
+                                                    <a href="javascript:void(0)" class="dropdown-toggle f-left" data-toggle="dropdown" id="userDropdownMenuLink{{ $row['id'] }}" aria-haspopup="true" aria-expanded="false">
                                                         <span class="text">
                                                             @if($row['editorFirstname'] != '')
                                                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['editorId'] }}" width="25" style="vertical-align: middle;"/></span>
@@ -229,8 +229,8 @@ jQuery(document).ready(function(){
                                                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle;"/></span>
                                                             @endif
                                                         </span>
-                                                    </div>
-                                                    <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
+                                                    </a>
+                                                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                                         <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>
                                                         @if(is_array($tpl->get('users')))
                                                             @foreach($tpl->get('users') as $user)
@@ -256,11 +256,11 @@ jQuery(document).ready(function(){
 
                                                     @if($row['tags'] != '')
                                                         @php $tagsArray = explode(',', $row['tags']); @endphp
-                                                        <div class="tw:dropdown">
-                                                        <div tabindex="0" role="button">
+                                                        <div class="dropdown">
+                                                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
                                                             <i class="fa fa-tags" aria-hidden="true"></i> {{ count($tagsArray) }}
-                                                        </div>
-                                                        <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm">
+                                                        </a>
+                                                        <ul class="dropdown-menu">
                                                             <li style="padding:10px"><div class="tagsinput readonly">
                                                                 @foreach($tagsArray as $tag)
                                                                     <span class="tag"><span>{{ e($tag) }}</span></span>

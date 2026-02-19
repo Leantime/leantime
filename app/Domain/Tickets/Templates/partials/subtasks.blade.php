@@ -63,21 +63,21 @@
                     <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>
 
             </div>
-            <div class="tw:grid tw:md:grid-cols-12 tw:gap-2">
-                <div class="tw:md:col-span-9 tw:px-4 tw:py-0">
-                    <div class="tw:grid tw:grid-cols-3">
-                        <div>
+            <div class="row">
+                <div class="col-md-9" style="padding-left:15px; padding-right:15px;">
+                    <div class="row">
+                        <div class="col-md-4">
                                 {{ __("label.due") }}<input type="text" title="{{ __("label.due") }}" value="{{ $date }}" class="duedates secretInput quickDueDates" data-id="{{ $subticket['id'] }}" name="date" />
                         </div>
-                        <div>
+                        <div class="col-md-4">
                                 {{ __("label.planned_hours") }}<input type="text" value="{{ $subticket['planHours'] }}" name="planHours" data-label="planHours-{{ $subticket['id'] }}" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
                         </div>
-                        <div>
+                        <div class="col-md-4">
                                 {{ __("label.estimated_hours_remaining") }}<input type="text" value="{{ $subticket['hourRemaining'] }}" name="hourRemaining" data-label="hourRemaining-{{ $subticket['id'] }}" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
                         </div>
                     </div>
                 </div>
-                <div class="tw:md:col-span-3 tw:pt-[3px]" >
+                <div class="col-md-3" style="padding-top:3px;" >
                     <div class="right">
                         <x-global::dropdownPill
                             type="effort"

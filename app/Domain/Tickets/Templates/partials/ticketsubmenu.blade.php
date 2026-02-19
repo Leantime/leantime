@@ -6,8 +6,8 @@
 
 @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$editor))
 
-    <x-global::elements.dropdown containerClass="tw:float-right">
-            <li class="tw:menu-title">{{ __("subtitles.todo") }}</li>
+    <x-global::elements.dropdown containerClass="pull-right">
+            <li class="nav-header border">{{ __("subtitles.todo") }}</li>
             @dispatchEvent("beforeShowTicket", ["ticket"=>$ticket])
             <li><a href="#/tickets/showTicket/{{ $ticket["id"] }}" class=''><i class="fa fa-edit"></i> {{  __("links.edit_todo") }}</a></li>
             @dispatchEvent("beforeMoveTicket", ["ticket"=>$ticket])
@@ -23,7 +23,7 @@
 
             @dispatchEvent("submenuSection", ["ticket"=>$ticket])
 
-            <li class="tw:menu-title border">{{  __("subtitles.track_time") }}</li>
+            <li class="nav-header border">{{  __("subtitles.track_time") }}</li>
             @dispatchEvent("beforeTimer", ["ticket"=>$ticket])
             <li class="timerContainer tw:px-[10px]">
                 @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock, 'style'=> 'full'])

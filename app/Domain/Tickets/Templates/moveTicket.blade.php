@@ -38,7 +38,7 @@
     </x-global::forms.select><br /><br /><br /><br />
     <br />
     <x-global::button submit type="primary" name="move">{{ __('buttons.move') }}</x-global::button>
-    <a class="tw:float-right" href="javascript:void(0);" onclick="leantime.modals.closeModal();">{{ __('buttons.back') }}</a>
+    <a class="pull-right" href="javascript:void(0);" onclick="leantime.modals.closeModal();">{{ __('buttons.back') }}</a>
     <div class="clearall"></div>
     <br />
 </form>

@@ -3,7 +3,7 @@
 @endphp
 
 @if($login::userIsAtLeast($roles::$editor) && !empty($newField))
-    <x-global::elements.button-dropdown :label="__('links.new_with_icon')" type="primary" class="tw:float-left" style="margin-right:5px;">
+    <x-global::elements.button-dropdown :label="__('links.new_with_icon')" type="primary" class="pull-left" style="margin-right:5px;">
         @foreach($newField as $option)
             <li>
                 <a href="{{ $option['url'] ?? '' }}"

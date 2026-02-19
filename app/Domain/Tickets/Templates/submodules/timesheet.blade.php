@@ -9,8 +9,8 @@
     $currentPay = $tpl->get('userHours') * $userInfo['wage'];
 @endphp
 
-<div class="tw:grid tw:md:grid-cols-2 tw:gap-4">
-    <div>
+<div class="row-fluid">
+    <div class="col-md-6">
 
         <h4 class="widgettitle title-light"><span class="fa fa-clock-o"></span>{{ __('headline.add_time_entry', false) }}</h4>
         <br />
@@ -44,7 +44,7 @@
         </form>
 
     </div>
-    <div>
+    <div class="col-md-6">
         <h4 class="widgettitle title-light"><span class="fa fa-bar-chart"></span>{{ __('subtitles.logged_hours_chart') }}</h4>
 
         <br />

@@ -33,7 +33,7 @@
         @foreach($tpl->get('files') as $file)
             <li class="{{ $file['moduleId'] }}">
                 <x-global::elements.dropdown style="float:right;">
-                    <li class="tw:menu-title">{{ __('subtitles.file') }}</li>
+                    <li class="nav-header border">{{ __('subtitles.file') }}</li>
                     <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">{{ __('links.download') }}</a></li>
 
                     @if($login::userIsAtLeast($roles::$editor))
