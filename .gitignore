@@ -139,3 +139,12 @@ public/hot
 tests/Httprequests/http-client.private.env.json
 .claude/docs/personal-companion-requirements.md
 .claude/docs/git-workflow.md
+
+# Development screenshots, audit images, and temp files
+/*.png
+/*.log
+/screenshots/
+/Docs/
+/dashboard-snapshot.md
+/test4-snapshot.md
+/wiki-console.log
