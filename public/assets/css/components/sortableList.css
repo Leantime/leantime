@@ -250,7 +250,7 @@
 }
 
 .milestone-box .progress-wrapper .percent-label {
-    font-size:14px;
+    font-size: var(--base-font-size);
     /*color: var(--main-titles-color);*/
 }
 

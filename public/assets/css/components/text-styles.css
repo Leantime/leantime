@@ -127,7 +127,7 @@ a .label.feature-label:after {
 
 .pagetitle h5 {
     text-transform: uppercase;
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     color: var(--secondary-font-color);
 }
 
@@ -151,7 +151,7 @@ a .label.feature-label:after {
 
 .subtitle {
     font-size: var(--base-font-size);
-    color: #999;
+    color: var(--secondary-font-color);
     margin-bottom: 5px;
 }
 

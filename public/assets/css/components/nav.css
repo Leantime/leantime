@@ -115,7 +115,7 @@ a.barmenu {
     left:0px;
     margin-top:1px;
     margin-left:20px;
-    font-size:20px;
+    font-size: var(--font-size-xxl);
     color: var(--header-nav-link-color) !important;
     cursor:pointer;
     width:30px;
@@ -274,7 +274,7 @@ a.barmenu:hover {
 .projectselector .projectAvatar {
     width:30px;
     height:30px;
-    font-size:14px;
+    font-size: var(--base-font-size);
     line-height:30px;
     text-align:center;
     background:var(--primary-font-color);
@@ -923,7 +923,7 @@ a.barmenu:hover {
     left:auto;
     display: inline-block;
     border-right: 6px solid transparent;
-    border-bottom: 6px solid white;
+    border-bottom: 6px solid var(--primary-background);
     border-left: 6px solid transparent;
     content: '';
 }
@@ -1309,7 +1309,7 @@ a.barmenu:hover {
 .headerinner .bigProjectSelector .projectAvatar .fa {
     width: 30px;
     height: 30px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     line-height: 30px;
     text-align: center;
     background: var(--header-gradient);
@@ -1324,8 +1324,8 @@ a.barmenu:hover {
 }
 
 .navbar-inner {
-    border-color: #ccc;
-    background: #f7f7f7;
+    border-color: var(--main-border-color);
+    background: var(--secondary-background);
 }
 
 .navbar .brand {
@@ -1334,15 +1334,15 @@ a.barmenu:hover {
 }
 
 .navbar .nav > li {
-    border-left: 1px solid #ccc;
+    border-left: 1px solid var(--main-border-color);
 }
 
 .navbar .nav > li:last-child {
-    border-right: 1px solid #ccc;
+    border-right: 1px solid var(--main-border-color);
 }
 
 .navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus {
-    background: #fff;
+    background: var(--primary-background);
 }
 
 .navbar .nav > li > a {
@@ -1353,13 +1353,13 @@ a.barmenu:hover {
 }
 
 .navbar .nav > li > a:hover {
-    background: #f3f4f5;
+    background: var(--layered-background);
 }
 
 .navbar .nav li.dropdown.open > .dropdown-toggle,
 .navbar .nav li.dropdown.active > .dropdown-toggle,
 .navbar .nav li.dropdown.open.active > .dropdown-toggle {
-    background: #fff;
+    background: var(--primary-background);
 }
 
 .navbar .navbar-search.pull-right .search-query {
@@ -1383,27 +1383,27 @@ a.barmenu:hover {
 }
 
 .navbar-inverse .navbar-inner {
-    background: #222;
+    background: var(--secondary-action-hover-bg);
 }
 
 .navbar-inverse .nav > .active > a,
 .navbar-inverse .nav > .active > a:hover,
 .navbar-inverse .nav > .active > a:focus {
-    background: #111;
+    background: color-mix(in srgb, var(--primary-font-color) 90%, transparent);
 }
 
 .navbar-inverse .nav > li, .navbar-inverse .nav > li:last-child {
-    border-color: #373737;
+    border-color: color-mix(in srgb, var(--primary-font-color) 30%, transparent);
 }
 
 .navbar-inverse .nav > li > a:hover {
-    background: #171717;
+    background: color-mix(in srgb, var(--primary-font-color) 85%, transparent);
 }
 
 .navbar-inverse .nav li.dropdown.open > .dropdown-toggle,
 .navbar-inverse .nav li.dropdown.active > .dropdown-toggle,
 .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle {
-    background: #171717;
+    background: color-mix(in srgb, var(--primary-font-color) 85%, transparent);
 }
 
 .navbar-search .search-query {

@@ -63,7 +63,7 @@
 }
 
 .wiki-sidebar.collapsed .wiki-tree-link i {
-    font-size: 18px;
+    font-size: var(--font-size-xl);
     opacity: 1;
 }
 
@@ -793,7 +793,7 @@
 }
 
 .wiki-edit-indicator i {
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 /* ==========================================================================
@@ -1173,7 +1173,7 @@
     justify-content: center;
     flex-shrink: 0;
     color: var(--secondary-font-color);
-    font-size: 12px;
+    font-size: var(--font-size-s);
 }
 
 .wiki-activity-icon.edit {
@@ -1274,7 +1274,7 @@
 }
 
 .wiki-tree-link i {
-    font-size: 14px;
+    font-size: var(--base-font-size);
     opacity: 0.7;
 }
 

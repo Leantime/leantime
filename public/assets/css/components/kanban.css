@@ -662,7 +662,7 @@ body .maincontent .priority-text-5 a:link {
 
 /* Chevron - 10px, rotates on toggle */
 .kanban-lane-chevron {
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     color: var(--primary-font-color);
     opacity: 0.6;
     width: 10px;
@@ -691,7 +691,7 @@ body .maincontent .priority-text-5 a:link {
 
 /* Icon indicator (for type, milestone, sprint) */
 .kanban-indicator-icon {
-    font-size: 16px;
+    font-size: var(--font-size-l);
     color: var(--primary-font-color);
 }
 
@@ -955,7 +955,7 @@ body .maincontent .priority-text-5 a:link {
 
 /* Compact ticket ID and type */
 .kanban-swimlane-content.collapsed .ticketBox small {
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     white-space: nowrap;
     flex-shrink: 0;
 }
@@ -1101,7 +1101,7 @@ body .maincontent .priority-text-5 a:link {
     color: var(--primary-font-color);
     opacity: 0.7;
     flex-shrink: 0;
-    font-size: 10px;
+    font-size: var(--font-size-xs);
 }
 
 .compact-ticket-title {
@@ -1117,7 +1117,7 @@ body .maincontent .priority-text-5 a:link {
 .compact-ticket-type {
     flex-shrink: 0;
     opacity: 0.6;
-    font-size: 10px;
+    font-size: var(--font-size-xs);
 }
 
 /* User avatar */
@@ -1384,10 +1384,10 @@ body .maincontent .priority-text-5 a:link {
 .status-segment.status-3 { background-color: var(--status-new-color, #60a5fa); }
 .status-segment.status-4 { background-color: var(--status-in-progress-color, #f59e0b); }
 .status-segment.status-5 { background-color: var(--status-done-color, #10b981); }
-.status-segment.status-1 { background-color: #ef4444; } /* Blocked - Red */
-.status-segment.status-2 { background-color: #f97316; } /* Waiting for approval - Orange */
-.status-segment.status-0 { background-color: #10b981; } /* Done - Green */
-.status-segment.status--1 { background-color: #9ca3af; } /* Archived - Gray */
+.status-segment.status-1 { background-color: var(--red); } /* Blocked - Red */
+.status-segment.status-2 { background-color: var(--yellow); } /* Waiting for approval - Yellow/Orange */
+.status-segment.status-0 { background-color: var(--green); } /* Done - Green */
+.status-segment.status--1 { background-color: var(--grey); } /* Archived - Gray */
 
 /* Allow dropdown menus to overflow in kanban columns */
 .kanban-swimlane-content .column .contentInner {

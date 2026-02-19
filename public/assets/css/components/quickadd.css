@@ -38,7 +38,7 @@
     }
 
     i {
-        font-size: 14px;
+        font-size: var(--base-font-size);
     }
 }
 
@@ -72,7 +72,7 @@ form.quickAddForm {
     position: absolute;
     top: 8px;
     right: 8px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     color: var(--primary-font-color);
     opacity: 0.4;
     cursor: help;
