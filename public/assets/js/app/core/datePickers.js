@@ -81,10 +81,55 @@ leantime.dateController = (function () {
         });
     };
 
+    /**
+     * Decorates .date-inline-picker wrappers with icon/text toggle behavior.
+     * Call AFTER initDateRangePicker / initDatePicker so linked flatpickr
+     * instances already exist on the inputs.
+     */
+    var initInlineDatePickers = function (scope) {
+        var root = scope
+            ? (typeof scope === 'string' ? document.querySelector(scope) : scope)
+            : document;
+        if (!root) return;
+
+        var wrappers = root.querySelectorAll('.date-inline-picker');
+        wrappers.forEach(function (wrapper) {
+            var input = wrapper.querySelector('input.dates');
+            var trigger = wrapper.querySelector('.date-inline-trigger');
+            if (!input || !trigger) return;
+
+            // Ensure flatpickr is initialised on this input
+            var fp = input._flatpickr;
+            if (!fp) {
+                fp = flatpickr(input, getBaseDatePickerConfig());
+            }
+
+            // Position calendar relative to the wrapper (always visible)
+            // instead of the input which may be display:none
+            fp._positionElement = wrapper;
+
+            function toggleVisibility() {
+                var hasDate = input.value !== '';
+                input.style.display = hasDate ? '' : 'none';
+                trigger.style.display = hasDate ? 'none' : '';
+            }
+
+            // Push onto flatpickr's internal hook arrays (never replace them)
+            fp.config.onChange.push(function () { toggleVisibility(); });
+            fp.config.onClose.push(function () { toggleVisibility(); });
+
+            // Wire trigger click to open flatpickr
+            trigger.addEventListener('click', function () {
+                fp.open();
+            });
+        });
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         initDateRangePicker: initDateRangePicker,
         initDatePicker: initDatePicker,
+        initInlineDatePickers: initInlineDatePickers,
         getBaseDatePickerConfig: getBaseDatePickerConfig,
     };
 

@@ -67,6 +67,7 @@
    always beats @layer CSS in the cascade.
    ──────────────────────────────────────────────────────────────────── */
 #global-modal-box {
+    position: relative;
     background-color: var(--glass-background, rgba(255,255,255,0.85));
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
@@ -81,6 +82,7 @@
     overflow-y: auto;
     flex: 1 1 auto;
     min-height: 0;
+    padding: 20px;
 }
 
 /* Frosted-glass overlay behind the modal.
@@ -92,7 +94,7 @@
     position: fixed;
     inset: 0;
     z-index: 998;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.25);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     cursor: pointer;
@@ -134,13 +136,15 @@
    Force Bootstrap float-grid to flex-wrap so columns don't overflow
    the constrained modal width.
    ──────────────────────────────────────────────────────────────────── */
-#global-modal-content .row {
+#global-modal-content .row,
+#global-modal-content .row-fluid {
     display: flex;
     flex-wrap: wrap;
     margin-left: 0;
     margin-right: 0;
 }
-#global-modal-content .row > [class*="col-"] {
+#global-modal-content .row > [class*="col-"],
+#global-modal-content .row-fluid > [class*="col-"] {
     float: none;
     flex: 0 0 auto;
     padding-left: 10px;
@@ -149,6 +153,56 @@
 /* Prevent hardcoded widths from overflowing the modal box */
 #global-modal-content > div {
     max-width: 100%;
+}
+
+/* ── Detail-panel date values (Linear/Notion style) ──────────────────
+   Clickable text that opens a date picker.  No border, subtle hover bg.
+   ──────────────────────────────────────────────────────────────────── */
+.detail-date-value {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: right;
+    padding: 4px 8px;
+    height: auto;
+    border-radius: var(--element-radius, 4px);
+    transition: background 0.15s ease;
+    width: auto;
+    max-width: 140px;
+    color: var(--primary-font-color);
+}
+.detail-date-value:hover,
+.detail-date-value:focus {
+    background: rgba(0, 0, 0, 0.05);
+    outline: none;
+}
+.detail-date-value::placeholder {
+    color: var(--secondary-font-color);
+    opacity: 0.7;
+}
+
+/* ── Inline date picker ("None" text ↔ date value toggle) ─────────── */
+.date-inline-picker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.date-inline-trigger {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--element-radius, 4px);
+    color: var(--secondary-font-color);
+    opacity: 0.7;
+    font-size: inherit;
+    transition: background 0.15s ease, opacity 0.15s ease;
+}
+.date-inline-trigger:hover,
+.date-inline-trigger:focus {
+    background: rgba(0, 0, 0, 0.05);
+    opacity: 1;
+    outline: none;
 }
 
 /* ── Tabbed widget tabs ───────────────────────────────────────────────
