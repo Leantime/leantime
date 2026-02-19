@@ -13,7 +13,9 @@
     <div id="page-loading" class="htmx-indicator"
          style="position:fixed;top:0;left:0;z-index:9999;height:3px;width:100%;background:var(--accent1);pointer-events:none;"></div>
 
-    <div class="mainwrapper menu{{ session("menuState") ?? "closed" }}">
+    <div class="mainwrapper menu{{ session("menuState") ?? "closed" }}"
+         @if(!empty($themeBgUrl)) style="background-image: url({{ filter_var($themeBgUrl, FILTER_SANITIZE_URL) }}); background-size: var(--background-size, cover); background-position: center; background-repeat: no-repeat;" @endif
+    >
 
         <div class="header">
 
@@ -67,20 +69,19 @@
     </div><!-- mainwrapper -->
 
     {{-- Global modal (native <dialog>) — replaces nyroModal --}}
-    <dialog id="global-modal" class="tw:modal">
-        <div class="tw:modal-box tw:max-w-3xl tw:p-0" id="global-modal-box">
-            <form method="dialog" style="margin:0;position:absolute;right:-10px;top:-10px;z-index:10;">
-                <button class="tw:btn tw:btn-sm tw:btn-circle" style="background:var(--color-base-100, #fff);box-shadow:0 1px 4px rgba(0,0,0,.2);" aria-label="Close">
+    <dialog id="global-modal">
+        <div id="global-modal-box">
+            <form method="dialog" style="margin:0;position:absolute;right:10px;top:10px;z-index:10;">
+                <button class="btn btn-default btn-sm" style="border:none;background:transparent;padding:4px 8px;border-radius:var(--element-radius);cursor:pointer;color:var(--secondary-font-color);font-size:16px;line-height:1;" aria-label="Close">
                     <i class="fa fa-xmark"></i>
                 </button>
             </form>
-            <div id="global-modal-content" style="padding:20px;">
+            <div id="global-modal-content">
                 <div style="display:flex;justify-content:center;padding:40px;">
-                    <span class="tw:loading tw:loading-spinner tw:loading-lg"></span>
+                    <x-global::loadingText type="text" count="1" />
                 </div>
             </div>
         </div>
-        <form method="dialog" class="tw:modal-backdrop"><button>close</button></form>
     </dialog>
 
     @include('global::sections.pageBottom')

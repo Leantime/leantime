@@ -379,6 +379,9 @@ body {
    files (dropdowns.css, forms.css, etc.) only override visually.
    ──────────────────────────────────────────────────────────────────── */
 
+/* Dropdown container: position anchor for absolutely-positioned menu */
+.dropdown { position: relative; }
+
 /* Dropdown menus: hidden by default, shown when parent has .open */
 .dropdown-menu {
     position: absolute;
@@ -538,7 +541,7 @@ body {
 .dropup .caret { border-top: 0; border-bottom: 4px solid }
 
 .mainwrapper {
-    background:var(--header-gradient);
+    background-image: var(--header-gradient);
     background-size: 100vw 100vh;
     background-attachment: fixed;
 }
@@ -614,6 +617,8 @@ body {
     float: left;
     clear: both;
     background:var(--left-panel-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     position:sticky;
     height:calc(100vh - 70px);
     z-index: 9;

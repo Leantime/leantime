@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\UI\Composer;
+use Leantime\Core\UI\Theme;
 use Leantime\Domain\Menu\Repositories\Menu;
 
 class App extends Composer
@@ -18,9 +19,12 @@ class App extends Composer
 
     private Menu $menuRepo;
 
-    public function init(Menu $menuRepo): void
+    private Theme $themeCore;
+
+    public function init(Menu $menuRepo, Theme $themeCore): void
     {
         $this->menuRepo = $menuRepo;
+        $this->themeCore = $themeCore;
     }
 
     /**
@@ -42,6 +46,7 @@ class App extends Composer
             'module' => strtolower(FrontcontrollerCore::getModuleName()),
             'section' => $menuType,
             'appAnnouncement' => $announcement,
+            'themeBgUrl' => $this->themeCore->getBackgroundImage(),
         ];
     }
 }

@@ -80,20 +80,20 @@
 
 <style id="backgroundImageSetter">
     @if(!empty($themeBg))
+        @if($themeType !== 'image')
             .rightpanel {
                 background-image: url({!! filter_var($themeBg, FILTER_SANITIZE_URL) !!});
                 opacity: {{ $themeOpacity }};
-                mix-blend-mode: {{ $themeType == 'image' ? 'normal' : 'multiply' }};
+                mix-blend-mode: multiply;
                 background-size: var(--background-size, cover);
                 background-position: center;
                 background-attachment: fixed;
             }
+        @endif
 
-    @if($themeType === 'image')
         .rightpanel:before {
             background: none;
         }
-    @endif
     @endif
 </style>
 
