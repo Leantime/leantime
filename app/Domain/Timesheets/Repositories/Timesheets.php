@@ -695,34 +695,39 @@ class Timesheets extends Repository
         $totalMinutesWorked = $seconds / 60;
         $hoursWorked = round(($totalMinutesWorked / 60), 2);
 
-        $this->db->table('zp_punch_clock')
-            ->where('userId', session('userdata.id'))
-            ->where('id', $ticketId)
-            ->limit(1)
-            ->delete();
+        // Delete punch clock and insert timesheet in a transaction
+        // to prevent data loss if the timesheet insert fails
+        return $this->db->transaction(function () use ($ticketId, $inTimestamp, $hoursWorked) {
 
-        // At least 1 minutes
-        if ($hoursWorked < 0.016) {
-            return 0;
-        }
+            $this->db->table('zp_punch_clock')
+                ->where('userId', session('userdata.id'))
+                ->where('id', $ticketId)
+                ->limit(1)
+                ->delete();
 
-        $userStartOfDay = dtHelper()::createFromTimestamp($inTimestamp, 'UTC')->setToUserTimezone()->startOfDay();
+            // At least 1 minute
+            if ($hoursWorked < 0.016) {
+                return 0;
+            }
 
-        // Use raw query for ON DUPLICATE KEY UPDATE (MySQL specific)
-        $query = "INSERT INTO `zp_timesheets` (userId, ticketId, workDate, hours, kind, modified)
-                  VALUES (?, ?, ?, ?, 'GENERAL_BILLABLE', ?)
-                  ON DUPLICATE KEY UPDATE hours = hours + ?";
+            $userStartOfDay = dtHelper()::createFromTimestamp($inTimestamp, 'UTC')->setToUserTimezone()->startOfDay();
 
-        $this->db->insert($query, [
-            session('userdata.id'),
-            $ticketId,
-            $userStartOfDay->formatDateTimeForDb(),
-            $hoursWorked,
-            date('Y-m-d H:i:s'),
-            $hoursWorked,
-        ]);
+            // Use raw query for ON DUPLICATE KEY UPDATE (MySQL specific)
+            $query = "INSERT INTO `zp_timesheets` (userId, ticketId, workDate, hours, kind, modified)
+                      VALUES (?, ?, ?, ?, 'GENERAL_BILLABLE', ?)
+                      ON DUPLICATE KEY UPDATE hours = hours + ?";
 
-        return $hoursWorked;
+            $this->db->insert($query, [
+                session('userdata.id'),
+                $ticketId,
+                $userStartOfDay->formatDateTimeForDb(),
+                $hoursWorked,
+                date('Y-m-d H:i:s'),
+                $hoursWorked,
+            ]);
+
+            return $hoursWorked;
+        });
     }
 
     /**

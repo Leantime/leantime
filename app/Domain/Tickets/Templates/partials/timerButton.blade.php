@@ -37,16 +37,16 @@
            hx-vals='{"ticketId": "{{ $parentTicketId }}", "action":"stop"}'
            hx-swap="outerHTML"
            onclick="this.classList.add('stopped');"
-           data-tippy-content="@if (is_array($onTheClock) == true) {!! strip_tags(sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), $onTheClock["since"]))) !!} @else {!! strip_tags(sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), time()))) !!} @endif"
+           data-tippy-content="@if (is_array($onTheClock) == true) {!! strip_tags(sprintf(__("links.stop_work_started_at"), dtHelper()::createFromTimestamp($onTheClock["since"], 'UTC')->setToUserTimezone()->format(__("language.timeformat")))) !!} @else {!! strip_tags(sprintf(__("links.stop_work_started_at"), dtHelper()::now()->setToUserTimezone()->format(__("language.timeformat")))) !!} @endif"
         >
 
 
                 <span class="fa-regular fa-circle-stop" style="font-size:18px; padding-top:3px;"></span>
                 @if($style=="full")
                     @if (is_array($onTheClock) == true)
-                        {!!  sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), $onTheClock["since"])) !!}
+                        {!!  sprintf(__("links.stop_work_started_at"), dtHelper()::createFromTimestamp($onTheClock["since"], 'UTC')->setToUserTimezone()->format(__("language.timeformat"))) !!}
                     @else
-                        {!! sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), time())) !!}
+                        {!! sprintf(__("links.stop_work_started_at"), dtHelper()::now()->setToUserTimezone()->format(__("language.timeformat"))) !!}
                     @endif
                 @endif
 
