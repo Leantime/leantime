@@ -160,7 +160,7 @@
                         </td>
                         <td>
                             <div class="form-group" id="projectSelect">
-                                <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_project') }}" class="project-select" style="width:100%;">
+                                <x-global::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" class="project-select" style="width:100%;">
                                     <option value=""></option>
                                     @foreach ($tpl->get('allProjects') as $projectRow)
                                         {!! sprintf(

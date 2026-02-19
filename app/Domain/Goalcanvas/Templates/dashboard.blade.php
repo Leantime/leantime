@@ -97,9 +97,10 @@ foreach ($allCanvas as $canvasRow) {
     @if (count($allCanvas) > 0)
         @foreach ($allCanvas as $canvasRow)
             <div>
-                <x-global::button link="#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow["id"] }}" type="primary" class="tw:float-right" icon="fa fa-plus">Create New Goal</x-global::button>
+                @php $canvasRowId = $canvasRow['id']; @endphp
+                <x-global::button :link="'#/goalcanvas/editCanvasItem?type=goal&canvasId=' . $canvasRowId" type="primary" class="tw:float-right" icon="fa fa-plus">Create New Goal</x-global::button>
 
-                <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>{{ $canvasRow["title"] }}</a></h5>
+                <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRowId }}'>{{ $canvasRow["title"] }}</a></h5>
             </div>
             <div class="tw:border-b tw:border-solid tw:border-[var(--main-border-color)] tw:mb-5">
                 @php

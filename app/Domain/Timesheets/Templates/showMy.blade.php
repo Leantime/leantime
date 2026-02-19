@@ -326,7 +326,7 @@ jQuery(document).ready(function(){
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
                                 <div class="form-group" id="projectSelect">
-                                    <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_project') }}" style="" class="project-select" >
+                                    <x-global::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" style="" class="project-select" >
                                         <option value=""></option>
                                         @foreach ($tpl->get('allProjects') as $projectRow)
                                             {!! sprintf(
