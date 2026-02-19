@@ -131,7 +131,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontent .ticketDropdown > a:link,
 #global-modal-content .ticketDropdown > a,
 #global-modal-content .ticketDropdown > a:link{
-    color:#fff;
+    color:var(--primary-background);
     padding:0px 10px;
     white-space: nowrap;
     border-radius:var(--box-radius-large);
@@ -162,7 +162,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .ticketDropdown.colorized li a,
 #global-modal-content .ticketDropdown.colorized li a{
-    color:#fff;
+    color:var(--primary-background);
 }
 
 .maincontent .ticketDropdown.noBg {
@@ -189,7 +189,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 
 .maincontent .ticketDropdown.noBg >a:hover {
-    color:#000;
+    color:var(--primary-font-color);
 }
 
 .maincontent .ticketDropdown.noBg >a:hover img {
@@ -457,7 +457,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .viewDropDown .dropdown-menu li a.active:hover {
-    color:#fff;
+    color:var(--primary-background);
 }
 
 .dropdown-menu span.radio input[type="radio"] {
@@ -599,7 +599,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .inlineDropDownContainer > a {
-    color: #aaa;
+    color: var(--secondary-font-color);
     width: 24px;
     line-height: 20px;
     text-align: center;

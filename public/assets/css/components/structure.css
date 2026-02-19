@@ -610,7 +610,7 @@ body {
 
 .leftpanel {
     width: 240px;
-    color: #fff;
+    color: var(--nav-link-color);
     float: left;
     clear: both;
     background:var(--left-panel-bg);

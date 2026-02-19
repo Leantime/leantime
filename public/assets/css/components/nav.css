@@ -7,7 +7,7 @@
     font-size: var(--font-size-l);
     padding: 15px 20px;
     text-shadow: none;
-    border-bottom: 1px solid #222;
+    border-bottom: 1px solid var(--main-border-color);
     margin-top: 0;
     color: var(--nav-link-color);
     line-height: 16px;
@@ -22,7 +22,7 @@
 
 .nav li + .nav-header small {
     text-transform: none;
-    color: #999;
+    color: var(--secondary-font-color);
     line-height: 12px;
 }
 
@@ -48,11 +48,11 @@
 }
 
 .headmenu .project-selector .chzn-container .chzn-single {
-    color: #555;
+    color: var(--primary-font-color);
 }
 
 .headmenu .project-selector .chzn-container .chzn-results li {
-    color: #555;
+    color: var(--primary-font-color);
 }
 
 .headmenu .project-selector .chzn-container .chzn-results li.highlighted {
@@ -263,7 +263,7 @@ a.barmenu:hover {
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {
     text-decoration: none;
-    background-color: #555;
+    background-color: var(--main-menu-link-hover-bg);
     color: var(--nav-link-color);
 }
 
@@ -297,7 +297,7 @@ a.barmenu:hover {
 }
 
 .leftmenu .nav-tabs.nav-stacked a {
-    color: #555;
+    color: var(--primary-font-color);
     padding: 10px 20px 10px 20px;
     font-size: var(--font-size-l);
 }
@@ -473,7 +473,7 @@ a.barmenu:hover {
     left: 45px;
     display: inline-block;
     border-right: 6px solid transparent;
-    border-bottom: 6px solid white;
+    border-bottom: 6px solid var(--primary-background);
     border-left: 6px solid transparent;
     content: '';
 }
@@ -615,7 +615,7 @@ a.barmenu:hover {
     transform: rotate(-90deg);
     display: inline-block;
     border-right: 6px solid transparent;
-    border-bottom: 6px solid white;
+    border-bottom: 6px solid var(--primary-background);
     border-left: 6px solid transparent;
     content: '';
 }
@@ -856,12 +856,12 @@ a.barmenu:hover {
 /* Header Navigation */
 
 .header .userloggedinfo img {
-    background-color: #fff;
+    background-color: var(--primary-background);
     width: auto !important;
     max-height: 30px;
     max-width: 30px;
     border-radius: 50%;
-    border: 1px solid white;
+    border: 1px solid var(--primary-background);
     margin-top:10px;
 }
 

@@ -90,15 +90,15 @@ button
 input[type='submit']:hover,
 button:hover {
     background-color:  var(--main-action-hover-bg);
-    color:#fff;
+    color:var(--main-action-color);
 }
 
 .btn-white {
-    background:#fff;
+    background:var(--primary-background);
 }
 
 span.btn-white:hover{
-    background:#fff;
+    background:var(--primary-background);
 }
 
 
@@ -146,7 +146,7 @@ div.tagsinput span.tag
 /* extras */
 
 .tabs-below > .nav-tabs > li.active > a { border-bottom: 1px solid var(--main-border-color) !important; }
-.nav-list > li > a { color: #666; }
+.nav-list > li > a { color: var(--secondary-font-color); }
 .tabs-left > .nav-tabs > li,
 .tabs-right > .nav-tabs > li { border-color: var(--main-border-color); }
 .leftmenu .nav-tabs.nav-stacked > li > a { border-color: var(--main-border-color) !important; }
@@ -181,7 +181,7 @@ div.tagsinput span.tag
 
 
 .ui-weekpicker td a.ui-state-hover{
-    background:#eee;
+    background:var(--neutral);
 }
 
 .ui-weekpicker td a.ui-state-highlight {
@@ -190,12 +190,12 @@ div.tagsinput span.tag
 
 
 .ui-state-highlight {
-    background:#eee;
+    background:var(--neutral);
 }
 
 .companyProject,
 .companyProject a{
-    color:#999;
+    color:var(--secondary-font-color);
     font-weight:normal
 }
 
@@ -257,7 +257,7 @@ body .widgettitle.title-light {
     border-left:0px !important;
     border-top:0px !important;
     border-right:0px !important;
-    border-bottom:0px solid #ccc;
+    border-bottom:0px solid var(--main-border-color);
     margin-bottom:15px;
     font-size:var(--font-size-l);
     box-shadow: none;
@@ -300,7 +300,7 @@ body .tox .tox-toolbar-overlord{
     position: relative;
     text-align: center;
     padding: 5px;
-    color: #fff;
+    color: var(--primary-background);
     background: var(--primary-color);
     text-transform: uppercase;
     border-top-left-radius: 5px;

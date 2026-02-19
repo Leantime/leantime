@@ -439,7 +439,7 @@
 
 .sortableTicketList .empty {
     text-align:center;
-    color:#999;
+    color:var(--secondary-font-color);
     padding:20px 0px;
 }
 
@@ -1268,7 +1268,7 @@ body .maincontent .priority-text-5 a:link {
 
 .sortableTicketList .ticketBox.priority-hightlight {
     position:relative;
-    background:#fff;
+    background:var(--primary-background);
     box-shadow: var(--regular-shadow);
 }
 

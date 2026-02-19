@@ -213,7 +213,7 @@ textarea, button {
     height: 205px;
     overflow: auto;
     margin: auto;
-    border: 1px solid #ccc;
+    border: 1px solid var(--main-border-color);
     padding: 10px;
 }
 
@@ -565,8 +565,8 @@ a:link.btn{
 }
 
 .btn-inverse, .btn-inverse:link {
-    background: #555;
-    border-color: #272727;
+    background: var(--primary-font-color);
+    border-color: var(--primary-font-color);
 }
 
 .btn-circle {
@@ -576,12 +576,12 @@ a:link.btn{
     width: 20px;
     padding: 5px;
     background: none;
-    border: 2px solid #ccc;
+    border: 2px solid var(--main-border-color);
 }
 
 .btn-circle:hover {
     background: none;
-    color: #ccc;
+    color: var(--main-border-color);
 }
 
 .btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
@@ -627,8 +627,8 @@ a:link.btn{
 .btn-circle.btn-inverse, .btn-circle.btn-inverse:hover, .btn-circle.btn-inverse:focus,
 .btn-circle.btn-inverse:active, .btn-circle.btn-inverse.active,
 .btn-circle.btn-inverse.disabled, .btn-circle.btn-inverse[disabled] {
-    border-color: #555;
-    color: #555;
+    border-color: var(--primary-font-color);
+    color: var(--primary-font-color);
     background: none;
 }
 
@@ -1357,7 +1357,7 @@ body .croppie-container {
 
 .stdform small.desc {
     font-size: var(--base-font-size);
-    color: #999;
+    color: var(--secondary-font-color);
     font-style: italic;
     display: block;
     margin: 5px 0 0 220px;
@@ -1371,8 +1371,8 @@ body .croppie-container {
 }
 
 .stdform2 p, .stdform2 div.par {
-    border-top: 1px solid #ddd;
-    background: #fcfcfc;
+    border-top: 1px solid var(--main-border-color);
+    background: var(--secondary-background);
     margin: 0;
     clear: both;
 }
@@ -1401,7 +1401,7 @@ body .croppie-container {
 
 .stdform2 label small {
     font-size: var(--base-font-size);
-    color: #999;
+    color: var(--secondary-font-color);
     display: block;
     font-weight: normal;
     line-height: 16px;
@@ -1410,15 +1410,15 @@ body .croppie-container {
 .stdform2 span.field, .stdform2 div.field {
     margin-left: 220px;
     display: block;
-    background: #fff;
+    background: var(--primary-background);
     padding: 15px;
-    border-left: 1px solid #ddd;
+    border-left: 1px solid var(--main-border-color);
 }
 
 .stdform2 .stdformbutton {
     margin-left: 0;
     padding: 15px;
-    background: #fff;
+    background: var(--primary-background);
 }
 
 .stdform2 input {
@@ -1815,13 +1815,13 @@ input[type=number].hide-controls {
     align-items: center;
     text-align:center;
     padding: 4px 8px;
-    background: #f5f5f5;
+    background: var(--neutral);
     border-radius: var(--box-radius-small);
     cursor: pointer;
 }
 
 .weekday-label:hover {
-    background: #e9ecef;
+    background: var(--col-hover-bg);
 }
 
 .weekday-checkbox {
@@ -1840,14 +1840,14 @@ input[type=number].hide-controls {
 }
 
 .text-muted {
-    color: #6c757d;
+    color: var(--secondary-font-color);
 }
 
 .dropdown-form {
-    background: white;
-    border: 1px solid #ddd;
+    background: var(--primary-background);
+    border: 1px solid var(--main-border-color);
     border-radius: var(--box-radius-small);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: var(--regular-shadow);
     min-width: 300px;
     position: absolute;
     z-index: 1000;
@@ -1855,7 +1855,7 @@ input[type=number].hide-controls {
 
 .dropdown-header {
     padding: 10px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--main-border-color);
 }
 
 .dropdown-title {

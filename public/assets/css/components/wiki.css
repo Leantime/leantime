@@ -1060,7 +1060,7 @@
     padding: 5px 10px;
     border-radius: var(--box-radius-large);
     font-size: var(--base-font-size);
-    color: #fff;
+    color: var(--primary-background);
 }
 
 .wiki-status-menu li a.draft-option {
