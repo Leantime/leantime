@@ -122,7 +122,7 @@
                                                         <x-global::button link="#" type="secondary" class="fileupload-exists" style="margin-left:5px;" data-dismiss="fileupload" onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</x-global::button>
                                                     </div>
                                                     <p class='stdformbutton'>
-                                                        <x-global::button tag="button" type="primary" id="save-logo" class="fileupload-exists ld-ext-right" onclick="leantime.settingController.saveCroppie()">{{ __('buttons.save') }}<span class="ld ld-ring ld-spin"> </span></x-global::button>
+                                                        <x-global::button tag="button" type="primary" id="save-logo" class="fileupload-exists" onclick="leantime.settingController.saveCroppie()">{{ __('buttons.save') }}</x-global::button>
 
                                                         <input id="picSubmit" type="submit" name="savePic" class="hidden" value="{{ __('buttons.upload') }}" />
                                                     </p>
