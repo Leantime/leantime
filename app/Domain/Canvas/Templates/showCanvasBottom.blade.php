@@ -7,7 +7,7 @@
     @if (count($allCanvas) > 0)
     @else
         <br /><br />
-        <div class="tw:text-center">
+        <div class="center">
             <div class="svgContainer">
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
             </div>
@@ -20,7 +20,7 @@
     @endif
 
     @if (! empty($disclaimer) && count($allCanvas) > 0)
-        <small class="tw:text-center">{{ $disclaimer }}</small>
+        <small class="center">{{ $disclaimer }}</small>
     @endif
 
     @include('canvas::modals', ['canvasName' => $canvasName])

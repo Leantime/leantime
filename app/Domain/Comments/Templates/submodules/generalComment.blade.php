@@ -57,7 +57,7 @@
                                     format($row['date'])->time()
                                 ) !!}
                                     @if($login::userIsAtLeast($roles::$editor))
-                                        <x-global::elements.dropdown containerClass="tw:float-right tw:ml-2.5">
+                                        <x-global::elements.dropdown containerClass="pull-right tw:ml-2.5">
                                             @if(($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
                                                 <li><a href="{{ $deleteUrlBase . $row['id'] }}" class="deleteComment formModal">
                                                     <span class="fa fa-trash"></span> {{ __('links.delete') }}

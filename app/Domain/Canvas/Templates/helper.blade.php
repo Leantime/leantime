@@ -1,4 +1,4 @@
-<div class="tw:text-center padding-lg">
+<div class="center padding-lg">
 
     <div style="width:300px" class="svgContainer">
         {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}

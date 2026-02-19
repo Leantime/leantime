@@ -16,9 +16,9 @@
 
     <div class="maincontentinner">
         <h5 class="subtitle">Jump right back in</h5>
-        <div class="tw:grid tw:grid-cols-4 tw:gap-4">
+        <div class="row">
             @foreach ($tpl->get('recentProgressCanvas') as $board)
-                <div class="profileBox">
+                <div class="col-md-3"><div class="profileBox">
                     <div class="commentImage icon">
                         <i class="{{ $board['icon'] }}"></i>
                     </div>
@@ -47,12 +47,12 @@
                     {{ sprintf($tpl->__('text.percent_complete'), $percentDone) }}
 
 
-                </div>
+                </div></div>
             @endforeach
         </div>
 
         @if (! is_array($tpl->get('recentProgressCanvas')) || count($tpl->get('recentProgressCanvas')) == 0)
-            <br /><br /><div class="tw:text-center">
+            <br /><br /><div class="center">
                 <div style="width:30%" class="svgContainer">
                     {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
                 </div>
@@ -72,11 +72,11 @@
             </a>
         </h5>
         <p style="padding-left:19px;">{{ $tpl->__('description.other_tools') }}</p>
-        <div id="accordion_other" class="tw:grid tw:grid-cols-4 tw:gap-4 teamBox" style="padding-left:19px;">
+        <div id="accordion_other" class="row teamBox" style="padding-left:19px;">
 
             @foreach ($tpl->get('otherBoards') as $board)
                 @if (! isset($board['visible']) || $board['visible'] === 1)
-                    <div class="profileBox" style="min-height: 125px;">
+                    <div class="col-md-3"><div class="profileBox" style="min-height: 125px;">
                         <div class="commentImage icon">
                             <i class="{{ $board['icon'] }}"></i>
                         </div>
@@ -89,7 +89,7 @@
                         <div class="clearall"></div>
 
 
-                    </div>
+                    </div></div>
                 @endif
             @endforeach
         </div>

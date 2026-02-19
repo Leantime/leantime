@@ -59,8 +59,8 @@ foreach ($allCanvas as $canvasRow) {
 
 <div class="maincontent">
 
-<div class="tw:grid tw:grid-cols-[2fr_1fr_1fr_1fr] tw:gap-4 tw:mb-5">
-    <div>
+<div class="row tw:mb-5">
+    <div class="col-md-5">
         <div class="bigNumberBox tw:py-7 tw:px-4">
             <h2>Progress: {{ round($goalStats['avgPercentComplete']) }}%</h2>
 
@@ -73,19 +73,19 @@ foreach ($allCanvas as $canvasRow) {
             </div>
         </div>
     </div>
-    <div>
+    <div class="col-md-2">
         <div class="bigNumberBox priority-border-4">
             <h2>On Track</h2>
             <span class="content">{{ $goalStats['goalsOnTrack'] }}</span>
         </div>
     </div>
-    <div>
+    <div class="col-md-2">
         <div class="bigNumberBox priority-border-3">
             <h2>At Risk</h2>
             <span class="content">{{ $goalStats['goalsAtRisk'] }}</span>
         </div>
     </div>
-    <div>
+    <div class="col-md-3">
         <div class="bigNumberBox priority-border-1">
             <h2>Miss</h2>
             <span class="content">{{ $goalStats['goalsMiss'] }}</span>
@@ -98,7 +98,7 @@ foreach ($allCanvas as $canvasRow) {
         @foreach ($allCanvas as $canvasRow)
             <div>
                 @php $canvasRowId = $canvasRow['id']; @endphp
-                <x-global::button :link="'#/goalcanvas/editCanvasItem?type=goal&canvasId=' . $canvasRowId" type="primary" class="tw:float-right" icon="fa fa-plus">Create New Goal</x-global::button>
+                <x-global::button :link="'#/goalcanvas/editCanvasItem?type=goal&canvasId=' . $canvasRowId" type="primary" class="pull-right" icon="fa fa-plus">Create New Goal</x-global::button>
 
                 <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRowId }}'>{{ $canvasRow["title"] }}</a></h5>
             </div>
@@ -108,9 +108,9 @@ foreach ($allCanvas as $canvasRow) {
                 $canvasItems = $canvasSvc->getCanvasItemsById($canvasRow["id"]);
                 @endphp
                 <div id="sortableCanvasKanban-{{ $canvasRow['id'] }}" class="sortableTicketList disabled tw:pt-4">
-                    <div class="tw:grid tw:md:grid-cols-3 tw:gap-4">
+                    <div class="row">
                                 @if (!is_countable($canvasItems) || count($canvasItems) == 0)
-                                    <div class="tw:col-span-3">No goals on this board yet. Open the <a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>board</a> to start adding goals</div>
+                                    <div class="col-md-12">No goals on this board yet. Open the <a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>board</a> to start adding goals</div>
                                 @endif
                                 @foreach ($canvasItems as $row)
                                     @php
@@ -122,10 +122,10 @@ foreach ($allCanvas as $canvasRow) {
                                         $comments = app()->make(Comments::class);
                                         $nbcomments = $comments->countComments(moduleId: $row['id']);
                                         @endphp
-                                        <div>
+                                        <div class="col-md-4">
                                             <div class="ticketBox" id="item_{{ $row["id"] }}">
                                                         @if ($login::userIsAtLeast($roles::$editor))
-                                                            <x-global::elements.dropdown class="tw:float-right">
+                                                            <x-global::elements.dropdown class="pull-right">
                                                                 <li><a href="#/goalcanvas/editCanvasItem/{{ $row["id"] }}" class="goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.edit_canvas_item") !!}</a></li>
                                                                 <li><a href="#/goalcanvas/delCanvasItem/{{ $row["id"] }}" class="delete goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.delete_canvas_item") !!}</a></li>
                                                             </x-global::elements.dropdown>
@@ -152,7 +152,7 @@ foreach ($allCanvas as $canvasRow) {
                                                         }
                                                         @endphp
 
-                                                        <div class="tw:text-center">
+                                                        <div class="center">
                                                             <small>{{ sprintf(__("text.percent_complete"), $percentDone) }}</small>
                                                         </div>
                                                         <div class="progress tw:mb-0">
@@ -160,14 +160,14 @@ foreach ($allCanvas as $canvasRow) {
                                                                 <span class="sr-only">{{ sprintf(__("text.percent_complete"), $percentDone) }}</span>
                                                             </div>
                                                         </div>
-                                                        <div class="tw:grid tw:grid-cols-3 tw:pb-0">
-                                                            <div>
+                                                        <div class="row tw:pb-0">
+                                                            <div class="col-md-4">
                                                                 <small>Start:<br />{{ $metricTypeFront . $row["startValue"] . $metricTypeBack }}</small>
                                                             </div>
-                                                            <div class="tw:text-center">
+                                                            <div class="col-md-4 center">
                                                                 <small>{{ __('label.current') }}:<br />{{ $metricTypeFront . $row["currentValue"] . $metricTypeBack }}</small>
                                                             </div>
-                                                            <div class="tw:text-right">
+                                                            <div class="col-md-4 align-right">
                                                                 <small>{{ __('label.goal') }}:<br />{{ $metricTypeFront . $row["endValue"] . $metricTypeBack }}</small>
                                                             </div>
                                                         </div>
@@ -175,11 +175,11 @@ foreach ($allCanvas as $canvasRow) {
                                                         <div class="clearfix tw:pb-2"></div>
 
                                                         @if (!empty($statusLabels))
-                                                            <div class="tw:dropdown ticketDropdown statusDropdown colorized firstDropdown">
-                                                                <div tabindex="0" role="button" class="dropdown-toggle f-left status label-{{ $row['status'] != "" ? $statusLabels[$row['status']]['dropdown'] : "" }}" id="statusDropdownMenuLink{{ $row['id'] }}">
+                                                            <div class="dropdown ticketDropdown statusDropdown colorized firstDropdown">
+                                                                <a href="javascript:void(0)" class="dropdown-toggle f-left status label-{{ $row['status'] != "" ? $statusLabels[$row['status']]['dropdown'] : "" }}" data-toggle="dropdown" id="statusDropdownMenuLink{{ $row['id'] }}">
                                                                     <span class="text">{{ $row['status'] != "" ? $statusLabels[$row['status']]['title'] : "" }}</span> <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                                </div>
-                                                                <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
+                                                                </a>
+                                                                <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
                                                                     <li class="nav-header border">{{ __("dropdown.choose_status") }}</li>
                                                                     @foreach ($statusLabels as $key => $data)
                                                                         @if ($data['active'] || true)
@@ -193,11 +193,11 @@ foreach ($allCanvas as $canvasRow) {
                                                         @endif
 
                                                         @if (!empty($relatesLabels))
-                                                            <div class="tw:dropdown ticketDropdown relatesDropdown colorized firstDropdown">
-                                                                <div tabindex="0" role="button" class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}" id="relatesDropdownMenuLink{{ $row['id'] }}">
+                                                            <div class="dropdown ticketDropdown relatesDropdown colorized firstDropdown">
+                                                                <a href="javascript:void(0)" class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}" data-toggle="dropdown" id="relatesDropdownMenuLink{{ $row['id'] }}">
                                                                     <span class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span> <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                                </div>
-                                                                <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
+                                                                </a>
+                                                                <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
                                                                     <li class="nav-header border">{{ __("dropdown.choose_relates") }}</li>
                                                                     @foreach ($relatesLabels as $key => $data)
                                                                         @if ($data['active'] || true)
@@ -210,8 +210,8 @@ foreach ($allCanvas as $canvasRow) {
                                                             </div>
                                                         @endif
 
-                                                        <div class="tw:dropdown ticketDropdown userDropdown noBg right lastDropdown dropRight">
-                                                            <div tabindex="0" role="button" class="dropdown-toggle f-left" id="userDropdownMenuLink{{ $row['id'] }}">
+                                                        <div class="dropdown ticketDropdown userDropdown noBg right lastDropdown dropRight">
+                                                            <a href="javascript:void(0)" class="dropdown-toggle f-left" data-toggle="dropdown" id="userDropdownMenuLink{{ $row['id'] }}">
                                                                 <span class="text">
                                                                     @if ($row["authorFirstname"] != "")
                                                                         <span id='userImage{{ $row['id'] }}'>
@@ -225,8 +225,8 @@ foreach ($allCanvas as $canvasRow) {
                                                                         <span id='user{{ $row['id'] }}'></span>
                                                                     @endif
                                                                 </span>
-                                                            </div>
-                                                            <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
+                                                            </a>
+                                                            <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                                                 <li class="nav-header border">{{ __("dropdown.choose_user") }}</li>
                                                                 @foreach ($users as $user)
                                                                     <li class='dropdown-item'>
@@ -277,7 +277,7 @@ foreach ($allCanvas as $canvasRow) {
     {{--  --}}
 @else
     <br><br>
-    <div class='tw:text-center'>
+    <div class='center'>
         <div class='svgContainer'>
             {!! file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg") !!}
         </div>
@@ -294,7 +294,7 @@ foreach ($allCanvas as $canvasRow) {
 @endif
 
 @if (!empty($disclaimer) && count($allCanvas) > 0)
-    <small class="tw:text-center">{{ $disclaimer }}</small>
+    <small class="center">{{ $disclaimer }}</small>
 @endif
 
 {!! $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render() !!}

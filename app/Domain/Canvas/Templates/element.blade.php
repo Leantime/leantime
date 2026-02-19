@@ -49,12 +49,12 @@
                 <div class="clearfix" style="padding-bottom: 8px;"></div>
 
                 @if (! empty($statusLabels))
-                    <div class="tw:dropdown ticketDropdown statusDropdown colorized firstDropdown">
-                        <div tabindex="0" role="button" class="dropdown-toggle f-left status label-{{ $statusLabels[$row['status']]['dropdown'] }}"
+                    <div class="dropdown ticketDropdown statusDropdown colorized firstDropdown">
+                        <a href="javascript:void(0)" class="dropdown-toggle f-left status label-{{ $statusLabels[$row['status']]['dropdown'] }}" data-toggle="dropdown"
                            id="statusDropdownMenuLink{{ $row['id'] }}">
                             <span class="text">{{ $statusLabels[$row['status']]['title'] }}</span> <i class="fa fa-caret-down" aria-hidden="true"></i>
-                        </div>
-                        <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
                             <li class="nav-header border">{{ $tpl->__('dropdown.choose_status') }}</li>
                             @foreach ($statusLabels as $key => $data)
                                 @if ($data['active'] || true)
@@ -70,12 +70,12 @@
                 @endif
 
                 @if (! empty($relatesLabels))
-                    <div class="tw:dropdown ticketDropdown relatesDropdown colorized firstDropdown">
-                        <div tabindex="0" role="button" class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}"
+                    <div class="dropdown ticketDropdown relatesDropdown colorized firstDropdown">
+                        <a href="javascript:void(0)" class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}" data-toggle="dropdown"
                            id="relatesDropdownMenuLink{{ $row['id'] }}">
                             <span class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span> <i class="fa fa-caret-down" aria-hidden="true"></i>
-                        </div>
-                        <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
                             <li class="nav-header border">{{ $tpl->__('dropdown.choose_relates') }}</li>
                             @foreach ($relatesLabels as $key => $data)
                                 @if ($data['active'] || true)
@@ -91,8 +91,8 @@
                     </div>
                 @endif
 
-                <div class="tw:dropdown ticketDropdown userDropdown noBg right lastDropdown dropRight">
-                    <div tabindex="0" role="button" class="dropdown-toggle f-left" id="userDropdownMenuLink{{ $row['id'] }}">
+                <div class="dropdown ticketDropdown userDropdown noBg right lastDropdown dropRight">
+                    <a href="javascript:void(0)" class="dropdown-toggle f-left" data-toggle="dropdown" id="userDropdownMenuLink{{ $row['id'] }}">
                         <span class="text">
                             @if ($row['authorFirstname'] != '')
                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['author'] }}" width="25" style="vertical-align: middle;" /></span><span id="user{{ $row['id'] }}"></span>
@@ -100,8 +100,8 @@
                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle;" /></span><span id="user{{ $row['id'] }}"></span>
                             @endif
                         </span>
-                    </div>
-                    <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                         <li class="nav-header border">{{ $tpl->__('dropdown.choose_user') }}</li>
                         @foreach ($tpl->get('users') as $user)
                             <li class="dropdown-item">
@@ -116,7 +116,7 @@
                         @endforeach
                     </ul>
                 </div>
-                <div class="tw:float-right" style="margin-right:10px;">
+                <div class="pull-right" style="margin-right:10px;">
                     <span class="fas fa-comments"></span> <small>{{ $nbcomments }}</small>
                 </div>
 

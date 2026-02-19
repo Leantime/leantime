@@ -54,8 +54,8 @@
 
 <form class="formModal" method="post" action="{{ CURRENT_URL }}">
 
-    <div class="tw:grid tw:md:grid-cols-12 tw:gap-4">
-        <div class="tw:md:col-span-2">
+    <div class="row">
+        <div class="col-md-2">
             <div class="marginBottom">
                 <h4 class="widgettitle title-light">
                     <span class="fa fa-folder"></span>{{ __('subtitles.organization') }}
@@ -83,7 +83,7 @@
 
                 <ul class="sortableTicketList" style="width:99%">
                     @if ($currentArticle->milestoneId == '')
-                        <li class="ui-state-default tw:text-center" id="milestone_0">
+                        <li class="ui-state-default center" id="milestone_0">
                             <h4>{{ __('headlines.no_milestone_link') }}</h4>
                             {{ __('text.use_milestone_to_track_leancanvas') }}<br />
                             <div id="milestoneSelectors">
@@ -144,10 +144,10 @@
             <br />
 
         </div>
-        <div class="tw:md:col-span-8">
+        <div class="col-md-8">
 
 
-            <div class="btn-group inlineDropDownContainerLeft tw:dropdown">
+            <div class="btn-group inlineDropDownContainerLeft">
                 <div tabindex="0" role="button" data-selected="graduation-cap"
                         class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker">
                     <span class="iconPlaceholder">
@@ -167,8 +167,8 @@
             <textarea class="tiptapComplex" rows="20" cols="80" id="wikiArticleContentEditor"  name="description">{{ htmlentities($currentArticle->description ?? '') }}</textarea>
 
 
-                <div class="tw:flex tw:justify-between tw:items-center tw:gap-4 padding-top-sm">
-                    <div>
+                <div class="row">
+                    <div class="col-md-10 padding-top-sm">
                         <br />
                         <input type="hidden" name="saveTicket" value="1" />
                         <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
@@ -176,7 +176,7 @@
                         <x-global::button submit type="primary" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" outline>{{ __('buttons.save_and_close') }}</x-global::button>
 
                     </div>
-                    <div class="tw:text-right padding-top-sm">
+                    <div class="col-md-2 align-right padding-top-sm">
                         @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))
                             <br />
                             <a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete_article') }}</a>
@@ -188,7 +188,7 @@
 
 
         </div>
-        <div class="tw:md:col-span-2"></div>
+        <div class="col-md-2"></div>
     </div>
 
 

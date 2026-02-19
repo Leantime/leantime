@@ -20,9 +20,9 @@
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}">
 
-<div class="tw:grid tw:md:grid-cols-12 tw:gap-4">
+<div class="row">
 
-    <div class="tw:md:col-span-8">
+    <div class="col-md-8">
 
         <input type="hidden" value="{{ $tpl->get('currentCanvas') }}" name="canvasId"/>
         <input type="hidden" value="{{ $tpl->escape($canvasItem['box']) }}" name="box" id="box"/>
@@ -58,7 +58,7 @@
 
     </div>
 
-    <div class="tw:md:col-span-4">
+    <div class="col-md-4">
         @if ($id !== '')
             <br/><br/>
             <h4 class="widgettitle title-light"><span
@@ -66,7 +66,7 @@
 
             <ul class="sortableTicketList" style="width:99%">
                 @if ($canvasItem['milestoneId'] == '')
-                    <li class="ui-state-default tw:text-center" id="milestone_0">
+                    <li class="ui-state-default center" id="milestone_0">
                         <h4>{{ $tpl->__('headlines.no_milestone_link') }}</h4>
                         {{ $tpl->__('text.use_milestone_to_track_idea') }}<br/>
                         <div id="milestoneSelectors">
