@@ -6,12 +6,12 @@
     'triggerClass' => '',
 ])
 
-<div {{ $attributes->merge(['class' => 'tw:dropdown tw:dropdown-' . $align . ' tw:inline-block']) }}>
-    <a tabindex="0" role="button" class="{{ $triggerClass }}" href="javascript:void(0)">
+<div {{ $attributes->merge(['class' => 'dropdown']) }} style="display:inline-block;">
+    <a href="javascript:void(0)" class="dropdown-toggle {{ $triggerClass }}" data-toggle="dropdown">
         {!! $label !!}
         <i class="{{ $icon }}"></i>
     </a>
-    <ul tabindex="0" class="tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm {{ $menuClass }}">
+    <ul class="dropdown-menu {{ $menuClass }}">
         {{ $slot }}
     </ul>
 </div>

@@ -29,7 +29,7 @@
             id="{{ $name }}"
             {{ $accept ? "accept=$accept" : '' }}
             {{ $required ? 'required' : '' }}
-            {{ $attributes->merge(['class' => 'tw:file-input tw:file-input-bordered tw:w-full' . ($error ? ' tw:file-input-error' : '')]) }}
+            {{ $attributes->merge(['class' => 'form-control tw:w-full' . ($error ? ' tw:file-input-error' : '')]) }}
         />
         @if($error)
             <label class="tw:label">

@@ -4,7 +4,7 @@
 ])
 
 <div {{ $attributes->merge(['class' => 'tabsComponent tabbedwidget tab-primary']) }}>
-    <ul {{ $headings->attributes->merge(['class' => 'tw:tabs tw:tabs-bordered', 'role' => 'tablist']) }}>
+    <ul {{ $headings->attributes->merge(['class' => 'nav nav-tabs', 'role' => 'tablist']) }}>
         {{ $headings }}
     </ul>
 

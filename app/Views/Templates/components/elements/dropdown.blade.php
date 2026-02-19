@@ -2,13 +2,13 @@
     'label' => null,
     'icon' => null,
     'align' => 'end',
-    'buttonClass' => 'tw:btn tw:btn-ghost tw:btn-sm',
+    'buttonClass' => '',
     'menuClass' => '',
     'containerClass' => '',
 ])
 
-<div {{ $attributes->merge(['class' => 'tw:dropdown tw:dropdown-' . $align . ($containerClass ? ' ' . $containerClass : '')]) }}>
-    <div tabindex="0" role="button" class="{{ $buttonClass }}">
+<div {{ $attributes->merge(['class' => 'dropdown' . ($containerClass ? ' ' . $containerClass : '')]) }}>
+    <a href="javascript:void(0)" class="dropdown-toggle {{ $buttonClass }}" data-toggle="dropdown">
         @if($icon)
             <i class="{{ $icon }}"></i>
         @endif
@@ -18,8 +18,8 @@
         @if(!$icon && !$label)
             <i class="fa-solid fa-ellipsis-vertical"></i>
         @endif
-    </div>
-    <ul tabindex="0" class="tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm {{ $menuClass }}">
+    </a>
+    <ul class="dropdown-menu {{ $menuClass }}">
         {{ $slot }}
     </ul>
 </div>

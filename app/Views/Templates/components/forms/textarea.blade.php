@@ -29,7 +29,7 @@
         {{ $required ? 'required' : '' }}
         {{ $disabled ? 'disabled' : '' }}
         {{ $readonly ? 'readonly' : '' }}
-        {{ $attributes->merge(['class' => 'tw:textarea tw:textarea-bordered tw:w-full' . ($error ? ' tw:textarea-error' : '')]) }}
+        {{ $attributes->merge(['class' => 'form-control tw:w-full' . ($error ? ' tw:textarea-error' : '')]) }}
     >{{ old($name, $value) }}</textarea>
     @if($error)
         <label class="tw:label">

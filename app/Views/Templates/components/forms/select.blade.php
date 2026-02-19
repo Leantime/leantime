@@ -27,7 +27,7 @@
 
     $selectClasses = $bare
         ? ''
-        : 'tw:select tw:select-bordered tw:w-full' . $sizeClass
+        : 'form-control tw:w-full' . $sizeClass
             . ($error ? ' tw:select-error' : '');
 @endphp
 

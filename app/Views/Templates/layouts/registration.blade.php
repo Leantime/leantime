@@ -28,8 +28,8 @@
         box-shadow: 0px 0px 50px rgba(0,0,0,0.4);
         border-radius: 10px;
         overflow:hidden;">
-            <div class="tw:grid tw:grid-cols-1 tw:md:grid-cols-[7fr_5fr]">
-                <div>
+            <div class="row">
+                <div class="col-md-7">
                     <div class="regpanelinner" style="padding:30px;">
 
                         <a href=""><img src="{{ BASE_URL }}/dist/images/logo_blue.svg" style="width:50%;"/></a><br /><br />
@@ -41,7 +41,7 @@
                         @endisset
                     </div>
                 </div>
-                <div class="regLeft" style="position:relative; background:var(--element-gradient); padding:20px; height:auto;">
+                <div class="col-md-5 regLeft" style="position:relative; background:var(--element-gradient); padding:20px; height:auto;">
 
                     <h1 style="position: relative; z-index: 5; width:100%; font-size:16px;">
                         <span style="font-size:26px">Sign Up</span><br /><br />

@@ -16,8 +16,8 @@
     </a>
 </div>
 
-<div class="tw:grid tw:grid-cols-1 tw:md:grid-cols-[1fr_2fr]" style="height:100%; width: 99%;">
-    <div class="hidden-phone regLeft">
+<div class="row" style="height:100%; width: 99%;">
+    <div class="col-md-4 hidden-phone regLeft">
 
         <div class="logo">
             <a href="{!! BASE_URL !!}" target="_blank"><img src="{{ BASE_URL }}/dist/images/logo.svg" /></a>
@@ -29,7 +29,7 @@
                 </h1>
         </div>
     </div>
-    <div class="regRight">
+    <div class="col-md-8 regRight">
 
         <div class="regpanel">
             <div class="regpanelinner">

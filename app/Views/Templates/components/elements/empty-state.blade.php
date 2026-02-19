@@ -3,7 +3,7 @@
     'image' => null,
 ])
 
-<div {{ $attributes->merge(['class' => 'tw:text-center', 'style' => 'padding: 40px 20px;']) }}>
+<div {{ $attributes->merge(['class' => 'center', 'style' => 'padding: 40px 20px;']) }}>
     @if($image)
         <x-global::undrawSvg image="{{ $image }}" maxWidth="250px" />
     @endif

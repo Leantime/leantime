@@ -6,27 +6,27 @@
 ])
 
 @php
-    $sizeClass = match ($size) {
-        'sm' => 'tw:max-w-sm',
-        'md' => 'tw:max-w-lg',
-        'lg' => 'tw:max-w-3xl',
-        'xl' => 'tw:max-w-5xl',
-        default => 'tw:max-w-lg',
+    $sizeStyle = match ($size) {
+        'sm' => 'max-width: 400px;',
+        'md' => 'max-width: 600px;',
+        'lg' => 'max-width: 900px;',
+        'xl' => 'max-width: 1140px;',
+        default => 'max-width: 600px;',
     };
 @endphp
 
-<dialog {{ $attributes->merge(['id' => $id, 'class' => 'tw:modal']) }}>
-    <div class="tw:modal-box {{ $sizeClass }}">
+<dialog {{ $attributes->merge(['id' => $id, 'class' => 'modal-dialog']) }} style="{{ $sizeStyle }}">
+    <div class="modal-content">
 
         @if ($title || $closeable)
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
                 @if ($title)
-                    <h3 style="font-size: var(--font-size-l); font-weight: bold; margin: 0;">{{ $title }}</h3>
+                    <h4 class="modal-title">{{ $title }}</h4>
                 @endif
 
                 @if ($closeable)
                     <form method="dialog" style="margin: 0;">
-                        <button class="tw:btn tw:btn-sm tw:btn-circle tw:btn-ghost" aria-label="{{ __('label.close') }}">
+                        <button class="btn btn-default btn-sm btn-circle" aria-label="{{ __('label.close') }}">
                             <i class="fa fa-xmark"></i>
                         </button>
                     </form>
@@ -34,18 +34,20 @@
             </div>
         @endif
 
-        {{ $slot }}
+        <div class="modal-body">
+            {{ $slot }}
+        </div>
 
         @isset($actions)
-            <div class="tw:modal-action">
+            <div class="modal-footer">
                 {{ $actions }}
             </div>
         @endisset
     </div>
 
     @if ($closeable)
-        <form method="dialog" class="tw:modal-backdrop">
-            <button>close</button>
+        <form method="dialog" class="modal-backdrop" style="position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:-1;">
+            <button style="opacity:0;width:100%;height:100%;cursor:default;">close</button>
         </form>
     @endif
 </dialog>

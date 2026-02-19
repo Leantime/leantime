@@ -7,21 +7,22 @@
 ])
 
 @php
-    $typeClass = match($type) {
-        'primary'   => 'tw:btn-primary',
-        'secondary' => 'tw:btn-secondary',
-        'default'   => 'tw:btn-ghost',
-        default     => 'tw:btn-' . $type,
+    $bsClass = match($type) {
+        'primary'   => 'btn btn-primary',
+        'secondary' => 'btn btn-default',
+        'default'   => 'btn btn-default',
+        'danger'    => 'btn btn-danger',
+        default     => 'btn btn-' . $type,
     };
 @endphp
 
-<div {{ $attributes->merge(['class' => 'tw:dropdown tw:dropdown-' . $align]) }}>
-    <div tabindex="0" role="button" class="tw:btn {{ $typeClass }}">
+<div {{ $attributes->merge(['class' => 'dropdown']) }}>
+    <a href="javascript:void(0)" class="{{ $bsClass }} dropdown-toggle" data-toggle="dropdown">
         @if($icon)<i class="{{ $icon }}"></i> @endif
         {!! $label !!}
-        <i class="fa fa-caret-down tw:text-xs"></i>
-    </div>
-    <ul tabindex="0" class="tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm {{ $menuClass }}">
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu {{ $menuClass }}">
         {{ $slot }}
     </ul>
 </div>

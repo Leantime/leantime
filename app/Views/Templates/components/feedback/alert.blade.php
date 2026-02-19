@@ -5,11 +5,11 @@
 ])
 
 @php
-    $typeClass = match($type) {
-        'success' => 'tw:alert-success',
-        'warning' => 'tw:alert-warning',
-        'error'   => 'tw:alert-error',
-        default   => 'tw:alert-info',
+    $bsClass = match($type) {
+        'success' => 'alert-success',
+        'warning' => 'alert-warning',
+        'error'   => 'alert-danger',
+        default   => 'alert-info',
     };
     $defaultIcon = match($type) {
         'success' => 'fa-solid fa-circle-check',
@@ -19,11 +19,11 @@
     };
 @endphp
 
-<div {{ $attributes->merge(['class' => "tw:alert $typeClass", 'role' => 'alert']) }}>
+<div {{ $attributes->merge(['class' => "alert $bsClass", 'role' => 'alert']) }}>
     <i class="{{ $icon ?? $defaultIcon }}"></i>
     <span>{{ $slot }}</span>
     @if($dismissible)
-        <button type="button" class="tw:btn tw:btn-sm tw:btn-ghost" onclick="this.closest('.tw\\:alert').remove()">
+        <button type="button" class="close" onclick="this.closest('.alert').remove()">
             <i class="fa fa-xmark"></i>
         </button>
     @endif

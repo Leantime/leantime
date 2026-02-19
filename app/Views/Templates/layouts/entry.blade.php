@@ -16,8 +16,8 @@
     </a>
 </div>
 
-<div class="tw:grid tw:grid-cols-1 tw:md:grid-cols-[1fr_2fr]" style="min-height:100vh; max-width: 98vw; height: auto;">
-    <div class="hidden-phone regLeft">
+<div class="row" style="min-height:100vh; max-width: 98vw; height: auto;">
+    <div class="col-md-4 hidden-phone regLeft">
 
         <div class="logo">
             <a href="{!! BASE_URL !!}" target="_blank">
@@ -32,7 +32,7 @@
         @dispatchFilter('belowWelcomeText', '')
 
     </div>
-    <div class="regRight">
+    <div class="col-md-8 col-sm-12 regRight">
 
         <div class="regpanel">
             <div class="regpanelinner">

@@ -31,10 +31,9 @@
 
     $inputClasses = $bare
         ? ''
-        : 'tw:input tw:input-bordered tw:w-full' . $sizeClass
+        : 'form-control tw:w-full' . $sizeClass
             . ($error ? ' tw:input-error' : '')
-            . ($disabled ? ' tw:input-disabled' : '')
-            . ($readonly ? ' tw:input-bordered' : '');
+            . ($disabled ? ' tw:input-disabled' : '');
 
     $extraAttrs = [];
     if ($min !== null) $extraAttrs['min'] = $min;

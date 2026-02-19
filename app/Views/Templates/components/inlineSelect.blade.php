@@ -6,11 +6,10 @@
     'noSelection' => ''
 ])
 
-<span class="tw:dropdown">
-    <div
-       tabindex="0"
-       role="button"
+<span class="dropdown">
+    <a href="javascript:void(0)"
        id="{{ $id }}-link"
+       data-toggle="dropdown"
        {{ $attributes->merge(["class" => "dropdown-toggle"]) }}>
         <span class="text">
            @if(empty($selected['value']))
@@ -22,8 +21,8 @@
         <i class="fa fa-chevron-down"
            style="font-size: 10px;
                 vertical-align: middle;"></i>
-    </div>
-    <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" id="{{ $id }}-options">
+    </a>
+    <ul class="dropdown-menu" id="{{ $id }}-options">
         @foreach($options as $key => $option)
             <li><a href="javascript:void(0);" data-id="{{ $key }}"
                    onclick="document.querySelector('#{{ $id }}-link .text').textContent = this.textContent.trim();

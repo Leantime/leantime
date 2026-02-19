@@ -20,7 +20,7 @@
     $inputId = $id ?? $name;
     $resolvedTimeName = $timeName ?? $name . '_time';
 
-    $inputClasses = 'tw:input tw:input-bordered tw:w-full'
+    $inputClasses = 'form-control tw:w-full'
         . ($error ? ' tw:input-error' : '');
 @endphp
 
@@ -53,7 +53,7 @@
                 value="{{ old($resolvedTimeName, $timeValue) }}"
                 {{ $disabled ? 'disabled' : '' }}
                 {{ $readonly ? 'readonly' : '' }}
-                class="tw:input tw:input-bordered"
+                class="form-control"
             />
         @endif
     </div>
