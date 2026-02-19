@@ -84,10 +84,10 @@ leantime.tabsController = (function () {
             link.setAttribute('aria-controls', link.getAttribute('href').substring(1));
 
             if (i === activeIndex) {
-                li.classList.add('active', 'tw:tab-active');
+                li.classList.add('active');
                 link.setAttribute('aria-selected', 'true');
             } else {
-                li.classList.remove('active', 'tw:tab-active',
+                li.classList.remove('active',
                     'ui-tabs-active', 'ui-state-active');
                 link.setAttribute('aria-selected', 'false');
             }
@@ -129,14 +129,14 @@ leantime.tabsController = (function () {
         panels.forEach(function (p) { p.style.display = 'none'; });
         tabLinks.forEach(function (link) {
             var li = link.parentElement;
-            li.classList.remove('active', 'tw:tab-active',
+            li.classList.remove('active',
                 'ui-tabs-active', 'ui-state-active');
             link.setAttribute('aria-selected', 'false');
         });
 
         if (panels[index]) { panels[index].style.display = ''; }
         var li = tabLinks[index].parentElement;
-        li.classList.add('active', 'tw:tab-active');
+        li.classList.add('active');
         tabLinks[index].setAttribute('aria-selected', 'true');
 
         // Persist
