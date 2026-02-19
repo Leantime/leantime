@@ -16,28 +16,24 @@
 }
 
 /* Fix interactivity in modals */
-.nyroModalCont .tiptap-wrapper,
 .modal .tiptap-wrapper {
     position: relative;
     z-index: 10;
     isolation: isolate;
 }
 
-.nyroModalCont .tiptap-editor,
 .modal .tiptap-editor {
     position: relative;
     z-index: 1;
     pointer-events: auto !important;
 }
 
-.nyroModalCont .tiptap-toolbar,
 .modal .tiptap-toolbar {
     position: relative;
     z-index: 2;
     pointer-events: auto !important;
 }
 
-.nyroModalCont .ProseMirror,
 .modal .ProseMirror {
     position: relative;
     z-index: 1;
@@ -48,7 +44,6 @@
 }
 
 /* Ensure toolbar buttons are clickable */
-.nyroModalCont .tiptap-toolbar__button,
 .modal .tiptap-toolbar__button {
     pointer-events: auto !important;
     cursor: pointer !important;

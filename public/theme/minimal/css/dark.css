@@ -197,7 +197,6 @@
     text-shadow:none;
 }
 
-.nyroModalCont .tab-primary.ui-tabs .ui-tabs-nav li,
 .maincontentinner .tab-primary.ui-tabs .ui-tabs-nav li{
     border-color:var(--neutral)
 }
