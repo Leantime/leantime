@@ -109,6 +109,8 @@
     border: 0px solid var(--neutral);
     font-size: var(--font-size-s);
     cursor: pointer;
+    border-radius: var(--box-radius-small);
+    transition: background-color 0.15s ease;
 }
 
 .dataTables_paginate span:hover {
@@ -132,7 +134,8 @@
 .dataTables_paginate .paginate_button_disabled {
     cursor: default;
     color: var(--neutral);
-    background: var(--kanban-col-title-bg);
+    background: transparent;
+    opacity: 0.5;
 }
 
 .dataTables_paginate a {
@@ -176,17 +179,19 @@
     font-family: FontAwesome;
     content: "\00a0\00a0\f0dc";
     font-size:var(--font-size-s);
+    opacity: 0.4;
 }
 
 .dataTable thead th.sorting_asc:after {
     font-family: FontAwesome;
     content: "\00a0\00a0\f0de";
-
+    opacity: 1;
 }
 
 .dataTable thead th.sorting_desc:after {
     font-family: FontAwesome;
     content: "\00a0\00a0\f0dd";
+    opacity: 1;
 }
 
 .maincontentinner .table,
@@ -282,6 +287,10 @@
     background: var(--col-hover-bg);
 }
 
+.dataTable tr {
+    transition: box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
 .dataTable tr:hover {
     box-shadow:var(--regular-shadow);
 }
@@ -307,7 +316,7 @@
     left:0px;
     top:10px;
     border:0px;
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 
 .maincontentinner .dataTables_wrapper  .dataTables_length{
@@ -331,7 +340,7 @@
     bottom:10px;
     border:0px;
     padding:10px 10px;
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 
 .maincontentinner .table tr.dt-rowReorder-moving {
@@ -349,9 +358,7 @@
     margin-top: 10px;
     border-radius: var(--box-radius-small);
     border: 0px;
-    -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    -moz-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--large-shadow);
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button {
@@ -413,7 +420,7 @@
     color:var(--secondary-action-hover-color);
 }
 .maincontentinner .dt-buttons .dt-button-collection button {
-    border-radius:0px;
+    border-radius: 0;
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button:hover {
@@ -480,7 +487,7 @@ table td{
 .table td.dropdown-cell .dropdown {
     width:100%;
     height:100%;
-    border-radius:0px !important;
+    border-radius: 0 !important;
     display:block;
 
 }
@@ -488,7 +495,7 @@ table td{
 .table td.dropdown-cell .dropdown > a {
     width:100%;
     height:100%;
-    border-radius:0px !important;
+    border-radius: 0 !important;
     padding: 5px 10px 3px 10px !important;
     line-height: 32px;
     font-size:var(--base-font-size);
