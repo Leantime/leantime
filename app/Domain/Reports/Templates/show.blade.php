@@ -22,33 +22,34 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="tw:grid tw:md:grid-cols-12 tw:gap-4">
-            <div class="tw:md:col-span-8">
+        <div class="row">
+            <div class="col-lg-8">
 
-                <div id="yourToDoContainer">
+                <div class="row" id="yourToDoContainer">
+                    <div class="col-md-12">
 
                             <h5 class="subtitle">{{ $tpl->__('subtitles.summary') }} @if ($fullReportLatest)({{ format($fullReportLatest['date'])->date() }})@endif </h5>
-                            <div class="tw:grid tw:md:grid-cols-4 tw:gap-4">
-                                <div>
+                            <div class="row">
+                                <div class="col-md-3">
                                     <div class="boxedHighlight">
                                         <span class="headline">{{ $tpl->__('label.planned_hours') }}</span>
                                         <span class="value">{{ ($fullReportLatest !== false && $fullReportLatest['sum_planned_hours'] != null) ? format($fullReportLatest['sum_planned_hours'])->decimal() : 0 }}</span>
                                     </div>
                                 </div>
-                                <div>
+                                <div class="col-md-3">
                                     <div class="boxedHighlight">
                                         <span class="headline">{{ $tpl->__('label.estimated_hours_remaining') }}</span>
                                         <span class="value">{{ ($fullReportLatest !== false && $fullReportLatest['sum_estremaining_hours'] != null) ? format($fullReportLatest['sum_estremaining_hours'])->decimal() : 0 }}</span>
                                     </div>
                                 </div>
-                                <div>
+                                <div class="col-md-3">
                                     <div class="boxedHighlight">
                                         <span class="headline">{{ $tpl->__('label.booked_hours') }}</span>
                                         <span class="value">{{ ($fullReportLatest !== false && $fullReportLatest['sum_logged_hours'] != null) ? format($fullReportLatest['sum_logged_hours'])->decimal() : 0 }}</span>
                                     </div>
                                 </div>
 
-                                <div>
+                                <div class="col-md-3">
                                     <div class="boxedHighlight">
                                         <span class="headline">{{ $tpl->__('label.open_todos') }}</span>
                                         <span class="value">{{ ($fullReportLatest !== false) ? format(($fullReportLatest['sum_open_todos'] + $fullReportLatest['sum_progres_todos']))->decimal() : 0 }}</span>
@@ -59,7 +60,7 @@
                             @if ($tpl->get('allSprints') !== false)
                                 <h5 class="subtitle">{{ $tpl->__('subtitles.sprint_burndown') }}</h5>
                                 <br />
-                                <span class="tw:float-left">
+                                <span class="pull-left">
                                 @if ($tpl->get('allSprints') !== false && count($tpl->get('allSprints')) > 0)
                                     <x-global::forms.select :bare="true" data-placeholder="{{ $tpl->__('input.placeholders.filter_by_sprint') }}" title="{{ $tpl->__('input.placeholders.filter_by_sprint') }}" name="sprint" class="mainSprintSelector" onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
                                         <option value="">{{ $tpl->__('input.placeholders.filter_by_sprint') }}</option>
@@ -76,7 +77,7 @@
                                 @endif
                             </span>
 
-                                <div class="tw:float-right">
+                                <div class="pull-right">
                                     <div class="btn-group mt-1 mx-auto" role="group">
                                         <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="NumChartButtonSprint" class="active chartButtons">{{ $tpl->__('label.num_tickets') }}</x-global::button>
                                         <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="EffortChartButtonSprint" class="chartButtons">{{ $tpl->__('label.effort') }}</x-global::button>
@@ -94,7 +95,7 @@
                         <br />
                         <h5 class="subtitle">{{ $tpl->__('subtitles.cummulative_flow') }}</h5>
 
-                        <div class="tw:float-right">
+                        <div class="pull-right">
                             <div class="btn-group mt-1 mx-auto" role="group">
                                 <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="NumChartButtonBacklog" class="active backlogChartButtons">{{ $tpl->__('label.num_tickets') }}</x-global::button>
                                 <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="EffortChartButtonBacklog" class="backlogChartButtons">{{ $tpl->__('label.effort') }}</x-global::button>
@@ -108,12 +109,15 @@
                         <div class="clearall"></div>
                         <br />
                         <br />
+                    </div>
+                </div>
 
             </div>
 
-            <div class="tw:md:col-span-4">
+            <div class="col-lg-4">
 
-                <div id="projectProgressContainer">
+                <div class="row" id="projectProgressContainer">
+                    <div class="col-md-12">
 
                         <h5 class="subtitle">{{ $tpl->__('subtitles.project_progress') }}</h5>
 
@@ -121,36 +125,45 @@
                             <canvas id="chart-area"></canvas>
                         </div>
                         <br /><br />
+                    </div>
                 </div>
-                <div id="milestoneProgressContainer">
+                <div class="row" id="milestoneProgressContainer">
+                    <div class="col-md-12">
                         <h5 class="subtitle">{{ $tpl->__('headline.milestones') }}</h5>
                         <ul class="sortableTicketList">
                             @if (count($tpl->get('milestones')) == 0)
-                                <div class="tw:text-center"><br /><h4>{{ $tpl->__('headlines.no_milestones') }}</h4>
+                                <div class="center"><br /><h4>{{ $tpl->__('headlines.no_milestones') }}</h4>
                                 {{ $tpl->__('text.milestones_help_organize_projects') }}<br /><br /><a href="{{ BASE_URL }}/tickets/roadmap">{{ $tpl->__('links.goto_milestones') }}</a>
                             @endif
                             @foreach ($tpl->get('milestones') as $row)
                                     <li class="ui-state-default" id="milestone_{{ $row->id }}">
                                         <div class="ticketBox fixed">
-                                            <strong><a href="{{ BASE_URL }}/tickets/editMilestone/{{ $row->id }}" class="milestoneModal">{{ $tpl->escape($row->headline) }}</a></strong>
-                                            <div class="tw:flex tw:justify-between tw:items-center">
-                                                <div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <strong><a href="#/tickets/editMilestone/{{ $row->id }}" class="milestoneModal">{{ $tpl->escape($row->headline) }}</a></strong>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-7">
                                                     {{ $tpl->__('label.due') }}
                                                     {{ format($row->editTo)->date($tpl->__('text.no_date_defined')) }}
                                                 </div>
-                                                <div style="text-align:right">
+                                                <div class="col-md-5" style="text-align:right">
                                                     {{ sprintf($tpl->__('text.percent_complete'), $row->percentDone) }}
                                                 </div>
                                             </div>
+                                            <div class="row"><div class="col-md-12">
                                             <div class="progress">
                                                 <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ $row->percentDone }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $row->percentDone }}%">
                                                     <span class="sr-only">{{ sprintf($tpl->__('text.percent_complete'), $row->percentDone) }}</span>
                                                 </div>
                                             </div>
+                                            </div></div>
                                         </div>
                                     </li>
                             @endforeach
                         </ul>
+                    </div>
                 </div>
             </div>
         </div>

@@ -84,7 +84,7 @@ if ($roadmapView == 'Day') {
             <h4>'.$tpl->__('headlines.no_milestones').'<br/>
 
             <br />
-            <a href="'.BASE_URL.'/tickets/editMilestone" class="milestoneModal addCanvasLink btn btn-primary">'.$tpl->__('links.add_milestone').'</a></h4></div>';
+            <a href="#/tickets/editMilestone" class="milestoneModal addCanvasLink btn btn-primary">'.$tpl->__('links.add_milestone').'</a></h4></div>';
         }
 ?>
         <div class="gantt-wrapper">
