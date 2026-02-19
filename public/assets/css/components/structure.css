@@ -470,7 +470,7 @@ body {
 /* Close button */
 .close {
     float: right;
-    font-size: 21px;
+    font-size: var(--font-size-xxl);
     font-weight: bold;
     line-height: 1;
     opacity: 0.4;
@@ -495,7 +495,7 @@ body {
     display: inline-block;
     min-width: 10px;
     padding: 3px 7px;
-    font-size: 12px;
+    font-size: var(--font-size-s);
     font-weight: bold;
     line-height: 1;
     text-align: center;
@@ -526,7 +526,7 @@ body {
 .nav-header {
     display: block;
     padding: 3px 15px;
-    font-size: 11px;
+    font-size: var(--font-size-s);
     font-weight: bold;
     line-height: 1.5;
     text-transform: uppercase;

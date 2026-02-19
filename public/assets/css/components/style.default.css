@@ -647,7 +647,7 @@ body.loginpage {
 .pageicon {
     width: 30px;
     height:30px;
-    font-size:16px;
+    font-size: var(--font-size-l);
     padding: 0px;
     color: var(--main-titles-color);
     border-width: 2px;
@@ -1196,7 +1196,7 @@ ul.list-inline li {
 }
 
 .errortitle h4 {
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     margin-bottom: 20px;
 }
 
@@ -1494,7 +1494,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .badge {
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     text-shadow: none;
     font-weight: normal;
     line-height: 19px;
@@ -1876,7 +1876,7 @@ div.color-picker ul li:hover {
     opacity: 0;
     filter: alpha(opacity=0);
     transform: translate(-300px, 0) scale(4);
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     direction: ltr;
     cursor: pointer;
 }
@@ -2041,7 +2041,7 @@ body::after {
 }
 
 .leftpanel .promotion i {
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     float: left;
     margin-right: 10px;
     line-height: 45px;
@@ -2218,7 +2218,7 @@ body .widgettitle .editHeadline:hover {
 
 
 .sortHandle {
-    font-size:16px;
+    font-size: var(--font-size-l);
     color:var(--main-border-color);
     padding-left:15px;
 }
@@ -2444,7 +2444,7 @@ a.titleInsertLink:hover {
 .projectBox .projectAvatar .fa {
 
     color:var(--main-action-color);
-    font-size: 23px;
+    font-size: var(--font-size-xxxl);
     line-height: 50px;
 }
 

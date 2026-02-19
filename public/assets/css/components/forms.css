@@ -1860,7 +1860,7 @@ input[type=number].hide-controls {
 
 .dropdown-title {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--font-size-l);
 }
 
 .dropdown-content {
