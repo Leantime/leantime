@@ -17,14 +17,14 @@
     // If submit shorthand is used, force tag to button with type=submit
     $resolvedTag = $submit ? 'button' : $tag;
 
-    // Map to Bootstrap classes
     $bsTypeClass = match($type) {
-        'danger'      => 'btn btn-danger',
-        'error'       => 'btn btn-danger',
-        'transparent' => 'btn btn-link',
-        'ghost'       => 'btn btn-default',
-        'accent'      => 'btn btn-primary',
-        default       => 'btn btn-' . $type,
+        'danger', 'error' => 'btn btn-danger',
+        'transparent'     => 'btn btn-link',
+        'ghost'           => 'btn btn-default',
+        'accent'          => 'btn btn-primary',
+        'success'         => 'btn btn-success',
+        'warning'         => 'btn btn-warning',
+        default           => 'btn btn-' . $type,
     };
 
     $sizeClass = match($size) {

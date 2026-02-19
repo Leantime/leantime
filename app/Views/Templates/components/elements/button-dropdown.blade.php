@@ -8,11 +8,13 @@
 
 @php
     $bsClass = match($type) {
-        'primary'   => 'btn btn-primary',
-        'secondary' => 'btn btn-default',
-        'default'   => 'btn btn-default',
-        'danger'    => 'btn btn-danger',
-        default     => 'btn btn-' . $type,
+        'primary'              => 'btn btn-primary',
+        'secondary', 'default', 'ghost' => 'btn btn-default',
+        'danger', 'error'      => 'btn btn-danger',
+        'success'              => 'btn btn-success',
+        'warning'              => 'btn btn-warning',
+        'transparent'          => 'btn btn-link',
+        default                => 'btn btn-' . $type,
     };
 @endphp
 
