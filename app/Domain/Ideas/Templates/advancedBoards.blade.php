@@ -70,7 +70,7 @@
         @if (count($tpl->get('allCanvas')) > 0)
             <div id="sortableIdeaKanban" class="sortableTicketList">
 
-                <div class="tw:flex tw:flex-wrap">
+                <div class="row-fluid">
 
                     @foreach ($tpl->get('canvasLabels') as $key => $statusRow)
                     <div class="column" style="width:{{ $size }}%;">
@@ -96,7 +96,7 @@
                                                     </x-global::elements.dropdown>
                                                 @endif
 
-                                                <h4><a href="{{ BASE_URL }}/ideas/advancedBoards/#/ideas/ideaDialog/{{ $row['id'] }}" class=""
+                                                <h4><a href="#/ideas/ideaDialog/{{ $row['id'] }}"
                                                        data="item_{{ $row['id'] }}">{{ $tpl->escape($row['description']) }}</a></h4>
 
                                                 <div class="mainIdeaContent">
@@ -109,8 +109,8 @@
 
                                                 <div class="clearfix" style="padding-bottom: 8px;"></div>
 
-                                                <div class="tw:dropdown ticketDropdown userDropdown noBg right lastDropdown dropRight">
-                                                    <div tabindex="0" role="button" class="dropdown-toggle f-left" id="userDropdownMenuLink{{ $row['id'] }}" aria-haspopup="true" aria-expanded="false">
+                                                <div class="dropdown ticketDropdown userDropdown noBg right lastDropdown dropRight">
+                                                    <a href="javascript:void(0)" class="dropdown-toggle f-left" data-toggle="dropdown" id="userDropdownMenuLink{{ $row['id'] }}" aria-haspopup="true" aria-expanded="false">
                                                         <span class="text">
                                                             @if ($row['authorFirstname'] != '')
                                                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['author'] }}" width="25" style="vertical-align: middle;"/></span><span id="user{{ $row['id'] }}"></span>
@@ -118,8 +118,8 @@
                                                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle;"/></span><span id="user{{ $row['id'] }}"></span>
                                                             @endif
                                                         </span>
-                                                    </div>
-                                                    <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
+                                                    </a>
+                                                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                                         <li class="nav-header border">{{ $tpl->__('dropdown.choose_user') }}</li>
                                                         @foreach ($tpl->get('users') as $user)
                                                             <li class="dropdown-item">
@@ -129,7 +129,7 @@
                                                     </ul>
                                                 </div>
 
-                                                <div class="tw:float-right" style="margin-right:10px;">
+                                                <div class="pull-right" style="margin-right:10px;">
                                                     <a href="#/ideas/ideaDialog/{{ $row['id'] }}"
                                                         data="item_{{ $row['id'] }}"
                                                         {!! $row['commentCount'] == 0 ? 'style="color: grey;"' : '' !!}>
@@ -165,7 +165,7 @@
 
         @else
             <br/><br/>
-            <div class="tw:text-center">
+            <div class="center">
                 <div style="width:50%" class="svgContainer">
                     {!! file_get_contents(ROOT . '/dist/images/svg/undraw_new_ideas_jdea.svg') !!}
                 </div>

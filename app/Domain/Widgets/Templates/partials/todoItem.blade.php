@@ -12,7 +12,7 @@
         'title' =>  $ticket['headline'],
         'color' =>   'var(--accent2)',
         'enitityType' =>  'ticket',
-        'url' =>  BASE_URL.'#/tickets/showTicket/'.$ticket['id'],
+        'url' =>  '#/tickets/showTicket/'.$ticket['id'],
     ]);
 
     $hasChildren = !empty($ticket['children']);

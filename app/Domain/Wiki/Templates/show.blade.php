@@ -71,7 +71,7 @@
              //
             <x-global::elements.link-dropdown :label="$currentWiki !== false ? e($currentWiki->title) : __('label.select_board')" triggerClass="header-title-dropdown">
                 <li><a class="inlineEdit" href="#/wiki/wikiModal/">{{ __('link.new_wiki') }}</a></li>
-                <li class="tw:menu-title"></li>
+                <li class="nav-header"></li>
                 @foreach ($wikis as $wiki)
                     <li>
                         <a href="{{ BASE_URL }}/wiki/show?setWiki={{ $wiki->id }}">{{ $wiki->title }}</a>
@@ -151,13 +151,13 @@
                                 @if ($login::userIsAtLeast($roles::$editor))
                                     {{-- Editable Title with Icon Picker --}}
                                     <div class="wiki-title-wrapper" id="wikiTitleWrapper">
-                                        <div class="wiki-icon-picker tw:dropdown">
-                                            <div tabindex="0" role="button"
+                                        <div class="wiki-icon-picker dropdown">
+                                            <a href="javascript:void(0);" data-toggle="dropdown"
                                                     class="wiki-icon-btn icp icp-dd btn btn-default dropdown-toggle iconpicker-container"
                                                     title="Change icon">
                                                 <span class="iconPlaceholder"><i class="{{ $tpl->escape($currentArticle->data ?: 'fa fa-file-alt') }}"></i></span>
                                                 <span class="wiki-icon-caret"><i class="fa fa-chevron-down"></i></span>
-                                            </div>
+                                            </a>
                                             <div class="dropdown-menu"></div>
                                             <input type="hidden" id="wikiArticleIcon" class="articleIcon" value="{{ $tpl->escape($currentArticle->data) }}" />
                                         </div>
@@ -271,18 +271,18 @@
                                     </span>
                                     <span class="wiki-property-value">
                                         @if ($login::userIsAtLeast($roles::$editor))
-                                            <div class="wiki-status-dropdown dropdown tw:dropdown" id="wikiStatusDropdown">
-                                                <div tabindex="0" role="button" class="wiki-status-pill {{ $currentArticle->status }}">
+                                            <div class="wiki-status-dropdown dropdown" id="wikiStatusDropdown">
+                                                <a href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle wiki-status-pill {{ $currentArticle->status }}">
                                                     @if ($currentArticle->status === 'draft')
                                                         <i class="fa fa-pencil"></i> Draft
                                                     @else
                                                         <i class="fa fa-check"></i> Published
                                                     @endif
                                                     <i class="fa fa-chevron-down"></i>
-                                                </div>
-                                                <ul tabindex="0" class="dropdown-menu wiki-status-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm">
-                                                    <li><a onclick="document.activeElement.blur();" href="javascript:void(0)" class="wiki-status-option draft-option" data-value="draft"><i class="fa fa-pencil"></i> Draft</a></li>
-                                                    <li><a onclick="document.activeElement.blur();" href="javascript:void(0)" class="wiki-status-option published-option" data-value="published"><i class="fa fa-check"></i> Published</a></li>
+                                                </a>
+                                                <ul class="dropdown-menu wiki-status-menu">
+                                                    <li><a href="javascript:void(0)" class="wiki-status-option draft-option" data-value="draft"><i class="fa fa-pencil"></i> Draft</a></li>
+                                                    <li><a href="javascript:void(0)" class="wiki-status-option published-option" data-value="published"><i class="fa fa-check"></i> Published</a></li>
                                                 </ul>
                                             </div>
                                         @else
@@ -313,13 +313,13 @@
                                     </span>
                                     <span class="wiki-property-value">
                                         @if ($login::userIsAtLeast($roles::$editor))
-                                            <div class="wiki-parent-dropdown dropdown tw:dropdown" id="wikiParentDropdown">
-                                                <div tabindex="0" role="button" class="wiki-milestone-btn">
+                                            <div class="wiki-parent-dropdown dropdown" id="wikiParentDropdown">
+                                                <a href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle wiki-milestone-btn">
                                                     <span class="parent-text{{ (! $currentArticle->parent || $currentArticle->parent == 0) ? ' none' : '' }}">{{ $parentName }}</span>
                                                     <i class="fa fa-chevron-down"></i>
-                                                </div>
-                                                <ul tabindex="0" class="dropdown-menu wiki-milestone-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm">
-                                                    <li><a onclick="document.activeElement.blur();" href="javascript:void(0)" class="wiki-parent-option{{ (! $currentArticle->parent || $currentArticle->parent == 0) ? ' active' : '' }}" data-value="0"><i class="fa fa-times"></i> None</a></li>
+                                                </a>
+                                                <ul class="dropdown-menu wiki-milestone-menu">
+                                                    <li><a href="javascript:void(0)" class="wiki-parent-option{{ (! $currentArticle->parent || $currentArticle->parent == 0) ? ' active' : '' }}" data-value="0"><i class="fa fa-times"></i> None</a></li>
                                                     @php
                                                         $parentOptions = array_filter($wikiHeadlines, function ($h) use ($currentArticle) {
                                                             return $h->id != $currentArticle->id;
@@ -329,7 +329,7 @@
                                                         <li class="divider"></li>
                                                         @foreach ($parentOptions as $headline)
                                                             <li>
-                                                                <a onclick="document.activeElement.blur();" href="javascript:void(0)"
+                                                                <a href="javascript:void(0)"
                                                                    class="wiki-parent-option{{ $currentArticle->parent == $headline->id ? ' active' : '' }}"
                                                                    data-value="{{ $headline->id }}">
                                                                     <i class="{{ $headline->data ?: 'fa fa-file-alt' }}"></i> {{ $headline->title }}@if ($headline->status === 'draft') <span class="wiki-tree-draft">({{ __('label.draft') }})</span>@endif
@@ -371,22 +371,22 @@
                                     </span>
                                     <span class="wiki-property-value">
                                         @if ($login::userIsAtLeast($roles::$editor))
-                                            <div class="wiki-milestone-dropdown dropdown tw:dropdown" id="wikiMilestoneDropdown">
-                                                <div tabindex="0" role="button" class="wiki-milestone-btn">
+                                            <div class="wiki-milestone-dropdown dropdown" id="wikiMilestoneDropdown">
+                                                <a href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle wiki-milestone-btn">
                                                     @if (! empty($currentArticle->milestoneHeadline))
                                                         <span class="milestone-text">{{ $currentArticle->milestoneHeadline }}</span>
                                                     @else
                                                         <span class="milestone-text none">None</span>
                                                     @endif
                                                     <i class="fa fa-chevron-down"></i>
-                                                </div>
-                                                <ul tabindex="0" class="dropdown-menu wiki-milestone-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm">
-                                                    <li><a onclick="document.activeElement.blur();" href="javascript:void(0)" class="wiki-milestone-option" data-value="0"><i class="fa fa-times"></i> None</a></li>
+                                                </a>
+                                                <ul class="dropdown-menu wiki-milestone-menu">
+                                                    <li><a href="javascript:void(0)" class="wiki-milestone-option" data-value="0"><i class="fa fa-times"></i> None</a></li>
                                                     @if (count($milestones) > 0)
                                                         <li class="divider"></li>
                                                         @foreach ($milestones as $milestone)
                                                             <li>
-                                                                <a onclick="document.activeElement.blur();" href="javascript:void(0)"
+                                                                <a href="javascript:void(0)"
                                                                    class="wiki-milestone-option{{ $currentArticle->milestoneId == $milestone->id ? ' active' : '' }}"
                                                                    data-value="{{ $milestone->id }}">
                                                                     <i class="fa fa-flag"></i> {{ $milestone->headline }}
@@ -398,7 +398,7 @@
                                             </div>
                                         @else
                                             @if (! empty($currentArticle->milestoneHeadline))
-                                                <a href="{{ BASE_URL }}/tickets/roadmap#/tickets/editMilestone/{{ $currentArticle->milestoneId }}" class="wiki-milestone-link">
+                                                <a href="#/tickets/editMilestone/{{ $currentArticle->milestoneId }}" class="wiki-milestone-link">
                                                     {{ $currentArticle->milestoneHeadline }}
                                                 </a>
                                             @else

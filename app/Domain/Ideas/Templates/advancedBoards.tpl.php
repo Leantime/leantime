@@ -143,7 +143,7 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
                                                     </div>
                                                  <?php } ?>
 
-                                                <h4><a href="<?= BASE_URL ?>/ideas/advancedBoards/#/ideas/ideaDialog/<?php echo $row['id']; ?>" class=""
+                                                <h4><a href="#/ideas/ideaDialog/<?php echo $row['id']; ?>"
                                                        data="item_<?php echo $row['id']; ?>"><?php $tpl->e($row['description']); ?></a></h4>
 
                                                 <div class="mainIdeaContent">
