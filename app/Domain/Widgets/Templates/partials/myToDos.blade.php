@@ -43,8 +43,8 @@
 
         @dispatchEvent("beforeTodoWidgetGroupByDropdown")
 
-        <x-global::elements.dropdown icon="fa-solid fa-diagram-project" buttonClass="tw:btn tw:btn-ghost tw:btn-sm tw:btn-circle" containerClass="left" data-tippy-content="{{ __('text.group_by') }}">
-            <li class="tw:menu-title">{!! __("text.group_by") !!}</li>
+        <x-global::elements.dropdown icon="fa-solid fa-diagram-project" buttonClass="btn btn-default btn-sm btn-circle" containerClass="left" data-tippy-content="{{ __('text.group_by') }}">
+            <li class="nav-header border">{!! __("text.group_by") !!}</li>
             <li>
                 <span class="radio">
                     <x-global::forms.radio name="groupBy" value="time" id="groupByDate"
@@ -91,8 +91,8 @@
                 </span>
             </li>
         </x-global::elements.dropdown>
-        <x-global::elements.dropdown :label="'<i class=&quot;fas fa-filter&quot;></i>' . ($projectFilter != '' ? '<span class=&quot;badge badge-primary&quot;>1</span>' : '')" buttonClass="tw:btn tw:btn-ghost tw:btn-sm tw:btn-circle" containerClass="left">
-            <li class="tw:menu-title">{!! __("text.filter") !!}</li>
+        <x-global::elements.dropdown :label="'<i class=&quot;fas fa-filter&quot;></i>' . ($projectFilter != '' ? '<span class=&quot;badge badge-primary&quot;>1</span>' : '')" buttonClass="btn btn-default btn-sm btn-circle" containerClass="left">
+            <li class="nav-header border">{!! __("text.filter") !!}</li>
             <li
                 @if($projectFilter == '')
                     class='active'
@@ -134,7 +134,7 @@
         <div class="">
             @if($tickets !== null && count($tickets) == 0)
 
-                <div class='tw:text-center'>
+                <div class='center'>
                     <div style='width:30%' class='svgContainer'>
                         {!! file_get_contents(ROOT . "/dist/images/svg/undraw_a_moment_to_relax_bbpa.svg") !!}
                     </div>
@@ -288,7 +288,7 @@
                  hx-target="#yourToDoContainer"
                  hx-swap="outerHTML"
                  hx-vals='{"limit": {{ $limit }}, "groupBy": "{{ $groupBy }}", "projectFilter": "{{ $projectFilter }}"}'>
-                <div class="tw:text-center tw:py-4">
+                <div class="center tw:py-4">
                     <div class="htmx-indicator">
                         <div class="indeterminate"></div>
                     </div>

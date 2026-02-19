@@ -1,6 +1,6 @@
 <div class="" style="min-width:50%;">
     <h1>{{ __("headlines.widget_manager") }}</h1>
-    <x-global::button link="{{ BASE_URL }}/dashboard/home?resetDashboard=true" type="secondary" outline icon="fa-solid fa-arrow-rotate-left" class="tw:float-right" style="margin-bottom:10px;">Reset Dashboard</x-global::button>
+    <x-global::button link="{{ BASE_URL }}/dashboard/home?resetDashboard=true" type="secondary" outline icon="fa-solid fa-arrow-rotate-left" class="pull-right" style="margin-bottom:10px;">Reset Dashboard</x-global::button>
     <p>{{ __("text.choose_widgets") }}</p>
     <br />
     <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:15px;">

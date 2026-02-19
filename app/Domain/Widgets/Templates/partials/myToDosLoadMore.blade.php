@@ -48,7 +48,7 @@
          hx-target="#global-load-more"
          hx-swap="outerHTML"
          hx-vals='{"offset": {{ $nextOffset }}, "limit": 20, "groupBy": "{{ $groupBy }}", "projectFilter": "{{ $projectFilter }}"}'>
-        <div class="tw:text-center tw:py-4">
+        <div class="center tw:py-4">
             <div class="htmx-indicator">
                 <div class="indeterminate"></div>
             </div>

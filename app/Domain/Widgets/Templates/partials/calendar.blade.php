@@ -6,10 +6,10 @@
 @dispatchEvent('beforeCalendar')
 
 
-<div class="widget-slot-actions minCalendar tw:dropdown tw:dropdown-end">
+<div class="widget-slot-actions minCalendar dropdown">
 
-    <div tabindex="0" role="button" class="btn btn-link btn-round-icon dropdown-toggle f-right" data-tippy-content="{{ __('text.calendar_view') }}"> <i class="fa-solid fa-calendar-week"></i></div>
-    <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm tw:float-right">
+    <a href="javascript:void(0)" class="btn btn-link btn-round-icon dropdown-toggle f-right" data-toggle="dropdown" data-tippy-content="{{ __('text.calendar_view') }}"> <i class="fa-solid fa-calendar-week"></i></a>
+    <ul class="dropdown-menu pull-right">
         <li>
             <a class="fc-agendaDay-button fc-button fc-state-default fc-corner-right calendarViewSelect" href="javascript:void(0);"
                onclick="document.activeElement.blur();"

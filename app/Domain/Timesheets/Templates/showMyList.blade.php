@@ -18,7 +18,7 @@
 
         <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="timesheetListForm" name="timesheetListForm">
             <div class="pull-right">
-                <x-global::elements.button-dropdown :label="__('links.list_view') . ' ' . __('links.view')" type="default">
+                <x-global::elements.button-dropdown :label="__('links.list_view')" type="default">
                     <li><a href="{{ BASE_URL }}/timesheets/showMy">{!! __('links.week_view') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
                 </x-global::elements.button-dropdown>

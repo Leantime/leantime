@@ -3,7 +3,7 @@
     'currentProject'
 ])
 
-<div tabindex="0" class="dropdown-menu tw:dropdown-content tw:bg-base-100 tw:rounded-box tw:z-50 tw:shadow-sm projectselector" id="mainProjectSelector">
+<div class="dropdown-menu projectselector" id="mainProjectSelector">
 
         @if ($menuType == 'project' || $menuType == 'default')
             <div class="head">
@@ -11,7 +11,7 @@
                 <span class="title">{{ session("currentProjectName") }}</span>
             </div>
         @else
-            <div class="projectSelectorFooter tw:border-none tw:border-b tw:border-solid tw:border-[var(--main-border-color)]">
+            <div class="projectSelectorFooter" style="border: none; border-bottom: 1px solid var(--main-border-color);">
             <ul class="selectorList projectList">
                 <li>
                     <a href="{{ BASE_URL }}/projects/showMy"><strong><i class="fa-solid fa-house-flag"></i> Open Project Hub</strong></a>

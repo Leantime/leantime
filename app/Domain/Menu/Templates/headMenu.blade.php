@@ -1,7 +1,7 @@
 @php use Leantime\Domain\Auth\Models\Roles; @endphp
 @dispatchEvent('beforeHeadMenu')
 
-<ul class="headmenu tw:float-right">
+<ul class="headmenu pull-right">
     @dispatchEvent('insideHeadMenu')
 
     @include('timesheets::partials.stopwatch', [
@@ -9,11 +9,10 @@
            ])
 
     @if ($login::userIsAtLeast("manager", true))
-        <li class="tw:dropdown tw:dropdown-end notificationDropdown appsLink">
-        <div
-            tabindex="0"
-            role="button"
+        <li class="dropdown notificationDropdown appsLink">
+        <a href="javascript:void(0)"
             class="dropdown-toggle profileHandler newsDropDownHandler"
+            data-toggle="dropdown"
             hx-get="{{ BASE_URL }}/plugins/marketplaceplugins/getLatest"
             hx-target="#pluginNewsDropdown"
             hx-indicator=".htmx-news-indicator"
@@ -23,9 +22,9 @@
         >
             <i class="fa-solid fa-puzzle-piece"></i>
 
-        </div>
+        </a>
 
-        <div tabindex="0" class='dropdown-menu tw:dropdown-content tw:bg-base-100 tw:rounded-box tw:z-50 tw:shadow-sm tw:p-m tw:h-screen tw:overflow-y-auto' id='pluginNewsDropdown'>
+        <div class='dropdown-menu' id='pluginNewsDropdown'>
             <div class="htmx-indicator htmx-news-indicator">
                 <x-global::loadingText type="text" count="3" includeHeadline="true" />
             </div>
@@ -33,11 +32,10 @@
     </li>
     @endif
 
-    <li class="tw:dropdown tw:dropdown-end notificationDropdown">
-        <div
-            tabindex="0"
-            role="button"
+    <li class="dropdown notificationDropdown">
+        <a href="javascript:void(0)"
             class="dropdown-toggle profileHandler newsDropDownHandler"
+            data-toggle="dropdown"
             hx-get="{{ BASE_URL }}/notifications/news/get"
             hx-target="#newsDropdown"
             hx-indicator=".htmx-news-indicator"
@@ -48,29 +46,28 @@
             <span class="fa-solid fa-bolt-lightning"></span>
             <span class="tw:inline-block" hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
 
-        </div>
+        </a>
 
-        <div tabindex="0" class='dropdown-menu tw:dropdown-content tw:bg-base-100 tw:rounded-box tw:z-50 tw:shadow-sm tw:p-m tw:h-screen tw:overflow-y-auto' id='newsDropdown'>
+        <div class='dropdown-menu' id='newsDropdown'>
             <div class="htmx-indicator htmx-news-indicator">
                 <x-global::loadingText type="text" count="3" includeHeadline="true" />
             </div>
         </div>
     </li>
 
-    <li class="tw:dropdown tw:dropdown-end notificationDropdown">
-        <div
-            tabindex="0"
-            role="button"
+    <li class="dropdown notificationDropdown">
+        <a href="javascript:void(0)"
             class="dropdown-toggle profileHandler notificationHandler"
+            data-toggle="dropdown"
             data-tippy-content='{{ __('popover.notifications') }}'
         >
             <span class="fa-solid fa-bell"></span>
             @if($newNotificationCount>0)
-                <span class='notificationCounter tw:badge tw:badge-error tw:badge-xs'>{{ $newNotificationCount }}</span>
+                <span class='notificationCounter badge badge-danger badge-xs'>{{ $newNotificationCount }}</span>
             @endif
-        </div>
+        </a>
 
-        <div tabindex="0" class='dropdown-menu tw:dropdown-content tw:bg-base-100 tw:rounded-box tw:z-50 tw:shadow-sm' id='notificationsDropdown'>
+        <div class='dropdown-menu' id='notificationsDropdown'>
 
             <div class='dropdownTabs'>
                 <a
@@ -156,16 +153,15 @@
 
     </li>
 
-    <li class="tw:dropdown tw:dropdown-end userloggedinfo">
-        <div
-            tabindex="0"
-            role="button"
+    <li class="dropdown userloggedinfo">
+        <a href="javascript:void(0)"
             class="dropdown-toggle"
+            data-toggle="dropdown"
             data-tippy-content='{{ __('popover.help') }}'
         >
             <span class="fa-solid fa-question-circle"></span>
-        </div>
-        <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm tw:float-right">
+        </a>
+        <ul class="dropdown-menu pull-right">
             <li class="nav-header">
                 {{ __("headline.support") }}
             </li>
@@ -215,10 +211,10 @@
 
 </ul>
 
-<ul class="headmenu work-modes tw:h-[50px] tw:float-left">
+<ul class="headmenu work-modes tw:h-[50px] pull-left">
 
     @dispatchEvent('afterHeadMenuOpen')
-    <li class="tw:dropdown dropdown">
+    <li class="dropdown">
         @include('menu::projectSelector')
     </li>
     <li>
