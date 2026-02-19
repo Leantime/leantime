@@ -22,14 +22,14 @@
             <input type="hidden" name="milestoneId" value="{{ $canvasItem['milestoneId'] ?? '' }}">
             <input type="hidden" name="changeItem" value="1">
 
-            <div class="tw:grid tw:grid-cols-[2fr_1fr] tw:gap-6">
-                <div>
+            <div class="row">
+                <div class="col-md-8">
                     <label>{{ __('label.what_is_your_goal') }}</label>
                     <x-global::forms.input name="title" value="{{ $canvasItem['title'] }}" style="width:100%" /><br>
 
                     @if (!empty($relatesLabels))
                         <label>{{ __('label.relates') }}</label>
-                        <x-global::forms.select name="relates" style="width: 50%" id="relatesCanvas">
+                        <x-global::forms.select :bare="true" name="relates" style="width: 50%" id="relatesCanvas">
                         </x-global::forms.select><br>
                     @else
                         <input type="hidden" name="relates"
@@ -46,13 +46,13 @@
                             style="width:100%" /><br>
                     </div>
 
-                    <div class="tw:grid tw:grid-cols-4 tw:gap-4">
-                        <div>
+                    <div class="row">
+                        <div class="col-md-3">
                             <label>{{ __('label.starting_value') }}</label>
                             <x-global::forms.input type="number" step="0.01" name="startValue" value="{{ $canvasItem['startValue'] }}"
                                 style="width:105px" />
                         </div>
-                        <div>
+                        <div class="col-md-3">
                             <label>{{ __('label.current_value') }}</label>
                             <x-global::forms.input type="number" step="0.01" name="currentValue" id="currentValueField"
                                 value="{{ $canvasItem['currentValue'] }}"
@@ -60,12 +60,12 @@
                                 @if ($canvasItem['setting'] == 'linkAndReport') data-tippy-content="Current value calculated from child goals" @endif
                                 style="width:105px" />
                         </div>
-                        <div>
+                        <div class="col-md-3">
                             <label>{{ __('label.goal_value') }}</label>
                             <x-global::forms.input type="number" step="0.01" name="endValue" value="{{ $canvasItem['endValue'] }}"
                                 style="width:105px" />
                         </div>
-                        <div>
+                        <div class="col-md-3">
                             <label>{{ __('label.type') }}</label>
                             <x-global::forms.select name="metricType">
                                 <option value="number" @if ($canvasItem['metricType'] == 'number') selected @endif>
@@ -96,10 +96,10 @@
                     @endif
                 </div>
 
-                <div>
+                <div class="col-md-4">
                     @if (!empty($statusLabels))
                         <label>{{ __("label.status") }}</label>
-                        <x-global::forms.select name="status" style="width: 50%" id="statusCanvas">
+                        <x-global::forms.select :bare="true" name="status" style="width: 50%" id="statusCanvas">
                         </x-global::forms.select><br /><br />
                     @else
                         <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />

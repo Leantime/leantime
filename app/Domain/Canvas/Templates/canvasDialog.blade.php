@@ -38,7 +38,7 @@
 
         @if (! empty($statusLabels))
             <label>{{ $tpl->__('label.status') }}</label>
-            <x-global::forms.select name="status" style="width: 50%" id="statusCanvas">
+            <x-global::forms.select :bare="true" name="status" style="width: 50%" id="statusCanvas">
             </x-global::forms.select><br /><br />
         @else
             <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
@@ -46,7 +46,7 @@
 
         @if (! empty($relatesLabels))
             <label>{{ $tpl->__('label.relates') }}</label>
-            <x-global::forms.select name="relates" style="width: 50%" id="relatesCanvas">
+            <x-global::forms.select :bare="true" name="relates" style="width: 50%" id="relatesCanvas">
             </x-global::forms.select><br />
         @else
             <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}" />
