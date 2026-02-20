@@ -430,6 +430,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 return null;
             }
 
+            // Close modal when server redirected to a URL with closeModal
+            // (used by canvas "Save & Close" buttons)
+            if (response.redirected && response.url && response.url.indexOf('closeModal') !== -1) {
+                leantime.modals.closeModal();
+                return null;
+            }
+
             return response.text();
         }).then(function (html) {
             leantime.modals.renderContent(html);
