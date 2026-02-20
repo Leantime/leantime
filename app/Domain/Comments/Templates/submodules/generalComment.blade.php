@@ -90,6 +90,8 @@
                             @endif
                             <span hx-get="{{ BASE_URL }}/hx/comments/reactions/get?commentId={{ $row['id'] }}"
                                   hx-trigger="load"
+                                  hx-target="this"
+                                  hx-select="unset"
                                   hx-swap="innerHTML"></span>
                         </div>
 

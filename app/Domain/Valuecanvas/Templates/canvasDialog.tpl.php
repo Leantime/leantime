@@ -188,7 +188,10 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                     <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>" class="<?= $canvasName ?>CanvasMilestone" >
                         <div hx-trigger="load"
                              hx-indicator=".htmx-indicator"
-                             hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $canvasItem['milestoneId'] ?>">
+                             hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $canvasItem['milestoneId'] ?>"
+                             hx-target="this"
+                             hx-select="unset"
+                             hx-swap="innerHTML">
                             <div class="htmx-indicator">
                                 <?= $tpl->__('label.loading_milestone') ?>
                             </div>

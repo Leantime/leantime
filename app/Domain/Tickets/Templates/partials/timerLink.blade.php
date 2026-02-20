@@ -7,6 +7,8 @@
     hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $parentTicketId }}"
     hx-trigger="timerUpdate from:body"
     hx-swap="outerHTML"
+    hx-target="this"
+    hx-select="unset"
     class="timerContainer">
 
     @if ($onTheClock === false)
