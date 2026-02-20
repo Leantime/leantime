@@ -30,6 +30,7 @@ class Menu
                     15 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'icon' => 'fa fa-fw fa-thumb-tack', 'tooltip' => 'menu.todos_tooltip', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket', 'showList']],
                     25 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'icon' => 'fa fa-fw fa-chart-gantt', 'tooltip' => 'menu.milestones_tooltip', 'href' => '', 'hrefFunction' => 'getTimelineMenu', 'active' => ['roadmap', 'showAllMilestones', 'showProjectCalendar']],
                     40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'icon' => 'fa fa-fw fa-bullseye', 'tooltip' => 'menu.goals_tooltip', 'href' => '/goalcanvas/dashboard', 'active' => ['showCanvas', 'dashboard']],
+                    45 => ['type' => 'item', 'module' => 'logicmodelcanvas', 'title' => 'menu.logicmodel', 'icon' => 'fa fa-fw fa-diagram-project', 'tooltip' => 'menu.logicmodel_tooltip', 'href' => '/logicmodelcanvas/showCanvas', 'active' => ['showCanvas']],
                 ],
             ],
             30 => [
@@ -58,6 +59,7 @@ class Menu
                     21 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'icon' => 'fa fa-fw fa-thumb-tack', 'tooltip' => 'menu.todos_tooltip', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
                     31 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'icon' => 'fa fa-fw fa-sliders', 'tooltip' => 'menu.milestones_tooltip', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
                     40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'icon' => 'fa fa-fw fa-bullseye', 'tooltip' => 'menu.goals_tooltip', 'href' => '/goalcanvas/showCanvas'],
+                    45 => ['type' => 'item', 'module' => 'logicmodelcanvas', 'title' => 'menu.logicmodel', 'icon' => 'fa fa-fw fa-diagram-project', 'tooltip' => 'menu.logicmodel_tooltip', 'href' => '/logicmodelcanvas/showCanvas', 'active' => ['showCanvas']],
                 ],
             ],
             50 => [
