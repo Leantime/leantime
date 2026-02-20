@@ -1,0 +1,333 @@
+{{--
+    Stageflow component styles.
+    Include once per page: @include('global::components.stageflow.styles')
+
+    These styles power the stage-flow layout used by Logic Model and
+    other blueprint boards. Stage cards use inline CSS custom properties
+    (--stage-color, --stage-bg) set via the <x-global::stageflow.card>
+    component.
+--}}
+@once
+<style>
+/* ═══════════════════════════════════════════════════════
+   Stageflow — Reusable stage-flow layout
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Flow container ── */
+.sf-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    padding: 10px 0;
+}
+
+/* ── Stage card ── */
+.sf-stage {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--box-radius);
+    background: var(--secondary-background);
+    transition: box-shadow 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                background 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                border-color 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    box-shadow: var(--min-shadow);
+    border: 1px solid var(--main-border-color);
+    overflow: visible;
+    z-index: 1;
+}
+.sf-stage:not(.active) {
+    cursor: pointer;
+}
+.sf-stage:not(.active):hover {
+    box-shadow: var(--regular-shadow);
+}
+.sf-stage.active {
+    z-index: 10;
+    box-shadow: var(--large-shadow);
+    border-color: transparent;
+    background: linear-gradient(180deg, var(--stage-bg) 0%, var(--secondary-background) 100px);
+}
+
+/* ── Current Focus flag ── */
+.sf-flag {
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 3px 14px;
+    border-radius: 20px;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: white;
+    z-index: 11;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 250ms;
+    box-shadow: var(--regular-shadow);
+}
+.sf-stage.active .sf-flag { opacity: 1; }
+
+/* ── Stage header ── */
+.sf-hd {
+    padding: 22px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 2px solid var(--main-border-color);
+    transition: border-color 300ms, padding 300ms;
+    position: relative;
+}
+.sf-stage.active .sf-hd {
+    padding-top: 26px;
+    border-bottom-width: 3px;
+    border-bottom-color: var(--stage-color);
+}
+
+/* Icon box */
+.sf-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--element-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-l);
+    margin-bottom: 10px;
+    transition: background 300ms, color 300ms, width 300ms, height 300ms;
+    background: var(--stage-bg);
+    color: var(--stage-color);
+}
+.sf-stage:not(.active) .sf-icon {
+    width: 34px;
+    height: 34px;
+    font-size: var(--font-size-m);
+    margin-bottom: 8px;
+}
+.sf-stage.active .sf-icon {
+    background: var(--stage-color);
+    color: white;
+}
+
+/* Title row with count badge */
+.sf-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+.sf-name {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    transition: font-size 300ms;
+    line-height: 1.2;
+    color: var(--primary-font-color);
+}
+.sf-stage:not(.active) .sf-name {
+    font-size: var(--font-size-m);
+    font-weight: 600;
+}
+
+/* Count badge — visible only on active stage */
+.sf-count {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 300ms;
+}
+.sf-stage.active .sf-count { opacity: 1; }
+.sf-stage:not(.active) .sf-count { width: 18px; height: 18px; }
+
+/* Subtitle */
+.sf-sub {
+    font-size: var(--font-size-s);
+    color: var(--primary-font-color);
+    opacity: 0.6;
+    transition: font-size 300ms;
+    text-align: center;
+}
+.sf-stage:not(.active) .sf-sub {
+    font-size: var(--font-size-xs);
+}
+
+/* ── Stage body ── */
+.sf-body {
+    padding: 16px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+/* ── Items ── */
+.sf-item {
+    padding: 10px 12px;
+    border-radius: var(--box-radius-small);
+    cursor: pointer;
+    transition: background 150ms, border-color 150ms;
+    border-left: 3px solid transparent;
+    position: relative;
+}
+.sf-item:hover { background: rgba(0,0,0,0.02); }
+.sf-stage.active .sf-item { border-left-color: var(--stage-color); }
+
+/* Item title */
+.sf-item-title {
+    font-size: var(--font-size-m);
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--primary-font-color);
+}
+.sf-item-title a {
+    color: var(--primary-font-color);
+    text-decoration: none;
+}
+.sf-item-title a:hover { color: var(--accent1); }
+
+/* Status dot */
+.sf-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 6px;
+    position: relative;
+    top: -1px;
+}
+.sf-dot--blue { background: #1B75BB; }
+.sf-dot--orange { background: #fdab3d; }
+.sf-dot--green { background: #75BB1B; }
+.sf-dot--red { background: #BB1B25; }
+.sf-dot--grey { background: #c3ccd4; }
+
+/* Item description */
+.sf-item-desc {
+    font-size: var(--font-size-s);
+    color: var(--primary-font-color);
+    opacity: 0.6;
+    line-height: 1.45;
+    margin-top: 3px;
+}
+
+/* Item footer */
+.sf-item-foot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+.sf-meta {
+    font-size: var(--font-size-xs);
+    color: var(--primary-font-color);
+    opacity: 0.5;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+.sf-meta i { font-size: var(--font-size-xs); }
+.sf-meta a { color: inherit; text-decoration: none; }
+.sf-meta a:hover { color: var(--accent1); opacity: 1; }
+
+.sf-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    vertical-align: middle;
+}
+
+/* ── Inactive stage: compact view ── */
+.sf-stage:not(.active) .sf-item {
+    padding: 6px 10px;
+    border-left-color: transparent;
+}
+.sf-stage:not(.active) .sf-item-title {
+    font-size: var(--font-size-s);
+    font-weight: 500;
+    color: var(--primary-font-color);
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+}
+.sf-stage:not(.active) .sf-item-desc { display: none; }
+.sf-stage:not(.active) .sf-item-foot { display: none; }
+.sf-stage:not(.active) .sf-item .inlineDropDownContainer { display: none; }
+
+/* Disable interactive elements in inactive stages */
+.sf-stage:not(.active) a,
+.sf-stage:not(.active) button,
+.sf-stage:not(.active) .dropdown-toggle {
+    pointer-events: none;
+}
+
+/* ── Empty state ── */
+.sf-empty {
+    text-align: center;
+    padding: 24px 12px;
+    font-size: var(--font-size-s);
+    color: var(--primary-font-color);
+    opacity: 0.5;
+}
+.sf-empty-icon {
+    font-size: var(--font-size-xxl);
+    opacity: 0.3;
+    margin-bottom: 10px;
+    display: block;
+}
+.sf-stage:not(.active) .sf-empty { display: none; }
+
+/* ── Add item button ── */
+.sf-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px;
+    color: var(--primary-font-color);
+    opacity: 0.5;
+    font-size: var(--font-size-s);
+    font-weight: 500;
+    cursor: pointer;
+    background: transparent;
+    text-decoration: none !important;
+    transition: all 150ms;
+    margin-top: auto;
+    border: none;
+    border-radius: var(--box-radius-small);
+}
+.sf-add:hover {
+    opacity: 1;
+    color: var(--accent1);
+    background: rgba(0,69,110,0.04);
+}
+.sf-stage:not(.active) .sf-add { display: none; }
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+    .sf-flow { flex-wrap: wrap; gap: 10px; }
+    .sf-stage { flex: 1 1 calc(50% - 5px); min-width: 200px; }
+}
+
+/* ── Print ── */
+@media print {
+    .sf-stage .sf-item-desc { display: block !important; }
+    .sf-stage .sf-item-foot { display: flex !important; }
+    .sf-stage .sf-add { display: none !important; }
+    .sf-flag { display: none !important; }
+}
+</style>
+@endonce

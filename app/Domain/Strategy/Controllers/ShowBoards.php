@@ -114,13 +114,16 @@ class ShowBoards extends Controller
             'emcanvas' =>
             // Full empathy Map<i class=""></i>
             ['visible' => '0', 'module' => 'emcanvas',       'name' => 'label.emcanvas', 'description' => 'description.emcanvas', 'icon' => 'fa-solid fa-hand-holding-heart',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'logicmodelcanvas' =>
+            // Logic Model Canvas
+            ['module' => 'logicmodelcanvas', 'name' => 'label.logicmodelcanvas', 'description' => 'description.logicmodelcanvas', 'icon' => 'fa-solid fa-diagram-project', 'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
 
         ];
 
         $boards = [
             'emcanvas', 'smcanvas', 'cpcanvas', 'insightscanvas',
             'sqcanvas', 'dbmcanvas', 'lbmcanvas', 'eacanvas', 'riskscanvas', 'sbcanvas',
-            'swotcanvas', 'obmcanvas', 'valuecanvas', 'leancanvas', 'minempathycanvas',
+            'swotcanvas', 'obmcanvas', 'valuecanvas', 'leancanvas', 'minempathycanvas', 'logicmodelcanvas',
         ];
 
         $recentlyUpdatedCanvas = $this->canvasService->getLastUpdatedCanvas((int) session('currentProject'), $boards);

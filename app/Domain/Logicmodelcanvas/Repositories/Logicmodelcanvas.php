@@ -56,7 +56,7 @@ class Logicmodelcanvas extends Canvas
             'key' => 'impact',
             'title' => 'box.logicmodel.impact',
             'subtitle' => 'box.logicmodel.impact_subtitle',
-            'icon' => 'fa-star',
+            'icon' => 'fa-bullseye',
             'color' => '#2D7D5E',
             'bg' => '#EAF5F0',
         ],
@@ -109,7 +109,7 @@ class Logicmodelcanvas extends Canvas
         'lm_activities' => ['icon' => 'fa-gears', 'title' => 'box.logicmodel.activities'],
         'lm_outputs' => ['icon' => 'fa-boxes-stacked', 'title' => 'box.logicmodel.outputs'],
         'lm_outcomes' => ['icon' => 'fa-chart-line', 'title' => 'box.logicmodel.outcomes'],
-        'lm_impact' => ['icon' => 'fa-star', 'title' => 'box.logicmodel.impact'],
+        'lm_impact' => ['icon' => 'fa-bullseye', 'title' => 'box.logicmodel.impact'],
     ];
 
     /**

@@ -10,25 +10,33 @@ leantime.logicmodelCanvasController = (function () {
     var activeStage = '';
 
     /**
-     * Set row heights — override from base canvas controller (no-op for logic model
-     * since the pricing-page layout does not use the standard grid).
+     * Set row heights — no-op for logic model since the flow layout
+     * does not use the standard canvas grid.
      */
     controller.setRowHeights = function () {};
 
     /**
-     * Initialise the board: focus the first stage by default.
+     * Initialise the board: focus first stage and attach click handlers.
      */
     controller.initBoard = function () {
-        var stages = document.querySelectorAll('.lm-stage');
+        var stages = document.querySelectorAll('.sf-stage');
         if (stages.length > 0) {
             var firstKey = stages[0].getAttribute('data-stage');
             controller.focusStage(firstKey);
         }
+
+        // Click handler: clicking an inactive stage focuses it.
+        // Active stage clicks pass through to normal link/button handlers.
+        stages.forEach(function (s) {
+            s.addEventListener('click', function (e) {
+                if (this.classList.contains('active')) return;
+                controller.focusStage(this.getAttribute('data-stage'));
+            });
+        });
     };
 
     /**
-     * Focus a specific stage — toggle active/inactive CSS classes and swap
-     * between full card view and compact dot view.
+     * Focus a specific stage.
      *
      * @param {string} stageKey  The box type key, e.g. 'lm_inputs'.
      */
@@ -38,21 +46,28 @@ leantime.logicmodelCanvasController = (function () {
     };
 
     /**
-     * Apply CSS classes and visibility toggles to all stages based on
-     * the current `activeStage` value.
+     * Apply active/inactive state to all stages based on the current
+     * activeStage value.
      */
     controller.updateStageStates = function () {
-        document.querySelectorAll('.lm-stage').forEach(function (el) {
-            var key = el.getAttribute('data-stage');
-            if (key === activeStage) {
-                el.classList.add('lm-stage--active');
-                el.classList.remove('lm-stage--inactive');
+        document.querySelectorAll('.sf-stage').forEach(function (el) {
+            if (el.getAttribute('data-stage') === activeStage) {
+                el.classList.add('active');
             } else {
-                el.classList.remove('lm-stage--active');
-                el.classList.add('lm-stage--inactive');
+                el.classList.remove('active');
             }
         });
     };
 
     return controller;
 })();
+
+// Auto-initialise — this module is lazy-loaded after DOM parsing,
+// so the DOM is already ready by the time this executes.
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+        leantime.logicmodelCanvasController.initBoard();
+    });
+} else {
+    leantime.logicmodelCanvasController.initBoard();
+}
