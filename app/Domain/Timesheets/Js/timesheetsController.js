@@ -105,37 +105,68 @@ leantime.timesheetsController = (function () {
         });
     };
 
-    var initEditTimeModal = function () {
-        var canvasoptions = {
-            sizes: {
-                minW: 700,
-                maxW: 1000,
-                minH: 1000,
-            },
-            resizable: false,
-            autoSizable: false,
-            callbacks: {
-                beforeShowCont: function () {
-                    jQuery(".showDialogOnLoad").show();
+var isReady = false;
+var pendingClick = null;
 
-                    if (closeModal === true) {
-                        closeModal = false;
-                        location.reload();
-                    }
-                },
-                beforeClose: function () {
+document.addEventListener('click', function(e) {
+    var target = e.target.closest('.editTimeModal');
+    if (target && !isReady) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        target.style.opacity = '0.5';
+        target.style.cursor = 'wait';
+
+        pendingClick = target;
+    }
+}, true);
+
+function initWhenReady() {
+    initEditTimeModal();
+    isReady = true;
+
+    if (pendingClick) {
+        var $pending = jQuery(pendingClick);
+        pendingClick.style.opacity = '';
+        pendingClick.style.cursor = '';
+        $pending.trigger('click');
+        pendingClick = null;
+    }
+}
+
+var initEditTimeModal = function () {
+    var canvasoptions = {
+        sizes: {
+            minW: 700,
+            maxW: 1000,
+            minH: 1000,
+        },
+        resizable: false,
+        autoSizable: false,
+        callbacks: {
+            beforeShowCont: function () {
+                jQuery(".showDialogOnLoad").show();
+
+                if (closeModal === true) {
+                    closeModal = false;
                     location.reload();
                 }
             },
-            titleFromIframe: true
-        };
-
-        jQuery(document).on('click', '.editTimeModal', function (e) {
-            e.preventDefault();
-            jQuery(this).nyroModal(canvasoptions);
-        });
+            beforeClose: function () {
+                location.reload();
+            }
+        },
+        titleFromIframe: true
     };
 
+    jQuery(document).on('click', 'a.editTimeModal', function (e) {
+        if (!isReady) return;
+        e.preventDefault();
+        jQuery(this).nyroModal(canvasoptions);
+    });
+};
+
+initWhenReady();
 
     var formatHours = function (hours) {
         var hoursFormat = jQuery('.timesheetTable').data('hours-format') ||

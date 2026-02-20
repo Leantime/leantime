@@ -50,12 +50,21 @@ $values = $tpl->get('values');
                 weekHeader: leantime.i18n.__("language.weekHeader"),
             });
         });
+        jQuery("#editTimeForm").on("submit", function(e) {
+            e.preventDefault();
+        jQuery.post(jQuery(this).attr("action"), jQuery(this).serialize(), function() {
+            if (window.parent && window.parent.jQuery) {
+                window.parent.location.reload();
+            }
+        });
     });
+});
+
 </script>
 
 <?php echo $tpl->displayNotification() ?>
 <h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('headlines.edit_todo'); ?></h4>
-<form action="<?= BASE_URL?>/timesheets/editTime/<?= (int) $_GET['id']?>" method="post" class="editTimeModal">
+<form action="<?= BASE_URL?>/timesheets/editTime/<?= (int) $_GET['id']?>" method="post" id="editTimeForm">
 
 <label for="projects" ><?php echo $tpl->__('label.project')?></label>
 <select name="projects" id="projects" class="project-select">
