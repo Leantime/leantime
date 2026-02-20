@@ -47,6 +47,7 @@
                     @endif
                     <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/export/{{ $currentCanvas }}" hx-boost="false">{!! $tpl->__('links.icon.export') !!}</a></li>
                     <li><a href="javascript:window.print();">{!! $tpl->__('links.icon.print') !!}</a></li>
+                    @dispatchEvent('logicmodel.headerActions', ['canvasId' => $currentCanvas])
                     @if ($login::userIsAtLeast($roles::$editor))
                         <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
                     @endif
@@ -101,6 +102,8 @@
                 @endif
             </div>
 
+            @dispatchEvent('logicmodel.beforeStageFlow', ['canvasId' => $currentCanvas, 'canvasItems' => $canvasItems])
+
             {{-- ── Five-Stage Flow ──────────────────────────────────── --}}
             <div class="sf-flow" id="logicModelBoard">
                 @foreach ($stages as $num => $stage)
@@ -128,6 +131,14 @@
                         :itemCount="$itemCount"
                         :focusLabel="$tpl->__('logicmodel.current_focus')"
                     >
+                        <x-slot:headerExtra>
+                            @dispatchEvent('logicmodel.afterStageHeader', ['stageNum' => $num, 'stage' => $stage, 'canvasId' => $currentCanvas, 'stageItems' => $stageItems])
+                        </x-slot:headerExtra>
+
+                        <x-slot:beforeBody>
+                            @dispatchEvent('logicmodel.beforeStageBody', ['stageNum' => $num, 'stage' => $stage, 'canvasId' => $currentCanvas])
+                        </x-slot:beforeBody>
+
                         @foreach ($stageItems as $row)
                             @php
                                 $commentsRepo = app()->make(Comments::class);
@@ -146,7 +157,9 @@
                                 :avatarUrl="$row['authorFirstname'] != '' ? BASE_URL . '/api/users?profileImage=' . $row['author'] : ''"
                                 :dotColor="$statusColor"
                                 :canEdit="$login::userIsAtLeast($roles::$editor)"
-                            />
+                            >
+                                @dispatchEvent('logicmodel.itemCardFooter', ['item' => $row, 'canvasId' => $currentCanvas])
+                            </x-global::stageflow.item>
                         @endforeach
 
                         @if ($itemCount === 0)
@@ -191,6 +204,10 @@
         @endif
 
         {!! $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render() !!}
+
+        {{-- Plugin panel containers (filled by HTMX when plugin is active) --}}
+        <div id="templateSelectorContainer"></div>
+        <div id="snapshotListContainer"></div>
 
     </div>
 </div>

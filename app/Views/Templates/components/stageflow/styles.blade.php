@@ -322,6 +322,24 @@
     .sf-stage { flex: 1 1 calc(50% - 5px); min-width: 200px; }
 }
 
+/* ── Status pill (plugin enhancement) ── */
+.sf-status-pill {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.6;
+    white-space: nowrap;
+    letter-spacing: 0.2px;
+}
+
+/* ── Project link icon (plugin enhancement) ── */
+.sf-project-link-icon i {
+    color: var(--accent1);
+    opacity: 0.7;
+}
+
 /* ── Print ── */
 @media print {
     .sf-stage .sf-item-desc { display: block !important; }

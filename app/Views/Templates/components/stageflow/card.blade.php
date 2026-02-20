@@ -25,7 +25,10 @@
             <span class="sf-count" style="background: {{ $color }};">{{ $itemCount }}</span>
         </div>
         <div class="sf-sub">{{ $subtitle }}</div>
+        {{ $headerExtra ?? '' }}
     </div>
+
+    {{ $beforeBody ?? '' }}
 
     <div class="sf-body">
         {{ $slot }}
