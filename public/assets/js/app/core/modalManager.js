@@ -408,6 +408,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (method === 'POST') {
             opts.body = new FormData(form);
+            // Include the submit button's name/value (FormData omits it)
+            if (event.submitter && event.submitter.name) {
+                opts.body.append(event.submitter.name, event.submitter.value || '');
+            }
         } else {
             var qs = new URLSearchParams(new FormData(form));
             action += (action.indexOf('?') === -1 ? '?' : '&') + qs.toString();

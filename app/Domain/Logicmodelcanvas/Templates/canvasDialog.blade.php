@@ -91,7 +91,7 @@
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
             @if ($login::userIsAtLeast($roles::$editor))
                 <x-global::button submit type="primary" id="primaryCanvasSubmitButton">{{ $tpl->__('buttons.save') }}</x-global::button>
-                <x-global::button tag="button" type="secondary" id="saveAndClose" onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();">{{ $tpl->__('buttons.save_and_close') }}</x-global::button>
+                <x-global::button submit type="secondary" id="saveAndClose" name="save" value="closeModal">{{ $tpl->__('buttons.save_and_close') }}</x-global::button>
             @endif
 
             @if ($id != '')
