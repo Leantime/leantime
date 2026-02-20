@@ -29,9 +29,9 @@
             </a>
             <ul class="dropdown-menu">
                 <li class="nav-header">{{ __('subtitles.edit') }}</li>
-                <li><a href="{{ $editUrl }}" data="item_{{ $itemId }}">{{ __('links.edit_canvas_item') }}</a></li>
+                <li><a href="{{ $editUrl }}" data="item_{{ $itemId }}">{!! __('links.edit_canvas_item') !!}</a></li>
                 @if ($deleteUrl)
-                    <li><a href="{{ $deleteUrl }}" class="delete" data="item_{{ $itemId }}">{{ __('links.delete_canvas_item') }}</a></li>
+                    <li><a href="{{ $deleteUrl }}" class="delete" data="item_{{ $itemId }}">{!! __('links.delete_canvas_item') !!}</a></li>
                 @endif
             </ul>
         </div>
