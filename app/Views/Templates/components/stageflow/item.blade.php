@@ -7,6 +7,8 @@
     'commentUrl' => '',
     'commentCount' => 0,
     'avatarUrl' => '',
+    'authorId' => null,
+    'authorName' => '',
     'dotColor' => 'grey',
     'canEdit' => false,
 ])
@@ -51,8 +53,10 @@
     @endif
 
     <div class="sf-item-foot">
-        @if ($avatarUrl)
-            <img class="sf-avatar" src="{{ $avatarUrl }}" width="22" />
+        @if ($authorId || $authorName)
+            <x-global::avatar :userId="$authorId" :username="$authorName" size="sm" />
+        @elseif ($avatarUrl)
+            <img class="sf-avatar" src="{{ $avatarUrl }}" width="18" />
         @endif
         @if ($commentCount > 0 && $commentUrl)
             <span class="sf-meta">

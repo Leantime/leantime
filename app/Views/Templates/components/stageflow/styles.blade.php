@@ -17,8 +17,8 @@
 .sf-flow {
     display: flex;
     align-items: stretch;
-    gap: 12px;
-    padding: 10px 0;
+    gap: 8px;
+    padding: 8px 0;
 }
 
 /* ── Stage card ── */
@@ -54,15 +54,15 @@
 /* ── Current Focus flag ── */
 .sf-flag {
     position: absolute;
-    top: -11px;
+    top: -10px;
     left: 50%;
     transform: translateX(-50%);
-    padding: 3px 14px;
+    padding: 2px 10px;
     border-radius: 20px;
-    font-size: var(--font-size-xs);
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.5px;
     color: white;
     z-index: 11;
     white-space: nowrap;
@@ -74,7 +74,7 @@
 
 /* ── Stage header ── */
 .sf-hd {
-    padding: 22px 16px 16px;
+    padding: 14px 10px 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -83,30 +83,30 @@
     position: relative;
 }
 .sf-stage.active .sf-hd {
-    padding-top: 26px;
+    padding-top: 18px;
     border-bottom-width: 3px;
     border-bottom-color: var(--stage-color);
 }
 
 /* Icon box */
 .sf-icon {
-    width: 42px;
-    height: 42px;
+    width: 32px;
+    height: 32px;
     border-radius: var(--element-radius);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-size-l);
-    margin-bottom: 10px;
+    font-size: var(--font-size-m);
+    margin-bottom: 6px;
     transition: background 300ms, color 300ms, width 300ms, height 300ms;
     background: var(--stage-bg);
     color: var(--stage-color);
 }
 .sf-stage:not(.active) .sf-icon {
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
     font-size: var(--font-size-m);
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 .sf-stage.active .sf-icon {
     background: var(--stage-color);
@@ -118,11 +118,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    margin-bottom: 4px;
+    gap: 5px;
+    margin-bottom: 2px;
 }
 .sf-name {
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-l);
     font-weight: 700;
     transition: font-size 300ms;
     line-height: 1.2;
@@ -131,28 +131,23 @@
 .sf-stage:not(.active) .sf-name {
     font-size: var(--font-size-m);
     font-weight: 600;
+    opacity: 0.5;
 }
 
-/* Count badge — visible only on active stage */
+/* Count — inline with title, kanban style */
 .sf-count {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-l);
     font-weight: 700;
-    color: white;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 300ms;
+    line-height: 1.2;
 }
-.sf-stage.active .sf-count { opacity: 1; }
-.sf-stage:not(.active) .sf-count { width: 18px; height: 18px; }
+.sf-stage:not(.active) .sf-count {
+    font-size: var(--font-size-m);
+    opacity: 0.4;
+}
 
 /* Subtitle */
 .sf-sub {
-    font-size: var(--font-size-s);
+    font-size: var(--font-size-xs);
     color: var(--primary-font-color);
     opacity: 0.6;
     transition: font-size 300ms;
@@ -160,20 +155,21 @@
 }
 .sf-stage:not(.active) .sf-sub {
     font-size: var(--font-size-xs);
+    opacity: 0.5;
 }
 
 /* ── Stage body ── */
 .sf-body {
-    padding: 16px 12px 12px;
+    padding: 8px 8px 8px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 5px;
     flex: 1;
 }
 
 /* ── Items ── */
 .sf-item {
-    padding: 10px 12px;
+    padding: 7px 10px;
     border-radius: var(--box-radius-small);
     cursor: pointer;
     transition: background 150ms, border-color 150ms;
@@ -185,10 +181,20 @@
 
 /* Item title */
 .sf-item-title {
-    font-size: var(--font-size-m);
+    font-size: var(--font-size-s);
     font-weight: 600;
-    line-height: 1.35;
+    line-height: 1.3;
     color: var(--primary-font-color);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+}
+.sf-item-title a,
+.sf-item-title span:not(.sf-dot) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .sf-item-title a {
     color: var(--primary-font-color);
@@ -216,19 +222,24 @@
 
 /* Item description */
 .sf-item-desc {
-    font-size: var(--font-size-s);
+    font-size: var(--font-size-xs);
     color: var(--primary-font-color);
     opacity: 0.6;
-    line-height: 1.45;
-    margin-top: 3px;
+    line-height: 1.4;
+    margin-top: 2px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
 }
 
 /* Item footer */
 .sf-item-foot {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 8px;
+    gap: 5px;
+    margin-top: 5px;
     flex-wrap: wrap;
 }
 .sf-meta {
@@ -244,24 +255,29 @@
 .sf-meta a:hover { color: var(--accent1); opacity: 1; }
 
 .sf-avatar {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     vertical-align: middle;
 }
 
 /* ── Inactive stage: compact view ── */
 .sf-stage:not(.active) .sf-item {
-    padding: 6px 10px;
+    padding: 4px 8px;
     border-left-color: transparent;
 }
 .sf-stage:not(.active) .sf-item-title {
     font-size: var(--font-size-s);
     font-weight: 500;
     color: var(--primary-font-color);
-    opacity: 0.8;
+    opacity: 1;
     display: flex;
     align-items: center;
+}
+.sf-stage:not(.active) .sf-item-title .sf-dot {
+    width: 6px;
+    height: 6px;
+    margin-right: 4px;
 }
 .sf-stage:not(.active) .sf-item-desc { display: none; }
 .sf-stage:not(.active) .sf-item-foot { display: none; }
@@ -277,15 +293,15 @@
 /* ── Empty state ── */
 .sf-empty {
     text-align: center;
-    padding: 24px 12px;
-    font-size: var(--font-size-s);
+    padding: 16px 8px;
+    font-size: var(--font-size-xs);
     color: var(--primary-font-color);
     opacity: 0.5;
 }
 .sf-empty-icon {
-    font-size: var(--font-size-xxl);
+    font-size: var(--font-size-xl);
     opacity: 0.3;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
     display: block;
 }
 .sf-stage:not(.active) .sf-empty { display: none; }
@@ -295,11 +311,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    padding: 10px;
+    gap: 4px;
+    padding: 6px;
     color: var(--primary-font-color);
     opacity: 0.5;
-    font-size: var(--font-size-s);
+    font-size: var(--font-size-xs);
     font-weight: 500;
     cursor: pointer;
     background: transparent;
@@ -318,18 +334,18 @@
 
 /* ── Responsive ── */
 @media (max-width: 1100px) {
-    .sf-flow { flex-wrap: wrap; gap: 10px; }
-    .sf-stage { flex: 1 1 calc(50% - 5px); min-width: 200px; }
+    .sf-flow { flex-wrap: wrap; gap: 8px; }
+    .sf-stage { flex: 1 1 calc(50% - 4px); min-width: 160px; }
 }
 
 /* ── Status pill (plugin enhancement) ── */
 .sf-status-pill {
     display: inline-block;
-    padding: 1px 8px;
+    padding: 0 6px;
     border-radius: 10px;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 600;
-    line-height: 1.6;
+    line-height: 1.7;
     white-space: nowrap;
     letter-spacing: 0.2px;
 }

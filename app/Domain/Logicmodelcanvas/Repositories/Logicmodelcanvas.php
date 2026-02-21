@@ -139,7 +139,7 @@ class Logicmodelcanvas extends Canvas
      */
     protected array $dataLabels = [
         1 => ['title' => 'logicmodel.field.description', 'field' => 'conclusion', 'active' => true],
-        2 => ['title' => 'label.assumptions', 'field' => 'assumptions', 'active' => false],
+        2 => ['title' => 'logicmodel.field.evidence', 'field' => 'assumptions', 'active' => true],
         3 => ['title' => 'label.data', 'field' => 'data', 'active' => false],
     ];
 

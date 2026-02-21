@@ -18,7 +18,8 @@
     $users = $tpl->get('users');
 
     $filter['status'] = $_GET['filter_status'] ?? (session('filter_status') ?? 'all');
-    $filter['relates'] = $_GET['filter_relates'] ?? (session('filter_relates') ?? 'all');
+    // Logic model board does not use relates filter — force to 'all'
+    $filter['relates'] = 'all';
 
     $canvasTitle = '';
     foreach ($allCanvas as $canvasRow) {
@@ -81,25 +82,52 @@
         {!! $tpl->displayNotification() !!}
 
         @if (count($allCanvas) > 0)
-            {{-- Status filter bar --}}
-            <div style="display:flex; justify-content:flex-end; align-items:center; margin-bottom:8px;">
+            {{-- Toolbar --}}
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                {{-- Left: + New Board --}}
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <a href="#/{{ $canvasName }}canvas/boardDialog" class="addCanvasLink btn btn-primary">
+                        {!! $tpl->__('links.icon.create_new_board') !!}
+                    </a>
+                @endif
+
                 @if (!empty($statusLabels))
                     @php
+                        $statusColorMap = ['blue' => '#1B75BB', 'orange' => '#fdab3d', 'green' => '#75BB1B', 'red' => '#BB1B25', 'grey' => '#c3ccd4'];
                         if ($filter['status'] != 'all' && !isset($statusLabels[$filter['status']])) { $filter['status'] = 'all'; }
-                        $statusFilterLabel = $filter['status'] == 'all'
-                            ? '<i class="fas fa-filter"></i> ' . $tpl->__('status.all')
-                            : '<i class="fas fa-fw ' . $statusLabels[$filter['status']]['icon'] . '"></i> ' . $statusLabels[$filter['status']]['title'];
+                        if ($filter['status'] == 'all') {
+                            $statusFilterLabel = '<i class="fas fa-filter"></i> ' . $tpl->__('status.all');
+                        } else {
+                            $sc = $statusColorMap[$statusLabels[$filter['status']]['color']] ?? '#666';
+                            $statusFilterLabel = '<i class="fas fa-fw ' . $statusLabels[$filter['status']]['icon'] . '" style="color:' . $sc . '"></i> ' . $statusLabels[$filter['status']]['title'];
+                        }
                     @endphp
                     <div class="btn-group viewDropDown">
                         <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">{!! $statusFilterLabel !!}</button>
                         <ul class="dropdown-menu">
                             <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
                             @foreach ($statusLabels as $key => $data)
-                                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}" @if ($filter['status'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
+                                @php $iconColor = $statusColorMap[$data['color']] ?? '#666'; @endphp
+                                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}" @if ($filter['status'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}" style="color:{{ $iconColor }}"></i> {{ $data['title'] }}</a></li>
                             @endforeach
                         </ul>
                     </div>
                 @endif
+
+                {{-- Spacer pushes export to the right --}}
+                <div style="flex:1;"></div>
+
+                {{-- Right: Export --}}
+                <div class="btn-group">
+                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-download"></i> {{ $tpl->__('logicmodel.export.header') }} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="javascript:void(0)" onclick="leantime.logicmodelPluginController.exportPng()"><i class="fa fa-fw fa-image"></i> {{ $tpl->__('logicmodel.export.png') }}</a></li>
+                        <li><a href="javascript:void(0)" onclick="leantime.logicmodelPluginController.exportPdf()"><i class="fa fa-fw fa-file-pdf"></i> {{ $tpl->__('logicmodel.export.pdf') }}</a></li>
+                        <li><a href="javascript:window.print()"><i class="fa fa-fw fa-print"></i> {{ $tpl->__('logicmodel.export.print') }}</a></li>
+                    </ul>
+                </div>
             </div>
 
             @dispatchEvent('logicmodel.beforeStageFlow', ['canvasId' => $currentCanvas, 'canvasItems' => $canvasItems])
@@ -154,7 +182,8 @@
                                 :deleteUrl="'#/' . $canvasName . 'canvas/delCanvasItem/' . $row['id']"
                                 :commentUrl="'#/' . $canvasName . 'canvas/editCanvasComment/' . $row['id']"
                                 :commentCount="$nbcomments"
-                                :avatarUrl="$row['authorFirstname'] != '' ? BASE_URL . '/api/users?profileImage=' . $row['author'] : ''"
+                                :authorId="$row['author']"
+                                :authorName="trim(($row['authorFirstname'] ?? '') . ' ' . ($row['authorLastname'] ?? ''))"
                                 :dotColor="$statusColor"
                                 :canEdit="$login::userIsAtLeast($roles::$editor)"
                             >
@@ -246,6 +275,11 @@
             leantime.canvasController.openModalManually("{{ BASE_URL }}/{{ $canvasName }}canvas/editCanvasItem{{ $modalUrl }}");
             window.history.pushState({}, document.title, '{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/');
         @endif
+
+        // Reload page when sector fixture is loaded (items were added server-side)
+        document.body.addEventListener('logicmodel.fixtureLoaded', function () {
+            window.location.reload();
+        });
 
     });
 </script>

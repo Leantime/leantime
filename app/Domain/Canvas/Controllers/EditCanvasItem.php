@@ -145,6 +145,8 @@ class EditCanvasItem extends Controller
                         'assumptions' => $params['assumptions'],
                         'data' => $params['data'],
                         'conclusion' => $params['conclusion'],
+                        'impact' => $params['impact'] ?? '',
+                        'effort' => $params['effort'] ?? '',
                         'itemId' => $params['itemId'],
                         'canvasId' => $currentCanvasId,
                         'milestoneId' => $params['milestoneId'],
@@ -224,6 +226,8 @@ class EditCanvasItem extends Controller
                         'assumptions' => $params['assumptions'],
                         'data' => $params['data'],
                         'conclusion' => $params['conclusion'],
+                        'impact' => $params['impact'] ?? '',
+                        'effort' => $params['effort'] ?? '',
                         'canvasId' => $currentCanvasId,
                     ];
 

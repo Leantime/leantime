@@ -434,11 +434,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 return null;
             }
 
-            // Close modal when server redirected to a URL with closeModal
-            // (used by canvas "Save & Close" buttons)
-            if (response.redirected && response.url && response.url.indexOf('closeModal') !== -1) {
-                leantime.modals.closeModal();
-                return null;
+            // Handle redirects after form submission
+            if (response.redirected && response.url) {
+                // Close modal when redirect URL contains closeModal (Save & Close)
+                if (response.url.indexOf('closeModal') !== -1) {
+                    leantime.modals.closeModal();
+                    return null;
+                }
+
+                // If redirect goes to a different page than the form action,
+                // close modal and navigate (e.g., delete → showCanvas)
+                var actionBase = action.split('?')[0].replace(/\/+$/, '');
+                var redirectBase = response.url.split('?')[0].replace(/\/+$/, '');
+                if (redirectBase !== actionBase) {
+                    leantime.modals.closeModal();
+                    window.location.href = response.url;
+                    return null;
+                }
             }
 
             return response.text();

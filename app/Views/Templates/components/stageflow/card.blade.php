@@ -22,7 +22,7 @@
         <div class="sf-icon"><i class="fa {{ $icon }}"></i></div>
         <div class="sf-title-row">
             <span class="sf-name">{{ $title }}</span>
-            <span class="sf-count" style="background: {{ $color }};">{{ $itemCount }}</span>
+            @if ($itemCount > 0)<span class="sf-count" style="color: {{ $color }};">{{ $itemCount }}</span>@endif
         </div>
         <div class="sf-sub">{{ $subtitle }}</div>
         {{ $headerExtra ?? '' }}
