@@ -358,10 +358,35 @@
 
 /* ── Print ── */
 @media print {
+    @page { size: landscape; margin: 0.5in; }
+
     .sf-stage .sf-item-desc { display: block !important; }
     .sf-stage .sf-item-foot { display: flex !important; }
     .sf-stage .sf-add { display: none !important; }
     .sf-flag { display: none !important; }
+    .sf-item-actions { display: none !important; }
+    .sf-health-badge { display: none !important; }
+
+    .sf-flow {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+    }
+    .sf-stage {
+        min-width: unset !important;
+        max-width: unset !important;
+        flex: 0 0 calc(33.33% - 8px) !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    /* Force page break after the 3rd stage */
+    .sf-stage:nth-child(3) {
+        break-after: page;
+        page-break-after: always;
+    }
+    .sf-stage:nth-child(n+4) {
+        flex: 0 0 calc(50% - 6px) !important;
+    }
 }
 </style>
 @endonce

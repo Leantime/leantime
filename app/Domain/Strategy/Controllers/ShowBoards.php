@@ -4,15 +4,19 @@ namespace Leantime\Domain\Strategy\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowBoards extends Controller
 {
     private CanvaService $canvasService;
 
-    public function init(CanvaService $canvasService): void
+    private ProjectService $projectService;
+
+    public function init(CanvaService $canvasService, ProjectService $projectService): void
     {
         $this->canvasService = $canvasService;
+        $this->projectService = $projectService;
     }
 
     /**
@@ -125,6 +129,14 @@ class ShowBoards extends Controller
             'sqcanvas', 'dbmcanvas', 'lbmcanvas', 'eacanvas', 'riskscanvas', 'sbcanvas',
             'swotcanvas', 'obmcanvas', 'valuecanvas', 'leancanvas', 'minempathycanvas', 'logicmodelcanvas',
         ];
+
+        // In strategy projects the Logic Model has its own dedicated menu item,
+        // so hide it from the planning boards listing to avoid duplication.
+        $project = $this->projectService->getProject((int) session('currentProject'));
+        if ($project !== false && ($project['type'] ?? '') === 'strategy') {
+            unset($others['logicmodelcanvas']);
+            $boards = array_values(array_diff($boards, ['logicmodelcanvas']));
+        }
 
         $recentlyUpdatedCanvas = $this->canvasService->getLastUpdatedCanvas((int) session('currentProject'), $boards);
 
