@@ -123,7 +123,6 @@
                         <i class="fa fa-download"></i> {{ $tpl->__('logicmodel.export.header') }} <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="javascript:void(0)" onclick="leantime.logicmodelPluginController.exportPng()"><i class="fa fa-fw fa-image"></i> {{ $tpl->__('logicmodel.export.png') }}</a></li>
                         <li><a href="javascript:void(0)" onclick="leantime.logicmodelPluginController.exportPdf()"><i class="fa fa-fw fa-file-pdf"></i> {{ $tpl->__('logicmodel.export.pdf') }}</a></li>
                         <li><a href="javascript:window.print()"><i class="fa fa-fw fa-print"></i> {{ $tpl->__('logicmodel.export.print') }}</a></li>
                     </ul>
@@ -206,6 +205,8 @@
                     </x-global::stageflow.card>
                 @endforeach
             </div>
+
+            @dispatchEvent('logicmodel.afterStageFlow', ['canvasId' => $currentCanvas, 'canvasItems' => $canvasItems])
 
             <div class="clearfix"></div>
         @endif
