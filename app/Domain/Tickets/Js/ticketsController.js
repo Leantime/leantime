@@ -2032,6 +2032,17 @@ leantime.ticketsController = (function () {
         });
     };
 
+    var openTicketModalManually = function (url) {
+        jQuery.nmManual(url, {
+            sizes: {
+                minW: 1800,
+                minH: 1800
+            },
+            resizable: true,
+            autoSizable: true,
+        });
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         toggleFilterBar: toggleFilterBar,
@@ -2064,6 +2075,7 @@ leantime.ticketsController = (function () {
         initTicketSearchUrlBuilder:initTicketSearchUrlBuilder,
         initSprintDates:initSprintDates,
         initSimpleColorPicker:initSimpleColorPicker,
-        openMilestoneModalManually:openMilestoneModalManually
+        openMilestoneModalManually:openMilestoneModalManually,
+        openTicketModalManually:openTicketModalManually
     };
 })();
