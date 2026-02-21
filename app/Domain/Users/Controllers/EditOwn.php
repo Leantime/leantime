@@ -287,6 +287,9 @@ class EditOwn extends Controller
                 $this->themeCore->setFont($themeFont);
 
                 $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'themsettings_updated');
+
+                // Theme changes affect the entire page (nav, sidebar, head styles) — force full reload
+                header('HX-Refresh: true');
             }
 
             // Save Look & Feel
@@ -316,6 +319,9 @@ class EditOwn extends Controller
                 $this->language->setLanguage($postLang);
 
                 $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');
+
+                // Language/timezone changes affect the entire page — force full reload
+                header('HX-Refresh: true');
             }
 
             // Save Profile Image

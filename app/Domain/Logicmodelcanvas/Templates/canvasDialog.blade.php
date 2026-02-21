@@ -84,15 +84,7 @@
                     <input type="hidden" name="{{ $dataLabels[2]['field'] }}" value="" />
                 @endif
 
-                @if ($id !== '')
-                    <br />
-                    <input type="hidden" name="comment" value="1" />
-                    <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{{ $tpl->__('subtitles.discussion') }}</h4>
-                    @php
-                        $tpl->assign('formUrl', "/$canvasName" . "canvas/editCanvasItem/" . $id);
-                        $tpl->displaySubmodule('comments-generalComment');
-                    @endphp
-                @endif
+                {{-- Comments section moved outside the form to avoid nested forms --}}
 
             </div>
 
@@ -180,6 +172,18 @@
         </div>
 
     </form>
+
+    {{-- Comments section rendered OUTSIDE the main form to avoid nested forms.
+         The comments submodule has its own <form> which would break the outer form. --}}
+    @if ($id !== '')
+        <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--main-border-color);">
+            <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{{ $tpl->__('subtitles.discussion') }}</h4>
+            @php
+                $tpl->assign('formUrl', "/$canvasName" . "canvas/editCanvasItem/" . $id);
+                $tpl->displaySubmodule('comments-generalComment');
+            @endphp
+        </div>
+    @endif
 
 </div>
 
