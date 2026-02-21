@@ -13,6 +13,7 @@ const StarterKit = require('@tiptap/starter-kit').default;
 const Placeholder = require('@tiptap/extension-placeholder').default;
 const Link = require('@tiptap/extension-link').default;
 const Image = require('@tiptap/extension-image').default;
+const { createResizableImage } = require('./extensions/imageResize');
 const TaskList = require('@tiptap/extension-task-list').default;
 const TaskItem = require('@tiptap/extension-task-item').default;
 const Table = require('@tiptap/extension-table').default;
@@ -309,7 +310,7 @@ function createTiptapEditor(elementOrSelector, options) {
                 return /^https?:\/\//.test(url) || /^mailto:/.test(url);
             },
         }),
-        Image.configure({
+        createResizableImage(Image).configure({
             inline: false,
             allowBase64: false,
         }),
@@ -445,11 +446,35 @@ function createTiptapEditor(elementOrSelector, options) {
         proseMirrorEl.style.cursor = 'text';
     }
 
-    // Create toolbar if configured
+    // Create toolbar if configured.
+    // The toolbar module is loaded as a separate <script> (compiled-tiptap-toolbar).
+    // When content is injected via HTMX, the editor init can fire before that
+    // script has evaluated. Retry with a short delay to handle this race.
     var toolbar = null;
-    if (options.toolbar && window.leantime && window.leantime.tiptapToolbar) {
-        toolbar = window.leantime.tiptapToolbar.create(editor, options.toolbar);
-        window.leantime.tiptapToolbar.attach({ element: element }, toolbar);
+    function attachToolbar() {
+        if (window.leantime && window.leantime.tiptapToolbar) {
+            toolbar = window.leantime.tiptapToolbar.create(editor, options.toolbar);
+            window.leantime.tiptapToolbar.attach({ element: element }, toolbar);
+        }
+    }
+    if (options.toolbar) {
+        if (window.leantime && window.leantime.tiptapToolbar) {
+            attachToolbar();
+        } else {
+            // Toolbar script hasn't loaded yet — poll briefly
+            var retries = 0;
+            var toolbarPoll = setInterval(function() {
+                retries++;
+                if (window.leantime && window.leantime.tiptapToolbar) {
+                    clearInterval(toolbarPoll);
+                    attachToolbar();
+                } else if (retries > 20) {
+                    // 2 seconds — give up
+                    clearInterval(toolbarPoll);
+                    console.warn('[TiptapEditor] Toolbar module not available after 2s');
+                }
+            }, 100);
+        }
     }
 
     // Store event handler references for cleanup

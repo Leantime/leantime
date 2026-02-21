@@ -84,6 +84,20 @@ leantime.modals = (function () {
 
         var urlParts = url.split("/");
         if(urlParts.length>2 && urlParts[1] !== "tab") {
+            // Guard against nyroModal losing its jQuery registration between opens.
+            // This can happen when the modal close/reinit cycle runs before the
+            // document-ready wrapper in jquery.nyroModal.custom.js has re-fired.
+            if (typeof jQuery.nmManual !== 'function') {
+                console.warn('[Modal] jQuery.nmManual not available, retrying...');
+                setTimeout(function() {
+                    if (typeof jQuery.nmManual === 'function') {
+                        jQuery.nmManual(baseUrl+""+url, modalOptions);
+                    } else {
+                        console.error('[Modal] jQuery.nmManual unavailable after retry — nyroModal may not be loaded.');
+                    }
+                }, 100);
+                return;
+            }
             jQuery.nmManual(baseUrl+""+url, modalOptions);
         }
     }
