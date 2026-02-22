@@ -4,6 +4,7 @@ namespace Leantime\Domain\WorkStructure\Services;
 
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\WorkStructure\Models\StructureMapping;
+use Leantime\Domain\WorkStructure\Models\WorkStructure;
 use Leantime\Domain\WorkStructure\Repositories\WorkStructureRepository;
 
 /**
@@ -72,6 +73,63 @@ class MappingService
         }
 
         return null;
+    }
+
+    /**
+     * Get all target structures that have mappings from a given source structure.
+     *
+     * Each returned structure includes its elements populated.
+     *
+     * @param  int  $sourceStructureId  Source structure ID
+     * @return WorkStructure[]
+     *
+     * @api
+     */
+    public function getTargetStructures(int $sourceStructureId): array
+    {
+        $targetIds = $this->repo->getTargetStructureIds($sourceStructureId);
+        $structures = [];
+
+        foreach ($targetIds as $targetId) {
+            $structure = $this->repo->getStructure($targetId);
+
+            if ($structure !== null) {
+                $structure->elements = $this->repo->getElements($targetId);
+                $structures[] = $structure;
+            }
+        }
+
+        return $structures;
+    }
+
+    /**
+     * Get target element type keys that have mappings from the source structure.
+     *
+     * @param  int  $sourceStructureId  Source structure ID
+     * @param  int  $targetStructureId  Target structure ID
+     * @return string[] Array of target element typeKeys (e.g., ['milestone', 'task', 'goal'])
+     *
+     * @api
+     */
+    public function getMappedElementKeys(int $sourceStructureId, int $targetStructureId): array
+    {
+        $mappings = $this->repo->getMappings($sourceStructureId, $targetStructureId);
+        $targetElements = $this->repo->getElements($targetStructureId);
+
+        $elementIdToKey = [];
+        foreach ($targetElements as $el) {
+            $elementIdToKey[$el->id] = $el->typeKey;
+        }
+
+        $keys = [];
+        foreach ($mappings as $mapping) {
+            $key = $elementIdToKey[$mapping->targetElementId] ?? null;
+            if ($key !== null && ! in_array($key, $keys, true)) {
+                $keys[] = $key;
+            }
+        }
+
+        return $keys;
     }
 
     /**

@@ -238,6 +238,22 @@ class WorkStructureRepository
     }
 
     /**
+     * Get distinct target structure IDs that have mappings from a given source.
+     *
+     * @param  int  $sourceStructureId  Source structure ID
+     * @return int[]
+     */
+    public function getTargetStructureIds(int $sourceStructureId): array
+    {
+        return $this->db->table('zp_work_structure_mappings')
+            ->where('source_structure_id', $sourceStructureId)
+            ->distinct()
+            ->pluck('target_structure_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
+    /**
      * Check if a mapping exists.
      *
      * @param  int  $sourceStructureId  Source structure ID
