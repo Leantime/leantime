@@ -1,3 +1,22 @@
+# Version: 3.7.1
+
+## Bug Fixes
+- **Sprint Creation/Edit Crash** — Fixed TypeError when creating or editing sprints caused by incorrect object casting (#3231)
+- **Milestone Timeline Drag Not Saving** — Implemented missing `bulkUpdateSortIndex()` repository method so milestone sort order persists after drag-and-drop (#3250)
+- **Subtask Description Showing Parent Content** — Fixed TipTap editor overwriting subtask textarea with parent ticket description when opening subtask from a modal (#3263)
+- **Plugin Details Page Crash** — Fixed `htmlspecialchars()` error when marketplace plugin reviews contain array/object data; added defensive null-coalescing for API response fields (#3241)
+- **Calendar Widget Day Selector** — Day selector buttons are now hidden in month/week/list views where they had no effect; only shown in day view (#3238, #3239)
+- **Timer Not Updating** — Stopwatch in header now polls every 60 seconds when a timer is running so elapsed time stays current (#3228)
+- **Pasted Images 404** — Added redirect from legacy `/download.php` URLs to the new `/files/get` endpoint (#3266)
+- **Modal Crash on Second Open** — Added guard for `jQuery.nmManual` availability between modal close/reinit cycles (#3265)
+- **TipTap Toolbar Missing on HTMX Load** — Added polling retry for toolbar module when editor initializes before the toolbar script has evaluated (#3267)
+- **TipTap Image Resize** — Added custom image resize extension with corner drag handles (#3268)
+- **TipTap HTML Source Edit** — Added source code toggle button to the toolbar for viewing/editing raw HTML (#3269)
+- **Embedded Content Broken** — Expanded CSP `frame-src` and per-provider sandbox attributes for Google Docs, Figma, Miro, and other embed providers
+- **Timesheet Edit Timezone Crash** — Fixed 500 error in EditTime controller caused by calling `setTimezone()` on an already-formatted string (#3248, thanks @robinson-j16)
+
+---
+
 # Version: 3.7.0
 
 ## Highlights
