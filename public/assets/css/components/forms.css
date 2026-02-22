@@ -1229,6 +1229,11 @@ input[type=range]:focus::-ms-fill-upper {
     line-height: 21px;
 }
 
+.ss-main .ss-single-selected .placeholder i {
+    display: inline-block;
+    overflow: visible;
+}
+
 .ss-main .ss-multi-selected .ss-values .ss-disabled {
     color:var(--main-border-color);
 }

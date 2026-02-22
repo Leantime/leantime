@@ -57,6 +57,7 @@ class SchemaBuilder
         $this->createAccessTokensTable();
         $this->createJobsTable();
         $this->createRecurringPatternsTable();
+        $this->createWorkStructureTables();
     }
 
     /**
@@ -826,6 +827,65 @@ class SchemaBuilder
             $table->tinyInteger('enabled')->default(1);
 
             $table->index(['entityId'], 'idx_recurring_patterns_entityId');
+        });
+    }
+
+    /**
+     * Create WorkStructure tables for structure definitions, elements, relationships, and mappings.
+     */
+    private function createWorkStructureTables(): void
+    {
+        Schema::create('zp_work_structures', function (Blueprint $table) {
+            $table->id();
+            $table->string('title', 255);
+            $table->text('description')->nullable();
+            $table->string('type', 50)->default('custom');
+            $table->integer('created_by')->nullable();
+            $table->json('meta')->nullable();
+            $table->dateTime('created_at')->nullable();
+            $table->dateTime('modified_at')->nullable();
+
+            $table->unique(['title'], 'idx_work_structures_title');
+            $table->index(['type'], 'idx_work_structures_type');
+        });
+
+        Schema::create('zp_work_structure_elements', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('structure_id');
+            $table->string('type_key', 50);
+            $table->string('label', 100);
+            $table->text('description')->nullable();
+            $table->string('domain_reference', 255)->nullable();
+            $table->integer('sort_order')->default(0);
+            $table->json('meta')->nullable();
+            $table->dateTime('created_at')->nullable();
+
+            $table->index(['structure_id'], 'idx_wse_structure_id');
+            $table->unique(['structure_id', 'type_key'], 'idx_wse_structure_type_key');
+        });
+
+        Schema::create('zp_work_structure_relationships', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('structure_id');
+            $table->unsignedBigInteger('from_element_id');
+            $table->unsignedBigInteger('to_element_id');
+            $table->string('relationship_type', 50);
+            $table->text('description')->nullable();
+            $table->json('meta')->nullable();
+
+            $table->index(['structure_id'], 'idx_wsr_structure_id');
+        });
+
+        Schema::create('zp_work_structure_mappings', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('source_structure_id');
+            $table->unsignedBigInteger('source_element_id');
+            $table->unsignedBigInteger('target_structure_id');
+            $table->unsignedBigInteger('target_element_id');
+            $table->string('mapping_type', 50)->default('generates');
+            $table->json('meta')->nullable();
+
+            $table->index(['source_structure_id', 'target_structure_id'], 'idx_wsm_source_target');
         });
     }
 }

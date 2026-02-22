@@ -57,7 +57,7 @@
                                     format($row['date'])->time()
                                 ) !!}
                                     @if($login::userIsAtLeast($roles::$editor))
-                                        <x-global::elements.dropdown containerClass="pull-right tw:ml-2.5">
+                                        <x-global::elements.dropdown containerClass="pull-right" style="margin-left:12px;">
                                             @if(($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
                                                 <li><a href="{{ $deleteUrlBase . $row['id'] }}" class="deleteComment formModal">
                                                     <span class="fa fa-trash"></span> {{ __('links.delete') }}
@@ -88,6 +88,11 @@
                                     <span class="fa fa-reply"></span> {{ __('links.reply') }}
                                 </a>
                             @endif
+                            <span hx-get="{{ BASE_URL }}/hx/comments/reactions/get?commentId={{ $row['id'] }}"
+                                  hx-trigger="load"
+                                  hx-target="this"
+                                  hx-select="unset"
+                                  hx-swap="innerHTML"></span>
                         </div>
 
                         <div class="replies">

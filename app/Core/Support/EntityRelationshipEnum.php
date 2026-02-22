@@ -15,6 +15,12 @@ enum EntityRelationshipEnum: string
     case Collaborator = 'collaborator';
 
     /**
-     * Add other relationship types as needed.
+     * Represents a "generated from" relationship (entity created from canvas item).
      */
+    case GeneratedFrom = 'generated_from';
+
+    /**
+     * Represents a "maps to" relationship (cross-structure element mapping).
+     */
+    case MapsTo = 'maps_to';
 }

@@ -24,37 +24,13 @@
         }
     }
 
-    $colorPalette = [
-        ['bg' => '#6B7A4D', 'text' => '#FFFFFF'],
-        ['bg' => '#5C8A8A', 'text' => '#FFFFFF'],
-        ['bg' => '#8A6B5C', 'text' => '#FFFFFF'],
-        ['bg' => '#7A6B8A', 'text' => '#FFFFFF'],
-        ['bg' => '#6B8A7A', 'text' => '#FFFFFF'],
-        ['bg' => '#8A7A6B', 'text' => '#FFFFFF'],
-    ];
-
-    $defaultColor = ['bg' => '#D1D5DB', 'text' => '#6B7280'];
-
-    if ($username && $username !== 'Unassigned') {
-        $hash = crc32($username);
-        $colorIndex = abs($hash) % count($colorPalette);
-        $colors = $colorPalette[$colorIndex];
-    } else {
-        $colors = $defaultColor;
-    }
+    $useColor = $username && $username !== 'Unassigned';
+    $defaultBg = '#D1D5DB';
+    $textColor = $useColor ? '#FFFFFF' : '#6B7280';
 @endphp
 
-<div {{ $attributes->merge(['class' => 'user-avatar tw:inline-flex tw:items-center tw:justify-center tw:rounded-full tw:shrink-0']) }}
-     style="background-color: {{ $colors['bg'] }}; width: {{ $s['dim'] }}; height: {{ $s['dim'] }}; font-size: {{ $s['font'] }};"
+<div {{ $attributes->merge(['class' => 'user-avatar']) }}
+     style="display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; background: {{ $useColor ? 'var(--accent1)' : $defaultBg }}; width: {{ $s['dim'] }}; height: {{ $s['dim'] }}; font-size: {{ $s['font'] }};"
      @if($username) data-tippy-content="{{ $username }}" @endif>
-    @if($userId)
-        <img src="{{ BASE_URL }}/api/users?profileImage={{ $userId }}"
-             alt="{{ $username }}"
-             class="tw:w-full tw:h-full tw:rounded-full tw:object-cover"
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
-             loading="lazy">
-        <span style="font-weight: 600; color: {{ $colors['text'] }}; display: none;">{{ $initials }}</span>
-    @else
-        <span style="font-weight: 600; color: {{ $colors['text'] }};">{{ $initials }}</span>
-    @endif
+    <span style="font-weight: 600; color: {{ $textColor }};">{{ $initials }}</span>
 </div>

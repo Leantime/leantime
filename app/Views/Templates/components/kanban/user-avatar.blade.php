@@ -22,30 +22,13 @@ if ($username) {
     }
 }
 
-// Generate consistent color based on username
-$colorPalette = [
-    ['bg' => '#6B7A4D', 'text' => '#FFFFFF'], // Olive green
-    ['bg' => '#5C8A8A', 'text' => '#FFFFFF'], // Teal
-    ['bg' => '#8A6B5C', 'text' => '#FFFFFF'], // Brown
-    ['bg' => '#7A6B8A', 'text' => '#FFFFFF'], // Purple
-    ['bg' => '#6B8A7A', 'text' => '#FFFFFF'], // Sage
-    ['bg' => '#8A7A6B', 'text' => '#FFFFFF'], // Tan
-];
-
-$defaultColor = ['bg' => '#D1D5DB', 'text' => '#6B7280']; // Gray for unassigned
-
-if ($username && $username !== 'Unassigned') {
-    // Use hash to consistently assign color to same user
-    $hash = crc32($username);
-    $colorIndex = abs($hash) % count($colorPalette);
-    $colors = $colorPalette[$colorIndex];
-} else {
-    $colors = $defaultColor;
-}
+$useGradient = $username && $username !== 'Unassigned';
+$defaultColor = ['bg' => '#D1D5DB', 'text' => '#6B7280'];
+$colors = $useGradient ? ['bg' => '', 'text' => '#FFFFFF'] : $defaultColor;
 @endphp
 
 <div {{ $attributes->merge(['class' => 'user-avatar']) }}
-     style="display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background-color: {{ $colors['bg'] }}; width: {{ $sizeStyles['width'] }}; height: {{ $sizeStyles['height'] }}; font-size: {{ $sizeStyles['fontSize'] }}; flex-shrink: 0;"
+     style="display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: {{ $useGradient ? 'var(--element-gradient)' : $colors['bg'] }}; width: {{ $sizeStyles['width'] }}; height: {{ $sizeStyles['height'] }}; font-size: {{ $sizeStyles['fontSize'] }}; flex-shrink: 0;"
      data-tippy-content="{{ $username }}">
     @if($userId)
         <img src="{{ BASE_URL }}/api/users?profileImage={{ $userId }}"

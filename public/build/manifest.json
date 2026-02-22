@@ -263,6 +263,15 @@
       "_canvasController-D8-avucL.js"
     ]
   },
+  "app/Domain/Logicmodelcanvas/Js/logicmodelCanvasController.js": {
+    "file": "assets/logicmodelCanvasController-XMUVoiYe.js",
+    "name": "logicmodelCanvasController",
+    "src": "app/Domain/Logicmodelcanvas/Js/logicmodelCanvasController.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_canvasController-D8-avucL.js"
+    ]
+  },
   "app/Domain/Minempathycanvas/Js/risksCanvasController.js": {
     "file": "assets/risksCanvasController-B1VoB3S7.js",
     "name": "risksCanvasController",
@@ -936,7 +945,7 @@
     "src": "public/assets/images/svg/loading-animation.svg"
   },
   "resources/css/app.css": {
-    "file": "assets/app-Ft4eZqD1.css",
+    "file": "assets/app-DggApISw.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -946,12 +955,12 @@
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-7ZxpmNJz.css",
+    "file": "assets/main-yjkpK2aD.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-C2mHsOOA.js",
+    "file": "assets/compiled-app-BPAQhr5r.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,
@@ -971,6 +980,7 @@
       "app/Domain/Insightscanvas/Js/insightsCanvasController.js",
       "app/Domain/Lbmcanvas/Js/lbmCanvasController.js",
       "app/Domain/Leancanvas/Js/leanCanvasController.js",
+      "app/Domain/Logicmodelcanvas/Js/logicmodelCanvasController.js",
       "app/Domain/Minempathycanvas/Js/risksCanvasController.js",
       "app/Domain/Obmcanvas/Js/obmCanvasController.js",
       "app/Domain/Projects/Js/projectsController.js",

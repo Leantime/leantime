@@ -54,10 +54,11 @@
                         </div>
                         <div class="col-md-3">
                             <label>{{ __('label.current_value') }}</label>
+                            @php $linkAndReport = $canvasItem['setting'] == 'linkAndReport'; @endphp
                             <x-global::forms.input type="number" step="0.01" name="currentValue" id="currentValueField"
                                 value="{{ $canvasItem['currentValue'] }}"
-                                :readonly="$canvasItem['setting'] == 'linkAndReport'"
-                                @if ($canvasItem['setting'] == 'linkAndReport') data-tippy-content="Current value calculated from child goals" @endif
+                                :readonly="$linkAndReport"
+                                data-tippy-content="{{ $linkAndReport ? 'Current value calculated from child goals' : '' }}"
                                 style="width:105px" />
                         </div>
                         <div class="col-md-3">
@@ -137,7 +138,7 @@
                                 </div>
 
                                 <div id="existingMilestone" style="display:none;">
-                                    <x-global::forms.select :bare="true" data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
+                                    <x-global::forms.select :bare="true" :data-placeholder="__('input.placeholders.filter_by_milestone')" name="existingMilestone" class="user-select">
                                         <option value=""></option>
                                         @foreach ($tpl->get('milestones') as $milestoneRow)
                                             <option value="{{ $milestoneRow->id }}" {{ isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id) ? 'selected' : '' }}>

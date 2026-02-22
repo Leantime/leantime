@@ -61,6 +61,10 @@ leantime.modals = (function () {
         return /showTicket|ideaDialog|articleDialog|notesDialog|notebookDialog/.test(url);
     }
 
+    function isMediumModal(url) {
+        return /editCanvasItem/.test(url);
+    }
+
     // ── Loading Spinner ────────────────────────────────────────────────
     function showLoading() {
         var c = getContent();
@@ -176,6 +180,10 @@ leantime.modals = (function () {
             box.style.maxWidth = '1024px';
             box.style.width = '95vw';
             box.style.minHeight = '80vh';
+        } else if (isMediumModal(url)) {
+            box.style.maxWidth = '50rem';
+            box.style.width = '90vw';
+            box.style.minHeight = '';
         } else {
             box.style.maxWidth = '48rem';
             box.style.width = '';
@@ -339,6 +347,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Handle the <dialog> native events ─────────────────────────────
     var dialog = document.getElementById('global-modal');
     if (dialog) {
+        // Click outside the modal box to close (click on dialog backdrop area)
+        dialog.addEventListener('click', function (e) {
+            if (e.target === dialog) {
+                leantime.modals.closeModal();
+            }
+        });
+
         // Intercept Escape key: .show() doesn't fire 'cancel' like
         // .showModal() does, so we listen for keydown on the dialog.
         dialog.addEventListener('keydown', function (e) {
@@ -393,6 +408,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (method === 'POST') {
             opts.body = new FormData(form);
+            // Include the submit button's name/value (FormData omits it)
+            if (event.submitter && event.submitter.name) {
+                opts.body.append(event.submitter.name, event.submitter.value || '');
+            }
         } else {
             var qs = new URLSearchParams(new FormData(form));
             action += (action.indexOf('?') === -1 ? '?' : '&') + qs.toString();
@@ -413,6 +432,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 leantime.modals.closeModal();
                 window.location.href = hxRedirect;
                 return null;
+            }
+
+            // Handle redirects after form submission
+            if (response.redirected && response.url) {
+                // Close modal when redirect URL contains closeModal (Save & Close)
+                if (response.url.indexOf('closeModal') !== -1) {
+                    leantime.modals.closeModal();
+                    return null;
+                }
+
+                // If redirect goes to a different page than the form action,
+                // close modal and navigate (e.g., delete → showCanvas)
+                var actionBase = action.split('?')[0].replace(/\/+$/, '');
+                var redirectBase = response.url.split('?')[0].replace(/\/+$/, '');
+                if (redirectBase !== actionBase) {
+                    leantime.modals.closeModal();
+                    window.location.href = response.url;
+                    return null;
+                }
             }
 
             return response.text();
