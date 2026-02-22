@@ -147,9 +147,9 @@ class EditTime extends Controller
                                 }
 
                                 if (! empty($_POST['paidDate'])) {
-                                    $date = dtHelper()->parseUserDateTime($_POST['paidDate'], 'start')->formatDateTimeForDb();
+                                    $date = dtHelper()->parseUserDateTime($_POST['paidDate'], 'start');
                                     $date->setTimezone('UTC');
-                                    $values['paidDate'] = $date;
+                                    $values['paidDate'] = $date->formatDateTimeForDb();
                                 } else {
                                     $values['paidDate'] = dtHelper()->userNow()->formatDateTimeForDb();
                                 }
