@@ -34,7 +34,11 @@
     <div class="clear"></div>
     <div class="fc-toolbar tw-z-10">
         <div class="fc-left tw-flex">
-            <div class="day-selector tw-w-full tw-flex tw-gap-2 tw-mb-4 tw-justify-between">
+            <div class="day-selector tw-w-full tw-flex tw-gap-2 tw-mb-4 tw-justify-between"
+                 @php
+                     $currentView = $tpl->getToggleState("dashboardCalendarView") ?: 'timeGridDay';
+                 @endphp
+                 @if ($currentView !== 'timeGridDay') style="display:none" @endif>
                 @php
                     $today = dtHelper()->userNow();
                     $startOfWeek = dtHelper()->userNow()->startOf("week");
@@ -97,14 +101,14 @@
         eventSources.push(events);
 
         <?php
-        $externalCalendars = $tpl->get("externalCalendars");
+        $externalCalendars = $tpl->get('externalCalendars');
 
-        foreach($externalCalendars as $externalCalendar) { ?>
+        foreach ($externalCalendars as $externalCalendar) { ?>
             eventSources.push(
                 {
-                    url: '<?=BASE_URL ?>/calendar/externalCal/<?=$externalCalendar['id'] ?>',
+                    url: '<?= BASE_URL ?>/calendar/externalCal/<?= $externalCalendar['id'] ?>',
                     format: 'ics',
-                    color: '<?=$externalCalendar['colorClass'] ?>',
+                    color: '<?= $externalCalendar['colorClass'] ?>',
                     editable: false,
                 }
             );

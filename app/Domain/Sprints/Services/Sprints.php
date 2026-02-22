@@ -103,13 +103,17 @@ class Sprints
     public function addSprint($params): int|false
     {
 
-        $sprint = (object) $params;
+        $sprint = new Models\Sprints;
 
-        if (dtHelper()->isValidDateString($sprint->startDate)) {
+        foreach ($params as $key => $value) {
+            $sprint->$key = $value;
+        }
+
+        if (dtHelper()->isValidDateString($sprint->startDate ?? null)) {
             $sprint->startDate = dtHelper()->parseUserDateTime($sprint->startDate)->startOfDay()->formatDateTimeForDb();
         }
 
-        if (dtHelper()->isValidDateString($sprint->endDate)) {
+        if (dtHelper()->isValidDateString($sprint->endDate ?? null)) {
             $sprint->endDate = dtHelper()->parseUserDateTime($sprint->endDate)->endOfDay()->formatDateTimeForDb();
         }
 
@@ -127,16 +131,20 @@ class Sprints
     /**
      * @api
      */
-    public function editSprint($params): object|false
+    public function editSprint($params): Models\Sprints|false
     {
 
-        $sprint = (object) $params;
+        $sprint = new Models\Sprints;
 
-        if (dtHelper()->isValidDateString($sprint->startDate)) {
+        foreach ($params as $key => $value) {
+            $sprint->$key = $value;
+        }
+
+        if (dtHelper()->isValidDateString($sprint->startDate ?? null)) {
             $sprint->startDate = dtHelper()->parseUserDateTime($sprint->startDate)->startOfDay()->formatDateTimeForDb();
         }
 
-        if (dtHelper()->isValidDateString($sprint->endDate)) {
+        if (dtHelper()->isValidDateString($sprint->endDate ?? null)) {
             $sprint->endDate = dtHelper()->parseUserDateTime($sprint->endDate)->endOfDay()->formatDateTimeForDb();
         }
 
@@ -144,7 +152,7 @@ class Sprints
 
         $result = $this->sprintRepository->editSprint($sprint);
 
-        if ($sprint) {
+        if ($result) {
             return $sprint;
         }
 

@@ -81,10 +81,18 @@ var EditorRegistry = (function() {
             if (!editor) return false;
 
             try {
-                // Sync content to original textarea if present
-                var textarea = this.findTextarea(element);
-                if (textarea) {
-                    textarea.value = editor.getHTML();
+                // Only sync content back to textarea if the editor element is
+                // still attached to the document. When nyroModal replaces modal
+                // content, the old editor DOM is removed before destroy() runs.
+                // Using document.getElementById() at that point would find a
+                // NEW textarea with the same id (e.g. the subtask's
+                // "ticketDescription") and overwrite it with the parent's
+                // content — causing #3263.
+                if (document.contains(element)) {
+                    var textarea = this.findTextarea(element);
+                    if (textarea) {
+                        textarea.value = editor.getHTML();
+                    }
                 }
                 editor.destroy();
             } catch (e) {
@@ -504,13 +512,18 @@ function createTiptapEditor(elementOrSelector, options) {
     element.addEventListener('click', handlers.click);
 
     // Image upload helper function
+    // Scope ID lookups to the editor's closest form/modal to support stacked modals
     function uploadImage(file, callback) {
         // Get module info from the page context
         var moduleId = '';
         var module = 'ticket';
 
-        // Try to get ticket ID from URL or form
-        var ticketIdInput = document.querySelector('input[name="id"], input[name="itemId"], input[name="ticketId"]');
+        // Scope the ID lookup to the editor's form or modal container
+        var scope = element.closest('form') || element.closest('.nyroModalCont') || document;
+
+        // Try to get ticket ID from scoped context first, then fall back to document
+        var ticketIdInput = scope.querySelector('input[name="id"], input[name="itemId"], input[name="ticketId"]')
+            || document.querySelector('input[name="id"], input[name="itemId"], input[name="ticketId"]');
         if (ticketIdInput && ticketIdInput.value) {
             moduleId = ticketIdInput.value;
         }
@@ -518,7 +531,7 @@ function createTiptapEditor(elementOrSelector, options) {
         // Check if we're in a wiki/doc context
         if (window.location.href.indexOf('/wiki/') > -1 || window.location.href.indexOf('/docs/') > -1) {
             module = 'wiki';
-            var wikiIdInput = document.querySelector('input[name="id"]');
+            var wikiIdInput = scope.querySelector('input[name="id"]') || document.querySelector('input[name="id"]');
             if (wikiIdInput) moduleId = wikiIdInput.value;
         }
 
@@ -738,8 +751,20 @@ var tiptapController = {
     registry: EditorRegistry,
 
     initComplex: function(elementOrSelector, options) {
-        var entityId = (options && options.entityId) ||
-            (document.querySelector('input[name="id"]') ? document.querySelector('input[name="id"]').value : 'new');
+        // Scope the ID lookup to the element's closest form or modal container
+        // to prevent stacked modals from picking up the parent ticket's ID
+        var entityId = (options && options.entityId) || 'new';
+        if (entityId === 'new') {
+            var el = (typeof elementOrSelector === 'string')
+                ? document.querySelector(elementOrSelector) : elementOrSelector;
+            if (el) {
+                var scope = el.closest('form') || el.closest('.nyroModalCont') || document;
+                var idInput = scope.querySelector('input[name="id"]');
+                if (idInput) {
+                    entityId = idInput.value;
+                }
+            }
+        }
         var projectId = (options && options.projectId) || (window.leantime && window.leantime.projectId) || '';
         var path = window.location.pathname;
 
