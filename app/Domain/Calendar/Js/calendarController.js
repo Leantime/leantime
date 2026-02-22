@@ -414,23 +414,30 @@ leantime.calendarController = (function () {
             });
             jQuery(".minCalendar .calendarViewSelect").on("click", function (e) {
 
-                console.log(jQuery(this).data("value"));
-                calendar.changeView(jQuery(this).data("value"));
+                var newView = jQuery(this).data("value");
+                calendar.changeView(newView);
+
+                // Show the day selector only in day view
+                if (newView === 'timeGridDay') {
+                    jQuery('.day-selector').show();
+                } else {
+                    jQuery('.day-selector').hide();
+                }
 
                 jQuery.ajax({
                     type: 'PATCH',
                     url: leantime.appUrl + '/api/submenu',
                     data: {
                         submenu: "dashboardCalendarView",
-                        state: jQuery(this).data("value")
+                        state: newView
                     }
                 });
 
             });
 
-            // Initialize day selector buttons
+            // Initialize day selector buttons (only active in day view)
             jQuery('.day-button').on('click', function() {
-                const date = jQuery(this).data('date');
+                var date = jQuery(this).data('date');
                 calendar.gotoDate(date);
 
                 // Update active state
