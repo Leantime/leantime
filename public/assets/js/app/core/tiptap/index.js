@@ -81,10 +81,18 @@ var EditorRegistry = (function() {
             if (!editor) return false;
 
             try {
-                // Sync content to original textarea if present
-                var textarea = this.findTextarea(element);
-                if (textarea) {
-                    textarea.value = editor.getHTML();
+                // Only sync content back to textarea if the editor element is
+                // still attached to the document. When nyroModal replaces modal
+                // content, the old editor DOM is removed before destroy() runs.
+                // Using document.getElementById() at that point would find a
+                // NEW textarea with the same id (e.g. the subtask's
+                // "ticketDescription") and overwrite it with the parent's
+                // content — causing #3263.
+                if (document.contains(element)) {
+                    var textarea = this.findTextarea(element);
+                    if (textarea) {
+                        textarea.value = editor.getHTML();
+                    }
                 }
                 editor.destroy();
             } catch (e) {
