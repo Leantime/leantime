@@ -159,11 +159,11 @@ var initEditTimeModal = function () {
         titleFromIframe: true
     };
 
-    jQuery(document).on('click', 'a.editTimeModal', function (e) {
-        if (!isReady) return;
-        e.preventDefault();
-        jQuery(this).nyroModal(canvasoptions);
-    });
+        jQuery(document).on('click.nyroInit', 'a.editTimeModal', function (e) {
+            e.preventDefault();
+            jQuery(this).nyroModal(canvasoptions);
+            jQuery(this).trigger('click.nyroModal');
+        });
 };
 
 initWhenReady();
