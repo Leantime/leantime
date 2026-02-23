@@ -198,6 +198,9 @@ jQuery(document).ready(function(){
 
         jQuery("#finalSum").text(roundedSum);
     });
+    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+        leantime.timesheetsController.initEditTimeModal();
+<?php } ?>
  });
 </script>
 
