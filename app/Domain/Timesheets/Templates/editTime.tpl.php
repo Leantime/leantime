@@ -52,12 +52,14 @@ $values = $tpl->get('values');
         });
         jQuery("#editTimeForm").on("submit", function(e) {
             e.preventDefault();
-        jQuery.post(jQuery(this).attr("action"), jQuery(this).serialize(), function() {
-            if (window.parent && window.parent.jQuery) {
-                window.parent.location.reload();
-            }
+                jQuery.post(jQuery(this).attr("action"), jQuery(this).serialize(), function() {
+                if (window.parent && window.parent.jQuery) {
+                    window.parent.jQuery.growl({ message: "Time saved successfully", style: "success" });
+                }
+            }).fail(function() {
+                jQuery.growl({ message: "Could not save time entry", style: "error" });
+            });
         });
-    });
 });
 
 </script>
