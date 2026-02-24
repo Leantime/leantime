@@ -1369,5 +1369,5 @@
 /* Dark mode status colors handled by theme CSS variables */
 
 [data-theme="dark"] .wiki-properties-panel {
-    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--large-shadow);
 }

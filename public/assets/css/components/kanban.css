@@ -81,8 +81,7 @@
     border: 2px dashed color-mix(in srgb, var(--primary-font-color) 20%, transparent);
     visibility: visible;
     display: block;
-    box-shadow: 0 2px 6px color-mix(in srgb, var(--primary-font-color) 12%, transparent),
-                0 1px 3px color-mix(in srgb, var(--primary-font-color) 8%, transparent);
+    box-shadow: var(--regular-shadow);
     border-radius: var(--box-radius-small);
 }
 
@@ -1188,7 +1187,7 @@ body .maincontent .priority-text-5 a:link {
     /* Subtle hover for dark mode - transparent overlay */
     .kanban-swimlane-sidebar:hover {
         background: rgba(255, 255, 255, 0.08); /* Subtle white overlay */
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        box-shadow: var(--regular-shadow);
     }
 
     .kanban-swimlane-sidebar:focus-visible {

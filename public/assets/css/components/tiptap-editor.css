@@ -663,7 +663,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     padding: 8px 12px;
     background: var(--toolbar-background, rgba(255, 255, 255, 0.95));
     border: 1px solid var(--main-border-color, #ddd);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--min-shadow);
     flex-wrap: wrap;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -793,7 +793,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 .dark .tiptap-toolbar {
     background: var(--toolbar-background, rgba(45, 45, 45, 0.95));
     border-color: var(--main-border-color, rgba(255, 255, 255, 0.06));
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--regular-shadow);
 }
 
 [data-theme="dark"] .tiptap-toolbar__button,
@@ -836,7 +836,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: var(--element-bg, #fff);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--regular-shadow);
     min-width: 280px;
     overflow: hidden;
     animation: tiptap-popover-fade-in 0.15s ease-out;
@@ -962,7 +962,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 .dark .tiptap-image-popover {
     background: var(--element-bg, #1e293b);
     border-color: var(--main-border-color, #334155);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--large-shadow);
 }
 
 [data-theme="dark"] .tiptap-image-popover__option,
@@ -1063,7 +1063,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: var(--main-background, #ffffff);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--regular-shadow);
     padding: 6px;
     animation: tiptap-mention-fade-in 0.15s ease-out;
 }
@@ -1149,7 +1149,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 .dark .tiptap-mention-popup {
     background: var(--element-bg, #1e293b);
     border-color: var(--main-border-color, #334155);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--large-shadow);
 }
 
 [data-theme="dark"] .tiptap-mention-popup__item:hover,
@@ -1211,7 +1211,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     max-width: 560px;
     background: var(--main-background, #ffffff);
     border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--large-shadow);
     animation: tiptap-dialog-fade-in 0.2s ease-out;
 }
 
@@ -1438,7 +1438,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: var(--main-background, #ffffff);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--regular-shadow);
     padding: 8px;
     animation: tiptap-slash-fade-in 0.15s ease-out;
     display: flex;
@@ -1547,7 +1547,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 .dark .tiptap-slash-popup {
     background: var(--element-bg, #1e293b);
     border-color: var(--main-border-color, #334155);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--large-shadow);
 }
 
 [data-theme="dark"] .tiptap-slash-popup__header,
@@ -1620,7 +1620,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     max-height: 80vh;
     background: var(--main-background, #ffffff);
     border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--large-shadow);
     display: flex;
     flex-direction: column;
     animation: tiptap-dialog-fade-in 0.2s ease-out;
@@ -1876,7 +1876,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     max-width: 480px;
     background: var(--main-background, #ffffff);
     border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--large-shadow);
     animation: tiptap-dialog-fade-in 0.2s ease-out;
 }
 
@@ -2238,7 +2238,7 @@ div[id^="comments-"] > div > .clearall {
     background: var(--element-bg, #ffffff);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--regular-shadow);
     padding: 8px;
     display: none;
 }
@@ -2304,7 +2304,7 @@ div[id^="comments-"] > div > .clearall {
 .dark .reaction-emoji-picker {
     background: var(--element-bg, #1e293b);
     border-color: var(--main-border-color, #334155);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--large-shadow);
 }
 
 [data-theme="dark"] .reaction-emoji-picker__btn:hover,
@@ -2342,7 +2342,7 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-color-popover__btn:hover {
     transform: scale(1.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--regular-shadow);
     z-index: 1;
 }
 
@@ -2356,7 +2356,7 @@ div[id^="comments-"] > div > .clearall {
 .dark .tiptap-color-popover {
     background: var(--element-bg, #1e293b);
     border-color: var(--main-border-color, #334155);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--large-shadow);
 }
 
 [data-theme="dark"] .tiptap-color-popover__btn,
@@ -2506,7 +2506,7 @@ div[id^="comments-"] > div > .clearall {
     margin: auto;
     background: var(--main-background, #fff);
     border-radius: 12px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--large-shadow);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -2762,7 +2762,7 @@ div[id^="comments-"] > div > .clearall {
     margin: auto;
     background: var(--main-background, #fff);
     border-radius: 12px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--large-shadow);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -3072,7 +3072,7 @@ div[id^="comments-"] > div > .clearall {
     background: var(--main-background, #fff);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--regular-shadow);
     overflow: hidden;
     z-index: 10001;
 }
@@ -3136,7 +3136,7 @@ div[id^="comments-"] > div > .clearall {
     margin: auto;
     background: var(--main-background, #fff);
     border-radius: 12px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--large-shadow);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -3407,7 +3407,7 @@ div[id^="comments-"] > div > .clearall {
     font-size: 12px;
     padding: 0;
     transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--min-shadow);
 }
 
 .tiptap-columns-toolbar__btn:hover {
@@ -3493,7 +3493,7 @@ div[id^="comments-"] > div > .clearall {
     background: var(--main-background, #fff);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--regular-shadow);
     min-width: 180px;
     overflow: hidden;
 }
@@ -3529,7 +3529,7 @@ div[id^="comments-"] > div > .clearall {
     background: var(--main-background, rgba(255, 255, 255, 0.98));
     border: 1px solid var(--main-border-color, rgba(0, 0, 0, 0.06));
     border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--regular-shadow);
     overflow: hidden;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -3611,7 +3611,7 @@ div[id^="comments-"] > div > .clearall {
 .dark .tiptap-more-menu {
     background: rgba(30, 41, 59, 0.98);
     border-color: rgba(255, 255, 255, 0.06);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--large-shadow);
 }
 
 [data-theme="dark"] .tiptap-more-menu__item:hover,
