@@ -40,15 +40,15 @@ label, input, textarea, select, button {
 }
 
 h1, h2, h3, h4, h5 {
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     line-height: normal;
 }
 
 h1 { font-size:var(--font-size-xxl);}
 h2 { font-size:var(--font-size-xl);}
-h3 { font-size:var(--font-size-xl); font-weight:bold;}
-h4 { font-size:var(--base-font-size); font-weight:bold;}
-h5 { font-size:var(--base-font-size); font-weight:bold;}
+h3 { font-size:var(--font-size-xl); font-weight:var(--font-weight-bold);}
+h4 { font-size:var(--base-font-size); font-weight:var(--font-weight-bold);}
+h5 { font-size:var(--base-font-size); font-weight:var(--font-weight-bold);}
 
 h1 small {
     font-size: var(--font-size-s);
@@ -136,7 +136,7 @@ a .label.feature-label:after {
 
     font-size: var(--font-size-xl);
     color: var(--primary-font-color);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
 }
 
 .maincontentinner .subtitle {

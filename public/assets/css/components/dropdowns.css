@@ -341,7 +341,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     font-size: var(--font-size-l);
     color: var(--primary-font-color);
     margin-bottom: 10px;
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
     margin-left:0px;
     border-radius: var(--accordion-header-radius);
     padding: 5px 0px;

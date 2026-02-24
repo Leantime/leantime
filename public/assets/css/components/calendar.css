@@ -39,7 +39,7 @@
 .day-button .day-num {
     display: block;
     font-size: var(--font-size-l);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     line-height: 1.2;
 }
 
@@ -142,7 +142,7 @@
 /*    padding:0px 0px 10px 0px;*/
 /*    text-align:left;*/
 /*    font-size: var(--font-size-xl);*/
-/*    font-weight:normal;*/
+/*    font-weight:var(--font-weight-body);*/
 /*    display:none;*/
 /*}*/
 
@@ -269,7 +269,7 @@
 /*.maincontent .fc-timegrid-event-harness-inset .fc-timegrid-event,*/
 /*.maincontent .fc-timegrid-event.fc-event-mirror,*/
 /*.fc-h-event .fc-event-main {*/
-/*    font-weight:normal;*/
+/*    font-weight:var(--font-weight-body);*/
 /*}*/
 
 /*.maincontent .fc-timegrid-event .fc-event-main {*/
@@ -353,13 +353,13 @@
     --fc-neutral-bg-color: var(--layered-background);
     --fc-neutral-text-color: var(--neutral);
     --fc-border-color: var(--main-border-color);
-    --fc-button-text-color: var(--secondary-background);
-    --fc-button-bg-color: #2c3e50;
-    --fc-button-border-color: #2c3e50;
-    --fc-button-hover-bg-color: #1e2b37;
-    --fc-button-hover-border-color: #1a252f;
-    --fc-button-active-bg-color: #1a252f;
-    --fc-button-active-border-color: #151e27;
+    --fc-button-text-color: var(--accent1-color);
+    --fc-button-bg-color: var(--accent1);
+    --fc-button-border-color: var(--accent1);
+    --fc-button-hover-bg-color: var(--accent1-hover);
+    --fc-button-hover-border-color: var(--accent1-hover);
+    --fc-button-active-bg-color: var(--accent1-hover);
+    --fc-button-active-border-color: var(--accent1-hover);
     --fc-event-bg-color: var(--accent1);
     --fc-event-border-color: var(--accent1);
     --fc-event-text-color:var(--main-action-color);

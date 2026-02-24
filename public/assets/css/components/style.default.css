@@ -285,7 +285,7 @@ body.loginpage {
 .row .regLeft .welcomeContent h1 {
     font-family: var(--primary-font-family);
     font-size: var(--font-size-xxl);
-    font-weight:400;
+    font-weight:var(--font-weight-body);
 }
 
 .row .regLeft .welcomeContent {
@@ -360,7 +360,7 @@ body.loginpage {
 }
 
 .row .regRight h2 {
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
     font-size:var(--font-size-xxl);
 }
 
@@ -723,7 +723,7 @@ body.loginpage {
     border-top:2px solid transparent;
     padding:0px 15px;
     color:var(--main-action-bg);
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
     border-radius: 0;
 }
 
@@ -843,7 +843,7 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
     padding: 10px;
     font-size: var(--base-font-size);
     text-transform: uppercase;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     margin-top: 5px;
     border-bottom: 1px solid var(--main-border-color);
 }
@@ -1291,7 +1291,7 @@ ul.list-inline li {
 .loginpanel .inputwrapper button,
 .userlist li .uinfo h5 {
 
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
 }
 
 /*** TRANSITION ***/
@@ -1437,7 +1437,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     background: var(--primary-font-color);
     color: var(--primary-background);
     text-shadow: none;
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
 }
 
 .nav-list > li > a {
@@ -1490,7 +1490,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     border-radius:  var(--box-radius-small);
     font-size: var(--font-size-xs);
     text-shadow: none;
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     text-transform: uppercase;
     padding: 2px 5px;
 }
@@ -1498,7 +1498,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 .badge {
     font-size: var(--font-size-xs);
     text-shadow: none;
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     line-height: 19px;
     border-radius: 50px;
 }
@@ -1547,7 +1547,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     font-size: var(--font-size-xxl);
     color: var(--primary-font-color);
     margin-bottom: 20px;
-    font-weight:normal;
+    font-weight:var(--font-weight-body);
 }
 
 .popover, .popover-title {
@@ -1714,7 +1714,7 @@ a.filter-term {
     content: "X";
     color: var(--primary-background);
     padding-left: 5px;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .noteForm {
@@ -2143,7 +2143,7 @@ body .widgettitle .editHeadline:hover {
 
 .commentContent.statusUpdate h3 {
     margin-bottom:8px;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .commentContent .text {
@@ -2157,7 +2157,7 @@ body .widgettitle .editHeadline:hover {
 }
 
 .commentContent .name {
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
     display:block;
     margin-bottom:5px;
 }
@@ -2456,7 +2456,7 @@ a.titleInsertLink:hover {
 }
 
 h3.todaysDate {
-    font-weight:normal;
+    font-weight:var(--font-weight-body);
 }
 
 .ui-resizable-handle.ui-resizable-w {
@@ -2700,7 +2700,7 @@ h3.todaysDate {
     border-radius: var(--box-radius);
     text-decoration: none;
     color: var(--primary-color);
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
     white-space: nowrap;
 }
 
@@ -2713,7 +2713,7 @@ h3.todaysDate {
 
 a.userMention {
     color: var(--primary-color);
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
 }
 
 a.userMention:hover,
@@ -2725,7 +2725,7 @@ a.userMention:focus {
 a.confetti {
     cursor:pointer;
     color:var(--primary-color);
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
 }
 
 /* Mirror transform utility - used for mirrored emoji in notifications */
@@ -2835,14 +2835,14 @@ h4 .helperTooltip,
 .bigNumberBoxNumber {
     font-size: 36px;
     color: var(--main-titles-color);
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     text-shadow: var(--min-shadow);
     line-height: 1;
 }
 
 .bigNumberBoxText {
     color: var(--main-titles-color);
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
 }
 
 .maincontent .infoIcon {
@@ -2913,7 +2913,7 @@ h4 .helperTooltip,
 
 body div .fancyLink {
     background-color: var(--accent1);
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
 
     /* Create the gradient. */
     background-image: var(--element-gradient);
@@ -2937,7 +2937,7 @@ body a.btn.btn-fancy {
 
 body a.btn-link.btn-fancy {
     background-color: var(--accent1);
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
 
     /* Create the gradient. */
     background-image: var(--element-gradient);

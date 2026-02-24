@@ -255,7 +255,7 @@
 }
 
 .milestone-box h4 {
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     color: var(--primary-font-color);
     margin-top: 0;
 }

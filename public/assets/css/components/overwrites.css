@@ -196,7 +196,7 @@ div.tagsinput span.tag
 .companyProject,
 .companyProject a{
     color:var(--secondary-font-color);
-    font-weight:normal
+    font-weight:var(--font-weight-body)
 }
 
 .filterBar {
@@ -217,7 +217,7 @@ div.tagsinput span.tag
 }
 
 .filterBar label {
-    font-weight:normal;
+    font-weight:var(--font-weight-body);
     display:block;
     margin-bottom:5px;
     font-size:var(--font-size-s);

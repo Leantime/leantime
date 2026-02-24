@@ -3,7 +3,7 @@
 }
 
 .table th {
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     text-transform: uppercase;
     font-size: var(--font-size-s);
     border-top: 0;
@@ -125,7 +125,7 @@
 .dataTables_paginate .paginate_active,
 .paginate_button.current {
     background-color: var(--col-title-bg);
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
 }
 
 .dataTables_paginate .paginate_button:hover {
@@ -211,12 +211,12 @@
 .maincontentinner table thead td,
 .maincontentinner .table.table-bordered th,
 .maincontentinner .table tr.dtrg-group td{
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     text-transform:none;
     font-size: var(--base-font-size);
     border-top: 0;
 
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     text-rendering: optimizelegibility;
     padding: 12px 10px;
 
@@ -235,7 +235,7 @@
 .maincontentinner table th {
     background:var(--col-title-bg);
     padding: 12px 10px;
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
 }
 
 .table-bordered colgroup+thead tr:first-child th:first-child {
@@ -261,7 +261,7 @@
     color: var(--kanban-col-title-color);
     padding: 5px 10px;
     padding-top: 24px;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .maincontentinner .table {
@@ -481,7 +481,7 @@ table td{
 
 .table td.dropdown-cell {
     padding:0px;
-    font-weight: 400;
+    font-weight: var(--font-weight-body);
     height: inherit;
 }
 
@@ -580,7 +580,7 @@ table td{
 
 .maincontentinner .table tfoot td,
 .maincontentinner table tfoot td {
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     border-top: 1px solid var(--neutral);
     /* text-align: center; */
     /* min-height: 41px; */
@@ -588,7 +588,7 @@ table td{
 }
 
 .ticketTable .ticketModal {
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
 }
 
 .dt-button-down-arrow {

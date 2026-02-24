@@ -3,7 +3,7 @@
 }
 
 .leftmenu .nav-header {
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     font-size: var(--font-size-l);
     padding: 15px 20px;
     text-shadow: none;
@@ -163,7 +163,7 @@ a.barmenu:hover {
 /*
 .bigProjectSelector {
     display:block;
-    font-weight:normal;
+    font-weight: var(--font-weight-body);
     font-size: var(--font-size-l);
     padding:0 15px;
     line-height:59px;
@@ -236,7 +236,7 @@ a.barmenu:hover {
     display: block;
     padding: 3px 15px;
     font-size: var(--base-font-size);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     line-height: 20px;
     color: var(--secondary-font-color);
     text-transform: uppercase;
@@ -463,7 +463,7 @@ a.barmenu:hover {
 /*.header .nav-header {*/
 /*    text-shadow: none;*/
 /*    text-transform: none;*/
-/*    font-weight: normal;*/
+/*    font-weight: var(--font-weight-body);*/
 /*    color:var(--primary-font-color);*/
 /*}*/
 
@@ -575,7 +575,7 @@ a.barmenu:hover {
 
 .leftmenu .nav-tabs.nav-stacked.collapsedMenu .bigProjectSelector {
     display: block;
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     font-size: var(--font-size-l);
     padding:0;
     line-height: 46px;
@@ -643,7 +643,7 @@ a.barmenu:hover {
     background-image:none;
     background:var(--main-menu-link-active-bg);
     color:var(--main-menu-link-active-color);
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 }
 
 
@@ -975,7 +975,7 @@ a.barmenu:hover {
 
 .notificationDropdown .dropdown-menu li.new {
     border-left:5px solid var(--primary-color);
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .notificationDropdown .dropdown-menu li {
@@ -1016,7 +1016,7 @@ a.barmenu:hover {
 }
 
 .notificationDropdown .notifcationTabs.active{
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 
 }
 
@@ -1258,7 +1258,7 @@ a.barmenu:hover {
 }
 
 .maincontentinner.tabs ul li a {
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
     padding:5px 16px; /*Other buttons have 1px borders so this makes up for it */
     border-radius: var(--box-radius-small);
     line-height:21px;
@@ -1330,7 +1330,7 @@ a.barmenu:hover {
 
 .navbar .brand {
     font-size: var(--font-size-l);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .navbar .nav > li {
@@ -1348,7 +1348,7 @@ a.barmenu:hover {
 .navbar .nav > li > a {
     padding: 11px 15px;
     font-size: var(--base-font-size);
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     text-transform: uppercase;
 }
 
@@ -1440,7 +1440,7 @@ a.barmenu:hover {
 
 .onboarding-checklist h3 {
     font-size: var(--font-size-l);
-    font-weight:normal;
+    font-weight: var(--font-weight-body);
     margin-bottom:10px;
 }
 

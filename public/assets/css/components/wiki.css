@@ -87,7 +87,7 @@
 
 .wiki-sidebar-title {
     font-size: var(--font-size-s);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--secondary-font-color);
@@ -334,7 +334,7 @@
 /* Headings */
 .wiki-document h1 {
     font-size: 1.875em;
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
     margin: 1.5em 0 0.5em;
     letter-spacing: -0.02em;
     line-height: 1.3;
@@ -342,7 +342,7 @@
 
 .wiki-document h2 {
     font-size: 1.5em;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     margin: 1.4em 0 0.5em;
     letter-spacing: -0.01em;
     line-height: 1.35;
@@ -350,14 +350,14 @@
 
 .wiki-document h3 {
     font-size: 1.25em;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     margin: 1.3em 0 0.4em;
     line-height: 1.4;
 }
 
 .wiki-document h4 {
     font-size: 1.1em;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     margin: 1.2em 0 0.4em;
     line-height: 1.45;
 }
@@ -495,7 +495,7 @@
 
 .wiki-document th {
     background: var(--layered-background);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .wiki-document tr:hover td {
@@ -672,7 +672,7 @@
 
 .wiki-properties-section .control-label {
     font-size: var(--base-font-size);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     opacity: 0.8;
 }
 
@@ -694,7 +694,7 @@
     align-items: center;
     justify-content: center;
     font-size: var(--font-size-xs);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 
@@ -718,7 +718,7 @@
     padding: 5px 10px;
     border-radius: 6px;
     font-size: var(--base-font-size);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     border: none;
     background: transparent;
     color: var(--primary-font-color);
@@ -804,7 +804,7 @@
 .wiki-milestone-link {
     color: var(--accent1);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
 }
 
 .wiki-milestone-link:hover {
@@ -824,7 +824,7 @@
     padding: 4px 12px;
     border-radius: var(--box-radius-large);
     font-size: var(--base-font-size);
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     border: none;
     cursor: pointer;
     box-shadow: var(--min-shadow);
@@ -907,7 +907,7 @@
     padding: 10px 14px;
     border-radius: 12px;
     font-size: var(--base-font-size);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     text-decoration: none;
     color: var(--primary-font-color);
     background: transparent;
@@ -1004,7 +1004,7 @@
 }
 
 .wiki-activity-text strong {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .wiki-activity-icon.status {
@@ -1217,7 +1217,7 @@
 
 .wiki-empty-state-title {
     font-size: var(--font-size-xl);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color);
     margin-bottom: 8px;
 }

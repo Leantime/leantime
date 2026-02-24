@@ -119,7 +119,7 @@
 .tiptap-editor .ProseMirror h2,
 .tiptap-editor .ProseMirror h3,
 .tiptap-editor .ProseMirror h4 {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     line-height: 1.3;
     margin-top: 1.5em;
     margin-bottom: 0.5em;
@@ -158,7 +158,7 @@
 
 /* Bold, Italic, etc. */
 .tiptap-editor .ProseMirror strong {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .tiptap-editor .ProseMirror em {
@@ -446,7 +446,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-editor .ProseMirror th {
     background: var(--table-header-background, #f9fafb);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .tiptap-editor .ProseMirror .selectedCell::after {
@@ -867,7 +867,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
     color: var(--primary-font-color, #1e293b);
     font-size: var(--base-font-size, 14px);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     background: var(--secondary-action-bg, #f1f5f9);
     border: 1px solid var(--secondary-action-bg, #f1f5f9);
 }
@@ -945,7 +945,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     border: 1px solid var(--main-action-bg);
     border-radius: var(--element-radius, 6px);
     font-size: var(--base-font-size, 14px);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     line-height: 21px;
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
@@ -1012,7 +1012,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     color: #fff;
     border-radius: 8px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     pointer-events: none;
     z-index: 10;
 }
@@ -1029,7 +1029,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: rgba(var(--primary-color-rgb, 90, 103, 216), 0.12);
     color: var(--primary-color, #5a67d8);
     border-radius: 4px;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     font-size: 0.95em;
     text-decoration: none;
     cursor: pointer;
@@ -1116,7 +1116,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     color: #fff;
     border-radius: 50%;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     text-transform: uppercase;
 }
 
@@ -1128,7 +1128,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-mention-popup__name {
     font-size: var(--base-font-size, 14px);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     color: var(--primary-font-color, #1e293b);
     white-space: nowrap;
     overflow: hidden;
@@ -1237,7 +1237,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 .tiptap-ai-dialog__header h3 {
     margin: 0;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color, #1e293b);
     display: flex;
     align-items: center;
@@ -1284,7 +1284,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     display: block;
     margin-bottom: 8px;
     font-size: var(--base-font-size, 14px);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     color: var(--primary-font-color, #1e293b);
 }
 
@@ -1338,7 +1338,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     padding: var(--input-padding, 10px 20px);
     border-radius: var(--element-radius, 6px);
     font-size: var(--base-font-size, 14px);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
@@ -1358,7 +1358,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: var(--main-action-bg);
     color: var(--main-action-color);
     border: 1px solid var(--main-action-bg);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .tiptap-ai-dialog__btn--primary:hover {
@@ -1466,7 +1466,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 .tiptap-slash-popup__header {
     padding: 8px 12px 6px;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: var(--secondary-font-color, #64748b);
@@ -1526,7 +1526,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-slash-popup__label {
     font-size: var(--base-font-size, 14px);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     color: var(--primary-font-color, #1e293b);
     white-space: nowrap;
     overflow: hidden;
@@ -1638,7 +1638,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 .tiptap-template-picker__header h3 {
     margin: 0;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color, #1e293b);
 }
 
@@ -1705,7 +1705,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 .tiptap-template-picker__category-title {
     padding: 8px 12px;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: var(--secondary-font-color, #64748b);
@@ -1724,7 +1724,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-template-picker__item-title {
     font-size: var(--base-font-size, 14px);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     color: var(--primary-font-color, #1e293b);
 }
 
@@ -1835,7 +1835,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: rgba(0, 0, 0, 0.6);
     color: white;
     font-size: 11px;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     border-radius: 4px;
     text-transform: capitalize;
     z-index: 1;
@@ -1891,7 +1891,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 .tiptap-embed-dialog__header h3 {
     margin: 0;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color, #1e293b);
 }
 
@@ -1927,7 +1927,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     display: block;
     margin-bottom: 8px;
     font-size: var(--base-font-size, 14px);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     color: var(--primary-font-color, #1e293b);
 }
 
@@ -1966,13 +1966,13 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-embed-dialog__preview--success {
     background: rgba(34, 197, 94, 0.1);
-    color: #16a34a;
+    color: var(--green);
     border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
 .tiptap-embed-dialog__preview--error {
     background: rgba(239, 68, 68, 0.1);
-    color: #dc2626;
+    color: var(--red);
     border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
@@ -1984,7 +1984,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-embed-dialog__services-label {
     font-size: 12px;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     color: var(--secondary-font-color, #64748b);
     margin-bottom: 12px;
     text-transform: uppercase;
@@ -2026,7 +2026,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     padding: var(--input-padding, 10px 20px);
     border-radius: var(--element-radius, 6px);
     font-size: var(--base-font-size, 14px);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
@@ -2045,7 +2045,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: var(--main-action-bg);
     color: var(--main-action-color);
     border: 1px solid var(--main-action-bg);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .tiptap-embed-dialog__btn--primary:hover {
@@ -2198,7 +2198,7 @@ div[id^="comments-"] > div > .clearall {
 .reaction-count {
     font-size: 12px;
     color: var(--secondary-font-color, #64748b);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
 }
 
 .reaction-btn.active .reaction-count {
@@ -2524,7 +2524,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-mermaid-dialog__header h3 {
     margin: 0;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .tiptap-mermaid-dialog__close {
@@ -2557,7 +2557,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-mermaid-dialog__templates label {
     display: block;
     margin-bottom: 6px;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     font-size: 13px;
 }
 
@@ -2589,7 +2589,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-mermaid-dialog__preview label {
     display: block;
     margin-bottom: 8px;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     font-size: 13px;
 }
 
@@ -2780,7 +2780,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-math-dialog__header h3 {
     margin: 0;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .tiptap-math-dialog__close {
@@ -2840,7 +2840,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-math-dialog__preview label {
     display: block;
     margin-bottom: 8px;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     font-size: 13px;
 }
 
@@ -2915,7 +2915,7 @@ div[id^="comments-"] > div > .clearall {
     background: var(--secondary-action-bg, #f9fafb);
     cursor: pointer;
     list-style: none;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     user-select: none;
 }
 
@@ -3249,7 +3249,7 @@ div[id^="comments-"] > div > .clearall {
 }
 
 .tiptap-toc__title {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     font-size: 14px;
     color: var(--main-text-color, #333);
 }
@@ -3338,7 +3338,7 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-toc__number {
     color: var(--secondary-text-color, #6b7280);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
 }
 
 .tiptap-toc__empty {

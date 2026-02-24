@@ -193,7 +193,7 @@ body {
 .dropdown-menu > li > a {
     display: block;
     clear: both;
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     white-space: nowrap;
 }
 
@@ -242,7 +242,7 @@ body {
 }
 
 /* Control labels */
-.control-label { font-weight: bold }
+.control-label { font-weight: var(--font-weight-bold) }
 
 /* Input group */
 .input-group {
@@ -257,7 +257,7 @@ body {
 .close {
     float: right;
     font-size: var(--font-size-xxl);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     line-height: 1;
     opacity: 0.4;
     cursor: pointer;
@@ -274,7 +274,7 @@ body {
 .label {
     display: inline;
     font-size: 75%;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     line-height: 1;
     text-align: center;
     white-space: nowrap;
@@ -288,7 +288,7 @@ body {
     min-width: 10px;
     padding: 3px 7px;
     font-size: var(--font-size-s);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     line-height: 1;
     text-align: center;
     white-space: nowrap;
@@ -319,7 +319,7 @@ body {
     display: block;
     padding: 3px 15px;
     font-size: var(--font-size-s);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     line-height: 1.5;
     text-transform: uppercase;
     color: var(--secondary-font-color, #999);

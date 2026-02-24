@@ -230,7 +230,7 @@
 
 .progressWrapper .step.current .title{
     color:var(--accent1);
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
     opacity:1;
 }
 
@@ -623,7 +623,7 @@
 }
 
 .timerContainer .stopped .particle-3 {
-    background-color: #f61067;
+    background-color: var(--accent4);
     animation: particleAnimation3 0.8s ease-out;
 }
 
@@ -638,7 +638,7 @@
 }
 
 .timerContainer .stopped .particle-6 {
-    background-color: #f61067;
+    background-color: var(--accent4);
     animation: particleAnimation6 0.8s ease-out;
 }
 

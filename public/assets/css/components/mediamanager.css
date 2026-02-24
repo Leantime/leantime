@@ -124,7 +124,7 @@
     border: 1px solid var(--accent1);
     background: var(--accent1);
     color: var(--primary-background);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     font-size: var(--base-font-size);
     -moz-box-shadow: inset 0 1px 0 rgba(250, 250, 250, 0.3);
     -webkit-box-shadow: inset 0 1px 0 rgba(250, 250, 250, 0.3);

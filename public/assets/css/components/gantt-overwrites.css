@@ -28,7 +28,7 @@ body .gantt .upper-text {
 
 body .gantt .lower-text,
 body .gantt .upper-text {
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
 }
 
 body .gantt #details .details-container p {

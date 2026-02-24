@@ -73,7 +73,7 @@
 }
 
 .ticketBox h4 a {
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .column .contentInner .ui-state-highlight {
@@ -533,7 +533,7 @@ body .maincontent .priority-text-5 a:link {
     padding: 10px 15px;
     font-size: var(--base-font-size);
     line-height:17px;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     border-bottom-width:3px;
     border-top-left-radius: var(--box-radius);
     border-top-right-radius: var(--box-radius);
@@ -703,14 +703,14 @@ body .maincontent .priority-text-5 a:link {
 /* Effort t-shirt indicator */
 .kanban-effort-indicator {
     font-size: var(--font-size-s);
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
     color: var(--primary-font-color);
 }
 
 /* Label - truncates with ellipsis */
 .swimlane-header-label {
     font-size: var(--font-size-s);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color);
     flex: 1;
     overflow: hidden;
@@ -729,7 +729,7 @@ body .maincontent .priority-text-5 a:link {
     padding: 3px 10px;
     border-radius: var(--input-radius);
     font-size: var(--font-size-s);
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
     min-width: 26px;
     flex-shrink: 0;
 }
@@ -819,7 +819,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-row[data-expanded="false"] .ticketBox h4 {
     margin: 0;
     font-size: var(--font-size-s);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -866,7 +866,7 @@ body .maincontent .priority-text-5 a:link {
 
 /* Tooltip content */
 .kanban-sidebar-tooltip .tooltip-label {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     font-size: var(--base-font-size);
     margin-bottom: 6px;
     word-wrap: break-word;
@@ -940,7 +940,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-content.collapsed .ticketBox h4 {
     margin: 0;
     font-size: var(--font-size-s);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -949,7 +949,7 @@ body .maincontent .priority-text-5 a:link {
 }
 
 .kanban-swimlane-content.collapsed .ticketBox h4 a {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
 }
 
 /* Compact ticket ID and type */
@@ -1096,7 +1096,7 @@ body .maincontent .priority-text-5 a:link {
 }
 
 .compact-ticket-id {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color);
     opacity: 0.7;
     flex-shrink: 0;
@@ -1142,7 +1142,7 @@ body .maincontent .priority-text-5 a:link {
     font-size: var(--font-size-xs);
     color: var(--primary-font-color);
     opacity: 0.7;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     height: 32px;
 }
 
@@ -1298,7 +1298,7 @@ body .maincontent .priority-text-5 a:link {
 
 .sortableTicketList .ticketBox.active {
     box-shadow: var(--regular-shadow);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .leader-line {
@@ -1362,7 +1362,7 @@ body .maincontent .priority-text-5 a:link {
 
 .micro-progress-bar .segment-count {
     font-size: var(--font-size-xs);
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
     color: white;
     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     opacity: 0;

@@ -26,7 +26,7 @@ textarea:focus-visible,
 form label{
     padding-top:5px;
     margin-bottom: 2px;
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
     opacity:0.8;
     padding-bottom:5px;
 }
@@ -249,7 +249,7 @@ a.btn-default,
 {
     font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
     padding: var(--input-padding);
     line-height:21px;
     background: var(--secondary-action-bg);
@@ -320,7 +320,7 @@ input[type='submit'],
     border-radius:var(--element-radius);
     outline:0;
     font-size: var(--base-font-size);
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
     padding: var(--input-padding);
     line-height:21px;
     box-shadow:none;
@@ -523,7 +523,7 @@ a:link.btn{
     background: var(--red);
     border-color: var(--dark-red);
     color: #fff;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .btn.btn-danger:hover,
@@ -1391,7 +1391,7 @@ body .croppie-container {
     padding: 15px 0 0 15px;
     vertical-align: top;
     text-align: left;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .stdform2 label.error {
@@ -1403,7 +1403,7 @@ body .croppie-container {
     font-size: var(--base-font-size);
     color: var(--secondary-font-color);
     display: block;
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     line-height: 16px;
 }
 
@@ -1491,7 +1491,7 @@ body .croppie-container {
 }
 
 .selectable .selectableContent label {
-    font-weight:normal;
+    font-weight: var(--font-weight-body);
     padding-bottom:0px;
 
 }
@@ -1530,12 +1530,12 @@ body .croppie-container {
 
 .selectable.active .selectableContent label,
 .selectable.active .selectableContent{
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .selectable.active .selectable-label {
     color:var(--accent1);
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .selectable:hover .selectableContent{
@@ -1610,7 +1610,7 @@ body a.textInputSwitch {
     padding-left:10px;
     border-radius: var(--element-radius);
     color:var(--primary-font-color);
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .textInputSwitch:hover {
@@ -1835,7 +1835,7 @@ input[type=number].hide-controls {
 }
 
 .weekday-label input[type="checkbox"]:checked + .weekday-text {
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     color: var(--primary-color);
 }
 
