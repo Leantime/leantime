@@ -70,7 +70,7 @@
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border-radius: var(--box-radius, 0.5rem);
-    max-height: calc(100vh - 5em);
+    max-height: calc(100dvh - 5em);
     overflow: visible;
     display: flex;
     flex-direction: column;

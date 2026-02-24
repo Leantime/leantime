@@ -325,14 +325,14 @@ body {
 
 .mainwrapper {
     background-image: var(--header-gradient);
-    background-size: 100vw 100vh;
+    background-size: 100vw 100dvh;
     background-attachment: fixed;
 }
 
 .rightpanel {
     background-size: contain;
     background-position: bottom;
-    min-height: 100vh;
+    min-height: 100dvh;
     overflow: hidden;
 }
 
@@ -383,7 +383,7 @@ body {
 
 
 .primaryContent {
-    min-height:calc(100vh - 50px);
+    min-height:calc(100dvh - 50px);
     padding-top:10px;
     padding-bottom:10px;
     position: relative;
@@ -403,7 +403,7 @@ body {
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     position:sticky;
-    height:calc(100vh - 70px);
+    height:calc(100dvh - 70px);
     z-index: 9;
     display: flex;
     flex-direction: column;

@@ -679,7 +679,7 @@ a.barmenu:hover {
 
 .projectselector .scrollingTab {
     padding:0;
-    height:calc(100vh - 310px);
+    height:calc(100dvh - 310px);
     overflow:auto;
 }
 
@@ -940,7 +940,7 @@ a.barmenu:hover {
 }
 
 #notificationsDropdown .scroll-wrapper {
-    height:calc(100vh - 100px);
+    height:calc(100dvh - 100px);
 }
 
 .notificationDropdown .dropdown-menu {

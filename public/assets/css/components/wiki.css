@@ -12,7 +12,7 @@
 .wiki-layout {
     display: flex;
     gap: 0;
-    height: calc(100vh - 120px);
+    height: calc(100dvh - 120px);
     position: relative;
 }
 
@@ -27,7 +27,7 @@
     background: var(--layered-background);
     position: sticky;
     top: 82px;
-    height: calc(100vh - 94px);
+    height: calc(100dvh - 94px);
     overflow-y: auto;
     overflow-x: hidden;
     transition: width 0.25s ease, padding 0.25s ease;

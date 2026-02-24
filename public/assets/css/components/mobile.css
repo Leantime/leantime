@@ -208,14 +208,14 @@ min-width: 1200px
     body.loginpage {
         overflow-x: hidden;
         max-width: 100vw;
-        min-height: 100vh;
+        min-height: 100dvh;
     }
 
     .loginpage .row {
         margin: 0;
         width: 100vw;
         max-width: 100vw;
-        min-height: 100vh;
+        min-height: 100dvh;
         height: auto;
         box-sizing: border-box;
         overflow-x: hidden;

@@ -2502,7 +2502,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-mermaid-dialog {
     width: 90%;
     max-width: 700px;
-    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
     margin: auto;
     background: var(--main-background, #fff);
     border-radius: 12px;
@@ -2758,7 +2758,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-math-dialog {
     width: 90%;
     max-width: 550px;
-    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
     margin: auto;
     background: var(--main-background, #fff);
     border-radius: 12px;
@@ -3132,7 +3132,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-emoji-dialog {
     width: 90%;
     max-width: 400px;
-    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
     margin: auto;
     background: var(--main-background, #fff);
     border-radius: 12px;
