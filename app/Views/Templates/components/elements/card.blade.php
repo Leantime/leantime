@@ -10,7 +10,7 @@
     $cardClasses = 'tw:card tw:bg-base-100 tw:shadow-sm'
         . ($compact ? ' tw:card-sm' : '')
         . ($bordered ? ' tw:border tw:border-base-300' : '')
-        . ($glass ? ' tw:glass' : '');
+        . ($glass ? ' lt-glass' : '');
 @endphp
 
 <div {{ $attributes->merge(['class' => $cardClasses]) }}>

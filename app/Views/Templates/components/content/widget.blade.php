@@ -4,7 +4,7 @@
     'collapsible' => false,
 ])
 
-<div {{ $attributes->merge(['class' => 'widget']) }}>
+<div {{ $attributes->merge(['class' => 'widget lt-glass-subtle']) }}>
     @if($title)
         <h4 class="widgettitle">
             @if($icon)<i class="{{ $icon }}"></i> @endif

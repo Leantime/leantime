@@ -1525,7 +1525,10 @@ body .croppie-container {
 }
 
 .selectable.active .selectableContent{
-    background: var(--col-hover-bg);
+    background: var(--glass-bg-subtle);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border-color: var(--glass-border);
 }
 
 .selectable.active .selectableContent label,
