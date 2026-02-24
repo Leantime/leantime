@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <x-global::undrawSvg image="undraw_adventure_map_hnin.svg" maxWidth="60%" maxHeight="300px"></x-global::undrawSvg>
+                <x-globals::undrawSvg image="undraw_adventure_map_hnin.svg" maxWidth="60%" maxHeight="300px"></x-globals::undrawSvg>
             </div>
         </div>
 
@@ -32,7 +32,7 @@
             intentions<br />to get the work done.</p> <br />
 
         <br />
-        <x-global::button submit type="primary" name="createAccount">Complete Sign up</x-global::button>
+        <x-globals::forms.button submit type="primary" name="createAccount">Complete Sign up</x-globals::forms.button>
 
 
     </form>

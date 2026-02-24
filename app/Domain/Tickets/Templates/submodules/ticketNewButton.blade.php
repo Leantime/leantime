@@ -3,7 +3,7 @@
 @endphp
 
 @if($login::userIsAtLeast($roles::$editor) && !empty($newField))
-    <x-global::elements.button-dropdown :label="__('links.new_with_icon')" type="primary">
+    <x-globals::elements.button-dropdown :label="__('links.new_with_icon')" type="primary">
         @foreach($newField as $option)
             <li>
                 <a href="{{ $option['url'] ?? '' }}"
@@ -12,5 +12,5 @@
                 </a>
             </li>
         @endforeach
-    </x-global::elements.button-dropdown>
+    </x-globals::elements.button-dropdown>
 @endif

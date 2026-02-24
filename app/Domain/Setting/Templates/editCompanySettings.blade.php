@@ -39,12 +39,12 @@
                                             <label>{{ __('label.language') }}</label>
                                         </div>
                                         <div class="col-md-8">
-                                            <x-global::forms.select name="language" id="language">
+                                            <x-globals::forms.select name="language" id="language">
                                                 @foreach($tpl->get('languageList') as $languagKey => $languageValue)
                                                     <option value="{{ $languagKey }}"
                                                         {{ $companySettings['language'] == $languagKey ? "selected='selected'" : '' }}>{{ $languageValue }}</option>
                                                 @endforeach
-                                            </x-global::forms.select>
+                                            </x-globals::forms.select>
                                         </div>
                                     </div>
 
@@ -53,7 +53,7 @@
                                             <label>{{ __('label.company_name') }}</label>
                                         </div>
                                         <div class="col-md-8">
-                                            <x-global::forms.input name="name" id="companyName" value="{{ $companySettings['name'] }}" class="pull-left" />
+                                            <x-globals::forms.input name="name" id="companyName" value="{{ $companySettings['name'] }}" class="pull-left" />
                                             <small>{{ __('text.company_name_helper') }}</small>
                                         </div>
                                     </div>
@@ -67,7 +67,7 @@
                                         </div>
                                         <div class="col-md-8">
                                             <span class='field'>
-                                                <x-global::forms.select name="messageFrequency" id="messageFrequency" style="width: 220px">
+                                                <x-globals::forms.select name="messageFrequency" id="messageFrequency" style="width: 220px">
                                                     <option value="">--{{ __('label.choose_option') }}--</option>
                                                     <option value="300" {{ $companySettings['messageFrequency'] == '300' ? ' selected ' : '' }}>{{ __('label.5min') }}</option>
                                                     <option value="900" {{ $companySettings['messageFrequency'] == '900' ? ' selected ' : '' }}>{{ __('label.15min') }}</option>
@@ -79,11 +79,11 @@
                                                     <option value="86400" {{ $companySettings['messageFrequency'] == '86400' ? ' selected ' : '' }}>{{ __('label.24h') }}</option>
                                                     <option value="172800" {{ $companySettings['messageFrequency'] == '172800' ? ' selected ' : '' }}>{{ __('label.48h') }}</option>
                                                     <option value="604800" {{ $companySettings['messageFrequency'] == '604800' ? ' selected ' : '' }}>{{ __('label.1w') }}</option>
-                                                </x-global::forms.select> <br/>
+                                                </x-globals::forms.select> <br/>
                                             </span>
                                         </div>
                                     </div>
-                                    <x-global::button submit type="primary" id="saveBtn">{{ __('buttons.save') }}</x-global::button>
+                                    <x-globals::forms.button submit type="primary" id="saveBtn">{{ __('buttons.save') }}</x-globals::forms.button>
                                 </form>
                             </div>
                             <div class="col-md-4">
@@ -116,13 +116,13 @@
                                                         <span class="btn btn-default btn-file">
                                                             <span class="fileupload-new">{{ __('buttons.select_file') }}</span>
                                                             <span class='fileupload-exists'>{{ __('buttons.change') }}</span>
-                                                            <x-global::forms.file :bare="true" name="file" onchange="leantime.settingController.readURL(this)" />
+                                                            <x-globals::forms.file :bare="true" name="file" onchange="leantime.settingController.readURL(this)" />
                                                         </span>
 
-                                                        <x-global::button link="#" type="secondary" class="fileupload-exists" style="margin-left:5px;" data-dismiss="fileupload" onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</x-global::button>
+                                                        <x-globals::forms.button link="#" type="secondary" class="fileupload-exists" style="margin-left:5px;" data-dismiss="fileupload" onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</x-globals::forms.button>
                                                     </div>
                                                     <p class='stdformbutton'>
-                                                        <x-global::button tag="button" type="primary" id="save-logo" class="fileupload-exists" onclick="leantime.settingController.saveCroppie()">{{ __('buttons.save') }}</x-global::button>
+                                                        <x-globals::forms.button tag="button" type="primary" id="save-logo" class="fileupload-exists" onclick="leantime.settingController.saveCroppie()">{{ __('buttons.save') }}</x-globals::forms.button>
 
                                                         <input id="picSubmit" type="submit" name="savePic" class="hidden" value="{{ __('buttons.upload') }}" />
                                                     </p>
@@ -133,22 +133,22 @@
                                 </form>
                                 <hr />
                                 {{ __('text.logo_reset') }}<br /><br />
-                                <x-global::button link="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" type="secondary">{{ __('buttons.reset_logo') }}</x-global::button>
+                                <x-globals::forms.button link="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" type="secondary">{{ __('buttons.reset_logo') }}</x-globals::forms.button>
                             </div>
                         </div>
                     </div>
 
                     <div id="apiKeys">
-                        <x-global::button link="#/api/newApiKey" type="primary">Generate API Key</x-global::button>
+                        <x-globals::forms.button link="#/api/newApiKey" type="primary">Generate API Key</x-globals::forms.button>
                         <br /> <br />
                         <ul class="sortableTicketList">
                             @foreach($tpl->get('apiKeys') as $apiKey)
                                 <li>
                                     <div class="ticketBox">
-                                        <x-global::elements.dropdown>
+                                        <x-globals::elements.dropdown>
                                             <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><i class="fa fa-edit"></i> Edit Key</a></li>
                                             <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>
-                                        </x-global::elements.dropdown>
+                                        </x-globals::elements.dropdown>
                                         <a href="#/api/apiKey/{{ $apiKey['id'] }}"><strong>{{ e($apiKey['firstname']) }}</strong></a><br />
                                         lt_{{ $apiKey['username'] }}***
                                         | {{ __('labels.created_on') }}: {{ format($apiKey['createdOn'])->date() }} | {{ __('labels.last_used') }}: {{ format($apiKey['lastlogin'])->date() }}

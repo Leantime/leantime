@@ -61,7 +61,7 @@
                         value="{{ $values['lastname'] }}" /><br />
 
             <label for="role">{{ __('label.role') }}</label>
-            <x-global::forms.select name="role" id="role">
+            <x-globals::forms.select name="role" id="role">
                 @foreach($tpl->get('roles') as $key => $role)
                     @if($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30)
                         @continue
@@ -71,10 +71,10 @@
                         {{ __('label.roles.' . $role) }}
                     </option>
                 @endforeach
-            </x-global::forms.select> <br />
+            </x-globals::forms.select> <br />
 
             <label for="client">{{ __('label.client') }}</label>
-            <x-global::forms.select name="client" id="client">
+            <x-globals::forms.select name="client" id="client">
                 @if($login::userIsAtLeast('admin'))
                     <option value="0" selected="selected">{{ __('label.no_clients') }}</option>
                 @endif
@@ -85,7 +85,7 @@
                     <option value="{{ $client['id'] }}"
                         {{ $client['id'] == $values['clientId'] || $tpl->get('preSelectedClient') == $client['id'] ? 'selected="selected"' : '' }}>{{ e($client['name']) }}</option>
                 @endforeach
-            </x-global::forms.select><br/>
+            </x-globals::forms.select><br/>
             <br/>
 
                 <h4 class="widgettitle title-light">{{ __('label.contact_information') }}</h4>
@@ -110,7 +110,7 @@
 
                     <p class="stdformbutton">
                         <input type="hidden" name="save" value="1" />
-                        <x-global::button submit type="primary" name="save" id="save">{{ __('buttons.invite_user') }}</x-global::button>
+                        <x-globals::forms.button submit type="primary" name="save" id="save">{{ __('buttons.invite_user') }}</x-globals::forms.button>
                     </p>
 
         </div>
@@ -143,7 +143,7 @@
                             }
                         @endphp
                         <div class="item" style="padding:10px 0px;">
-                            <x-global::forms.checkbox name="projects[]" id="project_{{ $row['id'] }}" value="{{ $row['id'] }}"
+                            <x-globals::forms.checkbox name="projects[]" id="project_{{ $row['id'] }}" value="{{ $row['id'] }}"
                                 :checked="is_array($projects) && in_array($row['id'], $projects)" />
                             <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
                                 <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}' />

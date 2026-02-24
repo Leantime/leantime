@@ -124,7 +124,7 @@
                                 }
                             @endphp
                             <td data-order="{{ $name }}">
-                                <x-global::dropdownPill
+                                <x-globals::dropdownPill
                                     type="status"
                                     :parentId="$row['id']"
                                     :selectedClass="$class"
@@ -150,7 +150,7 @@
                                 }
                             @endphp
                             <td data-order="{{ $milestoneHeadline }}">
-                                <x-global::dropdownPill
+                                <x-globals::dropdownPill
                                     type="milestone"
                                     :parentId="$row['id']"
                                     selectedClass="label-default"
@@ -163,7 +163,7 @@
                             </td>
 
                             <td data-order="{{ $row['storypoints'] ? ($efforts['' . $row['storypoints'] . ''] ?? '?') : __('label.story_points_unkown') }}">
-                                <x-global::dropdownPill
+                                <x-globals::dropdownPill
                                     type="effort"
                                     :parentId="$row['id']"
                                     selectedClass="label-default"
@@ -177,7 +177,7 @@
                                 $priorityLabel = ($row['priority'] != '' && $row['priority'] > 0) ? ($priorities[$row['priority']] ?? __('label.priority_unkown')) : __('label.priority_unkown');
                             @endphp
                             <td data-order="{{ $priorityLabel }}">
-                                <x-global::dropdownPill
+                                <x-globals::dropdownPill
                                     type="priority"
                                     :parentId="$row['id']"
                                     selectedClass="label-default priority-bg-{{ $row['priority'] }}"
@@ -230,7 +230,7 @@
                                 }
                             @endphp
                             <td data-order="{{ $sprintHeadline }}">
-                                <x-global::dropdownPill
+                                <x-globals::dropdownPill
                                     type="sprint"
                                     :parentId="$row['id']"
                                     selectedClass="label-default"

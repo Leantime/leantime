@@ -1,14 +1,14 @@
 <div class="center padding-lg">
 
     <div>
-        <x-global::undrawSvg
+        <x-globals::undrawSvg
             image="undraw_design_data_khdb.svg"
             maxWidth="300px"
             headlineSize="var(--font-size-xxxl)"
             maxheight="auto"
             height="250px"
             headline="{{ __("headlines.{$canvasName}.welcome_to_board") }}"
-        ></x-global::undrawSvg>
+        ></x-globals::undrawSvg>
         <br />
         {!! __("text.{$canvasName}.helper_content") !!}
         <br /><br />

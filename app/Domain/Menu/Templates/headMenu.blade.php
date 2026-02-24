@@ -26,7 +26,7 @@
 
         <div class='dropdown-menu' id='pluginNewsDropdown'>
             <div class="htmx-indicator htmx-news-indicator">
-                <x-global::loadingText type="text" count="3" includeHeadline="true" />
+                <x-globals::feedback.skeleton type="text" count="3" includeHeadline="true" />
             </div>
         </div>
     </li>
@@ -50,7 +50,7 @@
 
         <div class='dropdown-menu' id='newsDropdown'>
             <div class="htmx-indicator htmx-news-indicator">
-                <x-global::loadingText type="text" count="3" includeHeadline="true" />
+                <x-globals::feedback.skeleton type="text" count="3" includeHeadline="true" />
             </div>
         </div>
     </li>

@@ -1,6 +1,7 @@
 @props([
     'name',
     'label' => null,
+    'labelText' => null,
     'value',
     'checked' => false,
     'id' => null,
@@ -8,8 +9,9 @@
 ])
 
 @php
+    $resolvedLabel = $labelText ?? $label;
     $radioId = $id ?? null;
-    $hasLabel = $label || !$slot->isEmpty();
+    $hasLabel = $resolvedLabel || !$slot->isEmpty();
 @endphp
 
 @if($hasLabel)
@@ -24,8 +26,8 @@
         {{ $disabled ? 'disabled' : '' }}
         {{ $attributes->merge(['class' => 'tw:radio tw:radio-primary']) }}
     />
-    @if($label)
-        <span class="tw:label-text">{{ $label }}</span>
+    @if($resolvedLabel)
+        <span class="tw:label-text">{{ $resolvedLabel }}</span>
     @elseif(!$slot->isEmpty())
         <span class="tw:label-text">{{ $slot }}</span>
     @endif

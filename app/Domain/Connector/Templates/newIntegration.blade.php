@@ -24,7 +24,7 @@
         {{ $provider->name }}<br />
         {!! $provider->description !!}<br /><br />
 
-        <x-global::button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=connect" type="primary">Click Here to Connect</x-global::button>
+        <x-globals::forms.button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=connect" type="primary">Click Here to Connect</x-globals::forms.button>
 
     </div>
 </div>

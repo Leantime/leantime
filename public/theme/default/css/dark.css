@@ -23,18 +23,18 @@
 
     --main-titles-color: #fff;
 
-    --primary-background: #404040;
-    --secondary-background: #292929;
+    --primary-background: var(--color-surface-page);
+    --secondary-background: var(--color-surface-card);
 
     --layered-background: #222;
     --light-layered-background: rgba(0, 0, 0, 0.2);
 
-    --primary-font-color: #bbbbbb;
+    --primary-font-color: var(--color-text-default);
     --secondary-font-color: #eee;
 
     --neutral: rgba(0, 0, 0, 0.2);
     --solid-neutral:rgba(40, 40, 40, 1);
-    --neutral-background: rgba(40, 40, 40, 0.7);
+    --neutral-background: var(--color-surface-inset);
 
     --col-title-bg: var(--secondary-background);
     --col-content-bg: var(--secondary-background);
@@ -104,9 +104,9 @@
     --font-size-xxxl: 26px;
 
     --main-border-color: rgba(20,20,20, 0.9);
-    --min-shadow: 0px 1px 1px rgba(0 0 0 / 20%), 0px 0px 1px rgba(0 0 0 / 5%);
-    --regular-shadow: 0px 2px 6px rgba(0 0 0 / 20%), 0px 0px 0px rgba(0 0 0 / 20%);
-    --large-shadow: 0px 0px 8px 0 rgba(0 0 0 / 30%);
+    --min-shadow: var(--shadow-s);
+    --regular-shadow: var(--shadow-m);
+    --large-shadow: var(--shadow-l);
     --box-radius-large:20px;
     --box-radius: 10px;
     --box-radius-small:5px;
@@ -219,17 +219,17 @@
     --accent4-light: rgba(246,16,103,0.06);
 
     /* Color: Text (aliases → existing tokens) */
-    --color-text-primary: var(--primary-font-color);
+    --color-text-primary: var(--color-text-default); /* DEPRECATED: use --color-text-default */
     --color-text-secondary: var(--secondary-font-color);
     --color-text-muted: var(--interactive-icon-color);
     --color-text-disabled: var(--solid-neutral);
     --color-text-on-accent: var(--accent1-color);
 
     /* Color: Background (aliases → existing tokens) */
-    --color-bg-page: var(--primary-background);
-    --color-bg-card: var(--secondary-background);
+    --color-bg-page: var(--color-surface-page); /* DEPRECATED: use --color-surface-page */
+    --color-bg-card: var(--color-surface-card); /* DEPRECATED: use --color-surface-card */
     --color-bg-elevated: var(--layered-background);
-    --color-bg-muted: var(--neutral-background);
+    --color-bg-muted: var(--color-surface-inset); /* DEPRECATED: use --color-surface-inset */
     --color-bg-hover: var(--col-hover-bg);
     --color-bg-input: var(--input-background);
 
@@ -240,9 +240,9 @@
 
     /* Shadow */
     --shadow-xs: var(--input-shadow);
-    --shadow-sm: var(--min-shadow);
-    --shadow-md: var(--regular-shadow);
-    --shadow-lg: var(--large-shadow);
+    --shadow-sm: var(--shadow-s); /* DEPRECATED: use --shadow-s */
+    --shadow-md: var(--shadow-m); /* DEPRECATED: use --shadow-m */
+    --shadow-lg: var(--shadow-l); /* DEPRECATED: use --shadow-l */
     --shadow-xl: 0 14px 48px rgba(0,0,0,0.5);
 
     /* Radius */
@@ -280,6 +280,114 @@
     /* Emboss */
     --emboss-track: rgba(255,255,255,0.08);
     --emboss-highlight: rgba(255,255,255,0.08);
+
+    /* ═══ DESIGN SYSTEM v3 — BASE (PRIMITIVE) TOKENS ═══ */
+    /* Raw values. Never used directly in templates. */
+
+    --lt-color-blue-300: #66b3ff;
+    --lt-color-blue-400: #3b82f6;
+    --lt-color-blue-500: var(--accent1);
+    --lt-color-green-500: var(--accent2);
+    --lt-color-lime-500: var(--accent3);
+    --lt-color-magenta-500: var(--accent4);
+    --lt-color-red-500: #F76C5E;
+    --lt-color-yellow-500: #FDB833;
+    --lt-color-gray-50: #292929;
+    --lt-color-gray-100: rgba(40, 40, 40, 0.7);
+    --lt-color-gray-200: rgba(20, 20, 20, 0.9);
+    --lt-color-gray-500: #aaaaaa;
+    --lt-color-gray-800: #bbbbbb;
+
+    --lt-spacing-1: 0.25rem;
+    --lt-spacing-2: 0.5rem;
+    --lt-spacing-4: 1rem;
+    --lt-spacing-6: 1.5rem;
+    --lt-spacing-8: 2rem;
+    --lt-spacing-12: 3rem;
+
+    /* ═══ DESIGN SYSTEM v3 — FUNCTIONAL TOKENS ═══ */
+    /* Naming-doc target names (Section 4.4). Coexist with v2 aliases. */
+
+    /* Colors: Brand */
+    --color-brand-primary: var(--lt-color-blue-500);
+    --color-brand-secondary: var(--lt-color-green-500);
+
+    /* Colors: Surface */
+    --color-surface-page: #404040;
+    --color-surface-card: #292929;
+    --color-surface-inset: rgba(40, 40, 40, 0.7);
+    --color-surface-overlay: rgba(0, 0, 0, 0.7);
+
+    /* Colors: Text (naming-doc names) */
+    --color-text-default: var(--lt-color-gray-800);
+    --color-text-link: var(--lt-color-blue-300);
+    --color-text-on-emphasis: #ffffff;
+
+    /* Colors: State */
+    --color-state-danger: var(--lt-color-red-500);
+    --color-state-warning: var(--lt-color-yellow-500);
+    --color-state-success: var(--lt-color-green-500);
+    --color-state-info: var(--lt-color-blue-400);
+
+    /* Focus */
+    --color-focus-ring: var(--lt-color-blue-300);
+
+    /* Typography: naming-doc scale (s/m/l) */
+    --text-s: 0.875rem;
+    --text-m: 1rem;
+    --text-l: 1.25rem;
+    --font-family-base: var(--primary-font-family);
+    --font-family-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    --font-weight-normal: var(--font-weight-body);
+
+    /* Radius: naming-doc scale (s/m/l) */
+    --radius-s: 0.25rem;
+    --radius-m: 0.5rem;
+    --radius-l: 1rem;
+
+    /* Shadow: naming-doc scale (s/m/l) */
+    --shadow-s: 0px 1px 1px rgba(0 0 0 / 20%), 0px 0px 1px rgba(0 0 0 / 5%);
+    --shadow-m: 0px 2px 6px rgba(0 0 0 / 20%), 0px 0px 0px rgba(0 0 0 / 20%);
+    --shadow-l: 0px 0px 8px 0 rgba(0 0 0 / 30%);
+
+    /* Z-index: naming-doc semantic names */
+    --z-dropdown: 1000;
+    --z-sticky: 1100;
+    --z-modal: 1300;
+    --z-toast: 1400;
+
+    /* ═══ DESIGN SYSTEM v3 — COMPONENT TOKENS ═══ */
+    /* Component-scoped tokens referencing functional layer. */
+
+    /* Button */
+    --btn-bg: var(--color-brand-primary);
+    --btn-color: var(--color-text-on-emphasis);
+    --btn-radius: var(--radius-m);
+
+    /* Card */
+    --card-bg: var(--color-surface-card);
+    --card-border: var(--color-border-default);
+    --card-radius: var(--radius-m);
+    --card-shadow: var(--shadow-s);
+
+    /* Input */
+    --input-bg: var(--color-bg-input);
+    --input-border: var(--color-border-default);
+    --input-text: var(--color-text-default);
+
+    /* Modal */
+    --modal-bg: var(--color-surface-card);
+    --modal-overlay: var(--color-surface-overlay);
+    --modal-radius: var(--radius-l);
+    --modal-shadow: var(--shadow-l);
+
+    /* Badge */
+    --badge-radius: var(--radius-full);
+
+    /* Dropdown */
+    --dropdown-bg: var(--color-surface-card);
+    --dropdown-border: var(--color-border-default);
+    --dropdown-shadow: var(--shadow-m);
 
 }
 

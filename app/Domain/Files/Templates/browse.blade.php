@@ -29,7 +29,7 @@
             @if($login::userIsAtLeast($roles::$editor))
             <div class="uploadWrapper">
 
-                <x-global::button link="javascript:void(0);" type="secondary" id="cancelLink" style="display:none;">{{ __('links.cancel') }}</x-global::button>
+                <x-globals::forms.button link="javascript:void(0);" type="secondary" id="cancelLink" style="display:none;">{{ __('links.cancel') }}</x-globals::forms.button>
                 <div class="extra" style="margin-top:5px;"></div>
                 <div class="fileUploadDrop">
                     <p><i>{{ __('text.drop_files') }}</i></p>
@@ -57,14 +57,14 @@
                 <ul id="medialist" class="listfile">
                     @foreach($tpl->get('files') as $file)
                         <li class="file-module-{{ $file['moduleId'] }}">
-                            <x-global::elements.dropdown style="float:right;">
+                            <x-globals::elements.dropdown style="float:right;">
                                 <li class="nav-header">{{ __('subtitles.file') }}</li>
                                 <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{{ __('links.download') }}</a></li>
 
                                 @if($login::userIsAtLeast($roles::$editor))
                                     <li><a href="{{ BASE_URL }}/files/browse?delFile={{ $file['id'] }}" class="delete deleteFile"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
                                 @endif
-                            </x-global::elements.dropdown>
+                            </x-globals::elements.dropdown>
                             <a class="imageLink" data-ext="{{ $file['extension'] }}" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">
                                 @if(in_array(strtolower($file['extension']), $tpl->get('imgExtensions')))
                                     <img style="max-height: 50px; max-width: 70px;" src="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" alt="" />

@@ -1,7 +1,7 @@
 @extends($layout)
 
 @section('content')
-<x-global::pageheader :icon="'fa fa-gauge-high'">
+<x-globals::layout.page-header :icon="'fa fa-gauge-high'">
     @if (count($allUsers) == 1)
         <a href="#/users/newUser" class="headerCTA">
             <i class="fa fa-users"></i>
@@ -13,7 +13,7 @@
 
     <h5>{{ session("currentProjectClient") }}</h5>
     <h1>{!! __('headlines.project_dashboard') !!}</h1>
-</x-global::pageheader>
+</x-globals::layout.page-header>
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
@@ -25,22 +25,22 @@
             <div class="maincontentinner tw:z-20">
 
                 @if ($login::userIsAtLeast($roles::$admin))
-                    <x-global::elements.dropdown containerClass="pull-right" data-tippy-content="{{ __('label.edit_project') }}">
+                    <x-globals::elements.dropdown containerClass="pull-right" data-tippy-content="{{ __('label.edit_project') }}">
                         <li>
                             <a href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"><i class="fa fa-edit"></i> Edit Project</a>
                         </li>
                         <li>
                             <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete"><i class="fa fa-trash"></i> Delete Project</a>
                         </li>
-                    </x-global::elements.dropdown>
+                    </x-globals::elements.dropdown>
                 @endif
 
-                <x-global::elements.dropdown icon="fa fa-link" containerClass="pull-right tw:mr-[5px]" data-tippy-content="{{ __('label.copy_url_tooltip') }}">
+                <x-globals::elements.dropdown icon="fa fa-link" containerClass="pull-right tw:mr-[5px]" data-tippy-content="{{ __('label.copy_url_tooltip') }}">
                     <li class="tw:p-2">
-                        <x-global::forms.input name="projectUrl" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
-                        <x-global::button tag="button" type="primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</x-global::button>
+                        <x-globals::forms.input name="projectUrl" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
+                        <x-globals::forms.button tag="button" type="primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</x-globals::forms.button>
                     </li>
-                </x-global::elements.dropdown>
+                </x-globals::elements.dropdown>
 
                 <a
                     href="javascript:void(0);"
@@ -81,7 +81,7 @@
             </div>
 
             <div class="maincontentinner tw:z-10 latest-todos">
-                <x-global::button link="#/tickets/newTicket" type="link" icon="fa fa-plus" class="action-link pull-right" style="margin-top:-7px;">Create To-Do</x-global::button>
+                <x-globals::forms.button link="#/tickets/newTicket" type="link" icon="fa fa-plus" class="action-link pull-right" style="margin-top:-7px;">Create To-Do</x-globals::forms.button>
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
                 <ul class="sortableTicketList">
@@ -123,7 +123,7 @@
                                     </div>
                                     <div class="col-md-8 tw:mt-[3px]">
                                         <div class="right">
-                                            <x-global::dropdownPill
+                                            <x-globals::dropdownPill
                                                 type="effort"
                                                 :parentId="$row['id']"
                                                 selectedClass="label-default"
@@ -139,7 +139,7 @@
                                                     $milestoneOptions[$ms->id] = ['name' => $ms->headline, 'class' => $ms->tags];
                                                 }
                                             @endphp
-                                            <x-global::dropdownPill
+                                            <x-globals::dropdownPill
                                                 type="milestone"
                                                 :parentId="$row['id']"
                                                 selectedClass="label-default"
@@ -150,7 +150,7 @@
                                                 headerLabel="{{ __('dropdown.choose_milestone') }}"
                                             />
 
-                                            <x-global::dropdownPill
+                                            <x-globals::dropdownPill
                                                 type="status"
                                                 :parentId="$row['id']"
                                                 :selectedClass="$statusLabels[$row['status']]['class']"
@@ -221,7 +221,7 @@
             <div class="maincontentinner project-updates">
                 <div class="pull-right">
                     @if ($login::userIsAtLeast($roles::$editor))
-                        <x-global::button
+                        <x-globals::forms.button
                             link="javascript:void(0);"
                             type="link"
                             icon="fa fa-plus"
@@ -229,7 +229,7 @@
                             id="mainToggler"
                             class="action-link"
                             style="margin-top:-7px;"
-                        >{{ __('links.add_new_report') }}</x-global::button>
+                        >{{ __('links.add_new_report') }}</x-globals::forms.button>
                     @endif
                 </div>
 
@@ -241,15 +241,15 @@
                             <div id="comment0" class="commentBox tw:hidden">
                                 <label for="projectStatus tw:inline">{{ __('label.project_status_is') }}</label>
 
-                                <x-global::forms.select name="status" id="projectStatus" class="tw:ml-0 tw:mb-[10px]">
+                                <x-globals::forms.select name="status" id="projectStatus" class="tw:ml-0 tw:mb-[10px]">
                                     <option value="green">{{ __('label.project_status_green') }}</option>
                                     <option value="yellow">{{ __('label.project_status_yellow') }}</option>
                                     <option value="red">{{ __('label.project_status_red') }}</option>
-                                </x-global::forms.select>
+                                </x-globals::forms.select>
 
                                 <div class="commentReply">
                                     <textarea rows="5" cols="50" class="tiptapSimple tw:w-full" name="text"></textarea>
-                                    <x-global::button submit type="success" tag="button" class="tw:ml-0" name="comment">{{ __('buttons.save') }}</x-global::button>
+                                    <x-globals::forms.button submit type="success" tag="button" class="tw:ml-0" name="comment">{{ __('buttons.save') }}</x-globals::forms.button>
                                     <a
                                         href="javascript:void(0);"
                                         onclick="leantime.commentsController.toggleCommentBoxes(-1);jQuery('.noCommentsMessage').toggle();"
@@ -280,7 +280,7 @@
                                                 ) }}
                                             </strong>
                                                 @if ($login::userIsAtLeast($roles::$editor))
-                                                    <x-global::elements.dropdown containerClass="tw:float-right tw:ml-[10px]">
+                                                    <x-globals::elements.dropdown containerClass="tw:float-right tw:ml-[10px]">
                                                         @if ($row['userId'] == session("userdata.id"))
                                                             <li>
                                                                 <a href="{!! $delUrlBase . $row['id'] !!}" class="deleteComment">
@@ -297,7 +297,7 @@
                                                                 >{{ __('links.add_to_timesheets') }}</a>
                                                             </li>
                                                         @endif
-                                                    </x-global::elements.dropdown>
+                                                    </x-globals::elements.dropdown>
                                                 @endif
 
                                             <div class="text" id="commentText-{{ $row['id'] }}">{!! $tpl->escapeMinimal($row['text']) !!}</div>

@@ -11,10 +11,10 @@
     @dispatchEvent('afterFormOpen')
 
     <label for="description">{{ __('label.title') }}</label>
-    <x-global::forms.input name="description" id="description" value="{{ e($values['description']) }}" /><br />
+    <x-globals::forms.input name="description" id="description" value="{{ e($values['description']) }}" /><br />
 
     <label for="dateFrom">{{ __('label.start_date') }}</label>
-    <x-global::forms.date name="dateFrom" id="event_date_from" value="{{ format($values['dateFrom'])->date() }}" />
+    <x-globals::forms.date name="dateFrom" id="event_date_from" value="{{ format($values['dateFrom'])->date() }}" />
 
     <div class="par">
         <label> {{ __('label.start_time') }}</label>
@@ -24,7 +24,7 @@
     </div>
 
     <label for="dateTo">{{ __('label.end_date') }}</label>
-    <x-global::forms.date name="dateTo" id="event_date_to" value="{{ format($values['dateTo'])->date() }}" />
+    <x-globals::forms.date name="dateTo" id="event_date_to" value="{{ format($values['dateTo'])->date() }}" />
 
     <div class="par">
         <label for="">{{ __('label.end_time') }} </label>
@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <x-global::forms.checkbox name="allDay" label="{{ __('label.all_day') }}"
+    <x-globals::forms.checkbox name="allDay" label="{{ __('label.all_day') }}"
         :checked="$values['allDay'] === 'true'" />
 
     @dispatchEvent('beforeSubmitButton')
@@ -42,7 +42,7 @@
     <br />
     <a href="{{ BASE_URL }}/calendar/delEvent/{{ (int) $_GET['id'] }}" class="formModal delete right"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a>
     <input type="hidden" value="1" name="save" />
-    <x-global::button submit type="primary" name="saveEvent" id="save">{{ __('buttons.save') }}</x-global::button>
+    <x-globals::forms.button submit type="primary" name="saveEvent" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
 
     <div class="clear"></div>
 

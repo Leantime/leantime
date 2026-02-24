@@ -32,7 +32,7 @@
                      id="{{ $widget->id }}"
                      class="tw:h-full"
                      aria-live="polite">
-                    <x-global::loadingText type="{{ $widget->widgetLoadingIndicator }}" count="1" includeHeadline="true" />
+                    <x-globals::feedback.skeleton type="{{ $widget->widgetLoadingIndicator }}" count="1" includeHeadline="true" />
                 </div>
             </x-widgets::moveableWidget>
 

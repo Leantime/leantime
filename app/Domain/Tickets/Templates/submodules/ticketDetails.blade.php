@@ -12,14 +12,14 @@
         <div class="marginBottom">
 
                 <div class="form-group">
-                    <x-global::forms.input :bare="true" type="text" value="{{ e($ticket->headline) }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
+                    <x-globals::forms.input :bare="true" type="text" value="{{ e($ticket->headline) }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
                 </div>
 
                 {{-- Status --}}
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.todo_status') }}</label>
                     <div class="">
-                        <x-global::forms.select
+                        <x-globals::forms.select
                             id="status-select"
                             name="status"
                             data-placeholder="{{ isset($ticket->status) ? ($statusLabels[$ticket->status]['name'] ?? '') : '' }}"
@@ -29,7 +29,7 @@
                                     {{ $ticket->status == $key ? "selected='selected'" : '' }}
                                 >{{ e($label['name']) }}</option>
                             @endforeach
-                        </x-global::forms.select>
+                        </x-globals::forms.select>
                     </div>
                 </div>
 
@@ -37,14 +37,14 @@
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.priority') }}</label>
                     <div class="">
-                        <x-global::forms.select id="priority" name="priority">
+                        <x-globals::forms.select id="priority" name="priority">
                             <option value="">{{ __('label.priority_not_defined') }}</option>
                             @foreach($tpl->get('priorities') as $priorityKey => $priorityValue)
                                 <option value="{{ $priorityKey }}"
                                     {{ $priorityKey == $ticket->priority ? "selected='selected'" : '' }}
                                 >{{ $priorityValue }}</option>
                             @endforeach
-                        </x-global::forms.select>
+                        </x-globals::forms.select>
                     </div>
                 </div>
 
@@ -52,14 +52,14 @@
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.effort') }}</label>
                     <div class="">
-                        <x-global::forms.select id="storypoints" name="storypoints">
+                        <x-globals::forms.select id="storypoints" name="storypoints">
                             <option value="">{{ __('label.effort_not_defined') }}</option>
                             @foreach($tpl->get('efforts') as $effortKey => $effortValue)
                                 <option value="{{ $effortKey }}"
                                     {{ $effortKey == $ticket->storypoints ? "selected='selected'" : '' }}
                                 >{{ $effortValue }}</option>
                             @endforeach
-                        </x-global::forms.select>
+                        </x-globals::forms.select>
                     </div>
                 </div>
 
@@ -67,7 +67,7 @@
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.editor') }}</label>
                     <div class="">
-                        <x-global::forms.select :bare="true" data-placeholder="{{ __('label.filter_by_user') }}" style="width:175px;"
+                        <x-globals::forms.select :bare="true" data-placeholder="{{ __('label.filter_by_user') }}" style="width:175px;"
                                 name="editorId" id="editorId" class="user-select tw:mr-sm">
                             <option value="">{{ __('label.not_assigned_to_user') }}</option>
                             @foreach($tpl->get('users') as $userRow)
@@ -75,7 +75,7 @@
                                     {{ $ticket->editorId == $userRow['id'] ? "selected='selected'" : '' }}
                                 >{{ e($userRow['firstname'] . ' ' . $userRow['lastname']) }}</option>
                             @endforeach
-                        </x-global::forms.select>&nbsp;
+                        </x-globals::forms.select>&nbsp;
                     </div>
                     <div style="padding-top:6px;">
                         @if($login::userIsAtLeast($roles::$editor))
@@ -88,7 +88,7 @@
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.collaborators') }}</label>
                     <div class="">
-                        <x-global::forms.select :bare="true" data-placeholder="{{ __('label.filter_by_user') }}"
+                        <x-globals::forms.select :bare="true" data-placeholder="{{ __('label.filter_by_user') }}"
                                 style="width:175px;"
                                 name="collaborators[]"
                                 id="collaborators"
@@ -99,7 +99,7 @@
                                     {{ in_array($userRow['id'], $ticket->collaborators ?? []) ? "selected='selected'" : '' }}
                                 >{{ e($userRow['firstname'] . ' ' . $userRow['lastname']) }}</option>
                             @endforeach
-                        </x-global::forms.select>
+                        </x-globals::forms.select>
                     </div>
                 </div>
 
@@ -107,7 +107,7 @@
                 <div class="form-group tw:flex tw:w-3/5">
                     <label class="control-label tw:mx-m tw:w-[100px]">{{ __('label.due_date') }}</label>
                     <div class="">
-                        <x-global::forms.date name="dateToFinish" id="deadline" value="{{ format($ticket->dateToFinish)->date() }}" placeholder="{{ __('language.dateformat') }}" style="width:110px;" />
+                        <x-globals::forms.date name="dateToFinish" id="deadline" value="{{ format($ticket->dateToFinish)->date() }}" placeholder="{{ __('language.dateformat') }}" style="width:110px;" />
 
                         <input type="time" class="timepicker tw:mr-sm" style="width:120px;" id="dueTime" autocomplete="off"
                                value="{{ format($ticket->dateToFinish)->time24() }}"
@@ -139,8 +139,8 @@
                 <input type="hidden" name="saveTicket" value="1" />
                 <input type="hidden" id="saveAndCloseButton" name="saveAndCloseTicket" value="0" />
 
-                <x-global::button submit type="primary" name="saveTicket" class="saveTicketBtn">{{ __('buttons.save') }}</x-global::button>
-                <x-global::button submit type="primary" :outline="true" name="saveAndCloseTicket" onclick="jQuery('#saveAndCloseButton').val('1');">{{ __('buttons.save_and_close') }}</x-global::button>
+                <x-globals::forms.button submit type="primary" name="saveTicket" class="saveTicketBtn">{{ __('buttons.save') }}</x-globals::forms.button>
+                <x-globals::forms.button submit type="primary" :outline="true" name="saveAndCloseTicket" onclick="jQuery('#saveAndCloseButton').val('1');">{{ __('buttons.save_and_close') }}</x-globals::forms.button>
             </div>
         </div>
 
@@ -192,20 +192,20 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.todo_type') }}</label>
                         <div class="">
-                            <x-global::forms.select id="type" name="type">
+                            <x-globals::forms.select id="type" name="type">
                                 @foreach($ticketTypes as $types)
                                     <option value="{{ strtolower($types) }}"
                                         {{ strtolower($types) == strtolower($ticket->type ?? '') ? "selected='selected'" : '' }}
                                     >{{ __('label.' . strtolower($types)) }}</option>
                                 @endforeach
-                            </x-global::forms.select><br/>
+                            </x-globals::forms.select><br/>
                         </div>
                     </div>
 
                     {{-- Project --}}
                     <div class="form-group">
                         <label class="control-label">{{ __('label.project') }}</label>
-                        <x-global::forms.select name="projectId" class="tw:w-full">
+                        <x-globals::forms.select name="projectId" class="tw:w-full">
                             @foreach($allAssignedprojects as $project)
                                 <option value="{{ $project['id'] }}"
                                     @if($ticket->projectId == $project['id'])
@@ -215,7 +215,7 @@
                                     @endif
                                 >{{ e($project['name']) }}</option>
                             @endforeach
-                        </x-global::forms.select>
+                        </x-globals::forms.select>
                     </div>
 
                     {{-- Milestones --}}
@@ -223,14 +223,14 @@
                         <label class="control-label">{{ __('label.milestone') }}</label>
                         <div class="">
                             <div class="form-group">
-                                <x-global::forms.select name="milestoneid">
+                                <x-globals::forms.select name="milestoneid">
                                     <option value="">{{ __('label.not_assigned_to_milestone') }}</option>
                                     @foreach($tpl->get('milestones') as $milestoneRow)
                                         <option value="{{ $milestoneRow->id }}"
                                             {{ ($ticket->milestoneid == $milestoneRow->id) ? "selected='selected'" : '' }}
                                         >{{ e($milestoneRow->headline) }}</option>
                                     @endforeach
-                                </x-global::forms.select>
+                                </x-globals::forms.select>
                             </div>
                         </div>
                     </div>
@@ -239,7 +239,7 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.sprint') }}</label>
                         <div class="">
-                            <x-global::forms.select id="sprint-select" name="sprint"
+                            <x-globals::forms.select id="sprint-select" name="sprint"
                                     data-placeholder="{{ $ticket->sprint }}">
                                 <option value="">{{ __('label.backlog') }}</option>
                                 @if($tpl->get('sprints'))
@@ -249,7 +249,7 @@
                                         >{{ e($sprintRow->name) }}</option>
                                     @endforeach
                                 @endif
-                            </x-global::forms.select>
+                            </x-globals::forms.select>
                         </div>
                     </div>
 
@@ -258,7 +258,7 @@
                         <label class="control-label">{{ __('label.related_to') }}</label>
                         <div class="">
                             <div class="form-group">
-                                <x-global::forms.select name="dependingTicketId">
+                                <x-globals::forms.select name="dependingTicketId">
                                     <option value="">{{ __('label.not_related') }}</option>
                                     @if(is_array($tpl->get('ticketParents')))
                                         @foreach($tpl->get('ticketParents') as $ticketRow)
@@ -267,7 +267,7 @@
                                             >{{ e($ticketRow->headline) }}</option>
                                         @endforeach
                                     @endif
-                                </x-global::forms.select>
+                                </x-globals::forms.select>
                             </div>
                         </div>
                     </div>
@@ -291,9 +291,9 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.working_date_from') }}</label>
                         <div class="">
-                            <x-global::forms.input :bare="true" type="text" class="editFrom" style="width:100px;" name="editFrom" autocomplete="off"
+                            <x-globals::forms.input :bare="true" type="text" class="editFrom" style="width:100px;" name="editFrom" autocomplete="off"
                                    value="{{ format($ticket->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}"/>
-                            <x-global::forms.input :bare="true" type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
+                            <x-globals::forms.input :bare="true" type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
                                    value="{{ format($ticket->editFrom)->time24() }}"
                                    name="timeFrom"/>
                         </div>
@@ -302,9 +302,9 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.working_date_to') }}</label>
                         <div class="">
-                            <x-global::forms.input :bare="true" type="text" class="editTo" style="width:100px;" name="editTo" autocomplete="off"
+                            <x-globals::forms.input :bare="true" type="text" class="editTo" style="width:100px;" name="editTo" autocomplete="off"
                                    value="{{ format($ticket->editTo)->date() }}" placeholder="{{ __('language.dateformat') }}"/>
-                            <x-global::forms.input :bare="true" type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
+                            <x-globals::forms.input :bare="true" type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
                                    value="{{ format($ticket->editTo)->time24() }}"
                                    name="timeTo"/>
                         </div>
@@ -313,8 +313,8 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.planned_hours') }} / {{ __('label.estimated_hours_remaining') }}</label>
                         <div class="">
-                            <x-global::forms.input :bare="true" value="{{ e($ticket->planHours) }}" name="planHours" style="width:45px;" />&nbsp;/&nbsp;
-                            <x-global::forms.input :bare="true" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:45px;" />
+                            <x-globals::forms.input :bare="true" value="{{ e($ticket->planHours) }}" name="planHours" style="width:45px;" />&nbsp;/&nbsp;
+                            <x-globals::forms.input :bare="true" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:45px;" />
                             <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
                                 &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
                             </a>

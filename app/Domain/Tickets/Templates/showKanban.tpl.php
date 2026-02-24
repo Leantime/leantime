@@ -132,7 +132,7 @@ $allTickets = $group['items'];
                     <?php
                     // Render the blade component for the header
                     echo app('blade.compiler')::render(
-                        '<x-global::kanban.swimlane-row-header
+                        '<x-globals::kanban.swimlane-row-header
                             :groupBy="$groupBy"
                             :groupId="$groupId"
                             :label="$label"

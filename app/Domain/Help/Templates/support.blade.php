@@ -1,6 +1,6 @@
 <div class="padding-lg" style="width:1190px;">
     <div>
-        <x-global::undrawSvg image="undraw_unexpected-friends_42mc.svg" maxWidth="auto"  maxheight="auto" height="250px" headline=""></x-global::undrawSvg>
+        <x-globals::undrawSvg image="undraw_unexpected-friends_42mc.svg" maxWidth="auto"  maxheight="auto" height="250px" headline=""></x-globals::undrawSvg>
     </div>
     <div class="onboarding">
         <div style="font-size:var(--font-size-l);">
@@ -36,12 +36,12 @@
                     <div class="tw:flex-1" style="background:var(--header-gradient); color:var(--main-titles-color); padding:15px; border-radius:var(--box-radius);">
                         <strong style="margin-bottom:5px;  display:block; color:var(--main-titles-color);">Direct Sponsorship through Github</strong>
                         Fund open source development that benefits everyone<br /><br />
-                        <x-global::button link="https://github.com/sponsors/Leantime" type="primary" target="_blank" style="background:var(--main-titles-color); color:var(--accent1);">Sponsor Leantime</x-global::button>
+                        <x-globals::forms.button link="https://github.com/sponsors/Leantime" type="primary" target="_blank" style="background:var(--main-titles-color); color:var(--accent1);">Sponsor Leantime</x-globals::forms.button>
                     </div>
                     <div class="tw:flex-1" style="background:var(--header-gradient); color:var(--main-titles-color); padding:15px; border-radius:var(--box-radius);">
                         <strong style="margin-bottom:5px;  display:block; color:var(--main-titles-color);">Purchase Plugins</strong>
                         Get advanced features while supporting development<br /><br />
-                        <x-global::button link="{{ BASE_URL }}/plugins/marketplace" type="primary" style="background:var(--main-titles-color); color:var(--accent1);" target="_blank">Browse Marketplace</x-global::button>
+                        <x-globals::forms.button link="{{ BASE_URL }}/plugins/marketplace" type="primary" style="background:var(--main-titles-color); color:var(--accent1);" target="_blank">Browse Marketplace</x-globals::forms.button>
                     </div>
                 </div>
 
@@ -145,7 +145,7 @@
                         <h1 class="fancyLink">Ready to make a direct impact?</h1><p>Every contribution—from $1 to $100—goes directly to making Leantime better for everyone.</p>
                         <br />
                         <div class="center">
-                            <x-global::button link="https://github.com/sponsors/Leantime" type="primary" size="lg" target="_blank">Start Sponsoring Today</x-global::button>
+                            <x-globals::forms.button link="https://github.com/sponsors/Leantime" type="primary" size="lg" target="_blank">Start Sponsoring Today</x-globals::forms.button>
                         </div>
                     </center>
                 </div>

@@ -21,7 +21,7 @@
                 <div style="margin-top:10px;">
                     @if (! empty($plugin->name))
                         <strong style="font-size:var(--font-size-l);">{!! $plugin->name !!}</strong> {{ $plugin->version ? "(v".$plugin->version.")" : "" }}<br />
-                        <x-global::inlineLinks :links="$plugin->getMetadataLinks()" />
+                        <x-globals::inlineLinks :links="$plugin->getMetadataLinks()" />
                     @endif
                 </div>
             </div>

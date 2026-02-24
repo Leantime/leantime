@@ -2,9 +2,9 @@
 
 @section('content')
 
-    <x-global::pageheader :icon="'fa fa-puzzle-piece'">
+    <x-globals::layout.page-header :icon="'fa fa-puzzle-piece'">
         <h1>My Apps</h1>
-    </x-global::pageheader>
+    </x-globals::layout.page-header>
 
     @displayNotification()
 
@@ -50,7 +50,7 @@
                                                | <a href="{{ $newplugin->homepage }}"> {{ $tpl->__("text.visit_site") }} </a>
                                             </div>
                                             <div class="col-md-4" style="padding-top:5px;">
-                                                <x-global::button link="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" type="secondary" class="pull-right">{{ $tpl->__('buttons.activate') }}</x-global::button>
+                                                <x-globals::forms.button link="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" type="secondary" class="pull-right">{{ $tpl->__('buttons.activate') }}</x-globals::forms.button>
 
                                             </div>
 
@@ -59,9 +59,9 @@
                                 </li>
                             @endforeach
                         @else
-                            <x-global::undrawSvg image="undraw_empty_cart_co35.svg" headline="Nothing New">
+                            <x-globals::undrawSvg image="undraw_empty_cart_co35.svg" headline="Nothing New">
                                 We couldn't discover any new plugins in your plugin folder, please make sure the plugin is unzipped and contains a composer.json file.
-                            </x-global::undrawSvg>
+                            </x-globals::undrawSvg>
                         @endif
                     </ul>
             </div>

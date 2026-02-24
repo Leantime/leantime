@@ -1,3 +1,4 @@
+{{-- Backward-compat wrapper: maps old API → actions.dropdown-menu --}}
 @props([
     'label' => '',
     'type' => 'primary',
@@ -6,25 +7,12 @@
     'menuClass' => '',
 ])
 
-@php
-    $bsClass = match($type) {
-        'primary'              => 'btn btn-primary',
-        'secondary', 'default', 'ghost' => 'btn btn-default',
-        'danger', 'error'      => 'btn btn-danger',
-        'success'              => 'btn btn-success',
-        'warning'              => 'btn btn-warning',
-        'transparent'          => 'btn btn-link',
-        default                => 'btn btn-' . $type,
-    };
-@endphp
-
-<div {{ $attributes->merge(['class' => 'dropdown']) }}>
-    <a href="javascript:void(0)" class="{{ $bsClass }} dropdown-toggle" data-toggle="dropdown">
-        @if($icon)<i class="{{ $icon }}"></i> @endif
-        {!! $label !!}
-        <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu {{ $menuClass }}">
-        {{ $slot }}
-    </ul>
-</div>
+<x-globals::actions.dropdown-menu
+    :label="$label"
+    :leading-visual="$icon"
+    variant="button"
+    :content-role="$type"
+    :align="$align"
+    :menu-class="$menuClass"
+    {{ $attributes }}
+>{{ $slot }}</x-globals::actions.dropdown-menu>

@@ -18,13 +18,13 @@
 
         <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="timesheetListForm" name="timesheetListForm">
             <div class="pull-right">
-                <x-global::elements.button-dropdown :label="__('links.list_view')" type="default">
+                <x-globals::elements.button-dropdown :label="__('links.list_view')" type="default">
                     <li><a href="{{ BASE_URL }}/timesheets/showMy">{!! __('links.week_view') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
-                </x-global::elements.button-dropdown>
+                </x-globals::elements.button-dropdown>
             </div>
             <div class="pull-right" style="margin-right:3px;">
-                <x-global::button link="javascript:void(0);" type="primary" id="addHoursBtn"><i class="fa fa-plus"></i> {{ __('label.add_hours') }}</x-global::button>
+                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addHoursBtn"><i class="fa fa-plus"></i> {{ __('label.add_hours') }}</x-globals::forms.button>
             </div>
             <div class="filterWrapper tw:relative">
                 <div class="padding-top-sm">
@@ -44,7 +44,7 @@
                            autocomplete="off"
                            value="{{ $tpl->get('dateTo')->formatDateForUser() }}"
                            style="width:110px; margin-top:5px;" />
-                    <x-global::forms.select :bare="true" id="kind" name="kind" onchange="submit();" style="margin-top:5px;">
+                    <x-globals::forms.select :bare="true" id="kind" name="kind" onchange="submit();" style="margin-top:5px;">
                         <option value="all">{{ __('label.all_types') }}</option>
                         @foreach ($tpl->get('kind') as $key => $row)
                             <option value="{{ $key }}"
@@ -53,8 +53,8 @@
                                 @endif
                             >{{ __($row) }}</option>
                         @endforeach
-                    </x-global::forms.select>
-                    <x-global::button submit type="primary" class="reload" style="margin-top:5px;">{{ __('buttons.search') }}</x-global::button>
+                    </x-globals::forms.select>
+                    <x-globals::forms.button submit type="primary" class="reload" style="margin-top:5px;">{{ __('buttons.search') }}</x-globals::forms.button>
                 </div>
             </div>
             <div class="clearfix"></div>
@@ -164,7 +164,7 @@
                         </td>
                         <td>
                             <div class="form-group" id="projectSelect">
-                                <x-global::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" class="project-select" style="width:100%;">
+                                <x-globals::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" class="project-select" style="width:100%;">
                                     <option value=""></option>
                                     @foreach ($tpl->get('allProjects') as $projectRow)
                                         {!! sprintf(
@@ -182,12 +182,12 @@
                                             )
                                         ) !!}
                                     @endforeach
-                                </x-global::forms.select>
+                                </x-globals::forms.select>
                             </div>
                         </td>
                         <td>
                             <div class="form-group" id="ticketSelect">
-                                <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" class="ticket-select" name="newTicketId" style="width:100%;">
+                                <x-globals::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" class="ticket-select" name="newTicketId" style="width:100%;">
                                     <option value=""></option>
                                     @foreach ($tpl->get('allTickets') as $ticketRow)
                                         {!! sprintf(
@@ -205,15 +205,15 @@
                                             )
                                         ) !!}
                                     @endforeach
-                                </x-global::forms.select>
+                                </x-globals::forms.select>
                             </div>
                         </td>
                         <td>
-                            <x-global::forms.select :bare="true" class="kind-select" name="newKindId" style="width:100%;">
+                            <x-globals::forms.select :bare="true" class="kind-select" name="newKindId" style="width:100%;">
                                 @foreach ($tpl->get('kind') as $key => $kindRow)
                                     <option value="{{ $key }}">{{ __($kindRow) }}</option>
                                 @endforeach
-                            </x-global::forms.select>
+                            </x-globals::forms.select>
                         </td>
                         <td>
                             <input type="text"
@@ -239,7 +239,7 @@
             </table>
             </div>
             <div class="right">
-                <x-global::button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">{{ __('buttons.save') }}</x-global::button>
+                <x-globals::forms.button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">{{ __('buttons.save') }}</x-globals::forms.button>
             </div>
             <div class="clearall"></div>
         </form>

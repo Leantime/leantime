@@ -15,15 +15,15 @@
         <div class="col-md-4 {{ $projectType["active"] !== true ? "disabled" : "" }}"  >
             <div class="profileBox">
 
-                <x-global::undrawSvg image="{{ $projectType['image'] }}" headline="{{  __($projectType['label'])  }}" maxWidth="50%" height="150px"></x-global::undrawSvg>
+                <x-globals::undrawSvg image="{{ $projectType['image'] }}" headline="{{  __($projectType['label'])  }}" maxWidth="50%" height="150px"></x-globals::undrawSvg>
 
                 <br />
                 {!! __($projectType["description"]) !!}
                 <br /><br />
                 @if($projectType["active"] == true )
-                    <x-global::button link="{{ BASE_URL }}/{{$projectType['url'] }}" type="primary" :disabled="$projectType['active'] !== true">{{  __($projectType['btnLabel'])  }}</x-global::button>
+                    <x-globals::forms.button link="{{ BASE_URL }}/{{$projectType['url'] }}" type="primary" :disabled="$projectType['active'] !== true">{{  __($projectType['btnLabel'])  }}</x-globals::forms.button>
                 @else
-                    <x-global::button link="#" type="primary" :disabled="true">Not Available in this plan</x-global::button>
+                    <x-globals::forms.button link="#" type="primary" :disabled="true">Not Available in this plan</x-globals::forms.button>
                 @endif
                 <div class="clearall"></div>
 

@@ -39,9 +39,9 @@
                     @endif
                 @endforeach
             </ul>
-            <x-global::button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" type="primary" class="pull-left">Go Back</x-global::button>
+            <x-globals::forms.button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" type="primary" class="pull-left">Go Back</x-globals::forms.button>
         @else
-            <x-global::button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import" type="primary" class="right">Confirm</x-global::button>
+            <x-globals::forms.button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import" type="primary" class="right">Confirm</x-globals::forms.button>
         @endif
         <div class="clearall"></div>
 

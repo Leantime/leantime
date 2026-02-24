@@ -52,17 +52,17 @@
             && $sprint->id != 'backlog'
             && $login::userIsAtLeast($roles::$editor)
         )
-            <x-global::elements.dropdown containerClass="headerEditDropdown">
+            <x-globals::elements.dropdown containerClass="headerEditDropdown">
                 <li><a href="#/sprints/editSprint/{{ $tpl->get('currentSprint') }}">{{ __('link.edit_sprint') }}</a></li>
                 <li><a href="#/sprints/delSprint/{{ $tpl->get('currentSprint') }}" class="delete">{{ __('links.delete_sprint') }}</a></li>
-            </x-global::elements.dropdown>
+            </x-globals::elements.dropdown>
         @endif
 
         <h1>
             {{ __('headline.milestones') }}
             @if(($tpl->get('sprints') !== false) && ($tpl->get('sprints') !== null) && count($tpl->get('sprints')) > 0)
             //
-            <x-global::elements.link-dropdown triggerClass="header-title-dropdown" align="end">
+            <x-globals::elements.link-dropdown triggerClass="header-title-dropdown" align="end">
                 <x-slot:label>
                     @if($sprint !== false)
                         {{ e($sprint->name) }}
@@ -83,7 +83,7 @@
                             <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ e($sprintRow->name) }}<br /><small>{{ sprintf(__('label.date_from_date_to'), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) }}</small></a>
                         </li>
                     @endforeach
-            </x-global::elements.link-dropdown>
+            </x-globals::elements.link-dropdown>
             @endif
         </h1>
         <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />

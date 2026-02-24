@@ -43,7 +43,7 @@ foreach ($allCanvas as $canvasRow) {
 
         <h1>{{ __("headline.goal.dashboardboard") }} //
             @if (count($allCanvas) > 0)
-                <x-global::elements.link-dropdown label="All Goal Groups" triggerClass="header-title-dropdown">
+                <x-globals::elements.link-dropdown label="All Goal Groups" triggerClass="header-title-dropdown">
                     @if ($login::userIsAtLeast($roles::$editor))
                         <li><a href="#/goalcanvas/bigRock">{!! __("links.icon.create_new_board") !!}</a></li>
                     @endif
@@ -51,7 +51,7 @@ foreach ($allCanvas as $canvasRow) {
                     @foreach ($allCanvas as $canvasRow)
                         <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $canvasRow['title'] }}</a></li>
                     @endforeach
-                </x-global::elements.link-dropdown>
+                </x-globals::elements.link-dropdown>
             @endif
         </h1>
     </div>
@@ -98,7 +98,7 @@ foreach ($allCanvas as $canvasRow) {
         @foreach ($allCanvas as $canvasRow)
             <div>
                 @php $canvasRowId = $canvasRow['id']; @endphp
-                <x-global::button :link="'#/goalcanvas/editCanvasItem?type=goal&canvasId=' . $canvasRowId" type="primary" class="pull-right" icon="fa fa-plus">Create New Goal</x-global::button>
+                <x-globals::forms.button :link="'#/goalcanvas/editCanvasItem?type=goal&canvasId=' . $canvasRowId" type="primary" class="pull-right" icon="fa fa-plus">Create New Goal</x-globals::forms.button>
 
                 <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRowId }}'>{{ $canvasRow["title"] }}</a></h5>
             </div>
@@ -125,10 +125,10 @@ foreach ($allCanvas as $canvasRow) {
                                         <div class="col-md-4">
                                             <div class="ticketBox" id="item_{{ $row["id"] }}">
                                                         @if ($login::userIsAtLeast($roles::$editor))
-                                                            <x-global::elements.dropdown class="pull-right">
+                                                            <x-globals::elements.dropdown class="pull-right">
                                                                 <li><a href="#/goalcanvas/editCanvasItem/{{ $row["id"] }}" class="goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.edit_canvas_item") !!}</a></li>
                                                                 <li><a href="#/goalcanvas/delCanvasItem/{{ $row["id"] }}" class="delete goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.delete_canvas_item") !!}</a></li>
-                                                            </x-global::elements.dropdown>
+                                                            </x-globals::elements.dropdown>
                                                         @endif
 
                                                         <h4>
@@ -286,9 +286,9 @@ foreach ($allCanvas as $canvasRow) {
 
         @if ($login::userIsAtLeast($roles::$editor))
             <br><br>
-            <x-global::button link="javascript:void(0)" type="primary" class="addCanvasLink">
+            <x-globals::forms.button link="javascript:void(0)" type="primary" class="addCanvasLink">
                 {!! __("links.icon.create_new_board") !!}
-            </x-global::button>
+            </x-globals::forms.button>
         @endif
     </div>
 @endif

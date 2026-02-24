@@ -9,26 +9,26 @@
 <form class="formModal" method="post" action="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}">
 
     <label>{{ __('label.newProjectName') }}</label>
-    <x-global::forms.input name="projectName" value="{{ __('label.copy_of') }} {{ e($project['name']) }}" /><br />
+    <x-globals::forms.input name="projectName" value="{{ __('label.copy_of') }} {{ e($project['name']) }}" /><br />
 
     <label>{{ __('label.planned_start_date') }}</label>
     <input type="text" name="startDate" class="projectDateFrom" value="{{ format(date('Y-m-d'))->date() }}" placeholder="{{ __('language.dateformat') }}" id="sprintStart" /><br />
 
     <label>{{ __('label.client_product') }}</label>
-    <x-global::forms.select name="clientId" id="clientId">
+    <x-globals::forms.select name="clientId" id="clientId">
         @foreach($tpl->get('allClients') as $row)
             <option value="{{ $row['id'] }}"
                 {{ $project['clientId'] == $row['id'] ? 'selected="selected"' : '' }}>{{ e($row['name']) }}</option>
         @endforeach
-    </x-global::forms.select>
+    </x-globals::forms.select>
     <br />
-    <x-global::forms.checkbox name="assignSameUsers" label="{{ __('label.assignSameUsers') }}" />
+    <x-globals::forms.checkbox name="assignSameUsers" label="{{ __('label.assignSameUsers') }}" />
 
     <br />
 
     <div class="row">
         <div class="col-md-6">
-            <x-global::button submit type="primary">{{ __('buttons.duplicate') }}</x-global::button>
+            <x-globals::forms.button submit type="primary">{{ __('buttons.duplicate') }}</x-globals::forms.button>
         </div>
         <div class="col-md-6 align-right padding-top-sm">
         </div>

@@ -410,6 +410,7 @@ class ViewsServiceProvider extends LaravelViewServiceProvider
 
         $storePaths = $domainPaths
             ->merge($pluginPaths)
+            ->merge(['globals' => APP_ROOT.'/app/Views/Templates'])
             ->merge(['global' => APP_ROOT.'/app/Views/Templates'])
             ->merge(['__components' => $this->app['config']->get('view.compiled')])
             ->all();

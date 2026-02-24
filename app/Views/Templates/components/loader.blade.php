@@ -1,7 +1,6 @@
+{{-- Backward-compat wrapper: maps old API → feedback.loading naming-doc API --}}
 @props([
     'size' => 'md',
 ])
 
-<span {{ $attributes->merge(['class' => 'htmx-indicator']) }}>
-    <span class="indeterminate"></span>
-</span>
+<x-globals::feedback.loading :scale="$size" {{ $attributes }} />

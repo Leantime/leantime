@@ -60,16 +60,16 @@
         <h5>{{ e(session('currentProjectClient')) }}</h5>
 
         @if (count($wikis) > 0 && $login::userIsAtLeast($roles::$editor) && $currentWiki)
-            <x-global::elements.dropdown containerClass="headerEditDropdown">
+            <x-globals::elements.dropdown containerClass="headerEditDropdown">
                 <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{{ __('link.edit_wiki') }}</a></li>
                 <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i> {{ __('links.delete_wiki') }}</a></li>
-            </x-global::elements.dropdown>
+            </x-globals::elements.dropdown>
         @endif
 
         <h1>{{ __('headlines.documents') }}
          @if (count($wikis) > 0)
              //
-            <x-global::elements.link-dropdown :label="$currentWiki !== false ? e($currentWiki->title) : __('label.select_board')" triggerClass="header-title-dropdown">
+            <x-globals::elements.link-dropdown :label="$currentWiki !== false ? e($currentWiki->title) : __('label.select_board')" triggerClass="header-title-dropdown">
                 <li><a class="inlineEdit" href="#/wiki/wikiModal/">{{ __('link.new_wiki') }}</a></li>
                 <li class="nav-header"></li>
                 @foreach ($wikis as $wiki)
@@ -77,7 +77,7 @@
                         <a href="{{ BASE_URL }}/wiki/show?setWiki={{ $wiki->id }}">{{ $wiki->title }}</a>
                     </li>
                 @endforeach
-            </x-global::elements.link-dropdown>
+            </x-globals::elements.link-dropdown>
          @endif
         </h1>
     </div>
@@ -94,7 +94,7 @@
             </div>
             <h3 class="wiki-empty-state-title">{{ __('headlines.no_articles_yet') }}</h3>
             <p class="wiki-empty-state-text">{{ __('text.create_new_wiki') }}</p>
-            <x-global::button link="#/wiki/wikiModal/" type="primary" class="inlineEdit">{{ __('links.icon.create_new_board') }}</x-global::button>
+            <x-globals::forms.button link="#/wiki/wikiModal/" type="primary" class="inlineEdit">{{ __('links.icon.create_new_board') }}</x-globals::forms.button>
         </div>
 
     @elseif ($wikis && count($wikis) > 0)
@@ -463,10 +463,10 @@
                 </div>
                 <h3 class="wiki-empty-state-title">{{ __('headlines.no_articles_yet') }}</h3>
                 <p class="wiki-empty-state-text">{{ __('text.create_new_content') }}</p>
-                <x-global::button tag="button" type="primary"
+                <x-globals::forms.button tag="button" type="primary"
                         hx-post="{{ BASE_URL }}/hx/wiki/articleContent/create"
                         hx-swap="none"
-                        icon="fa fa-plus">{{ __('link.create_article') }}</x-global::button>
+                        icon="fa fa-plus">{{ __('link.create_article') }}</x-globals::forms.button>
             </div>
         @endif
 

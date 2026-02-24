@@ -25,8 +25,8 @@
             <form method="post">
                 @dispatchEvent('afterFormOpen')
                 <p>{{ __('text.confirm_client_deletion') }}<br /></p>
-                <x-global::button submit type="danger" name="del">{{ __('buttons.yes_delete') }}</x-global::button>
-                <x-global::button link="/clients/showClient/{{ $client['id'] }}" type="primary">{{ __('buttons.back') }}</x-global::button>
+                <x-globals::forms.button submit type="danger" name="del">{{ __('buttons.yes_delete') }}</x-globals::forms.button>
+                <x-globals::forms.button link="/clients/showClient/{{ $client['id'] }}" type="primary">{{ __('buttons.back') }}</x-globals::forms.button>
                 @dispatchEvent('beforeFormClose')
             </form>
         </div>

@@ -29,17 +29,17 @@
 
 
                 <label for="role">{{ $tpl->__('label.role') }}</label><div class="clearfix"></div>
-                <x-global::forms.select name="role" id="role">
+                <x-globals::forms.select name="role" id="role">
                     @foreach ($tpl->get('roles') as $key => $role)
                         <option value="{{ $key }}"
                             @if ($key == $values['role']) selected="selected" @endif>
                             {{ $tpl->__('label.roles.' . $role) }}
                         </option>
                     @endforeach
-                </x-global::forms.select> <br />
+                </x-globals::forms.select> <br />
 
                 <label for="status">{{ $tpl->__('label.status') }}</label><div class="clearfix"></div>
-                <x-global::forms.select name="status" id="status">
+                <x-globals::forms.select name="status" id="status">
                     <option value="a"
                         @if (strtolower($values['status']) == 'a') selected="selected" @endif>
                         {{ $tpl->__('label.active') }}
@@ -49,12 +49,12 @@
                         @if (strtolower($values['status']) == '') selected="selected" @endif>
                         {{ $tpl->__('label.deactivated') }}
                     </option>
-                </x-global::forms.select>
+                </x-globals::forms.select>
 
                     <div class="clearfix"></div>
 
                 <p class="stdformbutton">
-                    <x-global::button submit type="primary" name="save" id="save">{{ $tpl->__('buttons.save') }}</x-global::button>
+                    <x-globals::forms.button submit type="primary" name="save" id="save">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
                 </p>
 
             </div>
@@ -86,7 +86,7 @@
                         @endif
 
                         <div class="item">
-                            <x-global::forms.checkbox name="projects[]" id="project_{{ $row['id'] }}" value="{{ $row['id'] }}"
+                            <x-globals::forms.checkbox name="projects[]" id="project_{{ $row['id'] }}" value="{{ $row['id'] }}"
                                 :checked="is_array($projects) === true && in_array($row['id'], $projects) === true"
                                 label="{{ $tpl->escape($row['name']) }}" />
                             <div class="clearall"></div>

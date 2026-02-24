@@ -29,21 +29,21 @@
             </div>
             <div class="col-md-4">
 
-                <x-global::button tag="button" type="secondary" class="fc-next-button right" style="margin-right:5px;">
+                <x-globals::forms.button tag="button" type="secondary" class="fc-next-button right" style="margin-right:5px;">
                     <span class="fc-icon fc-icon-chevron-right"></span>
-                </x-global::button>
-                <x-global::button tag="button" type="secondary" class="fc-prev-button right" style="margin-right:5px;">
+                </x-globals::forms.button>
+                <x-globals::forms.button tag="button" type="secondary" class="fc-prev-button right" style="margin-right:5px;">
                     <span class="fc-icon fc-icon-chevron-left"></span>
-                </x-global::button>
+                </x-globals::forms.button>
 
-                <x-global::button tag="button" type="secondary" class="fc-today-button right" style="margin-right:5px;">today</x-global::button>
+                <x-globals::forms.button tag="button" type="secondary" class="fc-today-button right" style="margin-right:5px;">today</x-globals::forms.button>
 
-                <x-global::forms.select :bare="true" id="my-select" style="margin-right:5px;" class="right">
+                <x-globals::forms.select :bare="true" id="my-select" style="margin-right:5px;" class="right">
                     <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'timeGridDay' ? 'selected' : '' }}>Day</option>
                     <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'timeGridWeek' ? 'selected' : '' }}>Week</option>
                     <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'dayGridMonth' ? 'selected' : '' }}>Month</option>
                     <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'multiMonthYear' ? 'selected' : '' }}>Year</option>
-                </x-global::forms.select>
+                </x-globals::forms.select>
 
             </div>
         </div>

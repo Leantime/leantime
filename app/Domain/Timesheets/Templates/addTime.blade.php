@@ -38,14 +38,14 @@
                         <div class="widgetcontent" style="min-height: 460px">
 
                             <label for="clients">{{ __('label.client') }}</label>
-                            <x-global::forms.select :bare="true" name="clients" id="clients" onchange="filterProjectsByClient();">
+                            <x-globals::forms.select :bare="true" name="clients" id="clients" onchange="filterProjectsByClient();">
                                 <option value="all">{{ __('headline.all_clients') }}</option>
                                 @foreach ($tpl->get('allClients') as $client)
                                     <option value="{{ $client['id'] }}">{{ $tpl->escape($client['name']) }}</option>
                                 @endforeach
-                            </x-global::forms.select> <br/>
+                            </x-globals::forms.select> <br/>
 
-                            <label for="projects">{{ __('PROJECT') }}</label> <x-global::forms.select :bare="true"
+                            <label for="projects">{{ __('PROJECT') }}</label> <x-globals::forms.select :bare="true"
                                     name="projects" id="projects"
                                     onchange="removeOptions($('select#projects option:selected').val());">
 
@@ -75,10 +75,10 @@
                                         @endphp
                                     @endforeach
                                 </optgroup>
-                            </x-global::forms.select> <br/>
+                            </x-globals::forms.select> <br/>
 
                             <label for="tickets">{{ __('TICKET') }}</label>
-                            <x-global::forms.select name="tickets" id="tickets">
+                            <x-globals::forms.select name="tickets" id="tickets">
 
                                 @foreach ($tpl->get('allTickets') as $row)
                                     <option class="{{ $row['projectId'] }}" value="{{ $row['projectId'] }}|{{ $row['id'] }}"
@@ -88,9 +88,9 @@
                                     >{{ $row['headline'] }}</option>
                                 @endforeach
 
-                            </x-global::forms.select> <br/>
+                            </x-globals::forms.select> <br/>
                             <br/>
-                            <label for="kind">{{ __('KIND') }}</label> <x-global::forms.select id="kind"
+                            <label for="kind">{{ __('KIND') }}</label> <x-globals::forms.select id="kind"
                                                                                               name="kind">
                                 @foreach ($tpl->get('kind') as $row)
                                     <option value="{{ $row }}"
@@ -100,16 +100,16 @@
                                     >{{ __($row) }}</option>
                                 @endforeach
 
-                            </x-global::forms.select><br/>
-                            <label for="date">{{ __('DATE') }}</label> <x-global::forms.input :bare="true" type="text" autocomplete="off"
+                            </x-globals::forms.select><br/>
+                            <label for="date">{{ __('DATE') }}</label> <x-globals::forms.input :bare="true" type="text" autocomplete="off"
                                                                                              id="date" name="date"
                                                                                              value="{{ $values['date'] }}"
                                                                                              size="7"/>
                             <br/>
-                            <label for="hours">{{ __('HOURS') }}</label> <x-global::forms.input
+                            <label for="hours">{{ __('HOURS') }}</label> <x-globals::forms.input
                                     name="hours" id="hours"
                                     value="{{ $values['hours'] }}" size="7" /> <br/>
-                            <label for="description">{{ __('DESCRIPTION') }}</label> <x-global::forms.textarea
+                            <label for="description">{{ __('DESCRIPTION') }}</label> <x-globals::forms.textarea
                                     name="description" id="description" rows="5"
                                     value="{{ $values['description'] }}" /><br/>
                             <br/>
@@ -120,7 +120,7 @@
                                     checked="checked"
                                 @endif
                                 />
-                            {{ __('ONDATE') }}&nbsp;<x-global::forms.input :bare="true" type="text"
+                            {{ __('ONDATE') }}&nbsp;<x-globals::forms.input :bare="true" type="text"
                                                                           id="invoicedEmplDate" name="invoicedEmplDate"
                                                                           value="{{ $values['invoicedEmplDate'] }}"
                                                                           size="7"/><br/>
@@ -134,7 +134,7 @@
                                         checked="checked"
                                     @endif
                                     />
-                                {{ __('ONDATE') }}&nbsp;<x-global::forms.input :bare="true" type="text" autocomplete="off"
+                                {{ __('ONDATE') }}&nbsp;<x-globals::forms.input :bare="true" type="text" autocomplete="off"
                                                                               id="invoicedCompDate"
                                                                               name="invoicedCompDate"
                                                                               value="{{ $values['invoicedCompDate'] }}"
@@ -146,7 +146,7 @@
                                         checked="checked"
                                     @endif
                                     />
-                                {{ __('ONDATE') }}&nbsp;<x-global::forms.input :bare="true" type="text" autocomplete="off"
+                                {{ __('ONDATE') }}&nbsp;<x-globals::forms.input :bare="true" type="text" autocomplete="off"
                                                                               id="paidDate"
                                                                               name="paidDate"
                                                                               value="{{ $values['paidDate'] }}"
@@ -155,7 +155,7 @@
 
 
                             @endif
-                            <x-global::button submit type="primary" name="save">{{ __('SAVE') }}</x-global::button> <x-global::button submit type="primary" name="saveNew">{{ __('SAVE_NEW') }}</x-global::button>
+                            <x-globals::forms.button submit type="primary" name="save">{{ __('SAVE') }}</x-globals::forms.button> <x-globals::forms.button submit type="primary" name="saveNew">{{ __('SAVE_NEW') }}</x-globals::forms.button>
 
 
         </form>

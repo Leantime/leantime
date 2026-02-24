@@ -32,10 +32,10 @@
             <div>
                 <div class="pull-right">
 
-                    <x-global::elements.button-dropdown :label="__('label.roles.client') . ': ' . $clientNameSelected" type="default">
+                    <x-globals::elements.button-dropdown :label="__('label.roles.client') . ': ' . $clientNameSelected" type="default">
                         <li><a href="{{ BASE_URL }}/tickets/roadmapAll" {!! empty($labelActive) ? "class='active'" : '' !!}> {{ __('headline.all_clients') }} </a></li>
                         {!! $htmlDropdownClients !!}
-                    </x-global::elements.button-dropdown>
+                    </x-globals::elements.button-dropdown>
 
                     <div class="dropdown btn-group dropRight">
                         @php
@@ -67,7 +67,7 @@
                 </div>
                 <h4>{{ __('headlines.no_milestones') }}<br/>
                 <br />
-                <x-global::button link="{{ BASE_URL }}/tickets/editMilestone" type="primary" class="milestoneModal addCanvasLink">{{ __('links.add_milestone') }}</x-global::button></h4>
+                <x-globals::forms.button link="{{ BASE_URL }}/tickets/editMilestone" type="primary" class="milestoneModal addCanvasLink">{{ __('links.add_milestone') }}</x-globals::forms.button></h4>
             </div>
         @endif
 

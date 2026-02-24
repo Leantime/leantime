@@ -31,7 +31,7 @@
             <h3>Integration Success</h3>
             <p>Your data was synced successfully.</p>
             <br />
-            <x-global::button link="{{ BASE_URL }}/connector/show" type="secondary">Go back to integrations</x-global::button>
+            <x-globals::forms.button link="{{ BASE_URL }}/connector/show" type="secondary">Go back to integrations</x-globals::forms.button>
         </div>
     </div>
 </div>

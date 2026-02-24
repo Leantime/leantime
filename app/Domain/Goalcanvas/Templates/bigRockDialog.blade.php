@@ -8,11 +8,11 @@
 
     <br />
     <label>{{ __('label.goal_description') }}</label>
-    <x-global::forms.input name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" class="tw:w-full" /><br />
+    <x-globals::forms.input name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" class="tw:w-full" /><br />
 
     <br />
     <div class="tw:flex tw:justify-between tw:items-center">
-        <x-global::button submit type="primary" id="saveBtn">{{ __('buttons.save') }}</x-global::button>
+        <x-globals::forms.button submit type="primary" id="saveBtn">{{ __('buttons.save') }}</x-globals::forms.button>
     </div>
 
 </form>

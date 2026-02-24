@@ -111,7 +111,7 @@ foreach ($statusColumns as $statusId => $statusData) {
         {{-- Time indicator (⏳ ⏰ 💤) - hidden when collapsed --}}
         @if($timeAlert)
             <span class="swimlane-time-indicator">
-                <x-global::kanban.time-indicator :type="$timeAlert" />
+                <x-globals::kanban.time-indicator :type="$timeAlert" />
             </span>
         @endif
 
@@ -123,7 +123,7 @@ foreach ($statusColumns as $statusId => $statusData) {
     <div class="swimlane-header-row2">
         {{-- Micro Progress Bar (status breakdown) - always shown, gray when empty --}}
         <div style="flex: 1; min-width: 0;">
-            <x-global::kanban.micro-progress-bar
+            <x-globals::kanban.micro-progress-bar
                 :statusCounts="$statusCounts"
                 :statusColumns="$statusLabels"
                 :totalCount="$totalCount"

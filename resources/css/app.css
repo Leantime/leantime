@@ -9,18 +9,39 @@
 @source "../../app/{Views,Domain,Plugins}/**/{Composers,Controllers}/**/*.php";
 
 @theme {
-    /* Map Leantime CSS variables to Tailwind theme */
+    /* ═══ DESIGN SYSTEM v3 — CANONICAL FUNCTIONAL TOKENS ═══ */
+    /* These are the primary theme interface for Tailwind utilities. */
+
+    /* Brand colors */
     --color-primary: var(--primary-color);
     --color-secondary: var(--secondary-color);
-
-    /* Design System v2 semantic color aliases */
     --color-accent1: var(--accent1);
     --color-accent2: var(--accent2);
     --color-accent3: var(--accent3);
     --color-accent4: var(--accent4);
-    --color-text-primary: var(--color-text-primary);
-    --color-text-secondary: var(--color-text-secondary);
+    --color-brand-primary: var(--color-brand-primary);
+    --color-brand-secondary: var(--color-brand-secondary);
+
+    /* Surface colors (v3 canonical) */
+    --color-surface-page: var(--color-surface-page);
+    --color-surface-card: var(--color-surface-card);
+    --color-surface-inset: var(--color-surface-inset);
+    --color-surface-overlay: var(--color-surface-overlay);
+
+    /* Text colors (v3 canonical) */
+    --color-text-default: var(--color-text-default);
+    --color-text-link: var(--color-text-link);
+    --color-text-on-emphasis: var(--color-text-on-emphasis);
     --color-text-muted: var(--color-text-muted);
+
+    /* State colors (v3 canonical) */
+    --color-state-danger: var(--color-state-danger);
+    --color-state-warning: var(--color-state-warning);
+    --color-state-success: var(--color-state-success);
+    --color-state-info: var(--color-state-info);
+    --color-focus-ring: var(--color-focus-ring);
+
+    /* Background (v2 deprecated — kept for existing utilities) */
     --color-bg-page: var(--color-bg-page);
     --color-bg-card: var(--color-bg-card);
     --color-bg-elevated: var(--color-bg-elevated);
@@ -29,7 +50,7 @@
     --color-border-default: var(--color-border-default);
     --color-border-light: var(--color-border-light);
 
-    /* Font sizes mapped from Leantime design tokens */
+    /* Font sizes */
     --font-size-sm: var(--font-size-sm);
     --font-size-base: var(--base-font-size);
     --font-size-l: var(--font-size-l);
@@ -51,14 +72,22 @@
     --font-weight-bold: var(--font-weight-bold);
     --font-weight-display: var(--font-weight-display);
 
-    /* Shadow scale */
+    /* Shadow scale (v3 canonical s/m/l) */
+    --shadow-s: var(--shadow-s);
+    --shadow-m: var(--shadow-m);
+    --shadow-l: var(--shadow-l);
+    /* v2 deprecated aliases — kept for existing utilities */
     --shadow-xs: var(--shadow-xs);
     --shadow-sm: var(--shadow-sm);
     --shadow-md: var(--shadow-md);
     --shadow-lg: var(--shadow-lg);
     --shadow-xl: var(--shadow-xl);
 
-    /* Radius scale */
+    /* Radius scale (v3 canonical s/m/l) */
+    --radius-s: var(--radius-s);
+    --radius-m: var(--radius-m);
+    --radius-l: var(--radius-l);
+    /* v2 aliases — kept for existing utilities */
     --radius-xs: var(--radius-xs);
     --radius-sm: var(--radius-sm);
     --radius: var(--radius);
@@ -66,7 +95,7 @@
     --radius-pill: var(--radius-pill);
     --radius-full: var(--radius-full);
 
-    /* Spacing mapped from Leantime design tokens */
+    /* Spacing */
     --spacing-none: 0;
     --spacing-xs: 5px;
     --spacing-sm: 10px;
@@ -74,4 +103,26 @@
     --spacing-m: 15px;
     --spacing-l: 20px;
     --spacing-xl: 30px;
+
+    /* Z-index semantic tokens */
+    --z-dropdown: var(--z-dropdown);
+    --z-sticky: var(--z-sticky);
+    --z-modal: var(--z-modal);
+    --z-toast: var(--z-toast);
+
+    /* Component tokens */
+    --btn-bg: var(--btn-bg);
+    --btn-color: var(--btn-color);
+    --btn-radius: var(--btn-radius);
+    --card-bg: var(--card-bg);
+    --card-border: var(--card-border);
+    --card-radius: var(--card-radius);
+    --card-shadow: var(--card-shadow);
+    --modal-bg: var(--modal-bg);
+    --modal-overlay: var(--modal-overlay);
+    --modal-radius: var(--modal-radius);
+    --modal-shadow: var(--modal-shadow);
+    --dropdown-bg: var(--dropdown-bg);
+    --dropdown-border: var(--dropdown-border);
+    --dropdown-shadow: var(--dropdown-shadow);
 }

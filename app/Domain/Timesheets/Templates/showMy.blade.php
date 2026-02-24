@@ -209,10 +209,10 @@ jQuery(document).ready(function(){
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMy" method="post" id="timesheetList">
-            <x-global::elements.button-dropdown :label="__('links.week_view')" type="default" class="pull-right">
+            <x-globals::elements.button-dropdown :label="__('links.week_view')" type="default" class="pull-right">
                     <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
-                </x-global::elements.button-dropdown>
+                </x-globals::elements.button-dropdown>
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
                 <div class="padding-top-sm">
                     <span>{{ __('label.week_from') }}</span>
@@ -327,7 +327,7 @@ jQuery(document).ready(function(){
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
                                 <div class="form-group" id="projectSelect">
-                                    <x-global::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" style="" class="project-select" >
+                                    <x-globals::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" style="" class="project-select" >
                                         <option value=""></option>
                                         @foreach ($tpl->get('allProjects') as $projectRow)
                                             {!! sprintf(
@@ -345,12 +345,12 @@ jQuery(document).ready(function(){
                                                 )
                                             ) !!}
                                         @endforeach
-                                    </x-global::forms.select>
+                                    </x-globals::forms.select>
                                 </div>
                             </td>
                             <td width="14%">
                                 <div class="form-group" id="ticketSelect">
-                                    <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" style="" class="ticket-select" name="ticketId">
+                                    <x-globals::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" style="" class="ticket-select" name="ticketId">
                                         <option value=""></option>
                                         @foreach ($tpl->get('allTickets') as $ticketRow)
                                             @if (in_array($ticketRow['id'], $tpl->get('existingTicketIds')))
@@ -371,15 +371,15 @@ jQuery(document).ready(function(){
                                                 )
                                             ) !!}
                                         @endforeach
-                                    </x-global::forms.select>
+                                    </x-globals::forms.select>
                                 </div>
                             </td>
                             <td width="14%">
-                                <x-global::forms.select :bare="true" class="kind-select" name="kindId">
+                                <x-globals::forms.select :bare="true" class="kind-select" name="kindId">
                                         @foreach ($tpl->get('kind') as $key => $kindRow)
                                             <option value="{{ $key }}">{{ __($kindRow) }}</option>
                                         @endforeach
-                                    </x-global::forms.select>
+                                    </x-globals::forms.select>
                             </td>
 
                             @php $i = 0; @endphp
@@ -406,7 +406,7 @@ jQuery(document).ready(function(){
             </table>
             </div>
             <div class="right">
-                <x-global::button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">Save</x-global::button>
+                <x-globals::forms.button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">Save</x-globals::forms.button>
             </div>
             <div class="clearall"></div>
         </form>

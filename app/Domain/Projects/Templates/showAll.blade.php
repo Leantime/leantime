@@ -24,7 +24,7 @@
             </form>
         </div>
 
-        <x-global::button link="{{ BASE_URL }}/projects/newProject" type="primary" icon="fa fa-plus">{{ __('link.new_project') }}</x-global::button>
+        <x-globals::forms.button link="{{ BASE_URL }}/projects/newProject" type="primary" icon="fa fa-plus">{{ __('link.new_project') }}</x-globals::forms.button>
         <div class="clearall"></div>
         <div style="overflow-x: auto;">
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">

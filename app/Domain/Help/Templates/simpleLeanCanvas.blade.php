@@ -1,13 +1,13 @@
 <div class="center padding-lg">
 
-    <x-global::undrawSvg
+    <x-globals::undrawSvg
         image="undraw_design_data_khdb.svg"
         maxWidth="50%"
         headlineSize="var(--font-size-xxxl)"
         maxheight="auto"
         height="250px"
         headline="{{ __('headlines.welcome_to_simple_research_board') }}"
-    ></x-global::undrawSvg>
+    ></x-globals::undrawSvg>
     <br />
     {!! __('text.simple_lean_canvas_helper_content') !!}
     <br /><br />

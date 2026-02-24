@@ -1,3 +1,4 @@
+{{-- Backward-compat wrapper: maps old API → forms.button naming-doc API --}}
 @props([
     'link' => '#',
     'type' => 'primary',
@@ -14,53 +15,50 @@
 ])
 
 @php
-    // If submit shorthand is used, force tag to button with type=submit
-    $resolvedTag = $submit ? 'button' : $tag;
-
-    $bsTypeClass = match($type) {
-        'danger', 'error' => 'btn btn-danger',
-        'transparent'     => 'btn btn-link',
-        'ghost'           => 'btn btn-default',
-        'accent'          => 'btn btn-primary',
-        'success'         => 'btn btn-success',
-        'warning'         => 'btn btn-warning',
-        default           => 'btn btn-' . $type,
+    // Map old type → contentRole + state
+    $contentRole = match($type) {
+        'danger', 'error' => 'secondary',
+        'transparent'     => 'link',
+        'ghost'           => 'ghost',
+        'accent'          => 'accent',
+        'success'         => 'secondary',
+        'warning'         => 'secondary',
+        default           => $type,
     };
 
-    $sizeClass = match($size) {
-        'xs' => 'btn-xs',
-        'sm' => 'btn-sm',
-        'lg' => 'btn-lg',
-        default => '',
+    $state = match($type) {
+        'danger', 'error' => 'danger',
+        'success'         => 'success',
+        'warning'         => 'warning',
+        default           => 'default',
     };
 
-    $classes = $bsTypeClass
-        . ($outline ? ' btn-outline' : '')
-        . ($sizeClass ? " $sizeClass" : '')
-        . ($circle ? ' btn-circle' : '')
-        . ($formModal ? ' formModal' : '');
+    // Map old size → scale
+    $scale = match($size) {
+        'xs' => 'xs',
+        'sm' => 's',
+        'lg' => 'l',
+        default => 'm',
+    };
 
-    $extraAttrs = [];
-    if ($resolvedTag === 'a') {
-        $extraAttrs['href'] = $link;
-    }
-    if ($submit) {
-        $extraAttrs['type'] = 'submit';
-    }
-    if ($disabled) {
-        $extraAttrs['disabled'] = 'disabled';
-    }
+    // Map icon + iconPosition → leadingVisual / trailingVisual
+    $leadingVisual = ($icon && $iconPosition === 'left') ? $icon : null;
+    $trailingVisual = ($icon && $iconPosition === 'right') ? $icon : null;
 @endphp
 
-<{{ $resolvedTag }} {{ $attributes->merge(array_merge(['class' => $classes], $extraAttrs)) }}>
-    @if($loading)
-        <span class="loading-spinner"></span>
-    @endif
-    @if($icon && $iconPosition === 'left')
-        <i class="{{ $icon }}"></i>
-    @endif
-    {{ $slot }}
-    @if($icon && $iconPosition === 'right')
-        <i class="{{ $icon }}"></i>
-    @endif
-</{{ $resolvedTag }}>
+<x-globals::forms.button
+    :content-role="$contentRole"
+    :state="$state"
+    :scale="$scale"
+    :element="$tag"
+    :leading-visual="$leadingVisual"
+    :trailing-visual="$trailingVisual"
+    :submit="$submit"
+    :disabled="$disabled"
+    :loading="$loading"
+    :circle="$circle"
+    :form-modal="$formModal"
+    :href="$link"
+    :outline="$outline"
+    {{ $attributes }}
+>{{ $slot }}</x-globals::forms.button>

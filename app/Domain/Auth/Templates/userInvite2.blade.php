@@ -22,10 +22,10 @@
                      <?php
                      $themeAll = $themeCore->getAll();
                      foreach ($themeAll as $key => $theme) { ?>
-                         <x-global::selectable selected="{{ ($userTheme == $key ? 'true' : 'false') }}" :id="''" :name="'theme'" :value="$key" :label="''" class="tw:w-1/2" onclick="leantime.snippets.toggleBg('{{ $key }}')">
+                         <x-globals::selectable selected="{{ ($userTheme == $key ? 'true' : 'false') }}" :id="''" :name="'theme'" :value="$key" :label="''" class="tw:w-1/2" onclick="leantime.snippets.toggleBg('{{ $key }}')">
                             <img src="{{ BASE_URL }}/dist/images/background-{{$key}}.png" style="margin:0; border-radius:10px;" />
                                  <br /><?= $tpl->__($theme['name']) ?>
-                         </x-global::selectable>
+                         </x-globals::selectable>
 
                     <?php } ?>
                 </span>
@@ -36,12 +36,12 @@
                 <div class="tw:flex">
                     @foreach($availableFonts as $key => $font)
 
-                        <x-global::selectable  data-tippy-content="{{ $fontTooltips[$key] }}" :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
+                        <x-globals::selectable  data-tippy-content="{{ $fontTooltips[$key] }}" :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
                             <label for="selectable-{{ $key }}" class="font tw:w-[150px]"
                                    style="font-family:'{{ $font }}'; font-size:16px;">
                                 The quick brown fox jumps over the lazy dog
                             </label>
-                        </x-global::selectable>
+                        </x-globals::selectable>
 
                     @endforeach
                 </div>
@@ -51,8 +51,8 @@
         </div>
         <br />
         <div class="align-right">
-            <x-global::button link="{{ BASE_URL }}/auth/userInvite/{{ $inviteId }}" type="secondary" style="width:auto; margin-right:10px">Back</x-global::button>
-            <x-global::button submit type="primary" name="createAccount" class="tw:w-auto" style="width:auto">{{ __("buttons.next") }}</x-global::button>
+            <x-globals::forms.button link="{{ BASE_URL }}/auth/userInvite/{{ $inviteId }}" type="secondary" style="width:auto; margin-right:10px">Back</x-globals::forms.button>
+            <x-globals::forms.button submit type="primary" name="createAccount" class="tw:w-auto" style="width:auto">{{ __("buttons.next") }}</x-globals::forms.button>
         </div>
 
 

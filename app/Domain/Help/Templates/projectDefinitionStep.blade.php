@@ -7,13 +7,13 @@
                 <p>{!!  __('text.structured_project_thinking') !!}</p>
                 <br />
                 <label><strong>{{ __('label.what_are_you_trying_to_accomplish') }}</strong></label>
-                <x-global::forms.textarea name="accomplish" id="accomplish" rows="3" style="width:99%; overflow-x: hidden;" />
+                <x-globals::forms.textarea name="accomplish" id="accomplish" rows="3" style="width:99%; overflow-x: hidden;" />
                 <br />
                 <label><strong>{{ __('label.how_does_the_world_look_like') }}</strong></label>
-                <x-global::forms.textarea name="worldview" id="wordlview" rows="3" style="width:99%; overflow-x: hidden;" />
+                <x-globals::forms.textarea name="worldview" id="wordlview" rows="3" style="width:99%; overflow-x: hidden;" />
                 <br />
                 <label><strong>{{ __('label.why_is_this_important') }}</strong></label>
-                <x-global::forms.textarea name="whyImportant" id="whyImportant" rows="3" style="width:99%; overflow-x: hidden;" />
+                <x-globals::forms.textarea name="whyImportant" id="whyImportant" rows="3" style="width:99%; overflow-x: hidden;" />
 
             </div>
             <div class="col-md-4">
@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="align-right">
-            <x-global::button submit type="primary">{{ __('buttons.next') }}</x-global::button>
+            <x-globals::forms.button submit type="primary">{{ __('buttons.next') }}</x-globals::forms.button>
         </div>
     </form>
 </div>

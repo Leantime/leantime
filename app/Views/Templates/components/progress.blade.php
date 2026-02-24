@@ -1,3 +1,4 @@
+{{-- Backward-compat wrapper: maps old API → feedback.progress naming-doc API --}}
 @props([
     'value' => 0,
     'max' => 100,
@@ -7,45 +8,12 @@
     'showLabel' => false,
 ])
 
-@php
-    $percent = $max > 0 ? min(100, round(($value / $max) * 100)) : 0;
-
-    $sizeClass = match($size) {
-        'sm' => 'tw:h-1.5',
-        'lg' => 'tw:h-4',
-        default => 'tw:h-2.5',
-    };
-
-    $colorClass = match($color) {
-        'success' => 'tw:bg-success',
-        'warning' => 'tw:bg-warning',
-        'error'   => 'tw:bg-error',
-        'info'    => 'tw:bg-info',
-        default   => 'tw:bg-primary',
-    };
-
-    $displayLabel = $label ?: sprintf('%d%%', $percent);
-@endphp
-
-<div {{ $attributes->merge(['class' => 'progress-wrapper']) }}
-     role="progressbar"
-     aria-valuenow="{{ $value }}"
-     aria-valuemin="0"
-     aria-valuemax="{{ $max }}"
-     aria-label="{{ $displayLabel }}">
-
-    @if($showLabel)
-        <div class="tw:flex tw:justify-between tw:mb-1">
-            <span class="tw:text-sm tw:font-medium">{{ $label }}</span>
-            <span class="tw:text-sm tw:font-medium">{{ $percent }}%</span>
-        </div>
-    @endif
-
-    <div class="tw:w-full tw:bg-base-200 tw:rounded-full {{ $sizeClass }} tw:overflow-hidden">
-        <div class="{{ $colorClass }} {{ $sizeClass }} tw:rounded-full tw:transition-all tw:duration-300"
-             style="width: {{ $percent }}%">
-        </div>
-    </div>
-
-    <span class="tw:sr-only">{{ $displayLabel }}</span>
-</div>
+<x-globals::feedback.progress
+    :value="$value"
+    :max="$max"
+    :label="$label"
+    :state="$color"
+    :scale="$size"
+    :show-label="$showLabel"
+    {{ $attributes }}
+/>

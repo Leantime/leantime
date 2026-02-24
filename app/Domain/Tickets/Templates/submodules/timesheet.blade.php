@@ -19,15 +19,15 @@
 
             <label for="kind">{{ __('label.timesheet_kind') }}</label>
             <span class="field">
-                <x-global::forms.select :bare="true" id="kind" name="kind">
+                <x-globals::forms.select :bare="true" id="kind" name="kind">
                     @foreach($tpl->get('kind') as $key => $row)
                         <option value="{{ $key }}" {{ $row == $values['kind'] ? 'selected="selected"' : '' }}>{{ __(strtolower($row)) }}</option>
                     @endforeach
-                </x-global::forms.select>
+                </x-globals::forms.select>
             </span>
 
             <label for="timesheetdate">{{ __('label.date') }}:</label>
-            <x-global::forms.date name="date" id="timesheetdate" value="{{ format($values['date'])->date() }}" /><br/>
+            <x-globals::forms.date name="date" id="timesheetdate" value="{{ format($values['date'])->date() }}" /><br/>
 
             <label for="hours">{{ __('label.hours') }}</label>
             <span class="field">
@@ -36,11 +36,11 @@
 
             <label for="description">{{ __('label.description') }}</label>
             <span class="field">
-                <x-global::forms.textarea name="description" id="description" rows="5" value="{{ $values['description'] }}" /><br />
+                <x-globals::forms.textarea name="description" id="description" rows="5" value="{{ $values['description'] }}" /><br />
             </span>
 
             <input type="hidden" name="saveTimes" value="1" />
-            <x-global::button submit type="primary" name="saveTimes">{{ __('buttons.save') }}</x-global::button>
+            <x-globals::forms.button submit type="primary" name="saveTimes">{{ __('buttons.save') }}</x-globals::forms.button>
         </form>
 
     </div>

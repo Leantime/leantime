@@ -1,12 +1,25 @@
 @props([
     'id',
     'title' => '',
-    'size' => 'md',
+    'size' => null,
+    'scale' => null,
     'closeable' => true,
 ])
 
 @php
-    $sizeStyle = match ($size) {
+    // Naming-doc alias: scale takes precedence, then size
+    $resolvedScale = $scale ?? $size ?? 'md';
+
+    // Normalize naming-doc scale to size keywords
+    $normalizedSize = match($resolvedScale) {
+        's', 'sm' => 'sm',
+        'm', 'md' => 'md',
+        'l', 'lg' => 'lg',
+        'xl'      => 'xl',
+        default   => 'md',
+    };
+
+    $sizeStyle = match ($normalizedSize) {
         'sm' => 'max-width: 400px;',
         'md' => 'max-width: 600px;',
         'lg' => 'max-width: 900px;',

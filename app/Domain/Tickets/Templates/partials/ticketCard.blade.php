@@ -34,7 +34,7 @@
             </div>
 
         <div class="col-md-8 dropdownContainer" style="padding-top:5px;">
-            <x-global::dropdownPill
+            <x-globals::dropdownPill
                 type="status"
                 :parentId="$row['id']"
                 :selectedClass="$statusLabels[$row['status']]['class'] ?? 'label-default'"
@@ -82,7 +82,7 @@
                         }
                     }
                 @endphp
-                <x-global::dropdownPill
+                <x-globals::dropdownPill
                     type="milestone"
                     :parentId="$row['id']"
                     selectedClass="label-default"

@@ -10,10 +10,10 @@
                 hx-target="#ticketSubtasks">
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
-                <x-global::forms.input name="headline" title="{{ __("label.headline") }}" class="tw:w-full" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
-                <x-global::button submit type="primary" name="quickadd">{{ __("buttons.save") }}</x-global::button>
+                <x-globals::forms.input name="headline" title="{{ __("label.headline") }}" class="tw:w-full" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
+                <x-globals::forms.button submit type="primary" name="quickadd">{{ __("buttons.save") }}</x-globals::forms.button>
                 <div class="htmx-indicator-small">
-                    <x-global::loader id="loadingthis" size="25px" />
+                    <x-globals::feedback.loading id="loadingthis" size="25px" />
                 </div>
                 <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />
                 <input type="hidden" name="status" value="3" />
@@ -55,9 +55,9 @@
 
             <div class="tw:px-4 tw:py-0">
                     @if($login::userIsAtLeast($roles::$editor))
-                        <x-global::elements.dropdown>
+                        <x-globals::elements.dropdown>
                                 <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete_todo") }}</a></li>
-                        </x-global::elements.dropdown>
+                        </x-globals::elements.dropdown>
                    @endif
 
                     <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>
@@ -79,7 +79,7 @@
                 </div>
                 <div class="col-md-3" style="padding-top:3px;" >
                     <div class="right">
-                        <x-global::dropdownPill
+                        <x-globals::dropdownPill
                             type="effort"
                             :parentId="$subticket['id']"
                             selectedClass="label-default"
@@ -88,7 +88,7 @@
                             headerLabel="{{ __('dropdown.how_big_todo') }}"
                         />
 
-                        <x-global::dropdownPill
+                        <x-globals::dropdownPill
                             type="status"
                             :parentId="$subticket['id']"
                             :selectedClass="$statusLabels[$subticket['status']]['class'] ?? 'label-important'"

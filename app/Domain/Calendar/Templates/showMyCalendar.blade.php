@@ -32,12 +32,12 @@
                 @foreach($tpl->get('externalCalendars') as $calendars)
                     <li>
                         @if(empty($calendars['managedByPlugin']))
-                        <x-global::elements.dropdown style="float:right;" icon="fa fa-ellipsis-h">
+                        <x-globals::elements.dropdown style="float:right;" icon="fa fa-ellipsis-h">
                             <li>
                                 <a href="#/calendar/editExternal/{{ $calendars['id'] }}"><i class="fa-solid fa-pen-to-square"></i> {{ __('links.edit_calendar') }}</a>
                             </li>
                             <li><a href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete_external_calendar') }}</a></li>
-                        </x-global::elements.dropdown>
+                        </x-globals::elements.dropdown>
                         @endif
                         <span class="indicatorCircle" style="background:{{ $calendars['colorClass'] }}"></span>{{ $calendars['name'] }}
 
@@ -54,7 +54,7 @@
             <div class="maincontentinner">
                 <div class="row">
                     <div class="col-md-4">
-                        <x-global::button link="#/calendar/addEvent" type="primary" formModal><i class="fa fa-plus"></i> {{ __('buttons.add_event') }}</x-global::button>
+                        <x-globals::forms.button link="#/calendar/addEvent" type="primary" formModal><i class="fa fa-plus"></i> {{ __('buttons.add_event') }}</x-globals::forms.button>
                     </div>
                     <div class="col-md-4">
                         <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
@@ -62,7 +62,7 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <x-global::button link="#/calendar/export" type="secondary" class="right">Export</x-global::button>
+                        <x-globals::forms.button link="#/calendar/export" type="secondary" class="right">Export</x-globals::forms.button>
                         <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
                             <span class="fc-icon fc-icon-chevron-right"></span>
                         </button>
@@ -72,12 +72,12 @@
 
                         <button class="fc-today-button btn btn-default right" style="margin-right:5px;">today</button>
 
-                        <x-global::forms.select :bare="true" name="calendarView" id="my-select" style="margin-right:5px;" class="right">
+                        <x-globals::forms.select :bare="true" name="calendarView" id="my-select" style="margin-right:5px;" class="right">
                             <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridDay' ? 'selected' : '' }}>Day</option>
                             <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridWeek' ? 'selected' : '' }}>Week</option>
                             <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ session('usersettings.submenuToggle.myCalendarView') == 'dayGridMonth' ? 'selected' : '' }}>Month</option>
                             <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear' ? 'selected' : '' }}>Year</option>
-                        </x-global::forms.select>
+                        </x-globals::forms.select>
                     </div>
                 </div>
                 <div id="calendar"></div>

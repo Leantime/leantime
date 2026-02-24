@@ -1,6 +1,6 @@
 <div class="center padding-lg" style="width:800px;">
     <div>
-        <x-global::undrawSvg image="undraw_social_serenity_vhix.svg" maxWidth="auto"  maxheight="auto" height="250px" headline="{{ __('headlines.welcome') }}"></x-global::undrawSvg>
+        <x-globals::undrawSvg image="undraw_social_serenity_vhix.svg" maxWidth="auto"  maxheight="auto" height="250px" headline="{{ __('headlines.welcome') }}"></x-globals::undrawSvg>
     </div>
     <div class="onboarding" style="font-size:var(--font-size-l);">
         <br />
@@ -12,7 +12,7 @@
         2. Define the work that will get you to those goals<br />
         3. And then reach them, planning your day to day with your My Work Dashboard.<br />
         <br /><br />
-        <x-global::button link="javascript:void(0)" type="primary" onclick="leantime.helperController.hideAndKeepHidden('dashboard'); leantime.helperController.startProjectDashboardTour();">{{ __("buttons.lets_go") }} <i class="fa-solid fa-arrow-right"></i></x-global::button>
+        <x-globals::forms.button link="javascript:void(0)" type="primary" onclick="leantime.helperController.hideAndKeepHidden('dashboard'); leantime.helperController.startProjectDashboardTour();">{{ __("buttons.lets_go") }} <i class="fa-solid fa-arrow-right"></i></x-globals::forms.button>
         <div class="clearall"></div>
     </div>
 </div>

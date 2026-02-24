@@ -8,9 +8,9 @@
 @if(!empty($error))
     {!! $error !!}
 @elseif(is_object($ticket))
-    <x-global::actions.confirm-delete action="{{ BASE_URL }}/tickets/delTicket/{{ $ticket->id }}">
+    <x-globals::actions.confirm-delete action="{{ BASE_URL }}/tickets/delTicket/{{ $ticket->id }}">
         <p style="margin-bottom: 15px;">{{ __('text.confirm_ticket_deletion') }}</p>
-    </x-global::actions.confirm-delete>
+    </x-globals::actions.confirm-delete>
 @else
     <p>Ticket not found</p>
 @endif

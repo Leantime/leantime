@@ -11,9 +11,9 @@
 
         @if ($login::userIsAtLeast($roles::$editor))
             <br /><br />
-            <x-global::button link="javascript:void(0)" type="primary" class="addCanvasLink">
+            <x-globals::forms.button link="javascript:void(0)" type="primary" class="addCanvasLink">
                 {!! __('links.icon.create_new_board') !!}
-            </x-global::button>
+            </x-globals::forms.button>
         @endif
     </div>
 @endif

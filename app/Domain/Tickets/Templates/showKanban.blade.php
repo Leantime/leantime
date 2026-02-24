@@ -70,10 +70,10 @@ jQuery(document).ready(function(){
             <div class="column">
                 <h4 class="widgettitle title-primary title-border-{{ $statusRow['class'] }}">
                     @if($login::userIsAtLeast($roles::$manager))
-                        <x-global::elements.dropdown containerClass="pull-right">
+                        <x-globals::elements.dropdown containerClass="pull-right">
                             <li><a href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}" class="editLabelModal">{{ __('headlines.edit_label') }}</a></li>
                             <li><a href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings">{{ __('links.add_remove_col') }}</a></li>
-                        </x-global::elements.dropdown>
+                        </x-globals::elements.dropdown>
                     @endif
 
                     <strong class="count">0</strong>
@@ -100,7 +100,7 @@ jQuery(document).ready(function(){
                 <div class="kanban-swimlane-row" data-expanded="{{ $swimlaneExpanded ? 'true' : 'false' }}" id="swimlane-row-{{ $group['id'] }}">
                     <div class="kanban-swimlane-sentinel" data-swimlane-id="{{ $group['id'] }}" aria-hidden="true"></div>
 
-                    <x-global::kanban.swimlane-row-header
+                    <x-globals::kanban.swimlane-row-header
                         :groupBy="$groupBy"
                         :groupId="$group['id']"
                         :label="$group['label']"
@@ -188,7 +188,7 @@ jQuery(document).ready(function(){
                                                         $milestoneOptions[$ms->id] = ['name' => $ms->headline, 'class' => $ms->tags];
                                                     }
                                                 @endphp
-                                                <x-global::dropdownPill
+                                                <x-globals::dropdownPill
                                                     type="milestone"
                                                     :parentId="$row['id']"
                                                     selectedClass="label-default"
@@ -201,7 +201,7 @@ jQuery(document).ready(function(){
                                                 />
 
                                                 @if($row['storypoints'] != '' && $row['storypoints'] > 0)
-                                                    <x-global::dropdownPill
+                                                    <x-globals::dropdownPill
                                                         type="effort"
                                                         :parentId="$row['id']"
                                                         selectedClass="label-default"
@@ -211,7 +211,7 @@ jQuery(document).ready(function(){
                                                     />
                                                 @endif
 
-                                                <x-global::dropdownPill
+                                                <x-globals::dropdownPill
                                                     type="priority"
                                                     :parentId="$row['id']"
                                                     selectedClass="label-default priority-bg-{{ $row['priority'] }}"

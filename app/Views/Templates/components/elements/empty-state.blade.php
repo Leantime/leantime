@@ -5,7 +5,7 @@
 
 <div {{ $attributes->merge(['class' => 'center', 'style' => 'padding: 40px 20px;']) }}>
     @if($image)
-        <x-global::undrawSvg image="{{ $image }}" maxWidth="250px" />
+        <x-globals::undrawSvg image="{{ $image }}" maxWidth="250px" />
     @endif
     @if($headline)
         <h3 style="margin-top: 15px; color: var(--primary-font-color);">{{ $headline }}</h3>

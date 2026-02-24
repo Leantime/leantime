@@ -16,13 +16,13 @@
             👋 {{ __('text.hi') }} {{ session()->get("userdata.name") }}
 
             <div class="pull-right">
-                <x-global::button link="{{ BASE_URL }}/users/editOwn#theme" type="link" icon="fa-solid fa-palette" style="color:var(--main-titles-color); padding:0px; width:31px; line-height:31px; text-align: center;" data-tippy-content="{{ __('text.update_theme') }}" hx-boost="false"></x-global::button>
+                <x-globals::forms.button link="{{ BASE_URL }}/users/editOwn#theme" type="link" icon="fa-solid fa-palette" style="color:var(--main-titles-color); padding:0px; width:31px; line-height:31px; text-align: center;" data-tippy-content="{{ __('text.update_theme') }}" hx-boost="false"></x-globals::forms.button>
 
-                <x-global::button link="#/widgets/widgetManager" type="link" icon="fa fa-fw fa-cogs" style="color:var(--main-titles-color); padding:0px; width:31px; line-height:31px; text-align: center;" data-tippy-content="{{ __('text.update_dashboard') }}">
+                <x-globals::forms.button link="#/widgets/widgetManager" type="link" icon="fa fa-fw fa-cogs" style="color:var(--main-titles-color); padding:0px; width:31px; line-height:31px; text-align: center;" data-tippy-content="{{ __('text.update_dashboard') }}">
                     @if($showSettingsIndicator)
                         <span class='new-indicator'></span>
                     @endif
-                </x-global::button>
+                </x-globals::forms.button>
             </div>
         </div>
 

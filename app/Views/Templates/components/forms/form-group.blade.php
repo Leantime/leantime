@@ -1,3 +1,4 @@
+{{-- Backward-compat wrapper: maps old API → forms.form-field naming-doc API --}}
 @props([
     'label' => null,
     'name' => null,
@@ -8,25 +9,13 @@
     'labelWidth' => null,
 ])
 
-@php
-    $inputId = $name;
-@endphp
-
-<div {{ $attributes->merge([
-    'class' => 'form-group' . ($inline ? ' tw:flex tw:flex-row tw:items-start tw:gap-4' : ''),
-]) }}>
-    @if($label)
-        <label class="control-label{{ $inline && $labelWidth ? ' ' . $labelWidth : '' }}" @if($inputId) for="{{ $inputId }}" @endif>
-            {{ $label }}@if($required) <span class="tw:text-error">*</span>@endif
-        </label>
-    @endif
-    <div class="{{ $inline ? 'tw:flex-1' : '' }}">
-        {{ $slot }}
-        @if($help)
-            <span class="tw:text-xs tw:opacity-60 tw:block tw:mt-1">{{ $help }}</span>
-        @endif
-        @if($error)
-            <span class="tw:text-xs tw:text-error tw:block tw:mt-1">{{ $error }}</span>
-        @endif
-    </div>
-</div>
+<x-globals::forms.form-field
+    :label-text="$label"
+    :name="$name"
+    :required="$required"
+    :validation-text="$error"
+    :caption="$help"
+    :inline="$inline"
+    :label-width="$labelWidth"
+    {{ $attributes }}
+>{{ $slot }}</x-globals::forms.form-field>

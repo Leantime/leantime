@@ -6,7 +6,7 @@
      aria-live="polite">
 
     @if (count($clients) > 0)
-        <x-global::elements.link-dropdown :label="$currentClientName != '' ? $currentClientName : __('headline.all_clients')" triggerClass="btn btn-default header-title-dropdown" class="pull-right">
+        <x-globals::elements.link-dropdown :label="$currentClientName != '' ? $currentClientName : __('headline.all_clients')" triggerClass="btn btn-default header-title-dropdown" class="pull-right">
                 <li>
                     <a href="javascript:void(0);"
                        hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
@@ -23,7 +23,7 @@
                         </li>
                     @endif
                 @endforeach
-        </x-global::elements.link-dropdown>
+        </x-globals::elements.link-dropdown>
     @endif
 
     @if (count($allProjects) == 0)
@@ -33,13 +33,13 @@
                 {{ __('notifications.not_assigned_to_any_project') }}
                 @if($login::userIsAtLeast($roles::$manager))
                     <br />
-                    <x-global::button link="{{ BASE_URL }}/projects/newProject" type="primary">{{ __('link.new_project') }}</x-global::button>
+                    <x-globals::forms.button link="{{ BASE_URL }}/projects/newProject" type="primary">{{ __('link.new_project') }}</x-globals::forms.button>
                 @endif
             </div>
         </div>
     @endif
 
-    <x-global::accordion id="myProjectsHub-favorites" class="noBackground">
+    <x-globals::elements.accordion id="myProjectsHub-favorites" class="noBackground">
         <x-slot name="title">
             ⭐ My Favorites
         </x-slot>
@@ -65,10 +65,10 @@
                 @endif
             </div>
         </x-slot>
-    </x-global::accordion>
+    </x-globals::elements.accordion>
 
 
-    <x-global::accordion id="myProjectsHub-otherProjects" class="noBackground">
+    <x-globals::elements.accordion id="myProjectsHub-otherProjects" class="noBackground">
         <x-slot name="title">
             🗂️ All Assigned Projects
         </x-slot>
@@ -87,7 +87,7 @@
                 @endforeach
             </div>
         </x-slot>
-    </x-global::accordion>
+    </x-globals::elements.accordion>
 </div>
 
 

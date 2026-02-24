@@ -19,15 +19,15 @@
                                     <span class="btn btn-file">
                                     <span class="fileupload-new">Select file</span>
                                     <span class="fileupload-exists">Change</span>
-                                    <x-global::forms.file :bare="true" name="file" />
+                                    <x-globals::forms.file :bare="true" name="file" />
                                 </span>
 
-                                    <x-global::button link="#" type="secondary" class="fileupload-exists" data-dismiss="fileupload">Remove</x-global::button>
+                                    <x-globals::forms.button link="#" type="secondary" class="fileupload-exists" data-dismiss="fileupload">Remove</x-globals::forms.button>
                                 </div>
                             </div>
                         </div>
 
-                        <x-global::button submit type="primary" name="upload">{{ __('UPLOAD') }}</x-global::button>
+                        <x-globals::forms.button submit type="primary" name="upload">{{ __('UPLOAD') }}</x-globals::forms.button>
 
                     </form>
 
@@ -38,14 +38,14 @@
                     <ul id="medialist" class="listfile">
                         @foreach($tpl->get('files') as $file)
                             <li class="{{ $file['moduleId'] }}">
-                                <x-global::elements.dropdown style="float:right;">
+                                <x-globals::elements.dropdown style="float:right;">
                                     <li class="nav-header border">{{ __('subtitles.file') }}</li>
                                     <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{{ __('links.download') }}</a></li>
 
                                     @if($login::userIsAtLeast($roles::$editor))
                                         <li><a href="{{ BASE_URL }}/files/showAll?delFile={{ $file['id'] }}" class="delete deleteFile"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
                                     @endif
-                                </x-global::elements.dropdown>
+                                </x-globals::elements.dropdown>
                                 <a class="imageLink" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">
                                     @if(in_array(strtolower($file['extension']), $tpl->get('imgExtensions')))
                                         <img style="max-height: 50px; max-width: 70px;" src="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" alt="" />

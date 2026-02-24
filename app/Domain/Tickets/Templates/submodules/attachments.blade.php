@@ -15,14 +15,14 @@
                     <span class="btn btn-file">
                         <span class="fileupload-new">{{ __('buttons.select_file') }}</span>
                         <span class='fileupload-exists'>{{ __('buttons.change') }}</span>
-                        <x-global::forms.file :bare="true" name="file" />
+                        <x-globals::forms.file :bare="true" name="file" />
                     </span>
-                    <x-global::button link="#" type="secondary" data-dismiss="fileupload">{{ __('buttons.remove') }}</x-global::button>
+                    <x-globals::forms.button link="#" type="secondary" data-dismiss="fileupload">{{ __('buttons.remove') }}</x-globals::forms.button>
                 </div>
             </div>
         </div>
 
-        <x-global::button submit type="primary" name="upload">{{ __('buttons.upload') }}</x-global::button>
+        <x-globals::forms.button submit type="primary" name="upload">{{ __('buttons.upload') }}</x-globals::forms.button>
     </form>
 
     <div class="clear"></div>
@@ -32,14 +32,14 @@
     <ul id='medialist' class='listfile'>
         @foreach($tpl->get('files') as $file)
             <li class="{{ $file['moduleId'] }}">
-                <x-global::elements.dropdown style="float:right;">
+                <x-globals::elements.dropdown style="float:right;">
                     <li class="nav-header border">{{ __('subtitles.file') }}</li>
                     <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">{{ __('links.download') }}</a></li>
 
                     @if($login::userIsAtLeast($roles::$editor))
                         <li><a href="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}?delFile={{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
                     @endif
-                </x-global::elements.dropdown>
+                </x-globals::elements.dropdown>
 
                 <a class="cboxElement" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">
                     @if(in_array(strtolower($file['extension']), $tpl->get('imgExtensions')))
@@ -58,11 +58,11 @@
 </div>
 
 @if(count($tpl->get('files')) == 0)
-    <x-global::elements.empty-state headline="{{ __('text.no_files') }}">
+    <x-globals::elements.empty-state headline="{{ __('text.no_files') }}">
         <x-slot:icon>
             {!! file_get_contents(ROOT . '/dist/images/svg/undraw_image__folder_re_hgp7.svg') !!}
         </x-slot:icon>
-    </x-global::elements.empty-state>
+    </x-globals::elements.empty-state>
 @endif
 
 <div style='clear:both'>&nbsp;</div>

@@ -32,7 +32,7 @@
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tiptapSimple" name="text"></textarea>
-                <x-global::button submit type="success" name="comment" class="tw:ml-0">{{ __('buttons.save') }}</x-global::button>
+                <x-globals::forms.button submit type="success" name="comment" class="tw:ml-0">{{ __('buttons.save') }}</x-globals::forms.button>
             </div>
             <input type="hidden" name="comment" class="commenterField" value="1"/>
             <input type="hidden" name="father" class="commenterField" id="father-{{ $formHash }}" value="0"/>
@@ -57,7 +57,7 @@
                                     format($row['date'])->time()
                                 ) !!}
                                     @if($login::userIsAtLeast($roles::$editor))
-                                        <x-global::elements.dropdown containerClass="pull-right tw:ml-2.5">
+                                        <x-globals::elements.dropdown containerClass="pull-right tw:ml-2.5">
                                             @if(($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
                                                 <li><a href="{{ $deleteUrlBase . $row['id'] }}" class="deleteComment formModal">
                                                     <span class="fa fa-trash"></span> {{ __('links.delete') }}
@@ -73,7 +73,7 @@
                                             @if(isset($tpl->get('ticket')->id))
                                                 <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $tpl->get('ticket')->id }});">{{ __('links.add_to_timesheets') }}</a></li>
                                             @endif
-                                        </x-global::elements.dropdown>
+                                        </x-globals::elements.dropdown>
                                     @endif
                             </div>
                             <span class="name">{{ sprintf(__('text.full_name'), e($row['firstname']), e($row['lastname'])) }}</span>
@@ -137,8 +137,8 @@
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}"/>
                                 </div>
                                 <div class="commentReply">
-                                    <x-global::button submit type="primary" name="comment" id="submit-reply-button">{{ __('links.reply') }}</x-global::button>
-                                    <x-global::button tag="button" type="primary" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')">{{ __('links.cancel') }}</x-global::button>
+                                    <x-globals::forms.button submit type="primary" name="comment" id="submit-reply-button">{{ __('links.reply') }}</x-globals::forms.button>
+                                    <x-globals::forms.button tag="button" type="primary" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')">{{ __('links.cancel') }}</x-globals::forms.button>
                                 </div>
                                 <div class="clearall"></div>
                             </div>

@@ -1,6 +1,7 @@
 @props([
     'name',
     'label' => null,
+    'labelText' => null,
     'checked' => false,
     'value' => '1',
     'toggle' => false,
@@ -10,9 +11,10 @@
 ])
 
 @php
+    $resolvedLabel = $labelText ?? $label;
     $checkboxId = $id ?? $name;
     $inputClass = $toggle ? 'tw:toggle tw:toggle-primary' : 'tw:checkbox tw:checkbox-primary';
-    $hasLabel = $label || !$slot->isEmpty();
+    $hasLabel = $resolvedLabel || !$slot->isEmpty();
 @endphp
 
 @if($hasLabel)
@@ -28,8 +30,8 @@
         {{ $disabled ? 'disabled' : '' }}
         {{ $attributes->merge(['class' => $inputClass]) }}
     />
-    @if($label)
-        <span class="tw:label-text">{{ $label }}</span>
+    @if($resolvedLabel)
+        <span class="tw:label-text">{{ $resolvedLabel }}</span>
     @elseif(!$slot->isEmpty())
         <span class="tw:label-text">{{ $slot }}</span>
     @endif

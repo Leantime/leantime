@@ -16,7 +16,7 @@
                 <span style="font-size:18px; color:var(--main-titles-color););">
                    {{ __("text.project_hub_intro") }}
                     @if ($login::userIsAtLeast("manager"))
-                        <br /><br /><x-global::button link="#/projects/createnew" type="secondary">{!! __("menu.create_something_new") !!}</x-global::button>
+                        <br /><br /><x-globals::forms.button link="#/projects/createnew" type="secondary">{!! __("menu.create_something_new") !!}</x-globals::forms.button>
                     @endif
                 </span>
                 <br />
@@ -25,8 +25,8 @@
         </div>
 
         @if(is_array($allProjects) && count($allProjects) == 0)
-            <x-global::undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" style="color:var(--main-titles-color);" maxWidth="30%">
-            </x-global::undrawSvg>
+            <x-globals::undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" style="color:var(--main-titles-color);" maxWidth="30%">
+            </x-globals::undrawSvg>
 
         @endif
 
@@ -38,7 +38,7 @@
              aria-live="polite">
 
             @if (count($clients) > 0)
-                <x-global::elements.link-dropdown :label="$currentClientName != '' ? $currentClientName : __('headline.all_clients')" triggerClass="btn btn-default header-title-dropdown" class="pull-right">
+                <x-globals::elements.link-dropdown :label="$currentClientName != '' ? $currentClientName : __('headline.all_clients')" triggerClass="btn btn-default header-title-dropdown" class="pull-right">
                         <li>
                             <a href="javascript:void(0);"
                                hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
@@ -53,7 +53,7 @@
                                     hx-swap="outerHTML">{{ $value['name'] }}</a>
                             </li>
                         @endforeach
-                </x-global::elements.link-dropdown>
+                </x-globals::elements.link-dropdown>
             @endif
 
             @if (count($allProjects) == 0)
@@ -63,13 +63,13 @@
                         {{ __('notifications.not_assigned_to_any_project') }}
                         @if($login::userIsAtLeast($roles::$manager))
                             <br /><br />
-                            <x-global::button link="{{ BASE_URL }}/projects/newProject" type="primary">{{ __('link.new_project') }}</x-global::button>
+                            <x-globals::forms.button link="{{ BASE_URL }}/projects/newProject" type="primary">{{ __('link.new_project') }}</x-globals::forms.button>
                         @endif
                     </div>
                 </div>
             @endif
 
-            <x-global::accordion id="myProjectsHub-favorites" class="noBackground">
+            <x-globals::elements.accordion id="myProjectsHub-favorites" class="noBackground">
                 <x-slot name="title">
                     ⭐ My Favorites
                 </x-slot>
@@ -95,10 +95,10 @@
                         @endif
                     </div>
                 </x-slot>
-            </x-global::accordion>
+            </x-globals::elements.accordion>
 
 
-            <x-global::accordion id="myProjectsHub-otherProjects" class="noBackground">
+            <x-globals::elements.accordion id="myProjectsHub-otherProjects" class="noBackground">
                 <x-slot name="title">
                     {{ __("text.all_assigned_projects")  }}
                 </x-slot>
@@ -116,7 +116,7 @@
                         @endforeach
                     </div>
                 </x-slot>
-            </x-global::accordion>
+            </x-globals::elements.accordion>
         </div>
     </div>
 @endsection

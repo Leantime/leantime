@@ -47,7 +47,7 @@
                 hx-indicator=".htmx-indicator"
                 aria-live="polite">
                 <div class="htmx-indicator">
-                    <x-global::loadingText type="card" count="1" />
+                    <x-globals::feedback.skeleton type="card" count="1" />
                 </div>
             </div>
         @endif

@@ -15,7 +15,7 @@
 
     @if($url)
         {{ __('text.you_ical_url') }}
-        <br /><x-global::forms.input name="ical_url" value="{{ $url }}" readonly style="width:100%;" />
+        <br /><x-globals::forms.input name="ical_url" value="{{ $url }}" readonly style="width:100%;" />
     @else
         {{ __('text.no_url') }}
     @endif
@@ -26,7 +26,7 @@
 
             @dispatchEvent('beforeSubmitButton')
 
-            <br /><x-global::button submit type="primary">{{ __('buttons.generate_ical_url') }}</x-global::button>
+            <br /><x-globals::forms.button submit type="primary">{{ __('buttons.generate_ical_url') }}</x-globals::forms.button>
 
         </div>
         <div class="col-md-6 align-right">

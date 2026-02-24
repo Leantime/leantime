@@ -36,7 +36,7 @@
     <div class="pagetitle">
         <h5>{!! e(session('currentProjectClient') . ' // ' . session('currentProjectName')) !!}</h5>
         @if (count($allCanvas) > 0)
-            <x-global::elements.dropdown containerClass="headerEditDropdown">
+            <x-globals::elements.dropdown containerClass="headerEditDropdown">
                 @if ($login::userIsAtLeast($roles::$editor))
                     <li><a href="#/{{ $canvasName }}canvas/boardDialog/{{ $tpl->get('currentCanvas') }}" class="editCanvasLink">{!! $tpl->__('links.icon.edit') !!}</a></li>
                 @endif
@@ -45,11 +45,11 @@
                 @if ($login::userIsAtLeast($roles::$editor))
                     <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
                 @endif
-            </x-global::elements.dropdown>
+            </x-globals::elements.dropdown>
         @endif
         <h1>{{ $tpl->__("headline.$canvasName.board") }} //
             @if (count($allCanvas) > 0)
-                <x-global::elements.link-dropdown :label="$tpl->escape($canvasTitle)" triggerClass="header-title-dropdown">
+                <x-globals::elements.link-dropdown :label="$tpl->escape($canvasTitle)" triggerClass="header-title-dropdown">
                     @if ($login::userIsAtLeast($roles::$editor))
                         <li><a href="#/{{ $canvasName }}canvas/boardDialog">{!! $tpl->__('links.icon.create_new_board') !!}</a></li>
                     @endif
@@ -57,7 +57,7 @@
                     @foreach ($tpl->get('allCanvas') as $canvasRow)
                         <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
                     @endforeach
-                </x-global::elements.link-dropdown>
+                </x-globals::elements.link-dropdown>
             @endif
         </h1>
     </div>
@@ -71,7 +71,7 @@
         <div class="tw:flex tw:justify-between tw:items-center">
             <div>
                 @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
-                    <x-global::button link="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $elementName }}" type="primary" id="{{ $elementName }}">{!! $tpl->__('links.add_new_canvas_item' . $canvasName) !!}</x-global::button>
+                    <x-globals::forms.button link="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $elementName }}" type="primary" id="{{ $elementName }}">{!! $tpl->__('links.add_new_canvas_item' . $canvasName) !!}</x-globals::forms.button>
                 @endif
             </div>
 
@@ -85,12 +85,12 @@
                             ? '<i class="fas fa-filter"></i> ' . $tpl->__('status.all')
                             : '<i class="fas fa-fw ' . $tpl->__($statusLabels[$filter['status']]['icon']) . '"></i> ' . $statusLabels[$filter['status']]['title'];
                     @endphp
-                    <x-global::elements.button-dropdown :label="$statusFilterLabel" type="default">
+                    <x-globals::elements.button-dropdown :label="$statusFilterLabel" type="default">
                         <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
                         @foreach ($statusLabels as $key => $data)
                             <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}" @if ($filter['status'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
                         @endforeach
-                    </x-global::elements.button-dropdown>
+                    </x-globals::elements.button-dropdown>
                 @endif
 
                 @if (count($allCanvas) > 0 && ! empty($relatesLabels))
@@ -100,12 +100,12 @@
                             ? '<i class="fas fa-fw fa-globe"></i> ' . $tpl->__('relates.all')
                             : '<i class="fas fa-fw ' . $tpl->__($relatesLabels[$filter['relates']]['icon']) . '"></i> ' . $relatesLabels[$filter['relates']]['title'];
                     @endphp
-                    <x-global::elements.button-dropdown :label="$relatesFilterLabel" type="default">
+                    <x-globals::elements.button-dropdown :label="$relatesFilterLabel" type="default">
                         <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates=all" @if ($filter['relates'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('relates.all') }}</a></li>
                         @foreach ($relatesLabels as $key => $data)
                             <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates={{ $key }}" @if ($filter['relates'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
                         @endforeach
-                    </x-global::elements.button-dropdown>
+                    </x-globals::elements.button-dropdown>
                 @endif
 
             </div>

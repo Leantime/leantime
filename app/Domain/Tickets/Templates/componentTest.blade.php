@@ -26,40 +26,40 @@
             <div style="display: flex; gap: 20px; align-items: center;">
                 <div>
                     <small>Critical (1):</small>
-                    <x-global::kanban.thermometer-icon :priority="1" />
+                    <x-globals::kanban.thermometer-icon :priority="1" />
                 </div>
                 <div>
                     <small>High (2):</small>
-                    <x-global::kanban.thermometer-icon :priority="2" />
+                    <x-globals::kanban.thermometer-icon :priority="2" />
                 </div>
                 <div>
                     <small>Medium (3):</small>
-                    <x-global::kanban.thermometer-icon :priority="3" />
+                    <x-globals::kanban.thermometer-icon :priority="3" />
                 </div>
                 <div>
                     <small>Low (4):</small>
-                    <x-global::kanban.thermometer-icon :priority="4" />
+                    <x-globals::kanban.thermometer-icon :priority="4" />
                 </div>
                 <div>
                     <small>Lowest (5):</small>
-                    <x-global::kanban.thermometer-icon :priority="5" />
+                    <x-globals::kanban.thermometer-icon :priority="5" />
                 </div>
             </div>
             <div style="margin-top: 10px;">
                 <small>With labels:</small><br>
-                <x-global::kanban.thermometer-icon :priority="1" :showLabel="true" />
+                <x-globals::kanban.thermometer-icon :priority="1" :showLabel="true" />
             </div>
         </div>
 
         <div class="component-demo">
             <div class="component-label">TShirtIcon (Effort)</div>
             <div style="display: flex; gap: 20px; align-items: center;">
-                <x-global::kanban.tshirt-icon :effort="1" :showLabel="true" />
-                <x-global::kanban.tshirt-icon :effort="2" :showLabel="true" />
-                <x-global::kanban.tshirt-icon :effort="3" :showLabel="true" />
-                <x-global::kanban.tshirt-icon :effort="5" :showLabel="true" />
-                <x-global::kanban.tshirt-icon :effort="8" :showLabel="true" />
-                <x-global::kanban.tshirt-icon :effort="13" :showLabel="true" />
+                <x-globals::kanban.tshirt-icon :effort="1" :showLabel="true" />
+                <x-globals::kanban.tshirt-icon :effort="2" :showLabel="true" />
+                <x-globals::kanban.tshirt-icon :effort="3" :showLabel="true" />
+                <x-globals::kanban.tshirt-icon :effort="5" :showLabel="true" />
+                <x-globals::kanban.tshirt-icon :effort="8" :showLabel="true" />
+                <x-globals::kanban.tshirt-icon :effort="13" :showLabel="true" />
             </div>
         </div>
 
@@ -68,19 +68,19 @@
             <div style="display: flex; gap: 20px; align-items: center;">
                 <div>
                     <small>Marcus Wells (SM):</small><br>
-                    <x-global::kanban.user-avatar username="Marcus Wells" size="sm" />
+                    <x-globals::kanban.user-avatar username="Marcus Wells" size="sm" />
                 </div>
                 <div>
                     <small>Sarah Connor (MD):</small><br>
-                    <x-global::kanban.user-avatar username="Sarah Connor" size="md" />
+                    <x-globals::kanban.user-avatar username="Sarah Connor" size="md" />
                 </div>
                 <div>
                     <small>Unassigned (MD):</small><br>
-                    <x-global::kanban.user-avatar username="Unassigned" size="md" />
+                    <x-globals::kanban.user-avatar username="Unassigned" size="md" />
                 </div>
                 <div>
                     <small>Bob Johnson (LG):</small><br>
-                    <x-global::kanban.user-avatar username="Bob Johnson" size="lg" />
+                    <x-globals::kanban.user-avatar username="Bob Johnson" size="lg" />
                 </div>
             </div>
             <div style="margin-top: 10px; font-size: 12px; color: #666;">
@@ -93,15 +93,15 @@
             <div style="display: flex; gap: 20px; align-items: center;">
                 <div>
                     <small>Due Soon:</small>
-                    <x-global::kanban.time-indicator type="dueSoon" />
+                    <x-globals::kanban.time-indicator type="dueSoon" />
                 </div>
                 <div>
                     <small>Overdue:</small>
-                    <x-global::kanban.time-indicator type="overdue" />
+                    <x-globals::kanban.time-indicator type="overdue" />
                 </div>
                 <div>
                     <small>Stale:</small>
-                    <x-global::kanban.time-indicator type="stale" />
+                    <x-globals::kanban.time-indicator type="stale" />
                 </div>
             </div>
         </div>
@@ -111,19 +111,19 @@
             <div style="display: flex; gap: 20px; align-items: center;">
                 <div>
                     <small>Milestone 🎯:</small>
-                    <x-global::kanban.milestone-icon label="Sprint 1" />
+                    <x-globals::kanban.milestone-icon label="Sprint 1" />
                 </div>
                 <div>
                     <small>Bug 🐛:</small>
-                    <x-global::kanban.type-icon type="bug" />
+                    <x-globals::kanban.type-icon type="bug" />
                 </div>
                 <div>
                     <small>Feature ✨:</small>
-                    <x-global::kanban.type-icon type="feature" />
+                    <x-globals::kanban.type-icon type="feature" />
                 </div>
                 <div>
                     <small>Sprint 🏃:</small>
-                    <x-global::kanban.sprint-icon label="Sprint 2" />
+                    <x-globals::kanban.sprint-icon label="Sprint 2" />
                 </div>
             </div>
         </div>
@@ -135,7 +135,7 @@
 
         <div class="component-demo">
             <div class="component-label">Status Breakdown (50% New, 30% In Progress, 20% Done)</div>
-            <x-global::kanban.micro-progress-bar
+            <x-globals::kanban.micro-progress-bar
                 :statusCounts="['3' => 5, '4' => 3, '5' => 2]"
                 :statusColumns="['3' => 'New', '4' => 'In Progress', '5' => 'Done']"
                 :totalCount="10"
@@ -144,7 +144,7 @@
 
         <div class="component-demo">
             <div class="component-label">Different Distribution (70% New, 20% In Progress, 10% Done)</div>
-            <x-global::kanban.micro-progress-bar
+            <x-globals::kanban.micro-progress-bar
                 :statusCounts="['3' => 14, '4' => 4, '5' => 2]"
                 :statusColumns="['3' => 'New', '4' => 'In Progress', '5' => 'Done']"
                 :totalCount="20"
@@ -153,7 +153,7 @@
 
         <div class="component-demo">
             <div class="component-label">All Statuses</div>
-            <x-global::kanban.micro-progress-bar
+            <x-globals::kanban.micro-progress-bar
                 :statusCounts="['1' => 2, '3' => 5, '4' => 3, '2' => 1, '5' => 4]"
                 :statusColumns="['1' => 'Blocked', '3' => 'New', '4' => 'In Progress', '2' => 'Waiting', '5' => 'Done']"
                 :totalCount="15"
@@ -167,7 +167,7 @@
 
         <div class="component-demo">
             <div class="component-label">Small Count (1-9) - Light Olive</div>
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="priority"
                 :groupId="3"
                 label="Medium"
@@ -180,7 +180,7 @@
 
         <div class="component-demo">
             <div class="component-label">Medium Count (10-99) - Medium Olive</div>
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="priority"
                 :groupId="2"
                 label="High"
@@ -193,7 +193,7 @@
 
         <div class="component-demo">
             <div class="component-label">Large Count (100+) - Dark Olive</div>
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="priority"
                 :groupId="1"
                 label="Critical"
@@ -213,7 +213,7 @@
         <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 30px;">
             <div>
                 <small style="color: #666;">Expanded (shows progress bar)</small>
-                <x-global::kanban.swimlane-row-header
+                <x-globals::kanban.swimlane-row-header
                     groupBy="priority"
                     :groupId="1"
                     label="Critical"
@@ -226,7 +226,7 @@
             </div>
             <div>
                 <small style="color: #666;">Collapsed (minimal)</small>
-                <x-global::kanban.swimlane-row-header
+                <x-globals::kanban.swimlane-row-header
                     groupBy="priority"
                     :groupId="2"
                     label="High"
@@ -239,7 +239,7 @@
             </div>
             <div>
                 <small style="color: #666;">Collapsed (USER groupby)</small>
-                <x-global::kanban.swimlane-row-header
+                <x-globals::kanban.swimlane-row-header
                     groupBy="editorId"
                     groupId="123"
                     label="Sarah Chen"
@@ -252,7 +252,7 @@
             </div>
             <div>
                 <small style="color: #666;">Collapsed (EFFORT groupby)</small>
-                <x-global::kanban.swimlane-row-header
+                <x-globals::kanban.swimlane-row-header
                     groupBy="storypoints"
                     :groupId="5"
                     label="L"
@@ -267,7 +267,7 @@
 
         <h3 style="color: #6B7A4D; margin-top: 20px;">GROUP BY: EFFORT</h3>
         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="storypoints"
                 :groupId="1"
                 label="XS"
@@ -276,7 +276,7 @@
                 :statusColumns="['3' => 'New', '4' => 'In Progress', '5' => 'Done']"
                 :expanded="true"
             />
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="storypoints"
                 :groupId="2"
                 label="S"
@@ -286,7 +286,7 @@
                 :expanded="true"
                 timeAlert="dueSoon"
             />
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="storypoints"
                 :groupId="3"
                 label="M"
@@ -295,7 +295,7 @@
                 :statusColumns="['3' => 'New', '4' => 'In Progress', '5' => 'Done']"
                 :expanded="true"
             />
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="storypoints"
                 :groupId="5"
                 label="L"
@@ -305,7 +305,7 @@
                 :expanded="true"
                 timeAlert="overdue"
             />
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="storypoints"
                 :groupId="8"
                 label="XL"
@@ -318,7 +318,7 @@
 
         <h3 style="color: #6B7A4D; margin-top: 20px;">GROUP BY: MILESTONE</h3>
         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="milestoneid"
                 groupId="1"
                 label="Q1 Launch"
@@ -329,7 +329,7 @@
                 timeAlert="dueSoon"
                 moreInfo="Start: Jan 1, 2024 • End: Mar 31, 2024 • Status: Active"
             />
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="milestoneid"
                 groupId="2"
                 label="Beta Release"
@@ -339,7 +339,7 @@
                 :expanded="true"
                 moreInfo="Start: Feb 1, 2024 • End: Feb 28, 2024 • Status: Completed"
             />
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="milestoneid"
                 groupId="3"
                 label="User Research"
@@ -349,7 +349,7 @@
                 :expanded="true"
                 moreInfo="Start: Mar 1, 2024 • End: Apr 15, 2024 • Status: In Progress"
             />
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="milestoneid"
                 groupId="0"
                 label="No Milestone"
@@ -363,7 +363,7 @@
 
         <h3 style="color: #6B7A4D; margin-top: 20px;">GROUP BY: SPRINT</h3>
         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="sprint"
                 groupId="23"
                 label="Sprint 23"
@@ -373,7 +373,7 @@
                 :expanded="true"
                 timeAlert="dueSoon"
             />
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="sprint"
                 groupId="24"
                 label="Sprint 24"
@@ -382,7 +382,7 @@
                 :statusColumns="['3' => 'New', '4' => 'In Progress', '5' => 'Done']"
                 :expanded="true"
             />
-            <x-global::kanban.swimlane-row-header
+            <x-globals::kanban.swimlane-row-header
                 groupBy="sprint"
                 groupId="0"
                 label="Backlog"

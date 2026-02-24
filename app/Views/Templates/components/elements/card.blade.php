@@ -4,13 +4,22 @@
     'bordered' => false,
     'flush' => false,
     'glass' => false,
+    'contentRole' => null,
+    'state' => null,
+    'scale' => null,
+    'variant' => null,
 ])
 
 @php
+    // Naming-doc aliases: variant maps to compact/bordered/flush/glass
+    $isCompact = $compact || $scale === 's' || $variant === 'compact';
+    $isBordered = $bordered || $variant === 'bordered';
+    $isGlass = $glass || $variant === 'glass';
+
     $cardClasses = 'tw:card tw:bg-base-100 tw:shadow-sm'
-        . ($compact ? ' tw:card-sm' : '')
-        . ($bordered ? ' tw:border tw:border-base-300' : '')
-        . ($glass ? ' lt-glass' : '');
+        . ($isCompact ? ' tw:card-sm' : '')
+        . ($isBordered ? ' tw:border tw:border-base-300' : '')
+        . ($isGlass ? ' lt-glass' : '');
 @endphp
 
 <div {{ $attributes->merge(['class' => $cardClasses]) }}>

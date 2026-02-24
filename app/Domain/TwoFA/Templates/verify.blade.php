@@ -15,7 +15,7 @@
         {!! $tpl->displayInlineNotification() !!}
 
         <div class="">
-            <x-global::forms.input name="twoFA_code" id="twoFA_code"
+            <x-globals::forms.input name="twoFA_code" id="twoFA_code"
                    placeholder="{{ __('label.twoFACode') }}"
                    value="" autofocus />
         </div>
@@ -23,7 +23,7 @@
             <div class="forgotPwContainer">
                 <a href="{{ BASE_URL }}/auth/logout" class="forgotPw">{{ __('menu.sign_out') }}</a>
             </div>
-            <x-global::button submit type="primary" name="login">{{ __('buttons.login') }}</x-global::button>
+            <x-globals::forms.button submit type="primary" name="login">{{ __('buttons.login') }}</x-globals::forms.button>
         </div>
     </form>
 </div>

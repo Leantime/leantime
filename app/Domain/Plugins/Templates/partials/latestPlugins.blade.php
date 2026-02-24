@@ -12,7 +12,7 @@
         <img src="{{ $plugin->getPluginImageData() }}" width="75" height="75" class="tw:rounded pull-left tw:mr-m"/>
             @if (! empty($plugin->name))
             <a href="#/plugins/details/{{ $plugin->identifier }}"> <strong>{!! $plugin->name !!}</strong> {{ $plugin->version ? "(v".$plugin->version.")" : "" }}</a><br />
-                <x-global::inlineLinks :links="$plugin->getMetadataLinks()" />
+                <x-globals::inlineLinks :links="$plugin->getMetadataLinks()" />
             @endif
 
             @if (! empty($desc = $plugin->getCardDesc()))

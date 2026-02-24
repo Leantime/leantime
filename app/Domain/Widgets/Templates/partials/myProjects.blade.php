@@ -17,14 +17,14 @@
                     {{ __('notifications.not_assigned_to_any_project') }}
                     @if($login::userIsAtLeast($roles::$manager))
                         <br /><br />
-                        <x-global::button link="{{ BASE_URL }}/projects/newProject" type="primary">{{ __('link.new_project') }}</x-global::button>
+                        <x-globals::forms.button link="{{ BASE_URL }}/projects/newProject" type="primary">{{ __('link.new_project') }}</x-globals::forms.button>
                     @endif
                 </div>
             </div>
     @endif
     <div class="clearall"></div>
 
-    <x-global::accordion id="myProjectWidget-favorites" class="{{ $background }}">
+    <x-globals::elements.accordion id="myProjectWidget-favorites" class="{{ $background }}">
         <x-slot name="title">
             ⭐ My Favorites
         </x-slot>
@@ -49,10 +49,10 @@
                 @endif
             </div>
         </x-slot>
-    </x-global::accordion>
+    </x-globals::elements.accordion>
 
 
-    <x-global::accordion id="myProjectWidget-otherProjects" class="{{ $background }}">
+    <x-globals::elements.accordion id="myProjectWidget-otherProjects" class="{{ $background }}">
         <x-slot name="title">
             🗂️ All Assigned Projects
         </x-slot>
@@ -71,7 +71,7 @@
                 @endforeach
             </div>
         </x-slot>
-    </x-global::accordion>
+    </x-globals::elements.accordion>
 
 </div>
 

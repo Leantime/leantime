@@ -3,6 +3,6 @@
 
 <form method="post" action="{{ BASE_URL }}/sprints/delSprint/{{ $tpl->get('id') }}">
     <p>{{ __('text.are_you_sure_delete_sprint') }}</p><br />
-    <x-global::button submit type="danger" name="del">{{ __('buttons.yes_delete') }}</x-global::button>
-    <x-global::button link="{{ session('lastPage') }}" type="secondary">{{ __('buttons.back') }}</x-global::button>
+    <x-globals::forms.button submit type="danger" name="del">{{ __('buttons.yes_delete') }}</x-globals::forms.button>
+    <x-globals::forms.button link="{{ session('lastPage') }}" type="secondary">{{ __('buttons.back') }}</x-globals::forms.button>
 </form>

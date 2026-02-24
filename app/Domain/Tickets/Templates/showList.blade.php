@@ -44,10 +44,10 @@
             <div class="col-md-3">
                 <div class="quickAddForm" style="margin-top:15px;">
                     <form action="" method="post">
-                        <x-global::forms.input name="headline" autofocus placeholder="{{ __('input.placeholders.create_task') }}" style="width: 100%;" />
+                        <x-globals::forms.input name="headline" autofocus placeholder="{{ __('input.placeholders.create_task') }}" style="width: 100%;" />
                         <input type="hidden" name="sprint" value="{{ $currentSprint }}" />
                         <input type="hidden" name="quickadd" value="1"/>
-                        <x-global::button submit type="primary" name="saveTicket" style="vertical-align: top;">{{ __('buttons.save') }}</x-global::button>
+                        <x-globals::forms.button submit type="primary" name="saveTicket" style="vertical-align: top;">{{ __('buttons.save') }}</x-globals::forms.button>
                     </form>
 
                     @foreach($allTicketGroups as $group)
@@ -80,7 +80,7 @@
                                 <tr onclick="leantime.ticketsController.loadTicketToContainer('{{ $row['id'] }}', '#ticketContent')" id="row-{{ $row['id'] }}" class="ticketRows">
                                     @dispatchEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets])
                                     <td data-order="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['sortKey'] : '' }}" data-search="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['name'] : '' }}" class="roundStatusBtn" style="width:20px">
-                                        <x-global::dropdownPill
+                                        <x-globals::dropdownPill
                                             type="status"
                                             :parentId="$row['id']"
                                             selectedClass="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['class'] : '' }}"

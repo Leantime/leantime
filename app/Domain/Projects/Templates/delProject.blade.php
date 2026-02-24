@@ -20,8 +20,8 @@
 
             <form method="post">
                 <p>{{ __('text.confirm_project_deletion') }}</p><br />
-                <x-global::button submit type="danger" name="del">{{ __('buttons.yes_delete') }}</x-global::button>
-                <x-global::button link="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}" type="primary">{{ __('buttons.back') }}</x-global::button>
+                <x-globals::forms.button submit type="danger" name="del">{{ __('buttons.yes_delete') }}</x-globals::forms.button>
+                <x-globals::forms.button link="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}" type="primary">{{ __('buttons.back') }}</x-globals::forms.button>
             </form>
 
         </div>

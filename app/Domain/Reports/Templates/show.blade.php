@@ -62,7 +62,7 @@
                                 <br />
                                 <span class="pull-left">
                                 @if ($tpl->get('allSprints') !== false && count($tpl->get('allSprints')) > 0)
-                                    <x-global::forms.select :bare="true" data-placeholder="{{ $tpl->__('input.placeholders.filter_by_sprint') }}" title="{{ $tpl->__('input.placeholders.filter_by_sprint') }}" name="sprint" class="mainSprintSelector" onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
+                                    <x-globals::forms.select :bare="true" data-placeholder="{{ $tpl->__('input.placeholders.filter_by_sprint') }}" title="{{ $tpl->__('input.placeholders.filter_by_sprint') }}" name="sprint" class="mainSprintSelector" onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
                                         <option value="">{{ $tpl->__('input.placeholders.filter_by_sprint') }}</option>
                                         @php $dates = ''; @endphp
                                         @foreach ($tpl->get('allSprints') as $sprintRow)
@@ -73,15 +73,15 @@
                                                 @endif
                                             >{{ $tpl->escape($sprintRow->name) }}</option>
                                         @endforeach
-                                    </x-global::forms.select>
+                                    </x-globals::forms.select>
                                 @endif
                             </span>
 
                                 <div class="pull-right">
                                     <div class="btn-group mt-1 mx-auto" role="group">
-                                        <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="NumChartButtonSprint" class="active chartButtons">{{ $tpl->__('label.num_tickets') }}</x-global::button>
-                                        <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="EffortChartButtonSprint" class="chartButtons">{{ $tpl->__('label.effort') }}</x-global::button>
-                                        <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="HourlyChartButtonSprint" class="chartButtons">{{ $tpl->__('label.hours') }}</x-global::button>
+                                        <x-globals::forms.button link="javascript:void(0)" type="secondary" size="sm" id="NumChartButtonSprint" class="active chartButtons">{{ $tpl->__('label.num_tickets') }}</x-globals::forms.button>
+                                        <x-globals::forms.button link="javascript:void(0)" type="secondary" size="sm" id="EffortChartButtonSprint" class="chartButtons">{{ $tpl->__('label.effort') }}</x-globals::forms.button>
+                                        <x-globals::forms.button link="javascript:void(0)" type="secondary" size="sm" id="HourlyChartButtonSprint" class="chartButtons">{{ $tpl->__('label.hours') }}</x-globals::forms.button>
                                     </div>
                                 </div>
 
@@ -97,9 +97,9 @@
 
                         <div class="pull-right">
                             <div class="btn-group mt-1 mx-auto" role="group">
-                                <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="NumChartButtonBacklog" class="active backlogChartButtons">{{ $tpl->__('label.num_tickets') }}</x-global::button>
-                                <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="EffortChartButtonBacklog" class="backlogChartButtons">{{ $tpl->__('label.effort') }}</x-global::button>
-                                <x-global::button link="javascript:void(0)" type="secondary" size="sm" id="HourlyChartButtonBacklog" class="backlogChartButtons">{{ $tpl->__('label.hours') }}</x-global::button>
+                                <x-globals::forms.button link="javascript:void(0)" type="secondary" size="sm" id="NumChartButtonBacklog" class="active backlogChartButtons">{{ $tpl->__('label.num_tickets') }}</x-globals::forms.button>
+                                <x-globals::forms.button link="javascript:void(0)" type="secondary" size="sm" id="EffortChartButtonBacklog" class="backlogChartButtons">{{ $tpl->__('label.effort') }}</x-globals::forms.button>
+                                <x-globals::forms.button link="javascript:void(0)" type="secondary" size="sm" id="HourlyChartButtonBacklog" class="backlogChartButtons">{{ $tpl->__('label.hours') }}</x-globals::forms.button>
                             </div>
                         </div>
                         <div style="width:100%; height:350px;">

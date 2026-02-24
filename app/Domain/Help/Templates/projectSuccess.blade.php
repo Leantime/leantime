@@ -1,13 +1,13 @@
 <div class="center padding-lg">
 
-    <x-global::undrawSvg
+    <x-globals::undrawSvg
         image="undraw_events_2p66.svg"
         maxWidth="50%"
         headlineSize="var(--font-size-xxxl)"
         maxheight="auto"
         height="250px"
         headline="{{ __('headlines.congrats_on_your_project') }}"
-    ></x-global::undrawSvg>
+    ></x-globals::undrawSvg>
     <br />
     {!! __('notifications.project_created_successfully') !!}
 

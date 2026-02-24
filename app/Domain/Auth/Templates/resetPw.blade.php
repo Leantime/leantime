@@ -22,16 +22,16 @@
         <p>{{ __('text.enter_new_password') }}<br /><br /></p>
 
         <div class="">
-            <x-global::forms.input type="password" autocomplete="off" name="password" id="password" placeholder="{{ __('input.placeholders.enter_new_password') }}" />
+            <x-globals::forms.input type="password" autocomplete="off" name="password" id="password" placeholder="{{ __('input.placeholders.enter_new_password') }}" />
             <span id="pwStrength" style="width:100%;"></span>
         </div>
         <div class="">
-            <x-global::forms.input type="password" autocomplete="off" name="password2" id="password2" placeholder="{{ __('input.placeholders.confirm_password') }}" />
+            <x-globals::forms.input type="password" autocomplete="off" name="password2" id="password2" placeholder="{{ __('input.placeholders.confirm_password') }}" />
         </div>
         <small>{{ __('label.passwordRequirements') }}</small><br /><br />
         <div class="">
             @dispatchEvent('beforeSubmitButton')
-            <x-global::button submit type="primary" name="resetPassword">{{ __('buttons.reset_password') }}</x-global::button>
+            <x-globals::forms.button submit type="primary" name="resetPassword">{{ __('buttons.reset_password') }}</x-globals::forms.button>
             <div class="forgotPwContainer">
                 <a href="{{ BASE_URL }}/" class="forgotPw">{{ __('links.back_to_login') }}</a>
             </div>

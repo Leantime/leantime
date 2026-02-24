@@ -1,4 +1,4 @@
-<x-global::pageheader headline="Component Preview" />
+<x-globals::layout.page-header headline="Component Preview" />
 
 <div style="max-width: 960px; margin: 0 auto;">
 
@@ -97,7 +97,7 @@
     </section>
 
     {{-- ============================================================ --}}
-    {{-- MODAL (x-global::actions.modal component) --}}
+    {{-- MODAL (x-globals::actions.modal component) --}}
     {{-- ============================================================ --}}
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Modal Component</h3>
@@ -105,19 +105,19 @@
         <h4 style="margin: 15px 0 10px;">Basic Modal</h4>
         <button class="tw:btn tw:btn-primary" onclick="document.getElementById('basic-modal').showModal()">Open Basic Modal</button>
 
-        <x-global::actions.modal id="basic-modal" title="Basic Modal">
-            <p>This modal uses the <code>&lt;x-global::actions.modal&gt;</code> component with native <code>&lt;dialog&gt;</code> and DaisyUI styling.</p>
+        <x-globals::actions.modal id="basic-modal" title="Basic Modal">
+            <p>This modal uses the <code>&lt;x-globals::actions.modal&gt;</code> component with native <code>&lt;dialog&gt;</code> and DaisyUI styling.</p>
             <x-slot:actions>
                 <form method="dialog">
                     <button class="tw:btn">Close</button>
                 </form>
             </x-slot:actions>
-        </x-global::actions.modal>
+        </x-globals::actions.modal>
 
         <h4 style="margin: 15px 0 10px;">Large Modal with HTMX</h4>
         <button class="tw:btn tw:btn-secondary" onclick="document.getElementById('large-modal').showModal()">Open Large Modal</button>
 
-        <x-global::actions.modal id="large-modal" title="Large Modal" size="lg">
+        <x-globals::actions.modal id="large-modal" title="Large Modal" size="lg">
             <p>A larger modal (<code>size="lg"</code>) suitable for forms and detailed content.</p>
             <p style="margin-top: 10px;">Supports: <code>sm</code>, <code>md</code> (default), <code>lg</code>, <code>xl</code></p>
             <x-slot:actions>
@@ -126,18 +126,18 @@
                     <button class="tw:btn tw:btn-primary">Save</button>
                 </form>
             </x-slot:actions>
-        </x-global::actions.modal>
+        </x-globals::actions.modal>
 
         <h4 style="margin: 15px 0 10px;">Non-closeable Modal</h4>
         <button class="tw:btn tw:btn-accent" onclick="document.getElementById('locked-modal').showModal()">Open Locked Modal</button>
 
-        <x-global::actions.modal id="locked-modal" title="Confirmation Required" :closeable="false">
+        <x-globals::actions.modal id="locked-modal" title="Confirmation Required" :closeable="false">
             <p>This modal has <code>:closeable="false"</code> — no X button and no backdrop dismiss. User must interact with the action buttons.</p>
             <x-slot:actions>
                 <button class="tw:btn tw:btn-ghost" onclick="document.getElementById('locked-modal').close()">Cancel</button>
                 <button class="tw:btn tw:btn-primary" onclick="document.getElementById('locked-modal').close()">Confirm</button>
             </x-slot:actions>
-        </x-global::actions.modal>
+        </x-globals::actions.modal>
     </section>
 
     {{-- ============================================================ --}}
@@ -290,7 +290,7 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
         Blade Component Library
     </h2>
     <p style="margin-bottom: 20px; color: var(--primary-font-color);">
-        Reusable Blade components using <code>&lt;x-global::category.name&gt;</code> syntax.
+        Reusable Blade components using <code>&lt;x-globals::category.name&gt;</code> syntax.
         These wrap DaisyUI 5 classes and accept props for customization.
     </p>
 
@@ -298,29 +298,29 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Form Components</h3>
         <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
-            Usage: <code>&lt;x-global::forms.input name="title" label="Title" /&gt;</code>
+            Usage: <code>&lt;x-globals::forms.input name="title" label="Title" /&gt;</code>
         </p>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 700px;">
-            <x-global::forms.input name="preview-text" label="Text Input" placeholder="Enter text..." />
-            <x-global::forms.input name="preview-email" label="Email" type="email" placeholder="you@example.com" />
-            <x-global::forms.input name="preview-error" label="With Error" value="bad value" error="This field is invalid" />
-            <x-global::forms.input name="preview-required" label="Required Field" :required="true" />
-            <x-global::forms.select name="preview-select" label="Select" :options="['opt1' => 'Option 1', 'opt2' => 'Option 2', 'opt3' => 'Option 3']" placeholder="Choose one..." />
-            <x-global::forms.date name="preview-date" label="Date" placeholder="Pick a date..." />
-            <x-global::forms.file name="preview-file" label="File Upload" />
+            <x-globals::forms.input name="preview-text" label="Text Input" placeholder="Enter text..." />
+            <x-globals::forms.input name="preview-email" label="Email" type="email" placeholder="you@example.com" />
+            <x-globals::forms.input name="preview-error" label="With Error" value="bad value" error="This field is invalid" />
+            <x-globals::forms.input name="preview-required" label="Required Field" :required="true" />
+            <x-globals::forms.select name="preview-select" label="Select" :options="['opt1' => 'Option 1', 'opt2' => 'Option 2', 'opt3' => 'Option 3']" placeholder="Choose one..." />
+            <x-globals::forms.date name="preview-date" label="Date" placeholder="Pick a date..." />
+            <x-globals::forms.file name="preview-file" label="File Upload" />
         </div>
 
         <div style="max-width: 700px; margin-top: 15px;">
-            <x-global::forms.textarea name="preview-textarea" label="Textarea" placeholder="Enter description..." :rows="3" />
+            <x-globals::forms.textarea name="preview-textarea" label="Textarea" placeholder="Enter description..." :rows="3" />
         </div>
 
         <h4 style="margin: 20px 0 10px;">Checkbox &amp; Radio (Blade Components)</h4>
         <div style="display: flex; gap: 20px;">
-            <x-global::forms.checkbox name="preview-check1" label="Default checkbox" :checked="true" />
-            <x-global::forms.checkbox name="preview-toggle1" label="Toggle switch" :toggle="true" :checked="true" />
-            <x-global::forms.radio name="preview-radio-blade" value="a" label="Option A" :checked="true" />
-            <x-global::forms.radio name="preview-radio-blade" value="b" label="Option B" />
+            <x-globals::forms.checkbox name="preview-check1" label="Default checkbox" :checked="true" />
+            <x-globals::forms.checkbox name="preview-toggle1" label="Toggle switch" :toggle="true" :checked="true" />
+            <x-globals::forms.radio name="preview-radio-blade" value="a" label="Option A" :checked="true" />
+            <x-globals::forms.radio name="preview-radio-blade" value="b" label="Option B" />
         </div>
     </section>
 
@@ -328,19 +328,19 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Card Component</h3>
         <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
-            Usage: <code>&lt;x-global::elements.card title="Title"&gt;Content&lt;/x-global::elements.card&gt;</code>
+            Usage: <code>&lt;x-globals::elements.card title="Title"&gt;Content&lt;/x-globals::elements.card&gt;</code>
         </p>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 700px;">
-            <x-global::elements.card title="Basic Card">
+            <x-globals::elements.card title="Basic Card">
                 <p>Card content goes here. Supports title, body, and action slots.</p>
                 <x-slot:actions>
                     <button class="tw:btn tw:btn-primary tw:btn-sm">Action</button>
                 </x-slot:actions>
-            </x-global::elements.card>
+            </x-globals::elements.card>
 
-            <x-global::elements.card :compact="true" title="Compact Card">
+            <x-globals::elements.card :compact="true" title="Compact Card">
                 <p>A compact card with smaller padding.</p>
-            </x-global::elements.card>
+            </x-globals::elements.card>
         </div>
     </section>
 
@@ -348,13 +348,13 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Alert Component</h3>
         <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
-            Usage: <code>&lt;x-global::feedback.alert type="success"&gt;Message&lt;/x-global::feedback.alert&gt;</code>
+            Usage: <code>&lt;x-globals::feedback.alert type="success"&gt;Message&lt;/x-globals::feedback.alert&gt;</code>
         </p>
         <div style="display: flex; flex-direction: column; gap: 10px; max-width: 700px;">
-            <x-global::feedback.alert type="info">Info: New software update available.</x-global::feedback.alert>
-            <x-global::feedback.alert type="success">Success: Item has been saved.</x-global::feedback.alert>
-            <x-global::feedback.alert type="warning">Warning: Invalid email address.</x-global::feedback.alert>
-            <x-global::feedback.alert type="error" :dismissible="true">Error: Click the X to dismiss this alert.</x-global::feedback.alert>
+            <x-globals::feedback.alert type="info">Info: New software update available.</x-globals::feedback.alert>
+            <x-globals::feedback.alert type="success">Success: Item has been saved.</x-globals::feedback.alert>
+            <x-globals::feedback.alert type="warning">Warning: Invalid email address.</x-globals::feedback.alert>
+            <x-globals::feedback.alert type="error" :dismissible="true">Error: Click the X to dismiss this alert.</x-globals::feedback.alert>
         </div>
     </section>
 
@@ -362,19 +362,19 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Dropdown Component</h3>
         <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
-            Usage: <code>&lt;x-global::elements.dropdown label="Options"&gt;&lt;li&gt;&lt;a&gt;Item&lt;/a&gt;&lt;/li&gt;&lt;/x-global::elements.dropdown&gt;</code>
+            Usage: <code>&lt;x-globals::elements.dropdown label="Options"&gt;&lt;li&gt;&lt;a&gt;Item&lt;/a&gt;&lt;/li&gt;&lt;/x-globals::elements.dropdown&gt;</code>
         </p>
         <div style="display: flex; gap: 12px;">
-            <x-global::elements.dropdown label="Actions" icon="fa-solid fa-caret-down">
+            <x-globals::elements.dropdown label="Actions" icon="fa-solid fa-caret-down">
                 <li><a>Edit</a></li>
                 <li><a>Duplicate</a></li>
                 <li><a class="tw:text-error">Delete</a></li>
-            </x-global::elements.dropdown>
+            </x-globals::elements.dropdown>
 
-            <x-global::elements.dropdown>
+            <x-globals::elements.dropdown>
                 <li><a>Option 1</a></li>
                 <li><a>Option 2</a></li>
-            </x-global::elements.dropdown>
+            </x-globals::elements.dropdown>
         </div>
     </section>
 
@@ -382,14 +382,14 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Status Indicator</h3>
         <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
-            Usage: <code>&lt;x-global::elements.status-indicator status="success" label="Active" /&gt;</code>
+            Usage: <code>&lt;x-globals::elements.status-indicator status="success" label="Active" /&gt;</code>
         </p>
         <div style="display: flex; gap: 20px; align-items: center;">
-            <x-global::elements.status-indicator status="success" label="Active" />
-            <x-global::elements.status-indicator status="warning" label="Pending" />
-            <x-global::elements.status-indicator status="error" label="Failed" />
-            <x-global::elements.status-indicator status="info" label="In Progress" />
-            <x-global::elements.status-indicator status="default" label="Unknown" />
+            <x-globals::elements.status-indicator status="success" label="Active" />
+            <x-globals::elements.status-indicator status="warning" label="Pending" />
+            <x-globals::elements.status-indicator status="error" label="Failed" />
+            <x-globals::elements.status-indicator status="info" label="In Progress" />
+            <x-globals::elements.status-indicator status="default" label="Unknown" />
         </div>
     </section>
 
@@ -397,17 +397,17 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Badge Component (Updated)</h3>
         <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
-            Usage: <code>&lt;x-global::badge color="primary"&gt;Label&lt;/x-global::badge&gt;</code>
+            Usage: <code>&lt;x-globals::elements.badge color="primary"&gt;Label&lt;/x-globals::elements.badge&gt;</code>
         </p>
         <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-            <x-global::badge>Default</x-global::badge>
-            <x-global::badge color="primary">Primary</x-global::badge>
-            <x-global::badge color="secondary">Secondary</x-global::badge>
-            <x-global::badge color="accent">Accent</x-global::badge>
-            <x-global::badge color="success">Success</x-global::badge>
-            <x-global::badge color="warning">Warning</x-global::badge>
-            <x-global::badge color="error">Error</x-global::badge>
-            <x-global::badge color="outline">Outline</x-global::badge>
+            <x-globals::elements.badge>Default</x-globals::elements.badge>
+            <x-globals::elements.badge color="primary">Primary</x-globals::elements.badge>
+            <x-globals::elements.badge color="secondary">Secondary</x-globals::elements.badge>
+            <x-globals::elements.badge color="accent">Accent</x-globals::elements.badge>
+            <x-globals::elements.badge color="success">Success</x-globals::elements.badge>
+            <x-globals::elements.badge color="warning">Warning</x-globals::elements.badge>
+            <x-globals::elements.badge color="error">Error</x-globals::elements.badge>
+            <x-globals::elements.badge color="outline">Outline</x-globals::elements.badge>
         </div>
     </section>
 
@@ -415,29 +415,29 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Empty State</h3>
         <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
-            Usage: <code>&lt;x-global::elements.empty-state headline="No items"&gt;Description&lt;/x-global::elements.empty-state&gt;</code>
+            Usage: <code>&lt;x-globals::elements.empty-state headline="No items"&gt;Description&lt;/x-globals::elements.empty-state&gt;</code>
         </p>
-        <x-global::elements.card style="max-width: 500px;">
-            <x-global::elements.empty-state headline="No tickets found">
+        <x-globals::elements.card style="max-width: 500px;">
+            <x-globals::elements.empty-state headline="No tickets found">
                 Create your first ticket to get started.
                 <x-slot:actions>
                     <button class="tw:btn tw:btn-primary tw:btn-sm">Create Ticket</button>
                 </x-slot:actions>
-            </x-global::elements.empty-state>
-        </x-global::elements.card>
+            </x-globals::elements.empty-state>
+        </x-globals::elements.card>
     </section>
 
     {{-- LOADER COMPONENT (UPDATED) --}}
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Loader Component (Updated)</h3>
         <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
-            Usage: <code>&lt;x-global::loader size="md" /&gt;</code>
+            Usage: <code>&lt;x-globals::feedback.loading size="md" /&gt;</code>
         </p>
         <div style="display: flex; gap: 12px; align-items: center;">
-            <x-global::loader size="xs" />
-            <x-global::loader size="sm" />
-            <x-global::loader size="md" />
-            <x-global::loader size="lg" />
+            <x-globals::feedback.loading size="xs" />
+            <x-globals::feedback.loading size="sm" />
+            <x-globals::feedback.loading size="md" />
+            <x-globals::feedback.loading size="lg" />
         </div>
     </section>
 

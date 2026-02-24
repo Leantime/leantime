@@ -37,11 +37,11 @@
                     <div class="col-md-2 right">
                         <h1>From (your integration)</h1>
                         <label for="providerEntities">{{ $provider->name }}</label>
-                        <x-global::forms.select name="providerEntities" id="providerEntities" style="width:100%;">
+                        <x-globals::forms.select name="providerEntities" id="providerEntities" style="width:100%;">
                             @foreach ($providerEntities as $key => $entity)
                                 <option value="{{ $key }}">{{ $entity['name'] }}</option>
                             @endforeach
-                        </x-global::forms.select>
+                        </x-globals::forms.select>
                     </div>
                     <div class="col-md-2" style="padding-top:50px;">
                         <i class="fa fa-arrow-right"></i>
@@ -50,21 +50,21 @@
                         <h1>To (Leantime)</h1>
 
                         <label for="leantimeEntities">Leantime</label>
-                        <x-global::forms.select name="leantimeEntities" id="leantimeEntities" style="width:100%;">
+                        <x-globals::forms.select name="leantimeEntities" id="leantimeEntities" style="width:100%;">
                             @foreach ($leantimeEntities as $key => $entity)
                                 <option value="{{ $key }}">{{ $entity['name'] }}</option>
                             @endforeach
-                        </x-global::forms.select>
+                        </x-globals::forms.select>
                     </div>
                     <div class="col-md-3"></div>
                 </div>
 
                 <div class="left">
-                    <x-global::button link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" type="secondary" class="pull-left">Back</x-global::button>
+                    <x-globals::forms.button link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" type="secondary" class="pull-left">Back</x-globals::forms.button>
                 </div>
 
                 <div class="right">
-                    <x-global::button submit type="secondary">Next</x-global::button>
+                    <x-globals::forms.button submit type="secondary">Next</x-globals::forms.button>
                 </div>
                 <div class="clearall"></div>
             </form>

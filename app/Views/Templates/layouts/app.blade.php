@@ -78,7 +78,7 @@
             </form>
             <div id="global-modal-content">
                 <div style="display:flex;justify-content:center;padding:40px;">
-                    <x-global::loadingText type="text" count="1" />
+                    <x-globals::feedback.skeleton type="text" count="1" />
                 </div>
             </div>
         </div>

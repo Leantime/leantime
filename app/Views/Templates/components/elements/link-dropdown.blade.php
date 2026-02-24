@@ -1,3 +1,4 @@
+{{-- Backward-compat wrapper: maps old API → actions.dropdown-menu --}}
 @props([
     'label' => '',
     'icon' => 'fa fa-caret-down',
@@ -6,12 +7,12 @@
     'triggerClass' => '',
 ])
 
-<div {{ $attributes->merge(['class' => 'dropdown']) }} style="display:inline-block;">
-    <a href="javascript:void(0)" class="dropdown-toggle {{ $triggerClass }}" data-toggle="dropdown">
-        {!! $label !!}
-        <i class="{{ $icon }}"></i>
-    </a>
-    <ul class="dropdown-menu {{ $menuClass }}">
-        {{ $slot }}
-    </ul>
-</div>
+<x-globals::actions.dropdown-menu
+    :label="$label"
+    :trailing-visual="$icon"
+    variant="link"
+    :align="$align"
+    :menu-class="$menuClass"
+    :trigger-class="$triggerClass"
+    {{ $attributes }}
+>{{ $slot }}</x-globals::actions.dropdown-menu>

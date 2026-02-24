@@ -1,13 +1,13 @@
 <div class="center padding-lg">
 
-    <x-global::undrawSvg
+    <x-globals::undrawSvg
         image="undraw_Organizing_projects_0p9a.svg"
         maxWidth="50%"
         headlineSize="var(--font-size-xxxl)"
         maxheight="auto"
         height="250px"
         headline=""
-    ></x-global::undrawSvg>
+    ></x-globals::undrawSvg>
     <br />
     {!! __('text.show_projects_helper_content') !!}
     <br /><br />

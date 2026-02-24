@@ -1,20 +1,23 @@
 @props([
     'type' => 'info',
+    'state' => null,
     'dismissible' => false,
     'icon' => null,
 ])
 
 @php
-    $bsClass = match($type) {
+    $resolvedState = $state ?? $type;
+
+    $bsClass = match($resolvedState) {
         'success' => 'alert-success',
         'warning' => 'alert-warning',
-        'error'   => 'alert-danger',
+        'error', 'danger' => 'alert-danger',
         default   => 'alert-info',
     };
-    $defaultIcon = match($type) {
+    $defaultIcon = match($resolvedState) {
         'success' => 'fa-solid fa-circle-check',
         'warning' => 'fa-solid fa-triangle-exclamation',
-        'error'   => 'fa-solid fa-circle-xmark',
+        'error', 'danger' => 'fa-solid fa-circle-xmark',
         default   => 'fa-solid fa-circle-info',
     };
 @endphp

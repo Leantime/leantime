@@ -26,10 +26,10 @@
 <form class="formModal" method="post" action="{{ BASE_URL }}/tickets/editMilestone/{{ $currentMilestone->id }}" style="min-width: 250px;">
 
     <label>{{ __('label.milestone_title') }}</label>
-    <x-global::forms.input name="headline" value="{{ e($currentMilestone->headline) }}" placeholder="{{ __('label.milestone_title') }}" /><br />
+    <x-globals::forms.input name="headline" value="{{ e($currentMilestone->headline) }}" placeholder="{{ __('label.milestone_title') }}" /><br />
 
     <label class="control-label">{{ __('label.project') }}</label>
-    <x-global::forms.select name="projectId" class="tw:w-full">
+    <x-globals::forms.select name="projectId" class="tw:w-full">
         @foreach($allAssignedprojects as $project)
             @if(empty($project['type']) || $project['type'] == 'project')
                 <option value="{{ $project['id'] }}"
@@ -41,20 +41,20 @@
                 >{{ e($project['name']) }}</option>
             @endif
         @endforeach
-    </x-global::forms.select>
+    </x-globals::forms.select>
 
     <label>{{ __('label.todo_status') }}</label>
-    <x-global::forms.select id="status-select" name="status"
+    <x-globals::forms.select id="status-select" name="status"
             data-placeholder="{{ isset($statusLabels[$currentMilestone->status]) ? $statusLabels[$currentMilestone->status]['name'] : '' }}">
         @foreach($statusLabels as $key => $label)
             <option value="{{ $key }}"
                 {{ $currentMilestone->status == $key ? "selected='selected'" : '' }}
             >{{ e($label['name']) }}</option>
         @endforeach
-    </x-global::forms.select>
+    </x-globals::forms.select>
 
     <label>{{ __('label.dependent_on') }}</label>
-    <x-global::forms.select name="dependentMilestone">
+    <x-globals::forms.select name="dependentMilestone">
         <option value="">{{ __('label.no_dependency') }}</option>
         @foreach($tpl->get('milestones') as $milestoneRow)
             @if($milestoneRow->id !== $currentMilestone->id)
@@ -63,10 +63,10 @@
                 >{{ e($milestoneRow->headline) }}</option>
             @endif
         @endforeach
-    </x-global::forms.select>
+    </x-globals::forms.select>
 
     <label>{{ __('label.owner') }}</label>
-    <x-global::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.filter_by_user') }}"
+    <x-globals::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.filter_by_user') }}"
             name="editorId" class="user-select span11">
         <option value="">{{ __('dropdown.not_assigned') }}</option>
         @foreach($tpl->get('users') as $userRow)
@@ -74,20 +74,20 @@
                 {{ $currentMilestone->editorId == $userRow['id'] ? "selected='selected'" : '' }}
             >{{ e($userRow['firstname']) }} {{ e($userRow['lastname']) }}</option>
         @endforeach
-    </x-global::forms.select>
+    </x-globals::forms.select>
 
     <label>{{ __('label.color') }}</label>
-    <x-global::forms.input :bare="true" type="text" name="tags" autocomplete="off" value="{{ $currentMilestone->tags }}" placeholder="{{ __('input.placeholders.pick_a_color') }}" class="simpleColorPicker" /><br />
+    <x-globals::forms.input :bare="true" type="text" name="tags" autocomplete="off" value="{{ $currentMilestone->tags }}" placeholder="{{ __('input.placeholders.pick_a_color') }}" class="simpleColorPicker" /><br />
 
     <label>{{ __('label.planned_start_date') }}</label>
-    <x-global::forms.date name="editFrom" id="milestoneEditFrom" value="{{ format($currentMilestone->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}" /><br />
+    <x-globals::forms.date name="editFrom" id="milestoneEditFrom" value="{{ format($currentMilestone->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}" /><br />
 
     <label>{{ __('label.planned_end_date') }}</label>
-    <x-global::forms.date name="editTo" id="milestoneEditTo" value="{{ format($currentMilestone->editTo)->date() }}" placeholder="{{ __('language.dateformat') }}" /><br />
+    <x-globals::forms.date name="editTo" id="milestoneEditTo" value="{{ format($currentMilestone->editTo)->date() }}" placeholder="{{ __('language.dateformat') }}" /><br />
 
     <div class="tw:flex tw:justify-between tw:items-start">
         <div>
-            <x-global::button submit type="primary">{{ __('buttons.save') }}</x-global::button>
+            <x-globals::forms.button submit type="primary">{{ __('buttons.save') }}</x-globals::forms.button>
         </div>
         <div class="align-right padding-top-sm">
         </div>

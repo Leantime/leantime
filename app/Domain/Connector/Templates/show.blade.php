@@ -28,9 +28,9 @@
                         <br />
 
                         @if (isset($provider->button))
-                            <x-global::button link="{{ $provider->button['url'] }}" type="primary">{{ $provider->button['text'] }}</x-global::button>
+                            <x-globals::forms.button link="{{ $provider->button['url'] }}" type="primary">{{ $provider->button['text'] }}</x-globals::forms.button>
                         @else
-                            <x-global::button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}" type="primary">Create New Integration</x-global::button>
+                            <x-globals::forms.button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}" type="primary">Create New Integration</x-globals::forms.button>
                         @endif
 
                         <div class="clearall"></div>

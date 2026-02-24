@@ -2769,7 +2769,7 @@ a.confetti {
     text-decoration:line-through;
 }
 
-/* Skeleton loading placeholder - used by <x-global::loadingText> component. */
+/* Skeleton loading placeholder - used by <x-globals::loadingText> component. */
 .loading-text p {
     color: transparent;
     height: 16px;

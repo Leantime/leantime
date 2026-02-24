@@ -2,9 +2,9 @@
 
 @section('content')
 
-    <x-global::pageheader :icon="'fa fa-puzzle-piece'">
+    <x-globals::layout.page-header :icon="'fa fa-puzzle-piece'">
         <h1>App Marketplace</h1>
-    </x-global::pageheader>
+    </x-globals::layout.page-header>
 
     @displayNotification()
 
@@ -23,7 +23,7 @@
            >
                <div id="pluginList" aria-live="polite">
                    <div class="htmx-indicator tw:ml-m tw:mr-m tw:pt-l">
-                       <x-global::loadingText type="plugincard" count="5" includeHeadline="false"/>
+                       <x-globals::feedback.skeleton type="plugincard" count="5" includeHeadline="false"/>
                    </div>
                </div>
            </div>

@@ -1,36 +1,20 @@
+{{-- Backward-compat wrapper: maps old API → layout.page-header naming-doc API --}}
 @props([
     'icon' => 'fa fa-home',
     'headline' => null,
     'subtitle' => null,
 ])
 
-@dispatchEvent('beforePageHeaderOpen')
-
-<div {{ $attributes->merge([ 'class' => 'pageheader' ]) }}>
-
-    @dispatchEvent('afterPageHeaderOpen')
-
-    <div class="pageicon"><span class="{{ $icon }}"></span></div>
-
-    <div class="pagetitle">
-        @if($subtitle)
-            <small>{{ $subtitle }}</small>
-        @endif
-        @if($headline)
-            <h1>{{ $headline }}</h1>
-        @else
-            {{ $slot }}
-        @endif
-    </div>
-
+<x-globals::layout.page-header
+    :leading-visual="$icon"
+    :headline="$headline"
+    :subtitle="$subtitle"
+    {{ $attributes }}
+>
+    @if($headline === null)
+        {{ $slot }}
+    @endif
     @isset($actions)
-        <div class="pageheader-actions" style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
-            {{ $actions }}
-        </div>
+        <x-slot:actions>{{ $actions }}</x-slot:actions>
     @endisset
-
-    @dispatchEvent('beforePageHeaderClose')
-
-</div>
-
-@dispatchEvent('afterPageHeaderClose')
+</x-globals::layout.page-header>

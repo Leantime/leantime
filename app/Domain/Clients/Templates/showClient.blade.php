@@ -37,70 +37,70 @@
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.client_id') }}</label>
                                 <div class="">
-                                    <x-global::forms.input name="id" id="id" value="{{ e($values['id']) }}" :readonly="true" />
+                                    <x-globals::forms.input name="id" id="id" value="{{ e($values['id']) }}" :readonly="true" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.name') }}</label>
                                 <div class="">
-                                    <x-global::forms.input name="name" id="name" value="{{ e($values['name']) }}" />
+                                    <x-globals::forms.input name="name" id="name" value="{{ e($values['name']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.email') }}</label>
                                 <div class="">
-                                    <x-global::forms.input name="email" id="email" value="{{ e($values['email']) }}" />
+                                    <x-globals::forms.input name="email" id="email" value="{{ e($values['email']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.url') }}</label>
                                 <div class="">
-                                    <x-global::forms.input name="internet" id="internet" value="{{ e($values['internet']) }}" />
+                                    <x-globals::forms.input name="internet" id="internet" value="{{ e($values['internet']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.street') }}</label>
                                 <div class="">
-                                    <x-global::forms.input name="street" id="street" value="{{ e($values['street']) }}" />
+                                    <x-globals::forms.input name="street" id="street" value="{{ e($values['street']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.zip') }}</label>
                                 <div class="">
-                                    <x-global::forms.input name="zip" id="zip" value="{{ e($values['zip']) }}" />
+                                    <x-globals::forms.input name="zip" id="zip" value="{{ e($values['zip']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.city') }}</label>
                                 <div class="">
-                                    <x-global::forms.input name="city" id="city" value="{{ e($values['city']) }}" />
+                                    <x-globals::forms.input name="city" id="city" value="{{ e($values['city']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.state') }}</label>
                                 <div class="">
-                                    <x-global::forms.input name="state" id="state" value="{{ e($values['state']) }}" />
+                                    <x-globals::forms.input name="state" id="state" value="{{ e($values['state']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.country') }}</label>
                                 <div class="">
-                                    <x-global::forms.input name="country" id="country" value="{{ e($values['country']) }}" />
+                                    <x-globals::forms.input name="country" id="country" value="{{ e($values['country']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.phone') }}</label>
                                 <div class="">
-                                    <x-global::forms.input name="phone" id="phone" value="{{ e($values['phone']) }}" />
+                                    <x-globals::forms.input name="phone" id="phone" value="{{ e($values['phone']) }}" />
                                 </div>
                             </div>
 
@@ -108,7 +108,7 @@
 
                         <div class="col-md-6">
                             <h4 class="widgettitle title-light"><span class="fa fa-users"></span> {{ __('subtitles.users_assigned_to_this_client') }}</h4>
-                            <x-global::button link="#/users/newUser?preSelectedClient={{ $values['id'] }}" type="primary" icon="fa fa-plus">{{ __('buttons.add_user') }}</x-global::button>
+                            <x-globals::forms.button link="#/users/newUser?preSelectedClient={{ $values['id'] }}" type="primary" icon="fa fa-plus">{{ __('buttons.add_user') }}</x-globals::forms.button>
                             <table class='table table-bordered'>
                                 <colgroup>
                                     <col class="con1" />
@@ -157,7 +157,7 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <x-global::button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-global::button>
+                            <x-globals::forms.button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
                         </div>
                         <div class="col-md-6 align-right">
                             <a href="{{ BASE_URL }}/clients/delClient/{{ e($_GET['id']) }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a>
@@ -190,13 +190,13 @@
                                     <span class="btn btn-file">
                                         <span class="fileupload-new">{{ __('label.select_file') }}</span>
                                         <span class='fileupload-exists'>{{ __('label.change') }}</span>
-                                        <x-global::forms.file :bare="true" name="file" />
+                                        <x-globals::forms.file :bare="true" name="file" />
                                     </span>
-                                    <x-global::button link="#" type="secondary" class="fileupload-exists" data-dismiss="fileupload">{{ __('buttons.remove') }}</x-global::button>
+                                    <x-globals::forms.button link="#" type="secondary" class="fileupload-exists" data-dismiss="fileupload">{{ __('buttons.remove') }}</x-globals::forms.button>
                                 </div>
                             </div>
                         </div>
-                        <x-global::button submit type="primary" name="upload">{{ __('buttons.upload') }}</x-global::button>
+                        <x-globals::forms.button submit type="primary" name="upload">{{ __('buttons.upload') }}</x-globals::forms.button>
                     </form>
                 </div>
 
@@ -204,13 +204,13 @@
                     <ul id='medialist' class='listfile'>
                         @foreach($tpl->get('files') as $file)
                             <li class="{{ $file['moduleId'] }}">
-                                <x-global::elements.dropdown style="float:right;">
+                                <x-globals::elements.dropdown style="float:right;">
                                     <li class="nav-header border">{{ __('subtitles.file') }}</li>
                                     <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{{ __('links.download') }}</a></li>
                                     @if($login::userIsAtLeast($roles::$admin))
                                         <li><a href="{{ BASE_URL }}/clients/showClient/{{ e($_GET['id']) }}?delFile={{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
                                     @endif
-                                </x-global::elements.dropdown>
+                                </x-globals::elements.dropdown>
                                 <a class="cboxElement" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ e($file['extension']) }}&realName={{ e($file['realName']) }}">
                                     @if(in_array(strtolower($file['extension']), $tpl->get('imgExtensions')))
                                         <img style='max-height: 50px; max-width: 70px;' src="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ e($file['extension']) }}&realName={{ e($file['realName']) }}" alt="" />
