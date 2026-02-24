@@ -37,7 +37,7 @@ $expandedHeight = $heights['expanded'][$size] ?? '22px';
      onmouseleave="this.querySelector('.progress-segments').style.height='{{ $collapsedHeight }}'; this.querySelector('.progress-segments').style.borderRadius='2.5px';">
 
     <div class="progress-segments"
-         style="display: flex; align-items: stretch; height: {{ $collapsedHeight }}; border-radius: 2.5px; overflow: hidden; background-color: #D4D4D4; width: 100%; transition: height 0.2s ease, border-radius 0.2s ease; cursor: {{ $expandOnHover && $totalCount > 0 ? 'pointer' : 'default' }};">
+         style="display: flex; align-items: stretch; height: {{ $collapsedHeight }}; border-radius: 2.5px; overflow: hidden; background-color: var(--color-bg-muted); width: 100%; transition: height 0.2s ease, border-radius 0.2s ease; cursor: {{ $expandOnHover && $totalCount > 0 ? 'pointer' : 'default' }};">
         @foreach($segments as $segment)
             {{-- Render ALL segments (including empty ones) so JavaScript can update them after card moves --}}
             <div class="status-segment status-{{ $segment['id'] }}"

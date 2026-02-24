@@ -34,11 +34,11 @@
         <li class="border">
             @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin))
                 <a href='#/help/support' >
-                    <span class="fa-solid fa-hand-holding-heart" style="color:#f61067;"></span> {{ __('link.support_us') }}
+                    <span class="fa-solid fa-hand-holding-heart" style="color: var(--accent4);"></span> {{ __('link.support_us') }}
                 </a>
             @else
                 <a href='#/help/support'  >
-                    <span class="fa-solid fa-hand-holding-heart" style="color:#f61067;"></span> {{ __('link.support_us') }}
+                    <span class="fa-solid fa-hand-holding-heart" style="color: var(--accent4);"></span> {{ __('link.support_us') }}
                 </a>
             @endif
         </li>
