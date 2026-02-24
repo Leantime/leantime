@@ -45,7 +45,7 @@
 
         @dispatchEvent("beforeTodoWidgetGroupByDropdown")
 
-        <x-globals::elements.dropdown icon="fa-solid fa-diagram-project" buttonClass="btn btn-default btn-sm btn-circle" containerClass="left" data-tippy-content="{{ __('text.group_by') }}">
+        <x-globals::elements.dropdown icon="fa-solid fa-diagram-project" buttonClass="btn btn-default btn-sm btn-circle tw:min-w-[44px] tw:min-h-[44px] tw:inline-flex tw:items-center tw:justify-center" containerClass="left" data-tippy-content="{{ __('text.group_by') }}">
             <li class="nav-header border">{!! __("text.group_by") !!}</li>
             <li>
                 <span class="radio">
@@ -93,7 +93,7 @@
                 </span>
             </li>
         </x-globals::elements.dropdown>
-        <x-globals::elements.dropdown :label="'<i class=&quot;fas fa-filter&quot;></i>' . ($projectFilter != '' ? '<span class=&quot;badge badge-primary&quot;>1</span>' : '')" buttonClass="btn btn-default btn-sm btn-circle" containerClass="left">
+        <x-globals::elements.dropdown :label="'<i class=&quot;fas fa-filter&quot;></i>' . ($projectFilter != '' ? '<span class=&quot;badge badge-primary&quot;>1</span>' : '')" buttonClass="btn btn-default btn-sm btn-circle tw:min-w-[44px] tw:min-h-[44px] tw:inline-flex tw:items-center tw:justify-center" containerClass="left">
             <li class="nav-header border">{!! __("text.filter") !!}</li>
             <li
                 @if($projectFilter == '')
@@ -213,7 +213,7 @@
                         </span>
                     </x-slot>
                     <x-slot name="actionlink">
-                        <x-globals::forms.button link="javascript:void(0);" type="link" icon="fa-solid fa-circle-plus" class="add-task-button" style="padding:0px; padding-left:1px; width:31px; line-height:31px; height:31px; font-weight:bold; text-align: center; font-size:var(--font-size-l);" data-group="{{ $groupKey }}"></x-globals::forms.button>
+                        <x-globals::forms.button link="javascript:void(0);" type="link" icon="fa-solid fa-circle-plus" class="add-task-button" style="padding:0px; width:44px; height:44px; min-width:44px; min-height:44px; line-height:44px; display:inline-flex; align-items:center; justify-content:center; font-weight:bold; text-align: center; font-size:var(--font-size-l);" data-group="{{ $groupKey }}"></x-globals::forms.button>
                     </x-slot>
                     <x-slot name="content">
                         <!-- Quick Add Form for this group -->
