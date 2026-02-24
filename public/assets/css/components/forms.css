@@ -1594,7 +1594,7 @@ input[type="checkbox"].toggle:checked {
 }
 input[type="checkbox"].toggle:checked:after {
     transform: translatex(20px);
-    background:#fff;
+    background: var(--primary-background);
 }
 
 body a.textInputSwitch {

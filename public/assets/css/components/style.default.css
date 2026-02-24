@@ -197,12 +197,12 @@ body.loginpage {
 .inputwrapper input {
     border: 0;
     padding: 10px;
-    background: #fff;
+    background: var(--input-bg, var(--primary-background));
     width: 100%;
 }
 
 .inputwrapper input:active, .inputwrapper input:focus {
-    background: #fff;
+    background: var(--input-bg, var(--primary-background));
     border: 0;
 }
 

@@ -364,7 +364,7 @@
     --fc-event-border-color: var(--accent1);
     --fc-event-text-color:var(--main-action-color);
     --fc-event-selected-overlay-color: rgba(0, 0, 0, .25);
-    --fc-more-link-bg-color: #d0d0d0;
+    --fc-more-link-bg-color: var(--secondary-background);
     --fc-more-link-text-color: inherit;
     --fc-event-resizer-thickness: 8px;
     --fc-event-resizer-dot-total-width: 8px;
