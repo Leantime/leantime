@@ -665,8 +665,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     border: 1px solid var(--main-border-color, #ddd);
     box-shadow: var(--min-shadow);
     flex-wrap: wrap;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
 }
 
 .tiptap-toolbar--top {
@@ -1202,7 +1202,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
 }
 
 .tiptap-ai-dialog__content {
@@ -1610,7 +1611,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
 }
 
 .tiptap-template-picker__content {
@@ -1867,7 +1869,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
 }
 
 .tiptap-embed-dialog__content {
@@ -3531,8 +3534,8 @@ div[id^="comments-"] > div > .clearall {
     border-radius: 10px;
     box-shadow: var(--regular-shadow);
     overflow: hidden;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     animation: tiptap-menu-appear 0.12s ease-out;
 }
 
