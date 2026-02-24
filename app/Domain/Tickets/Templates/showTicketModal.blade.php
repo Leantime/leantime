@@ -19,7 +19,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
     }
 </script>
 
-<div style="min-width:70%">
+<div style="min-width: min(70%, 95vw)">
 
     <?php if ($ticket->dependingTicketId > 0) { ?>
         <small><a href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small> //

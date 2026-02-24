@@ -3047,6 +3047,28 @@ body a.btn-link.btn-fancy:hover {
     overflow-y: hidden;
 }
 
+/* Force single-column stacking on narrow viewports */
+@media (max-width: 768px) {
+    .grid-stack {
+        display: flex !important;
+        flex-direction: column !important;
+        height: auto !important;
+    }
+    .grid-stack > .grid-stack-item {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 200px;
+        margin-bottom: 16px;
+    }
+    .grid-stack > .grid-stack-item > .grid-stack-item-content {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 200px;
+    }
+}
+
 .grid-stack-item > .ui-resizable-se {
     bottom: calc(var(--gs-item-margin-bottom) + 10px);
     right: calc(var(--gs-item-margin-right) + 10px);
