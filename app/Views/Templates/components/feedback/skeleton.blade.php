@@ -4,8 +4,12 @@
     'type' => 'text'
 ])
 
+<div role="status" aria-live="polite">
+    <span class="sr-only">{{ __('label.loading') }}</span>
+</div>
+
 @if($includeHeadline == 'true')
-    <div class="loading-text">
+    <div class="loading-text" aria-hidden="true">
         <p style="width:40%">Loading...</p>
         <br />
     </div>
@@ -14,7 +18,7 @@
 
 @if($type == 'card')
     @for ($i = 0; $i < $count; $i++)
-        <div class="loading-text tw:w-full">
+        <div class="loading-text tw:w-full" aria-hidden="true">
             <div class="row" style="margin-bottom:var(--base-spacing-l);">
                 <div class="col-md-6">
                     <p style="width:30%">Loading...</p>
@@ -33,7 +37,7 @@
 
 @if($type == 'text')
     @for ($i = 0; $i < $count; $i++)
-        <div class="loading-text">
+        <div class="loading-text" aria-hidden="true">
             <p style="width:90%">Loading...</p>
             <p style="width:90%">Loading...</p>
             <br />
@@ -51,7 +55,7 @@
 
 @if($type == 'longtext')
     @for ($i = 0; $i < $count; $i++)
-        <div class="loading-text">
+        <div class="loading-text" aria-hidden="true">
             <p style="width:90%">Loading...</p>
             <p style="width:90%">Loading...</p>
             <br />
@@ -91,7 +95,7 @@
 
 @if($type == 'line')
     @for ($i = 0; $i < $count; $i++)
-        <div class="loading-text">
+        <div class="loading-text" aria-hidden="true">
             <p style="width:40%">Loading...</p>
             <br />
         </div>
@@ -100,7 +104,7 @@
 
 @if($type == 'project')
     @for ($i = 0; $i < $count; $i++)
-        <div class="loading-text">
+        <div class="loading-text" aria-hidden="true">
             <p style="margin-left:10px; margin-right:10px; width:30px; height:30px; float:left;">Loading...</p>
             <p style="width:200px; margin-left:50px;"></p>
             <br />
@@ -112,7 +116,7 @@
     <div class="row">
     @for ($i = 0; $i < $count; $i++)
         <div class="col-md-4">
-            <div class="loading-text">
+            <div class="loading-text" aria-hidden="true">
                 <div style="margin-bottom:var(--base-spacing-l);">
                     <p style="width:100%; height:80px;">Loading...</p>
                 </div>
