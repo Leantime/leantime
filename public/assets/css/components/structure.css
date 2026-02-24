@@ -307,7 +307,7 @@ body {
 /* Well */
 .well {
     min-height: 20px;
-    padding: 19px;
+    padding: 20px;
     margin-bottom: 20px;
     background-color: var(--secondary-background, #f5f5f5);
     border: 1px solid var(--main-border-color, #e3e3e3);

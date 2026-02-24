@@ -260,7 +260,7 @@
 .maincontentinner .table tr.dtrg-group td {
     color: var(--kanban-col-title-color);
     padding: 5px 10px;
-    padding-top:25px;
+    padding-top: 24px;
     font-weight: bold;
 }
 

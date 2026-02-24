@@ -736,7 +736,7 @@ input[type=color] {
 .userBox input[type=checkbox] {
     float:left;
     margin-right:15px;
-    margin-top:23px;
+    margin-top: 24px;
 }
 
 .userBox label {
