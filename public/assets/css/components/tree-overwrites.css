@@ -2,7 +2,7 @@
 body .jstree-default .jstree-wholerow-hovered,
 body .jstree-default .jstree-wholerow-clicked{
     background:var(--main-menu-overlayed-link-hover-bg);
-    border-radius:10px;
+    border-radius: var(--box-radius);
 }
 
 body .jstree-default .jstree-clicked {

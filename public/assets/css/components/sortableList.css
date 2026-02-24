@@ -103,7 +103,7 @@
         background: hsla(var(--accent2-hsl), 0.1);
         border: 2px dashed hsla(var(--accent2-hsl), 0.3);
         pointer-events: none;
-        border-radius: 4px;
+        border-radius: var(--box-radius-small);
     }
     min-height: 62px !important;
 }
@@ -120,7 +120,7 @@
         background: hsla(0, 100%, 50%, 0.1);
         border: 2px dashed hsla(0, 100%, 50%, 0.3);
         pointer-events: none;
-        border-radius: 4px;
+        border-radius: var(--box-radius-small);
     }
     min-height: 62px !important;
 }
@@ -149,7 +149,7 @@
 .sortable-placeholder {
     background: rgba(0, 0, 0, 0.05);
     border: 1px dashed rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
+    border-radius: var(--box-radius-small);
     margin-bottom: 5px;
     height: 60px;
     position: relative;

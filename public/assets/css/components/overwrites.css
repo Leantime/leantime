@@ -303,12 +303,12 @@ body .tox .tox-toolbar-overlord{
     color: var(--primary-background);
     background: var(--primary-color);
     text-transform: uppercase;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    border-top-left-radius: var(--box-radius-small);
+    border-top-right-radius: var(--box-radius-small);
 }
 
 .ui-datepicker {
-    border-radius:5px;
+    border-radius: var(--box-radius-small);
 }
 
 

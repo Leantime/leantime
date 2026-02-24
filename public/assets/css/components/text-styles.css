@@ -14,7 +14,7 @@ a:focus {
 a:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: var(--element-radius);
 }
 
 body a:hover {
@@ -67,7 +67,7 @@ h1 small {
     padding: 2px 8px;
     color: #fff;
     margin-left: 5px;
-    border-radius: 3px;
+    border-radius: var(--element-radius);
 }
 
 
@@ -98,7 +98,7 @@ a .label.feature-label {
     position:absolute;
     top:5px;
     right:0px;
-    border-radius: 6px;
+    border-radius: var(--element-radius);
     padding: 1px 5px;
     color:var(--main-action-color);
 }
