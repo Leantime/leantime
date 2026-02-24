@@ -150,7 +150,7 @@
 
             <div class="btn-group inlineDropDownContainerLeft">
                 <div tabindex="0" role="button" data-selected="graduation-cap"
-                        class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker">
+                        class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker tw:rounded-sm tw:focus-visible:outline tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-[var(--accent1)]">
                     <span class="iconPlaceholder">
                         <i class="fa fa-file"></i>
                     </span>

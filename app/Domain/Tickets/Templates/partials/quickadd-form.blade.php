@@ -40,9 +40,10 @@ $hasError = $isActive && ! empty($reopenState['error']);
         <input type="hidden" name="sprint" value="{{ session('currentSprint') ?? '' }}" />
         <input type="hidden" name="stay_open" value="0" data-stay-open-input />
 
-        <i class="fa fa-circle-question quickAddHelp"
+        <i class="fa fa-circle-question quickAddHelp tw:rounded-sm tw:focus-visible:outline tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-[var(--accent1)]"
            data-tippy-content="<strong>Keyboard Shortcuts:</strong><br>• Enter - Save and add another<br>• Shift+Enter - Save and close<br>• Esc - Cancel"
            tabindex="0"
+           role="img"
            aria-label="Keyboard shortcuts help"></i>
 
         <div class="form-group">
@@ -71,8 +72,9 @@ $hasError = $isActive && ! empty($reopenState['error']);
                     onclick="leantime.kanbanController.toggleQuickAdd(this.closest('.quickaddContainer').querySelector('.quickAddLink'))">
                 Cancel
             </x-globals::forms.button>
-            <i class="fa fa-circle-question quickAddHelp"
+            <i class="fa fa-circle-question quickAddHelp tw:rounded-sm tw:focus-visible:outline tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-[var(--accent1)]"
                tabindex="0"
+               role="img"
                title="Enter: Save and close&#10;Shift+Enter: Save and add another&#10;Esc: Cancel"
                aria-label="Enter: Save and close, Shift+Enter: Save and add another, Esc: Cancel"></i>
         </div>
