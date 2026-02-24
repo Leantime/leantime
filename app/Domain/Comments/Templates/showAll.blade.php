@@ -35,7 +35,7 @@
     <div id="comments">
         <div>
             @foreach($tpl->get('comments') as $row)
-                <div class="tw:block tw:p-2.5 tw:mt-2.5 tw:border-b tw:border-solid tw:border-[#f0f0f0]">
+                <div class="tw:block tw:p-2.5 tw:mt-2.5 tw:border-b tw:border-solid tw:border-[var(--color-border-light)]">
                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $row['userId'] }}&v={{ format($row['userModified'])->timestamp() }}"
                          class="pull-left tw:w-[50px] tw:mr-2.5 tw:p-0.5"/>
                     <div class="right">{!! sprintf(
@@ -72,7 +72,7 @@
 
                 @if($comments->getReplies($row['id']))
                     @foreach($comments->getReplies($row['id']) as $comment)
-                        <div class="tw:block tw:p-2.5 tw:pl-[60px] tw:border-b tw:border-solid tw:border-[#f0f0f0]">
+                        <div class="tw:block tw:p-2.5 tw:pl-[60px] tw:border-b tw:border-solid tw:border-[var(--color-border-light)]">
                             <img src="{{ BASE_URL }}/api/users?profileImage={{ $comment['userId'] }}&v={{ $comment['userModified'] }}"
                                  class="pull-left tw:w-[50px] tw:mr-2.5 tw:p-0.5"/>
                             <div>

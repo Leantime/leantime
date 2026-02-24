@@ -32,7 +32,7 @@ foreach ($allCanvas as $canvasRow) {
 <style>
     .canvas-row { margin-left: 0px; margin-right: 0px;}
     .canvas-title-only { border-radius: var(--box-radius-small); }
-    h4.canvas-element-title-empty { background: white !important; border-color: white !important; }
+    h4.canvas-element-title-empty { background: var(--color-bg-card) !important; border-color: var(--color-bg-card) !important; }
     div.canvas-element-center-middle { text-align: center; }
 </style>
 

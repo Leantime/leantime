@@ -24,7 +24,7 @@
     overflow: hidden;">
         <div class="regpanel" style="
          margin: auto;
-        background: #fff;
+        background: var(--color-bg-card);
         max-width: 50%;
         box-shadow: 0px 0px 50px rgba(0,0,0,0.4);
         border-radius: 10px;

@@ -33,8 +33,8 @@
         }
 
         h4.canvas-element-title-empty {
-            background: white !important;
-            border-color: white !important;
+            background: var(--color-bg-card) !important;
+            border-color: var(--color-bg-card) !important;
         }
 
         div.canvas-element-center-middle {

@@ -6,11 +6,11 @@
     <title>Swimlane Component Test</title>
     @vite(['resources/css/main.css'])
     <style>
-        body { padding: 20px; background: #f5f5f5; }
-        .test-section { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
-        .test-section h2 { margin-top: 0; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .component-demo { margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 4px; }
-        .component-label { font-weight: bold; color: #666; margin-bottom: 8px; }
+        body { padding: 20px; background: var(--color-bg-page); }
+        .test-section { background: var(--color-bg-card); padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        .test-section h2 { margin-top: 0; color: var(--color-text-primary); border-bottom: 2px solid var(--color-border-default); padding-bottom: 10px; }
+        .component-demo { margin: 15px 0; padding: 15px; background: var(--color-bg-muted); border-radius: 4px; }
+        .component-label { font-weight: bold; color: var(--color-text-secondary); margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -83,7 +83,7 @@
                     <x-globals::kanban.user-avatar username="Bob Johnson" size="lg" />
                 </div>
             </div>
-            <div style="margin-top: 10px; font-size: 12px; color: #666;">
+            <div style="margin-top: 10px; font-size: 12px; color: var(--color-text-secondary);">
                 Note: Each username gets a consistent color. Same user = same color every time.
             </div>
         </div>
@@ -212,7 +212,7 @@
         <h3 style="color: #6B7A4D; margin-top: 20px;">EXPANDED vs COLLAPSED States</h3>
         <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 30px;">
             <div>
-                <small style="color: #666;">Expanded (shows progress bar)</small>
+                <small style="color: var(--color-text-secondary);">Expanded (shows progress bar)</small>
                 <x-globals::kanban.swimlane-row-header
                     groupBy="priority"
                     :groupId="1"
@@ -225,7 +225,7 @@
                 />
             </div>
             <div>
-                <small style="color: #666;">Collapsed (minimal)</small>
+                <small style="color: var(--color-text-secondary);">Collapsed (minimal)</small>
                 <x-globals::kanban.swimlane-row-header
                     groupBy="priority"
                     :groupId="2"
@@ -238,7 +238,7 @@
                 />
             </div>
             <div>
-                <small style="color: #666;">Collapsed (USER groupby)</small>
+                <small style="color: var(--color-text-secondary);">Collapsed (USER groupby)</small>
                 <x-globals::kanban.swimlane-row-header
                     groupBy="editorId"
                     groupId="123"
@@ -251,7 +251,7 @@
                 />
             </div>
             <div>
-                <small style="color: #666;">Collapsed (EFFORT groupby)</small>
+                <small style="color: var(--color-text-secondary);">Collapsed (EFFORT groupby)</small>
                 <x-globals::kanban.swimlane-row-header
                     groupBy="storypoints"
                     :groupId="5"
