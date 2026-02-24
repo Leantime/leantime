@@ -8,7 +8,7 @@
 
 <div class="widget-slot-actions minCalendar dropdown">
 
-    <a href="javascript:void(0)" class="btn btn-link btn-round-icon dropdown-toggle f-right" data-toggle="dropdown" data-tippy-content="{{ __('text.calendar_view') }}"> <i class="fa-solid fa-calendar-week"></i></a>
+    <a href="javascript:void(0)" class="btn btn-link btn-round-icon dropdown-toggle f-right" data-toggle="dropdown" data-tippy-content="{{ __('text.calendar_view') }}" aria-label="{{ __('text.calendar_view') }}"> <i class="fa-solid fa-calendar-week"></i></a>
     <ul class="dropdown-menu pull-right">
         <li>
             <a class="fc-agendaDay-button fc-button fc-state-default fc-corner-right calendarViewSelect" href="javascript:void(0);"

@@ -8,7 +8,7 @@
 ])
 
 <div {{ $attributes->merge(['class' => 'dropdown' . ($containerClass ? ' ' . $containerClass : '')]) }}>
-    <a href="javascript:void(0)" class="dropdown-toggle {{ $buttonClass }}" data-toggle="dropdown">
+    <a href="javascript:void(0)" class="dropdown-toggle {{ $buttonClass }}" data-toggle="dropdown" @if(!$label) aria-label="{{ __('label.more_options') }}" @endif>
         @if($icon)
             <i class="{{ $icon }}"></i>
         @endif

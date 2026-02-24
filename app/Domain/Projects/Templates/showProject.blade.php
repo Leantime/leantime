@@ -311,7 +311,7 @@
                                         <div class="remove">
                                             <br />
                                             @if($key != -1)
-                                                <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus({{ $key }})" class="delete"><span class="fa fa-trash"></span></a>
+                                                <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus({{ $key }})" class="delete" aria-label="{{ __('label.remove') }}"><span class="fa fa-trash"></span></a>
                                             @endif
                                         </div>
                                     </div>
@@ -385,7 +385,7 @@
         </div>
         <div class="remove">
             <br />
-            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus('XXNEWKEYXX')" class="delete"><span class="fa fa-trash"></span></a>
+            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus('XXNEWKEYXX')" class="delete" aria-label="{{ __('label.remove') }}"><span class="fa fa-trash"></span></a>
         </div>
     </div>
 </div>

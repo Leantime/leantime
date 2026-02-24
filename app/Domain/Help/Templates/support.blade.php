@@ -126,7 +126,7 @@
                         <p>Traditional project management tools never clicked for me. They felt like they were built by neurotypical minds for neurotypical minds. When I was freelancing and struggling to keep client projects organized, I started building something that worked with my brain instead of against it.</p>
 
                         <p>What started as a personal solution became Leantime when I realized millions of others needed the same thing.</p><br />
-                        <a href="https://www.linkedin.com/in/marcelfolaron/" target="_blank" ><i class="fa fa-linkedin"></i></a>
+                        <a href="https://www.linkedin.com/in/marcelfolaron/" target="_blank" aria-label="Marcel Folaron on LinkedIn"><i class="fa fa-linkedin"></i></a>
                     </div>
 
                     <div class="tw:flex-1" style="background:var(--dropdown-link-hover-bg); padding:15px; border-radius:var(--box-radius);">
@@ -134,7 +134,7 @@
                         <p><strong style="margin-bottom:5px;  display:block;">👋 And I'm Gloria</strong>Former ER nurse turned product manager, first-generation Hispanic entrepreneur.</p>
                         <br /><p>I spent years in high-pressure medical environments where organization literally saves lives. But when I started my own business, traditional project tools felt overwhelming and disconnected from how I actually think and work.</p>
                         <p>My background in behavioral science and motivation research drives how we build features that don't just organize tasks—they help you actually want to complete them.</p><br />
-                        <a href="https://www.linkedin.com/in/gloriafolaron/" target="_blank" ><i class="fa fa-linkedin"></i></a>
+                        <a href="https://www.linkedin.com/in/gloriafolaron/" target="_blank" aria-label="Gloria Folaron on LinkedIn"><i class="fa fa-linkedin"></i></a>
                     </div>
                 </div>
 

@@ -20,9 +20,9 @@
         <div class="header">
 
             <div class="headerinner">
-                <a class="btnmenu" href="javascript:void(0);"></a>
+                <a class="btnmenu" href="javascript:void(0);" aria-label="{{ __('menu.toggle_sidebar') }}"></a>
 
-                <a class="barmenu" href="javascript:void(0);">
+                <a class="barmenu" href="javascript:void(0);" aria-label="{{ __('menu.toggle_navigation') }}">
                     <span class="fa fa-bars"></span>
                 </a>
 

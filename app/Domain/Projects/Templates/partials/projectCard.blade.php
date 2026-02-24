@@ -31,7 +31,8 @@
                     onclick="jQuery(this).addClass('go')"
                     hx-swap="none"
                     class="favoriteClick favoriteStar pull-right margin-right {{ $project['isFavorite'] ? 'isFavorite' : ''}} tw:mr-[5px]"
-                    data-tippy-content="{{ __('label.favorite_tooltip') }}">
+                    data-tippy-content="{{ __('label.favorite_tooltip') }}"
+                    aria-label="{{ __('label.favorite_tooltip') }}">
                         <i class="{{ $project['isFavorite'] ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
                 </a>
             </div>

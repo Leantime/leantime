@@ -216,11 +216,11 @@ jQuery(document).ready(function(){
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
                 <div class="padding-top-sm">
                     <span>{{ __('label.week_from') }}</span>
-                    <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
+                    <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek" aria-label="{{ __('label.previous_week') }}"><i class="fa fa-chevron-left"></i></a>
                     <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->formatDateForUser() }}" style="margin-top:5px;"/>
                     {{ __('label.until') }}
                     <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->addDays(6)->formatDateForUser() }}" style="margin-top:6px;"/>
-                    <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
+                    <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek" aria-label="{{ __('label.next_week') }}"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
                 </div>
             </div>
