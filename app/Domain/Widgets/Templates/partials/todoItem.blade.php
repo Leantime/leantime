@@ -49,8 +49,12 @@
             <div id="accordion_toggle_{{$accordionId }}"
                  class="task-collapse-toggle accordion-toggle {{ $accordionState }}"
                  onclick="leantime.snippets.accordionToggle('{{ $accordionId}}');"
+                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"
+                 tabindex="0"
+                 role="button"
+                 aria-label="{{ __('label.toggle') }}"
             >
-                <i class="fa fa-angle-{{ $accordionState == 'closed' ? 'right' : 'down' }}"></i>
+                <i class="fa fa-angle-{{ $accordionState == 'closed' ? 'right' : 'down' }}" aria-hidden="true"></i>
             </div>
         @endif
 

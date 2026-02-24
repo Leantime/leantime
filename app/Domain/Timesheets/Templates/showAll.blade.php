@@ -363,16 +363,16 @@
                         </td>
                         <td>
                             @if ($login::userIsAtLeast($roles::$manager))
-                            <input type="checkbox" id="checkAllEmpl" style="vertical-align: baseline;"/> {{ __('label.select_all') }}</td>
+                            <input type="checkbox" id="checkAllEmpl" aria-label="{{ __('label.select_all') }}" style="vertical-align: baseline;"/> {{ __('label.select_all') }}</td>
                             @endif
                         <td>
                             @if ($login::userIsAtLeast($roles::$manager))
-                            <input type="checkbox"  id="checkAllComp" style="vertical-align: baseline;"/> {{ __('label.select_all') }}
+                            <input type="checkbox"  id="checkAllComp" aria-label="{{ __('label.select_all') }}" style="vertical-align: baseline;"/> {{ __('label.select_all') }}
                             @endif
                         </td>
                         <td>
                             @if ($login::userIsAtLeast($roles::$manager))
-                                <input type="checkbox"  id="checkAllPaid" style="vertical-align: baseline;"/> {{ __('label.select_all') }}
+                                <input type="checkbox"  id="checkAllPaid" aria-label="{{ __('label.select_all') }}" style="vertical-align: baseline;"/> {{ __('label.select_all') }}
                             @endif
                         </td>
                     </tr>

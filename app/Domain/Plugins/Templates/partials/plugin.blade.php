@@ -13,7 +13,7 @@
                         class="certififed label-default tw:absolute tw:top-[10px] tw:right-[10px] tw:text-primary tw:rounded-full tw:text-sm"
                         data-tippy-content="{{ __('marketplace.certified_tooltip') }}"
                     >
-                        <i class="fa fa-certificate"></i>
+                        <i class="fa fa-certificate" aria-hidden="true"></i>
                         Certified
                     </div>
                 @endif

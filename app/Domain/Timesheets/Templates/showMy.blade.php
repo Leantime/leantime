@@ -216,11 +216,11 @@ jQuery(document).ready(function(){
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
                 <div class="padding-top-sm">
                     <span>{{ __('label.week_from') }}</span>
-                    <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek" aria-label="{{ __('label.previous_week') }}"><i class="fa fa-chevron-left"></i></a>
+                    <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek" aria-label="{{ __('label.previous_week') }}"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
                     <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->formatDateForUser() }}" style="margin-top:5px;"/>
                     {{ __('label.until') }}
                     <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->addDays(6)->formatDateForUser() }}" style="margin-top:6px;"/>
-                    <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek" aria-label="{{ __('label.next_week') }}"><i class="fa fa-chevron-right"></i></a>
+                    <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek" aria-label="{{ __('label.next_week') }}"><i class="fa fa-chevron-right" aria-hidden="true"></i></a>
                     <input type="hidden" name="search" value="1" />
                 </div>
             </div>
@@ -284,7 +284,7 @@ jQuery(document).ready(function(){
                                 <td width="10%">
                                 {{ __($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']) }}
                             @if ($timeRow['hasTimesheetOffset'])
-                                    <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
+                                    <i class="fa-solid fa-clock-rotate-left pull-right label-blue" aria-hidden="true"
                                        data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone">
                                     </i>
                             @endif
@@ -302,6 +302,7 @@ jQuery(document).ready(function(){
                                             @endphp
                                             <input type="text"
                                                    class="hourCell"
+                                                   aria-label="{{ e($timeRow['headline'] ?? '') }} - {{ $timeRow[$dayKey]['start']->formatDateForUser() }}"
                                                    @if (empty($timeRow[$dayKey]['actualWorkDate']))
                                                        disabled='disabled'
                                                    @endif
@@ -313,7 +314,7 @@ jQuery(document).ready(function(){
                                             />
 
                                             @if (! empty($timeRow[$dayKey]['description']))
-                                                <i class="fa fa-circle-info" data-tippy-content="{{ e($timeRow[$dayKey]['description']) }}"></i>
+                                                <i class="fa fa-circle-info" aria-hidden="true" data-tippy-content="{{ e($timeRow[$dayKey]['description']) }}"></i>
                                             @endif
                                         </td>
                                 @endif

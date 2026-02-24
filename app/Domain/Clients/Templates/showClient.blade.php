@@ -133,13 +133,13 @@
                                         <td>{{ e($user['phone']) }}</td>
                                         <td>
                                             <a href="{{ BASE_URL }}/users/editUser/{{ $user['id'] }}" title="{{ __('buttons.edit') }}">
-                                                <i class="fa fa-edit"></i>
+                                                <i class="fa fa-edit" aria-hidden="true"></i>
                                             </a>
                                             <a href="{{ BASE_URL }}/clients/removeUser/{{ $values['id'] }}/{{ $user['id'] }}"
                                                class="delete"
                                                title="{{ __('buttons.remove') }}"
                                                onclick="return confirm('{{ __('text.confirm_remove_user_from_client') }}')">
-                                                <i class="fa fa-trash"></i>
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
                                             </a>
                                         </td>
                                     </tr>
@@ -160,7 +160,7 @@
                             <x-globals::forms.button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
                         </div>
                         <div class="col-md-6 align-right">
-                            <a href="{{ BASE_URL }}/clients/delClient/{{ e($_GET['id']) }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a>
+                            <a href="{{ BASE_URL }}/clients/delClient/{{ e($_GET['id']) }}" class="delete"><i class="fa fa-trash" aria-hidden="true"></i> {{ __('links.delete') }}</a>
                         </div>
                     </div>
 
@@ -185,7 +185,7 @@
                                 <input type="hidden" />
                                 <div class="input-append">
                                     <div class="uneditable-input span3">
-                                        <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+                                        <i class="fa-file fileupload-exists" aria-hidden="true"></i><span class="fileupload-preview"></span>
                                     </div>
                                     <span class="btn btn-file">
                                         <span class="fileupload-new">{{ __('label.select_file') }}</span>
@@ -208,7 +208,7 @@
                                     <li class="nav-header border">{{ __('subtitles.file') }}</li>
                                     <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{{ __('links.download') }}</a></li>
                                     @if($login::userIsAtLeast($roles::$admin))
-                                        <li><a href="{{ BASE_URL }}/clients/showClient/{{ e($_GET['id']) }}?delFile={{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
+                                        <li><a href="{{ BASE_URL }}/clients/showClient/{{ e($_GET['id']) }}?delFile={{ $file['id'] }}" class="delete"><i class="fa fa-trash" aria-hidden="true"></i> {{ __('links.delete') }}</a></li>
                                     @endif
                                 </x-globals::elements.dropdown>
                                 <a class="cboxElement" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ e($file['extension']) }}&realName={{ e($file['realName']) }}">

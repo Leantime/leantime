@@ -27,8 +27,8 @@
     />
     {{-- Calendar icon trigger — visible when no value --}}
     @if (! $readonly && ! $disabled)
-        <button type="button" class="date-inline-trigger" style="{{ $hasValue ? 'display:none' : '' }}">
-            <i class="fa-regular fa-calendar-plus"></i>
+        <button type="button" class="date-inline-trigger" style="{{ $hasValue ? 'display:none' : '' }}" aria-label="{{ __('label.pick_date') }}">
+            <i class="fa-regular fa-calendar-plus" aria-hidden="true"></i>
         </button>
     @endif
 </span>

@@ -36,19 +36,19 @@
        @if(!$label) aria-label="{{ __('label.more_options') }}" @endif
     >
         @if($leadingVisual)
-            <i class="{{ $leadingVisual }}"></i>
+            <i class="{{ $leadingVisual }}" aria-hidden="true"></i>
         @endif
         @if($label)
             {!! $label !!}
         @endif
         @if(!$leadingVisual && !$label)
-            <i class="fa-solid fa-ellipsis-vertical"></i>
+            <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
         @endif
         @if($variant === 'button')
             <span class="caret"></span>
         @endif
         @if($trailingVisual)
-            <i class="{{ $trailingVisual }}"></i>
+            <i class="{{ $trailingVisual }}" aria-hidden="true"></i>
         @endif
     </a>
     <ul class="dropdown-menu {{ $menuClass }}">

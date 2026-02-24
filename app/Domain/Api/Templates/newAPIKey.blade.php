@@ -7,7 +7,7 @@
 
 <div style="min-width:700px;">
 
-<h4 class="widgettitle title-light"><i class="fa fa-key"></i> {{ $tpl->__('headlines.new_api_key') }}</h4>
+<h4 class="widgettitle title-light"><i class="fa fa-key" aria-hidden="true"></i> {{ $tpl->__('headlines.new_api_key') }}</h4>
 
 {!! $tpl->displayNotification() !!}
     @if ($apiKeyValues !== false && isset($apiKeyValues['id']))

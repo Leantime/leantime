@@ -140,7 +140,7 @@
         @if(isset($taskToggle) && $taskToggle === true)
             <div class="" style="float:right; margin-left:5px; ">
                 <input type="checkbox" class="toggle" id="taskTypeToggle" onchange="jQuery('#ticketSearch').submit();" name="showTasks" value="true" {{ ($tpl->get('showTasks') === 'true') ? 'checked="checked"' : '' }} style="margin-right:5px;" />
-                <label style="text-wrap: nowrap; float:right;">Show Tasks</label>
+                <label for="taskTypeToggle" style="text-wrap: nowrap; float:right;">Show Tasks</label>
             </div>
         @endif
 

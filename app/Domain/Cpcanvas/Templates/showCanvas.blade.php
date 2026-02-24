@@ -10,7 +10,7 @@
                         </div>
                         <div class="column" style="width: 84%">
                             <h4 class="widgettitle title-primary center canvas-title-only">
-                                <large><i class="fa fa-user-doctor"></i> {{ $tpl->__('box.header.cp.cj') }}</large>
+                                <large><i class="fa fa-user-doctor" aria-hidden="true"></i> {{ $tpl->__('box.header.cp.cj') }}</large>
                             </h4>
                         </div>
                     </div>
@@ -34,9 +34,9 @@
 
                     <div class="row canvas-row">
                         <div class="column" style="width: 16%">&nbsp;</div>
-                        <div class="column center" style="width: 28%"><i class="fa fa-arrows-up-down"></i></div>
-                        <div class="column center" style="width: 28%"><i class="fa fa-arrows-up-down"></i></div>
-                        <div class="column center" style="width: 28%"><i class="fa fa-arrows-up-down"></i></div>
+                        <div class="column center" style="width: 28%"><i class="fa fa-arrows-up-down" aria-hidden="true"></i></div>
+                        <div class="column center" style="width: 28%"><i class="fa fa-arrows-up-down" aria-hidden="true"></i></div>
+                        <div class="column center" style="width: 28%"><i class="fa fa-arrows-up-down" aria-hidden="true"></i></div>
                     </div>
 
                     <div class="row canvas-row">

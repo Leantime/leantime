@@ -18,7 +18,7 @@
                 {{ $selected['value'] }}
             @endif
         </span>
-        <i class="fa fa-chevron-down"
+        <i class="fa fa-chevron-down" aria-hidden="true"
            style="font-size: 10px;
                 vertical-align: middle;"></i>
     </a>

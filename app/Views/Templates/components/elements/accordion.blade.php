@@ -21,7 +21,7 @@
             'class' => 'accordionTitle tw:pb-15 tw:text-l',
             'id' => "accordion_link_$id"
         ]) }}>
-            <i class="fa fa-angle-{{ $state == 'closed' ? 'right' : 'down' }}"></i>
+            <i class="fa fa-angle-{{ $state == 'closed' ? 'right' : 'down' }}" aria-hidden="true"></i>
             {!! $title !!}
         </h5>
     </a>

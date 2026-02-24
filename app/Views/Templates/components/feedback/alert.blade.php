@@ -23,11 +23,11 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => "alert $bsClass", 'role' => 'alert']) }}>
-    <i class="{{ $icon ?? $defaultIcon }}"></i>
+    <i class="{{ $icon ?? $defaultIcon }}" aria-hidden="true"></i>
     <span>{{ $slot }}</span>
     @if($dismissible)
-        <button type="button" class="close" onclick="this.closest('.alert').remove()">
-            <i class="fa fa-xmark"></i>
+        <button type="button" class="close" onclick="this.closest('.alert').remove()" aria-label="{{ __('label.dismiss') }}">
+            <i class="fa fa-xmark" aria-hidden="true"></i>
         </button>
     @endif
 </div>

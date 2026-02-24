@@ -25,7 +25,7 @@
 
 <div class="" style="width:900px;">
 
-    <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i> {{ $canvasTypes[$canvasItem['box']]['title'] }}</h4>
+    <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}" aria-hidden="true"></i> {{ $canvasTypes[$canvasItem['box']]['title'] }}</h4>
     <hr style="margin-top: 5px; margin-bottom: 15px;">
     {!! $tpl->displayNotification() !!}
 
@@ -97,7 +97,7 @@
         <input type="hidden" name="changeItem" value="1" />
 
         @if ($id != '')
-            <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete right"><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</a>
+            <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete right"><i class="fa fa-trash-can" aria-hidden="true"></i> {{ $tpl->__('links.delete') }}</a>
         @endif
 
         @if ($login::userIsAtLeast($roles::$editor))
@@ -107,7 +107,7 @@
 
         @if ($id !== '')
             <br /><br />
-            <h4 class="widgettitle title-light"><span class="fa fa-link"></span> {{ $tpl->__('headlines.linked_milestone') }} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ $tpl->__('tooltip.link_milestones_tooltip') }}"></i></h4>
+            <h4 class="widgettitle title-light"><span class="fa fa-link" aria-hidden="true"></span> {{ $tpl->__('headlines.linked_milestone') }} <i class="fa fa-question-circle-o helperTooltip" aria-hidden="true" data-tippy-content="{{ $tpl->__('tooltip.link_milestones_tooltip') }}"></i></h4>
 
             <ul class="sortableTicketList" style="width: 100%">
 
@@ -156,7 +156,7 @@
                             {{ $tpl->__('label.loading_milestone') }}
                         </div>
                     </div>
-                    <a href="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="{{ $canvasName }}CanvasModal delete formModal"><i class="fa fa-close"></i> {{ $tpl->__('links.remove') }}</a>
+                    <a href="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="{{ $canvasName }}CanvasModal delete formModal"><i class="fa fa-close" aria-hidden="true"></i> {{ $tpl->__('links.remove') }}</a>
                 </li>
             @endif
 

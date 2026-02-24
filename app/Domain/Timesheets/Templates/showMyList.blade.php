@@ -24,7 +24,7 @@
                 </x-globals::elements.button-dropdown>
             </div>
             <div class="pull-right" style="margin-right:3px;">
-                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addHoursBtn"><i class="fa fa-plus"></i> {{ __('label.add_hours') }}</x-globals::forms.button>
+                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addHoursBtn"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('label.add_hours') }}</x-globals::forms.button>
             </div>
             <div class="filterWrapper tw:relative">
                 <div class="padding-top-sm">

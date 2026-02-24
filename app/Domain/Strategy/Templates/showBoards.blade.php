@@ -68,7 +68,7 @@
     <div class="maincontentinner">
         <h5 class="accordionTitle" id="accordion_link_other">
             <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_other" onclick="accordionToggle('other');">
-                <i class="fa fa-angle-down"></i> Templates
+                <i class="fa fa-angle-down" aria-hidden="true"></i> Templates
             </a>
         </h5>
         <p style="padding-left:19px;">{{ $tpl->__('description.other_tools') }}</p>

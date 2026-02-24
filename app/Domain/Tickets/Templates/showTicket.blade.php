@@ -6,7 +6,7 @@
 <div class="pageheader">
 
     <div class="pull-right padding-top">
-        <a href="{{ session('lastPage') }}" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> {{ __('links.go_back') }}</a>
+        <a href="{{ session('lastPage') }}" class="backBtn"><i class="far fa-arrow-alt-circle-left" aria-hidden="true"></i> {{ __('links.go_back') }}</a>
     </div>
 
     <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>

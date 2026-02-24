@@ -25,7 +25,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         <small><a href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small> //
     <?php } ?>
     <small class="pull-right tw:pr-md" style="padding:5px 30px 0px 0px">Created by <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | Last Updated: <?= format($ticket->date)->date(); ?> </small>
-    <h1 class="tw:mb-0" style="margin-bottom:0px;"><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
+    <h1 class="tw:mb-0" style="margin-bottom:0px;"><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>" aria-hidden="true"></i> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
 
     <br />
 

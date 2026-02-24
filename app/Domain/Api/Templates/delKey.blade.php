@@ -1,5 +1,5 @@
 <div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-key"></i></div>
+    <div class="pageicon"><i class="fa-solid fa-key" aria-hidden="true"></i></div>
     <div class="pagetitle">
         <h5>{{ $tpl->__('label.administration') }}</h5>
         <h1>{{ $tpl->__('headlines.delete_key') }}</h1>

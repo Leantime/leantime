@@ -84,7 +84,7 @@ foreach ($statusColumns as $statusId => $statusData) {
     <div class="swimlane-header-row1">
         {{-- Chevron (▼ expanded, ▶ collapsed) --}}
         <span class="kanban-lane-chevron">
-            <i class="fa fa-chevron-{{ $expanded ? 'down' : 'right' }}"></i>
+            <i class="fa fa-chevron-{{ $expanded ? 'down' : 'right' }}" aria-hidden="true"></i>
         </span>
 
         {{-- Visual indicator (icon/avatar) --}}
@@ -99,7 +99,7 @@ foreach ($statusColumns as $statusId => $statusData) {
         @else
             {{-- Default FontAwesome icon for status and other groupings --}}
             <span class="kanban-indicator">
-                <i class="fa {{ $faIcon }} kanban-indicator-icon"></i>
+                <i class="fa {{ $faIcon }} kanban-indicator-icon" aria-hidden="true"></i>
             </span>
         @endif
 

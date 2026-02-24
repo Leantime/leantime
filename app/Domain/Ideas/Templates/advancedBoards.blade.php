@@ -17,7 +17,7 @@
 @endphp
 
 <div class="pageheader">
-    <div class="pageicon"><i class="far fa-lightbulb"></i></div>
+    <div class="pageicon"><i class="far fa-lightbulb" aria-hidden="true"></i></div>
     <div class="pagetitle">
         <h5>{{ $tpl->escape(session('currentProjectClient') . ' // ' . session('currentProjectName')) }}</h5>
         @if (count($allCanvas) > 0)
@@ -78,7 +78,7 @@
                         <h4 class="widgettitle title-primary">
                             @if ($login::userIsAtLeast($roles::$manager))
                                 <a href="#/setting/editBoxLabel?module=idealabels&label={{ $key }}"
-                                   class="editHeadline"><i class="fas fa-edit"></i></a>
+                                   class="editHeadline"><i class="fas fa-edit" aria-hidden="true"></i></a>
                             @endif
                             {{ $tpl->escape($statusRow['name']) }}
                         </h4>

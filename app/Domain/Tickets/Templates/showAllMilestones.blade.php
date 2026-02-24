@@ -53,7 +53,7 @@
             @if($group['label'] != 'all')
                 <h5 class="accordionTitle {{ $group['class'] }}" @if(!empty($group['color'])) style="color:{{ htmlspecialchars($group['color']) }}" @endif id="accordion_link_{{ $group['id'] }}">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}" onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                        <i class="fa fa-angle-down"></i>{{ $group['label'] }} ({{ count($group['items']) }})
+                        <i class="fa fa-angle-down" aria-hidden="true"></i>{{ $group['label'] }} ({{ count($group['items']) }})
                     </a>
                 </h5>
                 <div class="simpleAccordionContainer" id="accordion_content-{{ $group['id'] }}">
@@ -207,9 +207,9 @@
                                 @if($login::userIsAtLeast($roles::$editor))
                                     <x-globals::elements.dropdown>
                                         <li class="nav-header border">{{ __('subtitles.todo') }}</li>
-                                        <li><a href="#/tickets/editMilestone/{{ $row['id'] }}" class="ticketModal"><i class="fa fa-edit"></i> {{ __('links.edit_milestone') }}</a></li>
-                                        <li><a href="#/tickets/moveTicket/{{ $row['id'] }}" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> {{ __('links.move_milestone') }}</a></li>
-                                        <li><a href="#/tickets/delMilestone/{{ $row['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
+                                        <li><a href="#/tickets/editMilestone/{{ $row['id'] }}" class="ticketModal"><i class="fa fa-edit" aria-hidden="true"></i> {{ __('links.edit_milestone') }}</a></li>
+                                        <li><a href="#/tickets/moveTicket/{{ $row['id'] }}" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> {{ __('links.move_milestone') }}</a></li>
+                                        <li><a href="#/tickets/delMilestone/{{ $row['id'] }}" class="delete"><i class="fa fa-trash" aria-hidden="true"></i> {{ __('links.delete') }}</a></li>
                                         <li><a href="{{ BASE_URL }}/tickets/showAll?search=true&milestone={{ $row['id'] }}">{{ __('links.view_todos') }}</a></li>
                                     </x-globals::elements.dropdown>
                                 @endif
