@@ -19,7 +19,10 @@
     font-size: var(--base-font-size);
     color:var(--primary-font-color);
     margin: 0;
-    padding: 5px 10px;
+    padding: 10px 12px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
     border-radius: 0px;
 }
 .pagetitle .dropdown-menu > li > a {

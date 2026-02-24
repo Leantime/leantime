@@ -105,7 +105,8 @@
 
 .dataTables_paginate .first, .dataTables_paginate .previous, .dataTables_paginate .paginate_active,
 .dataTables_paginate .paginate_button, .dataTables_paginate .next, .dataTables_paginate .last {
-    padding: 5px 10px;
+    padding: 10px 14px;
+    min-height: 44px;
     border: 0px solid var(--neutral);
     font-size: var(--font-size-s);
     cursor: pointer;
@@ -217,7 +218,7 @@
 
     font-weight: normal;
     text-rendering: optimizelegibility;
-    padding: 7px 10px 5px 10px;
+    padding: 12px 10px;
 
     border:0px;
     border-right:0px solid var(--neutral);

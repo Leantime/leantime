@@ -1652,7 +1652,8 @@ min-width: 1200px
 
     /* bootstrap */
     .btn {
-        padding: 4px 12px;
+        padding: 10px 14px;
+        min-height: 44px;
     }
 
     .ticketBox {
