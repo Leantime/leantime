@@ -703,14 +703,14 @@ body .maincontent .priority-text-5 a:link {
 
 /* Effort t-shirt indicator */
 .kanban-effort-indicator {
-    font-size: 13px;
+    font-size: var(--font-size-s);
     font-weight: 700;
     color: var(--primary-font-color);
 }
 
 /* Label - truncates with ellipsis */
 .swimlane-header-label {
-    font-size: 13px;
+    font-size: var(--font-size-s);
     font-weight: 600;
     color: var(--primary-font-color);
     flex: 1;
@@ -729,7 +729,7 @@ body .maincontent .priority-text-5 a:link {
     color: #FFFFFF; /* White text for high contrast */
     padding: 3px 10px;
     border-radius: var(--input-radius);
-    font-size: 13px;
+    font-size: var(--font-size-s);
     font-weight: 700;
     min-width: 26px;
     flex-shrink: 0;
@@ -1110,7 +1110,7 @@ body .maincontent .priority-text-5 a:link {
     text-overflow: ellipsis;
     flex: 1;
     min-width: 0;
-    font-size: 11px;
+    font-size: var(--font-size-xs);
 }
 
 /* Type icon */
@@ -1355,14 +1355,14 @@ body .maincontent .priority-text-5 a:link {
     align-items: center;
     justify-content: center;
     line-height: 1;
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     min-width: 0;
     position: relative;
 }
 
 
 .micro-progress-bar .segment-count {
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     font-weight: 700;
     color: white;
     text-shadow: 0 1px 2px rgba(0,0,0,0.3);

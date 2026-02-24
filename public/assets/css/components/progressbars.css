@@ -560,7 +560,7 @@
 .timerContainer .stopped::after {
     content: '✓';
     color: white;
-    font-size: 24px;
+    font-size: var(--font-size-xxl);
     position: absolute;
     z-index: 2;
     opacity: 0;
