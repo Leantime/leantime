@@ -371,7 +371,8 @@ body.loginpage {
     border: 56px solid rgba(255,255,255, 0.4);
     border-radius: 900px;
     height: 600px;
-    width: 600px;
+    max-width: 600px;
+    width: 100%;
     z-index:5;
 }
 
@@ -524,8 +525,8 @@ body.loginpage {
 }
 
 .regcontent {
-    width:550px;
-    max-width:90vw;
+    max-width: min(550px, 90vw);
+    width: 100%;
     padding-top:25px;
 }
 
@@ -801,7 +802,8 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
 
 /* Tiny MCE */
 #description_parent iframe {
-    width: 600px !important;
+    max-width: 600px;
+    width: 100% !important;
 }
 
 /*** DASHBOARD ***/
