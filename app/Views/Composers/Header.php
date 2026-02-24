@@ -44,7 +44,8 @@ class Header extends Composer
         $theme = $this->themeCore->getActive();
         $colorMode = $this->themeCore->getColorMode();
         $colorScheme = $this->themeCore->getColorScheme();
-        $themeFont = $this->themeCore->getFont();
+        $fontKey = $this->themeCore->getFont();
+        $themeFont = $this->themeCore->fonts[$fontKey] ?? 'Hanken Grotesk';
 
         // Set colors to use
         if (! session()->exists('companysettings.sitename')) {

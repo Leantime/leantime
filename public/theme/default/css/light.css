@@ -91,7 +91,7 @@
     --header-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 90%);
     --element-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 100%);
 
-    --primary-font-family: 'Roboto', 'Helvetica Neue', Helvetica, sans-serif;
+    --primary-font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 
     --font-size-xs: 10px;
     --font-size-s: 12px;
