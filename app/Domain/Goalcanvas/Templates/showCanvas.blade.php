@@ -322,7 +322,8 @@
                                         <br />
                                         <div hx-trigger="load" hx-indicator=".htmx-indicator"
                                             hx-target="this" hx-swap="innerHTML"
-                                            hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $row['milestoneId'] }}">
+                                            hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $row['milestoneId'] }}"
+                                            aria-live="polite">
                                             <div class="htmx-indicator">
                                                 {{ __('label.loading_milestone') }}
                                             </div>

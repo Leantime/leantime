@@ -17,7 +17,7 @@
     ];
 @endphp
 
-<span class="comment-reactions" id="reactions-{{ $commentId }}">
+<span class="comment-reactions" id="reactions-{{ $commentId }}" aria-live="polite">
     @if(count($reactions) > 0)
         <span class="reaction-list">
             @foreach($reactions as $reactionData)

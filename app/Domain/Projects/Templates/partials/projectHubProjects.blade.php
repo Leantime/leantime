@@ -2,7 +2,8 @@
      hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
      hx-trigger="HTMX.updateProjectList from:body"
      hx-target="#myProjectsHub"
-     hx-swap="outerHTML">
+     hx-swap="outerHTML"
+     aria-live="polite">
 
     @if (count($clients) > 0)
         <x-global::elements.link-dropdown :label="$currentClientName != '' ? $currentClientName : __('headline.all_clients')" triggerClass="btn btn-default header-title-dropdown" class="pull-right">

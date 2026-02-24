@@ -7,7 +7,7 @@
 
 @endif
 
-<form name="progressForm" id="progressForm">
+<form name="progressForm" id="progressForm" aria-live="polite">
     <div class="projectSteps">
         <div class="progressWrapper">
             <div class="progress">

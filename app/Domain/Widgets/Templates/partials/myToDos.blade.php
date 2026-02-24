@@ -37,6 +37,7 @@
      hx-ext="json-enc"
      hx-indicator=".htmx-indicator"
      data-group-by="{{ $groupBy }}"
+     aria-live="polite"
 >
 
     <div class="widget-slot-actions">

@@ -8,7 +8,7 @@
     hx-get="{{BASE_URL}}/tickets/timerButton/get-status-button/{{ $parentTicketId }}"
     hx-trigger="timerUpdate from:body"
     hx-swap="outerHTML"
-
+    aria-live="assertive"
     class="tw:relative timerContainer">
 
     @if ($onTheClock === false)

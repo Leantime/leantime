@@ -41,6 +41,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
                     hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
                     hx-trigger="timerUpdate from:body"
                     hx-swap="outerHTML"
+                    aria-live="assertive"
                     class="timerContainer">
 
                     @if ($onTheClock === false)

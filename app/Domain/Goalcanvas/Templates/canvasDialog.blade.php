@@ -156,7 +156,8 @@
                                  hx-indicator=".htmx-indicator"
                                  hx-target="this"
                                  hx-swap="innerHTML"
-                                 hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $canvasItem['milestoneId'] }}">
+                                 hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $canvasItem['milestoneId'] }}"
+                                 aria-live="polite">
                                 <div class="htmx-indicator">
                                     {{ __("label.loading_milestone") }}
                                 </div>

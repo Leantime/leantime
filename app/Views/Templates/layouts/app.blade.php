@@ -52,7 +52,7 @@
                  hx-select=".primaryContent"
                  hx-swap="outerHTML show:window:top"
                  hx-indicator="#page-loading">
-                <div class="primaryContent">
+                <div class="primaryContent" aria-live="polite">
                     @isset($action, $module)
                         @include("$module::$action")
                     @else

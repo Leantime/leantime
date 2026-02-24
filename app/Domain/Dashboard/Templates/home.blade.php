@@ -30,7 +30,8 @@
                      hx-target="this"
                      hx-swap="innerHTML"
                      id="{{ $widget->id }}"
-                     class="tw:h-full">
+                     class="tw:h-full"
+                     aria-live="polite">
                     <x-global::loadingText type="{{ $widget->widgetLoadingIndicator }}" count="1" includeHeadline="true" />
                 </div>
             </x-widgets::moveableWidget>

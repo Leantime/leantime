@@ -21,7 +21,7 @@
                 hx-indicator=".htmx-indicator, .htmx-loaded-content"
                 hx-swap="outerHTML"
            >
-               <div id="pluginList">
+               <div id="pluginList" aria-live="polite">
                    <div class="htmx-indicator tw:ml-m tw:mr-m tw:pt-l">
                        <x-global::loadingText type="plugincard" count="5" includeHeadline="false"/>
                    </div>

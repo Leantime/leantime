@@ -3,7 +3,7 @@
     'currentProject'
 ])
 
-<div class="dropdown-menu projectselector" id="mainProjectSelector">
+<div class="dropdown-menu projectselector" id="mainProjectSelector" aria-live="polite">
 
         @if ($menuType == 'project' || $menuType == 'default')
             <div class="head">

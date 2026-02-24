@@ -229,7 +229,8 @@
                                      hx-target="closest .wiki-milestone-card"
                                      hx-select="unset"
                                      hx-swap="innerHTML"
-                                     hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $currentArticle->milestoneId }}">
+                                     hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $currentArticle->milestoneId }}"
+                                     aria-live="polite">
                                     <div class="htmx-indicator">
                                         {{ __('label.loading_milestone') }}
                                     </div>
@@ -431,7 +432,8 @@
                                      hx-trigger="load, refreshActivity from:body"
                                      hx-target="this"
                                      hx-select="unset"
-                                     hx-swap="innerHTML">
+                                     hx-swap="innerHTML"
+                                     aria-live="polite">
                                     <div class="wiki-activity-loading">
                                         <i class="fa fa-circle-notch fa-spin"></i> Loading activity...
                                     </div>
