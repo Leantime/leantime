@@ -12,15 +12,13 @@
  * @module tiptap/extensions/imageResize
  */
 
-'use strict';
-
 /**
  * Creates a resizable image extension by extending the base Image extension.
  *
  * @param {Object} Image - The @tiptap/extension-image default export
  * @returns {Object} Extended TipTap Image node with resize support
  */
-function createResizableImage(Image) {
+export function createResizableImage(Image) {
 
     return Image.extend({
         name: 'image',
@@ -156,4 +154,3 @@ function createResizableImage(Image) {
     });
 }
 
-module.exports = { createResizableImage: createResizableImage };
