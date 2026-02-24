@@ -863,6 +863,22 @@
     "file": "assets/Atkinson-Hyperlegible-Regular-102a-CasLllZS.woff2",
     "src": "public/assets/fonts/atkinson/Atkinson-Hyperlegible-Regular-102a.woff2"
   },
+  "public/assets/fonts/hankengrotesk/HankenGrotesk-Italic-Latin.woff2": {
+    "file": "assets/HankenGrotesk-Italic-Latin-gSz4aCqd.woff2",
+    "src": "public/assets/fonts/hankengrotesk/HankenGrotesk-Italic-Latin.woff2"
+  },
+  "public/assets/fonts/hankengrotesk/HankenGrotesk-Italic-LatinExt.woff2": {
+    "file": "assets/HankenGrotesk-Italic-LatinExt-D7cE4dLN.woff2",
+    "src": "public/assets/fonts/hankengrotesk/HankenGrotesk-Italic-LatinExt.woff2"
+  },
+  "public/assets/fonts/hankengrotesk/HankenGrotesk-Latin.woff2": {
+    "file": "assets/HankenGrotesk-Latin-KjBMhMia.woff2",
+    "src": "public/assets/fonts/hankengrotesk/HankenGrotesk-Latin.woff2"
+  },
+  "public/assets/fonts/hankengrotesk/HankenGrotesk-LatinExt.woff2": {
+    "file": "assets/HankenGrotesk-LatinExt-BzvT_elb.woff2",
+    "src": "public/assets/fonts/hankengrotesk/HankenGrotesk-LatinExt.woff2"
+  },
   "public/assets/fonts/roboto/Roboto-Bold.ttf": {
     "file": "assets/Roboto-Bold-BKtbn9Wi.ttf",
     "src": "public/assets/fonts/roboto/Roboto-Bold.ttf"
@@ -936,17 +952,17 @@
     "src": "public/assets/images/svg/loading-animation.svg"
   },
   "resources/css/app.css": {
-    "file": "assets/app-YZwtZdID.css",
+    "file": "assets/app-DQ3J8BZw.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/editor.css": {
-    "file": "assets/editor-BEBwmF6l.css",
+    "file": "assets/editor-DRlPEpkV.css",
     "src": "resources/css/editor.css",
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-6cRUf33V.css",
+    "file": "assets/main-B1eQpg5h.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
