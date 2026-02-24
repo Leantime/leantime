@@ -1,12 +1,12 @@
 @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$editor, true))
 
-    <li class='dropdown timerHeadMenu' id='timerHeadMenu' hx-get="{{BASE_URL}}/timesheets/stopwatch/get-status" hx-trigger="timerUpdate from:body">
+    <li class='timerHeadMenu' id='timerHeadMenu' hx-get="{{BASE_URL}}/timesheets/stopwatch/get-status" hx-trigger="timerUpdate from:body{{ $onTheClock !== false ? ', every 60s' : '' }}" hx-swap="outerHTML">
 
     @if ($onTheClock !== false)
             <a
-                href="javascript:void(0);"
-                data-toggle="dropdown"
+                href='javascript:void(0);'
                 class='dropdown-toggle'
+                data-toggle='dropdown'
             >{!! sprintf(
                     __('text.timer_on_todo'),
                     $onTheClock['totalTime'],
@@ -33,3 +33,4 @@
     @endif
     </li>
 @endif
+

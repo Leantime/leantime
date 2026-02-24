@@ -34,19 +34,22 @@
 </div>
 
 <div class="tw:h-full tw:flex tw:flex-col minCalendar">
-    <div class="day-selector">
+    <div class="day-selector tw:w-full tw:flex tw:gap-2 tw:mb-4 tw:justify-between"
+         @php
+             $currentView = $tpl->getToggleState("dashboardCalendarView") ?: 'timeGridDay';
+         @endphp
+         @if ($currentView !== 'timeGridDay') style="display:none" @endif>
         @php
             $today = dtHelper()->userNow();
             $startOfWeek = dtHelper()->userNow()->startOf("week");
-            $startDate = $startOfWeek->modify("-14 days");
-            $dates = [];
-            for($i = 0; $i < 35; $i++) {
-                $date = $startDate->modify("+$i days");
-                $dates[] = $date;
+            $week = [];
+            for($i = 0; $i < 7; $i++) {
+                $date = $startOfWeek->modify("+$i days");
+                $week[] = $date;
             }
         @endphp
-        @foreach($dates as $day)
-            <button class="day-button {{ $day->format('Y-m-d') === $today->format('Y-m-d') ? 'today active' : '' }}" data-date="{{ $day->format('Y-m-d') }}">
+        @foreach($week as $day)
+            <button class="day-button tw:rounded-md tw:w-12 tw:h-12 tw:flex tw:flex-col tw:items-center tw:justify-center {{ $day->format('Y-m-d') === $today->format('Y-m-d') ? 'today active' : '' }}" data-date="{{ $day->format('Y-m-d') }}">
                 <span class="day-name">{{ $day->format('D') }}</span>
                 <span class="day-num">{{ $day->format('d') }}</span>
             </button>
@@ -94,14 +97,14 @@
         eventSources.push(events);
 
         <?php
-        $externalCalendars = $tpl->get("externalCalendars");
+        $externalCalendars = $tpl->get('externalCalendars');
 
-        foreach($externalCalendars as $externalCalendar) { ?>
+        foreach ($externalCalendars as $externalCalendar) { ?>
             eventSources.push(
                 {
-                    url: '<?=BASE_URL ?>/calendar/externalCal/<?=$externalCalendar['id'] ?>',
+                    url: '<?= BASE_URL ?>/calendar/externalCal/<?= $externalCalendar['id'] ?>',
                     format: 'ics',
-                    color: '<?=$externalCalendar['colorClass'] ?>',
+                    color: '<?= $externalCalendar['colorClass'] ?>',
                     editable: false,
                 }
             );

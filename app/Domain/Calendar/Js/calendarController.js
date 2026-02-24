@@ -406,8 +406,14 @@ leantime.calendarController = (function () {
             document.querySelectorAll(".minCalendar .calendarViewSelect").forEach(function (el) {
                 el.addEventListener("click", function (e) {
 
-                    console.log(this.dataset.value);
-                    calendar.changeView(this.dataset.value);
+                    var newView = this.dataset.value;
+                    calendar.changeView(newView);
+
+                    // Show the day selector only in day view
+                    var daySelector = document.querySelector('.day-selector');
+                    if (daySelector) {
+                        daySelector.style.display = (newView === 'timeGridDay') ? '' : 'none';
+                    }
 
                     fetch(leantime.appUrl + '/api/submenu', {
                         method: 'PATCH',

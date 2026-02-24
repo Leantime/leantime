@@ -483,6 +483,83 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     outline: 3px solid var(--primary-color, #5a67d8);
 }
 
+/* Image resize extension — tiptap-extension-resize-image */
+.tiptap-editor .image-resizer {
+    display: inline-flex;
+    position: relative;
+    max-width: 100%;
+    line-height: 0;
+}
+
+.tiptap-editor .image-resizer img {
+    /* Allow the resize extension to set explicit widths via inline style */
+    max-width: 100%;
+    margin: 0;
+}
+
+.tiptap-editor .image-resizer .resize-trigger {
+    position: absolute;
+    right: -6px;
+    bottom: -6px;
+    width: 12px;
+    height: 12px;
+    background: var(--primary-color, #5a67d8);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    cursor: se-resize;
+    z-index: 10;
+}
+
+.tiptap-editor .ProseMirror-selectednode .image-resizer {
+    outline: 3px solid var(--primary-color, #5a67d8);
+    border-radius: var(--box-radius-small, 4px);
+}
+
+/* ==========================================================================
+   HTML Source Code Panel
+   ========================================================================== */
+
+.tiptap-source-panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 200px;
+    border: 2px solid var(--primary-color, #5a67d8);
+    border-radius: var(--box-radius, 8px);
+    background: var(--secondary-background, #1e1e2e);
+    overflow: hidden;
+}
+
+.tiptap-source-textarea {
+    flex: 1;
+    width: 100%;
+    min-height: 200px;
+    padding: 12px 16px;
+    background: transparent;
+    color: var(--code-color, #a9b1d6);
+    font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    border: none;
+    outline: none;
+    resize: vertical;
+    white-space: pre;
+    overflow-x: auto;
+    tab-size: 2;
+}
+
+/* Dim other toolbar buttons while source view is open */
+.tiptap-wrapper.tiptap-source-active .tiptap-toolbar__button.is-disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.tiptap-wrapper.tiptap-source-active .tiptap-toolbar__button[data-command="sourceCode"] {
+    color: var(--primary-color, #5a67d8);
+    background: var(--primary-color-10, rgba(90, 103, 216, 0.1));
+}
+
 /* ==========================================================================
    Horizontal Rule
    ========================================================================== */

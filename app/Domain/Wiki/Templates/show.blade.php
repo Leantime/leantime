@@ -112,7 +112,7 @@
                         {{-- Left: Contents Sidebar --}}
                         <div class="wiki-contents-panel" id="contentsPanel">
                             <div class="wiki-panel-header">
-                                <h5 class="wiki-panel-title">Contents</h5>
+                                <h4 class="widgettitle title-light"><i class="fa fa-list"></i> Contents</h4>
                                 <button class="wiki-collapse-btn" id="toggleContents" title="Collapse">
                                     <i class="fa fa-chevron-left"></i>
                                 </button>
@@ -151,21 +151,24 @@
                                 @if ($login::userIsAtLeast($roles::$editor))
                                     {{-- Editable Title with Icon Picker --}}
                                     <div class="wiki-title-wrapper" id="wikiTitleWrapper">
-                                        <div class="wiki-icon-picker dropdown">
-                                            <a href="javascript:void(0);" data-toggle="dropdown"
-                                                    class="wiki-icon-btn icp icp-dd btn btn-default dropdown-toggle iconpicker-container"
+                                        <div class="wiki-icon-picker">
+                                            <button data-selected="graduation-cap" type="button"
+                                                    class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker"
+                                                    data-toggle="dropdown"
                                                     title="Change icon">
                                                 <span class="iconPlaceholder"><i class="{{ $tpl->escape($currentArticle->data ?: 'fa fa-file-alt') }}"></i></span>
                                                 <span class="wiki-icon-caret"><i class="fa fa-chevron-down"></i></span>
-                                            </a>
+                                            </button>
                                             <div class="dropdown-menu"></div>
-                                            <input type="hidden" id="wikiArticleIcon" class="articleIcon" value="{{ $tpl->escape($currentArticle->data) }}" />
                                         </div>
-                                        <h1 class="wiki-title-editable"
-                                            id="wikiTitleEditable"
-                                            contenteditable="true"
-                                            data-placeholder="Untitled"
-                                            data-original="{{ $currentArticle->title }}">{{ $currentArticle->title }}</h1>
+                                        <input type="hidden" id="wikiArticleIcon" class="articleIcon" value="{{ $tpl->escape($currentArticle->data) }}" />
+                                        <input type="text"
+                                               id="wikiTitleEditable"
+                                               class="wiki-title-editable main-title-input"
+                                               value="{{ $tpl->escape($currentArticle->title) }}"
+                                               data-original="{{ $tpl->escape($currentArticle->title) }}"
+                                               placeholder="{{ __('input.placeholders.wiki_title') }}"
+                                               style="width:80%" autocomplete="off" />
                                     </div>
 
                                     {{-- Editable Tags --}}
@@ -255,7 +258,7 @@
                         {{-- Properties Panel (inside content area) --}}
                         <div class="wiki-properties-panel" id="propertiesPanel">
                             <div class="wiki-panel-header">
-                                <h5 class="wiki-panel-title">Details</h5>
+                                <h4 class="widgettitle title-light"><i class="fa fa-info-circle"></i> Details</h4>
                                 <button class="wiki-collapse-btn" id="collapseProperties" title="Collapse">
                                     <i class="fa fa-chevron-right"></i>
                                 </button>
@@ -359,7 +362,7 @@
                                     <span class="wiki-property-value">
                                         <div class="wiki-author">
                                             <span class="wiki-author-avatar">{{ $authorInitials }}</span>
-                                            {{ $currentArticle->firstname }} {{ $currentArticle->lastname }}
+                                            {{ $tpl->escape($currentArticle->firstname) }} {{ $tpl->escape($currentArticle->lastname) }}
                                         </div>
                                     </span>
                                 </div>
@@ -563,6 +566,15 @@ jQuery(document).ready(function() {
         var isEditing = false;
         var saveTimeout = null;
         var lastSavedContent = textarea.value;
+        var toolbarClicking = false;
+
+        // Track mousedown on the wrapper so we know if a blur was caused
+        // by clicking within the editing UI (toolbar buttons, etc.)
+        wrapper.addEventListener('mousedown', function(e) {
+            if (isEditing && !editorEl.contains(e.target)) {
+                toolbarClicking = true;
+            }
+        });
 
         // Initialize Tiptap in read mode
         var tiptapInstance = leantime.tiptapController.initComplex(textarea, {
@@ -583,11 +595,31 @@ jQuery(document).ready(function() {
                 }
             },
             onBlur: function(params) {
+                // If the blur was caused by clicking toolbar/wrapper elements, skip
+                if (toolbarClicking) {
+                    toolbarClicking = false;
+                    return;
+                }
+
+                // Delay to allow for toolbar popover clicks (color, heading, font
+                // pickers are appended to document.body outside the wrapper)
                 setTimeout(function() {
-                    if (isEditing && !editorEl.contains(document.activeElement)) {
-                        exitEditMode();
-                    }
-                }, 200);
+                    if (!isEditing) return;
+
+                    var active = document.activeElement;
+
+                    // Check if focus moved to something inside the wrapper
+                    if (wrapper.contains(active)) return;
+
+                    // Check if a tiptap popover is currently open (they are
+                    // appended to document.body so won't be inside wrapper)
+                    var openPopover = document.querySelector(
+                        '.tiptap-color-popover, .tiptap-font-popover, .tiptap-heading-popover, .tiptap-image-popover'
+                    );
+                    if (openPopover) return;
+
+                    exitEditMode();
+                }, 300);
             }
         });
 
@@ -778,7 +810,7 @@ jQuery(document).ready(function() {
         var originalTitle = titleEditable.dataset.original;
 
         titleEditable.addEventListener('blur', function() {
-            var newTitle = titleEditable.textContent.trim();
+            var newTitle = titleEditable.value.trim();
             if (newTitle && newTitle !== originalTitle) {
                 saveField('title', newTitle, function() {
                     originalTitle = newTitle;
@@ -798,16 +830,9 @@ jQuery(document).ready(function() {
                 titleEditable.blur();
             }
             if (e.key === 'Escape') {
-                titleEditable.textContent = originalTitle;
+                titleEditable.value = originalTitle;
                 titleEditable.blur();
             }
-        });
-
-        // Prevent pasting rich text
-        titleEditable.addEventListener('paste', function(e) {
-            e.preventDefault();
-            var text = (e.clipboardData || window.clipboardData).getData('text/plain');
-            document.execCommand('insertText', false, text);
         });
     }
 
@@ -817,7 +842,7 @@ jQuery(document).ready(function() {
 
     var iconInput = document.getElementById('wikiArticleIcon');
     if (iconInput && jQuery.fn.iconpicker) {
-        jQuery('.wiki-icon-btn').iconpicker({
+        jQuery('.titleIconPicker').iconpicker({
             component: '.btn > .iconPlaceholder',
             input: '.articleIcon',
             inputSearch: true,
@@ -894,10 +919,10 @@ jQuery(document).ready(function() {
             ]
         });
 
-        jQuery('.wiki-icon-btn').on('iconpickerSelected', function(event) {
+        jQuery('.titleIconPicker').on('iconpickerSelected', function(event) {
             var newIcon = event.iconpickerValue;
             jQuery('.articleIcon').val(newIcon);
-            jQuery('.wiki-icon-btn .iconPlaceholder > i').attr('class', newIcon);
+            jQuery('.titleIconPicker .iconPlaceholder > i').attr('class', newIcon);
 
             saveField('icon', newIcon, function() {
                 var treeLink = document.querySelector('.wiki-tree-link.active i');
@@ -929,7 +954,7 @@ jQuery(document).ready(function() {
     }
 
     // ==========================================
-    // Status Dropdown
+    // Status Select
     // ==========================================
 
     var statusDropdown = document.getElementById('wikiStatusDropdown');
@@ -977,7 +1002,7 @@ jQuery(document).ready(function() {
     }
 
     // ==========================================
-    // Milestone Dropdown
+    // Milestone Select
     // ==========================================
 
     var milestoneDropdown = document.getElementById('wikiMilestoneDropdown');
@@ -1004,7 +1029,7 @@ jQuery(document).ready(function() {
     }
 
     // ==========================================
-    // Parent Dropdown
+    // Parent Select
     // ==========================================
 
     var parentDropdown = document.getElementById('wikiParentDropdown');

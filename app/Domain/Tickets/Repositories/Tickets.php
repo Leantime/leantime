@@ -1761,4 +1761,39 @@ class Tickets
             ->where('relationship', EntityRelationshipEnum::Collaborator->value)
             ->delete();
     }
+
+    /**
+     * Bulk update sortindex values for multiple tickets in a single transaction.
+     *
+     * @param  array<int, int>  $updates  Associative array of ticketId => sortIndex
+     * @return bool True on success, false on failure
+     */
+    public function bulkUpdateSortIndex(array $updates): bool
+    {
+        if (empty($updates)) {
+            return true;
+        }
+
+        try {
+            $this->connection->beginTransaction();
+
+            foreach ($updates as $ticketId => $sortIndex) {
+                $this->connection->table('zp_tickets')
+                    ->where('id', (int) $ticketId)
+                    ->update([
+                        'sortindex' => (int) $sortIndex,
+                        'modified' => dtHelper()->userNow()->formatDateTimeForDb(),
+                    ]);
+            }
+
+            $this->connection->commit();
+
+            return true;
+        } catch (\Exception $e) {
+            $this->connection->rollBack();
+            \Illuminate\Support\Facades\Log::error($e);
+
+            return false;
+        }
+    }
 }

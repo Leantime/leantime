@@ -41,7 +41,9 @@ class ShowMyCalendar extends Controller
 
         session(['lastPage' => BASE_URL.'/calendar/showMyCalendar/']);
 
-        $this->tpl->assign('externalCalendars', $this->calendarRepo->getMyExternalCalendars(session('userdata.id')));
+        $externalCalendars = $this->calendarRepo->getMyExternalCalendars(session('userdata.id'));
+        $externalCalendars = self::dispatch_filter('showMyCalendar.externalCalendars', $externalCalendars);
+        $this->tpl->assign('externalCalendars', $externalCalendars);
 
         // @TODO: This should come from the ticket repo...
         // $this->tpl->assign('ticketEditDates', $this->calendarRepo->getTicketEditDates());

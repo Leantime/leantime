@@ -267,6 +267,18 @@
                 showMoreMenu(editor, button);
             },
             isActive: function() { return false; }
+        },
+        sourceCode: {
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline><line x1="12" y1="2" x2="12" y2="22" stroke-width="1" stroke-dasharray="2,2"></line></svg>',
+            title: 'Edit HTML Source',
+            command: function(editor, button) {
+                toggleSourceCodePanel(editor, button);
+            },
+            isActive: function(editor) {
+                // Reflect active state when source panel is open for this editor
+                var wrapper = editor.view.dom.closest('.tiptap-wrapper');
+                return wrapper ? wrapper.classList.contains('tiptap-source-active') : false;
+            }
         }
     };
 
@@ -284,6 +296,95 @@
         { key: 'horizontalRule', label: 'Horizontal Line', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/></svg>' },
         { key: 'clearFormatting', label: 'Clear Formatting', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/><line x1="2" y1="2" x2="22" y2="22" stroke-width="2"/></svg>' }
     ];
+
+    /**
+     * Toggle the raw HTML source view panel for the editor.
+     *
+     * When active:
+     *  - The ProseMirror editor surface is hidden
+     *  - A <textarea> containing the raw HTML is shown in its place
+     *  - All toolbar buttons except this one are disabled
+     *
+     * When toggled off:
+     *  - The textarea content is written back via editor.commands.setContent()
+     *  - The ProseMirror surface is restored
+     *  - Toolbar buttons are re-enabled
+     */
+    function toggleSourceCodePanel(editor, button) {
+        var proseMirrorEl = editor.view.dom;
+        var wrapper = proseMirrorEl.closest('.tiptap-wrapper');
+        if (!wrapper) return;
+
+        var isActive = wrapper.classList.contains('tiptap-source-active');
+
+        if (isActive) {
+            // --- Close source panel: write back to editor ---
+            var panel = wrapper.querySelector('.tiptap-source-panel');
+            if (panel) {
+                var textarea = panel.querySelector('.tiptap-source-textarea');
+                if (textarea) {
+                    editor.commands.setContent(textarea.value, false);
+                }
+                panel.remove();
+            }
+
+            wrapper.classList.remove('tiptap-source-active');
+            proseMirrorEl.style.display = '';
+
+            // Re-enable toolbar buttons
+            var toolbar = wrapper.querySelector('.tiptap-toolbar');
+            if (toolbar) {
+                toolbar.querySelectorAll('.tiptap-toolbar__button').forEach(function(btn) {
+                    if (btn.getAttribute('data-command') !== 'sourceCode') {
+                        btn.disabled = false;
+                        btn.classList.remove('is-disabled');
+                    }
+                });
+            }
+
+            button.classList.remove('is-active');
+            button.setAttribute('aria-pressed', 'false');
+
+        } else {
+            // --- Open source panel: show raw HTML ---
+            var html = editor.getHTML();
+
+            var panel = document.createElement('div');
+            panel.className = 'tiptap-source-panel';
+
+            var textarea = document.createElement('textarea');
+            textarea.className = 'tiptap-source-textarea';
+            textarea.value = html;
+            textarea.setAttribute('spellcheck', 'false');
+            textarea.setAttribute('autocomplete', 'off');
+            textarea.setAttribute('aria-label', 'HTML source code');
+
+            panel.appendChild(textarea);
+
+            // Insert panel in place of the ProseMirror div
+            proseMirrorEl.style.display = 'none';
+            proseMirrorEl.parentNode.insertBefore(panel, proseMirrorEl.nextSibling);
+
+            wrapper.classList.add('tiptap-source-active');
+
+            // Disable other toolbar buttons
+            var toolbar = wrapper.querySelector('.tiptap-toolbar');
+            if (toolbar) {
+                toolbar.querySelectorAll('.tiptap-toolbar__button').forEach(function(btn) {
+                    if (btn.getAttribute('data-command') !== 'sourceCode') {
+                        btn.disabled = true;
+                        btn.classList.add('is-disabled');
+                    }
+                });
+            }
+
+            button.classList.add('is-active');
+            button.setAttribute('aria-pressed', 'true');
+
+            // Focus and position cursor at end
+            setTimeout(function() { textarea.focus(); }, 50);
+        }
+    }
 
     /**
      * Close any open more menu
@@ -427,16 +528,16 @@
     var toolbarConfigs = {
         complex: {
             position: 'top',
-            buttons: ['bold', 'italic', 'strike', '|', 'fontFamily', 'fontSize', 'textColor', 'highlight', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more'],
+            buttons: ['bold', 'italic', 'strike', '|', 'fontFamily', 'fontSize', 'textColor', 'highlight', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more', '|', 'sourceCode'],
             expandable: ['table', 'code']
         },
         simple: {
             position: 'bottom',
-            buttons: ['bold', 'italic', '|', 'link', 'image', '|', 'bulletList', '|', 'more']
+            buttons: ['bold', 'italic', '|', 'link', 'image', '|', 'bulletList', '|', 'more', '|', 'sourceCode']
         },
         notes: {
             position: 'top',
-            buttons: ['bold', 'italic', 'strike', '|', 'fontFamily', 'fontSize', 'textColor', 'highlight', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more']
+            buttons: ['bold', 'italic', 'strike', '|', 'fontFamily', 'fontSize', 'textColor', 'highlight', '|', 'heading', 'quote', '|', 'bulletList', 'orderedList', 'taskList', '|', 'link', 'image', '|', 'table', 'code', '|', 'more', '|', 'sourceCode']
         }
     };
 

@@ -319,6 +319,29 @@ var EmbedNode = Node.create({
         var embedSrc = attrs.src;
         var aspectRatio = getAspectRatio(type);
 
+        // Trusted embeds are services that require same-origin cookie access or
+        // postMessage with origin validation to authenticate and render correctly.
+        // Without allow-same-origin their internal scripts receive a null origin,
+        // auth cookies are inaccessible, and the embed fails with a 400 error.
+        //
+        // NOTE: allow-scripts + allow-same-origin together allow sandboxed content
+        // to remove its own sandbox via script — this is acceptable for these
+        // known first-party services but should NOT be added for arbitrary URLs.
+        var trustedEmbeds = {
+            googleDocs: true,
+            googleSheets: true,
+            googleSlides: true,
+            googleForms: true,
+            figma: true,
+            miro: true,
+            oneDrive: true,
+            office365: true,
+        };
+
+        var sandboxValue = trustedEmbeds[type]
+            ? 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-storage-access-by-user-activation allow-downloads allow-modals'
+            : 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals';
+
         return ['div', mergeAttributes({
             class: 'tiptap-embed tiptap-embed--' + type + ' tiptap-embed--' + aspectRatio,
             'data-embed': '',
@@ -335,8 +358,7 @@ var EmbedNode = Node.create({
                     allowfullscreen: 'true',
                     // Allow all permissions needed for editable embeds
                     allow: 'accelerometer; autoplay; clipboard-read; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen; camera; microphone',
-                    // Sandbox with permissions for editing
-                    sandbox: 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals',
+                    sandbox: sandboxValue,
                     title: attrs.title || getTypeName(type) + ' embed',
                     loading: 'lazy',
                 }

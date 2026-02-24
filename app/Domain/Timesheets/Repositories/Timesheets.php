@@ -445,7 +445,7 @@ class Timesheets extends Repository
 
         $results = $this->db->table('zp_timesheets')
             ->selectRaw($dateFormatYearSql)
-            ->addSelect('zp_timesheets.workDate')
+            ->addSelect('zp_timesheets.workDate AS workdate')
             ->selectRaw('SUM(ROUND(CAST(zp_timesheets.hours AS DECIMAL(10,2)), 2)) AS summe')
             ->where('zp_timesheets.ticketId', $ticketId)
             ->whereNotNull('zp_timesheets.workDate')
@@ -521,7 +521,7 @@ class Timesheets extends Repository
 
         $results = $this->db->table('zp_timesheets')
             ->selectRaw($dateFormatSql)
-            ->addSelect('zp_timesheets.workDate')
+            ->addSelect('zp_timesheets.workDate AS workdate')
             ->selectRaw('SUM(ROUND(CAST(zp_timesheets.hours AS DECIMAL(10,2)), 2)) AS sum')
             ->where('zp_timesheets.ticketId', $id)
             ->whereNotNull('zp_timesheets.workDate')
