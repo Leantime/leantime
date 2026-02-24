@@ -1,4 +1,4 @@
-<div class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
+<div class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}" aria-label="{{ __('label.priority') }}: {{ $priorities[$row['priority']] ?? $row['priority'] }}">
     <div class="row">
         <div class="col-md-8 titleContainer">
             @if($cardType == "full")

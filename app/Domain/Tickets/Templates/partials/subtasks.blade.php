@@ -51,7 +51,7 @@
         @endphp
 
     <li class="ui-state-default" id="ticket_{{ $subticket['id'] }}" >
-        <div class="ticketBox fixed priority-border-{{ $subticket['priority'] }}" data-val="{{ $subticket['id'] }}" >
+        <div class="ticketBox fixed priority-border-{{ $subticket['priority'] }}" data-val="{{ $subticket['id'] }}" aria-label="{{ __('label.priority') }}: {{ $priorities[$subticket['priority']] ?? $subticket['priority'] }}" >
 
             <div class="tw:px-4 tw:py-0">
                     @if($login::userIsAtLeast($roles::$editor))
