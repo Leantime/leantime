@@ -64,19 +64,15 @@ leantime.snippets = (function () {
 
     };
 
-    var toggleTheme = function (theme) {
+var toggleTheme = function (theme) {
+    var themeUrl = jQuery("#themeStyleSheet").attr("href");
+    themeUrl = themeUrl.replace(/light\.css|dark\.css/, theme + ".css");
+    jQuery("#themeStyleSheet").attr("href", themeUrl);
 
-        var themeUrl = jQuery("#themeStyleSheet").attr("href");
-
-        if(theme == "light"){
-            themeUrl = themeUrl.replace("dark.css", "light.css");
-            jQuery("#themeStyleSheet").attr("href", themeUrl);
-        }else if (theme == "dark"){
-            themeUrl = themeUrl.replace("light.css", "dark.css");
-            jQuery("#themeStyleSheet").attr("href", themeUrl);
-        }
-
-    };
+    jQuery("body")
+        .removeClass("colorMode-light colorMode-dark")
+        .addClass("colorMode-" + theme);
+};
 
     var toggleBg = function (theme) {
 

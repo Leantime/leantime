@@ -5,7 +5,7 @@
     @stack('styles')
 </head>
 
-<body class="" hx-ext="preload">
+<body class="colorScheme-{{ session('usersettings.colorScheme') ?? 'themeDefault' }} colorMode-{{ session('usersettings.colorMode') ?? 'light' }}" hx-ext="preload">
 
     @include('global::sections.appAnnouncement')
 

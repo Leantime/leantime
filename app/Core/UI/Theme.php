@@ -119,12 +119,12 @@ class Theme
         'grayscale1' => [
             'name' => 'Grayscale',
             'primaryColor' => '#000000',
-            'secondaryColor' => '#757575',
+            'secondaryColor' => '#ffffff',
         ],
         'grayscale2' => [
             'name' => 'Grayscale Reverse',
-            'primaryColor' => '#d1d1d1',
-            'secondaryColor' => '#000000',
+            'primaryColor' => '#000000',
+            'secondaryColor' => '#ffffff',
         ],
         'themeDefault' => 'themeDefault',
         'companyColors' => 'companyColors',
