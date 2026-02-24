@@ -48,9 +48,9 @@
     --left-panel-bg: transparent;
     --content-bg: var(--secondary-background);
 
-    --glass-blur: blur( 4px );
-    --glass-background:var(--secondary-background);
-    --glass-border: 1px solid rgba(0,0,0,0.3);
+    --glass-blur: blur(4px);
+    --glass-background: var(--color-bg-card);
+    --glass-border: var(--color-border-default);
 
     --main-action-bg: var(--accent1);
     --main-action-color: var(--accent1-color);
@@ -253,7 +253,13 @@
 
     /* Glass (aliases → existing tokens) */
     --glass-bg: var(--glass-background);
-    --glass-inset: inset 0 1px 0 rgba(255,255,255,0.1);
+    --glass-inset: none;
+    --glass-bg-subtle: var(--color-bg-card);
+    --glass-blur-subtle: none;
+
+    /* Emboss */
+    --emboss-track: rgba(255,255,255,0.08);
+    --emboss-highlight: rgba(255,255,255,0.08);
 
 }
 

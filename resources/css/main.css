@@ -59,6 +59,7 @@
 @import "../../public/assets/css/components/print.css";
 @import "../../public/assets/css/components/mermaid.css";
 @import "../../public/assets/css/components/overwrites.css";
+@import "../../public/assets/css/components/glass.css";
 
 /* ── Modal dialog ─────────────────────────────────────────────────────
    Override the CSS-reset rule (div { background: transparent }) which

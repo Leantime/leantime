@@ -459,7 +459,7 @@ body {
     padding:20px;
     margin-bottom:10px;
     box-shadow: var(--large-shadow);
-    border: var(--glass-border);
+    border: 1px solid var(--glass-border);
     flex: 1 1 auto;
 }
 
@@ -473,7 +473,7 @@ body {
     margin-bottom:20px;
     box-shadow: var(--large-shadow);
 
-    border: var(--glass-border);
+    border: 1px solid var(--glass-border);
 
     font-size: var(--font-size-s);
 
