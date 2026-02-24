@@ -62,12 +62,12 @@
                         <div class="tw:flex tw:flex-col tw:gap-base">
                             @foreach($plugin->reviews as $review)
                                 @if (is_array($review) || is_object($review))
-                                    <div class="tw-border-b tw-border-gray-200 tw-pb-sm tw-mb-sm">
+                                    <div class="tw:border-b tw:border-gray-200 tw:pb-sm tw:mb-sm">
                                         @if (! empty($review['author'] ?? null))
                                             <strong>{{ $review['author'] }}</strong>
                                         @endif
                                         @if (! empty($review['rating'] ?? null))
-                                            <span class="tw-text-sm tw-text-gray-500">({{ $review['rating'] }}/5)</span>
+                                            <span class="tw:text-sm tw:text-gray-500">({{ $review['rating'] }}/5)</span>
                                         @endif
                                         <p>{{ $review['content'] ?? $review['review'] ?? $review['text'] ?? '' }}</p>
                                     </div>

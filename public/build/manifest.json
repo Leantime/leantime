@@ -936,22 +936,22 @@
     "src": "public/assets/images/svg/loading-animation.svg"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BsJiaqp-.css",
+    "file": "assets/app-YZwtZdID.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/editor.css": {
-    "file": "assets/editor-CVogh4xh.css",
+    "file": "assets/editor-GJU6ynB0.css",
     "src": "resources/css/editor.css",
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-7ZxpmNJz.css",
+    "file": "assets/main-CfKjeIrb.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-C2mHsOOA.js",
+    "file": "assets/compiled-app-Cm_gnda-.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,
@@ -1098,7 +1098,7 @@
     ]
   },
   "resources/js/compiled-tiptap-editor.js": {
-    "file": "assets/compiled-tiptap-editor-jcrvxder.js",
+    "file": "assets/compiled-tiptap-editor-847l_zBY.js",
     "name": "compiled-tiptap-editor",
     "src": "resources/js/compiled-tiptap-editor.js",
     "isEntry": true,
@@ -1107,7 +1107,7 @@
     ]
   },
   "resources/js/compiled-tiptap-toolbar.js": {
-    "file": "assets/compiled-tiptap-toolbar-BQ8-YtKy.js",
+    "file": "assets/compiled-tiptap-toolbar-DzZUKfFY.js",
     "name": "compiled-tiptap-toolbar",
     "src": "resources/js/compiled-tiptap-toolbar.js",
     "isEntry": true
