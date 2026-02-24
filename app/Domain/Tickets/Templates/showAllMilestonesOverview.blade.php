@@ -55,6 +55,7 @@
 
         @dispatchEvent('allTicketsTable.before', ['tickets' => $allTickets])
 
+        <div style="overflow-x: auto;">
         <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
             <colgroup>
                 <col class="con1"><col class="con0"><col class="con1"><col class="con0">
@@ -198,6 +199,7 @@
             </tbody>
             @dispatchEvent('allTicketsTable.afterBody', ['tickets' => $allTickets])
         </table>
+        </div>
         @dispatchEvent('allTicketsTable.afterClose', ['tickets' => $allTickets])
 
     </div>

@@ -23,6 +23,7 @@
             </div>
         </div>
 
+        <div style="overflow-x: auto;">
         <table class="table table-bordered" id="allUsersTable">
             <colgroup>
                 <col class="con1">
@@ -74,6 +75,7 @@
             @endforeach
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 

@@ -224,6 +224,7 @@ jQuery(document).ready(function(){
                     <input type="hidden" name="search" value="1" />
                 </div>
             </div>
+            <div style="overflow-x: auto;">
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
                 <colgroup>
                       <col class="con0" >
@@ -403,6 +404,7 @@ jQuery(document).ready(function(){
                     </tr>
                 </tfoot>
             </table>
+            </div>
             <div class="right">
                 <x-global::button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">Save</x-global::button>
             </div>

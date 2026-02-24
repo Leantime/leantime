@@ -62,6 +62,7 @@
             @php $allTickets = $group['items']; @endphp
 
             @dispatchEvent('allTicketsTable.before', ['tickets' => $allTickets])
+            <div style="overflow-x: auto;">
             <table class="table table-bordered display ticketTable" style="width:100%">
                 <colgroup>
                     <col class="con1"><col class="con0"><col class="con1"><col class="con0">
@@ -220,6 +221,7 @@
                 </tbody>
                 @dispatchEvent('allTicketsTable.afterBody', ['tickets' => $allTickets])
             </table>
+            </div>
             @dispatchEvent('allTicketsTable.afterClose', ['tickets' => $allTickets])
 
             @if($group['label'] != 'all')

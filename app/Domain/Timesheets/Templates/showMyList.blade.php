@@ -84,6 +84,7 @@
                     white-space: nowrap;
                 }
             </style>
+            <div style="overflow-x: auto;">
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="myTimesheetList">
                 <colgroup>
                     <col width="110px" />
@@ -236,6 +237,7 @@
                     </tr>
                 </tfoot>
             </table>
+            </div>
             <div class="right">
                 <x-global::button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">{{ __('buttons.save') }}</x-global::button>
             </div>

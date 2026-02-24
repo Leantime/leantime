@@ -26,6 +26,7 @@
 
         <x-global::button link="{{ BASE_URL }}/projects/newProject" type="primary" icon="fa fa-plus">{{ __('link.new_project') }}</x-global::button>
         <div class="clearall"></div>
+        <div style="overflow-x: auto;">
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">
 
             <colgroup>
@@ -69,6 +70,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
 
     </div>
 </div>
