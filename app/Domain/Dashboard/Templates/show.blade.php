@@ -5,7 +5,7 @@
     @if (count($allUsers) == 1)
         <a href="#/users/newUser" class="headerCTA">
             <i class="fa fa-users"></i>
-            <span class="tw-text-[14px] tw-leading-[25px]">
+            <span class="tw:text-[14px] tw:leading-[25px]">
                 {{ __('links.dont_do_it_alone') }}
             </span>
         </a>
@@ -22,52 +22,30 @@
 
         <div class="col-md-8">
 
-            <div class="maincontentinner tw-z-20">
+            <div class="maincontentinner tw:z-20">
 
                 @if ($login::userIsAtLeast($roles::$admin))
-                    <div class="pull-right dropdownWrapper">
-                        <a
-                            class="dropdown-toggle btn round-button"
-                            data-toggle="dropdown"
-                            data-tippy-content="{{ __('label.edit_project') }}"
-                            href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"
-                        ><i class="fa fa-ellipsis"></i></a>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-item">
-                                <a
-                                    href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"
-
-                                ><i class="fa fa-edit"></i> Edit Project</a>
-                            </li>
-                            <li class="dropdown-item">
-                                <a
-                                    href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}"
-                                    class="delete"
-
-                                ><i class="fa fa-trash"></i> Delete Project</a>
-                            </li>
-
-                        </ul>
-                    </div>
+                    <x-global::elements.dropdown containerClass="pull-right" data-tippy-content="{{ __('label.edit_project') }}">
+                        <li>
+                            <a href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"><i class="fa fa-edit"></i> Edit Project</a>
+                        </li>
+                        <li>
+                            <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete"><i class="fa fa-trash"></i> Delete Project</a>
+                        </li>
+                    </x-global::elements.dropdown>
                 @endif
 
-                <div class="pull-right dropdownWrapper tw-mr-[5px]">
-                    <a
-                        class="dropdown-toggle btn round-button"
-                        data-toggle="dropdown"
-                        data-tippy-content="{{ __('label.copy_url_tooltip') }}"
-                        href="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}"
-                    ><i class="fa fa-link"></i></a>
-                    <div class="dropdown-menu padding-md">
-                        <input type="text" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
-                        <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</button>
-                    </div>
-                </div>
+                <x-global::elements.dropdown icon="fa fa-link" containerClass="pull-right tw:mr-[5px]" data-tippy-content="{{ __('label.copy_url_tooltip') }}">
+                    <li class="tw:p-2">
+                        <x-global::forms.input name="projectUrl" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
+                        <x-global::button tag="button" type="primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</x-global::button>
+                    </li>
+                </x-global::elements.dropdown>
 
                 <a
                     href="javascript:void(0);"
                     id="favoriteProject"
-                    class="btn pull-right margin-right {{ $isFavorite ? 'isFavorite' : ''}} tw-mr-[5px] round-button"
+                    class="btn pull-right margin-right {{ $isFavorite ? 'isFavorite' : ''}} tw:mr-[5px] round-button"
                     data-tippy-content="{{ __('label.favorite_tooltip') }}"
                 ><i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-star"></i></a>
 
@@ -88,7 +66,7 @@
 
                     <strong>{{ __('label.background') }}</strong><br/>
                 <div class="readMoreBox">
-                    <div class="tiptap-content kanbanContent closed tw-max-h-[200px] readMoreContent tw-pb-[30px]" id="projectDescription">
+                    <div class="tiptap-content kanbanContent closed tw:max-h-[200px] readMoreContent tw:pb-[30px]" id="projectDescription">
                         {!! $tpl->escapeMinimal($project['details']) !!}
                     </div>
 
@@ -102,8 +80,8 @@
 
             </div>
 
-            <div class="maincontentinner tw-z-10 latest-todos">
-                <a href="#/tickets/newTicket" class="btn btn-link action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> Create To-Do</a>
+            <div class="maincontentinner tw:z-10 latest-todos">
+                <x-global::button link="#/tickets/newTicket" type="link" icon="fa fa-plus" class="action-link pull-right" style="margin-top:-7px;">Create To-Do</x-global::button>
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
                 <ul class="sortableTicketList">
@@ -114,8 +92,7 @@
                     @foreach($tickets as $row)
                         <li class="ui-state-default" id="ticket_{!! $row['id'] !!}">
                             <div class="ticketBox fixed priority-border-{!! $row['priority'] !!}" data-val="{!! $row['id'] !!}">
-                                <div class="row">
-                                    <div class="col-md-12 timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{!! $row['id'] !!}">
+                                                    <div class="timerContainer tw:py-[5px] tw:px-[15px]" id="timerContainer-{!! $row['id'] !!}">
                                         @if($row['dependingTicketId'] > 0)
                                         <a href="#/tickets/showTicket/{{  $row['dependingTicketId'] }}">
                                             {{ $row['parentHeadline'] }}
@@ -129,10 +106,9 @@
 
                                         @include("tickets::partials.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])
                                     </div>
-                                </div>
 
                                 <div class="row">
-                                    <div class="col-md-4 tw-px-[15px] tw-py-0">
+                                    <div class="col-md-4 tw:px-[15px] tw:py-0">
 
                                         <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
 
@@ -145,105 +121,44 @@
                                             name="date"
                                         />
                                     </div>
-                                    <div class="col-md-8 tw-mt-[3px]">
+                                    <div class="col-md-8 tw:mt-[3px]">
                                         <div class="right">
-                                            <div class="dropdown ticketDropdown effortDropdown show">
-                                                <a
-                                                    class="dropdown-toggle f-left label-default effort"
-                                                    href="javascript:void(0);"
-                                                    role="button"
-                                                    id="effortDropdownMenuLink{{ $row['id'] }}"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                ><span class="text">
-                                                     {{ $row['storypoints'] != '' && $row['storypoints'] > 0
-                                                            ? $efforts[''.$row['storypoints'].'']
-                                                            : __('label.story_points_unkown')
-                                                        }}
-                                                </span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                                            <x-global::dropdownPill
+                                                type="effort"
+                                                :parentId="$row['id']"
+                                                selectedClass="label-default"
+                                                :selectedKey="$row['storypoints'] != '' && $row['storypoints'] > 0 ? ''.$row['storypoints'].'' : ''"
+                                                :options="$efforts"
+                                                :colorized="false"
+                                                headerLabel="{{ __('dropdown.how_big_todo') }}"
+                                            />
 
-                                                <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink{{ $row['id'] }}">
-                                                    <li class="nav-header border">{{ __('dropdown.how_big_todo') }}</li>
-                                                    @foreach ($efforts as $effortKey => $effortValue)
-                                                        <li class="dropdown-item">
-                                                            <a
-                                                                href="javascript:void(0)"
-                                                                data-value="{{ $row['id'] }}_{{ $effortKey}}"
-                                                                id="ticketEffortChange_{{ $row['id'] . $effortKey }}"
-                                                            >{{ $effortValue }}</a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
+                                            @php
+                                                $milestoneOptions = [0 => ['name' => __('label.no_milestone'), 'class' => '#b0b0b0']];
+                                                foreach ($milestones as $ms) {
+                                                    $milestoneOptions[$ms->id] = ['name' => $ms->headline, 'class' => $ms->tags];
+                                                }
+                                            @endphp
+                                            <x-global::dropdownPill
+                                                type="milestone"
+                                                :parentId="$row['id']"
+                                                selectedClass="label-default"
+                                                linkStyle="background-color:{{ e($row['milestoneColor']) }}"
+                                                :selectedKey="$row['milestoneid'] ?: 0"
+                                                :options="$milestoneOptions"
+                                                :colorized="true"
+                                                headerLabel="{{ __('dropdown.choose_milestone') }}"
+                                            />
 
-                                            <div class="dropdown ticketDropdown milestoneDropdown colorized show">
-                                                <a
-                                                    style="background-color:{{ __($row['milestoneColor']) }}"
-                                                    class="dropdown-toggle f-left label-default milestone"
-                                                    href="javascript:void(0);"
-                                                    role="button"
-                                                    id="milestoneDropdownMenuLink{{ $row['id'] }}"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                ><span class="text">
-                                                    {{ $row['milestoneid'] != '' && $row['milestoneid'] != 0
-                                                        ? $row['milestoneHeadline']
-                                                        : __('label.no_milestone')
-                                                    }}
-                                                </span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></a>
-
-                                                <ul class="dropdown-menu" aria-labeledby="milestoneDropdownMenuLink{{ $row['id'] }}">
-                                                    <li class="nav-header border">{{ __('dropdown.choose_milestone') }}</li>
-                                                    <li class="dropdown-item">
-                                                        <a
-                                                            href="javascript:void(0);"
-                                                            data-label="{{ __('label.no_milestone') }}"
-                                                            data-value="{{ $row['id'] }}_0_#b0b0b0"
-                                                            class="tw-bg-[#b0b0b0]"
-                                                        >{{ __('label.no_milestone') }}</a>
-                                                    </li>
-                                                    @foreach ($milestones as $milestone)
-                                                        <li class="dropdown-item">
-                                                            <a
-                                                                href="javascript:void(0);"
-                                                                data-label="{{ $milestone->headline }}"
-                                                                data-value="{{ $row['id'] }}_{!! $milestone->id !!}_{{ $milestone->tags }}"
-                                                                id="ticketMilestoneChange_{{ $row['id'] . $milestone->id }}"
-                                                                style="background-color:{{ $milestone->tags }}"
-                                                            >{{ $milestone->headline }}</a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-
-                                            <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                                <a
-                                                    class="dropdown-toggle f-left status {!! $statusLabels[$row['status']]['class'] !!}"
-                                                    href="javascript:void(0);"
-                                                    role="button"
-                                                    id="statusDropdownMenuLink{{ $row['id'] }}"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                ><span class="text">{!! $statusLabels[$row['status']]['name'] !!}</span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></a>
-
-                                                <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{!! $row['id'] !!}">
-                                                    <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
-                                                    @foreach ($statusLabels as $key => $label)
-                                                        <li class="dropdown-item">
-                                                            <a
-                                                                href="javascript:void(0);"
-                                                                class="{!! $label['class'] !!}"
-                                                                data-label="{{ $label['name'] }}"
-                                                                data-value="{{ $row['id'] }}_{{ $key }}_{!! $label['class'] !!}"
-                                                                id="ticketStatusChange{{ $row['id'] . $key }}"
-                                                            >{{ $label['name'] }}</a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
+                                            <x-global::dropdownPill
+                                                type="status"
+                                                :parentId="$row['id']"
+                                                :selectedClass="$statusLabels[$row['status']]['class']"
+                                                :selectedKey="$row['status']"
+                                                :options="$statusLabels"
+                                                :colorized="true"
+                                                headerLabel="{{ __('dropdown.choose_status') }}"
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -306,13 +221,15 @@
             <div class="maincontentinner project-updates">
                 <div class="pull-right">
                     @if ($login::userIsAtLeast($roles::$editor))
-                        <a
-                            href="javascript:void(0);"
+                        <x-global::button
+                            link="javascript:void(0);"
+                            type="link"
+                            icon="fa fa-plus"
                             onclick="leantime.commentsController.toggleCommentBoxes(0);jQuery('.noCommentsMessage').toggle();"
                             id="mainToggler"
-                            class="btn btn-link action-link"
+                            class="action-link"
                             style="margin-top:-7px;"
-                        ><span class="fa fa-plus"></span> {{ __('links.add_new_report') }}</a>
+                        >{{ __('links.add_new_report') }}</x-global::button>
                     @endif
                 </div>
 
@@ -321,27 +238,22 @@
                 <form method="post" action="{{ BASE_URL }}/dashboard/show">
                     <input type="hidden" name="comment" value="1" />
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <div id="comment0" class="commentBox tw-hidden">
-                                <label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</label>
+                            <div id="comment0" class="commentBox tw:hidden">
+                                <label for="projectStatus tw:inline">{{ __('label.project_status_is') }}</label>
 
-                                <select name="status" id="projectStatus" class="tw-ml-0 tw-mb-[10px]">
+                                <x-global::forms.select name="status" id="projectStatus" class="tw:ml-0 tw:mb-[10px]">
                                     <option value="green">{{ __('label.project_status_green') }}</option>
                                     <option value="yellow">{{ __('label.project_status_yellow') }}</option>
                                     <option value="red">{{ __('label.project_status_red') }}</option>
-                                </select>
+                                </x-global::forms.select>
 
                                 <div class="commentReply">
-                                    <textarea rows="5" cols="50" class="tiptapSimple tw-w-full" name="text"></textarea>
-                                    <input
-                                        type="submit"
-                                        value="{{ __('buttons.save') }}"
-                                        name="comment"
-                                        class="btn btn-primary btn-success tw-ml-0"
-                                    />
+                                    <textarea rows="5" cols="50" class="tiptapSimple tw:w-full" name="text"></textarea>
+                                    <x-global::button submit type="success" tag="button" class="tw:ml-0" name="comment">{{ __('buttons.save') }}</x-global::button>
                                     <a
                                         href="javascript:void(0);"
                                         onclick="leantime.commentsController.toggleCommentBoxes(-1);jQuery('.noCommentsMessage').toggle();"
-                                        class="tw-leading-[50px]"
+                                        class="tw:leading-[50px]"
                                     >{{ __('links.cancel') }}</a>
                                     <input type="hidden" name="comment" value="1"/>
                                     <input type="hidden" name="father" id="father" value="0"/>
@@ -355,7 +267,7 @@
                                     <a href="javascript:void(0);" onclick="jQuery('.readMore').toggle('fast')">
                                         {{ __('links.read_more') }}
                                     </a>
-                                    <div class="readMore tw-hidden tw-mt-[20px]">
+                                    <div class="readMore tw:hidden tw:mt-[20px]">
                                 @endif
                                 <div class="clearall">
                                     <div>
@@ -368,30 +280,24 @@
                                                 ) }}
                                             </strong>
                                                 @if ($login::userIsAtLeast($roles::$editor))
-                                                    <div class="inlineDropDownContainer tw-float-right tw-ml-[10px]">
-                                                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-                                                            <i class="fa fa-ellipsis-v"></i>
-                                                        </a>
+                                                    <x-global::elements.dropdown containerClass="tw:float-right tw:ml-[10px]">
+                                                        @if ($row['userId'] == session("userdata.id"))
+                                                            <li>
+                                                                <a href="{!! $delUrlBase . $row['id'] !!}" class="deleteComment">
+                                                                    <span class="fa fa-trash"></span> {{ __('links.delete') }}
+                                                                </a>
+                                                            </li>
+                                                        @endif
 
-                                                        <ul class="dropdown-menu">
-                                                            @if ($row['userId'] == session("userdata.id"))
-                                                                <li>
-                                                                    <a href="{!! $delUrlBase . $row['id'] !!}" class="deleteComment">
-                                                                        <span class="fa fa-trash"></span> {{ __('links.delete') }}
-                                                                    </a>
-                                                                </li>
-                                                            @endif
-
-                                                            @isset($ticket->id)
-                                                                <li>
-                                                                    <a
-                                                                        href="javascript:void(0);"
-                                                                        onclick="leantime.ticketsController.addCommentTimesheetContent({!! $row['id'] !!}, {!! $ticket->id !!})"
-                                                                    >{{ __('links.add_to_timesheets') }}</a>
-                                                                </li>
-                                                            @endif
-                                                        </ul>
-                                                    </div>
+                                                        @isset($ticket->id)
+                                                            <li>
+                                                                <a
+                                                                    href="javascript:void(0);"
+                                                                    onclick="leantime.ticketsController.addCommentTimesheetContent({!! $row['id'] !!}, {!! $ticket->id !!})"
+                                                                >{{ __('links.add_to_timesheets') }}</a>
+                                                            </li>
+                                                        @endif
+                                                    </x-global::elements.dropdown>
                                                 @endif
 
                                             <div class="text" id="commentText-{{ $row['id'] }}">{!! $tpl->escapeMinimal($row['text']) !!}</div>
@@ -445,20 +351,17 @@
             </div>
 
             <div class="maincontentinner project-progress">
-                <div class="row" id="projectProgressContainer">
-                    <div class="col-md-12">
+                <div id="projectProgressContainer">
                         <h5 class="subtitle">{{ __('subtitles.project_progress') }}</h5>
 
-                        <div id="canvas-holder" class="tw-w-full tw-h-[250px]">
+                        <div id="canvas-holder" class="tw:w-full tw:h-[250px]">
                             <canvas id="chart-area"></canvas>
                         </div>
 
                         <br/><br/>
-                    </div>
                 </div>
 
-                <div class="row" id="milestoneProgressContainer">
-                    <div class="col-md-12">
+                <div id="milestoneProgressContainer">
                         <h5 class="subtitle">{{ __('headline.milestones') }}</h5>
                         <ul class="sortableTicketList">
                             @if (count($milestones) == 0)
@@ -480,7 +383,10 @@
 
                                     <div hx-trigger="load"
                                          hx-indicator=".htmx-indicator"
-                                         hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $row->id ?>">
+                                         hx-target="this"
+                                         hx-swap="innerHTML"
+                                         hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $row->id ?>"
+                                         aria-live="polite">
                                         <div class="htmx-indicator">
                                                 <?= $tpl->__('label.loading_milestone') ?>
                                         </div>
@@ -489,7 +395,6 @@
                                 </li>
                             @endforeach
                         </ul>
-                    </div>
                 </div>
             </div>
         </div>
@@ -498,9 +403,11 @@
 
 @once @push('scripts')
 <script type='text/javascript'>
+jQuery(document).ready(function(){
     if (window.leantime && window.leantime.tiptapController) {
         leantime.tiptapController.initSimpleEditor();
     }
+});
 </script>
 @endpush @endonce
 

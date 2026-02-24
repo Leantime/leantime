@@ -7,12 +7,10 @@
 ])
 
 <span class="dropdown">
-    <a
-       href="javascript:void(0);"
-       role="button"
+    <a href="javascript:void(0)"
        id="{{ $id }}-link"
-       {{ $attributes->merge(["class" => "dropdown-toggle"]) }}
-       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+       data-toggle="dropdown"
+       {{ $attributes->merge(["class" => "dropdown-toggle"]) }}>
         <span class="text">
            @if(empty($selected['value']))
                <span style="opacity:0.4">{{ $noSelection }}</span>
@@ -26,25 +24,15 @@
     </a>
     <ul class="dropdown-menu" id="{{ $id }}-options">
         @foreach($options as $key => $option)
-            <li><a href="javascript:void(0);" data-id="{{ $key }}">{{ $option }}</a></li>
+            <li><a href="javascript:void(0);" data-id="{{ $key }}"
+                   onclick="document.querySelector('#{{ $id }}-link .text').textContent = this.textContent.trim();
+                            var field = document.getElementById('{{ $id }}-formField');
+                            field.value = this.getAttribute('data-id');
+                            field.dispatchEvent(new Event('change', {bubbles: true}));
+                            htmx.trigger(field, 'change');
+                            document.activeElement.blur();"
+                >{{ $option }}</a></li>
         @endforeach
     </ul>
 </span>
 <input type="hidden" name="{{ $formName }}" id="{{ $id }}-formField" value="{{ $selected['key'] }}" />
-
-<script>
-    jQuery("#{{ $id }}-options li a").each(function() {
-
-        jQuery(this).click(function() {
-            var newText = jQuery(this).text();
-            var id = jQuery(this).attr("data-id");
-            jQuery('#{{ $id }}-link .text').text(newText);
-            jQuery("#{{ $id }}-formField").val(id).trigger("change");
-            htmx.trigger("#{{ $id }}-formField", "change");
-
-        });
-    });
-
-
-
-</script>

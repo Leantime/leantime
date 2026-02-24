@@ -91,7 +91,7 @@ min-width: 1200px
         position:absolute;
         top:50px;
         left:5px;
-        background:#555;
+        background: var(--secondary-background);
         z-index: 999;
     }
 
@@ -171,7 +171,8 @@ min-width: 1200px
 
     /* forms */
     #elm1_toolbargroup {
-        width: 560px;
+        max-width: 100%;
+        width: 100%;
     }
 
     /* media */
@@ -208,14 +209,14 @@ min-width: 1200px
     body.loginpage {
         overflow-x: hidden;
         max-width: 100vw;
-        min-height: 100vh;
+        min-height: 100dvh;
     }
 
     .loginpage .row {
         margin: 0;
         width: 100vw;
         max-width: 100vw;
-        min-height: 100vh;
+        min-height: 100dvh;
         height: auto;
         box-sizing: border-box;
         overflow-x: hidden;
@@ -303,7 +304,7 @@ min-width: 1200px
     }
 
     .pageheader {
-        padding: 5px 15px;
+        padding: 5px 20px;
         min-height: 50px;
     }
 
@@ -332,7 +333,7 @@ min-width: 1200px
         float: none;
         display: block;
         width: auto;
-        border: 2px solid #0866c6;
+        border: 2px solid var(--primary-color);
         margin-bottom: 5px;
     }
 
@@ -349,7 +350,7 @@ min-width: 1200px
     }
 
     .wizard-inverse .hormenu li {
-        border-color: #333;
+        border-color: var(--main-border-color);
     }
 
     .wizard .tabbedmenu {
@@ -384,7 +385,7 @@ min-width: 1200px
         float: none;
         text-align: right;
         display: block;
-        border-top: 1px dashed #ddd;
+        border-top: 1px dashed var(--main-border-color);
         margin-top: 10px;
     }
 
@@ -425,7 +426,7 @@ min-width: 1200px
         margin-left: 0;
         display: none;
         height: auto;
-        border-left: 1px solid #0866c6;
+        border-left: 1px solid var(--primary-color);
     }
 
     .messagesearch input {
@@ -494,11 +495,11 @@ min-width: 1200px
     }
 
     .pagetitle h1 {
-        font-size: 18px;
+        font-size: var(--font-size-xl);
     }
 
     .pageheader {
-        padding: 5px 15px;
+        padding: 5px 20px;
         min-height: 50px;
     }
 
@@ -558,11 +559,11 @@ min-width: 1200px
     }
 
     .leftmenu .nav-tabs.nav-stacked li a {
-        font-size: 13px;
+        font-size: var(--base-font-size);
     }
 
     .leftmenu .nav-tabs.nav-stacked .dropdown ul li a {
-        font-size: 12px;
+        font-size: var(--font-size-s);
     }
 
 
@@ -578,7 +579,7 @@ min-width: 1200px
     /* buttons */
     .tabbable > .nav-tabs > li {
         overflow: hidden;
-        font-size: 11px;
+        font-size: var(--font-size-s);
     }
 
     .tabbable > .nav-tabs > li a {
@@ -680,7 +681,7 @@ min-width: 1200px
 
     /* error */
     .errortitle h4 {
-        font-size: 20px;
+        font-size: var(--font-size-xxl);
     }
 
     .errortitle span {
@@ -707,7 +708,7 @@ min-width: 1200px
     .input-append .btn, .input-prepend .btn {
         padding-left: 8px;
         padding-right: 8px;
-        font-size: 12px;
+        font-size: var(--font-size-s);
     }
 
     /* footer */
@@ -766,7 +767,7 @@ min-width: 1200px
     }
 
     .commentlist li .comment-info h4 {
-        font-size: 14px;
+        font-size: var(--base-font-size);
     }
 
     /* buttons */
@@ -998,8 +999,8 @@ min-width: 1200px
         margin-bottom: 10px;
         padding-right: 0;
         white-space: nowrap;
-        font-size: 14px;
-        color: #0866c6;
+        font-size: var(--base-font-size);
+        color: var(--primary-color);
         text-decoration: none;
     }
 
@@ -1083,7 +1084,7 @@ min-width: 1200px
     }
 
     .pageheader {
-        padding: 5px 15px;
+        padding: 5px 20px;
         min-height: 50px;
     }
 
@@ -1114,6 +1115,10 @@ min-width: 1200px
 
     }
 
+    /* TODO: rightpanel leaves a 63px gap on the right edge because margin-left
+       is missing. Adding margin-left breaks the open-menu state (content shifts
+       right and overlaps). Needs a menu-state-aware fix, e.g. different margins
+       for .menuclosed vs .menuopen. */
     .rightpanel {
         width:calc(100% - 63px);
 
@@ -1417,7 +1422,7 @@ min-width: 1200px
     }
 
     /* Fix modal responsive issues and content cutoff */
-    .nyroModalCont {
+    #global-modal-content {
         width: 95% !important;
         left: 2.5% !important;
         max-width: 100vw !important;
@@ -1427,58 +1432,51 @@ min-width: 1200px
     }
 
     /* Override fixed min-width from base CSS - key fix for task modal */
-    .nyroModalCont .row .regRight {
+    #global-modal-content .row .regRight {
         min-width: auto !important;
         max-width: 100% !important;
         width: 100% !important;
         box-sizing: border-box;
     }
 
-    /* Ensure modal close button stays visible */
-    .nyroModalCloseButton {
-        right: 15px !important;
-        top: 15px !important;
-        z-index: 101;
-    }
-
     /* Make modal content scrollable if needed */
-    .nyroModalCont .modal-icons {
+    #global-modal-content .modal-icons {
         margin-right: 40px;
     }
 
     /* Fix modal form elements */
-    .nyroModalCont input,
-    .nyroModalCont select,
-    .nyroModalCont textarea {
+    #global-modal-content input,
+    #global-modal-content select,
+    #global-modal-content textarea {
         max-width: 100% !important;
         box-sizing: border-box;
     }
 
     /* Additional fixes for task modal layout */
-    .nyroModalCont .tabbable {
+    #global-modal-content .tabbable {
         width: 100% !important;
         overflow-x: auto;
     }
 
-    .nyroModalCont .tab-content {
+    #global-modal-content .tab-content {
         padding: 10px 5px;
     }
 
     /* Ensure dropdowns and form controls are mobile-friendly */
-    .nyroModalCont .form-control,
-    .nyroModalCont .dropdown-menu {
+    #global-modal-content .form-control,
+    #global-modal-content .dropdown-menu {
         max-width: 100% !important;
         width: 100% !important;
         box-sizing: border-box;
     }
 
     /* Fix sidebar layout in task modal */
-    .nyroModalCont .row {
+    #global-modal-content .row {
         margin-left: 0 !important;
         margin-right: 0 !important;
     }
 
-    .nyroModalCont .row > div {
+    #global-modal-content .row > div {
         padding-left: 5px !important;
         padding-right: 5px !important;
     }
@@ -1500,7 +1498,8 @@ min-width: 1200px
 
     /* forms */
     #elm1_toolbargroup {
-        width: 680px;
+        max-width: 100%;
+        width: 100%;
     }
 
     /* messages */
@@ -1547,7 +1546,7 @@ min-width: 1200px
     /* calendar */
     .ui-datepicker-calendar td a {
         padding: 10px;
-        font-size: 12px;
+        font-size: var(--font-size-s);
     }
 
     /* buttons */
@@ -1601,7 +1600,8 @@ min-width: 1200px
     }
 
     #elm1_toolbargroup {
-        width: 640px;
+        max-width: 100%;
+        width: 100%;
     }
 
     /* boxes */
@@ -1636,7 +1636,7 @@ min-width: 1200px
         float: none;
         text-align: right;
         display: block;
-        border-top: 1px dashed #ddd;
+        border-top: 1px dashed var(--main-border-color);
         margin-top: 10px;
     }
 
@@ -1655,7 +1655,8 @@ min-width: 1200px
 
     /* bootstrap */
     .btn {
-        padding: 4px 12px;
+        padding: 10px 14px;
+        min-height: 44px;
     }
 
     .ticketBox {

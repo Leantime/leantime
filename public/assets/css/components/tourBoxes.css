@@ -28,7 +28,7 @@
 
 .shepherd-title {
     font-size:var(--font-size-l);
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
     color:var(--main-action-color);
 }
 
@@ -44,7 +44,7 @@
     color:var(--main-action-color);
     border-radius: var(--input-radius);
     padding: 4px 14px;
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
     line-height:21px;
     border: 1px solid var(--main-action-bg);
 }

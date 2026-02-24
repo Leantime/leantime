@@ -34,13 +34,13 @@
                     <i class="fa fa-clock"></i> Select my own
                 </label>
             </x-global::selectable>
-            <select name="daySchedule-workStart" id="daySchedule-workStart" style="display:none; vertical-align: top;">
+            <x-global::forms.select :bare="true" name="daySchedule-workStart" id="daySchedule-workStart" style="display:none; vertical-align: top;">
                 @foreach($dayHourOptions as $key => $value)
                     <option value="{{ $key }}">
                         {{ format($value['start'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time() }} - {{  format($value['end'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time()}}
                     </option>
                 @endforeach
-            </select>
+            </x-global::forms.select>
         </div>
         <br />
         <label>When do you normally take a lunch break from work?</label>
@@ -60,13 +60,13 @@
                     <i class="fa fa-clock"></i> Select my own
                 </label>
             </x-global::selectable>
-            <select name="daySchedule-lunch" id="daySchedule-lunch" style="display:none; vertical-align: top;">
+            <x-global::forms.select :bare="true" name="daySchedule-lunch" id="daySchedule-lunch" style="display:none; vertical-align: top;">
                 @foreach($dayHourOptions as $key => $value)
                     <option value="{{ $key }}">
                         {{ format($value['start'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time() }} - {{  format($value['end'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time()}}
                     </option>
                 @endforeach
-            </select>
+            </x-global::forms.select>
         </div>
         <br />
         <label>When do you normally end your work day? 🥳</label>
@@ -87,16 +87,16 @@
                     <i class="fa fa-clock"></i> Select my own
                 </label>
             </x-global::selectable>
-            <select name="daySchedule-workEnd" id="daySchedule-workEnd" style="display:none; vertical-align: top;">
+            <x-global::forms.select :bare="true" name="daySchedule-workEnd" id="daySchedule-workEnd" style="display:none; vertical-align: top;">
                 @foreach($dayHourOptions as $key => $value)
                     <option value="{{ $key }}">
                         {{ format($value['start'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time() }} - {{  format($value['end'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time()}}
                     </option>
                 @endforeach
-            </select>
+            </x-global::forms.select>
         </div>
 
-        {{--        <div class="tw-flex">--}}
+        {{--        <div class="tw:flex">--}}
 {{--            @foreach([1,2,3,4,5,6,7] as $dayOfWeekIso)--}}
 {{--                <x-global::selectable type="checkbox" class="circle" selected="{{ isset($workdays[$dayOfWeekIso]) ? 'true' : '' }}" :id="'dayOfWeek-'.$dayOfWeekIso" :name="'dayOfWeek-'.$dayOfWeekIso" :value="$dayOfWeekIso" :label="''" onclick="showTimeForm({{$dayOfWeekIso}})">--}}
 {{--                    <label for="dayOfWeek-{{ $dayOfWeekIso }}" class="">--}}
@@ -107,18 +107,18 @@
 {{--        </div>--}}
 {{--        <div>--}}
 {{--            @foreach([1,2,3,4,5,6,7] as $dayOfWeekIso)--}}
-{{--                <div class="dayOfWeekInputs dayOfWeekInput-{{$dayOfWeekIso}} {{ isset($workdays[$dayOfWeekIso]) ? 'tw-flex' : 'tw-hidden' }}">--}}
-{{--                    <div class="tw-w-1/4 tw-leading-[32px]">--}}
+{{--                <div class="dayOfWeekInputs dayOfWeekInput-{{$dayOfWeekIso}} {{ isset($workdays[$dayOfWeekIso]) ? 'tw:flex' : 'tw:hidden' }}">--}}
+{{--                    <div class="tw:w-1/4 tw:leading-[32px]">--}}
 {{--                        {{ __('dates.day_of_week_iso-'.$dayOfWeekIso) }}--}}
 {{--                    </div>--}}
-{{--                    <div class="tw-w-1/4">--}}
+{{--                    <div class="tw:w-1/4">--}}
 {{--                        <input type="time" class="dayStart" name="dayOfWeek-{{$dayOfWeekIso}}-start" value='{{  isset($workdays[$dayOfWeekIso]) ? $workdays[$dayOfWeekIso]['start'] : '09:00'}}' step="1800"/>--}}
 {{--                    </div>--}}
-{{--                    <div class="tw-px-2 tw-leading-[32px]">to</div>--}}
-{{--                    <div class="tw-w-1/4">--}}
+{{--                    <div class="tw:px-2 tw:leading-[32px]">to</div>--}}
+{{--                    <div class="tw:w-1/4">--}}
 {{--                        <input type="time" class="dayEnd" name="dayOfWeek-{{$dayOfWeekIso}}-end" value='{{  isset($workdays[$dayOfWeekIso]) ? $workdays[$dayOfWeekIso]['end'] : '17:00'}}' step="1800"/>--}}
 {{--                    </div>--}}
-{{--                    <div class="tw-w tw-leading-[32px] tw-pl-2 applyBox">--}}
+{{--                    <div class="tw:w tw:leading-[32px] tw:pl-2 applyBox">--}}
 {{--                        @if($loop->index == 0)--}}
 {{--                            <a href="javascript:void(0)">Apply to all</a>--}}
 {{--                        @endif--}}
@@ -129,9 +129,9 @@
 
 {{--        </div>--}}
         <br /> <br />
-        <div class="tw-text-right">
-            <a href="{{BASE_URL}}/auth/userInvite/{{$inviteId}}?step=3" class="btn btn-secondary" style="width:auto; margin-right:10px">Back</a>
-            <input type="submit" name="createAccount" class="tw-w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
+        <div class="align-right">
+            <x-global::button link="{{ BASE_URL }}/auth/userInvite/{{ $inviteId }}?step=3" type="secondary" style="width:auto; margin-right:10px">Back</x-global::button>
+            <x-global::button submit type="primary" name="createAccount" class="tw:w-auto" style="width:auto">{{ __("buttons.next") }}</x-global::button>
         </div>
 
     </form>
@@ -173,17 +173,17 @@
     })
 
     function showTimeForm($id) {
-        let isVisible = jQuery('.dayOfWeekInput-'+$id).hasClass("tw-flex");
+        let isVisible = jQuery('.dayOfWeekInput-'+$id).hasClass("tw:flex");
         if(isVisible) {
-            jQuery('.dayOfWeekInput-'+$id).removeClass("tw-flex");
-            jQuery('.dayOfWeekInput-'+$id).addClass("tw-hidden");
+            jQuery('.dayOfWeekInput-'+$id).removeClass("tw:flex");
+            jQuery('.dayOfWeekInput-'+$id).addClass("tw:hidden");
         }else{
-            jQuery('.dayOfWeekInput-'+$id).addClass("tw-flex");
-            jQuery('.dayOfWeekInput-'+$id).removeClass("tw-hidden");
+            jQuery('.dayOfWeekInput-'+$id).addClass("tw:flex");
+            jQuery('.dayOfWeekInput-'+$id).removeClass("tw:hidden");
         }
 
         jQuery('.dayOfWeekInputs').find('.applyBox').html("");
-        jQuery('.dayOfWeekInputs.tw-flex').each(function(index){
+        jQuery('.dayOfWeekInputs.tw:flex').each(function(index){
 
             if(index == 0) {
                 jQuery(this).find('.applyBox').html("<a href='javascript:void(0);'>Apply to all")

@@ -46,7 +46,7 @@
 
             <li class="projectLineItem hasSubtitle {{ session("currentProject") == $project['id'] ? "active" : '' }}" >
                 @include('menu::partials.projectLink')
-                <div class="clear"></div>
+                <div class="tw:clear-both"></div>
             </li>
         @endif
     @endforeach

@@ -2296,4 +2296,8 @@ var Gantt = (function () {
     return Gantt;
 
 })();
+// Expose to global scope — Vite wraps this file as a module so `var Gantt`
+// stays local.  Legacy code (ticketsController, projectsController) expects
+// bare `Gantt` on `window`.
+if (typeof window !== 'undefined') { window.Gantt = Gantt; }
 //# sourceMappingURL=frappe-gantt.js.map

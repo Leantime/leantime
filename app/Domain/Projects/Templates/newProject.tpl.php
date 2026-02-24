@@ -53,7 +53,7 @@ $project = $tpl->get('project');
                                         <?php echo $tpl->__('label.describe_outcome'); ?>
                                         <br /><br />
                                     </p>
-                                    <textarea name="details" id="details" class="tiptapComplex" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
+                                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
 
                                 </div>
                             </div>
@@ -88,7 +88,7 @@ $project = $tpl->get('project');
                             <?php $tpl->dispatchTplEvent('beforeClientPicker', $project) ?>
 
                             <div style="margin-bottom: 30px;">
-                                <h4 class="widgettitle title-light tw-block"><span
+                                <h4 class="widgettitle title-light tw:block"><span
                                         class="fa fa-calendar"></span><?php echo $tpl->__('label.project_dates'); ?></h4>
                                 <div>
                                     <label><?php echo $tpl->__('label.project_start'); ?></label>
@@ -163,9 +163,7 @@ $project = $tpl->get('project');
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
 
         leantime.projectsController.initProjectTabs();
-        if (window.leantime && window.leantime.tiptapController) {
-            leantime.tiptapController.initComplexEditor();
-        }
+        leantime.editorController.initComplexEditor();
 
         }
     );

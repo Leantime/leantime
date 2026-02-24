@@ -6,60 +6,56 @@
 @dispatchEvent('beforeCalendar')
 
 
-<div class="clear minCalendar" style="position:absolute; top:10px; right:35px;">
+<div class="widget-slot-actions minCalendar dropdown">
 
-    <button class="btn btn-link btn-round-icon dropdown-toggle f-right" type="button" data-tippy-content="{{ __('text.calendar_view') }}"
-            data-toggle="dropdown"> <i class="fa-solid fa-calendar-week"></i></button>
+    <a href="javascript:void(0)" class="btn btn-link btn-round-icon dropdown-toggle f-right" data-toggle="dropdown" data-tippy-content="{{ __('text.calendar_view') }}" aria-label="{{ __('text.calendar_view') }}"> <i class="fa-solid fa-calendar-week"></i></a>
     <ul class="dropdown-menu pull-right">
         <li>
             <a class="fc-agendaDay-button fc-button fc-state-default fc-corner-right calendarViewSelect" href="javascript:void(0);"
+               onclick="document.activeElement.blur();"
                data-value="multiMonthOneMonth"
                @if($tpl->getToggleState("dashboardCalendarView") == 'multiMonthOneMonth') selected='selected' @endif>Month</a>
         </li>
         <li>
             <a class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right calendarViewSelect" href="javascript:void(0);"
+               onclick="document.activeElement.blur();"
                data-value="timeGridWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridWeek') selected='selected' @endif>Week</a>
         </li>
         <li>
             <a class="fc-agendaWeek-button fc-button fc-state-default calendarViewSelect" href="javascript:void(0);"
+               onclick="document.activeElement.blur();"
                data-value="timeGridDay" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridDay' || empty($tpl->getToggleState("dashboardCalendarView")) ) selected='selected' @endif>Day</a>
         </li>
         <li><a class="fc-agendaWeek-button fc-button fc-state-default calendarViewSelect" href="javascript:void(0);"
+               onclick="document.activeElement.blur();"
                data-value="listWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'listWeek') selected='selected' @endif>List</a></li>
     </ul>
 
 </div>
 
-<div class="tw-h-full minCalendar">
-    <div class="clear"></div>
-    <div class="fc-toolbar tw-z-10">
-        <div class="fc-left tw-flex">
-            <div class="day-selector tw-w-full tw-flex tw-gap-2 tw-mb-4 tw-justify-between"
-                 @php
-                     $currentView = $tpl->getToggleState("dashboardCalendarView") ?: 'timeGridDay';
-                 @endphp
-                 @if ($currentView !== 'timeGridDay') style="display:none" @endif>
-                @php
-                    $today = dtHelper()->userNow();
-                    $startOfWeek = dtHelper()->userNow()->startOf("week");
-                    $week = [];
-                    for($i = 0; $i < 7; $i++) {
-                        $date = $startOfWeek->modify("+$i days");
-                        $week[] = $date;
-                    }
-                @endphp
-                @foreach($week as $day)
-                    <button class="day-button tw-rounded-md tw-w-12 tw-h-12 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-sm {{ $day->format('Y-m-d') === $today->format('Y-m-d') ? 'today active' : '' }}" data-date="{{ $day->format('Y-m-d') }}">
-                        <span class="tw-text-xs">{{ $day->format('D') }}</span>
-                        <span class="tw-font-medium">{{ $day->format('d') }}</span>
-                    </button>
-                @endforeach
-            </div>
-        </div>
-        <div class="clear"></div>
+<div class="tw:h-full tw:flex tw:flex-col minCalendar">
+    <div class="day-selector tw:w-full tw:flex tw:gap-2 tw:mb-4 tw:justify-between"
+         @php
+             $currentView = $tpl->getToggleState("dashboardCalendarView") ?: 'timeGridDay';
+         @endphp
+         @if ($currentView !== 'timeGridDay') style="display:none" @endif>
+        @php
+            $today = dtHelper()->userNow();
+            $startOfWeek = dtHelper()->userNow()->startOf("week");
+            $week = [];
+            for($i = 0; $i < 7; $i++) {
+                $date = $startOfWeek->modify("+$i days");
+                $week[] = $date;
+            }
+        @endphp
+        @foreach($week as $day)
+            <button class="day-button tw:rounded-md tw:w-12 tw:h-12 tw:flex tw:flex-col tw:items-center tw:justify-center {{ $day->format('Y-m-d') === $today->format('Y-m-d') ? 'today active' : '' }}" data-date="{{ $day->format('Y-m-d') }}">
+                <span class="day-name">{{ $day->format('D') }}</span>
+                <span class="day-num">{{ $day->format('d') }}</span>
+            </button>
+        @endforeach
     </div>
-    <div class="clear"></div>
-    <div class="minCalendarWrapper">
+    <div class="minCalendarWrapper tw:flex-1 tw:min-h-0">
     </div>
 </div>
 

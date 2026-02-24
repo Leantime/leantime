@@ -40,7 +40,7 @@ leantime.widgetController = (function () {
 
     var initGrid = function () {
         grid = GridStack.init({
-            margin: '0px 15px 15px 0px',
+            margin: '8px 15px 15px 0px',
             handle: ".grid-handler-top",
             minRow: 2,
             cellHeight: '30px',
@@ -48,14 +48,11 @@ leantime.widgetController = (function () {
             draggable: {
                 handle: '.grid-handler-top',
                 appendTo: 'body',
-                // scroll: true,
-                // scrollSensitivity: 20,
-                // scrollSpeed: 10
             },
             lazyLoad: false,
             columnOpts: {
                 breakpointForWindow: true,  // test window vs grid size
-                breakpoints: [{w:700, c:1},{w:950, c:6}]
+                breakpoints: [{w:0, c:1},{w:768, c:3},{w:1200, c:6}]
             },
         });
 
@@ -67,18 +64,28 @@ leantime.widgetController = (function () {
             saveGrid();
         });
 
-        jQuery(".grid-stack-item").each(function(){
-            jQuery(this).find(".removeWidget").click(function(){
-                removeWidget(jQuery(this).closest(".grid-stack-item")[0]);
-            });
-            jQuery(this).find(".fitContent").click(function(){
-                resizeWidget(jQuery(this).closest(".grid-stack-item")[0]);
-            });
+        document.querySelectorAll(".grid-stack-item").forEach(function(item) {
+            var removeBtn = item.querySelector(".removeWidget");
+            if (removeBtn) {
+                removeBtn.addEventListener('click', function() {
+                    removeWidget(this.closest(".grid-stack-item"));
+                });
+            }
+            var fitBtn = item.querySelector(".fitContent");
+            if (fitBtn) {
+                fitBtn.addEventListener('click', function() {
+                    resizeWidget(this.closest(".grid-stack-item"));
+                });
+            }
         });
 
-        jQuery(document).ready(function(){
-            jQuery("#gridBoard").css("opacity", 1);
-        });
+        // Show the grid board now that GridStack is initialized.
+        // Note: DOMContentLoaded has already fired by the time initGrid() runs
+        // (called from jQuery(document).ready), so we set opacity directly.
+        var gridBoard = document.querySelector("#gridBoard");
+        if (gridBoard) {
+            gridBoard.style.opacity = '1';
+        }
 
     };
 
@@ -100,12 +107,14 @@ leantime.widgetController = (function () {
         }
 
         items.forEach(function(item) {
-            //get hx links
-            let htmxElement = jQuery(item.content).find("[hx-get]").first();
+            //get hx links - parse the content HTML string to find the hx-get element
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = item.content;
+            var htmxElement = tempDiv.querySelector("[hx-get]");
 
-            item.id = htmxElement.attr("id");
-            item.widgetUrl = htmxElement.attr("hx-get");
-            item.widgetTrigger = htmxElement.attr("hx-trigger");
+            item.id = htmxElement ? htmxElement.getAttribute("id") : null;
+            item.widgetUrl = htmxElement ? htmxElement.getAttribute("hx-get") : null;
+            item.widgetTrigger = htmxElement ? htmxElement.getAttribute("hx-trigger") : null;
 
             if(item.x == undefined) {
                 item.x = 0;
@@ -131,14 +140,32 @@ leantime.widgetController = (function () {
         });
 
 
-        jQuery.post(leantime.appUrl+"/widgets/widgetManager",
-            {
-                action: "saveGrid",
-                data: items,
-                visibilityData: visibilityData
-            },
-            function(data, status){
+        // Build form-encoded params matching jQuery.post's nested serialization
+        var params = new URLSearchParams();
+        params.append('action', 'saveGrid');
+        items.forEach(function(item, i) {
+            Object.keys(item).forEach(function(key) {
+                var val = item[key];
+                if (val !== null && val !== undefined) {
+                    params.append('data[' + i + '][' + key + ']', val);
+                }
             });
+        });
+        if (visibilityData) {
+            Object.keys(visibilityData).forEach(function(key) {
+                params.append('visibilityData[' + key + ']', visibilityData[key]);
+            });
+        }
+
+        fetch(leantime.appUrl + "/widgets/widgetManager", {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: params
+        });
     };
 
 
@@ -156,13 +183,16 @@ leantime.widgetController = (function () {
 
     var toggleWidgetVisibility = function(id, element, widget) {
         let grid = document.querySelector('.grid-stack').gridstack;
-        let visible = jQuery(element).is(":checked");
+        let visible = element.checked;
 
         // Find the next available position
         let position = findAvailablePosition(widget, grid);
 
         if (!visible) {
-            removeWidget(jQuery("#" + id).closest(".grid-stack-item")[0]);
+            var targetEl = document.getElementById(id);
+            if (targetEl) {
+                removeWidget(targetEl.closest(".grid-stack-item"));
+            }
         } else {
             // Create the widget structure using DOM methods
             const widgetNode = document.createElement('div');
@@ -170,7 +200,7 @@ leantime.widgetController = (function () {
 
             // Create the content container
             const contentDiv = document.createElement('div');
-            contentDiv.className = `grid-stack-item-content tw-p-none ${
+            contentDiv.className = `grid-stack-item-content tw:p-none ${
                 widget.widgetBackground == "default" ? "maincontentinner" : widget.background
             }`;
 
@@ -196,25 +226,25 @@ leantime.widgetController = (function () {
 
     var buildWidget = function(widget) {
         return '<div class="widgetInner">' +
-            '        <div class="' + (widget.widgetBackground == "default" ? "tw-pb-l" : "") + '">\n' +
+            '        <div class="' + (widget.widgetBackground == "default" ? "tw:pb-l" : "") + '">\n' +
             '            <div class="stickyHeader" style="padding:15px; height:50px;  width:100%;">\n' +
-            '               <div class="grid-handler-top tw-h-[40px] tw-cursor-grab tw-float-left tw-mr-sm">\n' +
+            '               <div class="grid-handler-top tw:h-[40px] tw:cursor-grab tw:float-left tw:mr-sm">\n' +
             '                    <i class="fa-solid fa-grip-vertical"></i>\n' +
             '                </div>\n' +
-            '           ' + (widget.name != '' ? '<h5 class="subtitle tw-pb-m tw-float-left tw-mr-sm">' + widget.name + '</h5>' : '') + '\n' +
-            '            <div class="inlineDropDownContainer tw-float-right">\n' +
-            '                <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">\n' +
+            '           ' + (widget.name != '' ? '<h5 class="subtitle tw:pb-m tw:float-left tw:mr-sm">' + widget.name + '</h5>' : '') + '\n' +
+            '            <div class="tw:dropdown tw:dropdown-end tw:float-right">\n' +
+            '                <div tabindex="0" role="button" class="dropdown-toggle ticketDropDown editHeadline">\n' +
             '                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>\n' +
-            '                </a>\n' +
-            '                <ul class="dropdown-menu">\n' +
-            '                    <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Resize to fit content</a></li>\n' +
-            '                        <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> Hide</a></li>\n' +
+            '                </div>\n' +
+            '                <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm">\n' +
+            '                    <li><a href="javascript:void(0)" onclick="document.activeElement.blur();" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Resize to fit content</a></li>\n' +
+            '                        <li><a href="javascript:void(0)" onclick="document.activeElement.blur();" class="removeWidget"><i class="fa fa-eye-slash"></i> Hide</a></li>\n' +
             '                </ul>\n' +
             '            </div>\n' +
             '\n' +
             '        </div>\n' +
-            ' <div class="widgetContent tw-px-l">\n' +
-            '             <div hx-get="'+widget.widgetUrl+'" hx-trigger="'+widget.widgetTrigger+'" id="'+widget.id+'"></div>\n' +
+            ' <div class="widgetContent tw:px-l">\n' +
+            '             <div hx-get="'+widget.widgetUrl+'" hx-trigger="'+widget.widgetTrigger+'" hx-target="this" hx-swap="innerHTML" id="'+widget.id+'"></div>\n' +
             '        </div>\n' +
             '       </div>\n' +
             '        <div class="clear"></div>\n' +

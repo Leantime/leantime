@@ -227,8 +227,7 @@ leantime.ticketsController = (function () {
 
 
     var toggleFilterBar = function () {
-        jQuery(".filterBar").toggle();
-
+        jQuery(".filterBar").toggleClass("hideOnLoad");
     };
 
     var initGanttChart = function (tasks, viewMode, readonly) {
@@ -1100,49 +1099,6 @@ leantime.ticketsController = (function () {
 
     };
 
-    var initTicketTabs = function () {
-
-        jQuery(document).ready(function () {
-
-
-            let url = new URL(window.location.href);
-            let tab = url.searchParams.get("tab");
-
-            let activeTabIndex = 0;
-            if (tab) {
-                activeTabIndex = jQuery('.ticketTabs').find('a[href="#' + tab + '"]').parent().index();
-            }
-
-            jQuery('.ticketTabs').tabs({
-                create: function ( event, ui ) {
-                    jQuery('.ticketTabs').css("visibility", "visible");
-
-                },
-                activate: function (event, ui) {
-
-                    url = new URL(window.location.href);
-
-
-                    url.searchParams.set('tab', ui.newPanel[0].id);
-
-                    window.history.replaceState(null, null, url);
-
-                },
-                load: function () {
-
-                },
-                enable: function () {
-
-                },
-                active: activeTabIndex
-
-            });
-
-
-        });
-
-    };
-
     var initTicketSearchSubmit = function (url) {
 
         jQuery("#ticketSearch").on('submit', function (e) {
@@ -1708,9 +1664,9 @@ leantime.ticketsController = (function () {
 
                     // Update footer by showing the total with the reference of the column index
                     jQuery(api.column(9).footer()).html('Total');
-                    jQuery(api.column(10).footer()).html(plannedHours);
-                    jQuery(api.column(11).footer()).html(hoursLeft);
-                    jQuery(api.column(12).footer()).html(loggedHours);
+                    jQuery(api.column(10).footer()).html(parseFloat(plannedHours).toFixed(2));
+                    jQuery(api.column(11).footer()).html(parseFloat(hoursLeft).toFixed(2));
+                    jQuery(api.column(12).footer()).html(parseFloat(loggedHours).toFixed(2));
 
                 },
 
@@ -2022,6 +1978,15 @@ leantime.ticketsController = (function () {
 
     };
 
+    var openTicketModalManually = function (url) {
+        jQuery.nmManual(url, {
+            sizes: {
+                minW: 500,
+                minH: 500
+            }
+        });
+    };
+
     var openMilestoneModalManually = function (url) {
         jQuery.nmManual(url, {
             stack: true,
@@ -2051,7 +2016,6 @@ leantime.ticketsController = (function () {
         updateRemainingHours:updateRemainingHours,
         updatePlannedHours:updatePlannedHours,
         initTimeSheetChart:initTimeSheetChart,
-        initTicketTabs:initTicketTabs,
         initTicketSearchSubmit:initTicketSearchSubmit,
         initTicketKanban:initTicketKanban,
         initTicketsTable:initTicketsTable,

@@ -1,4 +1,4 @@
-var leantime = leantime || {};
+var leantime = window.leantime || (window.leantime = {});
 
 leantime.menuRepository = (function () {
 
@@ -6,21 +6,17 @@ leantime.menuRepository = (function () {
 
     var updateUserMenuSettings = function (menuStateValue) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/sessions',
-                data:
-                    {
-                        menuState : menuStateValue
-                }
-            }
-        ).done(
-            function () {
-
-
-            }
-        );
+        fetch(leantime.appUrl + '/api/sessions', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                menuState: menuStateValue
+            })
+        });
 
     };
 

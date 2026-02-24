@@ -1,4 +1,4 @@
-<div class="commentBox tw-hidden" id="comment{!! $commentId !!}">
+<div class="commentBox tw:hidden" id="comment{!! $commentId !!}">
     <div class="commentImage">
         <x-users::profile-image :user="$user" />
     </div>

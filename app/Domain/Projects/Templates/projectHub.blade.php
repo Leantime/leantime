@@ -16,7 +16,7 @@
                 <span style="font-size:18px; color:var(--main-titles-color););">
                    {{ __("text.project_hub_intro") }}
                     @if ($login::userIsAtLeast("manager"))
-                        <br /><br /><a class="btn btn-default" href="#/projects/createnew">{!! __("menu.create_something_new") !!}</a>
+                        <br /><br /><x-global::button link="#/projects/createnew" type="secondary">{!! __("menu.create_something_new") !!}</x-global::button>
                     @endif
                 </span>
                 <br />
@@ -34,22 +34,17 @@
              hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
              hx-trigger="HTMX.updateProjectList from:body"
              hx-target="#myProjectsHub"
-             hx-swap="outerHTML">
+             hx-swap="outerHTML"
+             aria-live="polite">
 
             @if (count($clients) > 0)
-                <div class="dropdown dropdownWrapper pull-right">
-                    <a href="javascript:void(0)" class="btn btn-default dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                        @if ($currentClientName != '')
-                            {{ $currentClientName }}
-                        @else
-                            {{ __("headline.all_clients") }}
-                        @endif
-
-                        <i class="fa fa-caret-down"></i>
-                    </a>
-
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ CURRENT_URL }}">{{ __("headline.all_clients") }}</a></li>
+                <x-global::elements.link-dropdown :label="$currentClientName != '' ? $currentClientName : __('headline.all_clients')" triggerClass="btn btn-default header-title-dropdown" class="pull-right">
+                        <li>
+                            <a href="javascript:void(0);"
+                               hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
+                               hx-target="#myProjectsHub"
+                               hx-swap="outerHTML">{{ __("headline.all_clients") }}</a>
+                        </li>
                         @foreach ($clients as $key => $value)
                             <li>
                                 <a  href="javascript:void(0);"
@@ -58,8 +53,7 @@
                                     hx-swap="outerHTML">{{ $value['name'] }}</a>
                             </li>
                         @endforeach
-                    </ul>
-                </div>
+                </x-global::elements.link-dropdown>
             @endif
 
             @if (count($allProjects) == 0)
@@ -69,7 +63,7 @@
                         {{ __('notifications.not_assigned_to_any_project') }}
                         @if($login::userIsAtLeast($roles::$manager))
                             <br /><br />
-                            <a href='{{ BASE_URL }}/projects/newProject' class='btn btn-primary'>{{ __('link.new_project') }}</a>
+                            <x-global::button link="{{ BASE_URL }}/projects/newProject" type="primary">{{ __('link.new_project') }}</x-global::button>
                         @endif
                     </div>
                 </div>

@@ -3,10 +3,12 @@
 .dropdown-menu {
     margin-top: 0;
     border-radius: var(--box-radius);
-    border:0px;
+    border: 1px solid var(--glass-border);
     padding: 8px 0;
-    box-shadow: var(--regular-shadow);
-    background:var(--secondary-background);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: var(--glass-inset), var(--regular-shadow);
 }
 
 .bigMenu ul li {
@@ -19,7 +21,10 @@
     font-size: var(--base-font-size);
     color:var(--primary-font-color);
     margin: 0;
-    padding: 5px 10px;
+    padding: 10px 12px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
     border-radius: 0px;
 }
 .pagetitle .dropdown-menu > li > a {
@@ -129,9 +134,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .ticketDropdown > a,
 .maincontent .ticketDropdown > a:link,
-.nyroModalCont .ticketDropdown > a,
-.nyroModalCont .ticketDropdown > a:link{
-    color:#fff;
+#global-modal-content .ticketDropdown > a,
+#global-modal-content .ticketDropdown > a:link{
+    color:var(--primary-background);
     padding:0px 10px;
     white-space: nowrap;
     border-radius:var(--box-radius-large);
@@ -141,8 +146,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .ticketDropdown.userDropdown > a,
 .maincontent .ticketDropdown.userDropdown > a:link,
-.nyroModalCont .ticketDropdown.userDropdown > a,
-.nyroModalCont .ticketDropdown.userDropdown > a:link {
+#global-modal-content .ticketDropdown.userDropdown > a,
+#global-modal-content .ticketDropdown.userDropdown > a:link {
     padding-left:0px;
 }
 
@@ -161,8 +166,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 
 .maincontent .ticketDropdown.colorized li a,
-.nyroModalCont .ticketDropdown.colorized li a{
-    color:#fff;
+#global-modal-content .ticketDropdown.colorized li a{
+    color:var(--primary-background);
 }
 
 .maincontent .ticketDropdown.noBg {
@@ -181,7 +186,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .dropdown img {
     width:23px;
-    border-radius: 12px;
+    border-radius: var(--input-radius);
     border: 1px solid var(--neutral);
     margin-top:1px;
     padding:1px;
@@ -189,7 +194,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 
 .maincontent .ticketDropdown.noBg >a:hover {
-    color:#000;
+    color:var(--primary-font-color);
 }
 
 .maincontent .ticketDropdown.noBg >a:hover img {
@@ -197,160 +202,134 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .maincontent .ticketDropdown ul li a[class*="label-"],
-.nyroModalCont .ticketDropdown ul li a[class*="label-"] {
+#global-modal-content .ticketDropdown ul li a[class*="label-"] {
     padding: 5px 10px;
     display:block;
 }
 
-.chosen-results li[class*=" label-"] {
-    color:#fff;
-}
-
-.chosen-results li[class*=" label-"]:hover {
-    color:#555;
-}
-
-.chosen-results li.label-warning,
 .maincontent .ticketDropdown a.label-warning,
-.nyroModalCont .ticketDropdown a.label-warning,
+#global-modal-content .ticketDropdown a.label-warning,
 .label-warning,
 .label-yellow{
     background:var(--yellow);
     color:var(--yellow-text-color);
 }
 
-.chosen-results li.label-info,
 .maincontent .ticketDropdown a.label-info,
-.nyroModalCont .ticketDropdown a.label-info{
+#global-modal-content .ticketDropdown a.label-info{
     background:var(--dark-blue);
     color:var(--dark-blue-text-color);
 }
 
-.chosen-results li.label-important,
 .maincontent .ticketDropdown a.label-important,
-.nyroModalCont .ticketDropdown a.label-important,
+#global-modal-content .ticketDropdown a.label-important,
 .label-important{
     background:var(--red);
     color:var(--red-text-color);
 }
 
-.chosen-results li.label-danger,
 .maincontent .ticketDropdown a.label-danger,
-.nyroModalCont .ticketDropdown a.label-danger,
+#global-modal-content .ticketDropdown a.label-danger,
 .label-danger,
 .label-red{
     background:var(--dark-red);
     color:var(--dark-red-text-color);
 }
 
-.chosen-results li.label-success,
 .maincontent .ticketDropdown a.label-success,
-.nyroModalCont .ticketDropdown a.label-success,
+#global-modal-content .ticketDropdown a.label-success,
 .label-success,
 .label-green {
     background:var(--green);
     color:var(--green-text-color);
 }
 
-.chosen-results li.label-default,
 .maincontent .ticketDropdown a.label-default,
-.nyroModalCont .ticketDropdown a.label-default,
+#global-modal-content .ticketDropdown a.label-default,
 .label-default{
     background: var(--grey);
     color:var(--grey-text-color);
 }
 
-.chosen-results li.label-default.milestone,
 .maincontent .ticketDropdown a.label-default.milestone,
-.nyroModalCont .ticketDropdown a.label-default.milestone {
+#global-modal-content .ticketDropdown a.label-default.milestone {
     color:var(--blue-text-color);
 }
 
-.chosen-results li.label-purple,
 .maincontent .ticketDropdown a.label-purple,
-.nyroModalCont .ticketDropdown a.label-purple{
+#global-modal-content .ticketDropdown a.label-purple{
     background:var(--purple);
     color:var(--purple-text-color);
 }
 
-.chosen-results li.label-pink,
 .maincontent .ticketDropdown a.label-pink,
-.nyroModalCont .ticketDropdown a.label-pink{
+#global-modal-content .ticketDropdown a.label-pink{
     background:var(--pink);
     color:var(--pink-text-color);
 }
 
-.chosen-results li.label-brown,
 .maincontent .ticketDropdown a.label-brown,
-.nyroModalCont .ticketDropdown a.label-brown{
+#global-modal-content .ticketDropdown a.label-brown{
     background:var(--brown);
     color:var(--brown-text-color);
 }
 
-.chosen-results li.label-blue,
 .maincontent .ticketDropdown a.label-blue,
-.nyroModalCont .ticketDropdown a.label-blue{
+#global-modal-content .ticketDropdown a.label-blue{
     background:var(--blue);
     color:var(--blue-text-color);
 }
 
-.chosen-results li.label-dark-blue,
 .maincontent .ticketDropdown a.label-dark-blue,
-.nyroModalCont .ticketDropdown a.label-dark-blue{
+#global-modal-content .ticketDropdown a.label-dark-blue{
     background:var(--dark-blue);
     color:var(--dark-blue-text-color);
 }
 
-.chosen-results li.label-darker-blue,
 .maincontent .ticketDropdown a.label-darker-blue,
-.nyroModalCont .ticketDropdown a.label-darker-blue{
+#global-modal-content .ticketDropdown a.label-darker-blue{
     background:var(--darker-blue);
     color:var(--darker-blue-text-color);
 }
 
-.chosen-results li.label-green,
 .maincontent .ticketDropdown a.label-green,
-.nyroModalCont .ticketDropdown a.label-green{
+#global-modal-content .ticketDropdown a.label-green{
     background:var(--green);
     color:var(--green-text-color);
 }
 
-.chosen-results li.label-dark-green,
 .maincontent .ticketDropdown a.label-dark-green,
-.nyroModalCont .ticketDropdown a.label-dark-green{
+#global-modal-content .ticketDropdown a.label-dark-green{
     background:var(--dark-green);
     color:var(--dark-green-text-color);
 }
 
-.chosen-results li.label-red,
 .maincontent .ticketDropdown a.label-red,
-.nyroModalCont .ticketDropdown a.label-red{
+#global-modal-content .ticketDropdown a.label-red{
     background:var(--red);
     color:var(--red-text-color);
 }
 
-.chosen-results li.label-dark-red,
 .maincontent .ticketDropdown a.label-dark-red,
-.nyroModalCont .ticketDropdown a.label-dark-red{
+#global-modal-content .ticketDropdown a.label-dark-red{
     background:var(--dark-red);
     color:var(--dark-red-text-color);
 }
 
-.chosen-results li.label-grey,
 .maincontent .ticketDropdown a.label-grey,
-.nyroModalCont .ticketDropdown a.label-grey{
+#global-modal-content .ticketDropdown a.label-grey{
     background:var(--grey);
     color:var(--grey-text-color);
 }
 
 .maincontent .ticketDropdown a.label-default.effort,
-.nyroModalCont .ticketDropdown a.label-default.effort{
+#global-modal-content .ticketDropdown a.label-default.effort{
     background:var(--secondary-background);
     color:var(--primary-font-color);
 }
 
 .maincontent .ticketDropdown ul li,
-.nyroModalCont .ticketDropdown ul li {
+#global-modal-content .ticketDropdown ul li {
     margin-bottom:1px;
     padding:0px 10px;
 }
@@ -364,7 +343,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     font-size: var(--font-size-l);
     color: var(--primary-font-color);
     margin-bottom: 10px;
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
     margin-left:0px;
     border-radius: var(--accordion-header-radius);
     padding: 5px 0px;
@@ -379,7 +358,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     width:15px;
     text-align:center;
     margin-right:5px;
-    border-radius:5px;
+    border-radius:var(--box-radius-small);
 }
 
 .maincontent .accordionTitle:hover i,
@@ -483,7 +462,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .viewDropDown .dropdown-menu li a.active:hover {
-    color:#fff;
+    color:var(--primary-background);
 }
 
 .dropdown-menu span.radio input[type="radio"] {
@@ -495,7 +474,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .dropdown-menu span.radio {
     display:block;
-    font-size: 12px;
+    font-size: var(--font-size-s);
     color: var(--main-menu-link-color);
     margin: 0px;
     padding: 5px 10px;
@@ -532,7 +511,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     color: var(--primary-font-color);
     background-color: var(--secondary-background);
     border: 1px solid var(--secondary-background);
-    border-radius: 3px;
+    border-radius: var(--box-radius-small);
 }
 
 .btn-group .btn.titleIconPicker:hover {
@@ -625,12 +604,12 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .inlineDropDownContainer > a {
-    color: #aaa;
+    color: var(--secondary-font-color);
     width: 24px;
     line-height: 20px;
     text-align: center;
     padding-top: 1px;
-    border-radius: 5px;
+    border-radius: var(--box-radius-small);
 }
 
 .inlineDropDownContainer > a.btn {

@@ -136,66 +136,6 @@ $companySettings = $tpl->get('companySettings');
                                                             </span>
                                         </div>
                                     </div>
-                                    <br />
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-bell"></span><?php echo $tpl->__('label.default_notification_types'); ?>
-                                    </h4>
-                                    <p><?php echo $tpl->__('label.default_notification_types_description'); ?></p>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <?php
-                                            $categoryLabels = [
-                                                'tasks' => 'label.notification_category_tasks',
-                                                'comments' => 'label.notification_category_comments',
-                                                'goals' => 'label.notification_category_goals',
-                                                'ideas' => 'label.notification_category_ideas',
-                                                'projects' => 'label.notification_category_projects',
-                                                'boards' => 'label.notification_category_boards',
-                                            ];
-$defaultNotificationTypes = $tpl->get('defaultNotificationTypes');
-$notificationCategories = $tpl->get('notificationCategories');
-foreach ($notificationCategories as $categoryKey => $config) { ?>
-                                                <div class="form-group">
-                                                    <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; padding:4px 0;">
-                                                        <input type="checkbox"
-                                                               name="defaultNotificationEventTypes[]"
-                                                               value="<?= $categoryKey ?>"
-                                                               style="margin-top:3px;"
-                                                               <?php if (in_array($categoryKey, $defaultNotificationTypes)) {
-                                                                   echo 'checked="checked"';
-                                                               } ?>
-                                                        />
-                                                        <span>
-                                                            <strong><?= $tpl->__($categoryLabels[$categoryKey] ?? $categoryKey) ?></strong><br />
-                                                            <small style="color:#888;"><?= $tpl->__($config['description'] ?? '') ?></small>
-                                                        </span>
-                                                    </label>
-                                                </div>
-                                            <?php } ?>
-                                        </div>
-                                    </div>
-
-                                    <br />
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-sliders"></span><?php echo $tpl->__('label.default_notification_relevance'); ?>
-                                    </h4>
-                                    <p><?php echo $tpl->__('label.default_notification_relevance_description'); ?></p>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <select name="defaultNotificationRelevance" class="form-control" style="max-width:300px;">
-                                                    <?php
-                                                    $defaultRelevance = $tpl->get('defaultRelevance');
-$relevanceLevels = $tpl->get('relevanceLevels');
-foreach ($relevanceLevels as $level => $labelKey) { ?>
-                                                        <option value="<?= $level ?>" <?= $defaultRelevance === $level ? 'selected' : '' ?>>
-                                                            <?= $tpl->__($labelKey) ?>
-                                                        </option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <input type="submit" value="<?= $tpl->__('buttons.save')?>" id="saveBtn"/>
                                 </form>
                             </div>

@@ -11,15 +11,15 @@
 
         @if ($login::userIsAtLeast($roles::$editor))
             <br /><br />
-            <a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
-                {{ __('links.icon.create_new_board') }}
-            </a>
+            <x-global::button link="javascript:void(0)" type="primary" class="addCanvasLink">
+                {!! __('links.icon.create_new_board') !!}
+            </x-global::button>
         @endif
     </div>
 @endif
 
 @if (!empty($disclaimer) && count($allCanvas) > 0)
-    <small class="align-center">{{ $disclaimer }}</small>
+    <small class="center">{{ $disclaimer }}</small>
 @endif
 
 {!! $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render() !!}

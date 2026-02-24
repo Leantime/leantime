@@ -73,7 +73,7 @@
 }
 
 .ticketBox h4 a {
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .column .contentInner .ui-state-highlight {
@@ -81,9 +81,8 @@
     border: 2px dashed color-mix(in srgb, var(--primary-font-color) 20%, transparent);
     visibility: visible;
     display: block;
-    box-shadow: 0 2px 6px color-mix(in srgb, var(--primary-font-color) 12%, transparent),
-                0 1px 3px color-mix(in srgb, var(--primary-font-color) 8%, transparent);
-    border-radius: 4px;
+    box-shadow: var(--regular-shadow);
+    border-radius: var(--box-radius-small);
 }
 
 /* Empty column state - same background as non-empty for consistency */
@@ -99,7 +98,7 @@
 .column .contentInner.empty-column a[id^="ticket_new_link_group_"] {
     color: var(--primary-font-color);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
     border-radius: var(--box-radius-small);
     opacity: 0.7;
 }
@@ -374,7 +373,7 @@
 .ticketBox .ticketBox,
 .projectBox .ticketBox{
     box-shadow: none;
-    border-radius:4px;
+    border-radius:var(--box-radius-small);
     padding:0px;
     padding-left:5px;
     border-left:3px solid var(--main-border-color);
@@ -439,7 +438,7 @@
 
 .sortableTicketList .empty {
     text-align:center;
-    color:#999;
+    color:var(--secondary-font-color);
     padding:20px 0px;
 }
 
@@ -534,7 +533,7 @@ body .maincontent .priority-text-5 a:link {
     padding: 10px 15px;
     font-size: var(--base-font-size);
     line-height:17px;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     border-bottom-width:3px;
     border-top-left-radius: var(--box-radius);
     border-top-right-radius: var(--box-radius);
@@ -662,7 +661,7 @@ body .maincontent .priority-text-5 a:link {
 
 /* Chevron - 10px, rotates on toggle */
 .kanban-lane-chevron {
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     color: var(--primary-font-color);
     opacity: 0.6;
     width: 10px;
@@ -691,7 +690,7 @@ body .maincontent .priority-text-5 a:link {
 
 /* Icon indicator (for type, milestone, sprint) */
 .kanban-indicator-icon {
-    font-size: 16px;
+    font-size: var(--font-size-l);
     color: var(--primary-font-color);
 }
 
@@ -703,15 +702,15 @@ body .maincontent .priority-text-5 a:link {
 
 /* Effort t-shirt indicator */
 .kanban-effort-indicator {
-    font-size: 13px;
-    font-weight: 700;
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-bold);
     color: var(--primary-font-color);
 }
 
 /* Label - truncates with ellipsis */
 .swimlane-header-label {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color);
     flex: 1;
     overflow: hidden;
@@ -728,9 +727,9 @@ body .maincontent .priority-text-5 a:link {
     background: color-mix(in srgb, var(--accent2) 76%, black); /* Darkened brand teal - WCAG AA compliant (4.9:1 contrast) */
     color: #FFFFFF; /* White text for high contrast */
     padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 700;
+    border-radius: var(--input-radius);
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-bold);
     min-width: 26px;
     flex-shrink: 0;
 }
@@ -811,7 +810,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .timerContainer,
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .border-top,
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .clearfix,
-.kanban-swimlane-row[data-expanded="false"] .ticketBox .tw-flex:not(.tw-items-center),
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .tw\:flex:not(.tw\:items-center),
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .inlineDropDownContainer {
     display: none !important;
 }
@@ -820,7 +819,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-row[data-expanded="false"] .ticketBox h4 {
     margin: 0;
     font-size: var(--font-size-s);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -867,7 +866,7 @@ body .maincontent .priority-text-5 a:link {
 
 /* Tooltip content */
 .kanban-sidebar-tooltip .tooltip-label {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     font-size: var(--base-font-size);
     margin-bottom: 6px;
     word-wrap: break-word;
@@ -924,7 +923,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-content.collapsed .ticketBox .timerContainer,
 .kanban-swimlane-content.collapsed .ticketBox .border-top,
 .kanban-swimlane-content.collapsed .ticketBox .clearfix,
-.kanban-swimlane-content.collapsed .ticketBox .tw-flex,
+.kanban-swimlane-content.collapsed .ticketBox .tw\:flex,
 .kanban-swimlane-content.collapsed .ticketBox .inlineDropDownContainer {
     display: none !important;
 }
@@ -941,7 +940,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-content.collapsed .ticketBox h4 {
     margin: 0;
     font-size: var(--font-size-s);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -950,12 +949,12 @@ body .maincontent .priority-text-5 a:link {
 }
 
 .kanban-swimlane-content.collapsed .ticketBox h4 a {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
 }
 
 /* Compact ticket ID and type */
 .kanban-swimlane-content.collapsed .ticketBox small {
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     white-space: nowrap;
     flex-shrink: 0;
 }
@@ -1055,10 +1054,10 @@ body .maincontent .priority-text-5 a:link {
     background: var(--kanban-card-bg);
     border: 1px solid var(--main-border-color);
     border-left: 3px solid transparent; /* Priority color goes here */
-    border-radius: 4px;
+    border-radius: var(--box-radius-small);
     text-decoration: none;
     color: var(--primary-font-color);
-    transition: all 150ms ease-out;
+    transition: background-color 150ms ease-out, border-color 150ms ease-out, box-shadow 150ms ease-out;
     font-size: var(--font-size-xs);
     min-width: 0;
     overflow: hidden;
@@ -1097,11 +1096,11 @@ body .maincontent .priority-text-5 a:link {
 }
 
 .compact-ticket-id {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color);
     opacity: 0.7;
     flex-shrink: 0;
-    font-size: 10px;
+    font-size: var(--font-size-xs);
 }
 
 .compact-ticket-title {
@@ -1110,14 +1109,14 @@ body .maincontent .priority-text-5 a:link {
     text-overflow: ellipsis;
     flex: 1;
     min-width: 0;
-    font-size: 11px;
+    font-size: var(--font-size-xs);
 }
 
 /* Type icon */
 .compact-ticket-type {
     flex-shrink: 0;
     opacity: 0.6;
-    font-size: 10px;
+    font-size: var(--font-size-xs);
 }
 
 /* User avatar */
@@ -1139,11 +1138,11 @@ body .maincontent .priority-text-5 a:link {
     align-items: center;
     padding: 4px 10px;
     background: var(--neutral-background);
-    border-radius: 4px;
+    border-radius: var(--box-radius-small);
     font-size: var(--font-size-xs);
     color: var(--primary-font-color);
     opacity: 0.7;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     height: 32px;
 }
 
@@ -1188,7 +1187,7 @@ body .maincontent .priority-text-5 a:link {
     /* Subtle hover for dark mode - transparent overlay */
     .kanban-swimlane-sidebar:hover {
         background: rgba(255, 255, 255, 0.08); /* Subtle white overlay */
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        box-shadow: var(--regular-shadow);
     }
 
     .kanban-swimlane-sidebar:focus-visible {
@@ -1268,7 +1267,7 @@ body .maincontent .priority-text-5 a:link {
 
 .sortableTicketList .ticketBox.priority-hightlight {
     position:relative;
-    background:#fff;
+    background:var(--primary-background);
     box-shadow: var(--regular-shadow);
 }
 
@@ -1299,7 +1298,7 @@ body .maincontent .priority-text-5 a:link {
 
 .sortableTicketList .ticketBox.active {
     box-shadow: var(--regular-shadow);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .leader-line {
@@ -1310,7 +1309,7 @@ body .maincontent .priority-text-5 a:link {
 .card-moving-out {
     opacity: 0.5;
     transform: scale(0.95);
-    transition: all 0.2s ease-out;
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
 .card-moving-in {
@@ -1355,15 +1354,15 @@ body .maincontent .priority-text-5 a:link {
     align-items: center;
     justify-content: center;
     line-height: 1;
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     min-width: 0;
     position: relative;
 }
 
 
 .micro-progress-bar .segment-count {
-    font-size: 11px;
-    font-weight: 700;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
     color: white;
     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     opacity: 0;
@@ -1384,10 +1383,10 @@ body .maincontent .priority-text-5 a:link {
 .status-segment.status-3 { background-color: var(--status-new-color, #60a5fa); }
 .status-segment.status-4 { background-color: var(--status-in-progress-color, #f59e0b); }
 .status-segment.status-5 { background-color: var(--status-done-color, #10b981); }
-.status-segment.status-1 { background-color: #ef4444; } /* Blocked - Red */
-.status-segment.status-2 { background-color: #f97316; } /* Waiting for approval - Orange */
-.status-segment.status-0 { background-color: #10b981; } /* Done - Green */
-.status-segment.status--1 { background-color: #9ca3af; } /* Archived - Gray */
+.status-segment.status-1 { background-color: var(--red); } /* Blocked - Red */
+.status-segment.status-2 { background-color: var(--yellow); } /* Waiting for approval - Yellow/Orange */
+.status-segment.status-0 { background-color: var(--green); } /* Done - Green */
+.status-segment.status--1 { background-color: var(--grey); } /* Archived - Gray */
 
 /* Allow dropdown menus to overflow in kanban columns */
 .kanban-swimlane-content .column .contentInner {

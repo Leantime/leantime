@@ -16,16 +16,16 @@
         <form action="{{ BASE_URL }}/calendar/connectCalendar" method="post" class="formModal">
             @csrf
             <label for="ical_name">{{ __('label.calendar_name') }}:</label>
-            <input type="text" id="ical_name" name="name" autocomplete="off" placeholder="{{ __('label.calendar_name') }}" /><br />
+            <x-global::forms.input name="name" id="ical_name" autocomplete="off" placeholder="{{ __('label.calendar_name') }}" /><br />
 
             <label for="ical_url">{{ __('label.ical_url') }}:</label>
-            <input type="text" id="ical_url" name="url" autocomplete="off" style="width:100%;" placeholder="https://example.com/calendar.ics" /><br />
+            <x-global::forms.input name="url" id="ical_url" autocomplete="off" style="width:100%;" placeholder="https://example.com/calendar.ics" /><br />
 
             <label for="ical_color">{{ __('label.color') }}:</label>
-            <input type="text" id="ical_color" name="colorClass" autocomplete="off" value="#082236" class="simpleColorPicker"/>
+            <x-global::forms.input :bare="true" type="text" id="ical_color" name="colorClass" autocomplete="off" value="#082236" class="simpleColorPicker"/>
 
             <br /><br />
-            <input type="submit" name="save" value="{{ __('label.import_ical_button') }}" class="btn btn-primary" />
+            <x-global::button submit type="primary" name="save">{{ __('label.import_ical_button') }}</x-global::button>
         </form>
     </x-slot>
 </x-global::accordion>
@@ -45,10 +45,9 @@
             </x-slot>
             <x-slot name="content" style="padding-top: 10px;">
                 <p class="text-muted small">{{ $provider['description'] }}</p>
-                <a href="{{ $provider['actionUrl'] }}"
-                   class="btn btn-primary {{ ($provider['actionType'] ?? 'link') === 'modal' ? 'formModal' : '' }}">
+                <x-global::button link="{{ $provider['actionUrl'] }}" type="primary" :formModal="($provider['actionType'] ?? 'link') === 'modal'">
                     {{ $provider['actionLabel'] }}
-                </a>
+                </x-global::button>
             </x-slot>
         </x-global::accordion>
     @endif

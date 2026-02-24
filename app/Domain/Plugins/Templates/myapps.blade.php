@@ -14,8 +14,7 @@
 
         <div class="maincontentinner">
 
-            <div class="row">
-                <div class="col-lg-12">
+            <div>
                     <h5 class="subtitle" style="margin-bottom:15px;">
                         {{ __("text.installed_plugins") }}
                     </h5>
@@ -23,15 +22,13 @@
                         @each('plugins::partials.plugin', $tpl->get("installedPlugins"), 'plugin')
 
                         @if ($tpl->get("installedPlugins") === false || count($tpl->get("installedPlugins")) == 0)
-                            <span class="tw-block tw-px-4 tw-mb-4">{{ __("text.no_plugins_activated") }}</span>
+                            <span class="tw:block tw:px-4 tw:mb-4">{{ __("text.no_plugins_activated") }}</span>
                         @endif
                     </div>
-                </div>
             </div>
             <br />
-            <div class="row">
-                <div class="col-lg-12">
-                    <h5 class="subtitle tw-mb-m" style="margin-bottom:15px;">
+            <div>
+                    <h5 class="subtitle tw:mb-m" style="margin-bottom:15px;">
                         {{ __("text.new_plugins") }}
                     </h5>
                     <ul class="sortableTicketList" >
@@ -53,7 +50,7 @@
                                                | <a href="{{ $newplugin->homepage }}"> {{ $tpl->__("text.visit_site") }} </a>
                                             </div>
                                             <div class="col-md-4" style="padding-top:5px;">
-                                                <a href="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" class="btn btn-default pull-right">{{ $tpl->__('buttons.activate') }}</a>
+                                                <x-global::button link="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" type="secondary" class="pull-right">{{ $tpl->__('buttons.activate') }}</x-global::button>
 
                                             </div>
 
@@ -67,7 +64,6 @@
                             </x-global::undrawSvg>
                         @endif
                     </ul>
-                </div>
             </div>
         </div>
     </div>

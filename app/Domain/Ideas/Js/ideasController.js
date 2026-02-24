@@ -13,7 +13,9 @@ leantime.ideasController = (function () {
             autoSizable: true,
             callbacks: {
                 beforeShowCont: function () {
-                    jQuery(".showDialogOnLoad").show();
+                    document.querySelectorAll(".showDialogOnLoad").forEach(function (el) {
+                        el.style.display = '';
+                    });
                     if (closeModal == true) {
                         closeModal = false;
                         location.reload();
@@ -40,73 +42,83 @@ leantime.ideasController = (function () {
 
     var initMasonryWall = function () {
 
-        var $grid = jQuery('#ideaMason').packery({
-            // options
+        var gridEl = document.querySelector('#ideaMason');
+        if (!gridEl) return;
+
+        var pckry = new Packery(gridEl, {
             itemSelector: '.ticketBox',
             columnWidth: 260,
             isResizable: true
         });
 
-        $grid.imagesLoaded().progress(function () {
-            $grid.packery('layout');
+        imagesLoaded(gridEl).on('progress', function () {
+            pckry.layout();
         });
 
-        var $items = $grid.find('.ticketBox').draggable({
-            start: function (event, ui) {
-                ui.helper.addClass('tilt');
-                tilt_direction(ui.helper);
-            },
-            stop: function (event, ui) {
-                ui.helper.removeClass("tilt");
-                jQuery("html").unbind('mousemove', ui.helper.data("move_handler"));
-                ui.helper.removeData("move_handler");
-            },
+        var ticketBoxes = gridEl.querySelectorAll('.ticketBox');
+
+        ticketBoxes.forEach(function (box) {
+            var draggie = new Draggabilly(box);
+
+            draggie.on('dragStart', function () {
+                box.classList.add('tilt');
+                tilt_direction(box);
+            });
+
+            draggie.on('dragEnd', function () {
+                box.classList.remove('tilt');
+                if (box._moveHandler) {
+                    document.removeEventListener('mousemove', box._moveHandler);
+                    delete box._moveHandler;
+                }
+            });
+
+            pckry.bindDraggabillyEvents(draggie);
         });
 
         function tilt_direction(item)
         {
-            var left_pos = item.position().left,
+            var left_pos = item.getBoundingClientRect().left,
                 move_handler = function (e) {
                     if (e.pageX >= left_pos) {
-                        item.addClass("right");
-                        item.removeClass("left");
+                        item.classList.add("right");
+                        item.classList.remove("left");
                     } else {
-                        item.addClass("left");
-                        item.removeClass("right");
+                        item.classList.add("left");
+                        item.classList.remove("right");
                     }
                     left_pos = e.pageX;
                 };
-            jQuery("html").bind("mousemove", move_handler);
-            item.data("move_handler", move_handler);
+            document.addEventListener("mousemove", move_handler);
+            item._moveHandler = move_handler;
         }
-        // bind drag events to Packery
-        $grid.packery('bindUIDraggableEvents', $items);
+
+        pckry.on('dragItemPositioned', orderItems);
 
         function orderItems()
         {
             var ideaSort = [];
 
-            var itemElems = $grid.packery('getItemElements');
-            jQuery(itemElems).each(function ( i, itemElem ) {
+            var itemElems = pckry.getItemElements();
+            itemElems.forEach(function (itemElem, i) {
                 var sortIndex = i + 1;
-                var ideaId = jQuery(itemElem).attr("data-value");
+                var ideaId = itemElem.getAttribute("data-value");
                 ideaSort.push({"id":ideaId, "sortIndex":sortIndex});
             });
 
-            // POST to server using $.post or $.ajax
-            jQuery.ajax({
-                type: 'POST',
-                url: leantime.appUrl + '/api/ideas',
-                data: {
-                    action:"ideaSort",
-                    payload: ideaSort
-                }
-
+            fetch(leantime.appUrl + '/api/ideas', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams({
+                    action: "ideaSort",
+                    payload: JSON.stringify(ideaSort)
+                })
             });
         }
-
-
-        $grid.on('dragItemPositioned',orderItems);
     };
 
     var initBoardControlModal = function () {
@@ -116,8 +128,12 @@ leantime.ideasController = (function () {
 
     var initWallImageModals = function () {
 
-        jQuery('.mainIdeaContent img').each(function () {
-            jQuery(this).wrap("<a href='" + jQuery(this).attr("src") + "' class='imageModal'></a>");
+        document.querySelectorAll('.mainIdeaContent img').forEach(function (img) {
+            var link = document.createElement('a');
+            link.href = img.getAttribute('src');
+            link.className = 'imageModal';
+            img.parentElement.insertBefore(link, img);
+            link.appendChild(img);
         });
 
         jQuery(".imageModal").nyroModal();
@@ -127,19 +143,31 @@ leantime.ideasController = (function () {
 
     var toggleMilestoneSelectors = function (trigger) {
         if (trigger == 'existing') {
-            jQuery('#newMilestone, #milestoneSelectors').hide('fast');
-            jQuery('#existingMilestone').show();
+            var newMs = document.querySelector('#newMilestone');
+            var msSelectors = document.querySelector('#milestoneSelectors');
+            var existingMs = document.querySelector('#existingMilestone');
+            if (newMs) newMs.style.display = 'none';
+            if (msSelectors) msSelectors.style.display = 'none';
+            if (existingMs) existingMs.style.display = '';
             _initModals();
         }
         if (trigger == 'new') {
-            jQuery('#newMilestone').show();
-            jQuery('#existingMilestone, #milestoneSelectors').hide('fast');
+            var newMs = document.querySelector('#newMilestone');
+            var existingMs = document.querySelector('#existingMilestone');
+            var msSelectors = document.querySelector('#milestoneSelectors');
+            if (newMs) newMs.style.display = '';
+            if (existingMs) existingMs.style.display = 'none';
+            if (msSelectors) msSelectors.style.display = 'none';
             _initModals();
         }
 
         if (trigger == 'hide') {
-            jQuery('#newMilestone, #existingMilestone').hide('fast');
-            jQuery('#milestoneSelectors').show('fast');
+            var newMs = document.querySelector('#newMilestone');
+            var existingMs = document.querySelector('#existingMilestone');
+            var msSelectors = document.querySelector('#milestoneSelectors');
+            if (newMs) newMs.style.display = 'none';
+            if (existingMs) existingMs.style.display = 'none';
+            if (msSelectors) msSelectors.style.display = '';
         }
     };
 
@@ -149,36 +177,39 @@ leantime.ideasController = (function () {
 
     var initUserDropdown = function () {
 
-        jQuery("body").on(
+        document.body.addEventListener(
             "click",
-            ".userDropdown .dropdown-menu a",
-            function () {
+            function (e) {
+                var link = e.target.closest(".userDropdown .dropdown-menu a");
+                if (!link) return;
 
-                var dataValue = jQuery(this).attr("data-value").split("_");
-                var dataLabel = jQuery(this).attr('data-label');
+                var dataValue = link.getAttribute("data-value").split("_");
+                var dataLabel = link.getAttribute('data-label');
 
                 if (dataValue.length == 3) {
                     var canvasId = dataValue[0];
                     var userId = dataValue[1];
                     var profileImageId = dataValue[2];
 
-                    jQuery.ajax(
-                        {
-                            type: 'PATCH',
-                            url: leantime.appUrl + '/api/ideas',
-                            data:
-                                {
-                                    id : canvasId,
-                                    author:userId
-                            }
+                    fetch(leantime.appUrl + '/api/ideas', {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams({
+                            id: canvasId,
+                            author: userId
+                        })
+                    }).then(function () {
+                        var imgEl = document.querySelector("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img");
+                        if (imgEl) {
+                            imgEl.setAttribute("src", leantime.appUrl + "/api/users?profileImage=" + userId);
                         }
-                    ).done(
-                        function () {
-                            jQuery("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img").attr("src", leantime.appUrl + "/api/users?profileImage=" + userId);
 
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated")});
-                        }
-                    );
+                        leantime.toast.show({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
+                    });
                 }
             }
         );
@@ -186,38 +217,42 @@ leantime.ideasController = (function () {
 
     var initStatusDropdown = function () {
 
-        jQuery("body").on(
+        document.body.addEventListener(
             "click",
-            ".statusDropdown .dropdown-menu a",
-            function () {
+            function (e) {
+                var link = e.target.closest(".statusDropdown .dropdown-menu a");
+                if (!link) return;
 
-                var dataValue = jQuery(this).attr("data-value").split("_");
-                var dataLabel = jQuery(this).attr('data-label');
+                var dataValue = link.getAttribute("data-value").split("_");
+                var dataLabel = link.getAttribute('data-label');
 
                 if (dataValue.length == 3) {
                     var canvasItemId = dataValue[0];
                     var status = dataValue[1];
                     var statusClass = dataValue[2];
 
-
-                    jQuery.ajax(
-                        {
-                            type: 'PATCH',
-                            url: leantime.appUrl + '/api/ideas',
-                            data:
-                                {
-                                    id : canvasItemId,
-                                    box:status
-                            }
+                    fetch(leantime.appUrl + '/api/ideas', {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams({
+                            id: canvasItemId,
+                            box: status
+                        })
+                    }).then(function () {
+                        var textEl = document.querySelector("#statusDropdownMenuLink" + canvasItemId + " span.text");
+                        if (textEl) {
+                            textEl.textContent = dataLabel;
                         }
-                    ).done(
-                        function () {
-                            jQuery("#statusDropdownMenuLink" + canvasItemId + " span.text").text(dataLabel);
-                            jQuery("#statusDropdownMenuLink" + canvasItemId).removeClass().addClass("" + statusClass + " dropdown-toggle f-left status ");
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated")});
-
+                        var dropdownEl = document.querySelector("#statusDropdownMenuLink" + canvasItemId);
+                        if (dropdownEl) {
+                            dropdownEl.className = statusClass + " dropdown-toggle f-left status";
                         }
-                    );
+                        leantime.toast.show({message: leantime.i18n.__("short_notifications.status_updated"), style: "success"});
+                    });
                 }
             }
         );
@@ -229,88 +264,118 @@ leantime.ideasController = (function () {
 
         var maxHeight = 0;
 
-        var height = jQuery("html").height() - 320;
-        jQuery("#sortableIdeaKanban .column .contentInner").css("height", height);
+        var height = document.documentElement.scrollHeight - 320;
+        document.querySelectorAll("#sortableIdeaKanban .column .contentInner").forEach(function (el) {
+            el.style.height = height + "px";
+        });
 
     };
 
     var initIdeaKanban = function (statusList) {
 
-        jQuery("#sortableIdeaKanban").disableSelection();
-
-        jQuery("#sortableIdeaKanban .ticketBox").hover(function () {
-            jQuery(this).css("background", "var(--kanban-card-hover)");
-        },function () {
-            jQuery(this).css("background", "var(--kanban-card-bg)");
+        document.querySelectorAll("#sortableIdeaKanban .ticketBox").forEach(function (box) {
+            box.addEventListener("mouseenter", function () {
+                this.style.background = "var(--kanban-card-hover)";
+            });
+            box.addEventListener("mouseleave", function () {
+                this.style.background = "var(--kanban-card-bg)";
+            });
         });
 
-        jQuery("#sortableIdeaKanban .contentInner").sortable({
-            connectWith: ".contentInner",
-            items: "> .moveable",
-            tolerance: 'pointer',
-            placeholder: "ui-state-highlight",
-            forcePlaceholderSize: true,
-            cancel: ".portlet-toggle",
-            start: function (event, ui) {
-                ui.item.addClass('tilt');
-                tilt_direction(ui.item);
-            },
-            stop: function (event, ui) {
-                ui.item.removeClass("tilt");
-                jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
-                ui.item.removeData("move_handler");
-            },
-            update: function (event, ui) {
-
-
-                var statusPostData = {
-                    action: "statusUpdate",
-                    payload: {}
-                };
-
-                for (var i = 0; i < statusList.length; i++) {
-                    if (jQuery(".contentInner.status_" + statusList[i]).length) {
-                        statusPostData.payload[statusList[i]] = jQuery(".contentInner.status_" + statusList[i]).sortable('serialize');
+        function serializeSortable(containerEl) {
+            var items = containerEl.querySelectorAll(':scope > .moveable');
+            var parts = [];
+            items.forEach(function (item) {
+                if (item.id) {
+                    var idx = item.id.indexOf('_');
+                    if (idx !== -1) {
+                        parts.push(item.id.substring(0, idx) + '[]=' + item.id.substring(idx + 1));
                     }
                 }
+            });
+            return parts.join('&');
+        }
 
-                // POST to server using $.post or $.ajax
-                jQuery.ajax({
-                    type: 'POST',
-                    url: leantime.appUrl + '/api/ideas',
-                    data:statusPostData
-                });
+        document.querySelectorAll("#sortableIdeaKanban .contentInner").forEach(function (contentInner) {
+            if (contentInner._sortableInstance) contentInner._sortableInstance.destroy();
+            contentInner._sortableInstance = new Sortable(contentInner, {
+                group: 'idea-kanban',
+                draggable: '.moveable',
+                ghostClass: 'ui-state-highlight',
+                filter: '.portlet-toggle',
+                animation: 150,
 
-            }
+                onStart: function (evt) {
+                    evt.item.classList.add('tilt');
+                    tilt_direction(evt.item);
+                },
+
+                onEnd: function (evt) {
+                    evt.item.classList.remove('tilt');
+                    if (evt.item._moveHandler) {
+                        document.removeEventListener('mousemove', evt.item._moveHandler);
+                        delete evt.item._moveHandler;
+                    }
+
+                    var statusPostData = {
+                        action: "statusUpdate",
+                        payload: {}
+                    };
+
+                    for (var i = 0; i < statusList.length; i++) {
+                        var col = document.querySelector(".contentInner.status_" + statusList[i]);
+                        if (col) {
+                            statusPostData.payload[statusList[i]] = serializeSortable(col);
+                        }
+                    }
+
+                    fetch(leantime.appUrl + '/api/ideas', {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams(statusPostData)
+                    });
+                }
+            });
         });
 
         function tilt_direction(item)
         {
-            var left_pos = item.position().left,
+            var left_pos = item.getBoundingClientRect().left,
                 move_handler = function (e) {
                     if (e.pageX >= left_pos) {
-                        item.addClass("right");
-                        item.removeClass("left");
+                        item.classList.add("right");
+                        item.classList.remove("left");
                     } else {
-                        item.addClass("left");
-                        item.removeClass("right");
+                        item.classList.add("left");
+                        item.classList.remove("right");
                     }
                     left_pos = e.pageX;
                 };
-            jQuery("html").bind("mousemove", move_handler);
-            item.data("move_handler", move_handler);
+            document.addEventListener("mousemove", move_handler);
+            item._moveHandler = move_handler;
         }
 
-        jQuery(".portlet")
-            .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
-            .find(".portlet-header")
-            .addClass("ui-widget-header ui-corner-all")
-            .prepend("<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
+        document.querySelectorAll(".portlet").forEach(function (portlet) {
+            var header = portlet.querySelector(".portlet-header");
+            if (header) {
+                var toggleSpan = document.createElement("span");
+                toggleSpan.className = "portlet-toggle";
+                header.prepend(toggleSpan);
+            }
+        });
 
-        jQuery(".portlet-toggle").click(function () {
-            var icon = jQuery(this);
-            icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
-            icon.closest(".portlet").find(".portlet-content").toggle();
+        document.querySelectorAll(".portlet-toggle").forEach(function (toggle) {
+            toggle.addEventListener("click", function () {
+                this.classList.toggle("expanded");
+                var content = this.closest(".portlet").querySelector(".portlet-content");
+                if (content) {
+                    content.style.display = content.style.display === 'none' ? '' : 'none';
+                }
+            });
         });
 
     };

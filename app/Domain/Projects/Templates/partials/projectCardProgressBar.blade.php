@@ -18,31 +18,27 @@
             <span class="sr-only">{{ sprintf(__("text.percent_complete"), $percentDone) }}</span>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            @if ($project['status'] !== null && $project['status'] != '')
-                <span class="label label-{{ $project['status'] }}">
-                                {{ __("label.project_status_" . $project['status']) }}
-                            </span><br />
-            @else
-                <span class="label label-grey">{{ __("label.no_status") }}</span><br />
-            @endif
-        </div>
+    <div>
+        @if ($project['status'] !== null && $project['status'] != '')
+            <span class="label label-{{ $project['status'] }}">
+                            {{ __("label.project_status_" . $project['status']) }}
+                        </span><br />
+        @else
+            <span class="label label-grey">{{ __("label.no_status") }}</span><br />
+        @endif
     </div>
     <br />
-    <div class="row">
-        <div class="col-md-12">
-            <div class="team">
-                @foreach ($project['team'] as $member)
-                    <div class="commentImage" style="margin-right:-10px;" data-tippy-content="{{ $member['firstname'] }} {{ $member['lastname'] }}">
-                        <img
-                            style=""
-                            src="{{  BASE_URL }}/api/users?profileImage={{ $member['id'] }}&v={{ format($member['modified'])->timestamp() }}" data-tippy-content="{{ $member['firstname'] . ' ' . $member['lastname'] }}" />
-                    </div>
-                @endforeach
-            </div>
-            <div class="clearall"></div>
+    <div>
+        <div class="team">
+            @foreach ($project['team'] as $member)
+                <div class="commentImage" style="margin-right:-10px;" data-tippy-content="{{ $member['firstname'] }} {{ $member['lastname'] }}">
+                    <img
+                        style=""
+                        src="{{  BASE_URL }}/api/users?profileImage={{ $member['id'] }}&v={{ format($member['modified'])->timestamp() }}" data-tippy-content="{{ $member['firstname'] . ' ' . $member['lastname'] }}" />
+                </div>
+            @endforeach
         </div>
+        <div class="clearall"></div>
     </div>
 
 <script>

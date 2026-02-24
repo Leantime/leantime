@@ -5,7 +5,7 @@
           hx-swap="outerHTML"
           hx-trigger="change">
         <i class="fas fa-filter"></i>
-        <select data-placeholder="" title=""
+        <x-global::forms.select :bare="true" data-placeholder="" title=""
                 hx-post="{{ BASE_URL }}/hx/menu/projectSelector/update-menu"
                 hx-target="#mainProjectSelector"
                 hx-swap="outerHTML"
@@ -21,9 +21,9 @@
                    >{{ $client['name'] }}</option>
                 @endif
             @endforeach
-        </select>
+        </x-global::forms.select>
         <i class="fa-solid fa-diagram-project"></i>
-        <select data-placeholder="" name="groupBy"
+        <x-global::forms.select :bare="true" data-placeholder="" name="groupBy"
                 hx-post="{{ BASE_URL }}/hx/menu/projectSelector/update-menu"
                 hx-target="#mainProjectSelector"
                 hx-indicator=".htmx-indicator, .htmx-loaded-content"
@@ -36,14 +36,14 @@
                 >{{ $group }}</option>
 
             @endforeach
-        </select>
+        </x-global::forms.select>
         <input type="hidden" name="activeTab" value="" />
 
     </form>
 
 </div>
 
-<div class="htmx-indicator tw-ml-m tw-mr-m tw-pt-l">
+<div class="htmx-indicator tw:ml-m tw:mr-m tw:pt-l">
     <x-global::loadingText type="project" count="5" includeHeadline="false"/>
 </div>
 

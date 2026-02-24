@@ -7,11 +7,11 @@
                 <p>{{ __('text.lets_start_with_first_task') }}</p>
                 <br />
                 <label><strong>{{ __('label.whats_one_thing_to_do_today') }}</strong></label>
-                <input type="text" id="firstTask" name="headline" value="" placeholder="{{ __('input.placeholder.finish_slide_deck') }}" style="width:100%;" required />
+                <x-global::forms.input id="firstTask" name="headline" value="" placeholder="{{ __('input.placeholder.finish_slide_deck') }}" style="width:100%;" required />
                 <br />
                 <p class="text-muted">{{ __('text.first_task_help') }}</p>
                 <br />
-                <input type="submit" value="{{ __('buttons.lets_go') }}" class="btn btn-primary" />
+                <x-global::button submit type="primary">{{ __('buttons.lets_go') }}</x-global::button>
 
             </div>
             <div class="col-md-4">
@@ -19,9 +19,6 @@
                     {!! file_get_contents(ROOT . "/dist/images/svg/undraw_happy_news_re_tsbd.svg") !!}
                 </div>
             </div>
-        </div>
-        <div class="row">
-
         </div>
     </form>
 </div>

@@ -29,6 +29,6 @@
     </script>
 @endif
 
-<script src="{!! BASE_URL !!}/dist/js/compiled-footer.{!! $version !!}.min.js"></script>
+@vite(['resources/js/compiled-footer.js'])
 
 @dispatchEvent('beforeBodyClose')

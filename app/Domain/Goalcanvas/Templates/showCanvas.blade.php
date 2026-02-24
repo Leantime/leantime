@@ -47,47 +47,31 @@
         <div class="pagetitle">
             <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
             @if (count($allCanvas) > 0)
-                <span class="dropdown dropdownWrapper headerEditDropdown">
-                    <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i
-                            class="fa-solid fa-ellipsis-v"></i></a>
-                    <ul class="dropdown-menu editCanvasDropdown">
-                        @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/goalcanvas/bigRock/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
-                            <li><a href="javascript:void(0)" class="cloneCanvasLink ">{!! __('links.icon.clone') !!}</a></li>
-                            <li><a href="javascript:void(0)" class="mergeCanvasLink ">{!! __('links.icon.merge') !!}</a></li>
-                            <li><a href="javascript:void(0)" class="importCanvasLink ">{!! __('links.icon.import') !!}</a>
-                            </li>
-                        @endif
-                        <li><a
-                                href="{{ BASE_URL }}/goalcanvas/export/{{ $currentCanvas }}">{!! __('links.icon.export') !!}</a>
-                        </li>
-                        <li><a href="javascript:window.print();">{!! __('links.icon.print') !!}</a></li>
-                        @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/goalcanvas/delCanvas/{{ $currentCanvas }}"
-                                    class="delete">{!!__('links.icon.delete') !!}</a></li>
-                        @endif
-                    </ul>
-                </span>
+                <x-global::elements.dropdown containerClass="headerEditDropdown">
+                    @if ($login::userIsAtLeast($roles::$editor))
+                        <li><a href="#/goalcanvas/bigRock/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
+                        <li><a href="javascript:void(0)" class="cloneCanvasLink ">{!! __('links.icon.clone') !!}</a></li>
+                        <li><a href="javascript:void(0)" class="mergeCanvasLink ">{!! __('links.icon.merge') !!}</a></li>
+                        <li><a href="javascript:void(0)" class="importCanvasLink ">{!! __('links.icon.import') !!}</a></li>
+                    @endif
+                    <li><a href="{{ BASE_URL }}/goalcanvas/export/{{ $currentCanvas }}" hx-boost="false">{!! __('links.icon.export') !!}</a></li>
+                    <li><a href="javascript:window.print();">{!! __('links.icon.print') !!}</a></li>
+                    @if ($login::userIsAtLeast($roles::$editor))
+                        <li><a href="#/goalcanvas/delCanvas/{{ $currentCanvas }}" class="delete">{!! __('links.icon.delete') !!}</a></li>
+                    @endif
+                </x-global::elements.dropdown>
             @endif
             <h1>{{ __('headline.goal.board') }} //
                 @if (count($allCanvas) > 0)
-                    <span class="dropdown dropdownWrapper">
-                        <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                            {{ $canvasTitle }}&nbsp;<i class="fa fa-caret-down"></i>
-                        </a>
-
-                        <ul class="dropdown-menu canvasSelector">
-                            @if ($login::userIsAtLeast($roles::$editor))
-                                <li><a href="#/goalcanvas/bigRock">{!! __('links.icon.create_new_bigrock') !!}</a></li>
-                            @endif
-                            <li class="border"></li>
-                            @foreach ($allCanvas as $canvasRow)
-                                <li><a
-                                        href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}'>{{ $canvasRow['title'] }}</a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </span>
+                    <x-global::elements.link-dropdown :label="$canvasTitle" triggerClass="header-title-dropdown">
+                        @if ($login::userIsAtLeast($roles::$editor))
+                            <li><a href="#/goalcanvas/bigRock">{!! __('links.icon.create_new_bigrock') !!}</a></li>
+                        @endif
+                        <li class="border"></li>
+                        @foreach ($allCanvas as $canvasRow)
+                            <li><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}'>{{ $canvasRow['title'] }}</a></li>
+                        @endforeach
+                    </x-global::elements.link-dropdown>
                 @endif
             </h1>
         </div>
@@ -99,79 +83,50 @@
 
             <?php echo $tpl->displayNotification(); ?>
 
-            <div class="row">
-                <div class="col-md-3">
+            <div class="tw:flex tw:justify-between tw:items-center">
+                <div>
                     @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
-                        <a href="#/goalcanvas/editCanvasItem?type={{ $elementName }}" class="btn btn-primary"
-                            id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</a>
+                        <x-global::button link="#/goalcanvas/editCanvasItem?type={{ $elementName }}" type="primary" id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</x-global::button>
                     @endif
                 </div>
 
-                <div class="col-md-6 center">
+                <div>
                 </div>
 
-                <div class="col-md-3">
+                <div>
                     <div class="pull-right">
-                        <div class="btn-group viewDropDown">
-                            @if (count($allCanvas) > 0 && !empty($statusLabels))
-                                @php
-                                    $filterStatus = $filter['status'] ?? 'all';
-                                    $filterRelates = $filter['relates'] ?? 'all';
-                                @endphp
+                        @if (count($allCanvas) > 0 && !empty($statusLabels))
+                            @php
+                                $filterStatus = $filter['status'] ?? 'all';
+                                if ($filterStatus != 'all' && !isset($statusLabels[$filterStatus])) { $filterStatus = 'all'; }
+                                $filterRelates = $filter['relates'] ?? 'all';
+                                $statusFilterLabel = $filterStatus == 'all'
+                                    ? '<i class="fas fa-filter"></i> ' . __('status.all')
+                                    : '<i class="fas fa-fw ' . __($statusLabels[$filterStatus]['icon']) . '"></i> ' . $statusLabels[$filterStatus]['title'];
+                            @endphp
+                            <x-global::elements.button-dropdown :label="$statusFilterLabel" type="default">
+                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all') class="active" @endif><i class="fas fa-globe"></i> {!! __('status.all') !!}</a></li>
+                                @foreach ($statusLabels as $key => $data)
+                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}" @if ($filterStatus == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {!! $data['title'] !!}</a></li>
+                                @endforeach
+                            </x-global::elements.button-dropdown>
+                        @endif
 
-                                @if (($filterStatus ?? '') == 'all')
-                                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-filter"></i>
-                                        {!! __('status.all') !!} {!! __('links.view') !!}</button>
-                                @else
-                                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i
-                                            class="fas fa-fw {{ __($statusLabels[$filterStatus]['icon']) }}"></i>
-                                        {{ $statusLabels[$filterStatus]['title'] }} {{ __('links.view') }}</button>
-                                @endif
-                                <ul class="dropdown-menu">
-                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all')
-                                            class="active"
-                            @endif><i class="fas fa-globe"></i> {!! __('status.all') !!}</a></li>
-                            @foreach ($statusLabels as $key => $data)
-                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}"
-                                        @if ($filterStatus == $key)
-                                        class="active"
-                            @endif><i class="fas fa-fw {{ $data['icon'] }}"></i>
-                            {!! $data['title'] !!}</a></li>
-                            @endforeach
-                            </ul>
-                            @endif
-                        </div>
-
-                        <div class="btn-group viewDropDown">
-                            @if (count($allCanvas) > 0 && !empty($relatesLabels))
-                                @php
-                                    $filterStatus = $filter['status'] ?? 'all';
-                                    $filterRelates = $filter['relates'] ?? 'all';
-                                @endphp
-
-                                @if ($filterRelates == 'all')
-                                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i
-                                            class="fas fa-fw fa-globe"></i> {{ __('relates.all') }}
-                                        {{ __('links.view') }}</button>
-                                @else
-                                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i
-                                            class="fas fa-fw {{ __($relatesLabels[$filterRelates]['icon']) }}"></i>
-                                        {{ $relatesLabels[$filterRelates]['title'] }} {{ __('links.view') }}</button>
-                                @endif
-                                <ul class="dropdown-menu">
-                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all')
-                                            class="active"
-                            @endif><i class="fas fa-globe"></i> {{ __('relates.all') }}</a></li>
-                            @foreach ($relatesLabels as $key => $data)
-                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}"
-                                        @if ($filterRelates == $key)
-                                        class="active"
-                            @endif><i class="fas fa-fw {{ $data['icon'] }}"></i>
-                            {{ $data['title'] }}</a></li>
-                            @endforeach
-                            </ul>
-                            @endif
-                        </div>
+                        @if (count($allCanvas) > 0 && !empty($relatesLabels))
+                            @php
+                                $filterRelates = $filter['relates'] ?? 'all';
+                                if ($filterRelates != 'all' && !isset($relatesLabels[$filterRelates])) { $filterRelates = 'all'; }
+                                $relatesFilterLabel = $filterRelates == 'all'
+                                    ? '<i class="fas fa-fw fa-globe"></i> ' . __('relates.all')
+                                    : '<i class="fas fa-fw ' . __($relatesLabels[$filterRelates]['icon']) . '"></i> ' . $relatesLabels[$filterRelates]['title'];
+                            @endphp
+                            <x-global::elements.button-dropdown :label="$relatesFilterLabel" type="default">
+                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ __('relates.all') }}</a></li>
+                                @foreach ($relatesLabels as $key => $data)
+                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}" @if ($filterRelates == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
+                                @endforeach
+                            </x-global::elements.button-dropdown>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -180,10 +135,8 @@
 
 
             @if (count($allCanvas) > 0)
-                <div id="sortableCanvasKanban" class="sortableTicketList disabled" style="padding-top:15px;">
+                <div id="sortableCanvasKanban" class="sortableTicketList disabled tw:pt-4">
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="row">
                                 @foreach ($canvasItems as $row)
                                     @php
                                         $filterStatus = $filter['status'] ?? 'all';
@@ -200,26 +153,16 @@
                                         @endphp
                                         <div class="col-md-4">
                                             <div class="ticketBox" id="item_{{ $row['id'] }}">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="inlineDropDownContainer" style="float:right;">
-                                                            @if ($login::userIsAtLeast($roles::$editor))
-                                                                <a href="javascript:void(0)"
-                                                                    class="dropdown-toggle ticketDropDown"
-                                                                    data-toggle="dropdown">
-                                                                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                                                </a>
-                                                                <ul class="dropdown-menu">
-                                                                    <li class="nav-header">{{ __('subtitles.edit') }}</li>
-                                                                    <li><a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
-                                                                            data="item_{{ $row['id'] }}">
-                                                                            {!!   __('links.edit_canvas_item') !!}</a></li>
-                                                                    <li><a href="#/goalcanvas/delCanvasItem/{{ $row['id'] }}"
-                                                                            data="item_{{ $row['id'] }}">
-                                                                        {!!  __('links.delete_canvas_item') !!}</a></li>
-                                                    </ul>
-                                                @endif
-                                            </div>
+                                                        @if ($login::userIsAtLeast($roles::$editor))
+                                                <x-global::elements.dropdown class="pull-right">
+                                                    <li><a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
+                                                            data="item_{{ $row['id'] }}">
+                                                            {!! __('links.edit_canvas_item') !!}</a></li>
+                                                    <li><a href="#/goalcanvas/delCanvasItem/{{ $row['id'] }}"
+                                                            data="item_{{ $row['id'] }}">
+                                                        {!! __('links.delete_canvas_item') !!}</a></li>
+                                                </x-global::elements.dropdown>
+                                            @endif
 
                                             <h4><strong>Goal:</strong> <a
                                                     href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
@@ -240,14 +183,10 @@
                                                 }
                                             @endphp
 
-                                            <div class="row">
-                                                <div class="col-md-4"></div>
-                                                <div class="col-md4 center">
-                                                    <small>{{ sprintf(__('text.percent_complete'), $percentDone) }}</small>
-                                                </div>
-                                                <div class="col-md-4"></div>
+                                            <div class="center">
+                                                <small>{{ sprintf(__('text.percent_complete'), $percentDone) }}</small>
                                             </div>
-                                            <div class="progress" style="margin-bottom:0px;">
+                                            <div class="progress tw:mb-0">
                                                 <div class="progress-bar progress-bar-success"
                                                     role="progressbar" aria-valuenow="{{ $percentDone }}"
                                                     aria-valuemin="0" aria-valuemax="100"
@@ -256,28 +195,25 @@
                                                         class="sr-only">{{ sprintf(__('text.percent_complete'), $percentDone) }}</span>
                                                 </div>
                                             </div>
-                                            <div class="row" style="padding-bottom:0px;">
+                                            <div class="row tw:pb-0">
                                                 <div class="col-md-4">
                                                     <small>Start:<br />{{ $metricTypeFront . $row['startValue'] . $metricTypeBack }}</small>
                                                 </div>
                                                 <div class="col-md-4 center">
                                                     <small>{{ __('label.current') }}:<br />{{ $metricTypeFront . $row['currentValue'] . $metricTypeBack }}</small>
                                                 </div>
-                                                <div class="col-md-4" style="text-align:right">
+                                                <div class="col-md-4 align-right">
                                                     <small>{{ __('label.goal') }}:<br />{{ $metricTypeFront . $row['endValue'] . $metricTypeBack }}</small>
                                                 </div>
                                             </div>
 
-                                            <div class="clearfix" style="padding-bottom: 8px;"></div>
+                                            <div class="clearfix tw:pb-2"></div>
 
                                             @if (!empty($statusLabels))
                                                 <div
-                                                    class="dropdown ticketDropdown statusDropdown colorized show firstDropdown">
-                                                    <a class="dropdown-toggle f-left status label-{{ $row['status'] != '' ? $statusLabels[$row['status']]['dropdown'] : '' }}"
-                                                        href="javascript:void(0);" role="button"
-                                                        id="statusDropdownMenuLink{{ $row['id'] }}"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
+                                                    class="dropdown ticketDropdown statusDropdown colorized firstDropdown">
+                                                    <a href="javascript:void(0)" class="dropdown-toggle f-left status label-{{ $row['status'] != '' ? $statusLabels[$row['status']]['dropdown'] : '' }}" data-toggle="dropdown"
+                                                        id="statusDropdownMenuLink{{ $row['id'] }}">
                                                         <span
                                                             class="text">{{ $row['status'] != '' ? $statusLabels[$row['status']]['title'] : '' }}</span>
                                                         <i class="fa fa-caret-down" aria-hidden="true"></i>
@@ -290,6 +226,7 @@
                                                             @if ($data['active'] || true)
                                                                 <li class='dropdown-item'>
                                                                     <a href="javascript:void(0);"
+                                                                        onclick="document.activeElement.blur();"
                                                                         class="label-{{ $data['dropdown'] }}"
                                                                         data-label='{{ $data['title'] }}'
                                                                         data-value="{{ $row['id'] . '/' . $key }}"
@@ -303,12 +240,9 @@
 
                                             @if (!empty($relatesLabels))
                                                 <div
-                                                    class="dropdown ticketDropdown relatesDropdown colorized show firstDropdown">
-                                                    <a class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}"
-                                                        href="javascript:void(0);" role="button"
-                                                        id="relatesDropdownMenuLink{{ $row['id'] }}"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
+                                                    class="dropdown ticketDropdown relatesDropdown colorized firstDropdown">
+                                                    <a href="javascript:void(0)" class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}" data-toggle="dropdown"
+                                                        id="relatesDropdownMenuLink{{ $row['id'] }}">
                                                         <span
                                                             class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span>
                                                         <i class="fa fa-caret-down" aria-hidden="true"></i>
@@ -321,6 +255,7 @@
                                                             @if ($data['active'] || true)
                                                                 <li class='dropdown-item'>
                                                                     <a href="javascript:void(0);"
+                                                                        onclick="document.activeElement.blur();"
                                                                         class="label-{{ $data['dropdown'] }}"
                                                                         data-label='{{ $data['title'] }}'
                                                                         data-value="{{ $row['id'] . '/' . $key }}"
@@ -333,25 +268,22 @@
                                             @endif
 
                                             <div
-                                                class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
-                                                <a class="dropdown-toggle f-left" href="javascript:void(0);"
-                                                    role="button"
-                                                    id="userDropdownMenuLink{{ $row['id'] }}"
-                                                    data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
+                                                class="dropdown ticketDropdown userDropdown noBg right lastDropdown dropRight">
+                                                <a href="javascript:void(0)" class="dropdown-toggle f-left" data-toggle="dropdown"
+                                                    id="userDropdownMenuLink{{ $row['id'] }}">
                                                     <span class="text">
                                                         @if ($row['authorFirstname'] != '')
                                                             <span id='userImage{{ $row['id'] }}'>
                                                                 <img src='{{ BASE_URL }}/api/users?profileImage={{ $row['author'] }}'
                                                                     width='25'
-                                                                    style='vertical-align: middle;' />
+                                                                    class="tw:align-middle" />
                                                             </span>
                                                             <span id='user{{ $row['id'] }}'></span>
                                                         @else
                                                             <span id='userImage{{ $row['id'] }}'>
                                                                 <img src='{{ BASE_URL }}/api/users?profileImage=false'
                                                                     width='25'
-                                                                    style='vertical-align: middle;' />
+                                                                    class="tw:align-middle" />
                                                             </span>
                                                             <span id='user{{ $row['id'] }}'></span>
                                                         @endif
@@ -364,12 +296,13 @@
                                                     @foreach ($users as $user)
                                                         <li class='dropdown-item'>
                                                             <a href='javascript:void(0);'
+                                                                onclick="document.activeElement.blur();"
                                                                 data-label='{{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}'
                                                                 data-value='{{ $row['id'] . '_' . $user['id'] . '_' . $user['profileId'] }}'
                                                                 id='userStatusChange{{ $row['id'] . $user['id'] }}'>
                                                                 <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}'
                                                                     width='25'
-                                                                    style='vertical-align: middle; margin-right:5px;' />
+                                                                    class="tw:align-middle tw:mr-1" />
                                                                 {{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
                                                             </a>
                                                         </li>
@@ -377,7 +310,7 @@
                                                 </ul>
                                             </div>
 
-                                            <div class="right" style="margin-right:10px;">
+                                            <div class="right tw:mr-2.5">
                                                 <a href="#/goalcanvas/editCanvasComment/{{ $row['id'] }}"
                                                     class="commentCountLink"
                                                     data="item_{{ $row['id'] }}"><span
@@ -385,13 +318,12 @@
                                                 <small>{{ $nbcomments }}</small>
                                             </div>
 
-                                        </div>
-                                    </div>
-
                                     @if ($row['milestoneHeadline'] != '')
                                         <br />
                                         <div hx-trigger="load" hx-indicator=".htmx-indicator"
-                                            hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $row['milestoneId'] }}">
+                                            hx-target="this" hx-swap="innerHTML"
+                                            hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $row['milestoneId'] }}"
+                                            aria-live="polite">
                                             <div class="htmx-indicator">
                                                 {{ __('label.loading_milestone') }}
                                             </div>
@@ -404,8 +336,6 @@
                 </div>
                 <br />
             </div>
-        </div>
-    </div>
 
     @if (count($canvasItems) == 0)
         <br /><br />
@@ -440,15 +370,15 @@
 
                     @if ($login::userIsAtLeast($roles::$editor))
                         <br /><br />
-                        <a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
-                            {{ __('links.icon.create_new_board') }}
-                        </a>
+                        <x-global::button link="javascript:void(0)" type="primary" class="addCanvasLink">
+                            {!! __('links.icon.create_new_board') !!}
+                        </x-global::button>
                     @endif
                 </div>
             @endif
 
             @if (!empty($disclaimer) && count($allCanvas) > 0)
-                <small class="align-center">{{ $disclaimer }}</small>
+                <small class="center">{{ $disclaimer }}</small>
             @endif
 
             {!! $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render() !!}

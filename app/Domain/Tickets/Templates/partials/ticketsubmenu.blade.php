@@ -6,13 +6,8 @@
 
 @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$editor))
 
-    <div class="inlineDropDownContainer" style="float:right;">
-
-        <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-        </a>
-        <ul class="dropdown-menu">
-            <li class="nav-header">{{ __("subtitles.todo") }}</li>
+    <x-global::elements.dropdown containerClass="pull-right">
+            <li class="nav-header border">{{ __("subtitles.todo") }}</li>
             @dispatchEvent("beforeShowTicket", ["ticket"=>$ticket])
             <li><a href="#/tickets/showTicket/{{ $ticket["id"] }}" class=''><i class="fa fa-edit"></i> {{  __("links.edit_todo") }}</a></li>
             @dispatchEvent("beforeMoveTicket", ["ticket"=>$ticket])
@@ -30,11 +25,10 @@
 
             <li class="nav-header border">{{  __("subtitles.track_time") }}</li>
             @dispatchEvent("beforeTimer", ["ticket"=>$ticket])
-            <li class="timerContainer tw-px-[10px]">
+            <li class="timerContainer tw:px-[10px]">
                 @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock, 'style'=> 'full'])
             </li>
             @dispatchEvent("end")
-        </ul>
-    </div>
+    </x-global::elements.dropdown>
 
 @endif

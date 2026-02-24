@@ -8,43 +8,20 @@ leantime.canvasController = (function () {
 
     var initFilterBar = function () {
 
-        jQuery(window).bind("load", function () {
-            jQuery(".loading").fadeOut();
-            jQuery(".filterBar .row-fluid").css("opacity", "1");
-
-
+        window.addEventListener("load", function () {
+            document.querySelectorAll(".loading").forEach(function (el) {
+                el.style.display = 'none';
+            });
+            document.querySelectorAll(".filterBar .row-fluid").forEach(function (el) {
+                el.style.opacity = "1";
+            });
         });
 
     };
 
     var initCanvasLinks = function () {
-
-        jQuery(".addCanvasLink").nyroModal();
-
-        jQuery(".editCanvasLink").click(function () {
-
-            jQuery('#editCanvas').modal('show');
-
-        });
-
-        jQuery(".cloneCanvasLink").click(function () {
-
-            jQuery('#cloneCanvas').modal('show');
-
-        });
-
-        jQuery(".mergeCanvasLink").click(function () {
-
-            jQuery('#mergeCanvas').modal('show');
-
-        });
-
-        jQuery(".importCanvasLink").click(function () {
-
-            jQuery('#importCanvas').modal('show');
-
-        });
-
+        // No-op: inline modals now use native <dialog> with onclick handlers.
+        // Generic canvas templates use modalManager hash-link delegation.
     };
 
     var closeModal = false;
@@ -59,14 +36,16 @@ leantime.canvasController = (function () {
         autoSizable: true,
         callbacks: {
             beforeShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
+                document.querySelectorAll(".showDialogOnLoad").forEach(function (el) {
+                    el.style.display = '';
+                });
                 if (closeModal == true) {
                     closeModal = false;
                     location.reload();
                 }
             },
             afterShowCont: function () {
-                window.htmx.process('.nyroModalCont');
+                window.htmx.process('#global-modal-content');
                 jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
 
             },
@@ -90,19 +69,28 @@ leantime.canvasController = (function () {
 
     var toggleMilestoneSelectors = function (trigger) {
         if (trigger == 'existing') {
-            jQuery('#newMilestone, #milestoneSelectors').hide('fast');
-            jQuery('#existingMilestone').show();
+            document.querySelectorAll('#newMilestone, #milestoneSelectors').forEach(function (el) {
+                el.style.display = 'none';
+            });
+            var existingEl = document.getElementById('existingMilestone');
+            if (existingEl) { existingEl.style.display = ''; }
             _initModals();
         }
         if (trigger == 'new') {
-            jQuery('#newMilestone').show();
-            jQuery('#existingMilestone, #milestoneSelectors').hide('fast');
+            var newEl = document.getElementById('newMilestone');
+            if (newEl) { newEl.style.display = ''; }
+            document.querySelectorAll('#existingMilestone, #milestoneSelectors').forEach(function (el) {
+                el.style.display = 'none';
+            });
             _initModals();
         }
 
         if (trigger == 'hide') {
-            jQuery('#newMilestone, #existingMilestone').hide('fast');
-            jQuery('#milestoneSelectors').show('fast');
+            document.querySelectorAll('#newMilestone, #existingMilestone').forEach(function (el) {
+                el.style.display = 'none';
+            });
+            var selectorsEl = document.getElementById('milestoneSelectors');
+            if (selectorsEl) { selectorsEl.style.display = ''; }
         }
     };
 
@@ -112,35 +100,36 @@ leantime.canvasController = (function () {
 
     var initUserDropdown = function () {
 
-        jQuery("body").on(
+        document.body.addEventListener(
             "click",
-            ".userDropdown .dropdown-menu a",
-            function () {
+            function (e) {
+                var target = e.target.closest(".userDropdown .dropdown-menu a");
+                if (!target) { return; }
 
-                var dataValue = jQuery(this).attr("data-value").split("_");
-                var dataLabel = jQuery(this).attr('data-label');
+                var dataValue = target.getAttribute("data-value").split("_");
+                var dataLabel = target.getAttribute('data-label');
 
                 if (dataValue.length == 3) {
                     var canvasId = dataValue[0];
                     var userId = dataValue[1];
                     var profileImageId = dataValue[2];
 
-                    jQuery.ajax(
-                        {
-                            type: 'PATCH',
-                            url: leantime.appUrl + '/api/' + canvasName + 'canvas',
-                            data:
-                                {
-                                    id : canvasId,
-                                    author:userId
-                            }
-                        }
-                    ).done(
-                        function () {
-                            jQuery("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img").attr("src", leantime.appUrl + "/api/users?profileImage=" + userId);
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
-                        }
-                    );
+                    fetch(leantime.appUrl + '/api/' + canvasName + 'canvas', {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams({
+                            id: canvasId,
+                            author: userId
+                        })
+                    }).then(function () {
+                        var img = document.querySelector("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img");
+                        if (img) { img.setAttribute("src", leantime.appUrl + "/api/users?profileImage=" + userId); }
+                        leantime.toast.show({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
+                    });
                 }
             }
         );
@@ -148,38 +137,38 @@ leantime.canvasController = (function () {
 
     var initStatusDropdown = function () {
 
-        jQuery("body").on(
+        document.body.addEventListener(
             "click",
-            ".statusDropdown .dropdown-menu a",
-            function () {
+            function (e) {
+                var target = e.target.closest(".statusDropdown .dropdown-menu a");
+                if (!target) { return; }
 
-                var dataValue = jQuery(this).attr("data-value").split("/");
-                var dataLabel = jQuery(this).attr('data-label');
+                var dataValue = target.getAttribute("data-value").split("/");
+                var dataLabel = target.getAttribute('data-label');
 
                 if (dataValue.length == 2) {
                     var canvasItemId = dataValue[0];
                     var status = dataValue[1];
-                    var statusClass = jQuery(this).attr('class');
+                    var statusClass = target.getAttribute('class');
 
-
-                    jQuery.ajax(
-                        {
-                            type: 'PATCH',
-                            url: leantime.appUrl + '/api/' + canvasName + 'canvas',
-                            data:
-                                {
-                                    id : canvasItemId,
-                                    status: status
-                            }
-                        }
-                    ).done(
-                        function () {
-                            jQuery("#statusDropdownMenuLink" + canvasItemId + " span.text").text(dataLabel);
-                            jQuery("#statusDropdownMenuLink" + canvasItemId).removeClass().addClass(statusClass + " dropdown-toggle f-left status ");
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated")});
-
-                        }
-                    );
+                    fetch(leantime.appUrl + '/api/' + canvasName + 'canvas', {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams({
+                            id: canvasItemId,
+                            status: status
+                        })
+                    }).then(function () {
+                        var textEl = document.querySelector("#statusDropdownMenuLink" + canvasItemId + " span.text");
+                        if (textEl) { textEl.textContent = dataLabel; }
+                        var linkEl = document.getElementById("statusDropdownMenuLink" + canvasItemId);
+                        if (linkEl) { linkEl.className = statusClass + " dropdown-toggle f-left status "; }
+                        leantime.toast.show({message: leantime.i18n.__("short_notifications.status_updated")});
+                    });
                 }
             }
         );
@@ -188,42 +177,178 @@ leantime.canvasController = (function () {
 
     var initRelatesDropdown = function () {
 
-        jQuery("body").on(
+        document.body.addEventListener(
             "click",
-            ".relatesDropdown .dropdown-menu a",
-            function () {
+            function (e) {
+                var target = e.target.closest(".relatesDropdown .dropdown-menu a");
+                if (!target) { return; }
 
-                var dataValue = jQuery(this).attr("data-value").split("/");
-                var dataLabel = jQuery(this).attr('data-label');
+                var dataValue = target.getAttribute("data-value").split("/");
+                var dataLabel = target.getAttribute('data-label');
 
                 if (dataValue.length == 2) {
                     var canvasItemId = dataValue[0];
                     var relates = dataValue[1];
-                    var relatesClass = jQuery(this).attr('class');
+                    var relatesClass = target.getAttribute('class');
 
-
-                    jQuery.ajax(
-                        {
-                            type: 'PATCH',
-                            url: leantime.appUrl + '/api/' + canvasName + 'canvas',
-                            data:
-                                {
-                                    id : canvasItemId,
-                                    relates: relates
-                            }
-                        }
-                    ).done(
-                        function () {
-                            jQuery("#relatesDropdownMenuLink" + canvasItemId + " span.text").text(dataLabel);
-                            jQuery("#relatesDropdownMenuLink" + canvasItemId).removeClass().addClass(relatesClass + " dropdown-toggle f-left relates ");
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.relates_updated")});
-
-                        }
-                    );
+                    fetch(leantime.appUrl + '/api/' + canvasName + 'canvas', {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams({
+                            id: canvasItemId,
+                            relates: relates
+                        })
+                    }).then(function () {
+                        var textEl = document.querySelector("#relatesDropdownMenuLink" + canvasItemId + " span.text");
+                        if (textEl) { textEl.textContent = dataLabel; }
+                        var linkEl = document.getElementById("relatesDropdownMenuLink" + canvasItemId);
+                        if (linkEl) { linkEl.className = relatesClass + " dropdown-toggle f-left relates "; }
+                        leantime.toast.show({message: leantime.i18n.__("short_notifications.relates_updated")});
+                    });
                 }
             }
         );
 
+    };
+
+    /**
+     * Factory: creates a domain-specific canvas controller.
+     *
+     * @param {string} name       Canvas domain name (e.g. 'lean', 'swot')
+     * @param {object} [config]   Optional overrides
+     * @param {number} [config.nbRows]          Number of numbered rows for setRowHeights
+     * @param {string[]} [config.rowSelectors]   Custom row selectors (e.g. ['stakeholderRow','financialsRow'])
+     * @param {object} [config.extras]           Extra methods to merge into the controller
+     * @returns {object} Controller with standard canvas methods
+     */
+    var createController = function (name, config) {
+        config = config || {};
+        var _name = name;
+        var _closeModal = false;
+
+        var _canvasoptions = function () {
+            return {
+                sizes: { minW: 700, minH: 1000 },
+                resizable: true,
+                autoSizable: true,
+                callbacks: {
+                    beforeShowCont: function () {
+                        document.querySelectorAll(".showDialogOnLoad").forEach(function (el) {
+                            el.style.display = '';
+                        });
+                        if (_closeModal) {
+                            _closeModal = false;
+                            location.reload();
+                        }
+                    },
+                    afterShowCont: function () {
+                        window.htmx.process('#global-modal-content');
+                        jQuery("." + _name + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + _name + "CanvasMilestone .deleteMilestone").nyroModal(_canvasoptions());
+                    },
+                    beforeClose: function () {
+                        location.reload();
+                    }
+                },
+                titleFromIframe: true
+            };
+        };
+
+        var _initModals = function () {
+            jQuery("." + _name + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + _name + "CanvasMilestone .deleteMilestone").nyroModal(_canvasoptions());
+        };
+
+        // Build setRowHeights based on config
+        var _setRowHeights;
+        if (config.rowSelectors && config.rowSelectors.length > 0) {
+            // Custom named rows (e.g. sb canvas)
+            _setRowHeights = function () {
+                config.rowSelectors.forEach(function (selector) {
+                    var maxHeight = 0;
+                    document.querySelectorAll("#" + selector + " div.contentInner").forEach(function (el) {
+                        if (el.offsetHeight > maxHeight) {
+                            maxHeight = el.offsetHeight + 35;
+                        }
+                    });
+                    document.querySelectorAll("#" + selector + " .column .contentInner").forEach(function (el) {
+                        el.style.height = maxHeight + "px";
+                    });
+                });
+            };
+        } else if (config.nbRows && config.nbRows > 0) {
+            // Standard numbered rows
+            _setRowHeights = function () {
+                var nbRows = config.nbRows;
+                var rowNames = ['firstRow', 'secondRow', 'thirdRow', 'fourthRow'];
+                var rowHeight = document.documentElement.offsetHeight - 320 - 20 * nbRows;
+                if (nbRows === 2) { rowHeight -= 25; }
+
+                for (var i = 0; i < nbRows && i < rowNames.length; i++) {
+                    var rowSelector = "#" + rowNames[i];
+                    var thisRowHeight = rowHeight / nbRows;
+                    if (nbRows >= 3) { thisRowHeight = rowHeight * 0.333; }
+                    document.querySelectorAll(rowSelector + " div.contentInner").forEach(function (el) {
+                        if (el.offsetHeight > thisRowHeight) {
+                            thisRowHeight = el.offsetHeight + 50;
+                        }
+                    });
+                    document.querySelectorAll(rowSelector + " .column .contentInner").forEach(function (el) {
+                        el.style.height = thisRowHeight + "px";
+                    });
+                }
+            };
+        } else {
+            // No-op (sm, sq canvases)
+            _setRowHeights = function () {};
+        }
+
+        var controller = {
+            setCloseModal: function () { _closeModal = true; },
+            toggleMilestoneSelectors: function (trigger) {
+                if (trigger == 'existing') {
+                    document.querySelectorAll('#newMilestone, #milestoneSelectors').forEach(function (el) {
+                        el.style.display = 'none';
+                    });
+                    var existingEl = document.getElementById('existingMilestone');
+                    if (existingEl) { existingEl.style.display = ''; }
+                    _initModals();
+                }
+                if (trigger == 'new') {
+                    var newEl = document.getElementById('newMilestone');
+                    if (newEl) { newEl.style.display = ''; }
+                    document.querySelectorAll('#existingMilestone, #milestoneSelectors').forEach(function (el) {
+                        el.style.display = 'none';
+                    });
+                    _initModals();
+                }
+                if (trigger == 'hide') {
+                    document.querySelectorAll('#newMilestone, #existingMilestone').forEach(function (el) {
+                        el.style.display = 'none';
+                    });
+                    var selectorsEl = document.getElementById('milestoneSelectors');
+                    if (selectorsEl) { selectorsEl.style.display = ''; }
+                }
+            },
+            openModalManually: function (url) { jQuery.nmManual(url, _canvasoptions); },
+            initUserDropdown: initUserDropdown,
+            initStatusDropdown: initStatusDropdown,
+            initRelatesDropdown: initRelatesDropdown,
+            setRowHeights: _setRowHeights
+        };
+
+        // Merge any extras (e.g. goalCanvasController.initProgressChart)
+        if (config.extras) {
+            for (var key in config.extras) {
+                if (config.extras.hasOwnProperty(key)) {
+                    controller[key] = config.extras[key];
+                }
+            }
+        }
+
+        return controller;
     };
 
     // Make public what you want to have public, everything else is private
@@ -236,7 +361,8 @@ leantime.canvasController = (function () {
         initRelatesDropdown:initRelatesDropdown,
         setCloseModal:setCloseModal,
         toggleMilestoneSelectors:toggleMilestoneSelectors,
-        openModalManually:openModalManually
+        openModalManually:openModalManually,
+        createController:createController
     };
 
 })();

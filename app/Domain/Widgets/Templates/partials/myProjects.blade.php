@@ -8,7 +8,8 @@
      hx-get="{{BASE_URL}}/widgets/myProjects/get"
      hx-trigger="HTMX.updateProjectList from:body"
      hx-target="#myProjectsWidget"
-     hx-swap="outerHTML">
+     hx-swap="outerHTML"
+     aria-live="polite">
     @if (count($allProjects) == 0)
             <br /><br />
             <div class='center'>
@@ -16,7 +17,7 @@
                     {{ __('notifications.not_assigned_to_any_project') }}
                     @if($login::userIsAtLeast($roles::$manager))
                         <br /><br />
-                        <a href='{{ BASE_URL }}/projects/newProject' class='btn btn-primary'>{{ __('link.new_project') }}</a>
+                        <x-global::button link="{{ BASE_URL }}/projects/newProject" type="primary">{{ __('link.new_project') }}</x-global::button>
                     @endif
                 </div>
             </div>

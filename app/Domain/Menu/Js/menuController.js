@@ -9,62 +9,50 @@ leantime.menuController = (function () {
             return;
         }
 
-        var submenuDisplay = jQuery('#submenu-' + submenuName).css('display');
+        var submenuEl = document.querySelector('#submenu-' + submenuName);
+        var iconEl = document.querySelector('#submenu-icon-' + submenuName);
         var submenuState = '';
 
-        if (submenuDisplay == 'none') {
-            jQuery('#submenu-' + submenuName).css('display', 'block');
-            jQuery('#submenu-icon-' + submenuName).removeClass('fa-angle-right');
-            jQuery('#submenu-icon-' + submenuName).addClass('fa-angle-down');
+        if (!submenuEl) {
+            return;
+        }
+
+        if (submenuEl.style.display === 'none' || getComputedStyle(submenuEl).display === 'none') {
+            submenuEl.style.display = 'block';
+            if (iconEl) {
+                iconEl.classList.remove('fa-angle-right');
+                iconEl.classList.add('fa-angle-down');
+            }
             submenuState = 'open';
         } else {
-            jQuery('#submenu-' + submenuName).css('display', 'none');
-            jQuery('#submenu-icon-' + submenuName).removeClass('fa-angle-down');
-            jQuery('#submenu-icon-' + submenuName).addClass('fa-angle-right');
+            submenuEl.style.display = 'none';
+            if (iconEl) {
+                iconEl.classList.remove('fa-angle-down');
+                iconEl.classList.add('fa-angle-right');
+            }
             submenuState = 'closed';
         }
 
-        jQuery.ajax({
-            type : 'PATCH',
-            url  : leantime.appUrl + '/api/submenu',
-            data : {
-                submenu : submenuName,
-                state   : submenuState
-            }
+        fetch(leantime.appUrl + '/api/submenu', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({
+                submenu: submenuName,
+                state: submenuState
+            })
         });
     }
 
     var initProjectSelector = function () {
 
-        jQuery(".project-select").chosen();
-
-        jQuery(document).on('click', '.projectselector.dropdown-menu', function (e) {
-            e.stopPropagation();
-        });
-
-        let currentTab = localStorage.getItem("currentMenuTab");
-
-        if (typeof currentTab === 'undefined') {
-            activeTabIndex = 0;
-        } else {
-            activeTabIndex = jQuery('.projectSelectorTabs').find('a[href="#' + currentTab + '"]').parent().index();
-        }
-
-        jQuery('.projectSelectorTabs').tabs({
-            create: function ( event, ui ) {
-
-            },
-            activate: function (event, ui) {
-                localStorage.setItem("currentMenuTab", ui.newPanel[0].id);
-            },
-            load: function () {
-
-            },
-            enable: function () {
-
-            },
-            active: activeTabIndex
-
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.projectselector.dropdown-menu')) {
+                e.stopPropagation();
+            }
         });
 
     };
@@ -74,27 +62,38 @@ leantime.menuController = (function () {
 
         var newWidth = 68;
         if (window.innerWidth < 576) {
-            jQuery(".mainwrapper").removeClass("menuopen");
-            jQuery(".mainwrapper").addClass("menuclosed");
+            var mainwrapperEl = document.querySelector(".mainwrapper");
+            if (mainwrapperEl) {
+                mainwrapperEl.classList.remove("menuopen");
+                mainwrapperEl.classList.add("menuclosed");
+            }
         }
 
-        jQuery('.barmenu').click(function () {
+        var barmenuEl = document.querySelector('.barmenu');
+        if (barmenuEl) {
+            barmenuEl.addEventListener('click', function () {
 
-            if (jQuery(".mainwrapper").hasClass('menuopen')) {
-                jQuery(".mainwrapper").removeClass("menuopen");
-                jQuery(".mainwrapper").addClass("menuclosed");
+                var mainwrapperEl = document.querySelector(".mainwrapper");
+                if (!mainwrapperEl) {
+                    return;
+                }
 
-                //If it doesn't have the class open, the user wants it to be open.
-                leantime.menuRepository.updateUserMenuSettings("closed");
-            } else {
-                jQuery(".mainwrapper").removeClass("menuclosed");
-                jQuery(".mainwrapper").addClass("menuopen");
+                if (mainwrapperEl.classList.contains('menuopen')) {
+                    mainwrapperEl.classList.remove("menuopen");
+                    mainwrapperEl.classList.add("menuclosed");
 
-                //If it doesn't have the class open, the user wants it to be open.
-                leantime.menuRepository.updateUserMenuSettings("open");
-            }
+                    //If it doesn't have the class open, the user wants it to be open.
+                    leantime.menuRepository.updateUserMenuSettings("closed");
+                } else {
+                    mainwrapperEl.classList.remove("menuclosed");
+                    mainwrapperEl.classList.add("menuopen");
 
-        });
+                    //If it doesn't have the class open, the user wants it to be open.
+                    leantime.menuRepository.updateUserMenuSettings("open");
+                }
+
+            });
+        }
 
     };
 
@@ -104,46 +103,59 @@ leantime.menuController = (function () {
         //toggler-ID (link to click on open/close)
         //dropdown-ID (dropdown to open/close)
 
+        var togglerEl = document.querySelector("#" + prefix + "-toggler-" + id);
+        var groupEl = document.querySelector("#" + prefix + "-projectSelectorlist-group-" + id);
+
+        if (!togglerEl) {
+            return;
+        }
+
         //Part 1 allow devs to set open/closed state.
         //This means we need to do the opposite of what the current state is.
         if (set === "closed") {
-            jQuery("#" + prefix + "-toggler-" + id).removeClass("closed");
-            jQuery("#" + prefix + "-toggler-" + id).removeClass("open");
-            jQuery("#" + prefix + "-toggler-" + id).addClass("open");
+            togglerEl.classList.remove("closed", "open");
+            togglerEl.classList.add("open");
         } else if (set === "open") {
-            jQuery("#" + prefix + "-toggler-" + id).removeClass("open");
-            jQuery("#" + prefix + "-toggler-" + id).removeClass("closed");
-            jQuery("#" + prefix + "-toggler-" + id).addClass("closed");
+            togglerEl.classList.remove("open", "closed");
+            togglerEl.classList.add("closed");
         }
 
         //Part 2
         //Do the toggle. If the link has the class open, we need to close it.
-        if (jQuery("#" + prefix + "-toggler-" + id).hasClass("open")) {
+        if (togglerEl.classList.contains("open")) {
             //Update class on link
-            jQuery("#" + prefix + "-toggler-" + id).removeClass("open");
-            jQuery("#" + prefix + "-toggler-" + id).addClass("closed");
+            togglerEl.classList.remove("open");
+            togglerEl.classList.add("closed");
 
             //Update icon on link
-            jQuery("#" + prefix + "-toggler-" + id).find("i").removeClass("fa-angle-down");
-            jQuery("#" + prefix + "-toggler-" + id).find("i").addClass("fa-angle-right");
+            var iconEl = togglerEl.querySelector("i");
+            if (iconEl) {
+                iconEl.classList.remove("fa-angle-down");
+                iconEl.classList.add("fa-angle-right");
+            }
 
-
-            jQuery("#" + prefix + "-projectSelectorlist-group-" + id).addClass("closed");
-            jQuery("#" + prefix + "-projectSelectorlist-group-" + id).removeClass("open");
+            if (groupEl) {
+                groupEl.classList.add("closed");
+                groupEl.classList.remove("open");
+            }
 
             updateGroupDropdownSetting(id, "closed", prefix);
         } else {
             //Update class on link
-            jQuery("#" + prefix + "-toggler-" + id).removeClass("closed");
-            jQuery("#" + prefix + "-toggler-" + id).addClass("open");
+            togglerEl.classList.remove("closed");
+            togglerEl.classList.add("open");
 
             //Update icon on link
-            jQuery("#" + prefix + "-toggler-" + id).find("i").removeClass("fa-angle-right");
-            jQuery("#" + prefix + "-toggler-" + id).find("i").addClass("fa-angle-down");
+            var iconEl = togglerEl.querySelector("i");
+            if (iconEl) {
+                iconEl.classList.remove("fa-angle-right");
+                iconEl.classList.add("fa-angle-down");
+            }
 
-
-            jQuery("#" + prefix + "-projectSelectorlist-group-" + id).addClass("open");
-            jQuery("#" + prefix + "-projectSelectorlist-group-" + id).removeClass("closed");
+            if (groupEl) {
+                groupEl.classList.add("open");
+                groupEl.classList.remove("closed");
+            }
 
             updateGroupDropdownSetting(id, "open", prefix);
         }
@@ -152,13 +164,17 @@ leantime.menuController = (function () {
 
     let updateGroupDropdownSetting = function (ID, state, prefix) {
 
-        jQuery.ajax({
-            type : 'PATCH',
-            url  : leantime.appUrl + '/api/submenu',
-            data : {
-                submenu : prefix + "-projectSelectorlist-group-" + ID,
-                state   : state
-            }
+        fetch(leantime.appUrl + '/api/submenu', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({
+                submenu: prefix + "-projectSelectorlist-group-" + ID,
+                state: state
+            })
         });
 
     };

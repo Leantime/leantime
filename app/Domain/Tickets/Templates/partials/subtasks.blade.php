@@ -1,5 +1,5 @@
 
-<ul class="sortableTicketList" style="margin-bottom:120px;">
+<ul class="sortableTicketList tw:mb-[120px]">
     <li class="">
         <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> {{ __("links.add_task") }}</a>
         <div class="ticketBox hideOnLoad" id="subticket_new" >
@@ -10,8 +10,8 @@
                 hx-target="#ticketSubtasks">
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
-                <input name="headline" type="text" title="{{ __("label.headline") }}" style="width:100%" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
-                <input type="submit" value="{{ __("buttons.save") }}" name="quickadd"  />
+                <x-global::forms.input name="headline" title="{{ __("label.headline") }}" class="tw:w-full" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
+                <x-global::button submit type="primary" name="quickadd">{{ __("buttons.save") }}</x-global::button>
                 <div class="htmx-indicator-small">
                     <x-global::loader id="loadingthis" size="25px" />
                 </div>
@@ -51,27 +51,20 @@
         @endphp
 
     <li class="ui-state-default" id="ticket_{{ $subticket['id'] }}" >
-        <div class="ticketBox fixed priority-border-{{ $subticket['priority'] }}" data-val="{{ $subticket['id'] }}" >
+        <div class="ticketBox fixed priority-border-{{ $subticket['priority'] }}" data-val="{{ $subticket['id'] }}" aria-label="{{ __('label.priority') }}: {{ $priorities[$subticket['priority']] ?? $subticket['priority'] }}" >
 
-            <div class="row">
-                <div class="col-md-12" style="padding:0 15px;">
+            <div class="tw:px-4 tw:py-0">
                     @if($login::userIsAtLeast($roles::$editor))
-                        <div class="inlineDropDownContainer" >
-                            <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                            </a>
-                            <ul class="dropdown-menu">
+                        <x-global::elements.dropdown>
                                 <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete_todo") }}</a></li>
-                            </ul>
-                        </div>
+                        </x-global::elements.dropdown>
                    @endif
 
                     <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>
 
-                </div>
             </div>
             <div class="row">
-                <div class="col-md-9" style="padding:0 15px;">
+                <div class="col-md-9" style="padding-left:15px; padding-right:15px;">
                     <div class="row">
                         <div class="col-md-4">
                                 {{ __("label.due") }}<input type="text" title="{{ __("label.due") }}" value="{{ $date }}" class="duedates secretInput quickDueDates" data-id="{{ $subticket['id'] }}" name="date" />
@@ -86,52 +79,24 @@
                 </div>
                 <div class="col-md-3" style="padding-top:3px;" >
                     <div class="right">
-                        <div class="dropdown ticketDropdown effortDropdown show">
-                            <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $subticket['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                <span class="text">@if ($subticket['storypoints'] != '' && $subticket['storypoints'] > 0 && isset($efforts[$subticket['storypoints']]))
-                                                                                        {{ $efforts[$subticket['storypoints']] }}
-                                                                                   @else
-                                                                                           {{ __("label.story_points_unkown") }}
-                                                                                    @endif
-                                                                </span>
-                                &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink{{ $subticket['id'] }}">
-                                <li class="nav-header border">{{ __("dropdown.how_big_todo") }}</li>
-                                @foreach($efforts as $effortKey => $effortValue)
-                                    <li class='dropdown-item'>
-                                        <a href='javascript:void(0);' data-value='{{  $subticket['id'] }}_{{ $effortKey }}' id='ticketEffortChange{{ $subticket['id'] . $effortKey }}'> {{  $effortValue }}</a>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
+                        <x-global::dropdownPill
+                            type="effort"
+                            :parentId="$subticket['id']"
+                            selectedClass="label-default"
+                            :selectedKey="'' . $subticket['storypoints']"
+                            :options="$efforts"
+                            headerLabel="{{ __('dropdown.how_big_todo') }}"
+                        />
 
-                            @php
-                                if (isset($statusLabels[$subticket['status']])) {
-                                    $class = $statusLabels[$subticket['status']]["class"];
-                                    $name = $statusLabels[$subticket['status']]["name"];
-                                } else {
-                                    $class = 'label-important';
-                                    $name = 'new';
-                                }
-                             @endphp
-                        <div class="dropdown ticketDropdown statusDropdown colorized show">
-                            <a class="dropdown-toggle f-left status {{ $class  }}" href="javascript:void(0);" role="button" id="statusDropdownMenuLink{{ $subticket['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                <span class="text">{{$name }}
-                                                                </span>
-                                &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $subticket['id'] }}">
-                                <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
-
-                                    @foreach ($statusLabels as $key => $label)
-                                        <li class='dropdown-item'>
-                                            <a href='javascript:void(0);' class='{{ $label["class"] }}' data-label='{{ $label["name"] }}' data-value='{{ $subticket['id'] }}_{{ $key }}_{{ $label["class"] }}' id='ticketStatusChange{{ $subticket['id'] . $key }}' >{{ $label["name"] }}</a>
-                                        </li>
-                                    @endforeach
-                            </ul>
-                        </div>
-
+                        <x-global::dropdownPill
+                            type="status"
+                            :parentId="$subticket['id']"
+                            :selectedClass="$statusLabels[$subticket['status']]['class'] ?? 'label-important'"
+                            :selectedKey="$subticket['status']"
+                            :options="$statusLabels"
+                            :colorized="true"
+                            headerLabel="{{ __('dropdown.choose_status') }}"
+                        />
                     </div>
                 </div>
 
@@ -154,7 +119,7 @@
 
         <?php } else { ?>
 
-            leantime.authController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly("#global-modal-content");
 
         <?php } ?>
 

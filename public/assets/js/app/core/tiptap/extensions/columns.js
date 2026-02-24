@@ -8,7 +8,7 @@
  * @module tiptap/extensions/columns
  */
 
-const { Node, mergeAttributes } = require('@tiptap/core');
+import { Node, mergeAttributes } from '@tiptap/core';
 
 /**
  * Shared helper: delete a columnLayout node at a known position,
@@ -436,8 +436,4 @@ function createColumnsExtension() {
     return [ColumnLayout, Column];
 }
 
-module.exports = {
-    createColumnsExtension: createColumnsExtension,
-    ColumnLayout: ColumnLayout,
-    Column: Column,
-};
+export { createColumnsExtension, ColumnLayout, Column };

@@ -3,7 +3,7 @@
 <meta name="requestId" content="{{ \Illuminate\Support\Str::random(4) }}">
 <meta name="description" content="{{ $sitename }}">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-touch-fullscreen" content="yes">
 <meta name="theme-color" content="{{ $primaryColor }}">
@@ -17,51 +17,37 @@
 <link rel="shortcut icon" href="{!! BASE_URL !!}/dist/images/favicon.png"/>
 <link rel="apple-touch-icon" href="{!! BASE_URL !!}/dist/images/apple-touch-icon.png">
 
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/main.{!! $version !!}.min.css"/>
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/app.{!! $version !!}.min.css"/>
-@if($tpl->needsComponent('tiptap'))
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/tiptap-editor.{!! $version !!}.min.css"/>
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/katex.min.css"/>
-@endif
+@vite([
+    'resources/css/main.css',
+    'resources/css/app.css',
+])
 
 @dispatchEvent('afterLinkTags')
 
+{{-- jQuery must load as a classic (non-module) script so inline scripts can use it.
+     Vite outputs type="module" which is deferred, causing "jQuery is not defined" errors. --}}
+<script src="{!! BASE_URL !!}/dist/jquery.min.js"></script>
+
 <script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
-<script src="{!! BASE_URL !!}/dist/js/compiled-htmx.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-htmx-extensions.{!! $version !!}.min.js"></script>
-
-<!-- libs -->
-<script src="{!! BASE_URL !!}/dist/js/compiled-frameworks.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-framework-plugins.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-global-component.{!! $version !!}.min.js"></script>
-@if($tpl->needsComponent('calendar'))
-<script src="{!! BASE_URL !!}/dist/js/compiled-calendar-component.{!! $version !!}.min.js"></script>
-@endif
-@if($tpl->needsComponent('table'))
-<script src="{!! BASE_URL !!}/dist/js/compiled-table-component.{!! $version !!}.min.js"></script>
-@endif
-@if($tpl->needsComponent('tiptap'))
-<script src="{!! BASE_URL !!}/dist/js/compiled-tiptap-toolbar.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-tiptap-editor.{!! $version !!}.min.js"></script>
-@endif
-@if($tpl->needsComponent('gantt'))
-<script src="{!! BASE_URL !!}/dist/js/compiled-gantt-component.{!! $version !!}.min.js"></script>
-@endif
-@if($tpl->needsComponent('chart'))
-<script src="{!! BASE_URL !!}/dist/js/compiled-chart-component.{!! $version !!}.min.js"></script>
-@endif
+@vite([
+    'resources/js/compiled-htmx.js',
+    'resources/js/compiled-htmx-extensions.js',
+    'resources/js/compiled-frameworks.js',
+    'resources/js/compiled-global-component.js',
+    'resources/js/compiled-calendar-component.js',
+    'resources/js/compiled-table-component.js',
+    'resources/js/compiled-tiptap-toolbar.js',
+    'resources/js/compiled-tiptap-editor.js',
+    'resources/js/compiled-gantt-component.js',
+    'resources/js/compiled-chart-component.js',
+])
 
 @dispatchEvent('afterScriptLibTags')
 
 <!-- app -->
-<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.min.js"></script>
+@vite(['resources/js/compiled-app.js'])
 @dispatchEvent('afterMainScriptTag')
-
-<!--
-//For future file based ref js loading
-<script src="{!! BASE_URL !!}/dist/js/{{ ucwords(\Leantime\Core\Controller\Frontcontroller::getModuleName()) }}/Js/{{ \Leantime\Core\Controller\Frontcontroller::getModuleName() }}Controller.js"></script>
--->
 
 <!-- theme & custom -->
 @foreach ($themeScripts as $script)
@@ -94,20 +80,20 @@
 
 <style id="backgroundImageSetter">
     @if(!empty($themeBg))
+        @if($themeType !== 'image')
             .rightpanel {
                 background-image: url({!! filter_var($themeBg, FILTER_SANITIZE_URL) !!});
                 opacity: {{ $themeOpacity }};
-                mix-blend-mode: {{ $themeType == 'image' ? 'normal' : 'multiply' }};
+                mix-blend-mode: multiply;
                 background-size: var(--background-size, cover);
                 background-position: center;
                 background-attachment: fixed;
             }
+        @endif
 
-    @if($themeType === 'image')
         .rightpanel:before {
             background: none;
         }
-    @endif
     @endif
 </style>
 
@@ -116,5 +102,6 @@
 
 
 <script>
+    window.leantime = window.leantime || {};
     window.leantime.currentProject = '{{ session("currentProject") }}';
 </script>

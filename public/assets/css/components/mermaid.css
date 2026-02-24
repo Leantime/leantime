@@ -2,7 +2,7 @@
 .mermaid-diagram {
     margin: 15px 0;
     padding: 10px;
-    background-color: #f8f9fa;
+    background-color: var(--color-bg-muted);
     border-radius: var(--box-radius-large);
     overflow: auto;
 }
@@ -24,38 +24,16 @@
 .mermaid .node ellipse,
 .mermaid .node polygon,
 .mermaid .node path {
-    fill: #fff;
-    stroke: #1f77b4;
+    fill: var(--primary-background);
+    stroke: var(--accent1);
     stroke-width: 1px;
 }
 
 .mermaid .edgePath .path {
-    stroke: #333;
+    stroke: var(--primary-font-color);
     stroke-width: 1.5px;
 }
 
 .mermaid .label {
-    color: #333;
-}
-
-/* Dark mode support */
-.dark-mode .mermaid-diagram {
-    background-color: #2d2d2d;
-}
-
-.dark-mode .mermaid .node rect,
-.dark-mode .mermaid .node circle,
-.dark-mode .mermaid .node ellipse,
-.dark-mode .mermaid .node polygon,
-.dark-mode .mermaid .node path {
-    fill: #3a3a3a;
-    stroke: #6baed6;
-}
-
-.dark-mode .mermaid .edgePath .path {
-    stroke: #ddd;
-}
-
-.dark-mode .mermaid .label {
-    color: #ddd;
+    color: var(--primary-font-color);
 }

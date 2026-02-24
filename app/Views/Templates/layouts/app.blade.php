@@ -1,22 +1,28 @@
 <!DOCTYPE html>
-<html dir="{{ __('language.direction') }}" lang="{{ __('language.code') }}">
+<html dir="{{ __('language.direction') }}" lang="{{ __('language.code') }}" data-theme="{{ session('usersettings.colorMode', 'light') }}">
 <head>
     @include('global::sections.header')
     @stack('styles')
 </head>
 
-<body class="" hx-ext="preload">
+<body class="" hx-ext="preload, head-support" data-module="{{ $module ?? '' }}">
 
     @include('global::sections.appAnnouncement')
 
-    <div class="mainwrapper menu{{ session("menuState") ?? "closed" }}">
+    {{-- Loading indicator for SPA navigation --}}
+    <div id="page-loading" class="htmx-indicator"
+         style="position:fixed;top:0;left:0;z-index:9999;height:3px;width:100%;background:var(--accent1);pointer-events:none;"></div>
+
+    <div class="mainwrapper menu{{ session("menuState") ?? "closed" }}"
+         @if(!empty($themeBgUrl)) style="background-image: url({{ filter_var($themeBgUrl, FILTER_SANITIZE_URL) }}); background-size: var(--background-size, cover); background-position: center; background-repeat: no-repeat;" @endif
+    >
 
         <div class="header">
 
             <div class="headerinner">
-                <a class="btnmenu" href="javascript:void(0);"></a>
+                <a class="btnmenu" href="javascript:void(0);" aria-label="{{ __('menu.toggle_sidebar') }}"></a>
 
-                <a class="barmenu" href="javascript:void(0);">
+                <a class="barmenu" href="javascript:void(0);" aria-label="{{ __('menu.toggle_navigation') }}">
                     <span class="fa fa-bars"></span>
                 </a>
 
@@ -40,8 +46,13 @@
                     @include('menu::menu')
                 </div><!-- leftmenu -->
             </div>
-            <div class="rightpanel {{ $section }}">
-                <div class="primaryContent">
+            <div class="rightpanel {{ $section }}"
+                 hx-boost="true"
+                 hx-target=".primaryContent"
+                 hx-select=".primaryContent"
+                 hx-swap="outerHTML show:window:top"
+                 hx-indicator="#page-loading">
+                <div class="primaryContent" aria-live="polite">
                     @isset($action, $module)
                         @include("$module::$action")
                     @else
@@ -56,6 +67,22 @@
         </div><!-- rightpanel -->
 
     </div><!-- mainwrapper -->
+
+    {{-- Global modal (native <dialog>) — replaces nyroModal --}}
+    <dialog id="global-modal">
+        <div id="global-modal-box">
+            <form method="dialog" style="margin:0;position:absolute;right:10px;top:10px;z-index:10;">
+                <button class="btn btn-default btn-sm" style="border:none;background:transparent;padding:4px 8px;border-radius:var(--element-radius);cursor:pointer;color:var(--secondary-font-color);font-size:16px;line-height:1;" aria-label="Close">
+                    <i class="fa fa-xmark"></i>
+                </button>
+            </form>
+            <div id="global-modal-content">
+                <div style="display:flex;justify-content:center;padding:40px;">
+                    <x-global::loadingText type="text" count="1" />
+                </div>
+            </div>
+        </div>
+    </dialog>
 
     @include('global::sections.pageBottom')
     @stack('scripts')

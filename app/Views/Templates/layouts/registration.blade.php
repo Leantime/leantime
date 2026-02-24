@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="{{ __('language.direction') }}" lang="{{ __('language.code') }}">
+<html dir="{{ __('language.direction') }}" lang="{{ __('language.code') }}" data-theme="{{ session('usersettings.colorMode', 'light') }}">
 <head>
     @include('global::sections.header')
 
@@ -18,7 +18,8 @@
     <div style="    width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.2);
-    backdrop-filter: blur(3px);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
     padding-top: 150px;
     overflow: hidden;">
         <div class="regpanel" style="

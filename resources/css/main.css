@@ -1,0 +1,256 @@
+/* CSS libs */
+@import "../../public/assets/css/libs/croppie.css";
+
+@import "../../public/assets/css/libs/bootstrap-fileupload.min.css";
+
+@import "../../public/assets/css/libs/slimselect.min.css";
+@import "../../public/assets/css/libs/slimselect.leantime.css";
+
+@import "flatpickr/dist/flatpickr.min.css";
+@import "../../public/assets/css/libs/animate.min.css";
+@import "../../public/assets/css/libs/animate.delay.css";
+
+@import "../../public/assets/css/libs/jquery.tagsinput.css";
+@import "../../public/assets/css/libs/fullcalendar.css";
+@import "../../public/assets/css/libs/roboto.css";
+@import "../../public/assets/css/libs/atkinson.css";
+@import "../../public/assets/css/libs/shantell.css";
+@import "../../public/assets/css/libs/hankengrotesk.css";
+@import "../../public/assets/css/libs/fontawesome-free/css/all.css";
+@import "../../public/assets/css/libs/fontawesome-free/css/v4-shims.css";
+
+@import "../../public/assets/css/libs/frappe_theme.css";
+@import "../../public/assets/css/libs/shepherd-theme-arrows.css";
+@import "../../public/assets/css/libs/jstree/style.css";
+
+@import "../../public/assets/css/libs/uppy/style.css";
+@import "../../public/assets/css/libs/uppy/dashboard.css";
+
+@import "../../public/assets/css/libs/tippy.js/tippy.css";
+
+@import "../../public/assets/css/libs/prism.css";
+
+@import "../../public/assets/css/libs/iconpicker/css/fontawesome-iconpicker.css";
+
+@import "../../public/assets/css/libs/gridstack.min.css";
+
+
+/* Components */
+@import "../../public/assets/css/components/structure.css";
+@import "../../public/assets/css/components/dropdowns.css";
+@import "../../public/assets/css/components/kanban.css";
+@import "../../public/assets/css/components/tables.css";
+@import "../../public/assets/css/components/masonwall.css";
+@import "../../public/assets/css/components/tiptap-editor.css";
+@import "../../public/assets/css/components/wiki.css";
+@import "../../public/assets/css/components/forms.css";
+@import "../../public/assets/css/components/gantt-overwrites.css";
+@import "../../public/assets/css/components/tree-overwrites.css";
+@import "../../public/assets/css/components/nav.css";
+@import "../../public/assets/css/components/style.default.css";
+@import "../../public/assets/css/components/calendar.css";
+@import "../../public/assets/css/components/text-styles.css";
+@import "../../public/assets/css/components/accessibility.css";
+@import "../../public/assets/css/components/progressbars.css";
+@import "../../public/assets/css/components/mediamanager.css";
+@import "../../public/assets/css/components/tourBoxes.css";
+@import "../../public/assets/css/components/sortableList.css";
+@import "../../public/assets/css/components/mobile.css";
+@import "../../public/assets/css/components/print.css";
+@import "../../public/assets/css/components/mermaid.css";
+@import "../../public/assets/css/components/overwrites.css";
+@import "../../public/assets/css/components/glass.css";
+
+/* ── Modal dialog ─────────────────────────────────────────────────────
+   Override the CSS-reset rule (div { background: transparent }) which
+   wins over DaisyUI's layered .tw:modal-box because unlayered CSS
+   always beats @layer CSS in the cascade.
+   ──────────────────────────────────────────────────────────────────── */
+#global-modal-box {
+    position: relative;
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--box-radius, 0.5rem);
+    max-height: calc(100dvh - 5em);
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--glass-inset), var(--shadow-lg);
+}
+#global-modal-content {
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 20px;
+}
+
+/* Frosted-glass overlay behind the modal.
+   We use dialog.show() (not .showModal()) so the dialog stays in normal
+   document flow where backdrop-filter composites correctly with the page.
+   .showModal()'s top-layer ::backdrop blocks blur from reaching the page. */
+#modal-blur-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    background-color: rgba(0, 0, 0, 0.25);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    cursor: pointer;
+}
+#modal-blur-overlay.active {
+    display: block;
+}
+
+/* Position the dialog ourselves since .show() doesn't auto-center
+   like .showModal(). Fixed + grid centers the modal-box. */
+#global-modal,
+#global-modal[open] {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: none;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 1em;
+    border: none;
+    background-color: transparent;
+    overflow: auto;
+}
+#global-modal[open] {
+    display: grid;
+}
+
+/* DaisyUI .modal-backdrop form — hide it since our overlay handles
+   click-to-close and visual scrim */
+#global-modal > .tw\:modal-backdrop {
+    display: none;
+}
+
+/* ── Bootstrap grid safety net inside modals ─────────────────────────
+   Force Bootstrap float-grid to flex-wrap so columns don't overflow
+   the constrained modal width.
+   ──────────────────────────────────────────────────────────────────── */
+#global-modal-content .row,
+#global-modal-content .row-fluid {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 0;
+    margin-right: 0;
+}
+#global-modal-content .row > [class*="col-"],
+#global-modal-content .row-fluid > [class*="col-"] {
+    float: none;
+    flex: 0 0 auto;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+/* Prevent hardcoded widths from overflowing the modal box */
+#global-modal-content > div {
+    max-width: 100%;
+}
+
+/* ── Detail-panel date values (Linear/Notion style) ──────────────────
+   Clickable text that opens a date picker.  No border, subtle hover bg.
+   ──────────────────────────────────────────────────────────────────── */
+.detail-date-value {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: right;
+    padding: 4px 8px;
+    height: auto;
+    border-radius: var(--element-radius, 4px);
+    transition: background 0.15s ease;
+    width: auto;
+    max-width: 140px;
+    color: var(--primary-font-color);
+}
+.detail-date-value:hover,
+.detail-date-value:focus {
+    background: rgba(0, 0, 0, 0.05);
+    outline: none;
+}
+.detail-date-value::placeholder {
+    color: var(--secondary-font-color);
+    opacity: 0.7;
+}
+
+/* ── Inline date picker ("None" text ↔ date value toggle) ─────────── */
+.date-inline-picker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.date-inline-trigger {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--element-radius, 4px);
+    color: var(--secondary-font-color);
+    opacity: 0.7;
+    font-size: inherit;
+    transition: background 0.15s ease, opacity 0.15s ease;
+}
+.date-inline-trigger:hover,
+.date-inline-trigger:focus {
+    background: rgba(0, 0, 0, 0.05);
+    opacity: 1;
+    outline: none;
+}
+
+/* ── Tabbed widget tabs ───────────────────────────────────────────────
+   Vanilla tabsController.js handles switching; these rules style the
+   tab strip.  .tabbedwidget kept as alias for backward compat.
+   ──────────────────────────────────────────────────────────────────── */
+.lt-tabs > ul[role="tablist"],
+.tabbedwidget > ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border-bottom: 1px solid var(--neutral-border, #ddd);
+    padding: 0;
+    margin: 0 0 15px 0;
+}
+
+.lt-tabs > ul[role="tablist"] > li,
+.tabbedwidget > ul > li {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lt-tabs > ul[role="tablist"] > li > a,
+.tabbedwidget > ul > li > a {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    color: var(--primary-font-color, #555);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+}
+
+.lt-tabs > ul[role="tablist"] > li > a:hover,
+.tabbedwidget > ul > li > a:hover {
+    color: var(--accent1, #1b75bb);
+    text-decoration: none;
+}
+
+.lt-tabs > ul[role="tablist"] > li.tw\:tab-active > a,
+.lt-tabs > ul[role="tablist"] > li.active > a,
+.tabbedwidget > ul > li.active > a,
+.tabbedwidget > ul > li.tw\:tab-active > a,
+.tabbedwidget > ul > li.ui-tabs-active > a,
+.tabbedwidget > ul > li.ui-state-active > a {
+    border-bottom-color: var(--accent1, #1b75bb);
+    color: var(--accent1, #1b75bb);
+}

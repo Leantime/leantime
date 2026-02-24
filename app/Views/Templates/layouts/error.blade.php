@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="{{ __('language.direction') }}" lang="{{ __('language.code') }}">
+<html dir="{{ __('language.direction') }}" lang="{{ __('language.code') }}" data-theme="{{ session('usersettings.colorMode', 'light') }}">
 <head>
     @include('global::sections.header')
     <style>
@@ -10,13 +10,13 @@
 
 <body class="loginpage" style="height:100%;">
 
-<div class="header hidden-gt-sm tw-p-[10px]" style="background:var(--header-gradient)">
+<div class="header hidden-gt-sm tw:p-[10px]" style="background:var(--header-gradient)">
     <a href="{!! BASE_URL !!}" target="_blank">
-        <img src="{{ BASE_URL }}/dist/images/logo.svg" class="tw-h-full "/>
+        <img src="{{ BASE_URL }}/dist/images/logo.svg" class="tw:h-full "/>
     </a>
 </div>
 
-<div class="row " style="height:100%; width: 99%;">
+<div class="row" style="height:100%; width: 99%;">
     <div class="col-md-4 hidden-phone regLeft">
 
         <div class="logo">
@@ -29,7 +29,7 @@
                 </h1>
         </div>
     </div>
-    <div class="col-md-8 col-sm-12 regRight">
+    <div class="col-md-8 regRight">
 
         <div class="regpanel">
             <div class="regpanelinner">

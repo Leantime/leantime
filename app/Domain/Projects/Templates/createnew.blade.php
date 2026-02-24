@@ -1,13 +1,11 @@
 <div class="center padding-lg" style="max-width:1200px;">
 
-    <div class="row">
-        <div class="col-md-12">
-            <h1 style="font-size:var(--font-size-xxxl);">Create something new</h1><br />
-            {!!  __("text.creation_hub") !!}
+    <div>
+        <h1 style="font-size:var(--font-size-xxxl);">Create something new</h1><br />
+        {!!  __("text.creation_hub") !!}
 
-            <br />
-            <br />
-        </div>
+        <br />
+        <br />
     </div>
 
 
@@ -23,9 +21,9 @@
                 {!! __($projectType["description"]) !!}
                 <br /><br />
                 @if($projectType["active"] == true )
-                    <a href="{{ BASE_URL }}/{{$projectType["url"] }}" class="btn btn-primary {{ $projectType["active"] !== true ? "disabled" : "" }}">{{  __($projectType['btnLabel'])  }}</a>
+                    <x-global::button link="{{ BASE_URL }}/{{$projectType['url'] }}" type="primary" :disabled="$projectType['active'] !== true">{{  __($projectType['btnLabel'])  }}</x-global::button>
                 @else
-                    <a href="#" class="btn btn-primary disabled">Not Available in this plan</a>
+                    <x-global::button link="#" type="primary" :disabled="true">Not Available in this plan</x-global::button>
                 @endif
                 <div class="clearall"></div>
 

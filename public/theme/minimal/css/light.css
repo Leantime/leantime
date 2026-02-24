@@ -48,9 +48,9 @@
     --left-panel-bg: transparent;
     --content-bg: var(--secondary-background);
 
-    --glass-blur: blur( 4px );
+    --glass-blur: blur(4px);
     --glass-background: rgba(255,255,255,1);
-    --glass-border: 1px solid rgba(255,255,255,1);
+    --glass-border: var(--color-border-default);
 
     --main-action-bg: var(--accent1);
     --main-action-color: var(--accent1-color);
@@ -92,7 +92,7 @@
     --header-gradient:#f9fafb;
     --element-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 100%);
 
-    --primary-font-family: 'Roboto', 'Helvetica Neue', Helvetica, sans-serif;
+    --primary-font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 
     --font-size-xs: 10px;
     --font-size-s: 12px;
@@ -111,8 +111,8 @@
     --box-radius-large:20px;
     --box-radius: 10px;
     --box-radius-small:5px;
-    --element-radius: 15px;
-    --input-radius: 15px;
+    --element-radius: 10px;
+    --input-radius: 8px;
     --input-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);
     --input-padding: 4px 10px;
 
@@ -184,6 +184,85 @@
     --zlayer-9: 40; /* modal modals*/
 
     --transparencyLayer: transparent;
+
+    /* ═══ DESIGN SYSTEM v2 — SEMANTIC ALIASES ═══ */
+
+    /* New accent colors (brand-layer) */
+    --accent3: #CADE1B;
+    --accent3-text: #A8B516;
+    --accent3-color: #000;
+    --accent4: #F61067;
+    --accent4-soft: #C84D7C;
+    --accent4-color: #fff;
+
+    /* Semantic tints */
+    --accent1-light: rgba(0,71,102,0.06);
+    --accent2-light: rgba(0,184,147,0.08);
+    --accent3-light: rgba(202,222,27,0.10);
+    --accent4-light: rgba(246,16,103,0.06);
+
+    /* Color: Text (aliases → existing tokens) */
+    --color-text-primary: var(--primary-font-color);
+    --color-text-secondary: var(--secondary-font-color);
+    --color-text-muted: var(--interactive-icon-color);
+    --color-text-disabled: var(--solid-neutral);
+    --color-text-on-accent: var(--accent1-color);
+
+    /* Color: Background (aliases → existing tokens) */
+    --color-bg-page: var(--primary-background);
+    --color-bg-card: var(--secondary-background);
+    --color-bg-elevated: var(--layered-background);
+    --color-bg-muted: var(--neutral-background);
+    --color-bg-hover: var(--col-hover-bg);
+    --color-bg-input: var(--input-background);
+
+    /* Color: Border (aliases → existing tokens) */
+    --color-border-default: var(--main-border-color);
+    --color-border-light: var(--neutral);
+    --color-border-hover: var(--main-border-color-hover);
+
+    /* Shadow */
+    --shadow-xs: var(--input-shadow);
+    --shadow-sm: var(--min-shadow);
+    --shadow-md: var(--regular-shadow);
+    --shadow-lg: var(--large-shadow);
+    --shadow-xl: 0 14px 48px rgba(0,0,0,0.13);
+
+    /* Radius */
+    --radius-xs: 4px;
+    --radius-sm: var(--box-radius-small);
+    --radius: var(--element-radius);
+    --radius-lg: var(--box-radius);
+    --radius-pill: 20px;
+    --radius-full: 9999px;
+
+    /* Typography: Size (aliases → existing tokens) */
+    --text-xs: var(--font-size-xs);
+    --text-sm: var(--font-size-s);
+    --text-base: var(--base-font-size);
+    --text-md: var(--font-size-m);
+    --text-lg: var(--font-size-l);
+    --text-xl: var(--font-size-xl);
+    --text-2xl: var(--font-size-xxl);
+    --text-3xl: var(--font-size-xxxl);
+
+    /* Typography: Weight */
+    --font-weight-body: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-heading: 650;
+    --font-weight-bold: 700;
+    --font-weight-display: 800;
+
+    /* Glass (aliases → existing tokens) */
+    --glass-bg: var(--glass-background);
+    --glass-inset: inset 0 1px 0 rgba(255,255,255,0.1);
+    --glass-bg-subtle: var(--color-bg-card);
+    --glass-blur-subtle: none;
+
+    /* Emboss */
+    --emboss-track: rgba(0,0,0,0.04);
+    --emboss-highlight: rgba(255,255,255,0.15);
 }
 
 /* Main default overrides */

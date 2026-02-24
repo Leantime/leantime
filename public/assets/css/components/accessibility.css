@@ -7,7 +7,7 @@
 @media (prefers-contrast: high) {
     a {
         text-decoration: underline;
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
     }
 
     a:focus-visible {
@@ -17,7 +17,7 @@
 
     .latest-todos a,
     .sortableTicketList a {
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
     }
 
     button,

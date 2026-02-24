@@ -9,34 +9,31 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
 
 ?>
 <script type="text/javascript">
-    window.onload = function() {
-        if (!window.jQuery) {
-            //It's not a modal
-            location.href="<?= BASE_URL ?>/tickets/showKanban?showTicketModal=<?php echo $ticket->id; ?>";
-        }
+    if (!window.jQuery) {
+        // Not inside a modal — redirect to the full kanban view which will
+        // open the ticket in a modal. Replace the document to prevent further
+        // inline scripts from executing and throwing ReferenceErrors.
+        location.replace("<?= BASE_URL ?>/tickets/showKanban?showTicketModal=<?php echo $ticket->id; ?>");
+        document.write('');
+        document.close();
     }
 </script>
 
-<div style="min-width:70%">
+<div style="min-width: min(70%, 95vw)">
 
     <?php if ($ticket->dependingTicketId > 0) { ?>
         <small><a href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small> //
     <?php } ?>
-    <small class="tw-float-right tw-pr-md" style="padding:5px 30px 0px 0px">Created by <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | Last Updated: <?= format($ticket->date)->date(); ?> </small>
-    <h1 class="tw-mb-0" style="margin-bottom:0px;"><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
+    <small class="pull-right tw:pr-md" style="padding:5px 30px 0px 0px">Created by <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | Last Updated: <?= format($ticket->date)->date(); ?> </small>
+    <h1 class="tw:mb-0" style="margin-bottom:0px;"><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
 
     <br />
 
     <?php if ($login::userIsAtLeast($roles::$editor)) {
         $onTheClock = $tpl->get('onTheClock');
         ?>
-        <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px; padding-right:10px;">
-
-            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-            </a>
-            <ul class="dropdown-menu">
-                <li class="nav-header"><?php echo $tpl->__('subtitles.todo'); ?></li>
+        <x-global::elements.dropdown containerClass="pull-right tw:z-50" style="padding-top:10px; padding-right:10px;">
+                <li class="nav-header border"><?php echo $tpl->__('subtitles.todo'); ?></li>
                 <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
                 <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
                 <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
@@ -44,6 +41,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
                     hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
                     hx-trigger="timerUpdate from:body"
                     hx-swap="outerHTML"
+                    aria-live="assertive"
                     class="timerContainer">
 
                     @if ($onTheClock === false)
@@ -77,12 +75,11 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         </span>
                     @endif
                 </li>
-            </ul>
-        </div>
+        </x-global::elements.dropdown>
     <?php } ?>
-    <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
+    <div class="lt-tabs tabbedwidget ticketTabs" style="visibility:hidden;" data-tabs data-tabs-persist="url">
 
-        <ul>
+        <ul role="tablist">
             <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
             <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__('tabs.files') ?> (<?php echo $tpl->get('numFiles'); ?>)</a></li>
             <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
@@ -120,8 +117,6 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
             jQuery.nmTop().close();
         <?php } ?>
 
-        leantime.ticketsController.initTicketTabs();
-
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
@@ -137,7 +132,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
             jQuery(".ticketTabs select").chosen();
 
         <?php } else { ?>
-            leantime.authController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly("#global-modal-content");
 
         <?php } ?>
 

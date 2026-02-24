@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Swimlane Component Test</title>
-    <link rel="stylesheet" href="{{ BASE_URL }}/dist/css/main.3.5.12.min.css">
+    @vite(['resources/css/main.css'])
     <style>
         body { padding: 20px; background: #f5f5f5; }
         .test-section { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; }

@@ -12,7 +12,7 @@
 .wiki-layout {
     display: flex;
     gap: 0;
-    height: calc(100vh - 120px);
+    height: calc(100dvh - 120px);
     position: relative;
 }
 
@@ -27,7 +27,7 @@
     background: var(--layered-background);
     position: sticky;
     top: 82px;
-    height: calc(100vh - 94px);
+    height: calc(100dvh - 94px);
     overflow-y: auto;
     overflow-x: hidden;
     transition: width 0.25s ease, padding 0.25s ease;
@@ -63,7 +63,7 @@
 }
 
 .wiki-sidebar.collapsed .wiki-tree-link i {
-    font-size: 18px;
+    font-size: var(--font-size-xl);
     opacity: 1;
 }
 
@@ -87,7 +87,7 @@
 
 .wiki-sidebar-title {
     font-size: var(--font-size-s);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--secondary-font-color);
@@ -106,7 +106,7 @@
     border: none;
     color: var(--secondary-font-color);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .wiki-collapse-btn:hover {
@@ -143,7 +143,7 @@
     color: var(--secondary-font-color);
     cursor: pointer;
     z-index: 10;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .wiki-properties-toggle-btn:hover {
@@ -213,7 +213,7 @@
     color: var(--secondary-font-color);
     cursor: pointer;
     z-index: 10;
-    transition: all 0.15s ease, opacity 0.25s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.25s ease;
     opacity: 0;
     pointer-events: none;
 }
@@ -334,7 +334,7 @@
 /* Headings */
 .wiki-document h1 {
     font-size: 1.875em;
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
     margin: 1.5em 0 0.5em;
     letter-spacing: -0.02em;
     line-height: 1.3;
@@ -342,7 +342,7 @@
 
 .wiki-document h2 {
     font-size: 1.5em;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     margin: 1.4em 0 0.5em;
     letter-spacing: -0.01em;
     line-height: 1.35;
@@ -350,14 +350,14 @@
 
 .wiki-document h3 {
     font-size: 1.25em;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     margin: 1.3em 0 0.4em;
     line-height: 1.4;
 }
 
 .wiki-document h4 {
     font-size: 1.1em;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     margin: 1.2em 0 0.4em;
     line-height: 1.45;
 }
@@ -495,7 +495,7 @@
 
 .wiki-document th {
     background: var(--layered-background);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .wiki-document tr:hover td {
@@ -547,7 +547,7 @@
     padding: 4px 10px;
     background: var(--layered-background);
     border-radius: 8px;
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     color: var(--secondary-font-color);
     opacity: 0.8;
     pointer-events: none;
@@ -616,7 +616,7 @@
     font-size: var(--base-font-size);
     color: var(--primary-font-color);
     z-index: 100;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .wiki-edit-indicator.editing {
@@ -647,7 +647,7 @@
 }
 
 .wiki-edit-indicator i {
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 /* ==========================================================================
@@ -672,7 +672,7 @@
 
 .wiki-properties-section .control-label {
     font-size: var(--base-font-size);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     opacity: 0.8;
 }
 
@@ -693,11 +693,203 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
 }
 
 
+.wiki-parent-link:hover {
+    text-decoration: underline;
+}
+
+.wiki-no-parent,
+.wiki-no-milestone {
+    color: var(--secondary-font-color);
+    font-style: italic;
+}
+
+/* Milestone Dropdown */
+.wiki-milestone-dropdown {
+    position: relative;
+}
+
+.wiki-milestone-btn {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: var(--base-font-size);
+    font-weight: var(--font-weight-medium);
+    border: none;
+    background: transparent;
+    color: var(--primary-font-color);
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.wiki-milestone-btn:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--primary-font-color);
+}
+
+.wiki-milestone-btn .milestone-text.none {
+    color: var(--secondary-font-color);
+    font-style: italic;
+}
+
+.wiki-milestone-btn .fa-chevron-down {
+    font-size: var(--font-size-xs);
+    color: var(--secondary-font-color);
+    margin-left: 6px;
+}
+
+.wiki-milestone-menu {
+    min-width: 200px;
+    max-width: 250px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 6px;
+    border-radius: 12px;
+    right: 0;
+    left: auto;
+}
+
+.wiki-milestone-menu li a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: var(--base-font-size);
+    color: var(--primary-font-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.wiki-milestone-menu li a:hover {
+    background: var(--layered-background);
+    text-decoration: none;
+    color: var(--primary-font-color);
+}
+
+.wiki-milestone-menu li a.active {
+    background: var(--accent1);
+    color: white;
+}
+
+.wiki-milestone-menu li a.active:hover {
+    background: var(--accent1);
+    color: white;
+    opacity: 0.9;
+}
+
+.wiki-milestone-menu li a i {
+    width: 14px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.wiki-milestone-menu li.divider {
+    height: 1px;
+    background: var(--main-border-color);
+    margin: 4px 0;
+}
+
+/* Milestone link */
+.wiki-milestone-link {
+    color: var(--accent1);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+}
+
+.wiki-milestone-link:hover {
+    text-decoration: underline;
+}
+
+/* Status Dropdown Pill */
+.wiki-status-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.wiki-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: var(--box-radius-large);
+    font-size: var(--base-font-size);
+    font-weight: var(--font-weight-body);
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--min-shadow);
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.wiki-status-pill.draft {
+    background: var(--yellow);
+    color: var(--yellow-text-color);
+}
+
+.wiki-status-pill.published {
+    background: var(--green);
+    color: var(--green-text-color);
+}
+
+.wiki-status-pill:hover {
+    opacity: 0.9;
+}
+
+.wiki-status-pill .fa-chevron-down {
+    font-size: var(--font-size-xs);
+    margin-left: 2px;
+}
+
+.wiki-status-menu {
+    min-width: 140px;
+    padding: 6px;
+    border-radius: var(--box-radius);
+    box-shadow: var(--regular-shadow);
+}
+
+.wiki-status-menu li {
+    margin-bottom: 1px;
+    padding: 0 10px;
+}
+
+.wiki-status-menu li a {
+    display: block;
+    padding: 5px 10px;
+    border-radius: var(--box-radius-large);
+    font-size: var(--base-font-size);
+    color: var(--primary-background);
+}
+
+.wiki-status-menu li a.draft-option {
+    background: var(--yellow);
+    color: var(--yellow-text-color);
+}
+
+.wiki-status-menu li a.published-option {
+    background: var(--green);
+    color: var(--green-text-color);
+}
+
+.wiki-status-menu li a:hover {
+    opacity: 0.85;
+    text-decoration: none;
+}
+
+.wiki-status-menu li a i {
+    width: 16px;
+    text-align: center;
+    margin-right: 4px;
+}
 
 /* Actions Section */
 .wiki-actions-section {
@@ -715,12 +907,12 @@
     padding: 10px 14px;
     border-radius: 12px;
     font-size: var(--base-font-size);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     text-decoration: none;
     color: var(--primary-font-color);
     background: transparent;
     border: none;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .wiki-action-btn:hover {
@@ -788,7 +980,7 @@
     justify-content: center;
     flex-shrink: 0;
     color: var(--secondary-font-color);
-    font-size: 12px;
+    font-size: var(--font-size-s);
 }
 
 .wiki-activity-icon.edit {
@@ -812,7 +1004,7 @@
 }
 
 .wiki-activity-text strong {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .wiki-activity-icon.status {
@@ -889,7 +1081,7 @@
 }
 
 .wiki-tree-link i {
-    font-size: 14px;
+    font-size: var(--base-font-size);
     opacity: 0.7;
 }
 
@@ -922,7 +1114,7 @@
     color: var(--secondary-font-color);
     font-size: var(--base-font-size);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
     width: 100%;
     justify-content: center;
 }
@@ -955,7 +1147,7 @@
     border: 1px solid var(--main-border-color);
     color: var(--secondary-font-color);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .wiki-properties-toggle:hover {
@@ -1025,7 +1217,7 @@
 
 .wiki-empty-state-title {
     font-size: var(--font-size-xl);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color);
     margin-bottom: 8px;
 }
@@ -1177,5 +1369,5 @@
 /* Dark mode status colors handled by theme CSS variables */
 
 [data-theme="dark"] .wiki-properties-panel {
-    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--large-shadow);
 }

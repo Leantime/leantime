@@ -1,31 +1,29 @@
 <div class="grid-stack-item" {{ $attributes }}>
-    <div class="grid-stack-item-content {{ ($background == "default") ? "maincontentinner" : $background  }} tw-p-none">
-        <div class="tw-flex tw-flex-col tw-h-full {{ ($background == "default") ? "tw-pb-l" : "" }}">
+    <div class="grid-stack-item-content {{ ($background == "default") ? "maincontentinner" : $background  }} tw:p-none">
+        <div class="tw:flex tw:flex-col tw:h-full {{ ($background == "default") ? "tw:pb-l" : "" }}">
             @if(empty($fixed))
-            <div class="stickyHeader" style="padding:15px; height:50px;  width:100%;">
+            <div class="stickyHeader" style="display:flex; align-items:center; gap:10px; padding:10px 15px; min-height:46px; width:100%;">
 
-                <div class="grid-handler-top tw-h-[30px] tw-cursor-grab tw-float-left tw-mr-sm">
+                <div class="grid-handler-top" style="cursor:grab; flex-shrink:0; display:flex; align-items:center;">
                     <i class="fa-solid fa-grip-vertical"></i>
                 </div>
 
                 @if($name != '' && $noTitle == false)
-                    <h5 class="subtitle tw-pb-m tw-float-left tw-mr-sm">{{ __($name) }}</h5>
+                    <h5 class="subtitle" style="flex:1; margin:0; line-height:1.2;">{{ __($name) }}</h5>
+                @else
+                    <div style="flex:1;"></div>
                 @endif
-                <div class="inlineDropDownContainer tw-float-right">
-                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
-                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Resize to fit content</a></li>
-                        @if(empty($alwaysVisible))
-                            <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> Hide</a></li>
-                        @endif
-                    </ul>
-                </div>
+                <div class="widget-header-actions" style="flex-shrink:0; display:flex; align-items:center; gap:2px;"></div>
+                <x-global::elements.dropdown containerClass="tw:flex-shrink-0 tw:flex tw:items-center">
+                    <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Resize to fit content</a></li>
+                    @if(empty($alwaysVisible))
+                        <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> Hide</a></li>
+                    @endif
+                </x-global::elements.dropdown>
             </div>
             @endif
             <span class="clearall"></span>
-            <div class="widgetContent {{ ($background == "default") ? 'tw-px-m' : '' }}">
+            <div class="widgetContent {{ ($background == "default") ? 'tw:px-m' : '' }}">
                 {{ $slot }}
             </div>
         </div>

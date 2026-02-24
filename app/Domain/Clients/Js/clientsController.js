@@ -23,13 +23,9 @@ leantime.clientsController = (function () {
         );
     };
 
-    var initClientTabs = function () {
-        jQuery('.clientTabs').tabs();
-    };
-
     var initClientTable = function () {
 
-        jQuery(document).ready(function () {
+        document.addEventListener('DOMContentLoaded', function () {
 
             var size = 100;
 
@@ -71,7 +67,6 @@ leantime.clientsController = (function () {
     // Make public what you want to have public, everything else is private
     return {
         initDates:initDates,
-        initClientTabs:initClientTabs,
         initClientTable:initClientTable
     };
 })();

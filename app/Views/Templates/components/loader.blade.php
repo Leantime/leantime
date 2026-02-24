@@ -1,11 +1,7 @@
 @props([
-    "size",
+    'size' => 'md',
 ])
 
-<div style="
-        display:inline-block;
-        width:{{ $size }};
-        height: {{ $size }};
-        vertical-align: middle;
-        background:url({{ BASE_URL }}/dist/images/loading-animation.svg);
-        background-size: contain;"></div>
+<span {{ $attributes->merge(['class' => 'htmx-indicator']) }}>
+    <span class="indeterminate"></span>
+</span>

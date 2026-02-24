@@ -30,7 +30,7 @@ class FirstLogin extends Controller
         if (isset($_GET['step']) && $_GET['step'] == 'end') {
             $content = '  <script>
                     confetti();
-                    jQuery.nmTop().close(2000);
+                    setTimeout(function() { leantime.modals.closeModal(); }, 2000);
                 </script>';
 
             return new \Illuminate\Http\Response($content);

@@ -7,7 +7,7 @@
 
 @endif
 
-<form name="progressForm" id="progressForm">
+<form name="progressForm" id="progressForm" aria-live="polite">
     <div class="projectSteps">
         <div class="progressWrapper">
             <div class="progress">
@@ -24,7 +24,7 @@
 
             @foreach ($progressSteps as $step)
                 <div class="step {{ $step['stepType'] }}" style="left: {{ $step['positionLeft'] }}%;">
-                    <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle" data-tippy-content="{{ __($step['description']) }}">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-tippy-content="{{ __($step['description']) }}">
                         <span class="innerCircle"></span>
                         <span class="title">
                             @if ($step['status'] == 'done')

@@ -9,22 +9,22 @@
            ])
 
     @if ($login::userIsAtLeast("manager", true))
-        <li class="notificationDropdown appsLink">
-        <a
+        <li class="dropdown notificationDropdown appsLink">
+        <a href="javascript:void(0)"
             class="dropdown-toggle profileHandler newsDropDownHandler"
+            data-toggle="dropdown"
             hx-get="{{ BASE_URL }}/plugins/marketplaceplugins/getLatest"
             hx-target="#pluginNewsDropdown"
             hx-indicator=".htmx-news-indicator"
             hx-trigger="click"
             preload="mouseover"
-            data-toggle='dropdown'
             data-tippy-content='{{ __('popover.latest_plugins') }}'
         >
             <i class="fa-solid fa-puzzle-piece"></i>
 
         </a>
 
-        <div class='dropdown-menu tw-p-m tw-h-screen tw-overflow-y-auto' id='pluginNewsDropdown'>
+        <div class='dropdown-menu' id='pluginNewsDropdown'>
             <div class="htmx-indicator htmx-news-indicator">
                 <x-global::loadingText type="text" count="3" includeHeadline="true" />
             </div>
@@ -32,39 +32,38 @@
     </li>
     @endif
 
-    <li class="notificationDropdown">
-        <a
+    <li class="dropdown notificationDropdown">
+        <a href="javascript:void(0)"
             class="dropdown-toggle profileHandler newsDropDownHandler"
+            data-toggle="dropdown"
             hx-get="{{ BASE_URL }}/notifications/news/get"
             hx-target="#newsDropdown"
             hx-indicator=".htmx-news-indicator"
             hx-trigger="click"
             preload="mouseover"
-            data-toggle='dropdown'
             data-tippy-content='{{ __('popover.latest_updates') }}'
         >
             <span class="fa-solid fa-bolt-lightning"></span>
-            <span hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
+            <span class="tw:inline-block" hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
 
         </a>
 
-        <div class='dropdown-menu tw-p-m tw-h-screen tw-overflow-y-auto' id='newsDropdown'>
+        <div class='dropdown-menu' id='newsDropdown'>
             <div class="htmx-indicator htmx-news-indicator">
                 <x-global::loadingText type="text" count="3" includeHeadline="true" />
             </div>
         </div>
     </li>
 
-    <li class="notificationDropdown">
-        <a
-            href='javascript:void(0);'
+    <li class="dropdown notificationDropdown">
+        <a href="javascript:void(0)"
             class="dropdown-toggle profileHandler notificationHandler"
-            data-toggle='dropdown'
+            data-toggle="dropdown"
             data-tippy-content='{{ __('popover.notifications') }}'
         >
             <span class="fa-solid fa-bell"></span>
             @if($newNotificationCount>0)
-                <span class='notificationCounter'>{{ $newNotificationCount }}</span>
+                <span class='notificationCounter badge badge-danger badge-xs'>{{ $newNotificationCount }}</span>
             @endif
         </a>
 
@@ -89,7 +88,7 @@
 
                 <ul id='notificationsList' class='notifcationViewLists'>
                     @if ($totalNotificationCount === 0)
-                        <p style='padding: 10px'>{{ __('text.no_notifications') }}</p>
+                        <p class="tw:p-2.5">{{ __('text.no_notifications') }}</p>
                     @endif
 
                     @foreach ($notifications as $notif)
@@ -118,9 +117,9 @@
                     @endforeach
                 </ul>
 
-                <ul id='mentionsList' style='display:none;' class='notificationViewLists'>
+                <ul id='mentionsList' class='notificationViewLists tw:hidden'>
                     @if ($totalMentionCount === 0)
-                        <p style="padding: 10px">{{ __('text.no_notifications') }}</p>
+                        <p class="tw:p-2.5">{{ __('text.no_notifications') }}</p>
                     @endif
 
                     @foreach ($notifications as $notif)
@@ -154,11 +153,10 @@
 
     </li>
 
-    <li class="userloggedinfo">
-        <a
-            href='javascript:void(0);'
+    <li class="dropdown userloggedinfo">
+        <a href="javascript:void(0)"
             class="dropdown-toggle"
-            data-toggle='dropdown'
+            data-toggle="dropdown"
             data-tippy-content='{{ __('popover.help') }}'
         >
             <span class="fa-solid fa-question-circle"></span>
@@ -213,10 +211,10 @@
 
 </ul>
 
-<ul class="headmenu work-modes" style="height: 50px; float: left;">
+<ul class="headmenu work-modes tw:h-[50px] pull-left">
 
     @dispatchEvent('afterHeadMenuOpen')
-    <li>
+    <li class="dropdown">
         @include('menu::projectSelector')
     </li>
     <li>

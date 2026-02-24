@@ -7,39 +7,38 @@
  * @module tiptap
  */
 
-// Use require for Node/Webpack compatibility
-const { Editor } = require('@tiptap/core');
-const StarterKit = require('@tiptap/starter-kit').default;
-const Placeholder = require('@tiptap/extension-placeholder').default;
-const Link = require('@tiptap/extension-link').default;
-const Image = require('@tiptap/extension-image').default;
-const { createResizableImage } = require('./extensions/imageResize');
-const TaskList = require('@tiptap/extension-task-list').default;
-const TaskItem = require('@tiptap/extension-task-item').default;
-const Table = require('@tiptap/extension-table').default;
-const TableRow = require('@tiptap/extension-table-row').default;
-const TableCell = require('@tiptap/extension-table-cell').default;
-const TableHeader = require('@tiptap/extension-table-header').default;
-const Highlight = require('@tiptap/extension-highlight').default;
-const Underline = require('@tiptap/extension-underline').default;
-const Typography = require('@tiptap/extension-typography').default;
-const Superscript = require('@tiptap/extension-superscript').default;
-const Subscript = require('@tiptap/extension-subscript').default;
-const CharacterCount = require('@tiptap/extension-character-count').default;
-const TextAlign = require('@tiptap/extension-text-align').default;
-const TextStyle = require('@tiptap/extension-text-style').default;
-const Color = require('@tiptap/extension-color').default;
-const FontFamily = require('@tiptap/extension-font-family').default;
-const FontSize = require('tiptap-extension-font-size').default;
-const { createMentionExtension } = require('./extensions/mention');
-const { createSlashCommandsExtension } = require('./extensions/slashCommands');
-const { EmbedNode, showEmbedDialog } = require('./extensions/embed');
-const { createMermaidExtension, showMermaidDialog } = require('./extensions/mermaid');
-const { createMathExtension, showMathDialog, loadKaTeX } = require('./extensions/math');
-const { createDetailsExtension } = require('./extensions/details');
-const { createEmojiExtension, showEmojiPickerDialog } = require('./extensions/emoji');
-const { createTableOfContentsExtension } = require('./extensions/tableOfContents');
-const { createColumnsExtension } = require('./extensions/columns');
+import { Editor } from '@tiptap/core';
+import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder';
+import Link from '@tiptap/extension-link';
+import Image from '@tiptap/extension-image';
+import { createResizableImage } from './extensions/imageResize.js';
+import TaskList from '@tiptap/extension-task-list';
+import TaskItem from '@tiptap/extension-task-item';
+import Table from '@tiptap/extension-table';
+import TableRow from '@tiptap/extension-table-row';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import Highlight from '@tiptap/extension-highlight';
+import Underline from '@tiptap/extension-underline';
+import Typography from '@tiptap/extension-typography';
+import Superscript from '@tiptap/extension-superscript';
+import Subscript from '@tiptap/extension-subscript';
+import CharacterCount from '@tiptap/extension-character-count';
+import TextAlign from '@tiptap/extension-text-align';
+import TextStyle from '@tiptap/extension-text-style';
+import Color from '@tiptap/extension-color';
+import FontFamily from '@tiptap/extension-font-family';
+import FontSize from 'tiptap-extension-font-size';
+import { createMentionExtension } from './extensions/mention.js';
+import { createSlashCommandsExtension } from './extensions/slashCommands.js';
+import { EmbedNode, showEmbedDialog } from './extensions/embed.js';
+import { createMermaidExtension, showMermaidDialog } from './extensions/mermaid.js';
+import { createMathExtension, showMathDialog, loadKaTeX } from './extensions/math.js';
+import { createDetailsExtension } from './extensions/details.js';
+import { createEmojiExtension, showEmojiPickerDialog } from './extensions/emoji.js';
+import { createTableOfContentsExtension } from './extensions/tableOfContents.js';
+import { createColumnsExtension } from './extensions/columns.js';
 
 /**
  * EditorRegistry - Manages Tiptap editor instances
@@ -942,10 +941,4 @@ if (document.readyState === 'loading') {
 }
 
 // Export for module systems
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        tiptapController: tiptapController,
-        EditorRegistry: EditorRegistry,
-        createTiptapEditor: createTiptapEditor,
-    };
-}
+export { tiptapController, EditorRegistry, createTiptapEditor };

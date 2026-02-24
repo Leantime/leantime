@@ -1,0 +1,77 @@
+@import "tailwindcss" prefix(tw);
+
+@plugin "daisyui" {
+    themes: light --default, dark;
+}
+
+@source "../../app/{Views,Domain,Plugins}/**/*.{tpl,sub,inc,blade}.php";
+@source "../../app/Core/Template.php";
+@source "../../app/{Views,Domain,Plugins}/**/{Composers,Controllers}/**/*.php";
+
+@theme {
+    /* Map Leantime CSS variables to Tailwind theme */
+    --color-primary: var(--primary-color);
+    --color-secondary: var(--secondary-color);
+
+    /* Design System v2 semantic color aliases */
+    --color-accent1: var(--accent1);
+    --color-accent2: var(--accent2);
+    --color-accent3: var(--accent3);
+    --color-accent4: var(--accent4);
+    --color-text-primary: var(--color-text-primary);
+    --color-text-secondary: var(--color-text-secondary);
+    --color-text-muted: var(--color-text-muted);
+    --color-bg-page: var(--color-bg-page);
+    --color-bg-card: var(--color-bg-card);
+    --color-bg-elevated: var(--color-bg-elevated);
+    --color-bg-muted: var(--color-bg-muted);
+    --color-bg-hover: var(--color-bg-hover);
+    --color-border-default: var(--color-border-default);
+    --color-border-light: var(--color-border-light);
+
+    /* Font sizes mapped from Leantime design tokens */
+    --font-size-sm: var(--font-size-sm);
+    --font-size-base: var(--base-font-size);
+    --font-size-l: var(--font-size-l);
+    --font-size-xl: var(--font-size-xl);
+    --font-size-2xl: var(--font-size-xxl);
+    --font-size-3xl: var(--font-size-xxxl);
+    --font-size-4xl: calc(var(--font-size-xxxl) * 1.2);
+    --font-size-5xl: calc(var(--font-size-xxxl) * 1.6);
+    --font-size-6xl: calc(var(--font-size-xxxl) * 2);
+    --font-size-7xl: calc(var(--font-size-xxxl) * 2.4);
+    --font-size-8xl: calc(var(--font-size-xxxl) * 3.2);
+    --font-size-9xl: calc(var(--font-size-xxxl) * 4.266);
+
+    /* Font weight tokens */
+    --font-weight-body: var(--font-weight-body);
+    --font-weight-medium: var(--font-weight-medium);
+    --font-weight-semibold: var(--font-weight-semibold);
+    --font-weight-heading: var(--font-weight-heading);
+    --font-weight-bold: var(--font-weight-bold);
+    --font-weight-display: var(--font-weight-display);
+
+    /* Shadow scale */
+    --shadow-xs: var(--shadow-xs);
+    --shadow-sm: var(--shadow-sm);
+    --shadow-md: var(--shadow-md);
+    --shadow-lg: var(--shadow-lg);
+    --shadow-xl: var(--shadow-xl);
+
+    /* Radius scale */
+    --radius-xs: var(--radius-xs);
+    --radius-sm: var(--radius-sm);
+    --radius: var(--radius);
+    --radius-lg: var(--radius-lg);
+    --radius-pill: var(--radius-pill);
+    --radius-full: var(--radius-full);
+
+    /* Spacing mapped from Leantime design tokens */
+    --spacing-none: 0;
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-base: 15px;
+    --spacing-m: 15px;
+    --spacing-l: 20px;
+    --spacing-xl: 30px;
+}
