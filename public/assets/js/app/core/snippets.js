@@ -95,12 +95,15 @@ var toggleTheme = function (theme) {
 
     };
 
-    var toggleColors = function (accent1, accent2) {
+var toggleColors = function (accent1, accent2, schemeKey) {
+    jQuery("#colorSchemeSetter").html(":root { --accent1: " + accent1 + "; --accent2: " + accent2 + "}");
 
-        jQuery("#colorSchemeSetter").html(":root { --accent1: "+accent1+"; --accent2: "+accent2+"}")
-
-
-    };
+    if (schemeKey) {
+        jQuery("body").removeClass(function(i, cls) {
+            return (cls.match(/\bcolorScheme-\S+/g) || []).join(' ');
+        }).addClass("colorScheme-" + schemeKey);
+    }
+};
 
 
 
