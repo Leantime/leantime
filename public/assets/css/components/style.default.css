@@ -2872,7 +2872,7 @@ h4 .helperTooltip,
 }
 
 .smooth {
-    transition: all 1s ease-in;
+    transition: opacity 1s ease-in, transform 1s ease-in;
 }
 
 

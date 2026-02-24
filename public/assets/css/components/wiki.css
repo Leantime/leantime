@@ -106,7 +106,7 @@
     border: none;
     color: var(--secondary-font-color);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .wiki-collapse-btn:hover {
@@ -143,7 +143,7 @@
     color: var(--secondary-font-color);
     cursor: pointer;
     z-index: 10;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .wiki-properties-toggle-btn:hover {
@@ -213,7 +213,7 @@
     color: var(--secondary-font-color);
     cursor: pointer;
     z-index: 10;
-    transition: all 0.15s ease, opacity 0.25s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.25s ease;
     opacity: 0;
     pointer-events: none;
 }
@@ -616,7 +616,7 @@
     font-size: var(--base-font-size);
     color: var(--primary-font-color);
     z-index: 100;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .wiki-edit-indicator.editing {
@@ -723,7 +723,7 @@
     background: transparent;
     color: var(--primary-font-color);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -828,7 +828,7 @@
     border: none;
     cursor: pointer;
     box-shadow: var(--min-shadow);
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .wiki-status-pill.draft {
@@ -912,7 +912,7 @@
     color: var(--primary-font-color);
     background: transparent;
     border: none;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .wiki-action-btn:hover {
@@ -1114,7 +1114,7 @@
     color: var(--secondary-font-color);
     font-size: var(--base-font-size);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
     width: 100%;
     justify-content: center;
 }
@@ -1147,7 +1147,7 @@
     border: 1px solid var(--main-border-color);
     color: var(--secondary-font-color);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .wiki-properties-toggle:hover {

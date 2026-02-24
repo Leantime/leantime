@@ -717,7 +717,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: transparent;
     color: var(--main-text-color, #4b5563);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .tiptap-toolbar__button:hover {
@@ -864,7 +864,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     padding: 12px 16px;
     border-radius: var(--element-radius, 8px);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
     color: var(--primary-font-color, #1e293b);
     font-size: var(--base-font-size, 14px);
     font-weight: 500;
@@ -904,7 +904,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     border-radius: var(--element-radius, 6px);
     color: var(--primary-color, #5a67d8);
     flex-shrink: 0;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .tiptap-image-popover__loading {
@@ -948,7 +948,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     font-weight: bold;
     line-height: 21px;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .tiptap-image-popover__url-btn:hover {
@@ -1260,7 +1260,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     font-size: 24px;
     cursor: pointer;
     border-radius: 6px;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .tiptap-ai-dialog__close:hover {
@@ -1340,7 +1340,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     font-size: var(--base-font-size, 14px);
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .tiptap-ai-dialog__btn--cancel {
@@ -1654,7 +1654,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     font-size: 24px;
     cursor: pointer;
     border-radius: 6px;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .tiptap-template-picker__close:hover {
@@ -1907,7 +1907,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     font-size: 24px;
     cursor: pointer;
     border-radius: 6px;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .tiptap-embed-dialog__close:hover {
@@ -2028,7 +2028,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     font-size: var(--base-font-size, 14px);
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .tiptap-embed-dialog__btn--cancel {
@@ -2175,7 +2175,7 @@ div[id^="comments-"] > div > .clearall {
     border-radius: 14px;
     background: var(--element-bg, #f8fafc);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
     font-size: 14px;
     line-height: 1;
 }
@@ -2216,7 +2216,7 @@ div[id^="comments-"] > div > .clearall {
     border-radius: 50%;
     background: transparent;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
     color: var(--secondary-font-color, #94a3b8);
 }
 
@@ -3406,7 +3406,7 @@ div[id^="comments-"] > div > .clearall {
     cursor: pointer;
     font-size: 12px;
     padding: 0;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
@@ -3564,7 +3564,7 @@ div[id^="comments-"] > div > .clearall {
     text-align: left;
     font-size: 13px;
     color: var(--main-text-color, #374151);
-    transition: all 0.12s ease;
+    transition: background-color 0.12s ease, color 0.12s ease;
 }
 
 .tiptap-more-menu__item:hover {

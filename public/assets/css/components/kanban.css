@@ -99,7 +99,7 @@
 .column .contentInner.empty-column a[id^="ticket_new_link_group_"] {
     color: var(--primary-font-color);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
     border-radius: var(--box-radius-small);
     opacity: 0.7;
 }
@@ -1058,7 +1058,7 @@ body .maincontent .priority-text-5 a:link {
     border-radius: var(--box-radius-small);
     text-decoration: none;
     color: var(--primary-font-color);
-    transition: all 150ms ease-out;
+    transition: background-color 150ms ease-out, border-color 150ms ease-out, box-shadow 150ms ease-out;
     font-size: var(--font-size-xs);
     min-width: 0;
     overflow: hidden;
@@ -1310,7 +1310,7 @@ body .maincontent .priority-text-5 a:link {
 .card-moving-out {
     opacity: 0.5;
     transform: scale(0.95);
-    transition: all 0.2s ease-out;
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
 .card-moving-in {
