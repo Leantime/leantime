@@ -13,6 +13,22 @@
     --color-primary: var(--primary-color);
     --color-secondary: var(--secondary-color);
 
+    /* Design System v2 semantic color aliases */
+    --color-accent1: var(--accent1);
+    --color-accent2: var(--accent2);
+    --color-accent3: var(--accent3);
+    --color-accent4: var(--accent4);
+    --color-text-primary: var(--color-text-primary);
+    --color-text-secondary: var(--color-text-secondary);
+    --color-text-muted: var(--color-text-muted);
+    --color-bg-page: var(--color-bg-page);
+    --color-bg-card: var(--color-bg-card);
+    --color-bg-elevated: var(--color-bg-elevated);
+    --color-bg-muted: var(--color-bg-muted);
+    --color-bg-hover: var(--color-bg-hover);
+    --color-border-default: var(--color-border-default);
+    --color-border-light: var(--color-border-light);
+
     /* Font sizes mapped from Leantime design tokens */
     --font-size-sm: var(--font-size-sm);
     --font-size-base: var(--base-font-size);
@@ -26,6 +42,29 @@
     --font-size-7xl: calc(var(--font-size-xxxl) * 2.4);
     --font-size-8xl: calc(var(--font-size-xxxl) * 3.2);
     --font-size-9xl: calc(var(--font-size-xxxl) * 4.266);
+
+    /* Font weight tokens */
+    --font-weight-body: var(--font-weight-body);
+    --font-weight-medium: var(--font-weight-medium);
+    --font-weight-semibold: var(--font-weight-semibold);
+    --font-weight-heading: var(--font-weight-heading);
+    --font-weight-bold: var(--font-weight-bold);
+    --font-weight-display: var(--font-weight-display);
+
+    /* Shadow scale */
+    --shadow-xs: var(--shadow-xs);
+    --shadow-sm: var(--shadow-sm);
+    --shadow-md: var(--shadow-md);
+    --shadow-lg: var(--shadow-lg);
+    --shadow-xl: var(--shadow-xl);
+
+    /* Radius scale */
+    --radius-xs: var(--radius-xs);
+    --radius-sm: var(--radius-sm);
+    --radius: var(--radius);
+    --radius-lg: var(--radius-lg);
+    --radius-pill: var(--radius-pill);
+    --radius-full: var(--radius-full);
 
     /* Spacing mapped from Leantime design tokens */
     --spacing-none: 0;
