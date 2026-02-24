@@ -118,7 +118,7 @@
                     @if (isset($formNotification) && ! empty($formNotification))
                         <div class="tw:text-green-500">{!! $formNotification !!}</div>
                     @else
-                        <div id="installForm{{ $plugin->marketplaceId }}">
+                        <div id="installForm{{ $plugin->marketplaceId }}" aria-live="polite">
 
 
                             @if (! empty($formError))

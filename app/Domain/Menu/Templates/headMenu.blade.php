@@ -24,7 +24,7 @@
 
         </a>
 
-        <div class='dropdown-menu' id='pluginNewsDropdown'>
+        <div class='dropdown-menu' id='pluginNewsDropdown' aria-live="polite">
             <div class="htmx-indicator htmx-news-indicator" role="status">
                 <x-globals::feedback.skeleton type="text" count="3" includeHeadline="true" />
             </div>
@@ -48,7 +48,7 @@
 
         </a>
 
-        <div class='dropdown-menu' id='newsDropdown'>
+        <div class='dropdown-menu' id='newsDropdown' aria-live="polite">
             <div class="htmx-indicator htmx-news-indicator" role="status">
                 <x-globals::feedback.skeleton type="text" count="3" includeHeadline="true" />
             </div>

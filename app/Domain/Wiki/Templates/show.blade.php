@@ -223,14 +223,13 @@
                         </div>
 
                         @if (! empty($currentArticle->milestoneHeadline))
-                            <div class="wiki-milestone-card">
+                            <div class="wiki-milestone-card" aria-live="polite">
                                 <div hx-trigger="load"
                                      hx-indicator=".htmx-indicator"
                                      hx-target="closest .wiki-milestone-card"
                                      hx-select="unset"
                                      hx-swap="innerHTML"
-                                     hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $currentArticle->milestoneId }}"
-                                     aria-live="polite">
+                                     hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $currentArticle->milestoneId }}">
                                     <div class="htmx-indicator" role="status">
                                         {{ __('label.loading_milestone') }}
                                     </div>

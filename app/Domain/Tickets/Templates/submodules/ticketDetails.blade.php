@@ -155,6 +155,7 @@
                 hx-get="{{ BASE_URL }}/tickets/subtasks/get?ticketId={{ $ticket->id }}"
                 hx-trigger="load, subtasksUpdated from:body"
                 hx-indicator=".subtaskIndicator"
+                aria-live="polite"
             ></div>
             <div class="htmx-indicator subtaskIndicator" role="status">
                 {{ __('label.loading') }} ...<br /><br />

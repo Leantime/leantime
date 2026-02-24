@@ -47,7 +47,8 @@
          hx-trigger="intersect once"
          hx-target="#global-load-more"
          hx-swap="outerHTML"
-         hx-vals='{"offset": {{ $nextOffset }}, "limit": 20, "groupBy": "{{ $groupBy }}", "projectFilter": "{{ $projectFilter }}"}'>
+         hx-vals='{"offset": {{ $nextOffset }}, "limit": 20, "groupBy": "{{ $groupBy }}", "projectFilter": "{{ $projectFilter }}"}'
+         aria-live="polite">
         <div class="center tw:py-4">
             <div class="htmx-indicator" role="status">
                 <div class="indeterminate"></div>
