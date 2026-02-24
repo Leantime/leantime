@@ -343,11 +343,14 @@ body hr {
 }
 
 .tippy-box {
-    background: var(--secondary-action-hover-bg);
+    background: var(--glass-bg-subtle);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border: 1px solid var(--glass-border);
 }
 
 .tippy-arrow {
-    color:var(--secondary-action-hover-bg);
+    color: var(--glass-bg-subtle);
 }
 
 

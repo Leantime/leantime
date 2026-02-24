@@ -3,10 +3,12 @@
 .dropdown-menu {
     margin-top: 0;
     border-radius: var(--box-radius);
-    border:0px;
+    border: 1px solid var(--glass-border);
     padding: 8px 0;
-    box-shadow: var(--regular-shadow);
-    background:var(--secondary-background);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: var(--glass-inset), var(--regular-shadow);
 }
 
 .bigMenu ul li {

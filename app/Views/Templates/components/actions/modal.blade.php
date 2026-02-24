@@ -16,7 +16,7 @@
 @endphp
 
 <dialog {{ $attributes->merge(['id' => $id, 'class' => 'modal-dialog']) }} style="{{ $sizeStyle }}">
-    <div class="modal-content">
+    <div class="modal-content lt-glass">
 
         @if ($title || $closeable)
             <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">

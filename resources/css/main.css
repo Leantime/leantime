@@ -68,15 +68,16 @@
    ──────────────────────────────────────────────────────────────────── */
 #global-modal-box {
     position: relative;
-    background-color: var(--glass-background, rgba(255,255,255,0.85));
+    background-color: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
     border-radius: var(--box-radius, 0.5rem);
     max-height: calc(100dvh - 5em);
     overflow: visible;
     display: flex;
     flex-direction: column;
-    box-shadow: var(--large-shadow, 0 25px 50px -12px rgba(0,0,0,.25));
+    box-shadow: var(--glass-inset), var(--shadow-lg);
 }
 #global-modal-content {
     overflow-y: auto;
@@ -95,8 +96,8 @@
     inset: 0;
     z-index: 998;
     background-color: rgba(0, 0, 0, 0.25);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
     cursor: pointer;
 }
 #modal-blur-overlay.active {
