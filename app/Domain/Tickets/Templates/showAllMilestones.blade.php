@@ -110,7 +110,7 @@
                                          hx-swap="innerHTML"
                                          hx-get="{{ BASE_URL }}/hx/tickets/milestones/progress?milestoneId={{ $row['id'] }}&view=Progress"
                                          aria-live="polite">
-                                        <div class="htmx-indicator">
+                                        <div class="htmx-indicator" role="status">
                                             {{ __('label.calculating_progress') }}
                                         </div>
                                     </div>

@@ -12,7 +12,7 @@
                 <input type="hidden" value="1" name="subtaskSave" />
                 <x-globals::forms.input name="headline" title="{{ __("label.headline") }}" class="tw:w-full" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
                 <x-globals::forms.button submit type="primary" name="quickadd">{{ __("buttons.save") }}</x-globals::forms.button>
-                <div class="htmx-indicator-small">
+                <div class="htmx-indicator-small" role="status">
                     <x-globals::feedback.loading id="loadingthis" size="25px" />
                 </div>
                 <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />

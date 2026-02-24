@@ -10,8 +10,10 @@
     @include('global::sections.appAnnouncement')
 
     {{-- Loading indicator for SPA navigation --}}
-    <div id="page-loading" class="htmx-indicator"
-         style="position:fixed;top:0;left:0;z-index:9999;height:3px;width:100%;background:var(--accent1);pointer-events:none;"></div>
+    <div id="page-loading" class="htmx-indicator" role="status"
+         style="position:fixed;top:0;left:0;z-index:9999;height:3px;width:100%;background:var(--accent1);pointer-events:none;">
+        <span class="sr-only">{{ __('label.loading') }}</span>
+    </div>
 
     <div class="mainwrapper menu{{ session("menuState") ?? "closed" }}"
          @if(!empty($themeBgUrl)) style="background-image: url({{ filter_var($themeBgUrl, FILTER_SANITIZE_URL) }}); background-size: var(--background-size, cover); background-position: center; background-repeat: no-repeat;" @endif

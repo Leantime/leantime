@@ -72,7 +72,7 @@
                          hx-target="this"
                          hx-swap="innerHTML"
                          hx-get="<?=BASE_URL ?>/hx/tickets/milestones/progress?milestoneId=<?=$ticket['id'] ?>&progressColor={{ trim($ticket['tags'], "#") }}">
-                        <div class="htmx-indicator">
+                        <div class="htmx-indicator" role="status">
                                 <?= $tpl->__("label.loading_milestone") ?>
                         </div>
                     </div>

@@ -156,8 +156,8 @@
                 hx-trigger="load, subtasksUpdated from:body"
                 hx-indicator=".subtaskIndicator"
             ></div>
-            <div class="htmx-indicator subtaskIndicator">
-                Loading Subtasks ...<br /><br />
+            <div class="htmx-indicator subtaskIndicator" role="status">
+                {{ __('label.loading') }} ...<br /><br />
             </div>
 
             <h4 class="widgettitle title-light"><span class="fa-solid fa-comments"></span>{{ __('subtitles.discussion') }}</h4>

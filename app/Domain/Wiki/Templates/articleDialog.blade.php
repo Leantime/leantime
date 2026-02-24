@@ -129,7 +129,7 @@
                                  hx-swap="innerHTML"
                                  hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $currentArticle->milestoneId }}"
                                  aria-live="polite">
-                                <div class="htmx-indicator">
+                                <div class="htmx-indicator" role="status">
                                     {{ __('label.loading_milestone') }}
                                 </div>
                             </div>

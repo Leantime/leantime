@@ -25,8 +25,9 @@
     }
 @endphp
 
-<div class="htmx-indicator full-width-loader">
+<div class="htmx-indicator full-width-loader" role="status">
     <div class="indeterminate"></div>
+    <span class="sr-only">{{ __('label.loading') }}</span>
 </div>
 
 <div id="yourToDoContainer"
@@ -290,8 +291,9 @@
                  hx-swap="outerHTML"
                  hx-vals='{"limit": {{ $limit }}, "groupBy": "{{ $groupBy }}", "projectFilter": "{{ $projectFilter }}"}'>
                 <div class="center tw:py-4">
-                    <div class="htmx-indicator">
+                    <div class="htmx-indicator" role="status">
                         <div class="indeterminate"></div>
+                        <span class="sr-only">{{ __('label.loading') }}</span>
                     </div>
                     <div class="tw:text-sm tw:text-gray-500">
                         {{ __('text.loading_more_tasks') }}

@@ -141,7 +141,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                 <?php if ($row['type'] == 'milestone') { ?>
                                     <div hx-trigger="load"
                                          hx-get="<?= BASE_URL ?>/hx/tickets/milestones/progress?milestoneId=<?= $row['id'] ?>&view=Progress">
-                                        <div class="htmx-indicator">
+                                        <div class="htmx-indicator" role="status">
                                             <?= $tpl->__('label.calculating_progress') ?>
                                         </div>
                                     </div>

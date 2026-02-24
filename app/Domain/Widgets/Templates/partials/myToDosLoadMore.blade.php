@@ -49,8 +49,9 @@
          hx-swap="outerHTML"
          hx-vals='{"offset": {{ $nextOffset }}, "limit": 20, "groupBy": "{{ $groupBy }}", "projectFilter": "{{ $projectFilter }}"}'>
         <div class="center tw:py-4">
-            <div class="htmx-indicator">
+            <div class="htmx-indicator" role="status">
                 <div class="indeterminate"></div>
+                <span class="sr-only">{{ __('label.loading') }}</span>
             </div>
             <div class="tw:text-sm tw:text-gray-500">
                 {{ __('text.loading_more_tasks') }}...

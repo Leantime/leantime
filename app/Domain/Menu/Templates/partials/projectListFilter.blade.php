@@ -43,7 +43,7 @@
 
 </div>
 
-<div class="htmx-indicator tw:ml-m tw:mr-m tw:pt-l">
+<div class="htmx-indicator tw:ml-m tw:mr-m tw:pt-l" role="status">
     <x-globals::feedback.skeleton type="project" count="5" includeHeadline="false"/>
 </div>
 

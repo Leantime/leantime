@@ -189,7 +189,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                         <div hx-trigger="load"
                              hx-indicator=".htmx-indicator"
                              hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $canvasItem['milestoneId'] ?>">
-                            <div class="htmx-indicator">
+                            <div class="htmx-indicator" role="status">
                                 <?= $tpl->__('label.loading_milestone') ?>
                             </div>
                         </div>

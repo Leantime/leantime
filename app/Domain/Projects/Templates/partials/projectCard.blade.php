@@ -46,7 +46,7 @@
                 hx-target="#projectProgressBox-{{ $project['id'] }}"
                 hx-indicator=".htmx-indicator"
                 aria-live="polite">
-                <div class="htmx-indicator">
+                <div class="htmx-indicator" role="status">
                     <x-globals::feedback.skeleton type="card" count="1" />
                 </div>
             </div>

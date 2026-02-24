@@ -151,7 +151,7 @@
                                     :tag="'button'"
                                     :type="'secondary'"
                                 >Install</x-globals::forms.button>
-                                <div class="htmx-indicator-small">
+                                <div class="htmx-indicator-small" role="status">
                                     <x-globals::feedback.loading id="loadingthis" size="25px" />
                                 </div>
                             </form>
