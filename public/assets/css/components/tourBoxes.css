@@ -73,5 +73,5 @@
 
 .shepherd-has-title .shepherd-content .shepherd-cancel-icon:hover {
     background: none;
-    opacity:0.8;
+    opacity:var(--opacity-subtle);
 }

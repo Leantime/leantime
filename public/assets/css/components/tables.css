@@ -136,7 +136,7 @@
     cursor: default;
     color: var(--neutral);
     background: transparent;
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
 }
 
 .dataTables_paginate a {
@@ -180,7 +180,7 @@
     font-family: FontAwesome;
     content: "\00a0\00a0\f0dc";
     font-size:var(--font-size-s);
-    opacity: 0.4;
+    opacity: var(--opacity-disabled);
 }
 
 .dataTable thead th.sorting_asc:after {

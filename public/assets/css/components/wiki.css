@@ -300,7 +300,7 @@
 }
 
 .wiki-document-meta-item i {
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
 }
 
 .wiki-document-tags {
@@ -434,7 +434,7 @@
 
 .wiki-document ul[data-type="taskList"] li[data-checked="true"] > div {
     text-decoration: line-through;
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
 }
 
 /* Blockquotes */
@@ -549,7 +549,7 @@
     border-radius: 8px;
     font-size: var(--font-size-xs);
     color: var(--secondary-font-color);
-    opacity: 0.8;
+    opacity: var(--opacity-subtle);
     pointer-events: none;
 }
 
@@ -673,7 +673,7 @@
 .wiki-properties-section .control-label {
     font-size: var(--base-font-size);
     font-weight: var(--font-weight-bold);
-    opacity: 0.8;
+    opacity: var(--opacity-subtle);
 }
 
 /* Author with Avatar */
@@ -785,7 +785,7 @@
 .wiki-milestone-menu li a.active:hover {
     background: var(--accent1);
     color: white;
-    opacity: 0.9;
+    opacity: var(--opacity-subtle);
 }
 
 .wiki-milestone-menu li a i {
@@ -842,7 +842,7 @@
 }
 
 .wiki-status-pill:hover {
-    opacity: 0.9;
+    opacity: var(--opacity-subtle);
 }
 
 .wiki-status-pill .fa-chevron-down {
@@ -881,7 +881,7 @@
 }
 
 .wiki-status-menu li a:hover {
-    opacity: 0.85;
+    opacity: var(--opacity-subtle);
     text-decoration: none;
 }
 
@@ -1082,7 +1082,7 @@
 
 .wiki-tree-link i {
     font-size: var(--base-font-size);
-    opacity: 0.7;
+    opacity: var(--opacity-subdued);
 }
 
 .wiki-tree-link.active i {
@@ -1212,7 +1212,7 @@
     width: 120px;
     height: 120px;
     margin: 0 auto 24px;
-    opacity: 0.4;
+    opacity: var(--opacity-disabled);
 }
 
 .wiki-empty-state-title {

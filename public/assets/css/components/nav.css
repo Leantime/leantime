@@ -519,7 +519,7 @@ a.barmenu:hover {
     position: absolute;
     top: 4px;
     right: 10px;
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
 }
 
 .headmenu > li > a:hover .count, .headmenu > li.open > a .count {
@@ -763,7 +763,7 @@ a.barmenu:hover {
 
 .projectselector ul.selectorList li.projectLineItem.hasSubtitle a small {
     font-size:var(--font-size-xs);
-    opacity:0.5;
+    opacity:var(--opacity-disabled);
 }
 
 .projectselector ul.selectorList li.projectLineItem .projectAvatar {
@@ -905,7 +905,7 @@ a.barmenu:hover {
 
 .userloggedinfo .userinfo small {
     font-size: var(--base-font-size);
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
     color: var(--nav-link-color);
     font-style: italic;
 }

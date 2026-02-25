@@ -284,6 +284,13 @@
     --duration-moderate: 0.2s;
     --duration-slow: 0.3s;
 
+    /* Opacity */
+    --opacity-faint: 0.2;
+    --opacity-disabled: 0.5;
+    --opacity-muted: 0.6;
+    --opacity-subdued: 0.7;
+    --opacity-subtle: 0.85;
+
     /* Glass (aliases → existing tokens) */
     --glass-bg: var(--glass-background);
     --glass-inset: inset 0 1px 0 rgba(255,255,255,0.04);

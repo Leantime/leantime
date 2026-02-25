@@ -100,7 +100,7 @@
     text-decoration: none;
     transition: background-color var(--duration-moderate) ease, opacity var(--duration-moderate) ease;
     border-radius: var(--box-radius-small);
-    opacity: 0.7;
+    opacity: var(--opacity-subdued);
 }
 
 .column .contentInner.empty-column a[id^="ticket_new_link_group_"]:hover {
@@ -663,7 +663,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-lane-chevron {
     font-size: var(--font-size-xs);
     color: var(--primary-font-color);
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
     width: 10px;
     flex-shrink: 0;
     transition: transform var(--duration-moderate) ease;
@@ -875,7 +875,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-sidebar-tooltip .tooltip-info {
     font-size: var(--font-size-s);
     color: var(--primary-font-color);
-    opacity: 0.7;
+    opacity: var(--opacity-subdued);
     line-height: var(--line-height-snug);
 }
 
@@ -1098,7 +1098,7 @@ body .maincontent .priority-text-5 a:link {
 .compact-ticket-id {
     font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color);
-    opacity: 0.7;
+    opacity: var(--opacity-subdued);
     flex-shrink: 0;
     font-size: var(--font-size-xs);
 }
@@ -1115,7 +1115,7 @@ body .maincontent .priority-text-5 a:link {
 /* Type icon */
 .compact-ticket-type {
     flex-shrink: 0;
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
     font-size: var(--font-size-xs);
 }
 
@@ -1141,7 +1141,7 @@ body .maincontent .priority-text-5 a:link {
     border-radius: var(--box-radius-small);
     font-size: var(--font-size-xs);
     color: var(--primary-font-color);
-    opacity: 0.7;
+    opacity: var(--opacity-subdued);
     font-weight: var(--font-weight-semibold);
     height: 32px;
 }
@@ -1153,7 +1153,7 @@ body .maincontent .priority-text-5 a:link {
     gap: 6px;
     padding: 4px 12px;
     color: var(--primary-font-color);
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
     font-size: var(--font-size-xs);
     font-style: italic;
     height: 32px;
@@ -1307,7 +1307,7 @@ body .maincontent .priority-text-5 a:link {
 
 /* Card movement animations for swimlane transitions */
 .card-moving-out {
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
     transform: scale(0.95);
     transition: opacity var(--duration-moderate) ease-out, transform var(--duration-moderate) ease-out;
 }

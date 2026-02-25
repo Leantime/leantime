@@ -126,7 +126,7 @@
 }
 
 .sortable-ghost {
-    opacity: 0.7;
+    opacity: var(--opacity-subdued);
     box-shadow: 0 0 8px hsla(var(--accent2-hsl), 0.3);
 }
 

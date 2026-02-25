@@ -259,7 +259,7 @@ body {
     font-size: var(--font-size-xxl);
     font-weight: var(--font-weight-bold);
     line-height: var(--line-height-tight);
-    opacity: 0.4;
+    opacity: var(--opacity-disabled);
     cursor: pointer;
     padding: 8px;
     min-width: 44px;
@@ -268,7 +268,7 @@ body {
     align-items: center;
     justify-content: center;
 }
-.close:hover, .close:focus { opacity: 0.7; text-decoration: none }
+.close:hover, .close:focus { opacity: var(--opacity-subdued); text-decoration: none }
 
 /* Label base (inline badge-like) */
 .label {

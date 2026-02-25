@@ -550,7 +550,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 /* Dim other toolbar buttons while source view is open */
 .tiptap-wrapper.tiptap-source-active .tiptap-toolbar__button.is-disabled {
-    opacity: 0.35;
+    opacity: var(--opacity-disabled);
     cursor: not-allowed;
     pointer-events: none;
 }
@@ -741,7 +741,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 }
 
 .tiptap-toolbar__button.is-disabled {
-    opacity: 0.4;
+    opacity: var(--opacity-disabled);
     cursor: not-allowed;
     pointer-events: none;
 }

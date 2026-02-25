@@ -298,7 +298,7 @@ body.loginpage {
     top:0px;
     left:0px;
     content:"";
-    opacity:0.1;
+    opacity:var(--opacity-faint);
     position:absolute;
     width:100%;
     height:100%;
@@ -2250,7 +2250,7 @@ body .widgettitle .editHeadline:hover {
 }
 
 .articleMeta .metaContent {
-    opacity:0.7;
+    opacity:var(--opacity-subdued);
 }
 
 .articleMeta .tagsinput.readonly {
@@ -2259,7 +2259,7 @@ body .widgettitle .editHeadline:hover {
     margin: 0px 0px;
     vertical-align: middle;
     color:var(--primary-font-color);
-    opacity:0.7;
+    opacity:var(--opacity-subdued);
 }
 
 .articleMeta div.tagsinput.readonly span.tag {
@@ -2268,7 +2268,7 @@ body .widgettitle .editHeadline:hover {
     padding:0px;
     background:none;
     color:var(--primary-font-color);
-    opacity:0.7;
+    opacity:var(--opacity-subdued);
 }
 
 .articleBody {
@@ -2567,7 +2567,7 @@ h3.todaysDate {
     background:var(--secondary-background);
     padding:10px;
     border-radius:var(--box-radius);
-    opacity:0.7;
+    opacity:var(--opacity-subdued);
 }
 
 .ticketBox.fc-event-dragging .dropdown a,
@@ -2756,7 +2756,7 @@ a.confetti {
     height: 20px;
     background-repeat: no-repeat;
     background-size: cover;
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
 }
 .tox-checklist li:not(.tox-checklist--hidden).tox-checklist--checked::before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='16' width='16' viewBox='0 0 512 512'%3E%3Cpath d='M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z'/%3E%3C/svg%3E");
@@ -2868,7 +2868,7 @@ h4 .helperTooltip,
     }
     to {
         transform: rotate(360deg) scale(1);
-        opacity:0.5;
+        opacity:var(--opacity-disabled);
 
     }
 }

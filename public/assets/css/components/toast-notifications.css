@@ -73,7 +73,7 @@
     cursor: pointer;
     padding: 0 0.5rem;
     margin-left: 0.5rem;
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
     flex-shrink: 0;
     min-width: 44px;
     min-height: 44px;

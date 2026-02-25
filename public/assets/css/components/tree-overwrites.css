@@ -39,7 +39,7 @@ body .jstree-default > .jstree-no-dots .jstree-closed > .jstree-ocl {
 .jstree-default .jstree-icon:empty {
     width:20px;
     padding-right:4px;
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
 }
 
 .jstree-wholerow-ul {

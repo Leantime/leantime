@@ -23,7 +23,7 @@ body .gantt .upper-text {
 
 body .gantt .upper-text {
     fill:var(--kanban-col-title-color);
-    opacity:0.7;
+    opacity:var(--opacity-subdued);
 }
 
 body .gantt .lower-text,

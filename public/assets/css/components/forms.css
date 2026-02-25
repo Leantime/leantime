@@ -27,7 +27,7 @@ form label{
     padding-top:6px;
     margin-bottom: 2px;
     font-weight: var(--font-weight-bold);
-    opacity:0.8;
+    opacity:var(--opacity-subtle);
     padding-bottom:6px;
 }
 
@@ -54,7 +54,7 @@ input:disabled,
 .btn-primary[disabled]{
     border:none;
     box-shadow:none;
-    opacity:0.4;
+    opacity:var(--opacity-disabled);
 }
 
 body input:focus {
@@ -179,26 +179,26 @@ select {
 input:-moz-placeholder,
 textarea:-moz-placeholder{
     color: var(--primary-font-color);
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
 }
 
 input::-webkit-input-placeholder,
 textarea::-webkit-input-placeholder{
     color: var(--primary-font-color);
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
     margin-left: -1px;
 }
 
 input::-moz-placeholder,
 textarea::-moz-placeholder { /* Firefox 19+ */
     color: var(--primary-font-color);
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
 }
 
 input:-ms-input-placeholder,
 textarea:-ms-input-placeholder{
     color: var(--primary-font-color);
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
 }
 
 
@@ -954,7 +954,7 @@ input.secretInput:focus {
 
 .uppy-is-drag-over:after {
     background-color: var(--primary-color);
-    opacity:0.6;
+    opacity:var(--opacity-muted);
     border: 4px dashed var(--input-background);
     bottom: 8px;
     border-radius:var(--box-radius);
@@ -1787,7 +1787,7 @@ label .fa-solid {
     right:4px;
     color:var(--primary-font-color);
     cursor:pointer;
-    opacity:0.5;
+    opacity:var(--opacity-disabled);
 }
 
 .date-picker-form-control:hover .reset-button {

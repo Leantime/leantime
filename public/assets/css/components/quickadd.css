@@ -29,7 +29,7 @@
         justify-content: flex-start;
         padding: 10px;
         color: var(--primary-font-color);
-        opacity: 0.7;
+        opacity: var(--opacity-subdued);
 
         &:hover {
             color: var(--accent1);
@@ -74,7 +74,7 @@ form.quickAddForm {
     right: 8px;
     font-size: var(--base-font-size);
     color: var(--primary-font-color);
-    opacity: 0.4;
+    opacity: var(--opacity-disabled);
     cursor: help;
     transition: opacity var(--duration-moderate) ease, color var(--duration-moderate) ease;
     padding: 4px;
@@ -122,7 +122,7 @@ form.quickAddForm {
 
     &::placeholder {
         color: var(--primary-font-color);
-        opacity: 0.5;
+        opacity: var(--opacity-disabled);
     }
 }
 
