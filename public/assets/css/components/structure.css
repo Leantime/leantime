@@ -429,9 +429,8 @@ body {
     z-index: var(--zlayer-5);
     width: 100%;
     box-shadow: var(--large-shadow);
-    background: var(--glass-bg-subtle);
-    backdrop-filter: var(--glass-blur-subtle);
-    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
 }
 
 .pageheader {
