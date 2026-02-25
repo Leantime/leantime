@@ -102,6 +102,10 @@
     --font-size-xl: 18px;
     --font-size-xxl: 20px;
     --font-size-xxxl: 24px;
+    --font-size-display-sm: 28px;
+    --font-size-display-md: 36px;
+    --font-size-display-lg: 40px;
+    --font-size-display-xl: 120px;
 
     --main-border-color:rgba(240,240,240, 0.9);
     --main-border-color-hover:rgba(200,200,200, 0.9);
@@ -173,15 +177,15 @@
     --teal: #1bbbb1;
     --teal-text-color: #fff;
 
-    --zlayer-1: 1; /*Background*/
-    --zlayer-2: 5; /* Maincontentinnnter */
-    --zlayer-3: 10; /* Element contentinner */
-    --zlayer-4: 15; /* over element contentinnter (headlines, status) */
-    --zlayer-5: 20; /* Highest layer on content inner (Filters) */
-    --zlayer-6: 25; /* modal */
-    --zlayer-7: 30; /* modal dropdowns*/
-    --zlayer-8: 35; /* modal dialogs */
-    --zlayer-9: 40; /* modal modals*/
+    --zlayer-1: 1;      /* Base content (editors, inputs) */
+    --zlayer-2: 2;      /* Content toolbar */
+    --zlayer-3: 5;      /* Elevated content (panels, main content) */
+    --zlayer-4: 10;     /* Over-content (image resizers, sortable, wiki) */
+    --zlayer-5: 15;     /* Header / nav bar */
+    --zlayer-6: 20;     /* Floating elements (kanban lines) */
+    --zlayer-7: 100;    /* Loaders / toggles */
+    --zlayer-8: 1000;   /* Dropdowns / pickers */
+    --zlayer-9: 1010;   /* Dropdown overlays (chosen) */
 
     --transparencyLayer: transparent;
 

@@ -170,7 +170,7 @@ body {
     position: absolute;
     top: 100%;
     left: 0;
-    z-index: 1000;
+    z-index: var(--zlayer-8);
     display: none;
     float: left;
     min-width: 160px;
@@ -250,7 +250,7 @@ body {
     display: table;
     border-collapse: separate;
 }
-.input-group .form-control { position: relative; z-index: 2; float: left; width: 100% }
+.input-group .form-control { position: relative; z-index: var(--zlayer-2); float: left; width: 100% }
 .input-group-addon, .input-group-btn { display: table-cell; width: 1%; white-space: nowrap; vertical-align: middle }
 
 /* Close button */
@@ -410,7 +410,7 @@ body {
     -webkit-backdrop-filter: var(--glass-blur);
     position:sticky;
     height:calc(100dvh - 70px);
-    z-index: 9;
+    z-index: var(--zlayer-4);
     display: flex;
     flex-direction: column;
     top:70px;
@@ -426,7 +426,7 @@ body {
     height: 48px;
     position: fixed;
     top:0px;
-    z-index: 15;
+    z-index: var(--zlayer-5);
     width: 100%;
     box-shadow: var(--large-shadow);
     background: var(--glass-bg-subtle);
@@ -447,7 +447,7 @@ body {
     padding: 10px 16px;
     margin-top:-95px;
     position:relative;
-    z-index:5;
+    z-index: var(--zlayer-3);
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
@@ -504,7 +504,7 @@ body {
     color:var(--main-action-color);
     position: fixed;
     bottom:0px;
-    z-index: 100;
+    z-index: var(--zlayer-7);
 }
 
 .announcementBanner:before {

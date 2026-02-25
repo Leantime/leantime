@@ -166,7 +166,7 @@
     width: 20px;
     height: 20px;
     cursor: pointer;
-    z-index: 10;
+    z-index: var(--zlayer-4);
     text-align: center;
     border-radius: 50%;
     background: var(--secondary-background);

@@ -142,7 +142,7 @@
     border-radius: 8px;
     color: var(--secondary-font-color);
     cursor: pointer;
-    z-index: 10;
+    z-index: var(--zlayer-4);
     transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
 }
 
@@ -212,7 +212,7 @@
     border: 1px solid var(--main-border-color);
     color: var(--secondary-font-color);
     cursor: pointer;
-    z-index: 10;
+    z-index: var(--zlayer-4);
     transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-moderate) ease;
     opacity: 0;
     pointer-events: none;
@@ -567,7 +567,7 @@
 .wiki-document-wrapper .tiptap-toolbar {
     position: sticky;
     top: 70px;
-    z-index: 10;
+    z-index: var(--zlayer-4);
     margin: 0 !important;
     padding: 10px 16px !important;
     background: var(--layered-background) !important;
@@ -615,7 +615,7 @@
     border-radius: 20px;
     font-size: var(--base-font-size);
     color: var(--primary-font-color);
-    z-index: 100;
+    z-index: var(--zlayer-7);
     transition: background-color var(--duration-moderate) ease, color var(--duration-moderate) ease, border-color var(--duration-moderate) ease;
 }
 
@@ -1296,7 +1296,7 @@
         background: var(--secondary-background);
         border-right: 1px solid var(--main-border-color);
         box-shadow: var(--large-shadow);
-        z-index: 20;
+        z-index: var(--zlayer-6);
     }
 
     /* Properties panel as overlay */
@@ -1311,7 +1311,7 @@
         background: var(--secondary-background);
         border-left: 1px solid var(--main-border-color);
         box-shadow: var(--large-shadow);
-        z-index: 20;
+        z-index: var(--zlayer-6);
     }
 }
 

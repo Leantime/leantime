@@ -102,6 +102,10 @@
     --font-size-xl: 18px;
     --font-size-xxl: 22px;
     --font-size-xxxl: 26px;
+    --font-size-display-sm: 28px;
+    --font-size-display-md: 36px;
+    --font-size-display-lg: 40px;
+    --font-size-display-xl: 120px;
 
     --main-border-color: rgba(20,20,20, 0.9);
     --min-shadow: var(--shadow-s);

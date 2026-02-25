@@ -286,7 +286,7 @@
 .full-width-loader {
     opacity: 0;
     position: fixed;
-    z-index: 100;
+    z-index: var(--zlayer-7);
     top: 0px;
     left: 0px;
     height: 4px;
@@ -562,7 +562,7 @@
     color: white;
     font-size: var(--font-size-xxl);
     position: absolute;
-    z-index: 2;
+    z-index: var(--zlayer-2);
     opacity: 0;
     animation: fadeInCheck 0.3s 0.2s ease-out forwards;
 }
@@ -580,7 +580,7 @@
     border-width: 1px;
     border-style: solid;
     border-radius: 50%;
-    z-index: 1;
+    z-index: var(--zlayer-1);
     opacity: 0;
 
 }

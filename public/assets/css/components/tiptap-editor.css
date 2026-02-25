@@ -12,31 +12,31 @@
 .tiptap-wrapper {
     position: relative;
     width: 100%;
-    z-index: 1;
+    z-index: var(--zlayer-1);
 }
 
 /* Fix interactivity in modals */
 .modal .tiptap-wrapper {
     position: relative;
-    z-index: 10;
+    z-index: var(--zlayer-4);
     isolation: isolate;
 }
 
 .modal .tiptap-editor {
     position: relative;
-    z-index: 1;
+    z-index: var(--zlayer-1);
     pointer-events: auto !important;
 }
 
 .modal .tiptap-toolbar {
     position: relative;
-    z-index: 2;
+    z-index: var(--zlayer-2);
     pointer-events: auto !important;
 }
 
 .modal .ProseMirror {
     position: relative;
-    z-index: 1;
+    z-index: var(--zlayer-1);
     pointer-events: auto !important;
     cursor: text !important;
     -webkit-user-select: text !important;
@@ -56,7 +56,7 @@
     border-radius: 15px;
     transition: border-color var(--duration-moderate) ease, box-shadow var(--duration-moderate) ease;
     min-height: 150px;
-    z-index: 1;
+    z-index: var(--zlayer-1);
     pointer-events: auto;
 }
 
@@ -507,7 +507,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     border: 2px solid #fff;
     border-radius: 50%;
     cursor: se-resize;
-    z-index: 10;
+    z-index: var(--zlayer-4);
 }
 
 .tiptap-editor .ProseMirror-selectednode .image-resizer {
@@ -538,7 +538,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: transparent;
     color: var(--code-color, #a9b1d6);
     font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     line-height: var(--line-height-relaxed);
     border: none;
     outline: none;
@@ -929,7 +929,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     padding: 8px 12px;
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 6px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     outline: none;
     transition: border-color var(--duration-normal) ease;
 }
@@ -1011,10 +1011,10 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: var(--primary-color, #5a67d8);
     color: #fff;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     font-weight: var(--font-weight-medium);
     pointer-events: none;
-    z-index: 10;
+    z-index: var(--zlayer-4);
 }
 
 /* ==========================================================================
@@ -1115,7 +1115,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: var(--primary-color, #5a67d8);
     color: #fff;
     border-radius: 50%;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     font-weight: var(--font-weight-semibold);
     text-transform: uppercase;
 }
@@ -1237,7 +1237,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-ai-dialog__header h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--font-size-l);
     font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color, #1e293b);
     display: flex;
@@ -1246,7 +1246,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 }
 
 .tiptap-ai-dialog__icon {
-    font-size: 20px;
+    font-size: var(--font-size-xxl);
 }
 
 .tiptap-ai-dialog__close {
@@ -1258,7 +1258,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     border: none;
     background: transparent;
     color: var(--secondary-font-color, #64748b);
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     cursor: pointer;
     border-radius: 6px;
     transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
@@ -1466,7 +1466,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-slash-popup__header {
     padding: 8px 12px 6px;
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     font-weight: var(--font-weight-semibold);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -1639,7 +1639,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-template-picker__header h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--font-size-l);
     font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color, #1e293b);
 }
@@ -1653,7 +1653,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     border: none;
     background: transparent;
     color: var(--secondary-font-color, #64748b);
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     cursor: pointer;
     border-radius: 6px;
     transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
@@ -1706,7 +1706,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-template-picker__category-title {
     padding: 8px 12px;
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     font-weight: var(--font-weight-semibold);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -1836,11 +1836,11 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     padding: 4px 8px;
     background: rgba(0, 0, 0, 0.6);
     color: white;
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     font-weight: var(--font-weight-medium);
     border-radius: 4px;
     text-transform: capitalize;
-    z-index: 1;
+    z-index: var(--zlayer-1);
     opacity: 0;
     transition: opacity var(--duration-moderate) ease;
 }
@@ -1893,7 +1893,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-embed-dialog__header h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--font-size-l);
     font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color, #1e293b);
 }
@@ -1907,7 +1907,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     border: none;
     background: transparent;
     color: var(--secondary-font-color, #64748b);
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     cursor: pointer;
     border-radius: 6px;
     transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
@@ -1961,7 +1961,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     margin-top: 12px;
     padding: 10px 12px;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -1986,7 +1986,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 }
 
 .tiptap-embed-dialog__services-label {
-    font-size: 12px;
+    font-size: var(--font-size-s);
     font-weight: var(--font-weight-medium);
     color: var(--secondary-font-color, #64748b);
     margin-bottom: 12px;
@@ -2007,12 +2007,12 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     padding: 6px 10px;
     background: var(--secondary-action-bg, #f1f5f9);
     border-radius: 6px;
-    font-size: 12px;
+    font-size: var(--font-size-s);
     color: var(--secondary-font-color, #64748b);
 }
 
 .tiptap-embed-dialog__service i {
-    font-size: 14px;
+    font-size: var(--base-font-size);
     width: 16px;
     text-align: center;
 }
@@ -2134,7 +2134,7 @@ div[id^="comments-"] > div > .clearall {
     align-items: center;
     gap: 4px;
     color: var(--secondary-font-color, #64748b);
-    font-size: 14px;
+    font-size: var(--base-font-size);
     text-decoration: none;
     transition: color var(--duration-normal) ease;
     white-space: nowrap;
@@ -2179,7 +2179,7 @@ div[id^="comments-"] > div > .clearall {
     background: var(--element-bg, #f8fafc);
     cursor: pointer;
     transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     line-height: var(--line-height-tight);
 }
 
@@ -2194,12 +2194,12 @@ div[id^="comments-"] > div > .clearall {
 }
 
 .reaction-emoji {
-    font-size: 14px;
+    font-size: var(--base-font-size);
     line-height: var(--line-height-tight);
 }
 
 .reaction-count {
-    font-size: 12px;
+    font-size: var(--font-size-s);
     color: var(--secondary-font-color, #64748b);
     font-weight: var(--font-weight-medium);
 }
@@ -2231,13 +2231,13 @@ div[id^="comments-"] > div > .clearall {
 }
 
 .add-reaction-btn i {
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 /* Emoji Picker Popup */
 .reaction-emoji-picker {
     position: absolute;
-    z-index: 1000;
+    z-index: var(--zlayer-8);
     background: var(--element-bg, #ffffff);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 12px;
@@ -2267,7 +2267,7 @@ div[id^="comments-"] > div > .clearall {
     border-radius: 6px;
     background: transparent;
     cursor: pointer;
-    font-size: 18px;
+    font-size: var(--font-size-xl);
     transition: background var(--duration-normal) ease;
 }
 
@@ -2346,7 +2346,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-color-popover__btn:hover {
     transform: scale(1.1);
     box-shadow: var(--regular-shadow);
-    z-index: 1;
+    z-index: var(--zlayer-1);
 }
 
 .tiptap-color-popover__btn:focus {
@@ -2443,7 +2443,7 @@ div[id^="comments-"] > div > .clearall {
     min-height: 150px;
     padding: 12px;
     font-family: var(--code-font-family, 'Monaco', 'Menlo', monospace);
-    font-size: 14px;
+    font-size: var(--base-font-size);
     line-height: var(--line-height-normal);
     background: var(--main-background, #fff);
     border: 1px solid var(--main-border-color, #e2e8f0);
@@ -2461,7 +2461,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-mermaid__save-btn,
 .tiptap-mermaid__cancel-btn {
     padding: 6px 12px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     border-radius: 4px;
     cursor: pointer;
 }
@@ -2483,7 +2483,7 @@ div[id^="comments-"] > div > .clearall {
     background: var(--error-background, #fef2f2);
     color: var(--error-color, #ef4444);
     border-radius: 4px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 /* Mermaid Dialog */
@@ -2526,7 +2526,7 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-mermaid-dialog__header h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--font-size-l);
     font-weight: var(--font-weight-semibold);
 }
 
@@ -2536,7 +2536,7 @@ div[id^="comments-"] > div > .clearall {
     padding: 0;
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     color: var(--main-text-color, #333);
     cursor: pointer;
     border-radius: 4px;
@@ -2561,13 +2561,13 @@ div[id^="comments-"] > div > .clearall {
     display: block;
     margin-bottom: 6px;
     font-weight: var(--font-weight-medium);
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 .tiptap-mermaid-dialog__template-select {
     width: 100%;
     padding: 8px 12px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 6px;
     background: var(--main-background, #fff);
@@ -2578,7 +2578,7 @@ div[id^="comments-"] > div > .clearall {
     min-height: 180px;
     padding: 12px;
     font-family: var(--code-font-family, 'Monaco', 'Menlo', monospace);
-    font-size: 14px;
+    font-size: var(--base-font-size);
     line-height: var(--line-height-normal);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 6px;
@@ -2593,7 +2593,7 @@ div[id^="comments-"] > div > .clearall {
     display: block;
     margin-bottom: 8px;
     font-weight: var(--font-weight-medium);
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 .tiptap-mermaid-dialog__preview-area {
@@ -2619,7 +2619,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-mermaid-dialog__preview-error {
     color: var(--secondary-text-color, #6b7280);
     font-style: italic;
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 .tiptap-mermaid-dialog__preview-error {
@@ -2639,7 +2639,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-mermaid-dialog__cancel,
 .tiptap-mermaid-dialog__insert {
     padding: 8px 16px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     border-radius: 6px;
     cursor: pointer;
 }
@@ -2734,7 +2734,7 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-math__error {
     color: var(--error-color, #ef4444);
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 .tiptap-math__placeholder {
@@ -2782,7 +2782,7 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-math-dialog__header h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--font-size-l);
     font-weight: var(--font-weight-semibold);
 }
 
@@ -2792,7 +2792,7 @@ div[id^="comments-"] > div > .clearall {
     padding: 0;
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     color: var(--main-text-color, #333);
     cursor: pointer;
 }
@@ -2815,7 +2815,7 @@ div[id^="comments-"] > div > .clearall {
     align-items: center;
     gap: 6px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 .tiptap-math-dialog__code {
@@ -2823,7 +2823,7 @@ div[id^="comments-"] > div > .clearall {
     min-height: 100px;
     padding: 12px;
     font-family: var(--code-font-family, monospace);
-    font-size: 14px;
+    font-size: var(--base-font-size);
     line-height: var(--line-height-normal);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 6px;
@@ -2832,7 +2832,7 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-math-dialog__examples {
     margin-top: 8px;
-    font-size: 12px;
+    font-size: var(--font-size-s);
     color: var(--secondary-text-color, #6b7280);
 }
 
@@ -2844,7 +2844,7 @@ div[id^="comments-"] > div > .clearall {
     display: block;
     margin-bottom: 8px;
     font-weight: var(--font-weight-medium);
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 .tiptap-math-dialog__preview-area {
@@ -2867,7 +2867,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-math-dialog__preview-error {
     color: var(--secondary-text-color, #6b7280);
     font-style: italic;
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 .tiptap-math-dialog__footer {
@@ -2883,7 +2883,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-math-dialog__cancel,
 .tiptap-math-dialog__insert {
     padding: 8px 16px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     border-radius: 6px;
     cursor: pointer;
 }
@@ -3099,13 +3099,13 @@ div[id^="comments-"] > div > .clearall {
 }
 
 .tiptap-emoji-popup__emoji {
-    font-size: 20px;
+    font-size: var(--font-size-xxl);
     width: 28px;
     text-align: center;
 }
 
 .tiptap-emoji-popup__shortcode {
-    font-size: 14px;
+    font-size: var(--base-font-size);
     color: var(--secondary-text-color, #6b7280);
 }
 
@@ -3113,7 +3113,7 @@ div[id^="comments-"] > div > .clearall {
     padding: 16px;
     text-align: center;
     color: var(--secondary-text-color, #6b7280);
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 /* Emoji Dialog */
@@ -3156,7 +3156,7 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-emoji-dialog__header h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--font-size-l);
 }
 
 .tiptap-emoji-dialog__close {
@@ -3164,7 +3164,7 @@ div[id^="comments-"] > div > .clearall {
     height: 32px;
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     cursor: pointer;
 }
 
@@ -3177,7 +3177,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-emoji-dialog__search-input {
     width: 100%;
     padding: 8px 12px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 6px;
 }
@@ -3196,7 +3196,7 @@ div[id^="comments-"] > div > .clearall {
     width: 36px;
     height: 36px;
     padding: 0;
-    font-size: 20px;
+    font-size: var(--font-size-xxl);
     background: none;
     border: none;
     border-radius: 6px;
@@ -3253,7 +3253,7 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-toc__title {
     font-weight: var(--font-weight-semibold);
-    font-size: 14px;
+    font-size: var(--base-font-size);
     color: var(--main-text-color, #333);
 }
 
@@ -3292,7 +3292,7 @@ div[id^="comments-"] > div > .clearall {
     align-items: center;
     gap: 8px;
     margin-bottom: 8px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 .tiptap-toc__setting:last-child {
@@ -3301,7 +3301,7 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-toc__depth-select {
     padding: 4px 8px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 4px;
 }
@@ -3330,7 +3330,7 @@ div[id^="comments-"] > div > .clearall {
     padding: 4px 8px;
     color: var(--primary-color, #5a67d8);
     text-decoration: none;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     border-radius: 4px;
     transition: background-color var(--duration-moderate) ease;
 }
@@ -3349,7 +3349,7 @@ div[id^="comments-"] > div > .clearall {
     text-align: center;
     color: var(--secondary-text-color, #6b7280);
     font-style: italic;
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 .tiptap-toc__highlight {
@@ -3388,7 +3388,7 @@ div[id^="comments-"] > div > .clearall {
     gap: 4px;
     opacity: 0;
     transition: opacity var(--duration-normal) ease;
-    z-index: 5;
+    z-index: var(--zlayer-3);
 }
 
 .tiptap-columns-wrapper:hover > .tiptap-columns-toolbar,
@@ -3407,7 +3407,7 @@ div[id^="comments-"] > div > .clearall {
     border-radius: 6px;
     color: var(--secondary-font-color, #64748b);
     cursor: pointer;
-    font-size: 12px;
+    font-size: var(--font-size-s);
     padding: 0;
     transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
     box-shadow: var(--min-shadow);
@@ -3565,7 +3565,7 @@ div[id^="comments-"] > div > .clearall {
     border-radius: 6px;
     cursor: pointer;
     text-align: left;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     color: var(--main-text-color, #374151);
     transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease;
 }
@@ -3599,7 +3599,7 @@ div[id^="comments-"] > div > .clearall {
 }
 
 .tiptap-more-menu__arrow {
-    font-size: 14px;
+    font-size: var(--base-font-size);
     color: var(--secondary-text-color, #6b7280);
 }
 
@@ -3695,7 +3695,7 @@ div[id^="comments-"] > div > .clearall {
 
     .tiptap-editor .ProseMirror {
         padding: 12px;
-        font-size: 16px; /* Prevent iOS zoom on focus */
+        font-size: var(--font-size-l); /* Prevent iOS zoom on focus */
     }
 
     /* Toolbar - allow wrapping and smaller buttons */
@@ -3802,7 +3802,7 @@ div[id^="comments-"] > div > .clearall {
     .tiptap-emoji-picker__emoji {
         width: 36px;
         height: 36px;
-        font-size: 20px;
+        font-size: var(--font-size-xxl);
     }
 
     /* Table responsive */
@@ -3859,11 +3859,11 @@ div[id^="comments-"] > div > .clearall {
     }
 
     .tiptap-slash-popup__label {
-        font-size: 14px;
+        font-size: var(--base-font-size);
     }
 
     .tiptap-slash-popup__description {
-        font-size: 12px;
+        font-size: var(--font-size-s);
     }
 }
 

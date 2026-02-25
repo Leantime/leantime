@@ -206,7 +206,7 @@ div.tagsinput span.tag
     margin-top: 10px;
     background:var(--secondary-background);
     border-radius:var(--box-radius);
-    z-index: 10;
+    z-index: var(--zlayer-4);
     position: absolute;
     left: 0px;
     box-shadow: var(--large-shadow);
@@ -360,5 +360,5 @@ body hr {
 
 #freshworks-container,
 #freshworks-container #launcher-frame{
-    z-index:90 !important;
+    z-index: var(--zlayer-7) !important;
 }

@@ -270,7 +270,7 @@ body.loginpage {
 
 .row .regLeft {
     position:fixed;
-    z-index:3;
+    z-index: var(--zlayer-3);
     height:100%;
 
     overflow:hidden;
@@ -347,7 +347,7 @@ body.loginpage {
     position:relative;
     margin-left:35%;
     padding:10% 0%;
-    z-index:10;
+    z-index: var(--zlayer-4);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -373,7 +373,7 @@ body.loginpage {
     height: 600px;
     max-width: 600px;
     width: 100%;
-    z-index:5;
+    z-index: var(--zlayer-3);
 }
 
 .iq-fadebounce {
@@ -1204,7 +1204,7 @@ ul.list-inline li {
 
 .errortitle span {
     display: inline-block;
-    font-size: 120px;
+    font-size: var(--font-size-display-xl);
     background: var(--primary-font-color);
     color: var(--primary-background);
     line-height: normal;
@@ -1527,7 +1527,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 
 .modal-header .close {
     margin-top: 0px;
-    font-size: 32px;
+    font-size: var(--font-size-display-sm);
 }
 
 .modal-footer {
@@ -1580,7 +1580,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 
 .infoBox {
     color: var(--primary-background);
-    font-size: 40px;
+    font-size: var(--font-size-display-lg);
     padding: 20px;
     line-height: 40px;
     float: left;
@@ -2017,7 +2017,7 @@ body::after {
 }
 
 .bigIcon {
-    font-size: 40px;
+    font-size: var(--font-size-display-lg);
 }
 
 .currentSprint select,
@@ -2308,7 +2308,7 @@ body .widgettitle .editHeadline:hover {
     border-radius:50px;
     width:50px;
     line-height:50px;
-    font-size:28px;
+    font-size: var(--font-size-display-sm);
     background:var(--secondary-background);
     color:var(--primary-color);
 }
@@ -2466,7 +2466,7 @@ h3.todaysDate {
     cursor:ew-resize;
     position:absolute;
     background:var(--secondary-background);
-    z-index:5 !important;
+    z-index: var(--zlayer-3) !important;
 }
 
 
@@ -2526,7 +2526,7 @@ h3.todaysDate {
 
 }
 .bigNumberBox .content {
-    font-size:36px
+    font-size: var(--font-size-display-md)
 }
 
 .verticalTab {
@@ -2827,13 +2827,13 @@ h4 .helperTooltip,
 }
 
 .bigNumberBox .icon .fa {
-    font-size: 40px;
+    font-size: var(--font-size-display-lg);
     color: var(--main-titles-color);
 }
 
 
 .bigNumberBoxNumber {
-    font-size: 36px;
+    font-size: var(--font-size-display-md);
     color: var(--main-titles-color);
     font-weight: var(--font-weight-body);
     text-shadow: var(--min-shadow);

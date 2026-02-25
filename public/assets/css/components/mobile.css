@@ -92,7 +92,7 @@ min-width: 1200px
         top:50px;
         left:4px;
         background: var(--secondary-background);
-        z-index: 999;
+        z-index: var(--zlayer-8);
     }
 
     .barmenu,
@@ -685,7 +685,7 @@ min-width: 1200px
     }
 
     .errortitle span {
-        font-size: 50px;
+        font-size: var(--font-size-display-lg);
     }
 
     .errortitle span:first-child {

@@ -633,7 +633,7 @@ body .maincontent .priority-text-5 a:link {
 
 /* JavaScript-controlled sticky state using transform (keeps element in flow) */
 .kanban-swimlane-sidebar.is-sticky {
-    z-index: 10;
+    z-index: var(--zlayer-4);
     box-shadow: var(--regular-shadow);
     /* transform is set via JS to translate the sidebar to sticky position */
 }
@@ -835,7 +835,7 @@ body .maincontent .priority-text-5 a:link {
     position: absolute;
     left: 100%;
     top: 0;
-    z-index: 1000;
+    z-index: var(--zlayer-8);
     background: var(--kanban-col-title-bg);
     border: 1px solid var(--main-border-color);
     border-left: none;
@@ -1302,7 +1302,7 @@ body .maincontent .priority-text-5 a:link {
 }
 
 .leader-line {
-    z-index:20;
+    z-index: var(--zlayer-6);
 }
 
 /* Card movement animations for swimlane transitions */

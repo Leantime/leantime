@@ -78,7 +78,7 @@ form.quickAddForm {
     cursor: help;
     transition: opacity var(--duration-moderate) ease, color var(--duration-moderate) ease;
     padding: 4px;
-    z-index: 5;
+    z-index: var(--zlayer-3);
 
     &:hover,
     &:focus {

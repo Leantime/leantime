@@ -121,7 +121,7 @@ a.barmenu {
     width:30px;
     height:50px;
     line-height:50px;
-    z-index:11;
+    z-index: var(--zlayer-5);
 }
 
 a.barmenu.open {
@@ -1233,7 +1233,7 @@ a.barmenu:hover {
     padding: 8px 12px;
     position:sticky;
     top:55px;
-    z-index: 9;
+    z-index: var(--zlayer-4);
 }
 
 

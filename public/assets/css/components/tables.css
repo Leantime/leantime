@@ -350,7 +350,7 @@
 
 .maincontentinner .dt-buttons .dt-button-collection {
     position:absolute;
-    z-index:3;
+    z-index: var(--zlayer-3);
     float: left;
     padding: 4px 0;
     margin: 2px 0 0;
