@@ -1672,7 +1672,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-template-picker__search-input {
     width: 100%;
-    padding: 10px 14px;
+    padding: 10px 12px;
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: var(--element-radius, 8px);
     font-size: var(--base-font-size, 14px);
@@ -1959,7 +1959,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-embed-dialog__preview {
     margin-top: 12px;
-    padding: 10px 14px;
+    padding: 10px 12px;
     border-radius: 6px;
     font-size: 14px;
     display: flex;
@@ -2132,7 +2132,7 @@ div[id^="comments-"] > div > .clearall {
 .commentLinks a {
     display: inline-flex !important;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     color: var(--secondary-font-color, #64748b);
     font-size: 14px;
     text-decoration: none;
@@ -3382,7 +3382,7 @@ div[id^="comments-"] > div > .clearall {
 /* Column layout toolbar */
 .tiptap-columns-toolbar {
     position: absolute;
-    top: -14px;
+    top: -12px;
     right: 4px;
     display: flex;
     gap: 4px;
@@ -3754,7 +3754,7 @@ div[id^="comments-"] > div > .clearall {
     }
 
     .tiptap-more-menu__item {
-        padding: 12px 14px;
+        padding: 12px 12px;
     }
 
     /* Template picker - full screen on mobile */
@@ -3766,7 +3766,7 @@ div[id^="comments-"] > div > .clearall {
     }
 
     .tiptap-template-picker__item {
-        padding: 14px;
+        padding: 12px;
     }
 
     /* Mermaid dialog - full width on mobile */

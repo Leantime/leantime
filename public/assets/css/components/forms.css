@@ -24,15 +24,15 @@ textarea:focus-visible,
 }
 
 form label{
-    padding-top:5px;
+    padding-top:6px;
     margin-bottom: 2px;
     font-weight: var(--font-weight-bold);
     opacity:0.8;
-    padding-bottom:5px;
+    padding-bottom:6px;
 }
 
 form .switchery {
-    margin-top:5px;
+    margin-top:4px;
 }
 
 tox-edit-area,
@@ -129,8 +129,8 @@ div.tagsinput span.tag a {
 
 /* Tags input in article/wiki dialogs - proper spacing */
 .formModal div.tagsinput {
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin-top: 16px;
+    margin-bottom: 16px;
     display: block;
     clear: both;
 }
@@ -159,7 +159,7 @@ div.tagsinput span.tag a {
 }
 
 select {
-    min-height:30px;
+    min-height:32px;
 }
 
 ::selection {
@@ -388,7 +388,7 @@ body input[type='submit'].btn-primary .caret,
     border: 1px solid var(--main-border-color);
     border-radius: var(--input-radius);
     box-shadow: none;
-    padding: 3px 5px 3px 8px;
+    padding: 4px 6px 4px 8px;
 }
 
 .chosen-container-active .chosen-single {
@@ -411,7 +411,7 @@ body input[type='submit'].btn-primary .caret,
     border: 1px solid var(--main-border-color);
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
-    padding: 3px 5px 3px 8px;
+    padding: 4px 6px 4px 8px;
 }
 
 .chosen-container-active .chosen-choices li.search-field input[type="text"],
@@ -466,8 +466,8 @@ body input[type='submit'].btn-primary .caret,
 
 .chosen-container-multi .chosen-choices li.search-choice {
     position: relative;
-    margin: 3px 5px 3px 0;
-    padding: 6px 20px 6px 5px;
+    margin: 4px 4px 4px 0;
+    padding: 6px 20px 6px 6px;
     border: 0px solid #aaa;
     max-width: 100%;
     border-radius: var(--box-radius-small);
@@ -498,7 +498,7 @@ a:link.btn{
 }
 
 .viewText {
-    padding-right:5px;
+    padding-right:6px;
 }
 
 .btn .caret {
@@ -574,7 +574,7 @@ a:link.btn{
     -webkit-border-radius: 50px;
     border-radius: 50px;
     width: 20px;
-    padding: 5px;
+    padding: 6px;
     background: none;
     border: 2px solid var(--main-border-color);
 }
@@ -646,11 +646,11 @@ select,
 
 .row-fluid.marginBottom,
 .row.marginBottom{
-    margin-bottom:15px;
+    margin-bottom:16px;
 }
 
 .marginBottomMd {
-    margin-bottom:15px;
+    margin-bottom:16px;
 }
 
 
@@ -671,7 +671,7 @@ select,
     border: 0px solid #bbb;
     line-height: 12px;
     padding: 1px 20px 1px 10px;
-    margin: 3px 0 2px 3px;
+    margin: 4px 0 2px 4px;
     position: relative;
     cursor: default;
     border-radius:var(--input-radius);
@@ -679,7 +679,7 @@ select,
 }
 
 .chosen-container-multi .chosen-choices .search-choice .search-choice-close {
-    right:5px;
+    right:4px;
 }
 
 .chosen-container-multi .chosen-choices li.search-field input[type="text"],
@@ -703,7 +703,7 @@ select,
 }
 
 input[type=checkbox] {
-    margin-top:9px;
+    margin-top:8px;
 }
 
 input[type=color] {
@@ -728,14 +728,14 @@ input[type=color] {
 }
 
 .userBox .commentImage img{
-    width:50px;
-    height:50px;
-    margin-top: 5px;
+    width:48px;
+    height:48px;
+    margin-top: 4px;
 }
 
 .userBox input[type=checkbox] {
     float:left;
-    margin-right:15px;
+    margin-right:16px;
     margin-top: 24px;
 }
 
@@ -752,7 +752,7 @@ input[type=color] {
 
 .backlogChartButtons,
 .chartButtons{
-    margin-left:5px !important;
+    margin-left:4px !important;
 }
 
 
@@ -778,11 +778,11 @@ input[type=color] {
 .dropdown-toggle.full-width-select .fa {
     float: right;
     vertical-align: bottom;
-    margin-top: 3px;
+    margin-top: 4px;
 }
 
 .board-select .dropdown-menu {
-    margin-left:15px;
+    margin-left:16px;
     margin-top:2px;
 }
 
@@ -798,7 +798,7 @@ body input[type=text].main-title-input.main-title-input {
     border-radius:var(--box-radius);
     box-shadow:none;
     font-size:var(--font-size-xxxl);
-    margin-bottom:5px;
+    margin-bottom:4px;
 }
 
 /* Title input after icon picker - prevent overlap */
@@ -824,8 +824,8 @@ select.secretInput {
     width:126px;
     border:0px;
     height: 21px;
-    margin-left:3px;
-    padding-left:3px;
+    margin-left:4px;
+    padding-left:4px;
     background:none;
     -webkit-box-shadow:none;
     -moz-box-shadow: none;
@@ -853,14 +853,14 @@ input.secretInput:focus {
 }
 
 .fileupload .btn, .fileupload .fileupload-exists {
-    margin-left: 5px;
+    margin-left: 4px;
 }
 
 .input-append .fa-file::before {
     font-family: "Font Awesome 6 Free";
     content: "\f15b";
     font-style: normal;
-    margin-right:5px;
+    margin-right:4px;
 }
 
 .uppy-Webcam-footer {
@@ -932,8 +932,8 @@ input.secretInput:focus {
     border:0px;
     color:var(--primary-color);
     background:transparent;
-    margin-right:15px;
-    margin-left:15px;
+    margin-right:16px;
+    margin-left:16px;
 }
 
 .uppy-FileInput-btn:before {
@@ -949,20 +949,20 @@ input.secretInput:focus {
 }
 
 .fileUploadDrop a {
-    padding-right:15px;
+    padding-right:16px;
 }
 
 .uppy-is-drag-over:after {
     background-color: var(--primary-color);
     opacity:0.6;
     border: 4px dashed var(--input-background);
-    bottom: 7px;
+    bottom: 8px;
     border-radius:var(--box-radius);
     content: "";
-    left: 7px;
+    left: 8px;
     position: absolute;
-    right: 7px;
-    top: 7px;
+    right: 8px;
+    top: 8px;
     z-index: 10000;
 }
 
@@ -1056,7 +1056,7 @@ body .btn.btn-danger-outline:hover {
 
 .viewDescription {
     border-radius:var(--box-radius);
-    padding:5px;
+    padding:6px;
     border:1px solid transparent;
 }
 
@@ -1072,7 +1072,7 @@ body .btn.btn-danger-outline:hover {
 input[type=range] {
     height: 28px;
     -webkit-appearance: none;
-    margin: 5px 0px 5px 0;
+    margin: 4px 0px 4px 0;
     width: 100%;
 }
 /* Range input focus is now handled by theme files using :focus-visible */
@@ -1161,7 +1161,7 @@ input[type=range]:focus::-ms-fill-upper {
     border:1px solid var(--main-border-color);
     border-radius:var(--box-radius);
     padding:10px;
-    margin-bottom:5px;
+    margin-bottom:4px;
     display:block;
 }
 
@@ -1212,7 +1212,7 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .ss-main {
-    margin-bottom:5px;
+    margin-bottom:4px;
 }
 
 .ss-main .ss-multi-selected {
@@ -1241,7 +1241,7 @@ input[type=range]:focus::-ms-fill-upper {
 .ss-main .ss-multi-selected .ss-add {
     display: flex;
     flex: 1 1 3px;
-    margin: 4px 0px 0 5px;
+    margin: 4px 0px 0 4px;
 }
 
 .ss-main .ss-multi-selected .ss-values .ss-value {
@@ -1304,7 +1304,7 @@ body .croppie-container {
 .maincontent .chosen-container .chosen-results li {
     margin-bottom:2px;
     list-style-type:none;
-    padding:5px;
+    padding:6px;
 }
 
 .maincontent .chosen-container .chosen-results li span,
@@ -1329,7 +1329,7 @@ body .croppie-container {
 
 .stdform .formwrapper {
     display: block;
-    padding-top: 5px;
+    padding-top: 6px;
     margin-left: 220px;
     line-height: 25px;
 }
@@ -1338,7 +1338,7 @@ body .croppie-container {
     float: left;
     width: 150px;
     text-align: left;
-    padding: 5px 20px 0 0;
+    padding: 6px 20px 0 0;
 }
 
 .stdform label.error {
@@ -1360,7 +1360,7 @@ body .croppie-container {
     color: var(--secondary-font-color);
     font-style: italic;
     display: block;
-    margin: 5px 0 0 220px;
+    margin: 4px 0 0 220px;
 }
 
 .stdform .stdformbutton {
@@ -1388,7 +1388,7 @@ body .croppie-container {
 
 .stdform2 label {
     display: inline-block;
-    padding: 15px 0 0 15px;
+    padding: 16px 0 0 16px;
     vertical-align: top;
     text-align: left;
     font-weight: var(--font-weight-bold);
@@ -1411,13 +1411,13 @@ body .croppie-container {
     margin-left: 220px;
     display: block;
     background: var(--primary-background);
-    padding: 15px;
+    padding: 16px;
     border-left: 1px solid var(--main-border-color);
 }
 
 .stdform2 .stdformbutton {
     margin-left: 0;
-    padding: 15px;
+    padding: 16px;
     background: var(--primary-background);
 }
 
@@ -1442,7 +1442,7 @@ body .croppie-container {
 }
 
 .dualselect select option {
-    padding: 4px 5px;
+    padding: 4px 6px;
     margin: 0;
     white-space: normal;
 }
@@ -1474,7 +1474,7 @@ body .croppie-container {
 .selectable {
     cursor: pointer;
     display: inline-block;
-    margin-right: 15px;
+    margin-right: 16px;
     vertical-align: middle;
     text-align: center;
     line-height: 20px;
@@ -1508,12 +1508,12 @@ body .croppie-container {
 }
 
 .selectable.compact .selectableContent {
-    padding:3px 10px;
+    padding:4px 10px;
 }
 
 .selectable .selectableContent .emoji {
     font-size:var(--font-size-xxl);
-    padding-right:5px;
+    padding-right:6px;
     vertical-align: middle;
 }
 
@@ -1574,7 +1574,7 @@ input[type="checkbox"].toggle {
     border: 0px solid var(--primary-font-color);
     background: var(--input-background);
     box-shadow: var(--min-shadow);
-    margin-top: 5px;
+    margin-top: 4px;
 
 }
 
@@ -1716,7 +1716,7 @@ body div.clearForm input
 
 body .noteContainer div.tagsinput input,
 body .clearForm div.tagsinput input {
-    padding-left:7px;
+    padding-left:8px;
     color:var(--secondary-font-color);
 }
 
@@ -1740,7 +1740,7 @@ div.tagsinput span.tag {
 
 .commentReply.inactive {
     border:1px solid var(--main-border-color);
-    padding:9px 14px;
+    padding:8px 12px;
     border-radius:var(--box-radius);
     margin-bottom:10px;
 }
@@ -1784,7 +1784,7 @@ label .fa-solid {
     border:none;
     position:absolute;
     top:-1px;
-    right:5px;
+    right:4px;
     color:var(--primary-font-color);
     cursor:pointer;
     opacity:0.5;
@@ -1867,7 +1867,7 @@ input[type=number].hide-controls {
 }
 
 .dropdown-content {
-    padding: 15px;
+    padding: 16px;
 }
 
 .recurring-form-content {

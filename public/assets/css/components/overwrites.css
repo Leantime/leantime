@@ -201,8 +201,8 @@ div.tagsinput span.tag
 
 .filterBar {
     border:0px solid var(--main-border-color);
-    padding:15px 20px;
-    margin-bottom:5px;
+    padding:16px 20px;
+    margin-bottom:4px;
     margin-top: 10px;
     background:var(--secondary-background);
     border-radius:var(--box-radius);
@@ -212,14 +212,14 @@ div.tagsinput span.tag
     box-shadow: var(--large-shadow);
     display:flex;
     align-items:flex-end;
-    gap:15px;
+    gap:16px;
     flex-wrap:wrap;
 }
 
 .filterBar label {
     font-weight:var(--font-weight-body);
     display:block;
-    margin-bottom:5px;
+    margin-bottom:4px;
     font-size:var(--font-size-s);
 }
 
@@ -240,7 +240,7 @@ div.tagsinput span.tag
 
 label.inline {
     float:left;
-    margin-right:5px;
+    margin-right:4px;
     padding-top:6px;
 }
 
@@ -258,14 +258,14 @@ body .widgettitle.title-light {
     border-top:0px !important;
     border-right:0px !important;
     border-bottom:0px solid var(--main-border-color);
-    margin-bottom:15px;
+    margin-bottom:16px;
     font-size:var(--font-size-l);
     box-shadow: none;
 
 }
 
 #global-modal-content .widgettitle.title-light {
-    padding-top: 5px;
+    padding-top: 4px;
     font-size:var(--font-size-l);
 }
 
@@ -284,22 +284,22 @@ body .tox .tox-toolbar-overlord{
     cursor: pointer;
     position: absolute;
     top: 8px;
-    right: 5px;
-    background: url(~images/calarrow.png) no-repeat 3px 1px;
+    right: 4px;
+    background: url(~images/calarrow.png) no-repeat 4px 1px;
 }
 
 .ui-datepicker-prev {
     cursor: pointer;
     position: absolute;
     top: 8px;
-    left: 5px;
-    background: url(~images/calarrow.png) no-repeat 3px -39px;
+    left: 4px;
+    background: url(~images/calarrow.png) no-repeat 4px -39px;
 }
 
 .ui-datepicker-header {
     position: relative;
     text-align: center;
-    padding: 5px;
+    padding: 4px;
     color: var(--primary-background);
     background: var(--primary-color);
     text-transform: uppercase;
@@ -325,8 +325,8 @@ code[class*=language-], pre[class*=language-] {
 
 
 element.style {
-    margin-top: 5px;
-    margin-bottom: 15px;
+    margin-top: 4px;
+    margin-bottom: 16px;
 }
 body hr {
     margin: 20px 0;

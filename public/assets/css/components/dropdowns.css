@@ -435,9 +435,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     left: 10px;
     transform: rotate(0deg);
     display: inline-block;
-    border-right: 7px solid transparent;
-    border-bottom: 7px solid white;
-    border-left: 7px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid white;
+    border-left: 8px solid transparent;
     content: '';
 }
 
@@ -468,7 +468,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .dropdown-menu span.radio input[type="radio"] {
     float:left;
     vertical-align: middle;
-    margin-top: 9px;
+    margin-top: 8px;
     margin-right:5px;
 }
 

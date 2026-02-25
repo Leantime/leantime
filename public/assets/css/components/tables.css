@@ -105,7 +105,7 @@
 
 .dataTables_paginate .first, .dataTables_paginate .previous, .dataTables_paginate .paginate_active,
 .dataTables_paginate .paginate_button, .dataTables_paginate .next, .dataTables_paginate .last {
-    padding: 10px 14px;
+    padding: 10px 12px;
     min-height: 44px;
     border: 0px solid var(--neutral);
     font-size: var(--font-size-s);
@@ -259,14 +259,14 @@
 
 .maincontentinner .table tr.dtrg-group td {
     color: var(--kanban-col-title-color);
-    padding: 5px 10px;
+    padding: 4px 10px;
     padding-top: 24px;
     font-weight: var(--font-weight-bold);
 }
 
 .maincontentinner .table {
     clear:both;
-    margin-top:30px;
+    margin-top:32px;
 }
 
 .maincontentinner .table td,
@@ -309,7 +309,7 @@
     position:relative;
     border: 0px solid var(--main-border-color);
     border-top:0px;
-    height:30px;
+    height:32px;
 }
 
 .maincontentinner .dataTables_wrapper  .dataTables_info {
@@ -326,7 +326,7 @@
     top:10px;
     margin-left:-65px;
     border:0px;
-    padding:5px;
+    padding:4px;
     font-size:var(--font-size-s);
 }
 
@@ -352,7 +352,7 @@
     position:absolute;
     z-index:3;
     float: left;
-    padding: 5px 0;
+    padding: 4px 0;
     margin: 2px 0 0;
     list-style: none;
     background-color: var(--secondary-background);
@@ -368,7 +368,7 @@
     margin:0px;
     background:var(--secondary-background);
     color: var(--main-menu-link-color);
-    padding: 5px 10px;
+    padding: 4px 10px;
     border:0px;
     text-align:left;
 }
@@ -376,7 +376,7 @@
 .maincontentinner .dt-buttons .dt-button-collection button:before {
     font-family: "Font Awesome 6 Free";
     content: "\f204";
-    margin-right:5px;
+    margin-right:4px;
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button. dt-button-active{
@@ -402,8 +402,8 @@
     box-shadow: none;
     border-color: var(--neutral);
     border: 1px solid var(--secondary-action-bg);
-    margin: 0 0 9px;
-    padding: 4px 14px;
+    margin: 0 0 8px;
+    padding: 4px 12px;
     line-height: 21px;
     text-align: center;
     vertical-align: baseline;
@@ -441,7 +441,7 @@
 }
 
 .maincontentinner .timesheetTable td input {
-    margin-bottom:5px;
+    margin-bottom:4px;
 }
 
 .maincontentinner .timesheetTable tfoot td {
@@ -497,7 +497,7 @@ table td{
     width:100%;
     height:100%;
     border-radius: 0 !important;
-    padding: 5px 10px 3px 10px !important;
+    padding: 4px 10px 4px 10px !important;
     line-height: 32px;
     font-size:var(--base-font-size);
     box-shadow:none;
@@ -512,7 +512,7 @@ table td{
 }
 
 .table td.dropdown-cell .dropdown.ticketDropdown ul {
-    top:35px;
+    top:32px;
 }
 
 .listStyleTable td {
@@ -524,7 +524,7 @@ table td{
 }
 
 .maincontentinner .table.listStyleTable td {
-    padding:5px 10px 5px 10px;
+    padding:4px 10px 4px 10px;
 }
 
 .maincontentinner .table.listStyleTable td.dropdown-cell {
@@ -584,7 +584,7 @@ table td{
     border-top: 1px solid var(--neutral);
     /* text-align: center; */
     /* min-height: 41px; */
-    padding: 8px 5px 8px 20px;
+    padding: 8px 4px 8px 20px;
 }
 
 .ticketTable .ticketModal {
@@ -599,7 +599,7 @@ table td{
     font-family: "Font Awesome 6 Free";
     content: "\f0d7";
     font-size: var(--font-size-m);
-    margin-left: 5px;
+    margin-left: 4px;
 }
 
 table.fc-multimonth-header-table {

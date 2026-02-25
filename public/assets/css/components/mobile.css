@@ -156,7 +156,7 @@ min-width: 1200px
 
 
     .headmenu > li > a {
-        padding: 15px 10px 9px;
+        padding: 16px 10px 8px;
     }
 
     .maincontent {
@@ -237,7 +237,7 @@ min-width: 1200px
     }
 
     .headmenu > li > a {
-        padding: 15px 15px 9px;
+        padding: 16px 16px 8px;
     }
 
     .userloggedinfo .userinfo small {
@@ -296,11 +296,11 @@ min-width: 1200px
     }
 
     .headmenu > li > a {
-        padding: 15px 20px 9px;
+        padding: 16px 20px 8px;
     }
 
     .headmenu > li.right {
-        padding-bottom: 13px;
+        padding-bottom: 12px;
     }
 
     .pageheader {
@@ -430,7 +430,7 @@ min-width: 1200px
     }
 
     .messagesearch input {
-        background-position: 375px 9px;
+        background-position: 375px 10px;
     }
 
     .msglist {
@@ -448,7 +448,7 @@ min-width: 1200px
     }
 
     .fc-header-title {
-        margin-top: 3px;
+        margin-top: 4px;
     }
 
     /* invoice */
@@ -529,7 +529,7 @@ min-width: 1200px
     }
 
     .headmenu > li > a {
-        padding: 0 3px;
+        padding: 0 4px;
         line-height: 50px;
         text-align: center;
         display: flex;
@@ -662,7 +662,7 @@ min-width: 1200px
 
     /* messages */
     .messagemenu ul {
-        height: 45px;
+        height: 48px;
     }
 
     .messagemenu ul li a {
@@ -694,7 +694,7 @@ min-width: 1200px
 
     /* bootstrap */
     .tabbable > .tab-content {
-        padding: 15px;
+        padding: 16px;
     }
 
     .btn-circle {
@@ -702,7 +702,7 @@ min-width: 1200px
     }
 
     .btn-circle i {
-        margin-left: -3px;
+        margin-left: -4px;
     }
 
     .input-append .btn, .input-prepend .btn {
@@ -825,8 +825,8 @@ min-width: 1200px
     }
 
     .headerinner {
-        width: calc(100% - 45px);
-        margin-left: 45px !important;
+        width: calc(100% - 48px);
+        margin-left: 48px !important;
 
     }
 
@@ -899,7 +899,7 @@ min-width: 1200px
 
     /* Project overview mobile improvements */
     .col-md-4, .col-md-8 {
-        margin-bottom: 15px;
+        margin-bottom: 16px;
     }
 
     .rightpanel {
@@ -909,7 +909,7 @@ min-width: 1200px
 
     /* Better spacing for mobile cards/widgets */
     .maincontentinner .row > div {
-        margin-bottom: 15px;
+        margin-bottom: 16px;
     }
 
     /* Mobile content padding optimization - reclaim horizontal space */
@@ -967,7 +967,7 @@ min-width: 1200px
         max-width: 100%;
         box-sizing: border-box;
         padding: 12px;
-        margin-bottom: 15px;
+        margin-bottom: 16px;
     }
 
     /* Fix "Forgot password?" link positioning and visibility */
@@ -985,7 +985,7 @@ min-width: 1200px
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
-        margin-bottom: 15px;
+        margin-bottom: 16px;
         padding-right: 0;
         overflow: visible;
     }
@@ -1017,7 +1017,7 @@ min-width: 1200px
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
-        margin-bottom: 15px;
+        margin-bottom: 16px;
         padding: 0;
     }
 }
@@ -1093,15 +1093,15 @@ min-width: 1200px
         left: 0px;
         top: 5px;
         margin-left:0px;
-        padding-left:15px;
+        padding-left:16px;
         width:50px;
     }
 
     .leftpanel a.barmenu.open {
         left:240px;
         background:var(--primary-color);
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
         box-shadow:var(--regular-shadow);
 
     }
@@ -1397,8 +1397,8 @@ min-width: 1200px
     }
 
     .container {
-        padding-right: 15px;
-        padding-left: 15px
+        padding-right: 16px;
+        padding-left: 16px
     }
 
     .container {
@@ -1407,8 +1407,8 @@ min-width: 1200px
     }
 
     .container-fluid {
-        padding-right: 15px;
-        padding-left: 15px
+        padding-right: 16px;
+        padding-left: 16px
     }
 
     .row {
@@ -1588,7 +1588,7 @@ min-width: 1200px
     }
 
     .stepContainer p {
-        margin: 10px 15px;
+        margin: 10px 16px;
     }
 
     #wiz1step2_1 p {
@@ -1596,7 +1596,7 @@ min-width: 1200px
     }
 
     .tabbedwizard .stepContainer {
-        padding: 30px 15px;
+        padding: 32px 16px;
     }
 
     #elm1_toolbargroup {
@@ -1946,8 +1946,8 @@ min-width: 1200px
     }
 
     .container {
-        padding-right: 15px;
-        padding-left: 15px
+        padding-right: 16px;
+        padding-left: 16px
     }
 
     .col-lg {
@@ -2485,8 +2485,8 @@ min-width: 1200px
     }
 
     .container {
-        padding-right: 15px;
-        padding-left: 15px
+        padding-right: 16px;
+        padding-left: 16px
     }
     .container {
         width: 1140px;
@@ -2494,8 +2494,8 @@ min-width: 1200px
     }
 
     .container-fluid {
-        padding-right: 15px;
-        padding-left: 15px
+        padding-right: 16px;
+        padding-left: 16px
     }
 
     .row {

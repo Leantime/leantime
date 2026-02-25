@@ -34,16 +34,16 @@ body {
     position: relative;
     margin-left: auto;
     margin-right: auto;
-    padding-right: 15px;
-    padding-left: 15px
+    padding-right: 16px;
+    padding-left: 16px
 }
 
 .container-fluid {
     position: relative;
     margin-left: auto;
     margin-right: auto;
-    padding-right: 15px;
-    padding-left: 15px
+    padding-right: 16px;
+    padding-left: 16px
 }
 
 /* ── Flexbox Grid ────────────────────────────────────────────────────
@@ -54,8 +54,8 @@ body {
 .row {
     display: flex;
     flex-wrap: wrap;
-    margin-right: -5px;
-    margin-left: -5px;
+    margin-right: -4px;
+    margin-left: -4px;
 }
 
 .no-gutters {
@@ -184,7 +184,7 @@ body {
 /* Dropdown divider */
 .dropdown-menu .divider {
     height: 1px;
-    margin: 9px 0;
+    margin: 8px 0;
     overflow: hidden;
     background-color: var(--main-border-color, #e5e5e5);
 }
@@ -222,7 +222,7 @@ body {
 }
 
 /* Form group spacing */
-.form-group { margin-bottom: 15px }
+.form-group { margin-bottom: 16px }
 
 /* Form control base */
 .form-control {
@@ -286,7 +286,7 @@ body {
 .badge {
     display: inline-block;
     min-width: 10px;
-    padding: 3px 7px;
+    padding: 4px 8px;
     font-size: var(--font-size-s);
     font-weight: var(--font-weight-bold);
     line-height: 1;
@@ -298,7 +298,7 @@ body {
 
 /* Alert base */
 .alert {
-    padding: 15px;
+    padding: 16px;
     margin-bottom: 20px;
     border: 1px solid transparent;
     border-radius: var(--box-radius-small, 4px);
@@ -317,7 +317,7 @@ body {
 /* Nav header (section labels in dropdown menus / sidebar) */
 .nav-header {
     display: block;
-    padding: 3px 15px;
+    padding: 4px 16px;
     font-size: var(--font-size-s);
     font-weight: var(--font-weight-bold);
     line-height: 1.5;
@@ -345,10 +345,10 @@ body {
 .rightpanel:before {
 
     position: absolute;
-    height: calc(100% + 50px);
+    height: calc(100% + 48px);
     width: 100%;
     left: 0;
-    top: -50px;
+    top: -48px;
     content: " ";
     opacity: .5;
     mix-blend-mode: multiply;
@@ -373,7 +373,7 @@ body {
 }
 
 .rightpanel {
-    padding-top:50px;
+    padding-top:48px;
 }
 
 .rightpanel::after {
@@ -389,7 +389,7 @@ body {
 
 
 .primaryContent {
-    min-height:calc(100dvh - 50px);
+    min-height:calc(100dvh - 48px);
     padding-top:10px;
     padding-bottom:10px;
     position: relative;
@@ -423,7 +423,7 @@ body {
 
 .header {
     clear: both;
-    height: 50px;
+    height: 48px;
     position: fixed;
     top:0px;
     z-index: 15;
@@ -444,7 +444,7 @@ body {
 
 .maincontent {
     width: 100%;
-    padding: 10px 15px;
+    padding: 10px 16px;
     margin-top:-95px;
     position:relative;
     z-index:5;
@@ -483,7 +483,7 @@ body {
 
     overflow: hidden;
     clear: both;
-    margin: 10px 15px;
+    margin: 10px 16px;
     margin-bottom:40px;
 }
 

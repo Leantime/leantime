@@ -5,7 +5,7 @@
 .leftmenu .nav-header {
     font-weight: var(--font-weight-body);
     font-size: var(--font-size-l);
-    padding: 15px 20px;
+    padding: 16px 20px;
     text-shadow: none;
     border-bottom: 1px solid var(--main-border-color);
     margin-top: 0;
@@ -27,7 +27,7 @@
 }
 
 .headmenu .project-selector {
-    padding: 10px 15px 20px 15px;
+    padding: 10px 16px 20px 16px;
     position: relative;
 
 }
@@ -65,7 +65,7 @@
 
 .headmenu .projectselector  .projectListFilter {
     border-bottom:1px solid var(--main-border-color);
-    padding:0px 15px;
+    padding:0px 16px;
 }
 
 .projectListFilter .fa {
@@ -90,7 +90,7 @@
     width: 170px;
     text-align: center;
     height: 50px;
-    padding:7px 5px 5px 5px;
+    padding:8px 4px 4px 4px;
     margin-left: 55px;
     display: block;
     float: left;
@@ -204,7 +204,7 @@ a.barmenu:hover {
 
 .headmenu .projectselector  li.intro {
     color:var(--primary-font-color);
-    padding:10px 15px 20px 15px;
+    padding:10px 16px 20px 16px;
 }
 
 .headmenu .projectselector  li.intro .title {
@@ -234,7 +234,7 @@ a.barmenu:hover {
 
 .headmenu .projectselector  li.nav-header {
     display: block;
-    padding: 3px 15px;
+    padding: 4px 16px;
     font-size: var(--base-font-size);
     font-weight: var(--font-weight-bold);
     line-height: 20px;
@@ -251,9 +251,9 @@ a.barmenu:hover {
 
 .headmenu .projectselector  li span.info {
     color:var(--primary-font-color);
-    padding: 10px 15px;
+    padding: 10px 16px;
     display: block;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
 }
 
 
@@ -306,7 +306,7 @@ a.barmenu:hover {
 }
 
 .leftmenu .nav-tabs.nav-stacked a span {
-    margin-right: 5px;
+    margin-right: 4px;
 }
 
 
@@ -316,8 +316,8 @@ a.barmenu:hover {
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown ul.submenu li a{
-    margin-left:15px;
-    padding-left:14px;
+    margin-left:16px;
+    padding-left:12px;
     border-left:0px dotted var(--main-border-color);
     position:relative;
 }
@@ -333,7 +333,7 @@ a.barmenu:hover {
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle a{
     font-size: var(--font-size-s);
     text-transform: uppercase;
-    padding: 10px 5px 10px 10px;
+    padding: 10px 4px 10px 10px;
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle a:has(.fa-angle-right){
@@ -347,7 +347,7 @@ a.barmenu:hover {
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.title a {
     font-size: var(--font-size-xs);
     text-transform: uppercase;
-    padding: 15px 5px 5px 25px;
+    padding: 16px 4px 4px 24px;
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.title a:hover {
@@ -364,7 +364,7 @@ a.barmenu:hover {
     height: 8px;
     background: var(--red);
     border-radius: 50%;
-    margin-left: 5px;
+    margin-left: 4px;
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown > a {
@@ -375,7 +375,7 @@ a.barmenu:hover {
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a {
     display: block;
     font-size: var(--base-font-size);
-    padding: 10px 15px 10px 15px;
+    padding: 10px 16px 10px 16px;
     color: var(--nav-link-color);
     border-radius:var(--box-radius-large);
     position:relative;
@@ -424,15 +424,15 @@ a.barmenu:hover {
 .nav-tabs li.separator {
     border-bottom:0px dashed var(--main-border-color);
     border-bottom-style: wave;
-    height:5px;
-    margin-bottom:5px;
+    height:4px;
+    margin-bottom:4px;
 }
 
 .nav-tabs li .submenuCaret {
     width: 20px;
     float: right;
-    margin-top: 5px;
-    margin-right: 5px;
+    margin-top: 4px;
+    margin-right: 4px;
     height: 20px;
     line-height: 20px;
     text-align: center;
@@ -480,7 +480,7 @@ a.barmenu:hover {
 
 .headmenu .dropdown-menu.pull-right::after {
     left: auto;
-    right:15px;
+    right:16px;
 }
 
 .headmenu > li {
@@ -505,7 +505,7 @@ a.barmenu:hover {
     color: var(--header-nav-link-color);
     line-height: 50px;
     cursor: pointer;
-    padding: 0 15px;
+    padding: 0 16px;
 }
 
 .headmenu > li > a.active,
@@ -517,7 +517,7 @@ a.barmenu:hover {
 
 .headmenu > li > a .count {
     position: absolute;
-    top: 5px;
+    top: 4px;
     right: 10px;
     opacity: 0.5;
 }
@@ -611,7 +611,7 @@ a.barmenu:hover {
 .leftmenu .projectselector::after {
     position: absolute;
     top: 30px;
-    left: -9px;
+    left: -8px;
     transform: rotate(-90deg);
     display: inline-block;
     border-right: 6px solid transparent;
@@ -629,7 +629,7 @@ a.barmenu:hover {
 
 .projectselector .projectSelectorFooter li a {
     display: block;
-    padding-left: 15px;
+    padding-left: 16px;
 }
 
 .projectselector  li a{
@@ -648,13 +648,13 @@ a.barmenu:hover {
 
 
 .headmenu .projectselector .head {
-    padding:15px;
+    padding:16px;
     color:var(--primary-font-color);
 }
 
 .headmenu .projectselector .head .searchBar {
     float: right;
-    padding-top: 5px;
+    padding-top: 4px;
 }
 
 
@@ -669,7 +669,7 @@ a.barmenu:hover {
 }
 
 .projectselector ul.tabs li a {
-    padding: 0 15px;
+    padding: 0 16px;
     margin-left: 0px;
 }
 
@@ -685,7 +685,7 @@ a.barmenu:hover {
 
 /* Project Selection Lists */
 .projectselector ul.selectorList {
-    padding-top:3px;
+    padding-top:4px;
     padding-left: 0;
 }
 
@@ -706,7 +706,7 @@ a.barmenu:hover {
     border-color:transparent;
     font-size: var(--base-font-size);
     text-transform: none;
-    padding:5px 0 5px 15px;
+    padding:4px 0 4px 16px;
     display:block;
     border-bottom:1px dotted var(--main-border-color);
 }
@@ -722,13 +722,13 @@ a.barmenu:hover {
 }
 
 .projectselector ul.selectorList li.projectLineItem ul.projectGroup[class*=level-] {
-    margin-left: 13px;
+    margin-left: 12px;
     margin-top: 0px;
 }
 
 .projectselector ul.selectorList li.projectLineItem ul.projectGroup.level-0,
 .projectselector ul.selectorList li.projectLineItem ul.projectGroup.level-1{
-    margin-left: 18px;
+    margin-left: 20px;
 }
 
 .projectselector ul.selectorList li.projectLineItem  ul.projectGroup.closed {
@@ -746,7 +746,7 @@ a.barmenu:hover {
 .projectselector ul.selectorList li.projectLineItem a {
     line-height:30px;
     min-height:50px;
-    padding-left:15px;
+    padding-left:16px;
     display: block;
 }
 
@@ -779,7 +779,7 @@ a.barmenu:hover {
 .projectselector ul.selectorList li .fas {
 
     padding-right:10px;
-    padding-top:5px;
+    padding-top:4px;
 }
 
 
@@ -820,18 +820,18 @@ a.barmenu:hover {
 .projectselector ul.selectorList.projectList li.projectLineItem .toggler {
     float: left;
     line-height: 20px;
-    width: 18px;
+    width: 20px;
     padding: 0;
     text-align: center;
-    margin-left: 9px;
-    margin-right: 3px;
-    margin-top: 15px;
+    margin-left: 8px;
+    margin-right: 4px;
+    margin-top: 16px;
     border-radius: var(--box-radius-small);
     min-height: 20px;
 }
 
 .projectselector ul.selectorList.projectList li.projectLineItem .projectGroup .toggler {
-    margin-left:5px;
+    margin-left:4px;
 }
 
 .projectselector ul.selectorList.projectList li.projectLineItem .toggler:hover {
@@ -870,11 +870,11 @@ a.barmenu:hover {
     border:0px;
     background:transparent;
     max-width: none;
-    max-height: 18px;
+    max-height: 20px;
     margin: 0px;
-    margin-top: 17px;
+    margin-top: 16px;
     padding: 0px;
-    margin-right: 5px;
+    margin-right: 4px;
     margin-left:10px;
 }
 
@@ -896,11 +896,11 @@ a.barmenu:hover {
 
 .userloggedinfo .userinfo a.profileHandler {
     color: var(--header-nav-link-color);
-    padding:0 5px 0 5px;
+    padding:0 4px 0 4px;
     height:50px;
     line-height:50px;
     display: block;
-    margin-right:15px;
+    margin-right:16px;
 }
 
 .userloggedinfo .userinfo small {
@@ -912,7 +912,7 @@ a.barmenu:hover {
 
 .userloggedinfo .dropdown-menu
 {
-    right:7px;
+    right:8px;
     left:auto;
 }
 
@@ -944,7 +944,7 @@ a.barmenu:hover {
 }
 
 .notificationDropdown .dropdown-menu {
-    right: -15px;
+    right: -16px;
     left: auto;
     min-width:375px;
 }
@@ -958,12 +958,12 @@ a.barmenu:hover {
 .notificationDropdown span.notificationCounter {
     position: absolute;
     top: 10px;
-    right: 5px;
-    height: 15px;
-    width: 15px;
+    right: 4px;
+    height: 16px;
+    width: 16px;
     background: var(--red);
     border-radius: 50%;
-    line-height: 15px;
+    line-height: 16px;
     text-align: center;
     font-size: var(--font-size-xs);
 }
@@ -974,7 +974,7 @@ a.barmenu:hover {
 }
 
 .notificationDropdown .dropdown-menu li.new {
-    border-left:5px solid var(--primary-color);
+    border-left:4px solid var(--primary-color);
     font-weight: var(--font-weight-bold);
 }
 
@@ -1001,7 +1001,7 @@ a.barmenu:hover {
     border: 1px solid var(--main-border-color);
     float:left;
     margin-right:10px;
-    margin-top: 5px;
+    margin-top: 4px;
 }
 
 .notificationDropdown .dropdown-menu li .notificationTitle {
@@ -1047,7 +1047,7 @@ a.barmenu:hover {
 
 .userloggedinfo ul li a span,
 .appsDropdown ul li a span{
-    margin-right: 5px;
+    margin-right: 4px;
 }
 
 .userloggedinfo ul li a:hover,
@@ -1129,7 +1129,7 @@ a.barmenu:hover {
     width: 39px;
     text-align: center;
     display: block;
-    line-height: 13px;
+    line-height: 12px;
     margin-left: 0px;
     margin-bottom:2px;
 }
@@ -1229,8 +1229,8 @@ a.barmenu:hover {
 
 .maincontentinner.tabs {
     height: 50px;
-    margin-bottom: 7px;
-    padding: 9px 14px;
+    margin-bottom: 8px;
+    padding: 8px 12px;
     position:sticky;
     top:55px;
     z-index: 9;
@@ -1259,7 +1259,7 @@ a.barmenu:hover {
 
 .maincontentinner.tabs ul li a {
     font-weight: var(--font-weight-bold);
-    padding:5px 16px; /*Other buttons have 1px borders so this makes up for it */
+    padding:4px 16px; /*Other buttons have 1px borders so this makes up for it */
     border-radius: var(--box-radius-small);
     line-height:21px;
     display:block;
@@ -1282,7 +1282,7 @@ a.barmenu:hover {
 
 .maincontentinner.tabs .intro {
     display: inline-block;
-    padding-top: 5px;
+    padding-top: 4px;
     padding-left: 10px;
     float: left;
 
@@ -1296,12 +1296,12 @@ a.barmenu:hover {
 
 .headerinner .bigProjectSelector > .fa-caret-down {
     float:right;
-    padding-top:17px;
+    padding-top:16px;
 }
 
 .headerinner .bigProjectSelector .projectAvatar img{
     max-height:30px;
-    margin:10px 5px 0px 0px;
+    margin:10px 4px 0px 0px;
     border-radius:var(--box-radius-small);
     float:left;
 }
@@ -1314,13 +1314,13 @@ a.barmenu:hover {
     text-align: center;
     background: var(--header-gradient);
     border-radius: var(--element-radius);
-    margin-right: 5px;
+    margin-right: 4px;
 }
 
 
 
 .navbar {
-    margin-bottom: 15px;
+    margin-bottom: 16px;
 }
 
 .navbar-inner {
@@ -1346,7 +1346,7 @@ a.barmenu:hover {
 }
 
 .navbar .nav > li > a {
-    padding: 11px 15px;
+    padding: 12px 16px;
     font-size: var(--base-font-size);
     font-weight: var(--font-weight-body);
     text-transform: uppercase;
@@ -1363,19 +1363,19 @@ a.barmenu:hover {
 }
 
 .navbar .navbar-search.pull-right .search-query {
-    margin-right: -15px;
+    margin-right: -16px;
 }
 
 .navbar .navbar-search.pull-left .search-query {
-    margin-left: -15px;
+    margin-left: -16px;
 }
 
 .navbar .navbar-form.pull-right {
-    margin-right: -15px;
+    margin-right: -16px;
 }
 
 .navbar .navbar-form.pull-left {
-    margin-left: -15px;
+    margin-left: -16px;
 }
 
 .navbar .navbar-form input {
@@ -1418,7 +1418,7 @@ a.barmenu:hover {
 
 .new-indicator {
     position: absolute;
-    top: 7px;
+    top: 8px;
     right: 2px;
     box-shadow: var(--min-shadow);
     height: 10px;
@@ -1446,5 +1446,5 @@ a.barmenu:hover {
 
 .onboarding-checklist ul li {
     list-style: none;
-    margin-bottom:5px;
+    margin-bottom:4px;
 }

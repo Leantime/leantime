@@ -411,7 +411,7 @@ body .chzn-container-active .chzn-single-with-drop {
 }
 
 .ticketDropdown ul::after {
-    border-bottom: 7px solid var(--secondary-background);
+    border-bottom: 8px solid var(--secondary-background);
 }
 
 .maincontentinner .table th, .maincontentinner .table.table-bordered th, .maincontentinner .table tr.dtrg-group td {
@@ -553,7 +553,7 @@ body .userloggedinfo .dropdown-menu::after {
 }
 
 body .ticketDropdown ul::after {
-    border-bottom: 7px solid var(--secondary-background);
+    border-bottom: 8px solid var(--secondary-background);
 }
 
 .ss-main .ss-single-selected, .ss-content {

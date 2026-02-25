@@ -110,7 +110,7 @@
 }
 
 .column .contentInner.empty-column a[id^="ticket_new_link_group_"] i {
-    margin-right: 5px;
+    margin-right: 4px;
 }
 
 /* Quick-add form styling in empty columns */
@@ -125,7 +125,7 @@
     color: var(--primary-font-color);
     border-radius: var(--input-radius);
     padding: var(--input-padding);
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .column .contentInner.empty-column div[id^="ticket_new_group_"] input[type="text"]:focus {
