@@ -373,7 +373,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 .tiptap-editor .ProseMirror h2[style*="text-align: justify"],
 .tiptap-editor .ProseMirror h3[style*="text-align: justify"],
 .tiptap-editor .ProseMirror h4[style*="text-align: justify"] {
-    text-align: justify;
+    text-align: left;
 }
 
 /* ==========================================================================
@@ -538,7 +538,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: transparent;
     color: var(--code-color, #a9b1d6);
     font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.6;
     border: none;
     outline: none;
@@ -929,7 +929,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     padding: 8px 12px;
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 14px;
     outline: none;
     transition: border-color 0.15s ease;
 }
@@ -1115,7 +1115,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     background: var(--primary-color, #5a67d8);
     color: #fff;
     border-radius: 50%;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: var(--font-weight-semibold);
     text-transform: uppercase;
 }
@@ -1961,7 +1961,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     margin-top: 12px;
     padding: 10px 14px;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 14px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -2134,7 +2134,7 @@ div[id^="comments-"] > div > .clearall {
     align-items: center;
     gap: 5px;
     color: var(--secondary-font-color, #64748b);
-    font-size: 13px;
+    font-size: 14px;
     text-decoration: none;
     transition: color 0.15s ease;
     white-space: nowrap;
@@ -2443,7 +2443,7 @@ div[id^="comments-"] > div > .clearall {
     min-height: 150px;
     padding: 12px;
     font-family: var(--code-font-family, 'Monaco', 'Menlo', monospace);
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.5;
     background: var(--main-background, #fff);
     border: 1px solid var(--main-border-color, #e2e8f0);
@@ -2461,7 +2461,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-mermaid__save-btn,
 .tiptap-mermaid__cancel-btn {
     padding: 6px 12px;
-    font-size: 13px;
+    font-size: 14px;
     border-radius: 4px;
     cursor: pointer;
 }
@@ -2483,7 +2483,7 @@ div[id^="comments-"] > div > .clearall {
     background: var(--error-background, #fef2f2);
     color: var(--error-color, #ef4444);
     border-radius: 4px;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 /* Mermaid Dialog */
@@ -2561,7 +2561,7 @@ div[id^="comments-"] > div > .clearall {
     display: block;
     margin-bottom: 6px;
     font-weight: var(--font-weight-medium);
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .tiptap-mermaid-dialog__template-select {
@@ -2578,7 +2578,7 @@ div[id^="comments-"] > div > .clearall {
     min-height: 180px;
     padding: 12px;
     font-family: var(--code-font-family, 'Monaco', 'Menlo', monospace);
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.5;
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 6px;
@@ -2593,7 +2593,7 @@ div[id^="comments-"] > div > .clearall {
     display: block;
     margin-bottom: 8px;
     font-weight: var(--font-weight-medium);
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .tiptap-mermaid-dialog__preview-area {
@@ -2619,7 +2619,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-mermaid-dialog__preview-error {
     color: var(--secondary-text-color, #6b7280);
     font-style: italic;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .tiptap-mermaid-dialog__preview-error {
@@ -2734,7 +2734,7 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-math__error {
     color: var(--error-color, #ef4444);
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .tiptap-math__placeholder {
@@ -2844,7 +2844,7 @@ div[id^="comments-"] > div > .clearall {
     display: block;
     margin-bottom: 8px;
     font-weight: var(--font-weight-medium);
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .tiptap-math-dialog__preview-area {
@@ -2867,7 +2867,7 @@ div[id^="comments-"] > div > .clearall {
 .tiptap-math-dialog__preview-error {
     color: var(--secondary-text-color, #6b7280);
     font-style: italic;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .tiptap-math-dialog__footer {
@@ -3105,7 +3105,7 @@ div[id^="comments-"] > div > .clearall {
 }
 
 .tiptap-emoji-popup__shortcode {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--secondary-text-color, #6b7280);
 }
 
@@ -3113,7 +3113,7 @@ div[id^="comments-"] > div > .clearall {
     padding: 16px;
     text-align: center;
     color: var(--secondary-text-color, #6b7280);
-    font-size: 13px;
+    font-size: 14px;
 }
 
 /* Emoji Dialog */
@@ -3292,7 +3292,7 @@ div[id^="comments-"] > div > .clearall {
     align-items: center;
     gap: 8px;
     margin-bottom: 8px;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .tiptap-toc__setting:last-child {
@@ -3301,7 +3301,7 @@ div[id^="comments-"] > div > .clearall {
 
 .tiptap-toc__depth-select {
     padding: 4px 8px;
-    font-size: 13px;
+    font-size: 14px;
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 4px;
 }
@@ -3330,7 +3330,7 @@ div[id^="comments-"] > div > .clearall {
     padding: 4px 8px;
     color: var(--primary-color, #5a67d8);
     text-decoration: none;
-    font-size: 13px;
+    font-size: 14px;
     border-radius: 4px;
     transition: background-color 0.2s ease;
 }
@@ -3349,7 +3349,7 @@ div[id^="comments-"] > div > .clearall {
     text-align: center;
     color: var(--secondary-text-color, #6b7280);
     font-style: italic;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .tiptap-toc__highlight {
@@ -3565,7 +3565,7 @@ div[id^="comments-"] > div > .clearall {
     border-radius: 6px;
     cursor: pointer;
     text-align: left;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--main-text-color, #374151);
     transition: background-color 0.12s ease, color 0.12s ease;
 }
@@ -3802,7 +3802,7 @@ div[id^="comments-"] > div > .clearall {
     .tiptap-emoji-picker__emoji {
         width: 36px;
         height: 36px;
-        font-size: 22px;
+        font-size: 20px;
     }
 
     /* Table responsive */
