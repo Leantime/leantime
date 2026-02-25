@@ -90,7 +90,7 @@ min-width: 1200px
         width:90%;
         position:absolute;
         top:50px;
-        left:5px;
+        left:4px;
         background: var(--secondary-background);
         z-index: 999;
     }
@@ -122,7 +122,7 @@ min-width: 1200px
     .maincontentinner .btn,
     .maincontentinner .btn-group{
 
-        margin-bottom:5px;
+        margin-bottom:4px;
     }
 
     .maincontentinner .simpleButtons .btn,
@@ -259,7 +259,7 @@ min-width: 1200px
 
     /* table */
     .dataTable th, .dataTable td {
-        padding: 5px;
+        padding: 4px;
     }
 
     .dataTable th:nth-child(2), .dataTable td:nth-child(2) {
@@ -304,13 +304,13 @@ min-width: 1200px
     }
 
     .pageheader {
-        padding: 5px 20px;
-        min-height: 50px;
+        padding: 4px 20px;
+        min-height: 48px;
     }
 
     .searchbar {
         position: static;
-        margin-bottom: 5px;
+        margin-bottom: 4px;
     }
 
     .searchbar input {
@@ -334,7 +334,7 @@ min-width: 1200px
         display: block;
         width: auto;
         border: 2px solid var(--primary-color);
-        margin-bottom: 5px;
+        margin-bottom: 4px;
     }
 
     .wizard .hormenu li a {
@@ -444,7 +444,7 @@ min-width: 1200px
 
     /* calendar */
     .fc-button {
-        padding: 0 5px;
+        padding: 0 4px;
     }
 
     .fc-header-title {
@@ -453,7 +453,7 @@ min-width: 1200px
 
     /* invoice */
     .amountdue h1 {
-        padding: 10px 25px;
+        padding: 10px 24px;
     }
 
     .amountdue .btn {
@@ -499,12 +499,12 @@ min-width: 1200px
     }
 
     .pageheader {
-        padding: 5px 20px;
-        min-height: 50px;
+        padding: 4px 20px;
+        min-height: 48px;
     }
 
     .header {
-        height: 50px;
+        height: 48px;
     }
 
     /* Fix header navigation icon overflow */
@@ -583,7 +583,7 @@ min-width: 1200px
     }
 
     .tabbable > .nav-tabs > li a {
-        padding: 10px 5px;
+        padding: 10px 4px;
     }
 
     .fontawesomeicons .span3 {
@@ -763,7 +763,7 @@ min-width: 1200px
     }
 
     .commentlist li .comment-info {
-        margin-left: 55px;
+        margin-left: 56px;
     }
 
     .commentlist li .comment-info h4 {
@@ -894,7 +894,7 @@ min-width: 1200px
     .maincontentinner .dataTables_filter input {
         width: 100%;
         max-width: 200px;
-        margin: 5px 0 0 0;
+        margin: 4px 0 0 0;
     }
 
     /* Project overview mobile improvements */
@@ -914,13 +914,13 @@ min-width: 1200px
 
     /* Mobile content padding optimization - reclaim horizontal space */
     .maincontent {
-        padding-left: 5px;
-        padding-right: 5px;
+        padding-left: 4px;
+        padding-right: 4px;
     }
 
     .rightpanel {
-        padding-left: 5px;
-        padding-right: 5px;
+        padding-left: 4px;
+        padding-right: 4px;
     }
 
     /* Fix login page layout and text cutoff issues */
@@ -995,7 +995,7 @@ min-width: 1200px
         display: inline-block !important;
         float: right;
         clear: both;
-        margin-top: 5px;
+        margin-top: 4px;
         margin-bottom: 10px;
         padding-right: 0;
         white-space: nowrap;
@@ -1076,7 +1076,7 @@ min-width: 1200px
     .maincontentinner .btn,
     .maincontentinner .btn-group{
         width:100%;
-        margin-bottom:5px;
+        margin-bottom:4px;
     }
 
     .currentSprint {
@@ -1084,14 +1084,14 @@ min-width: 1200px
     }
 
     .pageheader {
-        padding: 5px 20px;
-        min-height: 50px;
+        padding: 4px 20px;
+        min-height: 48px;
     }
 
     .leftpanel a.barmenu {
         position: fixed;
         left: 0px;
-        top: 5px;
+        top: 4px;
         margin-left:0px;
         padding-left:16px;
         width:50px;

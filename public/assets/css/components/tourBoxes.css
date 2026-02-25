@@ -22,7 +22,7 @@
 .shepherd-text {
     font-size: var(--font-size-l);
     line-height: 1.5;
-    padding:15px;
+    padding:16px;
     color:var(--primary-font-color);
 }
 
@@ -43,9 +43,9 @@
     background:var(--main-action-bg);
     color:var(--main-action-color);
     border-radius: var(--input-radius);
-    padding: 4px 14px;
+    padding: 4px 12px;
     font-weight:var(--font-weight-bold);
-    line-height:21px;
+    line-height:20px;
     border: 1px solid var(--main-action-bg);
 }
 

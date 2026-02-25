@@ -69,7 +69,7 @@
 }
 
 .mediamgr_menu form input.filekeyword {
-    padding: 5px 7px;
+    padding: 4px 8px;
     width: 200px;
     background: var(--primary-background);
     color: var(--secondary-font-color);
@@ -93,7 +93,7 @@
 
 .mediamgr_category ul li {
     display: inline-block;
-    margin-right: 5px;
+    margin-right: 4px;
 }
 
 .mediamgr_category ul li.right {
@@ -102,7 +102,7 @@
 
 .mediamgr_category ul li a {
     display: block;
-    padding: 3px 10px;
+    padding: 4px 10px;
     color: var(--secondary-font-color);
 }
 
@@ -114,12 +114,12 @@
 
 .mediamgr_category ul li .pagenuminfo {
     display: inline-block;
-    margin-top: 5px;
+    margin-top: 4px;
 }
 
 .mediamgr_menu li a.newfilebutton {
     display: block;
-    padding: 4px 10px 5px 10px;
+    padding: 4px 10px 4px 10px;
     text-align: center;
     border: 1px solid var(--accent1);
     background: var(--accent1);

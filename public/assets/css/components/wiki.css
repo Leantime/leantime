@@ -715,7 +715,7 @@
 
 .wiki-milestone-btn {
     display: inline-block;
-    padding: 5px 10px;
+    padding: 4px 10px;
     border-radius: 6px;
     font-size: var(--base-font-size);
     font-weight: var(--font-weight-medium);
@@ -864,7 +864,7 @@
 
 .wiki-status-menu li a {
     display: block;
-    padding: 5px 10px;
+    padding: 4px 10px;
     border-radius: var(--box-radius-large);
     font-size: var(--base-font-size);
     color: var(--primary-background);

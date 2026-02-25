@@ -19,7 +19,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 5px 4px;
+    padding: 4px 4px;
     border-radius: var(--box-radius);
     border: 2px solid transparent;
     background: var(--secondary-background);
@@ -164,7 +164,7 @@
 }
 
 .fc-popover-body  .fc-h-event .fc-event-title-container {
-    padding-left:5px;
+    padding-left:4px;
 }
 
 .fc-popover-body  .fc-event {
@@ -395,7 +395,7 @@
 }
 
 .maincontentinner .fc th .fc-scroller {
-    padding:5px;
+    padding:4px;
 }
 
 .fc .fc-col-header-cell-cushion {
@@ -451,7 +451,7 @@
 }
 
 .maincontentinner .fc-list-event td {
-    padding: 5px 10px;
+    padding: 4px 10px;
 }
 
 .maincontentinner .fc-theme-standard .fc-list {

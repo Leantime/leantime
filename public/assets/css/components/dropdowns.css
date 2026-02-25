@@ -41,7 +41,7 @@
 }
 
 .dropdownTabs {
-    padding:5px;
+    padding:4px;
     display: flex;
     flex-direction: row;
 
@@ -96,7 +96,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     padding-left: 10px;
     padding-right: 10px;
     padding-top:10px;
-    padding-bottom:5px;
+    padding-bottom:4px;
     font-size:var(--font-size-m);
     color:var(--interactive-icon-color);
     text-transform:none;
@@ -203,7 +203,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .ticketDropdown ul li a[class*="label-"],
 #global-modal-content .ticketDropdown ul li a[class*="label-"] {
-    padding: 5px 10px;
+    padding: 4px 10px;
     display:block;
 }
 
@@ -346,7 +346,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     font-weight:var(--font-weight-bold);
     margin-left:0px;
     border-radius: var(--accordion-header-radius);
-    padding: 5px 0px;
+    padding: 4px 0px;
 }
 
 .maincontent .noBackground .accordionTitle {
@@ -355,9 +355,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .accordionTitle i {
     display:inline-block;
-    width:15px;
+    width:16px;
     text-align:center;
-    margin-right:5px;
+    margin-right:4px;
     border-radius:var(--box-radius-small);
 }
 
@@ -370,7 +370,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontent .accordionTitle[class*="label-"] {
     margin-left:0px;
     border-radius: var(--accordion-header-radius);
-    padding: 5px 0px;
+    padding: 4px 0px;
     background: none;
 }
 
@@ -405,7 +405,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .simpleAccordionContainer {
-    margin-bottom:15px;
+    margin-bottom:16px;
     padding-left: 20px;
 }
 
@@ -414,11 +414,11 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .maincontent .accordionTitle .accordion-toggle i.fa:first-child {
-    width: 15px;
+    width: 16px;
     margin-top: 0px;
-    margin-right: 5px;
-    height: 15px;
-    line-height: 15px;
+    margin-right: 4px;
+    height: 16px;
+    line-height: 16px;
     text-align: center;
     border-radius: var(--element-radius);
     font-size: var(--font-size-m);
@@ -469,7 +469,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     float:left;
     vertical-align: middle;
     margin-top: 8px;
-    margin-right:5px;
+    margin-right:4px;
 }
 
 .dropdown-menu span.radio {
@@ -477,7 +477,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     font-size: var(--font-size-s);
     color: var(--main-menu-link-color);
     margin: 0px;
-    padding: 5px 10px;
+    padding: 4px 10px;
 }
 
 .dropdown-menu span.radio:hover {
@@ -491,7 +491,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .wikiSelect {
-    margin-bottom:5px;
+    margin-bottom:4px;
 }
 
 .dropdown-menu.iconpicker-container,
@@ -507,7 +507,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .btn-group .btn.titleIconPicker {
     font-size: var(--font-size-xl);
     line-height: 21px;
-    padding: 5px 6px;
+    padding: 4px 6px;
     color: var(--primary-font-color);
     background-color: var(--secondary-background);
     border: 1px solid var(--secondary-background);
@@ -544,7 +544,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     width:auto;
     color: var(--main-titles-color);
     text-decoration:underline;
-    padding:0px 3px ;
+    padding:0px 4px ;
     border-radius: var(--box-radius-small);
 }
 
@@ -577,7 +577,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .headerEditDropdown .dropdown-toggle {
-    padding:4px 13px;
+    padding:4px 12px;
 }
 
 .editCanvasDropdown {
@@ -617,7 +617,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .inlineDropDownContainer > a:last-child {
-    margin-right:-5px;
+    margin-right:-4px;
 }
 
 .inlineDropDownContainer > a:hover {
@@ -629,7 +629,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     float:right;
     font-size: var(--font-size-xl);
     color: var(--interactive-icon-color);
-    margin-right:-5px;
+    margin-right:-4px;
 }
 
 .inlineDropDownContainer .dropdown-menu {
@@ -639,7 +639,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .inlineDropDownContainer.dropright .dropdown-menu {
 
-    left:-5px;
+    left:-4px;
 }
 
 .inlineDropDownContainer .dropdown-menu .border {
@@ -647,7 +647,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .inlineDropDownContainer .dropdown-menu li>span {
-    padding-left:15px;
+    padding-left:16px;
 }
 
 .grid-stack-item-content .inlineDropDownContainer .ticketDropDown,

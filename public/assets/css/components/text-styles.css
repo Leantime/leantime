@@ -66,7 +66,7 @@ h1 small {
 .label-default, .label-primary, .label-danger {
     padding: 2px 8px;
     color: #fff;
-    margin-left: 5px;
+    margin-left: 4px;
     border-radius: var(--element-radius);
 }
 
@@ -96,10 +96,10 @@ a .label.feature-label {
     margin-top: 4px;
     display: block;
     position:absolute;
-    top:5px;
+    top:4px;
     right:0px;
     border-radius: var(--element-radius);
-    padding: 1px 5px;
+    padding: 1px 4px;
     color:var(--main-action-color);
 }
 
@@ -152,14 +152,14 @@ a .label.feature-label:after {
 .subtitle {
     font-size: var(--base-font-size);
     color: var(--secondary-font-color);
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .subtitle2 {
     font-size: var(--base-font-size);
     text-transform: uppercase;
     color: var(--primary-font-color);
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 

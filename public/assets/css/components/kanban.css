@@ -375,10 +375,10 @@
     box-shadow: none;
     border-radius:var(--box-radius-small);
     padding:0px;
-    padding-left:5px;
+    padding-left:4px;
     border-left:3px solid var(--main-border-color);
-    padding-top:5px;
-    margin-top:5px;
+    padding-top:4px;
+    margin-top:4px;
     background:transparent;
 }
 
@@ -530,9 +530,9 @@ body .maincontent .priority-text-5 a:link {
 .widgettitle {
     background: var(--kanban-col-title-bg) !important;
     color: var( --kanban-col-title-color);
-    padding: 10px 15px;
+    padding: 10px 16px;
     font-size: var(--base-font-size);
-    line-height:17px;
+    line-height:16px;
     font-weight: var(--font-weight-bold);
     border-bottom-width:3px;
     border-top-left-radius: var(--box-radius);
@@ -726,7 +726,7 @@ body .maincontent .priority-text-5 a:link {
     justify-content: center;
     background: color-mix(in srgb, var(--accent2) 76%, black); /* Darkened brand teal - WCAG AA compliant (4.9:1 contrast) */
     color: #FFFFFF; /* White text for high contrast */
-    padding: 3px 10px;
+    padding: 4px 10px;
     border-radius: var(--input-radius);
     font-size: var(--font-size-s);
     font-weight: var(--font-weight-bold);

@@ -1,6 +1,6 @@
 /* Mermaid diagram styling for Copilot */
 .mermaid-diagram {
-    margin: 15px 0;
+    margin: 16px 0;
     padding: 10px;
     background-color: var(--color-bg-muted);
     border-radius: var(--box-radius-large);

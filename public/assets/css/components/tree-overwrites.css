@@ -15,8 +15,8 @@ body .jstree-default .jstree-clicked {
 }
 
 body .jstree-default .jstree-node a{
-    padding-top:5px;
-    padding-bottom:5px;
+    padding-top:4px;
+    padding-bottom:4px;
 }
 
 
@@ -38,7 +38,7 @@ body .jstree-default > .jstree-no-dots .jstree-closed > .jstree-ocl {
 
 .jstree-default .jstree-icon:empty {
     width:20px;
-    padding-right:5px;
+    padding-right:4px;
     opacity: 0.6;
 }
 

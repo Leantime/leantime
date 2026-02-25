@@ -15,8 +15,8 @@
 }
 
 .sortable-item .sortable-list {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 .sortable-list .sortable-item:last-child {
@@ -35,7 +35,7 @@
 }
 
 .sortable-list .sortable-item .sortable-list .sortable-item:first-child {
-    margin-top:5px;
+    margin-top:4px;
 }
 
 .sortable-item .ticketBox {
@@ -96,7 +96,7 @@
     &::after {
         content: '';
         position: absolute;
-        top: 5px;
+        top: 4px;
         left: 0;
         right: 0;
         bottom: 0;
@@ -113,7 +113,7 @@
     &::after {
         content: '';
         position: absolute;
-        top: 5px;
+        top: 4px;
         left: 0;
         right: 0;
         bottom: 0;
@@ -150,7 +150,7 @@
     background: rgba(0, 0, 0, 0.05);
     border: 1px dashed rgba(0, 0, 0, 0.1);
     border-radius: var(--box-radius-small);
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     height: 60px;
     position: relative;
 }
@@ -161,7 +161,7 @@
 
 .task-collapse-toggle {
     position: absolute;
-    left: -25px;
+    left: -24px;
     top: 20px;
     width: 20px;
     height: 20px;
@@ -173,7 +173,7 @@
 }
 
 .milestone-box .task-collapse-toggle {
-    top:25px;
+    top:24px;
 }
 
 .sortable-list .sortable-list .task-collapse-toggle {
@@ -221,7 +221,7 @@
 .quickAddForm {
     background: var(--secondary-background);
     border-radius: var(--box-radius);
-    padding: 15px;
+    padding: 16px;
     margin-top: 10px;
     box-shadow: var(--regular-shadow);
 }
@@ -240,7 +240,7 @@
     border-left: 0px;
     border-right:0px;
     border-radius: var(--box-radius);
-    padding: 15px;
+    padding: 16px;
     margin-bottom: 10px;
     box-shadow: var(--regular-shadow);
 }
