@@ -219,6 +219,20 @@
     --status-in-progress-color: #f59e0b;  /* Amber-500 */
     --status-done-color: #10b981;         /* Emerald-500 */
 
+    /* Feedback Colors */
+    --feedback-success-bg: #e8f5e9;
+    --feedback-success-color: var(--green);
+    --feedback-success-border: #4caf50;
+    --feedback-warning-bg: #fff3e0;
+    --feedback-warning-color: #856404;
+    --feedback-warning-border: #ff9800;
+    --feedback-info-bg: #e3f2fd;
+    --feedback-info-color: var(--blue);
+    --feedback-info-border: #2196f3;
+    --feedback-error-bg: #ffebee;
+    --feedback-error-color: #c62828;
+    --feedback-error-border: #f44336;
+
     /* ═══ DESIGN SYSTEM v2 — SEMANTIC ALIASES ═══ */
 
     /* New accent colors (brand-layer) */

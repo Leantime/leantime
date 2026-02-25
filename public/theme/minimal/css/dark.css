@@ -182,6 +182,20 @@
 
     --transparencyLayer: rgba(0,0,0,1);
 
+    /* Feedback Colors (Dark Mode) */
+    --feedback-success-bg: rgba(76, 175, 80, 0.12);
+    --feedback-success-color: #66bb6a;
+    --feedback-success-border: #4caf50;
+    --feedback-warning-bg: rgba(255, 152, 0, 0.12);
+    --feedback-warning-color: #ffb74d;
+    --feedback-warning-border: #ff9800;
+    --feedback-info-bg: rgba(33, 150, 243, 0.12);
+    --feedback-info-color: #64b5f6;
+    --feedback-info-border: #2196f3;
+    --feedback-error-bg: rgba(244, 67, 54, 0.12);
+    --feedback-error-color: #ef5350;
+    --feedback-error-border: #f44336;
+
     /* ═══ DESIGN SYSTEM v2 — SEMANTIC ALIASES ═══ */
 
     /* New accent colors (brand-layer) */

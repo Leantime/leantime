@@ -209,7 +209,7 @@
     <div class="test-section">
         <h2>4. Complete SwimLaneRowHeader Components (Matching Design)</h2>
 
-        <h3 style="color: #6B7A4D; margin-top: 20px;">EXPANDED vs COLLAPSED States</h3>
+        <h3 style="color: var(--secondary-font-color); margin-top: 20px;">EXPANDED vs COLLAPSED States</h3>
         <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 30px;">
             <div>
                 <small style="color: var(--color-text-secondary);">Expanded (shows progress bar)</small>
@@ -265,7 +265,7 @@
             </div>
         </div>
 
-        <h3 style="color: #6B7A4D; margin-top: 20px;">GROUP BY: EFFORT</h3>
+        <h3 style="color: var(--secondary-font-color); margin-top: 20px;">GROUP BY: EFFORT</h3>
         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
             <x-globals::kanban.swimlane-row-header
                 groupBy="storypoints"
@@ -316,7 +316,7 @@
             />
         </div>
 
-        <h3 style="color: #6B7A4D; margin-top: 20px;">GROUP BY: MILESTONE</h3>
+        <h3 style="color: var(--secondary-font-color); margin-top: 20px;">GROUP BY: MILESTONE</h3>
         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
             <x-globals::kanban.swimlane-row-header
                 groupBy="milestoneid"
@@ -361,7 +361,7 @@
             />
         </div>
 
-        <h3 style="color: #6B7A4D; margin-top: 20px;">GROUP BY: SPRINT</h3>
+        <h3 style="color: var(--secondary-font-color); margin-top: 20px;">GROUP BY: SPRINT</h3>
         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
             <x-globals::kanban.swimlane-row-header
                 groupBy="sprint"

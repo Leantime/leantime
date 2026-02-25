@@ -191,19 +191,19 @@
     <p>Author: '.$author.'<br />
     Date: '.$today.'<br />
     Status: <span class="label label-default">Draft</span><br />
-    <table style="border-collapse: collapse; width: 100.146%; background-color: #ffffff; height: 182px;" border="1">
+    <table style="border-collapse: collapse; width: 100.146%; background-color: var(--primary-background); height: 182px;" border="1">
     <tbody>
     <tr style="height: 17px;">
-    <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">Why we\'re doing this:</span></strong></td>
+    <td style="width: 17.3786%; height: 17px; background-color: var(--accent1);"><strong><span style="color: var(--accent1-color);">Why we\'re doing this:</span></strong></td>
     <td style="height: 17px; width: 82.6214%;" colspan="3">&lt; insert project justification &gt;</td>
     </tr>
     <tr style="height: 17px;">
-    <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">What are we working on:</span></strong></td>
+    <td style="width: 17.3786%; height: 17px; background-color: var(--accent1);"><strong><span style="color: var(--accent1-color);">What are we working on:</span></strong></td>
     <td style="height: 17px; width: 82.6214%;" colspan="3">&lt; insert project description &gt;</td>
     </tr>
     <tr style="height: 46px;">
-    <td style="width: 17.3786%; height: 46px; background-color: #3598db;">
-    <p><strong><span style="color: #ffffff;">Project Objectives:</span></strong></p>
+    <td style="width: 17.3786%; height: 46px; background-color: var(--accent1);">
+    <p><strong><span style="color: var(--accent1-color);">Project Objectives:</span></strong></p>
     </td>
     <td style="height: 46px; width: 82.6214%;" colspan="3">
     <ul>
@@ -214,7 +214,7 @@
     </td>
     </tr>
     <tr style="height: 17px;">
-    <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">High Level Requirements:</span></strong></td>
+    <td style="width: 17.3786%; height: 17px; background-color: var(--accent1);"><strong><span style="color: var(--accent1-color);">High Level Requirements:</span></strong></td>
     <td style="height: 17px; width: 82.6214%;" colspan="3">
     <ul>
     <li>Requirement 1</li>
@@ -224,7 +224,7 @@
     </td>
     </tr>
     <tr style="height: 17px;">
-    <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">In Scope Work</span></strong></td>
+    <td style="width: 17.3786%; height: 17px; background-color: var(--accent1);"><strong><span style="color: var(--accent1-color);">In Scope Work</span></strong></td>
     <td style="height: 17px; width: 82.6214%;" colspan="3">
     <ul>
     <li>Item</li>
@@ -234,7 +234,7 @@
     </td>
     </tr>
     <tr style="height: 17px;">
-    <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">No-go\'s / Out of Scope:</span></strong></td>
+    <td style="width: 17.3786%; height: 17px; background-color: var(--accent1);"><strong><span style="color: var(--accent1-color);">No-go\'s / Out of Scope:</span></strong></td>
     <td style="height: 17px; width: 82.6214%;" colspan="3">
     <ul>
     <li>Item</li>
@@ -244,7 +244,7 @@
     </td>
     </tr>
     <tr style="height: 17px;">
-    <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">Cost Estimates:</span></strong></td>
+    <td style="width: 17.3786%; height: 17px; background-color: var(--accent1);"><strong><span style="color: var(--accent1-color);">Cost Estimates:</span></strong></td>
     <td style="height: 17px; width: 82.6214%;" colspan="3">
     <table style="border-collapse: collapse; width: 99.9991%; height: 68.875px;" border="1">
     <thead>
@@ -322,15 +322,15 @@
     $bugTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" border="1">
      <tbody>
      <tr data-mce-active="1">
-     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Summary</strong></span></td>
+     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: var(--accent1-color);"><strong>Summary</strong></span></td>
      <td style="width: 82.7562%;" data-mce-active="1">summarize the issue your are experiencing</td>
      </tr>
      <tr>
-     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Environment</strong></span></td>
+     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: var(--accent1-color);"><strong>Environment</strong></span></td>
      <td style="width: 82.7562%;">describe the environment under which the problem occured (hosted, production, staging etc)</td>
      </tr>
      <tr>
-     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Reproduction Steps</strong></span></td>
+     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: var(--accent1-color);"><strong>Reproduction Steps</strong></span></td>
      <td style="width: 82.7562%;">Describe the steps to reproduce the problem<br />
      <ol>
      <li>Step 1</li>
@@ -339,19 +339,19 @@
      </td>
      </tr>
      <tr>
-     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Expected Outcome</strong></span></td>
+     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: var(--accent1-color);"><strong>Expected Outcome</strong></span></td>
      <td style="width: 82.7562%;">describe what you expected would happen</td>
      </tr>
      <tr>
-     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Actual Outcome</strong></span></td>
+     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: var(--accent1-color);"><strong>Actual Outcome</strong></span></td>
      <td style="width: 82.7562%;">describe what actually happened</td>
      </tr>
      <tr>
-     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Impact</strong></span></td>
+     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: var(--accent1-color);"><strong>Impact</strong></span></td>
      <td style="width: 82.7562%;">describe how impactful this issue is to your workflow (eg can not work at all; delays my work; large inconvenience etc)</td>
      </tr>
      <tr>
-     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Additional Details</strong></span></td>
+     <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: var(--accent1-color);"><strong>Additional Details</strong></span></td>
      <td style="width: 82.7562%;">Anything else you would like to mention</td>
      </tr>
      </tbody>
@@ -366,19 +366,19 @@
     $featureTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" border="1">
     <tbody>
     <tr>
-    <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Summary</strong></span></td>
+    <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: var(--accent1-color);"><strong>Summary</strong></span></td>
     <td style="width: 82.7562%;">summarize the feature you would like</td>
     </tr>
     <tr>
-    <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Target User</strong></span></td>
+    <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: var(--accent1-color);"><strong>Target User</strong></span></td>
     <td style="width: 82.7562%;">describe who benefits most from this feature</td>
     </tr>
     <tr>
-    <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Desired Timeline</strong></span></td>
+    <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: var(--accent1-color);"><strong>Desired Timeline</strong></span></td>
     <td style="width: 82.7562%;">when would you like to see it implemented</td>
     </tr>
     <tr>
-    <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Additional Details</strong></span></td>
+    <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: var(--accent1-color);"><strong>Additional Details</strong></span></td>
     <td style="width: 82.7562%;">any additional details</td>
     </tr>
     </tbody>

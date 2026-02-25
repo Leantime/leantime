@@ -287,13 +287,13 @@
 
                                         <x-globals::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
                                             <div style="width:80px; height:60px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #fffbe6 0%, #ffe8a0 100%); border-radius:var(--element-radius);">
-                                                <span style="font-size:30px; color:#f5a623; line-height:1;">&#9679;</span>
+                                                <span style="font-size:30px; color:var(--yellow); line-height:1;">&#9679;</span>
                                             </div>
                                         </x-globals::selectable>
 
                                         <x-globals::selectable :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'" onclick="leantime.snippets.toggleTheme('dark')">
                                             <div style="width:80px; height:60px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #1a2332 0%, #2c3e50 100%); border-radius:var(--element-radius);">
-                                                <i class="fa-solid fa-moon" style="font-size:26px; color:#c4cfe0; line-height:1;"></i>
+                                                <i class="fa-solid fa-moon" style="font-size:26px; color:var(--secondary-font-color); line-height:1;"></i>
                                             </div>
                                         </x-globals::selectable>
 
