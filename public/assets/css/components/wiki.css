@@ -139,7 +139,7 @@
     justify-content: center;
     background: var(--layered-background);
     border: 1px solid var(--main-border-color);
-    border-radius: 10px;
+    border-radius: 8px;
     color: var(--secondary-font-color);
     cursor: pointer;
     z-index: 10;
@@ -314,7 +314,7 @@
     display: inline-block;
     padding: 4px 12px;
     background: var(--layered-background);
-    border-radius: 16px;
+    border-radius: 20px;
     font-size: var(--font-size-s);
     color: var(--primary-font-color);
 }
@@ -466,7 +466,7 @@
     margin: 1em 0;
     padding: 16px 20px;
     background: var(--layered-background);
-    border-radius: 16px;
+    border-radius: 12px;
     overflow-x: auto;
 }
 
@@ -506,7 +506,7 @@
 .wiki-document img {
     max-width: 100%;
     height: auto;
-    border-radius: 16px;
+    border-radius: 12px;
     margin: 1em 0;
 }
 
@@ -522,7 +522,7 @@
 .wiki-document mark {
     background: rgba(255, 230, 0, 0.4);
     padding: 1px 4px;
-    border-radius: 3px;
+    border-radius: 4px;
 }
 
 /* ==========================================================================
@@ -573,7 +573,7 @@
     background: var(--layered-background) !important;
     border: none !important;
     border-bottom: 1px solid var(--main-border-color) !important;
-    border-radius: 11px 11px 0 0 !important;
+    border-radius: 12px 12px 0 0 !important;
     box-shadow: none !important;
 }
 
@@ -1108,7 +1108,7 @@
     gap: 6px;
     padding: 10px 14px;
     margin-top: 16px;
-    border-radius: 14px;
+    border-radius: 12px;
     background: transparent;
     border: 1px dashed var(--main-border-color);
     color: var(--secondary-font-color);
@@ -1123,7 +1123,7 @@
     border-color: var(--accent1);
     color: var(--accent1);
     background: var(--secondary-background);
-    border-radius: 14px;
+    border-radius: 12px;
 }
 
 /* ==========================================================================

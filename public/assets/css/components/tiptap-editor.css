@@ -260,7 +260,7 @@
     cursor: pointer;
     accent-color: var(--primary-color, #5a67d8);
     margin: 0;
-    border-radius: 3px;
+    border-radius: 4px;
 }
 
 .tiptap-editor .ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div {
@@ -316,7 +316,7 @@ ul[data-type="taskList"] input[type="checkbox"] {
     cursor: pointer;
     accent-color: var(--primary-color, #5a67d8);
     margin: 0;
-    border-radius: 3px;
+    border-radius: 4px;
 }
 
 ul[data-type="taskList"] li[data-checked="true"] > div {
@@ -1062,7 +1062,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     overflow-y: auto;
     background: var(--main-background, #ffffff);
     border: 1px solid var(--main-border-color, #e2e8f0);
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: var(--regular-shadow);
     padding: 6px;
     animation: tiptap-mention-fade-in 0.15s ease-out;
@@ -1438,7 +1438,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     overflow: hidden;
     background: var(--main-background, #ffffff);
     border: 1px solid var(--main-border-color, #e2e8f0);
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: var(--regular-shadow);
     padding: 8px;
     animation: tiptap-slash-fade-in 0.15s ease-out;
@@ -2175,7 +2175,7 @@ div[id^="comments-"] > div > .clearall {
     gap: 4px;
     padding: 4px 10px;
     border: 1px solid var(--main-border-color, #e2e8f0);
-    border-radius: 14px;
+    border-radius: 12px;
     background: var(--element-bg, #f8fafc);
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
@@ -3531,7 +3531,7 @@ div[id^="comments-"] > div > .clearall {
     min-width: 200px;
     background: var(--main-background, rgba(255, 255, 255, 0.98));
     border: 1px solid var(--main-border-color, rgba(0, 0, 0, 0.06));
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: var(--regular-shadow);
     overflow: hidden;
     backdrop-filter: var(--glass-blur);

@@ -655,7 +655,7 @@ body.loginpage {
     border-style: solid;
     border-color:var(--main-titles-color);
     display: inline-block;
-    border-radius: 30px;
+    border-radius: 20px;
     float: left;
     text-align: center;
     margin-right:5px;

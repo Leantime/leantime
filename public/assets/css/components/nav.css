@@ -962,7 +962,7 @@ a.barmenu:hover {
     height: 15px;
     width: 15px;
     background: var(--red);
-    border-radius: 10px;
+    border-radius: 50%;
     line-height: 15px;
     text-align: center;
     font-size: var(--font-size-xs);
@@ -1424,7 +1424,7 @@ a.barmenu:hover {
     height: 10px;
     width: 10px;
     background: var(--blue);
-    border-radius: 10px;
+    border-radius: 50%;
     line-height: 10px;
     text-align: center;
     font-size: var(--font-size-xs);

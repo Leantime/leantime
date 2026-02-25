@@ -23,7 +23,7 @@
                      $themeAll = $themeCore->getAll();
                      foreach ($themeAll as $key => $theme) { ?>
                          <x-globals::selectable selected="{{ ($userTheme == $key ? 'true' : 'false') }}" :id="''" :name="'theme'" :value="$key" :label="''" class="tw:w-1/2" onclick="leantime.snippets.toggleBg('{{ $key }}')">
-                            <img src="{{ BASE_URL }}/dist/images/background-{{$key}}.png" style="margin:0; border-radius:10px;" />
+                            <img src="{{ BASE_URL }}/dist/images/background-{{$key}}.png" style="margin:0; border-radius:8px;" />
                                  <br /><?= $tpl->__($theme['name']) ?>
                          </x-globals::selectable>
 

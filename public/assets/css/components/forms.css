@@ -1091,7 +1091,7 @@ input[type=range]::-webkit-slider-thumb {
     border: 2px solid var(--input-background);
     height: 20px;
     width: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     background: var(--primary-color);
     cursor: pointer;
     -webkit-appearance: none;
@@ -1115,7 +1115,7 @@ input[type=range]::-moz-range-thumb {
     border: 2px solid var(--input-background);
     height: 20px;
     width: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     background: var(--primary-color);
     cursor: pointer;
 }
@@ -1131,13 +1131,13 @@ input[type=range]::-ms-track {
 input[type=range]::-ms-fill-lower {
     background: var(--main-border-color);
     border: 0px solid #000000;
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0px 0px 0px #000000;
 }
 input[type=range]::-ms-fill-upper {
     background: var(--main-border-color);
     border: 0px solid #000000;
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0px 0px 0px #000000;
 }
 input[type=range]::-ms-thumb {
@@ -1146,7 +1146,7 @@ input[type=range]::-ms-thumb {
     border: 2px solid var(--primary-background);
     height: 20px;
     width: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     background:var(--primary-color);
     cursor: pointer;
 }
@@ -1567,7 +1567,7 @@ input[type="checkbox"].toggle {
 input[type="checkbox"].toggle {
     height: 20px;
     width: 40px;
-    border-radius: 16px;
+    border-radius: 12px;
     display: inline-block;
     position: relative;
     margin: 0;
