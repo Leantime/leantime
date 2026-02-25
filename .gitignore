@@ -110,7 +110,6 @@ logs/*
 app/custom/domain/
 app/custom/plugin/
 app/custom/language/
-public/theme/*/css/custom.css
 public/theme/dts/
 nbproject
 config/config.yaml
