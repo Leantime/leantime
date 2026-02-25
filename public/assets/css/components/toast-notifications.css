@@ -16,7 +16,7 @@
     box-shadow: var(--large-shadow);
     opacity: 0;
     transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity var(--duration-slow) ease, transform var(--duration-slow) ease;
 }
 
 .toast-notification.toast-visible {

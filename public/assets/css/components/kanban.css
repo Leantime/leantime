@@ -98,7 +98,7 @@
 .column .contentInner.empty-column a[id^="ticket_new_link_group_"] {
     color: var(--primary-font-color);
     text-decoration: none;
-    transition: background-color 0.2s ease, opacity 0.2s ease;
+    transition: background-color var(--duration-moderate) ease, opacity var(--duration-moderate) ease;
     border-radius: var(--box-radius-small);
     opacity: 0.7;
 }
@@ -324,7 +324,7 @@
 /* Hide column counts by default - show on hover */
 .widgettitle .count {
     opacity: 0;
-    transition: opacity 200ms ease-out;
+    transition: opacity var(--duration-moderate) ease-out;
 }
 
 /* Show on hover/focus */
@@ -612,7 +612,7 @@ body .maincontent .priority-text-5 a:link {
     box-shadow: var(--min-shadow);
     align-self: stretch; /* Full height of swimlane */
     cursor: pointer;
-    transition: background 150ms ease-out, box-shadow 150ms ease-out;
+    transition: background var(--duration-normal) ease-out, box-shadow var(--duration-normal) ease-out;
     margin-right: 8px;
     margin-top: 10px; /* Align with column background top */
     position: relative; /* For inner positioning */
@@ -666,7 +666,7 @@ body .maincontent .priority-text-5 a:link {
     opacity: 0.6;
     width: 10px;
     flex-shrink: 0;
-    transition: transform 0.2s ease;
+    transition: transform var(--duration-moderate) ease;
 }
 
 /* Chevron rotation handled by icon class (fa-chevron-down vs fa-chevron-right) */
@@ -847,9 +847,9 @@ body .maincontent .priority-text-5 a:link {
     opacity: 0;
     visibility: hidden;
     transform: translateX(-10px);
-    transition: opacity 200ms ease-out,
-                transform 200ms ease-out,
-                visibility 0s 200ms;
+    transition: opacity var(--duration-moderate) ease-out,
+                transform var(--duration-moderate) ease-out,
+                visibility 0s var(--duration-moderate);
     pointer-events: none;
 }
 
@@ -859,8 +859,8 @@ body .maincontent .priority-text-5 a:link {
     opacity: 1;
     visibility: visible;
     transform: translateX(0);
-    transition: opacity 200ms ease-out,
-                transform 200ms ease-out,
+    transition: opacity var(--duration-moderate) ease-out,
+                transform var(--duration-moderate) ease-out,
                 visibility 0s 0s;
 }
 
@@ -1057,7 +1057,7 @@ body .maincontent .priority-text-5 a:link {
     border-radius: var(--box-radius-small);
     text-decoration: none;
     color: var(--primary-font-color);
-    transition: background-color 150ms ease-out, border-color 150ms ease-out, box-shadow 150ms ease-out;
+    transition: background-color var(--duration-normal) ease-out, border-color var(--duration-normal) ease-out, box-shadow var(--duration-normal) ease-out;
     font-size: var(--font-size-xs);
     min-width: 0;
     overflow: hidden;
@@ -1201,7 +1201,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-column-headers.groupby-active {
     /* Add left margin to align with kanban content when groupBy is active */
     margin-left: 158px; /* Matches sidebar width (150px) + margin (8px) */
-    transition: margin-left 300ms ease-out;
+    transition: margin-left var(--duration-slow) ease-out;
 }
 
 /* Mobile: Always expanded, stack vertically */
@@ -1309,7 +1309,7 @@ body .maincontent .priority-text-5 a:link {
 .card-moving-out {
     opacity: 0.5;
     transform: scale(0.95);
-    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+    transition: opacity var(--duration-moderate) ease-out, transform var(--duration-moderate) ease-out;
 }
 
 .card-moving-in {
@@ -1345,7 +1345,7 @@ body .maincontent .priority-text-5 a:link {
 
 .micro-progress-bar .status-segment {
     height: 100%;
-    transition: flex 0.3s ease;
+    transition: flex var(--duration-slow) ease;
     margin: 0;
     padding: 0;
     border: none;
@@ -1366,7 +1366,7 @@ body .maincontent .priority-text-5 a:link {
     color: white;
     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity var(--duration-moderate) ease;
     white-space: nowrap;
 }
 

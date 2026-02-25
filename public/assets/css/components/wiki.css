@@ -30,7 +30,7 @@
     height: calc(100dvh - 94px);
     overflow-y: auto;
     overflow-x: hidden;
-    transition: width 0.25s ease, padding 0.25s ease;
+    transition: width var(--duration-moderate) ease, padding var(--duration-moderate) ease;
 }
 
 /* Collapsed sidebar - icon only mode */
@@ -106,7 +106,7 @@
     border: none;
     color: var(--secondary-font-color);
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+    transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
 }
 
 .wiki-collapse-btn:hover {
@@ -143,7 +143,7 @@
     color: var(--secondary-font-color);
     cursor: pointer;
     z-index: 10;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+    transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
 }
 
 .wiki-properties-toggle-btn:hover {
@@ -173,7 +173,7 @@
     padding: 20px;
     border-right: 1px solid var(--main-border-color);
     overflow-y: auto;
-    transition: width 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
+    transition: width var(--duration-moderate) ease, opacity var(--duration-moderate) ease, padding var(--duration-moderate) ease;
 }
 
 .wiki-contents-panel.collapsed {
@@ -213,7 +213,7 @@
     color: var(--secondary-font-color);
     cursor: pointer;
     z-index: 10;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.25s ease;
+    transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-moderate) ease;
     opacity: 0;
     pointer-events: none;
 }
@@ -256,7 +256,7 @@
     padding: 20px 24px 20px 20px;
     border-left: 1px solid var(--main-border-color);
     overflow: hidden;
-    transition: width 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
+    transition: width var(--duration-moderate) ease, opacity var(--duration-moderate) ease, padding var(--duration-moderate) ease;
     display: flex;
     flex-direction: column;
 }
@@ -383,7 +383,7 @@
     color: var(--accent1);
     text-decoration: none;
     border-bottom: 1px solid transparent;
-    transition: border-color 0.15s ease;
+    transition: border-color var(--duration-normal) ease;
 }
 
 .wiki-document a:hover {
@@ -616,7 +616,7 @@
     font-size: var(--base-font-size);
     color: var(--primary-font-color);
     z-index: 100;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    transition: background-color var(--duration-moderate) ease, color var(--duration-moderate) ease, border-color var(--duration-moderate) ease;
 }
 
 .wiki-edit-indicator.editing {
@@ -723,7 +723,7 @@
     background: transparent;
     color: var(--primary-font-color);
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+    transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -828,7 +828,7 @@
     border: none;
     cursor: pointer;
     box-shadow: var(--min-shadow);
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+    transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
 }
 
 .wiki-status-pill.draft {
@@ -912,7 +912,7 @@
     color: var(--primary-font-color);
     background: transparent;
     border: none;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+    transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
 }
 
 .wiki-action-btn:hover {
@@ -1066,7 +1066,7 @@
     color: var(--primary-font-color);
     text-decoration: none;
     font-size: var(--base-font-size);
-    transition: background 0.15s ease;
+    transition: background var(--duration-normal) ease;
 }
 
 .wiki-tree-link:hover {
@@ -1114,7 +1114,7 @@
     color: var(--secondary-font-color);
     font-size: var(--base-font-size);
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+    transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
     width: 100%;
     justify-content: center;
 }
@@ -1147,7 +1147,7 @@
     border: 1px solid var(--main-border-color);
     color: var(--secondary-font-color);
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+    transition: background-color var(--duration-normal) ease, color var(--duration-normal) ease, border-color var(--duration-normal) ease, opacity var(--duration-normal) ease;
 }
 
 .wiki-properties-toggle:hover {

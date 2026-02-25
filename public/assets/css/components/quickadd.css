@@ -18,7 +18,7 @@
     text-decoration: none;
     padding: 8px;
     border-radius: var(--box-radius);
-    transition: color 0.2s ease;
+    transition: color var(--duration-moderate) ease;
     font-size: var(--font-size-s);
 
     &:hover {
@@ -76,7 +76,7 @@ form.quickAddForm {
     color: var(--primary-font-color);
     opacity: 0.4;
     cursor: help;
-    transition: opacity 0.2s ease, color 0.2s ease;
+    transition: opacity var(--duration-moderate) ease, color var(--duration-moderate) ease;
     padding: 4px;
     z-index: 5;
 

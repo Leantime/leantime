@@ -24,7 +24,7 @@
     border: 2px solid transparent;
     background: var(--secondary-background);
     box-shadow: var(--min-shadow);
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    transition: background-color var(--duration-normal) ease, border-color var(--duration-normal) ease, color var(--duration-normal) ease;
     color: var(--primary-font-color);
     cursor: pointer;
     font-family: var(--primary-font-family);

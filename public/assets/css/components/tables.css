@@ -111,7 +111,7 @@
     font-size: var(--font-size-s);
     cursor: pointer;
     border-radius: var(--box-radius-small);
-    transition: background-color 0.15s ease;
+    transition: background-color var(--duration-normal) ease;
 }
 
 .dataTables_paginate span:hover {
@@ -289,7 +289,7 @@
 }
 
 .dataTable tr {
-    transition: box-shadow 0.15s ease, background-color 0.15s ease;
+    transition: box-shadow var(--duration-normal) ease, background-color var(--duration-normal) ease;
 }
 
 .dataTable tr:hover {
