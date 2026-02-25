@@ -37,7 +37,7 @@
     clear: both;
     float: none;
     padding-top: 0;
-    font-weight:lighter;
+    font-weight:var(--font-weight-light);
     /*font-family: 'RobotoLight', 'Helvetica Neue', Helvetica, sans-serif;*/
     font-size: var(--font-size-l);
 }

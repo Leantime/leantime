@@ -1081,13 +1081,13 @@ input[type=range]::-webkit-slider-runnable-track {
     height: 5px;
     cursor: pointer;
     animate: 0.2s;
-    box-shadow: 0px 0px 0px #000000;
+    box-shadow: none;
     background: var(--main-border-color);
     border-radius: 5px;
     border: 0px solid #000000;
 }
 input[type=range]::-webkit-slider-thumb {
-    box-shadow: 0px 0px 0px #000000;
+    box-shadow: none;
     border: 2px solid var(--input-background);
     height: 20px;
     width: 20px;
@@ -1105,13 +1105,13 @@ input[type=range]::-moz-range-track {
     height: 5px;
     cursor: pointer;
     animate: 0.2s;
-    box-shadow: 0px 0px 0px #000000;
+    box-shadow: none;
     background: var(--main-border-color);
     border-radius: 5px;
     border: 0px solid #000000;
 }
 input[type=range]::-moz-range-thumb {
-    box-shadow: 0px 0px 0px #000000;
+    box-shadow: none;
     border: 2px solid var(--input-background);
     height: 20px;
     width: 20px;
@@ -1132,17 +1132,17 @@ input[type=range]::-ms-fill-lower {
     background: var(--main-border-color);
     border: 0px solid #000000;
     border-radius: 8px;
-    box-shadow: 0px 0px 0px #000000;
+    box-shadow: none;
 }
 input[type=range]::-ms-fill-upper {
     background: var(--main-border-color);
     border: 0px solid #000000;
     border-radius: 8px;
-    box-shadow: 0px 0px 0px #000000;
+    box-shadow: none;
 }
 input[type=range]::-ms-thumb {
     margin-top: 1px;
-    box-shadow: 0px 0px 0px #000000;
+    box-shadow: none;
     border: 2px solid var(--primary-background);
     height: 20px;
     width: 20px;

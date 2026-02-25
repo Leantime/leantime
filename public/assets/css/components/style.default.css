@@ -796,7 +796,7 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
     padding-bottom:10px;
     font-size:var(--font-size-xxxl);
     display:block;
-    font-weight:lighter;
+    font-weight:var(--font-weight-light);
 
 }
 
@@ -1845,7 +1845,7 @@ div.color-picker ul li:hover {
 .sortableTicketList .ticketBox small {
     font-size: var(--font-size-s);
     color: var(--secondary-font-color);
-    font-weight:lighter;
+    font-weight:var(--font-weight-light);
 }
 
 .sortableTicketList .ticketBox li {
@@ -2357,9 +2357,9 @@ a.titleInsertLink:hover {
     padding-top:0px;
     border:1px solid var(--main-border-color);
     border-radius: var(--box-radius-small);
-    -webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+    -webkit-box-shadow: var(--input-shadow);
+    -moz-box-shadow: var(--input-shadow);
+    box-shadow: var(--input-shadow);
 }
 
 .scrollableItemList .item {

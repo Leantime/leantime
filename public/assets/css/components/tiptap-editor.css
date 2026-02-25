@@ -2323,7 +2323,7 @@ div[id^="comments-"] > div > .clearall {
     background: var(--element-bg, #fff);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--large-shadow);
     padding: 8px;
     animation: tiptap-popover-fade-in 0.15s ease-out;
 }

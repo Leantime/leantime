@@ -265,6 +265,7 @@
     --text-3xl: var(--font-size-xxxl);
 
     /* Typography: Weight */
+    --font-weight-light: 300;
     --font-weight-body: 400;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
