@@ -2837,7 +2837,7 @@ h4 .helperTooltip,
     color: var(--main-titles-color);
     font-weight: var(--font-weight-body);
     text-shadow: var(--min-shadow);
-    line-height: 1;
+    line-height: var(--line-height-tight);
 }
 
 .bigNumberBoxText {

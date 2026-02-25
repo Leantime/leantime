@@ -326,7 +326,7 @@
 .wiki-document {
     font-family: var(--primary-font-family);
     font-size: var(--font-size-l);
-    line-height: 1.75;
+    line-height: var(--line-height-loose);
     color: var(--primary-font-color);
     max-width: 900px;
 }
@@ -337,7 +337,7 @@
     font-weight: var(--font-weight-bold);
     margin: 1.5em 0 0.5em;
     letter-spacing: -0.02em;
-    line-height: 1.3;
+    line-height: var(--line-height-snug);
 }
 
 .wiki-document h2 {
@@ -345,21 +345,21 @@
     font-weight: var(--font-weight-semibold);
     margin: 1.4em 0 0.5em;
     letter-spacing: -0.01em;
-    line-height: 1.35;
+    line-height: var(--line-height-snug);
 }
 
 .wiki-document h3 {
     font-size: 1.25em;
     font-weight: var(--font-weight-semibold);
     margin: 1.3em 0 0.4em;
-    line-height: 1.4;
+    line-height: var(--line-height-normal);
 }
 
 .wiki-document h4 {
     font-size: 1.1em;
     font-weight: var(--font-weight-semibold);
     margin: 1.2em 0 0.4em;
-    line-height: 1.45;
+    line-height: var(--line-height-normal);
 }
 
 .wiki-document h1:first-child,
@@ -475,7 +475,7 @@
     background: none;
     color: inherit;
     font-size: 0.875em;
-    line-height: 1.6;
+    line-height: var(--line-height-relaxed);
 }
 
 /* Tables */
@@ -1000,7 +1000,7 @@
 
 .wiki-activity-text {
     color: var(--primary-font-color);
-    line-height: 1.4;
+    line-height: var(--line-height-normal);
 }
 
 .wiki-activity-text strong {

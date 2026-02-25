@@ -76,7 +76,7 @@
     outline: none;
     font-family: var(--main-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
     font-size: var(--base-font-size, 14px);
-    line-height: 1.6;
+    line-height: var(--line-height-relaxed);
     color: var(--main-text-color, #333);
     cursor: text;
     white-space: pre-wrap;
@@ -120,7 +120,7 @@
 .tiptap-editor .ProseMirror h3,
 .tiptap-editor .ProseMirror h4 {
     font-weight: var(--font-weight-semibold);
-    line-height: 1.3;
+    line-height: var(--line-height-snug);
     margin-top: 1.5em;
     margin-bottom: 0.5em;
 }
@@ -228,7 +228,7 @@
     align-items: flex-start;
     gap: 10px;
     margin-bottom: 6px;
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
 }
 
 .tiptap-editor .ProseMirror ul[data-type="taskList"] li > label {
@@ -250,7 +250,7 @@
 
 .tiptap-editor .ProseMirror ul[data-type="taskList"] li > div > p {
     margin: 0;
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
 }
 
 .tiptap-editor .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
@@ -284,7 +284,7 @@ ul[data-type="taskList"] li {
     align-items: flex-start;
     gap: 10px;
     margin-bottom: 6px;
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
 }
 
 ul[data-type="taskList"] li > label {
@@ -306,7 +306,7 @@ ul[data-type="taskList"] li > div {
 
 ul[data-type="taskList"] li > div > p {
     margin: 0;
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
 }
 
 ul[data-type="taskList"] input[type="checkbox"] {
@@ -412,7 +412,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     margin: 1em 0;
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
     font-size: 0.9em;
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
 }
 
 .tiptap-editor .ProseMirror pre code {
@@ -539,7 +539,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     color: var(--code-color, #a9b1d6);
     font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
     font-size: 14px;
-    line-height: 1.6;
+    line-height: var(--line-height-relaxed);
     border: none;
     outline: none;
     resize: vertical;
@@ -1296,7 +1296,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     border-radius: var(--element-radius, 8px);
     font-family: inherit;
     font-size: var(--base-font-size, 14px);
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
     color: var(--primary-font-color, #1e293b);
     background: var(--main-background, #ffffff);
     resize: vertical;
@@ -2180,7 +2180,7 @@ div[id^="comments-"] > div > .clearall {
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
     font-size: 14px;
-    line-height: 1;
+    line-height: var(--line-height-tight);
 }
 
 .reaction-btn:hover {
@@ -2195,7 +2195,7 @@ div[id^="comments-"] > div > .clearall {
 
 .reaction-emoji {
     font-size: 14px;
-    line-height: 1;
+    line-height: var(--line-height-tight);
 }
 
 .reaction-count {
@@ -2444,7 +2444,7 @@ div[id^="comments-"] > div > .clearall {
     padding: 12px;
     font-family: var(--code-font-family, 'Monaco', 'Menlo', monospace);
     font-size: 14px;
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
     background: var(--main-background, #fff);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 6px;
@@ -2579,7 +2579,7 @@ div[id^="comments-"] > div > .clearall {
     padding: 12px;
     font-family: var(--code-font-family, 'Monaco', 'Menlo', monospace);
     font-size: 14px;
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 6px;
     resize: vertical;
@@ -2824,7 +2824,7 @@ div[id^="comments-"] > div > .clearall {
     padding: 12px;
     font-family: var(--code-font-family, monospace);
     font-size: 14px;
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 6px;
     resize: vertical;

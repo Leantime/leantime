@@ -1177,7 +1177,7 @@ input[type=range]:focus::-ms-fill-upper {
 .radioTab span {
     font-size:var(--font-size-s);
     color:var(--primary-font-color);
-    line-height:1;
+    line-height:var(--line-height-tight);
 }
 
 .radioTab.active {

@@ -33,14 +33,14 @@
 .day-button .day-name {
     display: block;
     font-size: var(--font-size-s);
-    line-height: 1.3;
+    line-height: var(--line-height-snug);
 }
 
 .day-button .day-num {
     display: block;
     font-size: var(--font-size-l);
     font-weight: var(--font-weight-semibold);
-    line-height: 1.2;
+    line-height: var(--line-height-snug);
 }
 
 .day-button:hover {

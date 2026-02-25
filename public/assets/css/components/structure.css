@@ -14,7 +14,7 @@ table, caption, tbody, tfoot, thead, tr, th, td {
     margin: 0;
     padding: 0;
     vertical-align: baseline;
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
     outline: none;
 }
 
@@ -230,7 +230,7 @@ body {
     width: 100%;
     padding: var(--input-padding, 6px 12px);
     font-size: var(--base-font-size, 14px);
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
     color: var(--primary-font-color, #555);
     background-color: var(--input-bg, #fff);
     border: 1px solid var(--main-border-color, #ccc);
@@ -258,7 +258,7 @@ body {
     float: right;
     font-size: var(--font-size-xxl);
     font-weight: var(--font-weight-bold);
-    line-height: 1;
+    line-height: var(--line-height-tight);
     opacity: 0.4;
     cursor: pointer;
     padding: 8px;
@@ -275,7 +275,7 @@ body {
     display: inline;
     font-size: 75%;
     font-weight: var(--font-weight-bold);
-    line-height: 1;
+    line-height: var(--line-height-tight);
     text-align: center;
     white-space: nowrap;
     vertical-align: baseline;
@@ -289,7 +289,7 @@ body {
     padding: 4px 8px;
     font-size: var(--font-size-s);
     font-weight: var(--font-weight-bold);
-    line-height: 1;
+    line-height: var(--line-height-tight);
     text-align: center;
     white-space: nowrap;
     vertical-align: baseline;
@@ -320,7 +320,7 @@ body {
     padding: 4px 16px;
     font-size: var(--font-size-s);
     font-weight: var(--font-weight-bold);
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
     text-transform: uppercase;
     color: var(--secondary-font-color, #999);
 }

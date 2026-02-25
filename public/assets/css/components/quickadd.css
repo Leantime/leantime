@@ -106,7 +106,7 @@ form.quickAddForm {
     font-size: var(--font-size-s);
     color: var(--primary-font-color);
     background: var(--main-bg);
-    line-height: 1.4;
+    line-height: var(--line-height-normal);
     display: block;
     box-sizing: border-box;
 

@@ -61,14 +61,14 @@
     flex: 1;
     font-size: var(--font-size-s);
     color: var(--primary-font-color);
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
 }
 
 .toast-notification__dismiss {
     background: none;
     border: none;
     font-size: var(--font-size-xxxl);
-    line-height: 1;
+    line-height: var(--line-height-tight);
     color: var(--primary-font-color);
     cursor: pointer;
     padding: 0 0.5rem;

@@ -254,6 +254,13 @@
     --font-weight-bold: 700;
     --font-weight-display: 800;
 
+    /* Typography: Line-Height */
+    --line-height-tight: 1;
+    --line-height-snug: 1.3;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.6;
+    --line-height-loose: 1.75;
+
     /* Glass (aliases → existing tokens) */
     --glass-bg: var(--glass-background);
     --glass-inset: inset 0 1px 0 rgba(255,255,255,0.1);

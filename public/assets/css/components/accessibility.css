@@ -58,6 +58,6 @@
 .font-shantell,
 [style*="font-family: 'Atkinson"],
 [style*="font-family: 'Shantell"] {
-    line-height: 1.6;
+    line-height: var(--line-height-relaxed);
     letter-spacing: 0.02em;
 }
