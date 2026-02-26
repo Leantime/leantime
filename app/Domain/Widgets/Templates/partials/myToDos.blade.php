@@ -48,44 +48,53 @@
 
         <x-globals::elements.dropdown icon="fa-solid fa-diagram-project" buttonClass="btn btn-default btn-sm btn-circle tw:min-w-[44px] tw:min-h-[44px] tw:inline-flex tw:items-center tw:justify-center" containerClass="left" data-tippy-content="{{ __('text.group_by') }}">
             <li class="nav-header border">{!! __("text.group_by") !!}</li>
-            <li>
-                <x-globals::forms.radio name="groupBy" value="time" id="groupByDate"
-                       :labelText="__('label.dates')"
-                       :checked="$groupBy == 'time'"
-                       hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                       hx-trigger="click"
-                       hx-target="#yourToDoContainer"
-                       hx-select="#yourToDoContainer"
-                       hx-swap="outerHTML"
-                       hx-indicator="#todos .htmx-indicator"
-                       hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "time" }'
-                />
+            <li style="padding:4px 16px;">
+                <label for="groupByDate" class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer">
+                    <x-globals::forms.radio name="groupBy" value="time" id="groupByDate"
+                           :checked="$groupBy == 'time'"
+                           class="tw:radio-sm"
+                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                           hx-trigger="click"
+                           hx-target="#yourToDoContainer"
+                           hx-select="#yourToDoContainer"
+                           hx-swap="outerHTML"
+                           hx-indicator="#todos .htmx-indicator"
+                           hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "time" }'
+                    />
+                    <span style="color:var(--primary-font-color); font-size:var(--base-font-size);">{!! __("label.dates") !!}</span>
+                </label>
             </li>
-            <li>
-                <x-globals::forms.radio name="groupBy" value="project" id="groupByProject"
-                       :labelText="__('label.project')"
-                       :checked="$groupBy == 'project'"
-                       hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                       hx-trigger="click"
-                       hx-target="#yourToDoContainer"
-                       hx-select="#yourToDoContainer"
-                       hx-swap="outerHTML"
-                       hx-indicator="#todos .htmx-indicator"
-                       hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "project" }'
-                />
+            <li style="padding:4px 16px;">
+                <label for="groupByProject" class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer">
+                    <x-globals::forms.radio name="groupBy" value="project" id="groupByProject"
+                           :checked="$groupBy == 'project'"
+                           class="tw:radio-sm"
+                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                           hx-trigger="click"
+                           hx-target="#yourToDoContainer"
+                           hx-select="#yourToDoContainer"
+                           hx-swap="outerHTML"
+                           hx-indicator="#todos .htmx-indicator"
+                           hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "project" }'
+                    />
+                    <span style="color:var(--primary-font-color); font-size:var(--base-font-size);">{!! __("label.project") !!}</span>
+                </label>
             </li>
-            <li>
-                <x-globals::forms.radio name="groupBy" value="priority" id="groupByPriority"
-                       :labelText="__('label.priority')"
-                       :checked="$groupBy == 'priority'"
-                       hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                       hx-trigger="click"
-                       hx-target="#yourToDoContainer"
-                       hx-select="#yourToDoContainer"
-                       hx-swap="outerHTML"
-                       hx-indicator="#todos .htmx-indicator"
-                       hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "priority" }'
-                />
+            <li style="padding:4px 16px;">
+                <label for="groupByPriority" class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer">
+                    <x-globals::forms.radio name="groupBy" value="priority" id="groupByPriority"
+                           :checked="$groupBy == 'priority'"
+                           class="tw:radio-sm"
+                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                           hx-trigger="click"
+                           hx-target="#yourToDoContainer"
+                           hx-select="#yourToDoContainer"
+                           hx-swap="outerHTML"
+                           hx-indicator="#todos .htmx-indicator"
+                           hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "priority" }'
+                    />
+                    <span style="color:var(--primary-font-color); font-size:var(--base-font-size);">{!! __("label.priority") !!}</span>
+                </label>
             </li>
         </x-globals::elements.dropdown>
         <x-globals::elements.dropdown icon="fas fa-filter" :label="$projectFilter != '' ? '<span class=\'badge badge-primary\'>1</span>' : null" buttonClass="btn btn-default btn-sm btn-circle tw:min-w-[44px] tw:min-h-[44px] tw:inline-flex tw:items-center tw:justify-center" containerClass="left">
