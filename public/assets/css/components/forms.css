@@ -569,19 +569,19 @@ a:link.btn{
     border-color: var(--primary-font-color);
 }
 
-body .btn.btn-circle {
-    -moz-border-radius: 50px !important;
-    -webkit-border-radius: 50px !important;
-    border-radius: 50px !important;
+.btn-circle {
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
     width: 20px;
-    padding: 6px;
+    padding: 5px;
     background: none;
-    border: 1px solid var(--main-border-color);
+    border: 2px solid var(--main-border-color);
 }
 
-body .btn.btn-circle:hover {
-    background: var(--secondary-background);
-    color: var(--primary-font-color);
+.btn-circle:hover {
+    background: none;
+    color: var(--main-border-color);
 }
 
 .btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
