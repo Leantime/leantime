@@ -152,14 +152,14 @@
                 <div class="form-group">
                     <label class="control-label" for="hourBudget">{{ __('label.hourly_budget') }}</label>
                     <div>
-                        <x-globals::forms.input name="hourBudget" id="hourBudget" value="{{ e($project['hourBudget']) }}" />
+                        <x-globals::forms.input name="hourBudget" id="hourBudget" value="{{ e($project['hourBudget']) }}" :bare="true" />
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label" for="dollarBudget">{{ __('label.budget_cost') }}</label>
                     <div>
-                        <x-globals::forms.input name="dollarBudget" id="dollarBudget" value="{{ e($project['dollarBudget']) }}" />
+                        <x-globals::forms.input name="dollarBudget" id="dollarBudget" value="{{ e($project['dollarBudget']) }}" :bare="true" />
                     </div>
                 </div>
 
