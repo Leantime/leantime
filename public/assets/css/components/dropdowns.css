@@ -457,6 +457,18 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     left:auto;
 }
 
+/* Right-align dropdown menus in pull-right containers */
+.dropdown.pull-right > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+/* Right-align dropdown menus in widget sticky headers */
+.stickyHeader .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
 .viewDropDown .dropdown-menu li a.active{
 
 }
