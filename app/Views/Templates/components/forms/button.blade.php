@@ -77,9 +77,11 @@
     if ($disabled) {
         $extraAttrs['disabled'] = 'disabled';
     }
+
+    $hxVals = $attributes->get('hx-vals');
 @endphp
 
-<{{ $resolvedTag }} {{ $attributes->merge(array_merge(['class' => $classes], $extraAttrs)) }}>
+<{{ $resolvedTag }} @if($hxVals) hx-vals='{!! $hxVals !!}' @endif {{ $attributes->except('hx-vals')->merge(array_merge(['class' => $classes], $extraAttrs)) }}>
     @if($loading)
         <span class="loading-spinner"></span>
     @endif

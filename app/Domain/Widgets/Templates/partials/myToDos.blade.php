@@ -35,6 +35,7 @@
      hx-trigger="{{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::UPDATE }} from:body, {{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::SUBTASK_UPDATE }} from:body"
      class="clear"
      hx-swap="outerHTML"
+     hx-select="#yourToDoContainer"
      hx-ext="json-enc"
      hx-indicator=".htmx-indicator"
      data-group-by="{{ $groupBy }}"
@@ -54,6 +55,7 @@
                            hx-get="{{BASE_URL}}/widgets/myToDos/get"
                            hx-trigger="click"
                            hx-target="#yourToDoContainer"
+                           hx-select="#yourToDoContainer"
                            hx-swap="outerHTML"
                            hx-indicator="#todos .htmx-indicator"
                            style="margin-top:4px;"
@@ -69,6 +71,7 @@
                            hx-get="{{BASE_URL}}/widgets/myToDos/get"
                            hx-trigger="click"
                            hx-target="#yourToDoContainer"
+                           hx-select="#yourToDoContainer"
                            hx-swap="outerHTML"
                            hx-indicator="#todos .htmx-indicator"
                            style="margin-top:4px;"
@@ -84,6 +87,7 @@
                            hx-get="{{BASE_URL}}/widgets/myToDos/get"
                            hx-trigger="click"
                            hx-target="#yourToDoContainer"
+                           hx-select="#yourToDoContainer"
                            hx-swap="outerHTML"
                            hx-indicator="#todos .htmx-indicator"
                            style="margin-top:4px;"
@@ -103,6 +107,7 @@
                 hx-get="{{BASE_URL}}/widgets/myToDos/get"
                 hx-trigger="click"
                 hx-target="#yourToDoContainer"
+                hx-select="#yourToDoContainer"
                 hx-swap="outerHTML"
                 hx-indicator="#todos .htmx-indicator"
                 hx-vals='{"projectFilter": "all", "groupBy": "{{ $groupBy }}" }'
@@ -119,6 +124,7 @@
                         hx-get="{{BASE_URL}}/widgets/myToDos/get"
                         hx-trigger="click"
                         hx-target="#yourToDoContainer"
+                        hx-select="#yourToDoContainer"
                         hx-swap="outerHTML"
                         hx-indicator="#todos .htmx-indicator"
                         hx-vals='{"projectFilter": "{{ $project['id'] }}", "groupBy": "{{ $groupBy }}" }'
@@ -149,6 +155,7 @@
                         <form method="post"
                               hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
                               hx-target="#yourToDoContainer"
+                              hx-select="#yourToDoContainer"
                               hx-swap="outerHTML"
                               hx-indicator=".htmx-indicator">
                             <div class="tw:flex tw:flex-row tw:gap-2">
@@ -222,6 +229,7 @@
                             <form method="post"
                                   hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
                                   hx-target="#yourToDoContainer"
+                                  hx-select="#yourToDoContainer"
                                   hx-swap="outerHTML"
                                   hx-indicator=".htmx-indicator">
                                 <div class="tw:flex tw:flex-row tw:gap-2">
@@ -288,6 +296,7 @@
                  hx-get="{{ BASE_URL }}/widgets/myToDos/loadMore"
                  hx-trigger="intersect once"
                  hx-target="#yourToDoContainer"
+                 hx-select="#yourToDoContainer"
                  hx-swap="outerHTML"
                  hx-vals='{"limit": {{ $limit }}, "groupBy": "{{ $groupBy }}", "projectFilter": "{{ $projectFilter }}"}'>
                 <div class="center tw:py-4">

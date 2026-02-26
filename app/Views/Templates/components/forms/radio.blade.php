@@ -12,6 +12,7 @@
     $resolvedLabel = $labelText ?? $label;
     $radioId = $id ?? null;
     $hasLabel = $resolvedLabel || !$slot->isEmpty();
+    $hxVals = $attributes->get('hx-vals');
 @endphp
 
 @if($hasLabel)
@@ -24,7 +25,8 @@
         @if($radioId) id="{{ $radioId }}" @endif
         {{ $checked ? 'checked' : '' }}
         {{ $disabled ? 'disabled' : '' }}
-        {{ $attributes->merge(['class' => 'tw:radio tw:radio-primary']) }}
+        @if($hxVals) hx-vals='{!! $hxVals !!}' @endif
+        {{ $attributes->except('hx-vals')->merge(['class' => 'tw:radio tw:radio-primary']) }}
     />
     @if($resolvedLabel)
         <span class="tw:label-text">{{ $resolvedLabel }}</span>

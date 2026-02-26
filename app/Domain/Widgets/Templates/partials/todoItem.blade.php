@@ -190,6 +190,7 @@
         <form class="form-group"
               hx-post="{{ BASE_URL }}/widgets/myToDos/addSubtask?ticketId={{$ticket['id']}}"
               hx-target="#yourToDoContainer"
+              hx-select="#yourToDoContainer"
               hx-swap="outerHTML"
               hx-indicator=".htmx-indicator">
             <input type="hidden" value="new" name="subtaskId"/>
@@ -229,6 +230,7 @@
                       id="task-add-form-{{ $groupKey }}-{{$ticket['id']}}-form"
                       hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
                       hx-target="#yourToDoContainer"
+                      hx-select="#yourToDoContainer"
                       hx-swap="outerHTML"
                       hx-indicator=".htmx-indicator"
                       onsubmit="jQuery(this).find('.main-title-input').attr('readonly', true);"
