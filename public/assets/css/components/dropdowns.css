@@ -490,6 +490,29 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     width:100%;
 }
 
+/* Radio component inside dropdown menus */
+.dropdown-menu label.tw\:label {
+    padding: 4px 16px;
+    gap: 8px;
+    margin: 0;
+}
+
+.dropdown-menu label.tw\:label:hover {
+    color: var(--dropdown-link-hover-color);
+    background: var(--dropdown-link-hover-bg);
+}
+
+.dropdown-menu .tw\:label-text {
+    color: var(--primary-font-color);
+    font-size: var(--base-font-size);
+}
+
+.dropdown-menu .tw\:radio {
+    width: 20px;
+    height: 20px;
+    min-height: auto;
+}
+
 .wikiSelect {
     margin-bottom:4px;
 }
