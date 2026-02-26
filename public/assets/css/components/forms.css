@@ -1021,16 +1021,18 @@ body .btn.btn-outline.active {
     background: var(--main-action-bg);
 }
 
-body .btn.btn-danger-outline {
+body .btn.btn-danger-outline,
+body .btn.btn-danger.btn-outline {
     background:transparent;
     color:var(--red);
     border:1px solid var(--red);
 }
 
-body .btn.btn-danger-outline:hover {
-    color:var(--main-action-hover-color);
-    background:var(--main-action-hover-bg);
-    border:1px solid var(--main-action-hover-bg);
+body .btn.btn-danger-outline:hover,
+body .btn.btn-danger.btn-outline:hover {
+    color:#fff;
+    background:var(--red);
+    border:1px solid var(--dark-red);
 }
 
 
@@ -1235,6 +1237,10 @@ input[type=range]:focus::-ms-fill-upper {
     padding: 0 !important;
     box-shadow: none !important;
     background: transparent !important;
+    height: auto !important;
+    line-height: normal !important;
+    min-height: 0 !important;
+    display: block !important;
 }
 
 .ss-main .ss-multi-selected {
