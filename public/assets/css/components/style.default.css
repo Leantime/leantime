@@ -3080,6 +3080,17 @@ body a.btn-link.btn-fancy:hover {
     overflow: auto;
 }
 
+/* Hide slot-actions until JS promotes them into the stickyHeader */
+.widget-slot-actions {
+    display: none;
+}
+
+.stickyHeader .widget-slot-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
 .modalWindowIcon {
     height:24px;
     line-height:24px;

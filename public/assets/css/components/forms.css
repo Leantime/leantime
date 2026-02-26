@@ -584,6 +584,21 @@ a:link.btn{
     color: var(--main-border-color);
 }
 
+/* Override btn-default/body .btn when combined with btn-circle */
+body a.btn.btn-circle,
+body button.btn.btn-circle {
+    background: transparent;
+    border: 2px solid var(--main-border-color);
+    border-radius: 50px !important;
+}
+
+body a.btn.btn-circle:hover,
+body button.btn.btn-circle:hover {
+    background: transparent;
+    color: var(--primary-font-color);
+    border-color: var(--primary-font-color);
+}
+
 .btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
 .btn-circle.btn-primary:active, .btn-circle.btn-primary.active,
 .btn-circle.btn-primary.disabled, .btn-circle.btn-primary[disabled] {
