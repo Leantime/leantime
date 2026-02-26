@@ -339,7 +339,7 @@ body {
     background-size: contain;
     background-position: bottom;
     min-height: 100dvh;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .rightpanel:before {
@@ -393,7 +393,6 @@ body {
     padding-top:10px;
     padding-bottom:10px;
     position: relative;
-    overflow-x: hidden;
     display: flex;
     flex-direction: column;
 }
