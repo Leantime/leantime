@@ -257,7 +257,16 @@
             </div>
 
             <div id="todosettings">
-                <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#todosettings" method="post">
+<form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#todosettings" method="post">
+                    <div class="row statusListHeader">
+                        <div class="statusListHeader-handle"></div>
+                        <div class="col-md-1">{{ __('label.sortindex') }}</div>
+                        <div class="col-md-3">{{ __('label.label') }}</div>
+                        <div class="col-md-2">{{ __('label.color') }}</div>
+                        <div class="col-md-2">{{ __('label.reportType') }}</div>
+                        <div class="col-md-2">{{ __('label.showInKanban') }}</div>
+                        <div class="statusListHeader-remove"></div>
+                    </div>
                     <ul class="sortableTicketList" id="todoStatusList">
                         @foreach($tpl->get('todoStatus') as $key => $ticketStatus)
                             <li>
@@ -267,19 +276,15 @@
 
                                         <input type="hidden" name="labelKeys[]" id="labelKey-{{ $key }}" class='labelKey' value="{{ $key }}"/>
                                         <div class="sortHandle">
-                                            <br />
                                             <span class="fa fa-sort"></span>
                                         </div>
                                         <div class="col-md-1">
-                                            <label>{{ __('label.sortindex') }}</label>
                                             <x-globals::forms.input :bare="true" type="text" name="labelSort-{{ $key }}" id="labelSort-{{ $key }}" value="{{ e($ticketStatus['sortKey']) }}" class="sorter" style="width:50px;" />
                                         </div>
-                                        <div class="col-md-2">
-                                            <label>{{ __('label.label') }}</label>
+                                        <div class="col-md-3">
                                             <x-globals::forms.input :bare="true" name="label-{{ $key }}" id="label-{{ $key }}" value="{{ e($ticketStatus['name']) }}" :readonly="$key == -1" />
                                         </div>
                                         <div class="col-md-2">
-                                            <label>{{ __('label.color') }}</label>
                                             <x-globals::forms.select :bare="true" name="labelClass-{{ $key }}" id="labelClass-{{ $key }}" class="colorChosen">
                                                 <option value="label-purple" class="label-purple" {{ $ticketStatus['class'] == 'label-purple' ? 'selected="selected"' : '' }}><span class="label-purple">{{ __('label.purple') }}</span></option>
                                                 <option value="label-pink" class="label-pink" {{ $ticketStatus['class'] == 'label-pink' ? 'selected="selected"' : '' }}><span class="label-pink">{{ __('label.pink') }}</span></option>
@@ -296,7 +301,6 @@
                                             </x-globals::forms.select>
                                         </div>
                                         <div class="col-md-2">
-                                            <label>{{ __('label.reportType') }}</label>
                                             <x-globals::forms.select name="labelType-{{ $key }}" id="labelType-{{ $key }}">
                                                 <option value="NEW" {{ ($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : '' }}>{{ __('status.new') }}</option>
                                                 <option value="INPROGRESS" {{ ($ticketStatus['statusType'] == 'INPROGRESS') ? 'selected="selected"' : '' }}>{{ __('status.in_progress') }}</option>
@@ -305,11 +309,9 @@
                                             </x-globals::forms.select>
                                         </div>
                                         <div class="col-md-2">
-                                            <label for="">{{ __('label.showInKanban') }}</label>
                                             <x-globals::forms.checkbox name="labelKanbanCol-{{ $key }}" id="labelKanbanCol-{{ $key }}" :checked="(bool) $ticketStatus['kanbanCol']" />
                                         </div>
                                         <div class="remove">
-                                            <br />
                                             @if($key != -1)
                                                 <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus({{ $key }})" class="delete" aria-label="{{ __('label.remove') }}"><span class="fa fa-trash"></span></a>
                                             @endif
@@ -342,19 +344,15 @@
     <div class="row statusList" id="todostatus-XXNEWKEYXX">
         <input type="hidden" name="labelKeys[]" id="labelKey-XXNEWKEYXX" class='labelKey' value="XXNEWKEYXX"/>
         <div class="sortHandle">
-            <br />
             <span class="fa fa-sort"></span>
         </div>
         <div class="col-md-1">
-            <label>{{ __('label.sortindex') }}</label>
             <x-globals::forms.input :bare="true" type="text" name="labelSort-XXNEWKEYXX" id="labelSort-XXNEWKEYXX" value="" class="sorter" style="width:50px;" />
         </div>
-        <div class="col-md-2">
-            <label>{{ __('label.label') }}</label>
+        <div class="col-md-3">
             <x-globals::forms.input :bare="true" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
         </div>
         <div class="col-md-2">
-            <label>{{ __('label.color') }}</label>
             <x-globals::forms.select :bare="true" name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen">
                 <option value="label-blue" class="label-blue"><span class="label-blue">{{ __('label.blue') }}</span></option>
                 <option value="label-info" class="label-info"><span class="label-info">{{ __('label.dark-blue') }}</span></option>
@@ -371,7 +369,6 @@
             </x-globals::forms.select>
         </div>
         <div class="col-md-2">
-            <label>{{ __('label.reportType') }}</label>
             <x-globals::forms.select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX">
                 <option value="NEW">{{ __('status.new') }}</option>
                 <option value="INPROGRESS">{{ __('status.in_progress') }}</option>
@@ -380,11 +377,9 @@
             </x-globals::forms.select>
         </div>
         <div class="col-md-2">
-            <label for="">{{ __('label.showInKanban') }}</label>
             <x-globals::forms.checkbox name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX" />
         </div>
         <div class="remove">
-            <br />
             <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus('XXNEWKEYXX')" class="delete" aria-label="{{ __('label.remove') }}"><span class="fa fa-trash"></span></a>
         </div>
     </div>

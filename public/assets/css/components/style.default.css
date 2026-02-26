@@ -2225,6 +2225,45 @@ body .widgettitle .editHeadline:hover {
     padding-left:16px;
 }
 
+/* To-Do Status Settings — header + row alignment */
+#todosettings .statusListHeader {
+    align-items: flex-end;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-s);
+    color: var(--secondary-font-color);
+    padding: 8px 0 4px;
+    border-bottom: 1px solid var(--main-border-color);
+    margin-bottom: 0;
+}
+
+#todosettings .statusListHeader-handle {
+    flex: 0 0 40px;
+}
+
+#todosettings .statusListHeader-remove {
+    flex: 0 0 30px;
+}
+
+#todosettings .statusList {
+    align-items: center;
+}
+
+#todosettings .statusList .sortHandle,
+#todosettings .statusList .remove {
+    flex: 0 0 auto;
+}
+
+#todosettings .statusList .sortHandle {
+    width: 40px;
+    text-align: center;
+    padding-left: 8px;
+}
+
+#todosettings .statusList .remove {
+    width: 30px;
+    text-align: center;
+}
+
 .ui-tabs-panel {
     padding:16px 0px;
 }

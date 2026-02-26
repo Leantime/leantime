@@ -307,6 +307,15 @@ $state = $tpl->get('state');
 
             <div id="todosettings">
                 <form action="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#todosettings" method="post">
+                    <div class="row statusListHeader">
+                        <div class="statusListHeader-handle"></div>
+                        <div class="col-md-1"><?= $tpl->__('label.sortindex') ?></div>
+                        <div class="col-md-3"><?= $tpl->__('label.label') ?></div>
+                        <div class="col-md-2"><?= $tpl->__('label.color') ?></div>
+                        <div class="col-md-2"><?= $tpl->__('label.reportType') ?></div>
+                        <div class="col-md-2"><?= $tpl->__('label.showInKanban') ?></div>
+                        <div class="statusListHeader-remove"></div>
+                    </div>
                     <ul class="sortableTicketList" id="todoStatusList">
                         <?php foreach ($tpl->get('todoStatus') as $key => $ticketStatus) { ?>
                             <li>
@@ -316,21 +325,15 @@ $state = $tpl->get('state');
 
                                         <input type="hidden" name="labelKeys[]" id="labelKey-<?= $key?>" class='labelKey' value="<?= $key?>"/>
                                         <div class="sortHandle">
-                                            <br />
                                             <span class="fa fa-sort"></span>
                                         </div>
                                         <div class="col-md-1">
-                                            <label><?= $tpl->__('label.sortindex') ?></label>
                                             <input type="text" name="labelSort-<?= $key?>" class="sorter" id="labelSort-<?= $key ?>" value="<?= $tpl->escape($ticketStatus['sortKey']); ?>" style="width:50px;"/>
                                         </div>
-                                        <div class="col-md-2">
-
-                                            <label><?= $tpl->__('label.label') ?></label>
+                                        <div class="col-md-3">
                                             <input type="text" name="label-<?= $key?>" <?= $key == -1 ? 'readonly' : ''?> id="label-<?= $key?>" value="<?= $tpl->escape($ticketStatus['name']); ?>" />
-
                                         </div>
                                         <div class="col-md-2">
-                                            <label><?= $tpl->__('label.color') ?></label>
                                             <select name="labelClass-<?= $key?>" id="labelClass-<?= $key ?>" class="colorChosen">
                                                 <option value="label-purple" class="label-purple" <?= $ticketStatus['class'] == 'label-purple' ? 'selected="selected"' : ''; ?>><span class="label-purple"><?= $tpl->__('label.purple'); ?></span></option>
                                                 <option value="label-pink" class="label-pink" <?= $ticketStatus['class'] == 'label-pink' ? 'selected="selected"' : ''; ?>><span class="label-pink"><?= $tpl->__('label.pink'); ?></span></option>
@@ -344,13 +347,9 @@ $state = $tpl->get('state');
                                                 <option value="label-danger" class="label-danger" <?= $ticketStatus['class'] == 'label-danger' ? 'selected="selected"' : ''; ?>><span class="label-danger"><?= $tpl->__('label.dark-red'); ?></span></option>
                                                 <option value="label-important" class="label-important" <?= $ticketStatus['class'] == 'label-important' ? 'selected="selected"' : ''; ?>><span class="label-important"><?= $tpl->__('label.red'); ?></span></option>
                                                 <option value="label-default" class="label-default" <?= $ticketStatus['class'] == 'label-default' ? 'selected="selected"' : ''; ?>><span class="label-default"><?= $tpl->__('label.grey'); ?></span></option>
-
-
-
                                             </select>
                                         </div>
                                         <div class="col-md-2">
-                                            <label><?= $tpl->__('label.reportType') ?></label>
                                             <select name="labelType-<?= $key?>" id="labelType-<?= $key ?>">
                                                 <option value="NEW" <?= ($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : ''; ?>><?= $tpl->__('status.new'); ?></option>
                                                 <option value="INPROGRESS" <?= ($ticketStatus['statusType'] == 'INPROGRESS') ? 'selected="selected"' : ''; ?>><?= $tpl->__('status.in_progress'); ?></option>
@@ -359,11 +358,9 @@ $state = $tpl->get('state');
                                             </select>
                                         </div>
                                         <div class="col-md-2">
-                                            <label for=""><?= $tpl->__('label.showInKanban'); ?></label>
                                             <input type="checkbox" name="labelKanbanCol-<?= $key?>" id="labelKanbanCol-<?= $key?>" <?= $ticketStatus['kanbanCol'] ? 'checked="checked"' : ''; ?>/>
                                         </div>
                                         <div class="remove">
-                                            <br />
                                             <?php if ($key != -1) { ?>
                                                 <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus(<?= $key?>)" class="delete"><span class="fa fa-trash"></span></a>
                                             <?php } ?>
@@ -397,20 +394,15 @@ $state = $tpl->get('state');
     <div class="row statusList" id="todostatus-XXNEWKEYXX">
         <input type="hidden" name="labelKeys[]" id="labelKey-XXNEWKEYXX" class='labelKey' value="XXNEWKEYXX"/>
         <div class="sortHandle">
-            <br />
             <span class="fa fa-sort"></span>
         </div>
         <div class="col-md-1">
-            <label><?= $tpl->__('label.sortindex') ?></label>
             <input type="text" name="labelSort-XXNEWKEYXX" class="sorter" id="labelSort-XXNEWKEYXX" value="" style="width:50px;"/>
         </div>
-        <div class="col-md-2">
-            <label><?= $tpl->__('label.label') ?></label>
+        <div class="col-md-3">
             <input type="text" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
-
         </div>
         <div class="col-md-2">
-            <label><?= $tpl->__('label.color') ?></label>
             <select name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen">
                 <option value="label-blue" class="label-blue"><span class="label-blue"><?= $tpl->__('label.blue'); ?></span></option>
                 <option value="label-info" class="label-info"><span class="label-info"><?= $tpl->__('label.dark-blue'); ?></span></option>
@@ -427,7 +419,6 @@ $state = $tpl->get('state');
             </select>
         </div>
         <div class="col-md-2">
-            <label><?= $tpl->__('label.reportType') ?></label>
             <select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX">
                 <option value="NEW"><?= $tpl->__('status.new'); ?></option>
                 <option value="INPROGRESS"><?= $tpl->__('status.in_progress'); ?></option>
@@ -436,11 +427,9 @@ $state = $tpl->get('state');
             </select>
         </div>
         <div class="col-md-2">
-            <label for=""><?= $tpl->__('label.showInKanban'); ?></label>
             <input type="checkbox" name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX"/>
         </div>
         <div class="remove">
-            <br />
             <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus('XXNEWKEYXX')" class="delete"><span class="fa fa-trash"></span></a>
         </div>
     </div>
