@@ -42,7 +42,7 @@
                     <div class="span12">
 
                          <div class="form-group">
-                             <br />{{ __('text.choose_access_for_users') }}<br />
+                             <br />{!! __('text.choose_access_for_users') !!}<br />
                              <br />
 
                             <div class="row">
@@ -80,7 +80,7 @@
                                                 @endif
                                             </label>
                                             @if($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)
-                                                <x-globals::forms.input name="role-{{ $assignedUser['id'] }}" readonly disabled value="{{ __('label.roles.' . $roles::getRoles()[$assignedUser['role']]) }}" />
+                                                <x-globals::forms.input :bare="true" name="role-{{ $assignedUser['id'] }}" readonly disabled value="{{ __('label.roles.' . $roles::getRoles()[$assignedUser['role']]) }}" />
                                             @else
                                                 <x-globals::forms.select name="userProjectRole-{{ $assignedUser['id'] }}">
                                                     <option value="inherit">Inherit</option>
@@ -120,7 +120,7 @@
                                                 </div>
                                                 <label for="user-{{ $row['id'] }}">{{ sprintf(__('text.full_name'), e($row['firstname']), e($row['lastname'])) }}</label>
                                                 @if($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner)
-                                                    <x-globals::forms.input name="role-{{ $row['id'] }}" readonly disabled value="{{ __('label.roles.' . $roles::getRoles()[$row['role']]) }}" />
+                                                    <x-globals::forms.input :bare="true" name="role-{{ $row['id'] }}" readonly disabled value="{{ __('label.roles.' . $roles::getRoles()[$row['role']]) }}" />
                                                 @else
                                                     @php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); @endphp
                                                     <x-globals::forms.select name="userProjectRole-{{ $row['id'] }}">
