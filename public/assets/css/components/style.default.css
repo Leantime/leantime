@@ -3082,8 +3082,7 @@ body a.btn-link.btn-fancy:hover {
     margin: 0;
     position: absolute;
     width: auto;
-    overflow-x: hidden;
-    overflow-y: hidden;
+    overflow: visible;
 }
 
 /* Force single-column stacking on narrow viewports */
