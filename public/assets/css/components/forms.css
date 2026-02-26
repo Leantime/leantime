@@ -1240,7 +1240,7 @@ input[type=range]:focus::-ms-fill-upper {
     height: auto !important;
     line-height: normal !important;
     min-height: 0 !important;
-    display: block !important;
+    width: fit-content !important;
 }
 
 .ss-main .ss-multi-selected {
