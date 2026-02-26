@@ -1231,6 +1231,10 @@ input[type=range]:focus::-ms-fill-upper {
 
 .ss-main {
     margin-bottom:4px;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
 }
 
 .ss-main .ss-multi-selected {

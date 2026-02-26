@@ -418,14 +418,22 @@
             }
         );
 
-        leantime.projectsController.initDuplicateProjectModal();
-        leantime.projectsController.initTodoStatusSortable("#todoStatusList");
-        leantime.projectsController.initSelectFields();
-        leantime.usersController.initUserEditModal();
+        // Domain JS is lazy-loaded via Vite dynamic import() and may not
+        // be available when jQuery.ready fires. Retry until it arrives.
+        (function initDomainJs(attempts) {
+            if (leantime.projectsController) {
+                leantime.projectsController.initDuplicateProjectModal();
+                leantime.projectsController.initTodoStatusSortable("#todoStatusList");
+                leantime.projectsController.initSelectFields();
+                leantime.usersController.initUserEditModal();
 
-        if (window.leantime && window.leantime.tiptapController) {
-            leantime.tiptapController.initComplexEditor();
-        }
+                if (window.leantime && window.leantime.tiptapController) {
+                    leantime.tiptapController.initComplexEditor();
+                }
+            } else if (attempts < 40) {
+                setTimeout(function() { initDomainJs(attempts + 1); }, 50);
+            }
+        })(0);
 
     });
 
