@@ -32,7 +32,7 @@
                 <div class="text-center">
                     <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
                     <p>The type of the project. This will determine which features are available.</p>
-                    <x-globals::forms.select name="type">
+                    <x-globals::forms.select name="type" :required="true">
                         @foreach($tpl->get('projectTypes') as $key => $type)
                             <option value="{{ e($key) }}"
                                 {{ $project['type'] == $key ? "selected='selected'" : '' }}>{{ __( e($type)) }}</option>
@@ -102,7 +102,7 @@
             <div style="margin-bottom: 30px;">
                 <h4 class="widgettitle title-light"><span
                         class="fa fa-building"></span>{{ __('label.client_product') }}</h4>
-                <x-globals::forms.select name="clientId" id="clientId">
+                <x-globals::forms.select name="clientId" id="clientId" :required="true">
                     @foreach($tpl->get('clients') as $row)
                         <option value="{{ $row['id'] }}"
                             {{ $project['clientId'] == $row['id'] ? 'selected=selected' : '' }}>{{ e($row['name']) }}</option>
@@ -123,7 +123,7 @@
                 <div class="form-group">
                     <label class="control-label" for="projectState">{{ __('label.project_state') }}</label>
                     <div>
-                        <x-globals::forms.select name="projectState" id="projectState">
+                        <x-globals::forms.select name="projectState" id="projectState" :required="true">
                             <option value="0" {{ $project['state'] == 0 ? 'selected=selected' : '' }}>{{ __('label.open') }}</option>
                             <option value="-1" {{ $project['state'] == -1 ? 'selected=selected' : '' }}>{{ __('label.closed') }}</option>
                         </x-globals::forms.select>
@@ -138,7 +138,7 @@
                 {{ __('text.who_can_access') }}
                 <br /><br />
 
-                <x-globals::forms.select name="globalProjectUserAccess" style="max-width:300px;">
+                <x-globals::forms.select name="globalProjectUserAccess" style="max-width:300px;" :required="true">
                     <option value="restricted" {{ $project['psettings'] == 'restricted' ? "selected='selected'" : '' }}>{{ __('labels.only_chose') }}</option>
                     <option value="clients" {{ $project['psettings'] == 'clients' ? "selected='selected'" : '' }}>{{ __('labels.everyone_in_client') }}</option>
                     <option value="all" {{ $project['psettings'] == 'all' ? "selected='selected'" : '' }}>{{ __('labels.everyone_in_org') }}</option>
