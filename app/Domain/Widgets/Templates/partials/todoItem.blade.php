@@ -79,21 +79,18 @@
                 </div>
             </div>
         @else
-            <div class="tw:flex tw:flex-row">
-                <div class="tw:content-center">
-                    <div class="tw:content-center tw:mr-[10px]">
-                        @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock])
-                    </div>
+            <div class="tw:flex tw:flex-row tw:items-center tw:gap-2">
+                <div class="tw:shrink-0">
+                    @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock])
                 </div>
 
-                <div class="tw:flex-1 ticket-title ticket-title-wrapper">
+                <div class="tw:flex-1 tw:min-w-0 ticket-title ticket-title-wrapper">
                     <div class="title-text">
-                        <small style="display:inline-block; ">{{ $ticket['projectName'] }}</small> <br/>
+                        <small style="display:inline-block;">{{ $ticket['projectName'] }}</small> <br/>
                         <strong><a href="#/tickets/showTicket/{{ $ticket['id'] }}"
                                    class="ticket-headline-{{ $ticket['id'] }}">{{ $ticket['headline'] }}</a></strong>
                         &nbsp;<a href="javascript:void(0);" class="tw:hidden edit-button"
                                  data-tippy-content="{{ __('text.edit_task_headline') }}"><i class="fa fa-edit"></i></a>
-
                     </div>
                     <div class="tw:hidden edit-form">
                         <form class="tw:flex tw:flex-row tw:items-center tw:gap-2"
@@ -118,80 +115,68 @@
                 </div>
 
                 @dispatchEvent('beforePlaceholder', ['ticket' => (object)$ticket])
-                <div class="placeholder-container tw:flex-1 tw:flex tw:flex-row tw:content-center">
+                <div class="placeholder-container tw:flex tw:flex-row tw:items-center">
                     @dispatchEvent('placeholderContainer', ['ticket' => (object)$ticket])
                 </div>
 
                 @dispatchEvent('beforeDueDate', ['ticket' => (object)$ticket])
-                <div
-                    class="due-date-container tw:flex-1 tw:justify-right tw:flex tw:flex-row tw:justify-end tw:content-center due-date-wrapper">
-                    <div class="tw:content-center">
-                        <div class="date-picker-form-control">
-                            <i class="fa-solid fa-business-time infoIcon"
-                               data-tippy-content="{{ __("label.due") }}"></i>
+                <div class="due-date-container tw:shrink-0 tw:flex tw:flex-row tw:items-center tw:gap-1 due-date-wrapper">
+                    <div class="date-picker-form-control">
+                        <i class="fa-solid fa-business-time infoIcon"
+                           data-tippy-content="{{ __("label.due") }}"></i>
 
-                            <input id="due-date-picker-{{ $ticket['id'] }}"
-                                   type="text"
-                                   title="{{ __("label.due") }}"
-                                   value="{{ format($ticket['dateToFinish'])->date(__("text.anytime")) }}"
-                                   class="duedates secretInput"
-                                   style="margin-left:0px; width:100px;"
-                                   data-id="{{ $ticket['id'] }}"
-                                   onchange="jQuery('#due-date-picker-trigger-{{ $ticket['id'] }}').text(this.value);"
-                                   name="date"
-                                   hx-post="{{ BASE_URL }}/widgets/myToDos/updateDueDate"
-                                   hx-trigger="change"
-                                   hx-vals='{"id": "{{ $ticket['id'] }}"}'
-                                   hx-indicator=".htmx-indicator"/>
-                            <button class="reset-button"
-                                    data-id="{{ $ticket['id'] }}"
-                                    id="reset-date-{{ $ticket['id'] }}"
-                                    hx-post="{{ BASE_URL }}/widgets/myToDos/updateDueDate"
-                                    hx-vals='{"id": "{{ $ticket['id'] }}", "date": ""}'
-                                    hx-indicator=".htmx-indicator">
-                                <span class="sr-only">{{ __("language.resetDate") }}</span>
-                                <i class="fa fa-close"></i>
-                            </button>
-                        </div>
+                        <input id="due-date-picker-{{ $ticket['id'] }}"
+                               type="text"
+                               title="{{ __("label.due") }}"
+                               value="{{ format($ticket['dateToFinish'])->date(__("text.anytime")) }}"
+                               class="duedates secretInput"
+                               style="margin-left:0px; width:100px;"
+                               data-id="{{ $ticket['id'] }}"
+                               onchange="jQuery('#due-date-picker-trigger-{{ $ticket['id'] }}').text(this.value);"
+                               name="date"
+                               hx-post="{{ BASE_URL }}/widgets/myToDos/updateDueDate"
+                               hx-trigger="change"
+                               hx-vals='{"id": "{{ $ticket['id'] }}"}'
+                               hx-indicator=".htmx-indicator"/>
+                        <button class="reset-button"
+                                data-id="{{ $ticket['id'] }}"
+                                id="reset-date-{{ $ticket['id'] }}"
+                                hx-post="{{ BASE_URL }}/widgets/myToDos/updateDueDate"
+                                hx-vals='{"id": "{{ $ticket['id'] }}", "date": ""}'
+                                hx-indicator=".htmx-indicator">
+                            <span class="sr-only">{{ __("language.resetDate") }}</span>
+                            <i class="fa fa-close"></i>
+                        </button>
                     </div>
-                    <div class="tw:content-center">
-                        @dispatchEvent('afterDueDate', ['ticket' => (object)$ticket])
-                    </div>
+                    @dispatchEvent('afterDueDate', ['ticket' => (object)$ticket])
                 </div>
 
                 @dispatchEvent('beforeStatusUpdate')
-                <div
-                    class="status-container tw:flex-1 tw:justify-items-end tw:flex tw:flex-row tw:justify-end tw:gap-2 tw:content-center">
-                    <div class="tw:content-center tw:mr-[10px]">
-                        <x-globals::dropdownPill
-                            type="status"
-                            :parentId="$ticket['id']"
-                            :selectedClass="$statusLabels[$ticket['projectId']][$ticket['status']]['class'] ?? 'label-default'"
-                            :selectedKey="$ticket['status']"
-                            :options="$statusLabels[$ticket['projectId']]"
-                            :colorized="true"
-                            align="end"
-                            headerLabel="{{ __('dropdown.choose_status') }}"
-                            hxPost="{{ BASE_URL }}/widgets/myToDos/updateStatus"
-                            hxSwap="none"
-                        />
+                <div class="status-container tw:shrink-0 tw:flex tw:flex-row tw:items-center tw:gap-2">
+                    <x-globals::dropdownPill
+                        type="status"
+                        :parentId="$ticket['id']"
+                        :selectedClass="$statusLabels[$ticket['projectId']][$ticket['status']]['class'] ?? 'label-default'"
+                        :selectedKey="$ticket['status']"
+                        :options="$statusLabels[$ticket['projectId']]"
+                        :colorized="true"
+                        align="end"
+                        headerLabel="{{ __('dropdown.choose_status') }}"
+                        hxPost="{{ BASE_URL }}/widgets/myToDos/updateStatus"
+                        hxSwap="none"
+                    />
+
+                    <div class="scheduler">
+                        @if( $ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00")
+                            <i class="fa-solid fa-calendar-check infoIcon" style="color:var(--accent2)"
+                               data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($ticket['editFrom'])->date() }}"></i>
+                        @else
+                            <i class="fa-regular fa-calendar-xmark infoIcon"
+                               data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
+                        @endif
                     </div>
 
-                    <div class="tw:content-center">
-                        <div class="scheduler">
-                            @if( $ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00")
-                                <i class="fa-solid fa-calendar-check infoIcon" style="color:var(--accent2)"
-                                   data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($ticket['editFrom'])->date() }}"></i>
-                            @else
-                                <i class="fa-regular fa-calendar-xmark infoIcon"
-                                   data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="tw:content-center">
-                        @include("tickets::partials.ticketsubmenu", ["ticket" => $ticket, "onTheClock" => $onTheClock, "allowSubtaskCreation" => true])
-                    </div>
-
+                    @include("tickets::partials.ticketsubmenu", ["ticket" => $ticket, "onTheClock" => $onTheClock, "allowSubtaskCreation" => true])
                 </div>
 
             </div>
