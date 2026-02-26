@@ -569,7 +569,7 @@ a:link.btn{
     border-color: var(--primary-font-color);
 }
 
-.btn-circle {
+body .btn.btn-circle {
     -moz-border-radius: 50px;
     -webkit-border-radius: 50px;
     border-radius: 50px;
@@ -579,7 +579,7 @@ a:link.btn{
     border: 2px solid var(--main-border-color);
 }
 
-.btn-circle:hover {
+body .btn.btn-circle:hover {
     background: none;
     color: var(--main-border-color);
 }
