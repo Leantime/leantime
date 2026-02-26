@@ -570,18 +570,18 @@ a:link.btn{
 }
 
 body .btn.btn-circle {
-    -moz-border-radius: 50px;
-    -webkit-border-radius: 50px;
-    border-radius: 50px;
+    -moz-border-radius: 50px !important;
+    -webkit-border-radius: 50px !important;
+    border-radius: 50px !important;
     width: 20px;
     padding: 6px;
     background: none;
-    border: 2px solid var(--main-border-color);
+    border: 1px solid var(--main-border-color);
 }
 
 body .btn.btn-circle:hover {
-    background: none;
-    color: var(--main-border-color);
+    background: var(--secondary-background);
+    color: var(--primary-font-color);
 }
 
 .btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
