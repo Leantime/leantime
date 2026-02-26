@@ -276,7 +276,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <label>{{ __('label.label') }}</label>
-                                            <x-globals::forms.input name="label-{{ $key }}" id="label-{{ $key }}" value="{{ e($ticketStatus['name']) }}" :readonly="$key == -1" />
+                                            <x-globals::forms.input :bare="true" name="label-{{ $key }}" id="label-{{ $key }}" value="{{ e($ticketStatus['name']) }}" :readonly="$key == -1" />
                                         </div>
                                         <div class="col-md-2">
                                             <label>{{ __('label.color') }}</label>
@@ -324,7 +324,7 @@
                         @endforeach
                     </ul>
 
-                    <a href="javascript:void(0);" onclick="leantime.projectsController.addToDoStatus();" class="quickAddLink" style="text-align:left;">{{ __('links.add_status') }}</a>
+                    <a href="javascript:void(0);" onclick="leantime.projectsController.addToDoStatus();" class="quickAddLink" style="text-align:left;">{!! __('links.add_status') !!}</a>
                     <br />
                     <x-globals::forms.button submit type="primary" name="submitSettings">{{ __('buttons.save') }}</x-globals::forms.button>
                 </form>
@@ -351,7 +351,7 @@
         </div>
         <div class="col-md-2">
             <label>{{ __('label.label') }}</label>
-            <x-globals::forms.input name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
+            <x-globals::forms.input :bare="true" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
         </div>
         <div class="col-md-2">
             <label>{{ __('label.color') }}</label>
