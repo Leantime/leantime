@@ -590,6 +590,9 @@ body button.btn.btn-circle {
     background: transparent;
     border: none;
     border-radius: 50px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 body a.btn.btn-circle:hover,
