@@ -588,13 +588,13 @@ a:link.btn{
 body a.btn.btn-circle,
 body button.btn.btn-circle {
     background: transparent;
-    border: 2px solid var(--main-border-color);
+    border: none;
     border-radius: 50px !important;
 }
 
 body a.btn.btn-circle:hover,
 body button.btn.btn-circle:hover {
-    background: transparent;
+    background: var(--secondary-background);
     color: var(--primary-font-color);
     border-color: var(--primary-font-color);
 }

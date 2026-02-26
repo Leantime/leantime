@@ -93,7 +93,7 @@
                 </span>
             </li>
         </x-globals::elements.dropdown>
-        <x-globals::elements.dropdown :label="'<i class=&quot;fas fa-filter&quot;></i>' . ($projectFilter != '' ? '<span class=&quot;badge badge-primary&quot;>1</span>' : '')" buttonClass="btn btn-default btn-sm btn-circle tw:min-w-[44px] tw:min-h-[44px] tw:inline-flex tw:items-center tw:justify-center" containerClass="left">
+        <x-globals::elements.dropdown icon="fas fa-filter" :label="$projectFilter != '' ? '<span class=\'badge badge-primary\'>1</span>' : null" buttonClass="btn btn-default btn-sm btn-circle tw:min-w-[44px] tw:min-h-[44px] tw:inline-flex tw:items-center tw:justify-center" containerClass="left">
             <li class="nav-header border">{!! __("text.filter") !!}</li>
             <li
                 @if($projectFilter == '')

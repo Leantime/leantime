@@ -71,13 +71,16 @@ function promoteWidgetActions(root) {
 }
 
 // Catch future HTMX swaps (widget refreshes, initial loads).
-document.body.addEventListener('htmx:afterSwap', function () {
+document.body.addEventListener('htmx:afterSettle', function () {
     promoteWidgetActions();
 });
 
-// Sweep for any widgets that loaded before this listener was ready.
+// Sweep for any widgets that loaded before the listener was ready.
+// Multiple passes cover slow-loading widgets.
 document.addEventListener('DOMContentLoaded', function () {
     setTimeout(promoteWidgetActions, 500);
+    setTimeout(promoteWidgetActions, 1500);
+    setTimeout(promoteWidgetActions, 3000);
 });
 </script>
 
