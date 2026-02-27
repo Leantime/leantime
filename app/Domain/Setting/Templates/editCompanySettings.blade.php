@@ -166,3 +166,13 @@
     </div>
 </div>
 
+<script>
+    jQuery(document).ready(function() {
+        jQuery(".companyTabs").tabs({
+            activate: function (event, ui) {
+                window.location.hash = ui.newPanel.selector;
+            }
+        });
+    });
+</script>
+
