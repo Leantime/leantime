@@ -64,13 +64,7 @@ foreach ($allCanvas as $canvasRow) {
         <div class="bigNumberBox tw:py-7 tw:px-4">
             <h2>Progress: {{ round($goalStats['avgPercentComplete']) }}%</h2>
 
-            <div class="progress tw:mt-1">
-                <div class="progress-bar progress-bar-success" role="progressbar"
-                     aria-valuenow="{{ round($goalStats['avgPercentComplete']) }}" aria-valuemin="0" aria-valuemax="100"
-                     style="width: {{ $goalStats['avgPercentComplete'] }}%">
-                    <span class="sr-only">{{ sprintf(__("text.percent_complete"), round($goalStats['avgPercentComplete'])) }}</span>
-                </div>
-            </div>
+            <x-global::progress :value="round($goalStats['avgPercentComplete'])" :showLabel="false" class="tw:mt-1" />
         </div>
     </div>
     <div class="col-md-2">
@@ -152,14 +146,7 @@ foreach ($allCanvas as $canvasRow) {
                                                         }
                                                         @endphp
 
-                                                        <div class="center">
-                                                            <small>{{ sprintf(__("text.percent_complete"), $percentDone) }}</small>
-                                                        </div>
-                                                        <div class="progress tw:mb-0">
-                                                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ $percentDone }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $percentDone }}%">
-                                                                <span class="sr-only">{{ sprintf(__("text.percent_complete"), $percentDone) }}</span>
-                                                            </div>
-                                                        </div>
+                                                        <x-global::progress :value="$percentDone" />
                                                         <div class="row tw:pb-0">
                                                             <div class="col-md-4">
                                                                 <small>Start:<br />{{ $metricTypeFront . $row["startValue"] . $metricTypeBack }}</small>

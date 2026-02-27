@@ -183,18 +183,7 @@
                                                 }
                                             @endphp
 
-                                            <div class="center">
-                                                <small>{{ sprintf(__('text.percent_complete'), $percentDone) }}</small>
-                                            </div>
-                                            <div class="progress tw:mb-0">
-                                                <div class="progress-bar progress-bar-success"
-                                                    role="progressbar" aria-valuenow="{{ $percentDone }}"
-                                                    aria-valuemin="0" aria-valuemax="100"
-                                                    style="width: {{ $percentDone }}%">
-                                                    <span
-                                                        class="sr-only">{{ sprintf(__('text.percent_complete'), $percentDone) }}</span>
-                                                </div>
-                                            </div>
+                                            <x-global::progress :value="$percentDone" />
                                             <div class="row tw:pb-0">
                                                 <div class="col-md-4">
                                                     <small>Start:<br />{{ $metricTypeFront . $row['startValue'] . $metricTypeBack }}</small>

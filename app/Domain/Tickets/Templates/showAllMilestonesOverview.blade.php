@@ -175,11 +175,7 @@
                         <td data-order="{{ $row->bookedHours }}">{{ $row->bookedHours }}</td>
 
                         <td data-order="{{ $row->percentDone }}">
-                            <div class="progress" style="width: 100%;">
-                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ $row->percentDone }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $row->percentDone }}%">
-                                    <span class="sr-only">{{ sprintf(__('text.percent_complete'), $row->percentDone) }}</span>
-                                </div>
-                            </div>
+                            <x-global::progress :value="$row->percentDone" size="sm" />
                         </td>
                         <td>
                             @if($login::userIsAtLeast($roles::$editor))

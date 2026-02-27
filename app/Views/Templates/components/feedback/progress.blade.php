@@ -3,10 +3,11 @@
     'max' => 100,
     'label' => '',
     'color' => 'primary',
+    'customColor' => null,
     'state' => null,
     'size' => 'md',
     'scale' => null,
-    'showLabel' => false,
+    'showLabel' => true,
 ])
 
 @php
@@ -14,42 +15,99 @@
     $resolvedSize = $scale ?? $size;
     $percent = $max > 0 ? min(100, round(($value / $max) * 100)) : 0;
 
-    $sizeClass = match($resolvedSize) {
-        's', 'sm' => 'tw:h-1.5',
-        'l', 'lg' => 'tw:h-4',
-        default => 'tw:h-2.5',
+    // Force showLabel false for sm size
+    $showText = ($resolvedSize === 'sm' || $resolvedSize === 's') ? false : $showLabel;
+
+    // Build label text
+    $labelText = $label !== '' ? $label . ': ' . $percent . '%' : $percent . '%';
+
+    // Size dimensions
+    $trackHeight = match($resolvedSize) {
+        's', 'sm' => '8px',
+        'l', 'lg' => '32px',
+        default => '24px',
     };
 
-    $colorClass = match($resolvedColor) {
-        'success' => 'tw:bg-success',
-        'warning' => 'tw:bg-warning',
-        'error', 'danger' => 'tw:bg-error',
-        'info'    => 'tw:bg-info',
-        default   => 'tw:bg-primary',
+    $fontSize = match($resolvedSize) {
+        'l', 'lg' => 'var(--font-size-s)',
+        default => 'var(--font-size-xs)',
     };
 
-    $displayLabel = $label ?: sprintf('%d%%', $percent);
+    // Color mapping
+    if ($customColor) {
+        $accentColor = $customColor;
+    } else {
+        $accentColor = match($resolvedColor) {
+            'success' => 'var(--feedback-success-color)',
+            'warning' => 'var(--feedback-warning-color)',
+            'error', 'danger' => 'var(--feedback-error-color)',
+            'info' => 'var(--feedback-info-color)',
+            default => 'var(--accent1)',
+        };
+    }
 @endphp
 
-<div {{ $attributes->merge(['class' => 'progress-wrapper']) }}
+<div {{ $attributes->merge(['class' => 'emboss-progress']) }}
      role="progressbar"
      aria-valuenow="{{ $value }}"
      aria-valuemin="0"
      aria-valuemax="{{ $max }}"
-     aria-label="{{ $displayLabel }}">
+     aria-label="{{ $labelText }}"
+     style="width: 100%;">
 
-    @if($showLabel)
-        <div class="tw:flex tw:justify-between tw:mb-1">
-            <span class="tw:text-sm tw:font-medium">{{ $label }}</span>
-            <span class="tw:text-sm tw:font-medium">{{ $percent }}%</span>
+    {{-- Track: recessed well --}}
+    <div style="
+        position: relative;
+        height: {{ $trackHeight }};
+        border-radius: 999px;
+        background: color-mix(in srgb, {{ $accentColor }} 15%, var(--secondary-background, #e8e8e8));
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.18), inset 0 1px 2px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.5);
+        overflow: hidden;
+    ">
+        {{-- Fill: embossed glossy bar with strong highlight --}}
+        <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: {{ $percent }}%;
+            border-radius: 999px;
+            background: {{ $accentColor }};
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 2px rgba(0,0,0,0.25);
+            transition: width 0.3s ease;
+            overflow: hidden;
+        ">
+            {{-- Glossy highlight overlay: subtle top shine --}}
+            <div style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 40%;
+                border-radius: 999px 999px 0 0;
+                background: linear-gradient(to bottom, rgba(255,255,255,0.40) 0%, rgba(255,255,255,0) 100%);
+            "></div>
         </div>
-    @endif
 
-    <div class="tw:w-full tw:bg-base-200 tw:rounded-full {{ $sizeClass }} tw:overflow-hidden">
-        <div class="{{ $colorClass }} {{ $sizeClass }} tw:rounded-full tw:transition-all tw:duration-300"
-             style="width: {{ $percent }}%">
-        </div>
+        {{-- Label: centered on track --}}
+        @if($showText)
+            <span style="
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 500;
+                font-size: {{ $fontSize }};
+                letter-spacing: 0.01em;
+                color: var(--kanban-col-title-color, var(--primary-font-color));
+                white-space: nowrap;
+                z-index: 1;
+                line-height: 1;
+                pointer-events: none;
+            ">{{ $labelText }}</span>
+        @endif
     </div>
 
-    <span class="tw:sr-only">{{ $displayLabel }}</span>
+    <span class="tw:sr-only">{{ $labelText }}</span>
 </div>

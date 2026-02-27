@@ -5,7 +5,7 @@
 
 <div class="projectBox" id="projectBox-{{ $project['id'] }}">
     <div class="fixed">
-        <div class="row" style="padding-bottom:var(--base-spacing-sm);">
+        <div class="row">
             <div class="col-md-10">
                 <a href="{{ BASE_URL }}/dashboard/show?projectId={{ $project['id'] }}">
                     <span class="projectAvatar">
@@ -16,11 +16,11 @@
                         @endif
                     </span>
                     @if($project["clientName"] != '')
-                        <small>{{ $project["clientName"] }}</small><br />
+                        <small>{{ $project["clientName"] }}</small>
                     @else
-                        <small>{{ __('projectType.'.$project["type"] ?? 'project') }}</small><br />
+                        <small>{{ __('projectType.'.$project["type"] ?? 'project') }}</small>
                     @endif
-                    <strong>{{ $project['name'] }} <i class="fa-solid fa-up-right-from-square"></i></strong>
+                    <strong>{{ $project['name'] }}</strong>
                 </a>
             </div>
             <div class="col-md-2 align-right">
@@ -39,7 +39,7 @@
         </div>
 
         @if($type != "simple")
-            <div id="projectProgressBox-{{ $project['id'] }}"
+            <div class="projectBox-progress" id="projectProgressBox-{{ $project['id'] }}"
                 hx-get="{{ BASE_URL }}/hx/projects/projectCardProgress/getProgress?pId={{ $project['id'] }}"
                 hx-trigger="load"
                 hx-swap="innerHTML"

@@ -22,15 +22,12 @@
                 </div>
             </div>
         @endif
-                <div class="progress" data-tippy-content="<?=sprintf($tpl->__("text.percent_complete"), format($percentDone)->decimal())?>">
-                    <div class="progress-bar progress-bar-success"
-                         role="progressbar"
-                         aria-valuenow="{{ $percentDone }}"
-                         aria-valuemin="0" aria-valuemax="100"
-                         style="width: {{ $percentDone }}%; {{ $progressColor !== 'default' ? ' background: #'.$progressColor.'; ' : '' }}">
-                        <span class="sr-only">{{ sprintf($tpl->__("text.percent_complete"), format($percentDone)->decimal()) }}</span>
-                    </div>
-                </div>
+
+        <x-global::progress
+            :value="$percentDone"
+            :customColor="$progressColor !== 'default' ? '#'.$progressColor : null"
+            :showLabel="false"
+        />
 
         <script>
             tippy('[data-tippy-content]');

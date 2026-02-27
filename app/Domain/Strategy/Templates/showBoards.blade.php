@@ -39,12 +39,7 @@
                         }
                     @endphp
                     <br />
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ $percentDone }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $percentDone }}%">
-                            <span class="sr-only">{{ sprintf($tpl->__('text.percent_complete'), $percentDone) }}</span>
-                        </div>
-                    </div>
-                    {{ sprintf($tpl->__('text.percent_complete'), $percentDone) }}
+                    <x-global::progress :value="$percentDone" />
 
 
                 </div></div>
