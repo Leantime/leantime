@@ -191,6 +191,15 @@ jQuery(document).ready(function(){
 
         jQuery("#finalSum").text(roundedSum);
     });
+
+    // "+ Add hours" link scrolls to and highlights the new entry row
+    jQuery("#addEntryLink").click(function () {
+        var $row = jQuery(".newEntryRow");
+        jQuery("html, body").animate({ scrollTop: $row.offset().top - 100 }, 200);
+        $row.css("background-color", "var(--accent1)");
+        setTimeout(function () { $row.css("background-color", ""); }, 800);
+        $row.find(".ss-main:first").trigger("click");
+    });
  });
 </script>
 
@@ -227,6 +236,53 @@ jQuery(document).ready(function(){
                     <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
                 </x-globals::elements.link-dropdown>
             </div>
+            <style>
+                /* Dim auxiliary icons so hour values stay the focal point */
+                .timesheetTable .fa-circle-info,
+                .timesheetTable .fa-clock-rotate-left {
+                    opacity: 0.25;
+                    transition: opacity 0.15s ease;
+                }
+                .timesheetTable tr:hover .fa-circle-info,
+                .timesheetTable tr:hover .fa-clock-rotate-left {
+                    opacity: 0.6;
+                }
+                .timesheetTable .fa-circle-info:hover,
+                .timesheetTable .fa-clock-rotate-left:hover {
+                    opacity: 1;
+                }
+                /* Dim zero-value cells so real data pops */
+                .timesheetTable .hourCell[value="0"],
+                .timesheetTable .hourCell[disabled] {
+                    color: var(--secondary-font-color);
+                    opacity: 0.4;
+                }
+                /* Make To-Do titles the primary focal point */
+                .timesheetTable .timesheetRow td:nth-child(2) a {
+                    font-weight: 500;
+                    color: var(--primary-color);
+                }
+                /* Dim Client/Product as secondary context */
+                .timesheetTable .timesheetRow td:first-child {
+                    color: var(--secondary-font-color);
+                    font-size: var(--font-size-s);
+                }
+                /* Style new entry row so dropdowns read as "add new" */
+                .timesheetTable .newEntryRow {
+                    border-top: 2px solid var(--main-border-color);
+                }
+                .timesheetTable .newEntryRow td {
+                    padding-top: 12px;
+                }
+                /* Force SlimSelect dropdowns to fill their cells */
+                .timesheetTable .newEntryRow .form-group {
+                    width: 100%;
+                }
+                .timesheetTable .newEntryRow .ss-main {
+                    display: block !important;
+                    width: 100% !important;
+                }
+            </style>
             <div style="overflow-x: auto;">
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
                 <colgroup>
@@ -287,7 +343,7 @@ jQuery(document).ready(function(){
                                 <td width="10%">
                                 {{ __($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']) }}
                             @if ($timeRow['hasTimesheetOffset'])
-                                    <i class="fa-solid fa-clock-rotate-left pull-right label-blue" aria-hidden="true"
+                                    <i class="fa-solid fa-clock-rotate-left" aria-hidden="true" style="float: right; font-size: 12px;"
                                        data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone">
                                     </i>
                             @endif
@@ -328,11 +384,11 @@ jQuery(document).ready(function(){
                         @endforeach
 
                         <!-- Row to add new time registration -->
-                        <tr class="gradeA timesheetRow">
+                        <tr class="gradeA timesheetRow newEntryRow">
                             <td width="14%">
                                 <div class="form-group" id="projectSelect">
-                                    <x-globals::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" style="" class="project-select" >
-                                        <option value=""></option>
+                                    <x-globals::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" style="width:100%;" class="project-select" >
+                                        <option value="">{{ __('input.placeholders.choose_project') }}</option>
                                         @foreach ($tpl->get('allProjects') as $projectRow)
                                             {!! sprintf(
                                                 $tpl->dispatchTplFilter(
@@ -354,8 +410,8 @@ jQuery(document).ready(function(){
                             </td>
                             <td width="14%">
                                 <div class="form-group" id="ticketSelect">
-                                    <x-globals::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" style="" class="ticket-select" name="ticketId">
-                                        <option value=""></option>
+                                    <x-globals::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" style="width:100%;" class="ticket-select" name="ticketId">
+                                        <option value="">{{ __('input.placeholders.choose_todo') }}</option>
                                         @foreach ($tpl->get('allTickets') as $ticketRow)
                                             @if (in_array($ticketRow['id'], $tpl->get('existingTicketIds')))
                                                 @continue
@@ -379,7 +435,7 @@ jQuery(document).ready(function(){
                                 </div>
                             </td>
                             <td width="14%">
-                                <x-globals::forms.select :bare="true" class="kind-select" name="kindId">
+                                <x-globals::forms.select :bare="true" class="kind-select" name="kindId" style="width:100%;">
                                         @foreach ($tpl->get('kind') as $key => $kindRow)
                                             <option value="{{ $key }}">{{ __($kindRow) }}</option>
                                         @endforeach
@@ -409,7 +465,11 @@ jQuery(document).ready(function(){
                 </tfoot>
             </table>
             </div>
-            <div class="tw:flex tw:justify-end tw:mt-4">
+            <div class="tw:flex tw:items-center tw:mt-4">
+                <a href="javascript:void(0)" id="addEntryLink" style="color: var(--primary-color); font-size: var(--font-size-s);">
+                    <i class="fa fa-plus" style="margin-right: 4px;"></i>{{ __('label.add_hours') }}
+                </a>
+                <div class="tw:flex-1"></div>
                 <x-globals::forms.button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">Save</x-globals::forms.button>
             </div>
         </form>

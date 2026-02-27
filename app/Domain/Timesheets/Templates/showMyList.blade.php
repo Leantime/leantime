@@ -64,16 +64,18 @@
                 #myTimesheetList .form-group { margin: 0; }
                 #myTimesheetList .newEntryRow input[type="text"],
                 #myTimesheetList .newEntryRow select { margin: 0; }
-                /* Constrain Chosen.js dropdowns so long names truncate */
-                #myTimesheetList #projectSelect .chzn-container,
-                #myTimesheetList #ticketSelect .chzn-container { max-width: 100%; }
-                #myTimesheetList #projectSelect .chzn-single span,
-                #myTimesheetList #ticketSelect .chzn-single span {
-                    max-width: 100%;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    display: block;
+                /* Force SlimSelect dropdowns to fill their cells */
+                #myTimesheetList .newEntryRow .form-group { width: 100%; }
+                #myTimesheetList .newEntryRow .ss-main {
+                    display: block !important;
+                    width: 100% !important;
+                }
+                /* New entry row visual separator */
+                #myTimesheetList .newEntryRow {
+                    border-top: 2px solid var(--main-border-color);
+                }
+                #myTimesheetList .newEntryRow td {
+                    padding-top: 12px;
                 }
                 /* Also truncate existing-row project/ticket links */
                 #myTimesheetList td a {
@@ -164,7 +166,7 @@
                         <td>
                             <div class="form-group" id="projectSelect">
                                 <x-globals::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" class="project-select" style="width:100%;">
-                                    <option value=""></option>
+                                    <option value="">{{ __('input.placeholders.choose_project') }}</option>
                                     @foreach ($tpl->get('allProjects') as $projectRow)
                                         {!! sprintf(
                                             $tpl->dispatchTplFilter(
@@ -187,7 +189,7 @@
                         <td>
                             <div class="form-group" id="ticketSelect">
                                 <x-globals::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" class="ticket-select" name="newTicketId" style="width:100%;">
-                                    <option value=""></option>
+                                    <option value="">{{ __('input.placeholders.choose_todo') }}</option>
                                     @foreach ($tpl->get('allTickets') as $ticketRow)
                                         {!! sprintf(
                                             $tpl->dispatchTplFilter(
