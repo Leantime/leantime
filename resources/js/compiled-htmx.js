@@ -9,6 +9,30 @@ window.htmx.config.globalViewTransitions = false;
 // HTMX 2.x defaults selfRequestsOnly to true (blocks cross-origin).
 // Keep this default for security.
 
+// ---------------------------------------------------------------------------
+// Fix hx-select inheritance from .rightpanel.
+//
+// .rightpanel sets hx-select=".primaryContent" for SPA navigation via
+// hx-boost. Interactive elements with explicit hx-get/hx-post/etc. inherit
+// this, causing their partial responses to be filtered through
+// querySelectorAll(".primaryContent") — which finds nothing and wipes the
+// target. Setting hx-select="unset" on these elements stops the inheritance.
+// Boosted <a href> links are unaffected (they have no verb attributes).
+// ---------------------------------------------------------------------------
+document.addEventListener('htmx:beforeProcessNode', function (evt) {
+    var elt = evt.detail.elt || evt.target;
+    if (!(elt instanceof Element)) return;
+    if (elt.hasAttribute('hx-select') || elt.hasAttribute('data-hx-select')) return;
+
+    if (elt.hasAttribute('hx-get') || elt.hasAttribute('hx-post')
+        || elt.hasAttribute('hx-put') || elt.hasAttribute('hx-patch')
+        || elt.hasAttribute('hx-delete') || elt.hasAttribute('data-hx-get')
+        || elt.hasAttribute('data-hx-post') || elt.hasAttribute('data-hx-put')
+        || elt.hasAttribute('data-hx-patch') || elt.hasAttribute('data-hx-delete')) {
+        elt.setAttribute('hx-select', 'unset');
+    }
+});
+
 // Workaround for HTMX 2.0.8 innerHTML swap bug:
 // HTMX's internal swapInnerHTML removes old children but fails to insert
 // new content from the parsed fragment. This affects all innerHTML swaps
