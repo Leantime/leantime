@@ -64,7 +64,7 @@
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.18), inset 0 1px 2px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.5);
         overflow: hidden;
     ">
-        {{-- Fill: embossed glossy bar with strong highlight --}}
+        {{-- Fill: embossed glossy bar --}}
         <div style="
             position: absolute;
             top: 0;
@@ -72,22 +72,10 @@
             height: 100%;
             width: {{ $percent }}%;
             border-radius: 999px;
-            background: {{ $accentColor }};
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 2px rgba(0,0,0,0.25);
+            background: linear-gradient(to bottom, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 40%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.08) 60%, rgba(0,0,0,0.18) 100%), {{ $accentColor }};
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 1px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.1);
             transition: width 0.3s ease;
-            overflow: hidden;
-        ">
-            {{-- Glossy highlight overlay: subtle top shine --}}
-            <div style="
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 40%;
-                border-radius: 999px 999px 0 0;
-                background: linear-gradient(to bottom, rgba(255,255,255,0.40) 0%, rgba(255,255,255,0) 100%);
-            "></div>
-        </div>
+        "></div>
 
         {{-- Label: centered on track --}}
         @if($showText)

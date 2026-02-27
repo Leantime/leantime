@@ -2,6 +2,7 @@
      hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
      hx-trigger="HTMX.updateProjectList from:body"
      hx-target="#myProjectsHub"
+     hx-select="#myProjectsHub"
      hx-swap="outerHTML"
      aria-live="polite">
 
@@ -11,6 +12,7 @@
                     <a href="javascript:void(0);"
                        hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
                        hx-target="#myProjectsHub"
+                       hx-select="#myProjectsHub"
                        hx-swap="outerHTML">{{ __("headline.all_clients") }}</a>
                 </li>
                 @foreach ($clients as $key => $value)
@@ -19,6 +21,7 @@
                             <a href="javascript:void(0);"
                                hx-get="{{BASE_URL}}/projects/projectHubProjects/get?client={{ $key }}"
                                hx-target="#myProjectsHub"
+                               hx-select="#myProjectsHub"
                                hx-swap="outerHTML">{{ $value['name'] }}</a>
                         </li>
                     @endif
