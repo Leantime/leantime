@@ -18,8 +18,6 @@
 
         <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="timesheetListForm" name="timesheetListForm">
             <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
-                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addHoursBtn"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('label.add_hours') }}</x-globals::forms.button>
-
                 <div class="tw:flex tw:items-center tw:gap-1">
                     <span>{{ __('label.date_from') }}</span>
                     <input type="text"
@@ -56,6 +54,8 @@
                     <li><a href="{{ BASE_URL }}/timesheets/showMy">{!! __('links.week_view') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
                 </x-globals::elements.link-dropdown>
+
+                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addHoursBtn"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('label.add_hours') }}</x-globals::forms.button>
             </div>
 
             <style>
@@ -83,6 +83,11 @@
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+                }
+                /* Make Ticket (To-Do) titles the primary focal point */
+                #myTimesheetList .timesheetRow td:nth-child(3) a {
+                    font-weight: 600;
+                    color: var(--primary-font-color);
                 }
             </style>
             <div style="overflow-x: auto;">

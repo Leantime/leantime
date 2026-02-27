@@ -231,12 +231,12 @@ jQuery(document).ready(function(){
 
                 <div class="tw:flex-1"></div>
 
-                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addEntryLink"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('label.add_hours') }}</x-globals::forms.button>
-
                 <x-globals::elements.link-dropdown :label="__('links.week_view')">
                     <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
                 </x-globals::elements.link-dropdown>
+
+                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addEntryLink"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('label.add_hours') }}</x-globals::forms.button>
             </div>
             <style>
                 /* Dim auxiliary icons so hour values stay the focal point */
@@ -261,8 +261,8 @@ jQuery(document).ready(function(){
                 }
                 /* Make To-Do titles the primary focal point */
                 .timesheetTable .timesheetRow td:nth-child(2) a {
-                    font-weight: 500;
-                    color: var(--primary-color);
+                    font-weight: 600;
+                    color: var(--primary-font-color);
                 }
                 /* Dim Client/Product as secondary context */
                 .timesheetTable .timesheetRow td:first-child {
