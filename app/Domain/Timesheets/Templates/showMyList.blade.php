@@ -17,17 +17,10 @@
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="timesheetListForm" name="timesheetListForm">
-            <div class="pull-right">
-                <x-globals::elements.button-dropdown :label="__('links.list_view')" type="default">
-                    <li><a href="{{ BASE_URL }}/timesheets/showMy">{!! __('links.week_view') !!}</a></li>
-                    <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
-                </x-globals::elements.button-dropdown>
-            </div>
-            <div class="pull-right" style="margin-right:3px;">
+            <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
                 <x-globals::forms.button link="javascript:void(0);" type="primary" id="addHoursBtn"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('label.add_hours') }}</x-globals::forms.button>
-            </div>
-            <div class="filterWrapper tw:relative">
-                <div class="padding-top-sm">
+
+                <div class="tw:flex tw:items-center tw:gap-1">
                     <span>{{ __('label.date_from') }}</span>
                     <input type="text"
                            id="dateFrom"
@@ -35,7 +28,7 @@
                            name="dateFrom"
                            autocomplete="off"
                            value="{{ $tpl->get('dateFrom')->formatDateForUser() }}"
-                           style="width:110px; margin-top:5px;" />
+                           style="width:110px;" />
                     <span>{{ __('label.until') }}</span>
                     <input type="text"
                            id="dateTo"
@@ -43,8 +36,8 @@
                            name="dateTo"
                            autocomplete="off"
                            value="{{ $tpl->get('dateTo')->formatDateForUser() }}"
-                           style="width:110px; margin-top:5px;" />
-                    <x-globals::forms.select :bare="true" id="kind" name="kind" onchange="submit();" style="margin-top:5px;">
+                           style="width:110px;" />
+                    <x-globals::forms.select :bare="true" id="kind" name="kind" onchange="submit();">
                         <option value="all">{{ __('label.all_types') }}</option>
                         @foreach ($tpl->get('kind') as $key => $row)
                             <option value="{{ $key }}"
@@ -54,10 +47,16 @@
                             >{{ __($row) }}</option>
                         @endforeach
                     </x-globals::forms.select>
-                    <x-globals::forms.button submit type="primary" class="reload" style="margin-top:5px;">{{ __('buttons.search') }}</x-globals::forms.button>
+                    <x-globals::forms.button submit type="primary" class="reload">{{ __('buttons.search') }}</x-globals::forms.button>
                 </div>
+
+                <div class="tw:flex-1"></div>
+
+                <x-globals::elements.link-dropdown :label="__('links.list_view')">
+                    <li><a href="{{ BASE_URL }}/timesheets/showMy">{!! __('links.week_view') !!}</a></li>
+                    <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
+                </x-globals::elements.link-dropdown>
             </div>
-            <div class="clearfix"></div>
 
             <style>
                 #myTimesheetList th,
@@ -238,10 +237,9 @@
                 </tfoot>
             </table>
             </div>
-            <div class="right">
+            <div class="tw:flex tw:justify-end tw:mt-4">
                 <x-globals::forms.button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">{{ __('buttons.save') }}</x-globals::forms.button>
             </div>
-            <div class="clearall"></div>
         </form>
     </div>
 </div>

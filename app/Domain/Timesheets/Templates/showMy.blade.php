@@ -209,20 +209,23 @@ jQuery(document).ready(function(){
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMy" method="post" id="timesheetList">
-            <x-globals::elements.button-dropdown :label="__('links.week_view')" type="default" class="pull-right">
-                    <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
-                    <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
-                </x-globals::elements.button-dropdown>
-            <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
-                <div class="padding-top-sm">
+            <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
+                <div class="tw:flex tw:items-center tw:gap-1">
                     <span>{{ __('label.week_from') }}</span>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek" aria-label="{{ __('label.previous_week') }}"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
-                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->formatDateForUser() }}" style="margin-top:5px;"/>
+                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->formatDateForUser() }}"/>
                     {{ __('label.until') }}
-                    <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->addDays(6)->formatDateForUser() }}" style="margin-top:6px;"/>
+                    <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->addDays(6)->formatDateForUser() }}"/>
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek" aria-label="{{ __('label.next_week') }}"><i class="fa fa-chevron-right" aria-hidden="true"></i></a>
                     <input type="hidden" name="search" value="1" />
                 </div>
+
+                <div class="tw:flex-1"></div>
+
+                <x-globals::elements.link-dropdown :label="__('links.week_view')">
+                    <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
+                    <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
+                </x-globals::elements.link-dropdown>
             </div>
             <div style="overflow-x: auto;">
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
@@ -406,10 +409,9 @@ jQuery(document).ready(function(){
                 </tfoot>
             </table>
             </div>
-            <div class="right">
+            <div class="tw:flex tw:justify-end tw:mt-4">
                 <x-globals::forms.button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">Save</x-globals::forms.button>
             </div>
-            <div class="clearall"></div>
         </form>
     </div>
 </div>
