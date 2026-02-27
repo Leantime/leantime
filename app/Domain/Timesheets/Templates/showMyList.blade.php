@@ -89,6 +89,22 @@
                     font-weight: 600;
                     color: var(--primary-font-color);
                 }
+                /* Dim Date column as secondary context */
+                #myTimesheetList .timesheetRow td:nth-child(1) {
+                    color: var(--secondary-font-color);
+                    font-size: var(--font-size-s);
+                }
+                /* Dim Type column (repetitive info) */
+                #myTimesheetList .timesheetRow td:nth-child(4) {
+                    color: var(--secondary-font-color);
+                    font-size: var(--font-size-s);
+                }
+                /* Dim zero-value and disabled hour cells */
+                #myTimesheetList .hourCell[value="0"],
+                #myTimesheetList .hourCell[disabled] {
+                    color: var(--secondary-font-color);
+                    opacity: 0.4;
+                }
             </style>
             <div style="overflow-x: auto;">
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="myTimesheetList">
