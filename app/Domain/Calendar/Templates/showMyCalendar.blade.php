@@ -52,33 +52,36 @@
         </div>
         <div class="col-md-10">
             <div class="maincontentinner">
-                <div class="row">
-                    <div class="col-md-4">
-                        <x-globals::forms.button link="#/calendar/addEvent" type="primary" formModal><i class="fa fa-plus"></i> {{ __('buttons.add_event') }}</x-globals::forms.button>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
-                            <h2>..</h2>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <x-globals::forms.button link="#/calendar/export" type="secondary" class="right">Export</x-globals::forms.button>
-                        <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
-                            <span class="fc-icon fc-icon-chevron-right"></span>
-                        </button>
-                        <button class="fc-prev-button btn btn-default right" type="button" style="margin-right:5px;">
-                            <span class="fc-icon fc-icon-chevron-left"></span>
-                        </button>
+                <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
+                    <x-globals::forms.button link="#/calendar/addEvent" type="primary" formModal><i class="fa fa-plus"></i> {{ __('buttons.add_event') }}</x-globals::forms.button>
 
-                        <button class="fc-today-button btn btn-default right" style="margin-right:5px;">today</button>
+                    <div class="tw:flex-1"></div>
 
-                        <x-globals::forms.select :bare="true" name="calendarView" id="my-select" style="margin-right:5px;" class="right">
-                            <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridDay' ? 'selected' : '' }}>Day</option>
-                            <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridWeek' ? 'selected' : '' }}>Week</option>
-                            <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ session('usersettings.submenuToggle.myCalendarView') == 'dayGridMonth' ? 'selected' : '' }}>Month</option>
-                            <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear' ? 'selected' : '' }}>Year</option>
-                        </x-globals::forms.select>
+                    <div id="calendarTitle" style="white-space:nowrap;">
+                        <h2 style="margin:0; font-size:var(--font-size-xl); font-weight:600;">..</h2>
                     </div>
+
+                    <div class="tw:flex-1"></div>
+
+                    <x-globals::forms.select :bare="true" name="calendarView" id="my-select">
+                        <option value="timeGridDay" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridDay' ? 'selected' : '' }}>Day</option>
+                        <option value="timeGridWeek" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridWeek' ? 'selected' : '' }}>Week</option>
+                        <option value="dayGridMonth" {{ session('usersettings.submenuToggle.myCalendarView') == 'dayGridMonth' ? 'selected' : '' }}>Month</option>
+                        <option value="multiMonthYear" {{ session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear' ? 'selected' : '' }}>Year</option>
+                    </x-globals::forms.select>
+
+                    <button class="fc-today-button btn btn-default" type="button">today</button>
+
+                    <div class="tw:flex tw:items-center tw:gap-1">
+                        <button class="fc-prev-button btn btn-default" type="button">
+                            <span class="fa fa-chevron-left"></span>
+                        </button>
+                        <button class="fc-next-button btn btn-default" type="button">
+                            <span class="fa fa-chevron-right"></span>
+                        </button>
+                    </div>
+
+                    <x-globals::forms.button link="#/calendar/export" type="secondary" formModal>Export</x-globals::forms.button>
                 </div>
                 <div id="calendar"></div>
             </div>
