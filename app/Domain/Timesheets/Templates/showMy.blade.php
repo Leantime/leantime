@@ -231,6 +231,8 @@ jQuery(document).ready(function(){
 
                 <div class="tw:flex-1"></div>
 
+                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addEntryLink"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('label.add_hours') }}</x-globals::forms.button>
+
                 <x-globals::elements.link-dropdown :label="__('links.week_view')">
                     <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
@@ -465,11 +467,7 @@ jQuery(document).ready(function(){
                 </tfoot>
             </table>
             </div>
-            <div class="tw:flex tw:items-center tw:mt-4">
-                <a href="javascript:void(0)" id="addEntryLink" style="color: var(--primary-color); font-size: var(--font-size-s);">
-                    <i class="fa fa-plus" style="margin-right: 4px;"></i>{{ __('label.add_hours') }}
-                </a>
-                <div class="tw:flex-1"></div>
+            <div class="tw:flex tw:justify-end tw:mt-4">
                 <x-globals::forms.button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">Save</x-globals::forms.button>
             </div>
         </form>
