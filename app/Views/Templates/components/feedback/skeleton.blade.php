@@ -113,26 +113,17 @@
 @endif
 
 @if($type == 'plugincard')
-    <div class="row">
     @for ($i = 0; $i < $count; $i++)
-        <div class="col-md-4">
-            <div class="loading-text" aria-hidden="true">
-                <div style="margin-bottom:var(--base-spacing-l);">
-                    <p style="width:100%; height:80px;">Loading...</p>
+        <div class="loading-text" aria-hidden="true" style="margin-bottom: 12px;">
+            <div style="display: flex; align-items: flex-start; gap: 20px; padding: 20px; background: var(--kanban-card-bg); border-radius: var(--box-radius);">
+                <p style="width: 75px; height: 75px; flex-shrink: 0; border-radius: var(--box-radius-small);">Loading...</p>
+                <div style="flex: 1;">
+                    <p style="width: 35%; margin-bottom: 8px;">Loading...</p>
+                    <p style="width: 20%; margin-bottom: 8px;">Loading...</p>
+                    <p style="width: 80%;">Loading...</p>
                 </div>
-                <div class="row" style="margin-bottom:var(--base-spacing-l);">
-                    <div class="col-md-6">
-                        <p style="width:60%">Loading...</p>
-                        <p style="width:20%">Loading...</p>
-                    </div>
-                    <div class="col-md-6 align-right">
-                        <p style="width:5%" class="pull-right">Loading...</p><div class="clearall"></div>
-                        <div class="clearall"></div><br />
-                        <p style="width:20%" class="pull-right tw:ml-sm">Loading...</p>&nbsp;<p style="width:25%" class="pull-right tw:ml-sm">Loading...</p>&nbsp;<p style="width:10%" class="pull-right tw:ml-sm">Loading...</p>
-                    </div>
-                </div>
+                <p style="width: 90px; flex-shrink: 0;">Loading...</p>
             </div>
         </div>
     @endfor
-    </div>
 @endif
