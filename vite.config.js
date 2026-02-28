@@ -32,6 +32,7 @@ export default defineConfig({
         tailwindcss(),
 
         laravel({
+            buildDirectory: 'dist',
             input: [
                 // CSS entry points
                 'resources/css/main.css',
@@ -74,6 +75,10 @@ export default defineConfig({
                     src: 'node_modules/katex/dist/fonts',
                     dest: 'fonts/katex',
                 },
+                {
+                    src: 'node_modules/jquery/dist/jquery.min.js',
+                    dest: '',
+                },
             ],
         }),
     ],
@@ -97,8 +102,7 @@ export default defineConfig({
         // es2022 enables top-level await (used for lazy-loading domain JS)
         target: 'es2022',
 
-        // Output to public/build (Vite default with laravel plugin)
-        // Keep public/dist intact for rollback
+        // Output to public/dist (matching Leantime convention)
 
         // Configure Vite's INTERNAL @rollup/plugin-commonjs (not a separate instance).
         // requireReturnsDefault: true ensures that when CJS libraries require() our
