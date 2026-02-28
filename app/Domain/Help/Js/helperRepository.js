@@ -18,6 +18,12 @@ leantime.helperRepository = (function () {
                 permanent: permanent ? 1 : 0,
                 patchModalSettings: 1
             })
+        }).then(function (response) {
+            if (!response.ok) {
+                console.error('Failed to update modal settings:', response.status);
+            }
+        }).catch(function (error) {
+            console.error('Error updating modal settings:', error);
         });
 
     };
@@ -34,6 +40,12 @@ leantime.helperRepository = (function () {
             body: new URLSearchParams({
                 tourActive: 1
             })
+        }).then(function (response) {
+            if (!response.ok) {
+                console.error('Failed to start tour:', response.status);
+            }
+        }).catch(function (error) {
+            console.error('Error starting tour:', error);
         });
 
     };
@@ -50,6 +62,12 @@ leantime.helperRepository = (function () {
             body: new URLSearchParams({
                 tourActive: 0
             })
+        }).then(function (response) {
+            if (!response.ok) {
+                console.error('Failed to stop tour:', response.status);
+            }
+        }).catch(function (error) {
+            console.error('Error stopping tour:', error);
         });
 
     };

@@ -27,7 +27,7 @@
 
             <h5 class="subtitle">What are you importing?</h5>
             <br />
-            On this screen you can choose what you would like to synchronize. Choose an entity on the left and map it to someting in Leantime on the right.
+            On this screen you can choose what you would like to synchronize. Choose an entity on the left and map it to something in Leantime on the right.
             The arrow indicates that we will synchronize from one location to the other.<br /><br />
 
             <form method="post" action="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}&step=fields{{ $urlAppend }}">

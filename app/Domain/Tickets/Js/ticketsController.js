@@ -1978,15 +1978,6 @@ leantime.ticketsController = (function () {
 
     };
 
-    var openTicketModalManually = function (url) {
-        jQuery.nmManual(url, {
-            sizes: {
-                minW: 500,
-                minH: 500
-            }
-        });
-    };
-
     var openMilestoneModalManually = function (url) {
         jQuery.nmManual(url, {
             stack: true,

@@ -1,7 +1,7 @@
 leantime.authController = (function () {
 
     var makeInputReadonly = function (container) {
-        if (typeof container === undefined) {
+        if (typeof container === 'undefined') {
             container = "body";
         }
 

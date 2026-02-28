@@ -16,6 +16,12 @@ leantime.menuRepository = (function () {
             body: new URLSearchParams({
                 menuState: menuStateValue
             })
+        }).then(function (response) {
+            if (!response.ok) {
+                console.error('Failed to update menu settings:', response.status);
+            }
+        }).catch(function (error) {
+            console.error('Error updating menu settings:', error);
         });
 
     };

@@ -58,7 +58,7 @@
                         <td>{!! $tpl->displayLink('calendar.editGCal', $row['id'], ['id' => $row['id']]) !!}</td>
                         <td>{!! $tpl->displayLink('calendar.editGCal', $row['name'], ['id' => $row['id']]) !!}</td>
                         <td>{{ $row['url'] }}</td>
-                        <td><span class="color: {{ $row['colorClass'] }}" style="padding:2px;">{{ $row['colorClass'] }}</span></td>
+                        <td><span style="background-color: {{ $row['colorClass'] }}; padding: 2px 8px; border-radius: 3px;">{{ $row['colorClass'] }}</span></td>
                     </tr>
                 @endforeach
                 </tbody>

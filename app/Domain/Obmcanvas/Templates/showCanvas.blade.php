@@ -29,12 +29,12 @@
                         </div>
 
                         <div class="column" style="width: 20%">
-                            <div class="row canvas-row" id="firstRowTop">
+                            <div class="row canvas-row" id="firstRowTopRight">
                                 <div class="column" style="width: 100%; padding-top: 0px">
                                     @include('canvas::element', ['canvasName' => 'obm', 'elementName' => 'obm_cr'])
                                 </div>
                             </div>
-                            <div class="row canvas-row" id="firstRowBottom">
+                            <div class="row canvas-row" id="firstRowBottomRight">
                                 <div class="column" style="width: 100%">
                                     @include('canvas::element', ['canvasName' => 'obm', 'elementName' => 'obm_ch'])
                                 </div>
