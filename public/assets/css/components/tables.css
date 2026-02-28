@@ -580,3 +580,420 @@ table.fc-multimonth-header-table {
     display:none;
 }
 
+/* =========================================================================
+   Table Grid - Spreadsheet-style inline-editable table
+   ========================================================================= */
+
+/* Remove gap between table and quick-add bar */
+#ticketGridTable_wrapper.dataTables_wrapper {
+    padding-bottom: 0;
+}
+
+#ticketGridTable_wrapper .bottom {
+    height: 0;
+    padding: 0;
+    margin: 0;
+}
+
+/* Hidden data columns (used by RowGroup/RowReorder but not visible) */
+#ticketGridTable th.hidden-col,
+#ticketGridTable td.hidden-col {
+    display: none !important;
+    width: 0 !important;
+    padding: 0 !important;
+}
+
+/* --- Group Headers (RowGroup) --- */
+/* Group header rows (RowGroup auto-generates <tr class="dtrg-group"><th>...</th></tr>) */
+#ticketGridTable .dtrg-group {
+    cursor: pointer;
+    background: var(--secondary-background);
+    transition: background-color 0.15s ease;
+}
+
+#ticketGridTable .dtrg-group:hover {
+    background: var(--layered-background);
+}
+
+#ticketGridTable .dtrg-group th {
+    padding: 0;
+    font-weight: normal;
+}
+
+#ticketGridTable .group-header-cell {
+    padding: 10px 12px;
+    font-size: var(--font-size-m);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+#ticketGridTable .group-color-swatch {
+    display: inline-block;
+    width: 4px;
+    height: 22px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+#ticketGridTable .group-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    color: var(--primary-font-color);
+    transition: transform 0.15s ease;
+}
+
+#ticketGridTable .group-toggle i {
+    font-size: var(--font-size-m);
+}
+
+#ticketGridTable .group-label {
+    font-weight: 600;
+    color: var(--primary-font-color);
+}
+
+#ticketGridTable .group-count {
+    font-size: var(--font-size-s);
+    opacity: 0.7;
+    font-weight: normal;
+}
+
+#ticketGridTable .group-info {
+    font-size: var(--font-size-s);
+    color: var(--primary-font-color);
+    opacity: 0.6;
+    margin-left: 8px;
+}
+
+#ticketGridTable .group-actions {
+    margin-left: auto;
+}
+
+#ticketGridTable .group-add-task {
+    font-size: var(--font-size-s);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    padding: 2px 8px;
+}
+
+#ticketGridTable .group-header:hover .group-add-task {
+    opacity: 1;
+}
+
+/* --- Drag Handle --- */
+#ticketGridTable .drag-handle-cell {
+    width: 30px;
+    text-align: center;
+    cursor: grab;
+    padding: 4px;
+}
+
+#ticketGridTable .drag-handle {
+    color: var(--primary-font-color);
+    opacity: 0.25;
+    cursor: grab;
+    transition: opacity 0.15s ease;
+}
+
+#ticketGridTable .drag-handle:hover,
+#ticketGridTable tr:hover .drag-handle {
+    opacity: 0.7;
+}
+
+#ticketGridTable .drag-handle:active {
+    cursor: grabbing;
+}
+
+/* RowReorder drag-in-progress state */
+#ticketGridTable .dt-rowReorder-moving {
+    outline: 2px solid var(--accent1);
+    background: var(--layered-background) !important;
+    opacity: 0.9;
+}
+
+/* --- Title Cell (click-to-edit) --- */
+#ticketGridTable .title-cell {
+    position: relative;
+}
+
+#ticketGridTable .title-cell-inner {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 28px;
+}
+
+#ticketGridTable .title-text {
+    cursor: text;
+    padding: 2px 4px;
+    border-radius: var(--box-radius-small);
+    border: 1px solid transparent;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+    flex-grow: 1;
+    line-height: 1.4;
+}
+
+#ticketGridTable .title-text:hover {
+    border-color: var(--main-border-color);
+    background-color: var(--secondary-background);
+}
+
+#ticketGridTable .title-edit-input {
+    width: 100%;
+    border: 1px solid var(--accent1);
+    border-radius: var(--box-radius-small);
+    padding: 2px 6px;
+    font-size: var(--base-font-size);
+    background: var(--primary-background);
+    color: var(--primary-font-color);
+    outline: none;
+    box-shadow: var(--input-shadow);
+}
+
+#ticketGridTable .parent-link {
+    font-size: var(--font-size-xs);
+    opacity: 0.6;
+    white-space: nowrap;
+}
+
+/* --- Subtask Toggle --- */
+#ticketGridTable .subtask-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    border-radius: var(--box-radius-small);
+    transition: background-color 0.15s ease;
+    flex-shrink: 0;
+}
+
+#ticketGridTable .subtask-toggle:hover {
+    background: var(--secondary-background);
+}
+
+#ticketGridTable .subtask-toggle i {
+    font-size: var(--font-size-s);
+    color: var(--accent2);
+    transition: transform 0.15s ease;
+}
+
+#ticketGridTable tr.shown .subtask-toggle i {
+    transform: rotate(0deg);
+}
+
+/* --- Subtask Child Rows --- */
+.subtask-child-rows {
+    padding: 0;
+}
+
+.subtask-table {
+    border-collapse: collapse;
+}
+
+.subtask-table tr {
+    border-bottom: 1px solid var(--main-border-color);
+}
+
+.subtask-table tr:last-child {
+    border-bottom: none;
+}
+
+.subtask-table td {
+    padding: 6px 8px;
+    font-size: var(--font-size-s);
+}
+
+.subtask-table .subtask-row:hover {
+    background: var(--secondary-background);
+}
+
+.subtask-table .subtask-title-text {
+    cursor: text;
+    padding: 1px 4px;
+    border: 1px solid transparent;
+    border-radius: var(--box-radius-small);
+    transition: border-color 0.15s ease;
+}
+
+.subtask-table .subtask-title-text:hover {
+    border-color: var(--main-border-color);
+}
+
+.subtask-table .subtask-title-input {
+    border: 1px solid var(--accent1);
+    border-radius: var(--box-radius-small);
+    padding: 1px 4px;
+    font-size: var(--font-size-s);
+}
+
+.subtask-table .add-subtask-row td {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.subtask-table .add-subtask-input {
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
+}
+
+.subtask-table .add-subtask-input:focus {
+    opacity: 1;
+}
+
+/* --- Quick-Add Row --- */
+#ticketGridTable .quick-add-row {
+    background: var(--layered-background);
+    border: 1px dashed var(--accent2);
+}
+
+#ticketGridTable .quick-add-row td {
+    padding: 6px 8px;
+}
+
+#ticketGridTable .quick-add-title-input {
+    font-size: var(--base-font-size);
+    color: var(--primary-font-color);
+    width: 100%;
+}
+
+#ticketGridTable .quick-add-title-input::placeholder {
+    color: var(--primary-font-color);
+    opacity: 0.5;
+}
+
+/* --- Inline Create Forms (Milestone/Sprint) --- */
+.inline-create-active {
+    margin: 10px 0;
+    padding: 10px 15px;
+    background: var(--layered-background);
+    border: 1px dashed var(--accent1);
+    border-radius: var(--box-radius);
+}
+
+.inline-create-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.inline-create-form i:first-child {
+    color: var(--accent1);
+    font-size: var(--font-size-l);
+    width: 20px;
+    text-align: center;
+}
+
+.inline-create-input {
+    flex: 1;
+    min-width: 200px;
+    border: 1px solid var(--main-border-color);
+    border-radius: var(--input-radius);
+    padding: 5px 10px;
+    font-size: var(--base-font-size);
+    background: var(--primary-background);
+    color: var(--primary-font-color);
+}
+
+.inline-create-input:focus {
+    border-color: var(--accent1);
+    outline: none;
+    box-shadow: var(--input-shadow);
+}
+
+/* --- Persistent Quick-Add Bar --- */
+.table-grid-quick-add {
+    border: 1px solid var(--main-border-color);
+    border-top: none;
+    border-radius: 0 0 var(--box-radius) var(--box-radius);
+    background: var(--primary-background);
+    padding: 0;
+}
+
+.quick-add-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--main-border-color);
+}
+
+.quick-add-bar .quick-add-icon {
+    color: var(--accent2);
+    font-size: var(--font-size-m);
+    opacity: 0.6;
+}
+
+.quick-add-persistent-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: var(--base-font-size);
+    color: var(--primary-font-color);
+    padding: 4px 0;
+    outline: none;
+}
+
+.quick-add-persistent-input::placeholder {
+    color: var(--primary-font-color);
+    opacity: 0.4;
+}
+
+.quick-add-persistent-input:focus {
+    border-bottom: 2px solid var(--accent1);
+    margin-bottom: -2px;
+}
+
+.quick-add-persistent-input:focus::placeholder {
+    opacity: 0.6;
+}
+
+/* --- Table Grid Bottom Actions --- */
+.table-grid-actions {
+    padding: 6px 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.table-grid-actions .btn-link {
+    font-size: var(--font-size-s);
+    opacity: 0.5;
+    transition: opacity 0.15s ease;
+    padding: 2px 6px;
+}
+
+.table-grid-actions .btn-link:hover {
+    opacity: 1;
+}
+
+/* --- Row hover enhancement --- */
+#ticketGridTable tbody tr.ticketRow {
+    transition: background-color 0.1s ease;
+}
+
+#ticketGridTable tbody tr.ticketRow:hover {
+    background-color: var(--layered-background);
+}
+
+/* --- Compact row height for spreadsheet feel --- */
+#ticketGridTable tbody td {
+    padding: 4px 8px;
+    vertical-align: middle;
+}
+
+#ticketGridTable thead th {
+    padding: 8px;
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+

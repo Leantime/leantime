@@ -2409,6 +2409,38 @@ class Tickets
     }
 
     /**
+     * Bulk update sort indexes for multiple tickets.
+     *
+     * Takes an array of ['id' => ticketId, 'sortindex' => newSortIndex] entries
+     * and persists them in a single transaction.
+     *
+     * @param  array  $updates  Array of associative arrays with 'id' and 'sortindex' keys
+     * @return bool True on success, false on failure
+     *
+     * @api
+     */
+    public function updateTicketsSortIndex(array $updates): bool
+    {
+        if (empty($updates)) {
+            return true;
+        }
+
+        // Transform to the format expected by bulkUpdateSortIndex: [ticketId => sortIndex]
+        $bulkUpdates = [];
+        foreach ($updates as $update) {
+            $bulkUpdates[(int) $update['id']] = (int) $update['sortindex'];
+        }
+
+        $result = $this->ticketRepository->bulkUpdateSortIndex($bulkUpdates);
+
+        if ($result) {
+            self::dispatchEvent('ticket_updated');
+        }
+
+        return $result;
+    }
+
+    /**
      * @throws BindingResolutionException
      *
      * @api
@@ -2806,10 +2838,26 @@ class Tickets
 
         $allTickets = self::dispatchFilter('filterTickets', $allTickets);
 
+        // Build flat ticket list with group metadata for the unified table grid.
+        // Each ticket gets a 'groupKey', 'groupLabel', and 'groupColor' field
+        // so DataTables RowGroup can group client-side.
+        $flatTickets = [];
+        foreach ($allTickets as $groupKey => $group) {
+            foreach ($group['items'] as $ticket) {
+                $ticket['groupKey'] = (string) $groupKey;
+                $ticket['groupLabel'] = $group['label'] ?? (string) $groupKey;
+                $ticket['groupColor'] = $group['color'] ?? '';
+                $ticket['groupMoreInfo'] = $group['more-info'] ?? '';
+                $ticket['groupSortId'] = $group['id'] ?? (string) $groupKey;
+                $flatTickets[] = $ticket;
+            }
+        }
+
         return [
             'currentSprint' => session('currentSprint'),
             'searchCriteria' => $searchCriteria,
             'allTickets' => $allTickets,
+            'flatTickets' => $flatTickets,
             'allTicketStates' => $allTicketStates,
             'efforts' => $efforts,
             'priorities' => $priorities,

@@ -42,6 +42,8 @@ class ShowAll extends Controller
     }
 
     /**
+     * Renders the spreadsheet-style table grid view for all tickets.
+     *
      * @throws \Exception
      */
     public function get($params): Response
@@ -49,6 +51,6 @@ class ShowAll extends Controller
         $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
         array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
-        return $this->tpl->display('tickets.showAll');
+        return $this->tpl->display('tickets::showAll');
     }
 }
