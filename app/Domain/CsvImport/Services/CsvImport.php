@@ -50,7 +50,7 @@ class CsvImport extends Provider implements ProviderIntegration
             ],
         ];
 
-        $this->button['url'] = BASE_URL.'/connector/integration?provider='.$this->id.'#/csvImport/upload';
+        $this->button['url'] = '#/csvImport/upload';
     }
 
     // Logic to connect to provider goes here.
