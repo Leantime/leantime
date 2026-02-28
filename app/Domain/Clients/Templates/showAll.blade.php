@@ -16,15 +16,18 @@
 
         {!! $tpl->displayNotification() !!}
 
-        @if($login::userIsAtLeast('manager'))
-             <x-globals::forms.button link="{{ BASE_URL }}/clients/newClient" type="primary" icon="fa fa-plus">{{ __('link.new_client') }}</x-globals::forms.button>
-        @endif
+        <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
+            @if($login::userIsAtLeast('manager'))
+                <x-globals::forms.button link="{{ BASE_URL }}/clients/newClient" type="primary" icon="fa fa-plus">{{ __('link.new_client') }}</x-globals::forms.button>
+            @endif
+        </div>
 
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allClientsTable">
             <colgroup>
                 <col class='con0' />
                 <col class='con1' />
                 <col class='con0' />
+                <col class='con1' />
             </colgroup>
             <thead>
                 <tr>
@@ -39,7 +42,7 @@
                     <tr>
                         <td>{{ $row['id'] }}</td>
                         <td>
-                            <a class="" href="{{ BASE_URL }}/clients/showClient/{{ $row['id'] }}"><i class='fa fa-plus'></i> {{ e($row['name']) }}</a>
+                            <a href="{{ BASE_URL }}/clients/showClient/{{ $row['id'] }}">{{ e($row['name']) }}</a>
                         </td>
                         <td><a href="{{ e($row['internet']) }}" target="_blank">{{ e($row['internet']) }}</a></td>
                         <td>{{ $row['numberOfProjects'] }}</td>

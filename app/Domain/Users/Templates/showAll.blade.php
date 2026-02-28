@@ -15,12 +15,8 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="row">
-            <div class="col-md-6">
-                <x-globals::forms.button link="{{ BASE_URL }}/users/newUser" type="primary" class="userEditModal" icon="fa fa-plus">{{ __('buttons.add_user') }}</x-globals::forms.button>
-            </div>
-            <div class="col-md-6 align-right">
-            </div>
+        <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
+            <x-globals::forms.button link="{{ BASE_URL }}/users/newUser" type="primary" class="userEditModal" icon="fa fa-plus">{{ __('buttons.add_user') }}</x-globals::forms.button>
         </div>
 
         <div style="overflow-x: auto;">

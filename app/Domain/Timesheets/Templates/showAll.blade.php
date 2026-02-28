@@ -110,135 +110,127 @@
     <div class="maincontentinner">
         <form action="{{ BASE_URL }}/timesheets/showAll" method="post" id="form" name="form">
 
-            <div class="pull-right">
-                <div id="tableButtons" style="display:inline-block"></div>
-            </div>
-            <div class="clearfix"></div>
-            <div class="headtitle" style="">
-
-            <table cellpadding="10" cellspacing="0" width="90%" class="table dataTable filterTable">
-                <tr>
-                    <td>
-                        <label for="clients">{{ __('label.client') }}</label>
-                        <x-globals::forms.select :bare="true" name="clientId">
-                            <option value="-1">{{ strip_tags(__('menu.all_clients')) }}</option>
-                            @foreach ($tpl->get('allClients') as $client)
-                                <option value="{{ $client['id'] }}"
-                                    @if ($tpl->get('clientFilter') == $client['id'])
-                                        selected='selected'
-                                    @endif
-                                >{{ e($client['name']) }}</option>
-                            @endforeach
-                        </x-globals::forms.select>
-                    </td>
-                    <td>
-                        <label for="projects">{{ __('label.project') }}</label>
-                        <x-globals::forms.select :bare="true" name="project" style="max-width:120px;">
-                            <option value="-1">{{ strip_tags(__('menu.all_projects')) }}</option>
-                            @foreach ($tpl->get('allProjects') as $project)
-                                <option value="{{ $project['id'] }}" data-client-id="{{ $project['clientId'] }}"
-                                    @if ($tpl->get('projectFilter') == $project['id'])
-                                        selected='selected'
-                                    @endif
-                                >{{ e($project['name']) }}</option>
-                            @endforeach
-                        </x-globals::forms.select>
-                    </td>
-                    @if (! empty($tpl->get('allTickets')))
-                    <td>
-                        <label for="ticket">{{ __('label.ticket') }}</label>
-                            <x-globals::forms.select :bare="true" name="ticket" style="max-width:120px;">
-                                <option value="-1">{{ strip_tags(__('menu.all_tickets')) }}</option>
-                                @foreach ($tpl->get('allTickets') as $ticket)
-                                    <option value="{{ $ticket['id'] }}" data-project-id="{{ $ticket['projectId'] }}"
-                                        @if ($tpl->get('ticketFilter') == $ticket['id'])
-                                            selected='selected'
-                                        @endif
-                                    >{{ e($ticket['headline']) }}</option>
-                                @endforeach
-                            </x-globals::forms.select>
-                    </td>
-                    @endif
-
-                    <td>
-                        <label for="dateFrom">{{ __('label.date_from') }}</label>
-                        <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
-                        value="{{ format($tpl->get('dateFrom'))->date() }}" size="5" style="max-width:100px; margin-bottom:10px"/></td>
-                    <td>
-                        <label for="dateTo">{{ __('label.date_to') }}</label>
-                        <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
-                        value="{{ format($tpl->get('dateTo'))->date() }}" size="5" style="max-width:100px; margin-bottom:10px" /></td>
-                    <td>
-                    <label for="userId">{{ __('label.employee') }}</label>
-                        <x-globals::forms.select :bare="true" name="userId" id="userId" onchange="submit();" style="max-width:120px;">
-                            <option value="all">{{ __('label.all_employees') }}</option>
-
-                            @foreach ($tpl->get('employees') as $row)
-                                <option value="{{ $row['id'] }}"
-                                    @if ($row['id'] == $tpl->get('employeeFilter'))
-                                        selected="selected"
-                                    @endif
-                                >{{ sprintf(__('text.full_name'), e($row['firstname']), e($row['lastname'])) }}</option>
-                            @endforeach
-                        </x-globals::forms.select>
-                    </td>
-                    <td>
-                        <label for="kind">{{ __('label.type') }}</label>
-                        <x-globals::forms.select :bare="true" id="kind" name="kind" onchange="submit();" style="max-width:120px;">
-                            <option value="all">{{ __('label.all_types') }}</option>
-                            @foreach ($tpl->get('kind') as $key => $row)
-                                <option value="{{ $key }}"
-                                    @if ($key == $tpl->get('actKind'))
-                                        selected="selected"
-                                    @endif
-                                >{{ __($row) }}</option>
-                            @endforeach
-
-                        </x-globals::forms.select>
-                    </td>
-                    <td>
-                        <label for="invEmpl">{{ __('label.invoiced') }}</label>
-                        <x-globals::forms.select :bare="true" name="invEmpl" id="invEmpl" style="max-width:120px;">
-                            <option value="all"
-                                @if ($tpl->get('invEmpl') == 'all' || ! $tpl->get('invEmpl'))
+            <div class="tw:flex tw:items-end tw:flex-wrap tw:gap-x-4 tw:gap-y-3 tw:mb-4">
+                <div>
+                    <label for="clients" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.client') }}</label>
+                    <x-globals::forms.select :bare="true" name="clientId">
+                        <option value="-1">{{ strip_tags(__('menu.all_clients')) }}</option>
+                        @foreach ($tpl->get('allClients') as $client)
+                            <option value="{{ $client['id'] }}"
+                                @if ($tpl->get('clientFilter') == $client['id'])
+                                    selected='selected'
+                                @endif
+                            >{{ e($client['name']) }}</option>
+                        @endforeach
+                    </x-globals::forms.select>
+                </div>
+                <div>
+                    <label for="projects" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.project') }}</label>
+                    <x-globals::forms.select :bare="true" name="project" style="max-width:150px;">
+                        <option value="-1">{{ strip_tags(__('menu.all_projects')) }}</option>
+                        @foreach ($tpl->get('allProjects') as $project)
+                            <option value="{{ $project['id'] }}" data-client-id="{{ $project['clientId'] }}"
+                                @if ($tpl->get('projectFilter') == $project['id'])
+                                    selected='selected'
+                                @endif
+                            >{{ e($project['name']) }}</option>
+                        @endforeach
+                    </x-globals::forms.select>
+                </div>
+                @if (! empty($tpl->get('allTickets')))
+                <div>
+                    <label for="ticket" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.ticket') }}</label>
+                    <x-globals::forms.select :bare="true" name="ticket" style="max-width:150px;">
+                        <option value="-1">{{ strip_tags(__('menu.all_tickets')) }}</option>
+                        @foreach ($tpl->get('allTickets') as $ticket)
+                            <option value="{{ $ticket['id'] }}" data-project-id="{{ $ticket['projectId'] }}"
+                                @if ($tpl->get('ticketFilter') == $ticket['id'])
+                                    selected='selected'
+                                @endif
+                            >{{ e($ticket['headline']) }}</option>
+                        @endforeach
+                    </x-globals::forms.select>
+                </div>
+                @endif
+                <div>
+                    <label for="dateFrom" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.date_from') }}</label>
+                    <input type="text" id="dateFrom" class="dateFrom" name="dateFrom" autocomplete="off"
+                        value="{{ format($tpl->get('dateFrom'))->date() }}" style="width:110px;" />
+                </div>
+                <div>
+                    <label for="dateTo" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.date_to') }}</label>
+                    <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
+                        value="{{ format($tpl->get('dateTo'))->date() }}" style="width:110px;" />
+                </div>
+                <div>
+                    <label for="userId" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.employee') }}</label>
+                    <x-globals::forms.select :bare="true" name="userId" id="userId" onchange="submit();" style="max-width:150px;">
+                        <option value="all">{{ __('label.all_employees') }}</option>
+                        @foreach ($tpl->get('employees') as $row)
+                            <option value="{{ $row['id'] }}"
+                                @if ($row['id'] == $tpl->get('employeeFilter'))
                                     selected="selected"
                                 @endif
-                            >{{ __('label.invoiced_all') }}</option>
-                            <option value="1"
-                                @if ($tpl->get('invEmpl') == '1')
+                            >{{ sprintf(__('text.full_name'), e($row['firstname']), e($row['lastname'])) }}</option>
+                        @endforeach
+                    </x-globals::forms.select>
+                </div>
+                <div>
+                    <label for="kind" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.type') }}</label>
+                    <x-globals::forms.select :bare="true" id="kind" name="kind" onchange="submit();" style="max-width:130px;">
+                        <option value="all">{{ __('label.all_types') }}</option>
+                        @foreach ($tpl->get('kind') as $key => $row)
+                            <option value="{{ $key }}"
+                                @if ($key == $tpl->get('actKind'))
                                     selected="selected"
                                 @endif
-                            >{{ __('label.invoiced') }}</option>
-                            <option value="0"
-                                @if ($tpl->get('invEmpl') == '0')
-                                    selected="selected"
-                                @endif
-                            >{{ __('label.invoiced_not') }}</option>
-                        </x-globals::forms.select>
-                    </td>
-                    <td>
-                        <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
-                            @if ($tpl->get('invComp') == '1')
-                                checked="checked"
+                            >{{ __($row) }}</option>
+                        @endforeach
+                    </x-globals::forms.select>
+                </div>
+                <div>
+                    <label for="invEmpl" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.invoiced') }}</label>
+                    <x-globals::forms.select :bare="true" name="invEmpl" id="invEmpl" style="max-width:130px;">
+                        <option value="all"
+                            @if ($tpl->get('invEmpl') == 'all' || ! $tpl->get('invEmpl'))
+                                selected="selected"
                             @endif
-                        />
-                        <label for="invEmpl">{{ __('label.invoiced_comp') }}</label>
-                    </td>
-
-                    <td>
-                        <input type="checkbox" value="on" name="paid" id="paid" onclick="submit();"
-                            @if ($tpl->get('paid') == '1')
-                                checked="checked"
+                        >{{ __('label.invoiced_all') }}</option>
+                        <option value="1"
+                            @if ($tpl->get('invEmpl') == '1')
+                                selected="selected"
                             @endif
-                        />
-                        <label for="paid">{{ __('label.paid') }}</label>
-                    </td>
-                    <td>
-                        <input type="hidden" name='filterSubmit' value="1"/>
-                        <x-globals::forms.button submit type="primary" class="reload">{{ __('buttons.search') }}</x-globals::forms.button>
-                    </td>
-                </tr>
-            </table>
+                        >{{ __('label.invoiced') }}</option>
+                        <option value="0"
+                            @if ($tpl->get('invEmpl') == '0')
+                                selected="selected"
+                            @endif
+                        >{{ __('label.invoiced_not') }}</option>
+                    </x-globals::forms.select>
+                </div>
+                <div class="tw:flex tw:items-center tw:gap-1 tw:pb-[6px]">
+                    <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
+                        @if ($tpl->get('invComp') == '1')
+                            checked="checked"
+                        @endif
+                    />
+                    <label for="invComp">{{ __('label.invoiced_comp') }}</label>
+                </div>
+                <div class="tw:flex tw:items-center tw:gap-1 tw:pb-[6px]">
+                    <input type="checkbox" value="on" name="paid" id="paid" onclick="submit();"
+                        @if ($tpl->get('paid') == '1')
+                            checked="checked"
+                        @endif
+                    />
+                    <label for="paid">{{ __('label.paid') }}</label>
+                </div>
+                <div class="tw:pb-[2px]">
+                    <input type="hidden" name='filterSubmit' value="1"/>
+                    <x-globals::forms.button submit type="primary" class="reload">{{ __('buttons.search') }}</x-globals::forms.button>
+                </div>
+                <div class="tw:ml-auto tw:pb-[2px]">
+                    <div id="tableButtons" style="display:inline-block"></div>
+                </div>
             </div>
 
             <div style="overflow-x: auto;">

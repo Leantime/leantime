@@ -17,15 +17,17 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="pull-right">
-            <form action="" method="post">
+        <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
+            <x-globals::forms.button link="{{ BASE_URL }}/projects/newProject" type="primary" icon="fa fa-plus">{{ __('link.new_project') }}</x-globals::forms.button>
+
+            <div class="tw:flex-1"></div>
+
+            <form action="" method="post" class="tw:flex tw:items-center tw:gap-1">
                 <input type="hidden" name="hideClosedProjects" value="1" />
-                <input type="checkbox" name="showClosedProjects" onclick="form.submit();" id="showClosed" {{ $showClosedProjects ? "checked='checked'" : '' }} />&nbsp;<label for="showClosed" class="pull-right">Show Closed Projects</label>
+                <input type="checkbox" name="showClosedProjects" onclick="form.submit();" id="showClosed" {{ $showClosedProjects ? "checked='checked'" : '' }} />
+                <label for="showClosed">Show Closed Projects</label>
             </form>
         </div>
-
-        <x-globals::forms.button link="{{ BASE_URL }}/projects/newProject" type="primary" icon="fa fa-plus">{{ __('link.new_project') }}</x-globals::forms.button>
-        <div class="clearall"></div>
         <div style="overflow-x: auto;">
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">
 
