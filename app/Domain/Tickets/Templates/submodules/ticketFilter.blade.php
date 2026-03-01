@@ -8,6 +8,9 @@
     $searchCriteria = $tpl->get('searchCriteria');
     $statusLabels = $tpl->get('allTicketStates');
     $taskToggle = $tpl->get('enableTaskTypeToggle');
+
+    // Helper: normalize filter value to array (handles both string and array from form submissions)
+    $toArray = fn($value) => is_array($value) ? $value : explode(',', (string) $value);
 @endphp
 
 <form action="" method="get" id="ticketSearch">
@@ -55,7 +58,7 @@
                         <option value="" data-placeholder="true">All Users</option>
                         @foreach($tpl->get('users') as $userRow)
                             <option value="{{ $userRow['id'] }}"
-                                {{ ($searchCriteria['users'] !== false && $searchCriteria['users'] !== null && array_search($userRow['id'], explode(',', $searchCriteria['users'])) !== false) ? "selected='selected'" : '' }}
+                                {{ ($searchCriteria['users'] !== false && $searchCriteria['users'] !== null && in_array($userRow['id'], $toArray($searchCriteria['users']))) ? "selected='selected'" : '' }}
                             >{{ sprintf(__('text.full_name'), e($userRow['firstname']), e($userRow['lastname'])) }}</option>
                         @endforeach
                     </x-globals::forms.select>
@@ -67,7 +70,7 @@
                         @if(is_array($tpl->get('milestones')))
                             @foreach($tpl->get('milestones') as $milestoneRow)
                                 <option value="{{ $milestoneRow->id }}"
-                                    {{ (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id) && array_search($milestoneRow->id, explode(',', $searchCriteria['milestone'])) !== false) ? "selected='selected'" : '' }}
+                                    {{ (isset($searchCriteria['milestone']) && in_array($milestoneRow->id, $toArray($searchCriteria['milestone']))) ? "selected='selected'" : '' }}
                                 >{{ e($milestoneRow->headline) }}</option>
                             @endforeach
                         @endif
@@ -79,7 +82,7 @@
                         <option value="" data-placeholder="true">{{ __('label.all_types') }}</option>
                         @foreach($tpl->get('types') as $type)
                             <option value="{{ $type }}"
-                                {{ (isset($searchCriteria['type']) && array_search($type, explode(',', $searchCriteria['type'])) !== false) ? "selected='selected'" : '' }}
+                                {{ (isset($searchCriteria['type']) && in_array($type, $toArray($searchCriteria['type']))) ? "selected='selected'" : '' }}
                             >{{ $type }}</option>
                         @endforeach
                     </x-globals::forms.select>
@@ -90,7 +93,7 @@
                         <option value="" data-placeholder="true">{{ __('label.all_priorities') }}</option>
                         @foreach($tpl->get('priorities') as $priorityKey => $priorityValue)
                             <option value="{{ $priorityKey }}"
-                                {{ (isset($searchCriteria['priority']) && array_search($priorityKey, explode(',', $searchCriteria['priority'])) !== false) ? "selected='selected'" : '' }}
+                                {{ (isset($searchCriteria['priority']) && in_array($priorityKey, $toArray($searchCriteria['priority']))) ? "selected='selected'" : '' }}
                             >{{ $priorityValue }}</option>
                         @endforeach
                     </x-globals::forms.select>
@@ -99,10 +102,10 @@
                 <x-globals::forms.form-field label-text="{{ __('label.todo_status') }}" name="statusSelect">
                     <x-globals::forms.select :bare="true" multiple="multiple" data-placeholder="{{ __('input.placeholders.filter_by_status') }}" name="status" class="status-select" id="statusSelect">
                         <option value="" data-placeholder="true">All Statuses</option>
-                        <option value="not_done" {{ ($searchCriteria['status'] !== false && str_contains($searchCriteria['status'], 'not_done')) ? "selected='selected'" : '' }}>{{ __('label.not_done') }}</option>
+                        <option value="not_done" {{ ($searchCriteria['status'] !== false && in_array('not_done', $toArray($searchCriteria['status']))) ? "selected='selected'" : '' }}>{{ __('label.not_done') }}</option>
                         @foreach($statusLabels as $key => $label)
                             <option value="{{ $key }}"
-                                {{ ($searchCriteria['status'] !== false && array_search((string) $key, explode(',', $searchCriteria['status'])) !== false) ? "selected='selected'" : '' }}
+                                {{ ($searchCriteria['status'] !== false && in_array((string) $key, $toArray($searchCriteria['status']))) ? "selected='selected'" : '' }}
                             >{{ e($label['name']) }}</option>
                         @endforeach
                     </x-globals::forms.select>

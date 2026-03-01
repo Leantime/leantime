@@ -203,4 +203,16 @@
         return show(options);
     };
     window._growlShim = growlShim;
+
+    // jQuery.growl shim — ticketsController.js and other legacy code call jQuery.growl()
+    if (typeof jQuery !== 'undefined') {
+        jQuery.growl = growlShim;
+    } else {
+        // Attach once jQuery is available
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof jQuery !== 'undefined') {
+                jQuery.growl = growlShim;
+            }
+        });
+    }
 })();

@@ -51,10 +51,10 @@ $hasError = $isActive && ! empty($reopenState['error']);
 
         <div class="form-group">
             <label for="headline-{{ $statusId }}-{{ $swimlaneKey ?? 'default' }}" class="sr-only">Task name</label>
-            <x-globals::forms.input
+            <input type="text"
                    name="headline"
                    id="headline-{{ $statusId }}-{{ $swimlaneKey ?? 'default' }}"
-                   class="quickAddInput {{ $hasError ? 'error' : '' }}"
+                   class="form-control quickAddInput {{ $hasError ? 'error' : '' }}"
                    placeholder="What are you working on? ↵"
                    value="{{ e($savedHeadline) }}"
                    {{ $isActive ? 'autofocus' : '' }}

@@ -282,7 +282,7 @@
     ]
   },
   "app/Domain/Projects/Js/projectsController.js": {
-    "file": "assets/projectsController-DCV-R9Ey.js",
+    "file": "assets/projectsController-CtzZEVhC.js",
     "name": "projectsController",
     "src": "app/Domain/Projects/Js/projectsController.js",
     "isDynamicEntry": true
@@ -971,7 +971,7 @@
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-DQOWPZkX.js",
+    "file": "assets/compiled-app-CLNSeCkW.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,

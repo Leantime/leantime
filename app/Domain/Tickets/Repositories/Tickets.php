@@ -17,6 +17,19 @@ class Tickets
 {
     use EventhelperCore;
 
+    /**
+     * Normalize a search criteria value into an array.
+     * Handles both comma-separated strings and arrays from form submissions.
+     */
+    private function toArray(mixed $value): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        return explode(',', (string) $value);
+    }
+
     public ?object $result = null;
 
     public ?object $tickets = null;
@@ -481,7 +494,7 @@ class Tickets
         }
 
         if (isset($searchCriteria['users']) && $searchCriteria['users'] != '') {
-            $userIds = explode(',', $searchCriteria['users']);
+            $userIds = $this->toArray($searchCriteria['users']);
             $query->where(function ($q) use ($userIds) {
                 $q->whereIn('zp_tickets.editorId', $userIds)
                     ->orWhereIn('er.entityB', $userIds);
@@ -489,14 +502,14 @@ class Tickets
         }
 
         if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] != '') {
-            $milestoneIds = explode(',', $searchCriteria['milestone']);
+            $milestoneIds = $this->toArray($searchCriteria['milestone']);
             $query->whereIn('zp_tickets.milestoneid', $milestoneIds);
         }
 
         if (isset($searchCriteria['status']) && $searchCriteria['status'] == 'all') {
             // No filter
         } elseif (isset($searchCriteria['status']) && $searchCriteria['status'] != '') {
-            $statusArray = explode(',', $searchCriteria['status']);
+            $statusArray = $this->toArray($searchCriteria['status']);
 
             if (array_search('not_done', $statusArray) !== false) {
                 if ($searchCriteria['currentProject'] != '') {
@@ -525,7 +538,7 @@ class Tickets
                     }
                 }
             } else {
-                $statuses = array_map('intval', explode(',', $searchCriteria['status']));
+                $statuses = array_map('intval', $this->toArray($searchCriteria['status']));
                 $query->whereIn('zp_tickets.status', $statuses);
             }
         } else {
@@ -533,12 +546,12 @@ class Tickets
         }
 
         if (isset($searchCriteria['type']) && $searchCriteria['type'] != '') {
-            $types = array_map('strtolower', explode(',', $searchCriteria['type']));
+            $types = array_map('strtolower', $this->toArray($searchCriteria['type']));
             $query->whereIn($this->connection->raw('LOWER(zp_tickets.type)'), $types);
         }
 
         if (isset($searchCriteria['priority']) && $searchCriteria['priority'] != '') {
-            $priorities = array_map('strtolower', explode(',', $searchCriteria['priority']));
+            $priorities = array_map('strtolower', $this->toArray($searchCriteria['priority']));
             $query->whereIn($this->connection->raw('LOWER(zp_tickets.priority)'), $priorities);
         }
 
@@ -555,7 +568,7 @@ class Tickets
         }
 
         if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] > 0 && $searchCriteria['sprint'] != 'all') {
-            $sprintIds = explode(',', $searchCriteria['sprint']);
+            $sprintIds = $this->toArray($searchCriteria['sprint']);
             $query->whereIn('zp_tickets.sprint', $sprintIds);
         }
 
@@ -1118,24 +1131,24 @@ class Tickets
         }
 
         if (isset($searchCriteria['clients']) && $searchCriteria['clients'] != 0 && $searchCriteria['clients'] != '') {
-            $clientIds = explode(',', $searchCriteria['clients']);
+            $clientIds = $this->toArray($searchCriteria['clients']);
             $query->whereIn('zp_projects.clientId', $clientIds);
         }
 
         if (isset($searchCriteria['users']) && $searchCriteria['users'] != '') {
-            $userIds = explode(',', $searchCriteria['users']);
+            $userIds = $this->toArray($searchCriteria['users']);
             $query->whereIn('zp_tickets.editorId', $userIds);
         }
 
         if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] != '') {
-            $milestoneIds = explode(',', $searchCriteria['milestone']);
+            $milestoneIds = $this->toArray($searchCriteria['milestone']);
             $query->whereIn('zp_tickets.milestoneid', $milestoneIds);
         }
 
         if (isset($searchCriteria['status']) && $searchCriteria['status'] == 'all') {
             // No filter
         } elseif (isset($searchCriteria['status']) && $searchCriteria['status'] != '') {
-            $statusArray = explode(',', $searchCriteria['status']);
+            $statusArray = $this->toArray($searchCriteria['status']);
 
             if (array_search('not_done', $statusArray) !== false) {
                 if ($searchCriteria['currentProject'] != '') {
@@ -1164,7 +1177,7 @@ class Tickets
                     }
                 }
             } else {
-                $statuses = array_map('intval', explode(',', $searchCriteria['status']));
+                $statuses = array_map('intval', $this->toArray($searchCriteria['status']));
                 $query->whereIn('zp_tickets.status', $statuses);
             }
         } else {
@@ -1172,12 +1185,12 @@ class Tickets
         }
 
         if (isset($searchCriteria['type']) && $searchCriteria['type'] != '') {
-            $types = array_map('strtolower', explode(',', $searchCriteria['type']));
+            $types = array_map('strtolower', $this->toArray($searchCriteria['type']));
             $query->whereIn($this->connection->raw('LOWER(zp_tickets.type)'), $types);
         }
 
         if (isset($searchCriteria['priority']) && $searchCriteria['priority'] != '') {
-            $priorities = array_map('strtolower', explode(',', $searchCriteria['priority']));
+            $priorities = array_map('strtolower', $this->toArray($searchCriteria['priority']));
             $query->whereIn($this->connection->raw('LOWER(zp_tickets.priority)'), $priorities);
         }
 
@@ -1194,7 +1207,7 @@ class Tickets
         }
 
         if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] > 0 && $searchCriteria['sprint'] != 'all') {
-            $sprintIds = explode(',', $searchCriteria['sprint']);
+            $sprintIds = $this->toArray($searchCriteria['sprint']);
             $query->where(function ($q) use ($sprintIds) {
                 $q->whereIn('zp_tickets.sprint', $sprintIds)
                     ->orWhere('zp_tickets.type', 'milestone');
