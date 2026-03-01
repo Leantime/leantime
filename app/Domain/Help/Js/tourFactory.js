@@ -109,7 +109,7 @@ leantime.tourFactory = (function () {
                     id: "my-todo-widget-add",
                     title: "Add More Tasks",
                     text: "You can add more tasks by clicking the plus button in each section, or by using the 3-dot menu next to each task.",
-                    attachTo: { element: '#yourToDoContainer .fa-circle-plus', on: 'bottom' }
+                    attachTo: { element: '#yourToDoContainer .add-task-button', on: 'bottom' }
                 },
                 {
                     id: "finish",

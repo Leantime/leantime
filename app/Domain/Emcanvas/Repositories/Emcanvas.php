@@ -21,7 +21,7 @@ class Emcanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-heart';
+    protected string $icon = 'favorite';
 
     /***
      * disclaimer - Disclaimer
@@ -37,15 +37,15 @@ class Emcanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'em_who' => ['icon' => 'fa-1', 'title' => 'box.em.who'],
-        'em_what' => ['icon' => 'fa-2', 'title' => 'box.em.what'],
-        'em_see' => ['icon' => 'fa-3', 'title' => 'box.em.see'],
-        'em_say' => ['icon' => 'fa-4', 'title' => 'box.em.say'],
-        'em_do' => ['icon' => 'fa-5', 'title' => 'box.em.do'],
-        'em_hear' => ['icon' => 'fa-6', 'title' => 'box.em.hear'],
-        'em_pains' => ['icon' => 'fa-face-frown', 'title' => 'box.em.pains'],
-        'em_gains' => ['icon' => 'fa-face-smile', 'title' => 'box.em.gains'],
-        'em_motives' => ['icon' => 'fa-face-rolling-eyes', 'title' => 'box.em.motives'],
+        'em_who' => ['icon' => 'counter_1', 'title' => 'box.em.who'],
+        'em_what' => ['icon' => 'counter_2', 'title' => 'box.em.what'],
+        'em_see' => ['icon' => 'counter_3', 'title' => 'box.em.see'],
+        'em_say' => ['icon' => 'counter_4', 'title' => 'box.em.say'],
+        'em_do' => ['icon' => 'counter_5', 'title' => 'box.em.do'],
+        'em_hear' => ['icon' => 'counter_6', 'title' => 'box.em.hear'],
+        'em_pains' => ['icon' => 'sentiment_dissatisfied', 'title' => 'box.em.pains'],
+        'em_gains' => ['icon' => 'sentiment_satisfied', 'title' => 'box.em.gains'],
+        'em_motives' => ['icon' => 'sentiment_dissatisfied', 'title' => 'box.em.motives'],
     ];
 
     /**

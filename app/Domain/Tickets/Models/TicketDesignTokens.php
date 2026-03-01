@@ -66,15 +66,15 @@ class TicketDesignTokens
      * Ticket types with emoji icons
      */
     public const TYPES = [
-        'story' => ['label' => 'Story', 'icon' => '👤', 'faIcon' => 'fa-book'],
-        'task' => ['label' => 'Task', 'icon' => '📋', 'faIcon' => 'fa-check-square'],
-        'subtask' => ['label' => 'Subtask', 'icon' => '📋', 'faIcon' => 'fa-diagram-successor'],
-        'bug' => ['label' => 'Bug', 'icon' => '🐛', 'faIcon' => 'fa-bug'],
-        'feature' => ['label' => 'Feature', 'icon' => '✨', 'faIcon' => 'fa-star'],
-        'epic' => ['label' => 'Epic', 'icon' => '🏔️', 'faIcon' => 'fa-mountain'],
-        'documentation' => ['label' => 'Documentation', 'icon' => '📄', 'faIcon' => 'fa-file'],
-        'improvement' => ['label' => 'Improvement', 'icon' => '🔧', 'faIcon' => 'fa-wrench'],
-        'research' => ['label' => 'Research', 'icon' => '🔬', 'faIcon' => 'fa-flask'],
+        'story' => ['label' => 'Story', 'icon' => '👤', 'materialIcon' => 'auto_stories'],
+        'task' => ['label' => 'Task', 'icon' => '📋', 'materialIcon' => 'check_box'],
+        'subtask' => ['label' => 'Subtask', 'icon' => '📋', 'materialIcon' => 'account_tree'],
+        'bug' => ['label' => 'Bug', 'icon' => '🐛', 'materialIcon' => 'bug_report'],
+        'feature' => ['label' => 'Feature', 'icon' => '✨', 'materialIcon' => 'star'],
+        'epic' => ['label' => 'Epic', 'icon' => '🏔️', 'materialIcon' => 'terrain'],
+        'documentation' => ['label' => 'Documentation', 'icon' => '📄', 'materialIcon' => 'description'],
+        'improvement' => ['label' => 'Improvement', 'icon' => '🔧', 'materialIcon' => 'build'],
+        'research' => ['label' => 'Research', 'icon' => '🔬', 'materialIcon' => 'science'],
     ];
 
     /**

@@ -21,7 +21,7 @@ class Lbmcanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-building';
+    protected string $icon = 'apartment';
 
     /***
      * disclaimer - Disclaimer
@@ -37,10 +37,10 @@ class Lbmcanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'lbm_customers' => ['icon' => 'fa-users',      'color' => '#ccffcc', 'title' => 'box.lbm.customers'],
-        'lbm_offerings' => ['icon' => 'fa-barcode',    'color' => '#ffcccc', 'title' => 'box.lbm.offerings'],
-        'lbm_capabilities' => ['icon' => 'fa-pen-ruler',  'color' => '#ccecff', 'title' => 'box.lbm.capabilities'],
-        'lbm_financials' => ['icon' => 'fa-money-bill', 'color' => '#ffffaa', 'title' => 'box.lbm.financials'],
+        'lbm_customers' => ['icon' => 'group',      'color' => '#ccffcc', 'title' => 'box.lbm.customers'],
+        'lbm_offerings' => ['icon' => 'barcode',    'color' => '#ffcccc', 'title' => 'box.lbm.offerings'],
+        'lbm_capabilities' => ['icon' => 'design_services',  'color' => '#ccecff', 'title' => 'box.lbm.capabilities'],
+        'lbm_financials' => ['icon' => 'payments', 'color' => '#ffffaa', 'title' => 'box.lbm.financials'],
     ];
 
     /**

@@ -23,12 +23,12 @@ class Reactions
             'funny' => '😂',
         ],
         'contentReactions' => [
-            'upvote' => "<i class='fa-solid fa-up'></i>",
-            'downvote' => "<i class='fa-solid fa-down'></i>",
+            'upvote' => "<span class='material-symbols-outlined'>arrow_upward</span>",
+            'downvote' => "<span class='material-symbols-outlined'>arrow_downward</span>",
         ],
         'entityReactions' => [
-            'favorite' => "<i class='fa fa-star'></i>",
-            'watch' => "<i class='fa fa-eye'></i>",
+            'favorite' => "<span class='material-symbols-outlined'>star</span>",
+            'watch' => "<span class='material-symbols-outlined'>visibility</span>",
         ],
 
     ];

@@ -21,7 +21,7 @@ class Swotcanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-chess-board';
+    protected string $icon = 'grid_view';
 
     /**
      * canvasTypes - Must be extended
@@ -29,10 +29,10 @@ class Swotcanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'swot_strengths' => ['icon' => 'fa-dumbbell', 'title' => 'box.swot.strengths'],
-        'swot_weaknesses' => ['icon' => 'fa-fire', 'title' => 'box.swot.weaknesses'],
-        'swot_opportunities' => ['icon' => 'fa-clover', 'title' => 'box.swot.opportunities'],
-        'swot_threats' => ['icon' => 'fa-bolt-lightning', 'title' => 'box.swot.threats'],
+        'swot_strengths' => ['icon' => 'fitness_center', 'title' => 'box.swot.strengths'],
+        'swot_weaknesses' => ['icon' => 'local_fire_department', 'title' => 'box.swot.weaknesses'],
+        'swot_opportunities' => ['icon' => 'eco', 'title' => 'box.swot.opportunities'],
+        'swot_threats' => ['icon' => 'electric_bolt', 'title' => 'box.swot.threats'],
     ];
 
     /**

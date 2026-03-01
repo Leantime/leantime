@@ -21,7 +21,7 @@ class Dbmcanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-building';
+    protected string $icon = 'apartment';
 
     /***
      * disclaimer - Disclaimer
@@ -37,21 +37,21 @@ class Dbmcanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'dbm_cs' => ['icon' => 'fa-users',               'color' => '#ccffcc', 'title' => 'box.dbm.cs'],
-        'dbm_cj' => ['icon' => 'fa-user-doctor',         'color' => '#ccffcc', 'title' => 'box.dbm.cj'],
-        'dbm_cr' => ['icon' => 'fa-heart',               'color' => '#ccffcc', 'title' => 'box.dbm.cr'],
-        'dbm_cd' => ['icon' => 'fa-truck',               'color' => '#ccffcc', 'title' => 'box.dbm.cd'],
-        'dbm_ovp' => ['icon' => 'fa-money-bill-transfer', 'color' => '#ffcccc', 'title' => 'box.dbm.ovp'],
-        'dbm_ops' => ['icon' => 'fa-barcode',             'color' => '#ffcccc', 'title' => 'box.dbm.ops'],
-        'dbm_kad' => ['icon' => 'fa-chess',               'color' => '#ccecff', 'title' => 'box.dbm.kad'],
-        'dbm_kac' => ['icon' => 'fa-hand-holding-dollar', 'color' => '#ccecff', 'title' => 'box.dbm.kac'],
-        'dbm_kao' => ['icon' => 'fa-handshake',           'color' => '#ccecff', 'title' => 'box.dbm.kao'],
-        'dbm_krp' => ['icon' => 'fa-apple-whole',         'color' => '#ccecff', 'title' => 'box.dbm.krp'],
-        'dbm_krc' => ['icon' => 'fa-industry',            'color' => '#ccecff', 'title' => 'box.dbm.krc'],
-        'dbm_krl' => ['icon' => 'fa-person-digging',      'color' => '#ccecff', 'title' => 'box.dbm.krl'],
-        'dbm_krs' => ['icon' => 'fa-lightbulb',           'color' => '#ccecff', 'title' => 'box.dbm.krs'],
-        'dbm_fr' => ['icon' => 'fa-sack-dollar',         'color' => '#ffffaa', 'title' => 'box.dbm.fr'],
-        'dbm_fc' => ['icon' => 'fa-tags',                'color' => '#ffffaa', 'title' => 'box.dbm.fc'],
+        'dbm_cs' => ['icon' => 'group',               'color' => '#ccffcc', 'title' => 'box.dbm.cs'],
+        'dbm_cj' => ['icon' => 'medical_services',         'color' => '#ccffcc', 'title' => 'box.dbm.cj'],
+        'dbm_cr' => ['icon' => 'favorite',               'color' => '#ccffcc', 'title' => 'box.dbm.cr'],
+        'dbm_cd' => ['icon' => 'local_shipping',               'color' => '#ccffcc', 'title' => 'box.dbm.cd'],
+        'dbm_ovp' => ['icon' => 'currency_exchange', 'color' => '#ffcccc', 'title' => 'box.dbm.ovp'],
+        'dbm_ops' => ['icon' => 'barcode',             'color' => '#ffcccc', 'title' => 'box.dbm.ops'],
+        'dbm_kad' => ['icon' => 'extension',               'color' => '#ccecff', 'title' => 'box.dbm.kad'],
+        'dbm_kac' => ['icon' => 'savings', 'color' => '#ccecff', 'title' => 'box.dbm.kac'],
+        'dbm_kao' => ['icon' => 'handshake',           'color' => '#ccecff', 'title' => 'box.dbm.kao'],
+        'dbm_krp' => ['icon' => 'nutrition',         'color' => '#ccecff', 'title' => 'box.dbm.krp'],
+        'dbm_krc' => ['icon' => 'factory',            'color' => '#ccecff', 'title' => 'box.dbm.krc'],
+        'dbm_krl' => ['icon' => 'engineering',      'color' => '#ccecff', 'title' => 'box.dbm.krl'],
+        'dbm_krs' => ['icon' => 'lightbulb',           'color' => '#ccecff', 'title' => 'box.dbm.krs'],
+        'dbm_fr' => ['icon' => 'savings',         'color' => '#ffffaa', 'title' => 'box.dbm.fr'],
+        'dbm_fc' => ['icon' => 'sell',                'color' => '#ffffaa', 'title' => 'box.dbm.fc'],
     ];
 
     /**

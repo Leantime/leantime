@@ -26,7 +26,7 @@ class Goalcanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-bullseye';
+    protected string $icon = 'adjust';
 
     /**
      * canvasTypes - Must be extended
@@ -34,7 +34,7 @@ class Goalcanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'goal' => ['icon' => 'fa-bullseye', 'title' => 'box.goal'],
+        'goal' => ['icon' => 'adjust', 'title' => 'box.goal'],
     ];
 
     /**
@@ -43,9 +43,9 @@ class Goalcanvas extends Canvas
      * @acces protected
      */
     protected array $statusLabels = [
-        'status_ontrack' => ['icon' => 'fa-circle-check', 'color' => 'green',       'title' => 'status.goal.ontrack', 'dropdown' => 'success',    'active' => true],
-        'status_atrisk' => ['icon' => 'fa-triangle-exclamation', 'color' => 'yellow',       'title' => 'status.goal.atrisk', 'dropdown' => 'warning',    'active' => true],
-        'status_miss' => ['icon' => 'fa-circle-xmark', 'color' => 'red',       'title' => 'status.goal.miss', 'dropdown' => 'danger',    'active' => true],
+        'status_ontrack' => ['icon' => 'check_circle', 'color' => 'green',       'title' => 'status.goal.ontrack', 'dropdown' => 'success',    'active' => true],
+        'status_atrisk' => ['icon' => 'warning', 'color' => 'yellow',       'title' => 'status.goal.atrisk', 'dropdown' => 'warning',    'active' => true],
+        'status_miss' => ['icon' => 'cancel', 'color' => 'red',       'title' => 'status.goal.miss', 'dropdown' => 'danger',    'active' => true],
 
     ];
 

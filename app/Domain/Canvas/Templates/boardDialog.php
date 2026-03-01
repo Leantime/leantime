@@ -13,7 +13,7 @@ $canvasName = $tpl->get('canvasName');
 
   <form action="<?= BASE_URL ?>/<?= $canvasName?>canvas/boardDialog<?= isset($_GET['id']) ? '/'.(int) $_GET['id'] : ''?>" method="post" class="formModal">
     <div style="margin-bottom: 15px;">
-      <h4 class="widgettitle title-light"><i class='fa fa-plus'></i> <?= $tpl->__('subtitles.create_new_board') ?></h4>
+      <h4 class="widgettitle title-light"><span class="material-symbols-outlined">add</span> <?= $tpl->__('subtitles.create_new_board') ?></h4>
     </div>
     <div style="margin-bottom: 15px;">
       <label><?= $tpl->__('label.title_new') ?></label><br />

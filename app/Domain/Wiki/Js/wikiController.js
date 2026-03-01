@@ -16,7 +16,7 @@ leantime.wikiController = (function () {
             },
             "types" : {
                 "default": {
-                    "icon": "far fa-file-alt"
+                    "icon": false // TODO: jstree icon picker needs rework for Material Symbols
                 },
             },
             "plugins" : ["wholerow", "types", "state"]

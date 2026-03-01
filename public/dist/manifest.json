@@ -282,7 +282,7 @@
     ]
   },
   "app/Domain/Projects/Js/projectsController.js": {
-    "file": "assets/projectsController-kUCbx_Fv.js",
+    "file": "assets/projectsController-DCV-R9Ey.js",
     "name": "projectsController",
     "src": "app/Domain/Projects/Js/projectsController.js",
     "isDynamicEntry": true
@@ -342,7 +342,7 @@
     ]
   },
   "app/Domain/Tickets/Js/kanbanController.js": {
-    "file": "assets/kanbanController-BaewnVvF.js",
+    "file": "assets/kanbanController-CdWL11RW.js",
     "name": "kanbanController",
     "src": "app/Domain/Tickets/Js/kanbanController.js",
     "isDynamicEntry": true
@@ -363,7 +363,7 @@
     ]
   },
   "app/Domain/Wiki/Js/wikiController.js": {
-    "file": "assets/wikiController-BEslrRep.js",
+    "file": "assets/wikiController-BOsG0ssm.js",
     "name": "wikiController",
     "src": "app/Domain/Wiki/Js/wikiController.js",
     "isDynamicEntry": true
@@ -373,6 +373,10 @@
     "name": "katex",
     "src": "node_modules/katex/dist/katex.mjs",
     "isDynamicEntry": true
+  },
+  "node_modules/material-symbols/material-symbols-outlined.woff2": {
+    "file": "assets/material-symbols-outlined-Bgl3Icaq.woff2",
+    "src": "node_modules/material-symbols/material-symbols-outlined.woff2"
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/architectureDiagram-KFL7JDKH.mjs": {
     "file": "assets/architectureDiagram-KFL7JDKH-IaD3874p.js",
@@ -952,7 +956,7 @@
     "src": "public/assets/images/svg/loading-animation.svg"
   },
   "resources/css/app.css": {
-    "file": "assets/app-C7uVc_Ol.css",
+    "file": "assets/app-DIrV_jeK.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -962,12 +966,12 @@
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-DfoMrxkE.css",
+    "file": "assets/main-CNoRfR5Z.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-BJiwH9Wt.js",
+    "file": "assets/compiled-app-Bkz6ZFVZ.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,

@@ -8,8 +8,8 @@
 @endphp
 
 <h4 class="widgettitle title-primary">
-    @if (isset($canvasTypes[$elementName]['icon']))
-        <i class="fas {{ $canvasTypes[$elementName]['icon'] }}"></i>
+    @if (!empty($canvasTypes[$elementName]['icon']))
+        <x-global::elements.icon :name="$canvasTypes[$elementName]['icon']" />
     @endif
     {{ $canvasTypes[$elementName]['title'] }}
 </h4>

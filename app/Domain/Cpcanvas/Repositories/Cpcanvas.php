@@ -21,7 +21,7 @@ class Cpcanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-city';
+    protected string $icon = 'location_city';
 
     /***
      * disclaimer - Disclaimer
@@ -37,18 +37,18 @@ class Cpcanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'cp_cj_rv' => ['icon' => 'fa-money-bills',         'title' => 'box.cp.cj_rv'],
-        'cp_cj_rc' => ['icon' => 'fa-hand-holding-dollar', 'title' => 'box.cp.cj_rc'],
-        'cp_cj_e' => ['icon' => 'fa-thumbs-up',           'title' => 'box.cp.cj_e'],
-        'cp_ou_rv' => ['icon' => 'fa-money-bills',         'title' => 'box.cp.ou_rv'],
-        'cp_ou_rc' => ['icon' => 'fa-hand-holding-dollar', 'title' => 'box.cp.ou_rc'],
-        'cp_ou_e' => ['icon' => 'fa-thumbs-up',           'title' => 'box.cp.ou_e'],
-        'cp_os_rv' => ['icon' => 'fa-money-bills',         'title' => 'box.cp.os_rv'],
-        'cp_os_rc' => ['icon' => 'fa-hand-holding-dollar', 'title' => 'box.cp.os_rc'],
-        'cp_os_e' => ['icon' => 'fa-thumbs-up',           'title' => 'box.cp.os_e'],
-        'cp_oi_rv' => ['icon' => 'fa-money-bills',         'title' => 'box.cp.oi_rv'],
-        'cp_oi_rc' => ['icon' => 'fa-hand-holding-dollar', 'title' => 'box.cp.oi_rc'],
-        'cp_oi_e' => ['icon' => 'fa-thumbs-up',           'title' => 'box.cp.oi_e'],
+        'cp_cj_rv' => ['icon' => 'payments',         'title' => 'box.cp.cj_rv'],
+        'cp_cj_rc' => ['icon' => 'savings', 'title' => 'box.cp.cj_rc'],
+        'cp_cj_e' => ['icon' => 'thumb_up',           'title' => 'box.cp.cj_e'],
+        'cp_ou_rv' => ['icon' => 'payments',         'title' => 'box.cp.ou_rv'],
+        'cp_ou_rc' => ['icon' => 'savings', 'title' => 'box.cp.ou_rc'],
+        'cp_ou_e' => ['icon' => 'thumb_up',           'title' => 'box.cp.ou_e'],
+        'cp_os_rv' => ['icon' => 'payments',         'title' => 'box.cp.os_rv'],
+        'cp_os_rc' => ['icon' => 'savings', 'title' => 'box.cp.os_rc'],
+        'cp_os_e' => ['icon' => 'thumb_up',           'title' => 'box.cp.os_e'],
+        'cp_oi_rv' => ['icon' => 'payments',         'title' => 'box.cp.oi_rv'],
+        'cp_oi_rc' => ['icon' => 'savings', 'title' => 'box.cp.oi_rc'],
+        'cp_oi_e' => ['icon' => 'thumb_up',           'title' => 'box.cp.oi_e'],
     ];
 
     /**

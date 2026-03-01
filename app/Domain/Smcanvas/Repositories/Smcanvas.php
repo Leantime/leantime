@@ -21,7 +21,7 @@ class Smcanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-chess';
+    protected string $icon = 'extension';
 
     /**
      * canvasTypes - Must be extended
@@ -29,13 +29,13 @@ class Smcanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'sm_qa' => ['icon' => 'fa-clipboard-question', 'title' => 'box.sm.qa'],
-        'sm_qb' => ['icon' => 'fa-clipboard-question', 'title' => 'box.sm.qb'],
-        'sm_qc' => ['icon' => 'fa-clipboard-question', 'title' => 'box.sm.qc'],
-        'sm_qd' => ['icon' => 'fa-clipboard-question', 'title' => 'box.sm.qd'],
-        'sm_qe' => ['icon' => 'fa-clipboard-question', 'title' => 'box.sm.qe'],
-        'sm_qf' => ['icon' => 'fa-clipboard-question', 'title' => 'box.sm.qf'],
-        'sm_qg' => ['icon' => 'fa-clipboard-question', 'title' => 'box.sm.qg'],
+        'sm_qa' => ['icon' => 'quiz', 'title' => 'box.sm.qa'],
+        'sm_qb' => ['icon' => 'quiz', 'title' => 'box.sm.qb'],
+        'sm_qc' => ['icon' => 'quiz', 'title' => 'box.sm.qc'],
+        'sm_qd' => ['icon' => 'quiz', 'title' => 'box.sm.qd'],
+        'sm_qe' => ['icon' => 'quiz', 'title' => 'box.sm.qe'],
+        'sm_qf' => ['icon' => 'quiz', 'title' => 'box.sm.qf'],
+        'sm_qg' => ['icon' => 'quiz', 'title' => 'box.sm.qg'],
     ];
 
     /**
@@ -55,10 +55,10 @@ class Smcanvas extends Canvas
      * @acces protected
      */
     protected array $statusLabels = [
-        'status_draft' => ['icon' => 'fa-circle-question',    'color' => 'blue',   'title' => 'status.draft',    'dropdown' => 'info',    'active' => true],
-        'status_review' => ['icon' => 'fa-circle-exclamation', 'color' => 'orange', 'title' => 'status.review',   'dropdown' => 'warning', 'active' => true],
-        'status_accepted' => ['icon' => 'fa-circle-check',       'color' => 'green',  'title' => 'status.accepted', 'dropdown' => 'success', 'active' => true],
-        'status_rejected' => ['icon' => 'fa-circle-xmark',       'color' => 'red',    'title' => 'status.rejected', 'dropdown' => 'danger',  'active' => true],
+        'status_draft' => ['icon' => 'help',    'color' => 'blue',   'title' => 'status.draft',    'dropdown' => 'info',    'active' => true],
+        'status_review' => ['icon' => 'error', 'color' => 'orange', 'title' => 'status.review',   'dropdown' => 'warning', 'active' => true],
+        'status_accepted' => ['icon' => 'check_circle',       'color' => 'green',  'title' => 'status.accepted', 'dropdown' => 'success', 'active' => true],
+        'status_rejected' => ['icon' => 'cancel',       'color' => 'red',    'title' => 'status.rejected', 'dropdown' => 'danger',  'active' => true],
     ];
 
     /**

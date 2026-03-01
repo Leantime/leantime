@@ -277,11 +277,11 @@ leantime.ticketsController = (function () {
                                     popUpHTML += '<h4><a href="#/tickets/editMilestone/' + task.id + '" >' + htmlEntities(task.name) + '</a></h4><br /> ' +
                                      '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                      '' + Math.round(task.progress) + '%</p> ' +
-                                     '<a href="#/tickets/editMilestone/' + task.id + '" ><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
-                                     '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
+                                     '<a href="#/tickets/editMilestone/' + task.id + '" ><span class="material-symbols-outlined">map</span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
+                                     '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="material-symbols-outlined">push_pin</span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
                                 } else {
                                     popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                     '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
+                                     '<a href="#/tickets/showTicket/' + task.id + '"><span class="material-symbols-outlined">push_pin</span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
                                 }
 
                                  popUpHTML += '</div>';
@@ -357,10 +357,10 @@ leantime.ticketsController = (function () {
                                     popUpHTML += '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
                                         '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                         '' + Math.round(task.progress) + '%</p> ' +
-                                        '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
+                                        '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="material-symbols-outlined">push_pin</span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
                                 } else {
                                     popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                        '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
+                                        '<a href="#/tickets/showTicket/' + task.id + '"><span class="material-symbols-outlined">push_pin</span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
                                 }
 
                                 popUpHTML += '</div>';
@@ -1433,7 +1433,7 @@ leantime.ticketsController = (function () {
 
                             } else if (groupBy === 'dueDate') {
                                 // Update due date display on card
-                                var $dateDisplay = $card.find('.dues .fa-calendar').parent();
+                                var $dateDisplay = $card.find('.dues .material-symbols-outlined').parent();
                                 if ($dateDisplay.length && newGroupValue) {
                                     // Format the date for display (MM/DD/YYYY)
                                     var dateParts = newGroupValue.split('-');

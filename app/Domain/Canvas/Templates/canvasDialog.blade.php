@@ -23,7 +23,7 @@
 
 <div class="" style="max-width:900px; width:100%;">
 
-    <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i> {{ $canvasTypes[$canvasItem['box']]['title'] }}</h4>
+    <h4 class="widgettitle title-light" style="padding-bottom: 0">@if(!empty($canvasTypes[$canvasItem['box']]['icon']))<x-global::elements.icon :name="$canvasTypes[$canvasItem['box']]['icon']" />@endif {{ $canvasTypes[$canvasItem['box']]['title'] }}</h4>
     <hr style="margin-top: 5px; margin-bottom: 15px;">
     {!! $tpl->displayNotification() !!}
 
@@ -179,7 +179,7 @@
                 data: [
                     @foreach ($statusLabels as $key => $data)
                         @if ($data['active'])
-                            { innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
+                            { innerHTML: '<span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">{{ $data['icon'] }}</span>&nbsp;{{ $data['title'] }}',
                               text: "{{ $data['title'] }}", value: "{{ $key }}", selected: {{ $canvasItem['status'] == $key ? 'true' : 'false' }} },
                         @endif
                     @endforeach
@@ -195,7 +195,7 @@
                 data: [
                     @foreach ($relatesLabels as $key => $data)
                         @if ($data['active'])
-                            { innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
+                            { innerHTML: '<span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">{{ $data['icon'] }}</span>&nbsp;{{ $data['title'] }}',
                               text: "{{ $data['title'] }}", value: "{{ $key }}", selected: {{ $canvasItem['relates'] == $key ? 'true' : 'false' }} },
                         @endif
                     @endforeach

@@ -640,10 +640,9 @@ leantime.projectsController = (function () {
                 id,
             'favorite',
                 function() {
-                    var icon = element.querySelector("i");
+                    var icon = element.querySelector(".material-symbols-outlined");
                     if (icon) {
-                        icon.classList.remove("fa-solid");
-                        icon.classList.add("fa-regular");
+                        icon.style.fontVariationSettings = "'FILL' 0";
                     }
                     element.classList.remove("isFavorite");
                 }
@@ -654,10 +653,9 @@ leantime.projectsController = (function () {
                 id,
             'favorite',
                 function() {
-                    var icon = element.querySelector("i");
+                    var icon = element.querySelector(".material-symbols-outlined");
                     if (icon) {
-                        icon.classList.remove("fa-regular");
-                        icon.classList.add("fa-solid");
+                        icon.style.fontVariationSettings = "'FILL' 1";
                     }
                     element.classList.add("isFavorite");
                 }

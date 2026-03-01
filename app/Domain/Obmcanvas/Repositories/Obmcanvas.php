@@ -21,7 +21,7 @@ class Obmcanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-object-group';
+    protected string $icon = 'select_all';
 
     /***
      * disclaimer - Disclaimer
@@ -37,15 +37,15 @@ class Obmcanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'obm_kp' => ['icon' => 'fa-ring',                'title' => 'box.obm.kp'],
-        'obm_kr' => ['icon' => 'fa-hammer',              'title' => 'box.obm.kr'],
-        'obm_ka' => ['icon' => 'fa-person-digging',      'title' => 'box.obm.ka'],
-        'obm_vp' => ['icon' => 'fa-gift',                'title' => 'box.obm.vp'],
-        'obm_ch' => ['icon' => 'fa-truck',               'title' => 'box.obm.ch'],
-        'obm_cr' => ['icon' => 'fa-heart',               'title' => 'box.obm.cr'],
-        'obm_cs' => ['icon' => 'fa-person',              'title' => 'box.obm.cs'],
-        'obm_fc' => ['icon' => 'fa-file-invoice-dollar', 'title' => 'box.obm.fc'],
-        'obm_fr' => ['icon' => 'fa-cash-register',       'title' => 'box.obm.fr'],
+        'obm_kp' => ['icon' => 'ring_volume',                'title' => 'box.obm.kp'],
+        'obm_kr' => ['icon' => 'handyman',              'title' => 'box.obm.kr'],
+        'obm_ka' => ['icon' => 'engineering',      'title' => 'box.obm.ka'],
+        'obm_vp' => ['icon' => 'redeem',                'title' => 'box.obm.vp'],
+        'obm_ch' => ['icon' => 'local_shipping',               'title' => 'box.obm.ch'],
+        'obm_cr' => ['icon' => 'favorite',               'title' => 'box.obm.cr'],
+        'obm_cs' => ['icon' => 'person',              'title' => 'box.obm.cs'],
+        'obm_fc' => ['icon' => 'receipt_long', 'title' => 'box.obm.fc'],
+        'obm_fr' => ['icon' => 'point_of_sale',       'title' => 'box.obm.fr'],
     ];
 
     /**

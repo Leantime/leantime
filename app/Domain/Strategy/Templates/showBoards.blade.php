@@ -20,7 +20,7 @@
             @foreach ($tpl->get('recentProgressCanvas') as $board)
                 <div class="col-md-3"><div class="profileBox">
                     <div class="commentImage icon">
-                        <i class="{{ $board['icon'] }}"></i>
+                        <x-global::elements.icon :name="$board['icon']" />
                     </div>
                     <span class="userName">
                             <small>{{ $tpl->__($board['name']) }} ({{ $board['count'] }})</small><br />
@@ -73,7 +73,7 @@
                 @if (! isset($board['visible']) || $board['visible'] === 1)
                     <div class="col-md-3"><div class="profileBox" style="min-height: 125px;">
                         <div class="commentImage icon">
-                            <i class="{{ $board['icon'] }}"></i>
+                            <x-global::elements.icon :name="$board['icon']" />
                         </div>
                         <span class="userName">
                             <a href="{{ BASE_URL }}/{{ $board['module'] }}/showCanvas">
@@ -97,18 +97,13 @@
 
 <script>
     function accordionToggle(id) {
-
-        let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
-
-        if(currentLink.hasClass("fa-angle-right")){
-            currentLink.removeClass("fa-angle-right");
-            currentLink.addClass("fa-angle-down");
-            jQuery('#accordion_'+id).slideDown("fast");
-        }else{
-            currentLink.removeClass("fa-angle-down");
-            currentLink.addClass("fa-angle-right");
-            jQuery('#accordion_'+id).slideUp("fast");
+        let icon = document.querySelector("#accordion_toggle_" + id + " .material-symbols-outlined");
+        if (icon && icon.textContent.trim() === "chevron_right") {
+            icon.textContent = "expand_more";
+            jQuery('#accordion_' + id).slideDown("fast");
+        } else if (icon) {
+            icon.textContent = "chevron_right";
+            jQuery('#accordion_' + id).slideUp("fast");
         }
-
     }
 </script>

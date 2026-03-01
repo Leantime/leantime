@@ -21,7 +21,7 @@ class Riskscanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-person-falling';
+    protected string $icon = 'personal_injury';
 
     /**
      * canvasTypes - Must be extended

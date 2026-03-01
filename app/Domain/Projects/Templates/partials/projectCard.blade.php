@@ -33,7 +33,7 @@
                     class="favoriteClick favoriteStar pull-right margin-right {{ $project['isFavorite'] ? 'isFavorite' : ''}} tw:mr-[5px]"
                     data-tippy-content="{{ __('label.favorite_tooltip') }}"
                     aria-label="{{ __('label.favorite_tooltip') }}">
-                        <i class="{{ $project['isFavorite'] ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' {{ $project['isFavorite'] ? '1' : '0' }};">star</span>
                 </a>
             </div>
         </div>

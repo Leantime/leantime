@@ -18,7 +18,7 @@
 
 <div class="showDialogOnLoad" style="display:none;">
 
-    <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i> {{ $canvasTypes[$canvasItem['box']]['title'] }}</h4>
+    <h4 class="widgettitle title-light" style="padding-bottom: 0">@if(!empty($canvasTypes[$canvasItem['box']]['icon']))<x-global::elements.icon :name="$canvasTypes[$canvasItem['box']]['icon']" />@endif {{ $canvasTypes[$canvasItem['box']]['title'] }}</h4>
     <hr style="margin-top: 5px; margin-bottom: 15px;">
 
     {!! $tpl->displayNotification() !!}

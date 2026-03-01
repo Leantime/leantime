@@ -21,7 +21,7 @@ class Retroscanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-hand-spock';
+    protected string $icon = 'back_hand';
 
     /**
      * canvasTypes - Must be extended
@@ -29,9 +29,9 @@ class Retroscanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'well' => ['icon' => 'fa-circle-check', 'title' => 'box.retros.continue'],
-        'notwell' => ['icon' => 'fa-circle-xmark', 'title' => 'box.retros.stop_doing'],
-        'startdoing' => ['icon' => 'fa-circle-plus',  'title' => 'box.retros.start_doing'],
+        'well' => ['icon' => 'check_circle', 'title' => 'box.retros.continue'],
+        'notwell' => ['icon' => 'cancel', 'title' => 'box.retros.stop_doing'],
+        'startdoing' => ['icon' => 'add_circle',  'title' => 'box.retros.start_doing'],
     ];
 
     /**

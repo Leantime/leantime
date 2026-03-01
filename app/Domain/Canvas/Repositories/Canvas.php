@@ -23,9 +23,9 @@ class Canvas
      * icon - Icon associated with canvas (must be extended)
      *
      * @access protected
-     * @var    string Fontawesome icone
+     * @var    string Material Symbols icon name
      */
-    protected string $icon = 'fa-x';
+    protected string $icon = 'close';
 
     /***
      * disclaimer - Disclaimer (may be extended)
@@ -41,7 +41,7 @@ class Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        // '??_' => [ 'icon' => 'fa-????', 'title' => 'box.??.????' ],
+        // '??_' => [ 'icon' => '????', 'title' => 'box.??.????' ],
     ];
 
     /**
@@ -50,11 +50,11 @@ class Canvas
      * @acces protected
      */
     protected array $statusLabels = [
-        'status_draft' => ['icon' => 'fa-circle-question',    'color' => 'blue',   'title' => 'status.draft',  'dropdown' => 'info',    'active' => true],
-        'status_review' => ['icon' => 'fa-circle-exclamation', 'color' => 'orange', 'title' => 'status.review', 'dropdown' => 'warning', 'active' => true],
-        'status_valid' => ['icon' => 'fa-circle-check',       'color' => 'green',  'title' => 'status.valid',  'dropdown' => 'success', 'active' => true],
-        'status_hold' => ['icon' => 'fa-circle-h',           'color' => 'red',    'title' => 'status.hold',   'dropdown' => 'danger',  'active' => true],
-        'status_invalid' => ['icon' => 'fa-circle-xmark',       'color' => 'red',    'title' => 'status.invalid', 'dropdown' => 'danger',  'active' => true],
+        'status_draft' => ['icon' => 'help',         'color' => 'blue',   'title' => 'status.draft',   'dropdown' => 'info',    'active' => true],
+        'status_review' => ['icon' => 'error',        'color' => 'orange', 'title' => 'status.review',  'dropdown' => 'warning', 'active' => true],
+        'status_valid' => ['icon' => 'check_circle',  'color' => 'green',  'title' => 'status.valid',   'dropdown' => 'success', 'active' => true],
+        'status_hold' => ['icon' => 'local_hospital', 'color' => 'red',    'title' => 'status.hold',    'dropdown' => 'danger',  'active' => true],
+        'status_invalid' => ['icon' => 'cancel',      'color' => 'red',    'title' => 'status.invalid', 'dropdown' => 'danger',  'active' => true],
     ];
 
     /**
@@ -63,14 +63,14 @@ class Canvas
      * @acces public
      */
     protected array $relatesLabels = [
-        'relates_none' => ['icon' => 'fa-border-none', 'color' => 'grey',      'title' => 'relates.none',         'dropdown' => 'default', 'active' => true],
-        'relates_customers' => ['icon' => 'fa-users',       'color' => 'green',     'title' => 'relates.customers',    'dropdown' => 'success', 'active' => true],
-        'relates_offerings' => ['icon' => 'fa-barcode',     'color' => 'red',       'title' => 'relates.offerings',    'dropdown' => 'danger',  'active' => true],
-        'relates_capabilities' => ['icon' => 'fa-pen-ruler',   'color' => 'blue',      'title' => 'relates.capabilities', 'dropdown' => 'info',    'active' => true],
-        'relates_financials' => ['icon' => 'fa-money-bill',  'color' => 'yellow',    'title' => 'relates.financials',   'dropdown' => 'warning', 'active' => true],
-        'relates_markets' => ['icon' => 'fa-shop',        'color' => 'brown',     'title' => 'relates.markets',      'dropdown' => 'default', 'active' => true],
-        'relates_environment' => ['icon' => 'fa-tree',        'color' => 'darkgreen', 'title' => 'relates.environment',  'dropdown' => 'default', 'active' => true],
-        'relates_firm' => ['icon' => 'fa-building',    'color' => 'darkblue',  'title' => 'relates.firm',         'dropdown' => 'info',    'active' => true],
+        'relates_none' => ['icon' => 'border_clear',     'color' => 'grey',      'title' => 'relates.none',         'dropdown' => 'default', 'active' => true],
+        'relates_customers' => ['icon' => 'group',        'color' => 'green',     'title' => 'relates.customers',    'dropdown' => 'success', 'active' => true],
+        'relates_offerings' => ['icon' => 'barcode',      'color' => 'red',       'title' => 'relates.offerings',    'dropdown' => 'danger',  'active' => true],
+        'relates_capabilities' => ['icon' => 'design_services', 'color' => 'blue',  'title' => 'relates.capabilities', 'dropdown' => 'info',    'active' => true],
+        'relates_financials' => ['icon' => 'payments',    'color' => 'yellow',    'title' => 'relates.financials',   'dropdown' => 'warning', 'active' => true],
+        'relates_markets' => ['icon' => 'storefront',     'color' => 'brown',     'title' => 'relates.markets',      'dropdown' => 'default', 'active' => true],
+        'relates_environment' => ['icon' => 'park',       'color' => 'darkgreen', 'title' => 'relates.environment',  'dropdown' => 'default', 'active' => true],
+        'relates_firm' => ['icon' => 'apartment',         'color' => 'darkblue',  'title' => 'relates.firm',         'dropdown' => 'info',    'active' => true],
     ];
 
     /**

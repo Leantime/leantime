@@ -229,16 +229,16 @@ leantime.widgetController = (function () {
             '        <div class="' + (widget.widgetBackground == "default" ? "tw:pb-l" : "") + '">\n' +
             '            <div class="stickyHeader" style="padding:15px; height:50px;  width:100%;">\n' +
             '               <div class="grid-handler-top tw:h-[40px] tw:cursor-grab tw:float-left tw:mr-sm">\n' +
-            '                    <i class="fa-solid fa-grip-vertical"></i>\n' +
+            '                    <span class="material-symbols-outlined">drag_indicator</span>\n' +
             '                </div>\n' +
             '           ' + (widget.name != '' ? '<h5 class="subtitle tw:pb-m tw:float-left tw:mr-sm">' + widget.name + '</h5>' : '') + '\n' +
             '            <div class="tw:dropdown tw:dropdown-end tw:float-right">\n' +
             '                <div tabindex="0" role="button" class="dropdown-toggle ticketDropDown editHeadline">\n' +
-            '                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>\n' +
+            '                    <span class="material-symbols-outlined" aria-hidden="true">more_vert</span>\n' +
             '                </div>\n' +
             '                <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm">\n' +
-            '                    <li><a href="javascript:void(0)" onclick="document.activeElement.blur();" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Resize to fit content</a></li>\n' +
-            '                        <li><a href="javascript:void(0)" onclick="document.activeElement.blur();" class="removeWidget"><i class="fa fa-eye-slash"></i> Hide</a></li>\n' +
+            '                    <li><a href="javascript:void(0)" onclick="document.activeElement.blur();" class="fitContent"><span class="material-symbols-outlined">open_in_full</span> Resize to fit content</a></li>\n' +
+            '                        <li><a href="javascript:void(0)" onclick="document.activeElement.blur();" class="removeWidget"><span class="material-symbols-outlined">visibility_off</span> Hide</a></li>\n' +
             '                </ul>\n' +
             '            </div>\n' +
             '\n' +
