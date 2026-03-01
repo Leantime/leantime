@@ -1,3 +1,14 @@
+# Version: 3.7.2
+
+## Bug Fixes
+- **Migration Fails on MySQL Strict Mode** — Fixed SQL syntax error in migrations `update_sql_30200` and `update_sql_30411` caused by using double quotes for string defaults (`DEFAULT "ocean"`); MySQL interprets these as identifier quotes, not string literals (#3284)
+- **Ticket Inline Edits Not Updating UI** — Fixed `patch()` returning false for non-status field changes (assignee, milestone, priority), causing the API to return HTTP 500 and jQuery `.done()` callbacks to never fire; data saved correctly but UI required a page refresh (#3282)
+- **File Viewing Broken on Shared Hosting** — Replaced `$storage->download()` (which relies on `fpassthru()`) with a direct file read and manual Response; fixes 500 errors on cPanel/shared hosts where `fpassthru` is in `disable_functions` (#3213)
+- **Ideas Saved to canvasId 0** — Fixed `IdeaDialog` controller never assigning `currentCanvas` to the template, causing the hidden form field to always render as empty; the post handler now also reads the submitted `canvasId` instead of relying solely on session state (#3181)
+- **Plugin Details Page TypeError** — Fixed crash when viewing marketplace plugin details caused by the API returning strings or nulls where the `MarketplacePlugin` model expects arrays or ints; all builder call sites now use explicit type casts and the model has safe property defaults (#3207)
+
+---
+
 # Version: 3.7.1
 
 ## Bug Fixes
