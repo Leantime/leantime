@@ -15,8 +15,8 @@
 }
 
 .sortable-item .sortable-list {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 .sortable-list .sortable-item:last-child {
@@ -35,7 +35,7 @@
 }
 
 .sortable-list .sortable-item .sortable-list .sortable-item:first-child {
-    margin-top:5px;
+    margin-top:4px;
 }
 
 .sortable-item .ticketBox {
@@ -96,14 +96,14 @@
     &::after {
         content: '';
         position: absolute;
-        top: 5px;
+        top: 4px;
         left: 0;
         right: 0;
         bottom: 0;
         background: hsla(var(--accent2-hsl), 0.1);
         border: 2px dashed hsla(var(--accent2-hsl), 0.3);
         pointer-events: none;
-        border-radius: 4px;
+        border-radius: var(--box-radius-small);
     }
     min-height: 62px !important;
 }
@@ -113,20 +113,20 @@
     &::after {
         content: '';
         position: absolute;
-        top: 5px;
+        top: 4px;
         left: 0;
         right: 0;
         bottom: 0;
         background: hsla(0, 100%, 50%, 0.1);
         border: 2px dashed hsla(0, 100%, 50%, 0.3);
         pointer-events: none;
-        border-radius: 4px;
+        border-radius: var(--box-radius-small);
     }
     min-height: 62px !important;
 }
 
 .sortable-ghost {
-    opacity: 0.7;
+    opacity: var(--opacity-subdued);
     box-shadow: 0 0 8px hsla(var(--accent2-hsl), 0.3);
 }
 
@@ -149,8 +149,8 @@
 .sortable-placeholder {
     background: rgba(0, 0, 0, 0.05);
     border: 1px dashed rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    margin-bottom: 5px;
+    border-radius: var(--box-radius-small);
+    margin-bottom: 4px;
     height: 60px;
     position: relative;
 }
@@ -161,19 +161,19 @@
 
 .task-collapse-toggle {
     position: absolute;
-    left: -25px;
+    left: -24px;
     top: 20px;
     width: 20px;
     height: 20px;
     cursor: pointer;
-    z-index: 10;
+    z-index: var(--zlayer-4);
     text-align: center;
     border-radius: 50%;
     background: var(--secondary-background);
 }
 
 .milestone-box .task-collapse-toggle {
-    top:25px;
+    top:24px;
 }
 
 .sortable-list .sortable-list .task-collapse-toggle {
@@ -221,7 +221,7 @@
 .quickAddForm {
     background: var(--secondary-background);
     border-radius: var(--box-radius);
-    padding: 15px;
+    padding: 16px;
     margin-top: 10px;
     box-shadow: var(--regular-shadow);
 }
@@ -240,7 +240,7 @@
     border-left: 0px;
     border-right:0px;
     border-radius: var(--box-radius);
-    padding: 15px;
+    padding: 16px;
     margin-bottom: 10px;
     box-shadow: var(--regular-shadow);
 }
@@ -250,12 +250,12 @@
 }
 
 .milestone-box .progress-wrapper .percent-label {
-    font-size:14px;
+    font-size: var(--base-font-size);
     /*color: var(--main-titles-color);*/
 }
 
 .milestone-box h4 {
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     color: var(--primary-font-color);
     margin-top: 0;
 }

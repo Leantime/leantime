@@ -14,7 +14,7 @@ a:focus {
 a:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: var(--element-radius);
 }
 
 body a:hover {
@@ -40,15 +40,15 @@ label, input, textarea, select, button {
 }
 
 h1, h2, h3, h4, h5 {
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     line-height: normal;
 }
 
 h1 { font-size:var(--font-size-xxl);}
 h2 { font-size:var(--font-size-xl);}
-h3 { font-size:var(--font-size-xl); font-weight:bold;}
-h4 { font-size:var(--base-font-size); font-weight:bold;}
-h5 { font-size:var(--base-font-size); font-weight:bold;}
+h3 { font-size:var(--font-size-xl); font-weight:var(--font-weight-bold);}
+h4 { font-size:var(--base-font-size); font-weight:var(--font-weight-bold);}
+h5 { font-size:var(--base-font-size); font-weight:var(--font-weight-bold);}
 
 h1 small {
     font-size: var(--font-size-s);
@@ -66,8 +66,8 @@ h1 small {
 .label-default, .label-primary, .label-danger {
     padding: 2px 8px;
     color: #fff;
-    margin-left: 5px;
-    border-radius: 3px;
+    margin-left: 4px;
+    border-radius: var(--element-radius);
 }
 
 
@@ -96,10 +96,10 @@ a .label.feature-label {
     margin-top: 4px;
     display: block;
     position:absolute;
-    top:5px;
+    top:4px;
     right:0px;
-    border-radius: 6px;
-    padding: 1px 5px;
+    border-radius: var(--element-radius);
+    padding: 1px 4px;
     color:var(--main-action-color);
 }
 
@@ -127,7 +127,7 @@ a .label.feature-label:after {
 
 .pagetitle h5 {
     text-transform: uppercase;
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     color: var(--secondary-font-color);
 }
 
@@ -136,27 +136,30 @@ a .label.feature-label:after {
 
     font-size: var(--font-size-xl);
     color: var(--primary-font-color);
+    font-weight: var(--font-weight-medium);
+}
+
+.maincontentinner .subtitle {
     margin-bottom: 10px;
-    font-weight:lighter;
 }
 
 .grid-stack-item-content .stickyHeader .subtitle {
-    margin-top:-5px;
+    margin: 0;
 }
 
 
 
 .subtitle {
     font-size: var(--base-font-size);
-    color: #999;
-    margin-bottom: 5px;
+    color: var(--secondary-font-color);
+    margin-bottom: 4px;
 }
 
 .subtitle2 {
     font-size: var(--base-font-size);
     text-transform: uppercase;
     color: var(--primary-font-color);
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 

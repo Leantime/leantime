@@ -2,7 +2,7 @@
 body .jstree-default .jstree-wholerow-hovered,
 body .jstree-default .jstree-wholerow-clicked{
     background:var(--main-menu-overlayed-link-hover-bg);
-    border-radius:10px;
+    border-radius: var(--box-radius);
 }
 
 body .jstree-default .jstree-clicked {
@@ -15,8 +15,8 @@ body .jstree-default .jstree-clicked {
 }
 
 body .jstree-default .jstree-node a{
-    padding-top:5px;
-    padding-bottom:5px;
+    padding-top:4px;
+    padding-bottom:4px;
 }
 
 
@@ -38,8 +38,8 @@ body .jstree-default > .jstree-no-dots .jstree-closed > .jstree-ocl {
 
 .jstree-default .jstree-icon:empty {
     width:20px;
-    padding-right:5px;
-    opacity: 0.6;
+    padding-right:4px;
+    opacity: var(--opacity-muted);
 }
 
 .jstree-wholerow-ul {

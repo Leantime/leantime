@@ -16,9 +16,9 @@
 }
 
 .packery-drop-placeholder {
-    background:#ddd;
-    opacity:0.2;
-    border: 2px dotted #ccc;
+    background: var(--main-border-color);
+    opacity:var(--opacity-faint);
+    border: 2px dotted var(--main-border-color);
     visibility:visible;
 
 

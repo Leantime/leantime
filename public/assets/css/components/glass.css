@@ -1,0 +1,32 @@
+/* ── Glass Utility Classes ────────────────────────────────────────────
+   Frosted-glass surfaces for the Leantime design system. All values
+   come from CSS custom properties defined in the theme files
+   (default/minimal × light/dark).
+   ──────────────────────────────────────────────────────────────────── */
+
+/* Full glass surface */
+.lt-glass {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-inset), var(--shadow-sm);
+}
+
+/* Subtle glass surface (less blur, more opaque) */
+.lt-glass-subtle {
+    background: var(--glass-bg-subtle);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border: 1px solid var(--glass-border);
+}
+
+/* Fallback for browsers without backdrop-filter (prefixed or unprefixed) */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .lt-glass,
+    .lt-glass-subtle {
+        background: var(--color-bg-card);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
