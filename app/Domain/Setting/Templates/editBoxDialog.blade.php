@@ -2,7 +2,7 @@
     $currentLabel = $tpl->get('currentLabel');
 @endphp
 
-<h4 class="widgettitle title-light">{{ __('headlines.edit_label') }}</h4>
+<h4 class="widgettitle title-light"><x-global::elements.icon name="edit" /> {{ __('label.edit_label') }}</h4>
 
 {!! $tpl->displayNotification() !!}
 

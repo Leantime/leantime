@@ -71,7 +71,7 @@
                                                 </li>
                                             @endif
                                             @if(isset($tpl->get('ticket')->id))
-                                                <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $tpl->get('ticket')->id }});">{{ __('links.add_to_timesheets') }}</a></li>
+                                                <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $tpl->get('ticket')->id }});"><x-global::elements.icon name="schedule" /> {{ __('label.add_to_timesheet') }}</a></li>
                                             @endif
                                         </x-globals::actions.dropdown-menu>
                                     @endif

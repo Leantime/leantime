@@ -2746,12 +2746,14 @@ class Tickets
         return [
             [
                 'url' => '#/tickets/newTicket',
-                'text' => 'links.add_todo',
+                'text' => 'label.add_todo',
+                'icon' => 'push_pin',
                 'class' => 'ticketModal',
             ],
             [
                 'url' => '#/tickets/editMilestone',
-                'text' => 'links.add_milestone',
+                'text' => 'label.add_milestone',
+                'icon' => 'map',
                 'class' => 'milestoneModal',
             ],
         ];

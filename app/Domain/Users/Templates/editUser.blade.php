@@ -56,7 +56,7 @@
                             <x-globals::actions.dropdown-menu variant="button" :label="'<span class=&quot;material-symbols-outlined&quot; aria-hidden=&quot;true&quot;>link</span> ' . __('label.copyinviteLink')" content-role="default" align="start" menu-class="tw:p-4 tw:min-w-72">
                                 <li class="noClickProp" onclick="event.stopPropagation()">
                                     <x-globals::forms.input :bare="true" type="text" id="inviteURL" name="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
-                                    <x-globals::forms.button tag="button" type="primary" onclick="leantime.snippets.copyUrl('inviteURL');">{{ __('links.copy_url') }}</x-globals::forms.button>
+                                    <x-globals::forms.button tag="button" type="primary" onclick="leantime.snippets.copyUrl('inviteURL');"><x-global::elements.icon name="link" /> {{ __('label.copy_url') }}</x-globals::forms.button>
                                 </li>
                             </x-globals::actions.dropdown-menu>
                             <x-globals::forms.button link="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite" type="secondary" style="margin-left:5px;" icon="mail">{{ __('buttons.resend_invite') }}</x-globals::forms.button>

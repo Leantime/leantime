@@ -38,7 +38,7 @@
                 <x-globals::actions.dropdown-menu leading-visual="link" container-class="pull-right tw:mr-[5px]" data-tippy-content="{{ __('label.copy_url_tooltip') }}">
                     <li class="tw:p-2">
                         <x-globals::forms.input name="projectUrl" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
-                        <x-globals::forms.button tag="button" type="primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</x-globals::forms.button>
+                        <x-globals::forms.button tag="button" type="primary" onclick="leantime.snippets.copyUrl('projectUrl')"><x-global::elements.icon name="link" /> {{ __('label.copy_url') }}</x-globals::forms.button>
                     </li>
                 </x-globals::actions.dropdown-menu>
 
@@ -291,7 +291,7 @@
                                                                 <a
                                                                     href="javascript:void(0);"
                                                                     onclick="leantime.ticketsController.addCommentTimesheetContent({!! $row['id'] !!}, {!! $ticket->id !!})"
-                                                                >{{ __('links.add_to_timesheets') }}</a>
+                                                                ><x-global::elements.icon name="schedule" /> {{ __('label.add_to_timesheet') }}</a>
                                                             </li>
                                                         @endif
                                                     </x-globals::actions.dropdown-menu>

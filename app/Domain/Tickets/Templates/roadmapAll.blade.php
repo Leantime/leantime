@@ -67,7 +67,7 @@
                 </div>
                 <h4>{{ __('headlines.no_milestones') }}<br/>
                 <br />
-                <x-globals::forms.button link="{{ BASE_URL }}/tickets/editMilestone" type="primary" class="milestoneModal addCanvasLink">{{ __('links.add_milestone') }}</x-globals::forms.button></h4>
+                <x-globals::forms.button link="{{ BASE_URL }}/tickets/editMilestone" type="primary" class="milestoneModal addCanvasLink"><x-global::elements.icon name="map" /> {{ __('label.add_milestone') }}</x-globals::forms.button></h4>
             </div>
         @endif
 

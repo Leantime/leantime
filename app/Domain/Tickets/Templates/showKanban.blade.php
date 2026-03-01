@@ -71,8 +71,8 @@ jQuery(document).ready(function(){
                 <h4 class="widgettitle title-primary title-border-{{ $statusRow['class'] }}">
                     @if($login::userIsAtLeast($roles::$manager))
                         <x-globals::actions.dropdown-menu container-class="pull-right">
-                            <li><a href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}" class="editLabelModal">{{ __('headlines.edit_label') }}</a></li>
-                            <li><a href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings">{{ __('links.add_remove_col') }}</a></li>
+                            <li><a href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}" class="editLabelModal"><x-global::elements.icon name="edit" /> {{ __('label.edit_label') }}</a></li>
+                            <li><a href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings"><x-global::elements.icon name="add" /> {{ __('label.add_remove_columns') }}</a></li>
                         </x-globals::actions.dropdown-menu>
                     @endif
 
