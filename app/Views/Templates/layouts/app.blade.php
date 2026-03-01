@@ -11,7 +11,7 @@
 
     {{-- Loading indicator for SPA navigation --}}
     <div id="page-loading" class="htmx-indicator" role="status"
-         style="position:fixed;top:0;left:0;z-index:9999;height:3px;width:100%;background:var(--accent1);pointer-events:none;">
+         style="position:fixed;top:0;left:0;z-index:9999;height:3px;background:var(--accent1);pointer-events:none;">
         <span class="sr-only">{{ __('label.loading') }}</span>
     </div>
 

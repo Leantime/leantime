@@ -1288,6 +1288,57 @@ a.barmenu:hover {
 
 }
 
+/* ── Navigation Tabs Component (.lt-nav-tabs) ─────────── */
+
+.lt-nav-tabs {
+    margin-bottom: 8px;
+}
+
+.lt-nav-tabs--sticky {
+    position: sticky;
+    top: 55px;
+    z-index: var(--zlayer-4);
+    border-radius: var(--box-radius);
+    background: var(--glass-background);
+    box-shadow: var(--large-shadow);
+    border: 1px solid var(--glass-border);
+    padding: 8px 12px;
+}
+
+.lt-nav-tabs ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 2px;
+}
+
+.lt-nav-tabs ul li.active {
+    box-shadow: var(--regular-shadow);
+    border-radius: var(--box-radius-small);
+    background: var(--secondary-background);
+}
+
+.lt-nav-tabs ul li a {
+    font-weight: var(--font-weight-bold);
+    padding: 4px 16px;
+    border-radius: var(--box-radius-small);
+    line-height: 21px;
+    display: block;
+    color: var(--primary-font-color);
+    white-space: nowrap;
+}
+
+.lt-nav-tabs ul li.active a {
+    color: var(--primary-color);
+}
+
+.lt-nav-tabs ul li a:hover,
+.lt-nav-tabs ul li.active a:hover {
+    background: var(--main-menu-link-active-bg);
+    color: var(--primary-color);
+}
+
 .headerinner .bigProjectSelector {
     width:270px;
     overflow:hidden;

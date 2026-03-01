@@ -5,22 +5,23 @@
     $searchParams = $tpl->get('searchParams');
 @endphp
 
-<div class="maincontentinner tabs">
-    <ul>
-        <li class="{{ str_contains($currentRoute, 'Kanban') ? 'active' : '' }}">
-            <a href="{{ BASE_URL }}/tickets/showKanban{{ $searchParams }}" preload="mouseover">
-                {!! __('links.kanban') !!}
-            </a>
-        </li>
-        <li class="{{ str_contains($currentRoute, 'showAll') ? 'active' : '' }}">
-            <a href="{{ BASE_URL }}/tickets/showAll{{ $searchParams }}" preload="mouseover">
-                {!! __('links.table') !!}
-            </a>
-        </li>
-        <li class="{{ str_contains($currentRoute, 'showList') ? 'active' : '' }}">
-            <a href="{{ BASE_URL }}/tickets/showList{{ $searchParams }}" preload="mouseover">
-                {!! __('links.list') !!}
-            </a>
-        </li>
-    </ul>
-</div>
+<x-globals::navigation.tabs sticky>
+    <x-globals::navigation.tab
+        :label="__('links.kanban')"
+        :href="BASE_URL . '/tickets/showKanban' . $searchParams"
+        :active="str_contains($currentRoute, 'Kanban')"
+        preload="mouseover"
+    />
+    <x-globals::navigation.tab
+        :label="__('links.table')"
+        :href="BASE_URL . '/tickets/showAll' . $searchParams"
+        :active="str_contains($currentRoute, 'showAll')"
+        preload="mouseover"
+    />
+    <x-globals::navigation.tab
+        :label="__('links.list')"
+        :href="BASE_URL . '/tickets/showList' . $searchParams"
+        :active="str_contains($currentRoute, 'showList')"
+        preload="mouseover"
+    />
+</x-globals::navigation.tabs>

@@ -4,17 +4,17 @@
     $currentRoute = Frontcontroller::getCurrentRoute();
 @endphp
 
-<div class="maincontentinner tabs">
-    <ul>
-        <li class="{{ str_contains($currentRoute, 'roadmapAll') ? 'active' : '' }}">
-            <a href="{{ BASE_URL }}/tickets/roadmapAll" preload="mouseover">
-                {{ __('links.timeline') }}
-            </a>
-        </li>
-        <li class="{{ str_contains($currentRoute, 'showAllMilestonesOverview') ? 'active' : '' }}">
-            <a href="{{ BASE_URL }}/tickets/showAllMilestonesOverview" preload="mouseover">
-                {{ __('links.table') }}
-            </a>
-        </li>
-    </ul>
-</div>
+<x-globals::navigation.tabs sticky>
+    <x-globals::navigation.tab
+        :label="__('links.timeline')"
+        :href="BASE_URL . '/tickets/roadmapAll'"
+        :active="str_contains($currentRoute, 'roadmapAll')"
+        preload="mouseover"
+    />
+    <x-globals::navigation.tab
+        :label="__('links.table')"
+        :href="BASE_URL . '/tickets/showAllMilestonesOverview'"
+        :active="str_contains($currentRoute, 'showAllMilestonesOverview')"
+        preload="mouseover"
+    />
+</x-globals::navigation.tabs>

@@ -239,13 +239,17 @@ leantime.modals = (function () {
             closingProgrammatically = false;
         }
 
-        // Callback or reload
+        // Callback or HTMX content refresh
         if (typeof window.globalModalCallback === 'function') {
             var cb = window.globalModalCallback;
             window.globalModalCallback = null;
             cb();
         } else {
-            location.reload();
+            htmx.ajax('GET', window.location.pathname + window.location.search, {
+                target: '.primaryContent',
+                select: '.primaryContent',
+                swap: 'outerHTML'
+            });
         }
     }
 
@@ -317,7 +321,13 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             e.stopPropagation();
 
-            window.globalModalCallback = function () { location.reload(); };
+            window.globalModalCallback = function () {
+                htmx.ajax('GET', window.location.pathname + window.location.search, {
+                    target: '.primaryContent',
+                    select: '.primaryContent',
+                    swap: 'outerHTML'
+                });
+            };
 
             var path = href.substring(1);
             try {
@@ -331,7 +341,13 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             e.stopPropagation();
 
-            window.globalModalCallback = function () { location.reload(); };
+            window.globalModalCallback = function () {
+                htmx.ajax('GET', window.location.pathname + window.location.search, {
+                    target: '.primaryContent',
+                    select: '.primaryContent',
+                    swap: 'outerHTML'
+                });
+            };
             leantime.modals.openByUrl(href);
         }
     }, true); // Use capture phase to run before HTMX or other handlers

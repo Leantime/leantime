@@ -64,3 +64,49 @@ if (currentModule) {
     }
     await Promise.all(loads);
 }
+
+// ── Domain JS reloader for hx-boost SPA navigation ─────────────────
+// After hx-boost swaps content from a different domain, the new page's
+// domain JS won't be available because import.meta.glob only loaded the
+// initial module above. These listeners lazy-load domain JS on navigation.
+
+const loadedDomains = new Set();
+if (currentModule) loadedDomains.add(currentModule);
+
+function loadDomainJs(moduleName) {
+    if (!moduleName || loadedDomains.has(moduleName)) return;
+    loadedDomains.add(moduleName);
+    for (const [path, loader] of Object.entries(domainModules)) {
+        if (path.toLowerCase().includes(`/${moduleName}/`)) {
+            loader();
+        }
+    }
+}
+
+// Extract module name from URL path (e.g., /tickets/showAll → tickets)
+function getModuleFromUrl(url) {
+    var match = url.replace(/^https?:\/\/[^/]+/, '').match(/^\/?([^/?#]+)/);
+    return match ? match[1].toLowerCase() : '';
+}
+
+// Pre-load domain JS when hx-boost navigation starts
+document.addEventListener('htmx:configRequest', function (evt) {
+    if (!evt.detail.boosted) return;
+    var module = getModuleFromUrl(evt.detail.path || '');
+    if (module) loadDomainJs(module);
+});
+
+// Update data-module on body after navigation
+document.addEventListener('htmx:pushedIntoHistory', function () {
+    var module = getModuleFromUrl(window.location.pathname);
+    if (module) document.body.dataset.module = module;
+});
+
+// Handle browser back/forward
+document.addEventListener('htmx:historyRestore', function () {
+    var module = getModuleFromUrl(window.location.pathname);
+    if (module) {
+        document.body.dataset.module = module;
+        loadDomainJs(module);
+    }
+});

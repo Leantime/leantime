@@ -97,6 +97,7 @@ leantime.tabsController = (function () {
         tabLinks.forEach(function (link, i) {
             link.addEventListener('click', function (e) {
                 e.preventDefault();
+                e.stopPropagation();
                 switchTab(container, tabLinks, panels, i, opts, persist, persistKey);
             });
         });
