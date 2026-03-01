@@ -137,9 +137,9 @@
         ];
 
         @if($login::userIsAtLeast($roles::$editor))
-        leantime.ticketsController.initGanttChart(tasks, '{{ $roadmapView }}', false);
+        if (leantime.ticketsController) { leantime.ticketsController.initGanttChart(tasks, '{{ $roadmapView }}', false); }
         @else
-        leantime.ticketsController.initGanttChart(tasks, '{{ $roadmapView }}', true);
+        if (leantime.ticketsController) { leantime.ticketsController.initGanttChart(tasks, '{{ $roadmapView }}', true); }
         @endif
     @endif
 

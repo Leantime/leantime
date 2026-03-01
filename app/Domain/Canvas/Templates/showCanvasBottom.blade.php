@@ -39,7 +39,7 @@
             jQuery.nmTop().close();
         @endif
 
-        leantime.{{ $canvasName }}CanvasController.setRowHeights();
+        if (leantime.{{ $canvasName }}CanvasController) { leantime.{{ $canvasName }}CanvasController.setRowHeights(); }
         leantime.canvasController.setCanvasName('{{ $canvasName }}');
         leantime.canvasController.initFilterBar();
 

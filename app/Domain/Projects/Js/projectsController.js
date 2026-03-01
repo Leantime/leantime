@@ -408,13 +408,11 @@ leantime.projectsController = (function () {
                             progress: false,
                             is_draggable: false,
                             custom_popup_html: function (project) {
-                                // the task object will contain the updated
-                                // dates and progress value
-                                var end_date = task._end;
+                                var end_date = project._end;
 
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
-                                if (task.projectName !== undefined) {
+                                if (project.projectName !== undefined) {
                                     popUpHTML +=  '<h3><b>' + project.name + '</b></h3>';
                                 }
 
@@ -463,7 +461,9 @@ leantime.projectsController = (function () {
                     });
                 }
 
-                gantt_chart.change_view_mode(viewMode);
+                if (gantt_chart) {
+                    gantt_chart.change_view_mode(viewMode);
+                }
 
             }
         );

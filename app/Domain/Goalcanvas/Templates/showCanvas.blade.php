@@ -213,7 +213,7 @@
                 });
             }
 
-            leantime.goalCanvasController.setRowHeights();
+            if (leantime.goalCanvasController) { leantime.goalCanvasController.setRowHeights(); }
             leantime.canvasController.setCanvasName('goal');
             leantime.canvasController.initFilterBar();
 
