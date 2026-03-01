@@ -74,7 +74,7 @@
     <dialog id="global-modal">
         <div id="global-modal-box">
             <form method="dialog" style="margin:0;position:absolute;right:10px;top:10px;z-index:10;">
-                <button class="btn btn-default btn-sm tw:focus-visible:outline tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-[var(--accent1)]" style="border:none;background:transparent;padding:8px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--element-radius);cursor:pointer;color:var(--secondary-font-color);font-size:16px;line-height:1;" aria-label="Close">
+                <button class="modal-close-btn" aria-label="Close">
                     <x-global::elements.icon name="close" />
                 </button>
             </form>

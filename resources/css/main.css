@@ -69,16 +69,14 @@
    ──────────────────────────────────────────────────────────────────── */
 #global-modal-box {
     position: relative;
-    background-color: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
+    background-color: var(--secondary-background);
+    border: 1px solid var(--main-border-color);
     border-radius: var(--box-radius, 0.5rem);
     max-height: calc(100dvh - 5em);
     overflow: visible;
     display: flex;
     flex-direction: column;
-    box-shadow: var(--glass-inset), var(--shadow-lg);
+    box-shadow: var(--regular-shadow);
 }
 #global-modal-content {
     overflow-y: auto;
@@ -96,13 +94,63 @@
     position: fixed;
     inset: 0;
     z-index: 998;
-    background-color: rgba(0, 0, 0, 0.25);
-    -webkit-backdrop-filter: var(--glass-blur);
-    backdrop-filter: var(--glass-blur);
+    background-color: rgba(0, 0, 0, 0.5);
     cursor: pointer;
 }
 #modal-blur-overlay.active {
     display: block;
+}
+
+/* ── Modal close button ──────────────────────────────────────────────
+   Consistent 32×32 close button used in the global modal X control.
+   ──────────────────────────────────────────────────────────────────── */
+.modal-close-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    border-radius: var(--element-radius, 4px);
+    cursor: pointer;
+    color: var(--secondary-font-color);
+    font-size: 20px;
+    line-height: 1;
+    transition: background 0.15s ease;
+}
+.modal-close-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--primary-font-color);
+}
+.modal-close-btn:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+}
+
+/* ── Modal content wrapper ───────────────────────────────────────────
+   Structural styles for <x-globals::actions.modal mode="content">.
+   Provides consistent heading size across all global-modal templates.
+   ──────────────────────────────────────────────────────────────────── */
+.modal-content-header {
+    padding-right: 40px;
+    margin-bottom: 12px;
+}
+.modal-content-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold, 600);
+    color: var(--main-titles-color);
+    margin: 0;
+    line-height: 1.3;
+}
+.modal-content-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    margin-top: 15px;
+    border-top: 1px solid var(--main-border-color);
 }
 
 /* Position the dialog ourselves since .show() doesn't auto-center
