@@ -346,7 +346,7 @@ jQuery(document).ready(function(){
                                 {{ __($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']) }}
                             @if ($timeRow['hasTimesheetOffset'])
                                     <x-global::elements.icon name="history" style="float: right; font-size: 12px;"
-                                       data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone"> />
+                                       data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone" />
                             @endif
                                 </td>
 
