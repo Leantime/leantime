@@ -136,7 +136,7 @@
                                     echo '</div>';
                                 }
                                 echo "<h3 id='accordion_link_" . $i . "'>
-                                    <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><x-global::elements.icon name="expand_more" /> " . e($row['clientName']) . "</a>
+                                    <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><span class='material-symbols-outlined'>expand_more</span> " . e($row['clientName']) . "</a>
                                     </h3>
                                     <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
                                 $currentClient = $row['clientName'];

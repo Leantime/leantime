@@ -1,7 +1,7 @@
 @extends($layout) 
 @section('content')
 
-<h4 class="widgettitle title-light">{!!__("subtitles.delete") !!}</h4>
+<h4 class="widgettitle title-light"><x-global::elements.icon name="delete" /> {{ __('label.delete') }}</h4>
 
 <form method="post" action="{{ BASE_URL."/goalcanvas/delCanvas/$id" }}">
     @if(isset($csrf_token))

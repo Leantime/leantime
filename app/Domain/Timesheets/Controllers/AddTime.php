@@ -170,10 +170,14 @@ class AddTime extends Controller
                 }
             }
 
+            if (! $this->tpl->get('values')) {
+                $this->tpl->assign('values', $values);
+            }
+
             $this->tpl->assign('info', $info);
             $this->tpl->assign('allClients', $this->clients->getAll());
             $this->tpl->assign('allProjects', $this->projects->getAll(showClosedProjects: false));
-            $this->tpl->assign('allTickets', $this->timesheetsRepo->getAll());
+            $this->tpl->assign('allTickets', $this->tickets->getAll());
             $this->tpl->assign('kind', $this->timesheetsRepo->kind);
 
             return $this->tpl->display('timesheets.addTime');

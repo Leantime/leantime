@@ -2,7 +2,7 @@
     $id = (int) $_GET['id'];
 @endphp
 
-<h4 class="widgettitle title-light">{{ __('subtitles.delete') }}</h4>
+<h4 class="widgettitle title-light"><x-global::elements.icon name="delete" /> {{ __('label.delete') }}</h4>
 
 <form method="post" class="formModal" action="{{ BASE_URL }}/calendar/delEvent/{{ $id }}">
     @dispatchEvent('afterFormOpen')

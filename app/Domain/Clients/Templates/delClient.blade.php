@@ -19,7 +19,7 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <h4 class="widget widgettitle">{{ __('subtitles.delete') }}</h4>
+        <h4 class="widget widgettitle"><x-global::elements.icon name="delete" /> {{ __('label.delete') }}</h4>
         <div class="widgetcontent">
 
             <form method="post">

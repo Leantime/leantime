@@ -8,7 +8,7 @@
 
 <div class="maincontent">
     <div class="maincontentinner">
-        <h4 class="widget widgettitle">{{ $tpl->__('subtitles.delete') }}</h4>
+        <h4 class="widget widgettitle"><x-global::elements.icon name="delete" /> {{ $tpl->__('label.delete') }}</h4>
         <div class="widgetcontent">
             <form method="post" action="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->escape($_GET['id']) }}">
                 <p>{{ $tpl->__('text.are_you_sure_delete_idea_board') }}</p>

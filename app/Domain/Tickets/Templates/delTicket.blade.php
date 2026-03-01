@@ -3,7 +3,7 @@
     $error = $tpl->get('error');
 @endphp
 
-<h4 class="widgettitle title-light">{{ __('subtitles.delete') }}</h4>
+<h4 class="widgettitle title-light"><x-global::elements.icon name="delete" /> {{ __('label.delete') }}</h4>
 
 @if(!empty($error))
     {!! $error !!}
