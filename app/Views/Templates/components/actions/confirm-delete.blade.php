@@ -17,7 +17,7 @@
         </button>
         <input type="hidden" name="del" value="1" />
         <button type="submit" class="btn btn-danger">
-            <i class="fa fa-trash" aria-hidden="true"></i>
+            <x-global::elements.icon name="delete" />
             {{ $buttonLabel ?? __('buttons.delete') }}
         </button>
     </div>

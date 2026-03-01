@@ -1,7 +1,7 @@
 {{-- Backward-compat wrapper: maps old API → actions.dropdown-menu --}}
 @props([
     'label' => '',
-    'icon' => 'fa fa-caret-down',
+    'icon' => 'arrow_drop_down',
     'align' => 'end',
     'menuClass' => '',
     'triggerClass' => '',

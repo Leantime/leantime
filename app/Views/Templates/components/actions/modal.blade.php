@@ -40,7 +40,7 @@
                 @if ($closeable)
                     <form method="dialog" style="margin: 0;">
                         <button class="btn btn-default btn-sm btn-circle" aria-label="{{ __('label.close') }}">
-                            <i class="fa fa-xmark" aria-hidden="true"></i>
+                            <x-global::elements.icon name="close" />
                         </button>
                     </form>
                 @endif

@@ -86,10 +86,18 @@
         <span class="loading-spinner"></span>
     @endif
     @if($resolvedLeading)
-        <i class="{{ $resolvedLeading }}"></i>
+        @if(str_contains($resolvedLeading, 'fa-') || str_starts_with($resolvedLeading, 'fa '))
+            <i class="{{ $resolvedLeading }}"></i>
+        @else
+            <x-global::elements.icon :name="$resolvedLeading" />
+        @endif
     @endif
     {{ $slot }}
     @if($resolvedTrailing)
-        <i class="{{ $resolvedTrailing }}"></i>
+        @if(str_contains($resolvedTrailing, 'fa-') || str_starts_with($resolvedTrailing, 'fa '))
+            <i class="{{ $resolvedTrailing }}"></i>
+        @else
+            <x-global::elements.icon :name="$resolvedTrailing" />
+        @endif
     @endif
 </{{ $resolvedTag }}>

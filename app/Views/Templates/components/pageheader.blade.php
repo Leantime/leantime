@@ -1,6 +1,6 @@
 {{-- Backward-compat wrapper: maps old API → layout.page-header naming-doc API --}}
 @props([
-    'icon' => 'fa fa-home',
+    'icon' => 'home',
     'headline' => null,
     'subtitle' => null,
 ])

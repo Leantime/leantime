@@ -23,15 +23,15 @@ $iconComponent = match($groupBy) {
     'type' => 'type-icon',
     'sprint' => 'sprint-icon',
     'dueDate' => null, // No icon for due date buckets - label is sufficient
-    default => null // Status and other groupings use FontAwesome icon below
+    default => null // Status and other groupings use fallback Material icon below
 };
 
-// For groupBy types without a component, use FontAwesome icon
-$faIcon = match($groupBy) {
-    'status' => 'fa-circle-dot',
-    'milestoneid' => null, // No icon for milestones
-    'dueDate' => null, // No icon for due date buckets - label is sufficient
-    default => 'fa-layer-group'
+// For groupBy types without a dedicated component, use a Material icon
+$fallbackIcon = match($groupBy) {
+    'status' => 'radio_button_checked',
+    'milestoneid' => null,
+    'dueDate' => null,
+    default => 'layers'
 };
 
 $iconProps = match($groupBy) {
@@ -84,7 +84,7 @@ foreach ($statusColumns as $statusId => $statusData) {
     <div class="swimlane-header-row1">
         {{-- Chevron (▼ expanded, ▶ collapsed) --}}
         <span class="kanban-lane-chevron">
-            <i class="fa fa-chevron-{{ $expanded ? 'down' : 'right' }}" aria-hidden="true"></i>
+            <x-global::elements.icon name="{{ $expanded ? 'expand_more' : 'chevron_right' }}" />
         </span>
 
         {{-- Visual indicator (icon/avatar) --}}
@@ -97,9 +97,9 @@ foreach ($statusColumns as $statusId => $statusData) {
                 />
             </div>
         @else
-            {{-- Default FontAwesome icon for status and other groupings --}}
+            {{-- Default icon for status and other groupings --}}
             <span class="kanban-indicator">
-                <i class="fa {{ $faIcon }} kanban-indicator-icon" aria-hidden="true"></i>
+                <x-global::elements.icon :name="$fallbackIcon" class="kanban-indicator-icon" />
             </span>
         @endif
 

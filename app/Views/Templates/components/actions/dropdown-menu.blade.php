@@ -36,19 +36,27 @@
        @if(!$label) aria-label="{{ __('label.more_options') }}" @endif
     >
         @if($leadingVisual)
-            <i class="{{ $leadingVisual }}" aria-hidden="true"></i>
+            @if(str_contains($leadingVisual, 'fa-') || str_starts_with($leadingVisual, 'fa '))
+                <i class="{{ $leadingVisual }}" aria-hidden="true"></i>
+            @else
+                <x-global::elements.icon :name="$leadingVisual" />
+            @endif
         @endif
         @if($label)
             {!! $label !!}
         @endif
         @if(!$leadingVisual && !$label)
-            <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
+            <x-global::elements.icon name="more_vert" />
         @endif
         @if($variant === 'button')
             <span class="caret"></span>
         @endif
         @if($trailingVisual)
-            <i class="{{ $trailingVisual }}" aria-hidden="true"></i>
+            @if(str_contains($trailingVisual, 'fa-') || str_starts_with($trailingVisual, 'fa '))
+                <i class="{{ $trailingVisual }}" aria-hidden="true"></i>
+            @else
+                <x-global::elements.icon :name="$trailingVisual" />
+            @endif
         @endif
     </a>
     <ul class="dropdown-menu {{ $menuClass }}">

@@ -1,5 +1,5 @@
 @props([
-    'icon' => 'fa fa-home',
+    'icon' => 'home',
     'leadingVisual' => null,
     'headline' => null,
     'subtitle' => null,
@@ -15,7 +15,13 @@
 
     @dispatchEvent('afterPageHeaderOpen')
 
-    <div class="pageicon"><span class="{{ $resolvedIcon }}"></span></div>
+    <div class="pageicon">
+        @if(str_contains($resolvedIcon, 'fa-') || str_starts_with($resolvedIcon, 'fa '))
+            <span class="{{ $resolvedIcon }}"></span>
+        @else
+            <x-global::elements.icon :name="$resolvedIcon" />
+        @endif
+    </div>
 
     <div class="pagetitle">
         @if($subtitle)

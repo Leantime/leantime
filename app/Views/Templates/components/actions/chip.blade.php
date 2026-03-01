@@ -30,7 +30,7 @@
                     {{ __("label.".$contentRole."_unknown") }}
                 @endif
             </span>
-            &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+            &nbsp;<x-global::elements.icon name="arrow_drop_down" size="xs" />
         </a>
         <ul class="dropdown-menu" aria-labelledby="{{ $contentRole }}DropdownMenuLink{{ $parentId }}">
             <li class="nav-header border">{{ $headerLabel ?: __("label.select_".$contentRole) }}</li>

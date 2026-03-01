@@ -46,14 +46,26 @@
         'class' => $badgeClasses,
         'href' => $url ?? '#',
     ] + ($inlineStyle ? ['style' => $inlineStyle] : [])) }}>
-        @if($icon)<i class="{{ $icon }}"></i> @endif
+        @if($icon)
+            @if(str_contains($icon, 'fa-') || str_starts_with($icon, 'fa '))
+                <i class="{{ $icon }}"></i>
+            @else
+                <x-global::elements.icon :name="$icon" />
+            @endif
+        @endif
         {{ $slot }}
     </a>
 @else
     <span {{ $attributes->merge([
         'class' => $badgeClasses,
     ] + ($inlineStyle ? ['style' => $inlineStyle] : [])) }}>
-        @if($icon)<i class="{{ $icon }}"></i> @endif
+        @if($icon)
+            @if(str_contains($icon, 'fa-') || str_starts_with($icon, 'fa '))
+                <i class="{{ $icon }}"></i>
+            @else
+                <x-global::elements.icon :name="$icon" />
+            @endif
+        @endif
         {{ $slot }}
     </span>
 @endif

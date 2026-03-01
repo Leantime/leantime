@@ -13,7 +13,7 @@
 
 <div class="emojiInput">
     <input type="text" name="{{ $name }}" {{ $attributes->merge(['class' => 'emojifield emojiFieldId'.$uniqueId.' '.$class]) }} value="{{ $value }}" placeholder="{{ $placeholder }}" id="{{ $id  }}" />
-    <a class="emojibtn emojibtnId{{ $uniqueId }} fa-regular fa-face-smile" href="javascript:void(0);">&nbsp;</a>
+    <a class="emojibtn emojibtnId{{ $uniqueId }}" href="javascript:void(0);"><x-global::elements.icon name="sentiment_satisfied" /></a>
 </div>
 <script>
     jQuery(document).ready(function(){
