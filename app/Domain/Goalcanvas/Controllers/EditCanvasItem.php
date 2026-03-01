@@ -88,7 +88,7 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                 'title' => '',
                 'description' => '',
                 'status' => array_key_first($this->canvasRepo->getStatusLabels()),
-                'relates' => '',
+                'relates' => array_key_first($this->canvasRepo->getRelatesLabels()) ?? '',
                 'startValue' => '',
                 'currentValue' => '',
                 'canvasId' => $_GET['canvasId'] ?? (int) session('currentGOALCanvas'),
@@ -100,6 +100,8 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                 'metricType' => '',
                 'assignedTo' => '',
                 'parent' => '',
+                'milestoneId' => '',
+                'milestoneHeadline' => '',
             ];
 
             $comments = [];
@@ -117,6 +119,7 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
         $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
+        $this->tpl->assign('relatesLabels', $this->canvasRepo->getRelatesLabels());
         $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
 
         return $this->tpl->displayPartial('goalcanvas.canvasDialog');

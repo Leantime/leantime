@@ -1,5 +1,11 @@
 @extends($layout)
 @section('content')
+    @php
+        $hiddenStatusLabels = $tpl->get('statusLabels');
+        $statusLabels = $statusLabels ?? $hiddenStatusLabels;
+        $hiddenRelatesLabels = $tpl->get('relatesLabels');
+        $relatesLabels = $relatesLabels ?? $hiddenRelatesLabels;
+    @endphp
     <script type="text/javascript">
         window.onload = function() {
             if (!window.jQuery) {

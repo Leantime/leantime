@@ -59,7 +59,7 @@ foreach ($allCanvas as $canvasRow) {
 
 <div class="maincontent">
 
-<div class="row tw:mb-5">
+<div class="row tw:mb-8">
     <div class="col-md-5">
         <div class="bigNumberBox tw:py-7 tw:px-4">
             <h2>Progress: {{ round($goalStats['avgPercentComplete']) }}%</h2>

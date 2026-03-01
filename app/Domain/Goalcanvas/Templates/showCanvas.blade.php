@@ -86,7 +86,7 @@
             <div class="tw:flex tw:justify-between tw:items-center">
                 <div>
                     @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
-                        <x-globals::forms.button link="#/goalcanvas/editCanvasItem?type={{ $elementName }}" type="primary" id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</x-globals::forms.button>
+                        <x-globals::forms.button link="#/goalcanvas/editCanvasItem?type={{ $elementName }}&canvasId={{ $currentCanvas }}" type="primary" id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</x-globals::forms.button>
                     @endif
                 </div>
 
