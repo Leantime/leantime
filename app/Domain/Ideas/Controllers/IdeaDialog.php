@@ -88,6 +88,7 @@ class IdeaDialog extends Controller
         $this->tpl->assign('milestones', $allProjectMilestones);
         $this->tpl->assign('canvasTypes', $this->ideaRepo->canvasTypes);
         $this->tpl->assign('canvasItem', $canvasItem);
+        $this->tpl->assign('currentCanvas', (int) session('currentIdeaCanvas'));
 
         return $this->tpl->displayPartial('ideas.ideaDialog');
     }

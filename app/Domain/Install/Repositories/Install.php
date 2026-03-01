@@ -1994,7 +1994,7 @@ class Install
                     `weekDays` TEXT NULL,
                     `monthDay` INT NULL,
                     `months` TEXT NULL,
-                    `action` VARCHAR(20) NOT NULL DEFAULT "reset",
+                    `action` VARCHAR(20) NOT NULL DEFAULT \'reset\',
                     `lastProcessed` DATETIME NULL,
                     `nextProcessingDate` DATETIME NULL,
                     `enabled` TINYINT(1) NOT NULL DEFAULT 1,
@@ -2320,7 +2320,7 @@ class Install
 
         $sql = [
             // Add color column to zp_canvas for notebook color support
-            'ALTER TABLE `zp_canvas` ADD COLUMN `color` VARCHAR(50) DEFAULT "ocean" AFTER `description`;',
+            'ALTER TABLE `zp_canvas` ADD COLUMN `color` VARCHAR(50) DEFAULT \'ocean\' AFTER `description`;',
         ];
 
         foreach ($sql as $statement) {

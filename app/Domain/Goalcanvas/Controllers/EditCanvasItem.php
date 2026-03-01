@@ -317,9 +317,10 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
 
         $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
 
-        if (isset($_GET['id'])) {
-            $comments = $this->commentsRepo->getComments('goalcanvasitem', $_GET['id']);
-            $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem($_GET['id']));
+        if (isset($params['id'])) {
+            $canvasItemId = (int) $params['id'];
+            $comments = $this->commentsRepo->getComments('goalcanvasitem', $canvasItemId);
+            $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem($canvasItemId));
         } else {
             $value = [
                 'id' => '',
