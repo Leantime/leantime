@@ -184,6 +184,202 @@
     --zlayer-9: 40; /* modal modals*/
 
     --transparencyLayer: transparent;
+
+    /* Feedback Colors */
+    --feedback-success-bg: #e8f5e9;
+    --feedback-success-color: var(--green);
+    --feedback-success-border: #4caf50;
+    --feedback-warning-bg: #fff3e0;
+    --feedback-warning-color: #856404;
+    --feedback-warning-border: #ff9800;
+    --feedback-info-bg: #e3f2fd;
+    --feedback-info-color: var(--blue);
+    --feedback-info-border: #2196f3;
+    --feedback-error-bg: #ffebee;
+    --feedback-error-color: #c62828;
+    --feedback-error-border: #f44336;
+
+    /* ═══ DESIGN SYSTEM v2 — SEMANTIC ALIASES ═══ */
+
+    --accent3: #CADE1B;
+    --accent3-text: #A8B516;
+    --accent3-color: #000;
+    --accent4: #F61067;
+    --accent4-soft: #C84D7C;
+    --accent4-color: #fff;
+
+    --accent1-light: rgba(0,71,102,0.06);
+    --accent2-light: rgba(0,184,147,0.08);
+    --accent3-light: rgba(202,222,27,0.10);
+    --accent4-light: rgba(246,16,103,0.06);
+
+    --color-text-primary: var(--color-text-default);
+    --color-text-secondary: var(--secondary-font-color);
+    --color-text-muted: var(--interactive-icon-color);
+    --color-text-disabled: var(--solid-neutral);
+    --color-text-on-accent: var(--accent1-color);
+
+    --color-bg-page: var(--color-surface-page);
+    --color-bg-card: var(--color-surface-card);
+    --color-bg-elevated: var(--layered-background);
+    --color-bg-muted: var(--color-surface-inset);
+    --color-bg-hover: var(--col-hover-bg);
+    --color-bg-input: var(--input-background);
+
+    --color-border-default: var(--main-border-color);
+    --color-border-light: var(--neutral);
+    --color-border-hover: var(--main-border-color-hover);
+
+    --shadow-xs: var(--input-shadow);
+    --shadow-sm: var(--shadow-s);
+    --shadow-md: var(--shadow-m);
+    --shadow-lg: var(--shadow-l);
+    --shadow-xl: 0 14px 48px rgba(0,0,0,0.13);
+
+    --radius-xs: 4px;
+    --radius-sm: var(--box-radius-small);
+    --radius: var(--element-radius);
+    --radius-lg: var(--box-radius);
+    --radius-pill: 20px;
+    --radius-full: 9999px;
+
+    --text-xs: var(--font-size-xs);
+    --text-sm: var(--font-size-s);
+    --text-base: var(--base-font-size);
+    --text-md: var(--font-size-m);
+    --text-lg: var(--font-size-l);
+    --text-xl: var(--font-size-xl);
+    --text-2xl: var(--font-size-xxl);
+    --text-3xl: var(--font-size-xxxl);
+
+    --font-weight-light: 300;
+    --font-weight-body: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-heading: 650;
+    --font-weight-bold: 700;
+    --font-weight-display: 800;
+
+    --line-height-tight: 1;
+    --line-height-snug: 1.3;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.6;
+    --line-height-loose: 1.75;
+
+    --font-size-display-sm: 28px;
+    --font-size-display-md: 36px;
+    --font-size-display-lg: 40px;
+    --font-size-display-xl: 120px;
+
+    --duration-fast: 0.1s;
+    --duration-normal: 0.15s;
+    --duration-moderate: 0.2s;
+    --duration-slow: 0.3s;
+
+    --opacity-faint: 0.2;
+    --opacity-disabled: 0.5;
+    --opacity-muted: 0.6;
+    --opacity-subdued: 0.7;
+    --opacity-subtle: 0.85;
+
+    --glass-bg: var(--glass-background);
+    --glass-inset: inset 0 1px 0 rgba(255,255,255,0.1);
+    --glass-bg-subtle: var(--color-bg-card);
+    --glass-blur-subtle: none;
+
+    --emboss-track: rgba(0,0,0,0.04);
+    --emboss-highlight: rgba(255,255,255,0.15);
+
+    /* ═══ DESIGN SYSTEM v3 — BASE (PRIMITIVE) TOKENS ═══ */
+
+    --lt-color-blue-300: #66b3ff;
+    --lt-color-blue-400: #1976d2;
+    --lt-color-blue-500: var(--accent1);
+    --lt-color-green-500: var(--accent2);
+    --lt-color-lime-500: var(--accent3);
+    --lt-color-magenta-500: var(--accent4);
+    --lt-color-red-500: #BB1B25;
+    --lt-color-yellow-500: #fdab3d;
+    --lt-color-gray-50: #ffffff;
+    --lt-color-gray-100: #f5f6f7;
+    --lt-color-gray-200: rgba(240, 240, 240, 0.9);
+    --lt-color-gray-500: #777777;
+    --lt-color-gray-800: #333333;
+
+    --lt-spacing-1: 0.25rem;
+    --lt-spacing-2: 0.5rem;
+    --lt-spacing-4: 1rem;
+    --lt-spacing-6: 1.5rem;
+    --lt-spacing-8: 2rem;
+    --lt-spacing-12: 3rem;
+
+    /* ═══ DESIGN SYSTEM v3 — FUNCTIONAL TOKENS ═══ */
+
+    --color-brand-primary: var(--lt-color-blue-500);
+    --color-brand-secondary: var(--lt-color-green-500);
+
+    --color-surface-page: rgba(255, 255, 255, 1);
+    --color-surface-card: #fff;
+    --color-surface-inset: #f5f6f7;
+    --color-surface-overlay: rgba(0, 0, 0, 0.5);
+
+    --color-text-default: var(--lt-color-gray-800);
+    --color-text-link: var(--color-brand-primary);
+    --color-text-on-emphasis: #ffffff;
+
+    --color-state-danger: var(--lt-color-red-500);
+    --color-state-warning: var(--lt-color-yellow-500);
+    --color-state-success: var(--lt-color-green-500);
+    --color-state-info: var(--lt-color-blue-400);
+
+    --color-focus-ring: var(--lt-color-blue-300);
+
+    --text-s: 0.875rem;
+    --text-m: 1rem;
+    --text-l: 1.25rem;
+    --font-family-base: var(--primary-font-family);
+    --font-family-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    --font-weight-normal: var(--font-weight-body);
+
+    --radius-s: 0.25rem;
+    --radius-m: 0.5rem;
+    --radius-l: 1rem;
+
+    --shadow-s: 0px 1px 2px rgba(0 0 0 / 5%), 0px 1px 1px 1px rgba(0 0 0 / 2%);
+    --shadow-m: 0px 0px 2px 0px rgba(0 0 0 / 20%), 0px 1px 1px 1px rgba(0 0 0 / 5%);
+    --shadow-l: 0px 0px 10px 0px rgba(220,220,220, 0.5), 0px 2px 2px 1px rgba(220,220,220, 0.5);
+
+    --z-dropdown: 1000;
+    --z-sticky: 1100;
+    --z-modal: 1300;
+    --z-toast: 1400;
+
+    /* ═══ DESIGN SYSTEM v3 — COMPONENT TOKENS ═══ */
+
+    --btn-bg: var(--color-brand-primary);
+    --btn-color: var(--color-text-on-emphasis);
+    --btn-radius: var(--radius-m);
+
+    --card-bg: var(--color-surface-card);
+    --card-border: var(--color-border-default);
+    --card-radius: var(--radius-m);
+    --card-shadow: var(--shadow-s);
+
+    --input-bg: var(--color-bg-input);
+    --input-border: var(--color-border-default);
+    --input-text: var(--color-text-default);
+
+    --modal-bg: var(--color-surface-card);
+    --modal-overlay: var(--color-surface-overlay);
+    --modal-radius: var(--radius-l);
+    --modal-shadow: var(--shadow-l);
+
+    --badge-radius: var(--radius-full);
+
+    --dropdown-bg: var(--color-surface-card);
+    --dropdown-border: var(--color-border-default);
+    --dropdown-shadow: var(--shadow-m);
+
 }
 
 /* Main default overrides */
