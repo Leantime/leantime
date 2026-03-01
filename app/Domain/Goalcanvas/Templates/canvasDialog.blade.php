@@ -142,7 +142,7 @@
                                 </div>
 
                                 <div id="existingMilestone" style="display:none;">
-                                    <x-globals::forms.select :bare="true" data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
+                                    <x-globals::forms.select :bare="true" :data-placeholder="__('input.placeholders.filter_by_milestone')" name="existingMilestone" class="user-select">
                                         <option value=""></option>
                                         @foreach ($tpl->get('milestones') as $milestoneRow)
                                             <option value="{{ $milestoneRow->id }}" {{ isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id) ? 'selected' : '' }}>
