@@ -178,8 +178,6 @@
     --zlayer-8: 35; /* modal dialogs */
     --zlayer-9: 40; /* modal modals*/
 
-    --transparencyLayer: transparent;
-
     --transparencyLayer: rgba(0,0,0,1);
 
     /* Feedback Colors (Dark Mode) */
