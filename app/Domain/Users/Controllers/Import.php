@@ -36,7 +36,7 @@ class Import extends Controller
     {
         // Only Admins
         if (! Auth::userIsAtLeast(Roles::$admin)) {
-            return $this->tpl->display('errors.error403');
+            return $this->tpl->display('errors.error403', layout: 'error', responseCode: 403);
         }
 
         $this->tpl->assign('allUsers', $this->userRepo->getAll());

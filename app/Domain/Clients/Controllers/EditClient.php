@@ -77,10 +77,10 @@ class EditClient extends Controller
 
                 return $this->tpl->display('clients.editClient');
             } else {
-                return $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403', layout: 'error', responseCode: 403);
             }
         } else {
-            return $this->tpl->display('errors.error403');
+            return $this->tpl->display('errors.error403', layout: 'error', responseCode: 403);
         }
     }
 }

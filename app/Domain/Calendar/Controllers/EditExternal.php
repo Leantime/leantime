@@ -48,7 +48,7 @@ class EditExternal extends Controller
 
             return $this->tpl->displayPartial('calendar.editExternalCalendar');
         } else {
-            return $this->tpl->display('errors.error403');
+            return $this->tpl->display('errors.error403', layout: 'error', responseCode: 403);
         }
     }
 }

@@ -41,7 +41,7 @@ class ShowAll extends Controller
 
             return $this->tpl->display('users.showAll');
         } else {
-            return $this->tpl->display('errors.error403');
+            return $this->tpl->display('errors.error403', layout: 'error', responseCode: 403);
         }
     }
 

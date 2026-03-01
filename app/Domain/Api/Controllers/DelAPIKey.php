@@ -70,7 +70,7 @@ class DelAPIKey extends Controller
 
             return $this->tpl->display('api.delKey');
         } else {
-            return $this->tpl->display('errors.error403');
+            return $this->tpl->display('errors.error403', layout: 'error', responseCode: 403);
         }
     }
 }
