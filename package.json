@@ -72,6 +72,7 @@
     "luxon": "^3.4.4",
     "marked": "^15.0.8",
     "masonry-layout": "^4.2.2",
+    "material-symbols": "^0.40.2",
     "mermaid": "^11.10.0",
     "moment": "^2.29.4",
     "packery": "^2.1.2",
