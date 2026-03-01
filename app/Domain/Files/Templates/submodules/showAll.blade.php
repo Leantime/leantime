@@ -193,13 +193,13 @@ jQuery(document).ready(function(){
             let html = '<li class="file-module-'+response.moduleId+'">' +
                             '<div class="dropdown" style="float:right;">' +
                                 '<a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle ticketDropDown">' +
-                                    '<x-global::elements.icon name="more_vert" />' +
+                                    '<span class="material-symbols-outlined" aria-hidden="true">more_vert</span>' +
                                 '</a>' +
                                 '<ul class="dropdown-menu">' +
                                     '<li class="nav-header">{{ __("subtitles.file") }}</li>' +
                                     '<li><a target="_blank" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">{{ str_replace("'", '"', __("links.download")) }}</a></li>'+
                                     @if($login::userIsAtLeast($roles::$editor))
-                                        '<li><a href="{{ BASE_URL }}/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><x-global::elements.icon name="delete" /> {{ str_replace("'", '"', __("links.delete")) }}</a></li>'+
+                                        '<li><a href="{{ BASE_URL }}/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><span class="material-symbols-outlined" aria-hidden="true">delete</span> {{ str_replace("'", '"', __("links.delete")) }}</a></li>'+
                                     @endif
                                 '</ul>'+
                             '</div>'+

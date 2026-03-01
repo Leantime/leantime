@@ -975,9 +975,9 @@ jQuery(document).ready(function() {
                         statusPill.classList.add(newStatus);
 
                         if (newStatus === 'draft') {
-                            statusPill.innerHTML = '<x-global::elements.icon name="edit" /> Draft <x-global::elements.icon name="expand_more" />';
+                            statusPill.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">edit</span> Draft <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>';
                         } else {
-                            statusPill.innerHTML = '<x-global::elements.icon name="check" /> Published <x-global::elements.icon name="expand_more" />';
+                            statusPill.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">check</span> Published <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>';
                         }
 
                         var activeLink = document.querySelector('.wiki-tree-link.active');

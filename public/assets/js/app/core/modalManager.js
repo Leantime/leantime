@@ -75,15 +75,22 @@ leantime.modals = (function () {
     // ── Script Execution ───────────────────────────────────────────────
     // innerHTML doesn't run <script> tags; cloning forces execution.
     function executeScripts(container) {
-        var scripts = container.querySelectorAll('script');
+        // Snapshot to a static array — the live NodeList shifts as we
+        // replace nodes, which can orphan later entries.
+        var scripts = Array.prototype.slice.call(container.querySelectorAll('script'));
         for (var i = 0; i < scripts.length; i++) {
             var old = scripts[i];
+            if (!old.parentNode) { continue; }
             var fresh = document.createElement('script');
             for (var j = 0; j < old.attributes.length; j++) {
                 fresh.setAttribute(old.attributes[j].name, old.attributes[j].value);
             }
             fresh.textContent = old.textContent;
-            old.parentNode.replaceChild(fresh, old);
+            try {
+                old.parentNode.replaceChild(fresh, old);
+            } catch (e) {
+                // Script node was detached during iteration — skip it
+            }
         }
     }
 
