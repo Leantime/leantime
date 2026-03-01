@@ -956,7 +956,7 @@
     "src": "public/assets/images/svg/loading-animation.svg"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BGNs5D8t.css",
+    "file": "assets/app-DNOjPUjq.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -966,12 +966,12 @@
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-DgtxDz8f.css",
+    "file": "assets/main-CfiNwONv.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-Cm05s7ss.js",
+    "file": "assets/compiled-app-yVBoBoAh.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,

@@ -182,10 +182,12 @@ if (typeof jQuery !== 'undefined') {
             // Initialize SlimSelect
             if (typeof SlimSelect !== 'undefined') {
                 try {
+                    // Only allow deselect (X button) on multi-selects
+                    var isMultiple = el.hasAttribute('multiple');
                     el._slimSelect = new SlimSelect({
                         select: el,
                         showSearch: (el.options && el.options.length > 8),
-                        allowDeselect: !el.hasAttribute('required')
+                        allowDeselect: isMultiple && !el.hasAttribute('required')
                     });
                 } catch (e) {
                     // SlimSelect may throw on hidden/detached elements — safe to ignore

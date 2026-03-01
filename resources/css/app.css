@@ -126,3 +126,13 @@
     --dropdown-border: var(--dropdown-border);
     --dropdown-shadow: var(--dropdown-shadow);
 }
+
+/* ── DaisyUI theme color override ──────────────────────────────────────
+   DaisyUI's built-in "light" theme sets --color-primary to purple.
+   Override it to use Leantime's theme primary color so DaisyUI components
+   (checkboxes, radios, toggles, badges) match the app's color scheme.
+   ──────────────────────────────────────────────────────────────────── */
+:root {
+    --color-primary: var(--primary-color);
+    --color-primary-content: #fff;
+}

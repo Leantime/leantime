@@ -17,12 +17,15 @@
 
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
         <x-globals::forms.button tag="button" type="link" onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;" data-tippy-content="{{ __('popover.filter') }}">
-            <x-global::elements.icon name="filter_list" /> Filter{!! $tpl->get('numOfFilters') > 0 ? "  <span class='badge badge-primary'>" . $tpl->get('numOfFilters') . '</span> ' : '' !!}
+            <x-global::elements.icon name="filter_list" /> Filter
+            @if($tpl->get('numOfFilters') > 0)
+                <x-globals::elements.badge color="primary">{{ $tpl->get('numOfFilters') }}</x-globals::elements.badge>
+            @endif
         </x-globals::forms.button>@if($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" trigger-class="btn btn-link" align="end" data-tippy-content="{{ __('popover.group_by') }}">
                 <x-slot:label>
                     <x-global::elements.icon name="account_tree" /> Group By
                     @if($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
-                        <span class="badge badge-primary">1</span>
+                        <x-globals::elements.badge color="primary">1</x-globals::elements.badge>
                     @endif
                 </x-slot:label>
                 @foreach($groupBy as $input)

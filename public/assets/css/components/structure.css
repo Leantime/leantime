@@ -296,6 +296,20 @@ body {
     border-radius: var(--box-radius);
 }
 
+/* Badge color variants */
+.badge-primary   { background-color: var(--primary-color);  color: #fff; }
+.badge-secondary { background-color: var(--secondary-color); color: #fff; }
+.badge-info      { background-color: var(--dark-blue);      color: var(--dark-blue-text-color, #fff); }
+.badge-success   { background-color: var(--green);          color: var(--green-text-color, #fff); }
+.badge-warning   { background-color: var(--yellow);         color: var(--yellow-text-color, #000); }
+.badge-danger    { background-color: var(--red);            color: var(--red-text-color, #fff); }
+.badge-outline   { background-color: transparent; border: 1px solid var(--main-border-color); color: var(--primary-font-color); }
+
+/* Badge size variants */
+.badge-xs { padding: 2px 5px; font-size: var(--font-size-xs); }
+.badge-sm { padding: 3px 6px; font-size: var(--font-size-xs); }
+.badge-lg { padding: 5px 10px; font-size: var(--font-size-m); }
+
 /* Alert base */
 .alert {
     padding: 16px;

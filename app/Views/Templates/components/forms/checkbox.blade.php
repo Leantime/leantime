@@ -5,6 +5,7 @@
     'checked' => false,
     'value' => '1',
     'toggle' => false,
+    'scale' => null,             // xs|s|m|l
     'id' => null,
     'required' => false,
     'disabled' => false,
@@ -13,7 +14,16 @@
 @php
     $resolvedLabel = $labelText ?? $label;
     $checkboxId = $id ?? $name;
-    $inputClass = $toggle ? 'tw:toggle tw:toggle-primary' : 'tw:checkbox tw:checkbox-primary';
+
+    $sizeClass = match($scale) {
+        'xs' => $toggle ? ' tw:toggle-xs' : ' tw:checkbox-xs',
+        's'  => $toggle ? ' tw:toggle-sm' : ' tw:checkbox-sm',
+        'l'  => $toggle ? ' tw:toggle-lg' : ' tw:checkbox-lg',
+        default => ' tw:checkbox-sm',
+    };
+    $inputClass = $toggle
+        ? 'tw:toggle tw:toggle-primary' . $sizeClass
+        : 'tw:checkbox tw:checkbox-primary' . $sizeClass;
     $hasLabel = $resolvedLabel || !$slot->isEmpty();
 @endphp
 
