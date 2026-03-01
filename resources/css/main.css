@@ -20,6 +20,10 @@
 @import "../../public/assets/css/libs/fontawesome-free/css/v4-shims.css";
 @import "material-symbols/outlined.css";
 
+.material-symbols-outlined {
+    vertical-align: middle;
+}
+
 @import "../../public/assets/css/libs/frappe_theme.css";
 @import "../../public/assets/css/libs/shepherd-theme-arrows.css";
 @import "../../public/assets/css/libs/jstree/style.css";
