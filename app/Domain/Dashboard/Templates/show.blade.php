@@ -57,10 +57,7 @@
 
                 <br/>
 
-                @include('projects::partials.checklist', [
-                    'progressSteps' => $progressSteps,
-                    'percentDone' => $percentDone
-                ])
+                <x-globals::projects.checklist :progress-steps="$progressSteps" :percent-done="$percentDone" />
 
                 <br/><br/>
 
@@ -104,7 +101,7 @@
                                             <strong>{{ $row['headline'] }}</strong>
                                         </a>
 
-                                        @include("tickets::partials.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])
+                                        <x-globals::tickets.ticket-submenu :ticket="$row" :on-the-clock="$tpl->get('onTheClock')" />
                                     </div>
 
                                 <div class="row">

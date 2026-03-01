@@ -26,7 +26,7 @@
             <li class="nav-header border">{{  __("subtitles.track_time") }}</li>
             @dispatchEvent("beforeTimer", ["ticket"=>$ticket])
             <li class="timerContainer tw:px-[10px]">
-                @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock, 'style'=> 'full'])
+                <x-globals::tickets.timer-button :parent-ticket-id="$ticket['id']" :on-the-clock="$onTheClock" style="full" />
             </li>
             @dispatchEvent("end")
     </x-globals::actions.dropdown-menu>

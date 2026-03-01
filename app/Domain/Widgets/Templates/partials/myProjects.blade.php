@@ -37,7 +37,7 @@
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == true)
                         <div class="col-md-4">
-                            @include("projects::partials.projectCard", ["project" => $project, "type" => $type])
+                            <x-globals::projects.project-card :project="$project" :type="$type" :project-type-avatars="$projectTypeAvatars ?? []" />
                         </div>
                         @php
                             $hasFavorites = true;
@@ -63,7 +63,7 @@
                     @if($project['isFavorite'] == false)
 
                         <div class="col-md-4">
-                            @include("projects::partials.projectCard", ["project" => $project, "type" => $type])
+                            <x-globals::projects.project-card :project="$project" :type="$type" :project-type-avatars="$projectTypeAvatars ?? []" />
                         </div>
 
                     @endif

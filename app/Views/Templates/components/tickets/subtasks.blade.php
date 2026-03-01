@@ -1,3 +1,10 @@
+@props([
+    'ticketSubtasks' => [],
+    'ticket' => null,
+    'priorities' => [],
+    'efforts' => [],
+    'statusLabels' => [],
+])
 
 <ul class="sortableTicketList tw:mb-[120px]">
     <li class="">
@@ -43,7 +50,7 @@
             $sumEstHours = $sumEstHours + $subticket['hourRemaining'];
 
             if ($subticket['dateToFinish'] == "0000-00-00 00:00:00" || $subticket['dateToFinish'] == "1969-12-31 00:00:00") {
-                $date = $tpl->__("text.anytime");
+                $date = __("text.anytime");
             } else {
                 $date = format($subticket['dateToFinish'])->date();
             }

@@ -142,18 +142,13 @@ jQuery(document).ready(function(){
                                  aria-label="{{ isset($emptyColumns[$key]) ? 'Empty column' : htmlspecialchars($statusRow['name']) . ' column items' }}"
                                  role="list">
 
-                                @include('tickets::partials.quickadd-form', [
-                                    'statusId' => $key,
-                                    'swimlaneKey' => $group['id'] ?? null,
-                                    'isEmpty' => isset($emptyColumns[$key]),
-                                    'currentGroupBy' => $searchCriteria['groupBy'] ?? null,
-                                ])
+                                <x-globals::tickets.quickadd-form :status-id="$key" :swimlane-key="$group['id'] ?? null" :is-empty="isset($emptyColumns[$key])" :current-group-by="$searchCriteria['groupBy'] ?? null" :reopen-state="$reopenState ?? null" :search-criteria="$searchCriteria ?? []" />
 
                                 @foreach($allTickets as $row)
                                     @if($row['status'] == $key)
                                         <div class="ticketBox moveable container priority-border-{{ $row['priority'] }}" id="ticket_{{ $row['id'] }}">
 
-                                                    @include('tickets::partials.ticketsubmenu', ['ticket' => $row, 'onTheClock' => $tpl->get('onTheClock')])
+                                                    <x-globals::tickets.ticket-submenu :ticket="$row" :on-the-clock="$tpl->get('onTheClock')" />
 
                                                     @if($row['dependingTicketId'] > 0)
                                                         <small><a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}" class="form-modal">{{ e($row['parentHeadline']) }}</a></small> //

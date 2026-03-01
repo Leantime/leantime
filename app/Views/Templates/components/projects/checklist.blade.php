@@ -1,5 +1,7 @@
 @props([
-    'includeTitle' => true
+    'includeTitle' => true,
+    'progressSteps' => [],
+    'percentDone' => 0,
 ])
 
 @if ($includeTitle)

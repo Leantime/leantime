@@ -81,7 +81,7 @@
         @else
             <div class="tw:flex tw:flex-row tw:items-center tw:gap-2">
                 <div class="tw:shrink-0">
-                    @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock])
+                    <x-globals::tickets.timer-button :parent-ticket-id="$ticket['id']" :on-the-clock="$onTheClock" />
                 </div>
 
                 <div class="tw:flex-1 tw:min-w-0 ticket-title ticket-title-wrapper">
@@ -174,7 +174,7 @@
                         @endif
                     </div>
 
-                    @include("tickets::partials.ticketsubmenu", ["ticket" => $ticket, "onTheClock" => $onTheClock, "allowSubtaskCreation" => true])
+                    <x-globals::tickets.ticket-submenu :ticket="$ticket" :on-the-clock="$onTheClock" :allow-subtask-creation="true" />
                 </div>
 
             </div>

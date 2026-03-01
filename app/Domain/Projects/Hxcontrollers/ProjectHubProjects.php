@@ -17,7 +17,7 @@ use Leantime\Domain\Users\Services\Users as UserService;
 
 class ProjectHubProjects extends HtmxController
 {
-    protected static string $view = 'projects::partials.projectHubProjects';
+    protected static string $view = 'globals::components.projects.project-hub-projects';
 
     private ProjectService $projectsService;
 

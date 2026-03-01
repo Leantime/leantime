@@ -1,6 +1,7 @@
 @props([
     'project' => [],
-    'type' => 'simple'
+    'type' => 'simple',
+    'projectTypeAvatars' => [],
 ])
 
 <div class="projectBox" id="projectBox-{{ $project['id'] }}">

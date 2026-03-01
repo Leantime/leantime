@@ -1,3 +1,9 @@
+@props([
+    'clients' => [],
+    'allProjects' => [],
+    'currentClientName' => '',
+])
+
 <div id="myProjectsHub"
      hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
      hx-trigger="HTMX.updateProjectList from:body"
@@ -44,7 +50,7 @@
 
     <x-globals::elements.accordion id="myProjectsHub-favorites" class="noBackground">
         <x-slot name="title">
-            ⭐ My Favorites
+            My Favorites
         </x-slot>
         <x-slot name="content">
             <div class="row">
@@ -54,7 +60,7 @@
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == true)
                         <div class="col-md-4">
-                            @include("projects::partials.projectCard", ["project" => $project,  "type" => "detailed"])
+                            <x-globals::projects.project-card :project="$project" type="detailed" :project-type-avatars="$projectTypeAvatars ?? []" />
                         </div>
                         @php
                             $hasFavorites = true;
@@ -73,7 +79,7 @@
 
     <x-globals::elements.accordion id="myProjectsHub-otherProjects" class="noBackground">
         <x-slot name="title">
-            🗂️ All Assigned Projects
+            All Assigned Projects
         </x-slot>
         <x-slot name="content">
 
@@ -82,7 +88,7 @@
                     @if($project['isFavorite'] == false)
 
                         <div class="col-md-3">
-                            @include("projects::partials.projectCard", ["project" => $project, "type" => "detailed"])
+                            <x-globals::projects.project-card :project="$project" type="detailed" :project-type-avatars="$projectTypeAvatars ?? []" />
                         </div>
 
                     @endif
@@ -92,5 +98,3 @@
         </x-slot>
     </x-globals::elements.accordion>
 </div>
-
-

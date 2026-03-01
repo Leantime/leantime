@@ -1,3 +1,7 @@
+@props([
+    'project' => [],
+])
+
 @php( $percentDone = format($project['progress']['percent'])->decimal())
 
     <x-global::progress :value="$percentDone" label="{{ __('subtitles.project_progress') }}" />

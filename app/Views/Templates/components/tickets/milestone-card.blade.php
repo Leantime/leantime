@@ -15,10 +15,10 @@
             <div class="tw:flex tw:justify-between progress-wrapper">
                 <div class="percent-label">
                     {{ __("label.due") }}
-                    <?php echo format($milestone->editTo )->date($tpl->__("text.no_date_defined")); ?>
+                    <?php echo format($milestone->editTo )->date(__("text.no_date_defined")); ?>
                 </div>
                 <div class="percent-label" style="text-align:right">
-                    <?=sprintf($tpl->__("text.percent_complete"), format($percentDone)->decimal())?>
+                    <?=sprintf(__("text.percent_complete"), format($percentDone)->decimal())?>
                 </div>
             </div>
         @endif

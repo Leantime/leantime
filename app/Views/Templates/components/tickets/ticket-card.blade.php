@@ -1,3 +1,13 @@
+@props([
+    'row' => [],
+    'cardType' => 'simple',
+    'onTheClock' => false,
+    'priorities' => [],
+    'statusLabels' => [],
+    'efforts' => [],
+    'milestones' => [],
+])
+
 <div class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}" aria-label="{{ __('label.priority') }}: {{ $priorities[$row['priority']] ?? $row['priority'] }}">
     <div class="row">
         <div class="col-md-8 titleContainer">
@@ -12,7 +22,7 @@
         </div>
         <div class="col-md-4 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
 
-            @include("tickets::partials.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
+            <x-globals::tickets.ticket-submenu :ticket="$row" :on-the-clock="$onTheClock" />
             @if($cardType == "full")
                 <div class="scheduler pull-right">
                     @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
@@ -45,32 +55,6 @@
                 headerLabel="{{ __('dropdown.choose_status') }}"
             />
 
-            <?php /*
-                                                        <div class="dropdown ticketDropdown effortDropdown show right">
-                                                            <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            <span class="text">
-                                                                @if ($row['storypoints'] != '' && $row['storypoints'] > 0)
-                                                                    {{ $efforts["" . $row['storypoints']] ?? $row['storypoints'] }}
-                                                                @else
-                                                                    {{ __("label.story_points_unkown") }}
-                                                                @endif
-                                                            </span>
-                                                                &nbsp;<x-global::elements.icon name="arrow_drop_down" />
-                                                            </a>
-                                                            <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink{{ $row['id'] }}">
-                                                                <li class="nav-header border">{{ __("dropdown.how_big_todo") }}</li>
-                                                                @foreach($efforts as $effortKey => $effortValue)
-                                                                    <li class='dropdown-item'>
-                                                                        <a href='javascript:void(0);'
-                                                                           data-value='{{ $row['id'] . "_" . $effortKey }}'
-                                                                           id='ticketEffortChange{{ $row['id'] . $effortKey }}'>
-                                                                            {{ $effortValue }}
-                                                                        </a>
-                                                                    </li>
-                                                                @endforeach
-                                                            </ul>
-                                                        </div>
-                                                    */ ?>
             @if($cardType == "full")
                 @php
                     $milestoneOptions = [0 => ['name' => __('label.no_milestone'), 'class' => '#b0b0b0']];

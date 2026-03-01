@@ -8,7 +8,7 @@ use Leantime\Domain\Timesheets\Services\Timesheets;
 
 class TicketCard extends HtmxController
 {
-    protected static string $view = 'tickets::partials.ticketCard';
+    protected static string $view = 'globals::components.tickets.ticket-card';
 
     private Tickets $ticketService;
 

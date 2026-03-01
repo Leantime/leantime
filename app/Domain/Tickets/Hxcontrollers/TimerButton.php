@@ -7,7 +7,7 @@ use Leantime\Domain\Timesheets\Services\Timesheets;
 
 class TimerButton extends HtmxController
 {
-    protected static string $view = 'tickets::partials.timerButton';
+    protected static string $view = 'globals::components.tickets.timer-button';
 
     private Timesheets $timesheetService;
 
@@ -32,6 +32,6 @@ class TimerButton extends HtmxController
     public function getStatusButton(): void
     {
         $this->getStatus();
-        $this->tpl->displayPartial('tickets::partials.timerButton');
+        $this->tpl->displayPartial('globals::components.tickets.timer-button');
     }
 }

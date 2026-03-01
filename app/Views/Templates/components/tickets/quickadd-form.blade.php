@@ -1,11 +1,15 @@
+@props([
+    'statusId' => 0,
+    'swimlaneKey' => null,
+    'isEmpty' => false,
+    'currentGroupBy' => null,
+    'reopenState' => null,
+    'searchCriteria' => [],
+])
+
 @php
 /**
- * Quick-add form partial for Kanban columns
- *
- * @var int $statusId - Status column ID
- * @var string|null $swimlaneKey - Swimlane identifier
- * @var bool $isEmpty - Whether column is empty
- * @var array|null $reopenState - Session flash data
+ * Quick-add form for Kanban columns
  */
 $isActive = ! empty($reopenState)
     && $reopenState['status'] == $statusId
