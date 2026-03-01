@@ -21,13 +21,13 @@
 
                 <x-globals::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
                     <label for="colormode-light" class="tw:w-[200px]">
-                        <i class="fa-solid fa-sun tw:font-xxl"></i>
+                        <x-global::elements.icon name="light_mode" class="tw:font-xxl" />
                     </label>
                 </x-globals::selectable>
 
                 <x-globals::selectable :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'" onclick="leantime.snippets.toggleTheme('dark')">
                     <label for="colormode-light" class="tw:w-[200px]">
-                        <i class="fa-solid fa-moon tw:font-xxl"></i>
+                        <x-global::elements.icon name="dark_mode" class="tw:font-xxl" />
                     </label>
                 </x-globals::selectable>
         </div>

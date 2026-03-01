@@ -28,7 +28,7 @@
     @if ($id !== '')
         <br />
         <input type="hidden" name="comment" value="1" />
-        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{{ $tpl->__('subtitles.discussion') }}</h4>
+        <h4 class="widgettitle title-light"><x-global::elements.icon name="forum" />{{ $tpl->__('subtitles.discussion') }}</h4>
         @php
             $tpl->assign('formUrl', "/$canvasName" . "canvas/editCanvasComment/" . $id);
             $tpl->displaySubmodule('comments-generalComment');

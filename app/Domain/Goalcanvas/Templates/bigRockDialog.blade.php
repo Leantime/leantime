@@ -1,5 +1,5 @@
 <h4 class="widgettitle title-light">
-    <i class="fa-solid fa-mountain"></i>
+    <x-global::elements.icon name="terrain" />
     {{ empty($bigRock['title']) ? __('label.create_new_goalboard') : __('label.goalboard') }} {{ $bigRock['title'] }}
 </h4>
 

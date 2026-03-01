@@ -4,7 +4,7 @@
           hx-target="#mainProjectSelector"
           hx-swap="outerHTML"
           hx-trigger="change">
-        <i class="fas fa-filter"></i>
+        <x-global::elements.icon name="filter_list" />
         <x-globals::forms.select :bare="true" data-placeholder="" title=""
                 hx-post="{{ BASE_URL }}/hx/menu/projectSelector/update-menu"
                 hx-target="#mainProjectSelector"
@@ -22,7 +22,7 @@
                 @endif
             @endforeach
         </x-globals::forms.select>
-        <i class="fa-solid fa-diagram-project"></i>
+        <x-global::elements.icon name="account_tree" />
         <x-globals::forms.select :bare="true" data-placeholder="" name="groupBy"
                 hx-post="{{ BASE_URL }}/hx/menu/projectSelector/update-menu"
                 hx-target="#mainProjectSelector"

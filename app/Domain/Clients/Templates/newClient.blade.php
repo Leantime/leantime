@@ -5,7 +5,7 @@
 @dispatchEvent('beforePageHeaderOpen')
 <div class="pageheader">
     @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><span class="fa fa-address-book"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="contact_page" /></div>
     <div class="pagetitle">
         <h5>{{ __('label.administration') }}</h5>
         <h1>{{ __('headline.new_client') }}</h1>

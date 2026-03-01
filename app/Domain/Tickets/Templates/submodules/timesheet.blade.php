@@ -12,7 +12,7 @@
 <div class="row-fluid">
     <div class="col-md-6">
 
-        <h4 class="widgettitle title-light"><span class="fa fa-clock-o"></span>{{ __('headline.add_time_entry', false) }}</h4>
+        <h4 class="widgettitle title-light"><x-global::elements.icon name="schedule" />{{ __('headline.add_time_entry', false) }}</h4>
         <br />
 
         <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#timesheet" class="formModal">
@@ -45,7 +45,7 @@
 
     </div>
     <div class="col-md-6">
-        <h4 class="widgettitle title-light"><span class="fa fa-bar-chart"></span>{{ __('subtitles.logged_hours_chart') }}</h4>
+        <h4 class="widgettitle title-light"><x-global::elements.icon name="bar_chart" />{{ __('subtitles.logged_hours_chart') }}</h4>
 
         <br />
         <canvas id="canvas"></canvas>

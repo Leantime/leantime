@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-lock"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="lock" /></div>
     <div class="pagetitle">
         <h1>{{ __('label.twoFA') }}</h1>
     </div>

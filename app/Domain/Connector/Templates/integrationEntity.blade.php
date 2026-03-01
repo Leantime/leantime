@@ -11,7 +11,7 @@
 @endphp
 
 <div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
+    <div class="pageicon"><x-global::elements.icon name="hub" /></div>
     <div class="pagetitle">
         <h1>{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}</h1>
     </div>
@@ -44,7 +44,7 @@
                         </x-globals::forms.select>
                     </div>
                     <div class="col-md-2" style="padding-top:50px;">
-                        <i class="fa fa-arrow-right"></i>
+                        <x-global::elements.icon name="arrow_forward" />
                     </div>
                     <div class="col-md-2">
                         <h1>To (Leantime)</h1>

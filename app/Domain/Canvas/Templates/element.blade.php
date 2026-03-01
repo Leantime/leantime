@@ -52,7 +52,7 @@
                     <div class="dropdown ticketDropdown statusDropdown colorized firstDropdown">
                         <a href="javascript:void(0)" class="dropdown-toggle f-left status label-{{ $statusLabels[$row['status']]['dropdown'] }}" data-toggle="dropdown"
                            id="statusDropdownMenuLink{{ $row['id'] }}">
-                            <span class="text">{{ $statusLabels[$row['status']]['title'] }}</span> <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            <span class="text">{{ $statusLabels[$row['status']]['title'] }}</span> <x-global::elements.icon name="arrow_drop_down" />
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
                             <li class="nav-header border">{{ $tpl->__('dropdown.choose_status') }}</li>
@@ -73,7 +73,7 @@
                     <div class="dropdown ticketDropdown relatesDropdown colorized firstDropdown">
                         <a href="javascript:void(0)" class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}" data-toggle="dropdown"
                            id="relatesDropdownMenuLink{{ $row['id'] }}">
-                            <span class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span> <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            <span class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span> <x-global::elements.icon name="arrow_drop_down" />
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
                             <li class="nav-header border">{{ $tpl->__('dropdown.choose_relates') }}</li>
@@ -117,7 +117,7 @@
                     </ul>
                 </div>
                 <div class="pull-right" style="margin-right:10px;">
-                    <span class="fas fa-comments"></span> <small>{{ $nbcomments }}</small>
+                    <x-global::elements.icon name="forum" /> <small>{{ $nbcomments }}</small>
                 </div>
 
                 @if ($row['milestoneHeadline'] != '')

@@ -15,7 +15,7 @@
             <a href="javascript:void(0)" class="dropdown-toggle">
                 <span class="innerCircle">
                     @if(in_array("account", $completed))
-                        <i class="fa-solid fa-check" style="color:var(--main-action-color); padding-left:3px;"></i>
+                        <x-global::elements.icon name="check" style="color:var(--main-action-color); padding-left:3px;" />
                     @endif
                 </span>
                 <span class="title">
@@ -28,7 +28,7 @@
             <a href="javascript:void(0)" class="dropdown-toggle">
                 <span class="innerCircle">
                     @if(in_array("theme", $completed))
-                        <i class="fa-solid fa-check" style="color:var(--main-action-color); padding-left:3px;"></i>
+                        <x-global::elements.icon name="check" style="color:var(--main-action-color); padding-left:3px;" />
                     @endif
                 </span>
                 <span class="title">
@@ -41,7 +41,7 @@
             <a href="javascript:void(0)" class="dropdown-toggle">
                 <span class="innerCircle">
                     @if(in_array("personalization", $completed))
-                        <i class="fa-solid fa-check" style="color:var(--main-action-color); padding-left:3px;"></i>
+                        <x-global::elements.icon name="check" style="color:var(--main-action-color); padding-left:3px;" />
                     @endif
                 </span>
                 <span class="title">
@@ -54,7 +54,7 @@
             <a href="javascript:void(0)" class="dropdown-toggle">
                 <span class="innerCircle">
                     @if(in_array("time", $completed))
-                        <i class="fa-solid fa-check" style="color:var(--main-action-color); padding-left:3px;"></i>
+                        <x-global::elements.icon name="check" style="color:var(--main-action-color); padding-left:3px;" />
                     @endif
                 </span>
                 <span class="title">

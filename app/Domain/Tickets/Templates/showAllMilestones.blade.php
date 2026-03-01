@@ -53,7 +53,7 @@
             @if($group['label'] != 'all')
                 <h5 class="accordionTitle {{ $group['class'] }}" @if(!empty($group['color'])) style="color:{{ htmlspecialchars($group['color']) }}" @endif id="accordion_link_{{ $group['id'] }}">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}" onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                        <i class="fa fa-angle-down" aria-hidden="true"></i>{{ $group['label'] }} ({{ count($group['items']) }})
+                        <x-global::elements.icon name="expand_more" />{{ $group['label'] }} ({{ count($group['items']) }})
                     </a>
                 </h5>
                 <div class="simpleAccordionContainer" id="accordion_content-{{ $group['id'] }}">
@@ -178,7 +178,7 @@
                                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle; margin-right:5px;"/></span><span id="user{{ $row['id'] }}">{{ __('dropdown.not_assigned') }}</span>
                                             @endif
                                         </span>
-                                        &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                        &nbsp;<x-global::elements.icon name="arrow_drop_down" />
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                         <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>
@@ -207,9 +207,9 @@
                                 @if($login::userIsAtLeast($roles::$editor))
                                     <x-globals::elements.dropdown>
                                         <li class="nav-header border">{{ __('subtitles.todo') }}</li>
-                                        <li><a href="#/tickets/editMilestone/{{ $row['id'] }}" class="ticketModal"><i class="fa fa-edit" aria-hidden="true"></i> {{ __('links.edit_milestone') }}</a></li>
-                                        <li><a href="#/tickets/moveTicket/{{ $row['id'] }}" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> {{ __('links.move_milestone') }}</a></li>
-                                        <li><a href="#/tickets/delMilestone/{{ $row['id'] }}" class="delete"><i class="fa fa-trash" aria-hidden="true"></i> {{ __('links.delete') }}</a></li>
+                                        <li><a href="#/tickets/editMilestone/{{ $row['id'] }}" class="ticketModal"><x-global::elements.icon name="edit" /> {{ __('links.edit_milestone') }}</a></li>
+                                        <li><a href="#/tickets/moveTicket/{{ $row['id'] }}" class="moveTicketModal sprintModal"><x-global::elements.icon name="swap_horiz" /> {{ __('links.move_milestone') }}</a></li>
+                                        <li><a href="#/tickets/delMilestone/{{ $row['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
                                         <li><a href="{{ BASE_URL }}/tickets/showAll?search=true&milestone={{ $row['id'] }}">{{ __('links.view_todos') }}</a></li>
                                     </x-globals::elements.dropdown>
                                 @endif

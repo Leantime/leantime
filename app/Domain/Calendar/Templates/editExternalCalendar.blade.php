@@ -1,6 +1,6 @@
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light"><i class="fa-regular fa-calendar-plus"></i> {{ __('label.edit_ical') }}</h4>
+<h4 class="widgettitle title-light"><x-global::elements.icon name="calendar_add_on" /> {{ __('label.edit_ical') }}</h4>
 {!!  __('label.import_ical_content')  !!}
 
 

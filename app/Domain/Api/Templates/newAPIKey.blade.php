@@ -7,7 +7,7 @@
 
 <div style="min-width:700px;">
 
-<h4 class="widgettitle title-light"><i class="fa fa-key" aria-hidden="true"></i> {{ $tpl->__('headlines.new_api_key') }}</h4>
+<h4 class="widgettitle title-light"><x-global::elements.icon name="key" /> {{ $tpl->__('headlines.new_api_key') }}</h4>
 
 {!! $tpl->displayNotification() !!}
     @if ($apiKeyValues !== false && isset($apiKeyValues['id']))
@@ -76,7 +76,7 @@
                             @endif
 
                             {!! "<h3 id='accordion_link_" . $i . "'>
-                                <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><i class='fa fa-angle-down'></i> " . $tpl->escape($row['clientName']) . "</a>
+                                <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><x-global::elements.icon name="expand_more" /> " . $tpl->escape($row['clientName']) . "</a>
                                 </h3>
                                 <div id='accordion_" . $i . "' class='simpleAccordionContainer'>" !!}
                             @php

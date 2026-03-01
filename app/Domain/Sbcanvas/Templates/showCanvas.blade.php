@@ -61,7 +61,7 @@
 
             <div class="row canvas-row">
                 <div class="column" style="width:100%">
-                   <h4 class="widgettitle title-primary center"><i class='fas fa-person-falling'></i> {{ $tpl->__('box.sb.risks') }}</h4>
+                   <h4 class="widgettitle title-primary center"><x-global::elements.icon name="personal_injury" /> {{ $tpl->__('box.sb.risks') }}</h4>
                    <div class="contentInner even" style="padding-top: 10px;">
                      {!! sprintf($tpl->__('text.sb.risks_analysis'), BASE_URL) !!}
                    </div>

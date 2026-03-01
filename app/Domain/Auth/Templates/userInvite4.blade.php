@@ -31,7 +31,7 @@
             </x-globals::selectable>
             <x-globals::selectable selected="" :id="'daySchedule-workStart-3'" :name="'daySchedule-workStart-button'" :value="''" :label="''" class="compact" onclick="jQuery(this).hide(); jQuery('#daySchedule-workStart').show()">
                 <label for="" class="">
-                    <i class="fa fa-clock"></i> Select my own
+                    <x-global::elements.icon name="schedule" /> Select my own
                 </label>
             </x-globals::selectable>
             <x-globals::forms.select :bare="true" name="daySchedule-workStart" id="daySchedule-workStart" style="display:none; vertical-align: top;">
@@ -57,7 +57,7 @@
             </x-globals::selectable>
             <x-globals::selectable selected="" :id="'daySchedule-lunch-3'" :name="'daySchedule-lunch-button'" :value="''" :label="''" class="compact" onclick="jQuery(this).hide(); jQuery('#daySchedule-lunch').show()">
                 <label for="" class="">
-                    <i class="fa fa-clock"></i> Select my own
+                    <x-global::elements.icon name="schedule" /> Select my own
                 </label>
             </x-globals::selectable>
             <x-globals::forms.select :bare="true" name="daySchedule-lunch" id="daySchedule-lunch" style="display:none; vertical-align: top;">
@@ -84,7 +84,7 @@
             </x-globals::selectable>
             <x-globals::selectable selected="" :id="'daySchedule-workEnd-3'" :name="'daySchedule-workEnd-button'" :value="''" :label="''" class="compact" onclick="jQuery(this).hide(); jQuery('#daySchedule-workEnd').show()">
                 <label for="" class="">
-                    <i class="fa fa-clock"></i> Select my own
+                    <x-global::elements.icon name="schedule" /> Select my own
                 </label>
             </x-globals::selectable>
             <x-globals::forms.select :bare="true" name="daySchedule-workEnd" id="daySchedule-workEnd" style="display:none; vertical-align: top;">

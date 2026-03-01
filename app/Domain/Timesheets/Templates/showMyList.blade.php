@@ -4,7 +4,7 @@
 
 <!-- page header -->
 <div class="pageheader">
-    <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="schedule" /></div>
     <div class="pagetitle">
         <h5>{{ __('headline.overview') }}</h5>
         <h1>{{ __('headline.my_timesheets') }}</h1>
@@ -55,7 +55,7 @@
                     <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
                 </x-globals::elements.link-dropdown>
 
-                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addHoursBtn"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('label.add_hours') }}</x-globals::forms.button>
+                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addHoursBtn"><x-global::elements.icon name="add" /> {{ __('label.add_hours') }}</x-globals::forms.button>
             </div>
 
             <style>

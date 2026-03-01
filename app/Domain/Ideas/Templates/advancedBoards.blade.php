@@ -17,7 +17,7 @@
 @endphp
 
 <div class="pageheader">
-    <div class="pageicon"><i class="far fa-lightbulb" aria-hidden="true"></i></div>
+    <div class="pageicon"><x-global::elements.icon name="lightbulb" /></div>
     <div class="pagetitle">
         <h5>{{ $tpl->escape(session('currentProjectClient') . ' // ' . session('currentProjectName')) }}</h5>
         @if (count($allCanvas) > 0)
@@ -53,7 +53,7 @@
             <div>
                 @if ($login::userIsAtLeast($roles::$editor))
                     @if (count($tpl->get('allCanvas')) > 0)
-                        <x-globals::forms.button link="#/ideas/ideaDialog?type=idea" type="primary" id="customersegment" icon="far fa-lightbulb">{{ $tpl->__('buttons.add_idea') }}</x-globals::forms.button>
+                        <x-globals::forms.button link="#/ideas/ideaDialog?type=idea" type="primary" id="customersegment" icon="lightbulb">{{ $tpl->__('buttons.add_idea') }}</x-globals::forms.button>
                     @endif
                 @endif
             </div>
@@ -78,7 +78,7 @@
                         <h4 class="widgettitle title-primary">
                             @if ($login::userIsAtLeast($roles::$manager))
                                 <a href="#/setting/editBoxLabel?module=idealabels&label={{ $key }}"
-                                   class="editHeadline"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                                   class="editHeadline"><x-global::elements.icon name="edit" /></a>
                             @endif
                             {{ $tpl->escape($statusRow['name']) }}
                         </h4>
@@ -133,7 +133,7 @@
                                                     <a href="#/ideas/ideaDialog/{{ $row['id'] }}"
                                                         data="item_{{ $row['id'] }}"
                                                         {!! $row['commentCount'] == 0 ? 'style="color: grey;"' : '' !!}>
-                                                        <span class="fas fa-comments"></span></a> <small>{{ $row['commentCount'] }}</small>
+                                                        <x-global::elements.icon name="forum" /></a> <small>{{ $row['commentCount'] }}</small>
                                                 </div>
 
                                         @if ($row['milestoneHeadline'] != '')

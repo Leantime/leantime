@@ -4,7 +4,7 @@
     $currentProject = session('currentProject');
 @endphp
 
-<h4 class="widgettitle title-light"><i class="fa fa-list-1-2"></i> {{ __('label.sprint') }} {{ $currentSprint->name }}</h4>
+<h4 class="widgettitle title-light"><x-global::elements.icon name="format_list_numbered" /> {{ __('label.sprint') }} {{ $currentSprint->name }}</h4>
 
 {!! $tpl->displayNotification() !!}
 
@@ -37,7 +37,7 @@
         </div>
         <div class="col-md-6 align-right padding-top-sm">
             @if(isset($currentSprint->id) && $currentSprint->id != '' && $login::userIsAtLeast($roles::$editor))
-                <a href="{{ BASE_URL }}/sprints/delSprint/{{ $currentSprint->id }}" class="delete formModal sprintModal"><i class="fa fa-trash"></i> {{ __('links.delete_sprint') }}</a>
+                <a href="{{ BASE_URL }}/sprints/delSprint/{{ $currentSprint->id }}" class="delete formModal sprintModal"><x-global::elements.icon name="delete" /> {{ __('links.delete_sprint') }}</a>
             @endif
         </div>
     </div>

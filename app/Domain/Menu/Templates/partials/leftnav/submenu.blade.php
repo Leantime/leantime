@@ -6,8 +6,7 @@
                onclick="leantime.menuController.toggleSubmenu('{{ $menuItem['id'] }}')"
             @endif
         >
-            <i class="submenuCaret fa fa-angle-{{ $menuItem['visual'] == 'closed' ? 'right' : 'down' }}"
-               id="submenu-icon-{{ $menuItem['id'] }}"></i>
+            <x-global::elements.icon name="{{ $menuItem['visual'] == 'closed' ? 'chevron_right' : 'expand_more' }}" class="submenuCaret" id="submenu-icon-{{ $menuItem['id'] }}" />
             <strong>{!! __($menuItem['title']) !!}</strong>
         </a>
     </li>

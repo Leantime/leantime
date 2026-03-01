@@ -32,11 +32,11 @@
                 @foreach($tpl->get('externalCalendars') as $calendars)
                     <li>
                         @if(empty($calendars['managedByPlugin']))
-                        <x-globals::elements.dropdown style="float:right;" icon="fa fa-ellipsis-h">
+                        <x-globals::elements.dropdown style="float:right;" icon="more_horiz">
                             <li>
-                                <a href="#/calendar/editExternal/{{ $calendars['id'] }}"><i class="fa-solid fa-pen-to-square"></i> {{ __('links.edit_calendar') }}</a>
+                                <a href="#/calendar/editExternal/{{ $calendars['id'] }}"><x-global::elements.icon name="edit_square" /> {{ __('links.edit_calendar') }}</a>
                             </li>
-                            <li><a href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete_external_calendar') }}</a></li>
+                            <li><a href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete_external_calendar') }}</a></li>
                         </x-globals::elements.dropdown>
                         @endif
                         <span class="indicatorCircle" style="background:{{ $calendars['colorClass'] }}"></span>{{ $calendars['name'] }}
@@ -46,14 +46,14 @@
 
                 </ul>
                 <hr />
-                <a href="#/calendar/connectCalendar" class="formModal" style="display:block; margin-bottom:8px; margin-left:-5px;"><i class="fa-regular fa-calendar-plus" style="width:16px;"></i> {{ __('label.connect_calendar') }}</a>
-                <a href="#/calendar/calendarSettings" class="formModal" style="margin-left:-5px;"><i class="fa fa-cog" style="width:16px;"></i> {{ __('label.calendar_settings') }}</a>
+                <a href="#/calendar/connectCalendar" class="formModal" style="display:block; margin-bottom:8px; margin-left:-5px;"><x-global::elements.icon name="calendar_add_on" style="width:16px;" /> {{ __('label.connect_calendar') }}</a>
+                <a href="#/calendar/calendarSettings" class="formModal" style="margin-left:-5px;"><x-global::elements.icon name="settings" style="width:16px;" /> {{ __('label.calendar_settings') }}</a>
             </div>
         </div>
         <div class="col-md-10">
             <div class="maincontentinner">
                 <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
-                    <x-globals::forms.button link="#/calendar/addEvent" type="primary" formModal><i class="fa fa-plus"></i> {{ __('buttons.add_event') }}</x-globals::forms.button>
+                    <x-globals::forms.button link="#/calendar/addEvent" type="primary" formModal><x-global::elements.icon name="add" /> {{ __('buttons.add_event') }}</x-globals::forms.button>
 
                     <div class="tw:flex-1"></div>
 
@@ -74,10 +74,10 @@
 
                     <div class="tw:flex tw:items-center tw:gap-1">
                         <button class="fc-prev-button btn btn-default" type="button">
-                            <span class="fa fa-chevron-left"></span>
+                            <x-global::elements.icon name="chevron_left" />
                         </button>
                         <button class="fc-next-button btn btn-default" type="button">
-                            <span class="fa fa-chevron-right"></span>
+                            <x-global::elements.icon name="chevron_right" />
                         </button>
                     </div>
 

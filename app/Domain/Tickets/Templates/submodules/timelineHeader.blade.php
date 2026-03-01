@@ -39,7 +39,7 @@
     @dispatchEvent('afterPageHeaderOpen')
 
     <div class="pageicon">
-        <span class="fa fa-fw fa-chart-gantt"></span>
+        <x-global::elements.icon name="view_timeline" />
     </div>
     <div class="pagetitle">
         <h5>{!! e(session('currentProjectClient') ?? '' . ' // ' . session('currentProjectName') ?? '') !!}</h5>
@@ -70,7 +70,7 @@
                         {{ __('label.select_board') }}
                     @endif
                 </x-slot:label>
-                    <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> {{ __('links.create_sprint_no_icon') }}</a></li>
+                    <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><x-global::elements.icon name="add" /> {{ __('links.create_sprint_no_icon') }}</a></li>
                     <li class="nav-header border"></li>
                     <li>
                         <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ __('links.all_todos') }}</a>

@@ -148,7 +148,7 @@
             <br />
             <hr />
             @dispatchEvent('beforeSubtasks', ['ticketId' => $ticket->id])
-            <h4 class="widgettitle title-light"><i class="fa-solid fa-sitemap"></i> {{ __('subtitles.subtasks') }}</h4>
+            <h4 class="widgettitle title-light"><x-global::elements.icon name="account_tree" /> {{ __('subtitles.subtasks') }}</h4>
 
             <div
                 id="ticketSubtasks"
@@ -161,7 +161,7 @@
                 {{ __('label.loading') }} ...<br /><br />
             </div>
 
-            <h4 class="widgettitle title-light"><span class="fa-solid fa-comments"></span>{{ __('subtitles.discussion') }}</h4>
+            <h4 class="widgettitle title-light"><x-global::elements.icon name="forum" />{{ __('subtitles.discussion') }}</h4>
 
             <div class="row-fluid">
                 <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" class="formModal">
@@ -182,8 +182,8 @@
                        class="accordion-toggle"
                        id="accordion_toggle_tickets-organization"
                        onclick="leantime.snippets.accordionToggle('tickets-organization');">
-                            <i class="fa fa-angle-down"></i>
-                            <span class="fa fa-folder-open"></span>
+                            <x-global::elements.icon name="expand_more" />
+                            <x-global::elements.icon name="folder_open" />
                             {{ __('subtitles.organization') }}
                     </a>
                 </h5>
@@ -283,8 +283,8 @@
                        class="accordion-toggle"
                        id="accordion_toggle_tickets-dates"
                        onclick="leantime.snippets.accordionToggle('tickets-dates');">
-                        <i class="fa fa-angle-down"></i>
-                        <span class="fa fa-calendar"></span>
+                        <x-global::elements.icon name="expand_more" />
+                        <x-global::elements.icon name="calendar_today" />
                         {{ __('subtitles.schedule') }}
                     </a>
                 </h5>
@@ -317,7 +317,7 @@
                             <x-globals::forms.input :bare="true" value="{{ e($ticket->planHours) }}" name="planHours" style="width:45px;" />&nbsp;/&nbsp;
                             <x-globals::forms.input :bare="true" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:45px;" />
                             <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
-                                &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
+                                &nbsp;<x-global::elements.icon name="help" />&nbsp;
                             </a>
                         </div>
                     </div>

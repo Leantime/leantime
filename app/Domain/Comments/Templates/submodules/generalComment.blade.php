@@ -60,13 +60,13 @@
                                         <x-globals::elements.dropdown containerClass="pull-right tw:ml-2.5">
                                             @if(($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
                                                 <li><a href="{{ $deleteUrlBase . $row['id'] }}" class="deleteComment formModal">
-                                                    <span class="fa fa-trash"></span> {{ __('links.delete') }}
+                                                    <x-global::elements.icon name="delete" /> {{ __('links.delete') }}
                                                 </a></li>
                                             @endif
                                             @if(($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
                                                 <li>
                                                     <a href="javascript:void(0);" onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}', true)">
-                                                        <span class="fa fa-edit"></span> {{ __('label.edit') }}
+                                                        <x-global::elements.icon name="edit" /> {{ __('label.edit') }}
                                                     </a>
                                                 </li>
                                             @endif
@@ -85,7 +85,7 @@
                             @if($login::userIsAtLeast($roles::$commenter))
                                 <a href="javascript:void(0);"
                                    onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}')">
-                                    <span class="fa fa-reply"></span> {{ __('links.reply') }}
+                                    <x-global::elements.icon name="reply" /> {{ __('links.reply') }}
                                 </a>
                             @endif
                         </div>
@@ -114,15 +114,15 @@
                                                 @if($login::userIsAtLeast($roles::$commenter))
                                                     <a href="javascript:void(0);"
                                                        onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}')">
-                                                        <span class="fa fa-reply"></span> {{ __('links.reply') }}
+                                                        <x-global::elements.icon name="reply" /> {{ __('links.reply') }}
                                                     </a>
                                                     @if($comment['userId'] == session('userdata.id'))
                                                         <a href="{{ $deleteUrlBase . $comment['id'] }}"
                                                            class="deleteComment formModal">
-                                                            <span class="fa fa-trash"></span> {{ __('links.delete') }}
+                                                            <x-global::elements.icon name="delete" /> {{ __('links.delete') }}
                                                         </a>
                                                         <a href="javascript:void(0);" onclick="toggleCommentBoxes({{ $row['id'] }}, {{ $comment['id'] }}, '{{ $formHash }}', true, true)">
-                                                            <span class="fa fa-edit"></span> {{ __('label.edit') }}
+                                                            <x-global::elements.icon name="edit" /> {{ __('label.edit') }}
                                                         </a>
                                                     @endif
                                                 @endif

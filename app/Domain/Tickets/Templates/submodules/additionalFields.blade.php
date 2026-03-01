@@ -31,8 +31,8 @@
                        class="accordion-toggle"
                        id="accordion_toggle_tickets-organization"
                        onclick="leantime.snippets.accordionToggle('tickets-organization');">
-                            <i class="fa fa-angle-down"></i>
-                            <span class="fa fa-folder-open"></span>
+                            <x-global::elements.icon name="expand_more" />
+                            <x-global::elements.icon name="folder_open" />
                             {{ __('subtitles.organization') }}
                     </a>
                 </h5>
@@ -117,8 +117,8 @@
                        class="accordion-toggle"
                        id="accordion_toggle_tickets-dates"
                        onclick="leantime.snippets.accordionToggle('tickets-dates');">
-                        <i class="fa fa-angle-down"></i>
-                        <span class="fa fa-calendar"></span>
+                        <x-global::elements.icon name="expand_more" />
+                        <x-global::elements.icon name="calendar_today" />
                         {{ __('subtitles.dates') }}
                     </a>
                 </h5>
@@ -156,8 +156,8 @@
                        class="accordion-toggle"
                        id="accordion_toggle_tickets-timetracking"
                        onclick="leantime.snippets.accordionToggle('tickets-timetracking');">
-                        <i class="fa fa-angle-down"></i>
-                        <span class="fa-regular fa-clock"></span>
+                        <x-global::elements.icon name="expand_more" />
+                        <x-global::elements.icon name="schedule" />
                         {{ __('subtitle.time_tracking') }}
                     </a>
                 </h5>
@@ -175,7 +175,7 @@
                         <div class="">
                             <x-globals::forms.input :bare="true" type="text" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:90px;" />
                             <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
-                                &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
+                                &nbsp;<x-global::elements.icon name="help" />&nbsp;
                             </a>
                         </div>
                     </div>

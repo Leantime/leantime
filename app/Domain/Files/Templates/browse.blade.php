@@ -9,7 +9,7 @@
 
 <div class="pageheader">
 
-    <div class="pageicon"><span class="fa fa-fw fa-file"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="description" /></div>
     <div class="pagetitle">
         <h5>{{ e(session('currentProjectName')) }}</h5>
         <h1>{{ __('headlines.files') }}</h1>
@@ -62,7 +62,7 @@
                                 <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{{ __('links.download') }}</a></li>
 
                                 @if($login::userIsAtLeast($roles::$editor))
-                                    <li><a href="{{ BASE_URL }}/files/browse?delFile={{ $file['id'] }}" class="delete deleteFile"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
+                                    <li><a href="{{ BASE_URL }}/files/browse?delFile={{ $file['id'] }}" class="delete deleteFile"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
                                 @endif
                             </x-globals::elements.dropdown>
                             <a class="imageLink" data-ext="{{ $file['extension'] }}" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">
@@ -216,13 +216,13 @@ jQuery(document).ready(function(){
             let html = '<li class="file-module-'+response.moduleId+'">' +
                             '<div class="dropdown" style="float:right;">' +
                                 '<a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle ticketDropDown">' +
-                                    '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
+                                    '<x-global::elements.icon name="more_vert" />' +
                                 '</a>' +
                                 '<ul class="dropdown-menu">' +
                                     '<li class="nav-header">{{ __("subtitles.file") }}</li>' +
                                     '<li><a target="_blank" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">{{ str_replace("'", '"', __("links.download")) }}</a></li>'+
                                     @if($login::userIsAtLeast($roles::$editor))
-                                        '<li><a href="{{ BASE_URL }}/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><i class="fa fa-trash"></i> {{ str_replace("'", '"', __("links.delete")) }}</a></li>'+
+                                        '<li><a href="{{ BASE_URL }}/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><x-global::elements.icon name="delete" /> {{ str_replace("'", '"', __("links.delete")) }}</a></li>'+
                                     @endif
                                 '</ul>'+
                             '</div>'+

@@ -37,14 +37,13 @@ leantime.snippets = (function () {
     var accordionToggle = function (id) {
 
         var toggleEl = document.getElementById("accordion_toggle_" + id);
-        var currentLink = toggleEl ? toggleEl.querySelector("i.fa") : null;
+        var currentLink = toggleEl ? toggleEl.querySelector(".material-symbols-outlined") : null;
         var submenuName = 'accordion_content-'+id;
         var submenuState = "closed";
         var contentEl = document.getElementById('accordion_content-' + id);
 
-        if(currentLink && currentLink.classList.contains("fa-angle-right")){
-            currentLink.classList.remove("fa-angle-right");
-            currentLink.classList.add("fa-angle-down");
+        if(currentLink && currentLink.textContent.trim() === "chevron_right"){
+            currentLink.textContent = "expand_more";
             if (contentEl) {
                 contentEl.style.display = '';
             }
@@ -52,8 +51,7 @@ leantime.snippets = (function () {
 
         }else if(currentLink){
 
-            currentLink.classList.remove("fa-angle-down");
-            currentLink.classList.add("fa-angle-right");
+            currentLink.textContent = "chevron_right";
 
             if (contentEl) {
                 contentEl.style.display = 'none';

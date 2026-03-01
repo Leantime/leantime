@@ -1,7 +1,7 @@
 
 <div class="showDialogOnLoad" style="display:none;">
 
-    <h4 class="widgettitle title-light"><i class="fa fa-arrow-circle-o-right"></i>
+    <h4 class="widgettitle title-light"><x-global::elements.icon name="arrow_circle_right" />
         {{ __('headlines.import_ldap_users') }}
     </h4>
 

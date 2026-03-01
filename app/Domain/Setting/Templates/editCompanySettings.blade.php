@@ -3,7 +3,7 @@
 @endphp
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-cogs"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="settings" /></div>
     <div class="pagetitle">
         <h5>{{ __('label.administration') }}</h5>
         <h1>{{ __('headlines.company_settings') }}</h1>
@@ -17,8 +17,8 @@
                 <div class="tabbedwidget tab-primary companyTabs">
 
                     <ul role="tablist">
-                        <li><a href="#details"><span class="fa fa-building"></span> {{ __('tabs.details') }}</a></li>
-                        <li><a href="#apiKeys"><i class="fa-solid fa-key"></i> {{ __('tabs.apiKeys') }}</a></li>
+                        <li><a href="#details"><x-global::elements.icon name="apartment" /> {{ __('tabs.details') }}</a></li>
+                        <li><a href="#apiKeys"><x-global::elements.icon name="key" /> {{ __('tabs.apiKeys') }}</a></li>
                         @dispatchEvent('tabs')
                     </ul>
 
@@ -31,8 +31,7 @@
                                     <br />
                                     <input type="hidden" value="1" name="saveSettings" />
 
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-building"></span>{{ __('subtitles.companydetails') }}
+                                    <h4 class="widgettitle title-light"><x-global::elements.icon name="apartment" />{{ __('subtitles.companydetails') }}
                                     </h4>
                                     <div class="row">
                                         <div class="col-md-2">
@@ -58,8 +57,7 @@
                                         </div>
                                     </div>
                                     <br />
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-cog"></span>{{ __('subtitles.defaults') }}
+                                    <h4 class="widgettitle title-light"><x-global::elements.icon name="settings" />{{ __('subtitles.defaults') }}
                                     </h4>
                                     <div class="row">
                                         <div class="col-md-2">
@@ -146,8 +144,8 @@
                                 <li>
                                     <div class="ticketBox">
                                         <x-globals::elements.dropdown>
-                                            <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><i class="fa fa-edit"></i> Edit Key</a></li>
-                                            <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>
+                                            <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><x-global::elements.icon name="edit" /> Edit Key</a></li>
+                                            <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><x-global::elements.icon name="delete" /> Delete Key</a></li>
                                         </x-globals::elements.dropdown>
                                         <a href="#/api/apiKey/{{ $apiKey['id'] }}"><strong>{{ e($apiKey['firstname']) }}</strong></a><br />
                                         lt_{{ $apiKey['username'] }}***

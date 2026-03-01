@@ -16,7 +16,7 @@
         {!! $tpl->displayNotification() !!}
 
         <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
-            <x-globals::forms.button link="{{ BASE_URL }}/users/newUser" type="primary" class="userEditModal" icon="fa fa-plus">{{ __('buttons.add_user') }}</x-globals::forms.button>
+            <x-globals::forms.button link="{{ BASE_URL }}/users/newUser" type="primary" class="userEditModal" icon="add">{{ __('buttons.add_user') }}</x-globals::forms.button>
         </div>
 
         <div style="overflow-x: auto;">
@@ -66,7 +66,7 @@
                             {{ __('label.no') }}
                         @endif
                     </td>
-                    <td><a href="{{ BASE_URL }}/users/delUser/{{ $row['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></td>
+                    <td><a href="{{ BASE_URL }}/users/delUser/{{ $row['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></td>
                 </tr>
             @endforeach
             </tbody>

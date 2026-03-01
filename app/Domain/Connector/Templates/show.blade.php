@@ -1,5 +1,5 @@
 <div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
+    <div class="pageicon"><x-global::elements.icon name="hub" /></div>
     <div class="pagetitle">
        <h1>Integrations</h1>
     </div>

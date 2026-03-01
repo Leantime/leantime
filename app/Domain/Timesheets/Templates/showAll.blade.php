@@ -98,7 +98,7 @@
 
 <!-- page header -->
 <div class="pageheader">
-    <div class="pageicon"><span class="fa-solid fa-business-time"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="business_center" /></div>
         <div class="pagetitle">
         <h1>{{ __('headlines.all_timesheets') }}</h1>
     </div>

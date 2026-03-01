@@ -11,15 +11,13 @@
     }
 @endphp
 
-<h4 class="widgettitle title-light"><span
-            class="fa fa-comments"></span>{{ __('subtitles.discussion') }}
+<h4 class="widgettitle title-light"><x-global::elements.icon name="forum" />{{ __('subtitles.discussion') }}
 </h4>
 
 <form method="post" accept-charset="utf-8" action="{{ $formUrl }}"
       id="commentForm">
     <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"
-       class="tw:hidden" id="mainToggler"><span
-                class="fa fa-plus-square"></span> {{ __('links.add_new_comment') }}
+       class="tw:hidden" id="mainToggler"><x-global::elements.icon name="add_box" /> {{ __('links.add_new_comment') }}
     </a>
 
     <div id="comment0" class="commentBox">
@@ -51,14 +49,14 @@
                     <div class="tw:pl-[60px]">
                         <a href="javascript:void(0);" class="replyButton"
                            onclick="toggleCommentBoxes({{ $row['id'] }})">
-                            <span class="fa fa-reply"></span> {{ __('links.reply') }}
+                            <x-global::elements.icon name="reply" /> {{ __('links.reply') }}
                         </a>
 
                         @if($row['userId'] == session('userdata.id'))
                             |
                             <a href="{{ $deleteUrlBase . $row['id'] }}"
                                class="deleteComment">
-                                <span class="fa fa-trash"></span> {{ __('links.delete') }}
+                                <x-global::elements.icon name="delete" /> {{ __('links.delete') }}
                             </a>
                         @endif
                         <div class="tw:hidden"
@@ -93,7 +91,7 @@
                                     @if($comment['userId'] == session('userdata.id'))
                                         <a href="{{ $deleteUrlBase . $comment['id'] }}"
                                            class="deleteComment">
-                                            <span class="fa fa-trash"></span> {{ __('links.delete') }}
+                                            <x-global::elements.icon name="delete" /> {{ __('links.delete') }}
                                         </a>
                                     @endif
                                 </div>

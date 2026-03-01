@@ -17,10 +17,10 @@
 
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
         <x-globals::forms.button tag="button" type="link" onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;" data-tippy-content="{{ __('popover.filter') }}">
-            <i class="fas fa-filter"></i> Filter{!! $tpl->get('numOfFilters') > 0 ? "  <span class='badge badge-primary'>" . $tpl->get('numOfFilters') . '</span> ' : '' !!}
+            <x-global::elements.icon name="filter_list" /> Filter{!! $tpl->get('numOfFilters') > 0 ? "  <span class='badge badge-primary'>" . $tpl->get('numOfFilters') . '</span> ' : '' !!}
         </x-globals::forms.button>@if($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<x-globals::elements.link-dropdown triggerClass="btn btn-link" align="end" data-tippy-content="{{ __('popover.group_by') }}">
                 <x-slot:label>
-                    <span class="fa-solid fa-diagram-project"></span> Group By
+                    <x-global::elements.icon name="account_tree" /> Group By
                     @if($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
                         <span class="badge badge-primary">1</span>
                     @endif

@@ -95,7 +95,7 @@
         <input type="hidden" name="changeItem" value="1" />
 
         @if ($id != '')
-            <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete right"><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</a>
+            <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete right"><x-global::elements.icon name="delete" /> {{ $tpl->__('links.delete') }}</a>
         @endif
 
         @if ($login::userIsAtLeast($roles::$editor))
@@ -105,7 +105,7 @@
 
         @if ($id !== '')
             <br /><br />
-            <h4 class="widgettitle title-light"><span class="fa fa-link"></span> {{ $tpl->__('headlines.linked_milestone') }} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ $tpl->__('tooltip.link_milestones_tooltip') }}"></i></h4>
+            <h4 class="widgettitle title-light"><x-global::elements.icon name="link" /> {{ $tpl->__('headlines.linked_milestone') }} <x-global::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="{{ $tpl->__('tooltip.link_milestones_tooltip') }}" /></h4>
 
             @if ($canvasItem['milestoneId'] == '')
                 <center>
@@ -151,7 +151,7 @@
                         {{ $tpl->__('label.loading_milestone') }}
                     </div>
                 </div>
-                <a href="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="{{ $canvasName }}CanvasModal delete formModal"><i class="fa fa-close"></i> {{ $tpl->__('links.remove') }}</a>
+                <a href="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="{{ $canvasName }}CanvasModal delete formModal"><x-global::elements.icon name="close" /> {{ $tpl->__('links.remove') }}</a>
             @endif
         @endif
 
@@ -160,7 +160,7 @@
     @if ($id !== '')
         <br />
         <input type="hidden" name="comment" value="1" />
-        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{{ $tpl->__('subtitles.discussion') }}</h4>
+        <h4 class="widgettitle title-light"><x-global::elements.icon name="forum" />{{ $tpl->__('subtitles.discussion') }}</h4>
         @php
             $tpl->assign('formUrl', "/$canvasName" . "canvas/editCanvasItem/" . $id);
             $tpl->displaySubmodule('comments-generalComment');

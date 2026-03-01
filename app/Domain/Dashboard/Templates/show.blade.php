@@ -1,10 +1,10 @@
 @extends($layout)
 
 @section('content')
-<x-globals::layout.page-header :icon="'fa fa-gauge-high'">
+<x-globals::layout.page-header :icon="'speed'">
     @if (count($allUsers) == 1)
         <a href="#/users/newUser" class="headerCTA">
-            <i class="fa fa-users"></i>
+            <x-global::elements.icon name="group" />
             <span class="tw:text-[14px] tw:leading-[25px]">
                 {{ __('links.dont_do_it_alone') }}
             </span>
@@ -27,15 +27,15 @@
                 @if ($login::userIsAtLeast($roles::$admin))
                     <x-globals::elements.dropdown containerClass="pull-right" data-tippy-content="{{ __('label.edit_project') }}">
                         <li>
-                            <a href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"><i class="fa fa-edit"></i> Edit Project</a>
+                            <a href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"><x-global::elements.icon name="edit" /> Edit Project</a>
                         </li>
                         <li>
-                            <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete"><i class="fa fa-trash"></i> Delete Project</a>
+                            <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete"><x-global::elements.icon name="delete" /> Delete Project</a>
                         </li>
                     </x-globals::elements.dropdown>
                 @endif
 
-                <x-globals::elements.dropdown icon="fa fa-link" containerClass="pull-right tw:mr-[5px]" data-tippy-content="{{ __('label.copy_url_tooltip') }}">
+                <x-globals::elements.dropdown icon="link" containerClass="pull-right tw:mr-[5px]" data-tippy-content="{{ __('label.copy_url_tooltip') }}">
                     <li class="tw:p-2">
                         <x-globals::forms.input name="projectUrl" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
                         <x-globals::forms.button tag="button" type="primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</x-globals::forms.button>
@@ -81,7 +81,7 @@
             </div>
 
             <div class="maincontentinner tw:z-10 latest-todos">
-                <x-globals::forms.button link="#/tickets/newTicket" type="link" icon="fa fa-plus" class="action-link pull-right" style="margin-top:-7px;">Create To-Do</x-globals::forms.button>
+                <x-globals::forms.button link="#/tickets/newTicket" type="link" icon="add" class="action-link pull-right" style="margin-top:-7px;">Create To-Do</x-globals::forms.button>
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
                 <ul class="sortableTicketList">
@@ -110,7 +110,7 @@
                                 <div class="row">
                                     <div class="col-md-4 tw:px-[15px] tw:py-0">
 
-                                        <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
+                                        <x-global::elements.icon name="business_center" class="infoIcon" data-tippy-content=" {{ __("label.due") }}" />
 
                                              <input
                                             type="text"
@@ -224,7 +224,7 @@
                         <x-globals::forms.button
                             link="javascript:void(0);"
                             type="link"
-                            icon="fa fa-plus"
+                            icon="add"
                             onclick="leantime.commentsController.toggleCommentBoxes(0);jQuery('.noCommentsMessage').toggle();"
                             id="mainToggler"
                             class="action-link"
@@ -284,7 +284,7 @@
                                                         @if ($row['userId'] == session("userdata.id"))
                                                             <li>
                                                                 <a href="{!! $delUrlBase . $row['id'] !!}" class="deleteComment">
-                                                                    <span class="fa fa-trash"></span> {{ __('links.delete') }}
+                                                                    <x-global::elements.icon name="delete" /> {{ __('links.delete') }}
                                                                 </a>
                                                             </li>
                                                         @endif
@@ -318,7 +318,7 @@
                                                 <a
                                                     href="javascript:void(0);"
                                                     onclick="leantime.commentsController.toggleCommentBoxes({!! $row['id'] !!});"
-                                                ><span class="fa fa-reply"></span> {{ __('links.reply') }}
+                                                ><x-global::elements.icon name="reply" /> {{ __('links.reply') }}
                                                 </a>
                                             @endif
                                         </div>

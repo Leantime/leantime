@@ -10,7 +10,7 @@
                         </div>
                         <div class="column" style="width: 84%">
                             <h4 class="widgettitle title-primary center canvas-title-only">
-                                <large><i class="fa fa-user-doctor" aria-hidden="true"></i> {{ $tpl->__('box.header.cp.cj') }}</large>
+                                <large><x-global::elements.icon name="medical_services" /> {{ $tpl->__('box.header.cp.cj') }}</large>
                             </h4>
                         </div>
                     </div>
@@ -34,9 +34,9 @@
 
                     <div class="row canvas-row">
                         <div class="column" style="width: 16%">&nbsp;</div>
-                        <div class="column center" style="width: 28%"><i class="fa fa-arrows-up-down" aria-hidden="true"></i></div>
-                        <div class="column center" style="width: 28%"><i class="fa fa-arrows-up-down" aria-hidden="true"></i></div>
-                        <div class="column center" style="width: 28%"><i class="fa fa-arrows-up-down" aria-hidden="true"></i></div>
+                        <div class="column center" style="width: 28%"><x-global::elements.icon name="swap_vert" /></div>
+                        <div class="column center" style="width: 28%"><x-global::elements.icon name="swap_vert" /></div>
+                        <div class="column center" style="width: 28%"><x-global::elements.icon name="swap_vert" /></div>
                     </div>
 
                     <div class="row canvas-row">
@@ -44,7 +44,7 @@
                         </div>
                         <div class="column" style="width: 84%">
                             <h4 class="widgettitle title-primary center canvas-title-only">
-                                <large><i class="fa fa-barcode"></i> {{ $tpl->__('box.header.cp.ovp') }}</large>
+                                <large><x-global::elements.icon name="barcode" /> {{ $tpl->__('box.header.cp.ovp') }}</large>
                             </h4>
                         </div>
                     </div>

@@ -4,7 +4,7 @@
 @endphp
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa-solid fa-chess"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="extension" /></div>
     <div class="pagetitle">
         <h1>{{ $tpl->__('headlines.blueprints') }}</h1>
     </div>
@@ -63,7 +63,7 @@
     <div class="maincontentinner">
         <h5 class="accordionTitle" id="accordion_link_other">
             <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_other" onclick="accordionToggle('other');">
-                <i class="fa fa-angle-down" aria-hidden="true"></i> Templates
+                <x-global::elements.icon name="expand_more" /> Templates
             </a>
         </h5>
         <p style="padding-left:19px;">{{ $tpl->__('description.other_tools') }}</p>

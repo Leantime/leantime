@@ -198,9 +198,9 @@ leantime.kanbanController = (function () {
         sidebar.setAttribute('aria-expanded', newExpanded.toString());
 
         // Update chevron icon
-        var chevronIcon = sidebar.querySelector('.kanban-lane-chevron i');
+        var chevronIcon = sidebar.querySelector('.kanban-lane-chevron .material-symbols-outlined');
         if (chevronIcon) {
-            chevronIcon.className = newExpanded ? 'fa fa-chevron-down' : 'fa fa-chevron-right';
+            chevronIcon.textContent = newExpanded ? 'expand_more' : 'chevron_right';
         }
 
         // Update data-expanded attribute on row (CSS uses this for styling)

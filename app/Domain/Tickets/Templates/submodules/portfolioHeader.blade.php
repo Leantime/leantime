@@ -10,7 +10,7 @@
     @dispatchEvent('afterPageHeaderOpen')
 
     <div class="pageicon">
-        <span class="fa fa-briefcase"></span>
+        <x-global::elements.icon name="work" />
     </div>
     <div class="pagetitle">
         <h1>{{ __('headlines.my_projects') }}</h1>

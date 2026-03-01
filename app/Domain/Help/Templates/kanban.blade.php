@@ -20,7 +20,7 @@
         <br /><br />
         <div class="center">
             <x-globals::forms.button link="javascript:void(0)" type="secondary" onclick="leantime.helperController.closeModal()">I'll explore on my own</x-globals::forms.button>
-            <x-globals::forms.button link="javascript:void(0)" type="primary" onclick="leantime.helperController.closeModal(); leantime.helperController.startKanbanTour();">{{ __("buttons.start_tour") }} <i class="fa-solid fa-arrow-right"></i></x-globals::forms.button>
+            <x-globals::forms.button link="javascript:void(0)" type="primary" onclick="leantime.helperController.closeModal(); leantime.helperController.startKanbanTour();">{{ __("buttons.start_tour") }} <x-global::elements.icon name="arrow_forward" /></x-globals::forms.button>
         </div>
         <div class="tw:mt-3 center">
             <form hx-post="{{ BASE_URL }}/help/helperModal/dontShowAgain" hx-trigger="change" hx-swap="none">

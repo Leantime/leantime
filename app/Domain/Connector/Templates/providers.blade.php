@@ -1,5 +1,5 @@
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-plug"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="power" /></div>
     <div class="pagetitle">
         <h1>{{ $tpl->__('headlines.providers') }}</h1>
     </div>

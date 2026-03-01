@@ -37,7 +37,7 @@
                     <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">{{ __('links.download') }}</a></li>
 
                     @if($login::userIsAtLeast($roles::$editor))
-                        <li><a href="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}?delFile={{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
+                        <li><a href="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}?delFile={{ $file['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
                     @endif
                 </x-globals::elements.dropdown>
 
@@ -46,7 +46,7 @@
                         <img style='max-height: 50px; max-width: 70px;' src="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" alt="" />
                     @else
                         <div style="font-size:50px; margin-bottom:10px;">
-                            <span class="fa fa-file"></span>
+                            <x-global::elements.icon name="description" />
                         </div>
                     @endif
                     <span class="filename">{{ $file['realName'] }}</span>

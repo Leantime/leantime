@@ -365,7 +365,7 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
             Usage: <code>&lt;x-globals::elements.dropdown label="Options"&gt;&lt;li&gt;&lt;a&gt;Item&lt;/a&gt;&lt;/li&gt;&lt;/x-globals::elements.dropdown&gt;</code>
         </p>
         <div style="display: flex; gap: 12px;">
-            <x-globals::elements.dropdown label="Actions" icon="fa-solid fa-caret-down">
+            <x-globals::elements.dropdown label="Actions" icon="arrow_drop_down">
                 <li><a>Edit</a></li>
                 <li><a>Duplicate</a></li>
                 <li><a class="tw:text-error">Delete</a></li>

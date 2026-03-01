@@ -1,6 +1,6 @@
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light"><i class="fa-regular fa-calendar-plus"></i> {{ __('label.connect_calendar_title') }}</h4>
+<h4 class="widgettitle title-light"><x-global::elements.icon name="calendar_add_on" /> {{ __('label.connect_calendar_title') }}</h4>
 <p class="subtitle">{{ __('label.connect_calendar_description') }}</p>
 
 <br />
@@ -8,7 +8,7 @@
 {{-- iCal URL Import --}}
 <x-globals::elements.accordion id="connectCalendar-ical" class="noBackground">
     <x-slot name="title">
-        <i class="fa fa-calendar-alt" style="margin-right: 5px;"></i> {{ __('label.ical_url_title') }}
+        <x-global::elements.icon name="calendar_month" style="margin-right: 5px;" /> {{ __('label.ical_url_title') }}
     </x-slot>
     <x-slot name="content" style="padding-top: 10px;">
         <p class="text-muted small">{{ __('label.ical_url_description') }}</p>

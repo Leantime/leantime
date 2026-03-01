@@ -54,7 +54,7 @@
                  role="button"
                  aria-label="{{ __('label.toggle') }}"
             >
-                <i class="fa fa-angle-{{ $accordionState == 'closed' ? 'right' : 'down' }}" aria-hidden="true"></i>
+                <x-global::elements.icon name="{{ $accordionState == 'closed' ? 'chevron_right' : 'expand_more' }}" />
             </div>
         @endif
 
@@ -90,7 +90,7 @@
                         <strong><a href="#/tickets/showTicket/{{ $ticket['id'] }}"
                                    class="ticket-headline-{{ $ticket['id'] }}">{{ $ticket['headline'] }}</a></strong>
                         &nbsp;<a href="javascript:void(0);" class="tw:hidden edit-button"
-                                 data-tippy-content="{{ __('text.edit_task_headline') }}"><i class="fa fa-edit"></i></a>
+                                 data-tippy-content="{{ __('text.edit_task_headline') }}"><x-global::elements.icon name="edit" /></a>
                     </div>
                     <div class="tw:hidden edit-form">
                         <form class="tw:flex tw:flex-row tw:items-center tw:gap-2"
@@ -105,10 +105,10 @@
                                        value="{{ $ticket['headline'] }}" />
                             </div>
                             <div>
-                                <x-globals::forms.button submit type="primary" name="edit" icon="fa fa-check"></x-globals::forms.button>
+                                <x-globals::forms.button submit type="primary" name="edit" icon="check"></x-globals::forms.button>
                             </div>
                             <div>
-                                <x-globals::forms.button link="javascript:void(0);" type="secondary" icon="fa fa-x" class="cancel-edit-task" data-group="{{ $groupKey }}"></x-globals::forms.button>
+                                <x-globals::forms.button link="javascript:void(0);" type="secondary" icon="close" class="cancel-edit-task" data-group="{{ $groupKey }}"></x-globals::forms.button>
                             </div>
                         </form>
                     </div>
@@ -122,8 +122,7 @@
                 @dispatchEvent('beforeDueDate', ['ticket' => (object)$ticket])
                 <div class="due-date-container tw:shrink-0 tw:flex tw:flex-row tw:items-center tw:gap-1 due-date-wrapper">
                     <div class="date-picker-form-control">
-                        <i class="fa-solid fa-business-time infoIcon"
-                           data-tippy-content="{{ __("label.due") }}"></i>
+                        <x-global::elements.icon name="business_center" class="infoIcon" data-tippy-content="{{ __("label.due") }}" />
 
                         <input id="due-date-picker-{{ $ticket['id'] }}"
                                type="text"
@@ -145,7 +144,7 @@
                                 hx-vals='{"id": "{{ $ticket['id'] }}", "date": ""}'
                                 hx-indicator=".htmx-indicator">
                             <span class="sr-only">{{ __("language.resetDate") }}</span>
-                            <i class="fa fa-close"></i>
+                            <x-global::elements.icon name="close" />
                         </button>
                     </div>
                     @dispatchEvent('afterDueDate', ['ticket' => (object)$ticket])
@@ -168,11 +167,10 @@
 
                     <div class="scheduler">
                         @if( $ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00")
-                            <i class="fa-solid fa-calendar-check infoIcon" style="color:var(--accent2)"
-                               data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($ticket['editFrom'])->date() }}"></i>
+                            <x-global::elements.icon name="event_available" class="infoIcon" style="color:var(--accent2)"
+                               data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($ticket['editFrom'])->date() }}" />
                         @else
-                            <i class="fa-regular fa-calendar-xmark infoIcon"
-                               data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
+                            <x-global::elements.icon name="event_busy" class="infoIcon" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}" />
                         @endif
                     </div>
 
@@ -270,8 +268,7 @@
             <!-- End Subtask Form -->
 
             <a href="javascript:void(0);" id="task-add-form-{{ $groupKey }}-{{$ticket['id']}}-handler"
-               onclick="jQuery(this).toggle(); jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}').toggle(); "><i
-                    class="fa fa-plus-circle"></i> {{ __('links.add_task') }}</a>
+               onclick="jQuery(this).toggle(); jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}').toggle(); "><x-global::elements.icon name="add_circle" /> {{ __('links.add_task') }}</a>
         @endif
 
     </div>

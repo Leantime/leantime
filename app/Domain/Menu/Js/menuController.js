@@ -20,15 +20,13 @@ leantime.menuController = (function () {
         if (submenuEl.style.display === 'none' || getComputedStyle(submenuEl).display === 'none') {
             submenuEl.style.display = 'block';
             if (iconEl) {
-                iconEl.classList.remove('fa-angle-right');
-                iconEl.classList.add('fa-angle-down');
+                iconEl.textContent = 'expand_more';
             }
             submenuState = 'open';
         } else {
             submenuEl.style.display = 'none';
             if (iconEl) {
-                iconEl.classList.remove('fa-angle-down');
-                iconEl.classList.add('fa-angle-right');
+                iconEl.textContent = 'chevron_right';
             }
             submenuState = 'closed';
         }
@@ -128,10 +126,9 @@ leantime.menuController = (function () {
             togglerEl.classList.add("closed");
 
             //Update icon on link
-            var iconEl = togglerEl.querySelector("i");
+            var iconEl = togglerEl.querySelector(".material-symbols-outlined");
             if (iconEl) {
-                iconEl.classList.remove("fa-angle-down");
-                iconEl.classList.add("fa-angle-right");
+                iconEl.textContent = 'chevron_right';
             }
 
             if (groupEl) {
@@ -146,10 +143,9 @@ leantime.menuController = (function () {
             togglerEl.classList.add("open");
 
             //Update icon on link
-            var iconEl = togglerEl.querySelector("i");
+            var iconEl = togglerEl.querySelector(".material-symbols-outlined");
             if (iconEl) {
-                iconEl.classList.remove("fa-angle-right");
-                iconEl.classList.add("fa-angle-down");
+                iconEl.textContent = 'expand_more';
             }
 
             if (groupEl) {

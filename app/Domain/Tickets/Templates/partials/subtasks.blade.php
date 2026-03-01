@@ -1,7 +1,7 @@
 
 <ul class="sortableTicketList tw:mb-[120px]">
     <li class="">
-        <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> {{ __("links.add_task") }}</a>
+        <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><x-global::elements.icon name="add_circle" /> {{ __("links.add_task") }}</a>
         <div class="ticketBox hideOnLoad" id="subticket_new" >
 
             <form method="post" class="form-group"
@@ -56,7 +56,7 @@
             <div class="tw:px-4 tw:py-0">
                     @if($login::userIsAtLeast($roles::$editor))
                         <x-globals::elements.dropdown>
-                                <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete_todo") }}</a></li>
+                                <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete"><x-global::elements.icon name="delete" /> {{ __("links.delete_todo") }}</a></li>
                         </x-globals::elements.dropdown>
                    @endif
 

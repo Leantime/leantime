@@ -16,6 +16,6 @@
         {!! __('menu.projects') !!}
     @endif
 
-   <i class="fa fa-caret-down" aria-hidden="true"></i>
+   <x-global::elements.icon name="arrow_drop_down" />
 </a>
 @include('menu::partials.projectSelector', [])

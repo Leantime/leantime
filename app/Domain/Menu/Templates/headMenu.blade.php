@@ -20,7 +20,7 @@
             preload="mouseover"
             data-tippy-content='{{ __('popover.latest_plugins') }}'
         >
-            <i class="fa-solid fa-puzzle-piece"></i>
+            <x-global::elements.icon name="extension" />
 
         </a>
 
@@ -43,7 +43,7 @@
             preload="mouseover"
             data-tippy-content='{{ __('popover.latest_updates') }}'
         >
-            <span class="fa-solid fa-bolt-lightning"></span>
+            <x-global::elements.icon name="electric_bolt" />
             <span class="tw:inline-block" hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
 
         </a>
@@ -61,7 +61,7 @@
             data-toggle="dropdown"
             data-tippy-content='{{ __('popover.notifications') }}'
         >
-            <span class="fa-solid fa-bell"></span>
+            <x-global::elements.icon name="notifications" />
             @if($newNotificationCount>0)
                 <span class='notificationCounter badge badge-danger badge-xs'>{{ $newNotificationCount }}</span>
             @endif
@@ -159,7 +159,7 @@
             data-toggle="dropdown"
             data-tippy-content='{{ __('popover.help') }}'
         >
-            <span class="fa-solid fa-question-circle"></span>
+            <x-global::elements.icon name="help" />
         </a>
         <ul class="dropdown-menu pull-right">
             <li class="nav-header">

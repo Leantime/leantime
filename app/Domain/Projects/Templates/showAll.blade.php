@@ -5,7 +5,7 @@
 @endphp
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-suitcase"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="luggage" /></div>
     <div class="pagetitle">
         <h5>{{ __('label.administration') }}</h5>
         <h1>{{ __('headline.all_projects') }}</h1>
@@ -18,7 +18,7 @@
         {!! $tpl->displayNotification() !!}
 
         <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
-            <x-globals::forms.button link="{{ BASE_URL }}/projects/newProject" type="primary" icon="fa fa-plus">{{ __('link.new_project') }}</x-globals::forms.button>
+            <x-globals::forms.button link="{{ BASE_URL }}/projects/newProject" type="primary" icon="add">{{ __('link.new_project') }}</x-globals::forms.button>
 
             <div class="tw:flex-1"></div>
 

@@ -56,7 +56,7 @@
             @if($group['label'] != 'all')
                 <h5 class="accordionTitle {{ $group['class'] }}" @if(!empty($group['color'])) style="color:{{ htmlspecialchars($group['color']) }}" @endif id="accordion_link_{{ $group['id'] }}">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}" onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                        <i class="fa fa-angle-down" aria-hidden="true"></i>{{ $group['label'] }}({{ count($group['items']) }})
+                        <x-global::elements.icon name="expand_more" />{{ $group['label'] }}({{ count($group['items']) }})
                     </a><br />
                     <small style="padding-left:20px; color:var(--primary-font-color); font-size:var(--font-size-s);">{{ $group['more-info'] }}</small>
                 </h5>
@@ -197,7 +197,7 @@
                                                 <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle; margin-right:5px;"/></span><span id="user{{ $row['id'] }}">{{ __('dropdown.not_assigned') }}</span>
                                             @endif
                                         </span>
-                                        &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                        &nbsp;<x-global::elements.icon name="arrow_drop_down" />
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                         <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>

@@ -26,7 +26,7 @@
                         style="font-size: var(--font-size-xs); color: var(--accent1); font-weight: 600;"
                         data-tippy-content="{{ __('marketplace.certified_tooltip') }}"
                     >
-                        <i class="fa fa-certificate" aria-hidden="true"></i>
+                        <x-global::elements.icon name="verified" />
                         Certified
                     </span>
                 @endif

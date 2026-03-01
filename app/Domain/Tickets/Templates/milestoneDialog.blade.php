@@ -15,7 +15,7 @@
 
 <div class="modal-icons">
     @if(isset($currentMilestone->id) && $currentMilestone->id != '')
-        <a href="#/tickets/delMilestone/{{ $currentMilestone->id }}" class="danger" data-tippy-content="Delete"><i class='fa fa-trash-can'></i></a>
+        <a href="#/tickets/delMilestone/{{ $currentMilestone->id }}" class="danger" data-tippy-content="Delete"><x-global::elements.icon name="delete" /></a>
     @endif
 </div>
 

@@ -7,7 +7,7 @@
                 <div class="row canvas-row">
                     <div class="column" style="width:100%">
                         <h4 class="widgettitle title-primary center canvas-title-only">
-                            <i class="fas fa-bullseye"></i> {{ $tpl->__('box.em.header.goal') }}
+                            <x-global::elements.icon name="adjust" /> {{ $tpl->__('box.em.header.goal') }}
                         </h4>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                 <div class="row canvas-row">
                     <div class="column" style="width: 100%">
                         <h4 class="widgettitle title-primary center canvas-title-only">
-                            <i class="fas fa-heart"></i> {{ $tpl->__('box.em.header.empathy') }}
+                            <x-global::elements.icon name="favorite" /> {{ $tpl->__('box.em.header.empathy') }}
                         </h4>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                 <div class="row canvas-row">
                     <div class="column" style="width: 100%">
                         <h4 class="widgettitle title-primary center canvas-title-only">
-                            <i class="fas fa-7"></i> {{ $tpl->__('box.em.header.think_feel') }}
+                            <x-global::elements.icon name="counter_7" /> {{ $tpl->__('box.em.header.think_feel') }}
                         </h4>
                     </div>
                 </div>

@@ -27,13 +27,13 @@
                 <a href="javascript:void(0);"
                    onclick="leantime.commentsController.toggleCommentBoxes({{ $comment['commentParent'] }})"
                    style="display:inline-flex; align-items:center; min-height:44px; padding:8px;">
-                    <span class="fa fa-reply"></span> {{ __('links.reply') }}
+                    <x-global::elements.icon name="reply" /> {{ __('links.reply') }}
                 </a>
                 @if($comment['userId'] == session("userdata.id"))
                     <a href="{{ CURRENT_URL }}?delComment={{ $comment['id'] }}"
                        class="deleteComment"
                        style="display:inline-flex; align-items:center; min-height:44px; padding:8px;">
-                        <span class="fa fa-trash"></span> {{ __('links.delete') }}
+                        <x-global::elements.icon name="delete" /> {{ __('links.delete') }}
                     </a>
                 @endif
             @endif

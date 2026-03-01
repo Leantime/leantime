@@ -2,7 +2,7 @@
 
 @section('content')
 
-<x-globals::layout.page-header :icon="'fa fa-user'">
+<x-globals::layout.page-header :icon="'person'">
     <h5>{{ __('label.overview') }}</h5>
     <h1>{!! __('headlines.accountSettings') !!}</h1>
 
@@ -175,7 +175,7 @@
                         </form>
                         <br /><br />
                         <h4 class="widgettitle title-light">
-                            <i class="fa-solid fa-shield-halved"></i> {{ __('headlines.twoFA') }}
+                            <x-global::elements.icon name="shield" /> {{ __('headlines.twoFA') }}
                         </h4>
                         @if ($values['twoFAEnabled'] )
                             <p>{!!   __('text.twoFA_enabled') !!}</p>
@@ -293,7 +293,7 @@
 
                                         <x-globals::selectable :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'" onclick="leantime.snippets.toggleTheme('dark')">
                                             <div style="width:80px; height:60px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #1a2332 0%, #2c3e50 100%); border-radius:var(--element-radius);">
-                                                <i class="fa-solid fa-moon" style="font-size:26px; color:var(--secondary-font-color); line-height:1;"></i>
+                                                <x-global::elements.icon name="dark_mode" style="font-size:26px; color:var(--secondary-font-color); line-height:1;" />
                                             </div>
                                         </x-globals::selectable>
 

@@ -30,7 +30,7 @@
 
                 @if($tpl->get('projectTypes') && count($tpl->get('projectTypes')) > 1)
                 <div class="text-center">
-                    <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
+                    <h4 class="widgettitle title-light"><x-global::elements.icon name="view_list" /> Project Type</h4>
                     <p>The type of the project. This will determine which features are available.</p>
                     <x-globals::forms.select name="type" :required="true">
                         @foreach($tpl->get('projectTypes') as $key => $type)
@@ -47,8 +47,7 @@
 
                 <div class="text-center">
 
-                    <h4 class="widgettitle title-light"><span
-                            class="fa fa-picture-o"></span>{{ __('label.project_avatar') }}</h4>
+                    <h4 class="widgettitle title-light"><x-global::elements.icon name="image" />{{ __('label.project_avatar') }}</h4>
 
                     <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project['id'] }}&v={{ format($project['modified'])->timestamp() }}' class='profileImg' alt='Profile Picture' id="previousImage"/>
                     <div id="projectAvatar">
@@ -86,8 +85,7 @@
             @dispatchEvent('afterProjectAvatar', $project)
 
             <div class="marginBottom" style="margin-bottom: 30px;">
-                <h4 class="widgettitle title-light"><span
-                        class="fa fa-calendar"></span>{{ __('label.project_dates') }}</h4>
+                <h4 class="widgettitle title-light"><x-global::elements.icon name="calendar_today" />{{ __('label.project_dates') }}</h4>
 
                 <label class="control-label">{{ __('label.project_start') }}</label>
                 <div class="">
@@ -100,8 +98,7 @@
             </div>
 
             <div style="margin-bottom: 30px;">
-                <h4 class="widgettitle title-light"><span
-                        class="fa fa-building"></span>{{ __('label.client_product') }}</h4>
+                <h4 class="widgettitle title-light"><x-global::elements.icon name="apartment" />{{ __('label.client_product') }}</h4>
                 <x-globals::forms.select name="clientId" id="clientId" :required="true">
                     @foreach($tpl->get('clients') as $row)
                         <option value="{{ $row['id'] }}"
@@ -114,8 +111,7 @@
             </div>
 
             <div class="marginBottom" style="margin-bottom: 30px;">
-                <h4 class="widgettitle title-light"><span
-                        class="fa fa-wrench"></span>{{ __('label.settings') }}</h4>
+                <h4 class="widgettitle title-light"><x-global::elements.icon name="build" />{{ __('label.settings') }}</h4>
 
                 <input type="hidden" name="menuType" id="menuType"
                        value="{{ Leantime\Domain\Menu\Repositories\Menu::DEFAULT_MENU }}">
@@ -133,8 +129,7 @@
             </div>
 
             <div class="marginBottom" style="margin-bottom: 30px;">
-                <h4 class="widgettitle title-light"><span
-                            class="fa fa-lock-open"></span>{{ __('labels.defaultaccess') }}</h4>
+                <h4 class="widgettitle title-light"><x-global::elements.icon name="lock_open" />{{ __('labels.defaultaccess') }}</h4>
                 {{ __('text.who_can_access') }}
                 <br /><br />
 
@@ -147,8 +142,7 @@
             </div>
 
             <div style="margin-bottom: 30px;">
-                <h4 class="widgettitle title-light"><span
-                            class="fa fa-money-bill-alt"></span>{{ __('label.budgets') }}</h4>
+                <h4 class="widgettitle title-light"><x-global::elements.icon name="payments" />{{ __('label.budgets') }}</h4>
                 <div class="form-group">
                     <label class="control-label" for="hourBudget">{{ __('label.hourly_budget') }}</label>
                     <div>

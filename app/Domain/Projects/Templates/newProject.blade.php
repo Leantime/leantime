@@ -3,7 +3,7 @@
 @endphp
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-suitcase"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="luggage" /></div>
     <div class="pagetitle">
         <h5>{{ __('label.administration') }}</h5>
         <h1>{{ __('headline.new_project') }}</h1>
@@ -43,7 +43,7 @@
                             <div class="padding-top">
                                 @if(isset($project['id']) && $project['id'] != '')
                                     <div class="pull-right padding-top">
-                                        <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('buttons.delete') }}</a>
+                                        <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('buttons.delete') }}</a>
                                     </div>
                                 @endif
                                 <x-globals::forms.button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
@@ -53,7 +53,7 @@
                         <div class="col-md-4">
 
                             @if($tpl->get('projectTypes') && count($tpl->get('projectTypes')) > 1)
-                                <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
+                                <h4 class="widgettitle title-light"><x-global::elements.icon name="view_list" /> Project Type</h4>
                                 <p>The type of the project. This will determine which features are available.</p>
                                 <x-globals::forms.select :bare="true" name="type">
                                     @foreach($tpl->get('projectTypes') as $key => $type)
@@ -67,8 +67,7 @@
                             @dispatchEvent('beforeClientPicker', $project)
 
                             <div style="margin-bottom: 30px;">
-                                <h4 class="widgettitle title-light tw:block"><span
-                                        class="fa fa-calendar"></span>{{ __('label.project_dates') }}</h4>
+                                <h4 class="widgettitle title-light tw:block"><x-global::elements.icon name="calendar_today" />{{ __('label.project_dates') }}</h4>
                                 <div>
                                     <label>{{ __('label.project_start') }}</label>
                                     <div class="">
@@ -83,8 +82,7 @@
 
                             <div style="margin-bottom: 30px;">
                                 <div class="">
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-building"></span>{{ __('label.client_product') }}</h4>
+                                    <h4 class="widgettitle title-light"><x-global::elements.icon name="apartment" />{{ __('label.client_product') }}</h4>
                                     <x-globals::forms.select :bare="true" name="clientId" id="clientId">
                                         @foreach($tpl->get('clients') as $row)
                                             <option value="{{ $row['id'] }}"
@@ -99,8 +97,7 @@
 
                             <div style="margin-bottom: 30px;">
                                 <div class="">
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-lock-open"></span>{{ __('labels.defaultaccess') }}</h4>
+                                    <h4 class="widgettitle title-light"><x-global::elements.icon name="lock_open" />{{ __('labels.defaultaccess') }}</h4>
                                     {{ __('text.who_can_access') }}
                                     <br /><br />
 

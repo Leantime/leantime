@@ -53,13 +53,13 @@
                     </x-globals::forms.select>
                         @if($values['status'] == 'i')
                         <div class="pull-left" style="padding-left:5px; line-height: 29px;">
-                            <x-globals::elements.button-dropdown :label="'<i class=&quot;fa fa-link&quot;></i> ' . __('label.copyinviteLink')" type="default" align="start" menuClass="tw:p-4 tw:min-w-72">
+                            <x-globals::elements.button-dropdown :label="'<span class=&quot;material-symbols-outlined&quot; aria-hidden=&quot;true&quot;>link</span> ' . __('label.copyinviteLink')" type="default" align="start" menuClass="tw:p-4 tw:min-w-72">
                                 <li class="noClickProp" onclick="event.stopPropagation()">
                                     <x-globals::forms.input :bare="true" type="text" id="inviteURL" name="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
                                     <x-globals::forms.button tag="button" type="primary" onclick="leantime.snippets.copyUrl('inviteURL');">{{ __('links.copy_url') }}</x-globals::forms.button>
                                 </li>
                             </x-globals::elements.button-dropdown>
-                            <x-globals::forms.button link="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite" type="secondary" style="margin-left:5px;" icon="fa fa-envelope">{{ __('buttons.resend_invite') }}</x-globals::forms.button>
+                            <x-globals::forms.button link="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite" type="secondary" style="margin-left:5px;" icon="mail">{{ __('buttons.resend_invite') }}</x-globals::forms.button>
                         </div>
                         @endif
                         <div class="clearfix"></div>
@@ -112,7 +112,7 @@
                                         echo '</div>';
                                     }
                                     echo "<h3 id='accordion_link_" . $i . "'>
-                                        <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><i class='fa fa-angle-down'></i> " . e($row['clientName']) . "</a>
+                                        <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><x-global::elements.icon name="expand_more" /> " . e($row['clientName']) . "</a>
                                         </h3>
                                         <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
                                     $currentClient = $row['clientName'];

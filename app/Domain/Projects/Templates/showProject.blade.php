@@ -4,7 +4,7 @@
 @endphp
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-suitcase"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="luggage" /></div>
     <div class="pagetitle">
         <h5>{{ __('label.administration') }}</h5>
         <h1>{{ sprintf(__('headline.project'), e($project['name'])) }}</h1>
@@ -17,16 +17,16 @@
         {!! $tpl->displayNotification() !!}
 
         <div class="inlineDropDownContainer" style="float:right; z-index:9; padding-top:2px;">
-            <x-globals::forms.button link="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}" type="secondary" class="duplicateProjectModal" data-tippy-content="{{ __('link.duplicate_project') }}" icon="fa-regular fa-copy">Copy</x-globals::forms.button>
-            <x-globals::forms.button link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" type="danger" class="delete" data-tippy-content="{{ __('link.delete_project') }}" outline icon="fa fa-trash">Delete</x-globals::forms.button>
+            <x-globals::forms.button link="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}" type="secondary" class="duplicateProjectModal" data-tippy-content="{{ __('link.duplicate_project') }}" icon="content_copy">Copy</x-globals::forms.button>
+            <x-globals::forms.button link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" type="danger" class="delete" data-tippy-content="{{ __('link.delete_project') }}" outline icon="delete">Delete</x-globals::forms.button>
         </div>
         <div class="lt-tabs tabbedwidget projectTabs" data-tabs>
 
             <ul role="tablist">
-                <li><a href="#projectdetails"><span class="fa fa-leaf"></span> {{ __('tabs.projectdetails') }}</a></li>
-                <li><a href="#team"><span class="fa fa-group"></span> {{ __('tabs.team') }}</a></li>
-                <li><a href="#integrations"> <span class="fa fa-asterisk"></span> {{ __('tabs.Integrations') }}</a></li>
-                <li><a href="#todosettings"><span class="fa fa-list-ul"></span> {{ __('tabs.todosettings') }}</a></li>
+                <li><a href="#projectdetails"><x-global::elements.icon name="eco" /> {{ __('tabs.projectdetails') }}</a></li>
+                <li><a href="#team"><x-global::elements.icon name="group" /> {{ __('tabs.team') }}</a></li>
+                <li><a href="#integrations"> <x-global::elements.icon name="emergency" /> {{ __('tabs.Integrations') }}</a></li>
+                <li><a href="#todosettings"><x-global::elements.icon name="format_list_bulleted" /> {{ __('tabs.todosettings') }}</a></li>
                 @dispatchEvent('projectTabsList')
             </ul>
 
@@ -48,7 +48,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <h4 class="widgettitle title-light">
-                                        <span class="fa fa-users"></span>{{ __('headlines.team_member') }}
+                                        <x-global::elements.icon name="group" />{{ __('headlines.team_member') }}
                                     </h4>
                                 </div>
                             </div>
@@ -103,7 +103,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <h4 class="widgettitle title-light">
-                                        <span class="fa fa-user-friends "></span>{{ __('headlines.assign_users_to_project') }}
+                                        <x-global::elements.icon name="group" />{{ __('headlines.assign_users_to_project') }}
                                     </h4>
                                 </div>
                             </div>
@@ -143,7 +143,7 @@
                                 @if($login::userIsAtLeast($roles::$manager))
                                     <div class="col-md-4">
                                         <div class="userBox">
-                                            <a class="userEditModal" href="{{ BASE_URL }}/users/newUser?preSelectProjectId={{ $project['id'] }}" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> {{ __('links.create_user') }}</a>
+                                            <a class="userEditModal" href="{{ BASE_URL }}/users/newUser?preSelectProjectId={{ $project['id'] }}" style="font-size:var(--font-size-l); line-height:61px"><x-global::elements.icon name="person_add" /> {{ __('links.create_user') }}</a>
                                             <div class="clearall"></div>
                                         </div>
                                     </div>
@@ -166,7 +166,7 @@
 
             <div id="integrations">
 
-                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Mattermost</h4>
+                <h4 class="widgettitle title-light"><x-global::elements.icon name="eco" />Mattermost</h4>
                 <div class="row">
                     <div class="col-md-3">
                         <img src="{{ BASE_URL }}/dist/images/mattermost-logoHorizontal.png" width="200" />
@@ -184,7 +184,7 @@
                     </div>
                 </div>
                 <br />
-                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Slack</h4>
+                <h4 class="widgettitle title-light"><x-global::elements.icon name="eco" />Slack</h4>
                 <div class="row">
                     <div class="col-md-3">
                         <img src="https://cdn.cdnlogo.com/logos/s/52/slack.svg" width="200"/>
@@ -203,7 +203,7 @@
                     </div>
                 </div>
 
-                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Zulip</h4>
+                <h4 class="widgettitle title-light"><x-global::elements.icon name="eco" />Zulip</h4>
                 <div class="row">
                     <div class="col-md-3">
                         <img src="{{ BASE_URL }}/dist/images/zulip-org-logo.png" width="200"/>
@@ -234,7 +234,7 @@
                     </div>
                 </div>
 
-                <h4 class='widgettitle title-light'><span class='fa fa-leaf'></span>Discord</h4>
+                <h4 class='widgettitle title-light'><x-global::elements.icon name="eco" />Discord</h4>
                 <div class='row'>
                     <div class='col-md-3'>
                         <img src='{{ BASE_URL }}/dist/images/discord-logo.png' width='200'/>
@@ -276,7 +276,7 @@
 
                                         <input type="hidden" name="labelKeys[]" id="labelKey-{{ $key }}" class='labelKey' value="{{ $key }}"/>
                                         <div class="sortHandle">
-                                            <span class="fa fa-sort"></span>
+                                            <x-global::elements.icon name="sort" />
                                         </div>
                                         <div class="col-md-1">
                                             <x-globals::forms.input :bare="true" type="text" name="labelSort-{{ $key }}" id="labelSort-{{ $key }}" value="{{ e($ticketStatus['sortKey']) }}" class="sorter" style="width:50px;" />
@@ -313,7 +313,7 @@
                                         </div>
                                         <div class="remove">
                                             @if($key != -1)
-                                                <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus({{ $key }})" class="delete" aria-label="{{ __('label.remove') }}"><span class="fa fa-trash"></span></a>
+                                                <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus({{ $key }})" class="delete" aria-label="{{ __('label.remove') }}"><x-global::elements.icon name="delete" /></a>
                                             @endif
                                         </div>
                                     </div>
@@ -344,7 +344,7 @@
     <div class="row statusList" id="todostatus-XXNEWKEYXX">
         <input type="hidden" name="labelKeys[]" id="labelKey-XXNEWKEYXX" class='labelKey' value="XXNEWKEYXX"/>
         <div class="sortHandle">
-            <span class="fa fa-sort"></span>
+            <x-global::elements.icon name="sort" />
         </div>
         <div class="col-md-1">
             <x-globals::forms.input :bare="true" type="text" name="labelSort-XXNEWKEYXX" id="labelSort-XXNEWKEYXX" value="" class="sorter" style="width:50px;" />
@@ -380,7 +380,7 @@
             <x-globals::forms.checkbox name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX" />
         </div>
         <div class="remove">
-            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus('XXNEWKEYXX')" class="delete" aria-label="{{ __('label.remove') }}"><span class="fa fa-trash"></span></a>
+            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus('XXNEWKEYXX')" class="delete" aria-label="{{ __('label.remove') }}"><x-global::elements.icon name="delete" /></a>
         </div>
     </div>
 </div>

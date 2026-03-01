@@ -6,7 +6,7 @@
 @dispatchEvent('beforePageHeaderOpen')
 <div class="pageheader">
     @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><span class="fa fa-address-book"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="contact_page" /></div>
     <div class="pagetitle">
         <h5>{{ __('label.administration') }}</h5>
         <h1>{{ e($values['name']) }}</h1>
@@ -32,7 +32,7 @@
 
                     <div class="row row-fluid">
                         <div class="col-md-6">
-                            <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> {{ __('subtitle.details') }}</h4>
+                            <h4 class="widgettitle title-light"><x-global::elements.icon name="eco" /> {{ __('subtitle.details') }}</h4>
 
                             <div class="form-group">
                                 <label class=" control-label">{{ __('label.client_id') }}</label>
@@ -107,8 +107,8 @@
                         </div>
 
                         <div class="col-md-6">
-                            <h4 class="widgettitle title-light"><span class="fa fa-users"></span> {{ __('subtitles.users_assigned_to_this_client') }}</h4>
-                            <x-globals::forms.button link="#/users/newUser?preSelectedClient={{ $values['id'] }}" type="primary" icon="fa fa-plus">{{ __('buttons.add_user') }}</x-globals::forms.button>
+                            <h4 class="widgettitle title-light"><x-global::elements.icon name="group" /> {{ __('subtitles.users_assigned_to_this_client') }}</h4>
+                            <x-globals::forms.button link="#/users/newUser?preSelectedClient={{ $values['id'] }}" type="primary" icon="add">{{ __('buttons.add_user') }}</x-globals::forms.button>
                             <table class='table table-bordered'>
                                 <colgroup>
                                     <col class="con1" />
@@ -133,13 +133,13 @@
                                         <td>{{ e($user['phone']) }}</td>
                                         <td>
                                             <a href="{{ BASE_URL }}/users/editUser/{{ $user['id'] }}" title="{{ __('buttons.edit') }}">
-                                                <i class="fa fa-edit" aria-hidden="true"></i>
+                                                <x-global::elements.icon name="edit" />
                                             </a>
                                             <a href="{{ BASE_URL }}/clients/removeUser/{{ $values['id'] }}/{{ $user['id'] }}"
                                                class="delete"
                                                title="{{ __('buttons.remove') }}"
                                                onclick="return confirm('{{ __('text.confirm_remove_user_from_client') }}')">
-                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                                <x-global::elements.icon name="delete" />
                                             </a>
                                         </td>
                                     </tr>
@@ -160,7 +160,7 @@
                             <x-globals::forms.button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
                         </div>
                         <div class="col-md-6 align-right">
-                            <a href="{{ BASE_URL }}/clients/delClient/{{ e($_GET['id']) }}" class="delete"><i class="fa fa-trash" aria-hidden="true"></i> {{ __('links.delete') }}</a>
+                            <a href="{{ BASE_URL }}/clients/delClient/{{ e($_GET['id']) }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a>
                         </div>
                     </div>
 
@@ -208,7 +208,7 @@
                                     <li class="nav-header border">{{ __('subtitles.file') }}</li>
                                     <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{{ __('links.download') }}</a></li>
                                     @if($login::userIsAtLeast($roles::$admin))
-                                        <li><a href="{{ BASE_URL }}/clients/showClient/{{ e($_GET['id']) }}?delFile={{ $file['id'] }}" class="delete"><i class="fa fa-trash" aria-hidden="true"></i> {{ __('links.delete') }}</a></li>
+                                        <li><a href="{{ BASE_URL }}/clients/showClient/{{ e($_GET['id']) }}?delFile={{ $file['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
                                     @endif
                                 </x-globals::elements.dropdown>
                                 <a class="cboxElement" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ e($file['extension']) }}&realName={{ e($file['realName']) }}">

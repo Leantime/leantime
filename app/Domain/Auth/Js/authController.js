@@ -41,7 +41,11 @@ leantime.authController = (function () {
         jQuery(".commentBox").hide();
         jQuery(".deleteComment, .replyButton").hide();
 
-        jQuery(container).find(".dropdown i, .tw\\:dropdown i").removeClass('fa-caret-down');
+        jQuery(container).find(".dropdown .material-symbols-outlined, .tw\\:dropdown .material-symbols-outlined").each(function() {
+            if (jQuery(this).text().trim() === 'arrow_drop_down') {
+                jQuery(this).hide();
+            }
+        });
     };
 
     // Make public what you want to have public, everything else is private

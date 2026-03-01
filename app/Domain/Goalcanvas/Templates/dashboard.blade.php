@@ -92,7 +92,7 @@ foreach ($allCanvas as $canvasRow) {
         @foreach ($allCanvas as $canvasRow)
             <div>
                 @php $canvasRowId = $canvasRow['id']; @endphp
-                <x-globals::forms.button :link="'#/goalcanvas/editCanvasItem?type=goal&canvasId=' . $canvasRowId" type="primary" class="pull-right" icon="fa fa-plus">Create New Goal</x-globals::forms.button>
+                <x-globals::forms.button :link="'#/goalcanvas/editCanvasItem?type=goal&canvasId=' . $canvasRowId" type="primary" class="pull-right" icon="add">Create New Goal</x-globals::forms.button>
 
                 <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRowId }}'>{{ $canvasRow["title"] }}</a></h5>
             </div>
@@ -164,7 +164,7 @@ foreach ($allCanvas as $canvasRow) {
                                                         @if (!empty($statusLabels))
                                                             <div class="dropdown ticketDropdown statusDropdown colorized firstDropdown">
                                                                 <a href="javascript:void(0)" class="dropdown-toggle f-left status label-{{ $row['status'] != "" ? $statusLabels[$row['status']]['dropdown'] : "" }}" data-toggle="dropdown" id="statusDropdownMenuLink{{ $row['id'] }}">
-                                                                    <span class="text">{{ $row['status'] != "" ? $statusLabels[$row['status']]['title'] : "" }}</span> <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    <span class="text">{{ $row['status'] != "" ? $statusLabels[$row['status']]['title'] : "" }}</span> <x-global::elements.icon name="arrow_drop_down" />
                                                                 </a>
                                                                 <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
                                                                     <li class="nav-header border">{{ __("dropdown.choose_status") }}</li>
@@ -182,7 +182,7 @@ foreach ($allCanvas as $canvasRow) {
                                                         @if (!empty($relatesLabels))
                                                             <div class="dropdown ticketDropdown relatesDropdown colorized firstDropdown">
                                                                 <a href="javascript:void(0)" class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}" data-toggle="dropdown" id="relatesDropdownMenuLink{{ $row['id'] }}">
-                                                                    <span class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span> <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    <span class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span> <x-global::elements.icon name="arrow_drop_down" />
                                                                 </a>
                                                                 <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
                                                                     <li class="nav-header border">{{ __("dropdown.choose_relates") }}</li>
@@ -227,7 +227,7 @@ foreach ($allCanvas as $canvasRow) {
                                                         </div>
 
                                                         <div class="right tw:mr-2.5">
-                                                            <span class="fas fa-comments"></span>
+                                                            <x-global::elements.icon name="forum" />
                                                             <small>{{ $nbcomments }}</small>
                                                         </div>
 

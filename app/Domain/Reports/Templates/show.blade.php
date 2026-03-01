@@ -10,7 +10,7 @@
 @endphp
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-chart-bar"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="bar_chart" /></div>
     <div class="pagetitle">
         <h5>{{ $tpl->escape(session('currentProjectClient') . ' // ' . session('currentProjectName')) }}</h5>
         <h1>{{ $tpl->__('headlines.reports') }}</h1>

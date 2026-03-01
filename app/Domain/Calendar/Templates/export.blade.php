@@ -2,7 +2,7 @@
     $url = $tpl->get('url');
 @endphp
 
-<h4 class="widgettitle title-light"><i class="fa fa-file-export"></i> {{ __('label.ical_export') }}</h4>
+<h4 class="widgettitle title-light"><x-global::elements.icon name="upload_file" /> {{ __('label.ical_export') }}</h4>
 
 {!! $tpl->displayNotification() !!}
 
@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-6 align-right">
             @if($url)
-                <a href="{{ BASE_URL }}/calendar/export?remove=1" class="delete formModal"><i class="fa fa-trash"></i> {{ __('links.remove_access') }}</a>
+                <a href="{{ BASE_URL }}/calendar/export?remove=1" class="delete formModal"><x-global::elements.icon name="delete" /> {{ __('links.remove_access') }}</a>
             @endif
         </div>
     </div>

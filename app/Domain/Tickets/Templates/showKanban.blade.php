@@ -247,18 +247,18 @@ jQuery(document).ready(function(){
                                             @if($row['commentCount'] > 0 || $row['subtaskCount'] > 0 || $row['tags'] != '')
                                                 <div class="border-top" style="white-space: nowrap;">
                                                     @if($row['commentCount'] > 0)
-                                                        <a href="#/tickets/showTicket/{{ $row['id'] }}"><span class="fa-regular fa-comments"></span> {{ $row['commentCount'] }}</a>&nbsp;
+                                                        <a href="#/tickets/showTicket/{{ $row['id'] }}"><x-global::elements.icon name="forum" /> {{ $row['commentCount'] }}</a>&nbsp;
                                                     @endif
 
                                                     @if($row['subtaskCount'] > 0)
-                                                        <a id="subtaskLink_{{ $row['id'] }}" href="#/tickets/showTicket/{{ $row['id'] }}" class="subtaskLineLink"> <span class="fa fa-diagram-successor"></span> {{ $row['subtaskCount'] }}</a>&nbsp;
+                                                        <a id="subtaskLink_{{ $row['id'] }}" href="#/tickets/showTicket/{{ $row['id'] }}" class="subtaskLineLink"> <x-global::elements.icon name="arrow_forward" /> {{ $row['subtaskCount'] }}</a>&nbsp;
                                                     @endif
 
                                                     @if($row['tags'] != '')
                                                         @php $tagsArray = explode(',', $row['tags']); @endphp
                                                         <div class="dropdown">
                                                         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-                                                            <i class="fa fa-tags" aria-hidden="true"></i> {{ count($tagsArray) }}
+                                                            <x-global::elements.icon name="sell" /> {{ count($tagsArray) }}
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li style="padding:10px"><div class="tagsinput readonly">

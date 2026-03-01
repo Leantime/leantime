@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <x-globals::layout.page-header :icon="'fa fa-puzzle-piece'">
+    <x-globals::layout.page-header :icon="'extension'">
         <h1>App Marketplace</h1>
     </x-globals::layout.page-header>
 

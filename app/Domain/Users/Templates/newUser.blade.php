@@ -42,7 +42,7 @@
 
 </script>
 
-<h4 class="widgettitle title-light"><i class="fa fa-people-group"></i> {{ __('headlines.new_user') }}</h4>
+<h4 class="widgettitle title-light"><x-global::elements.icon name="groups" /> {{ __('headlines.new_user') }}</h4>
 
 {!! $tpl->displayNotification() !!}
 
@@ -136,7 +136,7 @@
                                     echo '</div>';
                                 }
                                 echo "<h3 id='accordion_link_" . $i . "'>
-                                    <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><i class='fa fa-angle-down'></i> " . e($row['clientName']) . "</a>
+                                    <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><x-global::elements.icon name="expand_more" /> " . e($row['clientName']) . "</a>
                                     </h3>
                                     <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
                                 $currentClient = $row['clientName'];

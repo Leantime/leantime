@@ -35,7 +35,7 @@
     <br />
     <input type="hidden" name="comment" value="1" />
     <h4 class="widgettitle title-light">
-        <span class="fa fa-comments"></span>{{ __('subtitles.discussion') }}
+        <x-global::elements.icon name="forum" />{{ __('subtitles.discussion') }}
     </h4>
     @php
     $tpl->assign("formUrl", "/goalcanvas/editCanvasComment/" . $id . "");

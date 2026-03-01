@@ -43,7 +43,7 @@
                                     <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{{ __('links.download') }}</a></li>
 
                                     @if($login::userIsAtLeast($roles::$editor))
-                                        <li><a href="{{ BASE_URL }}/files/showAll?delFile={{ $file['id'] }}" class="delete deleteFile"><i class="fa fa-trash"></i> {{ __('links.delete') }}</a></li>
+                                        <li><a href="{{ BASE_URL }}/files/showAll?delFile={{ $file['id'] }}" class="delete deleteFile"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
                                     @endif
                                 </x-globals::elements.dropdown>
                                 <a class="imageLink" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">

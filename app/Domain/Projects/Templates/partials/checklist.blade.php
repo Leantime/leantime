@@ -3,7 +3,7 @@
 ])
 
 @if ($includeTitle)
-    <h5 class="subtitle">Project Checklist <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="The project checklist is list of activities you should do to ensure your projects are well defined, planned and executed."></i> </h5><br/>
+    <h5 class="subtitle">Project Checklist <x-global::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="The project checklist is list of activities you should do to ensure your projects are well defined, planned and executed." /> </h5><br/>
 
 @endif
 
@@ -28,12 +28,12 @@
                         <span class="innerCircle"></span>
                         <span class="title">
                             @if ($step['status'] == 'done')
-                                <i class="fa fa-circle-check"></i>
+                                <x-global::elements.icon name="check_circle" />
                             @else
-                                <i class="fa-regular fa-circle"></i>
+                                <x-global::elements.icon name="circle" />
                             @endif
                                 {{ __("text.step_".$loop->index + 1) }}: {{ __($step['title']) }}
-                            <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            <x-global::elements.icon name="arrow_drop_down" />
                         </span>
                     </a>
                     <ul class="dropdown-menu">
@@ -63,7 +63,7 @@
                                 <span class="clearall"></span>
                                 <span class="taskDescription">
                                 {{ __($task['description'] ?? '') }}<br />
-                                <a href="{{ $task['link'] ?? '#' }}"><i class="fa fa-external-link"></i> Take me there</a>
+                                <a href="{{ $task['link'] ?? '#' }}"><x-global::elements.icon name="open_in_new" /> Take me there</a>
                                 </span>
 
 

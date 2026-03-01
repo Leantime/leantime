@@ -16,9 +16,9 @@
             @if($cardType == "full")
                 <div class="scheduler pull-right">
                     @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
-                        <i class="fa-solid fa-calendar-check infoIcon tw:mr-xs" style="color:var(--accent2)" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>
+                        <x-global::elements.icon name="event_available" class="infoIcon tw:mr-xs" style="color:var(--accent2)" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}" />
                     @else
-                        <i class="fa-regular fa-calendar-xmark infoIcon tw:mr-xs" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
+                        <x-global::elements.icon name="event_busy" class="infoIcon tw:mr-xs" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}" />
                     @endif
                 </div>
             @endif
@@ -28,7 +28,7 @@
 
             <div class="col-md-4" style="padding:0 15px;">
                 @if($cardType == "full")
-                    <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
+                    <x-global::elements.icon name="business_center" class="infoIcon" data-tippy-content=" {{ __("label.due") }}" />
                     <input type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" style="margin-left:0px;" data-id="{{ $row['id'] }}" name="date" />
                 @endif
             </div>
@@ -55,7 +55,7 @@
                                                                     {{ __("label.story_points_unkown") }}
                                                                 @endif
                                                             </span>
-                                                                &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                &nbsp;<x-global::elements.icon name="arrow_drop_down" />
                                                             </a>
                                                             <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink{{ $row['id'] }}">
                                                                 <li class="nav-header border">{{ __("dropdown.how_big_todo") }}</li>

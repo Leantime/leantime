@@ -6,7 +6,7 @@
 
 <form action="{{ BASE_URL }}/ideas/boardDialog{{ isset($_GET['id']) ? '/' . (int) $_GET['id'] : '' }}" method="post" class="formModal">
     <div style="margin-bottom: 15px;">
-        <h4 class="widgettitle title-light"><i class="fa fa-plus" aria-hidden="true"></i> {{ $tpl->__('subtitles.create_new_board') }}</h4>
+        <h4 class="widgettitle title-light"><x-global::elements.icon name="add" /> {{ $tpl->__('subtitles.create_new_board') }}</h4>
     </div>
     <div style="margin-bottom: 15px;">
         <label>{{ $tpl->__('label.title_new') }}</label><br />

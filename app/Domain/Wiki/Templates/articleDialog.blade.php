@@ -58,7 +58,7 @@
         <div class="col-md-2">
             <div class="marginBottom">
                 <h4 class="widgettitle title-light">
-                    <span class="fa fa-folder"></span>{{ __('subtitles.organization') }}
+                    <x-global::elements.icon name="folder" />{{ __('subtitles.organization') }}
                 </h4>
                 <label>Parent</label>
                 <x-globals::forms.select name="parent" style="width:100%;">
@@ -79,7 +79,7 @@
             </div>
 
             @if ($id !== '')
-                <h4 class="widgettitle title-light"><span class="fa fa-link"></span> {{ __('headlines.linked_milestone') }} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}"></i></h4>
+                <h4 class="widgettitle title-light"><x-global::elements.icon name="link" /> {{ __('headlines.linked_milestone') }} <x-global::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}" /></h4>
 
                 <ul class="sortableTicketList" style="width:99%">
                     @if ($currentArticle->milestoneId == '')
@@ -97,7 +97,7 @@
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="leancanvasitemid" value="{{ $id }} " />
                                 <x-globals::forms.button tag="button" type="primary" onclick="jQuery('#primaryArticleSubmitButton').click()">{{ __('buttons.save') }}</x-globals::forms.button>
-                                <x-globals::forms.button link="javascript:void(0);" type="secondary" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" icon="fas fa-times">{{ __('links.cancel') }}</x-globals::forms.button>
+                                <x-globals::forms.button link="javascript:void(0);" type="secondary" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" icon="close">{{ __('links.cancel') }}</x-globals::forms.button>
                             </div>
 
                             <div id="existingMilestone" style="display:none;">
@@ -115,7 +115,7 @@
                                 <input type="hidden" name="articleId" value="{{ $id }} " />
                                 <x-globals::forms.button tag="button" type="primary" onclick="jQuery('#primaryArticleSubmitButton').click()">Save</x-globals::forms.button>
                                 <a href="javascript:void(0);"  onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
-                                    <i class="fas fa-times"></i> {{ __('links.cancel') }}
+                                    <x-global::elements.icon name="close" /> {{ __('links.cancel') }}
                                 </a>
                             </div>
 
@@ -133,7 +133,7 @@
                                     {{ __('label.loading_milestone') }}
                                 </div>
                             </div>
-                            <a href="{{ CURRENT_URL }}?removeMilestone={{ $currentArticle->milestoneId }}" class="formModal"><i class="fa fa-close"></i> {{ __('links.remove') }}</a>
+                            <a href="{{ CURRENT_URL }}?removeMilestone={{ $currentArticle->milestoneId }}" class="formModal"><x-global::elements.icon name="close" /> {{ __('links.remove') }}</a>
 
                         </li>
                     @endif
@@ -152,7 +152,7 @@
                 <div tabindex="0" role="button" data-selected="graduation-cap"
                         class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker tw:rounded-sm tw:focus-visible:outline tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-[var(--accent1)]">
                     <span class="iconPlaceholder">
-                        <i class="fa fa-file"></i>
+                        <x-global::elements.icon name="description" />
                     </span>
                     <span class="caret"></span>
                 </div>
@@ -180,7 +180,7 @@
                     <div class="col-md-2 align-right padding-top-sm">
                         @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))
                             <br />
-                            <a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete_article') }}</a>
+                            <a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete_article') }}</a>
                         @endif
                     </div>
                 </div>

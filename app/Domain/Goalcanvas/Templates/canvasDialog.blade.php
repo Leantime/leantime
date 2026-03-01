@@ -36,7 +36,7 @@
                             value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}">
                     @endif
                     <br>
-                    <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-ranking-star"></i>
+                    <h4 class="widgettitle title-light" style="margin-bottom:0px;"><x-global::elements.icon name="military_tech" />
                         {{ __('Metrics') }}</h4>
 
                     @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
@@ -87,8 +87,7 @@
                     @if ($id !== '')
                         <br /><br /><br />
                         <input type="hidden" name="comment" value="1" />
-                        <h4 class="widgettitle title-light"><span
-                                class="fa fa-comments"></span>{{ __('subtitles.discussion') }}</h4>
+                        <h4 class="widgettitle title-light"><x-global::elements.icon name="forum" />{{ __('subtitles.discussion') }}</h4>
                         @php
                             $tpl->assign('formUrl', '/goalcanvas/editCanvasItem/' . $id . '');
                             $tpl->displaySubmodule('comments-generalComment');
@@ -105,7 +104,7 @@
                         <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
                     @endif
 
-                    <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-calendar"></i> {{ __('label.dates') }}</h4>
+                    <h4 class="widgettitle title-light" style="margin-bottom:0px;"><x-global::elements.icon name="calendar_today" /> {{ __('label.dates') }}</h4>
 
                     <label>{{ __('label.start_date') }}</label>
                     <input type="text" autocomplete="off" value="{{ format($canvasItem['startDate'])->date() }}" name="startDate" class="startDate"/>
@@ -115,7 +114,7 @@
 
                     @if ($id !== '')
                         <br /><br />
-                        <h4 class="widgettitle title-light"><span class="fa fa-link"></span> {{ __("headlines.linked_milestone") }} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __("tooltip.link_milestones_tooltip") }}"></i></h4>
+                        <h4 class="widgettitle title-light"><x-global::elements.icon name="link" /> {{ __("headlines.linked_milestone") }} <x-global::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="{{ __("tooltip.link_milestones_tooltip") }}" /></h4>
 
                         @if ($canvasItem['milestoneId'] == '')
                             <center>
@@ -162,7 +161,7 @@
                                     {{ __("label.loading_milestone") }}
                                 </div>
                             </div>
-                            <a href="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="goalCanvasModal delete formModal"><i class="fa fa-close"></i> {{ __("links.remove") }}</a>
+                            <a href="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="goalCanvasModal delete formModal"><x-global::elements.icon name="close" /> {{ __("links.remove") }}</a>
                         @endif
                     @endif
                 </div>
@@ -170,7 +169,7 @@
 
             @if ($id != '')
                 <a href="{{ BASE_URL . "/goalcanvas/delCanvasItem/$id" }}" class="formModal delete right">
-                    <i class='fa fa-trash-can'></i> {{ __('links.delete') }}
+                    <x-global::elements.icon name="delete" /> {{ __('links.delete') }}
                 </a>
             @endif
 

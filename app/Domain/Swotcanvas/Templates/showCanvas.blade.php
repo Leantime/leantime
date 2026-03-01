@@ -8,12 +8,12 @@
                     <div class="row canvas-row" id="titleRow">
                         <div class="column" style="width: 50%">
                             <h4 class="widgettitle title-primary center canvas-title-only">
-                                <large><i class="far fa-thumbs-up" aria-hidden="true"></i> {{ $tpl->__('box.header.swot.helpful') }}</large>
+                                <large><x-global::elements.icon name="thumb_up" /> {{ $tpl->__('box.header.swot.helpful') }}</large>
                             </h4>
                         </div>
                         <div class="column" style="width: 50%">
                             <h4 class="widgettitle title-primary center" style="border-radius: var(--box-radius-small);">
-                                <large><i class="far fa-thumbs-down" aria-hidden="true"></i> {{ $tpl->__('box.header.swot.harmful') }}</large>
+                                <large><x-global::elements.icon name="thumb_down" /> {{ $tpl->__('box.header.swot.harmful') }}</large>
                             </h4>
                         </div>
                     </div>

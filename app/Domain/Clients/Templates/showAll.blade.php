@@ -2,7 +2,7 @@
 @dispatchEvent('beforePageHeaderOpen')
 <div class="pageheader">
     @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><span class="fa fa-address-book"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="contact_page" /></div>
     <div class="pagetitle">
         <h5>{{ __('label.administration') }}</h5>
         <h1>{{ __('headline.all_clients') }}</h1>
@@ -18,7 +18,7 @@
 
         <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
             @if($login::userIsAtLeast('manager'))
-                <x-globals::forms.button link="{{ BASE_URL }}/clients/newClient" type="primary" icon="fa fa-plus">{{ __('link.new_client') }}</x-globals::forms.button>
+                <x-globals::forms.button link="{{ BASE_URL }}/clients/newClient" type="primary" icon="add">{{ __('link.new_client') }}</x-globals::forms.button>
             @endif
         </div>
 

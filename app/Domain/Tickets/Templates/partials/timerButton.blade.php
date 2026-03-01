@@ -20,7 +20,7 @@
            hx-vals='{"ticketId": "{{ $parentTicketId }}", "action":"start"}'
             data-tippy-content="{{ __("links.start_work") }}">
 
-                    <span class="fa-regular fa-circle-play" style="font-size:18px; padding-top:3px;"></span>
+                    <x-global::elements.icon name="play_circle" style="font-size:18px; padding-top:3px;" />
 
             @if($style=="full")
                 {{ __("links.start_work") }}
@@ -41,7 +41,7 @@
         >
 
 
-                <span class="fa-regular fa-circle-stop" style="font-size:18px; padding-top:3px;"></span>
+                <x-global::elements.icon name="stop_circle" style="font-size:18px; padding-top:3px;" />
                 @if($style=="full")
                     @if (is_array($onTheClock) == true)
                         {!!  sprintf(__("links.stop_work_started_at"), dtHelper()::createFromTimestamp($onTheClock["since"], 'UTC')->setToUserTimezone()->format(__("language.timeformat"))) !!}
@@ -70,7 +70,7 @@
              @if($style=="full")
                 {{ __("text.timer_set_other_todo") }}
             @else
-                <span class="fa-solid fa-user-clock" style="font-size:16px; padding-top:3px; color:var(--grey);" data-tippy-content="{{ __("text.timer_set_other_todo") }}"></span>
+                <x-global::elements.icon name="manage_accounts" style="font-size:16px; padding-top:3px; color:var(--grey);" data-tippy-content="{{ __("text.timer_set_other_todo") }}" />
             @endif
         </span>
     @endif

@@ -101,11 +101,11 @@
                                 if ($filterStatus != 'all' && !isset($statusLabels[$filterStatus])) { $filterStatus = 'all'; }
                                 $filterRelates = $filter['relates'] ?? 'all';
                                 $statusFilterLabel = $filterStatus == 'all'
-                                    ? '<i class="fas fa-filter"></i> ' . __('status.all')
+                                    ? '<x-global::elements.icon name="filter_list" /> ' . __('status.all')
                                     : '<i class="fas fa-fw ' . __($statusLabels[$filterStatus]['icon']) . '"></i> ' . $statusLabels[$filterStatus]['title'];
                             @endphp
                             <x-globals::elements.button-dropdown :label="$statusFilterLabel" type="default">
-                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all') class="active" @endif><i class="fas fa-globe"></i> {!! __('status.all') !!}</a></li>
+                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all') class="active" @endif><x-global::elements.icon name="language" /> {!! __('status.all') !!}</a></li>
                                 @foreach ($statusLabels as $key => $data)
                                     <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}" @if ($filterStatus == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {!! $data['title'] !!}</a></li>
                                 @endforeach
@@ -117,11 +117,11 @@
                                 $filterRelates = $filter['relates'] ?? 'all';
                                 if ($filterRelates != 'all' && !isset($relatesLabels[$filterRelates])) { $filterRelates = 'all'; }
                                 $relatesFilterLabel = $filterRelates == 'all'
-                                    ? '<i class="fas fa-fw fa-globe"></i> ' . __('relates.all')
+                                    ? '<x-global::elements.icon name="language" /> ' . __('relates.all')
                                     : '<i class="fas fa-fw ' . __($relatesLabels[$filterRelates]['icon']) . '"></i> ' . $relatesLabels[$filterRelates]['title'];
                             @endphp
                             <x-globals::elements.button-dropdown :label="$relatesFilterLabel" type="default">
-                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ __('relates.all') }}</a></li>
+                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all') class="active" @endif><x-global::elements.icon name="language" /> {{ __('relates.all') }}</a></li>
                                 @foreach ($relatesLabels as $key => $data)
                                     <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}" @if ($filterRelates == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
                                 @endforeach
@@ -205,7 +205,7 @@
                                                         id="statusDropdownMenuLink{{ $row['id'] }}">
                                                         <span
                                                             class="text">{{ $row['status'] != '' ? $statusLabels[$row['status']]['title'] : '' }}</span>
-                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                        <x-global::elements.icon name="arrow_drop_down" />
                                                     </a>
                                                     <ul class="dropdown-menu"
                                                         aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
@@ -234,7 +234,7 @@
                                                         id="relatesDropdownMenuLink{{ $row['id'] }}">
                                                         <span
                                                             class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span>
-                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                        <x-global::elements.icon name="arrow_drop_down" />
                                                     </a>
                                                     <ul class="dropdown-menu"
                                                         aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
@@ -302,8 +302,7 @@
                                             <div class="right tw:mr-2.5">
                                                 <a href="#/goalcanvas/editCanvasComment/{{ $row['id'] }}"
                                                     class="commentCountLink"
-                                                    data="item_{{ $row['id'] }}"><span
-                                                        class="fas fa-comments"></span></a>
+                                                    data="item_{{ $row['id'] }}"><x-global::elements.icon name="forum" /></a>
                                                 <small>{{ $nbcomments }}</small>
                                             </div>
 

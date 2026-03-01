@@ -54,7 +54,7 @@
 @endphp
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-book"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="book" /></div>
     <div class="pagetitle">
 
         <h5>{{ e(session('currentProjectClient')) }}</h5>
@@ -62,7 +62,7 @@
         @if (count($wikis) > 0 && $login::userIsAtLeast($roles::$editor) && $currentWiki)
             <x-globals::elements.dropdown containerClass="headerEditDropdown">
                 <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{{ __('link.edit_wiki') }}</a></li>
-                <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i> {{ __('links.delete_wiki') }}</a></li>
+                <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><x-global::elements.icon name="delete" /> {{ __('links.delete_wiki') }}</a></li>
             </x-globals::elements.dropdown>
         @endif
 
@@ -112,9 +112,9 @@
                         {{-- Left: Contents Sidebar --}}
                         <div class="wiki-contents-panel" id="contentsPanel">
                             <div class="wiki-panel-header">
-                                <h4 class="widgettitle title-light"><i class="fa fa-list"></i> Contents</h4>
+                                <h4 class="widgettitle title-light"><x-global::elements.icon name="list" /> Contents</h4>
                                 <button class="wiki-collapse-btn" id="toggleContents" title="Collapse">
-                                    <i class="fa fa-chevron-left"></i>
+                                    <x-global::elements.icon name="chevron_left" />
                                 </button>
                             </div>
 
@@ -128,7 +128,7 @@
                                 <button class="wiki-create-btn"
                                         hx-post="{{ BASE_URL }}/hx/wiki/articleContent/create"
                                         hx-swap="none">
-                                    <i class="fa fa-plus"></i>
+                                    <x-global::elements.icon name="add" />
                                     <span>{{ __('link.create_article') }}</span>
                                 </button>
                             @endif
@@ -136,14 +136,14 @@
 
                         {{-- Toggle for collapsed Contents --}}
                         <button class="wiki-panel-toggle left" id="showContentsBtn" title="Show Contents">
-                            <i class="fa fa-chevron-right"></i>
+                            <x-global::elements.icon name="chevron_right" />
                         </button>
 
                         <div class="wiki-content-inner">
 
                         {{-- Toggle for collapsed Details --}}
                         <button class="wiki-panel-toggle right" id="showPropertiesBtn" title="Show Details">
-                            <i class="fa fa-chevron-left"></i>
+                            <x-global::elements.icon name="chevron_left" />
                         </button>
 
                             {{-- Document Header --}}
@@ -157,7 +157,7 @@
                                                     data-toggle="dropdown"
                                                     title="Change icon">
                                                 <span class="iconPlaceholder"><i class="{{ $tpl->escape($currentArticle->data ?: 'fa fa-file-alt') }}"></i></span>
-                                                <span class="wiki-icon-caret"><i class="fa fa-chevron-down"></i></span>
+                                                <span class="wiki-icon-caret"><x-global::elements.icon name="expand_more" /></span>
                                             </button>
                                             <div class="dropdown-menu"></div>
                                         </div>
@@ -211,7 +211,7 @@
                                 <div id="wikiTiptapEditor" class="wiki-document"></div>
                                 {{-- Edit mode indicator --}}
                                 <div class="wiki-edit-indicator" id="wikiEditIndicator" style="display: none;">
-                                    <i class="fa fa-circle"></i>
+                                    <x-global::elements.icon name="circle" />
                                     <span>Editing</span>
                                 </div>
                             @else
@@ -240,7 +240,7 @@
                         {{-- Comments Section --}}
                         <section class="wiki-comments-section" id="comments">
                             <h4 class="wiki-comments-title">
-                                <i class="fa fa-comments"></i>
+                                <x-global::elements.icon name="forum" />
                                 {{ __('subtitles.discussion') }}
                             </h4>
 
@@ -258,9 +258,9 @@
                         {{-- Properties Panel (inside content area) --}}
                         <div class="wiki-properties-panel" id="propertiesPanel">
                             <div class="wiki-panel-header">
-                                <h4 class="widgettitle title-light"><i class="fa fa-info-circle"></i> Details</h4>
+                                <h4 class="widgettitle title-light"><x-global::elements.icon name="info" /> Details</h4>
                                 <button class="wiki-collapse-btn" id="collapseProperties" title="Collapse">
-                                    <i class="fa fa-chevron-right"></i>
+                                    <x-global::elements.icon name="chevron_right" />
                                 </button>
                             </div>
 
@@ -270,22 +270,22 @@
                                 {{-- Status Dropdown --}}
                                 <div class="wiki-property-row">
                                     <span class="wiki-property-label">
-                                        <i class="fa fa-circle-dot"></i> Status
+                                        <x-global::elements.icon name="radio_button_checked" /> Status
                                     </span>
                                     <span class="wiki-property-value">
                                         @if ($login::userIsAtLeast($roles::$editor))
                                             <div class="wiki-status-dropdown dropdown" id="wikiStatusDropdown">
                                                 <a href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle wiki-status-pill {{ $currentArticle->status }}">
                                                     @if ($currentArticle->status === 'draft')
-                                                        <i class="fa fa-pencil"></i> Draft
+                                                        <x-global::elements.icon name="edit" /> Draft
                                                     @else
-                                                        <i class="fa fa-check"></i> Published
+                                                        <x-global::elements.icon name="check" /> Published
                                                     @endif
-                                                    <i class="fa fa-chevron-down"></i>
+                                                    <x-global::elements.icon name="expand_more" />
                                                 </a>
                                                 <ul class="dropdown-menu wiki-status-menu">
-                                                    <li><a href="javascript:void(0)" class="wiki-status-option draft-option" data-value="draft"><i class="fa fa-pencil"></i> Draft</a></li>
-                                                    <li><a href="javascript:void(0)" class="wiki-status-option published-option" data-value="published"><i class="fa fa-check"></i> Published</a></li>
+                                                    <li><a href="javascript:void(0)" class="wiki-status-option draft-option" data-value="draft"><x-global::elements.icon name="edit" /> Draft</a></li>
+                                                    <li><a href="javascript:void(0)" class="wiki-status-option published-option" data-value="published"><x-global::elements.icon name="check" /> Published</a></li>
                                                 </ul>
                                             </div>
                                         @else
@@ -312,17 +312,17 @@
                                 {{-- Parent --}}
                                 <div class="wiki-property-row">
                                     <span class="wiki-property-label">
-                                        <i class="fa fa-folder-tree"></i> Parent
+                                        <x-global::elements.icon name="account_tree" /> Parent
                                     </span>
                                     <span class="wiki-property-value">
                                         @if ($login::userIsAtLeast($roles::$editor))
                                             <div class="wiki-parent-dropdown dropdown" id="wikiParentDropdown">
                                                 <a href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle wiki-milestone-btn">
                                                     <span class="parent-text{{ (! $currentArticle->parent || $currentArticle->parent == 0) ? ' none' : '' }}">{{ $parentName }}</span>
-                                                    <i class="fa fa-chevron-down"></i>
+                                                    <x-global::elements.icon name="expand_more" />
                                                 </a>
                                                 <ul class="dropdown-menu wiki-milestone-menu">
-                                                    <li><a href="javascript:void(0)" class="wiki-parent-option{{ (! $currentArticle->parent || $currentArticle->parent == 0) ? ' active' : '' }}" data-value="0"><i class="fa fa-times"></i> None</a></li>
+                                                    <li><a href="javascript:void(0)" class="wiki-parent-option{{ (! $currentArticle->parent || $currentArticle->parent == 0) ? ' active' : '' }}" data-value="0"><x-global::elements.icon name="close" /> None</a></li>
                                                     @php
                                                         $parentOptions = array_filter($wikiHeadlines, function ($h) use ($currentArticle) {
                                                             return $h->id != $currentArticle->id;
@@ -357,7 +357,7 @@
                                 {{-- Author --}}
                                 <div class="wiki-property-row">
                                     <span class="wiki-property-label">
-                                        <i class="fa fa-user"></i> Author
+                                        <x-global::elements.icon name="person" /> Author
                                     </span>
                                     <span class="wiki-property-value">
                                         <div class="wiki-author">
@@ -370,7 +370,7 @@
                                 {{-- Milestone --}}
                                 <div class="wiki-property-row">
                                     <span class="wiki-property-label">
-                                        <i class="fa fa-flag"></i> Milestone
+                                        <x-global::elements.icon name="flag" /> Milestone
                                     </span>
                                     <span class="wiki-property-value">
                                         @if ($login::userIsAtLeast($roles::$editor))
@@ -381,10 +381,10 @@
                                                     @else
                                                         <span class="milestone-text none">None</span>
                                                     @endif
-                                                    <i class="fa fa-chevron-down"></i>
+                                                    <x-global::elements.icon name="expand_more" />
                                                 </a>
                                                 <ul class="dropdown-menu wiki-milestone-menu">
-                                                    <li><a href="javascript:void(0)" class="wiki-milestone-option" data-value="0"><i class="fa fa-times"></i> None</a></li>
+                                                    <li><a href="javascript:void(0)" class="wiki-milestone-option" data-value="0"><x-global::elements.icon name="close" /> None</a></li>
                                                     @if (count($milestones) > 0)
                                                         <li class="divider"></li>
                                                         @foreach ($milestones as $milestone)
@@ -392,7 +392,7 @@
                                                                 <a href="javascript:void(0)"
                                                                    class="wiki-milestone-option{{ $currentArticle->milestoneId == $milestone->id ? ' active' : '' }}"
                                                                    data-value="{{ $milestone->id }}">
-                                                                    <i class="fa fa-flag"></i> {{ $milestone->headline }}
+                                                                    <x-global::elements.icon name="flag" /> {{ $milestone->headline }}
                                                                 </a>
                                                             </li>
                                                         @endforeach
@@ -414,7 +414,7 @@
                                 {{-- Last Saved --}}
                                 <div class="wiki-property-row">
                                     <span class="wiki-property-label">
-                                        <i class="fa fa-clock"></i> Last Saved
+                                        <x-global::elements.icon name="schedule" /> Last Saved
                                     </span>
                                     <span class="wiki-property-value" id="wikiLastSaved" data-timestamp="{{ $currentArticle->modified }}">
                                         {{ format($currentArticle->modified)->diffForHumans() }}
@@ -434,7 +434,7 @@
                                      hx-swap="innerHTML"
                                      aria-live="polite">
                                     <div class="wiki-activity-loading">
-                                        <i class="fa fa-circle-notch fa-spin"></i> Loading activity...
+                                        <x-global::elements.icon name="autorenew" /> Loading activity...
                                     </div>
                                 </div>
                             </div>
@@ -443,7 +443,7 @@
                             @if ($login::userIsAtLeast($roles::$editor))
                             <div class="wiki-properties-footer">
                                 <a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="wiki-action-btn delete">
-                                    <i class="fa fa-trash"></i> Delete Article
+                                    <x-global::elements.icon name="delete" /> Delete Article
                                 </a>
                             </div>
                             @endif
@@ -465,7 +465,7 @@
                 <x-globals::forms.button tag="button" type="primary"
                         hx-post="{{ BASE_URL }}/hx/wiki/articleContent/create"
                         hx-swap="none"
-                        icon="fa fa-plus">{{ __('link.create_article') }}</x-globals::forms.button>
+                        icon="add">{{ __('link.create_article') }}</x-globals::forms.button>
             </div>
         @endif
 
@@ -724,24 +724,24 @@ jQuery(document).ready(function() {
             indicator.style.display = 'flex';
             indicator.className = 'wiki-edit-indicator ' + state;
 
-            var icon = indicator.querySelector('i');
-            var text = indicator.querySelector('span');
+            var icon = indicator.querySelector('.material-symbols-outlined');
+            var text = indicator.querySelector('span:not(.material-symbols-outlined)');
 
             switch (state) {
                 case 'editing':
-                    icon.className = 'fa fa-edit';
+                    icon.textContent = 'edit';
                     text.textContent = 'Editing';
                     break;
                 case 'saving':
-                    icon.className = 'fa fa-circle-notch fa-spin';
+                    icon.textContent = 'autorenew';
                     text.textContent = 'Saving...';
                     break;
                 case 'saved':
-                    icon.className = 'fa fa-check';
+                    icon.textContent = 'check';
                     text.textContent = 'Saved';
                     break;
                 case 'error':
-                    icon.className = 'fa fa-exclamation-triangle';
+                    icon.textContent = 'warning';
                     text.textContent = 'Save failed';
                     break;
             }
@@ -975,9 +975,9 @@ jQuery(document).ready(function() {
                         statusPill.classList.add(newStatus);
 
                         if (newStatus === 'draft') {
-                            statusPill.innerHTML = '<i class="fa fa-pencil"></i> Draft <i class="fa fa-chevron-down"></i>';
+                            statusPill.innerHTML = '<x-global::elements.icon name="edit" /> Draft <x-global::elements.icon name="expand_more" />';
                         } else {
-                            statusPill.innerHTML = '<i class="fa fa-check"></i> Published <i class="fa fa-chevron-down"></i>';
+                            statusPill.innerHTML = '<x-global::elements.icon name="check" /> Published <x-global::elements.icon name="expand_more" />';
                         }
 
                         var activeLink = document.querySelector('.wiki-tree-link.active');

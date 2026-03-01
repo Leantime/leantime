@@ -82,11 +82,11 @@
                     @php
                         if ($filter['status'] != 'all' && !isset($statusLabels[$filter['status']])) { $filter['status'] = 'all'; }
                         $statusFilterLabel = $filter['status'] == 'all'
-                            ? '<i class="fas fa-filter"></i> ' . $tpl->__('status.all')
+                            ? '<x-global::elements.icon name="filter_list" /> ' . $tpl->__('status.all')
                             : '<i class="fas fa-fw ' . $tpl->__($statusLabels[$filter['status']]['icon']) . '"></i> ' . $statusLabels[$filter['status']]['title'];
                     @endphp
                     <x-globals::elements.button-dropdown :label="$statusFilterLabel" type="default">
-                        <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
+                        <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><x-global::elements.icon name="language" /> {{ $tpl->__('status.all') }}</a></li>
                         @foreach ($statusLabels as $key => $data)
                             <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}" @if ($filter['status'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
                         @endforeach
@@ -97,11 +97,11 @@
                     @php
                         if ($filter['relates'] != 'all' && !isset($relatesLabels[$filter['relates']])) { $filter['relates'] = 'all'; }
                         $relatesFilterLabel = $filter['relates'] == 'all'
-                            ? '<i class="fas fa-fw fa-globe"></i> ' . $tpl->__('relates.all')
+                            ? '<x-global::elements.icon name="language" /> ' . $tpl->__('relates.all')
                             : '<i class="fas fa-fw ' . $tpl->__($relatesLabels[$filter['relates']]['icon']) . '"></i> ' . $relatesLabels[$filter['relates']]['title'];
                     @endphp
                     <x-globals::elements.button-dropdown :label="$relatesFilterLabel" type="default">
-                        <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates=all" @if ($filter['relates'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('relates.all') }}</a></li>
+                        <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates=all" @if ($filter['relates'] == 'all') class="active" @endif><x-global::elements.icon name="language" /> {{ $tpl->__('relates.all') }}</a></li>
                         @foreach ($relatesLabels as $key => $data)
                             <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates={{ $key }}" @if ($filter['relates'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
                         @endforeach

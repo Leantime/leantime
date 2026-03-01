@@ -205,7 +205,7 @@ jQuery(document).ready(function(){
 
 <!-- page header -->
 <div class="pageheader">
-    <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="schedule" /></div>
     <div class="pagetitle">
         <h5>{{ __('headline.overview') }}</h5>
         <h1>{{ __('headline.my_timesheets') }}</h1>
@@ -221,11 +221,11 @@ jQuery(document).ready(function(){
             <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
                 <div class="tw:flex tw:items-center tw:gap-1">
                     <span>{{ __('label.week_from') }}</span>
-                    <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek" aria-label="{{ __('label.previous_week') }}"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
+                    <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek" aria-label="{{ __('label.previous_week') }}"><x-global::elements.icon name="chevron_left" /></a>
                     <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->formatDateForUser() }}"/>
                     {{ __('label.until') }}
                     <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->addDays(6)->formatDateForUser() }}"/>
-                    <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek" aria-label="{{ __('label.next_week') }}"><i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                    <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek" aria-label="{{ __('label.next_week') }}"><x-global::elements.icon name="chevron_right" /></a>
                     <input type="hidden" name="search" value="1" />
                 </div>
 
@@ -236,7 +236,7 @@ jQuery(document).ready(function(){
                     <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
                 </x-globals::elements.link-dropdown>
 
-                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addEntryLink"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('label.add_hours') }}</x-globals::forms.button>
+                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addEntryLink"><x-global::elements.icon name="add" /> {{ __('label.add_hours') }}</x-globals::forms.button>
             </div>
             <style>
                 /* Dim auxiliary icons so hour values stay the focal point */
@@ -345,9 +345,8 @@ jQuery(document).ready(function(){
                                 <td width="10%">
                                 {{ __($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']) }}
                             @if ($timeRow['hasTimesheetOffset'])
-                                    <i class="fa-solid fa-clock-rotate-left" aria-hidden="true" style="float: right; font-size: 12px;"
-                                       data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone">
-                                    </i>
+                                    <x-global::elements.icon name="history" style="float: right; font-size: 12px;"
+                                       data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone"> />
                             @endif
                                 </td>
 
@@ -375,7 +374,7 @@ jQuery(document).ready(function(){
                                             />
 
                                             @if (! empty($timeRow[$dayKey]['description']))
-                                                <i class="fa fa-circle-info" aria-hidden="true" data-tippy-content="{{ e($timeRow[$dayKey]['description']) }}"></i>
+                                                <x-global::elements.icon name="info" data-tippy-content="{{ e($timeRow[$dayKey]['description']) }}" />
                                             @endif
                                         </td>
                                 @endif

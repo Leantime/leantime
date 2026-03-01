@@ -14,7 +14,7 @@
             <div class="projectSelectorFooter" style="border: none; border-bottom: 1px solid var(--main-border-color);">
             <ul class="selectorList projectList">
                 <li>
-                    <a href="{{ BASE_URL }}/projects/showMy"><strong><i class="fa-solid fa-house-flag"></i> Open Project Hub</strong></a>
+                    <a href="{{ BASE_URL }}/projects/showMy"><strong><x-global::elements.icon name="flag" /> Open Project Hub</strong></a>
                 </li>
 
                 @if ($login::userIsAtLeast("manager"))
@@ -109,7 +109,7 @@
 
 
                     <li>
-                        <a href="{{ BASE_URL }}/projects/showMy"><i class="fa-solid fa-circle-nodes"></i> Project Hub</a>
+                        <a href="{{ BASE_URL }}/projects/showMy"><x-global::elements.icon name="hub" /> Project Hub</a>
                     </li>
 
             </ul>

@@ -16,7 +16,7 @@
            hx-target="#timerHeadMenu"
            hx-swap="outerHTML"
            hx-vals='{"ticketId": "{{ $parentTicketId }}", "action":"start"}'>
-            <span class="fa-regular fa-clock"></span> {{ __("links.start_work") }}
+            <x-global::elements.icon name="schedule" /> {{ __("links.start_work") }}
         </a>
     @endif
 
@@ -26,7 +26,7 @@
        hx-target="#timerHeadMenu"
        hx-vals='{"ticketId": "{{ $parentTicketId }}", "action":"stop"}'
        hx-swap="outerHTML">
-        <span class="fa fa-stop"></span>
+        <x-global::elements.icon name="stop" />
 
         @if (is_array($onTheClock) == true)
             {!!  sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), $onTheClock["since"])) !!}

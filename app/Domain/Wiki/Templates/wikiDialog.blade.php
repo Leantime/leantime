@@ -6,7 +6,7 @@
     $currentWiki = $tpl->get('wiki');
 @endphp
 
-<h4 class="widgettitle title-light"><i class="fa fa-book"></i> {{ __('label.wiki') }} {{ $tpl->escape($currentWiki->title) }}</h4>
+<h4 class="widgettitle title-light"><x-global::elements.icon name="book" /> {{ __('label.wiki') }} {{ $tpl->escape($currentWiki->title) }}</h4>
 
 {!! $tpl->displayNotification() !!}
 
@@ -30,7 +30,7 @@
         </div>
         <div class="col-md-6 align-right padding-top-sm">
             @if (isset($currentWiki->id) && $currentWiki->id != '' && $login::userIsAtLeast($roles::$editor))
-                <a href="{{ BASE_URL }}/wiki/delWiki/{{ $currentWiki->id }}" class="delete formModal"><i class="fa fa-trash"></i> {{ __('links.delete_wiki') }}</a>
+                <a href="{{ BASE_URL }}/wiki/delWiki/{{ $currentWiki->id }}" class="delete formModal"><x-global::elements.icon name="delete" /> {{ __('links.delete_wiki') }}</a>
             @endif
         </div>
     </div>
