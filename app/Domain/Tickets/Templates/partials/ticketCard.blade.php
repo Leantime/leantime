@@ -86,7 +86,7 @@
                     content-role="milestone"
                     :parentId="$row['id']"
                     selectedClass="label-default"
-                    linkStyle="background-color:{{ $row['milestoneColor'] }}"
+                    color="{{ $row['milestoneColor'] }}"
                     :selectedKey="$row['milestoneid'] ?: 0"
                     :options="$milestoneOptions"
                     :colorized="true"

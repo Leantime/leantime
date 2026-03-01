@@ -454,6 +454,44 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
         </div>
     </section>
 
+    {{-- CHIP COMPONENT --}}
+    <section style="margin-bottom: 40px;">
+        <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Chip Component</h3>
+        <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
+            Usage: <code>&lt;x-globals::actions.chip variant="input" color="#hex"&gt;Label&lt;/x-globals::actions.chip&gt;</code><br>
+            The <code>color</code> prop auto-calculates contrasting text color (black or white) based on WCAG luminance.
+        </p>
+
+        <h4 style="margin: 15px 0 10px;">Display-only Chips (variant="input") — Auto-contrast</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 15px;">
+            <x-globals::actions.chip variant="input" color="#0d47a1">Dark Blue</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#2e7d32">Green</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#f9a825">Yellow</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#d64045">Red</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#FFE082">Pastel Yellow</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#E1BEE7">Pastel Purple</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#FFFFFF">White BG</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#000000">Black BG</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#b0b0b0">Grey</x-globals::actions.chip>
+        </div>
+
+        <h4 style="margin: 15px 0 10px;">With Leading/Trailing Icons</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 15px;">
+            <x-globals::actions.chip variant="input" color="#2e7d32" leading-visual="check_circle">Done</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#f9a825" leading-visual="schedule">In Progress</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#d64045" leading-visual="block">Blocked</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" leading-visual="person" selectedClass="label-default">Author Tag</x-globals::actions.chip>
+        </div>
+
+        <h4 style="margin: 15px 0 10px;">Chip Scales</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+            <x-globals::actions.chip variant="input" color="#0d47a1" scale="xs">Extra Small</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#0d47a1" scale="s">Small</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#0d47a1">Medium (default)</x-globals::actions.chip>
+            <x-globals::actions.chip variant="input" color="#0d47a1" scale="l">Large</x-globals::actions.chip>
+        </div>
+    </section>
+
     {{-- BADGE COMPONENT (UPDATED) --}}
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Badge Component (Updated)</h3>

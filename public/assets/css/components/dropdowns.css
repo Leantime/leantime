@@ -158,12 +158,12 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontent .ticketDropdown > a:link,
 #global-modal-content .ticketDropdown > a,
 #global-modal-content .ticketDropdown > a:link{
-    color:var(--primary-background);
     padding:0px 10px;
     white-space: nowrap;
     border-radius:var(--box-radius-large);
     margin-left:0px;
     box-shadow:var(--min-shadow);
+    /* Text color comes from label-* classes or inline auto-contrast styles */
 }
 
 .maincontent .ticketDropdown.userDropdown > a,
@@ -189,7 +189,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .ticketDropdown.colorized li a,
 #global-modal-content .ticketDropdown.colorized li a{
-    color:var(--primary-background);
+    /* Text color is now set via inline style with auto-contrast calculation.
+       Fallback to white for non-hex items (label-* class handles its own color). */
 }
 
 .maincontent .ticketDropdown.noBg {
@@ -275,7 +276,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .ticketDropdown a.label-default.milestone,
 #global-modal-content .ticketDropdown a.label-default.milestone {
-    color:var(--blue-text-color);
+    /* Text color is now set via inline style with auto-contrast calculation */
 }
 
 .maincontent .ticketDropdown a.label-purple,
@@ -716,3 +717,24 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .grid-stack-item-content.maincontentinner .grid-handler-top {
     color: var(--interactive-icon-color);
 }
+
+/* ── Display-only chip ─────────────────────────────────────────────────
+   Non-interactive chip for showing status, milestone, or author labels.
+   Used via <x-globals::actions.chip variant="input">.
+   ──────────────────────────────────────────────────────────────────── */
+.chip-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 10px;
+    border-radius: var(--box-radius-large);
+    font-size: var(--font-size-s);
+    line-height: 24px;
+    white-space: nowrap;
+    box-shadow: var(--min-shadow);
+}
+
+/* Scale variants for both display and dropdown chips */
+.chip-xs, .chip-xs > a { font-size: var(--font-size-xs); line-height: 20px; padding: 0 6px; }
+.chip-sm, .chip-sm > a { font-size: var(--font-size-s); line-height: 22px; padding: 0 8px; }
+.chip-lg, .chip-lg > a { font-size: var(--font-size-m); line-height: 28px; padding: 0 12px; }

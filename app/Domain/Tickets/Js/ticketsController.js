@@ -3,6 +3,31 @@ leantime.ticketsController = (function () {
     //Variables
 
 
+    /**
+     * Calculate contrasting text color (black or white) for a given hex background.
+     * Uses WCAG relative luminance formula.
+     *
+     * @param {string} hex - Hex color (e.g., '#FF5733' or 'FF5733')
+     * @returns {string} '#000' for light backgrounds, '#fff' for dark backgrounds
+     */
+    function contrastColor(hex) {
+        hex = hex.replace(/^#/, '');
+        if (hex.length === 3) {
+            hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+        }
+        if (hex.length !== 6 || !/^[0-9a-fA-F]{6}$/.test(hex)) {
+            return '#fff';
+        }
+        var r = parseInt(hex.substring(0, 2), 16) / 255;
+        var g = parseInt(hex.substring(2, 4), 16) / 255;
+        var b = parseInt(hex.substring(4, 6), 16) / 255;
+        r = r <= 0.03928 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
+        g = g <= 0.03928 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
+        b = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
+        var luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        return luminance > 0.179 ? '#000' : '#fff';
+    }
+
     //Functions
     function countTickets()
     {
@@ -790,7 +815,10 @@ leantime.ticketsController = (function () {
                 ).done(
                     function () {
                         jQuery("#milestoneDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
-                        jQuery("#milestoneDropdownMenuLink" + ticketId).css("backgroundColor", color);
+                        jQuery("#milestoneDropdownMenuLink" + ticketId).css({
+                            "backgroundColor": color,
+                            "color": contrastColor(color)
+                        });
                         jQuery.growl({message: leantime.i18n.__("short_notifications.milestone_updated"), style: "success"});
 
                         // Move card to correct swimlane if grouped by milestone
