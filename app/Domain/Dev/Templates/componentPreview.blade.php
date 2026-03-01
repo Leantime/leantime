@@ -362,19 +362,34 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Dropdown Component</h3>
         <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
-            Usage: <code>&lt;x-globals::elements.dropdown label="Options"&gt;&lt;li&gt;&lt;a&gt;Item&lt;/a&gt;&lt;/li&gt;&lt;/x-globals::elements.dropdown&gt;</code>
+            Usage: <code>&lt;x-globals::actions.dropdown-menu label="Options"&gt;&lt;li&gt;&lt;a&gt;Item&lt;/a&gt;&lt;/li&gt;&lt;/x-globals::actions.dropdown-menu&gt;</code>
         </p>
         <div style="display: flex; gap: 12px;">
-            <x-globals::elements.dropdown label="Actions" icon="arrow_drop_down">
-                <li><a>Edit</a></li>
-                <li><a>Duplicate</a></li>
-                <li><a class="tw:text-error">Delete</a></li>
-            </x-globals::elements.dropdown>
+            {{-- Icon variant (default) with label --}}
+            <x-globals::actions.dropdown-menu label="Actions" leading-visual="arrow_drop_down">
+                <x-globals::actions.dropdown-item>Edit</x-globals::actions.dropdown-item>
+                <x-globals::actions.dropdown-item>Duplicate</x-globals::actions.dropdown-item>
+                <x-globals::actions.dropdown-item state="danger">Delete</x-globals::actions.dropdown-item>
+            </x-globals::actions.dropdown-menu>
 
-            <x-globals::elements.dropdown>
-                <li><a>Option 1</a></li>
-                <li><a>Option 2</a></li>
-            </x-globals::elements.dropdown>
+            {{-- Icon variant (default) — 3-dot menu --}}
+            <x-globals::actions.dropdown-menu>
+                <x-globals::actions.dropdown-item>Option 1</x-globals::actions.dropdown-item>
+                <x-globals::actions.dropdown-item>Option 2</x-globals::actions.dropdown-item>
+            </x-globals::actions.dropdown-menu>
+
+            {{-- Button variant --}}
+            <x-globals::actions.dropdown-menu variant="button" label="New" content-role="primary">
+                <x-globals::actions.dropdown-item leading-visual="task">Task</x-globals::actions.dropdown-item>
+                <x-globals::actions.dropdown-item leading-visual="flag">Milestone</x-globals::actions.dropdown-item>
+            </x-globals::actions.dropdown-menu>
+
+            {{-- Link variant --}}
+            <x-globals::actions.dropdown-menu variant="link" label="Select" trailing-visual="arrow_drop_down">
+                <x-globals::actions.dropdown-item :header="true">Options</x-globals::actions.dropdown-item>
+                <x-globals::actions.dropdown-item href="#">Link A</x-globals::actions.dropdown-item>
+                <x-globals::actions.dropdown-item href="#">Link B</x-globals::actions.dropdown-item>
+            </x-globals::actions.dropdown-menu>
         </div>
     </section>
 

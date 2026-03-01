@@ -80,8 +80,8 @@
                                 <tr onclick="leantime.ticketsController.loadTicketToContainer('{{ $row['id'] }}', '#ticketContent')" id="row-{{ $row['id'] }}" class="ticketRows">
                                     @dispatchEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets])
                                     <td data-order="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['sortKey'] : '' }}" data-search="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['name'] : '' }}" class="roundStatusBtn" style="width:20px">
-                                        <x-globals::dropdownPill
-                                            type="status"
+                                        <x-globals::actions.chip
+                                            content-role="status"
                                             :parentId="$row['id']"
                                             selectedClass="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['class'] : '' }}"
                                             :selectedKey="$row['status']"

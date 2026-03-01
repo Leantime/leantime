@@ -43,7 +43,7 @@ foreach ($allCanvas as $canvasRow) {
 
         <h1>{{ __("headline.goal.dashboardboard") }} //
             @if (count($allCanvas) > 0)
-                <x-globals::elements.link-dropdown label="All Goal Groups" triggerClass="header-title-dropdown">
+                <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" label="All Goal Groups" trigger-class="header-title-dropdown">
                     @if ($login::userIsAtLeast($roles::$editor))
                         <li><a href="#/goalcanvas/bigRock">{!! __("links.icon.create_new_board") !!}</a></li>
                     @endif
@@ -51,7 +51,7 @@ foreach ($allCanvas as $canvasRow) {
                     @foreach ($allCanvas as $canvasRow)
                         <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $canvasRow['title'] }}</a></li>
                     @endforeach
-                </x-globals::elements.link-dropdown>
+                </x-globals::actions.dropdown-menu>
             @endif
         </h1>
     </div>
@@ -119,10 +119,10 @@ foreach ($allCanvas as $canvasRow) {
                                         <div class="col-md-4">
                                             <div class="ticketBox" id="item_{{ $row["id"] }}">
                                                         @if ($login::userIsAtLeast($roles::$editor))
-                                                            <x-globals::elements.dropdown class="pull-right">
+                                                            <x-globals::actions.dropdown-menu class="pull-right">
                                                                 <li><a href="#/goalcanvas/editCanvasItem/{{ $row["id"] }}" class="goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.edit_canvas_item") !!}</a></li>
                                                                 <li><a href="#/goalcanvas/delCanvasItem/{{ $row["id"] }}" class="delete goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.delete_canvas_item") !!}</a></li>
-                                                            </x-globals::elements.dropdown>
+                                                            </x-globals::actions.dropdown-menu>
                                                         @endif
 
                                                         <h4>

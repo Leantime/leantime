@@ -132,8 +132,8 @@
                                         $milestoneOptions[$ms->id] = ['name' => $ms->headline, 'class' => $ms->tags];
                                     }
                                 @endphp
-                                <x-globals::dropdownPill
-                                    type="milestone"
+                                <x-globals::actions.chip
+                                    content-role="milestone"
                                     :parentId="$row['id']"
                                     selectedClass="label-default"
                                     linkStyle="background-color:{{ e($row['milestoneColor']) }}"
@@ -157,8 +157,8 @@
                             @endphp
 
                             <td data-order="{{ $sortKey }}">
-                                <x-globals::dropdownPill
-                                    type="status"
+                                <x-globals::actions.chip
+                                    content-role="status"
                                     :parentId="$row['id']"
                                     :selectedClass="$class"
                                     :selectedKey="$row['status']"
@@ -205,13 +205,13 @@
 
                             <td>
                                 @if($login::userIsAtLeast($roles::$editor))
-                                    <x-globals::elements.dropdown>
+                                    <x-globals::actions.dropdown-menu>
                                         <li class="nav-header border">{{ __('subtitles.todo') }}</li>
                                         <li><a href="#/tickets/editMilestone/{{ $row['id'] }}" class="ticketModal"><x-global::elements.icon name="edit" /> {{ __('links.edit_milestone') }}</a></li>
                                         <li><a href="#/tickets/moveTicket/{{ $row['id'] }}" class="moveTicketModal sprintModal"><x-global::elements.icon name="swap_horiz" /> {{ __('links.move_milestone') }}</a></li>
                                         <li><a href="#/tickets/delMilestone/{{ $row['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
                                         <li><a href="{{ BASE_URL }}/tickets/showAll?search=true&milestone={{ $row['id'] }}">{{ __('links.view_todos') }}</a></li>
-                                    </x-globals::elements.dropdown>
+                                    </x-globals::actions.dropdown-menu>
                                 @endif
                             </td>
                             @dispatchEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum])

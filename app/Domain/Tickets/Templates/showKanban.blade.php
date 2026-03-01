@@ -70,10 +70,10 @@ jQuery(document).ready(function(){
             <div class="column">
                 <h4 class="widgettitle title-primary title-border-{{ $statusRow['class'] }}">
                     @if($login::userIsAtLeast($roles::$manager))
-                        <x-globals::elements.dropdown containerClass="pull-right">
+                        <x-globals::actions.dropdown-menu container-class="pull-right">
                             <li><a href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}" class="editLabelModal">{{ __('headlines.edit_label') }}</a></li>
                             <li><a href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings">{{ __('links.add_remove_col') }}</a></li>
-                        </x-globals::elements.dropdown>
+                        </x-globals::actions.dropdown-menu>
                     @endif
 
                     <strong class="count">0</strong>
@@ -188,8 +188,8 @@ jQuery(document).ready(function(){
                                                         $milestoneOptions[$ms->id] = ['name' => $ms->headline, 'class' => $ms->tags];
                                                     }
                                                 @endphp
-                                                <x-globals::dropdownPill
-                                                    type="milestone"
+                                                <x-globals::actions.chip
+                                                    content-role="milestone"
                                                     :parentId="$row['id']"
                                                     selectedClass="label-default"
                                                     linkStyle="background-color:{{ e($row['milestoneColor']) }}"
@@ -201,8 +201,8 @@ jQuery(document).ready(function(){
                                                 />
 
                                                 @if($row['storypoints'] != '' && $row['storypoints'] > 0)
-                                                    <x-globals::dropdownPill
-                                                        type="effort"
+                                                    <x-globals::actions.chip
+                                                        content-role="effort"
                                                         :parentId="$row['id']"
                                                         selectedClass="label-default"
                                                         :selectedKey="'' . $row['storypoints']"
@@ -211,8 +211,8 @@ jQuery(document).ready(function(){
                                                     />
                                                 @endif
 
-                                                <x-globals::dropdownPill
-                                                    type="priority"
+                                                <x-globals::actions.chip
+                                                    content-role="priority"
                                                     :parentId="$row['id']"
                                                     selectedClass="label-default priority-bg-{{ $row['priority'] }}"
                                                     :selectedKey="$row['priority']"

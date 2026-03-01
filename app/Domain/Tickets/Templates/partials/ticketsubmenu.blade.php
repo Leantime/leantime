@@ -6,7 +6,7 @@
 
 @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$editor))
 
-    <x-globals::elements.dropdown containerClass="pull-right">
+    <x-globals::actions.dropdown-menu container-class="pull-right">
             <li class="nav-header border">{{ __("subtitles.todo") }}</li>
             @dispatchEvent("beforeShowTicket", ["ticket"=>$ticket])
             <li><a href="#/tickets/showTicket/{{ $ticket["id"] }}" class=''><x-global::elements.icon name="edit" /> {{  __("links.edit_todo") }}</a></li>
@@ -29,6 +29,6 @@
                 @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock, 'style'=> 'full'])
             </li>
             @dispatchEvent("end")
-    </x-globals::elements.dropdown>
+    </x-globals::actions.dropdown-menu>
 
 @endif

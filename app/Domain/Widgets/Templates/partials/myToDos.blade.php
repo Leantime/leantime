@@ -46,7 +46,7 @@
 
         @dispatchEvent("beforeTodoWidgetGroupByDropdown")
 
-        <x-globals::elements.dropdown icon="account_tree" buttonClass="btn btn-default btn-sm btn-circle tw:min-w-[44px] tw:min-h-[44px] tw:inline-flex tw:items-center tw:justify-center" containerClass="left" data-tippy-content="{{ __('text.group_by') }}">
+        <x-globals::actions.dropdown-menu leading-visual="account_tree" trigger-class="btn btn-default btn-sm btn-circle tw:min-w-[44px] tw:min-h-[44px] tw:inline-flex tw:items-center tw:justify-center" container-class="left" data-tippy-content="{{ __('text.group_by') }}">
             <li class="nav-header border">{!! __("text.group_by") !!}</li>
             <li>
                 <x-globals::forms.radio name="groupBy" value="time" id="groupByDate"
@@ -87,8 +87,8 @@
                        hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "priority" }'
                 />
             </li>
-        </x-globals::elements.dropdown>
-        <x-globals::elements.dropdown icon="filter_list" :label="$projectFilter != '' ? '<span class=\'badge badge-primary\'>1</span>' : null" buttonClass="btn btn-default btn-sm btn-circle tw:min-w-[44px] tw:min-h-[44px] tw:inline-flex tw:items-center tw:justify-center" containerClass="left">
+        </x-globals::actions.dropdown-menu>
+        <x-globals::actions.dropdown-menu leading-visual="filter_list" :label="$projectFilter != '' ? '<span class=\'badge badge-primary\'>1</span>' : null" trigger-class="btn btn-default btn-sm btn-circle tw:min-w-[44px] tw:min-h-[44px] tw:inline-flex tw:items-center tw:justify-center" container-class="left">
             <li class="nav-header border">{!! __("text.filter") !!}</li>
             <li
                 @if($projectFilter == '')
@@ -122,7 +122,7 @@
                         >{{ $project['name'] }}</a></li>
                 @endforeach
             @endif
-        </x-globals::elements.dropdown>
+        </x-globals::actions.dropdown-menu>
 
         @dispatchEvent("afterTodoWidgetGroupByDropdown")
 

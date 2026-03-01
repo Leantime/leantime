@@ -18,7 +18,7 @@
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
         <x-globals::forms.button tag="button" type="link" onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;" data-tippy-content="{{ __('popover.filter') }}">
             <x-global::elements.icon name="filter_list" /> Filter{!! $tpl->get('numOfFilters') > 0 ? "  <span class='badge badge-primary'>" . $tpl->get('numOfFilters') . '</span> ' : '' !!}
-        </x-globals::forms.button>@if($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<x-globals::elements.link-dropdown triggerClass="btn btn-link" align="end" data-tippy-content="{{ __('popover.group_by') }}">
+        </x-globals::forms.button>@if($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" trigger-class="btn btn-link" align="end" data-tippy-content="{{ __('popover.group_by') }}">
                 <x-slot:label>
                     <x-global::elements.icon name="account_tree" /> Group By
                     @if($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
@@ -39,7 +39,7 @@
                         </span>
                     </li>
                 @endforeach
-            </x-globals::elements.link-dropdown>
+            </x-globals::actions.dropdown-menu>
         @endif
 
         <div class="filterBar hideOnLoad" style="width:250px;">

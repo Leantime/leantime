@@ -152,8 +152,8 @@
 
                 @dispatchEvent('beforeStatusUpdate')
                 <div class="status-container tw:shrink-0 tw:flex tw:flex-row tw:items-center tw:gap-2">
-                    <x-globals::dropdownPill
-                        type="status"
+                    <x-globals::actions.chip
+                        content-role="status"
                         :parentId="$ticket['id']"
                         :selectedClass="$statusLabels[$ticket['projectId']][$ticket['status']]['class'] ?? 'label-default'"
                         :selectedKey="$ticket['status']"

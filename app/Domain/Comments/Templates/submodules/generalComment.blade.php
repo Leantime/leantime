@@ -57,7 +57,7 @@
                                     format($row['date'])->time()
                                 ) !!}
                                     @if($login::userIsAtLeast($roles::$editor))
-                                        <x-globals::elements.dropdown containerClass="pull-right tw:ml-2.5">
+                                        <x-globals::actions.dropdown-menu container-class="pull-right tw:ml-2.5">
                                             @if(($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
                                                 <li><a href="{{ $deleteUrlBase . $row['id'] }}" class="deleteComment formModal">
                                                     <x-global::elements.icon name="delete" /> {{ __('links.delete') }}
@@ -73,7 +73,7 @@
                                             @if(isset($tpl->get('ticket')->id))
                                                 <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $tpl->get('ticket')->id }});">{{ __('links.add_to_timesheets') }}</a></li>
                                             @endif
-                                        </x-globals::elements.dropdown>
+                                        </x-globals::actions.dropdown-menu>
                                     @endif
                             </div>
                             <span class="name">{{ sprintf(__('text.full_name'), e($row['firstname']), e($row['lastname'])) }}</span>

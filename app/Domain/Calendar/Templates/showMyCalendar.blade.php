@@ -32,12 +32,12 @@
                 @foreach($tpl->get('externalCalendars') as $calendars)
                     <li>
                         @if(empty($calendars['managedByPlugin']))
-                        <x-globals::elements.dropdown style="float:right;" icon="more_horiz">
+                        <x-globals::actions.dropdown-menu style="float:right;" leading-visual="more_horiz">
                             <li>
                                 <a href="#/calendar/editExternal/{{ $calendars['id'] }}"><x-global::elements.icon name="edit_square" /> {{ __('links.edit_calendar') }}</a>
                             </li>
                             <li><a href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete_external_calendar') }}</a></li>
-                        </x-globals::elements.dropdown>
+                        </x-globals::actions.dropdown-menu>
                         @endif
                         <span class="indicatorCircle" style="background:{{ $calendars['colorClass'] }}"></span>{{ $calendars['name'] }}
 

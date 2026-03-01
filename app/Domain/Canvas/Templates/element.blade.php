@@ -30,13 +30,13 @@
 
             <div class="ticketBox" id="item_{{ $row['id'] }}">
                 @if ($login::userIsAtLeast($roles::$editor))
-                    <x-globals::elements.dropdown style="float:right;">
+                    <x-globals::actions.dropdown-menu style="float:right;">
                         <li><a href="#/{{ $canvasName }}canvas/editCanvasItem/{{ $row['id'] }}"
                                data="item_{{ $row['id'] }}"> {{ $tpl->__('links.edit_canvas_item') }}</a></li>
                         <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $row['id'] }}"
                                class="delete"
                                data="item_{{ $row['id'] }}"> {{ $tpl->__('links.delete_canvas_item') }}</a></li>
-                    </x-globals::elements.dropdown>
+                    </x-globals::actions.dropdown-menu>
                 @endif
 
                 <h4><a href="#/{{ $canvasName }}canvas/editCanvasItem/{{ $row['id'] }}"

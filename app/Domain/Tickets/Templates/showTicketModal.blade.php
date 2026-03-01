@@ -32,7 +32,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
     <?php if ($login::userIsAtLeast($roles::$editor)) {
         $onTheClock = $tpl->get('onTheClock');
         ?>
-        <x-globals::elements.dropdown containerClass="pull-right tw:z-50" style="padding-top:10px; padding-right:10px;">
+        <x-globals::actions.dropdown-menu container-class="pull-right tw:z-50" style="padding-top:10px; padding-right:10px;">
                 <li class="nav-header border"><?php echo $tpl->__('subtitles.todo'); ?></li>
                 <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><x-global::elements.icon name="swap_horiz" /> <?php echo $tpl->__('links.move_todo'); ?></a></li>
                 <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><x-global::elements.icon name="delete" /> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
@@ -75,7 +75,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         </span>
                     @endif
                 </li>
-        </x-globals::elements.dropdown>
+        </x-globals::actions.dropdown-menu>
     <?php } ?>
     <div class="lt-tabs tabbedwidget ticketTabs" style="visibility:hidden;" data-tabs data-tabs-persist="url">
 

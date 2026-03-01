@@ -7,7 +7,7 @@
      aria-live="polite">
 
     @if (count($clients) > 0)
-        <x-globals::elements.link-dropdown :label="$currentClientName != '' ? $currentClientName : __('headline.all_clients')" triggerClass="btn btn-default header-title-dropdown" class="pull-right">
+        <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" :label="$currentClientName != '' ? $currentClientName : __('headline.all_clients')" trigger-class="btn btn-default header-title-dropdown" class="pull-right">
                 <li>
                     <a href="javascript:void(0);"
                        hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
@@ -26,7 +26,7 @@
                         </li>
                     @endif
                 @endforeach
-        </x-globals::elements.link-dropdown>
+        </x-globals::actions.dropdown-menu>
     @endif
 
     @if (count($allProjects) == 0)

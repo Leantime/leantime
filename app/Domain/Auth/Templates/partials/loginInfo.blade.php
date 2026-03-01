@@ -11,7 +11,7 @@
 
 <div class="userinfo">
     @dispatchEvent('afterUserinfoMenuOpen')
-    <x-globals::elements.dropdown :label="$triggerLabel" buttonClass="profileHandler {{ $hasLogo ? 'includeLogo' : '' }}" align="end">
+    <x-globals::actions.dropdown-menu :label="$triggerLabel" trigger-class="profileHandler {{ $hasLogo ? 'includeLogo' : '' }}" align="end">
         @dispatchEvent('afterUserinfoDropdownMenuOpen')
         <li>
             <a href='{{ BASE_URL }}/users/editOwn/' preload="mouseover">
@@ -48,7 +48,7 @@
             </a>
         </li>
         @dispatchEvent('beforeUserinfoDropdownMenuClose')
-    </x-globals::elements.dropdown>
+    </x-globals::actions.dropdown-menu>
     @dispatchEvent('beforeUserinfoMenuClose')
 </div>
 @dispatchEvent('afterUserinfoMenuClose')

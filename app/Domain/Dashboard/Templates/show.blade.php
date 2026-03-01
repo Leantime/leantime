@@ -25,22 +25,22 @@
             <div class="maincontentinner tw:z-20">
 
                 @if ($login::userIsAtLeast($roles::$admin))
-                    <x-globals::elements.dropdown containerClass="pull-right" data-tippy-content="{{ __('label.edit_project') }}">
+                    <x-globals::actions.dropdown-menu container-class="pull-right" data-tippy-content="{{ __('label.edit_project') }}">
                         <li>
                             <a href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"><x-global::elements.icon name="edit" /> Edit Project</a>
                         </li>
                         <li>
                             <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete"><x-global::elements.icon name="delete" /> Delete Project</a>
                         </li>
-                    </x-globals::elements.dropdown>
+                    </x-globals::actions.dropdown-menu>
                 @endif
 
-                <x-globals::elements.dropdown icon="link" containerClass="pull-right tw:mr-[5px]" data-tippy-content="{{ __('label.copy_url_tooltip') }}">
+                <x-globals::actions.dropdown-menu leading-visual="link" container-class="pull-right tw:mr-[5px]" data-tippy-content="{{ __('label.copy_url_tooltip') }}">
                     <li class="tw:p-2">
                         <x-globals::forms.input name="projectUrl" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
                         <x-globals::forms.button tag="button" type="primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</x-globals::forms.button>
                     </li>
-                </x-globals::elements.dropdown>
+                </x-globals::actions.dropdown-menu>
 
                 <a
                     href="javascript:void(0);"
@@ -123,8 +123,8 @@
                                     </div>
                                     <div class="col-md-8 tw:mt-[3px]">
                                         <div class="right">
-                                            <x-globals::dropdownPill
-                                                type="effort"
+                                            <x-globals::actions.chip
+                                                content-role="effort"
                                                 :parentId="$row['id']"
                                                 selectedClass="label-default"
                                                 :selectedKey="$row['storypoints'] != '' && $row['storypoints'] > 0 ? ''.$row['storypoints'].'' : ''"
@@ -139,8 +139,8 @@
                                                     $milestoneOptions[$ms->id] = ['name' => $ms->headline, 'class' => $ms->tags];
                                                 }
                                             @endphp
-                                            <x-globals::dropdownPill
-                                                type="milestone"
+                                            <x-globals::actions.chip
+                                                content-role="milestone"
                                                 :parentId="$row['id']"
                                                 selectedClass="label-default"
                                                 linkStyle="background-color:{{ e($row['milestoneColor']) }}"
@@ -150,8 +150,8 @@
                                                 headerLabel="{{ __('dropdown.choose_milestone') }}"
                                             />
 
-                                            <x-globals::dropdownPill
-                                                type="status"
+                                            <x-globals::actions.chip
+                                                content-role="status"
                                                 :parentId="$row['id']"
                                                 :selectedClass="$statusLabels[$row['status']]['class']"
                                                 :selectedKey="$row['status']"
@@ -280,7 +280,7 @@
                                                 ) }}
                                             </strong>
                                                 @if ($login::userIsAtLeast($roles::$editor))
-                                                    <x-globals::elements.dropdown containerClass="tw:float-right tw:ml-[10px]">
+                                                    <x-globals::actions.dropdown-menu container-class="tw:float-right tw:ml-[10px]">
                                                         @if ($row['userId'] == session("userdata.id"))
                                                             <li>
                                                                 <a href="{!! $delUrlBase . $row['id'] !!}" class="deleteComment">
@@ -297,7 +297,7 @@
                                                                 >{{ __('links.add_to_timesheets') }}</a>
                                                             </li>
                                                         @endif
-                                                    </x-globals::elements.dropdown>
+                                                    </x-globals::actions.dropdown-menu>
                                                 @endif
 
                                             <div class="text" id="commentText-{{ $row['id'] }}">{!! $tpl->escapeMinimal($row['text']) !!}</div>

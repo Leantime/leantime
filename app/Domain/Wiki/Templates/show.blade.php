@@ -60,16 +60,16 @@
         <h5>{{ e(session('currentProjectClient')) }}</h5>
 
         @if (count($wikis) > 0 && $login::userIsAtLeast($roles::$editor) && $currentWiki)
-            <x-globals::elements.dropdown containerClass="headerEditDropdown">
+            <x-globals::actions.dropdown-menu container-class="headerEditDropdown">
                 <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{{ __('link.edit_wiki') }}</a></li>
                 <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><x-global::elements.icon name="delete" /> {{ __('links.delete_wiki') }}</a></li>
-            </x-globals::elements.dropdown>
+            </x-globals::actions.dropdown-menu>
         @endif
 
         <h1>{{ __('headlines.documents') }}
          @if (count($wikis) > 0)
              //
-            <x-globals::elements.link-dropdown :label="$currentWiki !== false ? e($currentWiki->title) : __('label.select_board')" triggerClass="header-title-dropdown">
+            <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" :label="$currentWiki !== false ? e($currentWiki->title) : __('label.select_board')" trigger-class="header-title-dropdown">
                 <li><a class="inlineEdit" href="#/wiki/wikiModal/">{{ __('link.new_wiki') }}</a></li>
                 <li class="nav-header"></li>
                 @foreach ($wikis as $wiki)
@@ -77,7 +77,7 @@
                         <a href="{{ BASE_URL }}/wiki/show?setWiki={{ $wiki->id }}">{{ $wiki->title }}</a>
                     </li>
                 @endforeach
-            </x-globals::elements.link-dropdown>
+            </x-globals::actions.dropdown-menu>
          @endif
         </h1>
     </div>

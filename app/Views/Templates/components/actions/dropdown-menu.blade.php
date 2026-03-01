@@ -8,6 +8,8 @@
     'containerClass' => '',
     'triggerClass' => '',
     'variant' => 'icon',          // icon|button|link
+    'position' => null,           // left|right — controls menu open direction
+    'scale' => 'm',              // s|m|l — trigger sizing
 ])
 
 @php
@@ -27,7 +29,20 @@
     };
 @endphp
 
-<div {{ $attributes->merge(['class' => 'dropdown' . ($containerClass ? ' ' . $containerClass : '')]) }}
+@php
+    $positionClass = match($position) {
+        'left'  => ' dropdown-position-left',
+        'right' => ' dropdown-position-right',
+        default => '',
+    };
+    $scaleClass = match($scale) {
+        's' => ' dropdown-scale-s',
+        'l' => ' dropdown-scale-l',
+        default => '',
+    };
+@endphp
+
+<div {{ $attributes->merge(['class' => 'dropdown' . ($containerClass ? ' ' . $containerClass : '') . $positionClass . $scaleClass]) }}
      @if($variant === 'link') style="display:inline-block;" @endif
 >
     <a href="javascript:void(0)"

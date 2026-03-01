@@ -21,17 +21,17 @@
     <div class="pagetitle">
         <h5>{{ $tpl->escape(session('currentProjectClient') . ' // ' . session('currentProjectName')) }}</h5>
         @if (count($allCanvas) > 0)
-            <x-globals::elements.dropdown containerClass="headerEditDropdown">
+            <x-globals::actions.dropdown-menu container-class="headerEditDropdown">
                 @if ($login::userIsAtLeast($roles::$editor))
                     <li><a href="javascript:void(0)" onclick="document.getElementById('editCanvas').showModal();">{!! $tpl->__('links.icon.edit') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
                 @endif
-            </x-globals::elements.dropdown>
+            </x-globals::actions.dropdown-menu>
         @endif
         <h1>{{ $tpl->__('headlines.idea_management') }}
             //
             @if (count($allCanvas) > 0)
-                <x-globals::elements.link-dropdown :label="$tpl->escape($canvasTitle)" triggerClass="header-title-dropdown" style="max-width:200px;">
+                <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" :label="$tpl->escape($canvasTitle)" trigger-class="header-title-dropdown" style="max-width:200px;">
                     @if ($login::userIsAtLeast($roles::$editor))
                         <li><a href="javascript:void(0)" onclick="document.getElementById('addCanvas').showModal();">{!! $tpl->__('links.icon.create_new_board') !!}</a></li>
                     @endif
@@ -39,7 +39,7 @@
                     @foreach ($tpl->get('allCanvas') as $canvasRow)
                         <li><a href="{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
                     @endforeach
-                </x-globals::elements.link-dropdown>
+                </x-globals::actions.dropdown-menu>
             @endif
         </h1>
     </div>
@@ -59,10 +59,10 @@
             </div>
 
             <div>
-                <x-globals::elements.button-dropdown :label="$tpl->__('buttons.idea_kanban')" type="default">
+                <x-globals::actions.dropdown-menu variant="button" :label="$tpl->__('buttons.idea_kanban')" content-role="default">
                     <li><a href="{{ BASE_URL }}/ideas/showBoards">{!! $tpl->__('buttons.idea_wall') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/ideas/advancedBoards" class="active">{!! $tpl->__('buttons.idea_kanban') !!}</a></li>
-                </x-globals::elements.button-dropdown>
+                </x-globals::actions.dropdown-menu>
             </div>
         </div>
 
@@ -90,10 +90,10 @@
                                     <div class="ticketBox moveable" id="item_{{ $row['id'] }}">
 
                                                 @if ($login::userIsAtLeast($roles::$editor))
-                                                    <x-globals::elements.dropdown style="float:right;">
+                                                    <x-globals::actions.dropdown-menu style="float:right;">
                                                         <li><a href="#/ideas/ideaDialog/{{ $row['id'] }}" data="item_{{ $row['id'] }}"> {{ $tpl->__('links.edit_canvas_item') }}</a></li>
                                                         <li><a href="#/ideas/delCanvasItem/{{ $row['id'] }}" class="delete" data="item_{{ $row['id'] }}"> {{ $tpl->__('links.delete_canvas_item') }}</a></li>
-                                                    </x-globals::elements.dropdown>
+                                                    </x-globals::actions.dropdown-menu>
                                                 @endif
 
                                                 <h4><a href="#/ideas/ideaDialog/{{ $row['id'] }}"

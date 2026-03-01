@@ -50,10 +50,10 @@
 
                 <div class="tw:flex-1"></div>
 
-                <x-globals::elements.link-dropdown :label="__('links.list_view')">
+                <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" :label="__('links.list_view')">
                     <li><a href="{{ BASE_URL }}/timesheets/showMy">{!! __('links.week_view') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
-                </x-globals::elements.link-dropdown>
+                </x-globals::actions.dropdown-menu>
 
                 <x-globals::forms.button link="javascript:void(0);" type="primary" id="addHoursBtn"><x-global::elements.icon name="add" /> {{ __('label.add_hours') }}</x-globals::forms.button>
             </div>

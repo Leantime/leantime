@@ -17,17 +17,17 @@
     <div class="pagetitle">
         <h5>{{ $tpl->escape((session('currentProjectClient') ?? '') . ' // ' . session('currentProjectName')) }}</h5>
         @if (count($allCanvas) > 0)
-            <x-globals::elements.dropdown containerClass="headerEditDropdown">
+            <x-globals::actions.dropdown-menu container-class="headerEditDropdown">
                 @if ($login::userIsAtLeast($roles::$editor))
                     <li><a href="#/ideas/boardDialog/{{ $tpl->get('currentCanvas') }}">{!! $tpl->__('links.icon.edit') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
                 @endif
-            </x-globals::elements.dropdown>
+            </x-globals::actions.dropdown-menu>
         @endif
         <h1>{{ $tpl->__('headlines.ideas') }}
             //
             @if (count($allCanvas) > 0)
-                <x-globals::elements.link-dropdown :label="$tpl->escape($canvasTitle)" triggerClass="header-title-dropdown">
+                <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" :label="$tpl->escape($canvasTitle)" trigger-class="header-title-dropdown">
                     @if ($login::userIsAtLeast($roles::$editor))
                         <li><a href="#/ideas/boardDialog">{!! $tpl->__('links.icon.create_new_board') !!}</a></li>
                     @endif
@@ -35,7 +35,7 @@
                     @foreach ($tpl->get('allCanvas') as $canvasRow)
                         <li><a href="{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
                     @endforeach
-                </x-globals::elements.link-dropdown>
+                </x-globals::actions.dropdown-menu>
             @endif
         </h1>
     </div>
@@ -55,10 +55,10 @@
             </div>
 
             <div>
-                <x-globals::elements.button-dropdown :label="$tpl->__('buttons.idea_wall')" type="default">
+                <x-globals::actions.dropdown-menu variant="button" :label="$tpl->__('buttons.idea_wall')" content-role="default">
                     <li><a href="{{ BASE_URL }}/ideas/showBoards" class="active">{!! $tpl->__('buttons.idea_wall') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/ideas/advancedBoards">{!! $tpl->__('buttons.idea_kanban') !!}</a></li>
-                </x-globals::elements.button-dropdown>
+                </x-globals::actions.dropdown-menu>
             </div>
         </div>
 
@@ -71,10 +71,10 @@
                     <div class="ticketBox" id="item_{{ $row['id'] }}" data-value="{{ $row['id'] }}">
 
                                 @if ($login::userIsAtLeast($roles::$editor))
-                                    <x-globals::elements.dropdown style="float:right;">
+                                    <x-globals::actions.dropdown-menu style="float:right;">
                                         <li><a href="#/ideas/ideaDialog/{{ $row['id'] }}" data="item_{{ $row['id'] }}"> {{ $tpl->__('links.edit_canvas_item') }}</a></li>
                                         <li><a href="#/ideas/delCanvasItem/{{ $row['id'] }}" class="delete" data="item_{{ $row['id'] }}"> {{ $tpl->__('links.delete_canvas_item') }}</a></li>
-                                    </x-globals::elements.dropdown>
+                                    </x-globals::actions.dropdown-menu>
                                 @endif
 
                                 <h4><a href="#/ideas/ideaDialog/{{ $row['id'] }}"
@@ -90,8 +90,8 @@
 
                                 <div class="clearfix" style="padding-bottom: 8px;"></div>
 
-                                <x-globals::dropdownPill
-                                    type="status"
+                                <x-globals::actions.chip
+                                    content-role="status"
                                     :parentId="$row['id']"
                                     :selectedClass="$canvasLabels[$row['box']]['class']"
                                     :selectedKey="$row['box']"

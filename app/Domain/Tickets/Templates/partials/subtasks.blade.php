@@ -55,9 +55,9 @@
 
             <div class="tw:px-4 tw:py-0">
                     @if($login::userIsAtLeast($roles::$editor))
-                        <x-globals::elements.dropdown>
+                        <x-globals::actions.dropdown-menu>
                                 <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete"><x-global::elements.icon name="delete" /> {{ __("links.delete_todo") }}</a></li>
-                        </x-globals::elements.dropdown>
+                        </x-globals::actions.dropdown-menu>
                    @endif
 
                     <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>
@@ -79,8 +79,8 @@
                 </div>
                 <div class="col-md-3" style="padding-top:3px;" >
                     <div class="right">
-                        <x-globals::dropdownPill
-                            type="effort"
+                        <x-globals::actions.chip
+                            content-role="effort"
                             :parentId="$subticket['id']"
                             selectedClass="label-default"
                             :selectedKey="'' . $subticket['storypoints']"
@@ -88,8 +88,8 @@
                             headerLabel="{{ __('dropdown.how_big_todo') }}"
                         />
 
-                        <x-globals::dropdownPill
-                            type="status"
+                        <x-globals::actions.chip
+                            content-role="status"
                             :parentId="$subticket['id']"
                             :selectedClass="$statusLabels[$subticket['status']]['class'] ?? 'label-important'"
                             :selectedKey="$subticket['status']"

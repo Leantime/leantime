@@ -143,10 +143,10 @@
                             @foreach($tpl->get('apiKeys') as $apiKey)
                                 <li>
                                     <div class="ticketBox">
-                                        <x-globals::elements.dropdown>
+                                        <x-globals::actions.dropdown-menu>
                                             <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><x-global::elements.icon name="edit" /> Edit Key</a></li>
                                             <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><x-global::elements.icon name="delete" /> Delete Key</a></li>
-                                        </x-globals::elements.dropdown>
+                                        </x-globals::actions.dropdown-menu>
                                         <a href="#/api/apiKey/{{ $apiKey['id'] }}"><strong>{{ e($apiKey['firstname']) }}</strong></a><br />
                                         lt_{{ $apiKey['username'] }}***
                                         | {{ __('labels.created_on') }}: {{ format($apiKey['createdOn'])->date() }} | {{ __('labels.last_used') }}: {{ format($apiKey['lastlogin'])->date() }}

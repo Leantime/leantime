@@ -14,12 +14,12 @@
                     <div style="flex:1;"></div>
                 @endif
                 <div class="widget-header-actions" style="flex-shrink:0; display:flex; align-items:center; gap:2px;"></div>
-                <x-globals::elements.dropdown containerClass="tw:flex-shrink-0 tw:flex tw:items-center">
+                <x-globals::actions.dropdown-menu container-class="tw:flex-shrink-0 tw:flex tw:items-center">
                     <li><a href="javascript:void(0)" class="fitContent"><x-global::elements.icon name="open_in_full" /> Resize to fit content</a></li>
                     @if(empty($alwaysVisible))
                         <li><a href="javascript:void(0)" class="removeWidget"><x-global::elements.icon name="visibility_off" /> Hide</a></li>
                     @endif
-                </x-globals::elements.dropdown>
+                </x-globals::actions.dropdown-menu>
             </div>
             @endif
             <span class="clearall"></span>

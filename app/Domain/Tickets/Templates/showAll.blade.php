@@ -124,8 +124,8 @@
                                 }
                             @endphp
                             <td data-order="{{ $name }}">
-                                <x-globals::dropdownPill
-                                    type="status"
+                                <x-globals::actions.chip
+                                    content-role="status"
                                     :parentId="$row['id']"
                                     :selectedClass="$class"
                                     :selectedKey="$row['status']"
@@ -150,8 +150,8 @@
                                 }
                             @endphp
                             <td data-order="{{ $milestoneHeadline }}">
-                                <x-globals::dropdownPill
-                                    type="milestone"
+                                <x-globals::actions.chip
+                                    content-role="milestone"
                                     :parentId="$row['id']"
                                     selectedClass="label-default"
                                     linkStyle="background-color:{{ e($row['milestoneColor']) }}"
@@ -163,8 +163,8 @@
                             </td>
 
                             <td data-order="{{ $row['storypoints'] ? ($efforts['' . $row['storypoints'] . ''] ?? '?') : __('label.story_points_unkown') }}">
-                                <x-globals::dropdownPill
-                                    type="effort"
+                                <x-globals::actions.chip
+                                    content-role="effort"
                                     :parentId="$row['id']"
                                     selectedClass="label-default"
                                     :selectedKey="'' . $row['storypoints']"
@@ -177,8 +177,8 @@
                                 $priorityLabel = ($row['priority'] != '' && $row['priority'] > 0) ? ($priorities[$row['priority']] ?? __('label.priority_unkown')) : __('label.priority_unkown');
                             @endphp
                             <td data-order="{{ $priorityLabel }}">
-                                <x-globals::dropdownPill
-                                    type="priority"
+                                <x-globals::actions.chip
+                                    content-role="priority"
                                     :parentId="$row['id']"
                                     selectedClass="label-default priority-bg-{{ $row['priority'] }}"
                                     :selectedKey="$row['priority']"
@@ -230,8 +230,8 @@
                                 }
                             @endphp
                             <td data-order="{{ $sprintHeadline }}">
-                                <x-globals::dropdownPill
-                                    type="sprint"
+                                <x-globals::actions.chip
+                                    content-role="sprint"
                                     :parentId="$row['id']"
                                     selectedClass="label-default"
                                     :selectedKey="$row['sprint'] ?: 0"

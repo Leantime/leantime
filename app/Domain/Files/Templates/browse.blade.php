@@ -57,14 +57,14 @@
                 <ul id="medialist" class="listfile">
                     @foreach($tpl->get('files') as $file)
                         <li class="file-module-{{ $file['moduleId'] }}">
-                            <x-globals::elements.dropdown style="float:right;">
+                            <x-globals::actions.dropdown-menu style="float:right;">
                                 <li class="nav-header">{{ __('subtitles.file') }}</li>
                                 <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{{ __('links.download') }}</a></li>
 
                                 @if($login::userIsAtLeast($roles::$editor))
                                     <li><a href="{{ BASE_URL }}/files/browse?delFile={{ $file['id'] }}" class="delete deleteFile"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
                                 @endif
-                            </x-globals::elements.dropdown>
+                            </x-globals::actions.dropdown-menu>
                             <a class="imageLink" data-ext="{{ $file['extension'] }}" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">
                                 @if(in_array(strtolower($file['extension']), $tpl->get('imgExtensions')))
                                     <img style="max-height: 50px; max-width: 70px;" src="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" alt="" />

@@ -32,14 +32,14 @@
     <ul id='medialist' class='listfile'>
         @foreach($tpl->get('files') as $file)
             <li class="{{ $file['moduleId'] }}">
-                <x-globals::elements.dropdown style="float:right;">
+                <x-globals::actions.dropdown-menu style="float:right;">
                     <li class="nav-header border">{{ __('subtitles.file') }}</li>
                     <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">{{ __('links.download') }}</a></li>
 
                     @if($login::userIsAtLeast($roles::$editor))
                         <li><a href="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}?delFile={{ $file['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
                     @endif
-                </x-globals::elements.dropdown>
+                </x-globals::actions.dropdown-menu>
 
                 <a class="cboxElement" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">
                     @if(in_array(strtolower($file['extension']), $tpl->get('imgExtensions')))

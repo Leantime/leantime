@@ -32,10 +32,10 @@
             <div>
                 <div class="pull-right">
 
-                    <x-globals::elements.button-dropdown :label="__('label.roles.client') . ': ' . $clientNameSelected" type="default">
+                    <x-globals::actions.dropdown-menu variant="button" :label="__('label.roles.client') . ': ' . $clientNameSelected" content-role="default">
                         <li><a href="{{ BASE_URL }}/tickets/roadmapAll" {!! empty($labelActive) ? "class='active'" : '' !!}> {{ __('headline.all_clients') }} </a></li>
                         {!! $htmlDropdownClients !!}
-                    </x-globals::elements.button-dropdown>
+                    </x-globals::actions.dropdown-menu>
 
                     <div class="dropdown btn-group dropRight">
                         @php
