@@ -101,33 +101,6 @@
     display: block;
 }
 
-/* ── Modal close button ──────────────────────────────────────────────
-   Consistent 32×32 close button used in the global modal X control.
-   ──────────────────────────────────────────────────────────────────── */
-.modal-close-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border: none;
-    background: transparent;
-    border-radius: var(--element-radius, 4px);
-    cursor: pointer;
-    color: var(--secondary-font-color);
-    font-size: 20px;
-    line-height: 1;
-    transition: background 0.15s ease;
-}
-.modal-close-btn:hover {
-    background: rgba(0, 0, 0, 0.08);
-    color: var(--primary-font-color);
-}
-.modal-close-btn:focus-visible {
-    outline: 2px solid var(--accent1);
-    outline-offset: 2px;
-}
 
 /* ── Modal content wrapper ───────────────────────────────────────────
    Structural styles for <x-globals::actions.modal mode="content">.

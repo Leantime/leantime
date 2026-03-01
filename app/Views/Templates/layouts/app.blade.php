@@ -74,9 +74,7 @@
     <dialog id="global-modal">
         <div id="global-modal-box">
             <form method="dialog" style="margin:0;position:absolute;right:10px;top:10px;z-index:10;">
-                <button class="modal-close-btn" aria-label="Close">
-                    <x-global::elements.icon name="close" />
-                </button>
+                <x-globals::forms.button variant="icon-only" element="button" leading-visual="close" aria-label="Close" />
             </form>
             <div id="global-modal-content">
                 <div style="display:flex;justify-content:center;padding:40px;">

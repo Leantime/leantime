@@ -654,6 +654,40 @@ body button.btn.btn-circle:hover {
 
 }
 
+/* ── Icon-only button ──────────────────────────────────────────────────
+   Transparent, borderless icon button with subtle hover background.
+   Used for toolbar actions, close buttons, and inline icon controls.
+   ──────────────────────────────────────────────────────────────────── */
+.btn-icon-only {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    border-radius: var(--element-radius, 4px);
+    cursor: pointer;
+    color: var(--secondary-font-color);
+    font-size: 20px;
+    line-height: 1;
+    transition: background 0.15s ease;
+}
+.btn-icon-only:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--primary-font-color);
+}
+.btn-icon-only:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+}
+
+/* Scale variants */
+.btn-icon-only.btn-xs { width: 24px; height: 24px; font-size: 16px; }
+.btn-icon-only.btn-sm { width: 28px; height: 28px; font-size: 18px; }
+.btn-icon-only.btn-lg { width: 40px; height: 40px; font-size: 24px; }
+
 .btn-group+.btn-group {
     margin-left: 0px;
 }

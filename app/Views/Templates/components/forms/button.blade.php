@@ -13,6 +13,7 @@
     'submit' => false,
     'disabled' => false,
     'loading' => false,
+    'variant' => 'default',          // default|icon-only|circle
     'circle' => false,
     'formModal' => false,
     'href' => '#',
@@ -36,20 +37,12 @@
     // Resolve element tag
     $resolvedTag = $submit ? 'button' : $resolvedElement;
 
-    // Map contentRole + state to Bootstrap .btn-* classes
-    $bsTypeClass = match(true) {
-        $state === 'danger'  => 'btn btn-danger',
-        $state === 'success' => 'btn btn-success',
-        $state === 'warning' => 'btn btn-warning',
-        $state === 'info'    => 'btn btn-info',
-        default => match($resolvedRole) {
-            'primary'   => 'btn btn-primary',
-            'secondary', 'default' => 'btn btn-default',
-            'ghost'     => 'btn btn-default',
-            'accent'    => 'btn btn-primary',
-            'link'      => 'btn btn-link',
-            default     => 'btn btn-' . $resolvedRole,
-        },
+    // Resolve variant — circle bool is a v1 alias
+    $resolvedVariant = match(true) {
+        $variant === 'icon-only' => 'icon-only',
+        $variant === 'circle'    => 'circle',
+        $circle                  => 'circle',
+        default                  => 'default',
     };
 
     // Map scale to Bootstrap size class
@@ -61,11 +54,38 @@
         default => '',
     };
 
-    $classes = $bsTypeClass
-        . ($outline ? ' btn-outline' : '')
-        . ($sizeClass ? " $sizeClass" : '')
-        . ($circle ? ' btn-circle' : '')
-        . ($formModal ? ' formModal' : '');
+    if ($resolvedVariant === 'icon-only') {
+        // Icon-only: transparent, borderless — no standard .btn classes
+        $classes = 'btn-icon-only'
+            . ($sizeClass ? " $sizeClass" : '')
+            . ($formModal ? ' formModal' : '');
+    } elseif ($resolvedVariant === 'circle') {
+        // Circle: round icon button with border
+        $classes = 'btn btn-default btn-circle'
+            . ($sizeClass ? " $sizeClass" : '')
+            . ($formModal ? ' formModal' : '');
+    } else {
+        // Default: standard Bootstrap button
+        $bsTypeClass = match(true) {
+            $state === 'danger'  => 'btn btn-danger',
+            $state === 'success' => 'btn btn-success',
+            $state === 'warning' => 'btn btn-warning',
+            $state === 'info'    => 'btn btn-info',
+            default => match($resolvedRole) {
+                'primary'   => 'btn btn-primary',
+                'secondary', 'default' => 'btn btn-default',
+                'ghost'     => 'btn btn-default',
+                'accent'    => 'btn btn-primary',
+                'link'      => 'btn btn-link',
+                default     => 'btn btn-' . $resolvedRole,
+            },
+        };
+
+        $classes = $bsTypeClass
+            . ($outline ? ' btn-outline' : '')
+            . ($sizeClass ? " $sizeClass" : '')
+            . ($formModal ? ' formModal' : '');
+    }
 
     $extraAttrs = [];
     if ($resolvedTag === 'a') {

@@ -62,9 +62,7 @@
 
                     @if ($closeable)
                         <form method="dialog" style="margin: 0;">
-                            <button class="btn btn-default btn-sm btn-circle" aria-label="{{ __('label.close') }}">
-                                <x-global::elements.icon name="close" />
-                            </button>
+                            <x-globals::forms.button variant="icon-only" element="button" leading-visual="close" aria-label="{{ __('label.close') }}" />
                         </form>
                     @endif
                 </div>

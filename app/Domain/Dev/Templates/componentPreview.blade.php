@@ -36,6 +36,52 @@
             <button class="tw:btn tw:btn-primary">Normal</button>
             <button class="tw:btn tw:btn-primary tw:btn-lg">Large</button>
         </div>
+
+        <h4 style="margin: 15px 0 10px;">Blade Button Component — Variants</h4>
+        <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
+            Usage: <code>&lt;x-globals::forms.button variant="icon-only" element="button" leading-visual="close" /&gt;</code>
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 10px;">
+            <div style="text-align:center;">
+                <x-globals::forms.button element="button" type="primary">Default</x-globals::forms.button>
+                <div style="font-size:11px;color:var(--secondary-font-color);margin-top:4px;">variant=default</div>
+            </div>
+            <div style="text-align:center;">
+                <x-globals::forms.button variant="icon-only" element="button" leading-visual="close" aria-label="Close" />
+                <div style="font-size:11px;color:var(--secondary-font-color);margin-top:4px;">icon-only</div>
+            </div>
+            <div style="text-align:center;">
+                <x-globals::forms.button variant="icon-only" element="button" leading-visual="settings" aria-label="Settings" />
+                <div style="font-size:11px;color:var(--secondary-font-color);margin-top:4px;">icon-only</div>
+            </div>
+            <div style="text-align:center;">
+                <x-globals::forms.button variant="icon-only" element="button" leading-visual="more_vert" aria-label="More" />
+                <div style="font-size:11px;color:var(--secondary-font-color);margin-top:4px;">icon-only</div>
+            </div>
+            <div style="text-align:center;">
+                <x-globals::forms.button variant="circle" element="button" leading-visual="add" aria-label="Add" />
+                <div style="font-size:11px;color:var(--secondary-font-color);margin-top:4px;">circle</div>
+            </div>
+        </div>
+        <h4 style="margin: 15px 0 10px;">Icon-only Scales</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+            <div style="text-align:center;">
+                <x-globals::forms.button variant="icon-only" scale="xs" element="button" leading-visual="close" aria-label="Close" />
+                <div style="font-size:11px;color:var(--secondary-font-color);margin-top:4px;">xs</div>
+            </div>
+            <div style="text-align:center;">
+                <x-globals::forms.button variant="icon-only" scale="s" element="button" leading-visual="close" aria-label="Close" />
+                <div style="font-size:11px;color:var(--secondary-font-color);margin-top:4px;">s</div>
+            </div>
+            <div style="text-align:center;">
+                <x-globals::forms.button variant="icon-only" element="button" leading-visual="close" aria-label="Close" />
+                <div style="font-size:11px;color:var(--secondary-font-color);margin-top:4px;">m (default)</div>
+            </div>
+            <div style="text-align:center;">
+                <x-globals::forms.button variant="icon-only" scale="l" element="button" leading-visual="close" aria-label="Close" />
+                <div style="font-size:11px;color:var(--secondary-font-color);margin-top:4px;">l</div>
+            </div>
+        </div>
     </section>
 
     {{-- ============================================================ --}}
