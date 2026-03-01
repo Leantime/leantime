@@ -1984,7 +1984,7 @@ class Install
                     PRIMARY KEY (`id`),
                     KEY `zp_jobs_queue_index` (`queue`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;',
-            "CREATE TABLE IF NOT EXISTS `zp_recurring_patterns` (
+            'CREATE TABLE IF NOT EXISTS `zp_recurring_patterns` (
                     `id` INT NOT NULL AUTO_INCREMENT,
                     `entityId` INT NOT NULL,
                     `module` VARCHAR(50) NOT NULL,
@@ -1994,13 +1994,13 @@ class Install
                     `weekDays` TEXT NULL,
                     `monthDay` INT NULL,
                     `months` TEXT NULL,
-                    `action` VARCHAR(20) NOT NULL DEFAULT 'reset',
+                    `action` VARCHAR(20) NOT NULL DEFAULT "reset",
                     `lastProcessed` DATETIME NULL,
                     `nextProcessingDate` DATETIME NULL,
                     `enabled` TINYINT(1) NOT NULL DEFAULT 1,
                     PRIMARY KEY (`id`),
                     INDEX `entityId` (`entityId`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
         ];
 
         foreach ($sql as $statement) {
@@ -2320,7 +2320,7 @@ class Install
 
         $sql = [
             // Add color column to zp_canvas for notebook color support
-            "ALTER TABLE `zp_canvas` ADD COLUMN `color` VARCHAR(50) DEFAULT 'ocean' AFTER `description`;",
+            'ALTER TABLE `zp_canvas` ADD COLUMN `color` VARCHAR(50) DEFAULT "ocean" AFTER `description`;',
         ];
 
         foreach ($sql as $statement) {
