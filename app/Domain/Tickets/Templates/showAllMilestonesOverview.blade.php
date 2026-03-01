@@ -163,11 +163,11 @@
                         </td>
 
                         <td data-order="{{ $row->editFrom }}">
-                            {{ __('label.due_icon') }}<input type="text" title="{{ __('label.planned_start_date') }}" value="{{ format($row->editFrom)->date() }}" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{{ $row->id }}" data-id="{{ $row->id }}" name="editFrom"/>
+                            <x-global::elements.icon name="calendar_month" /><input type="text" title="{{ __('label.planned_start_date') }}" value="{{ format($row->editFrom)->date() }}" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{{ $row->id }}" data-id="{{ $row->id }}" name="editFrom"/>
                         </td>
 
                         <td data-order="{{ $row->editTo }}">
-                            {{ __('label.due_icon') }}<input type="text" title="{{ __('label.planned_end_date') }}" value="{{ format($row->editTo)->date() }}" class="editToDate secretInput milestoneEditToAsync toDateTicket-{{ $row->id }}" data-id="{{ $row->id }}" name="editTo"/>
+                            <x-global::elements.icon name="calendar_month" /><input type="text" title="{{ __('label.planned_end_date') }}" value="{{ format($row->editTo)->date() }}" class="editToDate secretInput milestoneEditToAsync toDateTicket-{{ $row->id }}" data-id="{{ $row->id }}" name="editTo"/>
                         </td>
 
                         <td data-order="{{ $row->planHours }}">{{ $row->planHours }}</td>

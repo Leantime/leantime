@@ -6,13 +6,15 @@
 
 <x-globals::navigation.tabs sticky>
     <x-globals::navigation.tab
-        :label="__('links.timeline')"
+        icon="timeline"
+        label="Timeline"
         :href="BASE_URL . '/tickets/roadmapAll'"
         :active="str_contains($currentRoute, 'roadmapAll')"
         preload="mouseover"
     />
     <x-globals::navigation.tab
-        :label="__('links.table')"
+        icon="table_rows"
+        label="Table"
         :href="BASE_URL . '/tickets/showAllMilestonesOverview'"
         :active="str_contains($currentRoute, 'showAllMilestonesOverview')"
         preload="mouseover"

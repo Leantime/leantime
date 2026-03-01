@@ -3,6 +3,7 @@
     'href' => null,
     'target' => null,
     'active' => false,
+    'icon' => null,
 ])
 
 @php
@@ -16,5 +17,5 @@
        @if($active) aria-selected="true" @endif
        @if($isPanel) onclick="event.stopPropagation()" @endif
        {{ $attributes }}
-    >{{ $label ?: $slot }}</a>
+    >@if($icon)<x-global::elements.icon :name="$icon" /> @endif{{ $label ?: $slot }}</a>
 </li>

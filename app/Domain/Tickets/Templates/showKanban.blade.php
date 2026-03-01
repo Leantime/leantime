@@ -165,7 +165,7 @@ jQuery(document).ready(function(){
                                                     <div class="tw:flex tw:flex-wrap tw:items-center tw:gap-1">
                                                         @if($row['dateToFinish'] != '0000-00-00 00:00:00' && $row['dateToFinish'] != '1969-12-31 00:00:00')
                                                             <div>
-                                                                {!! __('label.due_icon') !!}
+                                                                <x-global::elements.icon name="calendar_month" />
                                                                 <input type="text" title="{{ __('label.due') }}" value="{{ format($row['dateToFinish'])->date() }}" class="duedates secretInput" style="margin-left:0px;" data-id="{{ $row['id'] }}" name="date" />
                                                             </div>
                                                             <div>
