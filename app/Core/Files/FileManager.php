@@ -190,10 +190,24 @@ class FileManager implements FileManagerInterface
             }
 
             // Get file mime type
-            $extension = pathinfo($fileName, PATHINFO_EXTENSION);
-            $mimeType = $this->filesystemManager->mimeType($fileName);
+            $mimeType = $storage->mimeType($fileName) ?: 'application/octet-stream';
 
-            return $storage->download($fileName, $realName);
+            // Read file contents directly instead of using download() which relies
+            // on fpassthru() — a function disabled on many shared hosting environments.
+            $content = $storage->get($fileName);
+
+            $response = new Response($content);
+            $response->headers->set('Content-Type', $mimeType);
+            $response->headers->set('Content-Length', (string) $storage->size($fileName));
+            $response->headers->set('Content-Disposition', 'inline; filename="'.$realName.'"');
+
+            if (! $this->config->debug) {
+                $response->headers->set('Pragma', 'public');
+                $response->headers->set('Cache-Control', 'max-age=86400');
+                $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s', $storage->lastModified($fileName)).' GMT');
+            }
+
+            return $response;
 
         } catch (\Exception $e) {
             Log::error('Error getting file: '.$e->getMessage(), [
