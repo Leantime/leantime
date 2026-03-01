@@ -3176,6 +3176,11 @@ body a.btn-link.btn-fancy:hover {
     overflow: auto;
 }
 
+/* Let dropdown menus escape the scroll container when open */
+.widgetContent:has(.dropdown.open) {
+    overflow: visible;
+}
+
 /* Hide slot-actions until JS promotes them into the stickyHeader */
 .widget-slot-actions {
     display: none;

@@ -20,10 +20,6 @@
 @import "../../public/assets/css/libs/fontawesome-free/css/v4-shims.css";
 @import "material-symbols/outlined.css";
 
-.material-symbols-outlined {
-    vertical-align: middle;
-}
-
 @import "../../public/assets/css/libs/frappe_theme.css";
 @import "../../public/assets/css/libs/shepherd-theme-arrows.css";
 @import "../../public/assets/css/libs/jstree/style.css";
@@ -65,6 +61,15 @@
 @import "../../public/assets/css/components/mermaid.css";
 @import "../../public/assets/css/components/overwrites.css";
 @import "../../public/assets/css/components/glass.css";
+
+/* ── Material Symbols global override ────────────────────────────────
+   Reduce default icon size from 24px to 18px and vertically center
+   with surrounding text.
+   ──────────────────────────────────────────────────────────────────── */
+.material-symbols-outlined {
+    font-size: 18px;
+    vertical-align: middle;
+}
 
 /* ── Modal dialog ─────────────────────────────────────────────────────
    Override the CSS-reset rule (div { background: transparent }) which
