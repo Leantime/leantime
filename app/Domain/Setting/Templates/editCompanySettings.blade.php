@@ -33,54 +33,37 @@
 
                                     <h4 class="widgettitle title-light"><x-global::elements.icon name="apartment" />{{ __('subtitles.companydetails') }}
                                     </h4>
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <label>{{ __('label.language') }}</label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <x-globals::forms.select name="language" id="language">
-                                                @foreach($tpl->get('languageList') as $languagKey => $languageValue)
-                                                    <option value="{{ $languagKey }}"
-                                                        {{ $companySettings['language'] == $languagKey ? "selected='selected'" : '' }}>{{ $languageValue }}</option>
-                                                @endforeach
-                                            </x-globals::forms.select>
-                                        </div>
-                                    </div>
+                                    <x-globals::forms.form-field label-text="{{ __('label.language') }}" name="language" label-position="left" label-width="tw:w-[150px]">
+                                        <x-globals::forms.select :bare="true" name="language" id="language">
+                                            @foreach($tpl->get('languageList') as $languagKey => $languageValue)
+                                                <option value="{{ $languagKey }}"
+                                                    {{ $companySettings['language'] == $languagKey ? "selected='selected'" : '' }}>{{ $languageValue }}</option>
+                                            @endforeach
+                                        </x-globals::forms.select>
+                                    </x-globals::forms.form-field>
 
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <label>{{ __('label.company_name') }}</label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <x-globals::forms.input name="name" id="companyName" value="{{ $companySettings['name'] }}" class="pull-left" />
-                                            <small>{{ __('text.company_name_helper') }}</small>
-                                        </div>
-                                    </div>
-                                    <br />
+                                    <x-globals::forms.form-field label-text="{{ __('label.company_name') }}" name="companyName" label-position="left" label-width="tw:w-[150px]" caption="{{ __('text.company_name_helper') }}">
+                                        <x-globals::forms.input :bare="true" name="name" id="companyName" value="{{ $companySettings['name'] }}" />
+                                    </x-globals::forms.form-field>
+
                                     <h4 class="widgettitle title-light"><x-global::elements.icon name="settings" />{{ __('subtitles.defaults') }}
                                     </h4>
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <label for="messageFrequency">{{ __('label.messages_frequency') }}</label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <span class='field'>
-                                                <x-globals::forms.select name="messageFrequency" id="messageFrequency" style="width: 220px">
-                                                    <option value="">--{{ __('label.choose_option') }}--</option>
-                                                    <option value="300" {{ $companySettings['messageFrequency'] == '300' ? ' selected ' : '' }}>{{ __('label.5min') }}</option>
-                                                    <option value="900" {{ $companySettings['messageFrequency'] == '900' ? ' selected ' : '' }}>{{ __('label.15min') }}</option>
-                                                    <option value="1800" {{ $companySettings['messageFrequency'] == '1800' ? ' selected ' : '' }}>{{ __('label.30min') }}</option>
-                                                    <option value="3600" {{ $companySettings['messageFrequency'] == '3600' ? ' selected ' : '' }}>{{ __('label.1h') }}</option>
-                                                    <option value="10800" {{ $companySettings['messageFrequency'] == '10800' ? ' selected ' : '' }}>{{ __('label.3h') }}</option>
-                                                    <option value="36000" {{ $companySettings['messageFrequency'] == '36000' ? ' selected ' : '' }}>{{ __('label.6h') }}</option>
-                                                    <option value="43200" {{ $companySettings['messageFrequency'] == '43200' ? ' selected ' : '' }}>{{ __('label.12h') }}</option>
-                                                    <option value="86400" {{ $companySettings['messageFrequency'] == '86400' ? ' selected ' : '' }}>{{ __('label.24h') }}</option>
-                                                    <option value="172800" {{ $companySettings['messageFrequency'] == '172800' ? ' selected ' : '' }}>{{ __('label.48h') }}</option>
-                                                    <option value="604800" {{ $companySettings['messageFrequency'] == '604800' ? ' selected ' : '' }}>{{ __('label.1w') }}</option>
-                                                </x-globals::forms.select> <br/>
-                                            </span>
-                                        </div>
-                                    </div>
+
+                                    <x-globals::forms.form-field label-text="{{ __('label.messages_frequency') }}" name="messageFrequency" label-position="left" label-width="tw:w-[150px]">
+                                        <x-globals::forms.select :bare="true" name="messageFrequency" id="messageFrequency" style="width: 220px">
+                                            <option value="">--{{ __('label.choose_option') }}--</option>
+                                            <option value="300" {{ $companySettings['messageFrequency'] == '300' ? ' selected ' : '' }}>{{ __('label.5min') }}</option>
+                                            <option value="900" {{ $companySettings['messageFrequency'] == '900' ? ' selected ' : '' }}>{{ __('label.15min') }}</option>
+                                            <option value="1800" {{ $companySettings['messageFrequency'] == '1800' ? ' selected ' : '' }}>{{ __('label.30min') }}</option>
+                                            <option value="3600" {{ $companySettings['messageFrequency'] == '3600' ? ' selected ' : '' }}>{{ __('label.1h') }}</option>
+                                            <option value="10800" {{ $companySettings['messageFrequency'] == '10800' ? ' selected ' : '' }}>{{ __('label.3h') }}</option>
+                                            <option value="36000" {{ $companySettings['messageFrequency'] == '36000' ? ' selected ' : '' }}>{{ __('label.6h') }}</option>
+                                            <option value="43200" {{ $companySettings['messageFrequency'] == '43200' ? ' selected ' : '' }}>{{ __('label.12h') }}</option>
+                                            <option value="86400" {{ $companySettings['messageFrequency'] == '86400' ? ' selected ' : '' }}>{{ __('label.24h') }}</option>
+                                            <option value="172800" {{ $companySettings['messageFrequency'] == '172800' ? ' selected ' : '' }}>{{ __('label.48h') }}</option>
+                                            <option value="604800" {{ $companySettings['messageFrequency'] == '604800' ? ' selected ' : '' }}>{{ __('label.1w') }}</option>
+                                        </x-globals::forms.select>
+                                    </x-globals::forms.form-field>
                                     <x-globals::forms.button submit type="primary" id="saveBtn">{{ __('buttons.save') }}</x-globals::forms.button>
                                 </form>
                             </div>

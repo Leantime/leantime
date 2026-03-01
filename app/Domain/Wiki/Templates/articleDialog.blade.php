@@ -60,22 +60,24 @@
                 <h4 class="widgettitle title-light">
                     <x-global::elements.icon name="folder" />{{ __('subtitles.organization') }}
                 </h4>
-                <label>Parent</label>
-                <x-globals::forms.select name="parent" style="width:100%;">
-                    <option value="0">None</option>
-                    @foreach ($wikiHeadlines as $parent)
-                        @if ($id != $parent->id)
-                            <option value="{{ $parent->id }}"
-                                    {{ ($parent->id == $currentArticle->parent) ? "selected='selected'" : '' }} >{{ e($parent->title) }}</option>
-                        @endif
-                    @endforeach
-                </x-globals::forms.select>
+                <x-globals::forms.form-field label-text="Parent" name="parent">
+                    <x-globals::forms.select :bare="true" name="parent" style="width:100%;">
+                        <option value="0">None</option>
+                        @foreach ($wikiHeadlines as $parent)
+                            @if ($id != $parent->id)
+                                <option value="{{ $parent->id }}"
+                                        {{ ($parent->id == $currentArticle->parent) ? "selected='selected'" : '' }} >{{ e($parent->title) }}</option>
+                            @endif
+                        @endforeach
+                    </x-globals::forms.select>
+                </x-globals::forms.form-field>
 
-                <label>{{ __('label.status') }}</label>
-                <x-globals::forms.select name="status" style="width:100%;">
-                    <option value="draft" {{ $currentArticle->status == 'draft' ? "selected='selected'" : '' }}>{{ __('label.draft') }}</option>
-                    <option value="published" {{ $currentArticle->status == 'published' ? "selected='selected'" : '' }}>{{ __('label.published') }}</option>
-                </x-globals::forms.select>
+                <x-globals::forms.form-field label-text="{{ __('label.status') }}" name="status">
+                    <x-globals::forms.select :bare="true" name="status" style="width:100%;">
+                        <option value="draft" {{ $currentArticle->status == 'draft' ? "selected='selected'" : '' }}>{{ __('label.draft') }}</option>
+                        <option value="published" {{ $currentArticle->status == 'published' ? "selected='selected'" : '' }}>{{ __('label.published') }}</option>
+                    </x-globals::forms.select>
+                </x-globals::forms.form-field>
             </div>
 
             @if ($id !== '')
