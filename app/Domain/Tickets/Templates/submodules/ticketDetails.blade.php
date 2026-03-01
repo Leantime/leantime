@@ -190,22 +190,18 @@
                 <div class="simpleAccordionContainer" id="accordion_content-tickets-organization" style="padding-left:0">
 
                     {{-- Type --}}
-                    <div class="form-group">
-                        <label class="control-label">{{ __('label.todo_type') }}</label>
-                        <div class="">
-                            <x-globals::forms.select id="type" name="type">
-                                @foreach($ticketTypes as $types)
-                                    <option value="{{ strtolower($types) }}"
-                                        {{ strtolower($types) == strtolower($ticket->type ?? '') ? "selected='selected'" : '' }}
-                                    >{{ __('label.' . strtolower($types)) }}</option>
-                                @endforeach
-                            </x-globals::forms.select><br/>
-                        </div>
-                    </div>
+                    <x-globals::forms.form-field label-text="{{ __('label.todo_type') }}" name="type">
+                        <x-globals::forms.select id="type" name="type">
+                            @foreach($ticketTypes as $types)
+                                <option value="{{ strtolower($types) }}"
+                                    {{ strtolower($types) == strtolower($ticket->type ?? '') ? "selected='selected'" : '' }}
+                                >{{ __('label.' . strtolower($types)) }}</option>
+                            @endforeach
+                        </x-globals::forms.select>
+                    </x-globals::forms.form-field>
 
                     {{-- Project --}}
-                    <div class="form-group">
-                        <label class="control-label">{{ __('label.project') }}</label>
+                    <x-globals::forms.form-field label-text="{{ __('label.project') }}" name="projectId">
                         <x-globals::forms.select name="projectId" class="tw:w-full">
                             @foreach($allAssignedprojects as $project)
                                 <option value="{{ $project['id'] }}"
@@ -217,61 +213,48 @@
                                 >{{ e($project['name']) }}</option>
                             @endforeach
                         </x-globals::forms.select>
-                    </div>
+                    </x-globals::forms.form-field>
 
                     {{-- Milestones --}}
-                    <div class="form-group">
-                        <label class="control-label">{{ __('label.milestone') }}</label>
-                        <div class="">
-                            <div class="form-group">
-                                <x-globals::forms.select name="milestoneid">
-                                    <option value="">{{ __('label.not_assigned_to_milestone') }}</option>
-                                    @foreach($tpl->get('milestones') as $milestoneRow)
-                                        <option value="{{ $milestoneRow->id }}"
-                                            {{ ($ticket->milestoneid == $milestoneRow->id) ? "selected='selected'" : '' }}
-                                        >{{ e($milestoneRow->headline) }}</option>
-                                    @endforeach
-                                </x-globals::forms.select>
-                            </div>
-                        </div>
-                    </div>
+                    <x-globals::forms.form-field label-text="{{ __('label.milestone') }}" name="milestoneid">
+                        <x-globals::forms.select name="milestoneid">
+                            <option value="">{{ __('label.not_assigned_to_milestone') }}</option>
+                            @foreach($tpl->get('milestones') as $milestoneRow)
+                                <option value="{{ $milestoneRow->id }}"
+                                    {{ ($ticket->milestoneid == $milestoneRow->id) ? "selected='selected'" : '' }}
+                                >{{ e($milestoneRow->headline) }}</option>
+                            @endforeach
+                        </x-globals::forms.select>
+                    </x-globals::forms.form-field>
 
                     {{-- Sprint --}}
-                    <div class="form-group">
-                        <label class="control-label">{{ __('label.sprint') }}</label>
-                        <div class="">
-                            <x-globals::forms.select id="sprint-select" name="sprint"
-                                    data-placeholder="{{ $ticket->sprint }}">
-                                <option value="">{{ __('label.backlog') }}</option>
-                                @if($tpl->get('sprints'))
-                                    @foreach($tpl->get('sprints') as $sprintRow)
-                                        <option value="{{ $sprintRow->id }}"
-                                            {{ $ticket->sprint == $sprintRow->id ? "selected='selected'" : '' }}
-                                        >{{ e($sprintRow->name) }}</option>
-                                    @endforeach
-                                @endif
-                            </x-globals::forms.select>
-                        </div>
-                    </div>
+                    <x-globals::forms.form-field label-text="{{ __('label.sprint') }}" name="sprint">
+                        <x-globals::forms.select id="sprint-select" name="sprint"
+                                data-placeholder="{{ $ticket->sprint }}">
+                            <option value="">{{ __('label.backlog') }}</option>
+                            @if($tpl->get('sprints'))
+                                @foreach($tpl->get('sprints') as $sprintRow)
+                                    <option value="{{ $sprintRow->id }}"
+                                        {{ $ticket->sprint == $sprintRow->id ? "selected='selected'" : '' }}
+                                    >{{ e($sprintRow->name) }}</option>
+                                @endforeach
+                            @endif
+                        </x-globals::forms.select>
+                    </x-globals::forms.form-field>
 
                     {{-- Related --}}
-                    <div class="form-group">
-                        <label class="control-label">{{ __('label.related_to') }}</label>
-                        <div class="">
-                            <div class="form-group">
-                                <x-globals::forms.select name="dependingTicketId">
-                                    <option value="">{{ __('label.not_related') }}</option>
-                                    @if(is_array($tpl->get('ticketParents')))
-                                        @foreach($tpl->get('ticketParents') as $ticketRow)
-                                            <option value="{{ $ticketRow->id }}"
-                                                {{ ($ticket->dependingTicketId == $ticketRow->id) ? "selected='selected'" : '' }}
-                                            >{{ e($ticketRow->headline) }}</option>
-                                        @endforeach
-                                    @endif
-                                </x-globals::forms.select>
-                            </div>
-                        </div>
-                    </div>
+                    <x-globals::forms.form-field label-text="{{ __('label.related_to') }}" name="dependingTicketId">
+                        <x-globals::forms.select name="dependingTicketId">
+                            <option value="">{{ __('label.not_related') }}</option>
+                            @if(is_array($tpl->get('ticketParents')))
+                                @foreach($tpl->get('ticketParents') as $ticketRow)
+                                    <option value="{{ $ticketRow->id }}"
+                                        {{ ($ticket->dependingTicketId == $ticketRow->id) ? "selected='selected'" : '' }}
+                                    >{{ e($ticketRow->headline) }}</option>
+                                @endforeach
+                            @endif
+                        </x-globals::forms.select>
+                    </x-globals::forms.form-field>
 
                 </div>
 
