@@ -48,18 +48,18 @@ class Template
     public $viewFactory;
 
     public array $picture = [
-        'calendar' => 'fa-calendar',
-        'clients' => 'fa-people-group',
-        'dashboard' => 'fa-th-large',
-        'files' => 'fa-picture',
-        'leads' => 'fa-signal',
-        'messages' => 'fa-envelope',
-        'projects' => 'fa-bar-chart',
-        'setting' => 'fa-cogs',
-        'tickets' => 'fa-pushpin',
-        'timesheets' => 'fa-table',
-        'users' => 'fa-people-group',
-        'default' => 'fa-off',
+        'calendar' => 'calendar_month',
+        'clients' => 'groups',
+        'dashboard' => 'dashboard',
+        'files' => 'folder',
+        'leads' => 'trending_up',
+        'messages' => 'mail',
+        'projects' => 'bar_chart',
+        'setting' => 'settings',
+        'tickets' => 'task_alt',
+        'timesheets' => 'schedule',
+        'users' => 'groups',
+        'default' => 'widgets',
     ];
 
     /**

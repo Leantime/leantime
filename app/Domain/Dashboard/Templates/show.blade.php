@@ -47,7 +47,7 @@
                     id="favoriteProject"
                     class="btn pull-right margin-right {{ $isFavorite ? 'isFavorite' : ''}} tw:mr-[5px] round-button"
                     data-tippy-content="{{ __('label.favorite_tooltip') }}"
-                ><i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-star"></i></a>
+                ><x-global::elements.icon name="{{ $isFavorite ? 'star' : 'star_border' }}" /></a>
 
 
 
@@ -463,7 +463,7 @@ jQuery(document).ready(function(){
                     {!! $project['id'] !!},
                     'favorite',
                     function() {
-                        jQuery("#favoriteProject").find("i").removeClass("fa-solid").addClass("fa-regular");
+                        jQuery("#favoriteProject").find(".material-symbols-outlined").text("star_border");
                         jQuery("#favoriteProject").removeClass("isFavorite");
                     }
                 );
@@ -473,7 +473,7 @@ jQuery(document).ready(function(){
                     {!! $project['id'] !!},
                     'favorite',
                     function() {
-                        jQuery("#favoriteProject").find("i").removeClass("fa-regular").addClass("fa-solid");
+                        jQuery("#favoriteProject").find(".material-symbols-outlined").text("star");
                         jQuery("#favoriteProject").addClass("isFavorite");
                     }
                 );

@@ -8,7 +8,7 @@
         <a href="{{ session('lastPage') }}" class="backBtn"><x-global::elements.icon name="arrow_circle_left" /> {{ __('links.go_back') }}</a>
     </div>
 
-    <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
+    <div class="pageicon"><x-global::elements.icon :name="$tpl->getModulePicture()" /></div>
     <div class="pagetitle">
         <h5>{{ e(session('currentProjectClient') . ' // ' . session('currentProjectName')) }}</h5>
         <h1>{{ __('headlines.new_to_do') }}</h1>

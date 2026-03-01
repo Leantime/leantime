@@ -43,7 +43,7 @@
     </style>
 
     <div class="pageheader">
-        <div class="pageicon"><span class="fas {{ $canvasIcon }}"></span></div>
+        <div class="pageicon"><x-global::elements.icon :name="$canvasIcon" /></div>
         <div class="pagetitle">
             <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
             @if (count($allCanvas) > 0)
@@ -102,12 +102,12 @@
                                 $filterRelates = $filter['relates'] ?? 'all';
                                 $statusFilterLabel = $filterStatus == 'all'
                                     ? '<x-global::elements.icon name="filter_list" /> ' . __('status.all')
-                                    : '<i class="fas fa-fw ' . __($statusLabels[$filterStatus]['icon']) . '"></i> ' . $statusLabels[$filterStatus]['title'];
+                                    : '<span class="material-symbols-outlined">' . __($statusLabels[$filterStatus]['icon']) . '</span> ' . $statusLabels[$filterStatus]['title'];
                             @endphp
                             <x-globals::actions.dropdown-menu variant="button" :label="$statusFilterLabel" content-role="default">
                                 <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all') class="active" @endif><x-global::elements.icon name="language" /> {!! __('status.all') !!}</a></li>
                                 @foreach ($statusLabels as $key => $data)
-                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}" @if ($filterStatus == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {!! $data['title'] !!}</a></li>
+                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}" @if ($filterStatus == $key) class="active" @endif><x-global::elements.icon :name="$data['icon']" /> {!! $data['title'] !!}</a></li>
                                 @endforeach
                             </x-globals::actions.dropdown-menu>
                         @endif
@@ -118,12 +118,12 @@
                                 if ($filterRelates != 'all' && !isset($relatesLabels[$filterRelates])) { $filterRelates = 'all'; }
                                 $relatesFilterLabel = $filterRelates == 'all'
                                     ? '<x-global::elements.icon name="language" /> ' . __('relates.all')
-                                    : '<i class="fas fa-fw ' . __($relatesLabels[$filterRelates]['icon']) . '"></i> ' . $relatesLabels[$filterRelates]['title'];
+                                    : '<span class="material-symbols-outlined">' . __($relatesLabels[$filterRelates]['icon']) . '</span> ' . $relatesLabels[$filterRelates]['title'];
                             @endphp
                             <x-globals::actions.dropdown-menu variant="button" :label="$relatesFilterLabel" content-role="default">
                                 <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all') class="active" @endif><x-global::elements.icon name="language" /> {{ __('relates.all') }}</a></li>
                                 @foreach ($relatesLabels as $key => $data)
-                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}" @if ($filterRelates == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}</a></li>
+                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}" @if ($filterRelates == $key) class="active" @endif><x-global::elements.icon :name="$data['icon']" /> {{ $data['title'] }}</a></li>
                                 @endforeach
                             </x-globals::actions.dropdown-menu>
                         @endif

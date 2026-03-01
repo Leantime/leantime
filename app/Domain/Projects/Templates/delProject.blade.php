@@ -3,7 +3,7 @@
 @endphp
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
+    <div class="pageicon"><x-global::elements.icon :name="$tpl->getModulePicture()" /></div>
     <div class="pagetitle">
         <h5>{{ __('label.administration') }}</h5>
         <h1>{{ sprintf(__('headlines.delete_project_x'), $project['name']) }}</h1>

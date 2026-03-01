@@ -24,7 +24,7 @@
 <div class="showDialogOnLoad" style="display:none;">
 
     <h4 class="widgettitle title-light" style="padding-bottom: 0">
-        <i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i>
+        <x-global::elements.icon :name="$canvasTypes[$canvasItem['box']]['icon']" />
         {{ $canvasTypes[$canvasItem['box']]['title'] }}
     </h4>
     <hr style="margin-top: 5px; margin-bottom: 15px;">

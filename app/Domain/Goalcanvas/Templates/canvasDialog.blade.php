@@ -17,7 +17,7 @@
 
     <div style="width:1000px">
 
-        <h1><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i>
+        <h1><x-global::elements.icon :name="$canvasTypes[$canvasItem['box']]['icon']" />
             {{ $canvasTypes[$canvasItem['box']]['title'] }}</h1>
 
         <form class="formModal" method="post" action="{{ BASE_URL . "/goalcanvas/editCanvasItem/$id" }}">
@@ -197,7 +197,7 @@
                         @foreach ($statusLabels as $key => $data)
                         @if ($data['active'])
                     {
-                        innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
+                        innerHTML: '<span class="material-symbols-outlined">{{ $data['icon'] }}</span>&nbsp;{{ $data['title'] }}',
                         text: "{{ $data['title'] }}",
                         value: "{{ $key }}",
                         selected: {{ $canvasItem['status'] == $key ? 'true' : 'false' }}
@@ -217,7 +217,7 @@
                         @foreach ($relatesLabels as $key => $data)
                         @if ($data['active'])
                     {
-                        innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
+                        innerHTML: '<span class="material-symbols-outlined">{{ $data['icon'] }}</span>&nbsp;{{ $data['title'] }}',
                         text: "{{ $data['title'] }}",
                         value: "{{ $key }}",
                         selected: {{ $canvasItem['relates'] == $key ? 'true' : 'false' }}

@@ -153,7 +153,7 @@ jQuery(document).ready(function(){
                                                     @if($row['dependingTicketId'] > 0)
                                                         <small><a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}" class="form-modal">{{ e($row['parentHeadline']) }}</a></small> //
                                                     @endif
-                                                    <small><i class="fa {{ $todoTypeIcons[strtolower($row['type'])] }}"></i> {{ __('label.' . strtolower($row['type'])) }}</small>
+                                                    <small><x-global::elements.icon :name="$todoTypeIcons[strtolower($row['type'])] ?? 'task_alt'" size="sm" /> {{ __('label.' . strtolower($row['type'])) }}</small>
                                                     <small>#{{ $row['id'] }}</small>
                                                     <div class="kanbanCardContent">
                                                         <h4><a href="#/tickets/showTicket/{{ $row['id'] }}">{{ e($row['headline']) }}</a></h4>

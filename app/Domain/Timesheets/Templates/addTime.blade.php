@@ -9,7 +9,7 @@
                placeholder="{{ __('input.placeholders.search_type_hit_enter') }}"/>
     </form>
 
-    <div class="pageicon"><span class="fa-laptop"></span></div>
+    <div class="pageicon"><x-global::elements.icon name="laptop" /></div>
     <div class="pagetitle">
         <h5>{{ __('OVERVIEW') }}</h5>
         <h1>{{ __('MY_TIMESHEETS') }}</h1>

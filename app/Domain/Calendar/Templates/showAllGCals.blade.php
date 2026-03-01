@@ -27,7 +27,7 @@
         <input type="text" name="term" placeholder="To search type and hit enter..." />
     </form>
 
-    <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
+    <div class="pageicon"><x-global::elements.icon :name="$tpl->getModulePicture()" /></div>
     <div class="pagetitle">
         <h5>{{ __('OVERVIEW') }}</h5>
         <h1>{{ __('ALL_GCCALS') }}</h1>

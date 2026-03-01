@@ -25,7 +25,7 @@
 
 <div class="" style="width:900px;">
 
-    <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}" aria-hidden="true"></i> {{ $canvasTypes[$canvasItem['box']]['title'] }}</h4>
+    <h4 class="widgettitle title-light" style="padding-bottom: 0"><x-global::elements.icon :name="$canvasTypes[$canvasItem['box']]['icon']" /> {{ $canvasTypes[$canvasItem['box']]['title'] }}</h4>
     <hr style="margin-top: 5px; margin-bottom: 15px;">
     {!! $tpl->displayNotification() !!}
 
@@ -188,7 +188,7 @@
                 data: [
                     @foreach ($statusLabels as $key => $data)
                         @if ($data['active'])
-                            { innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
+                            { innerHTML: '<span class="material-symbols-outlined">{{ $data['icon'] }}</span>&nbsp;{{ $data['title'] }}',
                               text: "{{ $data['title'] }}", value: "{{ $key }}", selected: {{ $canvasItem['status'] == $key ? 'true' : 'false' }} },
                         @endif
                     @endforeach
@@ -204,7 +204,7 @@
                 data: [
                     @foreach ($relatesLabels as $key => $data)
                         @if ($data['active'])
-                            { innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
+                            { innerHTML: '<span class="material-symbols-outlined">{{ $data['icon'] }}</span>&nbsp;{{ $data['title'] }}',
                               text: "{{ $data['title'] }}", value: "{{ $key }}", selected: {{ $canvasItem['relates'] == $key ? 'true' : 'false' }} },
                         @endif
                     @endforeach
