@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Domain\Tickets\Htmx;
+namespace Leantime\Domain\Tickets\Events;
 
 enum HtmxTicketEvents: string
 {
