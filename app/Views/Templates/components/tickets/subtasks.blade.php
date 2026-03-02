@@ -14,7 +14,7 @@
             <form method="post" class="form-group"
                   hx-post="{{ BASE_URL }}/tickets/subtasks/save?ticketId={{ $ticket->id }}"
                 hx-indicator=".htmx-indicator-small"
-                hx-swap="none">
+                hx-target="#ticketSubtasks">
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
                 <x-globals::forms.input name="headline" title="{{ __("label.headline") }}" class="tw:w-full" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
@@ -63,7 +63,7 @@
             <div class="tw:px-4 tw:py-0">
                     @if($login::userIsAtLeast($roles::$editor))
                         <x-globals::actions.dropdown-menu>
-                                <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-swap="none" class="delete"><x-global::elements.icon name="delete" /> {{ __("links.delete_todo") }}</a></li>
+                                <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete"><x-global::elements.icon name="delete" /> {{ __("links.delete_todo") }}</a></li>
                         </x-globals::actions.dropdown-menu>
                    @endif
 

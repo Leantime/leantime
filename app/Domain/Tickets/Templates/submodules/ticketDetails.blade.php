@@ -43,7 +43,6 @@
                 id="ticketSubtasks"
                 hx-get="{{ BASE_URL }}/tickets/subtasks/get?ticketId={{ $ticket->id }}"
                 hx-trigger="load, subtasksUpdated from:body"
-                hx-select="unset"
                 hx-indicator=".subtaskIndicator"
                 aria-live="polite"
             ></div>
@@ -53,13 +52,10 @@
 
             <h4 class="widgettitle title-light"><x-global::elements.icon name="forum" />{{ __('subtitles.discussion') }}</h4>
 
-            <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" class="formModal">
-                <input type="hidden" name="comment" value="1" />
-                @php
-                    $tpl->assign('formUrl', '' . BASE_URL . '/tickets/showTicket/' . $ticket->id . '');
-                    $tpl->displaySubmodule('comments-generalComment');
-                @endphp
-            </form>
+            @php
+                $tpl->assign('formUrl', '' . BASE_URL . '/tickets/showTicket/' . $ticket->id . '');
+                $tpl->displaySubmodule('comments-generalComment');
+            @endphp
         @endif
     </div>
     <div class="col-md-4">
