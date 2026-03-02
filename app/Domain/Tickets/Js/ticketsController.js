@@ -255,6 +255,18 @@ leantime.ticketsController = (function () {
         jQuery(".filterBar").toggleClass("hideOnLoad");
     };
 
+    // Close the filter panel when clicking outside of it or the toggle button
+    document.addEventListener("click", function (e) {
+        var filterBar = document.querySelector(".filterBar");
+        if (!filterBar || filterBar.classList.contains("hideOnLoad")) return;
+        // Don't close if click is inside the filter bar itself
+        if (filterBar.contains(e.target)) return;
+        // Don't close if click is on the filter toggle button
+        var toggleBtn = e.target.closest("[onclick*='toggleFilterBar']");
+        if (toggleBtn) return;
+        filterBar.classList.add("hideOnLoad");
+    });
+
     var initGanttChart = function (tasks, viewMode, readonly) {
 
         function htmlEntities(str)

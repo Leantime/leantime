@@ -2577,6 +2577,7 @@ h3.todaysDate {
 #ticketContent {
     margin-left: 0px;
     padding: 16px;
+    height: 100%;
     background: var(--secondary-background);
     border-radius: var(--box-radius);
 }
