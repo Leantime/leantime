@@ -6,6 +6,12 @@ window.htmx = htmx;
 // only supports one transition at a time; overlapping transitions silently
 // discard DOM mutations from earlier swaps.
 window.htmx.config.globalViewTransitions = false;
+// HTMX 2.x defaults allowScriptTags to false for security. Re-enable it
+// because the codebase relies on inline <script> tags in templates that
+// must execute after HTMX content swaps (e.g. SlimSelect init, DataTables,
+// ticket controllers). Without this, tab switches via hx-boost leave
+// scripts in the swapped content unexecuted.
+window.htmx.config.allowScriptTags = true;
 // HTMX 2.x defaults selfRequestsOnly to true (blocks cross-origin).
 // Keep this default for security.
 
@@ -92,3 +98,52 @@ document.addEventListener('htmx:beforeSwap', function (evt) {
     // Let HTMX process the new content for hx-* attributes
     htmx.process(target);
 });
+
+// ---------------------------------------------------------------------------
+// Auto-initialize SlimSelect on filter dropdowns.
+//
+// SlimSelect initialization is centralized here instead of in inline
+// <script> tags to avoid race conditions during HTMX content swaps.
+// A MutationObserver detects new <select> elements in .filterBar and
+// initializes them after the DOM has settled (via requestAnimationFrame).
+// SlimSelect adds .ss-hide to initialized selects — used as guard.
+// ---------------------------------------------------------------------------
+function initFilterSlimSelects() {
+    if (typeof SlimSelect === 'undefined') return;
+    document.querySelectorAll('.filterBar select:not(.ss-hide)').forEach(function (el) {
+        // Skip elements not attached to the live document
+        if (!el.isConnected) return;
+        // Skip if SlimSelect already created its container as a sibling
+        if (el.nextElementSibling && el.nextElementSibling.classList.contains('ss-main')) return;
+        try {
+            var placeholder = el.querySelector('option[data-placeholder]');
+            new SlimSelect({
+                select: el,
+                settings: {
+                    placeholderText: placeholder ? placeholder.textContent.trim() : 'All',
+                },
+            });
+        } catch (e) { /* element may be detached or hidden — safe to skip */ }
+    });
+}
+
+// Run on initial page load. Retry until SlimSelect module is available.
+(function waitForSlimSelect() {
+    if (typeof SlimSelect === 'undefined') {
+        setTimeout(waitForSlimSelect, 50);
+        return;
+    }
+    // Wait one animation frame so the browser has done layout
+    requestAnimationFrame(function () { initFilterSlimSelects(); });
+})();
+
+// Watch for future DOM changes (HTMX swaps, any content injection).
+// Debounced 200ms + requestAnimationFrame to ensure the swap is fully
+// complete and the browser has done layout before SlimSelect measures.
+var _ssInitTimer = null;
+new MutationObserver(function () {
+    if (_ssInitTimer) clearTimeout(_ssInitTimer);
+    _ssInitTimer = setTimeout(function () {
+        requestAnimationFrame(function () { initFilterSlimSelects(); });
+    }, 200);
+}).observe(document.documentElement, { childList: true, subtree: true });

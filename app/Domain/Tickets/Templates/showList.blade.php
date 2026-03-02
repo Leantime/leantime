@@ -20,23 +20,16 @@
 
     <div class="maincontentinner">
 
-        <div class="row">
-            <div class="col-md-4">
+        <div class="ticket-toolbar tw:flex tw:items-center tw:justify-between tw:flex-wrap tw:gap-2 tw:mb-5">
+            <div>
                 @dispatchEvent('filters.afterLefthandSectionOpen')
-                @php
-                    $tpl->displaySubmodule('tickets-ticketNewBtn');
-                    $tpl->displaySubmodule('tickets-ticketFilter');
-                @endphp
+                @php $tpl->displaySubmodule('tickets-ticketNewBtn'); @endphp
+            </div>
+            <div class="tw:flex tw:items-center tw:gap-2">
+                @php $tpl->displaySubmodule('tickets-ticketFilter'); @endphp
                 @dispatchEvent('filters.beforeLefthandSectionClose')
             </div>
-
-            <div class="col-md-4 center">
-            </div>
-            <div class="col-md-4">
-            </div>
         </div>
-
-        <div class="clearfix"></div>
 
         @dispatchEvent('allTicketsTable.before', ['tickets' => $allTickets])
 
@@ -54,8 +47,9 @@
                         @if($group['label'] != 'all')
                             <h5 class="accordionTitle {{ $group['class'] }}" @if(!empty($group['color'])) style="color:{{ htmlspecialchars($group['color']) }}" @endif id="accordion_link_{{ $group['id'] }}">
                                 <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}" onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                                    <x-global::elements.icon name="expand_more" />{{ $group['label'] }} ({{ count($group['items']) }})
+                                    <x-global::elements.icon name="expand_more" />{{ $group['label'] }}
                                 </a>
+                                <x-globals::elements.badge color="primary">{{ count($group['items']) }}</x-globals::elements.badge>
                             </h5>
                             <div class="simpleAccordionContainer" id="accordion_content-{{ $group['id'] }}">
                         @endif

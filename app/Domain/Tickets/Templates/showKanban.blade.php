@@ -32,23 +32,16 @@ jQuery(document).ready(function(){
 
     <div class="maincontentinner kanban-board-wrapper">
 
-        <div class="row">
-            <div class="col-md-4">
+        <div class="ticket-toolbar tw:flex tw:items-center tw:justify-between tw:flex-wrap tw:gap-2 tw:mb-10">
+            <div>
                 @dispatchEvent('filters.afterLefthandSectionOpen')
-                @php
-                    $tpl->displaySubmodule('tickets-ticketNewBtn');
-                    $tpl->displaySubmodule('tickets-ticketFilter');
-                @endphp
+                @php $tpl->displaySubmodule('tickets-ticketNewBtn'); @endphp
+            </div>
+            <div class="tw:flex tw:items-center tw:gap-2">
+                @php $tpl->displaySubmodule('tickets-ticketFilter'); @endphp
                 @dispatchEvent('filters.beforeLefthandSectionClose')
             </div>
-
-            <div class="center">
-            </div>
-            <div>
-            </div>
         </div>
-
-        <div class="clearfix"></div>
 
         @php
             if (isset($allTicketGroups['all'])) {
@@ -65,6 +58,7 @@ jQuery(document).ready(function(){
             top: 110px;
             justify-content: flex-start;
             z-index: 9;
+            padding-top: 16px;
             ">
         @foreach($tpl->get('allKanbanColumns') as $key => $statusRow)
             <div class="column">

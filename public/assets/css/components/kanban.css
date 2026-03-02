@@ -41,6 +41,8 @@
     padding: 0 6px;
     flex: 1 1 0;  /* Equal width columns regardless of content */
     min-width:150px;
+    display: flex;
+    flex-direction: column;
 }
 
 .column:first-child {
@@ -55,6 +57,7 @@
     border: none;
     padding: 10px 8px;
     min-height: 52px; /* Match collapsed row height */
+    flex: 1 1 auto;
     border-radius: var(--box-radius);
     /*overflow-y:scroll; Danger: when enabled the dropdowns will be hidden in the overflow. */
 }
@@ -537,7 +540,10 @@ body .maincontent .priority-text-5 a:link {
     border-bottom-width:3px;
     border-top-left-radius: var(--box-radius);
     border-top-right-radius: var(--box-radius);
-    box-shadow: var(--regular-shadow)
+    box-shadow: var(--regular-shadow);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .widgettitle span {

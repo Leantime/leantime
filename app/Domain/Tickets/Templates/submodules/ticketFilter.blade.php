@@ -19,7 +19,7 @@
     <input type="hidden" value="{{ session('currentProject') }}" name="projectId" id="projectIdInput"/>
 
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
-        <x-globals::forms.button tag="button" type="link" onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;" data-tippy-content="{{ __('popover.filter') }}">
+        <x-globals::forms.button tag="button" type="link" onclick="event.preventDefault(); leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;" data-tippy-content="{{ __('popover.filter') }}">
             <x-global::elements.icon name="filter_list" /> Filter
             @if($tpl->get('numOfFilters') > 0)
                 <x-globals::elements.badge color="primary">{{ $tpl->get('numOfFilters') }}</x-globals::elements.badge>
@@ -48,7 +48,7 @@
             </x-globals::actions.dropdown-menu>
         @endif
 
-        <div class="filterBar hideOnLoad" style="width:250px;">
+        <div class="filterBar hideOnLoad">
             <div class="row-fluid">
 
                 @dispatchEvent('filters.beforeFirstBarField')
@@ -113,13 +113,13 @@
 
                 <x-globals::forms.form-field label-text="{{ __('label.search_term') }}" name="termInput">
                     <x-globals::forms.input :bare="true" type="text" name="termInput" id="termInput"
-                           style="width: 230px"
+                           style="width:100%;"
                            value="{{ $searchCriteria['term'] }}"
                            placeholder="{{ __('label.search_term') }}" />
                 </x-globals::forms.form-field>
 
-                <div class="" style="margin-top:15px;">
-                    <x-globals::forms.button submit type="primary" name="search" class="form-control">{{ __('buttons.search') }}</x-globals::forms.button>
+                <div style="margin-top:8px;">
+                    <x-globals::forms.button submit type="primary" name="search" class="form-control">{{ __('buttons.apply') }}</x-globals::forms.button>
                 </div>
 
             </div>
@@ -144,39 +144,6 @@
 
 <script>
     jQuery(document).ready(function() {
-
-        new SlimSelect({
-            select: '#userSelect',
-            settings: {
-                placeholderText: 'All Users',
-            },
-        });
-        new SlimSelect({
-            select: '#milestoneSelect',
-            settings: {
-                placeholderText: 'All Milestones',
-            },
-        });
-        new SlimSelect({
-            select: '#prioritySelect',
-            settings: {
-                placeholderText: 'All Priorities',
-            },
-        });
-        new SlimSelect({
-            select: '#typeSelect',
-            settings: {
-                placeholderText: 'All Types',
-            },
-        });
-        new SlimSelect({
-            select: '#statusSelect',
-            settings: {
-                placeholderText: 'All Statuses',
-            },
-        });
-
         leantime.ticketsController.initTicketSearchSubmit('{{ $currentUrlPath }}');
-
-    })
+    });
 </script>

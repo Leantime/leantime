@@ -200,27 +200,54 @@ div.tagsinput span.tag
 }
 
 .filterBar {
-    border:0px solid var(--main-border-color);
-    padding:16px 20px;
-    margin-bottom:4px;
+    border: 1px solid var(--main-border-color);
+    padding: 20px;
+    margin-bottom: 4px;
     margin-top: 10px;
-    background:var(--secondary-background);
-    border-radius:var(--box-radius);
+    background: var(--secondary-background);
+    border-radius: var(--box-radius);
     z-index: var(--zlayer-4);
     position: absolute;
-    left: 0px;
+    right: 0;
     box-shadow: var(--large-shadow);
-    display:flex;
-    align-items:flex-end;
-    gap:16px;
-    flex-wrap:wrap;
+    width: 320px;
+}
+
+.filterBar .row-fluid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .filterBar label {
-    font-weight:var(--font-weight-body);
-    display:block;
-    margin-bottom:4px;
-    font-size:var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+    display: block;
+    margin-bottom: 2px;
+    font-size: var(--font-size-s);
+    color: var(--secondary-font-color);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.filterBar select {
+    display: none;
+}
+
+.filterBar .ss-main {
+    width: 100% !important;
+}
+
+.filterBar .ss-main .ss-multi-selected {
+    width: 100%;
+}
+
+.filterBar .ss-main .ss-multi-selected .ss-values {
+    height: auto;
+    flex-wrap: wrap;
+}
+
+.filterBar .ss-main .ss-multi-selected .ss-add {
+    display: none;
 }
 
 .headtitle {

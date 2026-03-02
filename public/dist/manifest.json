@@ -956,17 +956,17 @@
     "src": "public/assets/images/svg/loading-animation.svg"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DaBPDyt7.css",
+    "file": "assets/app-DYddLQKQ.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/editor.css": {
-    "file": "assets/editor-Un-a5tzX.css",
+    "file": "assets/editor-BCZN-O50.css",
     "src": "resources/css/editor.css",
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-du9JXU4t.css",
+    "file": "assets/main-Cowb01ko.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
@@ -1094,7 +1094,7 @@
     ]
   },
   "resources/js/compiled-htmx.js": {
-    "file": "assets/compiled-htmx-fXAN-Q5x.js",
+    "file": "assets/compiled-htmx-BMyKvM4E.js",
     "name": "compiled-htmx",
     "src": "resources/js/compiled-htmx.js",
     "isEntry": true,

@@ -65,6 +65,7 @@
 .dataTables_wrapper {
     position: relative;
     padding-bottom: 20px;
+    overflow-x: auto;
 }
 
 .simpleAccordionContainer .dataTables_wrapper{
@@ -271,7 +272,7 @@
 
 .maincontentinner .table td,
 .maincontentinner table td{
-    padding:10px 10px;
+    padding:12px 12px;
     vertical-align: middle;
     min-height:17px;
     border-right:1px solid var(--neutral);
@@ -352,14 +353,14 @@
     position:absolute;
     z-index: var(--zlayer-3);
     float: left;
-    padding: 4px 0;
+    padding: 8px 0;
     margin: 2px 0 0;
     list-style: none;
     background-color: var(--secondary-background);
     margin-top: 10px;
-    border-radius: var(--box-radius-small);
-    border: 0px;
-    box-shadow: var(--large-shadow);
+    border-radius: var(--box-radius);
+    border: 1px solid var(--main-border-color);
+    box-shadow: var(--regular-shadow);
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button {
@@ -367,14 +368,17 @@
     width:100%;
     margin:0px;
     background:var(--secondary-background);
-    color: var(--main-menu-link-color);
-    padding: 4px 10px;
+    color: var(--primary-font-color);
+    padding: 6px 12px;
     border:0px;
     text-align:left;
+    font-size: var(--base-font-size);
+    font-weight: var(--font-weight-body);
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button:before {
     font-family: "Font Awesome 6 Free";
+    font-weight: 900;
     content: "\f204";
     margin-right:4px;
 }
@@ -385,6 +389,7 @@
 
 .maincontentinner .dt-buttons .dt-button-collection button.dt-button-active:before {
     font-family: "Font Awesome 6 Free";
+    font-weight: 900;
     content: "\f205";
     color:var(--accent1);
 }
@@ -524,7 +529,7 @@ table td{
 }
 
 .maincontentinner .table.listStyleTable td {
-    padding:4px 10px 4px 10px;
+    padding:8px 10px;
 }
 
 .maincontentinner .table.listStyleTable td.dropdown-cell {
@@ -540,6 +545,14 @@ table td{
     border:0px;
 }
 
+.maincontentinner .table.listStyleTable tbody tr {
+    border-bottom: 1px solid var(--main-border-color);
+}
+
+.maincontentinner .table.listStyleTable tbody tr:hover td {
+    background: var(--col-title-bg);
+}
+
 .maincontentinner .table.listStyleTable tr:hover {
     box-shadow: none;
     cursor:pointer;
@@ -551,6 +564,12 @@ table td{
 
 
 
+.maincontentinner .table.listStyleTable td.roundStatusBtn {
+    width: 40px;
+    max-width: 40px;
+    padding-right: 0;
+}
+
 .maincontentinner .table.listStyleTable td.roundStatusBtn .statusDropdown > a {
     border-radius: var(--element-radius);
     padding: 0px;
@@ -559,6 +578,12 @@ table td{
     display: inline-block;
     line-height: 30px;
     text-align: center;
+    overflow: hidden;
+    text-indent: -9999px;
+}
+
+.maincontentinner .table.listStyleTable td.roundStatusBtn .statusDropdown > a .material-symbols-outlined {
+    display: none;
 }
 
 .maincontentinner .dataTables_wrapper .center .dataTables_paginate {
@@ -589,6 +614,75 @@ table td{
 
 .ticketTable .ticketModal {
     font-weight:var(--font-weight-bold);
+}
+
+/* Truncate chip/pill text in ticket table columns */
+.ticketTable .ticketDropdown a.dropdown-toggle {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.ticketTable .ticketDropdown a.dropdown-toggle .text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline;
+}
+
+/* Title column: truncate with ellipsis, full title on hover via title attr */
+.ticketTable td.title-cell {
+    max-width: 200px;
+}
+
+.ticketTable td.title-cell .ticketModal {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* User column: avatar only, hide name text and dropdown arrow */
+.ticketTable td.user-cell {
+    width: 50px;
+    max-width: 50px;
+    text-align: center;
+}
+
+.ticketTable td.user-cell .user-name-label {
+    display: none;
+}
+
+.ticketTable td.user-cell .dropdown-toggle .material-symbols-outlined {
+    display: none;
+}
+
+.ticketTable td.user-cell .dropdown-toggle {
+    padding: 0;
+}
+
+.ticketTable td.user-cell img {
+    margin-right: 0 !important;
+}
+
+/* Due date column: compact width */
+.ticketTable td .quickDueDates {
+    width: 90px;
+    font-size: var(--font-size-s);
+}
+
+/* Tags column: constrain and truncate */
+.ticketTable td .tagsinput.readonly {
+    max-width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.ticketTable td .tagsinput.readonly .tag {
+    display: inline;
 }
 
 .dt-button-down-arrow {

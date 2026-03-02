@@ -23,28 +23,19 @@
 
     <div class="maincontentinner">
 
-        <div class="row">
-            <div class="col-md-4">
+        <div class="ticket-toolbar tw:flex tw:items-center tw:justify-between tw:flex-wrap tw:gap-2 tw:mb-5">
+            <div>
                 @dispatchEvent('filters.afterLefthandSectionOpen')
-                @php
-                    $tpl->displaySubmodule('tickets-ticketNewBtn');
-                    $tpl->displaySubmodule('tickets-ticketFilter');
-                @endphp
+                @php $tpl->displaySubmodule('tickets-ticketNewBtn'); @endphp
+            </div>
+            <div class="tw:flex tw:items-center tw:gap-2">
+                @php $tpl->displaySubmodule('tickets-ticketFilter'); @endphp
                 @dispatchEvent('filters.beforeLefthandSectionClose')
-            </div>
-
-            <div class="col-md-4 center">
-            </div>
-            <div class="col-md-4">
-                <div class="pull-right">
-                    @dispatchEvent('filters.afterRighthandSectionOpen')
-                    <div id="tableButtons" style="display:inline-block"></div>
-                    @dispatchEvent('filters.beforeRighthandSectionClose')
-                </div>
+                @dispatchEvent('filters.afterRighthandSectionOpen')
+                <div id="tableButtons" style="display:inline-block"></div>
+                @dispatchEvent('filters.beforeRighthandSectionClose')
             </div>
         </div>
-
-        <div class="clearfix" style="margin-bottom: 20px;"></div>
 
         @php
             if (isset($allTicketGroups['all'])) {
@@ -56,9 +47,9 @@
             @if($group['label'] != 'all')
                 <h5 class="accordionTitle {{ $group['class'] }}" @if(!empty($group['color'])) style="color:{{ htmlspecialchars($group['color']) }}" @endif id="accordion_link_{{ $group['id'] }}">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}" onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                        <x-global::elements.icon name="expand_more" />{{ $group['label'] }}({{ count($group['items']) }})
-                    </a><br />
-                    <small style="padding-left:20px; color:var(--primary-font-color); font-size:var(--font-size-s);">{{ $group['more-info'] }}</small>
+                        <x-global::elements.icon name="expand_more" />{{ $group['label'] }}
+                    </a>
+                    <x-globals::elements.badge color="primary">{{ count($group['items']) }}</x-globals::elements.badge>
                 </h5>
 
                 <div class="simpleAccordionContainer" id="accordion_content-{{ $group['id'] }}">
@@ -105,11 +96,11 @@
                                 #{{ e($row['id']) }}
                             </td>
 
-                            <td data-order="{{ e($row['headline']) }}">
+                            <td data-order="{{ e($row['headline']) }}" class="title-cell">
                                 @if($row['dependingTicketId'] > 0)
                                     <small><a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}">{{ e($row['parentHeadline']) }}</a></small> //<br />
                                 @endif
-                                <a class="ticketModal" href="#/tickets/showTicket/{{ e($row['id']) }}">{{ e($row['headline']) }}</a>
+                                <a class="ticketModal" href="#/tickets/showTicket/{{ e($row['id']) }}" title="{{ e($row['headline']) }}">{{ e($row['headline']) }}</a>
                             </td>
 
                             @php
@@ -187,17 +178,16 @@
                                 />
                             </td>
 
-                            <td data-order="{{ $row['editorFirstname'] != '' ? e($row['editorFirstname']) : __('dropdown.not_assigned') }}">
+                            <td data-order="{{ $row['editorFirstname'] != '' ? e($row['editorFirstname']) : __('dropdown.not_assigned') }}" class="user-cell">
                                 <div class="dropdown ticketDropdown userDropdown noBg show f-left">
-                                    <a class="dropdown-toggle" href="javascript:void(0);" role="button" id="userDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a class="dropdown-toggle" href="javascript:void(0);" role="button" id="userDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ $row['editorFirstname'] != '' ? e($row['editorFirstname']) : __('dropdown.not_assigned') }}">
                                         <span class="text">
                                             @if($row['editorFirstname'] != '')
-                                                <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['editorId'] }}" width="25" style="vertical-align: middle; margin-right:5px;"/></span><span id="user{{ $row['id'] }}">{{ e($row['editorFirstname']) }}</span>
+                                                <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['editorId'] }}" width="25" style="vertical-align: middle;"/></span><span id="user{{ $row['id'] }}" class="user-name-label">{{ e($row['editorFirstname']) }}</span>
                                             @else
-                                                <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle; margin-right:5px;"/></span><span id="user{{ $row['id'] }}">{{ __('dropdown.not_assigned') }}</span>
+                                                <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle;"/></span><span id="user{{ $row['id'] }}" class="user-name-label">{{ __('dropdown.not_assigned') }}</span>
                                             @endif
                                         </span>
-                                        &nbsp;<x-global::elements.icon name="arrow_drop_down" />
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                         <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>

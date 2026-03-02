@@ -365,7 +365,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontent .accordionTitle {
     font-size: var(--font-size-l);
     color: var(--primary-font-color);
-    margin-bottom: 10px;
+    margin-bottom: 4px;
+    margin-top: 16px;
     font-weight:var(--font-weight-bold);
     margin-left:0px;
     border-radius: var(--accordion-header-radius);
@@ -501,18 +502,20 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .dropdown-menu span.radio input[type="radio"] {
-    float:left;
-    vertical-align: middle;
-    margin-top: 8px;
-    margin-right:4px;
+    flex-shrink: 0;
+    margin: 0;
 }
 
 .dropdown-menu span.radio {
-    display:block;
-    font-size: var(--font-size-s);
-    color: var(--main-menu-link-color);
-    margin: 0px;
-    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--base-font-size);
+    color: var(--primary-font-color);
+    margin: 0;
+    padding: 6px 12px;
+    min-height: 36px;
+    cursor: pointer;
 }
 
 .dropdown-menu span.radio:hover {
@@ -521,8 +524,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .dropdown-menu span.radio label {
-    display:inline-block;
-    width:100%;
+    display: inline;
+    cursor: pointer;
 }
 
 /* Radio component inside dropdown menus */

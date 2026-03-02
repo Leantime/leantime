@@ -522,3 +522,25 @@ body {
 .announcementBanner:before {
 
 }
+
+/* ============================================
+   TICKET TOOLBAR - Align +New with Filter/GroupBy
+   ============================================ */
+
+.ticket-toolbar .filterWrapper {
+    margin-bottom: 0 !important;
+    vertical-align: middle !important;
+}
+
+.ticket-toolbar form#ticketSearch {
+    display: inline-flex;
+    align-items: center;
+}
+
+.ticket-toolbar .clearall {
+    display: none;
+}
+
+.ticket-toolbar .pull-left {
+    float: none !important;
+}
