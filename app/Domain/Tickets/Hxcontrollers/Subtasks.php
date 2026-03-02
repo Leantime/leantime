@@ -43,6 +43,8 @@ class Subtasks extends HtmxController
         $this->tpl->assign('ticketSubtasks', $ticketSubtasks);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('efforts', $efforts);
+
+        $this->setHTMXEvent('subtasksUpdated');
     }
 
     public function get(): void
@@ -89,5 +91,7 @@ class Subtasks extends HtmxController
         $this->tpl->assign('ticketSubtasks', $ticketSubtasks);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('efforts', $efforts);
+
+        $this->setHTMXEvent('subtasksUpdated');
     }
 }
