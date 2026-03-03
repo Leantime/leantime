@@ -131,8 +131,32 @@
 }
 
 /* ── Ticket details tab layout ────────────────────────────────
-   Standard Bootstrap float layout with clearfix to prevent the
-   comment section from being pushed below the sidebar gap. */
+   CSS Grid dissolves the ticket <form> and .row-fluid so .col-md-8
+   (main) and .col-md-4 (sidebar) become direct grid items.
+   The Discussion heading + comment form land in column 1 beneath
+   the main content — never pushed down by sidebar height.
+   ──────────────────────────────────────────────────────────── */
+#ticketdetails {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 0 20px;
+}
+/* Make ticket form + .row-fluid transparent to the grid */
+#ticketdetails > form:first-of-type,
+#ticketdetails > form:first-of-type > .row-fluid {
+    display: contents;
+}
+/* Sidebar spans all rows in column 2 */
+#ticketdetails .col-md-4 {
+    grid-column: 2;
+    grid-row: 1 / span 50;
+}
+/* Everything else (main content, Discussion, comments) → column 1 */
+#ticketdetails .col-md-8,
+#ticketdetails > h4,
+#ticketdetails > form:not(:first-of-type) {
+    grid-column: 1;
+}
 
 .modal-content-footer {
     display: flex;

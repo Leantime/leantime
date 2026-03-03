@@ -19,6 +19,7 @@ leantime.modals = (function () {
     // ── State ──────────────────────────────────────────────────────────
     var isOpen = false;
     var closingProgrammatically = false;
+    var _formSubmitted = false;  // tracks whether a form was POSTed in this modal session
 
     // ── DOM Helpers ────────────────────────────────────────────────────
     function getDialog()  { return document.getElementById('global-modal'); }
@@ -176,6 +177,7 @@ leantime.modals = (function () {
         var dialog = getDialog();
         var box    = getBox();
         if (!dialog) { return; }
+        _formSubmitted = false;  // reset for new modal session
 
         // Resize — use inline styles instead of Tailwind utilities to
         // avoid CSS @layer conflicts (unlayered reset beats layered DaisyUI).
@@ -246,18 +248,20 @@ leantime.modals = (function () {
             closingProgrammatically = false;
         }
 
-        // Callback or HTMX content refresh
+        // Refresh the page behind the modal when data may have changed.
         if (typeof window.globalModalCallback === 'function') {
             var cb = window.globalModalCallback;
             window.globalModalCallback = null;
+            _formSubmitted = false;
             cb();
-        } else {
-            htmx.ajax('GET', window.location.pathname + window.location.search, {
-                target: '.primaryContent',
-                select: '.primaryContent',
-                swap: 'outerHTML'
-            });
+        } else if (_formSubmitted) {
+            // A form was submitted during this modal session — reload so the
+            // page behind reflects the updated state.
+            _formSubmitted = false;
+            window.location.reload();
         }
+        // Otherwise: view-only close — page content is still intact behind
+        // the modal, no refresh needed.
     }
 
     // ── Public API ─────────────────────────────────────────────────────
@@ -328,14 +332,6 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             e.stopPropagation();
 
-            window.globalModalCallback = function () {
-                htmx.ajax('GET', window.location.pathname + window.location.search, {
-                    target: '.primaryContent',
-                    select: '.primaryContent',
-                    swap: 'outerHTML'
-                });
-            };
-
             var path = href.substring(1);
             try {
                 history.pushState('', document.title,
@@ -348,13 +344,6 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             e.stopPropagation();
 
-            window.globalModalCallback = function () {
-                htmx.ajax('GET', window.location.pathname + window.location.search, {
-                    target: '.primaryContent',
-                    select: '.primaryContent',
-                    swap: 'outerHTML'
-                });
-            };
             leantime.modals.openByUrl(href);
         }
     }, true); // Use capture phase to run before HTMX or other handlers
@@ -412,17 +401,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Sync rich-text editors (TipTap/ProseMirror) to their textareas
         // before building FormData so typed content isn't lost.
+        var _tiptapSyncCount = 0;
         form.querySelectorAll('.tiptap-wrapper').forEach(function (wrapper) {
             var textarea = wrapper.querySelector('textarea');
             var pm = wrapper.querySelector('.ProseMirror');
             if (textarea && pm) {
                 textarea.value = pm.innerHTML;
+                _tiptapSyncCount++;
             }
         });
+
+        _formSubmitted = true;  // track that data may have changed
 
         var method  = (form.getAttribute('method') || 'GET').toUpperCase();
         var action  = form.getAttribute('action') || window.location.href;
         var content = document.getElementById('global-modal-content');
+
+        console.log('[modalManager] form submit', {
+            formId: form.id, action: action, method: method,
+            tiptapSynced: _tiptapSyncCount,
+            submitter: event.submitter ? event.submitter.name + '=' + event.submitter.value : 'none',
+        });
 
         var opts = {
             method: method,
@@ -435,10 +434,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (method === 'POST') {
             var fd = new FormData(form);
-            // Include the clicked submit button's name/value (FormData omits it)
+            // Include the clicked submit button's name/value (FormData omits it).
+            // Only override an existing field (e.g. a hidden input with the same
+            // name) when the button carries a meaningful value — otherwise keep
+            // the hidden input's value intact.
             if (event.submitter && event.submitter.name) {
-                fd.set(event.submitter.name, event.submitter.value || '');
+                if (!fd.has(event.submitter.name)) {
+                    fd.set(event.submitter.name, event.submitter.value || '');
+                } else if (event.submitter.value) {
+                    fd.set(event.submitter.name, event.submitter.value);
+                }
             }
+            // Debug: log form data entries
+            var _fdEntries = {};
+            fd.forEach(function(v, k) { _fdEntries[k] = typeof v === 'string' ? v.substring(0, 120) : '[File]'; });
+            console.log('[modalManager] FormData', _fdEntries);
+
             opts.body = fd;
         } else {
             var qs = new URLSearchParams(new FormData(form));
@@ -446,11 +457,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         fetch(action, opts).then(function (response) {
+            console.log('[modalManager] response', {
+                status: response.status, redirected: response.redirected,
+                url: response.url, hxTrigger: response.headers.get('HX-Trigger'),
+            });
             var hxTrigger = response.headers.get('HX-Trigger');
             if (hxTrigger && hxTrigger.indexOf('HTMX.closemodal') !== -1) {
                 if (hxTrigger.indexOf('HTMX.ShowNotification') !== -1) {
                     window.dispatchEvent(new CustomEvent('HTMX.ShowNotification'));
                 }
+                // _formSubmitted is already true — doClose() will reload.
                 leantime.modals.closeModal();
                 return null;
             }
