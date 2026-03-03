@@ -14,7 +14,7 @@ $efforts = $tpl->get('efforts');
 
 <ul class="sortableTicketList" style="margin-bottom:120px;">
     <li class="">
-        <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $tpl->__('links.quick_add_todo'); ?></a>
+        <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').removeClass('hideOnLoad').slideDown('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).hide();"><i class="fas fa-plus-circle"></i> <?php echo $tpl->__('links.quick_add_todo'); ?></a>
         <div class="ticketBox hideOnLoad" id="subticket_new" >
 
             <form method="post" class="form-group formModal" action="<?= BASE_URL.'/tickets/showTicket/'.$ticket->id.'#substasks'; ?>">
@@ -25,7 +25,7 @@ $efforts = $tpl->get('efforts');
                 <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />
                 <input type="hidden" name="status" value="3" />
                 <input type="hidden" name="sprint" value="<?php echo session('currentSprint'); ?>" />
-                <a href="javascript:void(0);" onclick="jQuery('#subticket_new').toggle('fast'); jQuery('#subticket_new_link').toggle('fast');">
+                <a href="javascript:void(0);" onclick="jQuery('#subticket_new').slideUp('fast'); jQuery('#subticket_new_link').show();">
                     <?php echo $tpl->__('links.cancel'); ?>
                 </a>
             </form>
