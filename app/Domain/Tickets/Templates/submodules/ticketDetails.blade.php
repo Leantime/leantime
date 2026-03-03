@@ -43,6 +43,9 @@
                 id="ticketSubtasks"
                 hx-get="{{ BASE_URL }}/tickets/subtasks/get?ticketId={{ $ticket->id }}"
                 hx-trigger="intersect once, subtasksUpdated from:body"
+                hx-target="this"
+                hx-select="unset"
+                hx-swap="innerHTML"
                 hx-indicator=".subtaskIndicator"
                 aria-live="polite"
             ></div>
