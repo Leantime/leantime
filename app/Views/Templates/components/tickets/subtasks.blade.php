@@ -6,7 +6,7 @@
     'statusLabels' => [],
 ])
 
-<ul class="sortableTicketList tw:mb-[120px]">
+<ul class="sortableTicketList">
     <li class="">
         <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><x-global::elements.icon name="add_circle" /> {{ __("links.add_task") }}</a>
         <div class="ticketBox hideOnLoad" id="subticket_new" >
@@ -14,7 +14,7 @@
             <form method="post" class="form-group"
                   hx-post="{{ BASE_URL }}/tickets/subtasks/save?ticketId={{ $ticket->id }}"
                 hx-indicator=".htmx-indicator-small"
-                hx-swap="none"
+                hx-swap="none">
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
                 <x-globals::forms.input name="headline" title="{{ __("label.headline") }}" class="tw:w-full" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />

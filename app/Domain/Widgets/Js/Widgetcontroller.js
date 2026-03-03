@@ -39,6 +39,11 @@ leantime.widgetController = (function () {
 
 
     var initGrid = function () {
+        // Destroy previous GridStack instance if it exists (e.g., after HTMX content swap)
+        if (grid && typeof grid.destroy === 'function') {
+            try { grid.destroy(false); } catch (e) { /* old DOM gone, safe to ignore */ }
+        }
+
         grid = GridStack.init({
             margin: '8px 15px 15px 0px',
             handle: ".grid-handler-top",

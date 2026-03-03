@@ -401,6 +401,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
         event.preventDefault();
 
+        // Sync rich-text editors (TipTap/ProseMirror) to their textareas
+        // before building FormData so typed content isn't lost.
+        form.querySelectorAll('.tiptap-wrapper').forEach(function (wrapper) {
+            var textarea = wrapper.querySelector('textarea');
+            var pm = wrapper.querySelector('.ProseMirror');
+            if (textarea && pm) {
+                textarea.value = pm.innerHTML;
+            }
+        });
+
         var method  = (form.getAttribute('method') || 'GET').toUpperCase();
         var action  = form.getAttribute('action') || window.location.href;
         var content = document.getElementById('global-modal-content');
@@ -415,7 +425,12 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         if (method === 'POST') {
-            opts.body = new FormData(form);
+            var fd = new FormData(form);
+            // Include the clicked submit button's name/value (FormData omits it)
+            if (event.submitter && event.submitter.name) {
+                fd.set(event.submitter.name, event.submitter.value || '');
+            }
+            opts.body = fd;
         } else {
             var qs = new URLSearchParams(new FormData(form));
             action += (action.indexOf('?') === -1 ? '?' : '&') + qs.toString();

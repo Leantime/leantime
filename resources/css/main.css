@@ -126,6 +126,9 @@
     margin: 0;
     line-height: 1.3;
 }
+#global-modal .modal-content-title {
+    color: var(--primary-font-color);
+}
 .modal-content-footer {
     display: flex;
     justify-content: space-between;
