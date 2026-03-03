@@ -6,6 +6,8 @@
 <li id="timerContainer-{{ $parentTicketId }}"
     hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $parentTicketId }}"
     hx-trigger="timerUpdate from:body"
+    hx-target="this"
+    hx-select="unset"
     hx-swap="outerHTML"
     aria-live="assertive"
     class="timerContainer">
