@@ -92,6 +92,14 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
             <form class="formModal" action="<?= BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
                 <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
             </form>
+
+            <?php if ($ticket->id) { ?>
+                <h4 class="widgettitle title-light"><x-global::elements.icon name="forum" /> <?= $tpl->__('subtitles.discussion') ?></h4>
+                <?php
+                    $tpl->assign('formUrl', BASE_URL . '/tickets/showTicket/' . $ticket->id);
+                    $tpl->displaySubmodule('comments-generalComment');
+                ?>
+            <?php } ?>
         </div>
 
         <div id="files">

@@ -40,14 +40,18 @@
         @endif
 
         if (leantime.{{ $canvasName }}CanvasController) { leantime.{{ $canvasName }}CanvasController.setRowHeights(); }
-        leantime.canvasController.setCanvasName('{{ $canvasName }}');
-        leantime.canvasController.initFilterBar();
+        if (leantime.canvasController) {
+            leantime.canvasController.setCanvasName('{{ $canvasName }}');
+            leantime.canvasController.initFilterBar();
+        }
 
         @if ($login::userIsAtLeast($roles::$editor))
-            leantime.canvasController.initCanvasLinks();
-            leantime.canvasController.initUserDropdown();
-            leantime.canvasController.initStatusDropdown();
-            leantime.canvasController.initRelatesDropdown();
+            if (leantime.canvasController) {
+                leantime.canvasController.initCanvasLinks();
+                leantime.canvasController.initUserDropdown();
+                leantime.canvasController.initStatusDropdown();
+                leantime.canvasController.initRelatesDropdown();
+            }
         @else
             leantime.authController.makeInputReadonly(".maincontentinner");
         @endif

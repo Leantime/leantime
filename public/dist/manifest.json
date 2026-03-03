@@ -961,12 +961,12 @@
     "isEntry": true
   },
   "resources/css/editor.css": {
-    "file": "assets/editor-DiSJ7ifO.css",
+    "file": "assets/editor-B6y5FmwN.css",
     "src": "resources/css/editor.css",
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-V5FWQJLH.css",
+    "file": "assets/main-BrbwMpHp.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
@@ -1094,7 +1094,7 @@
     ]
   },
   "resources/js/compiled-htmx.js": {
-    "file": "assets/compiled-htmx-BMyKvM4E.js",
+    "file": "assets/compiled-htmx-Cjnpkalb.js",
     "name": "compiled-htmx",
     "src": "resources/js/compiled-htmx.js",
     "isEntry": true,

@@ -55,7 +55,7 @@
 
                 <x-globals::forms.form-field label-text="{{ __('label.user') }}" name="userSelect">
                     <x-globals::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.filter_by_user') }}" title="{{ __('input.placeholders.filter_by_user') }}" name="users" multiple="multiple" class="user-select" id="userSelect">
-                        <option value="" data-placeholder="true">All Users</option>
+                        <option value="" data-placeholder="true">{{ __('label.all_users') }}</option>
                         @foreach($tpl->get('users') as $userRow)
                             <option value="{{ $userRow['id'] }}"
                                 {{ ($searchCriteria['users'] !== false && $searchCriteria['users'] !== null && in_array($userRow['id'], $toArray($searchCriteria['users']))) ? "selected='selected'" : '' }}
@@ -101,7 +101,7 @@
 
                 <x-globals::forms.form-field label-text="{{ __('label.todo_status') }}" name="statusSelect">
                     <x-globals::forms.select :bare="true" multiple="multiple" data-placeholder="{{ __('input.placeholders.filter_by_status') }}" name="status" class="status-select" id="statusSelect">
-                        <option value="" data-placeholder="true">All Statuses</option>
+                        <option value="" data-placeholder="true">{{ __('label.all_statuses') }}</option>
                         <option value="not_done" {{ ($searchCriteria['status'] !== false && in_array('not_done', $toArray($searchCriteria['status']))) ? "selected='selected'" : '' }}>{{ __('label.not_done') }}</option>
                         @foreach($statusLabels as $key => $label)
                             <option value="{{ $key }}"

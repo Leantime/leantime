@@ -39,10 +39,13 @@ class Subtasks extends HtmxController
         $statusLabels = $this->ticketService->getStatusLabels(session('currentProject'));
         $efforts = $this->ticketService->getEffortLabels();
 
+        $priorities = $this->ticketService->getPriorityLabels();
+
         $this->tpl->assign('ticket', $ticket);
         $this->tpl->assign('ticketSubtasks', $ticketSubtasks);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('efforts', $efforts);
+        $this->tpl->assign('priorities', $priorities);
 
         $this->setHTMXEvent('subtasksUpdated');
     }
@@ -61,11 +64,13 @@ class Subtasks extends HtmxController
         $ticketSubtasks = $this->ticketService->getAllSubtasks((int) $id);
         $statusLabels = $this->ticketService->getStatusLabels(session('currentProject'));
         $efforts = $this->ticketService->getEffortLabels();
+        $priorities = $this->ticketService->getPriorityLabels();
 
         $this->tpl->assign('ticket', $ticket);
         $this->tpl->assign('ticketSubtasks', $ticketSubtasks);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('efforts', $efforts);
+        $this->tpl->assign('priorities', $priorities);
 
     }
 
@@ -86,11 +91,13 @@ class Subtasks extends HtmxController
         $ticketSubtasks = $this->ticketService->getAllSubtasks($parentId);
         $statusLabels = $this->ticketService->getStatusLabels(session('currentProject'));
         $efforts = $this->ticketService->getEffortLabels();
+        $priorities = $this->ticketService->getPriorityLabels();
 
         $this->tpl->assign('ticket', $ticket);
         $this->tpl->assign('ticketSubtasks', $ticketSubtasks);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('efforts', $efforts);
+        $this->tpl->assign('priorities', $priorities);
 
         $this->setHTMXEvent('subtasksUpdated');
     }

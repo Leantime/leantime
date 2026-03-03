@@ -59,9 +59,9 @@
             </div>
 
             <div>
-                <x-globals::actions.dropdown-menu variant="button" :label="$tpl->__('buttons.idea_kanban')" content-role="default">
-                    <li><a href="{{ BASE_URL }}/ideas/showBoards">{!! $tpl->__('buttons.idea_wall') !!}</a></li>
-                    <li><a href="{{ BASE_URL }}/ideas/advancedBoards" class="active">{!! $tpl->__('buttons.idea_kanban') !!}</a></li>
+                <x-globals::actions.dropdown-menu variant="button" :label="__('label.idea_kanban')" content-role="default">
+                    <li><a href="{{ BASE_URL }}/ideas/showBoards"><x-global::elements.icon name="dashboard" /> {{ __('label.idea_wall') }}</a></li>
+                    <li><a href="{{ BASE_URL }}/ideas/advancedBoards" class="active"><x-global::elements.icon name="view_kanban" /> {{ __('label.idea_kanban') }}</a></li>
                 </x-globals::actions.dropdown-menu>
             </div>
         </div>

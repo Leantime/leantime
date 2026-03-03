@@ -42,7 +42,7 @@
             <div
                 id="ticketSubtasks"
                 hx-get="{{ BASE_URL }}/tickets/subtasks/get?ticketId={{ $ticket->id }}"
-                hx-trigger="load, subtasksUpdated from:body"
+                hx-trigger="intersect once, subtasksUpdated from:body"
                 hx-indicator=".subtaskIndicator"
                 aria-live="polite"
             ></div>
@@ -50,12 +50,6 @@
                 {{ __('label.loading') }} ...<br /><br />
             </div>
 
-            <h4 class="widgettitle title-light"><x-global::elements.icon name="forum" />{{ __('subtitles.discussion') }}</h4>
-
-            @php
-                $tpl->assign('formUrl', '' . BASE_URL . '/tickets/showTicket/' . $ticket->id . '');
-                $tpl->displaySubmodule('comments-generalComment');
-            @endphp
         @endif
     </div>
     <div class="col-md-4">
@@ -129,7 +123,7 @@
                     multiple>
                 @foreach($tpl->get('users') as $userRow)
                     <option value="{{ $userRow['id'] }}"
-                        {{ in_array($userRow['id'], $ticket->collaborators ?? []) ? "selected='selected'" : '' }}
+                        {{ in_array($userRow['id'], (array)($ticket->collaborators ?? [])) ? "selected='selected'" : '' }}
                     >{{ e($userRow['firstname'] . ' ' . $userRow['lastname']) }}</option>
                 @endforeach
             </x-globals::forms.select>
@@ -272,5 +266,5 @@
         }
     });
 
-    Prism.highlightAll();
+    if (typeof Prism !== 'undefined') { Prism.highlightAll(); }
 </script>

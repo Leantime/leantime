@@ -211,6 +211,9 @@ div.tagsinput span.tag
     right: 0;
     box-shadow: var(--large-shadow);
     width: 320px;
+    max-width: calc(100vw - 32px);
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .filterBar .row-fluid {

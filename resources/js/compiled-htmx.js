@@ -128,14 +128,15 @@ function initFilterSlimSelects() {
 }
 
 // Run on initial page load. Retry until SlimSelect module is available.
-(function waitForSlimSelect() {
+(function waitForSlimSelect(attempts) {
     if (typeof SlimSelect === 'undefined') {
-        setTimeout(waitForSlimSelect, 50);
+        if (attempts >= 100) return;
+        setTimeout(function () { waitForSlimSelect(attempts + 1); }, 50);
         return;
     }
     // Wait one animation frame so the browser has done layout
     requestAnimationFrame(function () { initFilterSlimSelects(); });
-})();
+})(0);
 
 // Watch for future DOM changes (HTMX swaps, any content injection).
 // Debounced 200ms + requestAnimationFrame to ensure the swap is fully
@@ -146,4 +147,4 @@ new MutationObserver(function () {
     _ssInitTimer = setTimeout(function () {
         requestAnimationFrame(function () { initFilterSlimSelects(); });
     }, 200);
-}).observe(document.documentElement, { childList: true, subtree: true });
+}).observe(document.querySelector('.maincontent') || document.body, { childList: true, subtree: true });
