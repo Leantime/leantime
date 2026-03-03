@@ -129,6 +129,42 @@
 #global-modal .modal-content-title {
     color: var(--primary-font-color);
 }
+
+/* ── Ticket details tab: grid layout ──────────────────────────
+   Puts the comments section in the left column (below subtasks)
+   instead of below the full two-column row which creates a gap
+   matching the sidebar's height. display:contents on the <form>
+   and .row-fluid lets their children participate in the grid
+   directly without breaking form submission. */
+#ticketdetails {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 0 20px;
+}
+#ticketdetails > * {
+    grid-column: 1;
+}
+#ticketdetails > form {
+    display: contents;
+}
+#ticketdetails > form > * {
+    grid-column: 1;
+}
+#ticketdetails > form > .row-fluid {
+    display: contents;
+}
+#ticketdetails > form > .row-fluid > .col-md-8 {
+    grid-column: 1;
+    float: none;
+    width: auto;
+}
+#ticketdetails > form > .row-fluid > .col-md-4 {
+    grid-column: 2;
+    grid-row: 1 / span 50;
+    float: none;
+    width: auto;
+}
+
 .modal-content-footer {
     display: flex;
     justify-content: space-between;

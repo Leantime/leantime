@@ -966,12 +966,12 @@
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-D03LBloN.css",
+    "file": "assets/main-Be_kz4nX.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-Cpol2wsh.js",
+    "file": "assets/compiled-app-R7RvU2j8.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,
@@ -1094,7 +1094,7 @@
     ]
   },
   "resources/js/compiled-htmx.js": {
-    "file": "assets/compiled-htmx-Cjnpkalb.js",
+    "file": "assets/compiled-htmx-yURhFR6R.js",
     "name": "compiled-htmx",
     "src": "resources/js/compiled-htmx.js",
     "isEntry": true,

@@ -39,6 +39,34 @@ document.addEventListener('htmx:beforeProcessNode', function (evt) {
     }
 });
 
+// ---------------------------------------------------------------------------
+// For non-innerHTML swaps (outerHTML, etc.), hx-select="unset" must be
+// neutralized before HTMX applies it as a CSS selector. "unset" matches no
+// elements, which would produce an empty swap. We temporarily remove the
+// attribute so HTMX uses the full response, then restore it afterward to
+// maintain the inheritance block.
+// ---------------------------------------------------------------------------
+document.addEventListener('htmx:beforeSwap', function (evt) {
+    var elt = evt.detail.elt;
+    if (!elt || elt.getAttribute('hx-select') !== 'unset') return;
+
+    var swapStyle = (evt.detail.requestConfig && evt.detail.requestConfig.swapOverride)
+        ? evt.detail.requestConfig.swapOverride.split(/\s/)[0]
+        : null;
+    if (!swapStyle) {
+        var swapAttr = elt.closest('[hx-swap]');
+        swapStyle = swapAttr ? swapAttr.getAttribute('hx-swap').split(/\s/)[0] : 'innerHTML';
+    }
+    // innerHTML is handled by the custom swap handler below — skip.
+    if (swapStyle === 'innerHTML') return;
+
+    // Strip hx-select so HTMX uses the full response for this swap
+    elt.removeAttribute('hx-select');
+    requestAnimationFrame(function () {
+        elt.setAttribute('hx-select', 'unset');
+    });
+});
+
 // Workaround for HTMX 2.0.8 innerHTML swap bug:
 // HTMX's internal swapInnerHTML removes old children but fails to insert
 // new content from the parsed fragment. This affects all innerHTML swaps

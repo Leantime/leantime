@@ -377,6 +377,15 @@ document.addEventListener('DOMContentLoaded', function () {
             leantime.modals.closeModal();
         });
 
+        // Click outside the modal box to close (the <dialog> covers the
+        // entire viewport with transparent background, so clicks on the
+        // transparent padding area should close the modal).
+        dialog.addEventListener('click', function (e) {
+            if (e.target === dialog) {
+                leantime.modals.closeModal();
+            }
+        });
+
         // The native 'close' event fires when:
         //  - <form method="dialog"> buttons (X or backdrop) submit
         //  - dialog.close() is called programmatically
