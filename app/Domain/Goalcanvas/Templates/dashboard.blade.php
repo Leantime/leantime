@@ -89,35 +89,36 @@ foreach ($allCanvas as $canvasRow) {
 <div class="maincontentinner">
     @if (count($allCanvas) > 0)
         @foreach ($allCanvas as $canvasRow)
-            <div>
-                @php $canvasRowId = $canvasRow['id']; @endphp
-                <x-globals::forms.button :link="'#/goalcanvas/editCanvasItem?type=goal&canvasId=' . $canvasRowId" type="primary" class="pull-right" icon="add">Create New Goal</x-globals::forms.button>
-
-                <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRowId }}'>{{ $canvasRow["title"] }}</a></h5>
+            @php
+                $canvasRowId = $canvasRow['id'];
+                $canvasSvc = app()->make(Goalcanvas::class);
+                $canvasItems = $canvasSvc->getCanvasItemsById($canvasRowId);
+            @endphp
+            <div class="tw:flex tw:justify-between tw:items-center tw:mb-2">
+                <h5 class="subtitle tw:m-0"><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRowId }}">{{ $canvasRow["title"] }}</a></h5>
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <x-globals::forms.button :link="'#/goalcanvas/editCanvasItem?type=goal&canvasId=' . $canvasRowId" type="primary" icon="add">Create New Goal</x-globals::forms.button>
+                @endif
             </div>
             <div class="tw:border-b tw:border-solid tw:border-[var(--main-border-color)] tw:mb-5">
-                @php
-                $canvasSvc = app()->make(Goalcanvas::class);
-                $canvasItems = $canvasSvc->getCanvasItemsById($canvasRow["id"]);
-                @endphp
-                <div id="sortableCanvasKanban-{{ $canvasRow['id'] }}" class="sortableTicketList disabled tw:pt-4">
+                <div id="sortableCanvasKanban-{{ $canvasRowId }}" class="sortableTicketList disabled tw:pt-2">
                     <div class="row">
-                                @if (!is_countable($canvasItems) || count($canvasItems) == 0)
-                                    <div class="col-md-12">No goals on this board yet. Open the <a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>board</a> to start adding goals</div>
-                                @endif
-                                @foreach ($canvasItems as $row)
-                                    @php
-                                    $filterStatus = $filter['status'] ?? 'all';
-                                    $filterRelates = $filter['relates'] ?? 'all';
-                                    @endphp
-                                    @if ($row['box'] === $elementName && ($filterStatus == 'all' || $filterStatus == $row['status']) && ($filterRelates == 'all' || $filterRelates == $row['relates']))
-                                        <div class="col-md-4">
-                                            <x-globals::goals.goal-card :row="$row" :status-labels="$statusLabels" :relates-labels="$relatesLabels" :users="$users" :element-name="$elementName" />
-                                        </div>
-                                    @endif
-                                @endforeach
-                            </div>
-                            <br />
+                        @if (!is_countable($canvasItems) || count($canvasItems) == 0)
+                            <div class="col-md-12">No goals on this board yet. Open the <a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRowId }}">board</a> to start adding goals</div>
+                        @endif
+                        @foreach ($canvasItems as $row)
+                            @php
+                                $filterStatus = $filter['status'] ?? 'all';
+                                $filterRelates = $filter['relates'] ?? 'all';
+                            @endphp
+                            @if ($row['box'] === $elementName && ($filterStatus == 'all' || $filterStatus == $row['status']) && ($filterRelates == 'all' || $filterRelates == $row['relates']))
+                                <div class="col-md-4">
+                                    <x-globals::goals.goal-card :row="$row" :status-labels="$statusLabels" :relates-labels="$relatesLabels" :users="$users" />
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                    <br />
                 </div>
             </div>
         @endforeach

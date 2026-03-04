@@ -249,6 +249,10 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
+
+                    if (app('request')->headers->get('is-modal')) {
+                        return response('', 200, ['HX-Trigger' => 'HTMX.closemodal, HTMX.ShowNotification']);
+                    }
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -306,6 +310,10 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                     $this->projectService->notifyProjectUsers($notification);
 
                     $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
+
+                    if (app('request')->headers->get('is-modal')) {
+                        return response('', 200, ['HX-Trigger' => 'HTMX.closemodal, HTMX.ShowNotification']);
+                    }
                 } else {
                     $id = '';
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');

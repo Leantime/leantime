@@ -20,7 +20,7 @@
     }
 @endphp
 
-<div class="ticketBox" id="item_{{ $row['id'] }}">
+<div class="ticketBox tw:p-5 tw:pb-4" id="item_{{ $row['id'] }}">
     @if ($login::userIsAtLeast($roles::$editor))
         <x-globals::actions.dropdown-menu class="pull-right">
             <li><a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <div class="clearfix tw:pb-2"></div>
+    <div class="clearfix tw:pb-4"></div>
 
     @if (!empty($statusLabels))
         <div class="dropdown ticketDropdown statusDropdown colorized firstDropdown">
