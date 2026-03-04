@@ -294,6 +294,68 @@ leantime.modals = (function () {
         openModalFromUrl(path);
     };
 
+    // ── Intercept form submissions inside the modal ────────────────────
+    // Lives inside the IIFE so it can access _formSubmitted and doClose.
+    document.addEventListener('submit', function (event) {
+        var form = event.target;
+        if (!form || !form.closest || !form.closest('#global-modal-content')) { return; }
+        if (form.getAttribute('method') === 'dialog') { return; }
+        if (form.hasAttribute('hx-post') || form.hasAttribute('hx-get') ||
+            form.hasAttribute('hx-put')  || form.hasAttribute('hx-delete')) { return; }
+
+        event.preventDefault();
+
+        // Sync rich-text editors (TipTap/ProseMirror) to their textareas
+        // before building FormData so typed content isn't lost.
+        form.querySelectorAll('.tiptap-wrapper').forEach(function (wrapper) {
+            var textarea = wrapper.querySelector('textarea');
+            var pm = wrapper.querySelector('.ProseMirror');
+            if (textarea && pm) {
+                textarea.value = pm.innerHTML;
+            }
+        });
+
+        _formSubmitted = true;  // track that data may have changed
+
+        var method  = (form.getAttribute('method') || 'GET').toUpperCase();
+        var action  = form.getAttribute('action') || window.location.href;
+
+        var opts = {
+            method: method,
+            credentials: 'include',
+            headers: {
+                'is-modal': 'true',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        };
+
+        if (method === 'POST') {
+            var fd = new FormData(form);
+            // Include the clicked submit button's name/value (FormData omits it).
+            // Only override an existing field (e.g. a hidden input with the same
+            // name) when the button carries a meaningful value — otherwise keep
+            // the hidden input's value intact.
+            if (event.submitter && event.submitter.name) {
+                if (!fd.has(event.submitter.name)) {
+                    fd.set(event.submitter.name, event.submitter.value || '');
+                } else if (event.submitter.value) {
+                    fd.set(event.submitter.name, event.submitter.value);
+                }
+            }
+            opts.body = fd;
+        } else {
+            var qs = new URLSearchParams(new FormData(form));
+            action += (action.indexOf('?') === -1 ? '?' : '&') + qs.toString();
+        }
+
+        fetch(action, opts)
+        .then(handleResponse)
+        .then(renderContent)
+        .catch(function (err) {
+            console.error('modalManager: form submit error', err);
+        });
+    }, true);
+
     return {
         openModal: openModal,
         setCustomModalCallback: setCustomModalCallback,
@@ -389,102 +451,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ── Intercept form submissions inside the modal ────────────────────
-    document.addEventListener('submit', function (event) {
-        var form = event.target;
-        if (!form || !form.closest || !form.closest('#global-modal-content')) { return; }
-        if (form.getAttribute('method') === 'dialog') { return; }
-        if (form.hasAttribute('hx-post') || form.hasAttribute('hx-get') ||
-            form.hasAttribute('hx-put')  || form.hasAttribute('hx-delete')) { return; }
-
-        event.preventDefault();
-
-        // Sync rich-text editors (TipTap/ProseMirror) to their textareas
-        // before building FormData so typed content isn't lost.
-        var _tiptapSyncCount = 0;
-        form.querySelectorAll('.tiptap-wrapper').forEach(function (wrapper) {
-            var textarea = wrapper.querySelector('textarea');
-            var pm = wrapper.querySelector('.ProseMirror');
-            if (textarea && pm) {
-                textarea.value = pm.innerHTML;
-                _tiptapSyncCount++;
-            }
-        });
-
-        _formSubmitted = true;  // track that data may have changed
-
-        var method  = (form.getAttribute('method') || 'GET').toUpperCase();
-        var action  = form.getAttribute('action') || window.location.href;
-        var content = document.getElementById('global-modal-content');
-
-        console.log('[modalManager] form submit', {
-            formId: form.id, action: action, method: method,
-            tiptapSynced: _tiptapSyncCount,
-            submitter: event.submitter ? event.submitter.name + '=' + event.submitter.value : 'none',
-        });
-
-        var opts = {
-            method: method,
-            credentials: 'include',
-            headers: {
-                'is-modal': 'true',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        };
-
-        if (method === 'POST') {
-            var fd = new FormData(form);
-            // Include the clicked submit button's name/value (FormData omits it).
-            // Only override an existing field (e.g. a hidden input with the same
-            // name) when the button carries a meaningful value — otherwise keep
-            // the hidden input's value intact.
-            if (event.submitter && event.submitter.name) {
-                if (!fd.has(event.submitter.name)) {
-                    fd.set(event.submitter.name, event.submitter.value || '');
-                } else if (event.submitter.value) {
-                    fd.set(event.submitter.name, event.submitter.value);
-                }
-            }
-            // Debug: log form data entries
-            var _fdEntries = {};
-            fd.forEach(function(v, k) { _fdEntries[k] = typeof v === 'string' ? v.substring(0, 120) : '[File]'; });
-            console.log('[modalManager] FormData', _fdEntries);
-
-            opts.body = fd;
-        } else {
-            var qs = new URLSearchParams(new FormData(form));
-            action += (action.indexOf('?') === -1 ? '?' : '&') + qs.toString();
-        }
-
-        fetch(action, opts).then(function (response) {
-            console.log('[modalManager] response', {
-                status: response.status, redirected: response.redirected,
-                url: response.url, hxTrigger: response.headers.get('HX-Trigger'),
-            });
-            var hxTrigger = response.headers.get('HX-Trigger');
-            if (hxTrigger && hxTrigger.indexOf('HTMX.closemodal') !== -1) {
-                if (hxTrigger.indexOf('HTMX.ShowNotification') !== -1) {
-                    window.dispatchEvent(new CustomEvent('HTMX.ShowNotification'));
-                }
-                // _formSubmitted is already true — doClose() will reload.
-                leantime.modals.closeModal();
-                return null;
-            }
-
-            var hxRedirect = response.headers.get('HX-Redirect');
-            if (hxRedirect) {
-                leantime.modals.closeModal();
-                window.location.href = hxRedirect;
-                return null;
-            }
-
-            return response.text();
-        }).then(function (html) {
-            leantime.modals.renderContent(html);
-        }).catch(function (err) {
-            console.error('modalManager: form submit error', err);
-        });
-    }, true);
 });
 
 // Hash change -> open modal

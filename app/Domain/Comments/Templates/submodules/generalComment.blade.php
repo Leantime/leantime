@@ -32,7 +32,14 @@
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tiptapSimple" name="text"></textarea>
-                <x-globals::forms.button submit type="success" name="comment" class="tw:ml-0">{{ __('buttons.save') }}</x-globals::forms.button>
+                <button type="button" class="btn btn-success tw:ml-0"
+                        hx-post="{{ $formUrl }}"
+                        hx-include="closest form"
+                        hx-target="#global-modal-content"
+                        hx-swap="innerHTML"
+                        onclick="syncTiptapEditors(this)">
+                    {{ __('buttons.save') }}
+                </button>
             </div>
             <input type="hidden" name="comment" class="commenterField" value="1"/>
             <input type="hidden" name="father" class="commenterField" id="father-{{ $formHash }}" value="0"/>
@@ -137,7 +144,14 @@
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}"/>
                                 </div>
                                 <div class="commentReply">
-                                    <x-globals::forms.button submit type="primary" name="comment" id="submit-reply-button">{{ __('links.reply') }}</x-globals::forms.button>
+                                    <button type="button" class="btn btn-primary" id="submit-reply-button"
+                                            hx-post="{{ $formUrl }}"
+                                            hx-include="closest form"
+                                            hx-target="#global-modal-content"
+                                            hx-swap="innerHTML"
+                                            onclick="syncTiptapEditors(this)">
+                                        {{ __('links.reply') }}
+                                    </button>
                                     <x-globals::forms.button tag="button" type="primary" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')">{{ __('links.cancel') }}</x-globals::forms.button>
                                 </div>
                                 <div class="clearall"></div>
@@ -153,6 +167,16 @@
 </form>
 
 <script type="text/javascript">
+
+    function syncTiptapEditors(button) {
+        var form = button.closest('form');
+        if (!form) return;
+        form.querySelectorAll('.tiptap-wrapper').forEach(function (w) {
+            var ta = w.querySelector('textarea');
+            var pm = w.querySelector('.ProseMirror');
+            if (ta && pm) ta.value = pm.innerHTML;
+        });
+    }
 
     function toggleCommentBoxes(id, commentId, formHash, editComment = false, isReply = false) {
         @if($login::userIsAtLeast($roles::$commenter))

@@ -44,9 +44,11 @@
 
 @dispatchEvent('scripts.afterOpen')
 
-leantime.widgetController.initGrid();
+jQuery(document).ready(function() {
+    leantime.widgetController.initGrid();
 
-@php(session(["usersettings.modals.homeDashboardTour" => 1]))
+    @php(session(["usersettings.modals.homeDashboardTour" => 1]))
+});
 
 // Promote .widget-slot-actions from content into the stickyHeader
 // so action icons align with the three-dots menu.

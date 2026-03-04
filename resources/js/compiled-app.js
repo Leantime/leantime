@@ -19,6 +19,7 @@ import '../../app/Domain/Users/Js/usersRepository.js';
 import '../../app/Domain/Users/Js/usersService.js';
 import '../../app/Domain/Canvas/Js/canvasController.js';
 import '../../app/Domain/Projects/Js/projectsController.js';
+import '../../app/Domain/Ideas/Js/ideasController.js';
 import '../../app/Domain/Reactions/Js/reactionsController.js';
 import '../../app/Domain/Help/Js/helperController.js';
 import '../../app/Domain/Help/Js/helperRepository.js';
@@ -48,6 +49,7 @@ const domainModules = import.meta.glob([
     '!../../app/Domain/Users/**',
     '!../../app/Domain/Canvas/Js/canvasController.js',
     '!../../app/Domain/Projects/**',
+    '!../../app/Domain/Ideas/**',
     '!../../app/Domain/Reactions/**',
     '!../../app/Domain/Help/**',
     '!../../app/Domain/Menu/**',

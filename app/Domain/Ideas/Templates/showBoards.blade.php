@@ -17,7 +17,7 @@
     <div class="pagetitle">
         <h5>{{ $tpl->escape((session('currentProjectClient') ?? '') . ' // ' . session('currentProjectName')) }}</h5>
         @if (count($allCanvas) > 0)
-            <x-globals::actions.dropdown-menu container-class="headerEditDropdown">
+            <x-globals::actions.dropdown-menu container-class="headerEditDropdown" position="left">
                 @if ($login::userIsAtLeast($roles::$editor))
                     <li><a href="#/ideas/boardDialog/{{ $tpl->get('currentCanvas') }}">{!! $tpl->__('links.icon.edit') !!}</a></li>
                     <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>

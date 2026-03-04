@@ -31,6 +31,9 @@ window.Croppie = Croppie;
 import Packery from 'packery';
 window.Packery = Packery;
 
+import Draggabilly from 'draggabilly';
+window.Draggabilly = Draggabilly;
+
 import imagesLoaded from 'imagesloaded';
 window.imagesLoaded = imagesLoaded;
 

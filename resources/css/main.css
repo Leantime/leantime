@@ -93,6 +93,14 @@
     min-height: 0;
     padding: 20px;
 }
+/* Prevent tiptap editor and other wide content from overflowing modal columns */
+#global-modal-content .row > [class*="col-"] {
+    min-width: 0;
+}
+/* Constrain tiptap toolbar within modal so buttons wrap instead of overhanging */
+#global-modal-content .tiptap-wrapper {
+    overflow: hidden;
+}
 
 /* ── Empty state cards ────────────────────────────────────────
    Give undraw illustration containers a glass backdrop so they're
