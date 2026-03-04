@@ -480,13 +480,13 @@ class Users
             ->first();
 
         // If no settings exist yet, return empty array
-        if (! $result || empty($result['settings'])) {
+        if (! $result || empty($result->settings)) {
             return [];
         }
 
         // Try to unserialize the settings
         try {
-            $settings = unserialize($result['settings']);
+            $settings = unserialize($result->settings);
 
             // If we have a specific path to retrieve
             if ($settingPath !== null) {
