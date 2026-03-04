@@ -138,7 +138,7 @@
    ──────────────────────────────────────────────────────────── */
 #ticketdetails {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr minmax(200px, 300px);
     gap: 0 20px;
 }
 /* Make ticket form + .row-fluid transparent to the grid */
@@ -150,12 +150,34 @@
 #ticketdetails .col-md-4 {
     grid-column: 2;
     grid-row: 1 / span 50;
+    min-width: 0;
+    overflow: hidden;
+    flex: none;
+    max-width: 100%;
+    width: 100%;
 }
 /* Everything else (main content, Discussion, comments) → column 1 */
 #ticketdetails .col-md-8,
 #ticketdetails > h4,
 #ticketdetails > form:not(:first-of-type) {
     grid-column: 1;
+    min-width: 0;
+    flex: none;
+    max-width: 100%;
+    width: 100%;
+}
+
+/* ── Sidebar: full-width inputs + breathing room ─────────── */
+#ticketdetails .col-md-4 {
+    padding-left: 16px;
+    border-left: 1px solid var(--main-border-color);
+}
+#ticketdetails .col-md-4 .chosen-container {
+    width: 100% !important;   /* Chosen.js inlines a px width; override it */
+    min-width: 0;
+}
+#ticketdetails .col-md-4 .form-group {
+    margin-bottom: 12px;
 }
 
 .modal-content-footer {

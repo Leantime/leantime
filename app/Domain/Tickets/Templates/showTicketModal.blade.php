@@ -19,7 +19,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
     }
 </script>
 
-<x-globals::actions.modal mode="content" style="min-width: min(70%, 95vw)">
+<x-globals::actions.modal mode="content" style="width: min(1100px, calc(100vw - 4em))">
 
     <?php if ($ticket->dependingTicketId > 0) { ?>
         <small><a href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small> //

@@ -135,8 +135,8 @@
         {{-- Due Date --}}
         <x-globals::forms.form-field label-text="{{ __('label.due_date') }}" name="dateToFinish">
             <div class="tw:flex tw:gap-2 tw:items-center">
-                <x-globals::forms.date name="dateToFinish" id="deadline" value="{{ format($ticket->dateToFinish)->date() }}" placeholder="{{ __('language.dateformat') }}" style="width:110px;" />
-                <input type="time" class="timepicker" style="width:120px;" id="dueTime" autocomplete="off"
+                <x-globals::forms.date name="dateToFinish" id="deadline" value="{{ format($ticket->dateToFinish)->date() }}" placeholder="{{ __('language.dateformat') }}" style="flex:1; min-width:0;" />
+                <input type="time" class="timepicker" style="flex:1; min-width:0;" id="dueTime" autocomplete="off"
                        value="{{ format($ticket->dateToFinish)->time24() }}"
                        name="timeToFinish"/>
             </div>
@@ -227,10 +227,10 @@
 
         <div class="form-group">
             <label class="control-label">{{ __('label.working_date_from') }}</label>
-            <div class="">
-                <x-globals::forms.input :bare="true" type="text" class="editFrom" style="width:100px;" name="editFrom" autocomplete="off"
+            <div class="tw:flex tw:gap-2 tw:items-center">
+                <x-globals::forms.input :bare="true" type="text" class="editFrom" style="flex:1; min-width:0;" name="editFrom" autocomplete="off"
                        value="{{ format($ticket->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}"/>
-                <x-globals::forms.input :bare="true" type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
+                <x-globals::forms.input :bare="true" type="time" class="timepicker" style="flex:1; min-width:0;" id="timeFrom" autocomplete="off"
                        value="{{ format($ticket->editFrom)->time24() }}"
                        name="timeFrom"/>
             </div>
@@ -238,10 +238,10 @@
 
         <div class="form-group">
             <label class="control-label">{{ __('label.working_date_to') }}</label>
-            <div class="">
-                <x-globals::forms.input :bare="true" type="text" class="editTo" style="width:100px;" name="editTo" autocomplete="off"
+            <div class="tw:flex tw:gap-2 tw:items-center">
+                <x-globals::forms.input :bare="true" type="text" class="editTo" style="flex:1; min-width:0;" name="editTo" autocomplete="off"
                        value="{{ format($ticket->editTo)->date() }}" placeholder="{{ __('language.dateformat') }}"/>
-                <x-globals::forms.input :bare="true" type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
+                <x-globals::forms.input :bare="true" type="time" class="timepicker" style="flex:1; min-width:0;" id="timeTo" autocomplete="off"
                        value="{{ format($ticket->editTo)->time24() }}"
                        name="timeTo"/>
             </div>
