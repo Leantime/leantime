@@ -2331,7 +2331,7 @@ body .widgettitle .editHeadline:hover {
 .profileBox .commentImage {
     float:none;
     margin:0px;
-    margin-top:-32px;
+    margin-top:0px;
     margin-bottom:10px;
 }
 
@@ -2341,7 +2341,8 @@ body .widgettitle .editHeadline:hover {
     border-radius:50px;
 }
 
-.profileBox .commentImage i {
+.profileBox .commentImage i,
+.profileBox .commentImage .material-symbols-outlined {
     display:inline-block;
     border:1px solid var(--main-border-color);
     border-radius:50px;

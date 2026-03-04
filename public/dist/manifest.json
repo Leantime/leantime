@@ -281,12 +281,6 @@
       "_canvasController-D8-avucL.js"
     ]
   },
-  "app/Domain/Projects/Js/projectsController.js": {
-    "file": "assets/projectsController-CtzZEVhC.js",
-    "name": "projectsController",
-    "src": "app/Domain/Projects/Js/projectsController.js",
-    "isDynamicEntry": true
-  },
   "app/Domain/Retroscanvas/Js/retroCanvasController.js": {
     "file": "assets/retroCanvasController-DTX3tACY.js",
     "name": "retroCanvasController",
@@ -961,17 +955,17 @@
     "isEntry": true
   },
   "resources/css/editor.css": {
-    "file": "assets/editor-B6y5FmwN.css",
+    "file": "assets/editor-1VBd7rKo.css",
     "src": "resources/css/editor.css",
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-BQh_p0gF.css",
+    "file": "assets/main-ChGpss63.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-SgoTRpI7.js",
+    "file": "assets/compiled-app-CORYvbn1.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,
@@ -993,7 +987,6 @@
       "app/Domain/Leancanvas/Js/leanCanvasController.js",
       "app/Domain/Minempathycanvas/Js/risksCanvasController.js",
       "app/Domain/Obmcanvas/Js/obmCanvasController.js",
-      "app/Domain/Projects/Js/projectsController.js",
       "app/Domain/Retroscanvas/Js/retroCanvasController.js",
       "app/Domain/Riskscanvas/Js/risksCanvasController.js",
       "app/Domain/Sbcanvas/Js/sbCanvasController.js",
