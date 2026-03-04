@@ -71,14 +71,16 @@
                     @foreach ($tpl->get('allProjects') as $row)
                         @if ($currentClient != $row['clientName'])
                             @if ($i > 0 && $containerOpen)
-                                {!! '</div>' !!}
+                                </div>
                                 @php $containerOpen = false; @endphp
                             @endif
 
-                            {!! "<h3 id='accordion_link_" . $i . "'>
-                                <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><x-global::elements.icon name="expand_more" /> " . $tpl->escape($row['clientName']) . "</a>
-                                </h3>
-                                <div id='accordion_" . $i . "' class='simpleAccordionContainer'>" !!}
+                            <h3 id="accordion_link_{{ $i }}">
+                                <a href="#" onclick="accordionToggle({{ $i }});" id="accordion_toggle_{{ $i }}">
+                                    <x-global::elements.icon name="expand_more" /> {{ $tpl->escape($row['clientName']) }}
+                                </a>
+                            </h3>
+                            <div id="accordion_{{ $i }}" class="simpleAccordionContainer">
                             @php
                                 $currentClient = $row['clientName'];
                                 $containerOpen = true;

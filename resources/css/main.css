@@ -94,6 +94,43 @@
     padding: 20px;
 }
 
+/* ── Empty state cards ────────────────────────────────────────
+   Give undraw illustration containers a glass backdrop so they're
+   visible over wallpaper backgrounds. Inside an already-white
+   content card the effect is invisible.
+   ──────────────────────────────────────────────────────────── */
+.undrawContainer {
+    background: var(--glass-background, rgba(255, 255, 255, 0.85));
+    backdrop-filter: var(--glass-blur, blur(10px));
+    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.2));
+    border-radius: var(--box-radius, 8px);
+    padding: 40px 30px;
+    max-width: 500px;
+    margin: 40px auto;
+}
+
+/* Tint near-white SVG fills so illustrations are visible on
+   white/glass backgrounds. The undraw SVGs use #f2f2f2, #e6e6e6,
+   #ccc for background shapes (trees, clouds, etc). */
+.undrawContainer svg [fill="#f2f2f2"],
+.undrawContainer svg [fill="#F2F2F2"],
+.wiki-empty-state svg [fill="#f2f2f2"],
+.wiki-empty-state svg [fill="#F2F2F2"] {
+    fill: #c8d6e5;
+}
+.undrawContainer svg [fill="#e6e6e6"],
+.undrawContainer svg [fill="#E6E6E6"],
+.wiki-empty-state svg [fill="#e6e6e6"],
+.wiki-empty-state svg [fill="#E6E6E6"] {
+    fill: #b0bec5;
+}
+.undrawContainer svg [fill="#ccc"],
+.undrawContainer svg [fill="#CCC"],
+.wiki-empty-state svg [fill="#ccc"],
+.wiki-empty-state svg [fill="#CCC"] {
+    fill: #90a4ae;
+}
+
 /* Frosted-glass overlay behind the modal.
    We use dialog.show() (not .showModal()) so the dialog stays in normal
    document flow where backdrop-filter composites correctly with the page.

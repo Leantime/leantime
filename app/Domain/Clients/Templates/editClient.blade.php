@@ -21,7 +21,7 @@
 
         <form action="" method="post" class="stdform">
 
-            <div class="widget">
+            <div class="widget" style="max-width:600px;">
             <h4 class="widgettitle">{{ __('OVERVIEW') }}</h4>
             <div class="widgetcontent">
 

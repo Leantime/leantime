@@ -19,7 +19,7 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="widget">
+        <div class="widget" style="max-width:600px;">
            <h4 class="widgettitle">{{ __('subtitle.details') }}</h4>
            <div class="widgetcontent">
 

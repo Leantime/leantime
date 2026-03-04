@@ -1204,15 +1204,21 @@
 
 .wiki-empty-state {
     text-align: center;
-    padding: 60px 24px;
+    padding: 50px 40px 40px;
     color: var(--secondary-font-color);
+    background: var(--glass-background, rgba(255, 255, 255, 0.85));
+    backdrop-filter: var(--glass-blur, blur(10px));
+    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.2));
+    border-radius: var(--box-radius, 8px);
+    max-width: 420px;
+    margin: 60px auto;
 }
 
 .wiki-empty-state-icon {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 24px;
-    opacity: var(--opacity-disabled);
+    width: 200px;
+    height: auto;
+    margin: 0 auto 28px;
+    opacity: 0.85;
 }
 
 .wiki-empty-state-title {
