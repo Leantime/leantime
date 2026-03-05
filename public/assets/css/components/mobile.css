@@ -2680,5 +2680,33 @@
     }
 }
 
+/* ============================================================
+   FLUID TYPOGRAPHY
+   Override CSS custom properties at breakpoints so every
+   element that uses font-size variables scales automatically.
+   No need to touch individual selectors.
+   ============================================================ */
 
+/* Tablet (768–1200px) — moderate downscale */
+@media (min-width: 768px) and (max-width: 1200px) {
+    :root {
+        --font-size-display-xl:  72px;  /* was 120px */
+        --font-size-display-lg:  32px;  /* was 40px  */
+        --font-size-display-md:  28px;  /* was 36px  */
+        --font-size-display-sm:  22px;  /* was 28px  */
+        --font-size-xxxl:        20px;  /* was 24px  */
+    }
+}
 
+/* Mobile (≤767px) — significant downscale for narrow viewports */
+@media (max-width: 767px) {
+    :root {
+        --font-size-display-xl:  40px;  /* was 120px */
+        --font-size-display-lg:  26px;  /* was 40px  */
+        --font-size-display-md:  22px;  /* was 36px  */
+        --font-size-display-sm:  18px;  /* was 28px  */
+        --font-size-xxxl:        18px;  /* was 24px  */
+        --font-size-xxl:         16px;  /* was 20px  */
+        --base-font-size:        14px;  /* retain — already readable */
+    }
+}
