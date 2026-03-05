@@ -4,7 +4,7 @@
     $profileImg = BASE_URL . '/api/users?profileImage=' . ($user['id'] ?? -1) . '&v=' . format($user['modified'] ?? -1)->timestamp();
     $hasLogo = session()->exists("companysettings.logoPath") && session("companysettings.logoPath") !== false && session("companysettings.logoPath") !== '';
     $userName = trim(($user['firstname'] ?? '') . ' ' . ($user['lastname'] ?? ''));
-    $triggerLabel = '<img src="' . e($profileImg) . '" class="profilePicture" alt="' . e(__('label.profile_picture_of', ['name' => $userName ?: __('label.user')])) . '" />';
+    $triggerLabel = '<img src="' . e($profileImg) . '" class="profilePicture" alt="' . e(sprintf(__('label.profile_picture_of'), $userName ?: __('label.user'))) . '" />';
     if ($hasLogo) {
         $triggerLabel .= '<img src="' . e(session("companysettings.logoPath")) . '" class="logo tw:pl-1" alt="" />';
     }
