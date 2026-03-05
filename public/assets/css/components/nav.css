@@ -1147,12 +1147,14 @@ a.barmenu:hover {
     justify-content: center;
 }
 
-.mainwrapper.menuclosed .bigProjectSelector i.fa {
+/* Scope all menuclosed bigProjectSelector rules to the leftpanel ONLY.
+   The header also uses .bigProjectSelector (as the project selector trigger)
+   and must not be affected by the sidebar-collapsed styles. */
+.mainwrapper.menuclosed .leftpanel .bigProjectSelector i.fa {
     display:none;
 }
 
-/* Keep the dropdown caret visible so users know it's a selector */
-.mainwrapper.menuclosed .bigProjectSelector i.fa.fa-caret-down {
+.mainwrapper.menuclosed .leftpanel .bigProjectSelector i.fa.fa-caret-down {
     display:inline;
     font-size: var(--font-size-s);
     position: static;
@@ -1160,16 +1162,16 @@ a.barmenu:hover {
     margin-left: 2px;
 }
 
-.mainwrapper.menuclosed .bigProjectSelector {
+.mainwrapper.menuclosed .leftpanel .bigProjectSelector {
     font-size: 0;
     width:auto;
 }
 
-.mainwrapper.menuclosed .bigProjectSelector .fa {
+.mainwrapper.menuclosed .leftpanel .bigProjectSelector .fa {
     font-size:var(--font-size-l);
 }
 
-.mainwrapper.menuclosed .bigProjectSelector > .projectAvatar {
+.mainwrapper.menuclosed .leftpanel .bigProjectSelector > .projectAvatar {
     float:none;
     margin: 10px 0 0;
 }

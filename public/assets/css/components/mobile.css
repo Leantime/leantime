@@ -1220,6 +1220,25 @@
         width:auto;
     }
 
+    /* Hide My Work / Company text at tablet — too cramped at 768-1200px
+       alongside logo + project selector + 5 icon buttons */
+    .headmenu.work-modes li:not(.dropdown) {
+        display: none;
+    }
+
+    /* Hide the leantime logo at 768-900px (smallest tablet range) to
+       free up header space for the project selector */
+    .header .logo {
+        display: none;
+    }
+
+    /* Show logo again at wider tablet where there's enough room */
+    @media (min-width: 1024px) {
+        .header .logo {
+            display: block;
+        }
+    }
+
     .barmenu,
     .headerCTA{
         display:none;
