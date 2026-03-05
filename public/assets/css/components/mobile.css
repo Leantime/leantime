@@ -257,7 +257,21 @@
         width: 400px;
     }
 
-    /* table */
+    /* ── Tables — horizontal scroll so rows never overflow ── */
+    .dataTables_wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+    }
+
+    /* Standard tables without DataTables wrapper */
+    .maincontentinner .table,
+    .maincontentinner table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
     .dataTable th, .dataTable td {
         padding: 4px;
     }
@@ -268,11 +282,12 @@
 
     .dataTables_paginate {
         position: relative;
-        margin: -25px 0 0 20px;
+        margin: 8px 0 0 0;
     }
 
     .dataTables_info {
-        height: 50px;
+        height: auto;
+        padding: 4px 0;
     }
 
     #dyntable2_info {
@@ -281,15 +296,61 @@
 
     .dataTables_filter {
         position: relative;
-        margin: -50px 0 20px 20px;
+        margin: 0 0 12px 0;
     }
 
     .dataTables_length {
-        height: 70px;
+        height: auto;
+        margin-bottom: 8px;
     }
 
     #dyntable2_wrapper .dataTables_filter {
         margin: 0;
+    }
+
+    /* ── Kanban / Canvas boards — horizontal scroll on narrow screens ── */
+    .kanbanBoard > .row-fluid,
+    .sortableTicketList > .row-fluid {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;  /* keep columns in a single scrollable row */
+        padding-bottom: 8px; /* room for scrollbar */
+    }
+
+    /* Ensure each column has a useful minimum width for touch interaction */
+    .kanbanBoard .column,
+    .sortableTicketList .column {
+        min-width: 240px;
+        flex: 0 0 240px;
+    }
+
+    /* ── Canvas board sections — stack vertically on phone ── */
+    .row-fluid.firstRow,
+    .row-fluid.secondRow,
+    .row-fluid.thirdRow,
+    .row-fluid.fourthRow,
+    .row-fluid.stakeholderRow,
+    .row-fluid.financialsRow,
+    .row-fluid.culturechangeRow {
+        flex-wrap: wrap;
+    }
+
+    .row-fluid.firstRow > .column,
+    .row-fluid.secondRow > .column,
+    .row-fluid.thirdRow > .column,
+    .row-fluid.fourthRow > .column,
+    .row-fluid.stakeholderRow > .column,
+    .row-fluid.financialsRow > .column,
+    .row-fluid.culturechangeRow > .column {
+        min-width: 100%;
+        flex: 0 0 100%;
+        height: auto !important;
+    }
+
+    /* Reset JS-set minHeight on contentInner for stacked mobile columns */
+    .contentInner {
+        min-height: auto !important;
+        height: auto !important;
     }
     .hidden-gt-sm {
         display:block!important;
@@ -596,25 +657,61 @@
         float: none;
     }
 
-    /* forms */
+    /* ── Forms — stack columns, fluid inputs ── */
+
+    /* Multi-column form rows collapse to single column */
+    .formContainer .row,
+    .maincontentinner form .row,
+    .modal-body .row {
+        flex-wrap: wrap;
+    }
+
+    .formContainer .row > [class*="col-"],
+    .maincontentinner form .row > [class*="col-"],
+    .modal-body .row > [class*="col-"] {
+        width: 100%;
+        max-width: 100%;
+        flex: 0 0 100%;
+    }
+
+    /* Fluid chosen / slim-select containers */
+    .chzn-container,
+    .ss-main {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .chzn-drop {
+        width: 100% !important;
+    }
+
+    .chzn-search input {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
     .dualselect select {
         width: 38%;
     }
 
-    .chzn-container {
-        width: 270px !important;
-    }
-
-    .chzn-drop {
-        width: 268px !important;
-    }
-
-    .chzn-search input {
-        width: 220px !important;
-    }
-
     .tagsinput {
-        width: 260px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Form controls full-width on mobile */
+    .form-control,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="url"],
+    input[type="search"],
+    input[type="number"],
+    select,
+    textarea {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     #elm1_toolbargroup {
