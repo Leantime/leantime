@@ -324,27 +324,25 @@
         flex: 0 0 240px;
     }
 
-    /* ── Canvas board sections — stack vertically on phone ── */
-    .row-fluid.firstRow,
-    .row-fluid.secondRow,
-    .row-fluid.thirdRow,
-    .row-fluid.fourthRow,
-    .row-fluid.stakeholderRow,
-    .row-fluid.financialsRow,
-    .row-fluid.culturechangeRow {
+    /* ── Canvas board sections — stack vertically on phone ──
+       All canvas templates use class="row canvas-row" consistently.
+       Inline style="width: X%" on columns requires !important to override. */
+    .canvas-row {
         flex-wrap: wrap;
     }
 
-    .row-fluid.firstRow > .column,
-    .row-fluid.secondRow > .column,
-    .row-fluid.thirdRow > .column,
-    .row-fluid.fourthRow > .column,
-    .row-fluid.stakeholderRow > .column,
-    .row-fluid.financialsRow > .column,
-    .row-fluid.culturechangeRow > .column {
-        min-width: 100%;
-        flex: 0 0 100%;
+    .canvas-row .column {
+        width: 100% !important;
+        min-width: 100% !important;
+        flex: 0 0 100% !important;
         height: auto !important;
+    }
+
+    /* The outer canvas wrapper has min-width: calc(2 * 250px) inline —
+       override it so the board doesn't force horizontal scroll on mobile */
+    #sortableCanvasKanban .row-fluid > .column {
+        min-width: 0 !important;
+        width: 100% !important;
     }
 
     /* Reset JS-set minHeight on contentInner for stacked mobile columns */
