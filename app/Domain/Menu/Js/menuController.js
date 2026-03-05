@@ -94,6 +94,23 @@ leantime.menuController = (function () {
             });
         }
 
+        // On mobile: tap the backdrop (::before pseudo-element area) to close sidebar.
+        // We detect taps on the mainwrapper that land outside the leftpanel.
+        if (window.innerWidth < 768) {
+            var mainwrapperEl = document.querySelector(".mainwrapper");
+            if (mainwrapperEl) {
+                mainwrapperEl.addEventListener('click', function (e) {
+                    if (!mainwrapperEl.classList.contains('menuopen')) return;
+                    var leftpanel = document.querySelector('.leftpanel');
+                    if (leftpanel && !leftpanel.contains(e.target) && !e.target.closest('.barmenu')) {
+                        mainwrapperEl.classList.remove("menuopen");
+                        mainwrapperEl.classList.add("menuclosed");
+                        leantime.menuRepository.updateUserMenuSettings("closed");
+                    }
+                });
+            }
+        }
+
     };
 
 
