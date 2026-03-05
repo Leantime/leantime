@@ -13,6 +13,9 @@
         <a href="javascript:void(0)"
             class="dropdown-toggle profileHandler newsDropDownHandler"
             data-toggle="dropdown"
+            aria-label="{{ __('popover.latest_plugins') }}"
+            aria-haspopup="true"
+            aria-expanded="false"
             hx-get="{{ BASE_URL }}/plugins/marketplaceplugins/getLatest"
             hx-target="#pluginNewsDropdown"
             hx-indicator=".htmx-news-indicator"
@@ -36,6 +39,9 @@
         <a href="javascript:void(0)"
             class="dropdown-toggle profileHandler newsDropDownHandler"
             data-toggle="dropdown"
+            aria-label="{{ __('popover.latest_updates') }}"
+            aria-haspopup="true"
+            aria-expanded="false"
             hx-get="{{ BASE_URL }}/notifications/news/get"
             hx-target="#newsDropdown"
             hx-indicator=".htmx-news-indicator"
@@ -59,6 +65,9 @@
         <a href="javascript:void(0)"
             class="dropdown-toggle profileHandler notificationHandler"
             data-toggle="dropdown"
+            aria-label="{{ __('popover.notifications') }}"
+            aria-haspopup="true"
+            aria-expanded="false"
             data-tippy-content='{{ __('popover.notifications') }}'
         >
             <x-global::elements.icon name="notifications" />
@@ -157,6 +166,9 @@
         <a href="javascript:void(0)"
             class="dropdown-toggle"
             data-toggle="dropdown"
+            aria-label="{{ __('popover.help') }}"
+            aria-haspopup="true"
+            aria-expanded="false"
             data-tippy-content='{{ __('popover.help') }}'
         >
             <x-global::elements.icon name="help" />

@@ -82,7 +82,7 @@
                         <th class="planned-hours-col">{{ __('label.planned_hours') }}</th>
                         <th class="remaining-hours-col">{{ __('label.estimated_hours_remaining') }}</th>
                         <th class="booked-hours-col">{{ __('label.booked_hours') }}</th>
-                        <th class="no-sort"></th>
+                        <th class="no-sort" scope="col"><span class="sr-only">{{ __('label.actions') }}</span></th>
                     </tr>
                     @dispatchEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets])
                 </thead>

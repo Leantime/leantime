@@ -11,7 +11,7 @@
     $isPanel = $target !== null;
 @endphp
 
-<li @class(['active' => $active])>
+<li role="presentation" @class(['active' => $active])>
     <a href="{{ $link }}"
        role="tab"
        @if($active) aria-selected="true" @endif

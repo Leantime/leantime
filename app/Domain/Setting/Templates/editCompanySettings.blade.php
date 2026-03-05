@@ -85,7 +85,7 @@
                                             <br />
                                             <div class="par">
 
-                                                <label>{{ __('label.upload_new_logo') }}</label>
+                                                <label for="logo-file-input">{{ __('label.upload_new_logo') }}</label>
 
                                                 <div class='fileupload fileupload-new' data-provides='fileupload'>
                                                     <input type="hidden"/>
@@ -97,7 +97,7 @@
                                                         <span class="btn btn-default btn-file">
                                                             <span class="fileupload-new">{{ __('buttons.select_file') }}</span>
                                                             <span class='fileupload-exists'>{{ __('buttons.change') }}</span>
-                                                            <x-globals::forms.file :bare="true" name="file" onchange="leantime.settingController.readURL(this)" />
+                                                            <x-globals::forms.file :bare="true" id="logo-file-input" name="file" onchange="leantime.settingController.readURL(this)" />
                                                         </span>
 
                                                         <x-globals::forms.button link="#" type="secondary" class="fileupload-exists" style="margin-left:5px;" data-dismiss="fileupload" onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</x-globals::forms.button>

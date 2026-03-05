@@ -19,7 +19,7 @@
          @if(!empty($themeBgUrl)) style="background-image: url({{ filter_var($themeBgUrl, FILTER_SANITIZE_URL) }}); background-size: var(--background-size, cover); background-position: center; background-repeat: no-repeat;" @endif
     >
 
-        <div class="header">
+        <header class="header" role="banner">
 
             <div class="headerinner">
                 <a class="btnmenu" href="javascript:void(0);" aria-label="{{ __('menu.toggle_sidebar') }}"></a>
@@ -31,30 +31,31 @@
                 <div class="logo">
                     <a
                         href="{{ BASE_URL }}"
+                        aria-label="{{ __('menu.leantime_home') }}"
                         style="background-image: url('{{ BASE_URL }}/dist/images/logo.svg')"
-                    >&nbsp;</a>
+                    ><span class="sr-only">{{ __('menu.leantime_home') }}</span></a>
                 </div>
 
                 @include('menu::headMenu')
             </div><!-- headerinner -->
 
-        </div><!-- header -->
+        </header><!-- header -->
 
 
 
         <div class="overlay" style="position: relative">
-            <div class="leftpanel">
+            <nav class="leftpanel" aria-label="{{ __('menu.main_navigation') }}">
                 <div class="leftmenu">
                     @include('menu::menu')
                 </div><!-- leftmenu -->
-            </div>
+            </nav>
             <div class="rightpanel {{ $section }}"
                  hx-boost="true"
                  hx-target=".primaryContent"
                  hx-select=".primaryContent"
                  hx-swap="outerHTML show:window:top"
                  hx-indicator="#page-loading">
-                <div class="primaryContent" aria-live="polite">
+                <main id="main-content" class="primaryContent" aria-live="polite">
                     @isset($action, $module)
                         @include("$module::$action")
                     @else
@@ -62,11 +63,11 @@
                     @endisset
                     <div class="clearfix"></div>
                     @include('global::sections.footer')
-                </div>
+                </main>
 
             </div>
 
-        </div><!-- rightpanel -->
+        </div><!-- overlay -->
 
     </div><!-- mainwrapper -->
 

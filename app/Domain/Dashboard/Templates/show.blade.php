@@ -245,7 +245,8 @@
                                 </x-globals::forms.select>
 
                                 <div class="commentReply">
-                                    <textarea rows="5" cols="50" class="tiptapSimple tw:w-full" name="text"></textarea>
+                                    <label for="dashboard-note-editor" class="sr-only">{{ __('label.add_note') }}</label>
+                                    <textarea rows="5" cols="50" id="dashboard-note-editor" class="tiptapSimple tw:w-full" name="text" aria-label="{{ __('label.add_note') }}"></textarea>
                                     <x-globals::forms.button submit type="success" tag="button" class="tw:ml-0" name="comment">{{ __('buttons.save') }}</x-globals::forms.button>
                                     <a
                                         href="javascript:void(0);"
