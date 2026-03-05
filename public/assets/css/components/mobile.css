@@ -87,12 +87,28 @@
     }
 
     .mainwrapper .leftpanel {
-        width:90%;
-        position:absolute;
-        top:50px;
-        left:4px;
-        background: var(--secondary-background);
-        z-index: var(--zlayer-8);
+        width: 280px;
+        max-width: 85vw;
+        position: fixed;
+        top: 48px;
+        left: 0;
+        bottom: 0;
+        height: auto;
+        margin: 0;
+        border-radius: 0 0 var(--box-radius-large) 0;
+        /* Use the same gradient as the main wrapper so nav links are legible */
+        background: var(--header-gradient);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        /* Sit below the fixed header so it never covers top-nav icons */
+        z-index: calc(var(--zlayer-5) - 1);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    /* Keep the header strictly above the sidebar overlay on mobile */
+    .header {
+        z-index: var(--zlayer-5);
     }
 
     .barmenu,

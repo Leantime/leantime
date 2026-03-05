@@ -59,7 +59,8 @@ leantime.menuController = (function () {
 
 
         var newWidth = 68;
-        if (window.innerWidth < 576) {
+        // Match the CSS mobile breakpoint: collapse sidebar on all screens < 768px
+        if (window.innerWidth < 768) {
             var mainwrapperEl = document.querySelector(".mainwrapper");
             if (mainwrapperEl) {
                 mainwrapperEl.classList.remove("menuopen");
