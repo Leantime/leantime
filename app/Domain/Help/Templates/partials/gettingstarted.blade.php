@@ -1,5 +1,5 @@
 
-<div clas="clear"></div>
+<div class="clear"></div>
 
 <div class="pull-left">
     <x-globals::undrawSvg

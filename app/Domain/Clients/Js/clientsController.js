@@ -25,8 +25,6 @@ leantime.clientsController = (function () {
 
     var initClientTable = function () {
 
-        document.addEventListener('DOMContentLoaded', function () {
-
             var size = 100;
 
             var allProjects = jQuery("#allClientsTable").DataTable({
@@ -59,8 +57,6 @@ leantime.clientsController = (function () {
                 "searching": false,
                 "displayLength":100
             });
-
-        });
 
     };
 

@@ -70,7 +70,8 @@
 
         // Upload
         uppy.on("restriction-failed", (file, error) => {
-            jQuery(".input-error").html("<span class='label-important'>"+error+"</span>");
+            var span = jQuery("<span class='label-important'></span>").text(error);
+            jQuery(".input-error").empty().append(span);
             return false
         });
 
@@ -80,7 +81,9 @@
         });
 
         uppy.on('upload-error', (file, error, response) => {
-            jQuery(".input-error").html("<span class='label-important'>There is a problem with your CSV file: "+response.body.error+"</span>");
+            var errorMsg = response && response.body && response.body.error ? response.body.error : 'Unknown error';
+            var span = jQuery("<span class='label-important'></span>").text("There is a problem with your CSV file: " + errorMsg);
+            jQuery(".input-error").empty().append(span);
             return false
         });
     }

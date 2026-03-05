@@ -10,7 +10,7 @@
                 <x-globals::forms.textarea name="accomplish" id="accomplish" rows="3" style="width:99%; overflow-x: hidden;" />
                 <br />
                 <label><strong>{{ __('label.how_does_the_world_look_like') }}</strong></label>
-                <x-globals::forms.textarea name="worldview" id="wordlview" rows="3" style="width:99%; overflow-x: hidden;" />
+                <x-globals::forms.textarea name="worldview" id="worldview" rows="3" style="width:99%; overflow-x: hidden;" />
                 <br />
                 <label><strong>{{ __('label.why_is_this_important') }}</strong></label>
                 <x-globals::forms.textarea name="whyImportant" id="whyImportant" rows="3" style="width:99%; overflow-x: hidden;" />

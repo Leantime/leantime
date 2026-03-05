@@ -42,9 +42,9 @@
                     <tr>
                         <td>{{ $row['id'] }}</td>
                         <td>
-                            <a href="{{ BASE_URL }}/clients/showClient/{{ $row['id'] }}">{{ e($row['name']) }}</a>
+                            <a href="{{ BASE_URL }}/clients/showClient/{{ $row['id'] }}">{{ $row['name'] }}</a>
                         </td>
-                        <td><a href="{{ e($row['internet']) }}" target="_blank">{{ e($row['internet']) }}</a></td>
+                        <td><a href="{{ $row['internet'] }}" target="_blank">{{ $row['internet'] }}</a></td>
                         <td>{{ $row['numberOfProjects'] }}</td>
                     </tr>
                 @endforeach

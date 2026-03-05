@@ -174,7 +174,7 @@
     ]
   },
   "app/Domain/Clients/Js/clientsController.js": {
-    "file": "assets/clientsController--qgiYeFs.js",
+    "file": "assets/clientsController-DA3o4aPl.js",
     "name": "clientsController",
     "src": "app/Domain/Clients/Js/clientsController.js",
     "isDynamicEntry": true
@@ -959,7 +959,7 @@
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-D9lDmf_F.js",
+    "file": "assets/compiled-app-CKe_h7xO.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,
