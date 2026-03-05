@@ -117,13 +117,45 @@
         cursor: pointer;
     }
 
+    /* Hide "My Work" and "Company" text links from header on mobile —
+       those pages are accessible via the left-nav sidebar instead */
+    .headmenu.work-modes li:not(.dropdown) {
+        display: none;
+    }
+
+    /* Keep project selector, but constrain it so it doesn't overflow */
     .headmenu .projectselector {
-        min-width: 320px;
-        width: 320px;
+        max-width: 160px;
+        min-width: unset;
+        width: auto;
     }
 
     .headmenu > li.appsLink {
         display: none;
+    }
+
+    /* ── Header dropdown positioning on mobile ──────────────────────
+       Dropdowns (notifications, help, profile) must stay within the
+       viewport. Override the desktop right:-16px offset and constrain
+       their width so they don't overflow a 375px screen. */
+    .headmenu .dropdown-menu {
+        position: fixed !important;
+        top: 50px !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        min-width: unset !important;
+        max-width: calc(100vw - 16px) !important;
+        max-height: 70vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Touch-action: remove 300ms tap delay on all header interactive elements */
+    .headmenu > li > a,
+    .headmenu a {
+        touch-action: manipulation;
+        cursor: pointer;
     }
 
     .mainwrapper .primaryContent {
@@ -151,8 +183,10 @@
         width:100%;
     }
 
-    .dropdown-menu {
-        width:100%;
+    /* Only full-width dropdowns inside page content — not in the fixed header */
+    .maincontentinner .dropdown-menu,
+    .filterBar .dropdown-menu {
+        width: 100%;
     }
 
     .fc-header {
@@ -1200,8 +1234,10 @@
         width:100%;
     }
 
-    .dropdown-menu {
-        width:100%;
+    /* Only full-width dropdowns inside page content — not in the fixed header */
+    .maincontentinner .dropdown-menu,
+    .filterBar .dropdown-menu {
+        width: 100%;
     }
 
     .fc-header {
