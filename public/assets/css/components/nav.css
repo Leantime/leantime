@@ -678,9 +678,17 @@ a.barmenu:hover {
 }
 
 .projectselector .scrollingTab {
-    padding:0;
-    height:calc(100dvh - 310px);
-    overflow:auto;
+    padding: 0;
+    height: calc(100dvh - 310px);
+    overflow: auto;
+}
+
+/* On mobile/tablet the project selector is position:fixed at top:50px.
+   Recalculate scrollable area so it fills the remaining viewport height. */
+@media (max-width: 1200px) {
+    .projectselector .scrollingTab {
+        height: calc(100dvh - 220px);
+    }
 }
 
 /* Project Selection Lists */

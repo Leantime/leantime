@@ -117,15 +117,20 @@
         cursor: pointer;
     }
 
-    /* Hide "My Work" and "Company" text links from header on mobile —
-       those pages are accessible via the left-nav sidebar instead */
-    .headmenu.work-modes li:not(.dropdown) {
-        display: none;
+    /* My Work / Company — compact on mobile, can't remove them (only
+       way to switch between dashboard contexts) */
+    .headmenu.work-modes li:not(.dropdown) a {
+        font-size: var(--font-size-xs);
+        padding: 0 4px;
+        white-space: nowrap;
+        max-width: 56px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    /* Keep project selector, but constrain it so it doesn't overflow */
+    /* Keep project selector constrained so it doesn't push other items */
     .headmenu .projectselector {
-        max-width: 160px;
+        max-width: 140px;
         min-width: unset;
         width: auto;
     }
@@ -1220,23 +1225,20 @@
         width:auto;
     }
 
-    /* Hide My Work / Company text at tablet — too cramped at 768-1200px
-       alongside logo + project selector + 5 icon buttons */
-    .headmenu.work-modes li:not(.dropdown) {
-        display: none;
-    }
-
-    /* Hide the leantime logo at 768-900px (smallest tablet range) to
-       free up header space for the project selector */
+    /* Logo — hide at all tablet widths to save header space */
     .header .logo {
         display: none;
     }
 
-    /* Show logo again at wider tablet where there's enough room */
-    @media (min-width: 1024px) {
-        .header .logo {
-            display: block;
-        }
+    /* My Work / Company — keep visible (only navigation to switch contexts)
+       but compact them to short text at tablet widths */
+    .headmenu.work-modes li:not(.dropdown) a {
+        font-size: var(--font-size-s);
+        padding: 0 6px;
+        white-space: nowrap;
+        max-width: 72px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .barmenu,
