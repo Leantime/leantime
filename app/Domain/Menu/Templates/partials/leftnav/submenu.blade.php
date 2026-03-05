@@ -7,7 +7,7 @@
             @endif
         >
             <x-global::elements.icon name="{{ $menuItem['visual'] == 'closed' ? 'chevron_right' : 'expand_more' }}" class="submenuCaret" id="submenu-icon-{{ $menuItem['id'] }}" />
-            <strong>{!! __($menuItem['title']) !!}</strong>
+            <strong>{{ strip_tags(__($menuItem['title'])) }}</strong>
         </a>
     </li>
     <ul id="submenu-{{ $menuItem['id'] }}" class="submenu {{ $menuItem['visual'] == 'closed' ? 'closed' : 'open' }}">

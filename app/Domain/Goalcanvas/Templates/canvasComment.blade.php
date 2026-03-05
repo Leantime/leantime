@@ -12,16 +12,7 @@
 
 @endphp
 
-<script type="text/javascript">
-    window.onload = function() {
-        if (!window.jQuery) {
-            //It's not a modal
-            location.href = "{{ BASE_URL }}/goalcanvas/showCanvas?showModal={{ $canvasItem['id'] }}";
-        }
-    }
-</script>
-
-<div class="showDialogOnLoad" style="display:none;">
+<div class="showDialogOnLoad" style="display:none; width:800px;">
 
     <h4 class="widgettitle title-light" style="padding-bottom: 0">
         <x-global::elements.icon :name="$canvasTypes[$canvasItem['box']]['icon']" />
@@ -54,7 +45,7 @@ jQuery(document).ready(function() {
    }
 
    @if(!$login::userIsAtLeast($roles::$editor))
-       leantime.authController.makeInputReadonly(".nyroModalCont");
+       leantime.authController.makeInputReadonly("#global-modal-content");
 
    @endif;
 

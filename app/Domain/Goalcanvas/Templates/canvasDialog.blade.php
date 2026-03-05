@@ -6,15 +6,6 @@
         $hiddenRelatesLabels = $tpl->get('relatesLabels');
         $relatesLabels = $relatesLabels ?? $hiddenRelatesLabels;
     @endphp
-    <script type="text/javascript">
-        window.onload = function() {
-            if (!window.jQuery) {
-                //It's not a modal
-                location.href = "{{ BASE_URL }}/goalcanvas/showCanvas?showModal={{ $canvasItem['id'] }}";
-            }
-        }
-    </script>
-
     <div style="width:1000px">
 
         <h1><x-global::elements.icon :name="$canvasTypes[$canvasItem['box']]['icon']" />
@@ -233,7 +224,7 @@
             }
 
             @if (!$login::userIsAtLeast($roles::$editor))
-            leantime.authController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly("#global-modal-content");
             @endif
 
             @if ($login::userHasRole([$roles::$commenter]))

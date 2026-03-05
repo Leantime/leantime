@@ -32,10 +32,10 @@
                 @if ($login::userIsAtLeast($roles::$editor))
                     <x-globals::actions.dropdown-menu style="float:right;">
                         <li><a href="#/{{ $canvasName }}canvas/editCanvasItem/{{ $row['id'] }}"
-                               data="item_{{ $row['id'] }}"> {{ $tpl->__('links.edit_canvas_item') }}</a></li>
+                               data="item_{{ $row['id'] }}"><x-global::elements.icon name="edit" /> {{ __('links.edit_canvas_item') }}</a></li>
                         <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $row['id'] }}"
                                class="delete"
-                               data="item_{{ $row['id'] }}"> {{ $tpl->__('links.delete_canvas_item') }}</a></li>
+                               data="item_{{ $row['id'] }}"><x-global::elements.icon name="delete" /> {{ __('links.delete_canvas_item') }}</a></li>
                     </x-globals::actions.dropdown-menu>
                 @endif
 
@@ -140,7 +140,7 @@
     <br />
     @if ($login::userIsAtLeast($roles::$editor))
         <a href="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $elementName }}"
-           class="" id="{{ $elementName }}"
-           style="padding-bottom: 10px;">{!! $tpl->__('links.add_new_canvas_item') !!}</a>
+           id="{{ $elementName }}"
+           style="padding-bottom: 10px;"><x-global::elements.icon name="add" /> {{ __('links.add_new_canvas_item') }}</a>
     @endif
 </div>

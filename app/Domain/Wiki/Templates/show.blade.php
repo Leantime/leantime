@@ -94,7 +94,7 @@
             </div>
             <h3 class="wiki-empty-state-title">{{ __('headlines.no_articles_yet') }}</h3>
             <p class="wiki-empty-state-text">{{ __('text.create_new_wiki') }}</p>
-            <x-globals::forms.button link="#/wiki/wikiModal/" type="primary" class="inlineEdit">{{ __('links.icon.create_new_board') }}</x-globals::forms.button>
+            <x-globals::forms.button link="#/wiki/wikiModal/" type="primary" class="inlineEdit" icon="add">{{ __('links.icon.create_new_board') }}</x-globals::forms.button>
         </div>
 
     @elseif ($wikis && count($wikis) > 0)

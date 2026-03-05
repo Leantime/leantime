@@ -18,7 +18,10 @@
                @endforeach
            @endif
         >
-            {!! $menuItem['title'] !!}
+            @if(!empty($menuItem['icon']))
+                <x-global::elements.icon :name="$menuItem['icon']" />
+            @endif
+            {{ strip_tags(__($menuItem['title'])) }}
         </a>
     </li>
 
