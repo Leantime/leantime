@@ -30,12 +30,12 @@
 
             <div class="ticketBox" id="item_{{ $row['id'] }}">
                 @if ($login::userIsAtLeast($roles::$editor))
-                    <x-globals::actions.dropdown-menu style="float:right;">
+                    <x-globals::actions.dropdown-menu style="float:right;" position="left">
                         <li><a href="#/{{ $canvasName }}canvas/editCanvasItem/{{ $row['id'] }}"
-                               data="item_{{ $row['id'] }}"><x-global::elements.icon name="edit" /> {{ __('links.edit_canvas_item') }}</a></li>
+                               data="item_{{ $row['id'] }}"><x-global::elements.icon name="edit" /> {{ $tpl->__('links.edit_canvas_item') }}</a></li>
                         <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $row['id'] }}"
                                class="delete"
-                               data="item_{{ $row['id'] }}"><x-global::elements.icon name="delete" /> {{ __('links.delete_canvas_item') }}</a></li>
+                               data="item_{{ $row['id'] }}"><x-global::elements.icon name="delete" /> {{ $tpl->__('links.delete_canvas_item') }}</a></li>
                     </x-globals::actions.dropdown-menu>
                 @endif
 
@@ -121,7 +121,7 @@
                 </div>
 
                 @if ($row['milestoneHeadline'] != '')
-                    <br />
+                    <div class="clearfix"></div>
                     <div hx-trigger="load"
                          hx-indicator=".htmx-indicator"
                          hx-target="this"

@@ -25,8 +25,8 @@
       "resources/js/compiled-global-component.js"
     ]
   },
-  "_canvasController-D8-avucL.js": {
-    "file": "assets/canvasController-D8-avucL.js",
+  "_canvasController-DOUTUjcx.js": {
+    "file": "assets/canvasController-DOUTUjcx.js",
     "name": "canvasController"
   },
   "_channel-DztoH7QB.js": {
@@ -180,39 +180,39 @@
     "isDynamicEntry": true
   },
   "app/Domain/Cpcanvas/Js/cpCanvasController.js": {
-    "file": "assets/cpCanvasController-Ccl4MLeF.js",
+    "file": "assets/cpCanvasController-Bz1i_gyC.js",
     "name": "cpCanvasController",
     "src": "app/Domain/Cpcanvas/Js/cpCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Dbmcanvas/Js/dbmCanvasController.js": {
-    "file": "assets/dbmCanvasController-DiEiAO_-.js",
+    "file": "assets/dbmCanvasController-C9ogswkz.js",
     "name": "dbmCanvasController",
     "src": "app/Domain/Dbmcanvas/Js/dbmCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Eacanvas/Js/eaCanvasController.js": {
-    "file": "assets/eaCanvasController-DVyakhZQ.js",
+    "file": "assets/eaCanvasController-DG6zaNnR.js",
     "name": "eaCanvasController",
     "src": "app/Domain/Eacanvas/Js/eaCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Emcanvas/Js/emCanvasController.js": {
-    "file": "assets/emCanvasController-DX95SWjb.js",
+    "file": "assets/emCanvasController-B9bhqBvT.js",
     "name": "emCanvasController",
     "src": "app/Domain/Emcanvas/Js/emCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Gamecenter/Js/game-snake.js": {
@@ -222,111 +222,111 @@
     "isDynamicEntry": true
   },
   "app/Domain/Goalcanvas/Js/goalCanvasController.js": {
-    "file": "assets/goalCanvasController-Ceh-U3nt.js",
+    "file": "assets/goalCanvasController-YCImekX2.js",
     "name": "goalCanvasController",
     "src": "app/Domain/Goalcanvas/Js/goalCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Insightscanvas/Js/insightsCanvasController.js": {
-    "file": "assets/insightsCanvasController-Bk-Bsq_B.js",
+    "file": "assets/insightsCanvasController-D1dBwUOt.js",
     "name": "insightsCanvasController",
     "src": "app/Domain/Insightscanvas/Js/insightsCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Lbmcanvas/Js/lbmCanvasController.js": {
-    "file": "assets/lbmCanvasController-1PjdkgLg.js",
+    "file": "assets/lbmCanvasController-BFWHPn9N.js",
     "name": "lbmCanvasController",
     "src": "app/Domain/Lbmcanvas/Js/lbmCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Leancanvas/Js/leanCanvasController.js": {
-    "file": "assets/leanCanvasController-DFsadmWM.js",
+    "file": "assets/leanCanvasController-xel75rM8.js",
     "name": "leanCanvasController",
     "src": "app/Domain/Leancanvas/Js/leanCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Minempathycanvas/Js/risksCanvasController.js": {
-    "file": "assets/risksCanvasController-B1VoB3S7.js",
+    "file": "assets/risksCanvasController-DRx-obcc.js",
     "name": "risksCanvasController",
     "src": "app/Domain/Minempathycanvas/Js/risksCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Obmcanvas/Js/obmCanvasController.js": {
-    "file": "assets/obmCanvasController-90KSxcTx.js",
+    "file": "assets/obmCanvasController-BZ9v8jt8.js",
     "name": "obmCanvasController",
     "src": "app/Domain/Obmcanvas/Js/obmCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Retroscanvas/Js/retroCanvasController.js": {
-    "file": "assets/retroCanvasController-DTX3tACY.js",
+    "file": "assets/retroCanvasController-zfzAeGjd.js",
     "name": "retroCanvasController",
     "src": "app/Domain/Retroscanvas/Js/retroCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Riskscanvas/Js/risksCanvasController.js": {
-    "file": "assets/risksCanvasController-Lj7LPQaf.js",
+    "file": "assets/risksCanvasController-CRyEAt8B.js",
     "name": "risksCanvasController",
     "src": "app/Domain/Riskscanvas/Js/risksCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Sbcanvas/Js/sbCanvasController.js": {
-    "file": "assets/sbCanvasController-Y6LrJ_Is.js",
+    "file": "assets/sbCanvasController-CzAPGldM.js",
     "name": "sbCanvasController",
     "src": "app/Domain/Sbcanvas/Js/sbCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Smcanvas/Js/smCanvasController.js": {
-    "file": "assets/smCanvasController-B7xYzqOP.js",
+    "file": "assets/smCanvasController-kLQOQFJC.js",
     "name": "smCanvasController",
     "src": "app/Domain/Smcanvas/Js/smCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Sqcanvas/Js/sqCanvasController.js": {
-    "file": "assets/sqCanvasController-BGQa_nhV.js",
+    "file": "assets/sqCanvasController-MOIZjFZS.js",
     "name": "sqCanvasController",
     "src": "app/Domain/Sqcanvas/Js/sqCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Swotcanvas/Js/swotCanvasController.js": {
-    "file": "assets/swotCanvasController-D5UvW75t.js",
+    "file": "assets/swotCanvasController-D0Gn-hPl.js",
     "name": "swotCanvasController",
     "src": "app/Domain/Swotcanvas/Js/swotCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Tickets/Js/kanbanController.js": {
@@ -342,12 +342,12 @@
     "isDynamicEntry": true
   },
   "app/Domain/Valuecanvas/Js/valueCanvasController.js": {
-    "file": "assets/valueCanvasController-DSAiosvP.js",
+    "file": "assets/valueCanvasController-C7oZh8Yx.js",
     "name": "valueCanvasController",
     "src": "app/Domain/Valuecanvas/Js/valueCanvasController.js",
     "isDynamicEntry": true,
     "imports": [
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ]
   },
   "app/Domain/Wiki/Js/wikiController.js": {
@@ -959,13 +959,13 @@
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-CKe_h7xO.js",
+    "file": "assets/compiled-app-Bl7KwOk3.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,
     "imports": [
       "_preload-helper-51J786ve.js",
-      "_canvasController-D8-avucL.js"
+      "_canvasController-DOUTUjcx.js"
     ],
     "dynamicImports": [
       "app/Domain/Clients/Js/clientsController.js",

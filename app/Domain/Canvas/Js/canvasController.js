@@ -274,7 +274,7 @@ leantime.canvasController = (function () {
                         }
                     });
                     document.querySelectorAll("#" + selector + " .column .contentInner").forEach(function (el) {
-                        el.style.height = maxHeight + "px";
+                        el.style.minHeight = maxHeight + "px";
                     });
                 });
             };
@@ -296,7 +296,7 @@ leantime.canvasController = (function () {
                         }
                     });
                     document.querySelectorAll(rowSelector + " .column .contentInner").forEach(function (el) {
-                        el.style.height = thisRowHeight + "px";
+                        el.style.minHeight = thisRowHeight + "px";
                     });
                 }
             };

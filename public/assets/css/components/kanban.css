@@ -361,12 +361,12 @@
 
 
 .ticketBox {
-    display: flow-root; /* BFC: contains floated dropdowns, avatar, comment count */
+    display: flow-root;
     background: var(--kanban-card-bg);
     border:none;
     border-left:3px solid transparent;
     border-right: 3px solid transparent;
-    padding:10px; /* account for 3px border */
+    padding:10px;
     padding-bottom:10px;
     margin-bottom:10px;
     cursor:move;
