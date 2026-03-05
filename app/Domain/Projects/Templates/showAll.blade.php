@@ -53,12 +53,13 @@
             <tbody>
                 @foreach($tpl->get('allProjects') as $row)
                     <tr class='gradeA'>
-                        <td style="padding:6px;">
-                            <a class="" href="{{ BASE_URL }}/projects/showProject/{{ $row['id'] }}">{{ e($row['name']) }}</a>
                         <td>
-                            <a class="" href="{{ BASE_URL }}/clients/showClient/{{ $row['clientId'] }}">{{ e($row['clientName']) }}</a>
+                            <a href="{{ BASE_URL }}/projects/showProject/{{ $row['id'] }}">{{ e($row['name']) }}</a>
                         </td>
-                        <td> {{ $row['type'] }} </td>
+                        <td>
+                            <a href="{{ BASE_URL }}/clients/showClient/{{ $row['clientId'] }}">{{ e($row['clientName']) }}</a>
+                        </td>
+                        <td>{{ $row['type'] }}</td>
                         <td>
                             @if($row['state'] == -1)
                                 {{ __('label.closed') }}
