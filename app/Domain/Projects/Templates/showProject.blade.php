@@ -38,127 +38,109 @@
                 <form method="post" action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#team">
                     <input type="hidden" name="saveUsers" value="1" />
 
-                    <div class="row-fluid">
-                    <div class="span12">
+                    <p style="margin-bottom: 24px; color: var(--primary-font-color); opacity: 0.8;">
+                        {!! __('text.choose_access_for_users') !!}
+                    </p>
 
-                         <div class="form-group">
-                             <br />{!! __('text.choose_access_for_users') !!}<br />
-                             <br />
+                    <h4 class="widgettitle title-light">
+                        <x-global::elements.icon name="group" />{{ __('headlines.team_member') }}
+                    </h4>
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h4 class="widgettitle title-light">
-                                        <x-global::elements.icon name="group" />{{ __('headlines.team_member') }}
-                                    </h4>
-                                </div>
-                            </div>
-
-                             <div class="row">
-                                @foreach($project['assignedUsers'] as $userId => $assignedUser)
-                                    <div class="col-md-4">
-                                        <div class="userBox">
-                                            <x-globals::forms.checkbox name="editorId[]" id="user-{{ $assignedUser['id'] }}" value="{{ $assignedUser['id'] }}"
-                                                :checked="true" />
-                                            <div class="commentImage">
-                                                <img src="{{ BASE_URL }}/api/users?profileImage={{ $assignedUser['id'] }}&v={{ format($assignedUser['modified'])->timestamp() }}"/>
-                                            </div>
-                                            <label for="user-{{ $assignedUser['id'] }}">{{ sprintf(__('text.full_name'), e($assignedUser['firstname']), e($assignedUser['lastname'])) }}
-                                                @if($assignedUser['jobTitle'] != '')
-                                                    <small>
-                                                        {{ e($assignedUser['jobTitle']) }}
-                                                    </small>
-                                                    <br/>
-                                                @endif
-                                                @if($assignedUser['source'] == 'api')
-                                                    <small>
-                                                        API Access
-                                                    </small>
-                                                    <br/>
-                                                @endif
-                                                @if($assignedUser['status'] == 'i')
-                                                    <small>{{ __('label.invited') }}</small>
-                                                @endif
-                                            </label>
-                                            @if($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)
-                                                <x-globals::forms.input :bare="true" name="role-{{ $assignedUser['id'] }}" readonly disabled value="{{ __('label.roles.' . $roles::getRoles()[$assignedUser['role']]) }}" />
-                                            @else
-                                                <x-globals::forms.select name="userProjectRole-{{ $assignedUser['id'] }}">
-                                                    <option value="inherit">Inherit</option>
-                                                    <option value="{{ array_search($roles::$readonly, $roles::getRoles()) }}"
-                                                        {{ $assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$readonly) }}</option>
-                                                    <option value="{{ array_search($roles::$commenter, $roles::getRoles()) }}"
-                                                        {{ $assignedUser['projectRole'] == array_search($roles::$commenter, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$commenter) }}</option>
-                                                    <option value="{{ array_search($roles::$editor, $roles::getRoles()) }}"
-                                                        {{ $assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$editor) }}</option>
-                                                    <option value="{{ array_search($roles::$manager, $roles::getRoles()) }}"
-                                                        {{ $assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$manager) }}</option>
-                                                </x-globals::forms.select>
-                                            @endif
-                                            <div class="clearall"></div>
-                                        </div>
+                    <div class="row">
+                        @foreach($project['assignedUsers'] as $userId => $assignedUser)
+                            <div class="col-md-4">
+                                <div class="userBox">
+                                    <x-globals::forms.checkbox name="editorId[]" id="user-{{ $assignedUser['id'] }}" value="{{ $assignedUser['id'] }}"
+                                        :checked="true" />
+                                    <div class="commentImage">
+                                        <img src="{{ BASE_URL }}/api/users?profileImage={{ $assignedUser['id'] }}&v={{ format($assignedUser['modified'])->timestamp() }}"/>
                                     </div>
-                                @endforeach
-                             </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h4 class="widgettitle title-light">
-                                        <x-global::elements.icon name="group" />{{ __('headlines.assign_users_to_project') }}
-                                    </h4>
-                                </div>
-                            </div>
-
-                             <div class="row">
-                                @foreach($tpl->get('availableUsers') as $row)
-                                    @if(collect($project['assignedUsers'])->where('id', $row['id'])->isEmpty())
-                                        <div class="col-md-4">
-                                            <div class="userBox">
-                                                <x-globals::forms.checkbox name="editorId[]" id="user-{{ $row['id'] }}" value="{{ $row['id'] }}" />
-
-                                                <div class="commentImage">
-                                                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}"/>
-                                                </div>
-                                                <label for="user-{{ $row['id'] }}">{{ sprintf(__('text.full_name'), e($row['firstname']), e($row['lastname'])) }}</label>
-                                                @if($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner)
-                                                    <x-globals::forms.input :bare="true" name="role-{{ $row['id'] }}" readonly disabled value="{{ __('label.roles.' . $roles::getRoles()[$row['role']]) }}" />
-                                                @else
-                                                    @php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); @endphp
-                                                    <x-globals::forms.select name="userProjectRole-{{ $row['id'] }}">
-                                                        <option value="inherit">Inherit</option>
-                                                        <option value="{{ array_search($roles::$readonly, $roles::getRoles()) }}"
-                                                            {{ $assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$readonly, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$readonly) }}</option>
-                                                        <option value="{{ array_search($roles::$commenter, $roles::getRoles()) }}"
-                                                            {{ $assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$commenter, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$commenter) }}</option>
-                                                        <option value="{{ array_search($roles::$editor, $roles::getRoles()) }}"
-                                                            {{ $assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$editor, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$editor) }}</option>
-                                                        <option value="{{ array_search($roles::$manager, $roles::getRoles()) }}"
-                                                            {{ $assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$manager, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$manager) }}</option>
-                                                    </x-globals::forms.select>
-                                                @endif
-                                                <div class="clearall"></div>
-                                            </div>
-                                        </div>
+                                    <label for="user-{{ $assignedUser['id'] }}">{{ sprintf(__('text.full_name'), e($assignedUser['firstname']), e($assignedUser['lastname'])) }}
+                                        @if($assignedUser['jobTitle'] != '')
+                                            <small>
+                                                {{ e($assignedUser['jobTitle']) }}
+                                            </small>
+                                            <br/>
+                                        @endif
+                                        @if($assignedUser['source'] == 'api')
+                                            <small>
+                                                API Access
+                                            </small>
+                                            <br/>
+                                        @endif
+                                        @if($assignedUser['status'] == 'i')
+                                            <small>{{ __('label.invited') }}</small>
+                                        @endif
+                                    </label>
+                                    @if($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)
+                                        <x-globals::forms.input :bare="true" name="role-{{ $assignedUser['id'] }}" readonly disabled value="{{ __('label.roles.' . $roles::getRoles()[$assignedUser['role']]) }}" />
+                                    @else
+                                        <x-globals::forms.select name="userProjectRole-{{ $assignedUser['id'] }}">
+                                            <option value="inherit">Inherit</option>
+                                            <option value="{{ array_search($roles::$readonly, $roles::getRoles()) }}"
+                                                {{ $assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$readonly) }}</option>
+                                            <option value="{{ array_search($roles::$commenter, $roles::getRoles()) }}"
+                                                {{ $assignedUser['projectRole'] == array_search($roles::$commenter, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$commenter) }}</option>
+                                            <option value="{{ array_search($roles::$editor, $roles::getRoles()) }}"
+                                                {{ $assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$editor) }}</option>
+                                            <option value="{{ array_search($roles::$manager, $roles::getRoles()) }}"
+                                                {{ $assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$manager) }}</option>
+                                        </x-globals::forms.select>
                                     @endif
-                                @endforeach
-                                @if($login::userIsAtLeast($roles::$manager))
-                                    <div class="col-md-4">
-                                        <div class="userBox">
-                                            <a class="userEditModal" href="{{ BASE_URL }}/users/newUser?preSelectProjectId={{ $project['id'] }}" style="font-size:var(--font-size-l); line-height:61px"><x-global::elements.icon name="person_add" /> {{ __('links.create_user') }}</a>
-                                            <div class="clearall"></div>
-                                        </div>
-                                    </div>
-                                @endif
+                                    <div class="clearall"></div>
+                                </div>
                             </div>
-                             <div class="row">
-                                 <div class="col-md-12">
-
-                                 </div>
-                             </div>
-                        </div>
+                        @endforeach
                     </div>
-                </div>
-                    <br/>
-                    <x-globals::forms.button submit type="primary" name="saveUsers" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
+
+                    <h4 class="widgettitle title-light" style="margin-top: 40px;">
+                        <x-global::elements.icon name="group" />{{ __('headlines.assign_users_to_project') }}
+                    </h4>
+
+                    <div class="row">
+                        @foreach($tpl->get('availableUsers') as $row)
+                            @if(collect($project['assignedUsers'])->where('id', $row['id'])->isEmpty())
+                                <div class="col-md-4">
+                                    <div class="userBox">
+                                        <x-globals::forms.checkbox name="editorId[]" id="user-{{ $row['id'] }}" value="{{ $row['id'] }}" />
+
+                                        <div class="commentImage">
+                                            <img src="{{ BASE_URL }}/api/users?profileImage={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}"/>
+                                        </div>
+                                        <label for="user-{{ $row['id'] }}">{{ sprintf(__('text.full_name'), e($row['firstname']), e($row['lastname'])) }}</label>
+                                        @if($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner)
+                                            <x-globals::forms.input :bare="true" name="role-{{ $row['id'] }}" readonly disabled value="{{ __('label.roles.' . $roles::getRoles()[$row['role']]) }}" />
+                                        @else
+                                            @php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); @endphp
+                                            <x-globals::forms.select name="userProjectRole-{{ $row['id'] }}">
+                                                <option value="inherit">Inherit</option>
+                                                <option value="{{ array_search($roles::$readonly, $roles::getRoles()) }}"
+                                                    {{ $assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$readonly, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$readonly) }}</option>
+                                                <option value="{{ array_search($roles::$commenter, $roles::getRoles()) }}"
+                                                    {{ $assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$commenter, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$commenter) }}</option>
+                                                <option value="{{ array_search($roles::$editor, $roles::getRoles()) }}"
+                                                    {{ $assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$editor, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$editor) }}</option>
+                                                <option value="{{ array_search($roles::$manager, $roles::getRoles()) }}"
+                                                    {{ $assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$manager, $roles::getRoles()) ? "selected='selected'" : '' }}>{{ __('label.roles.' . $roles::$manager) }}</option>
+                                            </x-globals::forms.select>
+                                        @endif
+                                        <div class="clearall"></div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                        @if($login::userIsAtLeast($roles::$manager))
+                            <div class="col-md-4">
+                                <div class="userBox userBox--add">
+                                    <a class="userEditModal" href="{{ BASE_URL }}/users/newUser?preSelectProjectId={{ $project['id'] }}"><x-global::elements.icon name="person_add" /> {{ __('links.create_user') }}</a>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div style="margin-top: 24px;">
+                        <x-globals::forms.button submit type="primary" name="saveUsers" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
+                    </div>
 
                 </form>
 

@@ -773,33 +773,86 @@ input[type=color] {
 }
 
 .userBox {
-    border:1px solid var(--main-border-color);
+    border: 1px solid var(--main-border-color);
     border-radius: var(--box-radius);
-    padding:10px;
-    margin-bottom:10px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 8px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.userBox .commentImage img{
-    width:48px;
-    height:48px;
-    margin-top: 4px;
+.userBox:hover {
+    border-color: var(--accent1);
+    box-shadow: var(--min-shadow);
+}
+
+.userBox .commentImage {
+    flex-shrink: 0;
+}
+
+.userBox .commentImage img {
+    width: 40px;
+    height: 40px;
+    margin-top: 0;
 }
 
 .userBox input[type=checkbox] {
-    float:left;
-    margin-right:16px;
-    margin-top: 24px;
+    float: none;
+    margin: 0;
+    flex-shrink: 0;
 }
 
 .userBox label {
     display: inline-block;
-    width:200px;
+    flex: 1 1 0%;
+    min-width: 50%;
+    width: auto;
+}
+
+.userBox label small {
+    display: block;
+    opacity: 0.7;
+    font-size: var(--font-size-s);
 }
 
 .userBox select,
-.userBox input{
-    margin-bottom:0px;
+.userBox input {
+    margin-bottom: 0;
+}
 
+/* Force role selector/input to a new row */
+.userBox > select,
+.userBox > input:not([type=checkbox]):not([type=hidden]),
+.userBox > div[class*="form-control"] {
+    flex-basis: 100%;
+}
+
+.userBox .clearall {
+    display: none;
+}
+
+/* CTA variant for "Create new user" */
+.userBox--add {
+    justify-content: center;
+    align-items: center;
+    min-height: 100%;
+}
+
+.userBox--add a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary-font-color);
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
+}
+
+.userBox--add:hover a {
+    opacity: 1;
 }
 
 .backlogChartButtons,
