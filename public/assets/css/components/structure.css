@@ -20,10 +20,37 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 
 html {
     box-sizing: border-box;
+    /* Prevent layout-breaking horizontal scroll on narrow viewports */
+    overflow-x: hidden;
 }
 
 body {
     color:var(--primary-font-color);
+    /* Constrain body to viewport width on all devices */
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* Fluid images — never overflow their container */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Horizontal-scroll wrapper for overflow content (tables, wide widgets) */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+
+/* Touch-friendly minimum tap target */
+.touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 *, ::after, ::before {
