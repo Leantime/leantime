@@ -1125,13 +1125,15 @@ a.barmenu:hover {
 
 .mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a {
     font-size: 0px;
-    padding: 12px 0px 8px 0;
-    width: 39px;
+    padding: 6px 0;
+    width: 40px;
     text-align: center;
-    display: block;
-    line-height: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
     margin-left: 0px;
-    margin-bottom:2px;
+    margin-bottom: 2px;
 }
 
 .mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked a span {
@@ -1139,7 +1141,10 @@ a.barmenu:hover {
 }
 
 .mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a span{
-    font-size: var(--base-font-size);
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .mainwrapper.menuclosed .bigProjectSelector i.fa {
