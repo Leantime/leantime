@@ -85,6 +85,8 @@ class Header extends Composer
             'accents' => [
                 $this->themeCore->getPrimaryColor(),
                 $this->themeCore->getSecondaryColor(),
+                false,  // accent3 uses CSS default
+                false,  // accent4 uses CSS default
             ],
             'themeBg' => $this->themeCore->getBackgroundImage(),
             'themeOpacity' => $backgroundOpacity,
