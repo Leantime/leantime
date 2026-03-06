@@ -13,7 +13,7 @@
     {!! $tpl->displayNotification() !!}
 
     <div class="maincontentinner">
-        <div class="lt-tabs tabbedwidget accountTabs" data-tabs data-tabs-persist="hash">
+        <div class="lt-tabs tabbedwidget accountTabs" data-tabs data-tabs-persist="hash" hx-boost="false">
 
                     <ul role="tablist">
                         <li><a href="#myProfile">{!! __('tabs.myProfile') !!}</a></li>
@@ -260,13 +260,15 @@
                                 <hr />
 
                                 <x-globals::forms.form-field label-text="Color Scheme" name="colorscheme">
-                                    @foreach($availableColorSchemes as $key => $scheme )
-                                        <x-globals::selectable class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])"  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
-                                            <label for="color-{{ $key }}" class="colorCircle"
-                                                   style="background:linear-gradient(135deg, {{ $scheme["primaryColor"] }} 20%, {{ $scheme["secondaryColor"] }} 100%);">
-                                            </label>
-                                        </x-globals::selectable>
-                                    @endforeach
+                                    <div class="tw:flex tw:flex-wrap" style="gap:10px;">
+                                        @foreach($availableColorSchemes as $key => $scheme )
+                                            <x-globals::selectable class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])"  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
+                                                <label for="color-{{ $key }}" class="colorCircle"
+                                                       style="background:linear-gradient(135deg, {{ $scheme["primaryColor"] }} 20%, {{ $scheme["secondaryColor"] }} 100%);">
+                                                </label>
+                                            </x-globals::selectable>
+                                        @endforeach
+                                    </div>
                                 </x-globals::forms.form-field>
                             </div>
                             <br /><br />
