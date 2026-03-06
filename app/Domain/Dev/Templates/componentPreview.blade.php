@@ -443,14 +443,14 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Status Indicator</h3>
         <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
-            Usage: <code>&lt;x-globals::elements.status-indicator status="success" label="Active" /&gt;</code>
+            Usage: <code>&lt;x-globals::feedback.indicator state="success" label="Active" /&gt;</code>
         </p>
         <div style="display: flex; gap: 20px; align-items: center;">
-            <x-globals::elements.status-indicator status="success" label="Active" />
-            <x-globals::elements.status-indicator status="warning" label="Pending" />
-            <x-globals::elements.status-indicator status="error" label="Failed" />
-            <x-globals::elements.status-indicator status="info" label="In Progress" />
-            <x-globals::elements.status-indicator status="default" label="Unknown" />
+            <x-globals::feedback.indicator state="success" label="Active" />
+            <x-globals::feedback.indicator state="warning" label="Pending" />
+            <x-globals::feedback.indicator state="error" label="Failed" />
+            <x-globals::feedback.indicator state="info" label="In Progress" />
+            <x-globals::feedback.indicator state="default" label="Unknown" />
         </div>
     </section>
 
