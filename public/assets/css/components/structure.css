@@ -195,7 +195,7 @@ img {
     position: absolute;
     top: 100%;
     left: 0;
-    z-index: var(--zlayer-8);
+    z-index: var(--zlayer-8, 1000);
     display: none;
     float: left;
     min-width: 160px;
@@ -448,7 +448,7 @@ img {
     -webkit-backdrop-filter: var(--glass-blur);
     position:sticky;
     height:calc(100dvh - 70px);
-    z-index: var(--zlayer-4);
+    z-index: var(--zlayer-4, 10);
     display: flex;
     flex-direction: column;
     top:70px;
@@ -464,7 +464,7 @@ img {
     height: 48px;
     position: fixed;
     top:0px;
-    z-index: var(--zlayer-5);
+    z-index: var(--zlayer-5, 50);
     width: 100%;
     box-shadow: var(--large-shadow);
     backdrop-filter: var(--glass-blur);
@@ -484,7 +484,7 @@ img {
     padding: 10px 16px;
     margin-top:-95px;
     position:relative;
-    z-index: var(--zlayer-3);
+    z-index: var(--zlayer-3, 5);
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
@@ -541,7 +541,7 @@ img {
     color:var(--main-action-color);
     position: fixed;
     bottom:0px;
-    z-index: var(--zlayer-7);
+    z-index: var(--zlayer-7, 100);
 }
 
 .announcementBanner:before {

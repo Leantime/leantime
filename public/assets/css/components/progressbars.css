@@ -286,7 +286,7 @@
 .full-width-loader {
     opacity: 0;
     position: fixed;
-    z-index: var(--zlayer-7);
+    z-index: var(--zlayer-7, 100);
     top: 0px;
     left: 0px;
     height: 4px;

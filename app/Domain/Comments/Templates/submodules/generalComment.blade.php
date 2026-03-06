@@ -95,6 +95,10 @@
                                     <x-global::elements.icon name="reply" /> {{ __('links.reply') }}
                                 </a>
                             @endif
+                            <span hx-get="{{ BASE_URL }}/hx/comments/reactions/get?commentId={{ $row['id'] }}"
+                                  hx-trigger="revealed"
+                                  hx-swap="outerHTML">
+                            </span>
                         </div>
 
                         <div class="replies">
@@ -133,6 +137,10 @@
                                                         </a>
                                                     @endif
                                                 @endif
+                                                <span hx-get="{{ BASE_URL }}/hx/comments/reactions/get?commentId={{ $comment['id'] }}"
+                                                      hx-trigger="revealed"
+                                                      hx-swap="outerHTML">
+                                                </span>
                                             </div>
                                         </div>
                                         <div class="clearall"></div>
@@ -220,6 +228,54 @@
             jQuery(`#comment-image-to-hide-on-edit-${formHash}-${id}`).show();
             jQuery(`#comment-${formHash}-${id}`).hide();
         @endif
+    }
+
+    function toggleReactionPicker(btn, commentId) {
+        var existing = document.querySelector('.reaction-emoji-picker.show');
+        if (existing && existing.dataset.commentId != commentId) {
+            existing.classList.remove('show');
+            existing.remove();
+        }
+
+        var picker = document.querySelector('.reaction-emoji-picker[data-comment-id="' + commentId + '"]');
+        if (picker) {
+            picker.classList.toggle('show');
+            if (!picker.classList.contains('show')) picker.remove();
+            return;
+        }
+
+        var emojiMap = {
+            'like': '👍', 'love': '❤️', 'celebrate': '🎉', 'funny': '😄',
+            'interesting': '🤔', 'support': '💯', 'sad': '😥', 'anger': '😡'
+        };
+
+        picker = document.createElement('span');
+        picker.className = 'reaction-emoji-picker show';
+        picker.dataset.commentId = commentId;
+        picker.innerHTML = '<span class="reaction-emoji-picker__grid">' +
+            Object.keys(emojiMap).map(function(key) {
+                return '<button type="button" class="reaction-emoji-picker__btn"' +
+                    ' hx-post="{{ BASE_URL }}/hx/comments/reactions/toggle?commentId=' + commentId + '"' +
+                    ' hx-vals=\'{"reaction": "' + key + '"}\'' +
+                    ' hx-target="#reactions-' + commentId + '"' +
+                    ' hx-swap="outerHTML"' +
+                    ' title="' + key + '">' + emojiMap[key] + '</button>';
+            }).join('') +
+            '</span>';
+
+        btn.closest('.reaction-picker-toggle').appendChild(picker);
+        htmx.process(picker);
+
+        // Close when clicking outside
+        setTimeout(function() {
+            document.addEventListener('click', function closePicker(e) {
+                if (!picker.contains(e.target) && e.target !== btn) {
+                    picker.classList.remove('show');
+                    picker.remove();
+                    document.removeEventListener('click', closePicker);
+                }
+            });
+        }, 0);
     }
 
     jQuery(".confetti").click(function(){

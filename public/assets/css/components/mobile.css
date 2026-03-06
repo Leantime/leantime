@@ -92,7 +92,7 @@
         overflow-y: auto;
         overflow-x: hidden;
         /* Layer: above content, strictly below fixed header */
-        z-index: calc(var(--zlayer-5) - 1) !important;
+        z-index: calc(var(--zlayer-5, 15) - 1) !important;
         /* Slide animation */
         transform: translateX(0);
         transition: transform 0.25s ease, visibility 0.25s;
@@ -113,7 +113,7 @@
         inset: 0;
         background: rgba(0, 0, 0, 0.45);
         /* Layer: below sidebar (zlayer-5 - 1 = 14), above page content */
-        z-index: calc(var(--zlayer-5) - 2);
+        z-index: calc(var(--zlayer-5, 15) - 2);
         cursor: pointer;
     }
 
@@ -182,7 +182,7 @@
 
     /* Header stays on top of everything including the sidebar overlay */
     .header {
-        z-index: var(--zlayer-5) !important;
+        z-index: var(--zlayer-5, 50) !important;
     }
 
     .barmenu,

@@ -175,6 +175,17 @@
 
     --transparencyLayer: rgba(0,0,0,1);
 
+    /* Z-index layers (must match light.css) */
+    --zlayer-1: 1;      /* Base content (editors, inputs) */
+    --zlayer-2: 2;      /* Content toolbar */
+    --zlayer-3: 5;      /* Elevated content (panels, main content) */
+    --zlayer-4: 10;     /* Over-content (image resizers, sortable, wiki) */
+    --zlayer-5: 15;     /* Header / nav bar */
+    --zlayer-6: 20;     /* Floating elements (kanban lines) */
+    --zlayer-7: 100;    /* Loaders / toggles */
+    --zlayer-8: 1000;   /* Dropdowns / pickers */
+    --zlayer-9: 1010;   /* Dropdown overlays (chosen) */
+
     /* Priority Colors (Dark Mode) */
     --priority-critical: #ef4444;      /* Red-500 */
     --priority-critical-bg: #7f1d1d;   /* Red-900 */

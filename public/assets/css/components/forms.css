@@ -427,7 +427,7 @@ body input[type='submit'].btn-primary .caret,
 .chosen-container .chosen-drop {
     position: absolute;
     top: 100%;
-    z-index: var(--zlayer-9);
+    z-index: var(--zlayer-9, 1010);
     width: 100%;
     border: 1px solid var(--main-border-color);
     border-top: 0;
@@ -1968,7 +1968,7 @@ input[type=number].hide-controls {
     box-shadow: var(--regular-shadow);
     min-width: 300px;
     position: absolute;
-    z-index: var(--zlayer-8);
+    z-index: var(--zlayer-8, 1000);
 }
 
 .dropdown-header {
