@@ -36,6 +36,8 @@
                                 $currentView = __('buttons.week');
                             } elseif ($roadmapView == 'Month') {
                                 $currentView = __('buttons.month');
+                            } elseif ($roadmapView == 'Quarter') {
+                                $currentView = __('buttons.quarter');
                             }
                         @endphp
                         <button class="btn dropdown-toggle" data-toggle="dropdown">{{ __('buttons.timeframe') }}: <span class="viewText">{{ $currentView }}</span><span class="caret"></span></button>
@@ -43,6 +45,7 @@
                             <li><a href="javascript:void(0);" data-value="Day" class="{{ $roadmapView == 'Day' ? 'active' : '' }}"> {{ __('buttons.day') }}</a></li>
                             <li><a href="javascript:void(0);" data-value="Week" class="{{ $roadmapView == 'Week' ? 'active' : '' }}">{{ __('buttons.week') }}</a></li>
                             <li><a href="javascript:void(0);" data-value="Month" class="{{ $roadmapView == 'Month' ? 'active' : '' }}">{{ __('buttons.month') }}</a></li>
+                            <li><a href="javascript:void(0);" data-value="Quarter" class="{{ $roadmapView == 'Quarter' ? 'active' : '' }}">{{ __('buttons.quarter') }}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -59,7 +62,7 @@
         @endif
 
         <div class="gantt-wrapper">
-            <svg id="gantt"></svg>
+            <div id="gantt"></div>
         </div>
 
     </div>
@@ -113,6 +116,7 @@
                         end :'" . (dtHelper()->isValidDateString($mlst->editTo) ? $mlst->editTo : dtHelper()->userNow()->addDays(2)->format('Y-m-d')) . "',
                         progress :'" . format($mlst->percentDone)->decimal() . "',
                         dependencies :'" . implode(',', $dependencyList) . "',
+                        milestoneid :'" . ($mlst->milestoneid ?? 0) . "',
                         custom_class :'',
                         type: '" . strtolower($mlst->type) . "',
                         bg_color: '" . $color . "',

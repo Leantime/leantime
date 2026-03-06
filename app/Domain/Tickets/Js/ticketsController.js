@@ -268,183 +268,12 @@ leantime.ticketsController = (function () {
     });
 
     var initGanttChart = function (tasks, viewMode, readonly) {
-
-        function htmlEntities(str)
-        {
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-        }
-
-        jQuery(document).ready(
-            function () {
-
-                if (readonly === false) {
-                    var gantt_chart = new Gantt(
-                        "#gantt",
-                        tasks,
-                        {
-                            header_height: 55,
-                            column_width: 20,
-                            step: 24,
-                            view_modes: ['Day', 'Week', 'Month'],
-                            bar_height: 40,
-                            static_progress_indicator: true,
-                            bar_corner_radius: 10,
-                            arrow_curve: 10,
-                            padding:20,
-                            view_mode: 'Month',
-                            date_format: leantime.i18n.__("language.momentJSDate"),
-                            language: leantime.i18n.__("language.code").slice(0, 2), //Get first 2 characters of language code
-                            additional_rows: 5,
-                            custom_popup_html: function (task) {
-
-                                // the task object will contain the updated
-                                // dates and progress value
-                                var end_date = task._end;
-                                var dateObject = new Date(end_date);
-                                var dateTime = jQuery.datepicker.formatDate(leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),  new Date(end_date));
-
-                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
-
-                                if (task.projectName !== undefined) {
-                                    popUpHTML +=  '<h3><b>' + task.projectName + '</b></h3>';
-                                }
-                                popUpHTML += '<small>' + task.type + ' #' + task.id + ' </small>';
-
-                                if (task.type === 'milestone') {
-                                    popUpHTML += '<h4><a href="#/tickets/editMilestone/' + task.id + '" >' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                     '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
-                                     '' + Math.round(task.progress) + '%</p> ' +
-                                     '<a href="#/tickets/editMilestone/' + task.id + '" ><span class="material-symbols-outlined">map</span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
-                                     '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="material-symbols-outlined">push_pin</span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
-                                } else {
-                                    popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                     '<a href="#/tickets/showTicket/' + task.id + '"><span class="material-symbols-outlined">push_pin</span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
-                                }
-
-                                 popUpHTML += '</div>';
-
-                                return popUpHTML;
-                            },
-                            on_click: function (task) {
-
-                            },
-                            on_date_change: function (task, start, end) {
-
-                                leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index+1);
-
-                            },
-                            on_sort_change: function (tasks) {
-
-                                var statusPostData = {
-                                    action: "ganttSort",
-                                    payload: {}
-                                };
-
-                                for (var i = 0; i < tasks.length; i++) {
-                                        //start sorting counter at 1 instead of 0 since 0 will cause date comparison
-                                        statusPostData.payload[tasks[i].id] = tasks[i]._index+1;
-                                }
-
-                                // POST to server using $.post or $.ajax
-                                jQuery.ajax({
-                                    type: 'POST',
-                                    url: leantime.appUrl + '/api/tickets',
-                                    data: statusPostData
-
-                                });
-                            },
-                            on_progress_change: function (task, progress) {
-
-                                //_initModals();
-                            },
-                            on_view_change: function (mode) {
-
-                                leantime.usersRepository.updateUserViewSettings("roadmap", mode);
-
-                            },
-                            on_popup_show: function (task) {
-
-                            }
-                        }
-                    );
-                } else {
-                    var gantt_chart = new Gantt(
-                        "#gantt",
-                        tasks,
-                        {
-                            readonlyGantt: true,
-                            resizing: false,
-                            progress: false,
-                            is_draggable: false,
-                            custom_popup_html: function (task) {
-
-
-                                var end_date = task._end;
-                                var dateObject = new Date(end_date);
-                                var dateTime = jQuery.datepicker.formatDate(leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),  new Date(end_date));
-
-                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
-
-                                if (task.projectName !== undefined) {
-                                    popUpHTML +=  '<h3><b>' + task.projectName + '</b></h3>';
-                                }
-                                popUpHTML += '<small>' + task.type + ' #' + task.id + ' </small>';
-
-                                if (task.type === 'milestone') {
-                                    popUpHTML += '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
-                                        '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
-                                        '' + Math.round(task.progress) + '%</p> ' +
-                                        '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="material-symbols-outlined">push_pin</span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
-                                } else {
-                                    popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                        '<a href="#/tickets/showTicket/' + task.id + '"><span class="material-symbols-outlined">push_pin</span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
-                                }
-
-                                popUpHTML += '</div>';
-
-                                return popUpHTML;
-
-                            },
-                            on_click: function (task) {
-
-                            },
-                            on_date_change: function (task, start, end) {
-
-
-                            },
-                            on_progress_change: function (task, progress) {
-
-
-                            },
-                            on_view_change: function (mode) {
-
-                                leantime.usersRepository.updateUserViewSettings("roadmap", mode);
-
-                            }
-                        }
-                    );
-                }
-
-                jQuery("#ganttTimeControl").on(
-                    "click",
-                    "a",
-                    function () {
-
-                        var $btn = jQuery(this);
-                        var mode = $btn.attr("data-value");
-                        gantt_chart.change_view_mode(mode);
-                        $btn.parent().parent().find('a').removeClass('active');
-                        $btn.addClass('active');
-                        var label = $btn.text();
-                        jQuery(".viewText").text(label);
-                    }
-                );
-
-                gantt_chart.change_view_mode(viewMode);
-
-            }
-        );
-
+        leantime.embossAdapter.init('#gantt', tasks, {
+            viewMode: viewMode,
+            readonly: readonly,
+            viewSettingKey: 'roadmap',
+            entityType: 'ticket',
+        });
     };
 
     var initSprintDates = function () {
@@ -987,37 +816,69 @@ leantime.ticketsController = (function () {
 
     var initSimpleColorPicker = function () {
 
-            var colors = ['#821219',
-                '#BB1B25',
+            var colors = [
+                // Emboss vivid palette
+                '#3b82f6',
+                '#8b5cf6',
+                '#ec4899',
+                '#f59e0b',
+                '#10b981',
+                '#ef4444',
+                '#06b6d4',
+                '#f97316',
+                // Leantime brand
+                '#00b893',
+                '#004766',
+                '#cade1b',
+                '#f61067',
+                // Extended
+                '#821219',
                 '#75BB1B',
-                '#4B7811',
-                '#fdab3d',
-                '#1bbbb1',
-                '#006d9f',
-                '#124F7D',
                 '#082236',
                 '#5F0F40',
-                '#bb1b75',
-                '#F26CA7',
                 '#BB611B',
                 '#aaaaaa',
                 '#4c4c4c',
             ];
-            jQuery('input.simpleColorPicker').simpleColorPicker(
-                { colors: colors,
-                    onChangeColor: function (color) {
-                        jQuery(this).css('background', color);
-                        jQuery(this).css('color', "#fff");
+
+            jQuery('input.simpleColorPicker').each(function () {
+                var $input = jQuery(this);
+                var currentColor = $input.val() || '';
+
+                // Create a wrapper with color swatches
+                var $wrapper = jQuery('<div class="color-picker-wrapper" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;"></div>');
+                for (var i = 0; i < colors.length; i++) {
+                    var $swatch = jQuery('<span></span>').css({
+                        display: 'inline-block',
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        background: colors[i],
+                        border: '2px solid transparent',
+                    }).attr('data-color', colors[i]);
+
+                    if (currentColor.toLowerCase() === colors[i].toLowerCase()) {
+                        $swatch.css('border-color', '#333');
                     }
+
+                    $swatch.on('click', function () {
+                        var color = jQuery(this).attr('data-color');
+                        $input.val(color);
+                        $input.css({ background: color, color: '#fff' });
+                        $wrapper.find('span').css('border-color', 'transparent');
+                        jQuery(this).css('border-color', '#333');
+                    });
+
+                    $wrapper.append($swatch);
                 }
-            );
 
-            var currentColor = jQuery('input.simpleColorPicker').val();
+                $input.after($wrapper);
 
-        if (currentColor != '') {
-            jQuery('input.simpleColorPicker').css('background', currentColor);
-        }
-
+                if (currentColor !== '') {
+                    $input.css({ background: currentColor, color: '#fff' });
+                }
+            });
 
     };
 

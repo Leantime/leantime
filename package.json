@@ -4,6 +4,7 @@
   "description": "Open source innovation management system",
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
+    "@emboss-js/core": "^0.1.1",
     "@fortawesome/fontawesome-free": "^6.5.2",
     "@fullcalendar/google-calendar": "^6.1.13",
     "@fullcalendar/icalendar": "^6.1.13",

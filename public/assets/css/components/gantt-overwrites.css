@@ -1,115 +1,208 @@
-body .gantt-container {
-    font-size: var(--base-font-size);
-    overflow-x:visible;
-    height:calc(100dvh - 375px);
-}
+/* ── Emboss Gantt — Leantime theme integration ────────────────────────
+   Maps Leantime's structural design tokens (backgrounds, borders, fonts,
+   radius, shadows) onto Emboss. Bar colors and fills are left to Emboss's
+   vivid mode so the chart stays visually engaging out of the box.
+   ──────────────────────────────────────────────────────────────────── */
 
+/* ── Container ────────────────────────────────────────────────────── */
 .gantt-wrapper {
-    margin-top:10px;
+    margin-top: 10px;
     border-radius: var(--box-radius);
-    overflow: auto;
+    overflow: hidden;
+    height: calc(100dvh - 375px);
+    position: relative;
 }
 
+/* ── Structural theme tokens only ────────────────────────────────── */
+.emboss {
+    /* Backgrounds */
+    --emboss-bg: var(--secondary-background);
+    --emboss-surface: var(--secondary-background);
 
-.gantt .bar-label {
-    text-anchor: start;
-}
+    /* Text */
+    --emboss-ink: var(--primary-font-color);
+    --emboss-ink-1: var(--primary-font-color);
+    --emboss-ink-2: var(--secondary-font-color, var(--primary-font-color));
+    --emboss-label-size: var(--base-font-size);
 
-body .gantt .bar-label,
-body .gantt .lower-text,
-body .gantt .upper-text {
+    /* Borders */
+    --emboss-border: var(--main-border-color);
+    --emboss-grid-line: var(--main-border-color);
+
+    /* Grid */
+    --emboss-grid-bg: transparent;
+    --emboss-grid-stripe: var(--col-row-striped, rgba(0, 0, 0, 0.02));
+
+    /* Header */
+    --emboss-header-bg: var(--col-title-bg, var(--layered-background));
+    --emboss-header-ink: var(--kanban-col-title-color, var(--primary-font-color));
+
+    /* Today marker — uses Leantime accent */
+    --emboss-today: var(--accent1);
+    --emboss-today-label-bg: var(--main-action-bg);
+    --emboss-today-label-ink: var(--main-action-color);
+
+    /* Selection ring — uses Leantime accent */
+    --emboss-selected-ring: var(--accent1);
+
+    /* Sidebar */
+    --emboss-sidebar-bg: var(--secondary-background);
+    --emboss-sidebar-border: var(--main-border-color);
+    --emboss-sidebar-ink: var(--primary-font-color);
+
+    /* Tooltip */
+    --emboss-tooltip-bg: var(--secondary-background);
+    --emboss-tooltip-ink: var(--primary-font-color);
+    --emboss-tooltip-shadow: var(--regular-shadow);
+
+    /* Override grayscale opacity — vivid fills are designed for full strength */
+    --emboss-opacity-done: 0.75;
+    --emboss-opacity-upcoming: 0.85;
+
+    /* Radius — lower than bar height so short-duration bars stay pill-shaped, not circular */
+    --emboss-bar-radius: 6px;
+
+    /* Typography */
+    font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
+    border-radius: var(--box-radius);
+    height: 100%;
 }
 
-body .gantt .upper-text {
-    fill:var(--kanban-col-title-color);
-    opacity:var(--opacity-subdued);
+/* ── Header refinements ───────────────────────────────────────────── */
+.emboss-header {
+    box-shadow: var(--min-shadow);
+    border-bottom: 1px solid var(--main-border-color);
 }
 
-body .gantt .lower-text,
-body .gantt .upper-text {
-    font-weight:var(--font-weight-bold);
+/* ── Grid row striping ────────────────────────────────────────────── */
+.emboss-grid-row:nth-child(even) {
+    fill: var(--col-row-striped, rgba(0, 0, 0, 0.02));
 }
 
-body .gantt #details .details-container p {
+/* ── Bar label typography ─────────────────────────────────────────── */
+.emboss-bar-label {
     font-size: var(--base-font-size);
+    font-weight: var(--font-weight-normal, 400);
 }
-
-
-body .gantt #details .details-container {
-    border-radius:var(--box-radius);
-}
-
-.gantt-container .popup-wrapper {
-    background-color:var(--secondary-background);
-    padding:16px;
-    box-shadow:var(--regular-shadow);
-    margin-left: -10px;
-    opacity:0;
-    min-width:100px;
-    max-width:300px;
-    border-radius:var(--box-radius);
-}
-
-.gantt-container .bar-wrapper {
-    outline:none;
-}
-
-.gantt .bar-wrapper.active .bar {
-    fill:var(--main-action-hover-bg);
-}
-
-.gantt .bar-wrapper.active .bar-label {
-    fill:var(--main-action-hover-color);
-}
-
-.gantt-container .popup-wrapper .pointer {
-    margin:10px 0 0 -12px;
-    height:10px;
-    border: 10px solid transparent;
-    border-top-color:var(--secondary-background);
-}
-
-.gantt .grid-header {
-    fill:var(--col-title-bg) !important;
-    stroke:none;
-    filter: drop-shadow(var(--regular-shadow));
-}
-
-.gantt .grid-header-line {
-    fill:var(--neutral) !important;
-    filter: drop-shadow(var(--regular-shadow));
-}
-
-.gantt .grid-row:nth-child(even) {
-    fill:var(--col-row-striped);
-}
-
-.gantt .handle {
-    fill:var(--col-title-bg);
-    width:10px;
-}
-
-.gantt .handle.progress {
-    display:none;
-}
-
-
-.gantt .today-highlight {
-    fill:var(--accent1);
-}
-
-.today-highlight-label-bg {
-    fill:var(--main-action-bg);
+.emboss-bar[data-type="phase"] .emboss-bar-label {
+    font-weight: var(--font-weight-bold, 600);
+    /* Counteract the phase bar's reduced opacity so label stays readable */
     opacity: 1;
+    color: var(--primary-font-color);
+    /* Position label below the bar, not inside it */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 2px;
 }
 
-.today-highlight-label {
-    fill:var(--main-action-color);
-    font-size:var(--font-size-s);
-    text-anchor: middle;
+/* Make phase bars full-height, clickable, and draggable (Leantime milestones are interactive).
+   Emboss default is 5px thin + pointer-events:none. We override to a proper bar. */
+.emboss-bar-phase {
+    overflow: visible;
+    pointer-events: auto !important;
+    cursor: grab;
+    /* Full row-height bar so it's easy to grab — visually distinct via opacity */
+    height: 22px !important;
+    top: 50% !important;
+    transform: translateY(-50%);
+    border-radius: var(--emboss-bar-radius, 6px) !important;
+    opacity: 0.35 !important;
+}
+.emboss-bar-phase:hover {
+    opacity: 0.5 !important;
+}
+.emboss-bar-phase:active {
+    cursor: grabbing;
+}
+/* Progress fill inside the phase bar */
+.emboss-phase-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    border-radius: inherit;
+    background: inherit;
+    opacity: 1.6; /* relative to parent's 0.35 opacity, makes fill appear ~0.56 */
+    transition: width 0.3s ease;
+    pointer-events: none;
+    z-index: 0;
 }
 
-.gantt .grid-row {
-    fill: transparent;
+/* Resize handles on phase bar edges */
+.emboss-bar-phase .emboss-phase-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    cursor: ew-resize;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.emboss-bar-phase .emboss-phase-handle-left {
+    left: -2px;
+    border-radius: 4px 0 0 4px;
+}
+.emboss-bar-phase .emboss-phase-handle-right {
+    right: -2px;
+    border-radius: 0 4px 4px 0;
+}
+/* Visible pill indicator on handles */
+.emboss-bar-phase .emboss-phase-handle::after {
+    content: '';
+    display: block;
+    width: 3px;
+    height: 12px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.5);
+    transition: background 0.15s;
+}
+.emboss-bar-phase:hover .emboss-phase-handle::after {
+    background: rgba(255,255,255,0.85);
+}
+
+/* ── Ghost bar during drag ────────────────────────────────────────── */
+.emboss-bar-ghost {
+    opacity: 0.6;
+    filter: brightness(1.1);
+}
+
+/* ── Density: presentation mode polish ────────────────────────────── */
+.emboss[data-density="presentation"] .emboss-bar-label {
+    font-size: var(--font-size-m, 13px);
+}
+
+/* ── Sidebar integration ──────────────────────────────────────────── */
+.emboss-sidebar {
+    background: var(--secondary-background);
+    border-right: 1px solid var(--main-border-color);
+    overflow-y: auto;
+}
+.emboss-sidebar-row {
+    border-bottom: 1px solid var(--main-border-color);
+    font-size: var(--base-font-size);
+}
+
+/* ── Tooltip styling ──────────────────────────────────────────────── */
+.emboss-tooltip {
+    background: var(--secondary-background);
+    color: var(--primary-font-color);
+    box-shadow: var(--regular-shadow);
+    border-radius: var(--box-radius);
+    padding: 12px 16px;
+    font-size: var(--base-font-size);
+    max-width: 300px;
+}
+
+/* ── Today marker ─────────────────────────────────────────────────── */
+.emboss-today-line {
+    stroke: var(--accent1);
+    stroke-width: 2;
+}
+.emboss-today-label {
+    fill: var(--main-action-color);
+    font-size: var(--font-size-s);
 }

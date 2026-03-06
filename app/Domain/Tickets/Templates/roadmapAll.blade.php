@@ -46,6 +46,8 @@
                                 $currentView = __('buttons.week');
                             } elseif ($roadmapView == 'Month') {
                                 $currentView = __('buttons.month');
+                            } elseif ($roadmapView == 'Quarter') {
+                                $currentView = __('buttons.quarter');
                             }
                         @endphp
                         <a href="javascript:void(0)" class="btn dropdown-toggle" data-toggle="dropdown">{{ __('buttons.timeframe') }}: <span class="viewText">{{ $currentView }}</span><span class="caret"></span></a>
@@ -53,6 +55,7 @@
                             <li><a href="javascript:void(0);" onclick="document.activeElement.blur();" data-value="Day" class="{{ $roadmapView == 'Day' ? 'active' : '' }}"> {{ __('buttons.day') }}</a></li>
                             <li><a href="javascript:void(0);" onclick="document.activeElement.blur();" data-value="Week" class="{{ $roadmapView == 'Week' ? 'active' : '' }}">{{ __('buttons.week') }}</a></li>
                             <li><a href="javascript:void(0);" onclick="document.activeElement.blur();" data-value="Month" class="{{ $roadmapView == 'Month' ? 'active' : '' }}">{{ __('buttons.month') }}</a></li>
+                            <li><a href="javascript:void(0);" onclick="document.activeElement.blur();" data-value="Quarter" class="{{ $roadmapView == 'Quarter' ? 'active' : '' }}">{{ __('buttons.quarter') }}</a></li>
                         </ul>
                     </div>
 
@@ -72,7 +75,7 @@
         @endif
 
         <div class="gantt-wrapper">
-            <svg id="gantt"></svg>
+            <div id="gantt"></div>
         </div>
 
     </div>
@@ -126,6 +129,7 @@
                         end :'" . (($mlst->editTo != '0000-00-00 00:00:00' && !str_starts_with($mlst->editTo, '1969-12-31')) ? $mlst->editTo : date('Y-m-d', strtotime('+1 week', time()))) . "',
                         progress :'" . $mlst->percentDone . "',
                         dependencies :'" . implode(',', $dependencyList) . "',
+                        milestoneid :'" . ($mlst->milestoneid ?? 0) . "',
                         custom_class :'',
                         type: '" . strtolower($mlst->type) . "',
                         bg_color: '" . $color . "',

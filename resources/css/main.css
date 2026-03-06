@@ -45,7 +45,7 @@
 @import "../../public/assets/css/components/tiptap-editor.css";
 @import "../../public/assets/css/components/wiki.css";
 @import "../../public/assets/css/components/forms.css";
-@import "../../public/assets/css/components/gantt-overwrites.css";
+/* gantt-overwrites.css moved to compiled-gantt-component.js — Tailwind v4 purges .emboss-* classes from CSS entry points */
 @import "../../public/assets/css/components/tree-overwrites.css";
 @import "../../public/assets/css/components/nav.css";
 @import "../../public/assets/css/components/style.default.css";
