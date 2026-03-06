@@ -77,7 +77,7 @@ class Config
     /* Sessions */
     public $sessionPassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';  // Salting sessions. Replace with a strong password
 
-    public $sessionExpiration = 28800;                    // How many seconds after inactivity should we logout?  28800seconds = 8hours
+    public $sessionExpiration = 480;                      // How many minutes after inactivity should we logout? Default: 480 (8 hours)
 
     /* Email */
     public $email = '';                                   // Return email address

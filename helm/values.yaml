@@ -59,8 +59,8 @@ app:
   session:
     # -- Salting sessions. Replace with a strong password
     password: "changeme"
-    # -- Session expiration
-    expiration: 28800
+    # -- Session expiration in minutes (default: 480 = 8 hours)
+    expiration: 480
   email:
     # -- Set to true if you want to use SMTP. If set to false, the default php mail() function will be used
     enabled: false
