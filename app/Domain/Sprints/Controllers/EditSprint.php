@@ -81,6 +81,7 @@ class EditSprint extends Controller
             }
         } else {
             if ($sprintId = $this->sprintService->addSprint($params)) {
+                session(['currentSprint' => $sprintId]);
                 $this->tpl->setNotification('Sprint created successfully.', 'success');
             } else {
                 $this->tpl->setNotification('There was a problem saving the sprint', 'error');
