@@ -2167,6 +2167,7 @@ div[id^="comments-"] > div > .clearall {
     display: inline-flex !important;
     align-items: center;
     vertical-align: middle;
+    position: relative;
 }
 
 .reaction-btn {
@@ -2237,12 +2238,15 @@ div[id^="comments-"] > div > .clearall {
 /* Emoji Picker Popup */
 .reaction-emoji-picker {
     position: absolute;
-    z-index: var(--zlayer-8);
+    z-index: var(--zlayer-8, 1000);
     background: var(--element-bg, #ffffff);
     border: 1px solid var(--main-border-color, #e2e8f0);
     border-radius: 12px;
     box-shadow: var(--regular-shadow);
     padding: 8px;
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
     display: none;
 }
 

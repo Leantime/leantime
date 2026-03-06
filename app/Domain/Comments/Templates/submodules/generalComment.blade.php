@@ -269,7 +269,7 @@
         // Close when clicking outside
         setTimeout(function() {
             document.addEventListener('click', function closePicker(e) {
-                if (!picker.contains(e.target) && e.target !== btn) {
+                if (!picker.contains(e.target) && !btn.contains(e.target)) {
                     picker.classList.remove('show');
                     picker.remove();
                     document.removeEventListener('click', closePicker);
