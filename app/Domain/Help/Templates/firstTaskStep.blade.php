@@ -7,7 +7,7 @@
                 <p>{{ __('text.lets_start_with_first_task') }}</p>
                 <br />
                 <label><strong>{{ __('label.whats_one_thing_to_do_today') }}</strong></label>
-                <x-globals::forms.input id="firstTask" name="headline" value="" placeholder="{{ __('input.placeholder.finish_slide_deck') }}" style="width:100%;" required />
+                <x-globals::forms.text-input id="firstTask" name="headline" value="" placeholder="{{ __('input.placeholder.finish_slide_deck') }}" style="width:100%;" required />
                 <br />
                 <p class="text-muted">{{ __('text.first_task_help') }}</p>
                 <br />

@@ -112,7 +112,7 @@
                 </x-globals::forms.form-field>
 
                 <x-globals::forms.form-field label-text="{{ __('label.search_term') }}" name="termInput">
-                    <x-globals::forms.input :bare="true" type="text" name="termInput" id="termInput"
+                    <x-globals::forms.text-input :bare="true" type="text" name="termInput" id="termInput"
                            style="width:100%;"
                            value="{{ $searchCriteria['term'] }}"
                            placeholder="{{ __('label.search_term') }}" />

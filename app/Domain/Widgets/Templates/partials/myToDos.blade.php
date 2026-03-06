@@ -151,7 +151,7 @@
                               hx-indicator=".htmx-indicator">
                             <div class="tw:flex tw:flex-row tw:gap-2">
                                 <div class="tw:flex-grow">
-                                    <x-globals::forms.input :bare="true" type="text" name="headline" class="main-title-input"
+                                    <x-globals::forms.text-input :bare="true" type="text" name="headline" class="main-title-input"
                                            style="font-size:var(--base-font-size)"
                                            placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                                     <input type="hidden" name="quickadd" value="true"/>
@@ -225,7 +225,7 @@
                                   hx-indicator=".htmx-indicator">
                                 <div class="tw:flex tw:flex-row tw:gap-2">
                                     <div class="tw:flex-grow">
-                                        <x-globals::forms.input :bare="true" type="text" name="headline" class="main-title-input"
+                                        <x-globals::forms.text-input :bare="true" type="text" name="headline" class="main-title-input"
                                                style="font-size:var(--base-font-size)"
                                                placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                                         <input type="hidden" name="quickadd" value="true"/>

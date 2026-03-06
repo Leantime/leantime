@@ -73,7 +73,7 @@
                                         @endif
                                     </label>
                                     @if($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)
-                                        <x-globals::forms.input :bare="true" name="role-{{ $assignedUser['id'] }}" readonly disabled value="{{ __('label.roles.' . $roles::getRoles()[$assignedUser['role']]) }}" />
+                                        <x-globals::forms.text-input :bare="true" name="role-{{ $assignedUser['id'] }}" readonly disabled value="{{ __('label.roles.' . $roles::getRoles()[$assignedUser['role']]) }}" />
                                     @else
                                         <x-globals::forms.select name="userProjectRole-{{ $assignedUser['id'] }}">
                                             <option value="inherit">Inherit</option>
@@ -109,7 +109,7 @@
                                         </div>
                                         <label for="user-{{ $row['id'] }}">{{ sprintf(__('text.full_name'), e($row['firstname']), e($row['lastname'])) }}</label>
                                         @if($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner)
-                                            <x-globals::forms.input :bare="true" name="role-{{ $row['id'] }}" readonly disabled value="{{ __('label.roles.' . $roles::getRoles()[$row['role']]) }}" />
+                                            <x-globals::forms.text-input :bare="true" name="role-{{ $row['id'] }}" readonly disabled value="{{ __('label.roles.' . $roles::getRoles()[$row['role']]) }}" />
                                         @else
                                             @php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); @endphp
                                             <x-globals::forms.select name="userProjectRole-{{ $row['id'] }}">
@@ -159,7 +159,7 @@
                     <div class="col-md-4">
                         <strong>{{ __('label.webhook_url') }}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
-                            <x-globals::forms.input name="mattermostWebhookURL" id="mattermostWebhookURL" value="{{ e($tpl->get('mattermostWebhookURL')) }}" />
+                            <x-globals::forms.text-input name="mattermostWebhookURL" id="mattermostWebhookURL" value="{{ e($tpl->get('mattermostWebhookURL')) }}" />
                             <br />
                             <x-globals::forms.button submit type="primary" name="mattermostSave">{{ __('buttons.save') }}</x-globals::forms.button>
                         </form>
@@ -178,7 +178,7 @@
                     <div class="col-md-4">
                         <strong>{{ __('label.webhook_url') }}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
-                            <x-globals::forms.input name="slackWebhookURL" id="slackWebhookURL" value="{{ e($tpl->get('slackWebhookURL')) }}" />
+                            <x-globals::forms.text-input name="slackWebhookURL" id="slackWebhookURL" value="{{ e($tpl->get('slackWebhookURL')) }}" />
                             <br />
                             <x-globals::forms.button submit type="primary" name="slackSave">{{ __('buttons.save') }}</x-globals::forms.button>
                         </form>
@@ -197,19 +197,19 @@
                     <div class="col-md-4">
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             <strong>{{ __('label.base_url') }}</strong><br />
-                            <x-globals::forms.input name="zulipURL" id="zulipURL" placeholder="{{ __('input.placeholders.zulip_url') }}" value="{{ $tpl->get('zulipHook')['zulipURL'] }}" />
+                            <x-globals::forms.text-input name="zulipURL" id="zulipURL" placeholder="{{ __('input.placeholders.zulip_url') }}" value="{{ $tpl->get('zulipHook')['zulipURL'] }}" />
                             <br />
                             <strong>{{ __('label.bot_email') }}</strong><br />
-                            <x-globals::forms.input name="zulipEmail" id="zulipEmail" value="{{ e($tpl->get('zulipHook')['zulipEmail']) }}" />
+                            <x-globals::forms.text-input name="zulipEmail" id="zulipEmail" value="{{ e($tpl->get('zulipHook')['zulipEmail']) }}" />
                             <br />
                             <strong>{{ __('label.botkey') }}</strong><br />
-                            <x-globals::forms.input name="zulipBotKey" id="zulipBotKey" value="{{ e($tpl->get('zulipHook')['zulipBotKey']) }}" />
+                            <x-globals::forms.text-input name="zulipBotKey" id="zulipBotKey" value="{{ e($tpl->get('zulipHook')['zulipBotKey']) }}" />
                             <br />
                             <strong>{{ __('label.stream') }}</strong><br />
-                            <x-globals::forms.input name="zulipStream" id="zulipStream" value="{{ e($tpl->get('zulipHook')['zulipStream']) }}" />
+                            <x-globals::forms.text-input name="zulipStream" id="zulipStream" value="{{ e($tpl->get('zulipHook')['zulipStream']) }}" />
                             <br />
                             <strong>{{ __('label.topic') }}</strong><br />
-                            <x-globals::forms.input name="zulipTopic" id="zulipTopic" value="{{ e($tpl->get('zulipHook')['zulipTopic']) }}" />
+                            <x-globals::forms.text-input name="zulipTopic" id="zulipTopic" value="{{ e($tpl->get('zulipHook')['zulipTopic']) }}" />
                             <br />
                             <x-globals::forms.button submit type="primary" name="zulipSave">{{ __('buttons.save') }}</x-globals::forms.button>
                         </form>
@@ -229,7 +229,7 @@
                         <strong>{{ __('label.webhook_url') }}</strong><br/>
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             @for($i = 1; $i <= 3; $i++)
-                            <x-globals::forms.input name="discordWebhookURL{{ $i }}" id="discordWebhookURL{{ $i }}" placeholder="{{ __('input.placeholders.discord_url') }}" value="{{ e($tpl->get('discordWebhookURL' . $i)) }}" /><br/>
+                            <x-globals::forms.text-input name="discordWebhookURL{{ $i }}" id="discordWebhookURL{{ $i }}" placeholder="{{ __('input.placeholders.discord_url') }}" value="{{ e($tpl->get('discordWebhookURL' . $i)) }}" /><br/>
                             @endfor
                             <x-globals::forms.button submit type="primary" name="discordSave">{{ __('buttons.save') }}</x-globals::forms.button>
                         </form>
@@ -261,10 +261,10 @@
                                             <x-global::elements.icon name="sort" />
                                         </div>
                                         <div class="col-md-1">
-                                            <x-globals::forms.input :bare="true" type="text" name="labelSort-{{ $key }}" id="labelSort-{{ $key }}" value="{{ e($ticketStatus['sortKey']) }}" class="sorter" style="width:50px;" />
+                                            <x-globals::forms.text-input :bare="true" type="text" name="labelSort-{{ $key }}" id="labelSort-{{ $key }}" value="{{ e($ticketStatus['sortKey']) }}" class="sorter" style="width:50px;" />
                                         </div>
                                         <div class="col-md-3">
-                                            <x-globals::forms.input :bare="true" name="label-{{ $key }}" id="label-{{ $key }}" value="{{ e($ticketStatus['name']) }}" :readonly="$key == -1" />
+                                            <x-globals::forms.text-input :bare="true" name="label-{{ $key }}" id="label-{{ $key }}" value="{{ e($ticketStatus['name']) }}" :readonly="$key == -1" />
                                         </div>
                                         <div class="col-md-2">
                                             <x-globals::forms.select :bare="true" name="labelClass-{{ $key }}" id="labelClass-{{ $key }}" class="colorChosen">
@@ -329,10 +329,10 @@
             <x-global::elements.icon name="sort" />
         </div>
         <div class="col-md-1">
-            <x-globals::forms.input :bare="true" type="text" name="labelSort-XXNEWKEYXX" id="labelSort-XXNEWKEYXX" value="" class="sorter" style="width:50px;" />
+            <x-globals::forms.text-input :bare="true" type="text" name="labelSort-XXNEWKEYXX" id="labelSort-XXNEWKEYXX" value="" class="sorter" style="width:50px;" />
         </div>
         <div class="col-md-3">
-            <x-globals::forms.input :bare="true" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
+            <x-globals::forms.text-input :bare="true" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
         </div>
         <div class="col-md-2">
             <x-globals::forms.select :bare="true" name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen">

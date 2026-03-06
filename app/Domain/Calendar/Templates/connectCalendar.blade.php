@@ -16,13 +16,13 @@
         <form action="{{ BASE_URL }}/calendar/connectCalendar" method="post" class="formModal">
             @csrf
             <label for="ical_name">{{ __('label.calendar_name') }}:</label>
-            <x-globals::forms.input name="name" id="ical_name" autocomplete="off" placeholder="{{ __('label.calendar_name') }}" /><br />
+            <x-globals::forms.text-input name="name" id="ical_name" autocomplete="off" placeholder="{{ __('label.calendar_name') }}" /><br />
 
             <label for="ical_url">{{ __('label.ical_url') }}:</label>
-            <x-globals::forms.input name="url" id="ical_url" autocomplete="off" style="width:100%;" placeholder="https://example.com/calendar.ics" /><br />
+            <x-globals::forms.text-input name="url" id="ical_url" autocomplete="off" style="width:100%;" placeholder="https://example.com/calendar.ics" /><br />
 
             <label for="ical_color">{{ __('label.color') }}:</label>
-            <x-globals::forms.input :bare="true" type="text" id="ical_color" name="colorClass" autocomplete="off" value="#082236" class="simpleColorPicker"/>
+            <x-globals::forms.text-input :bare="true" type="text" id="ical_color" name="colorClass" autocomplete="off" value="#082236" class="simpleColorPicker"/>
 
             <br /><br />
             <x-globals::forms.button submit type="primary" name="save">{{ __('label.import_ical_button') }}</x-globals::forms.button>

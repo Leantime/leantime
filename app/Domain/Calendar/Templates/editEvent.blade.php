@@ -11,7 +11,7 @@
     @dispatchEvent('afterFormOpen')
 
     <label for="description">{{ __('label.title') }}</label>
-    <x-globals::forms.input name="description" id="description" value="{{ e($values['description']) }}" /><br />
+    <x-globals::forms.text-input name="description" id="description" value="{{ e($values['description']) }}" /><br />
 
     <label for="dateFrom">{{ __('label.start_date') }}</label>
     <x-globals::forms.date name="dateFrom" id="event_date_from" value="{{ format($values['dateFrom'])->date() }}" />

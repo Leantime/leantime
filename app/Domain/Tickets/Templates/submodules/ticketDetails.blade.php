@@ -12,7 +12,7 @@
         <div class="marginBottom">
 
                 <div class="form-group">
-                    <x-globals::forms.input :bare="true" type="text" value="{{ e($ticket->headline) }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
+                    <x-globals::forms.text-input :bare="true" type="text" value="{{ e($ticket->headline) }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
                 </div>
 
                 <div class="form-group" id="descriptionEditor" style="overflow:hidden;">
@@ -228,9 +228,9 @@
         <div class="form-group">
             <label class="control-label">{{ __('label.working_date_from') }}</label>
             <div class="tw:flex tw:gap-2 tw:items-center">
-                <x-globals::forms.input :bare="true" type="text" class="editFrom" style="flex:1; min-width:0;" name="editFrom" autocomplete="off"
+                <x-globals::forms.text-input :bare="true" type="text" class="editFrom" style="flex:1; min-width:0;" name="editFrom" autocomplete="off"
                        value="{{ format($ticket->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}"/>
-                <x-globals::forms.input :bare="true" type="time" class="timepicker" style="flex:1; min-width:0;" id="timeFrom" autocomplete="off"
+                <x-globals::forms.text-input :bare="true" type="time" class="timepicker" style="flex:1; min-width:0;" id="timeFrom" autocomplete="off"
                        value="{{ format($ticket->editFrom)->time24() }}"
                        name="timeFrom"/>
             </div>
@@ -239,9 +239,9 @@
         <div class="form-group">
             <label class="control-label">{{ __('label.working_date_to') }}</label>
             <div class="tw:flex tw:gap-2 tw:items-center">
-                <x-globals::forms.input :bare="true" type="text" class="editTo" style="flex:1; min-width:0;" name="editTo" autocomplete="off"
+                <x-globals::forms.text-input :bare="true" type="text" class="editTo" style="flex:1; min-width:0;" name="editTo" autocomplete="off"
                        value="{{ format($ticket->editTo)->date() }}" placeholder="{{ __('language.dateformat') }}"/>
-                <x-globals::forms.input :bare="true" type="time" class="timepicker" style="flex:1; min-width:0;" id="timeTo" autocomplete="off"
+                <x-globals::forms.text-input :bare="true" type="time" class="timepicker" style="flex:1; min-width:0;" id="timeTo" autocomplete="off"
                        value="{{ format($ticket->editTo)->time24() }}"
                        name="timeTo"/>
             </div>
@@ -250,8 +250,8 @@
         <div class="form-group">
             <label class="control-label">{{ __('label.planned_hours') }} / {{ __('label.estimated_hours_remaining') }}</label>
             <div class="">
-                <x-globals::forms.input :bare="true" value="{{ e($ticket->planHours) }}" name="planHours" style="width:45px;" />&nbsp;/&nbsp;
-                <x-globals::forms.input :bare="true" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:45px;" />
+                <x-globals::forms.text-input :bare="true" value="{{ e($ticket->planHours) }}" name="planHours" style="width:45px;" />&nbsp;/&nbsp;
+                <x-globals::forms.text-input :bare="true" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:45px;" />
                 <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
                     &nbsp;<x-global::elements.icon name="help" />&nbsp;
                 </a>

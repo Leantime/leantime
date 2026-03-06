@@ -32,63 +32,63 @@
                             <div class="form-group">
                                 <label class="span4 control-label">{{ __('label.name') }}</label>
                                 <div class="span6">
-                                    <x-globals::forms.input name="name" id="name" value="{{ e($values['name']) }}" />
+                                    <x-globals::forms.text-input name="name" id="name" value="{{ e($values['name']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="span4 control-label">{{ __('label.email') }}</label>
                                 <div class="span6">
-                                    <x-globals::forms.input name="email" id="email" value="{{ e($values['email']) }}" />
+                                    <x-globals::forms.text-input name="email" id="email" value="{{ e($values['email']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="span4 control-label">{{ __('label.url') }}</label>
                                 <div class="span6">
-                                    <x-globals::forms.input name="internet" id="internet" value="{{ e($values['internet']) }}" />
+                                    <x-globals::forms.text-input name="internet" id="internet" value="{{ e($values['internet']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="span4 control-label">{{ __('label.street') }}</label>
                                 <div class="span6">
-                                    <x-globals::forms.input name="street" id="street" value="{{ e($values['street']) }}" />
+                                    <x-globals::forms.text-input name="street" id="street" value="{{ e($values['street']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="span4 control-label">{{ __('label.zip') }}</label>
                                 <div class="span6">
-                                    <x-globals::forms.input name="zip" id="zip" value="{{ e($values['zip']) }}" />
+                                    <x-globals::forms.text-input name="zip" id="zip" value="{{ e($values['zip']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="span4 control-label">{{ __('label.city') }}</label>
                                 <div class="span6">
-                                    <x-globals::forms.input name="city" id="city" value="{{ e($values['city']) }}" />
+                                    <x-globals::forms.text-input name="city" id="city" value="{{ e($values['city']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="span4 control-label">{{ __('label.state') }}</label>
                                 <div class="span6">
-                                    <x-globals::forms.input name="state" id="state" value="{{ e($values['state']) }}" />
+                                    <x-globals::forms.text-input name="state" id="state" value="{{ e($values['state']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="span4 control-label">{{ __('label.country') }}</label>
                                 <div class="span6">
-                                    <x-globals::forms.input name="country" id="country" value="{{ e($values['country']) }}" />
+                                    <x-globals::forms.text-input name="country" id="country" value="{{ e($values['country']) }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="span4 control-label">{{ __('label.phone') }}</label>
                                 <div class="span6">
-                                    <x-globals::forms.input name="phone" id="phone" value="{{ e($values['phone']) }}" />
+                                    <x-globals::forms.text-input name="phone" id="phone" value="{{ e($values['phone']) }}" />
                                 </div>
                             </div>
 

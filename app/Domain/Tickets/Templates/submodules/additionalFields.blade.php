@@ -126,9 +126,9 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.working_date_from') }}</label>
                         <div class="">
-                            <x-globals::forms.input :bare="true" type="text" class="editFrom" style="width:100px;" name="editFrom" autocomplete="off"
+                            <x-globals::forms.text-input :bare="true" type="text" class="editFrom" style="width:100px;" name="editFrom" autocomplete="off"
                                    value="{{ format($ticket->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}" />
-                            <x-globals::forms.input :bare="true" type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
+                            <x-globals::forms.text-input :bare="true" type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
                                    value="{{ format($ticket->editFrom)->time24() }}"
                                    name="timeFrom" />
                         </div>
@@ -137,9 +137,9 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.working_date_to') }}</label>
                         <div class="">
-                            <x-globals::forms.input :bare="true" type="text" class="editTo" style="width:100px;" name="editTo" autocomplete="off"
+                            <x-globals::forms.text-input :bare="true" type="text" class="editTo" style="width:100px;" name="editTo" autocomplete="off"
                                    value="{{ format($ticket->editTo)->date() }}" placeholder="{{ __('language.dateformat') }}" />
-                            <x-globals::forms.input :bare="true" type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
+                            <x-globals::forms.text-input :bare="true" type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
                                    value="{{ format($ticket->editTo)->time24() }}"
                                    name="timeTo" />
                         </div>
@@ -166,14 +166,14 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.planned_hours') }}</label>
                         <div class="">
-                            <x-globals::forms.input :bare="true" type="text" value="{{ e($ticket->planHours) }}" name="planHours" style="width:90px;" />
+                            <x-globals::forms.text-input :bare="true" type="text" value="{{ e($ticket->planHours) }}" name="planHours" style="width:90px;" />
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label">{{ __('label.estimated_hours_remaining') }}</label>
                         <div class="">
-                            <x-globals::forms.input :bare="true" type="text" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:90px;" />
+                            <x-globals::forms.text-input :bare="true" type="text" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:90px;" />
                             <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
                                 &nbsp;<x-global::elements.icon name="help" />&nbsp;
                             </a>
@@ -183,7 +183,7 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.booked_hours') }}</label>
                         <div class="">
-                            <x-globals::forms.input :bare="true" type="text" :disabled="true"
+                            <x-globals::forms.text-input :bare="true" type="text" :disabled="true"
                                    name="bookedHours" value="{{ $tpl->get('timesheetsAllHours') }}" style="width:90px;" />
                         </div>
                     </div>
@@ -191,7 +191,7 @@
                     <div class="form-group">
                         <label class="control-label">{{ __('label.actual_hours_remaining') }}</label>
                         <div class="">
-                            <x-globals::forms.input :bare="true" type="text" :disabled="true" name="actualHoursRemaining" value="{{ $remainingHours }}" style="width:90px;" />
+                            <x-globals::forms.text-input :bare="true" type="text" :disabled="true" name="actualHoursRemaining" value="{{ $remainingHours }}" style="width:90px;" />
                         </div>
                     </div>
 

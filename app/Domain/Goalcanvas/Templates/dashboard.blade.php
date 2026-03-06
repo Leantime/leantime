@@ -63,7 +63,7 @@ foreach ($allCanvas as $canvasRow) {
         <div class="bigNumberBox tw:py-7 tw:px-4">
             <h2>Progress: {{ round($goalStats['avgPercentComplete']) }}%</h2>
 
-            <x-global::progress :value="round($goalStats['avgPercentComplete'])" :showLabel="false" class="tw:mt-1" />
+            <x-global::feedback.progress :value="round($goalStats['avgPercentComplete'])" :showLabel="false" class="tw:mt-1" />
         </div>
     </div>
     <div class="col-md-2">

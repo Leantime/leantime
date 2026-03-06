@@ -22,9 +22,9 @@
                     <div class="maincontentinner">
                     <h4 class="widgettitle title-light">{{ __('label.profile_information') }}</h4>
 
-                    <label for="firstname">{{ __('label.firstname') }}</label> <x-globals::forms.input :bare="true" type="text" name="firstname" id="firstname" value="{{ e($values['firstname']) }}" /><br />
+                    <label for="firstname">{{ __('label.firstname') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="firstname" id="firstname" value="{{ e($values['firstname']) }}" /><br />
 
-                    <label for="lastname">{{ __('label.lastname') }}</label> <x-globals::forms.input :bare="true" type="text" name="lastname" id="lastname" value="{{ e($values['lastname']) }}" /><br />
+                    <label for="lastname">{{ __('label.lastname') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="lastname" id="lastname" value="{{ e($values['lastname']) }}" /><br />
 
                     <label for="role">{{ __('label.role') }}</label>
                     <x-globals::forms.select :bare="true" name="role" id="role">
@@ -55,7 +55,7 @@
                         <div class="pull-left" style="padding-left:5px; line-height: 29px;">
                             <x-globals::actions.dropdown-menu variant="button" :label="'<span class=&quot;material-symbols-outlined&quot; aria-hidden=&quot;true&quot;>link</span> ' . __('label.copyinviteLink')" content-role="default" align="start" menu-class="tw:p-4 tw:min-w-72">
                                 <li class="noClickProp" onclick="event.stopPropagation()">
-                                    <x-globals::forms.input :bare="true" type="text" id="inviteURL" name="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
+                                    <x-globals::forms.text-input :bare="true" type="text" id="inviteURL" name="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
                                     <x-globals::forms.button tag="button" type="primary" onclick="leantime.snippets.copyUrl('inviteURL');"><x-global::elements.icon name="link" /> {{ __('label.copy_url') }}</x-globals::forms.button>
                                 </li>
                             </x-globals::actions.dropdown-menu>
@@ -77,16 +77,16 @@
 
                         <h4 class="widgettitle title-light">{{ __('label.contact_information') }}</h4>
 
-                        <label for="user">{{ __('label.email') }}</label> <x-globals::forms.input :bare="true" type="text" name="user" id="user" value="{{ e($values['user']) }}" /><br />
+                        <label for="user">{{ __('label.email') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="user" id="user" value="{{ e($values['user']) }}" /><br />
 
-                        <label for="phone">{{ __('label.phone') }}</label> <x-globals::forms.input :bare="true" type="text" name="phone" id="phone" value="{{ e($values['phone']) }}" /><br /><br />
+                        <label for="phone">{{ __('label.phone') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="phone" id="phone" value="{{ e($values['phone']) }}" /><br /><br />
 
                         <h4 class="widgettitle title-light">{{ __('label.employee_information') }}</h4>
-                        <label for="jobTitle">{{ __('label.jobTitle') }}</label> <x-globals::forms.input :bare="true" type="text" name="jobTitle" id="jobTitle" value="{{ e($values['jobTitle']) }}" /><br />
+                        <label for="jobTitle">{{ __('label.jobTitle') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="jobTitle" id="jobTitle" value="{{ e($values['jobTitle']) }}" /><br />
 
-                        <label for="jobLevel">{{ __('label.jobLevel') }}</label> <x-globals::forms.input :bare="true" type="text" name="jobLevel" id="jobLevel" value="{{ e($values['jobLevel']) }}" /><br />
+                        <label for="jobLevel">{{ __('label.jobLevel') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="jobLevel" id="jobLevel" value="{{ e($values['jobLevel']) }}" /><br />
 
-                        <label for="department">{{ __('label.department') }}</label> <x-globals::forms.input :bare="true" type="text" name="department" id="department" value="{{ e($values['department']) }}" /><br />
+                        <label for="department">{{ __('label.department') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="department" id="department" value="{{ e($values['department']) }}" /><br />
 
                     <p class="stdformbutton">
                         <x-globals::forms.button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>

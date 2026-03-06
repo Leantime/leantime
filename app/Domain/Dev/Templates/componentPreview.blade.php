@@ -344,14 +344,14 @@ leantime.modals.setCustomModalCallback(fn)</code></pre>
     <section style="margin-bottom: 40px;">
         <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--neutral);">Form Components</h3>
         <p style="margin-bottom: 10px; font-size: 12px; color: var(--secondary-font-color);">
-            Usage: <code>&lt;x-globals::forms.input name="title" label="Title" /&gt;</code>
+            Usage: <code>&lt;x-globals::forms.text-input name="title" label-text="Title" /&gt;</code>
         </p>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 700px;">
-            <x-globals::forms.input name="preview-text" label="Text Input" placeholder="Enter text..." />
-            <x-globals::forms.input name="preview-email" label="Email" type="email" placeholder="you@example.com" />
-            <x-globals::forms.input name="preview-error" label="With Error" value="bad value" error="This field is invalid" />
-            <x-globals::forms.input name="preview-required" label="Required Field" :required="true" />
+            <x-globals::forms.text-input name="preview-text" label-text="Text Input" placeholder="Enter text..." />
+            <x-globals::forms.text-input name="preview-email" label-text="Email" type="email" placeholder="you@example.com" />
+            <x-globals::forms.text-input name="preview-error" label-text="With Error" value="bad value" validation-text="This field is invalid" />
+            <x-globals::forms.text-input name="preview-required" label-text="Required Field" :required="true" />
             <x-globals::forms.select name="preview-select" label="Select" :options="['opt1' => 'Option 1', 'opt2' => 'Option 2', 'opt3' => 'Option 3']" placeholder="Choose one..." />
             <x-globals::forms.date name="preview-date" label="Date" placeholder="Pick a date..." />
             <x-globals::forms.file name="preview-file" label="File Upload" />

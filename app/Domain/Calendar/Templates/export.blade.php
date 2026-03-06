@@ -15,7 +15,7 @@
 
     @if($url)
         {{ __('text.you_ical_url') }}
-        <br /><x-globals::forms.input name="ical_url" value="{{ $url }}" readonly style="width:100%;" />
+        <br /><x-globals::forms.text-input name="ical_url" value="{{ $url }}" readonly style="width:100%;" />
     @else
         {{ __('text.no_url') }}
     @endif

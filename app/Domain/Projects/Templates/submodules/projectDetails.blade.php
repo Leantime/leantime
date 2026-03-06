@@ -11,7 +11,7 @@
 
         <div class="col-md-8">
             <div class="form-group">
-                <x-globals::forms.input :bare="true" type="text" name="name" id="name" class="main-title-input" style="width:99%" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
+                <x-globals::forms.text-input :bare="true" type="text" name="name" id="name" class="main-title-input" style="width:99%" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
             </div>
 
             <p>
@@ -146,14 +146,14 @@
                 <div class="form-group">
                     <label class="control-label" for="hourBudget">{{ __('label.hourly_budget') }}</label>
                     <div>
-                        <x-globals::forms.input name="hourBudget" id="hourBudget" value="{{ e($project['hourBudget']) }}" :bare="true" />
+                        <x-globals::forms.text-input name="hourBudget" id="hourBudget" value="{{ e($project['hourBudget']) }}" :bare="true" />
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label" for="dollarBudget">{{ __('label.budget_cost') }}</label>
                     <div>
-                        <x-globals::forms.input name="dollarBudget" id="dollarBudget" value="{{ e($project['dollarBudget']) }}" :bare="true" />
+                        <x-globals::forms.text-input name="dollarBudget" id="dollarBudget" value="{{ e($project['dollarBudget']) }}" :bare="true" />
                     </div>
                 </div>
 

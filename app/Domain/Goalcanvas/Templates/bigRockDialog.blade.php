@@ -8,7 +8,7 @@
 
     <br />
     <label>{{ __('label.goal_description') }}</label>
-    <x-globals::forms.input name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" class="tw:w-full" /><br />
+    <x-globals::forms.text-input name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" class="tw:w-full" /><br />
 
     <br />
     <div class="tw:flex tw:justify-between tw:items-center">

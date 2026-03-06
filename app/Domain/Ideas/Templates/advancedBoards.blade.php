@@ -186,7 +186,7 @@
         <x-globals::actions.modal id="addCanvas" :title="$tpl->__('headlines.start_new_idea_board')">
             <form action="" method="post">
                 <label>{{ $tpl->__('label.topic_idea_board') }}</label>
-                <x-globals::forms.input name="canvastitle"
+                <x-globals::forms.text-input name="canvastitle"
                        placeholder="{{ $tpl->__('input.placeholders.name_for_idea_board') }}"
                        style="width:90%" />
                 <x-slot name="actions">
@@ -199,7 +199,7 @@
         <x-globals::actions.modal id="editCanvas" :title="$tpl->__('headlines.edit_board_name')">
             <form action="" method="post">
                 <label>{{ $tpl->__('label.title_idea_board') }}</label>
-                <x-globals::forms.input name="canvastitle" value="{{ $tpl->escape($canvasTitle) }}"
+                <x-globals::forms.text-input name="canvastitle" value="{{ $tpl->escape($canvasTitle) }}"
                        style="width:90%" />
                 <x-slot name="actions">
                     <x-globals::forms.button tag="button" type="secondary" onclick="document.getElementById('editCanvas').close();">{{ $tpl->__('buttons.close') }}</x-globals::forms.button>

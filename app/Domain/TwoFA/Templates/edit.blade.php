@@ -30,7 +30,7 @@
                             <h5>2. {{ __('text.twoFA_verify_code') }}</h5>
                             <p>
                                 <span>{{ __('label.twoFACode_short') }}:</span>
-                                <x-globals::forms.input name="twoFACode" id="twoFACode" /><br/>
+                                <x-globals::forms.text-input name="twoFACode" id="twoFACode" /><br/>
                             </p>
 
                             <input type="hidden" name="secret" value="{{ $tpl->get('secret') }}" />

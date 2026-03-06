@@ -10,7 +10,7 @@
     </div>
     <div style="margin-bottom: 15px;">
         <label>{{ $tpl->__('label.title_new') }}</label><br />
-        <x-globals::forms.input name="canvastitle" value="{{ $tpl->escape($canvasTitle) }}" placeholder="{{ $tpl->__('input.placeholders.enter_title_for_board') }}"
+        <x-globals::forms.text-input name="canvastitle" value="{{ $tpl->escape($canvasTitle) }}" placeholder="{{ $tpl->__('input.placeholders.enter_title_for_board') }}"
                style="width: 100%" />
     </div>
     <div style="display: flex; justify-content: flex-end; gap: 8px; padding-top: 10px;">

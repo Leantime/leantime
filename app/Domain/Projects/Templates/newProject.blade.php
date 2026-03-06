@@ -28,7 +28,7 @@
 
                         <div class="col-md-8">
                             <div class="form-group">
-                                <x-globals::forms.input :bare="true" type="text" name="name" id="name" class="main-title-input" style="width:99%" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
+                                <x-globals::forms.text-input :bare="true" type="text" name="name" id="name" class="main-title-input" style="width:99%" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
                             </div>
                             <input type="hidden" name="projectState" id="projectState" value="0" />
 

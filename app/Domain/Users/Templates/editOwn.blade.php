@@ -32,19 +32,19 @@
                                     <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                                     <div class="row-fluid">
                                         <x-globals::forms.form-field label-text="{{ __('label.firstname') }}" name="firstname">
-                                            <x-globals::forms.input :bare="true" name="firstname" id="firstname" :disabled="session('userdata.isExternalAuth')" value="{{ $values['firstname'] }}" />
+                                            <x-globals::forms.text-input :bare="true" name="firstname" id="firstname" :disabled="session('userdata.isExternalAuth')" value="{{ $values['firstname'] }}" />
                                         </x-globals::forms.form-field>
 
                                         <x-globals::forms.form-field label-text="{{ __('label.lastname') }}" name="lastname">
-                                            <x-globals::forms.input :bare="true" name="lastname" id="lastname" :disabled="session('userdata.isExternalAuth')" value="{{ $values['lastname'] }}" />
+                                            <x-globals::forms.text-input :bare="true" name="lastname" id="lastname" :disabled="session('userdata.isExternalAuth')" value="{{ $values['lastname'] }}" />
                                         </x-globals::forms.form-field>
 
                                         <x-globals::forms.form-field label-text="{{ __('label.email') }}" name="user">
-                                            <x-globals::forms.input :bare="true" name="user" id="user" :disabled="session('userdata.isExternalAuth')" value="{{ $values['user'] }}" />
+                                            <x-globals::forms.text-input :bare="true" name="user" id="user" :disabled="session('userdata.isExternalAuth')" value="{{ $values['user'] }}" />
                                         </x-globals::forms.form-field>
 
                                         <x-globals::forms.form-field label-text="{{ __('label.phone') }}" name="phone">
-                                            <x-globals::forms.input :bare="true" name="phone" id="phone" :disabled="session('userdata.isExternalAuth')" value="{{ $values['phone'] }}" />
+                                            <x-globals::forms.text-input :bare="true" name="phone" id="phone" :disabled="session('userdata.isExternalAuth')" value="{{ $values['phone'] }}" />
                                         </x-globals::forms.form-field>
                                         <p class='stdformbutton'>
                                             <input type="hidden" name="profileInfo" value="1" />
@@ -55,15 +55,15 @@
                                         <h4 class="widgettitle title-light">{{ __('label.employee_information') }}</h4>
                                         <em>{{ __('text.only_admins_can_change_user_info') }}</em><br /><br />
                                         <x-globals::forms.form-field label-text="{{ __('label.jobTitle') }}" name="jobTitle">
-                                            <x-globals::forms.input :bare="true" name="jobTitle" id="jobTitle" :readonly="true" value="{{ $values['jobTitle'] }}" />
+                                            <x-globals::forms.text-input :bare="true" name="jobTitle" id="jobTitle" :readonly="true" value="{{ $values['jobTitle'] }}" />
                                         </x-globals::forms.form-field>
 
                                         <x-globals::forms.form-field label-text="{{ __('label.jobLevel') }}" name="jobLevel">
-                                            <x-globals::forms.input :bare="true" name="jobLevel" id="jobLevel" :readonly="true" value="{{ $values['jobLevel'] }}" />
+                                            <x-globals::forms.text-input :bare="true" name="jobLevel" id="jobLevel" :readonly="true" value="{{ $values['jobLevel'] }}" />
                                         </x-globals::forms.form-field>
 
                                         <x-globals::forms.form-field label-text="{{ __('label.department') }}" name="department">
-                                            <x-globals::forms.input :bare="true" name="department" id="department" :readonly="true" value="{{ $values['department'] }}" />
+                                            <x-globals::forms.text-input :bare="true" name="department" id="department" :readonly="true" value="{{ $values['department'] }}" />
                                         </x-globals::forms.form-field>
 
                                     </div>
@@ -121,16 +121,16 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <x-globals::forms.form-field label-text="{{ __('label.old_password') }}" name="currentPassword">
-                                    <x-globals::forms.input :bare="true" type="password" value="" name="currentPassword" :disabled="session('userdata.isExternalAuth')" id="currentPassword" />
+                                    <x-globals::forms.text-input :bare="true" type="password" value="" name="currentPassword" :disabled="session('userdata.isExternalAuth')" id="currentPassword" />
                                 </x-globals::forms.form-field>
 
                                 <x-globals::forms.form-field label-text="{{ __('label.new_password') }}" name="newPassword">
-                                    <x-globals::forms.input :bare="true" type="password" value="" name="newPassword" :disabled="session('userdata.isExternalAuth')" id="newPassword" />
+                                    <x-globals::forms.text-input :bare="true" type="password" value="" name="newPassword" :disabled="session('userdata.isExternalAuth')" id="newPassword" />
                                     <span id="pwStrength"></span>
                                 </x-globals::forms.form-field>
 
                                 <x-globals::forms.form-field label-text="{{ __('label.password_repeat') }}" name="confirmPassword" caption="{{ !session('userdata.isExternalAuth') ? __('label.passwordRequirements') : '' }}">
-                                    <x-globals::forms.input :bare="true" type="password" value="" name="confirmPassword" :disabled="session('userdata.isExternalAuth')" id="confirmPassword" />
+                                    <x-globals::forms.text-input :bare="true" type="password" value="" name="confirmPassword" :disabled="session('userdata.isExternalAuth')" id="confirmPassword" />
                                 </x-globals::forms.form-field>
                             </div>
                             @if (!session("userdata.isExternalAuth") )

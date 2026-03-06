@@ -7,7 +7,7 @@
                 <p>{!!  __('text.get_organized_with_projects') !!}</p>
                 <br />
                 <label>{{ __('label.start_with_project_title') }}</label>
-                <x-globals::forms.input id="projectName" name="projectname" value="" placeholder="" style="width:100%;" /><br />
+                <x-globals::forms.text-input id="projectName" name="projectname" value="" placeholder="" style="width:100%;" /><br />
 
             </div>
             <div class="col-md-4">

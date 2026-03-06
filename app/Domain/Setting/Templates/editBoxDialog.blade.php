@@ -16,7 +16,7 @@
     <form class="formModal" method="post" action="{{ BASE_URL }}/setting/editBoxLabel?module={{ e($_GET['module']) }}&label={{ e($_GET['label']) }}">
 
         <label>{{ __('label.label') }}</label>
-        <x-globals::forms.input name="newLabel" value="{{ $currentLabel }}" /><br />
+        <x-globals::forms.text-input name="newLabel" value="{{ $currentLabel }}" /><br />
 
         <x-globals::forms.button submit type="primary">{{ __('buttons.save') }}</x-globals::forms.button>
 

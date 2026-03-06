@@ -4,7 +4,7 @@
 
 @php( $percentDone = format($project['progress']['percent'])->decimal())
 
-    <x-global::progress :value="$percentDone" label="{{ __('subtitles.project_progress') }}" />
+    <x-global::feedback.progress :value="$percentDone" label="{{ __('subtitles.project_progress') }}" />
 
     <div class="projectBox-statusRow">
         @if ($project['status'] !== null && $project['status'] != '')

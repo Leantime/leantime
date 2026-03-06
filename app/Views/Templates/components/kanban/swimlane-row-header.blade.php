@@ -14,14 +14,15 @@
 use Leantime\Domain\Tickets\Models\TicketDesignTokens;
 
 // Determine which icon component to use
+// Most resolve to global::kanban.{name}, editorId uses global::elements.avatar directly
 $iconComponent = match($groupBy) {
-    'priority' => 'thermometer-icon',
-    'storypoints' => 'tshirt-icon',
-    'effort' => 'tshirt-icon',
-    'editorId' => 'user-avatar',
-    'milestoneid' => 'milestone-icon',
-    'type' => 'type-icon',
-    'sprint' => 'sprint-icon',
+    'priority' => 'global::kanban.thermometer-icon',
+    'storypoints' => 'global::kanban.tshirt-icon',
+    'effort' => 'global::kanban.tshirt-icon',
+    'editorId' => 'global::elements.avatar',
+    'milestoneid' => 'global::kanban.milestone-icon',
+    'type' => 'global::kanban.type-icon',
+    'sprint' => 'global::kanban.sprint-icon',
     'dueDate' => null, // No icon for due date buckets - label is sufficient
     default => null // Status and other groupings use fallback Material icon below
 };
@@ -91,7 +92,7 @@ foreach ($statusColumns as $statusId => $statusData) {
         @if($iconComponent)
             <div class="kanban-indicator">
                 <x-dynamic-component
-                    :component="'global::kanban.' . $iconComponent"
+                    :component="$iconComponent"
                     :attributes="new \Illuminate\View\ComponentAttributeBag($iconProps)"
                     size="md"
                 />

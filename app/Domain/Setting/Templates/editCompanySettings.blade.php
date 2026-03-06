@@ -43,7 +43,7 @@
                                     </x-globals::forms.form-field>
 
                                     <x-globals::forms.form-field label-text="{{ __('label.company_name') }}" name="companyName" label-position="left" label-width="tw:w-[150px]" caption="{{ __('text.company_name_helper') }}">
-                                        <x-globals::forms.input :bare="true" name="name" id="companyName" value="{{ $companySettings['name'] }}" />
+                                        <x-globals::forms.text-input :bare="true" name="name" id="companyName" value="{{ $companySettings['name'] }}" />
                                     </x-globals::forms.form-field>
 
                                     <h4 class="widgettitle title-light"><x-global::elements.icon name="settings" />{{ __('subtitles.defaults') }}

@@ -162,10 +162,10 @@
             </div>
             <input type="hidden" class="articleIcon" value="{{ $currentArticle->data }}" name="articleIcon"/>
 
-            <x-globals::forms.input :bare="true" type="text" name="title" class="main-title-input" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" style="width:80%" />
+            <x-globals::forms.text-input :bare="true" type="text" name="title" class="main-title-input" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" style="width:80%" />
 
             <br />
-            <x-globals::forms.input :bare="true" type="text" value="{{ e($currentArticle->tags) }}" name="tags" id="tags" />
+            <x-globals::forms.text-input :bare="true" type="text" value="{{ e($currentArticle->tags) }}" name="tags" id="tags" />
 
             <textarea class="tiptapComplex" rows="20" cols="80" id="wikiArticleContentEditor"  name="description">{{ htmlentities($currentArticle->description ?? '') }}</textarea>
 

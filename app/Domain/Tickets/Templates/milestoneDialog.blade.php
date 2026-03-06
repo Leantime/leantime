@@ -20,7 +20,7 @@
     <form class="formModal" method="post" action="{{ BASE_URL }}/tickets/editMilestone/{{ $currentMilestone->id }}" style="min-width: 250px;">
 
         <x-globals::forms.form-field label-text="{{ __('label.milestone_title') }}" name="headline">
-            <x-globals::forms.input name="headline" value="{{ e($currentMilestone->headline) }}" placeholder="{{ __('label.milestone_title') }}" />
+            <x-globals::forms.text-input name="headline" value="{{ e($currentMilestone->headline) }}" placeholder="{{ __('label.milestone_title') }}" />
         </x-globals::forms.form-field>
 
         <x-globals::forms.form-field label-text="{{ __('label.project') }}" name="projectId">
@@ -76,7 +76,7 @@
         </x-globals::forms.form-field>
 
         <x-globals::forms.form-field label-text="{{ __('label.color') }}" name="tags">
-            <x-globals::forms.input :bare="true" type="text" name="tags" autocomplete="off" value="{{ $currentMilestone->tags }}" placeholder="{{ __('input.placeholders.pick_a_color') }}" class="simpleColorPicker" />
+            <x-globals::forms.text-input :bare="true" type="text" name="tags" autocomplete="off" value="{{ $currentMilestone->tags }}" placeholder="{{ __('input.placeholders.pick_a_color') }}" class="simpleColorPicker" />
         </x-globals::forms.form-field>
 
         <x-globals::forms.form-field label-text="{{ __('label.planned_start_date') }}" name="editFrom">

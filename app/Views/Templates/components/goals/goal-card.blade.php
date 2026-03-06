@@ -42,7 +42,7 @@
     </div>
 
     <div style="margin-top: 20px;">
-        <x-global::progress :value="$percentDone" />
+        <x-global::feedback.progress :value="$percentDone" />
     </div>
     <div class="row" style="margin-top: 6px;">
         <div class="col-md-4">

@@ -175,7 +175,7 @@
                         <td data-order="{{ $row->bookedHours }}">{{ $row->bookedHours }}</td>
 
                         <td data-order="{{ $row->percentDone }}">
-                            <x-global::progress :value="$row->percentDone" size="sm" />
+                            <x-global::feedback.progress :value="$row->percentDone" size="sm" />
                         </td>
                         <td>
                             @if($login::userIsAtLeast($roles::$editor))

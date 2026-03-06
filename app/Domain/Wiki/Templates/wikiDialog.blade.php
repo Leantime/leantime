@@ -20,7 +20,7 @@
 <form class="formModal" method="post" action="{{ BASE_URL }}/wiki/wikiModal/{{ $id }}">
 
     <label>{{ __('label.wiki_title') }}</label>
-    <x-globals::forms.input name="title" id="wikiTitle" value="{{ $tpl->escape($currentWiki->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" /><br />
+    <x-globals::forms.text-input name="title" id="wikiTitle" value="{{ $tpl->escape($currentWiki->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" /><br />
 
     <br />
 

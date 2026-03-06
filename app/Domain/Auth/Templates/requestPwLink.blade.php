@@ -17,7 +17,7 @@
         {!! $tpl->displayInlineNotification() !!}
         <p>{{ __('text.enter_email_address_to_reset') }}<br /><br /></p>
         <div class="">
-            <x-globals::forms.input name="username" id="username" placeholder="{{ __('input.placeholders.enter_email') }}" />
+            <x-globals::forms.text-input name="username" id="username" placeholder="{{ __('input.placeholders.enter_email') }}" />
         </div>
         <div class="">
             <div class="forgotPwContainer">

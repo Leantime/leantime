@@ -39,7 +39,7 @@
                         }
                     @endphp
                     <br />
-                    <x-global::progress :value="$percentDone" />
+                    <x-global::feedback.progress :value="$percentDone" />
 
 
                 </div></div>

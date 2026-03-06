@@ -34,7 +34,7 @@
         <input type="hidden" value="{{ $id }}" name="itemId" id="itemId"/>
 
         <label>{{ $tpl->__('label.description') }}</label>
-        <x-globals::forms.input name="description" value="{{ $tpl->escape($canvasItem['description']) }}" style="width:100%" /><br />
+        <x-globals::forms.text-input name="description" value="{{ $tpl->escape($canvasItem['description']) }}" style="width:100%" /><br />
 
         @if (! empty($statusLabels))
             <label>{{ $tpl->__('label.status') }}</label>
@@ -55,9 +55,9 @@
         @if ($dataLabels[1]['active'])
             <label>{{ $tpl->__($dataLabels[1]['title']) }}</label>
             @if (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int')
-                <x-globals::forms.input type="number" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" /><br />
+                <x-globals::forms.text-input type="number" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" /><br />
             @elseif (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string')
-                <x-globals::forms.input name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" style="width:100%" /><br />
+                <x-globals::forms.text-input name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" style="width:100%" /><br />
             @else
                 <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[1]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[1]['field']] }}</textarea><br />
             @endif
@@ -68,9 +68,9 @@
         @if ($dataLabels[2]['active'])
             <label>{{ $tpl->__($dataLabels[2]['title']) }}</label>
             @if (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int')
-                <x-globals::forms.input type="number" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" /><br />
+                <x-globals::forms.text-input type="number" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" /><br />
             @elseif (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string')
-                <x-globals::forms.input name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" style="width:100%" /><br />
+                <x-globals::forms.text-input name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" style="width:100%" /><br />
             @else
                 <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea><br />
             @endif
@@ -81,9 +81,9 @@
         @if ($dataLabels[3]['active'])
             <label>{{ $tpl->__($dataLabels[3]['title']) }}</label>
             @if (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int')
-                <x-globals::forms.input type="number" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}" /><br />
+                <x-globals::forms.text-input type="number" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}" /><br />
             @elseif (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string')
-                <x-globals::forms.input name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}" /><br />
+                <x-globals::forms.text-input name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}" /><br />
             @else
                 <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[3]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[3]['field']] }}</textarea><br />
             @endif
@@ -119,7 +119,7 @@
                         @endif
                     </div>
                     <div id="newMilestone" style="display:none;">
-                        <x-globals::forms.input name="newMilestone" style="width:50%" /><br />
+                        <x-globals::forms.text-input name="newMilestone" style="width:50%" /><br />
                         <input type="hidden" name="type" value="milestone" />
                         <input type="hidden" name="{{ $canvasName }}canvasitemid" value="{{ $id }} " />
                         <x-globals::forms.button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>

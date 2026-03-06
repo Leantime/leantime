@@ -99,14 +99,14 @@
                             </x-globals::forms.form-field>
 
                             <x-globals::forms.form-field label-text="{{ __('DATE') }}" name="date">
-                                <x-globals::forms.input :bare="true" type="text" autocomplete="off"
+                                <x-globals::forms.text-input :bare="true" type="text" autocomplete="off"
                                         id="date" name="date"
                                         value="{{ $values['date'] }}"
                                         size="7"/>
                             </x-globals::forms.form-field>
 
                             <x-globals::forms.form-field label-text="{{ __('HOURS') }}" name="hours">
-                                <x-globals::forms.input :bare="true" name="hours" id="hours"
+                                <x-globals::forms.text-input :bare="true" name="hours" id="hours"
                                         value="{{ $values['hours'] }}" size="7" />
                             </x-globals::forms.form-field>
 
@@ -118,7 +118,7 @@
                             <x-globals::forms.form-field label-text="{{ __('INVOICED') }}" name="invoicedEmpl">
                                 <div class="tw:flex tw:items-center tw:gap-2">
                                     <x-globals::forms.checkbox name="invoicedEmpl" :checked="isset($values['invoicedEmpl']) && $values['invoicedEmpl'] == '1'" />
-                                    {{ __('ONDATE') }}&nbsp;<x-globals::forms.input :bare="true" type="text"
+                                    {{ __('ONDATE') }}&nbsp;<x-globals::forms.text-input :bare="true" type="text"
                                             id="invoicedEmplDate" name="invoicedEmplDate"
                                             value="{{ $values['invoicedEmplDate'] }}"
                                             size="7"/>
@@ -129,7 +129,7 @@
                                 <x-globals::forms.form-field label-text="{{ __('INVOICED_COMP') }}" name="invoicedComp">
                                     <div class="tw:flex tw:items-center tw:gap-2">
                                         <x-globals::forms.checkbox name="invoicedComp" :checked="$values['invoicedComp'] == '1'" />
-                                        {{ __('ONDATE') }}&nbsp;<x-globals::forms.input :bare="true" type="text" autocomplete="off"
+                                        {{ __('ONDATE') }}&nbsp;<x-globals::forms.text-input :bare="true" type="text" autocomplete="off"
                                                 id="invoicedCompDate" name="invoicedCompDate"
                                                 value="{{ $values['invoicedCompDate'] }}"
                                                 size="7"/>
@@ -139,7 +139,7 @@
                                 <x-globals::forms.form-field label-text="{{ __('labels.paid') }}" name="paid">
                                     <div class="tw:flex tw:items-center tw:gap-2">
                                         <x-globals::forms.checkbox name="paid" :checked="$values['paid'] == '1'" />
-                                        {{ __('ONDATE') }}&nbsp;<x-globals::forms.input :bare="true" type="text" autocomplete="off"
+                                        {{ __('ONDATE') }}&nbsp;<x-globals::forms.text-input :bare="true" type="text" autocomplete="off"
                                                 id="paidDate" name="paidDate"
                                                 value="{{ $values['paidDate'] }}"
                                                 size="7"/>
