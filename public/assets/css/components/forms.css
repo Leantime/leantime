@@ -148,7 +148,7 @@ div.tagsinput span.tag a {
 .ss-main .ss-multi-selected .ss-values,
 .ss-main .ss-multi-selected .ss-disabled{
     padding:0px;
-    height:21px; /* Equivalend to line height on tags input*/
+    min-height:21px; /* Minimum height matching line height on tags input*/
 }
 
 .ss-main .ss-multi-selected .ss-values .ss-value {
@@ -1328,6 +1328,8 @@ input[type=range]:focus::-ms-fill-upper {
     line-height: normal !important;
     min-height: 0 !important;
     width: fit-content !important;
+    max-width: 100%;
+    min-width: 0 !important;
 }
 
 .ss-main .ss-multi-selected {
@@ -1338,6 +1340,7 @@ input[type=range]:focus::-ms-fill-upper {
     border: 1px solid var(--main-border-color);
     box-shadow: none;
     border-radius: var(--input-radius);
+    overflow: hidden;
 }
 
 .ss-main .ss-single-selected .placeholder {

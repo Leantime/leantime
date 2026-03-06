@@ -94,7 +94,8 @@
     padding: 20px;
 }
 /* Prevent tiptap editor and other wide content from overflowing modal columns */
-#global-modal-content .row > [class*="col-"] {
+#global-modal-content .row > [class*="col-"],
+#global-modal-content .row-fluid > [class*="col-"] {
     min-width: 0;
 }
 /* Constrain tiptap toolbar within modal so buttons wrap instead of overhanging */
