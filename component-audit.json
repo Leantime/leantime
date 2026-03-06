@@ -1,0 +1,433 @@
+[
+  {
+    "canonical_name": "globals::actions.dropdown-menu",
+    "category": "dropdown",
+    "keep": "app/Views/Templates/components/actions/dropdown-menu.blade.php",
+    "delete": [
+      "app/Views/Templates/components/elements/dropdown.blade.php",
+      "app/Views/Templates/components/elements/button-dropdown.blade.php",
+      "app/Views/Templates/components/elements/link-dropdown.blade.php"
+    ],
+    "references_count": 71,
+    "notes": "Canonical implementation renders a Bootstrap <ul> dropdown-menu with icon/button/link variants. The three elements/* files are backward-compat wrappers that delegate to actions.dropdown-menu with different variant presets (icon, button, link). elements.dropdown alone has 39 references — callers need migration to actions.dropdown-menu before deletion."
+  },
+  {
+    "canonical_name": "globals::actions.chip",
+    "category": "dropdown",
+    "keep": "app/Views/Templates/components/actions/chip.blade.php",
+    "delete": [
+      "app/Views/Templates/components/dropdownPill.blade.php"
+    ],
+    "references_count": 11,
+    "notes": "Chip is an inline status/priority dropdown pill with colorized options and HTMX support. dropdownPill is a backward-compat wrapper (10 refs) that maps old API props to actions.chip (1 direct ref)."
+  },
+  {
+    "canonical_name": "globals::inlineSelect",
+    "category": "dropdown",
+    "keep": "app/Views/Templates/components/inlineSelect.blade.php",
+    "delete": [],
+    "references_count": 1,
+    "notes": "Custom dropdown that renders a <ul> menu with vanilla JS onclick handlers and stores selection in a hidden <input>. Functionally a dropdown but used as an inline form element. Unique — no duplicates."
+  },
+  {
+    "canonical_name": "globals::forms.button",
+    "category": "button",
+    "keep": "app/Views/Templates/components/forms/button.blade.php",
+    "delete": [
+      "app/Views/Templates/components/button.blade.php"
+    ],
+    "references_count": 206,
+    "notes": "Most-used component in the codebase (206 refs). Canonical version supports naming-doc API (contentRole, state, scale, leadingVisual, trailingVisual) plus v1 backward-compat aliases. Root button.blade.php is a wrapper with 0 direct refs — safe to delete."
+  },
+  {
+    "canonical_name": "globals::forms.button-group",
+    "category": "button",
+    "keep": "app/Views/Templates/components/forms/button-group.blade.php",
+    "delete": [
+      "app/Views/Templates/components/elements/button-group.blade.php"
+    ],
+    "references_count": 1,
+    "notes": "Simple btn-group wrapper with vertical option. elements/button-group is a one-line backward-compat wrapper with 0 refs."
+  },
+  {
+    "canonical_name": "globals::elements.badge",
+    "category": "badge",
+    "keep": "app/Views/Templates/components/elements/badge.blade.php",
+    "delete": [
+      "app/Views/Templates/components/badge.blade.php"
+    ],
+    "references_count": 3,
+    "notes": "Canonical badge supports span/link rendering, dot mode, custom bgColor, and size/color variants. Root badge.blade.php is a backward-compat wrapper with 0 direct refs."
+  },
+  {
+    "canonical_name": "globals::elements.accordion",
+    "category": "accordion",
+    "keep": "app/Views/Templates/components/elements/accordion.blade.php",
+    "delete": [
+      "app/Views/Templates/components/accordion.blade.php"
+    ],
+    "references_count": 7,
+    "notes": "Canonical accordion with title/content/actionlink slots, toggle state persistence via $tpl->getToggleState(). Root accordion.blade.php is a backward-compat wrapper with 0 direct refs."
+  },
+  {
+    "canonical_name": "globals::elements.avatar",
+    "category": "avatar",
+    "keep": "app/Views/Templates/components/elements/avatar.blade.php",
+    "delete": [
+      "app/Views/Templates/components/avatar.blade.php",
+      "app/Views/Templates/components/kanban/user-avatar.blade.php"
+    ],
+    "references_count": 2,
+    "notes": "Three avatar implementations. elements/avatar is canonical (Tailwind utility classes, 5 sizes xs–xl, CRC32 color hashing, image fallback to initials). kanban/user-avatar is a near-identical copy using inline styles instead of Tailwind — same color palette, same CRC32 logic, same fallback pattern. Root avatar.blade.php is a backward-compat wrapper. kanban/user-avatar has 1 ref (swimlane-row-header) that should migrate to elements.avatar."
+  },
+  {
+    "canonical_name": "globals::navigations.tabs",
+    "category": "tabs",
+    "keep": "app/Views/Templates/components/navigations/tabs.blade.php",
+    "delete": [
+      "app/Views/Templates/components/tabs.blade.php"
+    ],
+    "references_count": 2,
+    "notes": "Canonical tabs component with headings/contents slots and jQuery tabs init. Root tabs.blade.php is a backward-compat wrapper with 0 direct refs."
+  },
+  {
+    "canonical_name": "globals::navigations.tabs.heading",
+    "category": "tabs",
+    "keep": "app/Views/Templates/components/navigations/tabs/heading.blade.php",
+    "delete": [
+      "app/Views/Templates/components/tabs/heading.blade.php"
+    ],
+    "references_count": 1,
+    "notes": "Byte-identical copies (MD5: 1e1170492deb3996472563590ec1f784). Single-line <li><a> tab heading. tabs/heading has 0 refs — pure dead code."
+  },
+  {
+    "canonical_name": "globals::navigations.tabs.content",
+    "category": "tabs",
+    "keep": "app/Views/Templates/components/navigations/tabs/content.blade.php",
+    "delete": [
+      "app/Views/Templates/components/tabs/content.blade.php"
+    ],
+    "references_count": 1,
+    "notes": "Byte-identical copies (MD5: 734a4cdb5713e84bc5ec68d2ff7de4d2). Simple <div> tab content panel. tabs/content has 0 refs — pure dead code."
+  },
+  {
+    "canonical_name": "globals::layout.page-header",
+    "category": "page-header",
+    "keep": "app/Views/Templates/components/layout/page-header.blade.php",
+    "delete": [
+      "app/Views/Templates/components/pageheader.blade.php"
+    ],
+    "references_count": 9,
+    "notes": "Canonical page header with icon, headline, subtitle, actions slot, and dispatchEvent hooks. Root pageheader.blade.php is a backward-compat wrapper with 0 direct refs."
+  },
+  {
+    "canonical_name": "globals::feedback.loading",
+    "category": "loading",
+    "keep": "app/Views/Templates/components/feedback/loading.blade.php",
+    "delete": [
+      "app/Views/Templates/components/loader.blade.php"
+    ],
+    "references_count": 11,
+    "notes": "Canonical HTMX loading indicator (htmx-indicator class, indeterminate spinner). Root loader.blade.php is a backward-compat wrapper with 0 direct refs."
+  },
+  {
+    "canonical_name": "globals::feedback.skeleton",
+    "category": "loading",
+    "keep": "app/Views/Templates/components/feedback/skeleton.blade.php",
+    "delete": [
+      "app/Views/Templates/components/loadingText.blade.php"
+    ],
+    "references_count": 9,
+    "notes": "Content placeholder skeleton supporting text, longtext, card, line, project, and plugincard types. Root loadingText.blade.php is a backward-compat wrapper with 0 direct refs."
+  },
+  {
+    "canonical_name": "globals::feedback.progress",
+    "category": "progress",
+    "keep": "app/Views/Templates/components/feedback/progress.blade.php",
+    "delete": [
+      "app/Views/Templates/components/progress.blade.php"
+    ],
+    "references_count": 14,
+    "notes": "Embossed progress bar with color-mix tracks and glossy fill. Root progress.blade.php is a backward-compat wrapper with 13 refs (all delegate to feedback.progress). feedback.progress itself has 1 direct ref. Callers of root progress.blade.php need migration before deletion."
+  },
+  {
+    "canonical_name": "globals::feedback.indicator",
+    "category": "status-indicator",
+    "keep": "app/Views/Templates/components/feedback/indicator.blade.php",
+    "delete": [
+      "app/Views/Templates/components/elements/status-indicator.blade.php"
+    ],
+    "references_count": 2,
+    "notes": "Colored dot indicator with label. elements/status-indicator is a backward-compat wrapper mapping old props (status→state, size→scale). Each has 1 ref."
+  },
+  {
+    "canonical_name": "globals::forms.text-input",
+    "category": "form-input",
+    "keep": "app/Views/Templates/components/forms/text-input.blade.php",
+    "delete": [
+      "app/Views/Templates/components/forms/input.blade.php"
+    ],
+    "references_count": 78,
+    "notes": "Canonical text input with naming-doc API (labelText, validationText, validationState, caption, scale). forms/input.blade.php is a backward-compat wrapper with 77 refs (most-used form input) — maps old props (label→labelText, error→validationText, help→caption, inputSize→scale). HIGH migration cost."
+  },
+  {
+    "canonical_name": "globals::forms.form-field",
+    "category": "form-input",
+    "keep": "app/Views/Templates/components/forms/form-field.blade.php",
+    "delete": [
+      "app/Views/Templates/components/forms/form-group.blade.php"
+    ],
+    "references_count": 1,
+    "notes": "Generic form field wrapper with label, validation, caption. forms/form-group is a backward-compat wrapper with 0 refs — safe to delete."
+  },
+  {
+    "canonical_name": "globals::forms.checkbox",
+    "category": "form-input",
+    "keep": "app/Views/Templates/components/forms/checkbox.blade.php",
+    "delete": [
+      "app/Views/Templates/components/forms/toggle.blade.php"
+    ],
+    "references_count": 28,
+    "notes": "Checkbox component has a built-in 'toggle' prop that renders toggle styling (tw:toggle tw:toggle-primary). forms/toggle.blade.php is a standalone toggle component that produces identical output to checkbox with toggle=true. toggle has 0 refs — pure dead code."
+  },
+  {
+    "canonical_name": "globals::actions.modal",
+    "category": "modal",
+    "keep": "app/Views/Templates/components/actions/modal.blade.php",
+    "delete": [],
+    "references_count": 5,
+    "notes": "HTML <dialog> modal with header/body/actions slots, size variants (sm/md/lg/xl), closeable backdrop. No duplicates."
+  },
+  {
+    "canonical_name": "globals::actions.confirm-delete",
+    "category": "modal",
+    "keep": "app/Views/Templates/components/actions/confirm-delete.blade.php",
+    "delete": [],
+    "references_count": 2,
+    "notes": "Deletion confirmation form with cancel/delete buttons. Used inside modals. No duplicates."
+  },
+  {
+    "canonical_name": "globals::elements.card",
+    "category": "card",
+    "keep": "app/Views/Templates/components/elements/card.blade.php",
+    "delete": [],
+    "references_count": 1,
+    "notes": "DaisyUI-style card with header/headerActions/actions slots, compact/bordered/glass variants. Only 1 reference — low adoption."
+  },
+  {
+    "canonical_name": "globals::elements.table",
+    "category": "table",
+    "keep": "app/Views/Templates/components/elements/table.blade.php",
+    "delete": [],
+    "references_count": 0,
+    "notes": "DaisyUI+Bootstrap hybrid table with striped/bordered/hover/compact/datatable options. 0 references — unused stub."
+  },
+  {
+    "canonical_name": "globals::elements.empty-state",
+    "category": "feedback",
+    "keep": "app/Views/Templates/components/elements/empty-state.blade.php",
+    "delete": [],
+    "references_count": 2,
+    "notes": "Empty state placeholder with undrawSvg image, headline, description, and actions slot. No duplicates."
+  },
+  {
+    "canonical_name": "globals::feedback.alert",
+    "category": "feedback",
+    "keep": "app/Views/Templates/components/feedback/alert.blade.php",
+    "delete": [],
+    "references_count": 1,
+    "notes": "Bootstrap alert with auto icon selection by state (info/success/warning/error), dismissible option. Only 1 ref — low adoption."
+  },
+  {
+    "canonical_name": "globals::forms.select",
+    "category": "form-input",
+    "keep": "app/Views/Templates/components/forms/select.blade.php",
+    "delete": [],
+    "references_count": 54,
+    "notes": "Native <select> form control with label, validation, bare mode. Third most-used form component. No duplicates."
+  },
+  {
+    "canonical_name": "globals::forms.textarea",
+    "category": "form-input",
+    "keep": "app/Views/Templates/components/forms/textarea.blade.php",
+    "delete": [],
+    "references_count": 10,
+    "notes": "Standard textarea with label, validation, caption. Consistent with text-input API. No duplicates."
+  },
+  {
+    "canonical_name": "globals::forms.radio",
+    "category": "form-input",
+    "keep": "app/Views/Templates/components/forms/radio.blade.php",
+    "delete": [],
+    "references_count": 6,
+    "notes": "Radio button with hx-vals fix for Blade ComponentAttributeBag escaping bug. No duplicates."
+  },
+  {
+    "canonical_name": "globals::forms.date",
+    "category": "form-input",
+    "keep": "app/Views/Templates/components/forms/date.blade.php",
+    "delete": [],
+    "references_count": 9,
+    "notes": "Date picker input using flatpickr (.dates class), optional time field. No duplicates."
+  },
+  {
+    "canonical_name": "globals::forms.dateInline",
+    "category": "form-input",
+    "keep": "app/Views/Templates/components/forms/dateInline.blade.php",
+    "delete": [],
+    "references_count": 1,
+    "notes": "Inline date picker — hidden input with calendar-plus icon trigger. Collapses when no value set. No duplicates."
+  },
+  {
+    "canonical_name": "globals::forms.file",
+    "category": "form-input",
+    "keep": "app/Views/Templates/components/forms/file.blade.php",
+    "delete": [],
+    "references_count": 9,
+    "notes": "File upload input with label, accept filter, bare mode. No duplicates."
+  },
+  {
+    "canonical_name": "globals::selectable",
+    "category": "form-input",
+    "keep": "app/Views/Templates/components/selectable.blade.php",
+    "delete": [],
+    "references_count": 5,
+    "notes": "Radio/checkbox disguised as clickable card with jQuery toggle logic and HTMX onLoad re-init. Legacy pattern — uses jQuery event handlers. No duplicates."
+  },
+  {
+    "canonical_name": "globals::emojiinput",
+    "category": "form-input",
+    "keep": "app/Views/Templates/components/emojiinput.blade.php",
+    "delete": [],
+    "references_count": 0,
+    "notes": "Text input with emoji picker button. Includes inline <script> and <style> blocks. 0 references — unused. Uses EmojiPicker JS constructor and jQuery. Candidate for removal."
+  },
+  {
+    "canonical_name": "globals::content.section",
+    "category": "layout",
+    "keep": "app/Views/Templates/components/content/section.blade.php",
+    "delete": [],
+    "references_count": 0,
+    "notes": "Minimal wrapper: <div class='maincontent'><div class='maincontentinner'>{{ $slot }}</div></div>. 0 references — unused stub."
+  },
+  {
+    "canonical_name": "globals::content.widget",
+    "category": "layout",
+    "keep": "app/Views/Templates/components/content/widget.blade.php",
+    "delete": [],
+    "references_count": 0,
+    "notes": "Widget panel with title, icon, and optional titleActions slot. 0 references — unused stub."
+  },
+  {
+    "canonical_name": "globals::layout.select-panel",
+    "category": "layout",
+    "keep": "app/Views/Templates/components/layout/select-panel.blade.php",
+    "delete": [],
+    "references_count": 0,
+    "notes": "Stub: placeholder for future select panel implementation. 0 references — unused."
+  },
+  {
+    "canonical_name": "globals::navigations.breadcrumbs",
+    "category": "navigation",
+    "keep": "app/Views/Templates/components/navigations/breadcrumbs.blade.php",
+    "delete": [],
+    "references_count": 0,
+    "notes": "Stub: placeholder nav wrapper. 0 references — unused."
+  },
+  {
+    "canonical_name": "globals::navigations.pagination",
+    "category": "navigation",
+    "keep": "app/Views/Templates/components/navigations/pagination.blade.php",
+    "delete": [],
+    "references_count": 0,
+    "notes": "Stub: placeholder nav wrapper. 0 references — unused."
+  },
+  {
+    "canonical_name": "globals::navigations.steps",
+    "category": "navigation",
+    "keep": "app/Views/Templates/components/navigations/steps.blade.php",
+    "delete": [],
+    "references_count": 0,
+    "notes": "Stub: placeholder nav wrapper. 0 references — unused."
+  },
+  {
+    "canonical_name": "globals::inlineLinks",
+    "category": "unclassified",
+    "keep": "app/Views/Templates/components/inlineLinks.blade.php",
+    "delete": [],
+    "references_count": 2,
+    "notes": "Renders a horizontal flex row of links from an array. Unique component, no duplicates."
+  },
+  {
+    "canonical_name": "globals::undrawSvg",
+    "category": "unclassified",
+    "keep": "app/Views/Templates/components/undrawSvg.blade.php",
+    "delete": [],
+    "references_count": 32,
+    "notes": "Inlines SVG files from /dist/images/svg/ with configurable sizing. Heavily used (32 refs) for illustrations throughout the app. No duplicates."
+  },
+  {
+    "canonical_name": "globals::kanban.micro-progress-bar",
+    "category": "kanban",
+    "keep": "app/Views/Templates/components/kanban/micro-progress-bar.blade.php",
+    "delete": [],
+    "references_count": 2,
+    "notes": "Expandable multi-segment progress bar showing status breakdown per swimlane. No duplicates."
+  },
+  {
+    "canonical_name": "globals::kanban.milestone-icon",
+    "category": "kanban",
+    "keep": "app/Views/Templates/components/kanban/milestone-icon.blade.php",
+    "delete": [],
+    "references_count": 1,
+    "notes": "Emoji milestone indicator (target emoji). No duplicates."
+  },
+  {
+    "canonical_name": "globals::kanban.sprint-icon",
+    "category": "kanban",
+    "keep": "app/Views/Templates/components/kanban/sprint-icon.blade.php",
+    "delete": [],
+    "references_count": 1,
+    "notes": "Emoji sprint indicator (runner emoji). No duplicates."
+  },
+  {
+    "canonical_name": "globals::kanban.swimlane-row-header",
+    "category": "kanban",
+    "keep": "app/Views/Templates/components/kanban/swimlane-row-header.blade.php",
+    "delete": [],
+    "references_count": 3,
+    "notes": "Kanban swimlane sidebar with dynamic icon resolution, micro-progress-bar, expand/collapse. Uses kanban.user-avatar (should migrate to elements.avatar). No duplicates."
+  },
+  {
+    "canonical_name": "globals::kanban.thermometer-icon",
+    "category": "kanban",
+    "keep": "app/Views/Templates/components/kanban/thermometer-icon.blade.php",
+    "delete": [],
+    "references_count": 1,
+    "notes": "SVG thermometer icon for priority visualization using TicketDesignTokens. No duplicates."
+  },
+  {
+    "canonical_name": "globals::kanban.time-indicator",
+    "category": "kanban",
+    "keep": "app/Views/Templates/components/kanban/time-indicator.blade.php",
+    "delete": [],
+    "references_count": 2,
+    "notes": "Emoji time-urgency indicator (dueSoon/overdue/stale). No duplicates."
+  },
+  {
+    "canonical_name": "globals::kanban.tshirt-icon",
+    "category": "kanban",
+    "keep": "app/Views/Templates/components/kanban/tshirt-icon.blade.php",
+    "delete": [],
+    "references_count": 1,
+    "notes": "SVG t-shirt icon for effort/story-point visualization using TicketDesignTokens. No duplicates."
+  },
+  {
+    "canonical_name": "globals::kanban.type-icon",
+    "category": "kanban",
+    "keep": "app/Views/Templates/components/kanban/type-icon.blade.php",
+    "delete": [],
+    "references_count": 1,
+    "notes": "Emoji type indicator (task/bug/story/etc) using TicketDesignTokens. No duplicates."
+  }
+]
