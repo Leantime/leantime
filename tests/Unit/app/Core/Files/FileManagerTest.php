@@ -169,23 +169,26 @@ class FileManagerTest extends TestCase
 
     public function test_get_file_successfully()
     {
-        // Create a mock response
-        $mockResponse = $this->createMock(Response::class);
-
         // Setup filesystem manager to return our mocked storage
         $this->filesystemManager->method('getDefaultDriver')->willReturn('local');
         $this->filesystemManager->method('disk')->with('local')->willReturn($this->storage);
-        $this->storage->method('mimeType')->willReturn('text/plain');
 
-        // Setup storage to successfully find and download the file
+        // Setup storage to successfully find and read the file
         $this->storage->expects($this->once())->method('exists')->willReturn(true);
-        $this->storage->method('download')->willReturn($mockResponse);
+        $this->storage->method('mimeType')->willReturn('text/plain');
+        $this->storage->method('get')->willReturn('file content');
+        $this->storage->method('size')->willReturn(12);
+        $this->storage->method('lastModified')->willReturn(1700000000);
 
         // Execute the method under test
         $result = $this->fileManager->getFile('test.txt', 'original-name.txt');
 
-        // Assert the result is the expected response
-        $this->assertSame($mockResponse, $result);
+        // Assert the result is a Response with correct headers
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals('file content', $result->getContent());
+        $this->assertEquals('text/plain', $result->headers->get('Content-Type'));
+        $this->assertEquals('12', $result->headers->get('Content-Length'));
+        $this->assertStringContainsString('original-name.txt', $result->headers->get('Content-Disposition'));
     }
 
     public function test_get_file_not_found()

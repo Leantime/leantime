@@ -433,22 +433,7 @@ class Plugins
                         $priceString = '$'.$perUserMonth.' per user/month (billed annually) <a href="javascript:void(0)" data-tippy-content="10 user minimum, billed annually"><i class="fa fa-circle-info"></i></a>';
                     }
 
-                    $plugins[$category['slug']]['plugins'][Str::lower($plugin['identifier'])] = build(new MarketplacePlugin)
-                        ->set('identifier', $plugin['identifier'] ?? '')
-                        ->set('name', $plugin['post_title'] ?? '')
-                        ->set('excerpt', $plugin['excerpt'] ?? '')
-                        ->set('imageUrl', $plugin['icon'] ?? '')
-                        ->set('vendorDisplayName', $plugin['vendor'] ?? '')
-                        ->set('vendorId', $plugin['vendor_id'] ?? '')
-                        ->set('vendorEmail', $plugin['vendor_email'] ?? '')
-                        ->set(
-                            'startingPrice',
-                            '$'.($plugin['price'] ?? '')
-                        )
-                        ->set('calculatedMonthlyPrice', $priceString)
-                        ->set('rating', $plugin['rating'] ?? '')
-                        ->set('version', $plugin['version'] ?? '')
-                        ->get();
+                    $plugins[$category['slug']]['plugins'][Str::lower($plugin['identifier'])] = self::buildMarketplacePluginFromListData($plugin, $priceString);
 
                     $pluginsFlat[Str::lower($plugin['identifier'])] = $plugins[$category['slug']]['plugins'][Str::lower($plugin['identifier'])];
                 }
@@ -494,22 +479,7 @@ class Plugins
                         $priceString = '$'.$perUserMonth.' per user/month (billed annually) <a href="javascript:void(0)" data-tippy-content="10 user minimum, billed annually"><i class="fa fa-circle-info"></i></a>';
                     }
 
-                    $plugins[$category['slug']]['plugins'][Str::lower($plugin['identifier'])] = build(new MarketplacePlugin)
-                        ->set('identifier', $plugin['identifier'] ?? '')
-                        ->set('name', $plugin['post_title'] ?? '')
-                        ->set('excerpt', $plugin['excerpt'] ?? '')
-                        ->set('imageUrl', $plugin['icon'] ?? '')
-                        ->set('vendorDisplayName', $plugin['vendor'] ?? '')
-                        ->set('vendorId', $plugin['vendor_id'] ?? '')
-                        ->set('vendorEmail', $plugin['vendor_email'] ?? '')
-                        ->set(
-                            'startingPrice',
-                            '$'.($plugin['price'] ?? '')
-                        )
-                        ->set('calculatedMonthlyPrice', $priceString)
-                        ->set('rating', $plugin['rating'] ?? '')
-                        ->set('version', $plugin['version'] ?? '')
-                        ->get();
+                    $plugins[$category['slug']]['plugins'][Str::lower($plugin['identifier'])] = self::buildMarketplacePluginFromListData($plugin, $priceString);
 
                     $pluginsFlat[Str::lower($plugin['identifier'])] = $plugins[$category['slug']]['plugins'][Str::lower($plugin['identifier'])];
                 }
@@ -520,6 +490,44 @@ class Plugins
         Cache::store('installation')->set('plugins.marketplacePluginsFlat', $pluginsFlat);
 
         return $pluginsFlat;
+    }
+
+    /**
+     * Builds a MarketplacePlugin from listing API data with proper type coercion.
+     *
+     * The marketplace API may return unexpected types (string instead of array,
+     * null instead of int, etc.) so all values are explicitly cast to match the
+     * MarketplacePlugin model's typed properties.
+     *
+     * @param  array  $plugin  Raw plugin data from the marketplace listing API.
+     * @param  string  $priceString  Pre-formatted monthly price string.
+     * @return MarketplacePlugin The hydrated plugin model.
+     */
+    private static function buildMarketplacePluginFromListData(array $plugin, string $priceString): MarketplacePlugin
+    {
+        return build(new MarketplacePlugin)
+            ->set('identifier', (string) ($plugin['identifier'] ?? ''))
+            ->set('name', (string) ($plugin['post_title'] ?? ''))
+            ->set('excerpt', (string) ($plugin['excerpt'] ?? ''))
+            ->set('description', '')
+            ->set('imageUrl', (string) ($plugin['icon'] ?? ''))
+            ->set('icon', (string) ($plugin['icon'] ?? ''))
+            ->set('vendorDisplayName', (string) ($plugin['vendor'] ?? ''))
+            ->set('vendorId', (int) ($plugin['vendor_id'] ?? 0))
+            ->set('vendorEmail', (string) ($plugin['vendor_email'] ?? ''))
+            ->set('marketplaceUrl', '')
+            ->set('startingPrice', '$'.($plugin['price'] ?? ''))
+            ->set('calculatedMonthlyPrice', $priceString)
+            ->set('rating', (string) ($plugin['rating'] ?? ''))
+            ->set('reviewCount', (int) ($plugin['review_count'] ?? 0))
+            ->set('reviews', is_array($plugin['reviews'] ?? null) ? $plugin['reviews'] : [])
+            ->set('marketplaceId', (string) ($plugin['product_id'] ?? ''))
+            ->set('version', (string) ($plugin['version'] ?? ''))
+            ->set('pricingTiers', is_array($plugin['tiers'] ?? null) ? $plugin['tiers'] : [])
+            ->set('categories', is_array($plugin['categories'] ?? null) ? $plugin['categories'] : [])
+            ->set('tags', is_array($plugin['tags'] ?? null) ? $plugin['tags'] : [])
+            ->set('compatibility', is_array($plugin['compatibility'] ?? null) ? $plugin['compatibility'] : [])
+            ->get();
     }
 
     /**
@@ -541,21 +549,25 @@ class Plugins
         $data = $response->json();
 
         return build(new MarketplacePlugin)
-            ->set('identifier', $identifier)
-            ->set('name', $data['name'] ?? '')
-            ->set('icon', $data['icon'] ?? '')
-            ->set('description', nl2br($data['description'] ?? ''))
-            ->set('marketplaceUrl', $data['marketplaceUrl'] ?? '')
-            ->set('vendorId', (int) ($data['vendor']['id'] ?? null))
-            ->set('vendorDisplayName', $data['vendor']['name'] ?? '')
-            ->set('rating', $data['reviews']['average'] ?? 'N/A')
-            ->set('reviewCount', $data['reviews']['count'] ?? 0)
-            ->set('reviews', $data['reviews']['list'] ?? [])
-            ->set('marketplaceId', $data['productId'] ?? '')
-            ->set('pricingTiers', $data['tiers'] ?? [])
-            ->set('categories', $data['categories'] ?? [])
-            ->set('tags', $data['tags'] ?? [])
-            ->set('compatibility', $data['compatibility'] ?? [])
+            ->set('identifier', (string) ($identifier ?? ''))
+            ->set('name', (string) ($data['name'] ?? ''))
+            ->set('icon', (string) ($data['icon'] ?? ''))
+            ->set('excerpt', (string) ($data['excerpt'] ?? ''))
+            ->set('imageUrl', (string) ($data['icon'] ?? ''))
+            ->set('description', nl2br((string) ($data['description'] ?? '')))
+            ->set('marketplaceUrl', (string) ($data['marketplaceUrl'] ?? ''))
+            ->set('vendorId', (int) ($data['vendor']['id'] ?? 0))
+            ->set('vendorDisplayName', (string) ($data['vendor']['name'] ?? ''))
+            ->set('vendorEmail', (string) ($data['vendor']['email'] ?? ''))
+            ->set('rating', (string) ($data['reviews']['average'] ?? 'N/A'))
+            ->set('reviewCount', (int) ($data['reviews']['count'] ?? 0))
+            ->set('reviews', is_array($data['reviews']['list'] ?? null) ? $data['reviews']['list'] : [])
+            ->set('marketplaceId', (string) ($data['productId'] ?? ''))
+            ->set('version', (string) ($data['version'] ?? ''))
+            ->set('pricingTiers', is_array($data['tiers'] ?? null) ? $data['tiers'] : [])
+            ->set('categories', is_array($data['categories'] ?? null) ? $data['categories'] : [])
+            ->set('tags', is_array($data['tags'] ?? null) ? $data['tags'] : [])
+            ->set('compatibility', is_array($data['compatibility'] ?? null) ? $data['compatibility'] : [])
             ->get();
     }
 

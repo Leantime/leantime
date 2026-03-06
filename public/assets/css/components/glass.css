@@ -21,8 +21,8 @@
     border: 1px solid var(--glass-border);
 }
 
-/* Fallback for browsers without backdrop-filter */
-@supports not (backdrop-filter: blur(1px)) {
+/* Fallback for browsers without backdrop-filter (prefixed or unprefixed) */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .lt-glass,
     .lt-glass-subtle {
         background: var(--color-bg-card);

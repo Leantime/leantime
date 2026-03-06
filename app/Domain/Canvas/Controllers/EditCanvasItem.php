@@ -313,9 +313,10 @@ class EditCanvasItem extends Controller
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
         $this->tpl->assign('relatesLabels', $this->canvasRepo->getRelatesLabels());
         $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
-        if (isset($params['id']) && ! empty($params['id'])) {
-            $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvas'.'item', (int) $params['id']);
-            $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem((int) $params['id']));
+        if (isset($params['id'])) {
+            $canvasItemId = (int) $params['id'];
+            $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvas'.'item', $canvasItemId);
+            $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem($canvasItemId));
         } else {
             $value = [
                 'id' => '',
