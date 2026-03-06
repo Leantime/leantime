@@ -2202,10 +2202,10 @@ class Tickets
 
             // Clear sprint/dependency/milestone directly via repo to avoid re-entering service layer
             $this->ticketRepository->patchTicket($ticket->id, [
-                'projectId'         => $ticket->projectId,
-                'sprint'            => '',
+                'projectId' => $ticket->projectId,
+                'sprint' => '',
                 'dependingTicketId' => '',
-                'milestoneid'       => '',
+                'milestoneid' => '',
             ]);
 
             return $return;
