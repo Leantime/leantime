@@ -9,6 +9,11 @@
         @endif
     >
         <a href="{{ BASE_URL . $menuItem['href'] }}"
+           hx-boost="true"
+           hx-target=".primaryContent"
+           hx-select=".primaryContent"
+           hx-swap="outerHTML show:window:top"
+           hx-indicator="#page-loading"
            data-tippy-content="{{ strip_tags(__($menuItem['tooltip'])) }}"
            data-tippy-placement="right"
            preload="mouseover"
