@@ -25,7 +25,8 @@
             default                => 'btn btn-' . $contentRole,
         },
         'link' => $triggerClass,
-        default => $triggerClass,
+        // icon variant: default to btn-icon-only; callers can override via trigger-class
+        default => $triggerClass ?: 'btn-icon-only',
     };
 @endphp
 

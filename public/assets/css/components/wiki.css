@@ -277,7 +277,44 @@
     margin-bottom: 32px;
 }
 
+/* Title Wrapper — icon picker + title input inline */
+.wiki-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
+.wiki-icon-picker {
+    flex-shrink: 0;
+}
+
+.wiki-icon-picker .titleIconPicker {
+    font-size: var(--font-size-xl);
+    line-height: 21px;
+    padding: 4px 6px;
+    border: 1px solid transparent;
+    background: var(--layered-background);
+    border-radius: var(--box-radius-small);
+}
+
+.wiki-icon-picker .titleIconPicker:hover {
+    border-color: var(--main-border-color);
+}
+
+.wiki-icon-picker .wiki-icon-caret {
+    font-size: var(--font-size-xs);
+    vertical-align: middle;
+}
+
+.wiki-title-editable {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Tags Wrapper */
+.wiki-tags-wrapper {
+    margin-top: 4px;
+}
 
 /* Tags Input */
 .wiki-tags-input {

@@ -675,7 +675,7 @@ body button.btn.btn-circle:hover {
     transition: background 0.15s ease;
 }
 .btn-icon-only:hover {
-    background: rgba(0, 0, 0, 0.08);
+    background: var(--hover-bg);
     color: var(--primary-font-color);
 }
 .btn-icon-only:focus-visible {

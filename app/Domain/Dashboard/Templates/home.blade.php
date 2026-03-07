@@ -62,9 +62,6 @@ function promoteWidgetActions(root) {
         if (!headerTarget) return;
         headerTarget.innerHTML = '';
         headerTarget.appendChild(slotActions);
-        slotActions.style.display = 'flex';
-        slotActions.style.alignItems = 'center';
-        slotActions.style.gap = '2px';
     });
 }
 

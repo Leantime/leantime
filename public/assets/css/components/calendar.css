@@ -44,7 +44,8 @@
 }
 
 .day-button:hover {
-    background-color: var(--dropdown-link-hover-bg);
+    background-color: var(--hover-bg);
+    color: var(--primary-font-color);
 }
 
 .day-button.today:not(.active) {

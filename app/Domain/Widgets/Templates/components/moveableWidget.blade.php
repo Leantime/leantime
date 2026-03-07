@@ -2,19 +2,19 @@
     <div class="grid-stack-item-content {{ ($background == "default") ? "maincontentinner" : $background  }} tw:p-none">
         <div class="tw:flex tw:flex-col tw:h-full {{ ($background == "default") ? "tw:pb-l" : "" }}">
             @if(empty($fixed))
-            <div class="stickyHeader" style="display:flex; align-items:center; gap:10px; min-height:46px; width:100%;">
+            <div class="stickyHeader">
 
-                <div class="grid-handler-top" style="cursor:grab; flex-shrink:0; display:flex; align-items:center;">
+                <div class="grid-handler-top">
                     <x-global::elements.icon name="drag_indicator" />
                 </div>
 
                 @if($name != '' && $noTitle == false)
-                    <h5 class="subtitle" style="flex:1; margin:0; line-height:1.2;">{{ __($name) }}</h5>
+                    <h5 class="subtitle">{{ __($name) }}</h5>
                 @else
                     <div style="flex:1;"></div>
                 @endif
-                <div class="widget-header-actions" style="flex-shrink:0; display:flex; align-items:center; gap:2px;"></div>
-                <x-globals::actions.dropdown-menu container-class="tw:flex-shrink-0 tw:flex tw:items-center">
+                <div class="widget-header-actions"></div>
+                <x-globals::actions.dropdown-menu>
                     <li><a href="javascript:void(0)" class="fitContent"><x-global::elements.icon name="open_in_full" /> Resize to fit content</a></li>
                     @if(empty($alwaysVisible))
                         <li><a href="javascript:void(0)" class="removeWidget"><x-global::elements.icon name="visibility_off" /> Hide</a></li>

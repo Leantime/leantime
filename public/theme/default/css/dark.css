@@ -82,7 +82,8 @@
 
     --dropdown-link-bg: var(--secondary-background);
     --dropdown-link-color: var(--primary-font-color);
-    --dropdown-link-hover-bg: var(--tab-active-background);
+    --hover-bg: rgba(255, 255, 255, 0.10);
+    --dropdown-link-hover-bg: var(--hover-bg);
     --dropdown-link-hover-color: var(--primary-font-color);
 
     --input-background: var(--secondary-background);

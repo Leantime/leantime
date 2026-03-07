@@ -42,12 +42,18 @@
 .dropdown-menu > li > .dropdown-item-wrapper {
     font-size: var(--base-font-size);
     color:var(--primary-font-color);
+    text-decoration: none;
     margin: 0;
-    padding: 10px 12px;
-    min-height: 44px;
+    padding: 4px 12px;
+    min-height: 30px;
     display: flex;
     align-items: center;
     border-radius: 0px;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    text-decoration: none;
 }
 .pagetitle .dropdown-menu > li > a {
     color:var(--primary-font-color);
@@ -101,6 +107,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .bigMenu ul li a:focus {
     color: var(--dropdown-link-hover-color) !important;
     background:var(--dropdown-link-hover-bg) !important;
+    text-decoration: none;
 }
 
 .dropdown-menu > li > a:hover small,
@@ -163,8 +170,13 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     border-radius:var(--box-radius-large);
     margin-left:0px;
     box-shadow:var(--min-shadow);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
     /* Text color comes from label-* classes or inline auto-contrast styles */
 }
+
 
 .maincontent .ticketDropdown.userDropdown > a,
 .maincontent .ticketDropdown.userDropdown > a:link,
@@ -224,11 +236,6 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     border-color:var(--dropdown-link-hover-bg) !important
 }
 
-.maincontent .ticketDropdown ul li a[class*="label-"],
-#global-modal-content .ticketDropdown ul li a[class*="label-"] {
-    padding: 4px 10px;
-    display:block;
-}
 
 .maincontent .ticketDropdown a.label-warning,
 #global-modal-content .ticketDropdown a.label-warning,
@@ -357,6 +364,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     padding:0px 10px;
 }
 
+
 .maincontent .ticketDropdown.milestoneDropdown li a:hover{
     background: var(--dropdown-link-hover-bg) !important;
     color: var(--dropdown-link-hover-color) !important;
@@ -453,22 +461,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 
-.ticketDropdown ul::after {
-    position: absolute;
-    top:-6px;
-    left: 10px;
-    transform: rotate(0deg);
-    display: inline-block;
-    border-right: 8px solid transparent;
-    border-bottom: 8px solid white;
-    border-left: 8px solid transparent;
-    content: '';
-}
 
-.dropdown-menu.pull-right::after {
-    right: 10px;
-    left:auto;
-}
 
 .tabbedwidget .dropdown-menu.pull-left,
 .mainwrapper .dropdown-menu.pull-left {

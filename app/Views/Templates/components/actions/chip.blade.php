@@ -67,6 +67,14 @@
         'l'  => 'chip-lg',
         default => '',
     };
+
+    // Alignment class: 'end' anchors the menu to the right edge of the trigger
+    // (expands leftward), 'start' anchors to the left edge (expands rightward).
+    $alignClass = match($align) {
+        'end'   => 'dropdown-position-left',
+        'start' => 'dropdown-position-right',
+        default => '',
+    };
 @endphp
 
 @if($variant === 'input')
@@ -84,8 +92,7 @@
     </span>
 @else
     {{-- Dropdown chip (select variant — default) --}}
-    <div {{ $attributes->merge(['class' => '']) }}>
-        <div class="dropdown ticketDropdown {{ $contentRole }}Dropdown {{ $colorized ? 'colorized' : '' }} {{ $noBg ? 'noBg' : '' }} show {{ $extraClass }} {{ $scaleClass }}">
+    <div {{ $attributes->merge(['class' => 'dropdown ticketDropdown ' . $contentRole . 'Dropdown ' . ($colorized ? 'colorized' : '') . ' ' . ($noBg ? 'noBg' : '') . ' show ' . $extraClass . ' ' . $scaleClass . ' ' . $alignClass]) }}>
             <a href="javascript:void(0)" style="{{ $triggerStyle }}" class="dropdown-toggle f-left {{ $contentRole }} {{ $selectedClass }}" id="{{ $contentRole }}DropdownMenuLink{{ $parentId }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 @if($leadingVisual)
                     <x-global::elements.icon :name="$leadingVisual" size="xs" />
@@ -104,7 +111,7 @@
                 @if($trailingVisual)
                     <x-global::elements.icon :name="$trailingVisual" size="xs" />
                 @else
-                    &nbsp;<x-global::elements.icon name="arrow_drop_down" size="xs" />
+                    <x-global::elements.icon name="arrow_drop_down" size="xs" />
                 @endif
             </a>
             <ul class="dropdown-menu" aria-labelledby="{{ $contentRole }}DropdownMenuLink{{ $parentId }}">
@@ -142,7 +149,6 @@
                     </li>
                 @endforeach
             </ul>
-        </div>
-        <input type="hidden" name="{{ $contentRole }}" value="{{ $selectedKey }}" id="dropdownPill-{{ $parentId }}-{{ $contentRole }}" />
     </div>
+    <input type="hidden" name="{{ $contentRole }}" value="{{ $selectedKey }}" id="dropdownPill-{{ $parentId }}-{{ $contentRole }}" />
 @endif

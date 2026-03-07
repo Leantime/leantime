@@ -3175,9 +3175,38 @@ body a.btn-link.btn-fancy:hover {
     overflow: auto;
 }
 
-/* Let dropdown menus escape the scroll container when open */
-.widgetContent:has(.dropdown.open) {
-    overflow: visible;
+/* Widget sticky header layout */
+.stickyHeader {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 46px;
+    width: 100%;
+    /* Match the horizontal padding of .widgetContent (tw:px-m = --spacing-m).
+       Pull the last action 4px further right so the icon's optical center
+       (Material Symbols have ~4px internal glyph inset) aligns with the
+       content edge below. */
+    padding-right: calc(var(--spacing-m) - 4px);
+}
+
+.stickyHeader .grid-handler-top {
+    cursor: grab;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.stickyHeader .subtitle {
+    flex: 1;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.stickyHeader .widget-header-actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 /* Hide slot-actions until JS promotes them into the stickyHeader */
@@ -3188,7 +3217,7 @@ body a.btn-link.btn-fancy:hover {
 .stickyHeader .widget-slot-actions {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
 }
 
 .modalWindowIcon {

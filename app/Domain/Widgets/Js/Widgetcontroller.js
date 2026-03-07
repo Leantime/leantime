@@ -230,30 +230,31 @@ leantime.widgetController = (function () {
     }
 
     var buildWidget = function(widget) {
+        var nameHtml = (widget.name != '') ? '<h5 class="subtitle">' + widget.name + '</h5>' : '<div style="flex:1;"></div>';
         return '<div class="widgetInner">' +
-            '        <div class="' + (widget.widgetBackground == "default" ? "tw:pb-l" : "") + '">\n' +
-            '            <div class="stickyHeader" style="height:50px;  width:100%;">\n' +
-            '               <div class="grid-handler-top tw:h-[40px] tw:cursor-grab tw:float-left tw:mr-sm">\n' +
-            '                    <span class="material-symbols-outlined">drag_indicator</span>\n' +
-            '                </div>\n' +
-            '           ' + (widget.name != '' ? '<h5 class="subtitle tw:pb-m tw:float-left tw:mr-sm">' + widget.name + '</h5>' : '') + '\n' +
-            '            <div class="tw:dropdown tw:dropdown-end tw:float-right">\n' +
-            '                <div tabindex="0" role="button" class="dropdown-toggle ticketDropDown editHeadline">\n' +
-            '                    <span class="material-symbols-outlined" aria-hidden="true">more_vert</span>\n' +
-            '                </div>\n' +
-            '                <ul tabindex="0" class="dropdown-menu tw:dropdown-content tw:menu tw:bg-base-100 tw:rounded-box tw:z-50 tw:min-w-52 tw:p-2 tw:shadow-sm">\n' +
-            '                    <li><a href="javascript:void(0)" onclick="document.activeElement.blur();" class="fitContent"><span class="material-symbols-outlined">open_in_full</span> Resize to fit content</a></li>\n' +
-            '                        <li><a href="javascript:void(0)" onclick="document.activeElement.blur();" class="removeWidget"><span class="material-symbols-outlined">visibility_off</span> Hide</a></li>\n' +
-            '                </ul>\n' +
-            '            </div>\n' +
-            '\n' +
-            '        </div>\n' +
-            ' <div class="widgetContent tw:px-l">\n' +
-            '             <div hx-get="'+widget.widgetUrl+'" hx-trigger="'+widget.widgetTrigger+'" hx-target="this" hx-swap="innerHTML" id="'+widget.id+'"></div>\n' +
-            '        </div>\n' +
-            '       </div>\n' +
-            '        <div class="clear"></div>\n' +
-            '    </div>\n';
+            '<div class="' + (widget.widgetBackground == "default" ? "tw:pb-l" : "") + '">' +
+            '<div class="stickyHeader">' +
+            '<div class="grid-handler-top">' +
+            '<span class="material-symbols-outlined">drag_indicator</span>' +
+            '</div>' +
+            nameHtml +
+            '<div class="widget-header-actions"></div>' +
+            '<div class="dropdown">' +
+            '<a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-label="More options">' +
+            '<span class="material-symbols-outlined">more_vert</span>' +
+            '</a>' +
+            '<ul class="dropdown-menu">' +
+            '<li><a href="javascript:void(0)" class="fitContent"><span class="material-symbols-outlined">open_in_full</span> Resize to fit content</a></li>' +
+            '<li><a href="javascript:void(0)" class="removeWidget"><span class="material-symbols-outlined">visibility_off</span> Hide</a></li>' +
+            '</ul>' +
+            '</div>' +
+            '</div>' +
+            '<div class="widgetContent ' + (widget.widgetBackground == "default" ? "tw:px-m" : "") + '">' +
+            '<div hx-get="' + widget.widgetUrl + '" hx-trigger="' + widget.widgetTrigger + '" hx-target="this" hx-swap="innerHTML" id="' + widget.id + '"></div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="clear"></div>' +
+            '</div>';
     }
 
     // Make public what you want to have public, everything else is private
