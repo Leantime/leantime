@@ -7,7 +7,7 @@
  * @module tiptap/extensions/details
  */
 
-const { Node, mergeAttributes } = require('@tiptap/core');
+import { Node, mergeAttributes } from '@tiptap/core';
 
 /**
  * Details Node - The container for collapsible content
@@ -348,9 +348,4 @@ function createDetailsExtension() {
     return [Details, DetailsSummary, DetailsContent];
 }
 
-module.exports = {
-    createDetailsExtension: createDetailsExtension,
-    Details: Details,
-    DetailsSummary: DetailsSummary,
-    DetailsContent: DetailsContent,
-};
+export { createDetailsExtension, Details, DetailsSummary, DetailsContent };

@@ -41,6 +41,8 @@
     padding: 0 6px;
     flex: 1 1 0;  /* Equal width columns regardless of content */
     min-width:150px;
+    display: flex;
+    flex-direction: column;
 }
 
 .column:first-child {
@@ -55,6 +57,7 @@
     border: none;
     padding: 10px 8px;
     min-height: 52px; /* Match collapsed row height */
+    flex: 1 1 auto;
     border-radius: var(--box-radius);
     /*overflow-y:scroll; Danger: when enabled the dropdowns will be hidden in the overflow. */
 }
@@ -68,12 +71,10 @@
 }
 
 
-.ticketBox:hover .kanbanContent:before {
-    background: linear-gradient(transparent, var(--main-menu-link-hover-bg) 70% 100%);
-}
+
 
 .ticketBox h4 a {
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .column .contentInner .ui-state-highlight {
@@ -81,9 +82,8 @@
     border: 2px dashed color-mix(in srgb, var(--primary-font-color) 20%, transparent);
     visibility: visible;
     display: block;
-    box-shadow: 0 2px 6px color-mix(in srgb, var(--primary-font-color) 12%, transparent),
-                0 1px 3px color-mix(in srgb, var(--primary-font-color) 8%, transparent);
-    border-radius: 4px;
+    box-shadow: var(--regular-shadow);
+    border-radius: var(--box-radius-small);
 }
 
 /* Empty column state - same background as non-empty for consistency */
@@ -99,9 +99,9 @@
 .column .contentInner.empty-column a[id^="ticket_new_link_group_"] {
     color: var(--primary-font-color);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: background-color var(--duration-moderate) ease, opacity var(--duration-moderate) ease;
     border-radius: var(--box-radius-small);
-    opacity: 0.7;
+    opacity: var(--opacity-subdued);
 }
 
 .column .contentInner.empty-column a[id^="ticket_new_link_group_"]:hover {
@@ -111,7 +111,7 @@
 }
 
 .column .contentInner.empty-column a[id^="ticket_new_link_group_"] i {
-    margin-right: 5px;
+    margin-right: 4px;
 }
 
 /* Quick-add form styling in empty columns */
@@ -126,7 +126,7 @@
     color: var(--primary-font-color);
     border-radius: var(--input-radius);
     padding: var(--input-padding);
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .column .contentInner.empty-column div[id^="ticket_new_group_"] input[type="text"]:focus {
@@ -325,7 +325,7 @@
 /* Hide column counts by default - show on hover */
 .widgettitle .count {
     opacity: 0;
-    transition: opacity 200ms ease-out;
+    transition: opacity var(--duration-moderate) ease-out;
 }
 
 /* Show on hover/focus */
@@ -359,11 +359,12 @@
 
 
 .ticketBox {
+    display: flow-root;
     background: var(--kanban-card-bg);
     border:none;
     border-left:3px solid transparent;
     border-right: 3px solid transparent;
-    padding:10px; /* account for 3px border */
+    padding:10px;
     padding-bottom:10px;
     margin-bottom:10px;
     cursor:move;
@@ -374,12 +375,12 @@
 .ticketBox .ticketBox,
 .projectBox .ticketBox{
     box-shadow: none;
-    border-radius:4px;
+    border-radius:var(--box-radius-small);
     padding:0px;
-    padding-left:5px;
+    padding-left:4px;
     border-left:3px solid var(--main-border-color);
-    padding-top:5px;
-    margin-top:5px;
+    padding-top:4px;
+    margin-top:4px;
     background:transparent;
 }
 
@@ -439,7 +440,7 @@
 
 .sortableTicketList .empty {
     text-align:center;
-    color:#999;
+    color:var(--secondary-font-color);
     padding:20px 0px;
 }
 
@@ -531,14 +532,17 @@ body .maincontent .priority-text-5 a:link {
 .widgettitle {
     background: var(--kanban-col-title-bg) !important;
     color: var( --kanban-col-title-color);
-    padding: 10px 15px;
+    padding: 10px 16px;
     font-size: var(--base-font-size);
-    line-height:17px;
-    font-weight: bold;
+    line-height:16px;
+    font-weight: var(--font-weight-bold);
     border-bottom-width:3px;
     border-top-left-radius: var(--box-radius);
     border-top-right-radius: var(--box-radius);
-    box-shadow: var(--regular-shadow)
+    box-shadow: var(--regular-shadow);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .widgettitle span {
@@ -565,9 +569,7 @@ body .maincontent .priority-text-5 a:link {
     position:relative;
 }
 
-.kanbanContent:before {
 
-}
 
 /* ============================================
    SWIMLANE ROW HEADERS - PRD v2 COMPLIANT
@@ -613,7 +615,7 @@ body .maincontent .priority-text-5 a:link {
     box-shadow: var(--min-shadow);
     align-self: stretch; /* Full height of swimlane */
     cursor: pointer;
-    transition: background 150ms ease-out, box-shadow 150ms ease-out;
+    transition: background var(--duration-normal) ease-out, box-shadow var(--duration-normal) ease-out;
     margin-right: 8px;
     margin-top: 10px; /* Align with column background top */
     position: relative; /* For inner positioning */
@@ -634,7 +636,7 @@ body .maincontent .priority-text-5 a:link {
 
 /* JavaScript-controlled sticky state using transform (keeps element in flow) */
 .kanban-swimlane-sidebar.is-sticky {
-    z-index: 10;
+    z-index: var(--zlayer-4);
     box-shadow: var(--regular-shadow);
     /* transform is set via JS to translate the sidebar to sticky position */
 }
@@ -662,12 +664,12 @@ body .maincontent .priority-text-5 a:link {
 
 /* Chevron - 10px, rotates on toggle */
 .kanban-lane-chevron {
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     color: var(--primary-font-color);
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
     width: 10px;
     flex-shrink: 0;
-    transition: transform 0.2s ease;
+    transition: transform var(--duration-moderate) ease;
 }
 
 /* Chevron rotation handled by icon class (fa-chevron-down vs fa-chevron-right) */
@@ -691,7 +693,7 @@ body .maincontent .priority-text-5 a:link {
 
 /* Icon indicator (for type, milestone, sprint) */
 .kanban-indicator-icon {
-    font-size: 16px;
+    font-size: var(--font-size-l);
     color: var(--primary-font-color);
 }
 
@@ -703,21 +705,21 @@ body .maincontent .priority-text-5 a:link {
 
 /* Effort t-shirt indicator */
 .kanban-effort-indicator {
-    font-size: 13px;
-    font-weight: 700;
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-bold);
     color: var(--primary-font-color);
 }
 
 /* Label - truncates with ellipsis */
 .swimlane-header-label {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color);
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    line-height: 1.4;
+    line-height: var(--line-height-normal);
 }
 
 /* Count badge - PRD Section 6.6 - Enhanced for accessibility */
@@ -727,10 +729,10 @@ body .maincontent .priority-text-5 a:link {
     justify-content: center;
     background: color-mix(in srgb, var(--accent2) 76%, black); /* Darkened brand teal - WCAG AA compliant (4.9:1 contrast) */
     color: #FFFFFF; /* White text for high contrast */
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: var(--input-radius);
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-bold);
     min-width: 26px;
     flex-shrink: 0;
 }
@@ -811,7 +813,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .timerContainer,
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .border-top,
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .clearfix,
-.kanban-swimlane-row[data-expanded="false"] .ticketBox .tw-flex:not(.tw-items-center),
+.kanban-swimlane-row[data-expanded="false"] .ticketBox .tw\:flex:not(.tw\:items-center),
 .kanban-swimlane-row[data-expanded="false"] .ticketBox .inlineDropDownContainer {
     display: none !important;
 }
@@ -820,7 +822,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-row[data-expanded="false"] .ticketBox h4 {
     margin: 0;
     font-size: var(--font-size-s);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -836,7 +838,7 @@ body .maincontent .priority-text-5 a:link {
     position: absolute;
     left: 100%;
     top: 0;
-    z-index: 1000;
+    z-index: var(--zlayer-8);
     background: var(--kanban-col-title-bg);
     border: 1px solid var(--main-border-color);
     border-left: none;
@@ -848,9 +850,9 @@ body .maincontent .priority-text-5 a:link {
     opacity: 0;
     visibility: hidden;
     transform: translateX(-10px);
-    transition: opacity 200ms ease-out,
-                transform 200ms ease-out,
-                visibility 0s 200ms;
+    transition: opacity var(--duration-moderate) ease-out,
+                transform var(--duration-moderate) ease-out,
+                visibility 0s var(--duration-moderate);
     pointer-events: none;
 }
 
@@ -860,14 +862,14 @@ body .maincontent .priority-text-5 a:link {
     opacity: 1;
     visibility: visible;
     transform: translateX(0);
-    transition: opacity 200ms ease-out,
-                transform 200ms ease-out,
+    transition: opacity var(--duration-moderate) ease-out,
+                transform var(--duration-moderate) ease-out,
                 visibility 0s 0s;
 }
 
 /* Tooltip content */
 .kanban-sidebar-tooltip .tooltip-label {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     font-size: var(--base-font-size);
     margin-bottom: 6px;
     word-wrap: break-word;
@@ -876,8 +878,8 @@ body .maincontent .priority-text-5 a:link {
 .kanban-sidebar-tooltip .tooltip-info {
     font-size: var(--font-size-s);
     color: var(--primary-font-color);
-    opacity: 0.7;
-    line-height: 1.3;
+    opacity: var(--opacity-subdued);
+    line-height: var(--line-height-snug);
 }
 
 /* Kanban content area */
@@ -924,7 +926,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-content.collapsed .ticketBox .timerContainer,
 .kanban-swimlane-content.collapsed .ticketBox .border-top,
 .kanban-swimlane-content.collapsed .ticketBox .clearfix,
-.kanban-swimlane-content.collapsed .ticketBox .tw-flex,
+.kanban-swimlane-content.collapsed .ticketBox .tw\:flex,
 .kanban-swimlane-content.collapsed .ticketBox .inlineDropDownContainer {
     display: none !important;
 }
@@ -941,7 +943,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-swimlane-content.collapsed .ticketBox h4 {
     margin: 0;
     font-size: var(--font-size-s);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -950,12 +952,12 @@ body .maincontent .priority-text-5 a:link {
 }
 
 .kanban-swimlane-content.collapsed .ticketBox h4 a {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
 }
 
 /* Compact ticket ID and type */
 .kanban-swimlane-content.collapsed .ticketBox small {
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     white-space: nowrap;
     flex-shrink: 0;
 }
@@ -1055,10 +1057,10 @@ body .maincontent .priority-text-5 a:link {
     background: var(--kanban-card-bg);
     border: 1px solid var(--main-border-color);
     border-left: 3px solid transparent; /* Priority color goes here */
-    border-radius: 4px;
+    border-radius: var(--box-radius-small);
     text-decoration: none;
     color: var(--primary-font-color);
-    transition: all 150ms ease-out;
+    transition: background-color var(--duration-normal) ease-out, border-color var(--duration-normal) ease-out, box-shadow var(--duration-normal) ease-out;
     font-size: var(--font-size-xs);
     min-width: 0;
     overflow: hidden;
@@ -1097,11 +1099,11 @@ body .maincontent .priority-text-5 a:link {
 }
 
 .compact-ticket-id {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--primary-font-color);
-    opacity: 0.7;
+    opacity: var(--opacity-subdued);
     flex-shrink: 0;
-    font-size: 10px;
+    font-size: var(--font-size-xs);
 }
 
 .compact-ticket-title {
@@ -1110,14 +1112,14 @@ body .maincontent .priority-text-5 a:link {
     text-overflow: ellipsis;
     flex: 1;
     min-width: 0;
-    font-size: 11px;
+    font-size: var(--font-size-xs);
 }
 
 /* Type icon */
 .compact-ticket-type {
     flex-shrink: 0;
-    opacity: 0.6;
-    font-size: 10px;
+    opacity: var(--opacity-muted);
+    font-size: var(--font-size-xs);
 }
 
 /* User avatar */
@@ -1139,11 +1141,11 @@ body .maincontent .priority-text-5 a:link {
     align-items: center;
     padding: 4px 10px;
     background: var(--neutral-background);
-    border-radius: 4px;
+    border-radius: var(--box-radius-small);
     font-size: var(--font-size-xs);
     color: var(--primary-font-color);
-    opacity: 0.7;
-    font-weight: 600;
+    opacity: var(--opacity-subdued);
+    font-weight: var(--font-weight-semibold);
     height: 32px;
 }
 
@@ -1154,7 +1156,7 @@ body .maincontent .priority-text-5 a:link {
     gap: 6px;
     padding: 4px 12px;
     color: var(--primary-font-color);
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
     font-size: var(--font-size-xs);
     font-style: italic;
     height: 32px;
@@ -1188,7 +1190,7 @@ body .maincontent .priority-text-5 a:link {
     /* Subtle hover for dark mode - transparent overlay */
     .kanban-swimlane-sidebar:hover {
         background: rgba(255, 255, 255, 0.08); /* Subtle white overlay */
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        box-shadow: var(--regular-shadow);
     }
 
     .kanban-swimlane-sidebar:focus-visible {
@@ -1202,7 +1204,7 @@ body .maincontent .priority-text-5 a:link {
 .kanban-column-headers.groupby-active {
     /* Add left margin to align with kanban content when groupBy is active */
     margin-left: 158px; /* Matches sidebar width (150px) + margin (8px) */
-    transition: margin-left 300ms ease-out;
+    transition: margin-left var(--duration-slow) ease-out;
 }
 
 /* Mobile: Always expanded, stack vertically */
@@ -1268,7 +1270,7 @@ body .maincontent .priority-text-5 a:link {
 
 .sortableTicketList .ticketBox.priority-hightlight {
     position:relative;
-    background:#fff;
+    background:var(--primary-background);
     box-shadow: var(--regular-shadow);
 }
 
@@ -1299,18 +1301,18 @@ body .maincontent .priority-text-5 a:link {
 
 .sortableTicketList .ticketBox.active {
     box-shadow: var(--regular-shadow);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .leader-line {
-    z-index:20;
+    z-index: var(--zlayer-6);
 }
 
 /* Card movement animations for swimlane transitions */
 .card-moving-out {
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
     transform: scale(0.95);
-    transition: all 0.2s ease-out;
+    transition: opacity var(--duration-moderate) ease-out, transform var(--duration-moderate) ease-out;
 }
 
 .card-moving-in {
@@ -1346,7 +1348,7 @@ body .maincontent .priority-text-5 a:link {
 
 .micro-progress-bar .status-segment {
     height: 100%;
-    transition: flex 0.3s ease;
+    transition: flex var(--duration-slow) ease;
     margin: 0;
     padding: 0;
     border: none;
@@ -1354,20 +1356,20 @@ body .maincontent .priority-text-5 a:link {
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1;
-    font-size: 11px;
+    line-height: var(--line-height-tight);
+    font-size: var(--font-size-xs);
     min-width: 0;
     position: relative;
 }
 
 
 .micro-progress-bar .segment-count {
-    font-size: 11px;
-    font-weight: 700;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
     color: white;
     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity var(--duration-moderate) ease;
     white-space: nowrap;
 }
 
@@ -1384,10 +1386,10 @@ body .maincontent .priority-text-5 a:link {
 .status-segment.status-3 { background-color: var(--status-new-color, #60a5fa); }
 .status-segment.status-4 { background-color: var(--status-in-progress-color, #f59e0b); }
 .status-segment.status-5 { background-color: var(--status-done-color, #10b981); }
-.status-segment.status-1 { background-color: #ef4444; } /* Blocked - Red */
-.status-segment.status-2 { background-color: #f97316; } /* Waiting for approval - Orange */
-.status-segment.status-0 { background-color: #10b981; } /* Done - Green */
-.status-segment.status--1 { background-color: #9ca3af; } /* Archived - Gray */
+.status-segment.status-1 { background-color: var(--red); } /* Blocked - Red */
+.status-segment.status-2 { background-color: var(--yellow); } /* Waiting for approval - Yellow/Orange */
+.status-segment.status-0 { background-color: var(--green); } /* Done - Green */
+.status-segment.status--1 { background-color: var(--grey); } /* Archived - Gray */
 
 /* Allow dropdown menus to overflow in kanban columns */
 .kanban-swimlane-content .column .contentInner {

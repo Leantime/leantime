@@ -14,24 +14,25 @@
 use Leantime\Domain\Tickets\Models\TicketDesignTokens;
 
 // Determine which icon component to use
+// Most resolve to global::kanban.{name}, editorId uses global::elements.avatar directly
 $iconComponent = match($groupBy) {
-    'priority' => 'thermometer-icon',
-    'storypoints' => 'tshirt-icon',
-    'effort' => 'tshirt-icon',
-    'editorId' => 'user-avatar',
-    'milestoneid' => 'milestone-icon',
-    'type' => 'type-icon',
-    'sprint' => 'sprint-icon',
+    'priority' => 'global::kanban.thermometer-icon',
+    'storypoints' => 'global::kanban.tshirt-icon',
+    'effort' => 'global::kanban.tshirt-icon',
+    'editorId' => 'global::elements.avatar',
+    'milestoneid' => 'global::kanban.milestone-icon',
+    'type' => 'global::kanban.type-icon',
+    'sprint' => 'global::kanban.sprint-icon',
     'dueDate' => null, // No icon for due date buckets - label is sufficient
-    default => null // Status and other groupings use FontAwesome icon below
+    default => null // Status and other groupings use fallback Material icon below
 };
 
-// For groupBy types without a component, use FontAwesome icon
-$faIcon = match($groupBy) {
-    'status' => 'fa-circle-dot',
-    'milestoneid' => null, // No icon for milestones
-    'dueDate' => null, // No icon for due date buckets - label is sufficient
-    default => 'fa-layer-group'
+// For groupBy types without a dedicated component, use a Material icon
+$fallbackIcon = match($groupBy) {
+    'status' => 'radio_button_checked',
+    'milestoneid' => null,
+    'dueDate' => null,
+    default => 'layers'
 };
 
 $iconProps = match($groupBy) {
@@ -84,22 +85,22 @@ foreach ($statusColumns as $statusId => $statusData) {
     <div class="swimlane-header-row1">
         {{-- Chevron (▼ expanded, ▶ collapsed) --}}
         <span class="kanban-lane-chevron">
-            <i class="fa fa-chevron-{{ $expanded ? 'down' : 'right' }}"></i>
+            <x-global::elements.icon name="{{ $expanded ? 'expand_more' : 'chevron_right' }}" />
         </span>
 
         {{-- Visual indicator (icon/avatar) --}}
         @if($iconComponent)
             <div class="kanban-indicator">
                 <x-dynamic-component
-                    :component="'global::kanban.' . $iconComponent"
+                    :component="$iconComponent"
                     :attributes="new \Illuminate\View\ComponentAttributeBag($iconProps)"
                     size="md"
                 />
             </div>
         @else
-            {{-- Default FontAwesome icon for status and other groupings --}}
+            {{-- Default icon for status and other groupings --}}
             <span class="kanban-indicator">
-                <i class="fa {{ $faIcon }} kanban-indicator-icon"></i>
+                <x-global::elements.icon :name="$fallbackIcon" class="kanban-indicator-icon" />
             </span>
         @endif
 
@@ -111,7 +112,7 @@ foreach ($statusColumns as $statusId => $statusData) {
         {{-- Time indicator (⏳ ⏰ 💤) - hidden when collapsed --}}
         @if($timeAlert)
             <span class="swimlane-time-indicator">
-                <x-global::kanban.time-indicator :type="$timeAlert" />
+                <x-globals::kanban.time-indicator :type="$timeAlert" />
             </span>
         @endif
 
@@ -123,7 +124,7 @@ foreach ($statusColumns as $statusId => $statusData) {
     <div class="swimlane-header-row2">
         {{-- Micro Progress Bar (status breakdown) - always shown, gray when empty --}}
         <div style="flex: 1; min-width: 0;">
-            <x-global::kanban.micro-progress-bar
+            <x-globals::kanban.micro-progress-bar
                 :statusCounts="$statusCounts"
                 :statusColumns="$statusLabels"
                 :totalCount="$totalCount"

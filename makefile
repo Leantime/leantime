@@ -16,11 +16,11 @@ install-deps:
 	composer install --no-dev --optimize-autoloader
 
 build: install-deps clear-cache
-	npx mix --production
+	npx vite build
 	node generateBlocklist.mjs
 
 build-dev: install-deps-dev clear-cache
-	npx mix
+	npx vite build
 	node generateBlocklist.mjs
 
 package: clean build

@@ -18,7 +18,7 @@ use Leantime\Domain\Users\Services\Users as UserService;
 
 class ProjectCardProgress extends HtmxController
 {
-    protected static string $view = 'projects::partials.projectCardProgressBar';
+    protected static string $view = 'globals::components.projects.project-card-progress-bar';
 
     private ProjectService $projectsService;
 

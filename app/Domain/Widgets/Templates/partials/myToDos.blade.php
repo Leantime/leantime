@@ -25,131 +25,110 @@
     }
 @endphp
 
-<div class="htmx-indicator full-width-loader">
+<div class="htmx-indicator full-width-loader" role="status">
     <div class="indeterminate"></div>
+    <span class="sr-only">{{ __('label.loading') }}</span>
 </div>
 
 <div id="yourToDoContainer"
      hx-get="{{BASE_URL}}/widgets/myToDos/get"
-     hx-trigger="{{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::UPDATE }} from:body, {{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::SUBTASK_UPDATE }} from:body"
+     hx-trigger="{{ \Leantime\Domain\Tickets\Events\HtmxTicketEvents::UPDATE }} from:body, {{ \Leantime\Domain\Tickets\Events\HtmxTicketEvents::SUBTASK_UPDATE }} from:body"
      class="clear"
      hx-swap="outerHTML"
+     hx-select="#yourToDoContainer"
      hx-ext="json-enc"
      hx-indicator=".htmx-indicator"
      data-group-by="{{ $groupBy }}"
+     aria-live="polite"
 >
 
-    <div class="clear" style="position:absolute; top:10px; right:35px;">
+    <div class="widget-slot-actions">
 
         @dispatchEvent("beforeTodoWidgetGroupByDropdown")
 
-        <div class="btn-group left">
-            <button class="btn btn-link btn-round-icon dropdown-toggle f-right" type="button" data-tippy-content="{{ __('text.group_by') }}"
-                    data-toggle="dropdown"><span class="fa-solid fa-diagram-project"></span></button>
-            <ul class="dropdown-menu pull-right">
-                <li class="nav-header">{!! __("text.group_by") !!}</li>
-                <li>
-                    <span class="radio">
-                        <input type="radio" name="groupBy"
-                               @if($groupBy == "time") checked='checked' @endif
-                               value="time" id="groupByDate"
-                               hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                               hx-trigger="click"
-                               hx-target="#yourToDoContainer"
-                               hx-swap="outerHTML"
-                               hx-indicator="#todos .htmx-indicator"
-                               style="margin-top:4px;"
-                               hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "time" }'
-                        />
-                        <label for="groupByDate">{!! __("label.dates") !!}</label>
-                    </span>
-                </li>
-                <li>
-                    <span class="radio">
-                        <input type="radio"
-                               name="groupBy"
-                               @if($groupBy == "project") checked='checked' @endif
-                               value="project" id="groupByProject"
-                               hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                               hx-trigger="click"
-                               hx-target="#yourToDoContainer"
-                               hx-swap="outerHTML"
-                               hx-indicator="#todos .htmx-indicator"
-                               style="margin-top:4px;"
-                               hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "project" }'
-                        />
-                        <label for="groupByProject">{!! __("label.project") !!}</label>
-                    </span>
-                </li>
-                <li>
-                    <span class="radio">
-                        <input type="radio"
-                               name="groupBy"
-                               @if($groupBy == "priority") checked='checked' @endif
-                               value="priority" id="groupByPriority"
-                               hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                               hx-trigger="click"
-                               hx-target="#yourToDoContainer"
-                               hx-swap="outerHTML"
-                               hx-indicator="#todos .htmx-indicator"
-                               style="margin-top:4px;"
-                               hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "priority" }'
-                        />
-                        <label for="groupByPriority">{!! __("label.priority") !!}</label>
-                    </span>
-                </li>
-            </ul>
-        </div>
-        <div class="btn-group left ">
-            <button class="btn btn-link btn-round-icon dropdown-toggle f-right" type="button" data-toggle="dropdown">
-                <i class="fas fa-filter"></i>
-                @if($projectFilter != '')
-                    <span class='badge badge-primary'>1</span>
+        <x-globals::actions.dropdown-menu leading-visual="account_tree" data-tippy-content="{{ __('text.group_by') }}">
+            <li class="nav-header border">{!! __("text.group_by") !!}</li>
+            <li>
+                <x-globals::forms.radio name="groupBy" value="time" id="groupByDate"
+                       :labelText="__('label.dates')"
+                       :checked="$groupBy == 'time'"
+                       hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                       hx-trigger="click"
+                       hx-target="#yourToDoContainer"
+                       hx-select="#yourToDoContainer"
+                       hx-swap="outerHTML"
+                       hx-indicator="#todos .htmx-indicator"
+                       hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "time" }'
+                />
+            </li>
+            <li>
+                <x-globals::forms.radio name="groupBy" value="project" id="groupByProject"
+                       :labelText="__('label.project')"
+                       :checked="$groupBy == 'project'"
+                       hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                       hx-trigger="click"
+                       hx-target="#yourToDoContainer"
+                       hx-select="#yourToDoContainer"
+                       hx-swap="outerHTML"
+                       hx-indicator="#todos .htmx-indicator"
+                       hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "project" }'
+                />
+            </li>
+            <li>
+                <x-globals::forms.radio name="groupBy" value="priority" id="groupByPriority"
+                       :labelText="__('label.priority')"
+                       :checked="$groupBy == 'priority'"
+                       hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                       hx-trigger="click"
+                       hx-target="#yourToDoContainer"
+                       hx-select="#yourToDoContainer"
+                       hx-swap="outerHTML"
+                       hx-indicator="#todos .htmx-indicator"
+                       hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "priority" }'
+                />
+            </li>
+        </x-globals::actions.dropdown-menu>
+        <x-globals::actions.dropdown-menu leading-visual="filter_list" :label="$projectFilter != '' ? '<span class=\'badge badge-primary\'>1</span>' : null">
+            <li class="nav-header border">{!! __("text.filter") !!}</li>
+            <li
+                @if($projectFilter == '')
+                    class='active'
                 @endif
-            </button>
-            <ul class="dropdown-menu pull-right">
-                <li class="nav-header">{!! __("text.filter") !!}</li>
-                <li
-                    @if($projectFilter == '')
-                        class='active'
-                    @endif
-                ><a href=""
-                    hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                    hx-trigger="click"
-                    hx-target="#yourToDoContainer"
-                    hx-swap="outerHTML"
-                    hx-indicator="#todos .htmx-indicator"
-                    hx-vals='{"projectFilter": "all", "groupBy": "{{ $groupBy }}" }'
+            ><a href=""
+                hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                hx-trigger="click"
+                hx-target="#yourToDoContainer"
+                hx-select="#yourToDoContainer"
+                hx-swap="outerHTML"
+                hx-indicator="#todos .htmx-indicator"
+                hx-vals='{"projectFilter": "all", "groupBy": "{{ $groupBy }}" }'
+                >{{ __('labels.all_projects') }}
+                </a></li>
 
-                    >{{ __('labels.all_projects') }}
-
-                    </a></li>
-
-                @if($allAssignedprojects)
-                    @foreach($allAssignedprojects as $project)
-                        <li
-                            @if($projectFilter == $project['id'])
-                                class='active'
-                            @endif
-                        ><a href=""
-                            hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                            hx-trigger="click"
-                            hx-target="#yourToDoContainer"
-                            hx-swap="outerHTML"
-                            hx-indicator="#todos .htmx-indicator"
-                            hx-vals='{"projectFilter": "{{ $project['id'] }}", "groupBy": "{{ $groupBy }}" }'
-                            >{{ $project['name'] }}</a></li>
-                    @endforeach
-                @endif
-
-            </ul>
-        </div>
+            @if($allAssignedprojects)
+                @foreach($allAssignedprojects as $project)
+                    <li
+                        @if($projectFilter == $project['id'])
+                            class='active'
+                        @endif
+                    ><a href=""
+                        hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                        hx-trigger="click"
+                        hx-target="#yourToDoContainer"
+                        hx-select="#yourToDoContainer"
+                        hx-swap="outerHTML"
+                        hx-indicator="#todos .htmx-indicator"
+                        hx-vals='{"projectFilter": "{{ $project['id'] }}", "groupBy": "{{ $groupBy }}" }'
+                        >{{ $project['name'] }}</a></li>
+                @endforeach
+            @endif
+        </x-globals::actions.dropdown-menu>
 
         @dispatchEvent("afterTodoWidgetGroupByDropdown")
 
     </div>
 
-    <div class="tw-flex tw-flex-col">
+    <div class="tw:flex tw:flex-col">
 
         <div class="">
             @if($tickets !== null && count($tickets) == 0)
@@ -160,31 +139,32 @@
                     </div>
                     <br/>
                     <h4>{{ __("text.no_tasks_assigned") }}</h4>
-                    <a href="javascript:void(0);" class="add-task-button btn btn-link" style="margin-left:0px;" data-group="emptyGroup"><i class="fa-solid fa-circle-plus"></i> {{ __('links.add_task') }}</a>
+                    <x-globals::forms.button link="javascript:void(0);" type="link" icon="add_circle" class="add-task-button" style="margin-left:0px;" data-group="emptyGroup">{{ __('links.add_task') }}</x-globals::forms.button>
 
                     <div class="quickAddForm" id="quickAddForm-emptyGroup"
                          style="display:none; margin-bottom:15px; padding-bottom:5px; padding-left:5px;">
                         <form method="post"
                               hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
                               hx-target="#yourToDoContainer"
+                              hx-select="#yourToDoContainer"
                               hx-swap="outerHTML"
                               hx-indicator=".htmx-indicator">
-                            <div class="tw-flex tw-flex-row tw-gap-2">
-                                <div class="tw-flex-grow">
-                                    <input type="text" name="headline" class="main-title-input"
+                            <div class="tw:flex tw:flex-row tw:gap-2">
+                                <div class="tw:flex-grow">
+                                    <x-globals::forms.text-input :bare="true" type="text" name="headline" class="main-title-input"
                                            style="font-size:var(--base-font-size)"
-                                           placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
+                                           placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                                     <input type="hidden" name="quickadd" value="true"/>
                                 </div>
                                 <div>
-                                    <select name="projectId">
+                                    <x-globals::forms.select name="projectId">
                                         @foreach($allAssignedprojects as $project)
                                             <option value="{{ $project['id']  }}"
 
                                                 {{ (session('currentProject') == $project['id'] ) ? 'selected' : '' }}
                                             >{{ $project["name"]  }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-globals::forms.select>
                                 </div>
                                 <div>
                                     <input type="hidden" name="milestone" value=""/>
@@ -193,14 +173,12 @@
                                            value=""/>
                                     <input type="hidden" name="dateToFinish"
                                            value="{{ date('Y-m-d', strtotime('next friday'))}}"/>
-                                    <textarea name="description" class="description-input" style="display:none;"
-                                              placeholder="{{ __('input.placeholders.description') }}"></textarea>
+                                    <x-globals::forms.textarea name="description" class="description-input" style="display:none;"
+                                              placeholder="{{ __('input.placeholders.description') }}" />
                                 </div>
                                 <div>
-                                    <input type="submit" value="{{ __('buttons.save') }}" name="create"
-                                           class="btn btn-primary"/>
-                                    <a href="javascript:void(0);" class="btn cancel-add-task"
-                                       data-group="emptyGroup">{{ __('buttons.cancel') }}</a>
+                                    <x-globals::forms.button submit type="primary" name="create">{{ __('buttons.save') }}</x-globals::forms.button>
+                                    <x-globals::forms.button link="javascript:void(0);" type="secondary" class="cancel-add-task" data-group="emptyGroup">{{ __('buttons.cancel') }}</x-globals::forms.button>
                                 </div>
                             </div>
                         </form>
@@ -225,7 +203,7 @@
                     }
                 @endphp
 
-                <x-global::accordion id="ticketBox1-{{ $groupKey }}-{{ $loop->index }}">
+                <x-globals::elements.accordion id="ticketBox1-{{ $groupKey }}-{{ $loop->index }}">
                     <x-slot name="title">
                         {!!  __($ticketGroup["labelName"]) !!}
                         <span class="task-count" id="task-count-{{ $groupKey }}">
@@ -233,8 +211,7 @@
                         </span>
                     </x-slot>
                     <x-slot name="actionlink">
-                        <a href="javascript:void(0);" class="add-task-button btn btn-link" style="padding:0px; padding-left:1px; width:31px; line-height:31px; height:31px; font-weight:bold; text-align: center; font-size:var(--font-size-l);" data-group="{{ $groupKey }}">
-                            <i class="fa-solid fa-circle-plus"></i></a>
+                        <x-globals::forms.button link="javascript:void(0);" variant="icon-only" icon="add_circle" class="add-task-button" data-group="{{ $groupKey }}"></x-globals::forms.button>
                     </x-slot>
                     <x-slot name="content">
                         <!-- Quick Add Form for this group -->
@@ -243,24 +220,25 @@
                             <form method="post"
                                   hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
                                   hx-target="#yourToDoContainer"
+                                  hx-select="#yourToDoContainer"
                                   hx-swap="outerHTML"
                                   hx-indicator=".htmx-indicator">
-                                <div class="tw-flex tw-flex-row tw-gap-2">
-                                    <div class="tw-flex-grow">
-                                        <input type="text" name="headline" class="main-title-input"
+                                <div class="tw:flex tw:flex-row tw:gap-2">
+                                    <div class="tw:flex-grow">
+                                        <x-globals::forms.text-input :bare="true" type="text" name="headline" class="main-title-input"
                                                style="font-size:var(--base-font-size)"
-                                               placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
+                                               placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                                         <input type="hidden" name="quickadd" value="true"/>
                                     </div>
                                     <div>
-                                        <select name="projectId">
+                                        <x-globals::forms.select name="projectId">
                                             @foreach($allAssignedprojects as $project)
                                                 <option value="{{ $project['id']  }}"
 
                                                     {{ (($groupBy === "project" && $project['id'] == $groupKey) || ($groupBy !== "project" && session('currentProject') == $groupKey)) ? 'selected' : '' }}
                                                 >{{ $project["name"]  }}</option>
                                             @endforeach
-                                        </select>
+                                        </x-globals::forms.select>
                                     </div>
                                     <div>
                                         <input type="hidden" name="milestone" value=""/>
@@ -278,14 +256,12 @@
                                         @endphp
                                         <input type="hidden" name="dateToFinish"
                                                value="{{ $dueDate }}"/>
-                                        <textarea name="description" class="description-input" style="display:none;"
-                                                  placeholder="{{ __('input.placeholders.description') }}"></textarea>
+                                        <x-globals::forms.textarea name="description" class="description-input" style="display:none;"
+                                                  placeholder="{{ __('input.placeholders.description') }}" />
                                     </div>
                                     <div>
-                                        <input type="submit" value="{{ __('buttons.save') }}" name="create"
-                                               class="btn btn-primary"/>
-                                        <a href="javascript:void(0);" class="btn cancel-add-task"
-                                           data-group="{{ $groupKey }}">{{ __('buttons.cancel') }}</a>
+                                        <x-globals::forms.button submit type="primary" name="create">{{ __('buttons.save') }}</x-globals::forms.button>
+                                        <x-globals::forms.button link="javascript:void(0);" type="secondary" class="cancel-add-task" data-group="{{ $groupKey }}">{{ __('buttons.cancel') }}</x-globals::forms.button>
                                     </div>
                                 </div>
                             </form>
@@ -298,7 +274,7 @@
                         </div>
                     </x-slot>
 
-                </x-global::accordion>
+                </x-globals::elements.accordion>
 
             @endforeach
 
@@ -311,13 +287,15 @@
                  hx-get="{{ BASE_URL }}/widgets/myToDos/loadMore"
                  hx-trigger="intersect once"
                  hx-target="#yourToDoContainer"
+                 hx-select="#yourToDoContainer"
                  hx-swap="outerHTML"
                  hx-vals='{"limit": {{ $limit }}, "groupBy": "{{ $groupBy }}", "projectFilter": "{{ $projectFilter }}"}'>
-                <div class="tw-text-center tw-py-4">
-                    <div class="htmx-indicator">
+                <div class="center tw:py-4">
+                    <div class="htmx-indicator" role="status">
                         <div class="indeterminate"></div>
+                        <span class="sr-only">{{ __('label.loading') }}</span>
                     </div>
-                    <div class="tw-text-sm tw-text-gray-500">
+                    <div class="tw:text-sm tw:text-gray-500">
                         {{ __('text.loading_more_tasks') }}
                     </div>
                 </div>

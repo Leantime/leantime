@@ -21,7 +21,7 @@ class Minempathycanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-solid fa-heart-circle-check';
+    protected string $icon = 'favorite';
 
     /**
      * canvasTypes - Must be extended

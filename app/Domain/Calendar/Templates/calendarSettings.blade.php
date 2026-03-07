@@ -1,6 +1,6 @@
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light"><i class="fa fa-cog"></i> {{ __('label.calendar_settings') }}</h4>
+<h4 class="widgettitle title-light"><x-global::elements.icon name="settings" /> {{ __('label.calendar_settings') }}</h4>
 
 <br />
 
@@ -32,11 +32,11 @@
                     @elseif(empty($calendar['managedByPlugin']))
                         {{-- Default iCal calendar actions --}}
                         <a href="#/calendar/editExternal/{{ $calendar['id'] }}" class="formModal" data-tippy-content="{{ __('label.edit') }}">
-                            <i class="fa fa-pen"></i>
+                            <x-global::elements.icon name="edit" />
                         </a>
                         &nbsp;
                         <a href="#/calendar/delExternalCalendar/{{ $calendar['id'] }}" class="delete" data-tippy-content="{{ __('label.delete') }}">
-                            <i class="fa fa-trash"></i>
+                            <x-global::elements.icon name="delete" />
                         </a>
                     @endif
                 </span>

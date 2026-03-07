@@ -1,6 +1,6 @@
 @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$editor, true))
 
-    <li class='timerHeadMenu' id='timerHeadMenu' hx-get="{{BASE_URL}}/timesheets/stopwatch/get-status" hx-trigger="timerUpdate from:body{{ $onTheClock !== false ? ', every 60s' : '' }}" hx-swap="outerHTML">
+    <li class='timerHeadMenu' id='timerHeadMenu' hx-get="{{BASE_URL}}/timesheets/stopwatch/get-status" hx-trigger="timerUpdate from:body{{ $onTheClock !== false ? ', every 60s' : '' }}" hx-swap="outerHTML" aria-live="assertive">
 
     @if ($onTheClock !== false)
             <a

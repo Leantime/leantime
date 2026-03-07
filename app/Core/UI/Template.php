@@ -48,18 +48,18 @@ class Template
     public $viewFactory;
 
     public array $picture = [
-        'calendar' => 'fa-calendar',
-        'clients' => 'fa-people-group',
-        'dashboard' => 'fa-th-large',
-        'files' => 'fa-picture',
-        'leads' => 'fa-signal',
-        'messages' => 'fa-envelope',
-        'projects' => 'fa-bar-chart',
-        'setting' => 'fa-cogs',
-        'tickets' => 'fa-pushpin',
-        'timesheets' => 'fa-table',
-        'users' => 'fa-people-group',
-        'default' => 'fa-off',
+        'calendar' => 'calendar_month',
+        'clients' => 'groups',
+        'dashboard' => 'dashboard',
+        'files' => 'folder',
+        'leads' => 'trending_up',
+        'messages' => 'mail',
+        'projects' => 'bar_chart',
+        'setting' => 'settings',
+        'tickets' => 'task_alt',
+        'timesheets' => 'schedule',
+        'users' => 'groups',
+        'default' => 'widgets',
     ];
 
     /**
@@ -293,10 +293,29 @@ class Template
 
         /** @todo this can be reduced to just the 'if' code after removal of php template support */
         if (str_ends_with($path, 'blade.php')) {
-            $view->with(array_merge(
-                $this->vars,
-                ['layout' => $layout]
-            ));
+            // Detect if template uses @extends (Blade inheritance).
+            // Templates WITH @extends handle their own layout wrapping via Blade sections.
+            // Templates WITHOUT @extends need the layout to @include them.
+            $usesExtends = str_contains(file_get_contents($path), '@extends');
+
+            if ($usesExtends) {
+                // Template manages its own layout — pass $layout for @extends($layout)
+                // but do NOT pass $module/$action so the layout won't re-include this template.
+                $view->with(array_merge(
+                    $this->vars,
+                    ['layout' => $layout]
+                ));
+            } else {
+                // Template has no @extends — render the LAYOUT as the main view
+                // and let it @include the template via $module/$action.
+                $view = app('view')->make($layout, array_merge(
+                    $this->vars,
+                    [
+                        'module' => strtolower($templateParts['module']),
+                        'action' => $templateParts['path'],
+                    ]
+                ));
+            }
         } else {
             $view = app('view')->make($layout, array_merge(
                 $this->vars,
@@ -553,7 +572,7 @@ class Template
 
         if (! empty($note) && $note['msg'] != '' && $note['type'] != '') {
             $notification .= app('blade.compiler')::render(
-                '<script type="text/javascript">jQuery.growl({message: "{!! $message !!}", style: "{{ $style }}"});</script>',
+                '<script type="text/javascript">document.addEventListener("DOMContentLoaded",function(){(window._growlShim||jQuery.growl)({message: "{!! $message !!}", style: "{{ $style }}"});});</script>',
                 [
                     'message' => $message,
                     'style' => $note['type'],

@@ -202,12 +202,11 @@ class EditCanvasItem extends Controller
 
                     $this->projectService->notifyProjectUsers($notification);
 
-                    $closeModal = '';
-                    if (isset($_POST['submitAction']) && $_POST['submitAction'] == 'closeModal') {
-                        $closeModal = '?closeModal=true';
+                    if (app('request')->headers->get('is-modal')) {
+                        return response('', 200, ['HX-Trigger' => 'HTMX.closemodal, HTMX.ShowNotification']);
                     }
 
-                    return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasItem/'.$params['itemId'].$closeModal);
+                    return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasItem/'.$params['itemId']);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -258,12 +257,11 @@ class EditCanvasItem extends Controller
 
                     $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
 
-                    $closeModal = '';
-                    if (isset($_POST['submitAction']) && $_POST['submitAction'] == 'closeModal') {
-                        $closeModal = '?closeModal=true';
+                    if (app('request')->headers->get('is-modal')) {
+                        return response('', 200, ['HX-Trigger' => 'HTMX.closemodal, HTMX.ShowNotification']);
                     }
 
-                    return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasItem/'.$id.$closeModal);
+                    return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasItem/'.$id);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }

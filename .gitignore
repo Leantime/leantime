@@ -127,6 +127,9 @@ config/.env
 .vscode
 .idea/codebuddy.xml
 
+# Vite dev server hot file
+public/hot
+
 **/.claude/settings.local.json
 .serena/project.yml
 /.serena
@@ -136,3 +139,12 @@ config/.env
 tests/Httprequests/http-client.private.env.json
 .claude/docs/personal-companion-requirements.md
 .claude/docs/git-workflow.md
+
+# Development screenshots, audit images, and temp files
+/*.png
+/*.log
+/screenshots/
+/Docs/
+/dashboard-snapshot.md
+/test4-snapshot.md
+/wiki-console.log

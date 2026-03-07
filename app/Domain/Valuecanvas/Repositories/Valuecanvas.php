@@ -21,7 +21,7 @@ class Valuecanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-ranking-star';
+    protected string $icon = 'military_tech';
 
     /***
      * disclaimer - Disclaimer
@@ -43,10 +43,10 @@ class Valuecanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'customersegment' => ['icon' => 'fa-user', 'title' => 'box.lean.customersegment'],
-        'problem' => ['icon' => 'fa-lock', 'title' => 'box.lean.problem'],
-        'solution' => ['icon' => 'fa-key', 'title' => 'box.lean.solution'],
-        'uniquevalue' => ['icon' => 'fa-gift', 'title' => 'box.value.benefit'],
+        'customersegment' => ['icon' => 'person', 'title' => 'box.lean.customersegment'],
+        'problem' => ['icon' => 'lock', 'title' => 'box.lean.problem'],
+        'solution' => ['icon' => 'key', 'title' => 'box.lean.solution'],
+        'uniquevalue' => ['icon' => 'redeem', 'title' => 'box.value.benefit'],
 
     ];
 

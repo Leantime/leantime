@@ -174,6 +174,7 @@ class Theme
      * possible font choices
      */
     public array $fonts = [
+        'hankengrotesk' => 'Hanken Grotesk',
         'roboto' => 'Roboto',
         'atkinson' => 'Atkinson Hyperlegible',
         'shantell' => 'Shantell Sans',
@@ -183,6 +184,7 @@ class Theme
      * possible font choices
      */
     public array $fontTooltips = [
+        'hankengrotesk' => 'Modern geometric sans-serif with excellent legibility at all sizes.',
         'roboto' => 'Designed to be easy to read on a variety of devices.',
         'atkinson' => 'Atkinson was specifically developed for readers with low vision.',
         'shantell' => 'The shape of the letters and increased spacing makes words less crowded and easier to read.',
@@ -526,9 +528,9 @@ class Theme
         }
 
         // Return default
-        $this->setFont('roboto');
+        $this->setFont('hankengrotesk');
 
-        return 'roboto';
+        return 'hankengrotesk';
     }
 
     /**
@@ -618,7 +620,7 @@ class Theme
     {
 
         if ($font == '') {
-            $font = 'roboto';
+            $font = 'hankengrotesk';
         }
 
         if (Auth::isLoggedIn()) {

@@ -7,9 +7,9 @@
  * @module tiptap/extensions/emoji
  */
 
-const { Extension } = require('@tiptap/core');
-const { Plugin, PluginKey } = require('@tiptap/pm/state');
-const { Decoration, DecorationSet } = require('@tiptap/pm/view');
+import { Extension } from '@tiptap/core';
+import { Plugin, PluginKey } from '@tiptap/pm/state';
+import { Decoration, DecorationSet } from '@tiptap/pm/view';
 
 // Common emojis with shortcodes
 var emojiData = [
@@ -816,9 +816,4 @@ function showEmojiPickerDialog(editor) {
     }, 100);
 }
 
-module.exports = {
-    createEmojiExtension: createEmojiExtension,
-    showEmojiPickerDialog: showEmojiPickerDialog,
-    searchEmojis: searchEmojis,
-    emojiData: emojiData,
-};
+export { createEmojiExtension, showEmojiPickerDialog, searchEmojis, emojiData };

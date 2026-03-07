@@ -1,5 +1,5 @@
 <h4 class="widgettitle title-light">
-    <i class="fa-solid fa-mountain"></i>
+    <x-global::elements.icon name="terrain" />
     {{ empty($bigRock['title']) ? __('label.create_new_goalboard') : __('label.goalboard') }} {{ $bigRock['title'] }}
 </h4>
 
@@ -8,16 +8,11 @@
 
     <br />
     <label>{{ __('label.goal_description') }}</label>
-    <input type="text" name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" style="width:100%;" /><br />
+    <x-globals::forms.text-input name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" class="tw:w-full" /><br />
 
     <br />
-    <div class="row">
-        <div class="col-md-6">
-            <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn" />
-        </div>
-        <div class="col-md-6 align-right padding-top-sm">
-
-        </div>
+    <div class="tw:flex tw:justify-between tw:items-center">
+        <x-globals::forms.button submit type="primary" id="saveBtn">{{ __('buttons.save') }}</x-globals::forms.button>
     </div>
 
 </form>

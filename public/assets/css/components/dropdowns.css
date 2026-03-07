@@ -3,10 +3,34 @@
 .dropdown-menu {
     margin-top: 0;
     border-radius: var(--box-radius);
-    border:0px;
+    border: 1px solid var(--main-border-color);
     padding: 8px 0;
+    background: var(--secondary-background);
     box-shadow: var(--regular-shadow);
-    background:var(--secondary-background);
+}
+
+/* Position: open menu left-aligned (right edge aligns with trigger) */
+.dropdown-position-left > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+/* Position: open menu right-aligned (left edge aligns with trigger) */
+.dropdown-position-right > .dropdown-menu {
+    left: 0;
+    right: auto;
+}
+
+/* Scale: small trigger */
+.dropdown-scale-s > .dropdown-toggle {
+    font-size: var(--font-size-s);
+    padding: 2px 6px;
+}
+
+/* Scale: large trigger */
+.dropdown-scale-l > .dropdown-toggle {
+    font-size: var(--font-size-l);
+    padding: 8px 16px;
 }
 
 .bigMenu ul li {
@@ -18,9 +42,18 @@
 .dropdown-menu > li > .dropdown-item-wrapper {
     font-size: var(--base-font-size);
     color:var(--primary-font-color);
+    text-decoration: none;
     margin: 0;
-    padding: 5px 10px;
+    padding: 4px 12px;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
     border-radius: 0px;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    text-decoration: none;
 }
 .pagetitle .dropdown-menu > li > a {
     color:var(--primary-font-color);
@@ -36,7 +69,7 @@
 }
 
 .dropdownTabs {
-    padding:5px;
+    padding:4px;
     display: flex;
     flex-direction: row;
 
@@ -74,6 +107,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .bigMenu ul li a:focus {
     color: var(--dropdown-link-hover-color) !important;
     background:var(--dropdown-link-hover-bg) !important;
+    text-decoration: none;
 }
 
 .dropdown-menu > li > a:hover small,
@@ -91,7 +125,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     padding-left: 10px;
     padding-right: 10px;
     padding-top:10px;
-    padding-bottom:5px;
+    padding-bottom:4px;
     font-size:var(--font-size-m);
     color:var(--interactive-icon-color);
     text-transform:none;
@@ -129,20 +163,25 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .ticketDropdown > a,
 .maincontent .ticketDropdown > a:link,
-.nyroModalCont .ticketDropdown > a,
-.nyroModalCont .ticketDropdown > a:link{
-    color:#fff;
+#global-modal-content .ticketDropdown > a,
+#global-modal-content .ticketDropdown > a:link{
     padding:0px 10px;
     white-space: nowrap;
     border-radius:var(--box-radius-large);
     margin-left:0px;
     box-shadow:var(--min-shadow);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    /* Text color comes from label-* classes or inline auto-contrast styles */
 }
+
 
 .maincontent .ticketDropdown.userDropdown > a,
 .maincontent .ticketDropdown.userDropdown > a:link,
-.nyroModalCont .ticketDropdown.userDropdown > a,
-.nyroModalCont .ticketDropdown.userDropdown > a:link {
+#global-modal-content .ticketDropdown.userDropdown > a,
+#global-modal-content .ticketDropdown.userDropdown > a:link {
     padding-left:0px;
 }
 
@@ -161,8 +200,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 
 .maincontent .ticketDropdown.colorized li a,
-.nyroModalCont .ticketDropdown.colorized li a{
-    color:#fff;
+#global-modal-content .ticketDropdown.colorized li a{
+    /* Text color is now set via inline style with auto-contrast calculation.
+       Fallback to white for non-hex items (label-* class handles its own color). */
 }
 
 .maincontent .ticketDropdown.noBg {
@@ -181,7 +221,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .dropdown img {
     width:23px;
-    border-radius: 12px;
+    border-radius: var(--input-radius);
     border: 1px solid var(--neutral);
     margin-top:1px;
     padding:1px;
@@ -189,171 +229,141 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 
 .maincontent .ticketDropdown.noBg >a:hover {
-    color:#000;
+    color:var(--primary-font-color);
 }
 
 .maincontent .ticketDropdown.noBg >a:hover img {
     border-color:var(--dropdown-link-hover-bg) !important
 }
 
-.maincontent .ticketDropdown ul li a[class*="label-"],
-.nyroModalCont .ticketDropdown ul li a[class*="label-"] {
-    padding: 5px 10px;
-    display:block;
-}
 
-.chosen-results li[class*=" label-"] {
-    color:#fff;
-}
-
-.chosen-results li[class*=" label-"]:hover {
-    color:#555;
-}
-
-.chosen-results li.label-warning,
 .maincontent .ticketDropdown a.label-warning,
-.nyroModalCont .ticketDropdown a.label-warning,
+#global-modal-content .ticketDropdown a.label-warning,
 .label-warning,
 .label-yellow{
     background:var(--yellow);
     color:var(--yellow-text-color);
 }
 
-.chosen-results li.label-info,
 .maincontent .ticketDropdown a.label-info,
-.nyroModalCont .ticketDropdown a.label-info{
+#global-modal-content .ticketDropdown a.label-info{
     background:var(--dark-blue);
     color:var(--dark-blue-text-color);
 }
 
-.chosen-results li.label-important,
 .maincontent .ticketDropdown a.label-important,
-.nyroModalCont .ticketDropdown a.label-important,
+#global-modal-content .ticketDropdown a.label-important,
 .label-important{
     background:var(--red);
     color:var(--red-text-color);
 }
 
-.chosen-results li.label-danger,
 .maincontent .ticketDropdown a.label-danger,
-.nyroModalCont .ticketDropdown a.label-danger,
+#global-modal-content .ticketDropdown a.label-danger,
 .label-danger,
 .label-red{
     background:var(--dark-red);
     color:var(--dark-red-text-color);
 }
 
-.chosen-results li.label-success,
 .maincontent .ticketDropdown a.label-success,
-.nyroModalCont .ticketDropdown a.label-success,
+#global-modal-content .ticketDropdown a.label-success,
 .label-success,
 .label-green {
     background:var(--green);
     color:var(--green-text-color);
 }
 
-.chosen-results li.label-default,
 .maincontent .ticketDropdown a.label-default,
-.nyroModalCont .ticketDropdown a.label-default,
+#global-modal-content .ticketDropdown a.label-default,
 .label-default{
     background: var(--grey);
     color:var(--grey-text-color);
 }
 
-.chosen-results li.label-default.milestone,
 .maincontent .ticketDropdown a.label-default.milestone,
-.nyroModalCont .ticketDropdown a.label-default.milestone {
-    color:var(--blue-text-color);
+#global-modal-content .ticketDropdown a.label-default.milestone {
+    /* Text color is now set via inline style with auto-contrast calculation */
 }
 
-.chosen-results li.label-purple,
 .maincontent .ticketDropdown a.label-purple,
-.nyroModalCont .ticketDropdown a.label-purple{
+#global-modal-content .ticketDropdown a.label-purple{
     background:var(--purple);
     color:var(--purple-text-color);
 }
 
-.chosen-results li.label-pink,
 .maincontent .ticketDropdown a.label-pink,
-.nyroModalCont .ticketDropdown a.label-pink{
+#global-modal-content .ticketDropdown a.label-pink{
     background:var(--pink);
     color:var(--pink-text-color);
 }
 
-.chosen-results li.label-brown,
 .maincontent .ticketDropdown a.label-brown,
-.nyroModalCont .ticketDropdown a.label-brown{
+#global-modal-content .ticketDropdown a.label-brown{
     background:var(--brown);
     color:var(--brown-text-color);
 }
 
-.chosen-results li.label-blue,
 .maincontent .ticketDropdown a.label-blue,
-.nyroModalCont .ticketDropdown a.label-blue{
+#global-modal-content .ticketDropdown a.label-blue{
     background:var(--blue);
     color:var(--blue-text-color);
 }
 
-.chosen-results li.label-dark-blue,
 .maincontent .ticketDropdown a.label-dark-blue,
-.nyroModalCont .ticketDropdown a.label-dark-blue{
+#global-modal-content .ticketDropdown a.label-dark-blue{
     background:var(--dark-blue);
     color:var(--dark-blue-text-color);
 }
 
-.chosen-results li.label-darker-blue,
 .maincontent .ticketDropdown a.label-darker-blue,
-.nyroModalCont .ticketDropdown a.label-darker-blue{
+#global-modal-content .ticketDropdown a.label-darker-blue{
     background:var(--darker-blue);
     color:var(--darker-blue-text-color);
 }
 
-.chosen-results li.label-green,
 .maincontent .ticketDropdown a.label-green,
-.nyroModalCont .ticketDropdown a.label-green{
+#global-modal-content .ticketDropdown a.label-green{
     background:var(--green);
     color:var(--green-text-color);
 }
 
-.chosen-results li.label-dark-green,
 .maincontent .ticketDropdown a.label-dark-green,
-.nyroModalCont .ticketDropdown a.label-dark-green{
+#global-modal-content .ticketDropdown a.label-dark-green{
     background:var(--dark-green);
     color:var(--dark-green-text-color);
 }
 
-.chosen-results li.label-red,
 .maincontent .ticketDropdown a.label-red,
-.nyroModalCont .ticketDropdown a.label-red{
+#global-modal-content .ticketDropdown a.label-red{
     background:var(--red);
     color:var(--red-text-color);
 }
 
-.chosen-results li.label-dark-red,
 .maincontent .ticketDropdown a.label-dark-red,
-.nyroModalCont .ticketDropdown a.label-dark-red{
+#global-modal-content .ticketDropdown a.label-dark-red{
     background:var(--dark-red);
     color:var(--dark-red-text-color);
 }
 
-.chosen-results li.label-grey,
 .maincontent .ticketDropdown a.label-grey,
-.nyroModalCont .ticketDropdown a.label-grey{
+#global-modal-content .ticketDropdown a.label-grey{
     background:var(--grey);
     color:var(--grey-text-color);
 }
 
 .maincontent .ticketDropdown a.label-default.effort,
-.nyroModalCont .ticketDropdown a.label-default.effort{
+#global-modal-content .ticketDropdown a.label-default.effort{
     background:var(--secondary-background);
     color:var(--primary-font-color);
 }
 
 .maincontent .ticketDropdown ul li,
-.nyroModalCont .ticketDropdown ul li {
+#global-modal-content .ticketDropdown ul li {
     margin-bottom:1px;
     padding:0px 10px;
 }
+
 
 .maincontent .ticketDropdown.milestoneDropdown li a:hover{
     background: var(--dropdown-link-hover-bg) !important;
@@ -363,11 +373,12 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontent .accordionTitle {
     font-size: var(--font-size-l);
     color: var(--primary-font-color);
-    margin-bottom: 10px;
-    font-weight:bold;
+    margin-bottom: 4px;
+    margin-top: 16px;
+    font-weight:var(--font-weight-bold);
     margin-left:0px;
     border-radius: var(--accordion-header-radius);
-    padding: 5px 0px;
+    padding: 4px 0px;
 }
 
 .maincontent .noBackground .accordionTitle {
@@ -376,10 +387,10 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .accordionTitle i {
     display:inline-block;
-    width:15px;
+    width:16px;
     text-align:center;
-    margin-right:5px;
-    border-radius:5px;
+    margin-right:4px;
+    border-radius:var(--box-radius-small);
 }
 
 .maincontent .accordionTitle:hover i,
@@ -391,7 +402,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontent .accordionTitle[class*="label-"] {
     margin-left:0px;
     border-radius: var(--accordion-header-radius);
-    padding: 5px 0px;
+    padding: 4px 0px;
     background: none;
 }
 
@@ -426,7 +437,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .simpleAccordionContainer {
-    margin-bottom:15px;
+    margin-bottom:16px;
     padding-left: 20px;
 }
 
@@ -435,11 +446,11 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .maincontent .accordionTitle .accordion-toggle i.fa:first-child {
-    width: 15px;
+    width: 16px;
     margin-top: 0px;
-    margin-right: 5px;
-    height: 15px;
-    line-height: 15px;
+    margin-right: 4px;
+    height: 16px;
+    line-height: 16px;
     text-align: center;
     border-radius: var(--element-radius);
     font-size: var(--font-size-m);
@@ -450,22 +461,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 
-.ticketDropdown ul::after {
-    position: absolute;
-    top:-6px;
-    left: 10px;
-    transform: rotate(0deg);
-    display: inline-block;
-    border-right: 7px solid transparent;
-    border-bottom: 7px solid white;
-    border-left: 7px solid transparent;
-    content: '';
-}
 
-.dropdown-menu.pull-right::after {
-    right: 10px;
-    left:auto;
-}
 
 .tabbedwidget .dropdown-menu.pull-left,
 .mainwrapper .dropdown-menu.pull-left {
@@ -478,27 +474,41 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     left:auto;
 }
 
+/* Right-align dropdown menus in pull-right containers */
+.dropdown.pull-right > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+/* Right-align dropdown menus in widget sticky headers */
+.stickyHeader .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
 .viewDropDown .dropdown-menu li a.active{
 
 }
 
 .viewDropDown .dropdown-menu li a.active:hover {
-    color:#fff;
+    color:var(--primary-background);
 }
 
 .dropdown-menu span.radio input[type="radio"] {
-    float:left;
-    vertical-align: middle;
-    margin-top: 9px;
-    margin-right:5px;
+    flex-shrink: 0;
+    margin: 0;
 }
 
 .dropdown-menu span.radio {
-    display:block;
-    font-size: 12px;
-    color: var(--main-menu-link-color);
-    margin: 0px;
-    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--base-font-size);
+    color: var(--primary-font-color);
+    margin: 0;
+    padding: 6px 12px;
+    min-height: 36px;
+    cursor: pointer;
 }
 
 .dropdown-menu span.radio:hover {
@@ -507,12 +517,35 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .dropdown-menu span.radio label {
-    display:inline-block;
-    width:100%;
+    display: inline;
+    cursor: pointer;
+}
+
+/* Radio component inside dropdown menus */
+.dropdown-menu label.tw\:label {
+    padding: 4px 16px;
+    gap: 8px;
+    margin: 0;
+}
+
+.dropdown-menu label.tw\:label:hover {
+    color: var(--dropdown-link-hover-color);
+    background: var(--dropdown-link-hover-bg);
+}
+
+.dropdown-menu .tw\:label-text {
+    color: var(--primary-font-color);
+    font-size: var(--base-font-size);
+}
+
+.dropdown-menu .tw\:radio {
+    width: 20px;
+    height: 20px;
+    min-height: auto;
 }
 
 .wikiSelect {
-    margin-bottom:5px;
+    margin-bottom:4px;
 }
 
 .dropdown-menu.iconpicker-container,
@@ -528,11 +561,11 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .btn-group .btn.titleIconPicker {
     font-size: var(--font-size-xl);
     line-height: 21px;
-    padding: 5px 6px;
+    padding: 4px 6px;
     color: var(--primary-font-color);
     background-color: var(--secondary-background);
     border: 1px solid var(--secondary-background);
-    border-radius: 3px;
+    border-radius: var(--box-radius-small);
 }
 
 .btn-group .btn.titleIconPicker:hover {
@@ -565,7 +598,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     width:auto;
     color: var(--main-titles-color);
     text-decoration:underline;
-    padding:0px 3px ;
+    padding:0px 4px ;
     border-radius: var(--box-radius-small);
 }
 
@@ -598,7 +631,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .headerEditDropdown .dropdown-toggle {
-    padding:4px 13px;
+    padding:4px 12px;
 }
 
 .editCanvasDropdown {
@@ -625,12 +658,12 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .inlineDropDownContainer > a {
-    color: #aaa;
+    color: var(--secondary-font-color);
     width: 24px;
     line-height: 20px;
     text-align: center;
     padding-top: 1px;
-    border-radius: 5px;
+    border-radius: var(--box-radius-small);
 }
 
 .inlineDropDownContainer > a.btn {
@@ -638,7 +671,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .inlineDropDownContainer > a:last-child {
-    margin-right:-5px;
+    margin-right:-4px;
 }
 
 .inlineDropDownContainer > a:hover {
@@ -650,7 +683,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     float:right;
     font-size: var(--font-size-xl);
     color: var(--interactive-icon-color);
-    margin-right:-5px;
+    margin-right:-4px;
 }
 
 .inlineDropDownContainer .dropdown-menu {
@@ -660,7 +693,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .inlineDropDownContainer.dropright .dropdown-menu {
 
-    left:-5px;
+    left:-4px;
 }
 
 .inlineDropDownContainer .dropdown-menu .border {
@@ -668,7 +701,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .inlineDropDownContainer .dropdown-menu li>span {
-    padding-left:15px;
+    padding-left:16px;
 }
 
 .grid-stack-item-content .inlineDropDownContainer .ticketDropDown,
@@ -680,3 +713,24 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .grid-stack-item-content.maincontentinner .grid-handler-top {
     color: var(--interactive-icon-color);
 }
+
+/* ── Display-only chip ─────────────────────────────────────────────────
+   Non-interactive chip for showing status, milestone, or author labels.
+   Used via <x-globals::actions.chip variant="input">.
+   ──────────────────────────────────────────────────────────────────── */
+.chip-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 10px;
+    border-radius: var(--box-radius-large);
+    font-size: var(--font-size-s);
+    line-height: 24px;
+    white-space: nowrap;
+    box-shadow: var(--min-shadow);
+}
+
+/* Scale variants for both display and dropdown chips */
+.chip-xs, .chip-xs > a { font-size: var(--font-size-xs); line-height: 20px; padding: 0 6px; }
+.chip-sm, .chip-sm > a { font-size: var(--font-size-s); line-height: 22px; padding: 0 8px; }
+.chip-lg, .chip-lg > a { font-size: var(--font-size-m); line-height: 28px; padding: 0 12px; }

@@ -3,13 +3,12 @@
 }
 
 .table th {
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     text-transform: uppercase;
     font-size: var(--font-size-s);
     border-top: 0;
     color: var(--kanban-col-title-color);
     background:var(--col-content-bg);
-
 }
 
 .table th.centeralign, .table td.centeralign {
@@ -35,7 +34,17 @@
 .table-bordered td {
     border-right: 0px solid var(--neutral);
     border-left:0px;
-    box-shadow: 0px 1px 1px var(--neutral);
+    box-shadow: none;
+}
+
+.table-bordered > thead > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > th,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > th,
+.table-bordered > tfoot > tr > td {
+    border: none;
+    border-bottom: 1px solid var(--neutral);
 }
 
 .table-bordered th:last-child,
@@ -56,6 +65,7 @@
 .dataTables_wrapper {
     position: relative;
     padding-bottom: 20px;
+    overflow-x: auto;
 }
 
 .simpleAccordionContainer .dataTables_wrapper{
@@ -96,10 +106,13 @@
 
 .dataTables_paginate .first, .dataTables_paginate .previous, .dataTables_paginate .paginate_active,
 .dataTables_paginate .paginate_button, .dataTables_paginate .next, .dataTables_paginate .last {
-    padding: 5px 10px;
+    padding: 10px 12px;
+    min-height: 44px;
     border: 0px solid var(--neutral);
     font-size: var(--font-size-s);
     cursor: pointer;
+    border-radius: var(--box-radius-small);
+    transition: background-color var(--duration-normal) ease;
 }
 
 .dataTables_paginate span:hover {
@@ -113,7 +126,7 @@
 .dataTables_paginate .paginate_active,
 .paginate_button.current {
     background-color: var(--col-title-bg);
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
 }
 
 .dataTables_paginate .paginate_button:hover {
@@ -123,7 +136,8 @@
 .dataTables_paginate .paginate_button_disabled {
     cursor: default;
     color: var(--neutral);
-    background: var(--kanban-col-title-bg);
+    background: transparent;
+    opacity: var(--opacity-disabled);
 }
 
 .dataTables_paginate a {
@@ -167,28 +181,30 @@
     font-family: FontAwesome;
     content: "\00a0\00a0\f0dc";
     font-size:var(--font-size-s);
+    opacity: var(--opacity-disabled);
 }
 
 .dataTable thead th.sorting_asc:after {
     font-family: FontAwesome;
     content: "\00a0\00a0\f0de";
-
+    opacity: 1;
 }
 
 .dataTable thead th.sorting_desc:after {
     font-family: FontAwesome;
     content: "\00a0\00a0\f0dd";
+    opacity: 1;
 }
 
 .maincontentinner .table,
 .maincontentinner table{
-    border:1px solid var(--col-content-bg);
-
+    border:none;
 }
 
 .table-bordered {
     border-top-left-radius:var(--box-radius);
     border-top-right-radius:var(--box-radius);
+    border:none;
 }
 
 .maincontentinner .table th,
@@ -196,14 +212,14 @@
 .maincontentinner table thead td,
 .maincontentinner .table.table-bordered th,
 .maincontentinner .table tr.dtrg-group td{
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     text-transform:none;
     font-size: var(--base-font-size);
     border-top: 0;
 
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     text-rendering: optimizelegibility;
-    padding: 7px 10px 5px 10px;
+    padding: 12px 10px;
 
     border:0px;
     border-right:0px solid var(--neutral);
@@ -219,8 +235,8 @@
 .maincontentinner .table.table-bordered th,
 .maincontentinner table th {
     background:var(--col-title-bg);
-    padding: 10px 10px;
-    font-weight:bold;
+    padding: 12px 10px;
+    font-weight:var(--font-weight-bold);
 }
 
 .table-bordered colgroup+thead tr:first-child th:first-child {
@@ -244,21 +260,22 @@
 
 .maincontentinner .table tr.dtrg-group td {
     color: var(--kanban-col-title-color);
-    padding: 5px 10px;
-    padding-top:25px;
-    font-weight: bold;
+    padding: 4px 10px;
+    padding-top: 24px;
+    font-weight: var(--font-weight-bold);
 }
 
 .maincontentinner .table {
-    margin-top:10px;
+    clear:both;
+    margin-top:32px;
 }
 
 .maincontentinner .table td,
 .maincontentinner table td{
-    padding:5px 10px 3px 10px;
+    padding:12px 12px;
     vertical-align: middle;
     min-height:17px;
-    border-right:1px solid var(--secondary-background);
+    border-right:1px solid var(--neutral);
 }
 
 .maincontentinner .listStyleTable td {
@@ -266,6 +283,15 @@
 }
 
 
+
+.table tbody tr:hover td,
+.table-hover tbody tr:hover td {
+    background: var(--col-hover-bg);
+}
+
+.dataTable tr {
+    transition: box-shadow var(--duration-normal) ease, background-color var(--duration-normal) ease;
+}
 
 .dataTable tr:hover {
     box-shadow:var(--regular-shadow);
@@ -284,7 +310,7 @@
     position:relative;
     border: 0px solid var(--main-border-color);
     border-top:0px;
-    height:30px;
+    height:32px;
 }
 
 .maincontentinner .dataTables_wrapper  .dataTables_info {
@@ -292,7 +318,7 @@
     left:0px;
     top:10px;
     border:0px;
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 
 .maincontentinner .dataTables_wrapper  .dataTables_length{
@@ -301,7 +327,7 @@
     top:10px;
     margin-left:-65px;
     border:0px;
-    padding:5px;
+    padding:4px;
     font-size:var(--font-size-s);
 }
 
@@ -316,7 +342,7 @@
     bottom:10px;
     border:0px;
     padding:10px 10px;
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 
 .maincontentinner .table tr.dt-rowReorder-moving {
@@ -325,20 +351,16 @@
 
 .maincontentinner .dt-buttons .dt-button-collection {
     position:absolute;
-    z-index:3;
+    z-index: var(--zlayer-3);
     float: left;
-    padding: 5px 0;
+    padding: 8px 0;
     margin: 2px 0 0;
     list-style: none;
     background-color: var(--secondary-background);
     margin-top: 10px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    border: 0px;
-    -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    -moz-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    border-radius: var(--box-radius);
+    border: 1px solid var(--main-border-color);
+    box-shadow: var(--regular-shadow);
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button {
@@ -346,16 +368,19 @@
     width:100%;
     margin:0px;
     background:var(--secondary-background);
-    color: var(--main-menu-link-color);
-    padding: 5px 10px;
+    color: var(--primary-font-color);
+    padding: 6px 12px;
     border:0px;
     text-align:left;
+    font-size: var(--base-font-size);
+    font-weight: var(--font-weight-body);
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button:before {
     font-family: "Font Awesome 6 Free";
+    font-weight: 900;
     content: "\f204";
-    margin-right:5px;
+    margin-right:4px;
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button. dt-button-active{
@@ -364,6 +389,7 @@
 
 .maincontentinner .dt-buttons .dt-button-collection button.dt-button-active:before {
     font-family: "Font Awesome 6 Free";
+    font-weight: 900;
     content: "\f205";
     color:var(--accent1);
 }
@@ -381,8 +407,8 @@
     box-shadow: none;
     border-color: var(--neutral);
     border: 1px solid var(--secondary-action-bg);
-    margin: 0 0 9px;
-    padding: 4px 14px;
+    margin: 0 0 8px;
+    padding: 4px 12px;
     line-height: 21px;
     text-align: center;
     vertical-align: baseline;
@@ -400,7 +426,7 @@
     color:var(--secondary-action-hover-color);
 }
 .maincontentinner .dt-buttons .dt-button-collection button {
-    border-radius:0px;
+    border-radius: 0;
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button:hover {
@@ -409,17 +435,26 @@
 }
 
 
-.timesheetTable td.active,
-.timesheetTable th.active{
-   background:var(--col-title-bg);
+.timesheetTable > tbody > tr > td.active,
+.timesheetTable > tfoot > tr > td.active {
+   background-color:transparent;
+}
+
+.timesheetTable th.active {
+   box-shadow: inset 0 0 0 2px var(--accent1);
+   border-radius: var(--box-radius-small);
 }
 
 .maincontentinner .timesheetTable td input {
-    margin-bottom:5px;
+    margin-bottom:4px;
 }
 
 .maincontentinner .timesheetTable tfoot td {
     padding:10px;
+}
+
+.timesheetTable td .form-group {
+    margin-bottom:0;
 }
 
 .maincontentinner .headtitle table,
@@ -451,14 +486,14 @@ table td{
 
 .table td.dropdown-cell {
     padding:0px;
-    font-weight: 400;
+    font-weight: var(--font-weight-body);
     height: inherit;
 }
 
 .table td.dropdown-cell .dropdown {
     width:100%;
     height:100%;
-    border-radius:0px !important;
+    border-radius: 0 !important;
     display:block;
 
 }
@@ -466,8 +501,8 @@ table td{
 .table td.dropdown-cell .dropdown > a {
     width:100%;
     height:100%;
-    border-radius:0px !important;
-    padding: 5px 10px 3px 10px !important;
+    border-radius: 0 !important;
+    padding: 4px 10px 4px 10px !important;
     line-height: 32px;
     font-size:var(--base-font-size);
     box-shadow:none;
@@ -482,7 +517,7 @@ table td{
 }
 
 .table td.dropdown-cell .dropdown.ticketDropdown ul {
-    top:35px;
+    top:32px;
 }
 
 .listStyleTable td {
@@ -494,7 +529,7 @@ table td{
 }
 
 .maincontentinner .table.listStyleTable td {
-    padding:5px 10px 5px 10px;
+    padding:8px 10px;
 }
 
 .maincontentinner .table.listStyleTable td.dropdown-cell {
@@ -510,6 +545,14 @@ table td{
     border:0px;
 }
 
+.maincontentinner .table.listStyleTable tbody tr {
+    border-bottom: 1px solid var(--main-border-color);
+}
+
+.maincontentinner .table.listStyleTable tbody tr:hover td {
+    background: var(--col-title-bg);
+}
+
 .maincontentinner .table.listStyleTable tr:hover {
     box-shadow: none;
     cursor:pointer;
@@ -521,14 +564,26 @@ table td{
 
 
 
+.maincontentinner .table.listStyleTable td.roundStatusBtn {
+    width: 40px;
+    max-width: 40px;
+    padding-right: 0;
+}
+
 .maincontentinner .table.listStyleTable td.roundStatusBtn .statusDropdown > a {
-    border-radius: 15px;
+    border-radius: var(--element-radius);
     padding: 0px;
     width: 30px;
     height: 30px;
     display: inline-block;
     line-height: 30px;
     text-align: center;
+    overflow: hidden;
+    text-indent: -9999px;
+}
+
+.maincontentinner .table.listStyleTable td.roundStatusBtn .statusDropdown > a .material-symbols-outlined {
+    display: none;
 }
 
 .maincontentinner .dataTables_wrapper .center .dataTables_paginate {
@@ -550,15 +605,84 @@ table td{
 
 .maincontentinner .table tfoot td,
 .maincontentinner table tfoot td {
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     border-top: 1px solid var(--neutral);
     /* text-align: center; */
     /* min-height: 41px; */
-    padding: 8px 5px 8px 20px;
+    padding: 8px 4px 8px 20px;
 }
 
 .ticketTable .ticketModal {
-    font-weight:bold;
+    font-weight:var(--font-weight-bold);
+}
+
+/* Truncate chip/pill text in ticket table columns */
+.ticketTable .ticketDropdown a.dropdown-toggle {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.ticketTable .ticketDropdown a.dropdown-toggle .text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline;
+}
+
+/* Title column: truncate with ellipsis, full title on hover via title attr */
+.ticketTable td.title-cell {
+    max-width: 200px;
+}
+
+.ticketTable td.title-cell .ticketModal {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* User column: avatar only, hide name text and dropdown arrow */
+.ticketTable td.user-cell {
+    width: 50px;
+    max-width: 50px;
+    text-align: center;
+}
+
+.ticketTable td.user-cell .user-name-label {
+    display: none;
+}
+
+.ticketTable td.user-cell .dropdown-toggle .material-symbols-outlined {
+    display: none;
+}
+
+.ticketTable td.user-cell .dropdown-toggle {
+    padding: 0;
+}
+
+.ticketTable td.user-cell img {
+    margin-right: 0 !important;
+}
+
+/* Due date column: compact width */
+.ticketTable td .quickDueDates {
+    width: 90px;
+    font-size: var(--font-size-s);
+}
+
+/* Tags column: constrain and truncate */
+.ticketTable td .tagsinput.readonly {
+    max-width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.ticketTable td .tagsinput.readonly .tag {
+    display: inline;
 }
 
 .dt-button-down-arrow {
@@ -569,7 +693,7 @@ table td{
     font-family: "Font Awesome 6 Free";
     content: "\f0d7";
     font-size: var(--font-size-m);
-    margin-left: 5px;
+    margin-left: 4px;
 }
 
 table.fc-multimonth-header-table {

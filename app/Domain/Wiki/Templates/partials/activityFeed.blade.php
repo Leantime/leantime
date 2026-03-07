@@ -3,14 +3,14 @@
     /** @var int $articleId */
 
     $actionIcons = [
-        'article.create' => 'fa fa-plus',
-        'article.edit' => 'fa fa-edit',
-        'article.title' => 'fa fa-heading',
-        'article.status' => 'fa fa-circle-dot',
-        'article.parent' => 'fa fa-folder-tree',
-        'article.milestone' => 'fa fa-flag',
-        'article.tags' => 'fa fa-tags',
-        'article.icon' => 'fa fa-icons',
+        'article.create' => 'add',
+        'article.edit' => 'edit',
+        'article.title' => 'title',
+        'article.status' => 'radio_button_checked',
+        'article.parent' => 'account_tree',
+        'article.milestone' => 'flag',
+        'article.tags' => 'sell',
+        'article.icon' => 'interests',
     ];
 
     $actionClasses = [
@@ -79,7 +79,7 @@
     @forelse ($activity as $item)
         @php
             $action = $item['action'] ?? '';
-            $icon = $actionIcons[$action] ?? 'fa fa-circle';
+            $icon = $actionIcons[$action] ?? 'circle';
             $cssClass = $actionClasses[$action] ?? '';
             $name = trim(($item['firstname'] ?? '') . ' ' . ($item['lastname'] ?? ''));
             $date = $item['date'] ?? '';
@@ -88,7 +88,7 @@
         @endphp
         <div class="wiki-activity-item">
             <div class="wiki-activity-icon {{ $cssClass }}">
-                <i class="{{ $icon }}"></i>
+                <x-global::elements.icon :name="$icon" />
             </div>
             <div class="wiki-activity-content">
                 <div class="wiki-activity-text">

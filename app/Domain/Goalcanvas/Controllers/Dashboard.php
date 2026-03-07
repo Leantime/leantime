@@ -306,7 +306,15 @@ class Dashboard extends Controller
 
         $filter['status'] = $_GET['filter_status'] ?? (session('filter_status') ?? 'all');
         session(['filter_status' => $filter['status']]);
-        $filter['relates'] = $_GET['filter_relates'] ?? (session('filter_relates') ?? 'all');
+
+        // Goalcanvas has no relates labels, so always reset to 'all' to prevent
+        // stale session values from other canvas types filtering out goals.
+        $relatesLabels = $this->canvasRepo->getRelatesLabels();
+        if (empty($relatesLabels)) {
+            $filter['relates'] = 'all';
+        } else {
+            $filter['relates'] = $_GET['filter_relates'] ?? (session('filter_relates') ?? 'all');
+        }
         session(['filter_relates' => $filter['relates']]);
 
         $this->tpl->assign('filter', $filter);

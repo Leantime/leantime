@@ -43,7 +43,8 @@ leantime.dateHelper =  (function () {
 
     var target = {
         "jquery": {},
-        "luxon": {}
+        "luxon": {},
+        "flatpickr": {}
     };
 
     target.jquery = {
@@ -84,6 +85,46 @@ leantime.dateHelper =  (function () {
         'c': '',     // jQuery DatePicker does not support ISO 8601 dates
         'r': '',     // jQuery DatePicker does not support RFC 2822 dates
         'U': '@'     // Unix timestamp - seconds since January 1 1970 00:00:00 GMT
+    };
+
+    target.flatpickr = {
+        'd': 'd',    // Day of month with leading zeroes
+        'D': 'D',    // Short day name (Mon, Tue...)
+        'j': 'j',    // Day of month without leading zeros
+        'l': 'l',    // Full day name (Sunday through Saturday)
+        'N': '',     // No equivalent
+        'S': '',     // No equivalent
+        'w': 'w',    // Numeric day of week (0=Sunday)
+        'z': '',     // Day of the year — no equivalent
+        'W': 'W',    // ISO week number
+        'F': 'F',    // Full month name (January through December)
+        'm': 'm',    // Month with leading zero (01-12)
+        'M': 'M',    // Short month name (Jan through Dec)
+        'n': 'n',    // Month without leading zero (1-12)
+        't': '',     // No equivalent
+        'L': '',     // No equivalent
+        'o': 'Y',    // ISO year — approximate with 4-digit year
+        'Y': 'Y',    // Year, four digits
+        'y': 'y',    // Year, two digits
+        'a': 'K',    // Lowercase am/pm
+        'A': 'K',    // am/pm (flatpickr doesn't differentiate case)
+        'B': '',     // No equivalent
+        'g': 'G',    // 12-hour without leading zero
+        'G': 'H',    // 24-hour without leading zero
+        'h': 'h',    // 12-hour with leading zero (flatpickr uses h for this)
+        'H': 'H',    // 24-hour with leading zero
+        'i': 'i',    // Minutes with leading zeros
+        's': 'S',    // Seconds with leading zeros (flatpickr uses S)
+        'u': '',     // No equivalent
+        'e': '',     // No equivalent
+        'I': '',     // No equivalent
+        'O': '',     // No equivalent
+        'P': '',     // No equivalent
+        'T': '',     // No equivalent
+        'Z': 'Z',    // Timezone offset
+        'c': '',     // No equivalent
+        'r': '',     // No equivalent
+        'U': 'U'     // Unix timestamp
     };
 
     target.luxon = {

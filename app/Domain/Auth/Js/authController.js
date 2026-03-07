@@ -1,7 +1,7 @@
 leantime.authController = (function () {
 
     var makeInputReadonly = function (container) {
-        if (typeof container === undefined) {
+        if (typeof container === 'undefined') {
             container = "body";
         }
 
@@ -32,11 +32,20 @@ leantime.authController = (function () {
 
         jQuery(container).find(".ticketDropdown a").removeAttr("data-toggle");
 
+        // Disable DaisyUI dropdowns by removing tabindex from triggers
+        document.querySelectorAll((container || 'body') + ' .tw\\:dropdown [tabindex]').forEach(function(el) {
+            el.removeAttribute('tabindex');
+        });
+
         jQuery("#mainToggler").hide();
         jQuery(".commentBox").hide();
         jQuery(".deleteComment, .replyButton").hide();
 
-        jQuery(container).find(".dropdown i").removeClass('fa-caret-down');
+        jQuery(container).find(".dropdown .material-symbols-outlined, .tw\\:dropdown .material-symbols-outlined").each(function() {
+            if (jQuery(this).text().trim() === 'arrow_drop_down') {
+                jQuery(this).hide();
+            }
+        });
     };
 
     // Make public what you want to have public, everything else is private

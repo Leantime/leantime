@@ -88,7 +88,7 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                 'title' => '',
                 'description' => '',
                 'status' => array_key_first($this->canvasRepo->getStatusLabels()),
-                'relates' => '',
+                'relates' => array_key_first($this->canvasRepo->getRelatesLabels()) ?? '',
                 'startValue' => '',
                 'currentValue' => '',
                 'canvasId' => $_GET['canvasId'] ?? (int) session('currentGOALCanvas'),
@@ -100,6 +100,8 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                 'metricType' => '',
                 'assignedTo' => '',
                 'parent' => '',
+                'milestoneId' => '',
+                'milestoneHeadline' => '',
             ];
 
             $comments = [];
@@ -117,6 +119,7 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
         $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
+        $this->tpl->assign('relatesLabels', $this->canvasRepo->getRelatesLabels());
         $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
 
         return $this->tpl->displayPartial('goalcanvas.canvasDialog');
@@ -181,18 +184,18 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                         'description' => $params['description'] ?? '',
                         'status' => $params['status'] ?? '',
                         'relates' => '',
-                        'startValue' => $params['startValue'],
-                        'currentValue' => $params['currentValue'],
-                        'endValue' => $params['endValue'],
+                        'startValue' => $params['startValue'] ?? '',
+                        'currentValue' => $params['currentValue'] ?? '',
+                        'endValue' => $params['endValue'] ?? '',
                         'itemId' => $params['itemId'],
                         'canvasId' => $params['canvasId'],
                         'parent' => $params['parent'] ?? null,
                         'id' => $params['itemId'],
                         'kpi' => $params['kpi'] ?? '',
-                        'startDate' => format(value: $params['startDate'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
-                        'endDate' => format(value: $params['endDate'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime(),
+                        'startDate' => format(value: $params['startDate'] ?? '', fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
+                        'endDate' => format(value: $params['endDate'] ?? '', fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime(),
                         'setting' => $params['setting'] ?? '',
-                        'metricType' => $params['metricType'],
+                        'metricType' => $params['metricType'] ?? 'number',
                         'assignedTo' => $params['assignedTo'] ?? '',
                         'milestoneId' => $params['milestoneId'] ?? '',
                     ];
@@ -246,6 +249,10 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
+
+                    if (app('request')->headers->get('is-modal')) {
+                        return response('', 200, ['HX-Trigger' => 'HTMX.closemodal, HTMX.ShowNotification']);
+                    }
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -261,16 +268,16 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                         'description' => $params['description'] ?? '',
                         'status' => $params['status'] ?? '',
                         'relates' => '',
-                        'startValue' => $params['startValue'],
-                        'currentValue' => $params['currentValue'],
-                        'endValue' => $params['endValue'],
+                        'startValue' => $params['startValue'] ?? '',
+                        'currentValue' => $params['currentValue'] ?? '',
+                        'endValue' => $params['endValue'] ?? '',
                         'canvasId' => $params['canvasId'],
                         'parent' => $params['parent'] ?? null,
                         'kpi' => $params['kpi'] ?? '',
                         'startDate' => format(value: $params['startDate'] ?? '', fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
                         'endDate' => format(value: $params['endDate'] ?? '', fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime(),
                         'setting' => $params['setting'] ?? '',
-                        'metricType' => $params['metricType'],
+                        'metricType' => $params['metricType'] ?? 'number',
                         'assignedTo' => $params['assignedTo'] ?? '',
                     ];
                     $id = $this->canvasRepo->addCanvasItem($canvasItem);
@@ -303,6 +310,10 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                     $this->projectService->notifyProjectUsers($notification);
 
                     $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
+
+                    if (app('request')->headers->get('is-modal')) {
+                        return response('', 200, ['HX-Trigger' => 'HTMX.closemodal, HTMX.ShowNotification']);
+                    }
                 } else {
                     $id = '';
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');

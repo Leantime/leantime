@@ -16,7 +16,7 @@
     box-shadow: var(--large-shadow);
     opacity: 0;
     transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity var(--duration-slow) ease, transform var(--duration-slow) ease;
 }
 
 .toast-notification.toast-visible {
@@ -61,19 +61,19 @@
     flex: 1;
     font-size: var(--font-size-s);
     color: var(--primary-font-color);
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
 }
 
 .toast-notification__dismiss {
     background: none;
     border: none;
-    font-size: 24px;
-    line-height: 1;
+    font-size: var(--font-size-xxxl);
+    line-height: var(--line-height-tight);
     color: var(--primary-font-color);
     cursor: pointer;
     padding: 0 0.5rem;
     margin-left: 0.5rem;
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
     flex-shrink: 0;
     min-width: 44px;
     min-height: 44px;

@@ -81,6 +81,8 @@ class ShowAllMilestonesOverview extends Controller
 
         $this->tpl->assign('searchCriteria', $searchCriteria);
         $this->tpl->assign('numOfFilters', $this->ticketService->countSetFilters($searchCriteria));
+        $this->tpl->assign('groupByOptions', $this->ticketService->getGroupByFieldOptions());
+        $this->tpl->assign('sortOptions', $this->ticketService->getSortByFieldOptions());
 
         $allClients = $this->clientService->getUserClients(session('userdata.id'));
 

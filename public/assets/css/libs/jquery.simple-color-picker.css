@@ -1,4 +1,0 @@
-html, body { height: 100%; }
-div.color-picker { border-left: 1px solid #000; border-top: 1px solid #000; position: absolute; left: 0px; top: 0px; padding: 0px; }
-div.color-picker ul { list-style: none; padding: 0px; margin: 0px; float: left; }
-div.color-picker ul li { display: block; width: 15px; height: 15px; border-right: 1px solid #000; border-bottom: 1px solid #000; margin: 0px; float: left; cursor: pointer; }

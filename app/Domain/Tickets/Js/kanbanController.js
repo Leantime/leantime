@@ -198,9 +198,9 @@ leantime.kanbanController = (function () {
         sidebar.setAttribute('aria-expanded', newExpanded.toString());
 
         // Update chevron icon
-        var chevronIcon = sidebar.querySelector('.kanban-lane-chevron i');
+        var chevronIcon = sidebar.querySelector('.kanban-lane-chevron .material-symbols-outlined');
         if (chevronIcon) {
-            chevronIcon.className = newExpanded ? 'fa fa-chevron-down' : 'fa fa-chevron-right';
+            chevronIcon.textContent = newExpanded ? 'expand_more' : 'chevron_right';
         }
 
         // Update data-expanded attribute on row (CSS uses this for styling)
@@ -218,13 +218,17 @@ leantime.kanbanController = (function () {
         }
 
         // Persist state to session via AJAX
-        jQuery.ajax({
-            url: leantime.appUrl + '/api/submenu',
-            type: 'POST',
-            data: {
+        fetch(leantime.appUrl + '/api/submenu', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
                 submenu: 'swimlane_' + swimlaneId,
                 state: newExpanded ? 'open' : 'closed'
-            }
+            })
         });
     };
 

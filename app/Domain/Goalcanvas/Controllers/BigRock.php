@@ -77,6 +77,10 @@ class BigRock extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
             $this->goalService->updateGoalboard($bigrock);
             $this->tpl->setNotification('notification.goalboard_updated_successfully', 'success', 'goalcanvas_updated');
 
+            if (app('request')->headers->get('is-modal')) {
+                return new Response('', 200, ['HX-Trigger' => 'HTMX.closemodal, HTMX.ShowNotification']);
+            }
+
             return Frontcontroller::redirect(BASE_URL.'/goalcanvas/bigRock/'.$id);
 
         } else {
@@ -90,10 +94,14 @@ class BigRock extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
             if ($id) {
                 $this->tpl->setNotification('notification.goalboard_created_successfully', 'success', 'wiki_created');
 
-                return Frontcontroller::redirect(BASE_URL.'/goalcanvas/bigRock/'.$id.'?closeModal=1');
+                if (app('request')->headers->get('is-modal')) {
+                    return new Response('', 200, ['HX-Trigger' => 'HTMX.closemodal, HTMX.ShowNotification']);
+                }
+
+                return Frontcontroller::redirect(BASE_URL.'/goalcanvas/bigRock/'.$id);
             }
 
-            return Frontcontroller::redirect(BASE_URL.'/goalcanvas/bigRock/'.$id.'');
+            return Frontcontroller::redirect(BASE_URL.'/goalcanvas/bigRock/'.$id);
         }
     }
 }

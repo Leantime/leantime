@@ -3,7 +3,7 @@
     'currentProject'
 ])
 
-<div class="dropdown-menu projectselector" id="mainProjectSelector">
+<div class="dropdown-menu projectselector" id="mainProjectSelector" aria-live="polite">
 
         @if ($menuType == 'project' || $menuType == 'default')
             <div class="head">
@@ -11,10 +11,10 @@
                 <span class="title">{{ session("currentProjectName") }}</span>
             </div>
         @else
-            <div class="projectSelectorFooter" style="border:none; border-bottom:1px solid var(--main-border-color)">
+            <div class="projectSelectorFooter" style="border: none; border-bottom: 1px solid var(--main-border-color);">
             <ul class="selectorList projectList">
                 <li>
-                    <a href="{{ BASE_URL }}/projects/showMy"><strong><i class="fa-solid fa-house-flag"></i> Open Project Hub</strong></a>
+                    <a href="{{ BASE_URL }}/projects/showMy"><strong><x-global::elements.icon name="flag" /> Open Project Hub</strong></a>
                 </li>
 
                 @if ($login::userIsAtLeast("manager"))
@@ -33,8 +33,8 @@
         @endif
 
 
-    <div class="tabbedwidget tab-primary projectSelectorTabs">
-        <ul class="tabs">
+    <div class="lt-tabs tabbedwidget projectSelectorTabs" data-tabs data-tabs-persist="localStorage" data-tabs-persist-key="currentMenuTab">
+        <ul class="tabs" role="tablist">
             <li><a href="#myProjects">{{ __('menu.projectselector.my_projects') }}</a></li>
             <li><a href="#favorites">{{ __('menu.projectselector.favorites') }}</a></li>
             <li><a href="#recentProjects">{{ __('menu.projectselector.recent') }}</a></li>
@@ -109,7 +109,7 @@
 
 
                     <li>
-                        <a href="{{ BASE_URL }}/projects/showMy"><i class="fa-solid fa-circle-nodes"></i> Project Hub</a>
+                        <a href="{{ BASE_URL }}/projects/showMy"><x-global::elements.icon name="hub" /> Project Hub</a>
                     </li>
 
             </ul>

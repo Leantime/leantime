@@ -2200,13 +2200,18 @@ class Tickets
 
             $this->projectService->notifyProjectUsers($notification);
 
-            self::dispatchEvent('ticket_updated');
+            // Clear sprint/dependency/milestone directly via repo to avoid re-entering service layer
+            $this->ticketRepository->patchTicket($ticket->id, [
+                'projectId' => $ticket->projectId,
+                'sprint' => '',
+                'dependingTicketId' => '',
+                'milestoneid' => '',
+            ]);
 
-            // Update ticket
-            return $this->patch($ticket->id, ['projectId' => $ticket->projectId, 'sprint' => '', 'dependingTicketId' => '', 'milestoneid' => '']);
+            return $return;
         }
 
-        return false;
+        return $return;
     }
 
     /**
@@ -2746,12 +2751,14 @@ class Tickets
         return [
             [
                 'url' => '#/tickets/newTicket',
-                'text' => 'links.add_todo',
+                'text' => 'label.add_todo',
+                'icon' => 'push_pin',
                 'class' => 'ticketModal',
             ],
             [
                 'url' => '#/tickets/editMilestone',
-                'text' => 'links.add_milestone',
+                'text' => 'label.add_milestone',
+                'icon' => 'map',
                 'class' => 'milestoneModal',
             ],
         ];

@@ -27,10 +27,12 @@
             >
                 <div hx-get="{{$widget->widgetUrl }}"
                      hx-trigger="revealed"
+                     hx-target="this"
+                     hx-swap="innerHTML"
                      id="{{ $widget->id }}"
-                     class="tw-h-full"
-                    hx-swap="#{{ $widget->id }}">
-                    <x-global::loadingText type="{{ $widget->widgetLoadingIndicator }}" count="1" includeHeadline="true" />
+                     class="tw:h-full"
+                     aria-live="polite">
+                    <x-globals::feedback.skeleton type="{{ $widget->widgetLoadingIndicator }}" count="1" includeHeadline="true" />
                 </div>
             </x-widgets::moveableWidget>
 
@@ -43,11 +45,40 @@
 @dispatchEvent('scripts.afterOpen')
 
 jQuery(document).ready(function() {
-
     leantime.widgetController.initGrid();
 
     @php(session(["usersettings.modals.homeDashboardTour" => 1]))
+});
 
+// Promote .widget-slot-actions from content into the stickyHeader
+// so action icons align with the three-dots menu.
+function promoteWidgetActions(root) {
+    if (!root) root = document;
+    root.querySelectorAll('.widget-slot-actions').forEach(function (slotActions) {
+        if (slotActions.closest('.stickyHeader')) return; // already promoted
+        var widgetEl = slotActions.closest('.grid-stack-item-content');
+        if (!widgetEl) return;
+        var headerTarget = widgetEl.querySelector('.widget-header-actions');
+        if (!headerTarget) return;
+        headerTarget.innerHTML = '';
+        headerTarget.appendChild(slotActions);
+    });
+}
+
+// Catch future HTMX swaps (widget refreshes, initial loads).
+if (!window._dashboardAfterSettleRegistered) {
+    window._dashboardAfterSettleRegistered = true;
+    document.body.addEventListener('htmx:afterSettle', function () {
+        promoteWidgetActions();
+    });
+}
+
+// Sweep for any widgets that loaded before the listener was ready.
+// Multiple passes cover slow-loading widgets.
+document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(promoteWidgetActions, 500);
+    setTimeout(promoteWidgetActions, 1500);
+    setTimeout(promoteWidgetActions, 3000);
 });
 </script>
 

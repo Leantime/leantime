@@ -1,4 +1,4 @@
-<div class="tw-flex tw-gap-base tw-justify-start">
+<div class="tw:flex tw:gap-base tw:justify-start">
     @foreach ($links as $link)
         @if (empty($link['display']))
             @continue

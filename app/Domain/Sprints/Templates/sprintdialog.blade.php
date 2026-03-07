@@ -1,0 +1,49 @@
+@php
+    $currentSprint = $tpl->get('sprint');
+    $id = isset($currentSprint->id) ? $currentSprint->id : '';
+    $currentProject = session('currentProject');
+@endphp
+
+<h4 class="widgettitle title-light"><x-global::elements.icon name="format_list_numbered" /> {{ __('label.sprint') }} {{ $currentSprint->name }}</h4>
+
+{!! $tpl->displayNotification() !!}
+
+<form class="formModal" method="post" action="{{ BASE_URL }}/sprints/editSprint/{{ $id }}">
+
+    <label>{{ __('label.sprint_name') }}</label>
+    <x-globals::forms.text-input name="name" value="{{ $currentSprint->name }}" placeholder="{{ __('label.sprint_name') }}" /><br />
+
+    <label>{{ __('label.project') }}</label>
+    <x-globals::forms.select name="projectId">
+        @foreach($allAssignedprojects as $project)
+            <option value="{{ $project['id'] }}"
+                {{ (isset($currentSprint) && ($currentSprint->projectId == $project['id'] || $currentProject == $project['id'])) || (!isset($currentSprint) && $currentProject == $project['id']) ? 'selected' : '' }}>{{ e($project['name']) }}</option>
+        @endforeach
+    </x-globals::forms.select><br />
+
+    <br /><br />
+    <p>{{ __('label.sprint_dates') }}</p><br/>
+    <label>{{ __('label.first_day') }}</label>
+    <x-globals::forms.date name="startDate" id="sprintStart" value="{{ format($currentSprint->startDate)->date() }}" placeholder="{{ __('language.dateformat') }}" /><br />
+
+    <label>{{ __('label.last_day') }}</label>
+    <x-globals::forms.date name="endDate" id="sprintEnd" value="{{ format($currentSprint->endDate)->date() }}" placeholder="{{ __('language.dateformat') }}" />
+
+    <br />
+
+    <div class="row">
+        <div class="col-md-6">
+            <x-globals::forms.button submit type="primary">{{ __('buttons.save') }}</x-globals::forms.button>
+        </div>
+        <div class="col-md-6 align-right padding-top-sm">
+            @if(isset($currentSprint->id) && $currentSprint->id != '' && $login::userIsAtLeast($roles::$editor))
+                <a href="{{ BASE_URL }}/sprints/delSprint/{{ $currentSprint->id }}" class="delete formModal sprintModal"><x-global::elements.icon name="delete" /> {{ __('links.delete_sprint') }}</a>
+            @endif
+        </div>
+    </div>
+
+</form>
+
+<script>
+    leantime.ticketsController.initSprintDates();
+</script>

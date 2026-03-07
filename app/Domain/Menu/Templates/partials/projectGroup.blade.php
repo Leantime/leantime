@@ -24,15 +24,15 @@
                 @if(!empty($project['children']) && count($project['children']) >0)
                     <a href="javascript:void(0);" class="toggler {{ $parentState }}" id="{{ $prefix }}-toggler-{{ $project["id"] }}" onclick="leantime.menuController.toggleProjectDropDownList('{{ $project["id"] }}', '', '{{ $prefix }}')">
                         @if($parentState == 'closed')
-                            <i class="fa fa-angle-right"></i>
+                            <x-global::elements.icon name="chevron_right" />
                         @else
-                            <i class="fa fa-angle-down"></i>
+                            <x-global::elements.icon name="expand_more" />
                         @endif
                     </a>
                 @endif
                 @include('menu::partials.projectLink')
 
-                <div class="clear"></div>
+                <div class="tw:clear-both"></div>
 
                 @if(!empty($project['children']) && count($project['children']) >0)
                     @include('menu::partials.projectGroup', ['projects' => $project['children'], 'parent' => $project['id'], 'level'=> $level+1, 'prefx' => $prefix, "currentProject"=>$currentProject])

@@ -4,9 +4,9 @@
  * Provides @mentions functionality with user autocomplete
  */
 
-const Mention = require('@tiptap/extension-mention').default;
-const { PluginKey } = require('@tiptap/pm/state');
-const { mergeAttributes } = require('@tiptap/core');
+import Mention from '@tiptap/extension-mention';
+import { PluginKey } from '@tiptap/pm/state';
+import { mergeAttributes } from '@tiptap/core';
 
 /**
  * Extended Mention extension that outputs data-tagged-user-id for backend notifications
@@ -327,7 +327,4 @@ function createMentionExtension() {
 }
 
 // Export for use in main module
-module.exports = {
-    createMentionExtension: createMentionExtension,
-    fetchUsers: fetchUsers
-};
+export { createMentionExtension, fetchUsers };

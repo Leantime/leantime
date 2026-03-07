@@ -120,7 +120,7 @@
     }
 </style>
 
-<div id="game-area" tabindex="0" ></div>
+<div id="game-area" tabindex="0" role="application" aria-label="Snake game" class="tw:focus-visible:outline tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-[var(--accent1)]"></div>
 
 
 <script>

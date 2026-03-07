@@ -214,6 +214,10 @@ class IdeaDialog extends Controller
 
                     $this->projectService->notifyProjectUsers($notification);
 
+                    if (isset($_POST['save']) && $_POST['save'] == 'closeModal') {
+                        return response('', 200, ['HX-Trigger' => 'HTMX.closemodal']);
+                    }
+
                     return Frontcontroller::redirect(BASE_URL.'/ideas/ideaDialog/'.(int) $params['itemId']);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
@@ -258,6 +262,10 @@ class IdeaDialog extends Controller
                     $this->projectService->notifyProjectUsers($notification);
 
                     $this->tpl->setNotification($this->language->__('notification.idea_created'), 'success', 'idea_created');
+
+                    if (isset($_POST['save']) && $_POST['save'] == 'closeModal') {
+                        return response('', 200, ['HX-Trigger' => 'HTMX.closemodal']);
+                    }
 
                     return Frontcontroller::redirect(BASE_URL.'/ideas/ideaDialog/'.(int) $id);
                 } else {
