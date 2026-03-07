@@ -2,7 +2,7 @@
     <div class="grid-stack-item-content {{ ($background == "default") ? "maincontentinner" : $background  }} tw:p-none">
         <div class="tw:flex tw:flex-col tw:h-full {{ ($background == "default") ? "tw:pb-l" : "" }}">
             @if(empty($fixed))
-            <div class="stickyHeader" style="display:flex; align-items:center; gap:10px; padding:10px 15px; min-height:46px; width:100%;">
+            <div class="stickyHeader" style="display:flex; align-items:center; gap:10px; min-height:46px; width:100%;">
 
                 <div class="grid-handler-top" style="cursor:grab; flex-shrink:0; display:flex; align-items:center;">
                     <x-global::elements.icon name="drag_indicator" />

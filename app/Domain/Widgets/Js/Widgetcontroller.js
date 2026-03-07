@@ -232,7 +232,7 @@ leantime.widgetController = (function () {
     var buildWidget = function(widget) {
         return '<div class="widgetInner">' +
             '        <div class="' + (widget.widgetBackground == "default" ? "tw:pb-l" : "") + '">\n' +
-            '            <div class="stickyHeader" style="padding:15px; height:50px;  width:100%;">\n' +
+            '            <div class="stickyHeader" style="height:50px;  width:100%;">\n' +
             '               <div class="grid-handler-top tw:h-[40px] tw:cursor-grab tw:float-left tw:mr-sm">\n' +
             '                    <span class="material-symbols-outlined">drag_indicator</span>\n' +
             '                </div>\n' +
