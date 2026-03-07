@@ -151,24 +151,24 @@
                                 @if ($login::userIsAtLeast($roles::$editor))
                                     {{-- Editable Title with Icon Picker --}}
                                     <div class="wiki-title-wrapper" id="wikiTitleWrapper">
-                                        <div class="wiki-icon-picker">
-                                            <button data-selected="graduation-cap" type="button"
+                                        <div class="btn-group wiki-icon-picker">
+                                            <div tabindex="0" role="button" data-selected="graduation-cap"
                                                     class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker"
                                                     data-toggle="dropdown"
                                                     title="Change icon">
                                                 <span class="iconPlaceholder"><i class="{{ $tpl->escape($currentArticle->data ?: 'fa fa-file-alt') }}"></i></span>
-                                                <span class="wiki-icon-caret"><x-global::elements.icon name="expand_more" /></span>
-                                            </button>
+                                                <span class="caret"></span>
+                                            </div>
                                             <div class="dropdown-menu"></div>
                                         </div>
-                                        <input type="hidden" id="wikiArticleIcon" class="articleIcon" value="{{ $tpl->escape($currentArticle->data) }}" />
+                                        <input type="hidden" id="wikiArticleIcon" class="articleIcon" value="{{ $currentArticle->data }}" />
                                         <input type="text"
                                                id="wikiTitleEditable"
                                                class="wiki-title-editable main-title-input"
-                                               value="{{ $tpl->escape($currentArticle->title) }}"
-                                               data-original="{{ $tpl->escape($currentArticle->title) }}"
+                                               value="{{ $currentArticle->title }}"
+                                               data-original="{{ $currentArticle->title }}"
                                                placeholder="{{ __('input.placeholders.wiki_title') }}"
-                                               style="width:80%" autocomplete="off" />
+                                               autocomplete="off" />
                                     </div>
 
                                     {{-- Editable Tags --}}
