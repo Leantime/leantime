@@ -959,7 +959,7 @@
     "isEntry": true
   },
   "resources/js/compiled-app.js": {
-    "file": "assets/compiled-app-DMxnJZEk.js",
+    "file": "assets/compiled-app-BZ-w-vjf.js",
     "name": "compiled-app",
     "src": "resources/js/compiled-app.js",
     "isEntry": true,
@@ -1023,12 +1023,12 @@
     "isEntry": true
   },
   "resources/js/compiled-gantt-component.js": {
-    "file": "assets/compiled-gantt-component-CwZcTvdC.js",
+    "file": "assets/compiled-gantt-component-CzTn3gOf.js",
     "name": "compiled-gantt-component",
     "src": "resources/js/compiled-gantt-component.js",
     "isEntry": true,
     "css": [
-      "assets/compiled-gantt-component-B9t_i-ee.css"
+      "assets/compiled-gantt-component-pyZiE347.css"
     ]
   },
   "resources/js/compiled-global-component.js": {

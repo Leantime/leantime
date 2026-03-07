@@ -105,8 +105,9 @@
     cursor: grab;
     /* Full row-height bar so it's easy to grab — visually distinct via opacity */
     height: 22px !important;
-    top: 50% !important;
-    transform: translateY(-50%);
+    /* Let Emboss's inline top value position the bar on the correct row;
+       nudge up slightly so the taller bar stays vertically centred in its row */
+    margin-top: -8px;
     border-radius: var(--emboss-bar-radius, 6px) !important;
     opacity: 0.35 !important;
 }
