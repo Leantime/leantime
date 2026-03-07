@@ -71,9 +71,7 @@
 }
 
 
-.ticketBox:hover .kanbanContent:before {
-    background: linear-gradient(transparent, var(--main-menu-link-hover-bg) 70% 100%);
-}
+
 
 .ticketBox h4 a {
     font-weight: var(--font-weight-bold);
@@ -571,9 +569,7 @@ body .maincontent .priority-text-5 a:link {
     position:relative;
 }
 
-.kanbanContent:before {
 
-}
 
 /* ============================================
    SWIMLANE ROW HEADERS - PRD v2 COMPLIANT

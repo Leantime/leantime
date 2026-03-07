@@ -211,7 +211,7 @@
                         </span>
                     </x-slot>
                     <x-slot name="actionlink">
-                        <x-globals::forms.button link="javascript:void(0);" type="link" icon="add_circle" class="add-task-button" style="padding:0px; width:44px; height:44px; min-width:44px; min-height:44px; line-height:44px; display:inline-flex; align-items:center; justify-content:center; font-weight:bold; text-align: center; font-size:var(--font-size-l);" data-group="{{ $groupKey }}"></x-globals::forms.button>
+                        <x-globals::forms.button link="javascript:void(0);" variant="icon-only" icon="add_circle" class="add-task-button" data-group="{{ $groupKey }}"></x-globals::forms.button>
                     </x-slot>
                     <x-slot name="content">
                         <!-- Quick Add Form for this group -->

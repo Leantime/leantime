@@ -3175,6 +3175,11 @@ body a.btn-link.btn-fancy:hover {
     overflow: auto;
 }
 
+/* Welcome widget header icons inherit the title color (white on gradient bg) */
+.welcome-widget .btn-icon-only {
+    color: var(--main-titles-color);
+}
+
 /* Widget sticky header layout */
 .stickyHeader {
     display: flex;

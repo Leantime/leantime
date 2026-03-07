@@ -263,7 +263,7 @@ a.barmenu:hover {
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {
     text-decoration: none;
-    background-color: var(--main-menu-link-hover-bg);
+    background-color: var(--hover-bg);
     color: var(--nav-link-color);
 }
 
@@ -382,13 +382,13 @@ a.barmenu:hover {
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
-    background: var(--main-menu-link-hover-bg);
+    background: var(--hover-bg);
 
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {
     text-decoration: none;
-    background:var(--main-menu-link-hover-bg);
+    background: var(--hover-bg);
 }
 
 .fixedMenuPoint {
@@ -994,12 +994,12 @@ a.barmenu:hover {
 
 .notificationDropdown .dropdown-menu li:hover {
     cursor:pointer;
-    background:var(--main-menu-link-hover-bg);
+    background: var(--hover-bg);
 }
 
 .notificationDropdown .dropdown-menu li a:hover {
     cursor:pointer;
-    background:var(--main-menu-link-hover-bg);
+    background: var(--hover-bg);
 }
 
 .notificationDropdown .dropdown-menu li .notificationProfileImage img {

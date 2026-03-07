@@ -16,9 +16,9 @@
             👋 {{ __('text.hi') }} {{ session()->get("userdata.name") }}
 
             <div class="pull-right">
-                <x-globals::forms.button link="{{ BASE_URL }}/users/editOwn#theme" type="link" icon="palette" style="color:var(--main-titles-color); padding:0px; width:44px; height:44px; min-width:44px; min-height:44px; display:inline-flex; align-items:center; justify-content:center; text-align: center;" data-tippy-content="{{ __('text.update_theme') }}" hx-boost="false"></x-globals::forms.button>
+                <x-globals::forms.button link="{{ BASE_URL }}/users/editOwn#theme" variant="icon-only" icon="palette" data-tippy-content="{{ __('text.update_theme') }}" hx-boost="false"></x-globals::forms.button>
 
-                <x-globals::forms.button link="#/widgets/widgetManager" type="link" icon="settings" style="color:var(--main-titles-color); padding:0px; width:44px; height:44px; min-width:44px; min-height:44px; display:inline-flex; align-items:center; justify-content:center; text-align: center;" data-tippy-content="{{ __('text.update_dashboard') }}">
+                <x-globals::forms.button link="#/widgets/widgetManager" variant="icon-only" icon="settings" data-tippy-content="{{ __('text.update_dashboard') }}">
                     @if($showSettingsIndicator)
                         <span class='new-indicator'></span>
                     @endif
