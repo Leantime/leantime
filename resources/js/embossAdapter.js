@@ -329,6 +329,57 @@ leantime.embossAdapter = (function () {
         return { rows: rows, projectStart: projectStart };
     }
 
+    /**
+     * Flat conversion for program/portfolio timelines.
+     * No milestone sandwich grouping — every item is a standalone bar.
+     * Dependencies render as arrows but don't create parent/child nesting.
+     */
+    function convertTasksFlat(tasks) {
+        var projectStart = computeProjectStart(tasks);
+        var rows = [];
+
+        for (var i = 0; i < tasks.length; i++) {
+            var t = tasks[i];
+            var startDate = parseDate(t.start);
+            var endDate = parseDate(t.end);
+            var dayOffset = daysBetween(projectStart, startDate);
+            var duration = Math.max(7, daysBetween(startDate, endDate));
+            var progress = parseFloat(t.progress) || 0;
+
+            var deps = [];
+            if (t.dependencies && t.dependencies !== '' && t.dependencies !== '-1') {
+                deps = String(t.dependencies).split(',').map(function (d) { return d.trim(); }).filter(Boolean);
+            }
+
+            var status = 'upcoming';
+            if (progress >= 100) status = 'done';
+            else if (progress > 0) status = 'active';
+
+            rows.push({
+                id: String(t.id),
+                type: 'task',
+                name: t.name || '',
+                start: dayOffset,
+                duration: duration,
+                progress: progress,
+                depth: 0,
+                parentId: null,
+                collapsed: false,
+                hidden: false,
+                status: status,
+                dependencies: deps,
+                phaseColor: resolvePhaseColor(t.bg_color),
+                _ltId: t.id,
+                _ltType: t.type,
+                _ltProjectName: t.projectName || null,
+                _ltSortIndex: t.sortIndex,
+                _ltThumbnail: t.thumbnail || null,
+            });
+        }
+
+        return { rows: rows, projectStart: projectStart };
+    }
+
     // ── Emboss day offset → Leantime date string ─────────────────────────
 
     function offsetToSQL(dayOffset, projectStart) {
@@ -791,30 +842,41 @@ leantime.embossAdapter = (function () {
     function init(selector, leantimeTasks, options) {
         options = options || {};
 
-        var converted = convertTasks(leantimeTasks);
+        var entityType = options.entityType || 'ticket';
+
+        // Program/portfolio timelines use flat rows (no milestone sandwich)
+        var converted = entityType === 'project'
+            ? convertTasksFlat(leantimeTasks)
+            : convertTasks(leantimeTasks);
         var rows = converted.rows;
         var projectStart = converted.projectStart;
 
         var viewMode = VIEW_MAP[options.viewMode] || options.viewMode || 'month';
         var readonly = options.readonly || false;
         var viewSettingKey = options.viewSettingKey || 'roadmap';
-        var entityType = options.entityType || 'ticket';
         var sortApiUrl = options.sortApiUrl || null;
 
         // Build extensions list
+        var isFlat = entityType === 'project';
         var extensions = [
             todayMarker,
             dependencyArrows,
             tooltips,
-            phases,
-            milestones,
         ];
+        // Phase/milestone extensions only for ticket-based views (roadmap)
+        if (!isFlat) {
+            extensions.push(phases);
+            extensions.push(milestones);
+        }
 
         // Add sidebar + columns for non-readonly views
+        // Flat mode (program timeline) gets sidebar but no inline edit or columns
         if (!readonly) {
             extensions.push(sidebar);
-            extensions.push(inlineEdit);
-            extensions.push(columns);
+            if (!isFlat) {
+                extensions.push(inlineEdit);
+                extensions.push(columns);
+            }
         }
 
         // Enable vivid mode so phaseColor heuristics apply

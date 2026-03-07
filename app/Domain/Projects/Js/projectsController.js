@@ -270,204 +270,21 @@ leantime.projectsController = (function () {
     };
 
 
-    var initGanttChart = function (projects, viewMode, readonly) {
-
-        function htmlEntities(str)
-        {
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-        }
-
-        document.addEventListener('DOMContentLoaded',
-            function () {
-
-                if (readonly === false) {
-                    var gantt_chart = new Gantt(
-                        "#gantt",
-                        projects,
-                        {
-                            header_height: 55,
-                            column_width: 20,
-                            step: 24,
-                            view_modes: ['Day', 'Week', 'Month'],
-                            bar_height: 40,
-                            static_progress_indicator: true,
-                            bar_corner_radius: 10,
-                            arrow_curve: 10,
-                            padding:20,
-                            view_mode: 'Month',
-                            date_format: leantime.i18n.__("language.momentJSDate"),
-                            language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
-                            additional_rows: 5,
-                            custom_popup_html: function (project) {
-
-                                // the task object will contain the updated
-                                // dates and progress value
-                                var end_date = project._end;
-
-                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
-
-                                if (project.projectName !== undefined) {
-                                    popUpHTML +=  '<h3><b>' + project.name + '</b></h3>';
-                                }
-
-                                popUpHTML += '<h4>' + htmlEntities(project.name) + '</a></h4><br /> ';
-
-                                popUpHTML += '</div>';
-
-                                return popUpHTML;
-                            },
-                            on_click: function (project) {
-                                //_initModals();
-                            },
-                            on_date_change: function (project, start, end) {
-
-                                var idParts = project.id.split("-");
-
-                                let entityId = 0;
-                                let entityType = "";
-
-                                if (idParts.length > 1) {
-                                    if (idParts[0] == "ticket") {
-                                        entityId = idParts[1];
-                                        entityType = "ticket"
-                                    } else if (idParts[0] == "pgm") {
-                                        entityId = idParts[1];
-                                        entityType = "project"
-                                    }
-                                } else {
-                                    entityId = idParts;
-                                }
-
-
-                                if (entityType == "ticket") {
-                                    leantime.ticketsRepository.updateMilestoneDates(entityId, start, end, project._index+1);
-                                } else {
-                                    fetch(leantime.appUrl + '/api/projects', {
-                                        method: 'PATCH',
-                                        body: new URLSearchParams({
-                                            id: entityId,
-                                            start: start,
-                                            end: end,
-                                            sortIndex: project._index + 1,
-                                        }),
-                                        credentials: 'include',
-                                        headers: {
-                                            'Content-Type': 'application/x-www-form-urlencoded',
-                                            'X-Requested-With': 'XMLHttpRequest'
-                                        }
-                                    });
-                                }
-
-                                //leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index);
-                                //_initModals();
-
-                            },
-                            on_sort_change: function (projects) {
-
-                                var statusPostData = {
-                                    action: "ganttSort",
-                                    payload: {}
-                                };
-
-                                for (var i = 0; i < projects.length; i++) {
-                                    statusPostData.payload[projects[i].id] = projects[i]._index+1;
-                                }
-
-                                fetch(leantime.appUrl + '/api/projects', {
-                                    method: 'POST',
-                                    body: new URLSearchParams(flattenForURLSearchParams(statusPostData)),
-                                    credentials: 'include',
-                                    headers: {
-                                        'Content-Type': 'application/x-www-form-urlencoded',
-                                        'X-Requested-With': 'XMLHttpRequest'
-                                    }
-                                });
-
-                            },
-                            on_progress_change: function (project, progress) {
-
-                                //_initModals();
-                            },
-                            on_view_change: function (mode) {
-
-                                leantime.usersRepository.updateUserViewSettings("projectGantt", mode);
-
-                            },
-                            on_popup_show: function (project) {
-
-                            }
-                        }
-                    );
-                } else {
-                    var gantt_chart = new Gantt(
-                        "#gantt",
-                        projects,
-                        {
-                            readonlyGantt: true,
-                            resizing: false,
-                            progress: false,
-                            is_draggable: false,
-                            custom_popup_html: function (project) {
-                                var end_date = project._end;
-
-                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
-
-                                if (project.projectName !== undefined) {
-                                    popUpHTML +=  '<h3><b>' + project.name + '</b></h3>';
-                                }
-
-                                popUpHTML += '<h4>' + htmlEntities(project.name) + '</a></h4><br /> ';
-
-                                popUpHTML += '</div>';
-
-                                return popUpHTML;
-                            },
-                            on_click: function (project) {
-
-                            },
-                            on_date_change: function (project, start, end) {
-
-
-                            },
-                            on_progress_change: function (project, progress) {
-
-                                //_initModals();
-                            },
-                            on_view_change: function (mode) {
-
-                                leantime.usersRepository.updateUserViewSettings("projectGantt", mode);
-
-                            }
-                        }
-                    );
-                }
-
-                var ganttTimeControl = document.querySelector("#ganttTimeControl");
-                if (ganttTimeControl) {
-                    ganttTimeControl.addEventListener("click", function (e) {
-                        var link = e.target.closest("a");
-                        if (!link) return;
-
-                        var mode = link.getAttribute("data-value");
-                        gantt_chart.change_view_mode(mode);
-                        ganttTimeControl.querySelectorAll('a').forEach(function (a) {
-                            a.classList.remove('active');
-                        });
-                        link.classList.add('active');
-                        var label = link.textContent;
-                        document.querySelectorAll(".viewText").forEach(function (el) {
-                            el.textContent = label;
-                        });
-                    });
-                }
-
-                if (gantt_chart) {
-                    gantt_chart.change_view_mode(viewMode);
-                }
-
+    var initGanttChart = function (projects, viewMode, readonly, viewSettingKey) {
+        // Emboss adapter lives in a deferred ES module chunk that may not have
+        // executed yet when an inline <script> calls this. Use jQuery ready
+        // (fires after all deferred modules) as the safest wait point.
+        jQuery(function () {
+            if (leantime.embossAdapter) {
+                leantime.embossAdapter.init('#gantt', projects, {
+                    viewMode: viewMode,
+                    readonly: readonly,
+                    viewSettingKey: viewSettingKey || 'projectGantt',
+                    entityType: 'project',
+                    sortApiUrl: leantime.appUrl + '/api/projects',
+                });
             }
-        );
-
+        });
     };
 
     /**
