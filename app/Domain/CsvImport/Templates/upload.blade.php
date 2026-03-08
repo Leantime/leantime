@@ -9,14 +9,14 @@
     <h2>Upload CSV file</h2>
     <p>You can upload CSVs to import or update Tasks, Projects, Goals. <a href="https://support.leantime.io/importing-data-via-csv" target="_blank">Check our documentation</a> to learn more about the formatting and to download templates</p>
     <br /><br/>
-    <div class="uploadWrapper" style="width:100%">
+    <div class="uploadWrapper tw:w-full">
 
         <form id="upload-form">
 
-        <div class="extra" style="margin-top:5px;"></div>
+        <div class="extra tw:mt-1"></div>
         <div class="fileUploadDrop">
             <p><i>{{ $tpl->__('text.drop_files') }}</i></p>
-            <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
+            <div class="file-upload-input tw:mx-auto tw:inline-block"></div>
         </div>
 
         <!-- Progress bar #1 -->

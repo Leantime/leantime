@@ -2,11 +2,7 @@
 
 @section('content')
 
-<x-globals::layout.page-header :icon="'person'">
-    <h5>{{ __('label.overview') }}</h5>
-    <h1>{!! __('headlines.accountSettings') !!}</h1>
-
-</x-globals::layout.page-header>
+<x-globals::layout.page-header icon="person" headline="{{ __('headlines.accountSettings') }}" subtitle="{{ __('label.overview') }}" />
 
 <div class="maincontent">
 
@@ -28,7 +24,7 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <form action="" method="post">
-                                    <h4 class="widgettitle title-light"><?php echo $tpl->__('label.profile_information'); ?></h4>
+                                    <x-globals::elements.section-title><?php echo $tpl->__('label.profile_information'); ?></x-globals::elements.section-title>
                                     <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                                     <div class="row-fluid">
                                         <x-globals::forms.form-field label-text="{{ __('label.firstname') }}" name="firstname">
@@ -52,7 +48,7 @@
                                             <x-globals::forms.button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
                                         </p>
                                         <br />
-                                        <h4 class="widgettitle title-light">{{ __('label.employee_information') }}</h4>
+                                        <x-globals::elements.section-title>{{ __('label.employee_information') }}</x-globals::elements.section-title>
                                         <em>{{ __('text.only_admins_can_change_user_info') }}</em><br /><br />
                                         <x-globals::forms.form-field label-text="{{ __('label.jobTitle') }}" name="jobTitle">
                                             <x-globals::forms.text-input :bare="true" name="jobTitle" id="jobTitle" :readonly="true" value="{{ $values['jobTitle'] }}" />
@@ -111,9 +107,7 @@
                     </div>
 
                     <div id="security">
-                        <h4 class="widgettitle title-light">
-                            {!! __('headlines.change_password') !!}
-                        </h4>
+                        <x-globals::elements.section-title>{!! __('headlines.change_password') !!}</x-globals::elements.section-title>
                         @if (session("userdata.isExternalAuth") )
                             <strong> {{  __("text.account_managed_external_auth") }}</strong><br /><br />
                         @endif
@@ -139,9 +133,7 @@
                             @endif
                         </form>
                         <br /><br />
-                        <h4 class="widgettitle title-light">
-                            <x-global::elements.icon name="shield" /> {{ __('headlines.twoFA') }}
-                        </h4>
+                        <x-globals::elements.section-title icon="shield">{{ __('headlines.twoFA') }}</x-globals::elements.section-title>
                         @if ($values['twoFAEnabled'] )
                             <p>{!!   __('text.twoFA_enabled') !!}</p>
                         @else
@@ -155,7 +147,7 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <x-globals::forms.form-field label-text="{{ __('label.language') }}" name="language">
-                                    <x-globals::forms.select :bare="true" name="language" id="language" style="width: 220px">
+                                    <x-globals::forms.select :bare="true" name="language" id="language" class="tw:w-56">
                                         @foreach ($languageList as $languagKey => $languageValue )
                                             <option value="{{ $languagKey }}"
                                                     @if ($userLang == $languagKey )
@@ -166,7 +158,7 @@
                                 </x-globals::forms.form-field>
 
                                 <x-globals::forms.form-field label-text="{{ __('label.date_format') }}" name="date_format">
-                                    <x-globals::forms.select :bare="true" name="date_format" id="date_format" style="width: 220px">
+                                    <x-globals::forms.select :bare="true" name="date_format" id="date_format" class="tw:w-56">
                                        @php
                                         $dateFormats = $dateTimeValues['dates'];
                                         $dateTimeNow = date_create();
@@ -181,7 +173,7 @@
                                 </x-globals::forms.form-field>
 
                                 <x-globals::forms.form-field label-text="{{ __('label.time_format') }}" name="time_format">
-                                    <x-globals::forms.select :bare="true" name="time_format" id="time_format" style="width: 220px">
+                                    <x-globals::forms.select :bare="true" name="time_format" id="time_format" class="tw:w-56">
                                         @php
                                             $timeFormats = $dateTimeValues['times'];
                                             $dateTimeNow = date_create();
@@ -196,7 +188,7 @@
                                 </x-globals::forms.form-field>
 
                                 <x-globals::forms.form-field label-text="{{ __('label.timezone') }}" name="timezone">
-                                    <x-globals::forms.select :bare="true" name="timezone" id="timezone" style="width: 220px">
+                                    <x-globals::forms.select :bare="true" name="timezone" id="timezone" class="tw:w-56">
                                         @foreach ($timezoneOptions as $tz)
                                             <option value="{{ $tz }}"
                                                     @if ($timezone === $tz )
@@ -217,11 +209,11 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <x-globals::forms.form-field label-text="Optimal Stimulation" name="themeSelect">
-                                    <div class="tw:flex" style="gap:10px;">
+                                    <div class="tw:flex tw:gap-2">
                                         <?php
                                         foreach ($availableThemes as $key => $theme) { ?>
                                             <x-globals::selectable selected="{{ ($userTheme == $key ? 'true' : 'false') }}" :id="''" :name="'theme'" :value="$key" :label="''" onclick="leantime.snippets.toggleBg('{{ $key }}')">
-                                               <img src="{{ BASE_URL }}/dist/images/background-{{$key}}.png" style="margin:0; border-radius:8px; width:180px;" />
+                                               <img src="{{ BASE_URL }}/dist/images/background-{{$key}}.png" class="tw:m-0 tw:rounded-lg tw:w-[180px]" />
                                                     <br /><?= $tpl->__($theme['name']) ?>
                                             </x-globals::selectable>
                                         <?php } ?>
@@ -232,14 +224,14 @@
 
                                 <x-globals::forms.form-field label-text="{{ __('label.colormode') }}" name="colormode">
                                     <x-globals::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
-                                        <div style="width:80px; height:60px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #fffbe6 0%, #ffe8a0 100%); border-radius:var(--element-radius);">
+                                        <div class="tw:w-[80px] tw:h-[60px] tw:flex tw:items-center tw:justify-center" style="background:linear-gradient(135deg, #fffbe6 0%, #ffe8a0 100%); border-radius:var(--element-radius);">
                                             <span style="font-size:30px; color:var(--yellow); line-height:1;">&#9679;</span>
                                         </div>
                                     </x-globals::selectable>
 
                                     <x-globals::selectable :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'" onclick="leantime.snippets.toggleTheme('dark')">
-                                        <div style="width:80px; height:60px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #1a2332 0%, #2c3e50 100%); border-radius:var(--element-radius);">
-                                            <x-global::elements.icon name="dark_mode" style="font-size:26px; color:var(--secondary-font-color); line-height:1;" />
+                                        <div class="tw:w-[80px] tw:h-[60px] tw:flex tw:items-center tw:justify-center" style="background:linear-gradient(135deg, #1a2332 0%, #2c3e50 100%); border-radius:var(--element-radius);">
+                                            <x-globals::elements.icon name="dark_mode" style="font-size:26px; color:var(--secondary-font-color); line-height:1;" />
                                         </div>
                                     </x-globals::selectable>
                                 </x-globals::forms.form-field>
@@ -260,7 +252,7 @@
                                 <hr />
 
                                 <x-globals::forms.form-field label-text="Color Scheme" name="colorscheme">
-                                    <div class="tw:flex tw:flex-wrap" style="gap:10px;">
+                                    <div class="tw:flex tw:flex-wrap tw:gap-2">
                                         @foreach($availableColorSchemes as $key => $scheme )
                                             <x-globals::selectable class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])"  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
                                                 <label for="color-{{ $key }}" class="colorCircle"
@@ -289,7 +281,7 @@
                                         label="{{ __('label.receive_notifications') }}" />
                                 </div>
                                 <x-globals::forms.form-field label-text="{{ __('label.messages_frequency') }}" name="messagesfrequency">
-                                    <x-globals::forms.select :bare="true" name="messagesfrequency" id="messagesfrequency" style="width: 220px">
+                                    <x-globals::forms.select :bare="true" name="messagesfrequency" id="messagesfrequency" class="tw:w-56">
                                         <option value="">--{{ __('label.choose_option') }}--</option>
                                          <option value="60"
                                                  @if ($values['messagesfrequency'] == "60" )
@@ -331,7 +323,7 @@
 
                             <hr />
 
-                            <h4 class="widgettitle title-light">{{ __('label.notification_event_types') }}</h4>
+                            <x-globals::elements.section-title>{{ __('label.notification_event_types') }}</x-globals::elements.section-title>
                             <p><small>{{ __('label.notification_event_types_description') }}</small></p>
                             <div class="tw:mb-4">
                                 @php
@@ -355,7 +347,7 @@
 
                             <hr />
 
-                            <h4 class="widgettitle title-light">{{ __('label.project_notifications') }}</h4>
+                            <x-globals::elements.section-title>{{ __('label.project_notifications') }}</x-globals::elements.section-title>
                             <p><small>{{ __('label.project_notifications_description') }}</small></p>
                             <div class="tw:max-w-lg tw:max-h-[350px] tw:overflow-y-auto tw:mb-5">
                                 @if (count($userProjects) > 0)

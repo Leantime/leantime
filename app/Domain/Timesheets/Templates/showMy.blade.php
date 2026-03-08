@@ -203,29 +203,21 @@ jQuery(document).ready(function(){
  });
 </script>
 
-<!-- page header -->
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="schedule" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('headline.overview') }}</h5>
-        <h1>{{ __('headline.my_timesheets') }}</h1>
-    </div>
-</div>
-<!-- page header -->
+<x-globals::layout.page-header icon="schedule" headline="{{ __('headline.my_timesheets') }}" subtitle="{{ __('headline.overview') }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMy" method="post" id="timesheetList">
-            <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
+            <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4 tw:p-5">
                 <div class="tw:flex tw:items-center tw:gap-1">
                     <span>{{ __('label.week_from') }}</span>
-                    <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek" aria-label="{{ __('label.previous_week') }}"><x-global::elements.icon name="chevron_left" /></a>
+                    <a href="javascript:void(0);" class="tw:text-base" id="prevWeek" aria-label="{{ __('label.previous_week') }}"><x-globals::elements.icon name="chevron_left" /></a>
                     <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->formatDateForUser() }}"/>
                     {{ __('label.until') }}
                     <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->addDays(6)->formatDateForUser() }}"/>
-                    <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek" aria-label="{{ __('label.next_week') }}"><x-global::elements.icon name="chevron_right" /></a>
+                    <a href="javascript:void(0);" class="tw:text-base" id="nextWeek" aria-label="{{ __('label.next_week') }}"><x-globals::elements.icon name="chevron_right" /></a>
                     <input type="hidden" name="search" value="1" />
                 </div>
 
@@ -236,7 +228,7 @@ jQuery(document).ready(function(){
                     <li><a href="{{ BASE_URL }}/timesheets/showMyList">{!! __('links.list_view') !!}</a></li>
                 </x-globals::actions.dropdown-menu>
 
-                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addEntryLink"><x-global::elements.icon name="add" /> {{ __('label.add_hours') }}</x-globals::forms.button>
+                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addEntryLink"><x-globals::elements.icon name="add" /> {{ __('label.add_hours') }}</x-globals::forms.button>
             </div>
             <style>
                 /* Dim auxiliary icons so hour values stay the focal point */
@@ -285,177 +277,175 @@ jQuery(document).ready(function(){
                     width: 100% !important;
                 }
             </style>
-            <div style="overflow-x: auto;">
-            <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
-                <colgroup>
-                      <col class="con0" >
-                      <col class="con1" >
-                      <col class="con0" >
-                      <col class="con1" >
-                      <col class="con0" >
-                      <col class="con1" >
-                      <col class="con0" >
-                      <col class="con1" >
-                      <col class="con0" >
-                      <col class="con1">
-                      <col class="con0">
+            <x-globals::elements.table :hover="true" id="dyntableX" class="timesheetTable tw:w-full">
+                <x-slot:head>
+                    <colgroup>
+                          <col class="con0" >
+                          <col class="con1" >
+                          <col class="con0" >
+                          <col class="con1" >
+                          <col class="con0" >
+                          <col class="con1" >
+                          <col class="con0" >
+                          <col class="con1" >
+                          <col class="con0" >
+                          <col class="con1">
+                          <col class="con0">
 
-                </colgroup>
-                <thead>
-                @php
-                    $days = explode(',', __('language.dayNamesShort'));
-                    // Make the first day of week monday, by shifting sunday to the back of the array.
-                    $days[] = array_shift($days);
-                @endphp
-                <tr>
-                    <th>{{ __('label.client_product') }}</th>
-                    <th>{{ __('subtitles.todo') }}</th>
-                    <th>{{ __('label.type') }}</th>
-                    @php $i = 0; @endphp
-                    @foreach ($days as $day)
-                        <th class="@if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) active @endif">
-                            {{ $day }}<br />
-                            {{ $dateFrom->addDays($i)->formatDateForUser() }}
-                            @php $i++; @endphp
-                        </th>
-                    @endforeach
-                    <th>{{ __('label.total') }}</th>
-                </tr>
-                </thead>
-                <tbody>
+                    </colgroup>
                     @php
-                        $colSum = [
-                            'day1' => 0,
-                            'day2' => 0,
-                            'day3' => 0,
-                            'day4' => 0,
-                            'day5' => 0,
-                            'day6' => 0,
-                            'day7' => 0,
-                        ];
+                        $days = explode(',', __('language.dayNamesShort'));
+                        // Make the first day of week monday, by shifting sunday to the back of the array.
+                        $days[] = array_shift($days);
                     @endphp
-                    {{-- @todo: move all this calculations into the service the timesheets class. --}}
-                    @foreach ($tpl->get('allTimesheets') as $timeRow)
-                        @php $timesheetId = 'new'; @endphp
-                            <tr class="gradeA timesheetRow">
-                                <td width="14%">{{ e($timeRow['clientName']) }} // {{ e($timeRow['name']) }}</td>
-                                <td width="14%">
-                                    <a href="#/tickets/showTicket/{{ $timeRow['ticketId'] }}">{{ e($timeRow['headline']) }}</a>
-                                </td>
-                                <td width="10%">
-                                {{ __($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']) }}
-                            @if ($timeRow['hasTimesheetOffset'])
-                                    <x-global::elements.icon name="history" style="float: right; font-size: 12px;"
-                                       data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone" />
+                    <tr>
+                        <th>{{ __('label.client_product') }}</th>
+                        <th>{{ __('subtitles.todo') }}</th>
+                        <th>{{ __('label.type') }}</th>
+                        @php $i = 0; @endphp
+                        @foreach ($days as $day)
+                            <th class="@if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) active @endif">
+                                {{ $day }}<br />
+                                {{ $dateFrom->addDays($i)->formatDateForUser() }}
+                                @php $i++; @endphp
+                            </th>
+                        @endforeach
+                        <th>{{ __('label.total') }}</th>
+                    </tr>
+                </x-slot:head>
+
+                @php
+                    $colSum = [
+                        'day1' => 0,
+                        'day2' => 0,
+                        'day3' => 0,
+                        'day4' => 0,
+                        'day5' => 0,
+                        'day6' => 0,
+                        'day7' => 0,
+                    ];
+                @endphp
+                {{-- @todo: move all this calculations into the service the timesheets class. --}}
+                @foreach ($tpl->get('allTimesheets') as $timeRow)
+                    @php $timesheetId = 'new'; @endphp
+                        <tr class="gradeA timesheetRow">
+                            <td width="14%">{{ e($timeRow['clientName']) }} // {{ e($timeRow['name']) }}</td>
+                            <td width="14%">
+                                <a href="#/tickets/showTicket/{{ $timeRow['ticketId'] }}">{{ e($timeRow['headline']) }}</a>
+                            </td>
+                            <td width="10%">
+                            {{ __($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']) }}
+                        @if ($timeRow['hasTimesheetOffset'])
+                                <x-globals::elements.icon name="history" class="tw:float-right tw:text-[12px]"
+                                   data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone" />
+                        @endif
+                            </td>
+
+                        @foreach (array_keys($timeRow) as $dayKey)
+                            @if (str_starts_with($dayKey, 'day'))
+                                @php $colSum[$dayKey] = ($colSum[$dayKey] ?? 0) + $timeRow[$dayKey]['hours']; @endphp
+
+                                    <td width="7%" class="row{{ $dayKey }}@if ($timeRow[$dayKey]['start']->setToUserTimezone()->isToday()) active @endif">
+
+
+                                        @php
+                                            $inputNameKey = $timeRow['ticketId'].'|'.$timeRow['kind'].'|'.($timeRow[$dayKey]['actualWorkDate'] ? $timeRow[$dayKey]['actualWorkDate']->formatDateForUser() : 'false').'|'.($timeRow[$dayKey]['actualWorkDate'] ? $timeRow[$dayKey]['actualWorkDate']->getTimestamp() : 'false');
+                                        @endphp
+                                        <input type="text"
+                                               class="hourCell"
+                                               aria-label="{{ e($timeRow['headline'] ?? '') }} - {{ $timeRow[$dayKey]['start']->formatDateForUser() }}"
+                                               @if (empty($timeRow[$dayKey]['actualWorkDate']))
+                                                   disabled='disabled'
+                                               @endif
+                                               name="{{ $inputNameKey }}"
+                                               value="{{ $timeRow[$dayKey]['hours'] }}"
+                                                @if (empty($timeRow[$dayKey]['actualWorkDate']))
+                                                    data-tippy-content="Cannot add time entry in previous timezone"
+                                                @endif
+                                        />
+
+                                        @if (! empty($timeRow[$dayKey]['description']))
+                                            <x-globals::elements.icon name="info" data-tippy-content="{{ e($timeRow[$dayKey]['description']) }}" />
+                                        @endif
+                                    </td>
                             @endif
-                                </td>
-
-                            @foreach (array_keys($timeRow) as $dayKey)
-                                @if (str_starts_with($dayKey, 'day'))
-                                    @php $colSum[$dayKey] = ($colSum[$dayKey] ?? 0) + $timeRow[$dayKey]['hours']; @endphp
-
-                                        <td width="7%" class="row{{ $dayKey }}@if ($timeRow[$dayKey]['start']->setToUserTimezone()->isToday()) active @endif">
-
-
-                                            @php
-                                                $inputNameKey = $timeRow['ticketId'].'|'.$timeRow['kind'].'|'.($timeRow[$dayKey]['actualWorkDate'] ? $timeRow[$dayKey]['actualWorkDate']->formatDateForUser() : 'false').'|'.($timeRow[$dayKey]['actualWorkDate'] ? $timeRow[$dayKey]['actualWorkDate']->getTimestamp() : 'false');
-                                            @endphp
-                                            <input type="text"
-                                                   class="hourCell"
-                                                   aria-label="{{ e($timeRow['headline'] ?? '') }} - {{ $timeRow[$dayKey]['start']->formatDateForUser() }}"
-                                                   @if (empty($timeRow[$dayKey]['actualWorkDate']))
-                                                       disabled='disabled'
-                                                   @endif
-                                                   name="{{ $inputNameKey }}"
-                                                   value="{{ $timeRow[$dayKey]['hours'] }}"
-                                                    @if (empty($timeRow[$dayKey]['actualWorkDate']))
-                                                        data-tippy-content="Cannot add time entry in previous timezone"
-                                                    @endif
-                                            />
-
-                                            @if (! empty($timeRow[$dayKey]['description']))
-                                                <x-global::elements.icon name="info" data-tippy-content="{{ e($timeRow[$dayKey]['description']) }}" />
-                                            @endif
-                                        </td>
-                                @endif
-                            @endforeach
-
-                                <td width="7%" class="rowSum"><strong>{{ $timeRow['rowSum'] }}</strong></td>
-                            </tr>
                         @endforeach
 
-                        <!-- Row to add new time registration -->
-                        <tr class="gradeA timesheetRow newEntryRow">
-                            <td width="14%">
-                                <div class="form-group" id="projectSelect">
-                                    <x-globals::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" style="width:100%;" class="project-select" >
-                                        <option value="">{{ __('input.placeholders.choose_project') }}</option>
-                                        @foreach ($tpl->get('allProjects') as $projectRow)
-                                            {!! sprintf(
-                                                $tpl->dispatchTplFilter(
-                                                    'client_product_format',
-                                                    '<option value="%s">%s / %s</option>'
-                                                ),
-                                                ...$tpl->dispatchTplFilter(
-                                                    'client_product_values',
-                                                    [
-                                                        $projectRow['id'],
-                                                        $tpl->escape($projectRow['clientName']),
-                                                        $tpl->escape($projectRow['name']),
-                                                    ]
-                                                )
-                                            ) !!}
-                                        @endforeach
-                                    </x-globals::forms.select>
-                                </div>
-                            </td>
-                            <td width="14%">
-                                <div class="form-group" id="ticketSelect">
-                                    <x-globals::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" style="width:100%;" class="ticket-select" name="ticketId">
-                                        <option value="">{{ __('input.placeholders.choose_todo') }}</option>
-                                        @foreach ($tpl->get('allTickets') as $ticketRow)
-                                            @if (in_array($ticketRow['id'], $tpl->get('existingTicketIds')))
-                                                @continue
-                                            @endif
-                                            {!! sprintf(
-                                                $tpl->dispatchTplFilter(
-                                                    'todo_format',
-                                                    '<option value="%1$s" data-value="%2$s" class="project_%2$s">%1$s / %3$s</option>'
-                                                ),
-                                                ...$tpl->dispatchTplFilter(
-                                                    'todo_values',
-                                                    [
-                                                        $ticketRow['id'],
-                                                        $ticketRow['projectId'],
-                                                        $tpl->escape($ticketRow['headline']),
-                                                    ]
-                                                )
-                                            ) !!}
-                                        @endforeach
-                                    </x-globals::forms.select>
-                                </div>
-                            </td>
-                            <td width="14%">
-                                <x-globals::forms.select :bare="true" class="kind-select" name="kindId" style="width:100%;">
-                                        @foreach ($tpl->get('kind') as $key => $kindRow)
-                                            <option value="{{ $key }}">{{ __($kindRow) }}</option>
-                                        @endforeach
-                                    </x-globals::forms.select>
-                            </td>
-
-                            @php $i = 0; @endphp
-                            @foreach ($days as $day)
-                                <td width="7%" class="rowday{{ $i + 1 }}@if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) active @endif">
-                                    <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|{{ $dateFrom->addDays($i)->formatDateForUser() }}|{{ $dateFrom->addDays($i)->getTimestamp() }}" value="0" />
-                                </td>
-                                @php $i++; @endphp
-                            @endforeach
+                            <td width="7%" class="rowSum"><strong>{{ $timeRow['rowSum'] }}</strong></td>
                         </tr>
-                </tbody>
+                    @endforeach
 
-                <tfoot>
-                    <tr style="font-weight:bold;">
-                        <td colspan="3" style="text-align:right; padding-right:10px;">{{ __('label.total') }}</td>
+                    <!-- Row to add new time registration -->
+                    <tr class="gradeA timesheetRow newEntryRow">
+                        <td width="14%">
+                            <div class="form-group" id="projectSelect">
+                                <x-globals::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" class="project-select tw:w-full">
+                                    <option value="">{{ __('input.placeholders.choose_project') }}</option>
+                                    @foreach ($tpl->get('allProjects') as $projectRow)
+                                        {!! sprintf(
+                                            $tpl->dispatchTplFilter(
+                                                'client_product_format',
+                                                '<option value="%s">%s / %s</option>'
+                                            ),
+                                            ...$tpl->dispatchTplFilter(
+                                                'client_product_values',
+                                                [
+                                                    $projectRow['id'],
+                                                    $tpl->escape($projectRow['clientName']),
+                                                    $tpl->escape($projectRow['name']),
+                                                ]
+                                            )
+                                        ) !!}
+                                    @endforeach
+                                </x-globals::forms.select>
+                            </div>
+                        </td>
+                        <td width="14%">
+                            <div class="form-group" id="ticketSelect">
+                                <x-globals::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" class="ticket-select tw:w-full" name="ticketId">
+                                    <option value="">{{ __('input.placeholders.choose_todo') }}</option>
+                                    @foreach ($tpl->get('allTickets') as $ticketRow)
+                                        @if (in_array($ticketRow['id'], $tpl->get('existingTicketIds')))
+                                            @continue
+                                        @endif
+                                        {!! sprintf(
+                                            $tpl->dispatchTplFilter(
+                                                'todo_format',
+                                                '<option value="%1$s" data-value="%2$s" class="project_%2$s">%1$s / %3$s</option>'
+                                            ),
+                                            ...$tpl->dispatchTplFilter(
+                                                'todo_values',
+                                                [
+                                                    $ticketRow['id'],
+                                                    $ticketRow['projectId'],
+                                                    $tpl->escape($ticketRow['headline']),
+                                                ]
+                                            )
+                                        ) !!}
+                                    @endforeach
+                                </x-globals::forms.select>
+                            </div>
+                        </td>
+                        <td width="14%">
+                            <x-globals::forms.select :bare="true" class="kind-select tw:w-full" name="kindId">
+                                    @foreach ($tpl->get('kind') as $key => $kindRow)
+                                        <option value="{{ $key }}">{{ __($kindRow) }}</option>
+                                    @endforeach
+                                </x-globals::forms.select>
+                        </td>
+
+                        @php $i = 0; @endphp
+                        @foreach ($days as $day)
+                            <td width="7%" class="rowday{{ $i + 1 }}@if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) active @endif">
+                                <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|{{ $dateFrom->addDays($i)->formatDateForUser() }}|{{ $dateFrom->addDays($i)->getTimestamp() }}" value="0" />
+                            </td>
+                            @php $i++; @endphp
+                        @endforeach
+                    </tr>
+
+                <x-slot:foot>
+                    <tr class="tw:font-bold">
+                        <td colspan="3" class="tw:text-right tw:pr-[10px]">{{ __('label.total') }}</td>
                         @php $totalHours = 0; @endphp
                         @foreach ($colSum as $key => $col)
                             @php $totalHours += $col; @endphp
@@ -463,10 +453,10 @@ jQuery(document).ready(function(){
                         @endforeach
                         <td id="finalSum">{{ $totalHours }}</td>
                     </tr>
-                </tfoot>
-            </table>
-            </div>
-            <div class="tw:flex tw:justify-end tw:mt-4">
+                </x-slot:foot>
+            </x-globals::elements.table>
+
+            <div class="tw:flex tw:justify-end tw:mt-4 tw:p-5">
                 <x-globals::forms.button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">Save</x-globals::forms.button>
             </div>
         </form>

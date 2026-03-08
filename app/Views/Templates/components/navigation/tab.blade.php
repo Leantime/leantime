@@ -17,5 +17,5 @@
        @if($active) aria-selected="true" @endif
        @if($isPanel) onclick="event.stopPropagation()" @endif
        {{ $attributes }}
-    >@if($icon)<x-global::elements.icon :name="$icon" /> @endif{{ $label ?: $slot }}</a>
+    >@if($icon)<x-globals::elements.icon :name="$icon" /> @endif{{ $label ?: $slot }}</a>
 </li>

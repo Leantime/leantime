@@ -1,6 +1,6 @@
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light"><x-global::elements.icon name="calendar_add_on" /> {{ __('label.edit_ical') }}</h4>
+<x-globals::elements.section-title icon="calendar_add_on">{{ __('label.edit_ical') }}</x-globals::elements.section-title>
 {!!  __('label.import_ical_content')  !!}
 
 
@@ -11,14 +11,14 @@
     <x-globals::forms.text-input name="name" id="name" autocomplete="off" value="{{ $values['name'] }}" /><br />
 
     <label for="url">{{ $tpl->__('label.ical_url') }}:</label>
-    <x-globals::forms.text-input name="url" id="url" autocomplete="off" style="width:300px;" value="{{ $values['url'] }}" /><br />
+    <x-globals::forms.text-input name="url" id="url" autocomplete="off" class="tw:w-72" value="{{ $values['url'] }}" /><br />
 
     <label for="color">{{ $tpl->__('label.color') }}:</label>
     <input type="text" name="colorClass" autocomplete="off" value="{{ $values['colorClass'] }}"  class="simpleColorPicker"/>
 
     @dispatchEvent('beforeSubmitButton')
     <br /><br />
-    <x-globals::forms.button submit type="secondary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
+    <x-globals::forms.button :submit="true" contentRole="secondary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
 
 
 

@@ -2,39 +2,29 @@
     use Leantime\Core\Support\FromFormat;
 @endphp
 
-<!-- page header -->
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="schedule" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('headline.overview') }}</h5>
-        <h1>{{ __('headline.my_timesheets') }}</h1>
-    </div>
-</div>
-<!-- page header -->
+<x-globals::layout.page-header icon="schedule" headline="{{ __('headline.my_timesheets') }}" subtitle="{{ __('headline.overview') }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="timesheetListForm" name="timesheetListForm">
-            <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
+            <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4 tw:p-5">
                 <div class="tw:flex tw:items-center tw:gap-1">
                     <span>{{ __('label.date_from') }}</span>
                     <input type="text"
                            id="dateFrom"
-                           class="dateFrom"
+                           class="dateFrom tw:w-[110px]"
                            name="dateFrom"
                            autocomplete="off"
-                           value="{{ $tpl->get('dateFrom')->formatDateForUser() }}"
-                           style="width:110px;" />
+                           value="{{ $tpl->get('dateFrom')->formatDateForUser() }}" />
                     <span>{{ __('label.until') }}</span>
                     <input type="text"
                            id="dateTo"
-                           class="dateTo"
+                           class="dateTo tw:w-[110px]"
                            name="dateTo"
                            autocomplete="off"
-                           value="{{ $tpl->get('dateTo')->formatDateForUser() }}"
-                           style="width:110px;" />
+                           value="{{ $tpl->get('dateTo')->formatDateForUser() }}" />
                     <x-globals::forms.select :bare="true" id="kind" name="kind" onchange="submit();">
                         <option value="all">{{ __('label.all_types') }}</option>
                         @foreach ($tpl->get('kind') as $key => $row)
@@ -55,7 +45,7 @@
                     <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active">{!! __('links.list_view') !!}</a></li>
                 </x-globals::actions.dropdown-menu>
 
-                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addHoursBtn"><x-global::elements.icon name="add" /> {{ __('label.add_hours') }}</x-globals::forms.button>
+                <x-globals::forms.button link="javascript:void(0);" type="primary" id="addHoursBtn"><x-globals::elements.icon name="add" /> {{ __('label.add_hours') }}</x-globals::forms.button>
             </div>
 
             <style>
@@ -106,18 +96,18 @@
                     opacity: 0.4;
                 }
             </style>
-            <div style="overflow-x: auto;">
-            <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="myTimesheetList">
-                <colgroup>
-                    <col width="110px" />
-                    <col width="200px" />
-                    <col width="200px" />
-                    <col width="160px" />
-                    <col width="70px" />
-                    <col width="140px" />
-                    <col width="90px" />
-                </colgroup>
-                <thead>
+
+            <x-globals::elements.table :hover="true" id="myTimesheetList" class="timesheetTable tw:w-full">
+                <x-slot:head>
+                    <colgroup>
+                        <col width="110px" />
+                        <col width="200px" />
+                        <col width="200px" />
+                        <col width="160px" />
+                        <col width="70px" />
+                        <col width="140px" />
+                        <col width="90px" />
+                    </colgroup>
                     <tr>
                         <th>{{ __('label.date') }}</th>
                         <th>{{ __('label.project') }}</th>
@@ -127,140 +117,138 @@
                         <th>{{ __('label.description') }}</th>
                         <th>{{ __('label.billing') }}</th>
                     </tr>
-                </thead>
-                <tbody>
-                    {{-- Existing timesheet entries --}}
-                    @php $sum = 0; @endphp
-                    @if (is_array($tpl->get('allTimesheets')))
-                        @foreach ($tpl->get('allTimesheets') as $row)
-                            @php
-                                $sum += $row['hours'];
-                                $isLocked = ($row['invoicedComp'] == '1' || $row['paid'] == '1');
-                                $inputNameKey = $row['ticketId'] . '|' . $row['kind'] . '|' . format($row['workDate'])->date() . '|' . format($row['workDate'])->timestamp();
-                            @endphp
-                            <tr class="timesheetRow">
-                                <td>{{ format($row['workDate'])->date() }}</td>
-                                <td>
-                                    <a href="{{ BASE_URL }}/projects/showProject/{{ $row['projectId'] }}">{{ e($row['name']) }}</a>
-                                </td>
-                                <td>
-                                    <a href="#/tickets/showTicket/{{ $row['ticketId'] }}">{{ e($row['headline']) }}</a>
-                                </td>
-                                <td>{{ __($tpl->get('kind')[$row['kind']] ?? '') }}</td>
-                                <td>
-                                    <input type="text"
-                                           class="hourCell"
-                                           name="{{ $inputNameKey }}"
-                                           value="{{ e($row['hours'] ?: 0) }}"
-                                           style="width:50px; text-align:right;"
-                                           @if ($isLocked) disabled="disabled" @endif
-                                    />
-                                </td>
-                                <td style="max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
-                                    @if (!empty($row['description'])) data-tippy-content="{{ e($row['description']) }}" @endif
-                                >{{ e($row['description']) }}</td>
-                                <td>
-                                    @if ($row['paid'] == '1')
-                                        <span class="badge badge-success">{{ __('label.paid') }}</span>
-                                    @elseif ($row['invoicedComp'] == '1')
-                                        <span class="badge badge-info">{{ __('label.approved') }}</span>
-                                    @elseif ($row['invoicedEmpl'] == '1')
-                                        <span class="badge badge-warning">{{ __('label.invoiced') }}</span>
-                                    @else
-                                        <span class="badge">{{ __('label.pending') }}</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endif
+                </x-slot:head>
 
-                    {{-- New entry row (always visible at bottom, like week view) --}}
-                    <tr class="timesheetRow newEntryRow" id="newEntryRow">
-                        <td>
-                            <input type="text"
-                                   id="newEntryDate"
-                                   name="newDate"
-                                   placeholder="{{ __('language.dateformat') }}"
-                                   autocomplete="off"
-                                   style="width:100px" />
-                        </td>
-                        <td>
-                            <div class="form-group" id="projectSelect">
-                                <x-globals::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" class="project-select" style="width:100%;">
-                                    <option value="">{{ __('input.placeholders.choose_project') }}</option>
-                                    @foreach ($tpl->get('allProjects') as $projectRow)
-                                        {!! sprintf(
-                                            $tpl->dispatchTplFilter(
-                                                'client_product_format',
-                                                '<option value="%s">%s / %s</option>'
-                                            ),
-                                            ...$tpl->dispatchTplFilter(
-                                                'client_product_values',
-                                                [
-                                                    $projectRow['id'],
-                                                    $tpl->escape($projectRow['clientName']),
-                                                    $tpl->escape($projectRow['name']),
-                                                ]
-                                            )
-                                        ) !!}
-                                    @endforeach
-                                </x-globals::forms.select>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group" id="ticketSelect">
-                                <x-globals::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" class="ticket-select" name="newTicketId" style="width:100%;">
-                                    <option value="">{{ __('input.placeholders.choose_todo') }}</option>
-                                    @foreach ($tpl->get('allTickets') as $ticketRow)
-                                        {!! sprintf(
-                                            $tpl->dispatchTplFilter(
-                                                'todo_format',
-                                                '<option value="%1$s" data-value="%2$s" class="project_%2$s">%1$s / %3$s</option>'
-                                            ),
-                                            ...$tpl->dispatchTplFilter(
-                                                'todo_values',
-                                                [
-                                                    $ticketRow['id'],
-                                                    $ticketRow['projectId'],
-                                                    $tpl->escape($ticketRow['headline']),
-                                                ]
-                                            )
-                                        ) !!}
-                                    @endforeach
-                                </x-globals::forms.select>
-                            </div>
-                        </td>
-                        <td>
-                            <x-globals::forms.select :bare="true" class="kind-select" name="newKindId" style="width:100%;">
-                                @foreach ($tpl->get('kind') as $key => $kindRow)
-                                    <option value="{{ $key }}">{{ __($kindRow) }}</option>
+                {{-- Existing timesheet entries --}}
+                @php $sum = 0; @endphp
+                @if (is_array($tpl->get('allTimesheets')))
+                    @foreach ($tpl->get('allTimesheets') as $row)
+                        @php
+                            $sum += $row['hours'];
+                            $isLocked = ($row['invoicedComp'] == '1' || $row['paid'] == '1');
+                            $inputNameKey = $row['ticketId'] . '|' . $row['kind'] . '|' . format($row['workDate'])->date() . '|' . format($row['workDate'])->timestamp();
+                        @endphp
+                        <tr class="timesheetRow">
+                            <td>{{ format($row['workDate'])->date() }}</td>
+                            <td>
+                                <a href="{{ BASE_URL }}/projects/showProject/{{ $row['projectId'] }}">{{ e($row['name']) }}</a>
+                            </td>
+                            <td>
+                                <a href="#/tickets/showTicket/{{ $row['ticketId'] }}">{{ e($row['headline']) }}</a>
+                            </td>
+                            <td>{{ __($tpl->get('kind')[$row['kind']] ?? '') }}</td>
+                            <td>
+                                <input type="text"
+                                       class="hourCell tw:w-[50px] tw:text-right"
+                                       name="{{ $inputNameKey }}"
+                                       value="{{ e($row['hours'] ?: 0) }}"
+                                       @if ($isLocked) disabled="disabled" @endif
+                                />
+                            </td>
+                            <td class="tw:max-w-[140px] tw:overflow-hidden tw:text-ellipsis tw:whitespace-nowrap"
+                                @if (!empty($row['description'])) data-tippy-content="{{ e($row['description']) }}" @endif
+                            >{{ e($row['description']) }}</td>
+                            <td>
+                                @if ($row['paid'] == '1')
+                                    <x-globals::elements.badge state="success">{{ __('label.paid') }}</x-globals::elements.badge>
+                                @elseif ($row['invoicedComp'] == '1')
+                                    <x-globals::elements.badge state="info">{{ __('label.approved') }}</x-globals::elements.badge>
+                                @elseif ($row['invoicedEmpl'] == '1')
+                                    <x-globals::elements.badge state="warning">{{ __('label.invoiced') }}</x-globals::elements.badge>
+                                @else
+                                    <x-globals::elements.badge>{{ __('label.pending') }}</x-globals::elements.badge>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
+
+                {{-- New entry row (always visible at bottom, like week view) --}}
+                <tr class="timesheetRow newEntryRow" id="newEntryRow">
+                    <td>
+                        <input type="text"
+                               id="newEntryDate"
+                               name="newDate"
+                               placeholder="{{ __('language.dateformat') }}"
+                               autocomplete="off"
+                               class="tw:w-[100px]" />
+                    </td>
+                    <td>
+                        <div class="form-group" id="projectSelect">
+                            <x-globals::forms.select :bare="true" name="projectId" data-placeholder="{{ __('input.placeholders.choose_project') }}" class="project-select tw:w-full">
+                                <option value="">{{ __('input.placeholders.choose_project') }}</option>
+                                @foreach ($tpl->get('allProjects') as $projectRow)
+                                    {!! sprintf(
+                                        $tpl->dispatchTplFilter(
+                                            'client_product_format',
+                                            '<option value="%s">%s / %s</option>'
+                                        ),
+                                        ...$tpl->dispatchTplFilter(
+                                            'client_product_values',
+                                            [
+                                                $projectRow['id'],
+                                                $tpl->escape($projectRow['clientName']),
+                                                $tpl->escape($projectRow['name']),
+                                            ]
+                                        )
+                                    ) !!}
                                 @endforeach
                             </x-globals::forms.select>
-                        </td>
-                        <td>
-                            <input type="text"
-                                   class="hourCell"
-                                   id="newEntryHours"
-                                   name="newHours"
-                                   value="0"
-                                   style="width:50px; text-align:right;" />
-                        </td>
-                        <td>
-                            <input type="text" name="newDescription" placeholder="{{ __('label.description') }}" style="width:100%;" />
-                        </td>
-                        <td>--</td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr style="font-weight:bold;">
-                        <td colspan="4" style="text-align:right; padding-right:10px;">{{ __('label.total') }}</td>
-                        <td id="listTotalHours" style="text-align:right; padding-right:12px;">{{ $sum }}</td>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group" id="ticketSelect">
+                            <x-globals::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.choose_todo') }}" class="ticket-select tw:w-full" name="newTicketId">
+                                <option value="">{{ __('input.placeholders.choose_todo') }}</option>
+                                @foreach ($tpl->get('allTickets') as $ticketRow)
+                                    {!! sprintf(
+                                        $tpl->dispatchTplFilter(
+                                            'todo_format',
+                                            '<option value="%1$s" data-value="%2$s" class="project_%2$s">%1$s / %3$s</option>'
+                                        ),
+                                        ...$tpl->dispatchTplFilter(
+                                            'todo_values',
+                                            [
+                                                $ticketRow['id'],
+                                                $ticketRow['projectId'],
+                                                $tpl->escape($ticketRow['headline']),
+                                            ]
+                                        )
+                                    ) !!}
+                                @endforeach
+                            </x-globals::forms.select>
+                        </div>
+                    </td>
+                    <td>
+                        <x-globals::forms.select :bare="true" class="kind-select tw:w-full" name="newKindId">
+                            @foreach ($tpl->get('kind') as $key => $kindRow)
+                                <option value="{{ $key }}">{{ __($kindRow) }}</option>
+                            @endforeach
+                        </x-globals::forms.select>
+                    </td>
+                    <td>
+                        <input type="text"
+                               class="hourCell tw:w-[50px] tw:text-right"
+                               id="newEntryHours"
+                               name="newHours"
+                               value="0" />
+                    </td>
+                    <td>
+                        <input type="text" name="newDescription" placeholder="{{ __('label.description') }}" class="tw:w-full" />
+                    </td>
+                    <td>--</td>
+                </tr>
+
+                <x-slot:foot>
+                    <tr class="tw:font-bold">
+                        <td colspan="4" class="tw:text-right tw:pr-[10px]">{{ __('label.total') }}</td>
+                        <td id="listTotalHours" class="tw:text-right tw:pr-[12px]">{{ $sum }}</td>
                         <td colspan="2"></td>
                     </tr>
-                </tfoot>
-            </table>
-            </div>
-            <div class="tw:flex tw:justify-end tw:mt-4">
+                </x-slot:foot>
+            </x-globals::elements.table>
+
+            <div class="tw:flex tw:justify-end tw:mt-4 tw:p-5">
                 <x-globals::forms.button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">{{ __('buttons.save') }}</x-globals::forms.button>
             </div>
         </form>

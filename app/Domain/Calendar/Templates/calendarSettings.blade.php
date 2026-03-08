@@ -1,6 +1,6 @@
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light"><x-global::elements.icon name="settings" /> {{ __('label.calendar_settings') }}</h4>
+<x-globals::elements.section-title icon="settings">{{ __('label.calendar_settings') }}</x-globals::elements.section-title>
 
 <br />
 
@@ -8,9 +8,9 @@
 <h5 class="subtitle">{{ __('label.connected_calendars') }}</h5>
 
 @if(count($externalCalendars) > 0)
-    <ul class="simpleList" style="margin-bottom: 20px;">
+    <ul class="simpleList tw:mb-5">
         @foreach($externalCalendars as $calendar)
-            <li style="padding: 10px; background: var(--secondary-background); border-radius: var(--box-radius-small); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <li class="tw:flex tw:justify-between tw:items-center tw:p-2 tw:mb-2" style="background: var(--secondary-background); border-radius: var(--box-radius-small);">
                 <span>
                     <span class="indicatorCircle" style="background-color: {{ e($calendar['colorClass']) }};"></span>
                     <strong>{{ $calendar['name'] }}</strong>
@@ -18,7 +18,7 @@
                         <br><small class="text-muted">{!! $calendar['subtitle'] !!}</small>
                     @endif
                 </span>
-                <span style="white-space: nowrap;">
+                <span class="tw:whitespace-nowrap">
                     @if(!empty($calendar['actions']))
                         {{-- Plugin-provided per-calendar actions --}}
                         @foreach($calendar['actions'] as $action)
@@ -32,11 +32,11 @@
                     @elseif(empty($calendar['managedByPlugin']))
                         {{-- Default iCal calendar actions --}}
                         <a href="#/calendar/editExternal/{{ $calendar['id'] }}" class="formModal" data-tippy-content="{{ __('label.edit') }}">
-                            <x-global::elements.icon name="edit" />
+                            <x-globals::elements.icon name="edit" />
                         </a>
                         &nbsp;
                         <a href="#/calendar/delExternalCalendar/{{ $calendar['id'] }}" class="delete" data-tippy-content="{{ __('label.delete') }}">
-                            <x-global::elements.icon name="delete" />
+                            <x-globals::elements.icon name="delete" />
                         </a>
                     @endif
                 </span>
@@ -44,7 +44,7 @@
         @endforeach
     </ul>
 @else
-    <p class="text-muted small" style="font-style: italic;">
+    <p class="text-muted small tw:italic">
         {{ __('label.no_connected_calendars') }}
     </p>
     <br />
@@ -53,14 +53,14 @@
 {{-- Plugin-injected sections (Google Calendar, etc.) --}}
 {{-- Note: Plugin content via {!! !!} is trusted. Plugins are responsible for sanitizing their output. --}}
 @foreach($pluginSections as $section)
-    <hr style="margin: 20px 0;" />
+    <hr class="tw:my-5" />
 
     <h5 class="subtitle">
         @if(isset($section['icon']))
             @if(($section['iconType'] ?? 'fontawesome') === 'svg')
-                <span style="display: inline-block; width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">{!! $section['icon'] !!}</span>
+                <span class="tw:inline-block tw:w-5 tw:h-5 tw:align-middle tw:mr-2">{!! $section['icon'] !!}</span>
             @else
-                <i class="{{ e($section['icon']) }}" style="margin-right: 8px;"></i>
+                <i class="{{ e($section['icon']) }} tw:mr-2"></i>
             @endif
         @endif
         {{ $section['title'] }}
@@ -75,15 +75,19 @@
     @endif
 
     @if(isset($section['actions']))
-        <div style="margin-top: 10px;">
+        <div class="tw:mt-2">
             @foreach($section['actions'] as $action)
-                <a href="{{ $action['url'] }}"
-                   class="btn {{ $action['class'] ?? 'btn-default' }} {{ ($action['type'] ?? 'link') === 'modal' ? 'formModal' : '' }}">
+                <x-globals::forms.button
+                    element="a"
+                    href="{{ $action['url'] }}"
+                    :class="(($action['type'] ?? 'link') === 'modal' ? 'formModal ' : '') . ($action['class'] ?? '')"
+                    contentRole="{{ str_replace(['btn-default', 'btn-primary', 'btn-secondary'], ['secondary', 'primary', 'secondary'], $action['class'] ?? 'btn-default') }}"
+                >
                     @if(isset($action['icon']))
                         <i class="{{ e($action['icon']) }}"></i>
                     @endif
                     {{ $action['label'] }}
-                </a>
+                </x-globals::forms.button>
             @endforeach
         </div>
     @endif

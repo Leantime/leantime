@@ -8,7 +8,7 @@
             <li>
                 <a href="{{ $option['url'] ?? '' }}"
                    class="{{ $option['class'] ?? '' }}">
-                    @if(!empty($option['icon']))<x-global::elements.icon :name="$option['icon']" /> @endif{{ !empty($option['text']) ? __($option['text']) : '' }}
+                    @if(!empty($option['icon']))<x-globals::elements.icon :name="$option['icon']" /> @endif{{ !empty($option['text']) ? __($option['text']) : '' }}
                 </a>
             </li>
         @endforeach

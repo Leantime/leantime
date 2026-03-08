@@ -18,7 +18,7 @@
                 {{ $selected['value'] }}
             @endif
         </span>
-        <x-global::elements.icon name="expand_more" size="xs" style="vertical-align: middle;" />
+        <x-globals::elements.icon name="expand_more" size="xs" style="vertical-align: middle;" />
     </a>
     <ul class="dropdown-menu" id="{{ $id }}-options">
         @foreach($options as $key => $option)

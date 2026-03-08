@@ -1,7 +1,4 @@
-<h4 class="widgettitle title-light">
-    <x-global::elements.icon name="terrain" />
-    {{ empty($bigRock['title']) ? __('label.create_new_goalboard') : __('label.goalboard') }} {{ $bigRock['title'] }}
-</h4>
+<x-globals::elements.section-title icon="terrain">{{ empty($bigRock['title']) ? __('label.create_new_goalboard') : __('label.goalboard') }} {{ $bigRock['title'] }}</x-globals::elements.section-title>
 
 <form class="formModal" method="post"
     action="{{ BASE_URL }}/goalcanvas/bigRock/{{ !empty($bigRock['id']) ? $bigRock['id'] : '' }}">
@@ -12,7 +9,7 @@
 
     <br />
     <div class="tw:flex tw:justify-between tw:items-center">
-        <x-globals::forms.button submit type="primary" id="saveBtn">{{ __('buttons.save') }}</x-globals::forms.button>
+        <x-globals::forms.button :submit="true" contentRole="primary" id="saveBtn">{{ __('buttons.save') }}</x-globals::forms.button>
     </div>
 
 </form>

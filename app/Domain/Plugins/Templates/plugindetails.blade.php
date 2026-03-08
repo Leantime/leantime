@@ -146,10 +146,10 @@
                                         <option value="{{ $compatibility['version_number'] }}">{{ $compatibility['version_number'] }}</option>
                                     @endforeach
                                 </x-globals::forms.select>
-                                <input class="!tw:mb-none !tw:p-[4px]" type="text" name="plugin[license]" placeholder="License Key" />
+                                <x-globals::forms.text-input class="!tw:mb-none !tw:p-[4px]" name="plugin[license]" placeholder="License Key" :bare="true" />
                                 <x-globals::forms.button
-                                    :tag="'button'"
-                                    :type="'secondary'"
+                                    contentRole="secondary"
+                                    :submit="true"
                                 >Install</x-globals::forms.button>
                                 <div class="htmx-indicator-small" role="status">
                                     <x-globals::feedback.loading id="loadingthis" size="25px" />

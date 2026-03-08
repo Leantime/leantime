@@ -2,12 +2,7 @@
     $provider = $tpl->get('provider');
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="hub" /></div>
-    <div class="pagetitle">
-        <h1>{{ $tpl->__('headlines.integrations') }} // {{ $provider->name }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header icon="hub" headline="{{ $tpl->__('headlines.integrations') }} // {{ $provider->name }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -24,7 +19,7 @@
         {{ $provider->name }}<br />
         {!! $provider->description !!}<br /><br />
 
-        <x-globals::forms.button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=connect" type="primary">Click Here to Connect</x-globals::forms.button>
+        <x-globals::forms.button element="a" href="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=connect" contentRole="primary">Click Here to Connect</x-globals::forms.button>
 
     </div>
 </div>

@@ -134,15 +134,15 @@
             @if($tickets !== null && count($tickets) == 0)
 
                 <div class='center'>
-                    <div style='width:30%' class='svgContainer'>
+                    <div class='tw:w-[30%] svgContainer'>
                         {!! file_get_contents(ROOT . "/dist/images/svg/undraw_a_moment_to_relax_bbpa.svg") !!}
                     </div>
                     <br/>
                     <h4>{{ __("text.no_tasks_assigned") }}</h4>
-                    <x-globals::forms.button link="javascript:void(0);" type="link" icon="add_circle" class="add-task-button" style="margin-left:0px;" data-group="emptyGroup">{{ __('links.add_task') }}</x-globals::forms.button>
+                    <x-globals::forms.button link="javascript:void(0);" type="link" icon="add_circle" class="add-task-button tw:ml-0" data-group="emptyGroup">{{ __('links.add_task') }}</x-globals::forms.button>
 
-                    <div class="quickAddForm" id="quickAddForm-emptyGroup"
-                         style="display:none; margin-bottom:15px; padding-bottom:5px; padding-left:5px;">
+                    <div class="quickAddForm tw:mb-4 tw:pb-1 tw:pl-1" id="quickAddForm-emptyGroup"
+                         style="display:none;">
                         <form method="post"
                               hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
                               hx-target="#yourToDoContainer"
@@ -215,8 +215,8 @@
                     </x-slot>
                     <x-slot name="content">
                         <!-- Quick Add Form for this group -->
-                        <div class="quickAddForm" id="quickAddForm-{{ $groupKey }}"
-                             style="display:none; margin-bottom:15px; padding-bottom:5px; padding-left:5px;">
+                        <div class="quickAddForm tw:mb-4 tw:pb-1 tw:pl-1" id="quickAddForm-{{ $groupKey }}"
+                             style="display:none;">
                             <form method="post"
                                   hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
                                   hx-target="#yourToDoContainer"
@@ -267,7 +267,7 @@
                             </form>
                         </div>
 
-                        <div class="sortable-list" data-container-type="section" data-group-key="{{ $groupKey }}" style="padding-left:5px;">
+                        <div class="sortable-list tw:pl-1" data-container-type="section" data-group-key="{{ $groupKey }}">
                             @foreach ($ticketGroup['tickets'] as $row)
                                 @include('widgets::partials.todoItem', ['ticket' => $row, 'statusLabels' => $statusLabels, 'onTheClock' => $onTheClock, 'tpl' => $tpl, 'level' => 0, 'groupKey' => $groupKey])
                             @endforeach

@@ -57,11 +57,9 @@
     <div class="row">
         <div class="col-md-2">
             <div class="marginBottom">
-                <h4 class="widgettitle title-light">
-                    <x-global::elements.icon name="folder" />{{ __('subtitles.organization') }}
-                </h4>
+                <x-globals::elements.section-title icon="folder">{{ __('subtitles.organization') }}</x-globals::elements.section-title>
                 <x-globals::forms.form-field label-text="Parent" name="parent">
-                    <x-globals::forms.select :bare="true" name="parent" style="width:100%;">
+                    <x-globals::forms.select :bare="true" name="parent" class="tw:w-full">
                         <option value="0">None</option>
                         @foreach ($wikiHeadlines as $parent)
                             @if ($id != $parent->id)
@@ -73,7 +71,7 @@
                 </x-globals::forms.form-field>
 
                 <x-globals::forms.form-field label-text="{{ __('label.status') }}" name="status">
-                    <x-globals::forms.select :bare="true" name="status" style="width:100%;">
+                    <x-globals::forms.select :bare="true" name="status" class="tw:w-full">
                         <option value="draft" {{ $currentArticle->status == 'draft' ? "selected='selected'" : '' }}>{{ __('label.draft') }}</option>
                         <option value="published" {{ $currentArticle->status == 'published' ? "selected='selected'" : '' }}>{{ __('label.published') }}</option>
                     </x-globals::forms.select>
@@ -81,9 +79,9 @@
             </div>
 
             @if ($id !== '')
-                <h4 class="widgettitle title-light"><x-global::elements.icon name="link" /> {{ __('headlines.linked_milestone') }} <x-global::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}" /></h4>
+                <x-globals::elements.section-title icon="link">{{ __('headlines.linked_milestone') }} <x-globals::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}" /></x-globals::elements.section-title>
 
-                <ul class="sortableTicketList" style="width:99%">
+                <ul class="sortableTicketList tw:w-full">
                     @if ($currentArticle->milestoneId == '')
                         <li class="ui-state-default center" id="milestone_0">
                             <h4>{{ __('headlines.no_milestone_link') }}</h4>
@@ -95,11 +93,11 @@
                                 @endif
                             </div>
                             <div id="newMilestone" style="display:none;">
-                                <textarea name="newMilestone"></textarea><br />
+                                <x-globals::forms.textarea name="newMilestone" /><br />
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="leancanvasitemid" value="{{ $id }} " />
-                                <x-globals::forms.button tag="button" type="primary" onclick="jQuery('#primaryArticleSubmitButton').click()">{{ __('buttons.save') }}</x-globals::forms.button>
-                                <x-globals::forms.button link="javascript:void(0);" type="secondary" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" icon="close">{{ __('links.cancel') }}</x-globals::forms.button>
+                                <x-globals::forms.button tag="button" contentRole="primary" onclick="jQuery('#primaryArticleSubmitButton').click()">{{ __('buttons.save') }}</x-globals::forms.button>
+                                <x-globals::forms.button link="javascript:void(0);" contentRole="secondary" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" icon="close">{{ __('links.cancel') }}</x-globals::forms.button>
                             </div>
 
                             <div id="existingMilestone" style="display:none;">
@@ -115,9 +113,9 @@
                                 </x-globals::forms.select>
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="articleId" value="{{ $id }} " />
-                                <x-globals::forms.button tag="button" type="primary" onclick="jQuery('#primaryArticleSubmitButton').click()">Save</x-globals::forms.button>
+                                <x-globals::forms.button tag="button" contentRole="primary" onclick="jQuery('#primaryArticleSubmitButton').click()">Save</x-globals::forms.button>
                                 <a href="javascript:void(0);"  onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
-                                    <x-global::elements.icon name="close" /> {{ __('links.cancel') }}
+                                    <x-globals::elements.icon name="close" /> {{ __('links.cancel') }}
                                 </a>
                             </div>
 
@@ -135,7 +133,7 @@
                                     {{ __('label.loading_milestone') }}
                                 </div>
                             </div>
-                            <a href="{{ CURRENT_URL }}?removeMilestone={{ $currentArticle->milestoneId }}" class="formModal"><x-global::elements.icon name="close" /> {{ __('links.remove') }}</a>
+                            <a href="{{ CURRENT_URL }}?removeMilestone={{ $currentArticle->milestoneId }}" class="formModal"><x-globals::elements.icon name="close" /> {{ __('links.remove') }}</a>
 
                         </li>
                     @endif
@@ -154,7 +152,7 @@
                 <div tabindex="0" role="button" data-selected="graduation-cap"
                         class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker tw:rounded-sm tw:focus-visible:outline tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-[var(--accent1)]">
                     <span class="iconPlaceholder">
-                        <x-global::elements.icon name="description" />
+                        <x-globals::elements.icon name="description" />
                     </span>
                     <span class="caret"></span>
                 </div>
@@ -162,7 +160,7 @@
             </div>
             <input type="hidden" class="articleIcon" value="{{ $currentArticle->data }}" name="articleIcon"/>
 
-            <x-globals::forms.text-input :bare="true" type="text" name="title" class="main-title-input" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" style="width:80%" />
+            <x-globals::forms.text-input :bare="true" type="text" name="title" class="main-title-input tw:w-4/5" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" />
 
             <br />
             <x-globals::forms.text-input :bare="true" type="text" value="{{ e($currentArticle->tags) }}" name="tags" id="tags" />
@@ -175,14 +173,14 @@
                         <br />
                         <input type="hidden" name="saveTicket" value="1" />
                         <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
-                        <x-globals::forms.button submit type="primary" name="saveArticle" id="primaryArticleSubmitButton">{{ __('buttons.save') }}</x-globals::forms.button>
-                        <x-globals::forms.button submit type="primary" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" outline>{{ __('buttons.save_and_close') }}</x-globals::forms.button>
+                        <x-globals::forms.button :submit="true" contentRole="primary" name="saveArticle" id="primaryArticleSubmitButton">{{ __('buttons.save') }}</x-globals::forms.button>
+                        <x-globals::forms.button :submit="true" contentRole="primary" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" :outline="true">{{ __('buttons.save_and_close') }}</x-globals::forms.button>
 
                     </div>
                     <div class="col-md-2 align-right padding-top-sm">
                         @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))
                             <br />
-                            <a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete_article') }}</a>
+                            <a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete"><x-globals::elements.icon name="delete" /> {{ __('links.delete_article') }}</a>
                         @endif
                     </div>
                 </div>

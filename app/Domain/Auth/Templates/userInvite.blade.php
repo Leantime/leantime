@@ -18,25 +18,25 @@
         <input type="hidden" name="step" value="1"/>
 
         <div class="">
-            <label for="name"><?php echo $tpl->language->__("label.name"); ?></label>
-            <x-globals::forms.text-input name="name" style="margin-bottom:15px" id="name" placeholder="<?php echo $tpl->language->__("input.placeholders.name"); ?>" value="<?=$tpl->escape($user['firstname']); ?>" />
+            <label for="name"><?php echo $tpl->language->__('label.name'); ?></label>
+            <x-globals::forms.text-input name="name" class="tw:mb-4" id="name" placeholder="{{ $tpl->language->__('input.placeholders.name') }}" :value="$tpl->escape($user['firstname'])" />
         </div>
         <div class="">
-            <label for="jobTitle"><?php echo $tpl->language->__("label.role_or_title"); ?></label>
-            <x-globals::forms.text-input name="jobTitle" id="jobTitle" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.jobtitle"); ?>" value="<?=$tpl->escape($user['jobTitle']); ?>" />
+            <label for="jobTitle"><?php echo $tpl->language->__('label.role_or_title'); ?></label>
+            <x-globals::forms.text-input name="jobTitle" id="jobTitle" class="tw:mb-4" placeholder="{{ $tpl->language->__('input.placeholders.jobtitle') }}" :value="$tpl->escape($user['jobTitle'])" />
 
         </div>
         <div class="">
-            <label for="password"><?php echo $tpl->language->__("label.password"); ?></label>
-            <x-globals::forms.text-input type="password" name="password" autocomplete="off" id="password" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_new_password"); ?>" />
-            <span id="pwStrength" style="width:100%;"></span>
+            <label for="password"><?php echo $tpl->language->__('label.password'); ?></label>
+            <x-globals::forms.text-input type="password" name="password" autocomplete="off" id="password" class="tw:mb-4" placeholder="<?php echo $tpl->language->__('input.placeholders.enter_new_password'); ?>" />
+            <span id="pwStrength" class="tw:w-full tw:block"></span>
         </div>
-        <small><?=$tpl->__('label.passwordRequirements') ?></small><br /><br />
+        <small><?= $tpl->__('label.passwordRequirements') ?></small><br /><br />
         <div class="">
             <input type="hidden" name="saveAccount" value="1" />
             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
             <div class="align-right">
-                <x-globals::forms.button submit type="primary" name="createAccount" class="tw:w-auto" style="width:auto">{{ __("buttons.next") }}</x-globals::forms.button>
+                <x-globals::forms.button :submit="true" contentRole="primary" name="createAccount" class="tw:w-auto">{{ __("buttons.next") }}</x-globals::forms.button>
             </div>
 
         </div>

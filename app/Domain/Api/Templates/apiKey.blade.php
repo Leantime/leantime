@@ -4,28 +4,26 @@
     $projects = $tpl->get('relations');
 @endphp
 
-<div style="min-width:700px;">
+<div class="tw:min-w-[700px]">
 
-<h4 class="widgettitle title-light"><x-global::elements.icon name="key" /> {{ $tpl->__('headlines.api_key') }}</h4>
+<x-globals::elements.section-title icon="key">{{ $tpl->__('headlines.api_key') }}</x-globals::elements.section-title>
 
 {!! $tpl->displayNotification() !!}
 
-<form action="{{ BASE_URL }}/api/apiKey/{{ (int) $_GET['id'] }}" method="post" class="stdform formModal">
+<form action="{{ BASE_URL }}/api/apiKey/{{ (int) $_GET['id'] }}" method="post" class="formModal">
         <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
         <input type="hidden" name="save" value="1" />
 
         <div class="row">
             <div class="col-md-6">
 
-                <h4 class="widgettitle title-light">{{ $tpl->__('label.basic_information') }}</h4>
+                <x-globals::elements.section-title>{{ $tpl->__('label.basic_information') }}</x-globals::elements.section-title>
 
                 <label>{{ $tpl->__('label.key') }}</label><div class="clearfix"></div>
                 lt_{{ substr($values['user'], 0, 5) }}***<br /><br />
 
                 <label for="firstname">{{ $tpl->__('label.key_name') }}</label><div class="clearfix"></div>
-                    <input
-                    type="text" name="firstname" id="firstname"
-                    value="{{ $values['firstname'] }}" /><br />
+                    <x-globals::forms.text-input name="firstname" id="firstname" value="{{ $values['firstname'] }}" /><br />
 
 
                 <label for="role">{{ $tpl->__('label.role') }}</label><div class="clearfix"></div>
@@ -53,14 +51,14 @@
 
                     <div class="clearfix"></div>
 
-                <p class="stdformbutton">
-                    <x-globals::forms.button submit type="primary" name="save" id="save">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
+                <p>
+                    <x-globals::forms.button :submit="true" contentRole="primary" name="save" id="save">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
                 </p>
 
             </div>
             <div class="col-md-6">
 
-                <h4 class="widgettitle title-light">{{ $tpl->__('label.project_access') }}</h4>
+                <x-globals::elements.section-title>{{ $tpl->__('label.project_access') }}</x-globals::elements.section-title>
 
                 <div class="scrollableItemList">
                     @php
@@ -77,7 +75,7 @@
 
                             <h3 id="accordion_link_{{ $i }}">
                                 <a href="#" onclick="accordionToggle({{ $i }});" id="accordion_toggle_{{ $i }}">
-                                    <x-global::elements.icon name="expand_more" /> {{ $tpl->escape($row['clientName']) }}
+                                    <x-globals::elements.icon name="expand_more" /> {{ $tpl->escape($row['clientName']) }}
                                 </a>
                             </h3>
                             <div id="accordion_{{ $i }}" class="simpleAccordionContainer">

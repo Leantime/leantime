@@ -35,11 +35,11 @@
         <li class="border">
             @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin))
                 <a href='#/help/support' >
-                    <x-global::elements.icon name="volunteer_activism" style="color: var(--accent4);" /> {{ __('link.support_us') }}
+                    <x-globals::elements.icon name="volunteer_activism" style="color: var(--accent4);" /> {{ __('link.support_us') }}
                 </a>
             @else
                 <a href='#/help/support'  >
-                    <x-global::elements.icon name="volunteer_activism" style="color: var(--accent4);" /> {{ __('link.support_us') }}
+                    <x-globals::elements.icon name="volunteer_activism" style="color: var(--accent4);" /> {{ __('link.support_us') }}
                 </a>
             @endif
         </li>

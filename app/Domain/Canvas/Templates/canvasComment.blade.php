@@ -18,17 +18,17 @@
 
 <div class="showDialogOnLoad" style="display:none;">
 
-    <h4 class="widgettitle title-light" style="padding-bottom: 0">@if(!empty($canvasTypes[$canvasItem['box']]['icon']))<x-global::elements.icon :name="$canvasTypes[$canvasItem['box']]['icon']" />@endif {{ $canvasTypes[$canvasItem['box']]['title'] }}</h4>
-    <hr style="margin-top: 5px; margin-bottom: 15px;">
+    <x-globals::elements.section-title class="tw:pb-0">@if(!empty($canvasTypes[$canvasItem['box']]['icon']))<x-globals::elements.icon :name="$canvasTypes[$canvasItem['box']]['icon']" />@endif {{ $canvasTypes[$canvasItem['box']]['title'] }}</x-globals::elements.section-title>
+    <hr class="tw:mt-1 tw:mb-4">
 
     {!! $tpl->displayNotification() !!}
 
-    <h5 style="padding-left: 40px"><strong>{{ $tpl->escape($canvasItem['description']) }}</strong></h5>
+    <h5 class="tw:pl-10"><strong>{{ $tpl->escape($canvasItem['description']) }}</strong></h5>
 
     @if ($id !== '')
         <br />
         <input type="hidden" name="comment" value="1" />
-        <h4 class="widgettitle title-light"><x-global::elements.icon name="forum" />{{ $tpl->__('subtitles.discussion') }}</h4>
+        <x-globals::elements.section-title icon="forum">{{ $tpl->__('subtitles.discussion') }}</x-globals::elements.section-title>
         @php
             $tpl->assign('formUrl', "/$canvasName" . "canvas/editCanvasComment/" . $id);
             $tpl->displaySubmodule('comments-generalComment');

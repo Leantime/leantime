@@ -2,24 +2,14 @@
     $client = $tpl->get('client');
 @endphp
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><x-global::elements.icon :name="$tpl->getModulePicture()" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('label.administration') }}</h5>
-        <h1>{{ sprintf(__('headline.delete_client'), $client['name']) }}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div>
-@dispatchEvent('afterPageHeaderClose')
+<x-globals::layout.page-header :icon="$tpl->getModulePicture()" subtitle="{{ __('label.administration') }}" headline="{{ sprintf(__('headline.delete_client'), $client['name']) }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
 
-        <h4 class="widget widgettitle"><x-global::elements.icon name="delete" /> {{ __('label.delete') }}</h4>
+        <x-globals::elements.section-title variant="plain" icon="delete">{{ __('label.delete') }}</x-globals::elements.section-title>
         <div class="widgetcontent">
 
             <form method="post">

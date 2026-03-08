@@ -62,17 +62,17 @@ jQuery(document).ready(function(){
             ">
         @foreach($tpl->get('allKanbanColumns') as $key => $statusRow)
             <div class="column">
-                <h4 class="widgettitle title-primary title-border-{{ $statusRow['class'] }}">
+                <x-globals::elements.section-title variant="primary" :borderColor="$statusRow['class']">
                     @if($login::userIsAtLeast($roles::$manager))
                         <x-globals::actions.dropdown-menu container-class="pull-right">
-                            <li><a href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}" class="editLabelModal"><x-global::elements.icon name="edit" /> {{ __('label.edit_label') }}</a></li>
-                            <li><a href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings"><x-global::elements.icon name="add" /> {{ __('label.add_remove_columns') }}</a></li>
+                            <li><a href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}" class="editLabelModal"><x-globals::elements.icon name="edit" /> {{ __('label.edit_label') }}</a></li>
+                            <li><a href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings"><x-globals::elements.icon name="add" /> {{ __('label.add_remove_columns') }}</a></li>
                         </x-globals::actions.dropdown-menu>
                     @endif
 
                     <strong class="count">0</strong>
                     {{ e($statusRow['name']) }}
-                </h4>
+                </x-globals::elements.section-title>
             </div>
         @endforeach
         </div>
@@ -109,7 +109,7 @@ jQuery(document).ready(function(){
                     <div class="kanban-swimlane-content{{ !$swimlaneExpanded ? ' collapsed' : '' }}" id="swimlane-content-{{ $group['id'] }}">
             @endif
 
-            <div class="sortableTicketList kanbanBoard" id="kanboard-{{ $group['id'] }}" style="margin-top:-5px;">
+            <div class="sortableTicketList kanbanBoard tw:-mt-1" id="kanboard-{{ $group['id'] }}">
                 <div class="row-fluid">
                     @php
                         $emptyColumns = [];
@@ -147,20 +147,20 @@ jQuery(document).ready(function(){
                                                     @if($row['dependingTicketId'] > 0)
                                                         <small><a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}" class="form-modal">{{ e($row['parentHeadline']) }}</a></small> //
                                                     @endif
-                                                    <small><x-global::elements.icon :name="$todoTypeIcons[strtolower($row['type'])] ?? 'task_alt'" size="sm" /> {{ __('label.' . strtolower($row['type'])) }}</small>
+                                                    <small><x-globals::elements.icon :name="$todoTypeIcons[strtolower($row['type'])] ?? 'task_alt'" size="sm" /> {{ __('label.' . strtolower($row['type'])) }}</small>
                                                     <small>#{{ $row['id'] }}</small>
                                                     <div class="kanbanCardContent">
                                                         <h4><a href="#/tickets/showTicket/{{ $row['id'] }}">{{ e($row['headline']) }}</a></h4>
 
-                                                        <div class="kanbanContent" style="margin-bottom: 20px">
+                                                        <div class="kanbanContent tw:mb-5">
                                                             {!! $tpl->escapeMinimal($row['description']) !!}
                                                         </div>
                                                     </div>
                                                     <div class="tw:flex tw:flex-wrap tw:items-center tw:gap-1">
                                                         @if($row['dateToFinish'] != '0000-00-00 00:00:00' && $row['dateToFinish'] != '1969-12-31 00:00:00')
                                                             <div>
-                                                                <x-global::elements.icon name="calendar_month" />
-                                                                <input type="text" title="{{ __('label.due') }}" value="{{ format($row['dateToFinish'])->date() }}" class="duedates secretInput" style="margin-left:0px;" data-id="{{ $row['id'] }}" name="date" />
+                                                                <x-globals::elements.icon name="calendar_month" />
+                                                                <input type="text" title="{{ __('label.due') }}" value="{{ format($row['dateToFinish'])->date() }}" class="duedates secretInput tw:ml-0" data-id="{{ $row['id'] }}" name="date" />
                                                             </div>
                                                             <div>
                                                                 @dispatchEvent('afterDates', ['ticket' => $row])
@@ -168,89 +168,58 @@ jQuery(document).ready(function(){
                                                         @endif
                                                     </div>
 
-                                            <div class="clearfix" style="padding-bottom: 8px;"></div>
+                                            <div class="clearfix tw:pb-2"></div>
 
                                             <div class="timerContainer" id="timerContainer-{{ $row['id'] }}">
-                                                @php
-                                                    $milestoneOptions = [0 => ['name' => __('label.no_milestone'), 'class' => '#b0b0b0']];
-                                                    foreach ($tpl->get('milestones') as $ms) {
-                                                        $milestoneOptions[$ms->id] = ['name' => $ms->headline, 'class' => $ms->tags];
-                                                    }
-                                                @endphp
-                                                <x-globals::actions.chip
-                                                    content-role="milestone"
-                                                    :parentId="$row['id']"
-                                                    selectedClass="label-default"
-                                                    color="{{ e($row['milestoneColor']) }}"
-                                                    :selectedKey="$row['milestoneid'] ?: 0"
-                                                    :options="$milestoneOptions"
-                                                    :colorized="true"
-                                                    extraClass="firstDropdown"
-                                                    headerLabel="{{ __('dropdown.choose_milestone') }}"
+                                                <x-tickets::chips.milestone-select
+                                                    :ticket="(object)$row"
+                                                    :milestones="$tpl->get('milestones')"
+                                                    class="firstDropdown"
                                                 />
 
                                                 @if($row['storypoints'] != '' && $row['storypoints'] > 0)
-                                                    <x-globals::actions.chip
-                                                        content-role="effort"
-                                                        :parentId="$row['id']"
-                                                        selectedClass="label-default"
-                                                        :selectedKey="'' . $row['storypoints']"
-                                                        :options="$efforts"
-                                                        headerLabel="{{ __('dropdown.how_big_todo') }}"
+                                                    <x-tickets::chips.effort-select
+                                                        :ticket="(object)$row"
+                                                        :efforts="$efforts"
                                                     />
                                                 @endif
 
-                                                <x-globals::actions.chip
-                                                    content-role="priority"
-                                                    :parentId="$row['id']"
-                                                    selectedClass="label-default priority-bg-{{ $row['priority'] }}"
-                                                    :selectedKey="$row['priority']"
-                                                    :options="$priorities"
-                                                    headerLabel="{{ __('dropdown.select_priority') }}"
+                                                <x-tickets::chips.priority-select
+                                                    :ticket="(object)$row"
+                                                    :priorities="$priorities"
                                                 />
 
-                                                <div class="dropdown ticketDropdown userDropdown noBg lastDropdown dropRight">
-                                                    <a href="javascript:void(0)" class="dropdown-toggle f-left" data-toggle="dropdown" id="userDropdownMenuLink{{ $row['id'] }}" aria-haspopup="true" aria-expanded="false">
-                                                        <span class="text">
-                                                            @if($row['editorFirstname'] != '')
-                                                                <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['editorId'] }}" width="25" style="vertical-align: middle;"/></span>
-                                                            @else
-                                                                <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle;"/></span>
-                                                            @endif
-                                                        </span>
-                                                    </a>
-                                                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
-                                                        <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>
-                                                        @if(is_array($tpl->get('users')))
-                                                            @foreach($tpl->get('users') as $user)
-                                                                <li class="dropdown-item">
-                                                                    <a href="javascript:void(0);" onclick="document.activeElement.blur();" data-label="{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}" data-value="{{ $row['id'] }}_{{ $user['id'] }}_{{ $user['profileId'] }}" id="userStatusChange{{ $row['id'] }}{{ $user['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" width="25" style="vertical-align: middle; margin-right:5px;"/>{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}</a>
-                                                                </li>
-                                                            @endforeach
-                                                        @endif
-                                                    </ul>
-                                                </div>
+                                                <x-globals::actions.user-select
+                                                    :entityId="$row['id']"
+                                                    :assignedUserId="$row['editorId']"
+                                                    :assignedName="$row['editorFirstname']"
+                                                    :users="is_array($tpl->get('users')) ? $tpl->get('users') : []"
+                                                    :showNameLabel="false"
+                                                    :showArrowIcon="false"
+                                                    :showUnassign="false"
+                                                    dropdownClasses="lastDropdown dropRight"
+                                                />
                                             </div>
                                             <div class="clearfix"></div>
 
                                             @if($row['commentCount'] > 0 || $row['subtaskCount'] > 0 || $row['tags'] != '')
-                                                <div class="border-top" style="white-space: nowrap;">
+                                                <div class="border-top tw:whitespace-nowrap">
                                                     @if($row['commentCount'] > 0)
-                                                        <a href="#/tickets/showTicket/{{ $row['id'] }}"><x-global::elements.icon name="forum" /> {{ $row['commentCount'] }}</a>&nbsp;
+                                                        <a href="#/tickets/showTicket/{{ $row['id'] }}"><x-globals::elements.icon name="forum" /> {{ $row['commentCount'] }}</a>&nbsp;
                                                     @endif
 
                                                     @if($row['subtaskCount'] > 0)
-                                                        <a id="subtaskLink_{{ $row['id'] }}" href="#/tickets/showTicket/{{ $row['id'] }}" class="subtaskLineLink"> <x-global::elements.icon name="arrow_forward" /> {{ $row['subtaskCount'] }}</a>&nbsp;
+                                                        <a id="subtaskLink_{{ $row['id'] }}" href="#/tickets/showTicket/{{ $row['id'] }}" class="subtaskLineLink"> <x-globals::elements.icon name="arrow_forward" /> {{ $row['subtaskCount'] }}</a>&nbsp;
                                                     @endif
 
                                                     @if($row['tags'] != '')
                                                         @php $tagsArray = explode(',', $row['tags']); @endphp
                                                         <div class="dropdown">
                                                         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-                                                            <x-global::elements.icon name="sell" /> {{ count($tagsArray) }}
+                                                            <x-globals::elements.icon name="sell" /> {{ count($tagsArray) }}
                                                         </a>
                                                         <ul class="dropdown-menu">
-                                                            <li style="padding:10px"><div class="tagsinput readonly">
+                                                            <li class="tw:p-2"><div class="tagsinput readonly">
                                                                 @foreach($tagsArray as $tag)
                                                                     <span class="tag"><span>{{ e($tag) }}</span></span>
                                                                 @endforeach

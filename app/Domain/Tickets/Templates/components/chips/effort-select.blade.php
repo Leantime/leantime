@@ -12,7 +12,7 @@
 
 @if($showLabel)
     <label class="control-label">
-        <x-global::elements.icon name="elevation" />
+        <x-globals::elements.icon name="elevation" />
         {!! __('label.effort') !!}
     </label>
 @endif

@@ -1,9 +1,7 @@
 
 <div class="showDialogOnLoad" style="display:none;">
 
-    <h4 class="widgettitle title-light"><x-global::elements.icon name="arrow_circle_right" />
-        {{ __('headlines.import_ldap_users') }}
-    </h4>
+    <x-globals::elements.section-title icon="arrow_circle_right">{{ __('headlines.import_ldap_users') }}</x-globals::elements.section-title>
 
     {!! $tpl->displayNotification() !!}
 
@@ -11,7 +9,7 @@
         <form class="importModal userImportModal" method="post" action="{{ BASE_URL }}/users/import">
             @foreach($tpl->get('allLdapUsers') as $user)
                 <x-globals::forms.checkbox value="{{ e($user['user']) }}" id="{{ e($user['user']) }}" name="users[]" :checked="true" />
-                <label for="{{ e($user['user']) }}" style="display:inline;">{{ e($user['user']) }} - {{ e($user['firstname']) }}, {{ e($user['lastname']) }}<br />
+                <label for="{{ e($user['user']) }}" class="tw:inline">{{ e($user['user']) }} - {{ e($user['firstname']) }}, {{ e($user['lastname']) }}<br />
             @endforeach
             <br />
             <input type="hidden" name="importSubmit" value="1"/>

@@ -88,7 +88,7 @@
         @endphp
         <div class="wiki-activity-item">
             <div class="wiki-activity-icon {{ $cssClass }}">
-                <x-global::elements.icon :name="$icon" />
+                <x-globals::elements.icon :name="$icon" />
             </div>
             <div class="wiki-activity-content">
                 <div class="wiki-activity-text">

@@ -5,19 +5,19 @@
             <div class="stickyHeader">
 
                 <div class="grid-handler-top">
-                    <x-global::elements.icon name="drag_indicator" />
+                    <x-globals::elements.icon name="drag_indicator" />
                 </div>
 
                 @if($name != '' && $noTitle == false)
                     <h5 class="subtitle">{{ __($name) }}</h5>
                 @else
-                    <div style="flex:1;"></div>
+                    <div class="tw:flex-1"></div>
                 @endif
                 <div class="widget-header-actions"></div>
                 <x-globals::actions.dropdown-menu>
-                    <li><a href="javascript:void(0)" class="fitContent"><x-global::elements.icon name="open_in_full" /> Resize to fit content</a></li>
+                    <li><a href="javascript:void(0)" class="fitContent"><x-globals::elements.icon name="open_in_full" /> Resize to fit content</a></li>
                     @if(empty($alwaysVisible))
-                        <li><a href="javascript:void(0)" class="removeWidget"><x-global::elements.icon name="visibility_off" /> Hide</a></li>
+                        <li><a href="javascript:void(0)" class="removeWidget"><x-globals::elements.icon name="visibility_off" /> Hide</a></li>
                     @endif
                 </x-globals::actions.dropdown-menu>
             </div>

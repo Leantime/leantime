@@ -12,7 +12,7 @@
 
 @if($showLabel)
     <label class="control-label">
-        <x-global::elements.icon name="label_important" />
+        <x-globals::elements.icon name="label_important" />
         {!! __('label.milestone') !!}
     </label>
 @endif

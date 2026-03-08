@@ -3,9 +3,9 @@
 @endphp
 
 @if($ticket->type == 'milestone')
-    <h4 class="widgettitle title-light">{{ __('headline.move_milestone') }}</h4>
+    <x-globals::elements.section-title>{{ __('headline.move_milestone') }}</x-globals::elements.section-title>
 @else
-    <h4 class="widgettitle title-light">{{ __('headline.move_todo') }}</h4>
+    <x-globals::elements.section-title>{{ __('headline.move_todo') }}</x-globals::elements.section-title>
 @endif
 
 <form method="post" action="{{ BASE_URL }}/tickets/moveTicket/{{ $ticket->id }}" class="formModal">
@@ -35,8 +35,9 @@
             <option value="{{ $projectRow['id'] }}">{{ e($projectRow['name']) }}</option>
             @php $i++; @endphp
         @endforeach
-    </x-globals::forms.select><br /><br /><br /><br />
-    <br />
+    </x-globals::forms.select>
+
+    <div class="tw:mt-8"></div>
     <x-globals::forms.button submit type="primary" name="move">{{ __('buttons.move') }}</x-globals::forms.button>
     <a class="pull-right" href="javascript:void(0);" onclick="leantime.modals.closeModal();">{{ __('buttons.back') }}</a>
     <div class="clearall"></div>

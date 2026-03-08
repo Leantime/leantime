@@ -3,12 +3,7 @@
     $canvasProgress = $tpl->get('canvasProgress');
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="extension" /></div>
-    <div class="pagetitle">
-        <h1>{{ $tpl->__('headlines.blueprints') }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header icon="extension" headline="{{ $tpl->__('headlines.blueprints') }}" />
 
 {!! $tpl->displayNotification() !!}
 
@@ -20,7 +15,7 @@
             @foreach ($tpl->get('recentProgressCanvas') as $board)
                 <div class="col-md-3"><div class="profileBox">
                     <div class="commentImage icon">
-                        <x-global::elements.icon :name="$board['icon']" />
+                        <x-globals::elements.icon :name="$board['icon']" />
                     </div>
                     <span class="userName">
                             <small>{{ $tpl->__($board['name']) }} ({{ $board['count'] }})</small><br />
@@ -39,7 +34,7 @@
                         }
                     @endphp
                     <br />
-                    <x-global::feedback.progress :value="$percentDone" />
+                    <x-globals::feedback.progress :value="$percentDone" />
 
 
                 </div></div>
@@ -48,12 +43,12 @@
 
         @if (! is_array($tpl->get('recentProgressCanvas')) || count($tpl->get('recentProgressCanvas')) == 0)
             <br /><br /><div class="center">
-                <div style="width:30%" class="svgContainer">
+                <div class="svgContainer tw:w-[30%]">
                     {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
                 </div>
                 <h3>{{ $tpl->__('headline.no_blueprints_yet') }}</h3>
                 <br />{{ $tpl->__('text.no_blueprints_yet') }}
-                <br /><x-globals::forms.button link="{{ BASE_URL }}/valuecanvas/showCanvas" type="primary">{{ $tpl->__('button.start_here_project_value') }}</x-globals::forms.button>
+                <br /><x-globals::forms.button link="{{ BASE_URL }}/valuecanvas/showCanvas" contentRole="primary">{{ $tpl->__('button.start_here_project_value') }}</x-globals::forms.button>
             </div>
         @endif
 
@@ -63,17 +58,17 @@
     <div class="maincontentinner">
         <h5 class="accordionTitle" id="accordion_link_other">
             <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_other" onclick="accordionToggle('other');">
-                <x-global::elements.icon name="expand_more" /> Templates
+                <x-globals::elements.icon name="expand_more" /> Templates
             </a>
         </h5>
-        <p style="padding-left:19px;">{{ $tpl->__('description.other_tools') }}</p>
-        <div id="accordion_other" class="row teamBox" style="padding-left:19px;">
+        <p class="tw:pl-5">{{ $tpl->__('description.other_tools') }}</p>
+        <div id="accordion_other" class="row teamBox tw:pl-5">
 
             @foreach ($tpl->get('otherBoards') as $board)
                 @if (! isset($board['visible']) || $board['visible'] === 1)
-                    <div class="col-md-3"><div class="profileBox" style="min-height: 125px;">
+                    <div class="col-md-3"><div class="profileBox tw:min-h-[125px]">
                         <div class="commentImage icon">
-                            <x-global::elements.icon :name="$board['icon']" />
+                            <x-globals::elements.icon :name="$board['icon']" />
                         </div>
                         <span class="userName">
                             <a href="{{ BASE_URL }}/{{ $board['module'] }}/showCanvas">

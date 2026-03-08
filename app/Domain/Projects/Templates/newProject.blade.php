@@ -2,121 +2,115 @@
     $project = $tpl->get('project');
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="luggage" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('label.administration') }}</h5>
-        <h1>{{ __('headline.new_project') }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header icon="luggage" subtitle="{{ __('label.administration') }}" headline="{{ __('headline.new_project') }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="lt-tabs tabbedwidget projectTabs" data-tabs>
+        <x-globals::navigations.tabs persist="url">
+            <x-slot:headings>
+                <x-globals::navigations.tabs.heading name="projectdetails">{{ __('tabs.projectdetails') }}</x-globals::navigations.tabs.heading>
+            </x-slot:headings>
+            <x-slot:contents>
+                <x-globals::navigations.tabs.content name="projectdetails">
+                    <form action="" method="post" class="">
 
-            <ul role="tablist">
-                <li><a href="#projectdetails">{{ __('tabs.projectdetails') }}</a></li>
-            </ul>
+                        <div class="row">
 
-            <div id="projectdetails">
-                <form action="" method="post" class="">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <x-globals::forms.text-input :bare="true" type="text" name="name" id="name" class="main-title-input tw:w-full" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
+                                </div>
+                                <input type="hidden" name="projectState" id="projectState" value="0" />
 
-                    <div class="row">
+                                <br />
+                                <p>
+                                    {{ __('label.accomplish') }}
+                                    {{ __('label.describe_outcome') }}
+                                    <br /><br />
+                                </p>
+                                <textarea name="details" id="details" class="tiptapComplex" rows="5" cols="50">{!! htmlentities($project['details']) !!}</textarea>
 
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <x-globals::forms.text-input :bare="true" type="text" name="name" id="name" class="main-title-input" style="width:99%" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
-                            </div>
-                            <input type="hidden" name="projectState" id="projectState" value="0" />
-
-                            <br />
-                            <p>
-                                {{ __('label.accomplish') }}
-                                {{ __('label.describe_outcome') }}
-                                <br /><br />
-                            </p>
-                            <textarea name="details" id="details" class="tiptapComplex" rows="5" cols="50">{!! htmlentities($project['details']) !!}</textarea>
-
-                            <div class="padding-top">
-                                @if(isset($project['id']) && $project['id'] != '')
-                                    <div class="pull-right padding-top">
-                                        <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('buttons.delete') }}</a>
-                                    </div>
-                                @endif
-                                <x-globals::forms.button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-
-                            @if($tpl->get('projectTypes') && count($tpl->get('projectTypes')) > 1)
-                                <h4 class="widgettitle title-light"><x-global::elements.icon name="view_list" /> Project Type</h4>
-                                <p>The type of the project. This will determine which features are available.</p>
-                                <x-globals::forms.select :bare="true" name="type">
-                                    @foreach($tpl->get('projectTypes') as $key => $type)
-                                        <option value="{{ e($key) }}"
-                                            {{ $project['type'] == $key ? "selected='selected'" : '' }}>{{ __(e($type)) }}</option>
-                                    @endforeach
-                                </x-globals::forms.select>
-                                <br /><br />
-                            @endif
-
-                            @dispatchEvent('beforeClientPicker', $project)
-
-                            <div style="margin-bottom: 30px;">
-                                <h4 class="widgettitle title-light tw:block"><x-global::elements.icon name="calendar_today" />{{ __('label.project_dates') }}</h4>
-                                <div>
-                                    <label>{{ __('label.project_start') }}</label>
-                                    <div class="">
-                                        <x-globals::forms.date name="start" value="{{ $project['start'] }}" placeholder="{{ __('language.dateformat') }}" style="width:100px;" class="dateFrom" />
-                                    </div>
-                                    <label>{{ __('label.project_end') }}</label>
-                                    <div class="">
-                                        <x-globals::forms.date name="end" value="{{ $project['end'] }}" placeholder="{{ __('language.dateformat') }}" style="width:100px;" class="dateTo" />
-                                    </div>
+                                <div class="padding-top">
+                                    @if(isset($project['id']) && $project['id'] != '')
+                                        <div class="pull-right padding-top">
+                                            <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete"><x-globals::elements.icon name="delete" /> {{ __('buttons.delete') }}</a>
+                                        </div>
+                                    @endif
+                                    <x-globals::forms.button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
                                 </div>
                             </div>
 
-                            <div style="margin-bottom: 30px;">
-                                <div class="">
-                                    <h4 class="widgettitle title-light"><x-global::elements.icon name="apartment" />{{ __('label.client_product') }}</h4>
-                                    <x-globals::forms.select :bare="true" name="clientId" id="clientId">
-                                        @foreach($tpl->get('clients') as $row)
-                                            <option value="{{ $row['id'] }}"
-                                                {{ $project['clientId'] == $row['id'] ? 'selected=selected' : '' }}>{{ e($row['name']) }}</option>
+                            <div class="col-md-4">
+
+                                @if($tpl->get('projectTypes') && count($tpl->get('projectTypes')) > 1)
+                                    <x-globals::elements.section-title icon="view_list">Project Type</x-globals::elements.section-title>
+                                    <p>The type of the project. This will determine which features are available.</p>
+                                    <x-globals::forms.select :bare="true" name="type">
+                                        @foreach($tpl->get('projectTypes') as $key => $type)
+                                            <option value="{{ e($key) }}"
+                                                {{ $project['type'] == $key ? "selected='selected'" : '' }}>{{ __(e($type)) }}</option>
                                         @endforeach
                                     </x-globals::forms.select>
-                                    @if($login::userIsAtLeast('manager'))
-                                        <br /><a href="{{ BASE_URL }}/clients/newClient" target="_blank">{{ __('label.client_not_listed') }}</a>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 30px;">
-                                <div class="">
-                                    <h4 class="widgettitle title-light"><x-global::elements.icon name="lock_open" />{{ __('labels.defaultaccess') }}</h4>
-                                    {{ __('text.who_can_access') }}
                                     <br /><br />
+                                @endif
 
-                                    <x-globals::forms.select :bare="true" name="globalProjectUserAccess" style="max-width:300px;">
-                                        <option value="restricted" {{ $project['psettings'] == 'restricted' ? "selected='selected'" : '' }}>{{ __('labels.only_chose') }}</option>
-                                        <option value="clients" {{ $project['psettings'] == 'clients' ? "selected='selected'" : '' }}>{{ __('labels.everyone_in_client') }}</option>
-                                        <option value="all" {{ $project['psettings'] == 'all' ? "selected='selected'" : '' }}>{{ __('labels.everyone_in_org') }}</option>
-                                    </x-globals::forms.select>
+                                @dispatchEvent('beforeClientPicker', $project)
 
+                                <div class="tw:mb-8">
+                                    <x-globals::elements.section-title icon="calendar_today" class="tw:block">{{ __('label.project_dates') }}</x-globals::elements.section-title>
+                                    <div>
+                                        <label>{{ __('label.project_start') }}</label>
+                                        <div class="">
+                                            <x-globals::forms.date name="start" value="{{ $project['start'] }}" placeholder="{{ __('language.dateformat') }}" class="dateFrom" />
+                                        </div>
+                                        <label>{{ __('label.project_end') }}</label>
+                                        <div class="">
+                                            <x-globals::forms.date name="end" value="{{ $project['end'] }}" placeholder="{{ __('language.dateformat') }}" class="dateTo" />
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <div class="tw:mb-8">
+                                    <div class="">
+                                        <x-globals::elements.section-title icon="apartment">{{ __('label.client_product') }}</x-globals::elements.section-title>
+                                        <x-globals::forms.select :bare="true" name="clientId" id="clientId">
+                                            @foreach($tpl->get('clients') as $row)
+                                                <option value="{{ $row['id'] }}"
+                                                    {{ $project['clientId'] == $row['id'] ? 'selected=selected' : '' }}>{{ e($row['name']) }}</option>
+                                            @endforeach
+                                        </x-globals::forms.select>
+                                        @if($login::userIsAtLeast('manager'))
+                                            <br /><a href="{{ BASE_URL }}/clients/newClient" target="_blank">{{ __('label.client_not_listed') }}</a>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="tw:mb-8">
+                                    <div class="">
+                                        <x-globals::elements.section-title icon="lock_open">{{ __('labels.defaultaccess') }}</x-globals::elements.section-title>
+                                        {{ __('text.who_can_access') }}
+                                        <br /><br />
+
+                                        <x-globals::forms.select :bare="true" name="globalProjectUserAccess" class="tw:max-w-xs">
+                                            <option value="restricted" {{ $project['psettings'] == 'restricted' ? "selected='selected'" : '' }}>{{ __('labels.only_chose') }}</option>
+                                            <option value="clients" {{ $project['psettings'] == 'clients' ? "selected='selected'" : '' }}>{{ __('labels.everyone_in_client') }}</option>
+                                            <option value="all" {{ $project['psettings'] == 'all' ? "selected='selected'" : '' }}>{{ __('labels.everyone_in_org') }}</option>
+                                        </x-globals::forms.select>
+
+                                    </div>
+                                </div>
+
                             </div>
 
                         </div>
 
-                    </div>
-
-                </form>
-            </div>
-        </div>
+                    </form>
+                </x-globals::navigations.tabs.content>
+            </x-slot:contents>
+        </x-globals::navigations.tabs>
     </div>
 </div>
 

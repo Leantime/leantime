@@ -9,13 +9,7 @@
     $fullReportLatest = $tpl->get('fullReportLatest');
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="bar_chart" /></div>
-    <div class="pagetitle">
-        <h5>{{ $tpl->escape(session('currentProjectClient') . ' // ' . session('currentProjectName')) }}</h5>
-        <h1>{{ $tpl->__('headlines.reports') }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header icon="bar_chart" headline="{{ $tpl->__('headlines.reports') }}" subtitle="{{ $tpl->escape(session('currentProjectClient') . ' // ' . session('currentProjectName')) }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -79,9 +73,9 @@
 
                                 <div class="pull-right">
                                     <div class="btn-group mt-1 mx-auto" role="group">
-                                        <x-globals::forms.button link="javascript:void(0)" type="secondary" size="sm" id="NumChartButtonSprint" class="active chartButtons">{{ $tpl->__('label.num_tickets') }}</x-globals::forms.button>
-                                        <x-globals::forms.button link="javascript:void(0)" type="secondary" size="sm" id="EffortChartButtonSprint" class="chartButtons">{{ $tpl->__('label.effort') }}</x-globals::forms.button>
-                                        <x-globals::forms.button link="javascript:void(0)" type="secondary" size="sm" id="HourlyChartButtonSprint" class="chartButtons">{{ $tpl->__('label.hours') }}</x-globals::forms.button>
+                                        <x-globals::forms.button element="a" href="javascript:void(0)" contentRole="secondary" scale="s" id="NumChartButtonSprint" class="active chartButtons">{{ $tpl->__('label.num_tickets') }}</x-globals::forms.button>
+                                        <x-globals::forms.button element="a" href="javascript:void(0)" contentRole="secondary" scale="s" id="EffortChartButtonSprint" class="chartButtons">{{ $tpl->__('label.effort') }}</x-globals::forms.button>
+                                        <x-globals::forms.button element="a" href="javascript:void(0)" contentRole="secondary" scale="s" id="HourlyChartButtonSprint" class="chartButtons">{{ $tpl->__('label.hours') }}</x-globals::forms.button>
                                     </div>
                                 </div>
 
@@ -97,9 +91,9 @@
 
                         <div class="pull-right">
                             <div class="btn-group mt-1 mx-auto" role="group">
-                                <x-globals::forms.button link="javascript:void(0)" type="secondary" size="sm" id="NumChartButtonBacklog" class="active backlogChartButtons">{{ $tpl->__('label.num_tickets') }}</x-globals::forms.button>
-                                <x-globals::forms.button link="javascript:void(0)" type="secondary" size="sm" id="EffortChartButtonBacklog" class="backlogChartButtons">{{ $tpl->__('label.effort') }}</x-globals::forms.button>
-                                <x-globals::forms.button link="javascript:void(0)" type="secondary" size="sm" id="HourlyChartButtonBacklog" class="backlogChartButtons">{{ $tpl->__('label.hours') }}</x-globals::forms.button>
+                <x-globals::forms.button element="a" href="javascript:void(0)" contentRole="secondary" scale="s" id="NumChartButtonBacklog" class="active backlogChartButtons">{{ $tpl->__('label.num_tickets') }}</x-globals::forms.button>
+                                 <x-globals::forms.button element="a" href="javascript:void(0)" contentRole="secondary" scale="s" id="EffortChartButtonBacklog" class="backlogChartButtons">{{ $tpl->__('label.effort') }}</x-globals::forms.button>
+                                 <x-globals::forms.button element="a" href="javascript:void(0)" contentRole="secondary" scale="s" id="HourlyChartButtonBacklog" class="backlogChartButtons">{{ $tpl->__('label.hours') }}</x-globals::forms.button>
                             </div>
                         </div>
                         <div style="width:100%; height:350px;">
@@ -148,16 +142,12 @@
                                                     {{ $tpl->__('label.due') }}
                                                     {{ format($row->editTo)->date($tpl->__('text.no_date_defined')) }}
                                                 </div>
-                                                <div class="col-md-5" style="text-align:right">
+                                                <div class="col-md-5 tw:text-right">
                                                     {{ sprintf($tpl->__('text.percent_complete'), $row->percentDone) }}
                                                 </div>
                                             </div>
                                             <div class="row"><div class="col-md-12">
-                                            <div class="progress">
-                                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ $row->percentDone }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $row->percentDone }}%">
-                                                    <span class="sr-only">{{ sprintf($tpl->__('text.percent_complete'), $row->percentDone) }}</span>
-                                                </div>
-                                            </div>
+                                            <x-globals::feedback.progress :value="$row->percentDone" :max="100" />
                                             </div></div>
                                         </div>
                                     </li>

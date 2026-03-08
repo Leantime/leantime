@@ -13,7 +13,7 @@
 
                         <div class="column" style="width: 20%">
                             <div class="row canvas-row" id="firstRowTop">
-                                <div class="column" style="width: 100%; padding-top: 0px">
+                                <div class="column tw:pt-0" style="width: 100%">
                                     @include('canvas::element', ['canvasName' => 'obm', 'elementName' => 'obm_ka'])
                                 </div>
                             </div>
@@ -30,7 +30,7 @@
 
                         <div class="column" style="width: 20%">
                             <div class="row canvas-row" id="firstRowTopRight">
-                                <div class="column" style="width: 100%; padding-top: 0px">
+                                <div class="column tw:pt-0" style="width: 100%">
                                     @include('canvas::element', ['canvasName' => 'obm', 'elementName' => 'obm_cr'])
                                 </div>
                             </div>

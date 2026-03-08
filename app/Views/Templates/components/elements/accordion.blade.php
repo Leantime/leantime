@@ -21,7 +21,7 @@
             'class' => 'accordionTitle tw:pb-15 tw:text-l',
             'id' => "accordion_link_$id"
         ]) }}>
-            <x-global::elements.icon name="{{ $state == 'closed' ? 'chevron_right' : 'expand_more' }}" />
+            <x-globals::elements.icon name="{{ $state == 'closed' ? 'chevron_right' : 'expand_more' }}" />
             {!! $title !!}
         </h5>
     </a>

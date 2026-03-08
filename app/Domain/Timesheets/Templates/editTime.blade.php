@@ -70,7 +70,7 @@
 
 {!! $tpl->displayNotification() !!}
 
-<h4  class="widgettitle title-light"><x-global::elements.icon name="schedule" /> {{ __('headlines.edit_time') }}</h4>
+<x-globals::elements.section-title icon="schedule">{{ __('headlines.edit_time') }}</x-globals::elements.section-title>
 <form action="{{ BASE_URL }}/timesheets/editTime/{{ (int) $_GET['id'] }}" method="post" class="editTimeModal">
 
 <x-globals::forms.form-field label-text="{{ __('label.client') }}" name="clients">
@@ -171,7 +171,7 @@
 
 
     <input type="hidden" name="saveForm" value="1"/>
-    <p class="stdformbutton">
+    <p>
         <a class="delete editTimeModal pull-right" href="{{ BASE_URL }}/timesheets/delTime/{{ e($_GET['id']) }}">{{ __('links.delete') }}</a>
         <x-globals::forms.button submit type="primary" name="save">{{ __('buttons.save') }}</x-globals::forms.button>
     </p>

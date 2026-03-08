@@ -85,7 +85,7 @@ foreach ($statusColumns as $statusId => $statusData) {
     <div class="swimlane-header-row1">
         {{-- Chevron (▼ expanded, ▶ collapsed) --}}
         <span class="kanban-lane-chevron">
-            <x-global::elements.icon name="{{ $expanded ? 'expand_more' : 'chevron_right' }}" />
+            <x-globals::elements.icon name="{{ $expanded ? 'expand_more' : 'chevron_right' }}" />
         </span>
 
         {{-- Visual indicator (icon/avatar) --}}
@@ -100,7 +100,7 @@ foreach ($statusColumns as $statusId => $statusData) {
         @else
             {{-- Default icon for status and other groupings --}}
             <span class="kanban-indicator">
-                <x-global::elements.icon :name="$fallbackIcon" class="kanban-indicator-icon" />
+                <x-globals::elements.icon :name="$fallbackIcon" class="kanban-indicator-icon" />
             </span>
         @endif
 

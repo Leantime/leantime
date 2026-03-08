@@ -1,9 +1,5 @@
 @php $tpl = $__data['tpl']; @endphp
-<div class="pageheader">
-    <div class="pagetitle">
-        <h1>{{ $tpl->language->__('headlines.installation') }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header headline="{{ $tpl->language->__('headlines.installation') }}" />
 <div class="regcontent" id="login">
     <p>{{ $tpl->language->__('text.this_script_will_set_up_leantime') }}</p><br />
 
@@ -19,7 +15,7 @@
         <x-globals::forms.text-input name="company" placeholder="{{ $tpl->language->__('label.company_name') }}" value="" />
         <br /><br />
         <input type="hidden" name="install" value="Install" />
-        <p><x-globals::forms.button submit type="primary" name="installAction" onClick="this.form.submit(); this.disabled=true; this.value='{{ $tpl->language->__('buttons.install') }}';">{{ $tpl->language->__('buttons.install') }}</x-globals::forms.button></p>
+        <p><x-globals::forms.button :submit="true" contentRole="primary" name="installAction" onClick="this.form.submit(); this.disabled=true; this.value='{{ $tpl->language->__('buttons.install') }}';">{{ $tpl->language->__('buttons.install') }}</x-globals::forms.button></p>
     </form>
 
 </div>

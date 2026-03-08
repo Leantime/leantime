@@ -2,12 +2,7 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="lock" /></div>
-    <div class="pagetitle">
-        <h1>{{ __('label.twoFA') }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header icon="lock" headline="{{ __('label.twoFA') }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -26,7 +21,7 @@
                         <br />
                         <img src="{{ $tpl->get('qrData') }}" style="border-radius: var(--box-radius);"/><br />
                         Secret: <p>{{ $tpl->get('secret') }}</p><br/>
-                        <form action="" method="post" class="stdform">
+                        <form action="" method="post">
                             <h5>2. {{ __('text.twoFA_verify_code') }}</h5>
                             <p>
                                 <span>{{ __('label.twoFACode_short') }}:</span>
@@ -36,16 +31,16 @@
                             <input type="hidden" name="secret" value="{{ $tpl->get('secret') }}" />
                             <br/>
                             <p class="stdformbutton">
-                                <x-globals::forms.button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
+                                <x-globals::forms.button :submit="true" contentRole="primary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
                             </p>
                         </form>
                     @else
-                        <form action="" method="post" class="stdform">
+                        <form action="" method="post">
                             <h5>{{ __('text.twoFA_already_enabled') }}</h5>
                             <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
                             <p class="stdformbutton">
-                                <x-globals::forms.button submit type="primary" name="disable" id="disable">{{ __('buttons.remove') }}</x-globals::forms.button>
-                                <x-globals::forms.button link="{{ BASE_URL }}/users/editOwn" type="secondary">{{ __('buttons.back') }}</x-globals::forms.button>
+                                <x-globals::forms.button :submit="true" contentRole="primary" name="disable" id="disable">{{ __('buttons.remove') }}</x-globals::forms.button>
+                                <x-globals::forms.button element="a" href="{{ BASE_URL }}/users/editOwn" contentRole="secondary">{{ __('buttons.back') }}</x-globals::forms.button>
                             </p>
                         </form>
                     @endif

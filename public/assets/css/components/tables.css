@@ -445,11 +445,11 @@
    border-radius: var(--box-radius-small);
 }
 
-.maincontentinner .timesheetTable td input {
+.timesheetTable td input {
     margin-bottom:4px;
 }
 
-.maincontentinner .timesheetTable tfoot td {
+.timesheetTable tfoot td {
     padding:10px;
 }
 

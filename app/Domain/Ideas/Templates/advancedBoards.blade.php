@@ -16,34 +16,31 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="lightbulb" /></div>
-    <div class="pagetitle">
-        <h5>{{ $tpl->escape(session('currentProjectClient') . ' // ' . session('currentProjectName')) }}</h5>
+<x-globals::layout.page-header icon="lightbulb">
+    <h5>{{ $tpl->escape(session('currentProjectClient') . ' // ' . session('currentProjectName')) }}</h5>
+    @if (count($allCanvas) > 0)
+        <x-globals::actions.dropdown-menu container-class="headerEditDropdown" position="left">
+            @if ($login::userIsAtLeast($roles::$editor))
+                <li><a href="javascript:void(0)" onclick="document.getElementById('editCanvas').showModal();">{!! $tpl->__('links.icon.edit') !!}</a></li>
+                <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
+            @endif
+        </x-globals::actions.dropdown-menu>
+    @endif
+    <h1>{{ $tpl->__('headlines.idea_management') }}
+        //
         @if (count($allCanvas) > 0)
-            <x-globals::actions.dropdown-menu container-class="headerEditDropdown" position="left">
+            <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" :label="$tpl->escape($canvasTitle)" trigger-class="header-title-dropdown">
                 @if ($login::userIsAtLeast($roles::$editor))
-                    <li><a href="javascript:void(0)" onclick="document.getElementById('editCanvas').showModal();">{!! $tpl->__('links.icon.edit') !!}</a></li>
-                    <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
+                    <li><a href="javascript:void(0)" onclick="document.getElementById('addCanvas').showModal();">{!! $tpl->__('links.icon.create_new_board') !!}</a></li>
                 @endif
+                <li class="border"></li>
+                @foreach ($tpl->get('allCanvas') as $canvasRow)
+                    <li><a href="{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
+                @endforeach
             </x-globals::actions.dropdown-menu>
         @endif
-        <h1>{{ $tpl->__('headlines.idea_management') }}
-            //
-            @if (count($allCanvas) > 0)
-                <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" :label="$tpl->escape($canvasTitle)" trigger-class="header-title-dropdown">
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="javascript:void(0)" onclick="document.getElementById('addCanvas').showModal();">{!! $tpl->__('links.icon.create_new_board') !!}</a></li>
-                    @endif
-                    <li class="border"></li>
-                    @foreach ($tpl->get('allCanvas') as $canvasRow)
-                        <li><a href="{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
-                    @endforeach
-                </x-globals::actions.dropdown-menu>
-            @endif
-        </h1>
-    </div>
-</div><!--pageheader-->
+    </h1>
+</x-globals::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -53,40 +50,40 @@
             <div>
                 @if ($login::userIsAtLeast($roles::$editor))
                     @if (count($tpl->get('allCanvas')) > 0)
-                        <x-globals::forms.button link="#/ideas/ideaDialog?type=idea" type="primary" id="customersegment" icon="lightbulb">{{ $tpl->__('buttons.add_idea') }}</x-globals::forms.button>
+                        <x-globals::forms.button link="#/ideas/ideaDialog?type=idea" contentRole="primary" id="customersegment" leadingVisual="lightbulb">{{ $tpl->__('buttons.add_idea') }}</x-globals::forms.button>
                     @endif
                 @endif
             </div>
 
             <div>
-                <x-globals::actions.dropdown-menu variant="button" :label="__('label.idea_kanban')" content-role="default">
-                    <li><a href="{{ BASE_URL }}/ideas/showBoards"><x-global::elements.icon name="dashboard" /> {{ __('label.idea_wall') }}</a></li>
-                    <li><a href="{{ BASE_URL }}/ideas/advancedBoards" class="active"><x-global::elements.icon name="view_kanban" /> {{ __('label.idea_kanban') }}</a></li>
+                <x-globals::actions.dropdown-menu variant="button" :label="__('label.idea_kanban')" contentRole="default">
+                    <li><a href="{{ BASE_URL }}/ideas/showBoards"><x-globals::elements.icon name="dashboard" /> {{ __('label.idea_wall') }}</a></li>
+                    <li><a href="{{ BASE_URL }}/ideas/advancedBoards" class="active"><x-globals::elements.icon name="view_kanban" /> {{ __('label.idea_kanban') }}</a></li>
                 </x-globals::actions.dropdown-menu>
             </div>
         </div>
 
         @if (count($tpl->get('allCanvas')) > 0)
-            <div id="sortableIdeaKanban" class="sortableTicketList" style="margin-top: 15px;">
+            <div id="sortableIdeaKanban" class="sortableTicketList tw:mt-4">
 
                 <div class="row-fluid">
 
                     @foreach ($tpl->get('canvasLabels') as $key => $statusRow)
                     <div class="column" style="width:{{ $size }}%;">
 
-                        <h4 class="widgettitle title-primary">
+                        <x-globals::elements.section-title variant="primary">
                             @if ($login::userIsAtLeast($roles::$manager))
                                 <a href="#/setting/editBoxLabel?module=idealabels&label={{ $key }}"
-                                   class="editHeadline"><x-global::elements.icon name="edit" /></a>
+                                   class="editHeadline"><x-globals::elements.icon name="edit" /></a>
                             @endif
                             {{ $tpl->escape($statusRow['name']) }}
-                        </h4>
+                        </x-globals::elements.section-title>
 
                         <div class="contentInner status_{{ $key }}">
 
                             @foreach ($tpl->get('canvasItems') as $row)
                                 @if ($row['box'] == $key)
-                                    <div class="ticketBox moveable" id="item_{{ $row['id'] }}" style="padding: 15px;">
+                                    <div class="ticketBox moveable tw:p-4" id="item_{{ $row['id'] }}">
 
                                         <div class="tw:flex tw:justify-between tw:items-start tw:gap-2 tw:mb-3">
                                             <h4 class="tw:m-0 tw:flex-1 tw:min-w-0"><a href="#/ideas/ideaDialog/{{ $row['id'] }}"
@@ -113,30 +110,21 @@
                                                     data="item_{{ $row['id'] }}"
                                                     class="tw:flex tw:items-center tw:gap-1"
                                                     {!! $row['commentCount'] == 0 ? 'style="color: grey;"' : '' !!}>
-                                                    <span class="material-symbols-outlined" aria-hidden="true">forum</span>
+                                                    <x-globals::elements.icon name="forum" />
                                                     <small>{{ $row['commentCount'] }}</small>
                                                 </a>
                                             </div>
 
-                                            <div class="dropdown ticketDropdown userDropdown noBg lastDropdown dropRight">
-                                                <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="userDropdownMenuLink{{ $row['id'] }}" aria-haspopup="true" aria-expanded="false">
-                                                    <span class="text">
-                                                        @if ($row['authorFirstname'] != '')
-                                                            <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['author'] }}" width="25" style="vertical-align: middle; border-radius: 50%;"/></span>
-                                                        @else
-                                                            <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle; border-radius: 50%;"/></span>
-                                                        @endif
-                                                    </span>
-                                                </a>
-                                                <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
-                                                    <li class="nav-header border">{{ $tpl->__('dropdown.choose_user') }}</li>
-                                                    @foreach ($tpl->get('users') as $user)
-                                                        <li class="dropdown-item">
-                                                            <a href="javascript:void(0);" onclick="document.activeElement.blur();" data-label="{{ sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}" data-value="{{ $row['id'] }}_{{ $user['id'] }}_{{ $user['profileId'] }}" id="userStatusChange{{ $row['id'] }}{{ $user['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" width="25" style="vertical-align: middle; margin-right:5px;"/>{{ sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}</a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
+                                            <x-globals::actions.user-select
+                                                :entityId="$row['id']"
+                                                :assignedUserId="$row['author']"
+                                                :assignedName="$row['authorFirstname']"
+                                                :users="$tpl->get('users')"
+                                                :showNameLabel="false"
+                                                :showArrowIcon="false"
+                                                :showUnassign="false"
+                                                dropdownClasses="lastDropdown dropRight"
+                                            />
                                         </div>
 
                                         @if ($row['milestoneHeadline'] != '')
@@ -169,14 +157,14 @@
         @else
             <br/><br/>
             <div class="center">
-                <div style="width:50%" class="svgContainer">
+                <div class="tw:w-1/2 svgContainer">
                     {!! file_get_contents(ROOT . '/dist/images/svg/undraw_new_ideas_jdea.svg') !!}
                 </div>
 
                 <br/><h4>{{ $tpl->__('headlines.have_an_idea') }}</h4><br/>
                 {{ $tpl->__('subtitles.start_collecting_ideas') }}<br/><br/>
                 @if ($login::userIsAtLeast($roles::$editor))
-                    <x-globals::forms.button link="javascript:void(0);" type="primary" onclick="document.getElementById('addCanvas').showModal();">{{ $tpl->__('buttons.start_new_idea_board') }}</x-globals::forms.button>
+                    <x-globals::forms.button link="javascript:void(0);" contentRole="primary" onclick="document.getElementById('addCanvas').showModal();">{{ $tpl->__('buttons.start_new_idea_board') }}</x-globals::forms.button>
                 @endif
             </div>
 
@@ -188,10 +176,10 @@
                 <label>{{ $tpl->__('label.topic_idea_board') }}</label>
                 <x-globals::forms.text-input name="canvastitle"
                        placeholder="{{ $tpl->__('input.placeholders.name_for_idea_board') }}"
-                       style="width:90%" />
+                       class="tw:w-full" />
                 <x-slot name="actions">
-                    <x-globals::forms.button tag="button" type="secondary" onclick="document.getElementById('addCanvas').close();">{{ $tpl->__('buttons.close') }}</x-globals::forms.button>
-                    <x-globals::forms.button submit type="secondary" name="newCanvas">{{ $tpl->__('buttons.create_board') }}</x-globals::forms.button>
+                    <x-globals::forms.button tag="button" contentRole="secondary" onclick="document.getElementById('addCanvas').close();">{{ $tpl->__('buttons.close') }}</x-globals::forms.button>
+                    <x-globals::forms.button :submit="true" contentRole="secondary" name="newCanvas">{{ $tpl->__('buttons.create_board') }}</x-globals::forms.button>
                 </x-slot>
             </form>
         </x-globals::actions.modal>
@@ -200,10 +188,10 @@
             <form action="" method="post">
                 <label>{{ $tpl->__('label.title_idea_board') }}</label>
                 <x-globals::forms.text-input name="canvastitle" value="{{ $tpl->escape($canvasTitle) }}"
-                       style="width:90%" />
+                       class="tw:w-full" />
                 <x-slot name="actions">
-                    <x-globals::forms.button tag="button" type="secondary" onclick="document.getElementById('editCanvas').close();">{{ $tpl->__('buttons.close') }}</x-globals::forms.button>
-                    <x-globals::forms.button submit type="secondary" name="editCanvas">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
+                    <x-globals::forms.button tag="button" contentRole="secondary" onclick="document.getElementById('editCanvas').close();">{{ $tpl->__('buttons.close') }}</x-globals::forms.button>
+                    <x-globals::forms.button :submit="true" contentRole="secondary" name="editCanvas">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
                 </x-slot>
             </form>
         </x-globals::actions.modal>
@@ -222,7 +210,7 @@
             leantime.ideasController.initIdeaKanban(ideaStatusList);
             leantime.ideasController.initUserDropdown();
         @else
-            leantime.authController.makeInputReadonly(".maincontentinner");
+            leantime.authController.makeInputReadonly(".maincontent");
         @endif
 
     });

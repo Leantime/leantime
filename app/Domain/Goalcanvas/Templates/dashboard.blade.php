@@ -35,44 +35,40 @@ foreach ($allCanvas as $canvasRow) {
     div.canvas-element-center-middle { text-align: center; }
 </style>
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon :name="$canvasIcon" /></div>
-    <div class="pagetitle">
-        <h5>{{ session("currentProjectClient") . " // " . session("currentProjectName") }}</h5>
-
-        <h1>{{ __("headline.goal.dashboardboard") }} //
-            @if (count($allCanvas) > 0)
-                <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" label="All Goal Groups" trigger-class="header-title-dropdown">
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/goalcanvas/bigRock">{!! __("links.icon.create_new_board") !!}</a></li>
-                    @endif
-                    <li class="border"></li>
-                    @foreach ($allCanvas as $canvasRow)
-                        <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $canvasRow['title'] }}</a></li>
-                    @endforeach
-                </x-globals::actions.dropdown-menu>
-            @endif
-        </h1>
-    </div>
-</div><!--pageheader-->
+<x-globals::layout.page-header :icon="$canvasIcon" subtitle="{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}">
+    <x-slot:headline>
+        {{ __("headline.goal.dashboardboard") }} //
+        @if (count($allCanvas) > 0)
+            <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" label="All Goal Groups" trigger-class="header-title-dropdown">
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <li><a href="#/goalcanvas/bigRock">{!! __("links.icon.create_new_board") !!}</a></li>
+                @endif
+                <li class="border"></li>
+                @foreach ($allCanvas as $canvasRow)
+                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $canvasRow['title'] }}</a></li>
+                @endforeach
+            </x-globals::actions.dropdown-menu>
+        @endif
+    </x-slot:headline>
+</x-globals::layout.page-header>
 
 <div class="maincontent">
 
 <div class="row tw:mb-8">
     <div class="col-md-5">
-        <x-global::elements.big-number-box class="tw:py-7 tw:px-4">
+        <x-globals::elements.big-number-box class="tw:py-7 tw:px-4">
             <h2>Progress: {{ round($goalStats['avgPercentComplete']) }}%</h2>
-            <x-global::feedback.progress :value="round($goalStats['avgPercentComplete'])" :showLabel="false" class="tw:mt-1" />
-        </x-global::elements.big-number-box>
+            <x-globals::feedback.progress :value="round($goalStats['avgPercentComplete'])" :showLabel="false" class="tw:mt-1" />
+        </x-globals::elements.big-number-box>
     </div>
     <div class="col-md-2">
-        <x-global::elements.big-number-box state="on-track" number="{{ $goalStats['goalsOnTrack'] }}" label="On Track" />
+        <x-globals::elements.big-number-box state="on-track" number="{{ $goalStats['goalsOnTrack'] }}" label="On Track" />
     </div>
     <div class="col-md-2">
-        <x-global::elements.big-number-box state="at-risk" number="{{ $goalStats['goalsAtRisk'] }}" label="At Risk" />
+        <x-globals::elements.big-number-box state="at-risk" number="{{ $goalStats['goalsAtRisk'] }}" label="At Risk" />
     </div>
     <div class="col-md-3">
-        <x-global::elements.big-number-box state="miss" number="{{ $goalStats['goalsMiss'] }}" label="Miss" />
+        <x-globals::elements.big-number-box state="miss" number="{{ $goalStats['goalsMiss'] }}" label="Miss" />
     </div>
 </div>
 
@@ -87,7 +83,7 @@ foreach ($allCanvas as $canvasRow) {
             <div class="tw:flex tw:justify-between tw:items-center tw:mb-2">
                 <h5 class="subtitle tw:m-0"><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRowId }}">{{ $canvasRow["title"] }}</a></h5>
                 @if ($login::userIsAtLeast($roles::$editor))
-                    <x-globals::forms.button :link="'#/goalcanvas/editCanvasItem?type=goal&canvasId=' . $canvasRowId" type="primary" icon="add">Create New Goal</x-globals::forms.button>
+                    <x-globals::forms.button :link="'#/goalcanvas/editCanvasItem?type=goal&canvasId=' . $canvasRowId" contentRole="primary" leadingVisual="add">Create New Goal</x-globals::forms.button>
                 @endif
             </div>
             <div class="tw:border-b tw:border-solid tw:border-[var(--main-border-color)] tw:mb-5">
@@ -115,8 +111,6 @@ foreach ($allCanvas as $canvasRow) {
     @endif
 </div>
 
-
-
 {{--
  * showCanvasBottom.blade.php template - Bottom part of the main canvas page
  *
@@ -137,7 +131,7 @@ foreach ($allCanvas as $canvasRow) {
 
         @if ($login::userIsAtLeast($roles::$editor))
             <br><br>
-            <x-globals::forms.button link="javascript:void(0)" type="primary" class="addCanvasLink">
+            <x-globals::forms.button link="javascript:void(0)" contentRole="primary" class="addCanvasLink">
                 {!! __("links.icon.create_new_board") !!}
             </x-globals::forms.button>
         @endif
@@ -150,7 +144,6 @@ foreach ($allCanvas as $canvasRow) {
 
 {!! $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render() !!}
 
-</div>
 </div>
 
 <script type="text/javascript">
@@ -173,7 +166,7 @@ jQuery(document).ready(function() {
             leantime.canvasController.initRelatesDropdown();
         }
     @else
-        leantime.authController.makeInputReadonly(".maincontentinner");
+        leantime.authController.makeInputReadonly(".maincontent");
     @endif
 
     @if (isset($_GET['showModal']))

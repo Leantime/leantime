@@ -35,13 +35,13 @@
             <div>
                 <div class="pull-right">
                     @dispatchEvent('filters.afterRighthandSectionOpen')
-                    <div id="tableButtons" style="display:inline-block"></div>
+                    <div id="tableButtons" class="tw:inline-block"></div>
                     @dispatchEvent('filters.beforeRighthandSectionClose')
                 </div>
             </div>
         </div>
 
-        <div class="clearfix" style="margin-bottom: 20px;"></div>
+        <div class="clearfix tw:mb-5"></div>
 
         @php
             if (isset($allTicketGroups['all'])) {
@@ -53,7 +53,7 @@
             @if($group['label'] != 'all')
                 <h5 class="accordionTitle {{ $group['class'] }}" @if(!empty($group['color'])) style="color:{{ htmlspecialchars($group['color']) }}" @endif id="accordion_link_{{ $group['id'] }}">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}" onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                        <x-global::elements.icon name="expand_more" />{{ $group['label'] }} ({{ count($group['items']) }})
+                        <x-globals::elements.icon name="expand_more" />{{ $group['label'] }} ({{ count($group['items']) }})
                     </a>
                 </h5>
                 <div class="simpleAccordionContainer" id="accordion_content-{{ $group['id'] }}">
@@ -62,15 +62,16 @@
             @php $allTickets = $group['items']; @endphp
 
             @dispatchEvent('allTicketsTable.before', ['tickets' => $allTickets])
-            <div style="overflow-x: auto;">
-            <table class="table table-bordered display ticketTable" style="width:100%">
-                <colgroup>
-                    <col class="con1"><col class="con0"><col class="con1"><col class="con0">
-                    <col class="con1"><col class="con0"><col class="con1"><col class="con0">
-                    <col class="con1"><col class="con0"><col class="con1">
-                </colgroup>
+            <x-globals::elements.table :datatable="true" class="tw:w-full tw:overflow-x-auto">
+                <x-slot:colgroup>
+                    <colgroup>
+                        <col class="con1"><col class="con0"><col class="con1"><col class="con0">
+                        <col class="con1"><col class="con0"><col class="con1"><col class="con0">
+                        <col class="con1"><col class="con0"><col class="con1">
+                    </colgroup>
+                </x-slot:colgroup>
                 @dispatchEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets])
-                <thead>
+                <x-slot:head>
                 @dispatchEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets])
                 <tr>
                     <th>{{ __('label.title') }}</th>
@@ -87,7 +88,7 @@
                     <th class="no-sort" scope="col"><span class="sr-only">{{ __('label.actions') }}</span></th>
                 </tr>
                 @dispatchEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets])
-                </thead>
+                </x-slot:head>
                 @dispatchEvent('allTicketsTable.afterHead', ['tickets' => $allTickets])
                 <tbody>
                     @dispatchEvent('allTicketsTable.beforeFirstRow', ['tickets' => $allTickets])
@@ -126,77 +127,40 @@
                             @endphp
 
                             <td data-order="{{ $milestoneHeadline }}">
-                                @php
-                                    $milestoneOptions = [0 => ['name' => __('label.no_milestone'), 'class' => '#b0b0b0']];
-                                    foreach ($tpl->get('milestones') as $ms) {
-                                        $milestoneOptions[$ms->id] = ['name' => $ms->headline, 'class' => $ms->tags];
-                                    }
-                                @endphp
-                                <x-globals::actions.chip
-                                    content-role="milestone"
-                                    :parentId="$row['id']"
-                                    selectedClass="label-default"
-                                    color="{{ e($row['milestoneColor']) }}"
-                                    :selectedKey="$row['milestoneid'] ?: 0"
-                                    :options="$milestoneOptions"
-                                    :colorized="true"
-                                    headerLabel="{{ __('dropdown.choose_milestone') }}"
+                                <x-tickets::chips.milestone-select
+                                    :ticket="(object)$row"
+                                    :milestones="$tpl->get('milestones')"
                                 />
                             </td>
 
                             @php
-                                if (isset($statusLabels[$row['status']])) {
-                                    $class = $statusLabels[$row['status']]['class'];
-                                    $name = $statusLabels[$row['status']]['name'];
-                                    $sortKey = $statusLabels[$row['status']]['sortKey'];
-                                } else {
-                                    $class = 'label-important';
-                                    $name = 'new';
-                                    $sortKey = 0;
-                                }
+                                $sortKey = $statusLabels[$row['status']]['sortKey'] ?? 0;
                             @endphp
-
                             <td data-order="{{ $sortKey }}">
-                                <x-globals::actions.chip
-                                    content-role="status"
-                                    :parentId="$row['id']"
-                                    :selectedClass="$class"
-                                    :selectedKey="$row['status']"
-                                    :options="$statusLabels"
-                                    :colorized="true"
-                                    headerLabel="{{ __('dropdown.choose_status') }}"
+                                <x-tickets::chips.status-select
+                                    :ticket="(object)$row"
+                                    :statuses="$statusLabels"
                                 />
                             </td>
 
                             <td data-order="{{ $row['editorFirstname'] != '' ? e($row['editorFirstname']) : __('dropdown.not_assigned') }}">
-                                <div class="dropdown ticketDropdown userDropdown noBg">
-                                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="userDropdownMenuLink{{ $row['id'] }}" aria-haspopup="true" aria-expanded="false">
-                                        <span class="text">
-                                            @if($row['editorFirstname'] != '')
-                                                <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['editorId'] }}" width="25" style="vertical-align: middle; margin-right:5px;"/></span><span id="user{{ $row['id'] }}"> {{ e($row['editorFirstname']) }}</span>
-                                            @else
-                                                <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle; margin-right:5px;"/></span><span id="user{{ $row['id'] }}">{{ __('dropdown.not_assigned') }}</span>
-                                            @endif
-                                        </span>
-                                        &nbsp;<x-global::elements.icon name="arrow_drop_down" />
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
-                                        <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>
-                                        @foreach($tpl->get('users') as $user)
-                                            <li class="dropdown-item">
-                                                <a href="javascript:void(0);" onclick="document.activeElement.blur();" data-label="{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}" data-value="{{ $row['id'] }}_{{ $user['id'] }}_{{ $user['profileId'] }}" id="userStatusChange{{ $row['id'] }}{{ $user['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" width="25" style="vertical-align: middle; margin-right:5px;"/>{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}</a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
+                                <x-globals::actions.user-select
+                                    :entityId="$row['id']"
+                                    :assignedUserId="$row['editorId']"
+                                    :assignedName="$row['editorFirstname']"
+                                    :users="$tpl->get('users')"
+                                    :showNameLabel="true"
+                                    :showArrowIcon="true"
+                                    :showUnassign="false"
+                                />
                             </td>
 
                             <td data-order="{{ $row['editFrom'] }}">
-                                <x-global::elements.icon name="calendar_month" /><input type="text" title="{{ __('label.planned_start_date') }}" value="{{ format($row['editFrom'])->date() }}" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{{ $row['id'] }}" data-id="{{ $row['id'] }}" name="editFrom"/>
+                                <x-globals::elements.icon name="calendar_month" /><input type="text" title="{{ __('label.planned_start_date') }}" value="{{ format($row['editFrom'])->date() }}" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{{ $row['id'] }}" data-id="{{ $row['id'] }}" name="editFrom"/>
                             </td>
 
                             <td data-order="{{ $row['editTo'] }}">
-                                <x-global::elements.icon name="calendar_month" /><input type="text" title="{{ __('label.planned_end_date') }}" value="{{ format($row['editTo'])->date() }}" class="editToDate secretInput milestoneEditToAsync toDateTicket-{{ $row['id'] }}" data-id="{{ $row['id'] }}" name="editTo"/>
+                                <x-globals::elements.icon name="calendar_month" /><input type="text" title="{{ __('label.planned_end_date') }}" value="{{ format($row['editTo'])->date() }}" class="editToDate secretInput milestoneEditToAsync toDateTicket-{{ $row['id'] }}" data-id="{{ $row['id'] }}" name="editTo"/>
                             </td>
 
                             <td data-order="{{ $row['planHours'] }}">{{ $row['planHours'] }}</td>
@@ -207,9 +171,9 @@
                                 @if($login::userIsAtLeast($roles::$editor))
                                     <x-globals::actions.dropdown-menu>
                                         <li class="nav-header border">{{ __('subtitles.todo') }}</li>
-                                        <li><a href="#/tickets/editMilestone/{{ $row['id'] }}" class="ticketModal"><x-global::elements.icon name="edit" /> {{ __('links.edit_milestone') }}</a></li>
-                                        <li><a href="#/tickets/moveTicket/{{ $row['id'] }}" class="moveTicketModal sprintModal"><x-global::elements.icon name="swap_horiz" /> {{ __('links.move_milestone') }}</a></li>
-                                        <li><a href="#/tickets/delMilestone/{{ $row['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
+                                        <li><a href="#/tickets/editMilestone/{{ $row['id'] }}" class="ticketModal"><x-globals::elements.icon name="edit" /> {{ __('links.edit_milestone') }}</a></li>
+                                        <li><a href="#/tickets/moveTicket/{{ $row['id'] }}" class="moveTicketModal sprintModal"><x-globals::elements.icon name="swap_horiz" /> {{ __('links.move_milestone') }}</a></li>
+                                        <li><a href="#/tickets/delMilestone/{{ $row['id'] }}" class="delete"><x-globals::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
                                         <li><a href="{{ BASE_URL }}/tickets/showAll?search=true&milestone={{ $row['id'] }}">{{ __('links.view_todos') }}</a></li>
                                     </x-globals::actions.dropdown-menu>
                                 @endif
@@ -220,8 +184,7 @@
                     @dispatchEvent('allTicketsTable.afterLastRow', ['tickets' => $allTickets])
                 </tbody>
                 @dispatchEvent('allTicketsTable.afterBody', ['tickets' => $allTickets])
-            </table>
-            </div>
+            </x-globals::elements.table>
             @dispatchEvent('allTicketsTable.afterClose', ['tickets' => $allTickets])
 
             @if($group['label'] != 'all')

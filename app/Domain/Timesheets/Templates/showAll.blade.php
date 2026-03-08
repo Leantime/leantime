@@ -96,21 +96,13 @@
     });
 </script>
 
-<!-- page header -->
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="business_center" /></div>
-        <div class="pagetitle">
-        <h1>{{ __('headlines.all_timesheets') }}</h1>
-    </div>
-</div>
-<!-- page header -->
-
+<x-globals::layout.page-header icon="business_center" headline="{{ __('headlines.all_timesheets') }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
         <form action="{{ BASE_URL }}/timesheets/showAll" method="post" id="form" name="form">
 
-            <div class="tw:flex tw:items-end tw:flex-wrap tw:gap-x-4 tw:gap-y-3 tw:mb-4">
+            <div class="tw:flex tw:items-end tw:flex-wrap tw:gap-x-4 tw:gap-y-3 tw:mb-4 tw:p-5">
                 <div>
                     <label for="clients" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.client') }}</label>
                     <x-globals::forms.select :bare="true" name="clientId">
@@ -126,7 +118,7 @@
                 </div>
                 <div>
                     <label for="projects" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.project') }}</label>
-                    <x-globals::forms.select :bare="true" name="project" style="max-width:150px;">
+                    <x-globals::forms.select :bare="true" name="project" class="tw:max-w-[150px]">
                         <option value="-1">{{ strip_tags(__('menu.all_projects')) }}</option>
                         @foreach ($tpl->get('allProjects') as $project)
                             <option value="{{ $project['id'] }}" data-client-id="{{ $project['clientId'] }}"
@@ -140,7 +132,7 @@
                 @if (! empty($tpl->get('allTickets')))
                 <div>
                     <label for="ticket" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.ticket') }}</label>
-                    <x-globals::forms.select :bare="true" name="ticket" style="max-width:150px;">
+                    <x-globals::forms.select :bare="true" name="ticket" class="tw:max-w-[150px]">
                         <option value="-1">{{ strip_tags(__('menu.all_tickets')) }}</option>
                         @foreach ($tpl->get('allTickets') as $ticket)
                             <option value="{{ $ticket['id'] }}" data-project-id="{{ $ticket['projectId'] }}"
@@ -155,16 +147,16 @@
                 <div>
                     <label for="dateFrom" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.date_from') }}</label>
                     <input type="text" id="dateFrom" class="dateFrom" name="dateFrom" autocomplete="off"
-                        value="{{ format($tpl->get('dateFrom'))->date() }}" style="width:110px;" />
+                        value="{{ format($tpl->get('dateFrom'))->date() }}" class="tw:w-[110px]" />
                 </div>
                 <div>
                     <label for="dateTo" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.date_to') }}</label>
                     <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
-                        value="{{ format($tpl->get('dateTo'))->date() }}" style="width:110px;" />
+                        value="{{ format($tpl->get('dateTo'))->date() }}" class="tw:w-[110px]" />
                 </div>
                 <div>
                     <label for="userId" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.employee') }}</label>
-                    <x-globals::forms.select :bare="true" name="userId" id="userId" onchange="submit();" style="max-width:150px;">
+                    <x-globals::forms.select :bare="true" name="userId" id="userId" onchange="submit();" class="tw:max-w-[150px]">
                         <option value="all">{{ __('label.all_employees') }}</option>
                         @foreach ($tpl->get('employees') as $row)
                             <option value="{{ $row['id'] }}"
@@ -177,7 +169,7 @@
                 </div>
                 <div>
                     <label for="kind" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.type') }}</label>
-                    <x-globals::forms.select :bare="true" id="kind" name="kind" onchange="submit();" style="max-width:130px;">
+                    <x-globals::forms.select :bare="true" id="kind" name="kind" onchange="submit();" class="tw:max-w-[130px]">
                         <option value="all">{{ __('label.all_types') }}</option>
                         @foreach ($tpl->get('kind') as $key => $row)
                             <option value="{{ $key }}"
@@ -190,7 +182,7 @@
                 </div>
                 <div>
                     <label for="invEmpl" class="tw:block tw:text-xs tw:text-[var(--secondary-font-color)] tw:mb-1">{{ __('label.invoiced') }}</label>
-                    <x-globals::forms.select :bare="true" name="invEmpl" id="invEmpl" style="max-width:130px;">
+                    <x-globals::forms.select :bare="true" name="invEmpl" id="invEmpl" class="tw:max-w-[130px]">
                         <option value="all"
                             @if ($tpl->get('invEmpl') == 'all' || ! $tpl->get('invEmpl'))
                                 selected="selected"
@@ -229,31 +221,30 @@
                     <x-globals::forms.button submit type="primary" class="reload">{{ __('buttons.search') }}</x-globals::forms.button>
                 </div>
                 <div class="tw:ml-auto tw:pb-[2px]">
-                    <div id="tableButtons" style="display:inline-block"></div>
+                    <div id="tableButtons" class="tw:inline-block"></div>
                 </div>
             </div>
 
-            <div style="overflow-x: auto;">
-            <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
-                <colgroup>
-                      <col class="con0" width="100px"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1" />
-                      <col class="con0"/>
-                      <col class="con1"/>
-                      <col class="con0"/>
-                      <col class="con1"/>
-                      <col class="con0"/>
-                      <col class="con1"/>
-                </colgroup>
-                <thead>
+            <x-globals::elements.table :hover="true" id="allTimesheetsTable" class="display">
+                <x-slot:head>
+                    <colgroup>
+                          <col class="con0" width="100px"/>
+                          <col class="con1" />
+                          <col class="con0"/>
+                          <col class="con1" />
+                          <col class="con0"/>
+                          <col class="con1" />
+                          <col class="con0"/>
+                          <col class="con1" />
+                          <col class="con0"/>
+                          <col class="con1" />
+                          <col class="con0"/>
+                          <col class="con1"/>
+                          <col class="con0"/>
+                          <col class="con1"/>
+                          <col class="con0"/>
+                          <col class="con1"/>
+                    </colgroup>
                     <tr>
                         <th>{{ __('label.id') }}</th>
                         <th>{{ __('label.date') }}</th>
@@ -272,9 +263,7 @@
                         <th>{{ __('label.invoiced_comp') }}</th>
                         <th>{{ __('label.paid') }}</th>
                     </tr>
-
-                </thead>
-                <tbody>
+                </x-slot:head>
 
                 @php
                     $sum = 0;
@@ -342,8 +331,8 @@
                         </td>
                     </tr>
                 @endforeach
-                </tbody>
-                <tfoot>
+
+                <x-slot:foot>
                     <tr>
                         <td colspan="2"><strong>{{ __('label.total_hours') }}</strong></td>
                         <td colspan="10"><strong>{{ $sum }}</strong></td>
@@ -355,22 +344,21 @@
                         </td>
                         <td>
                             @if ($login::userIsAtLeast($roles::$manager))
-                            <input type="checkbox" id="checkAllEmpl" aria-label="{{ __('label.select_all') }}" style="vertical-align: baseline;"/> {{ __('label.select_all') }}</td>
+                            <input type="checkbox" id="checkAllEmpl" aria-label="{{ __('label.select_all') }}" class="tw:align-baseline"/> {{ __('label.select_all') }}</td>
                             @endif
                         <td>
                             @if ($login::userIsAtLeast($roles::$manager))
-                            <input type="checkbox"  id="checkAllComp" aria-label="{{ __('label.select_all') }}" style="vertical-align: baseline;"/> {{ __('label.select_all') }}
+                            <input type="checkbox"  id="checkAllComp" aria-label="{{ __('label.select_all') }}" class="tw:align-baseline"/> {{ __('label.select_all') }}
                             @endif
                         </td>
                         <td>
                             @if ($login::userIsAtLeast($roles::$manager))
-                                <input type="checkbox"  id="checkAllPaid" aria-label="{{ __('label.select_all') }}" style="vertical-align: baseline;"/> {{ __('label.select_all') }}
+                                <input type="checkbox"  id="checkAllPaid" aria-label="{{ __('label.select_all') }}" class="tw:align-baseline"/> {{ __('label.select_all') }}
                             @endif
                         </td>
                     </tr>
-                </tfoot>
-            </table>
-            </div>
+                </x-slot:foot>
+            </x-globals::elements.table>
         </form>
     </div>
 </div>

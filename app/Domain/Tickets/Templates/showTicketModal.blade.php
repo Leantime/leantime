@@ -24,18 +24,18 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
     <?php if ($ticket->dependingTicketId > 0) { ?>
         <small><a href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small> //
     <?php } ?>
-    <small class="pull-right tw:pr-md" style="padding:5px 30px 0px 0px">Created by <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | Last Updated: <?= format($ticket->date)->date(); ?> </small>
-    <h1 class="modal-content-title" style="margin-bottom:0px;"><x-global::elements.icon :name="$todoTypeIcons[strtolower($ticket->type)] ?? 'task_alt'" /> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
+    <small class="pull-right tw:pr-md tw:pt-1 tw:pr-[30px]">Created by <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | Last Updated: <?= format($ticket->date)->date(); ?> </small>
+    <h1 class="modal-content-title tw:mb-0"><x-globals::elements.icon :name="$todoTypeIcons[strtolower($ticket->type)] ?? 'task_alt'" /> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
 
     <br />
 
     <?php if ($login::userIsAtLeast($roles::$editor)) {
         $onTheClock = $tpl->get('onTheClock');
         ?>
-        <x-globals::actions.dropdown-menu container-class="pull-right tw:z-50" style="padding-top:10px; padding-right:10px;">
+        <x-globals::actions.dropdown-menu container-class="pull-right tw:z-50 tw:pt-2 tw:pr-2">
                 <li class="nav-header border"><?php echo $tpl->__('subtitles.todo'); ?></li>
-                <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><x-global::elements.icon name="swap_horiz" /> <?php echo $tpl->__('links.move_todo'); ?></a></li>
-                <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><x-global::elements.icon name="delete" /> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
+                <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><x-globals::elements.icon name="swap_horiz" /> <?php echo $tpl->__('links.move_todo'); ?></a></li>
+                <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><x-globals::elements.icon name="delete" /> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
                 <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
                 <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
                     hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
@@ -52,7 +52,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
                            hx-target="#timerHeadMenu"
                            hx-swap="outerHTML"
                            hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"start"}'>
-                            <x-global::elements.icon name="schedule" /> {{ __("links.start_work") }}
+                            <x-globals::elements.icon name="schedule" /> {{ __("links.start_work") }}
                         </a>
                     @endif
 
@@ -62,7 +62,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
                            hx-target="#timerHeadMenu"
                            hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"stop"}'
                            hx-swap="outerHTML">
-                            <x-global::elements.icon name="stop" />
+                            <x-globals::elements.icon name="stop" />
 
                             @if (is_array($onTheClock) == true)
                                 {!!  sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), $onTheClock["since"])) !!}
@@ -82,10 +82,10 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
     <div class="lt-tabs tabbedwidget ticketTabs" style="visibility:hidden;" data-tabs data-tabs-persist="url">
 
         <ul role="tablist">
-            <li><a href="#ticketdetails"><x-global::elements.icon name="star" /> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
-            <li><a href="#files"><x-global::elements.icon name="description" /> <?php echo $tpl->__('tabs.files') ?> (<?php echo $tpl->get('numFiles'); ?>)</a></li>
+            <li><a href="#ticketdetails"><x-globals::elements.icon name="star" /> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
+            <li><a href="#files"><x-globals::elements.icon name="description" /> <?php echo $tpl->__('tabs.files') ?> (<?php echo $tpl->get('numFiles'); ?>)</a></li>
             <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
-                <li><a href="#timesheet"><x-global::elements.icon name="schedule" /> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
+                <li><a href="#timesheet"><x-globals::elements.icon name="schedule" /> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
             <?php } ?>
             <?php $tpl->dispatchTplEvent('ticketTabs', ['ticket' => $ticket]); ?>
         </ul>
@@ -96,10 +96,10 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
             </form>
 
             <?php if ($ticket->id) { ?>
-                <h4 class="widgettitle title-light"><x-global::elements.icon name="forum" /> <?= $tpl->__('subtitles.discussion') ?></h4>
+                <x-globals::elements.section-title icon="forum"><?= $tpl->__('subtitles.discussion') ?></x-globals::elements.section-title>
                 <?php
-                    $tpl->assign('formUrl', BASE_URL . '/tickets/showTicket/' . $ticket->id);
-                    $tpl->displaySubmodule('comments-generalComment');
+                    $tpl->assign('formUrl', BASE_URL.'/tickets/showTicket/'.$ticket->id);
+                $tpl->displaySubmodule('comments-generalComment');
                 ?>
             <?php } ?>
         </div>

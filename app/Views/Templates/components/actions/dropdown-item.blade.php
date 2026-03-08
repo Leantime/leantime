@@ -22,11 +22,11 @@
     <li>
         <a href="{{ $href }}" {{ $attributes->merge(['class' => $stateClass]) }}>
             @if($leadingVisual)
-                <x-global::elements.icon :name="$leadingVisual" style="margin-right:6px;" />
+                <x-globals::elements.icon :name="$leadingVisual" style="margin-right:6px;" />
             @endif
             {{ $slot }}
             @if($trailingVisual)
-                <x-global::elements.icon :name="$trailingVisual" style="margin-left:auto;" />
+                <x-globals::elements.icon :name="$trailingVisual" style="margin-left:auto;" />
             @endif
         </a>
     </li>

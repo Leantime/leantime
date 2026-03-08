@@ -2,15 +2,7 @@
 
 @section('content')
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pagetitle">
-        <h1>{{ __('headlines.reset_password') }}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div>
-@dispatchEvent('afterPageHeaderClose')
+<x-globals::layout.page-header headline="{{ __('headlines.reset_password') }}" />
 
 <div class="regcontent">
     @dispatchEvent('afterRegcontentOpen')
@@ -23,7 +15,7 @@
 
         <div class="">
             <x-globals::forms.text-input type="password" autocomplete="off" name="password" id="password" placeholder="{{ __('input.placeholders.enter_new_password') }}" />
-            <span id="pwStrength" style="width:100%;"></span>
+            <span id="pwStrength" class="tw:w-full tw:block"></span>
         </div>
         <div class="">
             <x-globals::forms.text-input type="password" autocomplete="off" name="password2" id="password2" placeholder="{{ __('input.placeholders.confirm_password') }}" />

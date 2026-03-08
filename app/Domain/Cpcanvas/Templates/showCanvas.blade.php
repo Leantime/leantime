@@ -9,15 +9,15 @@
                         <div class="column" style="width: 16%">
                         </div>
                         <div class="column" style="width: 84%">
-                            <h4 class="widgettitle title-primary center canvas-title-only">
-                                <large><x-global::elements.icon name="medical_services" /> {{ $tpl->__('box.header.cp.cj') }}</large>
-                            </h4>
+                            <x-globals::elements.section-title variant="primary" class="center canvas-title-only">
+                                <large><x-globals::elements.icon name="medical_services" /> {{ $tpl->__('box.header.cp.cj') }}</large>
+                            </x-globals::elements.section-title>
                         </div>
                     </div>
 
                     <div class="row canvas-row" id="firstRow">
                         <div class="column" style="width: 16%">
-                            <h4 class="widgettitle title-primary center canvas-element-title-empty">&nbsp;</h4>
+                            <x-globals::elements.section-title variant="primary" class="center canvas-element-title-empty">&nbsp;</x-globals::elements.section-title>
                             <div class="contentInner even status_cp canvas-element-center-middle">
                                 <strong>{{ $tpl->__('box.label.cp.need') }}</strong></div>
                         </div>
@@ -34,24 +34,24 @@
 
                     <div class="row canvas-row">
                         <div class="column" style="width: 16%">&nbsp;</div>
-                        <div class="column center" style="width: 28%"><x-global::elements.icon name="swap_vert" /></div>
-                        <div class="column center" style="width: 28%"><x-global::elements.icon name="swap_vert" /></div>
-                        <div class="column center" style="width: 28%"><x-global::elements.icon name="swap_vert" /></div>
+                        <div class="column center" style="width: 28%"><x-globals::elements.icon name="swap_vert" /></div>
+                        <div class="column center" style="width: 28%"><x-globals::elements.icon name="swap_vert" /></div>
+                        <div class="column center" style="width: 28%"><x-globals::elements.icon name="swap_vert" /></div>
                     </div>
 
                     <div class="row canvas-row">
                         <div class="column" style="width: 16%">
                         </div>
                         <div class="column" style="width: 84%">
-                            <h4 class="widgettitle title-primary center canvas-title-only">
-                                <large><x-global::elements.icon name="barcode" /> {{ $tpl->__('box.header.cp.ovp') }}</large>
-                            </h4>
+                            <x-globals::elements.section-title variant="primary" class="center canvas-title-only">
+                                <large><x-globals::elements.icon name="barcode" /> {{ $tpl->__('box.header.cp.ovp') }}</large>
+                            </x-globals::elements.section-title>
                         </div>
                     </div>
 
                     <div class="row canvas-row" id="secondRow">
                         <div class="column" style="width: 16%">
-                            <h4 class="widgettitle title-primary center canvas-element-title-empty">&nbsp;</h4>
+                            <x-globals::elements.section-title variant="primary" class="center canvas-element-title-empty">&nbsp;</x-globals::elements.section-title>
                             <div class="contentInner even status_cp canvas-element-center-middle">
                                 <strong>{{ $tpl->__('box.label.cp.unique') }}</strong></div>
                         </div>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="row canvas-row" id="thirdRow">
                         <div class="column" style="width: 16%">
-                            <h4 class="widgettitle title-primary center canvas-element-title-empty">&nbsp;</h4>
+                            <x-globals::elements.section-title variant="primary" class="center canvas-element-title-empty">&nbsp;</x-globals::elements.section-title>
                             <div class="contentInner even status_cp canvas-element-center-middle">
                                 <strong>{{ $tpl->__('box.label.cp.superior') }}</strong></div>
                         </div>
@@ -83,7 +83,7 @@
                     </div>
                     <div class="row canvas-row" id="fourthRow">
                         <div class="column" style="width: 16%">
-                            <h4 class="widgettitle title-primary center canvas-element-title-empty">&nbsp;</h4>
+                            <x-globals::elements.section-title variant="primary" class="center canvas-element-title-empty">&nbsp;</x-globals::elements.section-title>
                             <div class="contentInner even status_cp canvas-element-center-middle">
                               <strong>{{ $tpl->__('box.label.cp.indifferent') }}</strong></div>
                         </div>

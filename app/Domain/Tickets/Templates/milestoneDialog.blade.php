@@ -17,7 +17,7 @@
 
     {!! $tpl->displayNotification() !!}
 
-    <form class="formModal" method="post" action="{{ BASE_URL }}/tickets/editMilestone/{{ $currentMilestone->id }}" style="min-width: 250px;">
+    <form class="formModal tw:min-w-[250px]" method="post" action="{{ BASE_URL }}/tickets/editMilestone/{{ $currentMilestone->id }}">
 
         <x-globals::forms.form-field label-text="{{ __('label.milestone_title') }}" name="headline">
             <x-globals::forms.text-input name="headline" value="{{ e($currentMilestone->headline) }}" placeholder="{{ __('label.milestone_title') }}" />
@@ -93,9 +93,9 @@
             </div>
             @if(isset($currentMilestone->id) && $currentMilestone->id != '')
                 <div>
-                    <a href="#/tickets/delMilestone/{{ $currentMilestone->id }}" class="btn btn-danger btn-sm">
-                        <x-global::elements.icon name="delete" /> {{ __('buttons.delete') }}
-                    </a>
+                    <x-globals::forms.button element="a" href="#/tickets/delMilestone/{{ $currentMilestone->id }}" state="danger" scale="s">
+                        <x-globals::elements.icon name="delete" /> {{ __('buttons.delete') }}
+                    </x-globals::forms.button>
                 </div>
             @endif
         </div>

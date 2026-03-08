@@ -7,7 +7,7 @@
             headlineSize="var(--font-size-xxxl)"
             maxheight="auto"
             height="250px"
-            headline="{{ __("headlines.{$canvasName}.welcome_to_board") }}"
+            :headline="__('headlines.' . $canvasName . '.welcome_to_board')"
         ></x-globals::undrawSvg>
         <br />
         {!! __("text.{$canvasName}.helper_content") !!}

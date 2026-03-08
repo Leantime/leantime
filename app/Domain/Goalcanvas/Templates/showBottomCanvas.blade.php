@@ -11,7 +11,7 @@
 
         @if ($login::userIsAtLeast($roles::$editor))
             <br /><br />
-            <x-globals::forms.button link="javascript:void(0)" type="primary" class="addCanvasLink">
+            <x-globals::forms.button link="javascript:void(0)" contentRole="primary" class="addCanvasLink">
                 {!! __('links.icon.create_new_board') !!}
             </x-globals::forms.button>
         @endif
@@ -50,7 +50,7 @@
           leantime.canvasController.initRelatesDropdown();
       }
       @else
-      leantime.authController.makeInputReadonly(".maincontentinner");
+      leantime.authController.makeInputReadonly(".maincontent");
       @endif
 
       @if (isset($_GET['showModal']))

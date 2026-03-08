@@ -10,12 +10,7 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="hub" /></div>
-    <div class="pagetitle">
-        <h1>{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header icon="hub" headline="{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}" />
 
     <div class="maincontent">
         <div class="maincontentinner">
@@ -37,20 +32,20 @@
                     <div class="col-md-2 right">
                         <h1>From (your integration)</h1>
                         <label for="providerEntities">{{ $provider->name }}</label>
-                        <x-globals::forms.select name="providerEntities" id="providerEntities" style="width:100%;">
+                        <x-globals::forms.select name="providerEntities" id="providerEntities" class="tw:w-full">
                             @foreach ($providerEntities as $key => $entity)
                                 <option value="{{ $key }}">{{ $entity['name'] }}</option>
                             @endforeach
                         </x-globals::forms.select>
                     </div>
-                    <div class="col-md-2" style="padding-top:50px;">
-                        <x-global::elements.icon name="arrow_forward" />
+                    <div class="col-md-2 tw:pt-12">
+                        <x-globals::elements.icon name="arrow_forward" />
                     </div>
                     <div class="col-md-2">
                         <h1>To (Leantime)</h1>
 
                         <label for="leantimeEntities">Leantime</label>
-                        <x-globals::forms.select name="leantimeEntities" id="leantimeEntities" style="width:100%;">
+                        <x-globals::forms.select name="leantimeEntities" id="leantimeEntities" class="tw:w-full">
                             @foreach ($leantimeEntities as $key => $entity)
                                 <option value="{{ $key }}">{{ $entity['name'] }}</option>
                             @endforeach
@@ -60,11 +55,11 @@
                 </div>
 
                 <div class="left">
-                    <x-globals::forms.button link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" type="secondary" class="pull-left">Back</x-globals::forms.button>
+                    <x-globals::forms.button element="a" href="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" contentRole="secondary" class="pull-left">Back</x-globals::forms.button>
                 </div>
 
                 <div class="right">
-                    <x-globals::forms.button submit type="secondary">Next</x-globals::forms.button>
+                    <x-globals::forms.button :submit="true" contentRole="secondary">Next</x-globals::forms.button>
                 </div>
                 <div class="clearall"></div>
             </form>

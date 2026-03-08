@@ -2,23 +2,10 @@
     $values = $tpl->get('values');
 @endphp
 
-
-<div class="pageheader">
-    <form action="index.php?act=tickets.showAll" method="post" class="searchbar">
-        <input type="text" name="term"
-               placeholder="{{ __('input.placeholders.search_type_hit_enter') }}"/>
-    </form>
-
-    <div class="pageicon"><x-global::elements.icon name="laptop" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('OVERVIEW') }}</h5>
-        <h1>{{ __('MY_TIMESHEETS') }}</h1>
-    </div>
-</div><!--pageheader-->
+<x-globals::layout.page-header icon="laptop" headline="{{ __('MY_TIMESHEETS') }}" subtitle="{{ __('OVERVIEW') }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
-
 
         <div class="fail">
             @if ($tpl->get('info') != '')
@@ -27,14 +14,14 @@
         </div>
 
         <div id="loader">&nbsp;</div>
-        <form action="" method="post" class="stdform">
+        <form action="" method="post">
 
             <div class="row-fluid">
                 <div class="span12">
 
 
                     <div class="widget">
-                        <h4 class="widgettitle">{{ __('OVERVIEW') }}</h4>
+                        <x-globals::elements.section-title variant="plain">{{ __('OVERVIEW') }}</x-globals::elements.section-title>
                         <div class="widgetcontent" style="min-height: 460px">
 
                             <x-globals::forms.form-field label-text="{{ __('label.client') }}" name="clients">
@@ -148,6 +135,11 @@
                             @endif
                             <x-globals::forms.button submit type="primary" name="save">{{ __('SAVE') }}</x-globals::forms.button> <x-globals::forms.button submit type="primary" name="saveNew">{{ __('SAVE_NEW') }}</x-globals::forms.button>
 
+                        </div>
+                    </div>
+
+                </div>
+            </div>
 
         </form>
     </div>

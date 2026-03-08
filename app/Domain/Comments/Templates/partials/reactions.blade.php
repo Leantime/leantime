@@ -49,7 +49,7 @@
 
     <span class="reaction-picker-toggle">
         <button type="button" class="add-reaction-btn" onclick="toggleReactionPicker(this, {{ $commentId }})">
-            <x-global::elements.icon name="sentiment_satisfied" />
+            <x-globals::elements.icon name="sentiment_satisfied" />
             <span class="sr-only">Add reaction</span>
         </button>
     </span>

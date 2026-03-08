@@ -5,7 +5,7 @@
 ])
 
 @if ($includeTitle)
-    <h5 class="subtitle">Project Checklist <x-global::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="The project checklist is list of activities you should do to ensure your projects are well defined, planned and executed." /> </h5><br/>
+    <h5 class="subtitle">Project Checklist <x-globals::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="The project checklist is list of activities you should do to ensure your projects are well defined, planned and executed." /> </h5><br/>
 
 @endif
 
@@ -30,12 +30,12 @@
                         <span class="innerCircle"></span>
                         <span class="title">
                             @if ($step['status'] == 'done')
-                                <x-global::elements.icon name="check_circle" />
+                                <x-globals::elements.icon name="check_circle" />
                             @else
-                                <x-global::elements.icon name="circle" />
+                                <x-globals::elements.icon name="circle" />
                             @endif
                                 {{ __("text.step_".$loop->index + 1) }}: {{ __($step['title']) }}
-                            <x-global::elements.icon name="arrow_drop_down" />
+                            <x-globals::elements.icon name="arrow_drop_down" />
                         </span>
                     </a>
                     <ul class="dropdown-menu">
@@ -65,7 +65,7 @@
                                 <span class="clearall"></span>
                                 <span class="taskDescription">
                                 {{ __($task['description'] ?? '') }}<br />
-                                <a href="{{ $task['link'] ?? '#' }}"><x-global::elements.icon name="open_in_new" /> Take me there</a>
+                                <a href="{{ $task['link'] ?? '#' }}"><x-globals::elements.icon name="open_in_new" /> Take me there</a>
                                 </span>
 
 

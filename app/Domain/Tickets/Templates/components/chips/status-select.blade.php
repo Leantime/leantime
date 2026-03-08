@@ -23,7 +23,7 @@
 
 @if($showLabel)
     <label class="control-label">
-        <x-global::elements.icon name="clock_loader_90" />
+        <x-globals::elements.icon name="clock_loader_90" />
         {!! __('label.status') !!}
     </label>
 @endif

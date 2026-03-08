@@ -2,18 +2,11 @@
     $ticket = $tpl->get('ticket');
 @endphp
 
-<div class="pageheader">
-
-    <div class="pull-right padding-top">
-        <a href="{{ session('lastPage') }}" class="backBtn"><x-global::elements.icon name="arrow_circle_left" /> {{ __('links.go_back') }}</a>
-    </div>
-
-    <div class="pageicon"><x-global::elements.icon :name="$tpl->getModulePicture()" /></div>
-    <div class="pagetitle">
-        <h5>{{ e(session('currentProjectClient') . ' // ' . session('currentProjectName')) }}</h5>
-        <h1>{{ __('headlines.new_to_do') }}</h1>
-    </div>
-</div><!--pageheader-->
+<x-globals::layout.page-header :icon="$tpl->getModulePicture()" headline="{{ __('headlines.new_to_do') }}" subtitle="{{ e(session('currentProjectClient') . ' // ' . session('currentProjectName')) }}">
+    <x-slot:actions>
+        <a href="{{ session('lastPage') }}" class="backBtn"><x-globals::elements.icon name="arrow_circle_left" /> {{ __('links.go_back') }}</a>
+    </x-slot:actions>
+</x-globals::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">

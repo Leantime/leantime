@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="maincontent" id="gridBoard" style="margin-top:0px; opacity:0;">
+<div class="maincontent tw:mt-0" id="gridBoard" style="opacity:0;">
 
     {!! $tpl->displayNotification() !!}
 

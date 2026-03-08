@@ -20,7 +20,7 @@
 
 @if($showLabel)
     <label class="control-label">
-        <x-global::elements.icon name="emergency_heat" />
+        <x-globals::elements.icon name="emergency_heat" />
         {!! __('label.priority') !!}
     </label>
 @endif

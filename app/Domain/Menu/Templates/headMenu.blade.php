@@ -23,7 +23,7 @@
             preload="mouseover"
             data-tippy-content='{{ __('popover.latest_plugins') }}'
         >
-            <x-global::elements.icon name="extension" />
+            <x-globals::elements.icon name="extension" />
 
         </a>
 
@@ -49,7 +49,7 @@
             preload="mouseover"
             data-tippy-content='{{ __('popover.latest_updates') }}'
         >
-            <x-global::elements.icon name="electric_bolt" />
+            <x-globals::elements.icon name="electric_bolt" />
             <span class="tw:inline-block" hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
 
         </a>
@@ -70,9 +70,9 @@
             aria-expanded="false"
             data-tippy-content='{{ __('popover.notifications') }}'
         >
-            <x-global::elements.icon name="notifications" />
+            <x-globals::elements.icon name="notifications" />
             @if($newNotificationCount>0)
-                <span class='notificationCounter badge badge-danger badge-xs'>{{ $newNotificationCount }}</span>
+                <x-globals::elements.badge state="danger" scale="xs" class="notificationCounter">{{ $newNotificationCount }}</x-globals::elements.badge>
             @endif
         </a>
 
@@ -163,49 +163,23 @@
     </li>
 
     <li class="dropdown userloggedinfo">
-        <a href="javascript:void(0)"
-            class="dropdown-toggle"
-            data-toggle="dropdown"
+        <x-globals::actions.dropdown-menu
+            variant="icon"
+            leadingVisual="help"
+            position="left"
+            data-tippy-content='{{ __("popover.help") }}'
             aria-label="{{ __('popover.help') }}"
-            aria-haspopup="true"
-            aria-expanded="false"
-            data-tippy-content='{{ __('popover.help') }}'
         >
-            <x-global::elements.icon name="help" />
-        </a>
-        <ul class="dropdown-menu pull-right">
-            <li class="nav-header">
-                {{ __("headline.support") }}
-            </li>
-            <li>
-                <a href='#/help/showOnboardingDialog?route={{ $request->getCurrentRoute() }}'>
-                {!! __("menu.what_is_this_page") !!}
-                </a>
-            </li>
-            <li>
-                <a href='https://support.leantime.io' target="_blank">
-                    {!! __("menu.knowledge_base") !!}
-                    </a>
-            </li>
-            <li>
-                <a href='https://github.com/Leantime/leantime/issues' target="_blank">
-                    {!! __("menu.submit_bug") !!}
-                </a>
-            </li>
+            <x-globals::actions.dropdown-item :header="true">{{ __("headline.support") }}</x-globals::actions.dropdown-item>
+            <x-globals::actions.dropdown-item href="#/help/showOnboardingDialog?route={{ $request->getCurrentRoute() }}">{!! __("menu.what_is_this_page") !!}</x-globals::actions.dropdown-item>
+            <x-globals::actions.dropdown-item href="https://support.leantime.io" target="_blank">{!! __("menu.knowledge_base") !!}</x-globals::actions.dropdown-item>
+            <x-globals::actions.dropdown-item href="https://github.com/Leantime/leantime/issues" target="_blank">{!! __("menu.submit_bug") !!}</x-globals::actions.dropdown-item>
             <li class="nav-header border">{!! __("menu.leantime_community") !!}</li>
-            <li>
-                <a href='https://discord.gg/4zMzJtAq9z' target="_blank">
-                    {!! __("menu.community") !!}
-                </a>
-            </li>
-            <li>
-                <a href='https://leantime.io/contact-us' target="_blank">
-                    {!! __("menu.contact_us") !!}
-                </a>
-            </li>
+            <x-globals::actions.dropdown-item href="https://discord.gg/4zMzJtAq9z" target="_blank">{!! __("menu.community") !!}</x-globals::actions.dropdown-item>
+            <x-globals::actions.dropdown-item href="https://leantime.io/contact-us" target="_blank">{!! __("menu.contact_us") !!}</x-globals::actions.dropdown-item>
             <li class="nav-header border">System</li>
-            <li><a href="https://github.com/Leantime/leantime/releases" target="_blank">Leantime V{{ app(\Leantime\Core\Configuration\AppSettings::class)->appVersion }}</a></li>
-        </ul>
+            <x-globals::actions.dropdown-item href="https://github.com/Leantime/leantime/releases" target="_blank">Leantime V{{ app(\Leantime\Core\Configuration\AppSettings::class)->appVersion }}</x-globals::actions.dropdown-item>
+        </x-globals::actions.dropdown-menu>
     </li>
 
     <li>

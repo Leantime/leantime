@@ -55,14 +55,14 @@
             @if(str_contains($leadingVisual, 'fa-') || str_starts_with($leadingVisual, 'fa '))
                 <i class="{{ $leadingVisual }}" aria-hidden="true"></i>
             @else
-                <x-global::elements.icon :name="$leadingVisual" />
+                <x-globals::elements.icon :name="$leadingVisual" />
             @endif
         @endif
         @if($label)
             {!! $label !!}
         @endif
         @if(!$leadingVisual && !$label)
-            <x-global::elements.icon name="more_vert" />
+            <x-globals::elements.icon name="more_vert" />
         @endif
         @if($variant === 'button')
             <span class="caret"></span>
@@ -71,7 +71,7 @@
             @if(str_contains($trailingVisual, 'fa-') || str_starts_with($trailingVisual, 'fa '))
                 <i class="{{ $trailingVisual }}" aria-hidden="true"></i>
             @else
-                <x-global::elements.icon :name="$trailingVisual" />
+                <x-globals::elements.icon :name="$trailingVisual" />
             @endif
         @endif
     </a>

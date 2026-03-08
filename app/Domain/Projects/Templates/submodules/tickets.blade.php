@@ -77,6 +77,6 @@ var ganttData = [
     });
 </script>
 
-{!! $tpl->displayLink('tickets.newTicket', "<x-global::elements.icon name="add" /> " . __('NEW_TICKET'), null, ['class' => 'btn btn-primary btn-rounded']) !!}
-<div id="eventMessage" class="alert alert-success" style="display:none;"></div>
+{!! $tpl->displayLink('tickets.newTicket', "<x-globals::elements.icon name="add" /> " . __('NEW_TICKET'), null, ['class' => 'btn btn-primary btn-rounded']) !!}
+<x-globals::feedback.alert state="success" class="tw:hidden" id="eventMessage"></x-globals::feedback.alert>
 <div id="ganttChart"></div>

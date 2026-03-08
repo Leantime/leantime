@@ -2,13 +2,7 @@
     $roles = $tpl->get('roles');
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon :name="$tpl->getModulePicture()" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('label.administration') }}</h5>
-        <h1>{{ __('headlines.users') }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header :icon="$tpl->getModulePicture()" headline="{{ __('headlines.users') }}" subtitle="{{ __('label.administration') }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -19,18 +13,17 @@
             <x-globals::forms.button link="{{ BASE_URL }}/users/newUser" type="primary" class="userEditModal" icon="add">{{ __('buttons.add_user') }}</x-globals::forms.button>
         </div>
 
-        <div style="overflow-x: auto;">
-        <table class="table table-bordered" id="allUsersTable">
-            <colgroup>
-                <col class="con1">
-                <col class="con0">
-                <col class="con1">
-                <col class="con0">
-                <col class="con1">
-                <col class="con0">
-                <col class="con1">
-            </colgroup>
-            <thead>
+        <x-globals::elements.table id="allUsersTable">
+            <x-slot:head>
+                <colgroup>
+                    <col class="con1">
+                    <col class="con0">
+                    <col class="con1">
+                    <col class="con0">
+                    <col class="con1">
+                    <col class="con0">
+                    <col class="con1">
+                </colgroup>
                 <tr>
                     <th class='head1'>{{ __('label.name') }}</th>
                     <th class='head0'>{{ __('label.email') }}</th>
@@ -40,11 +33,10 @@
                     <th class='head1'>{{ __('headlines.twoFA') }}</th>
                     <th class='head0 no-sort'></th>
                 </tr>
-            </thead>
-            <tbody>
+            </x-slot:head>
             @foreach($tpl->get('allUsers') as $row)
                 <tr>
-                    <td style="padding:6px 10px;">
+                    <td class="tw:px-2.5 tw:py-1.5">
                          <a href="{{ BASE_URL }}/users/editUser/{{ $row['id'] }}">{{ sprintf(__('text.full_name'), e($row['firstname']), e($row['lastname'])) }}</a>
                     </td>
                     <td><a href="{{ BASE_URL }}/users/editUser/{{ $row['id'] }}">{{ e($row['username']) }}</a></td>
@@ -66,12 +58,10 @@
                             {{ __('label.no') }}
                         @endif
                     </td>
-                    <td><a href="{{ BASE_URL }}/users/delUser/{{ $row['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></td>
+                    <td><a href="{{ BASE_URL }}/users/delUser/{{ $row['id'] }}" class="delete"><x-globals::elements.icon name="delete" /> {{ __('links.delete') }}</a></td>
                 </tr>
             @endforeach
-            </tbody>
-        </table>
-        </div>
+        </x-globals::elements.table>
     </div>
 </div>
 

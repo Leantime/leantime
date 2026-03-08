@@ -11,19 +11,18 @@
     }
 @endphp
 
-<h4 class="widgettitle title-light"><x-global::elements.icon name="forum" />{{ __('subtitles.discussion') }}
-</h4>
+<x-globals::elements.section-title icon="forum">{{ __('subtitles.discussion') }}</x-globals::elements.section-title>
 
 <form method="post" accept-charset="utf-8" action="{{ $formUrl }}"
       id="commentForm">
     <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"
-       class="tw:hidden" id="mainToggler"><x-global::elements.icon name="add_box" /> {{ __('links.add_new_comment') }}
+       class="tw:hidden" id="mainToggler"><x-globals::elements.icon name="add_box" /> {{ __('links.add_new_comment') }}
     </a>
 
     <div id="comment0" class="commentBox">
         <textarea rows="5" cols="50" class="tiptapSimple"
                   name="text"></textarea><br/>
-        <x-globals::forms.button submit type="success" name="comment" class="tw:ml-0">{{ __('buttons.save') }}</x-globals::forms.button>
+        <x-globals::forms.button :submit="true" state="success" name="comment" class="tw:ml-0">{{ __('buttons.save') }}</x-globals::forms.button>
         <input type="hidden" name="comment" value="1"/>
         <input type="hidden" name="father" id="father" value="0"/>
         <br/>
@@ -49,20 +48,20 @@
                     <div class="tw:pl-[60px]">
                         <a href="javascript:void(0);" class="replyButton"
                            onclick="toggleCommentBoxes({{ $row['id'] }})">
-                            <x-global::elements.icon name="reply" /> {{ __('links.reply') }}
+                            <x-globals::elements.icon name="reply" /> {{ __('links.reply') }}
                         </a>
 
                         @if($row['userId'] == session('userdata.id'))
                             |
                             <a href="{{ $deleteUrlBase . $row['id'] }}"
                                class="deleteComment">
-                                <x-global::elements.icon name="delete" /> {{ __('links.delete') }}
+                                <x-globals::elements.icon name="delete" /> {{ __('links.delete') }}
                             </a>
                         @endif
                         <div class="tw:hidden"
                              id="comment{{ $row['id'] }}"
                              class="commentBox">
-                            <br/><x-globals::forms.button submit type="secondary" name="comment">{{ __('links.reply') }}</x-globals::forms.button>
+                            <br/><x-globals::forms.button :submit="true" contentRole="secondary" name="comment">{{ __('links.reply') }}</x-globals::forms.button>
                         </div>
                     </div>
                     <div class="tw:clear-both"></div>
@@ -91,7 +90,7 @@
                                     @if($comment['userId'] == session('userdata.id'))
                                         <a href="{{ $deleteUrlBase . $comment['id'] }}"
                                            class="deleteComment">
-                                            <x-global::elements.icon name="delete" /> {{ __('links.delete') }}
+                                            <x-globals::elements.icon name="delete" /> {{ __('links.delete') }}
                                         </a>
                                     @endif
                                 </div>

@@ -2,23 +2,17 @@
     $companySettings = $tpl->get('companySettings');
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="settings" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('label.administration') }}</h5>
-        <h1>{{ __('headlines.company_settings') }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header icon="settings" headline="{{ __('headlines.company_settings') }}" subtitle="{{ __('label.administration') }}" />
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
     <div class="maincontentinner">
                 <div class="row"><div class="col-md-12">
-                <div class="tabbedwidget tab-primary companyTabs">
+                <div class="tabbedwidget tab-primary companyTabs" data-tabs>
 
                     <ul role="tablist">
-                        <li><a href="#details"><x-global::elements.icon name="apartment" /> {{ __('tabs.details') }}</a></li>
-                        <li><a href="#apiKeys"><x-global::elements.icon name="key" /> {{ __('tabs.apiKeys') }}</a></li>
+                        <li><a href="#details"><x-globals::elements.icon name="apartment" /> {{ __('tabs.details') }}</a></li>
+                        <li><a href="#apiKeys"><x-globals::elements.icon name="key" /> {{ __('tabs.apiKeys') }}</a></li>
                         @dispatchEvent('tabs')
                     </ul>
 
@@ -31,8 +25,7 @@
                                     <br />
                                     <input type="hidden" value="1" name="saveSettings" />
 
-                                    <h4 class="widgettitle title-light"><x-global::elements.icon name="apartment" />{{ __('subtitles.companydetails') }}
-                                    </h4>
+                                    <x-globals::elements.section-title icon="apartment">{{ __('subtitles.companydetails') }}</x-globals::elements.section-title>
                                     <x-globals::forms.form-field label-text="{{ __('label.language') }}" name="language" label-position="left" label-width="tw:w-[150px]">
                                         <x-globals::forms.select :bare="true" name="language" id="language">
                                             @foreach($tpl->get('languageList') as $languagKey => $languageValue)
@@ -46,11 +39,10 @@
                                         <x-globals::forms.text-input :bare="true" name="name" id="companyName" value="{{ $companySettings['name'] }}" />
                                     </x-globals::forms.form-field>
 
-                                    <h4 class="widgettitle title-light"><x-global::elements.icon name="settings" />{{ __('subtitles.defaults') }}
-                                    </h4>
+                                    <x-globals::elements.section-title icon="settings">{{ __('subtitles.defaults') }}</x-globals::elements.section-title>
 
                                     <x-globals::forms.form-field label-text="{{ __('label.messages_frequency') }}" name="messageFrequency" label-position="left" label-width="tw:w-[150px]">
-                                        <x-globals::forms.select :bare="true" name="messageFrequency" id="messageFrequency" style="width: 220px">
+                                        <x-globals::forms.select :bare="true" name="messageFrequency" id="messageFrequency" class="tw:w-56">
                                             <option value="">--{{ __('label.choose_option') }}--</option>
                                             <option value="300" {{ $companySettings['messageFrequency'] == '300' ? ' selected ' : '' }}>{{ __('label.5min') }}</option>
                                             <option value="900" {{ $companySettings['messageFrequency'] == '900' ? ' selected ' : '' }}>{{ __('label.15min') }}</option>
@@ -64,14 +56,14 @@
                                             <option value="604800" {{ $companySettings['messageFrequency'] == '604800' ? ' selected ' : '' }}>{{ __('label.1w') }}</option>
                                         </x-globals::forms.select>
                                     </x-globals::forms.form-field>
-                                    <x-globals::forms.button submit type="primary" id="saveBtn">{{ __('buttons.save') }}</x-globals::forms.button>
+                                    <x-globals::forms.button :submit="true" contentRole="primary" id="saveBtn">{{ __('buttons.save') }}</x-globals::forms.button>
                                 </form>
                             </div>
                             <div class="col-md-4">
 
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings">
                                     <input type="hidden" value="1" name="saveLogo" />
-                                    <h5 class="widgettitle title-light">{{ __('headlines.logo') }}</h5>
+                                    <x-globals::elements.section-title tag="h5">{{ __('headlines.logo') }}</x-globals::elements.section-title>
                                     <br />
 
                                     <div class="row"><div class="col-md-12">
@@ -80,7 +72,7 @@
                                             @else
                                                 {{ __('text.no_logo') }}
                                             @endif
-                                            <div id="logoImg" style="height:auto;">
+                                            <div id="logoImg">
                                             </div>
                                             <br />
                                             <div class="par">
@@ -100,12 +92,12 @@
                                                             <x-globals::forms.file :bare="true" id="logo-file-input" name="file" onchange="leantime.settingController.readURL(this)" />
                                                         </span>
 
-                                                        <x-globals::forms.button link="#" type="secondary" class="fileupload-exists" style="margin-left:5px;" data-dismiss="fileupload" onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</x-globals::forms.button>
+                                                        <x-globals::forms.button element="a" href="#" contentRole="secondary" class="fileupload-exists tw:ml-1" data-dismiss="fileupload" onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</x-globals::forms.button>
                                                     </div>
-                                                    <p class='stdformbutton'>
-                                                        <x-globals::forms.button tag="button" type="primary" id="save-logo" class="fileupload-exists" onclick="leantime.settingController.saveCroppie()">{{ __('buttons.save') }}</x-globals::forms.button>
+                                                    <p>
+                                                        <x-globals::forms.button contentRole="primary" id="save-logo" class="fileupload-exists" onclick="leantime.settingController.saveCroppie()">{{ __('buttons.save') }}</x-globals::forms.button>
 
-                                                        <input id="picSubmit" type="submit" name="savePic" class="hidden" value="{{ __('buttons.upload') }}" />
+                                                        <input id="picSubmit" type="submit" name="savePic" class="tw:hidden" value="{{ __('buttons.upload') }}" />
                                                     </p>
                                                 </div>
                                             </div>
@@ -114,21 +106,21 @@
                                 </form>
                                 <hr />
                                 {{ __('text.logo_reset') }}<br /><br />
-                                <x-globals::forms.button link="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" type="secondary">{{ __('buttons.reset_logo') }}</x-globals::forms.button>
+                                <x-globals::forms.button element="a" href="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" contentRole="secondary">{{ __('buttons.reset_logo') }}</x-globals::forms.button>
                             </div>
                         </div>
                     </div>
 
                     <div id="apiKeys">
-                        <x-globals::forms.button link="#/api/newApiKey" type="primary">Generate API Key</x-globals::forms.button>
+                        <x-globals::forms.button element="a" href="#/api/newApiKey" contentRole="primary">Generate API Key</x-globals::forms.button>
                         <br /> <br />
                         <ul class="sortableTicketList">
                             @foreach($tpl->get('apiKeys') as $apiKey)
                                 <li>
                                     <div class="ticketBox">
                                         <x-globals::actions.dropdown-menu>
-                                            <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><x-global::elements.icon name="edit" /> Edit Key</a></li>
-                                            <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><x-global::elements.icon name="delete" /> Delete Key</a></li>
+                                            <x-globals::actions.dropdown-item href="#/api/apiKey/{{ $apiKey['id'] }}" leadingVisual="edit">Edit Key</x-globals::actions.dropdown-item>
+                                            <x-globals::actions.dropdown-item href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" leadingVisual="delete" state="danger">Delete Key</x-globals::actions.dropdown-item>
                                         </x-globals::actions.dropdown-menu>
                                         <a href="#/api/apiKey/{{ $apiKey['id'] }}"><strong>{{ e($apiKey['firstname']) }}</strong></a><br />
                                         lt_{{ $apiKey['username'] }}***
@@ -146,14 +138,4 @@
         </div>
     </div>
 </div>
-
-<script>
-    jQuery(document).ready(function() {
-        jQuery(".companyTabs").tabs({
-            activate: function (event, ui) {
-                window.location.hash = ui.newPanel.selector;
-            }
-        });
-    });
-</script>
 

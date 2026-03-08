@@ -18,15 +18,15 @@
     <input type="hidden" value="1" name="search"/>
     <input type="hidden" value="{{ session('currentProject') }}" name="projectId" id="projectIdInput"/>
 
-    <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
-        <x-globals::forms.button tag="button" type="link" onclick="event.preventDefault(); leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;" data-tippy-content="{{ __('popover.filter') }}">
-            <x-global::elements.icon name="filter_list" /> Filter
+    <div class="filterWrapper tw:inline-block tw:relative tw:align-bottom tw:mb-5">
+        <x-globals::forms.button tag="button" type="link" onclick="event.preventDefault(); leantime.ticketsController.toggleFilterBar();" class="tw:mr-1" data-tippy-content="{{ __('popover.filter') }}">
+            <x-globals::elements.icon name="filter_list" /> Filter
             @if($tpl->get('numOfFilters') > 0)
                 <x-globals::elements.badge color="primary">{{ $tpl->get('numOfFilters') }}</x-globals::elements.badge>
             @endif
         </x-globals::forms.button>@if($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" trigger-class="btn btn-link" align="end" data-tippy-content="{{ __('popover.group_by') }}">
                 <x-slot:label>
-                    <x-global::elements.icon name="account_tree" /> Group By
+                    <x-globals::elements.icon name="account_tree" /> Group By
                     @if($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
                         <x-globals::elements.badge color="primary">1</x-globals::elements.badge>
                     @endif
@@ -118,7 +118,7 @@
                            placeholder="{{ __('label.search_term') }}" />
                 </x-globals::forms.form-field>
 
-                <div style="margin-top:8px;">
+                <div class="tw:mt-2">
                     <x-globals::forms.button submit type="primary" name="search" class="form-control">{{ __('buttons.apply') }}</x-globals::forms.button>
                 </div>
 
@@ -126,7 +126,7 @@
         </div>
 
         @if(isset($taskToggle) && $taskToggle === true)
-            <div class="" style="float:right; margin-left:5px;">
+            <div class="tw:float-right tw:ml-1">
                 <x-globals::forms.checkbox name="showTasks" id="taskTypeToggle" value="true" label="Show Tasks"
                     :checked="$tpl->get('showTasks') === 'true'"
                     onchange="jQuery('#ticketSearch').submit();" toggle />

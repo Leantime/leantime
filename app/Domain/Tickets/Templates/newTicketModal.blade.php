@@ -4,7 +4,7 @@
     $todoTypeIcons = $tpl->get('ticketTypeIcons');
 @endphp
 
-<div style="min-width:90%">
+<div class="tw:min-w-[90%]">
     <h1>{{ __('headlines.new_to_do') }}</h1>
 
     {!! $tpl->displayNotification() !!}

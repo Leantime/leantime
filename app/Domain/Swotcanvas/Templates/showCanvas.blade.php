@@ -7,14 +7,14 @@
 
                     <div class="row canvas-row" id="titleRow">
                         <div class="column" style="width: 50%">
-                            <h4 class="widgettitle title-primary center canvas-title-only">
-                                <large><x-global::elements.icon name="thumb_up" /> {{ $tpl->__('box.header.swot.helpful') }}</large>
-                            </h4>
+                            <x-globals::elements.section-title variant="primary" class="center canvas-title-only">
+                                <large><x-globals::elements.icon name="thumb_up" /> {{ $tpl->__('box.header.swot.helpful') }}</large>
+                            </x-globals::elements.section-title>
                         </div>
                         <div class="column" style="width: 50%">
-                            <h4 class="widgettitle title-primary center" style="border-radius: var(--box-radius-small);">
-                                <large><x-global::elements.icon name="thumb_down" /> {{ $tpl->__('box.header.swot.harmful') }}</large>
-                            </h4>
+                            <x-globals::elements.section-title variant="primary" class="center">
+                                <large><x-globals::elements.icon name="thumb_down" /> {{ $tpl->__('box.header.swot.harmful') }}</large>
+                            </x-globals::elements.section-title>
                         </div>
                     </div>
 

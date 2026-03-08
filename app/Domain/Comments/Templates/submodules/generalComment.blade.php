@@ -32,14 +32,17 @@
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tiptapSimple" name="text"></textarea>
-                <button type="button" class="btn btn-success tw:ml-0"
-                        hx-post="{{ $formUrl }}"
-                        hx-include="closest form"
-                        hx-target="#global-modal-content"
-                        hx-swap="innerHTML"
-                        onclick="syncTiptapEditors(this)">
+                <x-globals::forms.button
+                    tag="button"
+                    state="success"
+                    class="tw:ml-0"
+                    hx-post="{{ $formUrl }}"
+                    hx-include="closest form"
+                    hx-target="#global-modal-content"
+                    hx-swap="innerHTML"
+                    onclick="syncTiptapEditors(this)">
                     {{ __('buttons.save') }}
-                </button>
+                </x-globals::forms.button>
             </div>
             <input type="hidden" name="comment" class="commenterField" value="1"/>
             <input type="hidden" name="father" class="commenterField" id="father-{{ $formHash }}" value="0"/>
@@ -67,18 +70,18 @@
                                         <x-globals::actions.dropdown-menu container-class="pull-right tw:ml-2.5">
                                             @if(($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
                                                 <li><a href="{{ $deleteUrlBase . $row['id'] }}" class="deleteComment formModal">
-                                                    <x-global::elements.icon name="delete" /> {{ __('links.delete') }}
+                                                    <x-globals::elements.icon name="delete" /> {{ __('links.delete') }}
                                                 </a></li>
                                             @endif
                                             @if(($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
                                                 <li>
                                                     <a href="javascript:void(0);" onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}', true)">
-                                                        <x-global::elements.icon name="edit" /> {{ __('label.edit') }}
+                                                        <x-globals::elements.icon name="edit" /> {{ __('label.edit') }}
                                                     </a>
                                                 </li>
                                             @endif
                                             @if(isset($tpl->get('ticket')->id))
-                                                <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $tpl->get('ticket')->id }});"><x-global::elements.icon name="schedule" /> {{ __('label.add_to_timesheet') }}</a></li>
+                                                <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $tpl->get('ticket')->id }});"><x-globals::elements.icon name="schedule" /> {{ __('label.add_to_timesheet') }}</a></li>
                                             @endif
                                         </x-globals::actions.dropdown-menu>
                                     @endif
@@ -92,7 +95,7 @@
                             @if($login::userIsAtLeast($roles::$commenter))
                                 <a href="javascript:void(0);"
                                    onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}')">
-                                    <x-global::elements.icon name="reply" /> {{ __('links.reply') }}
+                                    <x-globals::elements.icon name="reply" /> {{ __('links.reply') }}
                                 </a>
                             @endif
                             <span hx-get="{{ BASE_URL }}/hx/comments/reactions/get?commentId={{ $row['id'] }}"
@@ -125,15 +128,15 @@
                                                 @if($login::userIsAtLeast($roles::$commenter))
                                                     <a href="javascript:void(0);"
                                                        onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}')">
-                                                        <x-global::elements.icon name="reply" /> {{ __('links.reply') }}
+                                                        <x-globals::elements.icon name="reply" /> {{ __('links.reply') }}
                                                     </a>
                                                     @if($comment['userId'] == session('userdata.id'))
                                                         <a href="{{ $deleteUrlBase . $comment['id'] }}"
                                                            class="deleteComment formModal">
-                                                            <x-global::elements.icon name="delete" /> {{ __('links.delete') }}
+                                                            <x-globals::elements.icon name="delete" /> {{ __('links.delete') }}
                                                         </a>
                                                         <a href="javascript:void(0);" onclick="toggleCommentBoxes({{ $row['id'] }}, {{ $comment['id'] }}, '{{ $formHash }}', true, true)">
-                                                            <x-global::elements.icon name="edit" /> {{ __('label.edit') }}
+                                                            <x-globals::elements.icon name="edit" /> {{ __('label.edit') }}
                                                         </a>
                                                     @endif
                                                 @endif
@@ -152,15 +155,18 @@
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}"/>
                                 </div>
                                 <div class="commentReply">
-                                    <button type="button" class="btn btn-primary" id="submit-reply-button"
-                                            hx-post="{{ $formUrl }}"
-                                            hx-include="closest form"
-                                            hx-target="#global-modal-content"
-                                            hx-swap="innerHTML"
-                                            onclick="syncTiptapEditors(this)">
+                                    <x-globals::forms.button
+                                        tag="button"
+                                        contentRole="primary"
+                                        id="submit-reply-button"
+                                        hx-post="{{ $formUrl }}"
+                                        hx-include="closest form"
+                                        hx-target="#global-modal-content"
+                                        hx-swap="innerHTML"
+                                        onclick="syncTiptapEditors(this)">
                                         {{ __('links.reply') }}
-                                    </button>
-                                    <x-globals::forms.button tag="button" type="primary" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')">{{ __('links.cancel') }}</x-globals::forms.button>
+                                    </x-globals::forms.button>
+                                     <x-globals::forms.button tag="button" contentRole="secondary" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')">{{ __('links.cancel') }}</x-globals::forms.button>
                                 </div>
                                 <div class="clearall"></div>
                             </div>

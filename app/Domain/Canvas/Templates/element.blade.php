@@ -7,12 +7,12 @@
     $relatesLabels = $relatesLabels ?? $tpl->get('relatesLabels');
 @endphp
 
-<h4 class="widgettitle title-primary">
+<x-globals::elements.section-title variant="primary">
     @if (!empty($canvasTypes[$elementName]['icon']))
-        <x-global::elements.icon :name="$canvasTypes[$elementName]['icon']" />
+        <x-globals::elements.icon :name="$canvasTypes[$elementName]['icon']" />
     @endif
     {{ $canvasTypes[$elementName]['title'] }}
-</h4>
+</x-globals::elements.section-title>
 <div class="contentInner even status_{{ $elementName }}"
      {!! isset($canvasTypes[$elementName]['color']) ? 'style="background: ' . $canvasTypes[$elementName]['color'] . ';"' : '' !!}>
 
@@ -30,12 +30,12 @@
 
             <div class="ticketBox" id="item_{{ $row['id'] }}">
                 @if ($login::userIsAtLeast($roles::$editor))
-                    <x-globals::actions.dropdown-menu style="float:right;" position="left">
+                    <x-globals::actions.dropdown-menu class="tw:float-right" position="left">
                         <li><a href="#/{{ $canvasName }}canvas/editCanvasItem/{{ $row['id'] }}"
-                               data="item_{{ $row['id'] }}"><x-global::elements.icon name="edit" /> {{ $tpl->__('links.edit_canvas_item') }}</a></li>
+                               data="item_{{ $row['id'] }}"><x-globals::elements.icon name="edit" /> {{ $tpl->__('links.edit_canvas_item') }}</a></li>
                         <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $row['id'] }}"
                                class="delete"
-                               data="item_{{ $row['id'] }}"><x-global::elements.icon name="delete" /> {{ $tpl->__('links.delete_canvas_item') }}</a></li>
+                               data="item_{{ $row['id'] }}"><x-globals::elements.icon name="delete" /> {{ $tpl->__('links.delete_canvas_item') }}</a></li>
                     </x-globals::actions.dropdown-menu>
                 @endif
 
@@ -46,13 +46,13 @@
                     <small>{!! $tpl->convertRelativePaths($row['conclusion']) !!}</small>
                 @endif
 
-                <div class="clearfix" style="padding-bottom: 8px;"></div>
+                <div class="clearfix tw:pb-2"></div>
 
                 @if (! empty($statusLabels))
                     <div class="dropdown ticketDropdown statusDropdown colorized firstDropdown">
                         <a href="javascript:void(0)" class="dropdown-toggle f-left status label-{{ $statusLabels[$row['status']]['dropdown'] }}" data-toggle="dropdown"
                            id="statusDropdownMenuLink{{ $row['id'] }}">
-                            <span class="text">{{ $statusLabels[$row['status']]['title'] }}</span> <x-global::elements.icon name="arrow_drop_down" />
+                            <span class="text">{{ $statusLabels[$row['status']]['title'] }}</span> <x-globals::elements.icon name="arrow_drop_down" />
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
                             <li class="nav-header border">{{ $tpl->__('dropdown.choose_status') }}</li>
@@ -73,7 +73,7 @@
                     <div class="dropdown ticketDropdown relatesDropdown colorized firstDropdown">
                         <a href="javascript:void(0)" class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}" data-toggle="dropdown"
                            id="relatesDropdownMenuLink{{ $row['id'] }}">
-                            <span class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span> <x-global::elements.icon name="arrow_drop_down" />
+                            <span class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span> <x-globals::elements.icon name="arrow_drop_down" />
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
                             <li class="nav-header border">{{ $tpl->__('dropdown.choose_relates') }}</li>
@@ -91,33 +91,18 @@
                     </div>
                 @endif
 
-                <div class="dropdown ticketDropdown userDropdown noBg right lastDropdown dropRight">
-                    <a href="javascript:void(0)" class="dropdown-toggle f-left" data-toggle="dropdown" id="userDropdownMenuLink{{ $row['id'] }}">
-                        <span class="text">
-                            @if ($row['authorFirstname'] != '')
-                                <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['author'] }}" width="25" style="vertical-align: middle;" /></span><span id="user{{ $row['id'] }}"></span>
-                            @else
-                                <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle;" /></span><span id="user{{ $row['id'] }}"></span>
-                            @endif
-                        </span>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
-                        <li class="nav-header border">{{ $tpl->__('dropdown.choose_user') }}</li>
-                        @foreach ($tpl->get('users') as $user)
-                            <li class="dropdown-item">
-                                <a href="javascript:void(0);" onclick="document.activeElement.blur();"
-                                   data-label="{{ sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}"
-                                   data-value="{{ $row['id'] }}_{{ $user['id'] }}_{{ $user['profileId'] }}"
-                                   id="userStatusChange{{ $row['id'] }}{{ $user['id'] }}">
-                                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}&v={{ $user['modified'] }}" width="25" style="vertical-align: middle; margin-right:5px;" />
-                                    {{ sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-                <div class="pull-right" style="margin-right:10px;">
-                    <x-global::elements.icon name="forum" /> <small>{{ $nbcomments }}</small>
+                <x-globals::actions.user-select
+                    :entityId="$row['id']"
+                    :assignedUserId="$row['author']"
+                    :assignedName="$row['authorFirstname']"
+                    :users="$tpl->get('users')"
+                    :showNameLabel="false"
+                    :showArrowIcon="false"
+                    :showUnassign="false"
+                    dropdownClasses="right lastDropdown dropRight"
+                />
+                <div class="pull-right tw:mr-2">
+                    <x-globals::elements.icon name="forum" /> <small>{{ $nbcomments }}</small>
                 </div>
 
                 @if ($row['milestoneHeadline'] != '')
@@ -141,6 +126,6 @@
     @if ($login::userIsAtLeast($roles::$editor))
         <a href="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $elementName }}"
            id="{{ $elementName }}"
-           style="padding-bottom: 10px;"><x-global::elements.icon name="add" /> {{ __('links.add_new_canvas_item') }}</a>
+           class="tw:pb-2 tw:block"><x-globals::elements.icon name="add" /> {{ __('links.add_new_canvas_item') }}</a>
     @endif
 </div>

@@ -1,15 +1,5 @@
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><x-global::elements.icon name="contact_page" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('label.administration') }}</h5>
-        <h1>{{ __('headline.all_clients') }}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div>
-@dispatchEvent('afterPageHeaderClose')
+<x-globals::layout.page-header icon="contact_page" subtitle="{{ __('label.administration') }}" headline="{{ __('headline.all_clients') }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -22,34 +12,33 @@
             @endif
         </div>
 
-        <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allClientsTable">
-            <colgroup>
-                <col class='con0' />
-                <col class='con1' />
-                <col class='con0' />
-                <col class='con1' />
-            </colgroup>
-            <thead>
+        <x-globals::elements.table :hover="true" id="allClientsTable">
+            <x-slot:head>
+                <colgroup>
+                    <col class='con0' />
+                    <col class='con1' />
+                    <col class='con0' />
+                    <col class='con1' />
+                </colgroup>
                 <tr>
                     <th class='head0'>{{ __('label.client_id') }}</th>
                     <th class='head1'>{{ __('label.client_name') }}</th>
                     <th class='head0'>{{ __('label.url') }}</th>
                     <th class='head1'>{{ __('label.number_of_projects') }}</th>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach($tpl->get('allClients') as $row)
-                    <tr>
-                        <td>{{ $row['id'] }}</td>
-                        <td>
-                            <a href="{{ BASE_URL }}/clients/showClient/{{ $row['id'] }}">{{ $row['name'] }}</a>
-                        </td>
-                        <td><a href="{{ $row['internet'] }}" target="_blank">{{ $row['internet'] }}</a></td>
-                        <td>{{ $row['numberOfProjects'] }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+            </x-slot:head>
+
+            @foreach($tpl->get('allClients') as $row)
+                <tr>
+                    <td>{{ $row['id'] }}</td>
+                    <td>
+                        <a href="{{ BASE_URL }}/clients/showClient/{{ $row['id'] }}">{{ $row['name'] }}</a>
+                    </td>
+                    <td><a href="{{ $row['internet'] }}" target="_blank">{{ $row['internet'] }}</a></td>
+                    <td>{{ $row['numberOfProjects'] }}</td>
+                </tr>
+            @endforeach
+        </x-globals::elements.table>
 
     </div>
 </div>

@@ -20,21 +20,13 @@
 </script>
 <link rel="stylesheet" type="text/css" href="includes/libs/fullCalendar/fullcalendar.css" />
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <form action="{{ BASE_URL }}/index.php?act=tickets.showAll" method="post" class="searchbar">
-        <input type="text" name="term" placeholder="To search type and hit enter..." />
-    </form>
-
-    <div class="pageicon"><x-global::elements.icon :name="$tpl->getModulePicture()" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('OVERVIEW') }}</h5>
-        <h1>{{ __('ALL_GCCALS') }}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div>
-@dispatchEvent('afterPageHeaderClose')
+<x-globals::layout.page-header :icon="$tpl->getModulePicture()" headline="{{ __('ALL_GCCALS') }}" subtitle="{{ __('OVERVIEW') }}">
+    <x-slot:actions>
+        <form action="{{ BASE_URL }}/index.php?act=tickets.showAll" method="post" class="searchbar">
+            <x-globals::forms.text-input name="term" placeholder="To search type and hit enter..." />
+        </form>
+    </x-slot:actions>
+</x-globals::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -42,17 +34,16 @@
 
             @dispatchEvent('afterFormOpen')
 
-            <table cellpadding="0" cellspacing="0" border="0" class="allTickets table table-bordered" id="allTickets">
-                <thead>
+            <x-globals::elements.table>
+                <x-slot:head>
                     <tr>
                         <th>Id</th>
                         <th>{{ __('NAME') }}</th>
                         <th>{{ __('URL') }}</th>
                         <th>{{ __('COLOR') }}</th>
                     </tr>
-                </thead>
+                </x-slot:head>
 
-                <tbody>
                 @foreach($tpl->get('allCalendars') as $row)
                     <tr>
                         <td>{!! $tpl->displayLink('calendar.editGCal', $row['id'], ['id' => $row['id']]) !!}</td>
@@ -61,8 +52,7 @@
                         <td><span style="background-color: {{ $row['colorClass'] }}; color: #fff; padding: 2px 8px; border-radius: 3px;">{{ $row['colorClass'] }}</span></td>
                     </tr>
                 @endforeach
-                </tbody>
-            </table>
+            </x-globals::elements.table>
 
             @dispatchEvent('beforeFormClose')
 

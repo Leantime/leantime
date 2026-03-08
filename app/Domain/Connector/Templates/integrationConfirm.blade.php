@@ -9,12 +9,7 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="hub" /></div>
-    <div class="pagetitle">
-        <h1>{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header icon="hub" headline="{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}" />
 
 {!! $tpl->displayNotification() !!}
 
@@ -24,14 +19,14 @@
     </div>
     <div class="maincontentinner">
         <div class="center">
-            <div style="width:30%" class="svgContainer">
+            <div class="tw:w-1/3 tw:mx-auto svgContainer">
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_party_re_nmwj.svg') !!}
             </div>
             <br />
             <h3>Integration Success</h3>
             <p>Your data was synced successfully.</p>
             <br />
-            <x-globals::forms.button link="{{ BASE_URL }}/connector/show" type="secondary">Go back to integrations</x-globals::forms.button>
+            <x-globals::forms.button element="a" href="{{ BASE_URL }}/connector/show" contentRole="secondary">Go back to integrations</x-globals::forms.button>
         </div>
     </div>
 </div>

@@ -25,7 +25,7 @@
                 <a class="btnmenu" href="javascript:void(0);" aria-label="{{ __('menu.toggle_sidebar') }}"></a>
 
                 <a class="barmenu" href="javascript:void(0);" aria-label="{{ __('menu.toggle_navigation') }}">
-                    <x-global::elements.icon name="menu" />
+                    <x-globals::elements.icon name="menu" />
                 </a>
 
                 <div class="logo">

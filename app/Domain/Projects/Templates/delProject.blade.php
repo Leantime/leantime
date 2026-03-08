@@ -2,20 +2,14 @@
     $project = $tpl->get('project');
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon :name="$tpl->getModulePicture()" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('label.administration') }}</h5>
-        <h1>{{ sprintf(__('headlines.delete_project_x'), $project['name']) }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header :icon="$tpl->getModulePicture()" subtitle="{{ __('label.administration') }}" headline="{{ sprintf(__('headlines.delete_project_x'), $project['name']) }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
 
-        <h4 class="widget widgettitle"><x-global::elements.icon name="delete" /> {{ __('label.delete') }}</h4>
+        <x-globals::elements.section-title variant="plain" icon="delete">{{ __('label.delete') }}</x-globals::elements.section-title>
         <div class="widgetcontent">
 
             <form method="post">

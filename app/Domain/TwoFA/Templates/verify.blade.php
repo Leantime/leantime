@@ -2,11 +2,7 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pagetitle">
-        <h1>{{ __('headlines.twoFA_login') }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header headline="{{ __('headlines.twoFA_login') }}" />
 
 <div class="regcontent">
     <form id="login" action="{{ BASE_URL }}/twoFA/verify" method="post">
@@ -23,7 +19,7 @@
             <div class="forgotPwContainer">
                 <a href="{{ BASE_URL }}/auth/logout" class="forgotPw">{{ __('menu.sign_out') }}</a>
             </div>
-            <x-globals::forms.button submit type="primary" name="login">{{ __('buttons.login') }}</x-globals::forms.button>
+            <x-globals::forms.button :submit="true" contentRole="primary" name="login">{{ __('buttons.login') }}</x-globals::forms.button>
         </div>
     </form>
 </div>

@@ -46,7 +46,7 @@
 
 @if($showLabel)
     <label class="control-label">
-        <x-global::elements.icon name="alarm" />
+        <x-globals::elements.icon name="alarm" />
         {!! __('label.due') !!}
     </label>
 @endif

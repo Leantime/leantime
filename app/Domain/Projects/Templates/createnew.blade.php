@@ -1,7 +1,7 @@
-<div class="center padding-lg" style="max-width:1200px;">
+<div class="center padding-lg tw:max-w-[1200px]">
 
     <div>
-        <h1 style="font-size:var(--font-size-xxxl);">Create something new</h1><br />
+        <h1>Create something new</h1><br />
         {!!  __("text.creation_hub") !!}
 
         <br />

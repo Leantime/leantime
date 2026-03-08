@@ -37,37 +37,34 @@
                         {!! $htmlDropdownClients !!}
                     </x-globals::actions.dropdown-menu>
 
-                    <div class="dropdown btn-group dropRight">
-                        @php
-                            $currentView = '';
-                            if ($roadmapView == 'Day') {
-                                $currentView = __('buttons.day');
-                            } elseif ($roadmapView == 'Week') {
-                                $currentView = __('buttons.week');
-                            } elseif ($roadmapView == 'Month') {
-                                $currentView = __('buttons.month');
-                            }
-                        @endphp
-                        <a href="javascript:void(0)" class="btn dropdown-toggle" data-toggle="dropdown">{{ __('buttons.timeframe') }}: <span class="viewText">{{ $currentView }}</span><span class="caret"></span></a>
-                        <ul class="dropdown-menu" id="ganttTimeControl">
-                            <li><a href="javascript:void(0);" onclick="document.activeElement.blur();" data-value="Day" class="{{ $roadmapView == 'Day' ? 'active' : '' }}"> {{ __('buttons.day') }}</a></li>
-                            <li><a href="javascript:void(0);" onclick="document.activeElement.blur();" data-value="Week" class="{{ $roadmapView == 'Week' ? 'active' : '' }}">{{ __('buttons.week') }}</a></li>
-                            <li><a href="javascript:void(0);" onclick="document.activeElement.blur();" data-value="Month" class="{{ $roadmapView == 'Month' ? 'active' : '' }}">{{ __('buttons.month') }}</a></li>
-                        </ul>
-                    </div>
+                    @php
+                        $currentView = '';
+                        if ($roadmapView == 'Day') {
+                            $currentView = __('buttons.day');
+                        } elseif ($roadmapView == 'Week') {
+                            $currentView = __('buttons.week');
+                        } elseif ($roadmapView == 'Month') {
+                            $currentView = __('buttons.month');
+                        }
+                    @endphp
+                    <x-globals::actions.dropdown-menu id="ganttTimeControl" variant="button" content-role="default" :label="__('buttons.timeframe') . ': ' . $currentView">
+                        <x-globals::actions.dropdown-item href="javascript:void(0);" data-value="Day" :state="$roadmapView == 'Day' ? 'active' : null">{{ __('buttons.day') }}</x-globals::actions.dropdown-item>
+                        <x-globals::actions.dropdown-item href="javascript:void(0);" data-value="Week" :state="$roadmapView == 'Week' ? 'active' : null">{{ __('buttons.week') }}</x-globals::actions.dropdown-item>
+                        <x-globals::actions.dropdown-item href="javascript:void(0);" data-value="Month" :state="$roadmapView == 'Month' ? 'active' : null">{{ __('buttons.month') }}</x-globals::actions.dropdown-item>
+                    </x-globals::actions.dropdown-menu>
 
                 </div>
             </div>
         </div>
 
         @if(count($milestones) == 0)
-            <div class="empty" id="emptySprint" style="text-align:center;">
-                <div style="width:30%" class="svgContainer">
+            <div class="empty tw:text-center" id="emptySprint">
+                <div class="svgContainer tw:w-[30%] tw:mx-auto">
                     {!! file_get_contents(ROOT . '/dist/images/svg/undraw_adjustments_p22m.svg') !!}
                 </div>
                 <h4>{{ __('headlines.no_milestones') }}<br/>
                 <br />
-                <x-globals::forms.button link="{{ BASE_URL }}/tickets/editMilestone" type="primary" class="milestoneModal addCanvasLink"><x-global::elements.icon name="map" /> {{ __('label.add_milestone') }}</x-globals::forms.button></h4>
+                <x-globals::forms.button link="{{ BASE_URL }}/tickets/editMilestone" type="primary" class="milestoneModal addCanvasLink"><x-globals::elements.icon name="map" /> {{ __('label.add_milestone') }}</x-globals::forms.button></h4>
             </div>
         @endif
 

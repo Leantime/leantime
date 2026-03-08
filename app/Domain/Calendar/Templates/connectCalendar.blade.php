@@ -1,6 +1,6 @@
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light"><x-global::elements.icon name="calendar_add_on" /> {{ __('label.connect_calendar_title') }}</h4>
+<x-globals::elements.section-title icon="calendar_add_on">{{ __('label.connect_calendar_title') }}</x-globals::elements.section-title>
 <p class="subtitle">{{ __('label.connect_calendar_description') }}</p>
 
 <br />
@@ -8,7 +8,7 @@
 {{-- iCal URL Import --}}
 <x-globals::elements.accordion id="connectCalendar-ical" class="noBackground">
     <x-slot name="title">
-        <x-global::elements.icon name="calendar_month" style="margin-right: 5px;" /> {{ __('label.ical_url_title') }}
+        <x-globals::elements.icon name="calendar_month" style="margin-right: 5px;" /> {{ __('label.ical_url_title') }}
     </x-slot>
     <x-slot name="content" style="padding-top: 10px;">
         <p class="text-muted small">{{ __('label.ical_url_description') }}</p>
@@ -19,13 +19,13 @@
             <x-globals::forms.text-input name="name" id="ical_name" autocomplete="off" placeholder="{{ __('label.calendar_name') }}" /><br />
 
             <label for="ical_url">{{ __('label.ical_url') }}:</label>
-            <x-globals::forms.text-input name="url" id="ical_url" autocomplete="off" style="width:100%;" placeholder="https://example.com/calendar.ics" /><br />
+            <x-globals::forms.text-input name="url" id="ical_url" autocomplete="off" class="tw:w-full" placeholder="https://example.com/calendar.ics" /><br />
 
             <label for="ical_color">{{ __('label.color') }}:</label>
             <x-globals::forms.text-input :bare="true" type="text" id="ical_color" name="colorClass" autocomplete="off" value="#082236" class="simpleColorPicker"/>
 
             <br /><br />
-            <x-globals::forms.button submit type="primary" name="save">{{ __('label.import_ical_button') }}</x-globals::forms.button>
+            <x-globals::forms.button :submit="true" contentRole="primary" name="save">{{ __('label.import_ical_button') }}</x-globals::forms.button>
         </form>
     </x-slot>
 </x-globals::elements.accordion>
@@ -45,7 +45,7 @@
             </x-slot>
             <x-slot name="content" style="padding-top: 10px;">
                 <p class="text-muted small">{{ $provider['description'] }}</p>
-                <x-globals::forms.button link="{{ $provider['actionUrl'] }}" type="primary" :formModal="($provider['actionType'] ?? 'link') === 'modal'">
+                <x-globals::forms.button element="a" href="{{ $provider['actionUrl'] }}" contentRole="primary" :formModal="($provider['actionType'] ?? 'link') === 'modal'">
                     {{ $provider['actionLabel'] }}
                 </x-globals::forms.button>
             </x-slot>

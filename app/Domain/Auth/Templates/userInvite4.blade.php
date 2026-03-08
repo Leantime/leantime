@@ -31,7 +31,7 @@
             </x-globals::selectable>
             <x-globals::selectable selected="" :id="'daySchedule-workStart-3'" :name="'daySchedule-workStart-button'" :value="''" :label="''" class="compact" onclick="jQuery(this).hide(); jQuery('#daySchedule-workStart').show()">
                 <label for="" class="">
-                    <x-global::elements.icon name="schedule" /> Select my own
+                    <x-globals::elements.icon name="schedule" /> Select my own
                 </label>
             </x-globals::selectable>
             <x-globals::forms.select :bare="true" name="daySchedule-workStart" id="daySchedule-workStart" style="display:none; vertical-align: top;">
@@ -57,7 +57,7 @@
             </x-globals::selectable>
             <x-globals::selectable selected="" :id="'daySchedule-lunch-3'" :name="'daySchedule-lunch-button'" :value="''" :label="''" class="compact" onclick="jQuery(this).hide(); jQuery('#daySchedule-lunch').show()">
                 <label for="" class="">
-                    <x-global::elements.icon name="schedule" /> Select my own
+                    <x-globals::elements.icon name="schedule" /> Select my own
                 </label>
             </x-globals::selectable>
             <x-globals::forms.select :bare="true" name="daySchedule-lunch" id="daySchedule-lunch" style="display:none; vertical-align: top;">
@@ -84,7 +84,7 @@
             </x-globals::selectable>
             <x-globals::selectable selected="" :id="'daySchedule-workEnd-3'" :name="'daySchedule-workEnd-button'" :value="''" :label="''" class="compact" onclick="jQuery(this).hide(); jQuery('#daySchedule-workEnd').show()">
                 <label for="" class="">
-                    <x-global::elements.icon name="schedule" /> Select my own
+                    <x-globals::elements.icon name="schedule" /> Select my own
                 </label>
             </x-globals::selectable>
             <x-globals::forms.select :bare="true" name="daySchedule-workEnd" id="daySchedule-workEnd" style="display:none; vertical-align: top;">
@@ -130,8 +130,8 @@
 {{--        </div>--}}
         <br /> <br />
         <div class="align-right">
-            <x-globals::forms.button link="{{ BASE_URL }}/auth/userInvite/{{ $inviteId }}?step=3" type="secondary" style="width:auto; margin-right:10px">Back</x-globals::forms.button>
-            <x-globals::forms.button submit type="primary" name="createAccount" class="tw:w-auto" style="width:auto">{{ __("buttons.next") }}</x-globals::forms.button>
+            <x-globals::forms.button element="a" href="{{ BASE_URL }}/auth/userInvite/{{ $inviteId }}?step=3" contentRole="secondary" class="tw:w-auto tw:mr-2">Back</x-globals::forms.button>
+            <x-globals::forms.button :submit="true" contentRole="primary" name="createAccount" class="tw:w-auto">{{ __("buttons.next") }}</x-globals::forms.button>
         </div>
 
     </form>

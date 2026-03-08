@@ -8,7 +8,7 @@
 
 <ul class="sortableTicketList">
     <li class="">
-        <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').removeClass('hideOnLoad').slideDown('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).hide();"><x-global::elements.icon name="add_circle" /> {{ __("links.add_task") }}</a>
+        <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').removeClass('hideOnLoad').slideDown('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).hide();"><x-globals::elements.icon name="add_circle" /> {{ __("links.add_task") }}</a>
         <div class="ticketBox hideOnLoad" id="subticket_new" >
 
             <form method="post" class="form-group"
@@ -63,26 +63,17 @@
             <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 10px;">
                 <a href="#/tickets/showTicket/{{ $subticket['id'] }}" style="flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $subticket['headline'] }}</a>
                 <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
-                    <x-globals::actions.chip
-                        content-role="effort"
-                        :parentId="$subticket['id']"
-                        selectedClass="label-default"
-                        :selectedKey="'' . $subticket['storypoints']"
-                        :options="$efforts"
-                        headerLabel="{{ __('dropdown.how_big_todo') }}"
+                    <x-tickets::chips.effort-select
+                        :ticket="(object)$subticket"
+                        :efforts="$efforts"
                     />
-                    <x-globals::actions.chip
-                        content-role="status"
-                        :parentId="$subticket['id']"
-                        :selectedClass="$statusLabels[$subticket['status']]['class'] ?? 'label-important'"
-                        :selectedKey="$subticket['status']"
-                        :options="$statusLabels"
-                        :colorized="true"
-                        headerLabel="{{ __('dropdown.choose_status') }}"
+                    <x-tickets::chips.status-select
+                        :ticket="(object)$subticket"
+                        :statuses="$statusLabels"
                     />
                     @if($login::userIsAtLeast($roles::$editor))
                         <x-globals::actions.dropdown-menu>
-                                <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-swap="none" class="delete"><x-global::elements.icon name="delete" /> {{ __("links.delete_todo") }}</a></li>
+                                <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-swap="none" class="delete"><x-globals::elements.icon name="delete" /> {{ __("links.delete_todo") }}</a></li>
                         </x-globals::actions.dropdown-menu>
                     @endif
                 </div>
@@ -104,9 +95,6 @@
 
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
-
-            leantime.ticketsController.initEffortDropdown();
-            leantime.ticketsController.initStatusDropdown();
 
         <?php } else { ?>
 

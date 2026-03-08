@@ -33,7 +33,7 @@
         <input type="hidden" name="milestoneId" value="{{ $canvasItem['milestoneId'] }}"/>
         <input type="hidden" name="changeItem" value="1"/>
 
-        <x-globals::forms.text-input :bare="true" type="text" name="description" class="main-title-input" style="width:99%;" value="{{ $tpl->escape($canvasItem['description']) }}"
+        <x-globals::forms.text-input :bare="true" type="text" name="description" class="main-title-input tw:w-full" value="{{ $tpl->escape($canvasItem['description']) }}"
                placeholder="{{ $tpl->__('input.placeholders.short_name') }}" /><br/>
 
         <x-globals::forms.text-input :bare="true" type="text" value="{{ $tpl->escape($canvasItem['tags']) }}" name="tags" id="tags" />
@@ -41,15 +41,15 @@
         <textarea rows="3" cols="10" name="data" class="tiptapComplex"
                   placeholder="">{!! $tpl->escapeMinimal($canvasItem['data']) !!}</textarea><br/>
 
-        <x-globals::forms.button submit type="primary" name="save" id="primaryCanvasSubmitButton">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
-        <x-globals::forms.button submit type="primary" name="save" value="closeModal" id="saveAndClose">{{ $tpl->__('buttons.save_and_close') }}</x-globals::forms.button>
+        <x-globals::forms.button :submit="true" contentRole="primary" name="save" id="primaryCanvasSubmitButton">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
+        <x-globals::forms.button :submit="true" contentRole="primary" name="save" value="closeModal" id="saveAndClose">{{ $tpl->__('buttons.save_and_close') }}</x-globals::forms.button>
 
         @if ($id !== '')
             <br/>
             <hr>
             <input type="hidden" name="comment" value="1"/>
 
-            <h4 class="widgettitle title-light"><x-global::elements.icon name="forum" />{{ $tpl->__('subtitles.discussion') }}</h4>
+            <x-globals::elements.section-title icon="forum">{{ $tpl->__('subtitles.discussion') }}</x-globals::elements.section-title>
             @php
                 $tpl->assign('formUrl', BASE_URL . '/ideas/ideaDialog/' . $id . '');
                 $tpl->displaySubmodule('comments-generalComment');
@@ -61,9 +61,9 @@
     <div class="col-md-4">
         @if ($id !== '')
             <br/><br/>
-            <h4 class="widgettitle title-light"><x-global::elements.icon name="link" /> {{ $tpl->__('headlines.linked_milestone') }} <x-global::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="{{ $tpl->__('tooltip.link_milestones_tooltip') }}" /></h4>
+            <x-globals::elements.section-title icon="link">{{ $tpl->__('headlines.linked_milestone') }} <x-globals::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="{{ $tpl->__('tooltip.link_milestones_tooltip') }}" /></x-globals::elements.section-title>
 
-            <ul class="sortableTicketList" style="width:99%">
+            <ul class="sortableTicketList tw:w-full">
                 @if ($canvasItem['milestoneId'] == '')
                     <li class="ui-state-default center" id="milestone_0">
                         <h4>{{ $tpl->__('headlines.no_milestone_link') }}</h4>
@@ -80,10 +80,10 @@
                             <x-globals::forms.textarea name="newMilestone" /><br/>
                             <input type="hidden" name="type" value="milestone"/>
                             <input type="hidden" name="leancanvasitemid" value="{{ $id }} "/>
-                            <x-globals::forms.button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
+                            <x-globals::forms.button tag="button" contentRole="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
                             <a href="javascript:void(0);"
                                onclick="leantime.ideasController.toggleMilestoneSelectors('hide');">
-                                <x-global::elements.icon name="close" /> {{ $tpl->__('links.cancel') }}
+                                <x-globals::elements.icon name="close" /> {{ $tpl->__('links.cancel') }}
                             </a>
                         </div>
 
@@ -99,10 +99,10 @@
                             </x-globals::forms.select>
                             <input type="hidden" name="type" value="milestone"/>
                             <input type="hidden" name="leancanvasitemid" value="{{ $id }} "/>
-                            <x-globals::forms.button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
+                            <x-globals::forms.button tag="button" contentRole="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
                             <a href="javascript:void(0);"
                                onclick="leantime.ideasController.toggleMilestoneSelectors('hide');">
-                                <x-global::elements.icon name="close" /> {{ $tpl->__('links.cancel') }}
+                                <x-globals::elements.icon name="close" /> {{ $tpl->__('links.cancel') }}
                             </a>
                         </div>
                     </li>
@@ -119,7 +119,7 @@
                                 {{ $tpl->__('label.loading_milestone') }}
                             </div>
                         </div>
-                        <a href="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="ideaCanvasModal delete formModal"><x-global::elements.icon name="close" /> {{ $tpl->__('links.remove') }}</a>
+                        <a href="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="ideaCanvasModal delete formModal"><x-globals::elements.icon name="close" /> {{ $tpl->__('links.remove') }}</a>
 
                     </li>
                 @endif
@@ -135,7 +135,7 @@
 
 <div class="showDialogOnLoad">
     @if ($id != '')
-        <a href="{{ BASE_URL }}/ideas/delCanvasItem/{{ $id }}" class="ideaModal delete right"><x-global::elements.icon name="delete" /> {{ $tpl->__('links.delete') }}</a>
+        <a href="{{ BASE_URL }}/ideas/delCanvasItem/{{ $id }}" class="ideaModal delete right"><x-globals::elements.icon name="delete" /> {{ $tpl->__('links.delete') }}</a>
     @endif
 </div>
 

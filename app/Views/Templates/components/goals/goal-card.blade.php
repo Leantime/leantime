@@ -42,7 +42,7 @@
     </div>
 
     <div style="margin-top: 20px;">
-        <x-global::feedback.progress :value="$percentDone" />
+        <x-globals::feedback.progress :value="$percentDone" />
     </div>
     <div class="row" style="margin-top: 6px;">
         <div class="col-md-4">
@@ -64,7 +64,7 @@
                         style="line-height: 25px;"
                         id="statusDropdownMenuLink{{ $row['id'] }}">
                         <span class="text">{{ $row['status'] != '' ? $statusLabels[$row['status']]['title'] : '' }}</span>
-                        <x-global::elements.icon name="arrow_drop_down" />
+                        <x-globals::elements.icon name="arrow_drop_down" />
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
                         <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
@@ -90,7 +90,7 @@
                         style="line-height: 25px;"
                         id="relatesDropdownMenuLink{{ $row['id'] }}">
                         <span class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span>
-                        <x-global::elements.icon name="arrow_drop_down" />
+                        <x-globals::elements.icon name="arrow_drop_down" />
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
                         <li class="nav-header border">{{ __('dropdown.choose_relates') }}</li>
@@ -115,40 +115,18 @@
             <a href="#/goalcanvas/editCanvasComment/{{ $row['id'] }}"
                 class="commentCountLink"
                 style="display: inline-flex; align-items: center; gap: 4px; line-height: 25px;"
-                data="item_{{ $row['id'] }}"><x-global::elements.icon name="forum" /><small>{{ $nbcomments }}</small></a>
+                data="item_{{ $row['id'] }}"><x-globals::elements.icon name="forum" /><small>{{ $nbcomments }}</small></a>
 
-            <div class="dropdown ticketDropdown userDropdown noBg lastDropdown dropRight" style="margin: 0;">
-                <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"
-                    id="userDropdownMenuLink{{ $row['id'] }}" style="display: inline-flex; align-items: center; line-height: 25px;">
-                    @if ($row['authorFirstname'] != '')
-                        <span id='userImage{{ $row['id'] }}'>
-                            <img src='{{ BASE_URL }}/api/users?profileImage={{ $row['author'] }}'
-                                width='25' style="vertical-align: middle;" />
-                        </span>
-                    @else
-                        <span id='userImage{{ $row['id'] }}'>
-                            <img src='{{ BASE_URL }}/api/users?profileImage=false'
-                                width='25' style="vertical-align: middle;" />
-                        </span>
-                    @endif
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
-                    <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>
-                    @foreach ($users as $user)
-                        <li class='dropdown-item'>
-                            <a href='javascript:void(0);'
-                                onclick="document.activeElement.blur();"
-                                data-label='{{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}'
-                                data-value='{{ $row['id'] . '_' . $user['id'] . '_' . $user['profileId'] }}'
-                                id='userStatusChange{{ $row['id'] . $user['id'] }}'>
-                                <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}'
-                                    width='25' style="vertical-align: middle; margin-right: 4px;" />
-                                {{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
+            <x-globals::actions.user-select
+                :entityId="$row['id']"
+                :assignedUserId="$row['author']"
+                :assignedName="$row['authorFirstname']"
+                :users="$users"
+                :showNameLabel="false"
+                :showArrowIcon="false"
+                :showUnassign="false"
+                dropdownClasses="lastDropdown dropRight"
+            />
         </div>
     </div>
 

@@ -7,15 +7,7 @@
     $moduleId = session('currentProject');
 @endphp
 
-<div class="pageheader">
-
-    <div class="pageicon"><x-global::elements.icon name="description" /></div>
-    <div class="pagetitle">
-        <h5>{{ e(session('currentProjectName')) }}</h5>
-        <h1>{{ __('headlines.files') }}</h1>
-    </div>
-
-</div>
+<x-globals::layout.page-header icon="description" headline="{{ __('headlines.files') }}" subtitle="{{ e(session('currentProjectName')) }}" />
 
 <div class="maincontent">
 
@@ -29,11 +21,12 @@
             @if($login::userIsAtLeast($roles::$editor))
             <div class="uploadWrapper">
 
-                <x-globals::forms.button link="javascript:void(0);" type="secondary" id="cancelLink" style="display:none;">{{ __('links.cancel') }}</x-globals::forms.button>
-                <div class="extra" style="margin-top:5px;"></div>
+                {{-- display:none kept inline — jQuery .show()/.hide() toggles this element --}}
+                <x-globals::forms.button link="javascript:void(0);" contentRole="secondary" id="cancelLink" style="display:none;">{{ __('links.cancel') }}</x-globals::forms.button>
+                <div class="extra tw:mt-1"></div>
                 <div class="fileUploadDrop">
                     <p><i>{{ __('text.drop_files') }}</i></p>
-                    <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
+                    <div class="file-upload-input tw:mx-auto tw:inline-block"></div>
                     <a href="javascript:void(0);" id="webcamClick">{!! __('label.webcam') !!}</a>
                     <a href="javascript:void(0);" id="screencaptureLink">{!! __('label.screen_recording') !!}</a>
                 </div>
@@ -57,19 +50,19 @@
                 <ul id="medialist" class="listfile">
                     @foreach($tpl->get('files') as $file)
                         <li class="file-module-{{ $file['moduleId'] }}">
-                            <x-globals::actions.dropdown-menu style="float:right;">
+                            <x-globals::actions.dropdown-menu class="tw:float-right">
                                 <li class="nav-header">{{ __('subtitles.file') }}</li>
                                 <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{{ __('links.download') }}</a></li>
 
                                 @if($login::userIsAtLeast($roles::$editor))
-                                    <li><a href="{{ BASE_URL }}/files/browse?delFile={{ $file['id'] }}" class="delete deleteFile"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
+                                    <li><a href="{{ BASE_URL }}/files/browse?delFile={{ $file['id'] }}" class="delete deleteFile"><x-globals::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
                                 @endif
                             </x-globals::actions.dropdown-menu>
                             <a class="imageLink" data-ext="{{ $file['extension'] }}" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">
                                 @if(in_array(strtolower($file['extension']), $tpl->get('imgExtensions')))
-                                    <img style="max-height: 50px; max-width: 70px;" src="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" alt="" />
+                                    <img class="tw:max-h-[50px] tw:max-w-[70px]" src="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" alt="" />
                                 @else
-                                    <img style="max-height: 50px; max-width: 70px;" src="{{ BASE_URL }}/dist/images/doc.png" />
+                                    <img class="tw:max-h-[50px] tw:max-w-[70px]" src="{{ BASE_URL }}/dist/images/doc.png" />
                                 @endif
                                 <span class="filename">{{ substr($file['realName'], 0, 10) . '(...).' . $file['extension'] }}</span>
                             </a>

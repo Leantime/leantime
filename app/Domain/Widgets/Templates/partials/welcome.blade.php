@@ -11,8 +11,8 @@
 
 <div class="welcome-widget">
 
-    <div style="padding:0px 0px">
-        <div style="font-size:18px; color:var(--main-titles-color); padding-bottom:15px; padding-top:8px">
+    <div>
+        <div class="tw:text-lg tw:pb-4 tw:pt-2" style="color:var(--main-titles-color)">
             👋 {{ __('text.hi') }} {{ session()->get("userdata.name") }}
 
             <div class="pull-right">
@@ -29,19 +29,19 @@
         <div class="row">
 
             <div class="col-md-3">
-                <x-global::elements.big-number-box number="⏱️ {{ $doneTodayCount }}/{{ $totalTodayCount }}" label="{{ __('welcome_widget.timeboxed_completed') }}" />
+                <x-globals::elements.big-number-box number="⏱️ {{ $doneTodayCount }}/{{ $totalTodayCount }}" label="{{ __('welcome_widget.timeboxed_completed') }}" />
             </div>
 
             <div class="col-md-3">
-                <x-global::elements.big-number-box number="🥳 {{ $closedTicketsCount }}" label="{{ __('welcome_widget.tasks_completed') }}" />
+                <x-globals::elements.big-number-box number="🥳 {{ $closedTicketsCount }}" label="{{ __('welcome_widget.tasks_completed') }}" />
             </div>
 
             <div class="col-md-3">
-                <x-global::elements.big-number-box number="📥 {{ $totalTickets }}" label="{{ __('welcome_widget.tasks_left') }}" />
+                <x-globals::elements.big-number-box number="📥 {{ $totalTickets }}" label="{{ __('welcome_widget.tasks_left') }}" />
             </div>
 
             <div class="col-md-3">
-                <x-global::elements.big-number-box number="🎯 {{ $ticketsInGoals }}" label="{{ __('welcome_widget.goals_contributing_to') }}" />
+                <x-globals::elements.big-number-box number="🎯 {{ $ticketsInGoals }}" label="{{ __('welcome_widget.goals_contributing_to') }}" />
             </div>
 
         </div>

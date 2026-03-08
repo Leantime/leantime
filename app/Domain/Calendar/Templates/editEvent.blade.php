@@ -4,7 +4,7 @@
 
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light">{{ __('subtitles.event') }}</h4>
+<x-globals::elements.section-title>{{ __('subtitles.event') }}</x-globals::elements.section-title>
 
 <form action="{{ BASE_URL }}/calendar/editEvent/{{ $values['id'] }}" method="post" class="formModal">
 
@@ -40,9 +40,9 @@
 
     <div class="clear"></div>
     <br />
-    <a href="{{ BASE_URL }}/calendar/delEvent/{{ (int) $values['id'] }}" class="formModal delete right"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a>
+    <a href="{{ BASE_URL }}/calendar/delEvent/{{ (int) $values['id'] }}" class="formModal delete right"><x-globals::elements.icon name="delete" /> {{ __('links.delete') }}</a>
     <input type="hidden" value="1" name="save" />
-    <x-globals::forms.button submit type="primary" name="saveEvent" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
+    <x-globals::forms.button :submit="true" contentRole="primary" name="saveEvent" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
 
     <div class="clear"></div>
 

@@ -21,10 +21,10 @@
     }
 </script>
 
-<div class="" style="max-width:900px; width:100%;">
+<div class="tw:max-w-[900px] tw:w-full">
 
-    <h4 class="widgettitle title-light" style="padding-bottom: 0">@if(!empty($canvasTypes[$canvasItem['box']]['icon']))<x-global::elements.icon :name="$canvasTypes[$canvasItem['box']]['icon']" />@endif {{ $canvasTypes[$canvasItem['box']]['title'] }}</h4>
-    <hr style="margin-top: 5px; margin-bottom: 15px;">
+    <x-globals::elements.section-title class="tw:pb-0">@if(!empty($canvasTypes[$canvasItem['box']]['icon']))<x-globals::elements.icon :name="$canvasTypes[$canvasItem['box']]['icon']" />@endif {{ $canvasTypes[$canvasItem['box']]['title'] }}</x-globals::elements.section-title>
+    <hr class="tw:mt-1 tw:mb-4">
     {!! $tpl->displayNotification() !!}
 
     <form class="formModal" method="post" action="{{ BASE_URL }}/{{ $canvasName }}canvas/editCanvasItem/{{ $id }}">
@@ -34,11 +34,11 @@
         <input type="hidden" value="{{ $id }}" name="itemId" id="itemId"/>
 
         <label>{{ $tpl->__('label.description') }}</label>
-        <x-globals::forms.text-input name="description" value="{{ $tpl->escape($canvasItem['description']) }}" style="width:100%" /><br />
+        <x-globals::forms.text-input name="description" value="{{ $tpl->escape($canvasItem['description']) }}" class="tw:w-full" /><br />
 
         @if (! empty($statusLabels))
             <label>{{ $tpl->__('label.status') }}</label>
-            <x-globals::forms.select :bare="true" name="status" style="width: 50%" id="statusCanvas">
+            <x-globals::forms.select :bare="true" name="status" class="tw:w-1/2" id="statusCanvas">
             </x-globals::forms.select><br /><br />
         @else
             <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
@@ -46,7 +46,7 @@
 
         @if (! empty($relatesLabels))
             <label>{{ $tpl->__('label.relates') }}</label>
-            <x-globals::forms.select :bare="true" name="relates" style="width: 50%" id="relatesCanvas">
+            <x-globals::forms.select :bare="true" name="relates" class="tw:w-1/2" id="relatesCanvas">
             </x-globals::forms.select><br />
         @else
             <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}" />
@@ -57,9 +57,9 @@
             @if (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int')
                 <x-globals::forms.text-input type="number" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" /><br />
             @elseif (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string')
-                <x-globals::forms.text-input name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" style="width:100%" /><br />
+                <x-globals::forms.text-input name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" class="tw:w-full" /><br />
             @else
-                <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[1]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[1]['field']] }}</textarea><br />
+                <textarea class="tw:w-full modalTextArea tiptapSimple" rows="3" cols="10" name="{{ $dataLabels[1]['field'] }}">{{ $canvasItem[$dataLabels[1]['field']] }}</textarea><br />
             @endif
         @else
             <input type="hidden" name="{{ $dataLabels[1]['field'] }}" value="" />
@@ -70,9 +70,9 @@
             @if (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int')
                 <x-globals::forms.text-input type="number" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" /><br />
             @elseif (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string')
-                <x-globals::forms.text-input name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" style="width:100%" /><br />
+                <x-globals::forms.text-input name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" class="tw:w-full" /><br />
             @else
-                <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea><br />
+                <textarea class="tw:w-full modalTextArea tiptapSimple" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea><br />
             @endif
         @else
             <input type="hidden" name="{{ $dataLabels[2]['field'] }}" value="" />
@@ -85,7 +85,7 @@
             @elseif (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string')
                 <x-globals::forms.text-input name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}" /><br />
             @else
-                <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[3]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[3]['field']] }}</textarea><br />
+                <textarea class="tw:w-full modalTextArea tiptapSimple" rows="3" cols="10" name="{{ $dataLabels[3]['field'] }}">{{ $canvasItem[$dataLabels[3]['field']] }}</textarea><br />
             @endif
         @else
             <input type="hidden" name="{{ $dataLabels[3]['field'] }}" value="" />
@@ -95,17 +95,17 @@
         <input type="hidden" name="changeItem" value="1" />
 
         @if ($id != '')
-            <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete right"><x-global::elements.icon name="delete" /> {{ $tpl->__('links.delete') }}</a>
+            <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete right"><x-globals::elements.icon name="delete" /> {{ $tpl->__('links.delete') }}</a>
         @endif
 
         @if ($login::userIsAtLeast($roles::$editor))
-            <x-globals::forms.button submit type="primary" id="primaryCanvasSubmitButton">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
-            <x-globals::forms.button tag="button" type="secondary" id="saveAndClose" onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();">{{ $tpl->__('buttons.save_and_close') }}</x-globals::forms.button>
+            <x-globals::forms.button :submit="true" contentRole="primary" id="primaryCanvasSubmitButton">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
+            <x-globals::forms.button tag="button" contentRole="secondary" id="saveAndClose" onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();">{{ $tpl->__('buttons.save_and_close') }}</x-globals::forms.button>
         @endif
 
         @if ($id !== '')
             <br /><br />
-            <h4 class="widgettitle title-light"><x-global::elements.icon name="link" /> {{ $tpl->__('headlines.linked_milestone') }} <x-global::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="{{ $tpl->__('tooltip.link_milestones_tooltip') }}" /></h4>
+            <x-globals::elements.section-title icon="link">{{ $tpl->__('headlines.linked_milestone') }} <x-globals::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="{{ $tpl->__('tooltip.link_milestones_tooltip') }}" /></x-globals::elements.section-title>
 
             @if ($canvasItem['milestoneId'] == '')
                 <center>
@@ -119,11 +119,11 @@
                         @endif
                     </div>
                     <div id="newMilestone" style="display:none;">
-                        <x-globals::forms.text-input name="newMilestone" style="width:50%" /><br />
+                        <x-globals::forms.text-input name="newMilestone" class="tw:w-1/2" /><br />
                         <input type="hidden" name="type" value="milestone" />
                         <input type="hidden" name="{{ $canvasName }}canvasitemid" value="{{ $id }} " />
-                        <x-globals::forms.button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
-                        <x-globals::forms.button tag="button" type="primary" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')">{{ $tpl->__('buttons.cancel') }}</x-globals::forms.button>
+                        <x-globals::forms.button tag="button" contentRole="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
+                        <x-globals::forms.button tag="button" contentRole="secondary" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')">{{ $tpl->__('buttons.cancel') }}</x-globals::forms.button>
                     </div>
                     <div id="existingMilestone" style="display:none;">
                         <x-globals::forms.select :bare="true" data-placeholder="{{ $tpl->__('input.placeholders.filter_by_milestone') }}" name="existingMilestone" class="user-select">
@@ -136,8 +136,8 @@
                         </x-globals::forms.select>
                         <input type="hidden" name="type" value="milestone" />
                         <input type="hidden" name="{{ $canvasName }}canvasitemid" value="{{ $id }} " />
-                        <x-globals::forms.button tag="button" type="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
-                        <x-globals::forms.button tag="button" type="primary" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')">{{ $tpl->__('buttons.cancel') }}</x-globals::forms.button>
+                        <x-globals::forms.button tag="button" contentRole="primary" onclick="jQuery('#primaryCanvasSubmitButton').click()">{{ $tpl->__('buttons.save') }}</x-globals::forms.button>
+                        <x-globals::forms.button tag="button" contentRole="secondary" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')">{{ $tpl->__('buttons.cancel') }}</x-globals::forms.button>
                     </div>
                 </center>
             @else
@@ -151,7 +151,7 @@
                         {{ $tpl->__('label.loading_milestone') }}
                     </div>
                 </div>
-                <a href="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="{{ $canvasName }}CanvasModal delete formModal"><x-global::elements.icon name="close" /> {{ $tpl->__('links.remove') }}</a>
+                <a href="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="{{ $canvasName }}CanvasModal delete formModal"><x-globals::elements.icon name="close" /> {{ $tpl->__('links.remove') }}</a>
             @endif
         @endif
 
@@ -160,7 +160,7 @@
     @if ($id !== '')
         <br />
         <input type="hidden" name="comment" value="1" />
-        <h4 class="widgettitle title-light"><x-global::elements.icon name="forum" />{{ $tpl->__('subtitles.discussion') }}</h4>
+        <x-globals::elements.section-title icon="forum">{{ $tpl->__('subtitles.discussion') }}</x-globals::elements.section-title>
         @php
             $tpl->assign('formUrl', "/$canvasName" . "canvas/editCanvasItem/" . $id);
             $tpl->displaySubmodule('comments-generalComment');

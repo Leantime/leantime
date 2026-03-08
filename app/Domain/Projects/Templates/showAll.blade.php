@@ -4,13 +4,7 @@
     $showClosedProjects = $tpl->get('showClosedProjects');
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="luggage" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('label.administration') }}</h5>
-        <h1>{{ __('headline.all_projects') }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header icon="luggage" subtitle="{{ __('label.administration') }}" headline="{{ __('headline.all_projects') }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -28,18 +22,17 @@
                 <label for="showClosed">Show Closed Projects</label>
             </form>
         </div>
-        <div style="overflow-x: auto;">
-        <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">
 
-            <colgroup>
-                <col class="con1"/>
-                <col class="con0" />
-                <col class="con1"/>
-                <col class="con0" />
-                <col class="con1"/>
-                <col class="con0"/>
-            </colgroup>
-            <thead>
+        <x-globals::elements.table :hover="true" id="allProjectsTable">
+            <x-slot:head>
+                <colgroup>
+                    <col class="con1"/>
+                    <col class="con0" />
+                    <col class="con1"/>
+                    <col class="con0" />
+                    <col class="con1"/>
+                    <col class="con0"/>
+                </colgroup>
                 <tr>
                     <th class="head0">{{ __('label.project_name') }}</th>
                     <th class="head1">{{ __('label.client_product') }}</th>
@@ -48,32 +41,29 @@
                     <th class="head0">{{ __('label.hourly_budget') }}</th>
                     <th class="head1">{{ __('label.budget_cost') }}</th>
                 </tr>
-            </thead>
+            </x-slot:head>
 
-            <tbody>
-                @foreach($tpl->get('allProjects') as $row)
-                    <tr class='gradeA'>
-                        <td>
-                            <a href="{{ BASE_URL }}/projects/showProject/{{ $row['id'] }}">{{ e($row['name']) }}</a>
-                        </td>
-                        <td>
-                            <a href="{{ BASE_URL }}/clients/showClient/{{ $row['clientId'] }}">{{ e($row['clientName']) }}</a>
-                        </td>
-                        <td>{{ $row['type'] }}</td>
-                        <td>
-                            @if($row['state'] == -1)
-                                {{ __('label.closed') }}
-                            @else
-                                {{ __('label.open') }}
-                            @endif
-                        </td>
-                        <td class="center">{{ e($row['hourBudget']) }}</td>
-                        <td class="center">{{ e($row['dollarBudget']) }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-        </div>
+            @foreach($tpl->get('allProjects') as $row)
+                <tr class='gradeA'>
+                    <td>
+                        <a href="{{ BASE_URL }}/projects/showProject/{{ $row['id'] }}">{{ e($row['name']) }}</a>
+                    </td>
+                    <td>
+                        <a href="{{ BASE_URL }}/clients/showClient/{{ $row['clientId'] }}">{{ e($row['clientName']) }}</a>
+                    </td>
+                    <td>{{ $row['type'] }}</td>
+                    <td>
+                        @if($row['state'] == -1)
+                            {{ __('label.closed') }}
+                        @else
+                            {{ __('label.open') }}
+                        @endif
+                    </td>
+                    <td class="center">{{ e($row['hourBudget']) }}</td>
+                    <td class="center">{{ e($row['dollarBudget']) }}</td>
+                </tr>
+            @endforeach
+        </x-globals::elements.table>
 
     </div>
 </div>

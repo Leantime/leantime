@@ -83,11 +83,11 @@
           @if($triggerStyle) style="{{ $triggerStyle }}" @endif
     >
         @if($leadingVisual)
-            <x-global::elements.icon :name="$leadingVisual" size="xs" />
+            <x-globals::elements.icon :name="$leadingVisual" size="xs" />
         @endif
         <span class="text">{{ $slot }}</span>
         @if($trailingVisual)
-            <x-global::elements.icon :name="$trailingVisual" size="xs" />
+            <x-globals::elements.icon :name="$trailingVisual" size="xs" />
         @endif
     </span>
 @else
@@ -95,7 +95,7 @@
     <div {{ $attributes->merge(['class' => 'dropdown ticketDropdown ' . $contentRole . 'Dropdown ' . ($colorized ? 'colorized' : '') . ' ' . ($noBg ? 'noBg' : '') . ' show ' . $extraClass . ' ' . $scaleClass . ' ' . $alignClass]) }}>
             <a href="javascript:void(0)" style="{{ $triggerStyle }}" class="dropdown-toggle f-left {{ $contentRole }} {{ $selectedClass }}" id="{{ $contentRole }}DropdownMenuLink{{ $parentId }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 @if($leadingVisual)
-                    <x-global::elements.icon :name="$leadingVisual" size="xs" />
+                    <x-globals::elements.icon :name="$leadingVisual" size="xs" />
                 @endif
                 <span class="text">
                     @if(isset($options[$selectedKey]))
@@ -109,9 +109,9 @@
                     @endif
                 </span>
                 @if($trailingVisual)
-                    <x-global::elements.icon :name="$trailingVisual" size="xs" />
+                    <x-globals::elements.icon :name="$trailingVisual" size="xs" />
                 @else
-                    <x-global::elements.icon name="arrow_drop_down" size="xs" />
+                    <x-globals::elements.icon name="arrow_drop_down" size="xs" />
                 @endif
             </a>
             <ul class="dropdown-menu" aria-labelledby="{{ $contentRole }}DropdownMenuLink{{ $parentId }}">

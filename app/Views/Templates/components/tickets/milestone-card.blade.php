@@ -23,7 +23,7 @@
             </div>
         @endif
 
-        <x-global::feedback.progress
+        <x-globals::feedback.progress
             :value="$percentDone"
             :customColor="$progressColor !== 'default' ? '#'.$progressColor : null"
             :showLabel="false"

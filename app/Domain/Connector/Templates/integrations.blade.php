@@ -1,9 +1,4 @@
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="power" /></div>
-    <div class="pagetitle">
-        <h1>{{ $tpl->__('headlines.integrations') }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header icon="power" headline="{{ $tpl->__('headlines.integrations') }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">

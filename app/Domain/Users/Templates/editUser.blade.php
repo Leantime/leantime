@@ -6,21 +6,15 @@
 
 {!! $tpl->displayNotification() !!}
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon :name="$tpl->getModulePicture()" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('label.administration') }}</h5>
-        <h1>{{ __('headlines.edit_user') }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header :icon="$tpl->getModulePicture()" headline="{{ __('headlines.edit_user') }}" subtitle="{{ __('label.administration') }}" />
 
-<form action="" method="post" class="stdform userEditModal">
+<form action="" method="post" class="userEditModal">
         <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
         <div class="maincontent">
             <div class="row">
                 <div class="col-md-7">
                     <div class="maincontentinner">
-                    <h4 class="widgettitle title-light">{{ __('label.profile_information') }}</h4>
+                    <x-globals::elements.section-title>{{ __('label.profile_information') }}</x-globals::elements.section-title>
 
                     <label for="firstname">{{ __('label.firstname') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="firstname" id="firstname" value="{{ e($values['firstname']) }}" /><br />
 
@@ -52,14 +46,14 @@
                         </option>
                     </x-globals::forms.select>
                         @if($values['status'] == 'i')
-                        <div class="pull-left" style="padding-left:5px; line-height: 29px;">
+                        <div class="pull-left tw:pl-1 tw:leading-[29px]">
                             <x-globals::actions.dropdown-menu variant="button" :label="'<span class=&quot;material-symbols-outlined&quot; aria-hidden=&quot;true&quot;>link</span> ' . __('label.copyinviteLink')" content-role="default" align="start" menu-class="tw:p-4 tw:min-w-72">
                                 <li class="noClickProp" onclick="event.stopPropagation()">
                                     <x-globals::forms.text-input :bare="true" type="text" id="inviteURL" name="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
-                                    <x-globals::forms.button tag="button" type="primary" onclick="leantime.snippets.copyUrl('inviteURL');"><x-global::elements.icon name="link" /> {{ __('label.copy_url') }}</x-globals::forms.button>
+                                    <x-globals::forms.button tag="button" type="primary" onclick="leantime.snippets.copyUrl('inviteURL');"><x-globals::elements.icon name="link" /> {{ __('label.copy_url') }}</x-globals::forms.button>
                                 </li>
                             </x-globals::actions.dropdown-menu>
-                            <x-globals::forms.button link="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite" type="secondary" style="margin-left:5px;" icon="mail">{{ __('buttons.resend_invite') }}</x-globals::forms.button>
+                            <x-globals::forms.button element="a" href="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite" contentRole="secondary" class="tw:ml-1" leadingVisual="mail">{{ __('buttons.resend_invite') }}</x-globals::forms.button>
                         </div>
                         @endif
                         <div class="clearfix"></div>
@@ -75,13 +69,13 @@
                     </x-globals::forms.select><br/>
                         <br/>
 
-                        <h4 class="widgettitle title-light">{{ __('label.contact_information') }}</h4>
+                        <x-globals::elements.section-title>{{ __('label.contact_information') }}</x-globals::elements.section-title>
 
                         <label for="user">{{ __('label.email') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="user" id="user" value="{{ e($values['user']) }}" /><br />
 
                         <label for="phone">{{ __('label.phone') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="phone" id="phone" value="{{ e($values['phone']) }}" /><br /><br />
 
-                        <h4 class="widgettitle title-light">{{ __('label.employee_information') }}</h4>
+                        <x-globals::elements.section-title>{{ __('label.employee_information') }}</x-globals::elements.section-title>
                         <label for="jobTitle">{{ __('label.jobTitle') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="jobTitle" id="jobTitle" value="{{ e($values['jobTitle']) }}" /><br />
 
                         <label for="jobLevel">{{ __('label.jobLevel') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="jobLevel" id="jobLevel" value="{{ e($values['jobLevel']) }}" /><br />
@@ -89,13 +83,13 @@
                         <label for="department">{{ __('label.department') }}</label> <x-globals::forms.text-input :bare="true" type="text" name="department" id="department" value="{{ e($values['department']) }}" /><br />
 
                     <p class="stdformbutton">
-                        <x-globals::forms.button submit type="primary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
+                        <x-globals::forms.button :submit="true" contentRole="primary" name="save" id="save">{{ __('buttons.save') }}</x-globals::forms.button>
                     </p>
                     </div>
                 </div>
                 <div class="col-md-5">
                     <div class="maincontentinner">
-                    <h4 class="widgettitle title-light">{{ __('label.project_assignment') }}</h4>
+                    <x-globals::elements.section-title>{{ __('label.project_assignment') }}</x-globals::elements.section-title>
 
                     <div class="scrollableItemList">
                         @php
@@ -118,14 +112,14 @@
                                     $currentClient = $row['clientName'];
                                 }
                             @endphp
-                            <div class="item" style="padding:10px 0px;">
+                            <div class="item tw:py-2">
                                 <x-globals::forms.checkbox name="projects[]" id="project_{{ $row['id'] }}" value="{{ $row['id'] }}"
                                     :checked="is_array($projects) && in_array($row['id'], $projects)" />
-                                <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
+                                <span class="projectAvatar tw:w-[30px] tw:float-left tw:mr-2">
                                     <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}' />
                                 </span>
 
-                                <label for="project_{{ $row['id'] }}" style="margin-top:-11px">
+                                <label for="project_{{ $row['id'] }}" class="tw:-mt-[11px]">
                                     <small>{{ e($row['type']) }}</small><br />
                                     {{ e($row['name']) }}</label>
                                 <div class="clearall"></div>

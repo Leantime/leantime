@@ -31,12 +31,12 @@
                        class="accordion-toggle"
                        id="accordion_toggle_tickets-organization"
                        onclick="leantime.snippets.accordionToggle('tickets-organization');">
-                            <x-global::elements.icon name="expand_more" />
-                            <x-global::elements.icon name="folder_open" />
+                            <x-globals::elements.icon name="expand_more" />
+                            <x-globals::elements.icon name="folder_open" />
                             {{ __('subtitles.organization') }}
                     </a>
                 </h5>
-                <div class="simpleAccordionContainer" id="accordion_content-tickets-organization" style="padding-left:0">
+                <div class="simpleAccordionContainer tw:pl-0" id="accordion_content-tickets-organization">
 
                     {{-- Project --}}
                     <div class="form-group">
@@ -117,12 +117,12 @@
                        class="accordion-toggle"
                        id="accordion_toggle_tickets-dates"
                        onclick="leantime.snippets.accordionToggle('tickets-dates');">
-                        <x-global::elements.icon name="expand_more" />
-                        <x-global::elements.icon name="calendar_today" />
+                        <x-globals::elements.icon name="expand_more" />
+                        <x-globals::elements.icon name="calendar_today" />
                         {{ __('subtitles.dates') }}
                     </a>
                 </h5>
-                <div class="simpleAccordionContainer" id="accordion_content-tickets-dates" style="padding-left:0">
+                <div class="simpleAccordionContainer tw:pl-0" id="accordion_content-tickets-dates">
                     <div class="form-group">
                         <label class="control-label">{{ __('label.working_date_from') }}</label>
                         <div class="">
@@ -156,12 +156,12 @@
                        class="accordion-toggle"
                        id="accordion_toggle_tickets-timetracking"
                        onclick="leantime.snippets.accordionToggle('tickets-timetracking');">
-                        <x-global::elements.icon name="expand_more" />
-                        <x-global::elements.icon name="schedule" />
+                        <x-globals::elements.icon name="expand_more" />
+                        <x-globals::elements.icon name="schedule" />
                         {{ __('subtitle.time_tracking') }}
                     </a>
                 </h5>
-                <div class="simpleAccordionContainer" id="accordion_content-tickets-timetracking" style="padding-left:0">
+                <div class="simpleAccordionContainer tw:pl-0" id="accordion_content-tickets-timetracking">
 
                     <div class="form-group">
                         <label class="control-label">{{ __('label.planned_hours') }}</label>
@@ -175,7 +175,7 @@
                         <div class="">
                             <x-globals::forms.text-input :bare="true" type="text" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:90px;" />
                             <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
-                                &nbsp;<x-global::elements.icon name="help" />&nbsp;
+                                &nbsp;<x-globals::elements.icon name="help" />&nbsp;
                             </a>
                         </div>
                     </div>

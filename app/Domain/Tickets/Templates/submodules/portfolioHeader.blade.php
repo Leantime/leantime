@@ -6,17 +6,9 @@
 
 @dispatchEvent('beforePageHeaderOpen')
 
-<div class="pageheader">
+<x-globals::layout.page-header icon="work" headline="{{ __('headlines.my_projects') }}">
     @dispatchEvent('afterPageHeaderOpen')
-
-    <div class="pageicon">
-        <x-global::elements.icon name="work" />
-    </div>
-    <div class="pagetitle">
-        <h1>{{ __('headlines.my_projects') }}</h1>
-    </div>
-
     @dispatchEvent('beforePageHeaderClose')
-</div>
+</x-globals::layout.page-header>
 
 @dispatchEvent('afterPageHeaderClose')

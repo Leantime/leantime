@@ -5,13 +5,13 @@
     $menuTypes = $tpl->get('menuTypes');
 @endphp
 
-<form action="" method="post" class="stdform">
+<form action="" method="post">
 
     <div class="row">
 
         <div class="col-md-8">
             <div class="form-group">
-                <x-globals::forms.text-input :bare="true" type="text" name="name" id="name" class="main-title-input" style="width:99%" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
+                <x-globals::forms.text-input :bare="true" type="text" name="name" id="name" class="main-title-input tw:w-full" value="{{ e($project['name']) }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
             </div>
 
             <p>
@@ -30,7 +30,7 @@
 
                 @if($tpl->get('projectTypes') && count($tpl->get('projectTypes')) > 1)
                 <div class="text-center">
-                    <h4 class="widgettitle title-light"><x-global::elements.icon name="view_list" /> Project Type</h4>
+                    <x-globals::elements.section-title icon="view_list">Project Type</x-globals::elements.section-title>
                     <p>The type of the project. This will determine which features are available.</p>
                     <x-globals::forms.select name="type" :required="true">
                         @foreach($tpl->get('projectTypes') as $key => $type)
@@ -47,7 +47,7 @@
 
                 <div class="text-center">
 
-                    <h4 class="widgettitle title-light"><x-global::elements.icon name="image" />{{ __('label.project_avatar') }}</h4>
+                    <x-globals::elements.section-title icon="image">{{ __('label.project_avatar') }}</x-globals::elements.section-title>
 
                     <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project['id'] }}&v={{ format($project['modified'])->timestamp() }}' class='profileImg' alt='Profile Picture' id="previousImage"/>
                     <div id="projectAvatar">
@@ -73,7 +73,7 @@
 
                             <x-globals::forms.button tag="button" type="primary" id="save-picture" class="fileupload-exists" onclick="leantime.projectsController.saveCroppie()">{{ __('buttons.save') }}</x-globals::forms.button>
                         <input type="hidden" name="profileImage" value="1" />
-                        <input id="picSubmit" type="submit" name="savePic" class="hidden"
+                        <input id="picSubmit" type="submit" name="savePic" class="tw:hidden"
                                value="{{ __('buttons.upload') }}"/>
 
                         </div>
@@ -84,21 +84,21 @@
 
             @dispatchEvent('afterProjectAvatar', $project)
 
-            <div class="marginBottom" style="margin-bottom: 30px;">
-                <h4 class="widgettitle title-light"><x-global::elements.icon name="calendar_today" />{{ __('label.project_dates') }}</h4>
+            <div class="tw:mb-8">
+                <x-globals::elements.section-title icon="calendar_today">{{ __('label.project_dates') }}</x-globals::elements.section-title>
 
                 <label class="control-label">{{ __('label.project_start') }}</label>
                 <div class="">
-                    <x-globals::forms.date name="start" value="{{ format($project['start'])->date() }}" placeholder="{{ __('language.dateformat') }}" style="width:100px;" />
+                    <x-globals::forms.date name="start" value="{{ format($project['start'])->date() }}" placeholder="{{ __('language.dateformat') }}" />
                 </div>
                 <label class="control-label">{{ __('label.project_end') }}</label>
                 <div class="">
-                    <x-globals::forms.date name="end" value="{{ format($project['end'])->date() }}" placeholder="{{ __('language.dateformat') }}" style="width:100px;" />
+                    <x-globals::forms.date name="end" value="{{ format($project['end'])->date() }}" placeholder="{{ __('language.dateformat') }}" />
                 </div>
             </div>
 
-            <div style="margin-bottom: 30px;">
-                <h4 class="widgettitle title-light"><x-global::elements.icon name="apartment" />{{ __('label.client_product') }}</h4>
+            <div class="tw:mb-8">
+                <x-globals::elements.section-title icon="apartment">{{ __('label.client_product') }}</x-globals::elements.section-title>
                 <x-globals::forms.select name="clientId" id="clientId" :required="true">
                     @foreach($tpl->get('clients') as $row)
                         <option value="{{ $row['id'] }}"
@@ -110,8 +110,8 @@
                 @endif
             </div>
 
-            <div class="marginBottom" style="margin-bottom: 30px;">
-                <h4 class="widgettitle title-light"><x-global::elements.icon name="build" />{{ __('label.settings') }}</h4>
+            <div class="tw:mb-8">
+                <x-globals::elements.section-title icon="build">{{ __('label.settings') }}</x-globals::elements.section-title>
 
                 <input type="hidden" name="menuType" id="menuType"
                        value="{{ Leantime\Domain\Menu\Repositories\Menu::DEFAULT_MENU }}">
@@ -128,12 +128,12 @@
 
             </div>
 
-            <div class="marginBottom" style="margin-bottom: 30px;">
-                <h4 class="widgettitle title-light"><x-global::elements.icon name="lock_open" />{{ __('labels.defaultaccess') }}</h4>
+            <div class="tw:mb-8">
+                <x-globals::elements.section-title icon="lock_open">{{ __('labels.defaultaccess') }}</x-globals::elements.section-title>
                 {{ __('text.who_can_access') }}
                 <br /><br />
 
-                <x-globals::forms.select name="globalProjectUserAccess" style="max-width:300px;" :required="true">
+                <x-globals::forms.select name="globalProjectUserAccess" class="tw:max-w-xs" :required="true">
                     <option value="restricted" {{ $project['psettings'] == 'restricted' ? "selected='selected'" : '' }}>{{ __('labels.only_chose') }}</option>
                     <option value="clients" {{ $project['psettings'] == 'clients' ? "selected='selected'" : '' }}>{{ __('labels.everyone_in_client') }}</option>
                     <option value="all" {{ $project['psettings'] == 'all' ? "selected='selected'" : '' }}>{{ __('labels.everyone_in_org') }}</option>
@@ -141,8 +141,8 @@
 
             </div>
 
-            <div style="margin-bottom: 30px;">
-                <h4 class="widgettitle title-light"><x-global::elements.icon name="payments" />{{ __('label.budgets') }}</h4>
+            <div class="tw:mb-8">
+                <x-globals::elements.section-title icon="payments">{{ __('label.budgets') }}</x-globals::elements.section-title>
                 <div class="form-group">
                     <label class="control-label" for="hourBudget">{{ __('label.hourly_budget') }}</label>
                     <div>

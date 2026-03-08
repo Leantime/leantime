@@ -38,18 +38,18 @@
                         </div>
                         <div class="column" style="width:40%">
                             <div class="row canvas-row" id="secondRowTop">
-                                <div class="column" style="width:50%; padding-top: 0px">
+                                <div class="column tw:pt-0" style="width:50%">
                                     @include('canvas::element', ['canvasName' => 'dbm', 'elementName' => 'dbm_krp'])
                                 </div>
-                                <div class="column" style="width:50%; padding-top: 0">
+                                <div class="column tw:pt-0" style="width:50%">
                                     @include('canvas::element', ['canvasName' => 'dbm', 'elementName' => 'dbm_krc'])
                                 </div>
                             </div>
                             <div class="row canvas-row" id="secondRowBottom">
-                                <div class="column" style="width:50%; padding-bottom: 0">
+                                <div class="column tw:pb-0" style="width:50%">
                                     @include('canvas::element', ['canvasName' => 'dbm', 'elementName' => 'dbm_krl'])
                                 </div>
-                                <div class="column" style="width:50%; padding-bottom: 0">
+                                <div class="column tw:pb-0" style="width:50%">
                                     @include('canvas::element', ['canvasName' => 'dbm', 'elementName' => 'dbm_krs'])
                                 </div>
                             </div>

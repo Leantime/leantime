@@ -20,7 +20,7 @@
 
 @if($showLabel)
     <label class="control-label">
-        <x-global::elements.icon name="category" />
+        <x-globals::elements.icon name="category" />
         {!! __('label.todo_type') !!}
     </label>
 @endif

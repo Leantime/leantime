@@ -2,13 +2,7 @@
 
 @section('content')
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    <div class="pagetitle">
-        <h1>{{ __('headlines.reset_password') }}</h1>
-    </div>
-</div>
-@dispatchEvent('afterPageHeaderClose')
+<x-globals::layout.page-header headline="{{ __('headlines.reset_password') }}" />
 
 <div class="regcontent">
     @dispatchEvent('afterRegcontentOpen')

@@ -16,6 +16,6 @@
         {!! __('menu.projects') !!}
     @endif
 
-   <x-global::elements.icon name="arrow_drop_down" />
+   <x-globals::elements.icon name="arrow_drop_down" />
 </a>
 @include('menu::partials.projectSelector', [])

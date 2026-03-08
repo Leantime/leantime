@@ -12,7 +12,7 @@
 
 @if($showLabel)
     <label class="control-label">
-        <x-global::elements.icon name="restart_alt" />
+        <x-globals::elements.icon name="restart_alt" />
         {!! __('label.sprint') !!}
     </label>
 @endif

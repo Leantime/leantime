@@ -28,12 +28,12 @@
     @if($iconIsFa)
         <i class="{{ $resolvedIcon }}" aria-hidden="true"></i>
     @else
-        <x-global::elements.icon :name="$resolvedIcon" />
+        <x-globals::elements.icon :name="$resolvedIcon" />
     @endif
     <span>{{ $slot }}</span>
     @if($dismissible)
         <button type="button" class="close" onclick="this.closest('.alert').remove()" aria-label="{{ __('label.dismiss') }}">
-            <x-global::elements.icon name="close" />
+            <x-globals::elements.icon name="close" />
         </button>
     @endif
 </div>

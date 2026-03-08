@@ -109,7 +109,7 @@
         @if(str_contains($resolvedLeading, 'fa-') || str_starts_with($resolvedLeading, 'fa '))
             <i class="{{ $resolvedLeading }}"></i>
         @else
-            <x-global::elements.icon :name="$resolvedLeading" />
+            <x-globals::elements.icon :name="$resolvedLeading" />
         @endif
     @endif
     {{ $slot }}
@@ -117,7 +117,7 @@
         @if(str_contains($resolvedTrailing, 'fa-') || str_starts_with($resolvedTrailing, 'fa '))
             <i class="{{ $resolvedTrailing }}"></i>
         @else
-            <x-global::elements.icon :name="$resolvedTrailing" />
+            <x-globals::elements.icon :name="$resolvedTrailing" />
         @endif
     @endif
 </{{ $resolvedTag }}>

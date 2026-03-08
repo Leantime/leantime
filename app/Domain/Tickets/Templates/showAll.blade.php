@@ -32,7 +32,7 @@
                 @php $tpl->displaySubmodule('tickets-ticketFilter'); @endphp
                 @dispatchEvent('filters.beforeLefthandSectionClose')
                 @dispatchEvent('filters.afterRighthandSectionOpen')
-                <div id="tableButtons" style="display:inline-block"></div>
+                <div id="tableButtons" class="tw:inline-block"></div>
                 @dispatchEvent('filters.beforeRighthandSectionClose')
             </div>
         </div>
@@ -47,7 +47,7 @@
             @if($group['label'] != 'all')
                 <h5 class="accordionTitle {{ $group['class'] }}" @if(!empty($group['color'])) style="color:{{ htmlspecialchars($group['color']) }}" @endif id="accordion_link_{{ $group['id'] }}">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}" onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                        <x-global::elements.icon name="expand_more" />{{ $group['label'] }}
+                        <x-globals::elements.icon name="expand_more" />{{ $group['label'] }}
                     </a>
                     <x-globals::elements.badge color="primary">{{ count($group['items']) }}</x-globals::elements.badge>
                 </h5>
@@ -58,19 +58,21 @@
             @php $allTickets = $group['items']; @endphp
 
             @dispatchEvent('allTicketsTable.before', ['tickets' => $allTicketGroups])
-            <table class="table table-bordered display ticketTable" style="width:100%">
-                <colgroup>
-                    <col class="con1"><col class="con0" style="max-width:200px;"><col class="con1"><col class="con0">
-                    <col class="con1"><col class="con0"><col class="con1"><col class="con0">
-                    <col class="con1"><col class="con0"><col class="con1"><col class="con0">
-                    <col class="con1"><col class="con0">
-                </colgroup>
+            <x-globals::elements.table :datatable="true" class="tw:w-full">
+                <x-slot:colgroup>
+                    <colgroup>
+                        <col class="con1"><col class="con0" class="tw:max-w-[200px]"><col class="con1"><col class="con0">
+                        <col class="con1"><col class="con0"><col class="con1"><col class="con0">
+                        <col class="con1"><col class="con0"><col class="con1"><col class="con0">
+                        <col class="con1"><col class="con0">
+                    </colgroup>
+                </x-slot:colgroup>
                 @dispatchEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets])
-                <thead>
+                <x-slot:head>
                     @dispatchEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets])
                     <tr>
                         <th class="id-col">{{ __('label.id') }}</th>
-                        <th style="max-width: 350px;">{{ __('label.title') }}</th>
+                        <th class="tw:max-w-[350px]">{{ __('label.title') }}</th>
                         <th class="status-col">{{ __('label.todo_status') }}</th>
                         <th class="milestone-col">{{ __('label.milestone') }}</th>
                         <th class="effort-col">{{ __('label.effort') }}</th>
@@ -85,12 +87,12 @@
                         <th class="no-sort" scope="col"><span class="sr-only">{{ __('label.actions') }}</span></th>
                     </tr>
                     @dispatchEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets])
-                </thead>
+                </x-slot:head>
                 @dispatchEvent('allTicketsTable.afterHead', ['tickets' => $allTickets])
                 <tbody>
                     @dispatchEvent('allTicketsTable.beforeFirstRow', ['tickets' => $allTickets])
                     @foreach($allTickets as $rowNum => $row)
-                        <tr style="height:1px;">
+                        <tr class="tw:h-px">
                             @dispatchEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets])
                             <td data-order="{{ e($row['id']) }}">
                                 #{{ e($row['id']) }}
@@ -104,129 +106,68 @@
                             </td>
 
                             @php
-                                if (isset($statusLabels[$row['status']])) {
-                                    $class = $statusLabels[$row['status']]['class'];
-                                    $name = $statusLabels[$row['status']]['name'];
-                                    $sortKey = $statusLabels[$row['status']]['sortKey'];
-                                } else {
-                                    $class = 'label-important';
-                                    $name = 'new';
-                                    $sortKey = 0;
-                                }
+                                $sortKey = $statusLabels[$row['status']]['sortKey'] ?? 0;
+                                $name    = $statusLabels[$row['status']]['name'] ?? 'new';
                             @endphp
                             <td data-order="{{ $name }}">
-                                <x-globals::actions.chip
-                                    content-role="status"
-                                    :parentId="$row['id']"
-                                    :selectedClass="$class"
-                                    :selectedKey="$row['status']"
-                                    :options="$statusLabels"
-                                    :colorized="true"
-                                    headerLabel="{{ __('dropdown.choose_status') }}"
+                                <x-tickets::chips.status-select
+                                    :ticket="(object)$row"
+                                    :statuses="$statusLabels"
                                 />
                             </td>
 
                             @php
-                                if ($row['milestoneid'] != '' && $row['milestoneid'] != 0) {
-                                    $milestoneHeadline = $tpl->escape($row['milestoneHeadline']);
-                                } else {
-                                    $milestoneHeadline = __('label.no_milestone');
-                                }
-                            @endphp
-
-                            @php
-                                $milestoneOptions = [0 => ['name' => __('label.no_milestone'), 'class' => '#b0b0b0']];
-                                foreach ($tpl->get('milestones') as $ms) {
-                                    $milestoneOptions[$ms->id] = ['name' => $ms->headline, 'class' => $ms->tags];
-                                }
+                                $milestoneHeadline = ($row['milestoneid'] != '' && $row['milestoneid'] != 0)
+                                    ? $tpl->escape($row['milestoneHeadline'])
+                                    : __('label.no_milestone');
                             @endphp
                             <td data-order="{{ $milestoneHeadline }}">
-                                <x-globals::actions.chip
-                                    content-role="milestone"
-                                    :parentId="$row['id']"
-                                    selectedClass="label-default"
-                                    color="{{ e($row['milestoneColor']) }}"
-                                    :selectedKey="$row['milestoneid'] ?: 0"
-                                    :options="$milestoneOptions"
-                                    :colorized="true"
-                                    headerLabel="{{ __('dropdown.choose_milestone') }}"
+                                <x-tickets::chips.milestone-select
+                                    :ticket="(object)$row"
+                                    :milestones="$tpl->get('milestones')"
                                 />
                             </td>
 
                             <td data-order="{{ $row['storypoints'] ? ($efforts['' . $row['storypoints'] . ''] ?? '?') : __('label.story_points_unkown') }}">
-                                <x-globals::actions.chip
-                                    content-role="effort"
-                                    :parentId="$row['id']"
-                                    selectedClass="label-default"
-                                    :selectedKey="'' . $row['storypoints']"
-                                    :options="$efforts"
-                                    headerLabel="{{ __('dropdown.how_big_todo') }}"
+                                <x-tickets::chips.effort-select
+                                    :ticket="(object)$row"
+                                    :efforts="$efforts"
                                 />
                             </td>
 
                             @php
-                                $priorityLabel = ($row['priority'] != '' && $row['priority'] > 0) ? ($priorities[$row['priority']] ?? __('label.priority_unkown')) : __('label.priority_unkown');
+                                $priorityLabel = ($row['priority'] != '' && $row['priority'] > 0)
+                                    ? ($priorities[$row['priority']] ?? __('label.priority_unkown'))
+                                    : __('label.priority_unkown');
                             @endphp
                             <td data-order="{{ $priorityLabel }}">
-                                <x-globals::actions.chip
-                                    content-role="priority"
-                                    :parentId="$row['id']"
-                                    selectedClass="label-default priority-bg-{{ $row['priority'] }}"
-                                    :selectedKey="$row['priority']"
-                                    :options="$priorities"
-                                    headerLabel="{{ __('dropdown.select_priority') }}"
+                                <x-tickets::chips.priority-select
+                                    :ticket="(object)$row"
+                                    :priorities="$priorities"
                                 />
                             </td>
 
                             <td data-order="{{ $row['editorFirstname'] != '' ? e($row['editorFirstname']) : __('dropdown.not_assigned') }}" class="user-cell">
-                                <div class="dropdown ticketDropdown userDropdown noBg show f-left">
-                                    <a class="dropdown-toggle" href="javascript:void(0);" role="button" id="userDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ $row['editorFirstname'] != '' ? e($row['editorFirstname']) : __('dropdown.not_assigned') }}">
-                                        <span class="text">
-                                            @if($row['editorFirstname'] != '')
-                                                <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $row['editorId'] }}" width="25" style="vertical-align: middle;"/></span><span id="user{{ $row['id'] }}" class="user-name-label">{{ e($row['editorFirstname']) }}</span>
-                                            @else
-                                                <span id="userImage{{ $row['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage=false" width="25" style="vertical-align: middle;"/></span><span id="user{{ $row['id'] }}" class="user-name-label">{{ __('dropdown.not_assigned') }}</span>
-                                            @endif
-                                        </span>
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
-                                        <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>
-                                        <li class="dropdown-item">
-                                            <a href="javascript:void(0);" onclick="document.activeElement.blur();" data-label="{{ __('label.not_assigned_to_user') }}" data-value="{{ $row['id'] }}_0_0" id="userStatusChange{{ $row['id'] }}0">{{ __('label.not_assigned_to_user') }}</a>
-                                        </li>
-                                        @foreach($tpl->get('users') as $user)
-                                            <li class="dropdown-item">
-                                                <a href="javascript:void(0);" onclick="document.activeElement.blur();" data-label="{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}" data-value="{{ $row['id'] }}_{{ $user['id'] }}_{{ $user['profileId'] }}" id="userStatusChange{{ $row['id'] }}{{ $user['id'] }}"><img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" width="25" style="vertical-align: middle; margin-right:5px;"/>{{ sprintf(__('text.full_name'), e($user['firstname']), e($user['lastname'])) }}</a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
+                                <x-globals::actions.user-select
+                                    :entityId="$row['id']"
+                                    :assignedUserId="$row['editorId']"
+                                    :assignedName="$row['editorFirstname']"
+                                    :users="$tpl->get('users')"
+                                    :showNameLabel="true"
+                                    :showArrowIcon="false"
+                                    :showUnassign="true"
+                                />
                             </td>
 
                             @php
-                                if ($row['sprint'] != '' && $row['sprint'] != 0 && $row['sprint'] != -1) {
-                                    $sprintHeadline = $tpl->escape($row['sprintName']);
-                                } else {
-                                    $sprintHeadline = __('label.not_assigned_to_sprint');
-                                }
-                            @endphp
-
-                            @php
-                                $sprintOptions = [0 => __('label.not_assigned_to_sprint')];
-                                if ($tpl->get('sprints')) {
-                                    foreach ($tpl->get('sprints') as $sprintItem) {
-                                        $sprintOptions[$sprintItem->id] = $sprintItem->name;
-                                    }
-                                }
+                                $sprintHeadline = ($row['sprint'] != '' && $row['sprint'] != 0 && $row['sprint'] != -1)
+                                    ? $tpl->escape($row['sprintName'])
+                                    : __('label.not_assigned_to_sprint');
                             @endphp
                             <td data-order="{{ $sprintHeadline }}">
-                                <x-globals::actions.chip
-                                    content-role="sprint"
-                                    :parentId="$row['id']"
-                                    selectedClass="label-default"
-                                    :selectedKey="$row['sprint'] ?: 0"
-                                    :options="$sprintOptions"
-                                    headerLabel="{{ __('dropdown.choose_sprint') }}"
+                                <x-tickets::chips.sprint-select
+                                    :ticket="(object)$row"
+                                    :sprints="$sprints ?? []"
                                 />
                             </td>
 
@@ -271,10 +212,10 @@
                     @dispatchEvent('allTicketsTable.afterLastRow', ['tickets' => $allTickets])
                 </tbody>
                 @dispatchEvent('allTicketsTable.afterBody', ['tickets' => $allTickets])
-                <tfoot align="right">
+                <x-slot:foot>
                     <tr><td colspan="9"></td><td></td><td></td><td></td><td></td><td></td></tr>
-                </tfoot>
-            </table>
+                </x-slot:foot>
+            </x-globals::elements.table>
             @dispatchEvent('allTicketsTable.afterClose', ['tickets' => $allTickets])
 
             @if($group['label'] != 'all')

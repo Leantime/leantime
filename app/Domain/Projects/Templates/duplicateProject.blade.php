@@ -2,7 +2,7 @@
     $project = $tpl->get('project');
 @endphp
 
-<h4 class="widgettitle title-light">{{ sprintf(__('headlines.duplicate_project_x'), $project['name']) }}</h4>
+<x-globals::elements.section-title>{{ sprintf(__('headlines.duplicate_project_x'), $project['name']) }}</x-globals::elements.section-title>
 
 {!! $tpl->displayNotification() !!}
 

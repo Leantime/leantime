@@ -4,7 +4,7 @@
     $currentProject = session('currentProject');
 @endphp
 
-<h4 class="widgettitle title-light"><x-global::elements.icon name="format_list_numbered" /> {{ __('label.sprint') }} {{ $currentSprint->name }}</h4>
+<x-globals::elements.section-title icon="format_list_numbered">{{ __('label.sprint') }} {{ $currentSprint->name }}</x-globals::elements.section-title>
 
 {!! $tpl->displayNotification() !!}
 
@@ -33,11 +33,11 @@
 
     <div class="row">
         <div class="col-md-6">
-            <x-globals::forms.button submit type="primary">{{ __('buttons.save') }}</x-globals::forms.button>
+            <x-globals::forms.button :submit="true" contentRole="primary">{{ __('buttons.save') }}</x-globals::forms.button>
         </div>
         <div class="col-md-6 align-right padding-top-sm">
             @if(isset($currentSprint->id) && $currentSprint->id != '' && $login::userIsAtLeast($roles::$editor))
-                <a href="{{ BASE_URL }}/sprints/delSprint/{{ $currentSprint->id }}" class="delete formModal sprintModal"><x-global::elements.icon name="delete" /> {{ __('links.delete_sprint') }}</a>
+                <a href="{{ BASE_URL }}/sprints/delSprint/{{ $currentSprint->id }}" class="delete formModal sprintModal"><x-globals::elements.icon name="delete" /> {{ __('links.delete_sprint') }}</a>
             @endif
         </div>
     </div>

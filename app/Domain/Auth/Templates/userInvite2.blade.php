@@ -23,7 +23,7 @@
                      $themeAll = $themeCore->getAll();
                      foreach ($themeAll as $key => $theme) { ?>
                          <x-globals::selectable selected="{{ ($userTheme == $key ? 'true' : 'false') }}" :id="''" :name="'theme'" :value="$key" :label="''" class="tw:w-1/2" onclick="leantime.snippets.toggleBg('{{ $key }}')">
-                            <img src="{{ BASE_URL }}/dist/images/background-{{$key}}.png" style="margin:0; border-radius:8px;" />
+                             <img src="{{ BASE_URL }}/dist/images/background-{{$key}}.png" class="tw:m-0 tw:rounded-lg" />
                                  <br /><?= $tpl->__($theme['name']) ?>
                          </x-globals::selectable>
 
@@ -51,8 +51,8 @@
         </div>
         <br />
         <div class="align-right">
-            <x-globals::forms.button link="{{ BASE_URL }}/auth/userInvite/{{ $inviteId }}" type="secondary" style="width:auto; margin-right:10px">Back</x-globals::forms.button>
-            <x-globals::forms.button submit type="primary" name="createAccount" class="tw:w-auto" style="width:auto">{{ __("buttons.next") }}</x-globals::forms.button>
+            <x-globals::forms.button element="a" href="{{ BASE_URL }}/auth/userInvite/{{ $inviteId }}" contentRole="secondary" class="tw:w-auto tw:mr-2">Back</x-globals::forms.button>
+            <x-globals::forms.button :submit="true" contentRole="primary" name="createAccount" class="tw:w-auto">{{ __("buttons.next") }}</x-globals::forms.button>
         </div>
 
 

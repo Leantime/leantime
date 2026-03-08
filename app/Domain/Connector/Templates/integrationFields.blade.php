@@ -11,12 +11,7 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="hub" /></div>
-    <div class="pagetitle">
-        <h1>{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}</h1>
-    </div>
-</div>
+<x-globals::layout.page-header icon="hub" headline="{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -28,17 +23,16 @@
 
                 {!! $tpl->displayNotification() !!}
                 <h5 class="subtitle">Match Fields</h5>
-                <p class="mb-2">Match the fields from your source to the corresponding fields in Leantime</p><br />
+                <p class="tw:mb-2">Match the fields from your source to the corresponding fields in Leantime</p><br />
 
                 <form method="post" action="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}&step=parse{{ $urlAppend }}">
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th class="center">Source Field</th>
-                            <th class="center">Leantime Field</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                    <x-globals::elements.table :bordered="true">
+                        <x-slot:head>
+                            <tr>
+                                <th class="center">Source Field</th>
+                                <th class="center">Leantime Field</th>
+                            </tr>
+                        </x-slot:head>
                         @foreach ($providerFields as $key => $entity)
                             <tr>
                                 <td class="center">{{ $entity }}</td>
@@ -54,13 +48,12 @@
                                 </td>
                             </tr>
                         @endforeach
-                        </tbody>
-                    </table>
+                    </x-globals::elements.table>
                     <div class="left">
-                        <x-globals::forms.button link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" type="secondary" class="pull-left">Back</x-globals::forms.button>
+                        <x-globals::forms.button element="a" href="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" contentRole="secondary" class="pull-left">Back</x-globals::forms.button>
                     </div>
                     <div class="right">
-                        <x-globals::forms.button submit type="primary">Next</x-globals::forms.button>
+                        <x-globals::forms.button :submit="true" contentRole="primary">Next</x-globals::forms.button>
                     </div>
                     <div class="clearall"></div>
                 </form>
@@ -68,12 +61,12 @@
         </div>
         <div class="col-md-3">
             <div class="maincontentinner">
-            <h5 class="subtitle">Requirements for a successful import</h5>
-            <p>Please review these requirements and make sure your import and mapping covers everything.</p>
-            @foreach ($flags as $flag)
-                <hr />
-                <p style="padding-left:10px"><strong>{{ $flag }}</strong></p>
-            @endforeach
+                <h5 class="subtitle">Requirements for a successful import</h5>
+                <p>Please review these requirements and make sure your import and mapping covers everything.</p>
+                @foreach ($flags as $flag)
+                    <hr />
+                    <p class="tw:pl-2"><strong>{{ $flag }}</strong></p>
+                @endforeach
             </div>
         </div>
 

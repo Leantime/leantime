@@ -15,7 +15,7 @@
         <div class="maincontentinner">
 
             <div>
-                <h5 class="subtitle" style="margin-bottom: 15px;">
+                <h5 class="subtitle tw:mb-4">
                     {{ __("text.installed_plugins") }}
                 </h5>
                 <div>
@@ -27,22 +27,22 @@
                 </div>
             </div>
 
-            <div style="margin-top: 30px;">
-                <h5 class="subtitle" style="margin-bottom: 15px;">
+            <div class="tw:mt-8">
+                <h5 class="subtitle tw:mb-4">
                     {{ __("text.new_plugins") }}
                 </h5>
                 <div>
                     @if (count($tpl->get("newPlugins")) > 0)
                         @foreach ($tpl->get("newPlugins") as $newplugin)
-                            <div style="background: var(--kanban-card-bg); border-radius: var(--box-radius); box-shadow: var(--regular-shadow); padding: 20px; margin-bottom: 12px;">
-                                <div style="display: flex; align-items: center; gap: 20px;">
-                                    <div style="flex: 1; min-width: 0;">
-                                        <strong style="font-size: var(--font-size-l);">{{ $newplugin->name }}</strong>
+                            <div class="tw:bg-[var(--kanban-card-bg)] tw:rounded-[var(--box-radius)] tw:shadow-[var(--regular-shadow)] tw:p-5 tw:mb-3">
+                                <div class="tw:flex tw:items-center tw:gap-5">
+                                    <div class="tw:flex-1 tw:min-w-0">
+                                        <strong>{{ $newplugin->name }}</strong>
                                         @if (!empty($newplugin->version))
-                                            <span style="color: var(--secondary-font-color); font-size: var(--font-size-s);">v{{ $newplugin->version }}</span>
+                                            <span class="tw:text-[color:var(--secondary-font-color)]">v{{ $newplugin->version }}</span>
                                         @endif
 
-                                        <div style="margin-top: 4px; font-size: var(--font-size-s); color: var(--secondary-font-color);">
+                                        <div class="tw:mt-1 tw:text-[color:var(--secondary-font-color)]">
                                             @if (is_array($newplugin->authors) && count($newplugin->authors) > 0)
                                                 {{ $tpl->__("text.by") }} <a href="mailto:{{ $newplugin->authors[0]["email"] }}">{{ $newplugin->authors[0]["name"] }}</a>
                                             @endif
@@ -53,14 +53,14 @@
                                         </div>
 
                                         @if (!empty($newplugin->description))
-                                            <p style="margin: 8px 0 0; font-size: var(--font-size-s); color: var(--primary-font-color); line-height: 1.5;">
+                                            <p class="tw:mt-2 tw:text-[color:var(--primary-font-color)] tw:leading-normal">
                                                 {{ $newplugin->description }}
                                             </p>
                                         @endif
                                     </div>
 
-                                    <div style="flex-shrink: 0;">
-                                        <x-globals::forms.button link="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" type="secondary">{{ $tpl->__('buttons.activate') }}</x-globals::forms.button>
+                                    <div class="tw:shrink-0">
+                                        <x-globals::forms.button link="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" contentRole="secondary">{{ $tpl->__('buttons.activate') }}</x-globals::forms.button>
                                     </div>
                                 </div>
                             </div>

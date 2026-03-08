@@ -27,7 +27,7 @@
                 @if(str_starts_with($menuItem['icon'], 'fa'))
                     <span class="{{ $menuItem['icon'] }}"></span>
                 @else
-                    <x-global::elements.icon :name="$menuItem['icon']" />
+                    <x-globals::elements.icon :name="$menuItem['icon']" />
                 @endif
             @endif
             {{ strip_tags(__($menuItem['title'])) }}

@@ -4,7 +4,7 @@
 
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light">{{ __('subtitles.event') }}</h4>
+<x-globals::elements.section-title>{{ __('subtitles.event') }}</x-globals::elements.section-title>
 
 <form action="{{ BASE_URL }}/calendar/addEvent/" method="post" class="formModal">
 
@@ -39,10 +39,8 @@
 
     @dispatchEvent('beforeSubmitButton')
 
-    <p class="stdformbutton">
-        <input type="hidden" value="1" name="save" />
-        <x-globals::forms.button submit type="primary" name="saveEvent" id="saveEvent">{{ __('buttons.save') }}</x-globals::forms.button>
-    </p>
+    <input type="hidden" value="1" name="save" />
+    <x-globals::forms.button :submit="true" contentRole="primary" name="saveEvent" id="saveEvent">{{ __('buttons.save') }}</x-globals::forms.button>
 
     @dispatchEvent('beforeFormClose')
 

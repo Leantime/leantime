@@ -4,7 +4,7 @@
 
 <div class="mediamgr_category">
     <form action='{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#files' method='POST' enctype="multipart/form-data" class="formModal">
-        <div class="par f-left" style="margin-right: 15px;">
+        <div class="par f-left tw:mr-4">
             <input type="hidden" name="upload" value="1" />
             <div class='fileupload fileupload-new' data-provides='fileupload'>
                 <input type="hidden" />
@@ -32,12 +32,12 @@
     <ul id='medialist' class='listfile'>
         @foreach($tpl->get('files') as $file)
             <li class="{{ $file['moduleId'] }}">
-                <x-globals::actions.dropdown-menu style="float:right;">
+                <x-globals::actions.dropdown-menu class="tw:float-right">
                     <li class="nav-header border">{{ __('subtitles.file') }}</li>
                     <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">{{ __('links.download') }}</a></li>
 
                     @if($login::userIsAtLeast($roles::$editor))
-                        <li><a href="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}?delFile={{ $file['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
+                        <li><a href="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}?delFile={{ $file['id'] }}" class="delete"><x-globals::elements.icon name="delete" /> {{ __('links.delete') }}</a></li>
                     @endif
                 </x-globals::actions.dropdown-menu>
 
@@ -45,8 +45,8 @@
                     @if(in_array(strtolower($file['extension']), $tpl->get('imgExtensions')))
                         <img style='max-height: 50px; max-width: 70px;' src="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" alt="" />
                     @else
-                        <div style="font-size:50px; margin-bottom:10px;">
-                            <x-global::elements.icon name="description" />
+                        <div class="tw:text-[50px] tw:mb-2">
+                            <x-globals::elements.icon name="description" />
                         </div>
                     @endif
                     <span class="filename">{{ $file['realName'] }}</span>
@@ -65,7 +65,7 @@
     </x-globals::elements.empty-state>
 @endif
 
-<div style='clear:both'>&nbsp;</div>
+<div class="tw:clear-both">&nbsp;</div>
 
 <script type='text/javascript'>
     leantime.replaceSVGColors();

@@ -11,10 +11,10 @@
                 <span class="title">{{ session("currentProjectName") }}</span>
             </div>
         @else
-            <div class="projectSelectorFooter" style="border: none; border-bottom: 1px solid var(--main-border-color);">
+            <div class="projectSelectorFooter tw:border-0 tw:border-b tw:border-b-[var(--main-border-color)]">
             <ul class="selectorList projectList">
                 <li>
-                    <a href="{{ BASE_URL }}/projects/showMy"><strong><x-global::elements.icon name="flag" /> Open Project Hub</strong></a>
+                    <a href="{{ BASE_URL }}/projects/showMy"><strong><x-globals::elements.icon name="flag" /> Open Project Hub</strong></a>
                 </li>
 
                 @if ($login::userIsAtLeast("manager"))
@@ -109,7 +109,7 @@
 
 
                     <li>
-                        <a href="{{ BASE_URL }}/projects/showMy"><x-global::elements.icon name="hub" /> Project Hub</a>
+                        <a href="{{ BASE_URL }}/projects/showMy"><x-globals::elements.icon name="hub" /> Project Hub</a>
                     </li>
 
             </ul>

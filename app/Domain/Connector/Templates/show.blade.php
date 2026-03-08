@@ -1,9 +1,4 @@
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="hub" /></div>
-    <div class="pagetitle">
-       <h1>Integrations</h1>
-    </div>
-</div>
+<x-globals::layout.page-header icon="hub" headline="Integrations" />
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -28,9 +23,9 @@
                         <br />
 
                         @if (isset($provider->button))
-                            <x-globals::forms.button link="{{ $provider->button['url'] }}" type="primary">{{ $provider->button['text'] }}</x-globals::forms.button>
+                            <x-globals::forms.button element="a" href="{{ $provider->button['url'] }}" contentRole="primary">{{ $provider->button['text'] }}</x-globals::forms.button>
                         @else
-                            <x-globals::forms.button link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}" type="primary">Create New Integration</x-globals::forms.button>
+                            <x-globals::forms.button element="a" href="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}" contentRole="primary">Create New Integration</x-globals::forms.button>
                         @endif
 
                         <div class="clearall"></div>

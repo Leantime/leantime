@@ -42,10 +42,22 @@
         }
     </style>
 
-    <div class="pageheader">
-        <div class="pageicon"><x-global::elements.icon :name="$canvasIcon" /></div>
-        <div class="pagetitle">
-            <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
+    <x-globals::layout.page-header :icon="$canvasIcon" subtitle="{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}">
+        <x-slot:headline>
+            {{ __('headline.goal.board') }} //
+            @if (count($allCanvas) > 0)
+                <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" :label="$canvasTitle" trigger-class="header-title-dropdown">
+                    @if ($login::userIsAtLeast($roles::$editor))
+                        <li><a href="#/goalcanvas/bigRock">{!! __('links.icon.create_new_bigrock') !!}</a></li>
+                    @endif
+                    <li class="border"></li>
+                    @foreach ($allCanvas as $canvasRow)
+                        <li><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}'>{{ $canvasRow['title'] }}</a></li>
+                    @endforeach
+                </x-globals::actions.dropdown-menu>
+            @endif
+        </x-slot:headline>
+        <x-slot:actions>
             @if (count($allCanvas) > 0)
                 <x-globals::actions.dropdown-menu container-class="headerEditDropdown">
                     @if ($login::userIsAtLeast($roles::$editor))
@@ -61,22 +73,8 @@
                     @endif
                 </x-globals::actions.dropdown-menu>
             @endif
-            <h1>{{ __('headline.goal.board') }} //
-                @if (count($allCanvas) > 0)
-                    <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" :label="$canvasTitle" trigger-class="header-title-dropdown">
-                        @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/goalcanvas/bigRock">{!! __('links.icon.create_new_bigrock') !!}</a></li>
-                        @endif
-                        <li class="border"></li>
-                        @foreach ($allCanvas as $canvasRow)
-                            <li><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}'>{{ $canvasRow['title'] }}</a></li>
-                        @endforeach
-                    </x-globals::actions.dropdown-menu>
-                @endif
-            </h1>
-        </div>
-    </div>
-    <!--pageheader-->
+        </x-slot:actions>
+    </x-globals::layout.page-header>
 
     <div class="maincontent">
         <div class="maincontentinner">
@@ -86,7 +84,7 @@
             <div class="tw:flex tw:justify-between tw:items-center">
                 <div>
                     @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
-                        <x-globals::forms.button link="#/goalcanvas/editCanvasItem?type={{ $elementName }}&canvasId={{ $currentCanvas }}" type="primary" id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</x-globals::forms.button>
+                        <x-globals::forms.button link="#/goalcanvas/editCanvasItem?type={{ $elementName }}&canvasId={{ $currentCanvas }}" contentRole="primary" id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</x-globals::forms.button>
                     @endif
                 </div>
 
@@ -101,13 +99,13 @@
                                 if ($filterStatus != 'all' && !isset($statusLabels[$filterStatus])) { $filterStatus = 'all'; }
                                 $filterRelates = $filter['relates'] ?? 'all';
                                 $statusFilterLabel = $filterStatus == 'all'
-                                    ? '<x-global::elements.icon name="filter_list" /> ' . __('status.all')
+                                    ? '<x-globals::elements.icon name="filter_list" /> ' . __('status.all')
                                     : '<span class="material-symbols-outlined">' . __($statusLabels[$filterStatus]['icon']) . '</span> ' . $statusLabels[$filterStatus]['title'];
                             @endphp
                             <x-globals::actions.dropdown-menu variant="button" :label="$statusFilterLabel" content-role="default">
-                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all') class="active" @endif><x-global::elements.icon name="language" /> {!! __('status.all') !!}</a></li>
+                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all') class="active" @endif><x-globals::elements.icon name="language" /> {!! __('status.all') !!}</a></li>
                                 @foreach ($statusLabels as $key => $data)
-                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}" @if ($filterStatus == $key) class="active" @endif><x-global::elements.icon :name="$data['icon']" /> {!! $data['title'] !!}</a></li>
+                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}" @if ($filterStatus == $key) class="active" @endif><x-globals::elements.icon :name="$data['icon']" /> {!! $data['title'] !!}</a></li>
                                 @endforeach
                             </x-globals::actions.dropdown-menu>
                         @endif
@@ -117,13 +115,13 @@
                                 $filterRelates = $filter['relates'] ?? 'all';
                                 if ($filterRelates != 'all' && !isset($relatesLabels[$filterRelates])) { $filterRelates = 'all'; }
                                 $relatesFilterLabel = $filterRelates == 'all'
-                                    ? '<x-global::elements.icon name="language" /> ' . __('relates.all')
+                                    ? '<x-globals::elements.icon name="language" /> ' . __('relates.all')
                                     : '<span class="material-symbols-outlined">' . __($relatesLabels[$filterRelates]['icon']) . '</span> ' . $relatesLabels[$filterRelates]['title'];
                             @endphp
                             <x-globals::actions.dropdown-menu variant="button" :label="$relatesFilterLabel" content-role="default">
-                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all') class="active" @endif><x-global::elements.icon name="language" /> {{ __('relates.all') }}</a></li>
+                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all') class="active" @endif><x-globals::elements.icon name="language" /> {{ __('relates.all') }}</a></li>
                                 @foreach ($relatesLabels as $key => $data)
-                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}" @if ($filterRelates == $key) class="active" @endif><x-global::elements.icon :name="$data['icon']" /> {{ $data['title'] }}</a></li>
+                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}" @if ($filterRelates == $key) class="active" @endif><x-globals::elements.icon :name="$data['icon']" /> {{ $data['title'] }}</a></li>
                                 @endforeach
                             </x-globals::actions.dropdown-menu>
                         @endif
@@ -189,7 +187,7 @@
 
                     @if ($login::userIsAtLeast($roles::$editor))
                         <br /><br />
-                        <x-globals::forms.button link="javascript:void(0)" type="primary" class="addCanvasLink">
+                        <x-globals::forms.button link="javascript:void(0)" contentRole="primary" class="addCanvasLink">
                             {!! __('links.icon.create_new_board') !!}
                         </x-globals::forms.button>
                     @endif
@@ -227,7 +225,7 @@
                     leantime.canvasController.initRelatesDropdown();
                 }
             @else
-                leantime.authController.makeInputReadonly(".maincontentinner");
+                leantime.authController.makeInputReadonly(".maincontent");
             @endif
 
             @if (isset($_GET['showModal']))

@@ -12,11 +12,11 @@
     @else
         @foreach($plugins as $key => $pluginCategory)
             @if($key !== 'plugins')
-                <div style="margin-bottom: 30px;">
-                    <h5 class="subtitle" style="margin-bottom: 5px;">
+                <div class="tw:mb-8">
+                    <h5 class="subtitle tw:mb-1">
                         <strong>{!! $pluginCategory['name'] !!}</strong>
                     </h5>
-                    <p style="font-size: var(--font-size-s); color: var(--secondary-font-color); margin-bottom: 15px;">
+                    <p class="tw:text-[color:var(--secondary-font-color)] tw:mb-4">
                         {!! $pluginCategory['description'] !!}
                     </p>
 

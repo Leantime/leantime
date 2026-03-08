@@ -12,7 +12,7 @@
 <div class="row-fluid">
     <div class="col-md-6">
 
-        <h4 class="widgettitle title-light"><x-global::elements.icon name="schedule" />{{ __('headline.add_time_entry', false) }}</h4>
+        <x-globals::elements.section-title icon="schedule">{{ __('headline.add_time_entry', false) }}</x-globals::elements.section-title>
         <br />
 
         <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#timesheet" class="formModal">
@@ -31,7 +31,7 @@
 
             <label for="hours">{{ __('label.hours') }}</label>
             <span class="field">
-                <input type="text" id="hours" name="hours" value="{{ $values['hours'] }}" size="7" class="input-small" />
+                <x-globals::forms.text-input :bare="true" id="hours" name="hours" value="{{ $values['hours'] }}" class="input-small" />
             </span>
 
             <label for="description">{{ __('label.description') }}</label>
@@ -45,7 +45,7 @@
 
     </div>
     <div class="col-md-6">
-        <h4 class="widgettitle title-light"><x-global::elements.icon name="bar_chart" />{{ __('subtitles.logged_hours_chart') }}</h4>
+        <x-globals::elements.section-title icon="bar_chart">{{ __('subtitles.logged_hours_chart') }}</x-globals::elements.section-title>
 
         <br />
         <canvas id="canvas"></canvas>

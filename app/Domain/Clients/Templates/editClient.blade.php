@@ -2,27 +2,17 @@
     $values = $tpl->get('values');
 @endphp
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><x-global::elements.icon :name="$tpl->getModulePicture()" /></div>
-    <div class="pagetitle">
-        <h5>Administration</h5>
-        <h1>{{ __('EDIT_CLIENT') }}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div>
-@dispatchEvent('afterPageHeaderClose')
+<x-globals::layout.page-header :icon="$tpl->getModulePicture()" subtitle="Administration" headline="{{ __('EDIT_CLIENT') }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
 
-        <form action="" method="post" class="stdform">
+        <form action="" method="post">
 
-            <div class="widget" style="max-width:600px;">
-            <h4 class="widgettitle">{{ __('OVERVIEW') }}</h4>
+            <div class="widget tw:max-w-lg">
+            <x-globals::elements.section-title variant="plain">{{ __('OVERVIEW') }}</x-globals::elements.section-title>
             <div class="widgetcontent">
 
                 <label for="name">{{ __('NAME') }}</label>

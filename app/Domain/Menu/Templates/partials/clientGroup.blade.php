@@ -33,9 +33,9 @@
                         id="{{ $prefix }}-toggler-{{ $project["clientId"] }}"
                         onclick="leantime.menuController.toggleProjectDropDownList('{{ $project["clientId"] }}', '', '{{ $prefix }}')">
                     @if($parentState == 'closed')
-                        <x-global::elements.icon name="chevron_right" />
+                        <x-globals::elements.icon name="chevron_right" />
                     @else
-                        <x-global::elements.icon name="expand_more" />
+                        <x-globals::elements.icon name="expand_more" />
                     @endif
                     </a>
                     <a href="javascript:void(0)">

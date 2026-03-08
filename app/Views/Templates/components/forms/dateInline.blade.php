@@ -28,7 +28,7 @@
     {{-- Calendar icon trigger — visible when no value --}}
     @if (! $readonly && ! $disabled)
         <button type="button" class="date-inline-trigger" style="{{ $hasValue ? 'display:none' : '' }}" aria-label="{{ __('label.pick_date') }}">
-            <x-global::elements.icon name="calendar_add_on" />
+            <x-globals::elements.icon name="calendar_add_on" />
         </button>
     @endif
 </span>

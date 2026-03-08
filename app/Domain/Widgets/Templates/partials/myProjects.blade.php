@@ -13,7 +13,7 @@
     @if (count($allProjects) == 0)
             <br /><br />
             <div class='center'>
-                <div style='width:70%' class='svgContainer'>
+                <div class='tw:w-[70%] svgContainer'>
                     {{ __('notifications.not_assigned_to_any_project') }}
                     @if($login::userIsAtLeast($roles::$manager))
                         <br /><br />

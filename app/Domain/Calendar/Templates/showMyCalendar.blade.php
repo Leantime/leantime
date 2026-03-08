@@ -4,17 +4,7 @@
     }
 @endphp
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><x-global::elements.icon :name="$tpl->getModulePicture()" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('headline.calendar') }}</h5>
-        <h1>{{ __('headline.my_calendar') }}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div>
-@dispatchEvent('afterPageHeaderClose')
+<x-globals::layout.page-header :icon="$tpl->getModulePicture()" headline="{{ __('headline.my_calendar') }}" subtitle="{{ __('headline.calendar') }}" />
 
 {!! $tpl->displayNotification() !!}
 
@@ -32,11 +22,9 @@
                 @foreach($tpl->get('externalCalendars') as $calendars)
                     <li>
                         @if(empty($calendars['managedByPlugin']))
-                        <x-globals::actions.dropdown-menu style="float:right;" leading-visual="more_horiz">
-                            <li>
-                                <a href="#/calendar/editExternal/{{ $calendars['id'] }}"><x-global::elements.icon name="edit_square" /> {{ __('links.edit_calendar') }}</a>
-                            </li>
-                            <li><a href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" class="delete"><x-global::elements.icon name="delete" /> {{ __('links.delete_external_calendar') }}</a></li>
+                        <x-globals::actions.dropdown-menu class="tw:float-right" leadingVisual="more_horiz">
+                            <x-globals::actions.dropdown-item href="#/calendar/editExternal/{{ $calendars['id'] }}" leadingVisual="edit_square">{{ __('links.edit_calendar') }}</x-globals::actions.dropdown-item>
+                            <x-globals::actions.dropdown-item href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" leadingVisual="delete" state="danger">{{ __('links.delete_external_calendar') }}</x-globals::actions.dropdown-item>
                         </x-globals::actions.dropdown-menu>
                         @endif
                         <span class="indicatorCircle" style="background:{{ $calendars['colorClass'] }}"></span>{{ $calendars['name'] }}
@@ -46,19 +34,19 @@
 
                 </ul>
                 <hr />
-                <a href="#/calendar/connectCalendar" class="formModal" style="display:block; margin-bottom:8px; margin-left:-5px;"><x-global::elements.icon name="calendar_add_on" style="width:16px;" /> {{ __('label.connect_calendar') }}</a>
-                <a href="#/calendar/calendarSettings" class="formModal" style="margin-left:-5px;"><x-global::elements.icon name="settings" style="width:16px;" /> {{ __('label.calendar_settings') }}</a>
+                <a href="#/calendar/connectCalendar" class="formModal tw:block tw:mb-2"><x-globals::elements.icon name="calendar_add_on" /> {{ __('label.connect_calendar') }}</a>
+                <a href="#/calendar/calendarSettings" class="formModal"><x-globals::elements.icon name="settings" /> {{ __('label.calendar_settings') }}</a>
             </div>
         </div>
         <div class="col-md-10">
-            <div class="maincontentinner">
+            <div class="maincontentinner calendarMainCard">
                 <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
-                    <x-globals::forms.button link="#/calendar/addEvent" type="primary" formModal><x-global::elements.icon name="add" /> {{ __('buttons.add_event') }}</x-globals::forms.button>
+                    <x-globals::forms.button element="a" href="#/calendar/addEvent" contentRole="primary" class="formModal"><x-globals::elements.icon name="add" /> {{ __('buttons.add_event') }}</x-globals::forms.button>
 
                     <div class="tw:flex-1"></div>
 
-                    <div id="calendarTitle" style="white-space:nowrap;">
-                        <h2 style="margin:0; font-size:var(--font-size-xl); font-weight:600;">..</h2>
+                    <div id="calendarTitle" class="tw:whitespace-nowrap">
+                        <h2 class="tw:m-0" style="font-size:var(--font-size-xl); font-weight:600;">..</h2>
                     </div>
 
                     <div class="tw:flex-1"></div>
@@ -70,18 +58,18 @@
                         <option value="multiMonthYear" {{ session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear' ? 'selected' : '' }}>Year</option>
                     </x-globals::forms.select>
 
-                    <button class="fc-today-button btn btn-default" type="button">today</button>
+                    <x-globals::forms.button class="fc-today-button" contentRole="secondary">today</x-globals::forms.button>
 
                     <div class="tw:flex tw:items-center tw:gap-1">
-                        <button class="fc-prev-button btn btn-default" type="button">
-                            <x-global::elements.icon name="chevron_left" />
-                        </button>
-                        <button class="fc-next-button btn btn-default" type="button">
-                            <x-global::elements.icon name="chevron_right" />
-                        </button>
+                        <x-globals::forms.button class="fc-prev-button" contentRole="secondary">
+                            <x-globals::elements.icon name="chevron_left" />
+                        </x-globals::forms.button>
+                        <x-globals::forms.button class="fc-next-button" contentRole="secondary">
+                            <x-globals::elements.icon name="chevron_right" />
+                        </x-globals::forms.button>
                     </div>
 
-                    <x-globals::forms.button link="#/calendar/export" type="secondary" formModal>Export</x-globals::forms.button>
+                    <x-globals::forms.button element="a" href="#/calendar/export" contentRole="secondary" class="formModal">Export</x-globals::forms.button>
                 </div>
                 <div id="calendar"></div>
             </div>
@@ -330,7 +318,7 @@
 </script>
 
 <style type="text/css">
-    .maincontent .maincontentinner {
+    .calendarMainCard {
         height:calc(100vh - 165px);
     }
 </style>

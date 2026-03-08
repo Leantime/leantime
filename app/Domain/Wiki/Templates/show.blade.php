@@ -53,35 +53,29 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><x-global::elements.icon name="book" /></div>
-    <div class="pagetitle">
-
-        <h5>{{ e(session('currentProjectClient')) }}</h5>
-
-        @if (count($wikis) > 0 && $login::userIsAtLeast($roles::$editor) && $currentWiki)
+<x-globals::layout.page-header icon="book" subtitle="{{ e(session('currentProjectClient')) }}">
+    {{ __('headlines.documents') }}
+    @if (count($wikis) > 0)
+        //
+        <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" :label="$currentWiki !== false ? e($currentWiki->title) : __('label.select_board')" trigger-class="header-title-dropdown">
+            <li><a class="inlineEdit" href="#/wiki/wikiModal/">{{ __('link.new_wiki') }}</a></li>
+            <li class="nav-header"></li>
+            @foreach ($wikis as $wiki)
+                <li>
+                    <a href="{{ BASE_URL }}/wiki/show?setWiki={{ $wiki->id }}">{{ $wiki->title }}</a>
+                </li>
+            @endforeach
+        </x-globals::actions.dropdown-menu>
+    @endif
+    @if (count($wikis) > 0 && $login::userIsAtLeast($roles::$editor) && $currentWiki)
+        <x-slot:actions>
             <x-globals::actions.dropdown-menu container-class="headerEditDropdown">
                 <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{{ __('link.edit_wiki') }}</a></li>
-                <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><x-global::elements.icon name="delete" /> {{ __('links.delete_wiki') }}</a></li>
+                <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><x-globals::elements.icon name="delete" /> {{ __('links.delete_wiki') }}</a></li>
             </x-globals::actions.dropdown-menu>
-        @endif
-
-        <h1>{{ __('headlines.documents') }}
-         @if (count($wikis) > 0)
-             //
-            <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" :label="$currentWiki !== false ? e($currentWiki->title) : __('label.select_board')" trigger-class="header-title-dropdown">
-                <li><a class="inlineEdit" href="#/wiki/wikiModal/">{{ __('link.new_wiki') }}</a></li>
-                <li class="nav-header"></li>
-                @foreach ($wikis as $wiki)
-                    <li>
-                        <a href="{{ BASE_URL }}/wiki/show?setWiki={{ $wiki->id }}">{{ $wiki->title }}</a>
-                    </li>
-                @endforeach
-            </x-globals::actions.dropdown-menu>
-         @endif
-        </h1>
-    </div>
-</div>
+        </x-slot:actions>
+    @endif
+</x-globals::layout.page-header>
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
@@ -94,7 +88,7 @@
             </div>
             <h3 class="wiki-empty-state-title">{{ __('headlines.no_articles_yet') }}</h3>
             <p class="wiki-empty-state-text">{{ __('text.create_new_wiki') }}</p>
-            <x-globals::forms.button link="#/wiki/wikiModal/" type="primary" class="inlineEdit" icon="add">{{ __('links.icon.create_new_board') }}</x-globals::forms.button>
+            <x-globals::forms.button link="#/wiki/wikiModal/" contentRole="primary" class="inlineEdit" icon="add">{{ __('links.icon.create_new_board') }}</x-globals::forms.button>
         </div>
 
     @elseif ($wikis && count($wikis) > 0)
@@ -112,9 +106,9 @@
                         {{-- Left: Contents Sidebar --}}
                         <div class="wiki-contents-panel" id="contentsPanel">
                             <div class="wiki-panel-header">
-                                <h4 class="widgettitle title-light"><x-global::elements.icon name="list" /> Contents</h4>
+                                <x-globals::elements.section-title icon="list">Contents</x-globals::elements.section-title>
                                 <button class="wiki-collapse-btn" id="toggleContents" title="Collapse">
-                                    <x-global::elements.icon name="chevron_left" />
+                                    <x-globals::elements.icon name="chevron_left" />
                                 </button>
                             </div>
 
@@ -128,7 +122,7 @@
                                 <button class="wiki-create-btn"
                                         hx-post="{{ BASE_URL }}/hx/wiki/articleContent/create"
                                         hx-swap="none">
-                                    <x-global::elements.icon name="add" />
+                                    <x-globals::elements.icon name="add" />
                                     <span>{{ __('link.create_article') }}</span>
                                 </button>
                             @endif
@@ -136,14 +130,14 @@
 
                         {{-- Toggle for collapsed Contents --}}
                         <button class="wiki-panel-toggle left" id="showContentsBtn" title="Show Contents">
-                            <x-global::elements.icon name="chevron_right" />
+                            <x-globals::elements.icon name="chevron_right" />
                         </button>
 
                         <div class="wiki-content-inner">
 
                         {{-- Toggle for collapsed Details --}}
                         <button class="wiki-panel-toggle right" id="showPropertiesBtn" title="Show Details">
-                            <x-global::elements.icon name="chevron_left" />
+                            <x-globals::elements.icon name="chevron_left" />
                         </button>
 
                             {{-- Document Header --}}
@@ -162,13 +156,15 @@
                                             <div class="dropdown-menu"></div>
                                         </div>
                                         <input type="hidden" id="wikiArticleIcon" class="articleIcon" value="{{ $currentArticle->data }}" />
-                                        <input type="text"
-                                               id="wikiTitleEditable"
-                                               class="wiki-title-editable main-title-input"
-                                               value="{{ $currentArticle->title }}"
-                                               data-original="{{ $currentArticle->title }}"
-                                               placeholder="{{ __('input.placeholders.wiki_title') }}"
-                                               autocomplete="off" />
+                                        <x-globals::forms.text-input
+                                            :bare="true"
+                                            name="wikiTitle"
+                                            id="wikiTitleEditable"
+                                            class="wiki-title-editable main-title-input"
+                                            value="{{ $currentArticle->title }}"
+                                            data-original="{{ $currentArticle->title }}"
+                                            placeholder="{{ __('input.placeholders.wiki_title') }}"
+                                            autocomplete="off" />
                                     </div>
 
                                     {{-- Editable Tags --}}
@@ -211,7 +207,7 @@
                                 <div id="wikiTiptapEditor" class="wiki-document"></div>
                                 {{-- Edit mode indicator --}}
                                 <div class="wiki-edit-indicator" id="wikiEditIndicator" style="display: none;">
-                                    <x-global::elements.icon name="circle" />
+                                    <x-globals::elements.icon name="circle" />
                                     <span>Editing</span>
                                 </div>
                             @else
@@ -240,7 +236,7 @@
                         {{-- Comments Section --}}
                         <section class="wiki-comments-section" id="comments">
                             <h4 class="wiki-comments-title">
-                                <x-global::elements.icon name="forum" />
+                                <x-globals::elements.icon name="forum" />
                                 {{ __('subtitles.discussion') }}
                             </h4>
 
@@ -258,9 +254,9 @@
                         {{-- Properties Panel (inside content area) --}}
                         <div class="wiki-properties-panel" id="propertiesPanel">
                             <div class="wiki-panel-header">
-                                <h4 class="widgettitle title-light"><x-global::elements.icon name="info" /> Details</h4>
+                                <x-globals::elements.section-title icon="info">Details</x-globals::elements.section-title>
                                 <button class="wiki-collapse-btn" id="collapseProperties" title="Collapse">
-                                    <x-global::elements.icon name="chevron_right" />
+                                    <x-globals::elements.icon name="chevron_right" />
                                 </button>
                             </div>
 
@@ -270,22 +266,22 @@
                                 {{-- Status Dropdown --}}
                                 <div class="wiki-property-row">
                                     <span class="wiki-property-label">
-                                        <x-global::elements.icon name="radio_button_checked" /> Status
+                                        <x-globals::elements.icon name="radio_button_checked" /> Status
                                     </span>
                                     <span class="wiki-property-value">
                                         @if ($login::userIsAtLeast($roles::$editor))
                                             <div class="wiki-status-dropdown dropdown" id="wikiStatusDropdown">
                                                 <a href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle wiki-status-pill {{ $currentArticle->status }}">
                                                     @if ($currentArticle->status === 'draft')
-                                                        <x-global::elements.icon name="edit" /> Draft
+                                                        <x-globals::elements.icon name="edit" /> Draft
                                                     @else
-                                                        <x-global::elements.icon name="check" /> Published
+                                                        <x-globals::elements.icon name="check" /> Published
                                                     @endif
-                                                    <x-global::elements.icon name="expand_more" />
+                                                    <x-globals::elements.icon name="expand_more" />
                                                 </a>
                                                 <ul class="dropdown-menu wiki-status-menu">
-                                                    <li><a href="javascript:void(0)" class="wiki-status-option draft-option" data-value="draft"><x-global::elements.icon name="edit" /> Draft</a></li>
-                                                    <li><a href="javascript:void(0)" class="wiki-status-option published-option" data-value="published"><x-global::elements.icon name="check" /> Published</a></li>
+                                                    <li><a href="javascript:void(0)" class="wiki-status-option draft-option" data-value="draft"><x-globals::elements.icon name="edit" /> Draft</a></li>
+                                                    <li><a href="javascript:void(0)" class="wiki-status-option published-option" data-value="published"><x-globals::elements.icon name="check" /> Published</a></li>
                                                 </ul>
                                             </div>
                                         @else
@@ -312,17 +308,17 @@
                                 {{-- Parent --}}
                                 <div class="wiki-property-row">
                                     <span class="wiki-property-label">
-                                        <x-global::elements.icon name="account_tree" /> Parent
+                                        <x-globals::elements.icon name="account_tree" /> Parent
                                     </span>
                                     <span class="wiki-property-value">
                                         @if ($login::userIsAtLeast($roles::$editor))
                                             <div class="wiki-parent-dropdown dropdown" id="wikiParentDropdown">
                                                 <a href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle wiki-milestone-btn">
                                                     <span class="parent-text{{ (! $currentArticle->parent || $currentArticle->parent == 0) ? ' none' : '' }}">{{ $parentName }}</span>
-                                                    <x-global::elements.icon name="expand_more" />
+                                                    <x-globals::elements.icon name="expand_more" />
                                                 </a>
                                                 <ul class="dropdown-menu wiki-milestone-menu">
-                                                    <li><a href="javascript:void(0)" class="wiki-parent-option{{ (! $currentArticle->parent || $currentArticle->parent == 0) ? ' active' : '' }}" data-value="0"><x-global::elements.icon name="close" /> None</a></li>
+                                                    <li><a href="javascript:void(0)" class="wiki-parent-option{{ (! $currentArticle->parent || $currentArticle->parent == 0) ? ' active' : '' }}" data-value="0"><x-globals::elements.icon name="close" /> None</a></li>
                                                     @php
                                                         $parentOptions = array_filter($wikiHeadlines, function ($h) use ($currentArticle) {
                                                             return $h->id != $currentArticle->id;
@@ -357,7 +353,7 @@
                                 {{-- Author --}}
                                 <div class="wiki-property-row">
                                     <span class="wiki-property-label">
-                                        <x-global::elements.icon name="person" /> Author
+                                        <x-globals::elements.icon name="person" /> Author
                                     </span>
                                     <span class="wiki-property-value">
                                         <div class="wiki-author">
@@ -370,7 +366,7 @@
                                 {{-- Milestone --}}
                                 <div class="wiki-property-row">
                                     <span class="wiki-property-label">
-                                        <x-global::elements.icon name="flag" /> Milestone
+                                        <x-globals::elements.icon name="flag" /> Milestone
                                     </span>
                                     <span class="wiki-property-value">
                                         @if ($login::userIsAtLeast($roles::$editor))
@@ -381,10 +377,10 @@
                                                     @else
                                                         <span class="milestone-text none">None</span>
                                                     @endif
-                                                    <x-global::elements.icon name="expand_more" />
+                                                    <x-globals::elements.icon name="expand_more" />
                                                 </a>
                                                 <ul class="dropdown-menu wiki-milestone-menu">
-                                                    <li><a href="javascript:void(0)" class="wiki-milestone-option" data-value="0"><x-global::elements.icon name="close" /> None</a></li>
+                                                    <li><a href="javascript:void(0)" class="wiki-milestone-option" data-value="0"><x-globals::elements.icon name="close" /> None</a></li>
                                                     @if (count($milestones) > 0)
                                                         <li class="divider"></li>
                                                         @foreach ($milestones as $milestone)
@@ -392,7 +388,7 @@
                                                                 <a href="javascript:void(0)"
                                                                    class="wiki-milestone-option{{ $currentArticle->milestoneId == $milestone->id ? ' active' : '' }}"
                                                                    data-value="{{ $milestone->id }}">
-                                                                    <x-global::elements.icon name="flag" /> {{ $milestone->headline }}
+                                                                    <x-globals::elements.icon name="flag" /> {{ $milestone->headline }}
                                                                 </a>
                                                             </li>
                                                         @endforeach
@@ -414,7 +410,7 @@
                                 {{-- Last Saved --}}
                                 <div class="wiki-property-row">
                                     <span class="wiki-property-label">
-                                        <x-global::elements.icon name="schedule" /> Last Saved
+                                        <x-globals::elements.icon name="schedule" /> Last Saved
                                     </span>
                                     <span class="wiki-property-value" id="wikiLastSaved" data-timestamp="{{ $currentArticle->modified }}">
                                         {{ format($currentArticle->modified)->diffForHumans() }}
@@ -434,7 +430,7 @@
                                      hx-swap="innerHTML"
                                      aria-live="polite">
                                     <div class="wiki-activity-loading">
-                                        <x-global::elements.icon name="autorenew" /> Loading activity...
+                                        <x-globals::elements.icon name="autorenew" /> Loading activity...
                                     </div>
                                 </div>
                             </div>
@@ -443,7 +439,7 @@
                             @if ($login::userIsAtLeast($roles::$editor))
                             <div class="wiki-properties-footer">
                                 <a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="wiki-action-btn delete">
-                                    <x-global::elements.icon name="delete" /> Delete Article
+                                    <x-globals::elements.icon name="delete" /> Delete Article
                                 </a>
                             </div>
                             @endif
@@ -457,12 +453,12 @@
         @else
             {{-- Wiki exists but no articles yet --}}
             <div class="wiki-empty-state">
-                <div class="wiki-empty-state-icon svgContainer" style="width: 200px; margin: 0 auto;">
+                <div class="wiki-empty-state-icon svgContainer tw:w-[200px] tw:mx-auto">
                     {!! file_get_contents(ROOT . '/dist/images/svg/undraw_book_reading_re_fu2c.svg') !!}
                 </div>
                 <h3 class="wiki-empty-state-title">{{ __('headlines.no_articles_yet') }}</h3>
                 <p class="wiki-empty-state-text">{{ __('text.create_new_content') }}</p>
-                <x-globals::forms.button tag="button" type="primary"
+                <x-globals::forms.button tag="button" contentRole="primary"
                         hx-post="{{ BASE_URL }}/hx/wiki/articleContent/create"
                         hx-swap="none"
                         icon="add">{{ __('link.create_article') }}</x-globals::forms.button>

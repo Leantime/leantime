@@ -2,15 +2,7 @@
 
 @section('content')
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pagetitle">
-        <h1>{{ __('headlines.login') }}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div>
-@dispatchEvent('afterPageHeaderClose')
+<x-globals::layout.page-header headline="{{ __('headlines.login') }}" />
 
 <div class="regcontent">
     @dispatchEvent('afterRegcontentOpen')
@@ -23,18 +15,18 @@
 
             <div class="">
                 <label for="username">Email</label>
-                <input type="text" name="username" id="username" class="form-control" placeholder="{{ __($tpl->get('inputPlaceholder')) }}" value=""/>
+                <x-globals::forms.text-input name="username" id="username" placeholder="{{ __($tpl->get('inputPlaceholder')) }}" value="" />
             </div>
             <div class="">
                 <label for="password">Password</label>
-                <input type="password" name="password" id="password" autocomplete="off" class="form-control" placeholder="{{ __('input.placeholders.enter_password') }}" value=""/>
+                <x-globals::forms.text-input type="password" name="password" id="password" autocomplete="off" placeholder="{{ __('input.placeholders.enter_password') }}" value="" />
                 <div class="forgotPwContainer">
                     <a href="{{ BASE_URL }}/auth/resetPw" class="forgotPw">{{ __('links.forgot_password') }}</a>
                 </div>
             </div>
             @dispatchEvent('beforeSubmitButton')
             <div class="">
-                <input type="submit" name="login" value="{{ __('buttons.login') }}" class="btn btn-primary"/>
+                <x-globals::forms.button contentRole="primary" :submit="true" name="login">{{ __('buttons.login') }}</x-globals::forms.button>
             </div>
             <div>
             </div>
@@ -47,12 +39,12 @@
     @if($tpl->get('oidcEnabled'))
         @dispatchEvent('beforeOidcButton')
         <div class="">
-            <div style="margin-top:20px; border-bottom:1px solid #ccc; width:100%; height:10px; overflow:show; text-align:center; margin-bottom:40px;">
-                <p style="text-align:center; display:inline-block; background:var(--secondary-background); padding:0px 5px;">{{ __('label.or_login_with') }}</p>
+            <div class="tw:mt-5 tw:border-b tw:border-gray-300 tw:w-full tw:h-[10px] tw:text-center tw:mb-10 tw:overflow-visible">
+                <p class="tw:text-center tw:inline-block tw:bg-[var(--secondary-background)] tw:px-1">{{ __('label.or_login_with') }}</p>
             </div>
-            <a href="{{ BASE_URL }}/oidc/login" style="width:100%;" class="btn btn-primary">
+            <x-globals::forms.button element="a" href="{{ BASE_URL }}/oidc/login" contentRole="primary" class="tw:w-full">
                 {{ __('buttons.oidclogin') }}
-            </a>
+            </x-globals::forms.button>
         </div>
     @endif
 

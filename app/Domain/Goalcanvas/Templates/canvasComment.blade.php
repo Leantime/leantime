@@ -12,22 +12,17 @@
 
 @endphp
 
-<div class="showDialogOnLoad" style="display:none; width:800px;">
+<div class="showDialogOnLoad tw:w-[800px]" style="display:none;">
 
-    <h4 class="widgettitle title-light" style="padding-bottom: 0">
-        <x-global::elements.icon :name="$canvasTypes[$canvasItem['box']]['icon']" />
-        {{ $canvasTypes[$canvasItem['box']]['title'] }}
-    </h4>
-    <hr style="margin-top: 5px; margin-bottom: 15px;">
+    <x-globals::elements.section-title icon="{{ $canvasTypes[$canvasItem['box']]['icon'] }}" class="tw:pb-0">{{ $canvasTypes[$canvasItem['box']]['title'] }}</x-globals::elements.section-title>
+    <hr class="tw:mt-1 tw:mb-4">
 
-    <h5 style="padding-left: 40px"><strong>{{ $canvasItem['description'] }}</strong></h5>
+    <h5 class="tw:pl-10"><strong>{{ $canvasItem['description'] }}</strong></h5>
 
     @if ($id !== '')
     <br />
     <input type="hidden" name="comment" value="1" />
-    <h4 class="widgettitle title-light">
-        <x-global::elements.icon name="forum" />{{ __('subtitles.discussion') }}
-    </h4>
+    <x-globals::elements.section-title icon="forum">{{ __('subtitles.discussion') }}</x-globals::elements.section-title>
     @php
     $tpl->assign("formUrl", "/goalcanvas/editCanvasComment/" . $id . "");
     $tpl->displaySubmodule('comments-generalComment');

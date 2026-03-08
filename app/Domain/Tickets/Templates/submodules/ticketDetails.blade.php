@@ -12,10 +12,10 @@
         <div class="marginBottom">
 
                 <div class="form-group">
-                    <x-globals::forms.text-input :bare="true" type="text" value="{{ e($ticket->headline) }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
+                    <x-globals::forms.text-input :bare="true" type="text" value="{{ e($ticket->headline) }}" name="headline" class="main-title-input tw:w-full tw:mb-2" autocomplete="off" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
                 </div>
 
-                <div class="form-group" id="descriptionEditor" style="overflow:hidden;">
+                <div class="form-group tw:overflow-hidden" id="descriptionEditor">
                     <textarea name="description" id="ticketDescription"
                               class="tiptapComplex">{!! $ticket->description !== null ? htmlentities($ticket->description) : '' !!}</textarea><br/>
                 </div>
@@ -37,7 +37,7 @@
             <br />
             <hr />
             @dispatchEvent('beforeSubtasks', ['ticketId' => $ticket->id])
-            <h4 class="widgettitle title-light"><x-global::elements.icon name="account_tree" /> {{ __('subtitles.subtasks') }}</h4>
+            <x-globals::elements.section-title icon="account_tree">{{ __('subtitles.subtasks') }}</x-globals::elements.section-title>
 
             <div
                 id="ticketSubtasks"
@@ -58,9 +58,7 @@
     <div class="col-md-4">
 
         {{-- Details Section --}}
-        <h4 class="widgettitle title-light">
-            <x-global::elements.icon name="star" /> {{ __('subtitles.details') }}
-        </h4>
+        <x-globals::elements.section-title icon="star">{{ __('subtitles.details') }}</x-globals::elements.section-title>
 
         {{-- Status chip — patches live via HTMX on selection --}}
         <div class="form-group">
@@ -101,7 +99,7 @@
                 @endforeach
             </x-globals::forms.select>
             @if($login::userIsAtLeast($roles::$editor))
-                <a href="javascript:void(0);" style="display:block; margin-top:4px;" onclick="jQuery('#editorId').val({{ session('userdata.id') }}).trigger('chosen:updated');">{{ __('label.assign_to_me') }}</a>
+                <a href="javascript:void(0);" class="tw:block tw:mt-1" onclick="jQuery('#editorId').val({{ session('userdata.id') }}).trigger('chosen:updated');">{{ __('label.assign_to_me') }}</a>
             @endif
         </x-globals::forms.form-field>
 
@@ -137,9 +135,7 @@
         </x-globals::forms.form-field>
 
         {{-- Organization Section --}}
-        <h4 class="widgettitle title-light" style="margin-top:20px;">
-            <x-global::elements.icon name="folder_open" /> {{ __('subtitles.organization') }}
-        </h4>
+        <x-globals::elements.section-title icon="folder_open" class="tw:mt-5">{{ __('subtitles.organization') }}</x-globals::elements.section-title>
 
         {{-- Type chip --}}
         <div class="form-group">
@@ -198,9 +194,7 @@
         </x-globals::forms.form-field>
 
         {{-- Schedule Section --}}
-        <h4 class="widgettitle title-light" style="margin-top:20px;">
-            <x-global::elements.icon name="calendar_today" /> {{ __('subtitles.schedule') }}
-        </h4>
+        <x-globals::elements.section-title icon="calendar_today" class="tw:mt-5">{{ __('subtitles.schedule') }}</x-globals::elements.section-title>
 
         <div class="form-group">
             <label class="control-label">{{ __('label.working_date_from') }}</label>
@@ -230,7 +224,7 @@
                 <x-globals::forms.text-input :bare="true" value="{{ e($ticket->planHours) }}" name="planHours" style="width:45px;" />&nbsp;/&nbsp;
                 <x-globals::forms.text-input :bare="true" value="{{ e($ticket->hourRemaining) }}" name="hourRemaining" style="width:45px;" />
                 <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
-                    &nbsp;<x-global::elements.icon name="help" />&nbsp;
+                    &nbsp;<x-globals::elements.icon name="help" />&nbsp;
                 </a>
             </div>
         </div>

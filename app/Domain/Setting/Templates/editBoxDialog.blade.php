@@ -9,7 +9,7 @@
         }
     </script>
 @else
-    <h4 class="widgettitle title-light"><x-global::elements.icon name="edit" /> {{ __('label.edit_label') }}</h4>
+    <x-globals::elements.section-title icon="edit">{{ __('label.edit_label') }}</x-globals::elements.section-title>
 
     {!! $tpl->displayNotification() !!}
 
@@ -18,7 +18,7 @@
         <label>{{ __('label.label') }}</label>
         <x-globals::forms.text-input name="newLabel" value="{{ $currentLabel }}" /><br />
 
-        <x-globals::forms.button submit type="primary">{{ __('buttons.save') }}</x-globals::forms.button>
+        <x-globals::forms.button :submit="true" contentRole="primary">{{ __('buttons.save') }}</x-globals::forms.button>
 
     </form>
 @endif

@@ -19,7 +19,7 @@
         @if(str_contains($resolvedIcon, 'fa-') || str_starts_with($resolvedIcon, 'fa '))
             <span class="{{ $resolvedIcon }}"></span>
         @else
-            <x-global::elements.icon :name="$resolvedIcon" />
+            <x-globals::elements.icon :name="$resolvedIcon" />
         @endif
     </div>
 

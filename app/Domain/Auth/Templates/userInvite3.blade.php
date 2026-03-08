@@ -21,13 +21,13 @@
 
                 <x-globals::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
                     <label for="colormode-light" class="tw:w-[200px]">
-                        <x-global::elements.icon name="light_mode" class="tw:font-xxl" />
+                        <x-globals::elements.icon name="light_mode" class="tw:font-xxl" />
                     </label>
                 </x-globals::selectable>
 
                 <x-globals::selectable :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'" onclick="leantime.snippets.toggleTheme('dark')">
                     <label for="colormode-light" class="tw:w-[200px]">
-                        <x-global::elements.icon name="dark_mode" class="tw:font-xxl" />
+                        <x-globals::elements.icon name="dark_mode" class="tw:font-xxl" />
                     </label>
                 </x-globals::selectable>
         </div>
@@ -45,8 +45,8 @@
         </div>
         <br /> <br />
         <div class="align-right">
-            <x-globals::forms.button link="{{ BASE_URL }}/auth/userInvite/{{ $inviteId }}?step=2" type="secondary" style="width:auto; margin-right:10px">Back</x-globals::forms.button>
-            <x-globals::forms.button submit type="primary" name="createAccount" class="tw:w-auto" style="width:auto">{{ __("buttons.next") }}</x-globals::forms.button>
+            <x-globals::forms.button element="a" href="{{ BASE_URL }}/auth/userInvite/{{ $inviteId }}?step=2" contentRole="secondary" class="tw:w-auto tw:mr-2">Back</x-globals::forms.button>
+            <x-globals::forms.button :submit="true" contentRole="primary" name="createAccount" class="tw:w-auto">{{ __("buttons.next") }}</x-globals::forms.button>
         </div>
 
 

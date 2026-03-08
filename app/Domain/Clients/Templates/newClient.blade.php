@@ -2,28 +2,18 @@
     $values = $tpl->get('values');
 @endphp
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><x-global::elements.icon name="contact_page" /></div>
-    <div class="pagetitle">
-        <h5>{{ __('label.administration') }}</h5>
-        <h1>{{ __('headline.new_client') }}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div>
-@dispatchEvent('afterPageHeaderClose')
+<x-globals::layout.page-header icon="contact_page" subtitle="{{ __('label.administration') }}" headline="{{ __('headline.new_client') }}" />
 
 <div class="maincontent">
     <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="widget" style="max-width:600px;">
-           <h4 class="widgettitle">{{ __('subtitle.details') }}</h4>
+        <div class="widget tw:max-w-lg">
+           <x-globals::elements.section-title variant="plain">{{ __('subtitle.details') }}</x-globals::elements.section-title>
            <div class="widgetcontent">
 
-                <form action="" method="post" class="stdform">
+                <form action="" method="post">
 
                     @dispatchEvent('afterFormOpen')
 

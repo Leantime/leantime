@@ -2,55 +2,55 @@
     'plugin'
 ])
 
-<div style="background: var(--kanban-card-bg); border-radius: var(--box-radius); box-shadow: var(--regular-shadow); padding: 20px; margin-bottom: 12px;">
-    <div style="display: flex; align-items: flex-start; gap: 20px;">
+<div class="tw:bg-[var(--kanban-card-bg)] tw:rounded-[var(--box-radius)] tw:shadow-[var(--regular-shadow)] tw:p-5 tw:mb-3">
+    <div class="tw:flex tw:items-start tw:gap-5">
 
         {{-- Plugin image --}}
         <img
             src="{{ $plugin->getPluginImageData() }}"
             width="75"
             height="75"
-            style="border-radius: var(--box-radius-small); flex-shrink: 0; object-fit: cover;"
+            class="tw:rounded-[var(--box-radius-small)] tw:shrink-0 tw:object-cover"
             alt="{{ $plugin->name }}"
         />
 
         {{-- Content --}}
-        <div style="flex: 1; min-width: 0;">
-            <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;">
-                <strong style="font-size: var(--font-size-l);">{!! $plugin->name !!}</strong>
+        <div class="tw:flex-1 tw:min-w-0">
+            <div class="tw:flex tw:items-baseline tw:gap-2 tw:flex-wrap">
+                <strong>{!! $plugin->name !!}</strong>
                 @if (!empty($plugin->version))
-                    <span style="color: var(--secondary-font-color); font-size: var(--font-size-s);">v{{ $plugin->version }}</span>
+                    <span class="tw:text-[color:var(--secondary-font-color)]">v{{ $plugin->version }}</span>
                 @endif
                 @if($plugin instanceof \Leantime\Domain\Plugins\Models\MarketplacePlugin)
                     <span
-                        style="font-size: var(--font-size-xs); color: var(--accent1); font-weight: 600;"
+                        class="tw:font-semibold tw:text-[color:var(--accent1)]"
                         data-tippy-content="{{ __('marketplace.certified_tooltip') }}"
                     >
-                        <x-global::elements.icon name="verified" />
+                        <x-globals::elements.icon name="verified" />
                         Certified
                     </span>
                 @endif
             </div>
 
-            <div style="margin-top: 4px; font-size: var(--font-size-s); color: var(--secondary-font-color);">
+            <div class="tw:mt-1 tw:text-[color:var(--secondary-font-color)]">
                 <x-globals::inlineLinks :links="$plugin->getMetadataLinks()" />
             </div>
 
             @if (! empty($desc = $plugin->getCardDesc()))
-                <p style="margin: 8px 0 0; font-size: var(--font-size-s); color: var(--primary-font-color); line-height: 1.5;">
+                <p class="tw:mt-2 tw:text-[color:var(--primary-font-color)] tw:leading-normal">
                     {!! $desc !!}
                 </p>
             @endif
 
             @if (! empty($price = $plugin->getPrice()))
-                <div style="margin-top: 8px; font-size: var(--font-size-s); font-weight: 600; color: var(--primary-font-color);">
+                <div class="tw:mt-2 tw:font-semibold tw:text-[color:var(--primary-font-color)]">
                     {!! $price !!}
                 </div>
             @endif
         </div>
 
         {{-- Controls --}}
-        <div style="flex-shrink: 0; display: flex; align-items: center;">
+        <div class="tw:shrink-0 tw:flex tw:items-center">
             @include($plugin->getControlsView(), ["plugin" => $plugin])
         </div>
 

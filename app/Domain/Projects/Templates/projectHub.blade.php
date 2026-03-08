@@ -7,13 +7,13 @@
         'allProjects' => []
     ])
 
-    <div class="maincontent" style="margin-top:0px">
-        <div style="padding:10px 0px">
+    <div class="maincontent tw:mt-0">
+        <div class="tw:py-2">
             <div class="center">
-                <span style="font-size:38px; color:var(--main-titles-color););">
+                <span class="tw:text-[38px]" style="color:var(--main-titles-color);">
                     {{ __("headline.project_hub") }}
                 </span><br />
-                <span style="font-size:18px; color:var(--main-titles-color););">
+                <span class="tw:text-lg" style="color:var(--main-titles-color);">
                    {{ __("text.project_hub_intro") }}
                     @if ($login::userIsAtLeast("manager"))
                         <br /><br /><x-globals::forms.button link="#/projects/createnew" type="secondary">{!! __("menu.create_something_new") !!}</x-globals::forms.button>
@@ -62,7 +62,7 @@
             @if (count($allProjects) == 0)
                 <br /><br />
                 <div class='center'>
-                    <div style='width:70%; color:var(--main-titles-color)' class='svgContainer'>
+                    <div class='tw:w-4/5 svgContainer' style="color:var(--main-titles-color)">
                         {{ __('notifications.not_assigned_to_any_project') }}
                         @if($login::userIsAtLeast($roles::$manager))
                             <br /><br />
@@ -123,4 +123,3 @@
         </div>
     </div>
 @endsection
-

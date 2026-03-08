@@ -35,19 +35,19 @@
 
         <div class="row">
             <div class="col-md-3">
-                <div class="quickAddForm" style="margin-top:15px;">
+                <div class="quickAddForm tw:mt-4">
                     <form action="" method="post">
-                        <x-globals::forms.text-input name="headline" autofocus placeholder="{{ __('input.placeholders.create_task') }}" style="width: 100%;" />
+                        <x-globals::forms.text-input name="headline" autofocus placeholder="{{ __('input.placeholders.create_task') }}" class="tw:w-full" />
                         <input type="hidden" name="sprint" value="{{ $currentSprint }}" />
                         <input type="hidden" name="quickadd" value="1"/>
-                        <x-globals::forms.button submit type="primary" name="saveTicket" style="vertical-align: top;">{{ __('buttons.save') }}</x-globals::forms.button>
+                        <x-globals::forms.button submit type="primary" name="saveTicket" class="tw:align-top">{{ __('buttons.save') }}</x-globals::forms.button>
                     </form>
 
                     @foreach($allTicketGroups as $group)
                         @if($group['label'] != 'all')
                             <h5 class="accordionTitle {{ $group['class'] }}" @if(!empty($group['color'])) style="color:{{ htmlspecialchars($group['color']) }}" @endif id="accordion_link_{{ $group['id'] }}">
                                 <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}" onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                                    <x-global::elements.icon name="expand_more" />{{ $group['label'] }}
+                                    <x-globals::elements.icon name="expand_more" />{{ $group['label'] }}
                                 </a>
                                 <x-globals::elements.badge color="primary">{{ count($group['items']) }}</x-globals::elements.badge>
                             </h5>
@@ -56,32 +56,27 @@
 
                         @php $allTickets = $group['items']; @endphp
 
-                        <table class="table display listStyleTable" style="width:100%">
+                        <x-globals::elements.table class="listStyleTable tw:w-full">
                             @dispatchEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets])
-                            <thead>
+                            <x-slot:head>
                             @dispatchEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets])
-                            <tr style="display:none;">
-                                <th style="width:20px" class="status-col">{{ __('label.todo_status') }}</th>
+                            <tr class="tw:hidden">
+                                <th class="status-col tw:w-5">{{ __('label.todo_status') }}</th>
                                 <th>{{ __('label.title') }}</th>
                             </tr>
                             @dispatchEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets])
-                            </thead>
+                            </x-slot:head>
 
                             @dispatchEvent('allTicketsTable.afterHead', ['tickets' => $allTickets])
                             <tbody>
                             @dispatchEvent('allTicketsTable.beforeFirstRow', ['tickets' => $allTickets])
                             @foreach($allTickets as $rowNum => $row)
-                                <tr onclick="leantime.ticketsController.loadTicketToContainer('{{ $row['id'] }}', '#ticketContent')" id="row-{{ $row['id'] }}" class="ticketRows">
+                                <tr onclick="leantime.ticketsController.loadTicketToContainer('{{ $row['id'] }}', '#ticketContent')" id="row-{{ $row['id'] }}" class="ticket-row">
                                     @dispatchEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets])
-                                    <td data-order="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['sortKey'] : '' }}" data-search="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['name'] : '' }}" class="roundStatusBtn" style="width:20px">
-                                        <x-globals::actions.chip
-                                            content-role="status"
-                                            :parentId="$row['id']"
-                                            selectedClass="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['class'] : '' }}"
-                                            :selectedKey="$row['status']"
-                                            :options="$statusLabels"
-                                            :colorized="true"
-                                            headerLabel="{{ __('dropdown.choose_status') }}"
+                                    <td data-order="{{ $statusLabels[$row['status']]['sortKey'] ?? '' }}" data-search="{{ $statusLabels[$row['status']]['name'] ?? '' }}" class="roundStatusBtn tw:w-5">
+                                        <x-tickets::chips.status-select
+                                            :ticket="(object)$row"
+                                            :statuses="$statusLabels"
                                         />
                                     </td>
 
@@ -95,7 +90,7 @@
                             @dispatchEvent('allTicketsTable.afterLastRow', ['tickets' => $allTickets])
                             </tbody>
                             @dispatchEvent('allTicketsTable.afterBody', ['tickets' => $allTickets])
-                        </table>
+                        </x-globals::elements.table>
 
                         @if($group['label'] != 'all')
                             </div>
