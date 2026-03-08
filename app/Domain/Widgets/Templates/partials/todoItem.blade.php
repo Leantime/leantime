@@ -41,10 +41,6 @@
             style="background: var(--secondary-background) linear-gradient(135deg, {{ $ticket['tags'] }} 0%, var(--accent1) 100%); background-repeat: no-repeat; background-size: 100% 5px; background-position: bottom;"
         @endif
     >
-        <div class="tw:absolute full-width-loader htmx-indicator-ticket-{{$ticket['id']}}">
-            <div class="indeterminate"></div>
-        </div>
-
         @if($hasChildren)
             <div id="accordion_toggle_{{$accordionId }}"
                  class="task-collapse-toggle accordion-toggle {{ $accordionState }}"
@@ -81,7 +77,7 @@
         @else
             <div class="tw:flex tw:flex-row tw:items-center tw:gap-2">
                 <div class="tw:shrink-0">
-                    <x-globals::tickets.timer-button :parent-ticket-id="$ticket['id']" :on-the-clock="$onTheClock" />
+                    <x-timesheets::timer :parent-ticket-id="$ticket['id']" :on-the-clock="$onTheClock" variant="button" />
                 </div>
 
                 <div class="tw:flex-1 tw:min-w-0 ticket-title ticket-title-wrapper">
@@ -169,7 +165,9 @@
                         hx-post="{{ $statusPatchUrl }}"
                         hx-trigger="change"
                         hx-swap="none"
+                        hx-target="this"
                         hx-vals="{{ $statusHxVals }}"
+                        hx-ext="ignore:json-enc"
                     >
                         @foreach($projectStatuses as $key => $label)
                             @php

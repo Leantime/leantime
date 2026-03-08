@@ -91,26 +91,27 @@ jQuery(document).ready(function(){
         jQuery(this).find('td a').removeClass('ui-state-hover');
     });
 
-    jQuery(".project-select").chosen();
-    jQuery(".ticket-select").chosen();
     jQuery(".project-select").change(function(){
-            jQuery(".ticket-select").removeAttr("selected");
-            jQuery(".ticket-select").val("");
-            jQuery(".ticket-select").trigger("liszt:updated");
+        var ticketSelectEl = document.querySelector(".ticket-select");
+        if (ticketSelectEl && ticketSelectEl._tomSelect) {
+            ticketSelectEl._tomSelect.clear(true);
+        }
+        jQuery(".ticket-select").val("");
 
-            jQuery(".ticket-select option").show();
-            jQuery("#ticketSelect .chosen-results li").show();
-            var selectedValue = jQuery(this).find("option:selected").val();
-            jQuery(".ticket-select option").not(".project_"+selectedValue).hide();
-            jQuery("#ticketSelect .chosen-results li").not(".project_"+selectedValue).hide();
-            jQuery(".ticket-select").chosen("destroy").chosen();
+        jQuery(".ticket-select option").show();
+        var selectedValue = jQuery(this).find("option:selected").val();
+        if (selectedValue) {
+            jQuery(".ticket-select option").not(".project_" + selectedValue).not('[value=""]').hide();
+        }
+        jQuery(".ticket-select").trigger("liszt:updated");
     });
 
     jQuery(".ticket-select").change(function() {
         var selectedValue = jQuery(this).find("option:selected").attr("data-value");
-        jQuery(".project-select option[value="+selectedValue+"]").attr("selected", "selected");
-        jQuery(".project-select").trigger("liszt:updated");
-        jQuery(".ticket-select").chosen("destroy").chosen();
+        if (selectedValue) {
+            jQuery(".project-select option[value=" + selectedValue + "]").attr("selected", "selected");
+            jQuery(".project-select").trigger("liszt:updated");
+        }
     });
 
     jQuery("#nextWeek").click(function() {

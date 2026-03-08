@@ -128,7 +128,6 @@ class MyToDos extends HtmxController
         }
 
         $this->tpl->setNotification($this->language->__('notifications.sorting_error'), 'error');
-        $this->setHTMXEvent('HTMX.ShowNotification');
 
         return $this->tpl->emptyResponse();
     }
@@ -406,10 +405,11 @@ class MyToDos extends HtmxController
 
             if ($result) {
                 $this->tpl->setNotification($this->language->__('short_notifications.status_updated'), 'success');
-                $this->setHTMXEvent('HTMX.ShowNotification');
+                // No ticket_update event needed — TomSelect already shows the new value
+                // optimistically, and the SetCacheHeaders middleware now bypasses 304 for
+                // HTMX requests so stale cache is no longer an issue.
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.status_update_error'), 'error');
-                $this->setHTMXEvent('HTMX.ShowNotification');
             }
         }
 
@@ -431,10 +431,8 @@ class MyToDos extends HtmxController
 
             if ($result) {
                 $this->tpl->setNotification($this->language->__('notifications.milestone_updated'), 'success');
-                $this->setHTMXEvent('HTMX.ShowNotification');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.milestone_update_error'), 'error');
-                $this->setHTMXEvent('HTMX.ShowNotification');
             }
         }
 
@@ -456,10 +454,8 @@ class MyToDos extends HtmxController
 
             if ($result) {
                 $this->tpl->setNotification($this->language->__('notifications.date_updated'), 'success');
-                $this->setHTMXEvent('HTMX.ShowNotification');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.date_update_error'), 'error');
-                $this->setHTMXEvent('HTMX.ShowNotification');
             }
         }
 

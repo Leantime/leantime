@@ -1,10 +1,22 @@
+/* ── Shared dropdown item sizing tokens ───────────────────────────────────────
+   Used by both .dropdown-menu items and .ts-dropdown options so all dropdown
+   rows (action menus, 3-dot menus, TomSelect) share the same rhythm.
+   ─────────────────────────────────────────────────────────────────────────── */
+:root {
+    --dropdown-item-padding-y: 7px;
+    --dropdown-item-padding-x: 12px;
+    --dropdown-item-padding: var(--dropdown-item-padding-y) var(--dropdown-item-padding-x);
+    --dropdown-header-padding: 6px var(--dropdown-item-padding-x) 2px;
+    --dropdown-icon-gap: 6px;
+}
+
 /* Ticket Labelled dropdowns */
 
 .dropdown-menu {
     margin-top: 0;
     border-radius: var(--box-radius);
     border: 1px solid var(--main-border-color);
-    padding: 8px 0;
+    padding: 4px 0;
     background: var(--secondary-background);
     box-shadow: var(--regular-shadow);
 }
@@ -41,13 +53,13 @@
 .bigMenu ul li a,
 .dropdown-menu > li > .dropdown-item-wrapper {
     font-size: var(--base-font-size);
-    color:var(--primary-font-color);
+    color: var(--primary-font-color);
     text-decoration: none;
     margin: 0;
-    padding: 4px 12px;
-    min-height: 30px;
+    padding: var(--dropdown-item-padding);
     display: flex;
     align-items: center;
+    gap: var(--dropdown-icon-gap);
     border-radius: 0px;
 }
 
@@ -122,13 +134,22 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 
 .dropdown-menu .nav-header {
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top:10px;
-    padding-bottom:4px;
-    font-size:var(--font-size-m);
-    color:var(--interactive-icon-color);
-    text-transform:none;
+    padding: var(--dropdown-header-padding);
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-bold);
+    color: var(--secondary-font-color);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Timer link inside dropdown — the "working on another ticket" span has no
+   li > a wrapper so it needs explicit dropdown item padding to match rows above it */
+.dropdown-menu li.timerContainer > span.working {
+    display: flex;
+    align-items: center;
+    padding: var(--dropdown-item-padding);
+    font-size: var(--base-font-size);
+    color: var(--secondary-font-color);
 }
 
 .ticketDropdown.show {

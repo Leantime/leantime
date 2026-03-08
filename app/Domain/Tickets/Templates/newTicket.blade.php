@@ -33,11 +33,6 @@
 
 <script type="text/javascript">
 
-    jQuery(document).ready(function() {
-        leantime.ticketsController.initTagsInput();
-    });
-
-
     jQuery(window).load(function () {
         jQuery(window).resize();
     });

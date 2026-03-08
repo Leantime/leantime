@@ -120,24 +120,21 @@ leantime.timesheetsController = (function () {
             }
         });
 
-        // Chosen.js for project and ticket selectors
-        jQuery(".project-select").chosen();
-        jQuery(".ticket-select").chosen();
-
         // Project filters ticket list
         jQuery(".project-select").change(function () {
-            jQuery(".ticket-select").removeAttr("selected");
+            var ticketSelectEl = document.querySelector(".ticket-select");
+            if (ticketSelectEl && ticketSelectEl._tomSelect) {
+                ticketSelectEl._tomSelect.clear(true);
+            }
             jQuery(".ticket-select").val("");
-            jQuery(".ticket-select").trigger("liszt:updated");
 
-            jQuery(".ticket-select option").show();
-            jQuery("#ticketSelect .chosen-results li").show();
             var selectedValue = jQuery(this).find("option:selected").val();
+            jQuery(".ticket-select option").show();
             if (selectedValue) {
                 jQuery(".ticket-select option").not(".project_" + selectedValue).not('[value=""]').hide();
-                jQuery("#ticketSelect .chosen-results li").not(".project_" + selectedValue).hide();
             }
-            jQuery(".ticket-select").chosen("destroy").chosen();
+            // Sync TomSelect with updated option visibility
+            jQuery(".ticket-select").trigger("liszt:updated");
         });
 
         // Selecting a ticket auto-selects its project
@@ -146,7 +143,6 @@ leantime.timesheetsController = (function () {
             if (selectedValue) {
                 jQuery(".project-select option[value=" + selectedValue + "]").attr("selected", "selected");
                 jQuery(".project-select").trigger("liszt:updated");
-                jQuery(".ticket-select").chosen("destroy").chosen();
             }
         });
 

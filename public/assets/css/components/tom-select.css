@@ -1,0 +1,425 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Tom Select — Leantime custom styles
+   Replaces SlimSelect + Chosen.js + jQuery TagsInput.
+
+   Three visual contexts:
+   1. .ts-wrapper.select-chip  — pill-shaped chip (forms.select variant="chip")
+   2. .ts-wrapper              — standard searchable dropdown (.tomselect / .filterBar)
+   3. .ts-wrapper.tag-select   — free-form tag input (input.tag-input)
+
+   Note: TomSelect copies all classes from the original <select>/<input> onto
+   its wrapper div. So <select class="select-chip"> becomes
+   <div class="ts-wrapper select-chip single">.
+
+   IMPORTANT — avoid :not() chains in selectors. The Vite/lightningcss
+   minifier incorrectly strips the leading class from
+   .ts-wrapper:not(.select-chip):not(.tag-select), turning it into a bare
+   :not() selector. Instead, apply standard styles to all .ts-wrapper and
+   override specifically for .select-chip and .tag-select.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Hide the original <select>/<input> (TomSelect renders its own UI) ─────
+   !important matches TomSelect's own default CSS so other form-control rules
+   cannot override position/size. */
+.ts-hidden-accessible {
+    border: 0 !important;
+    clip: rect(0 0 0 0) !important;
+    -webkit-clip-path: inset(50%) !important;
+    clip-path: inset(50%) !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+    white-space: nowrap !important;
+    height: 1px !important;
+}
+
+/* ── Base wrapper ─────────────────────────────────────────────────────────── */
+.ts-wrapper {
+    position: relative;
+}
+
+/* ── Control (the trigger / input field) ──────────────────────────────────── */
+.ts-wrapper .ts-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    user-select: none;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* ── Dropdown panel ───────────────────────────────────────────────────────── */
+.ts-dropdown {
+    position: absolute;
+    z-index: 1050;
+    top: 100%;
+    left: 0;
+    max-height: 260px;
+    max-width: 200px;
+    overflow-y: auto;
+    background: var(--secondary-background, #fff);
+    border: 1px solid var(--main-border-color, #e0e0e0);
+    border-radius: var(--box-radius, 16px);
+    box-shadow: var(--regular-shadow, 0 2px 8px rgba(0, 0, 0, 0.12));
+    margin-top: 2px;
+    font-size: var(--base-font-size, 13px);
+}
+
+.ts-dropdown .ts-dropdown-content {
+    padding: 4px 0;
+}
+
+/* ── Dropdown options — must be block-level so they stack vertically ─────── */
+.ts-dropdown .option {
+    display: flex;
+    align-items: center;
+    gap: var(--dropdown-icon-gap, 6px);
+    padding: var(--dropdown-item-padding, 7px 12px);
+    cursor: pointer;
+    color: var(--primary-font-color, #333);
+    white-space: nowrap;
+    transition: background 0.1s ease;
+}
+
+.ts-dropdown .option:hover,
+.ts-dropdown .option.active {
+    background: var(--hover-bg, rgba(0, 0, 0, 0.07));
+}
+
+.ts-dropdown .option.selected {
+    font-weight: 600;
+    color: var(--main-action-bg, var(--accent1));
+}
+
+.ts-dropdown .optgroup-header {
+    padding: var(--dropdown-header-padding, 6px 12px 2px);
+    font-size: var(--font-size-s, 12px);
+    font-weight: var(--font-weight-bold, 600);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--secondary-font-color, #666);
+}
+
+.ts-dropdown .no-results {
+    padding: 8px 12px;
+    color: var(--secondary-font-color, #666);
+    font-style: italic;
+}
+
+/* ── Search input inside the control ─────────────────────────────────────── */
+.ts-wrapper .ts-control input {
+    flex: 1 1 auto;
+    min-width: 60px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--primary-font-color, #333);
+    font-size: var(--base-font-size, 13px);
+    padding: 0;
+    margin: 0;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   STANDARD SELECT  (default — applies to all .ts-wrapper unless overridden)
+   Chip and tag contexts override these below with higher specificity.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.ts-wrapper .ts-control {
+    background: var(--input-background, var(--input-bg, #fff));
+    border: 1px solid var(--input-border, var(--main-border-color, #e0e0e0));
+    border-radius: var(--input-radius, 8px);
+    padding: var(--input-padding, 4px 10px);
+    min-height: 34px;
+    box-shadow: var(--input-shadow, 0 1px 2px rgba(0, 0, 0, 0.075));
+    color: var(--input-text, var(--primary-font-color, #333));
+    font-size: var(--base-font-size, 13px);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ts-wrapper.focus .ts-control {
+    border-color: var(--main-action-bg, var(--accent1));
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent1-light, rgba(0, 71, 102, 0.12));
+}
+
+/* Dropdown caret for standard selects */
+.ts-wrapper .ts-control::after {
+    content: '';
+    display: inline-block;
+    margin-left: auto;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--secondary-font-color, #666);
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.ts-wrapper.open .ts-control::after {
+    border-top: none;
+    border-bottom: 5px solid var(--secondary-font-color, #666);
+}
+
+/* Selected item text */
+.ts-wrapper .ts-control .item {
+    color: var(--input-text, var(--primary-font-color, #333));
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   CHIP SELECT  (.ts-wrapper.select-chip)
+   Overrides the standard rules above.
+   Pill-shaped inline selector — used by forms.select variant="chip".
+   The .select-chip class is copied from the <select> onto the wrapper div.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.ts-wrapper.select-chip {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Strip all input-box styling — must look like a bare pill, not a form field */
+.ts-wrapper.select-chip .ts-control {
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    min-height: unset !important;
+    cursor: pointer;
+    flex-wrap: nowrap;
+    gap: 0;
+}
+
+/* Item container — passes through the badge HTML */
+.ts-wrapper.select-chip .ts-control .item {
+    display: inline-flex;
+    align-items: center;
+    color: inherit;
+}
+
+/* Chip badge rendered by render.item — flex so badge + caret align on same row */
+.ts-wrapper.select-chip .ts-chip-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+}
+
+/* No CSS ::after caret — the caret is an inline SVG rendered by the chip select
+   render.item function so it sits flush inside the badge pill. */
+.ts-wrapper.select-chip .ts-control::after {
+    display: none !important;
+}
+
+/* Inline SVG caret rendered by render.item */
+.ts-chip-caret {
+    display: inline-block;
+    width: 10px;
+    height: 6px;
+    margin-left: 4px;
+    opacity: 0.7;
+    vertical-align: middle;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+}
+
+.ts-wrapper.select-chip.open .ts-chip-caret {
+    transform: rotate(180deg);
+}
+
+/* Hover state — subtle highlight to signal interactivity */
+.ts-wrapper.select-chip .ts-control:hover {
+    opacity: 0.85;
+    filter: brightness(0.93);
+}
+
+/* No focus ring on chips */
+.ts-wrapper.select-chip.focus .ts-control {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none;
+}
+
+
+
+/* Chip option rows — inline-flex so row width shrinks to badge content */
+.ts-chip-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: auto;
+    max-width: 100%;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   TAG INPUT  (.ts-wrapper.tag-select)
+   Overrides the standard rules above.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.ts-wrapper.tag-select .ts-control {
+    background: var(--input-background, var(--input-bg, #fff));
+    border: 1px solid var(--input-border, var(--main-border-color, #e0e0e0));
+    border-radius: var(--input-radius, 8px);
+    padding: 4px 8px;
+    min-height: 34px;
+    box-shadow: var(--input-shadow, 0 1px 2px rgba(0, 0, 0, 0.075));
+    cursor: text;
+    transition: border-color 0.15s ease;
+}
+
+.ts-wrapper.tag-select.focus .ts-control {
+    border-color: var(--main-action-bg, var(--accent1));
+    box-shadow: 0 0 0 2px var(--accent1-light, rgba(0, 71, 102, 0.12));
+}
+
+/* No caret for tag inputs */
+.ts-wrapper.tag-select .ts-control::after {
+    display: none;
+}
+
+/* Tag pills inside the control */
+.ts-wrapper.tag-select .ts-control .item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--accent1-light, rgba(0, 71, 102, 0.1));
+    border: 1px solid var(--main-border-color, #e0e0e0);
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: var(--font-size-s, 12px);
+    color: var(--primary-font-color, #333);
+    line-height: 1.4;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Remove (×) button on tags */
+.ts-wrapper.tag-select .ts-control .item .remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--secondary-font-color, #666);
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    padding: 0;
+    border: none;
+    margin-left: 2px;
+    flex-shrink: 0;
+    text-decoration: none;
+}
+
+.ts-wrapper.tag-select .ts-control .item .remove:hover {
+    background: var(--hover-bg, rgba(0, 0, 0, 0.07));
+    color: var(--primary-font-color, #333);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   FILTER BAR context  (.filterBar .ts-wrapper)
+   Compact styling for the filter toolbar selects.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.filterBar .ts-wrapper .ts-control {
+    min-height: 30px;
+    padding: 2px 8px;
+    font-size: var(--font-size-s, 12px);
+}
+
+/* filterBar chips keep their pill appearance */
+.filterBar .ts-wrapper.select-chip .ts-control {
+    padding: 0 !important;
+    min-height: unset !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   READONLY state
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.ts-wrapper.disabled .ts-control {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   REMOVE BUTTON plugin  (used by multi-selects and tag inputs)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.ts-control .item .remove {
+    text-decoration: none;
+    color: inherit;
+    opacity: 0.6;
+    margin-left: 4px;
+}
+
+.ts-control .item .remove:hover {
+    opacity: 1;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   CLEAR BUTTON plugin  (used by multi-selects)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.ts-wrapper .clear-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--secondary-font-color, #666);
+    cursor: pointer;
+    font-size: 14px;
+    border: none;
+    padding: 0;
+    margin-left: 4px;
+    flex-shrink: 0;
+}
+
+.ts-wrapper .clear-button:hover {
+    background: var(--hover-bg, rgba(0, 0, 0, 0.07));
+    color: var(--primary-font-color, #333);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   READONLY tag display (tables)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.tagsinput.readonly {
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.tagsinput.readonly span.tag,
+.tagsinput.readonly .tag {
+    display: inline-flex;
+    align-items: center;
+    background: var(--accent1-light, rgba(0, 71, 102, 0.1));
+    border: 1px solid var(--main-border-color, #e0e0e0);
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: var(--font-size-s, 12px);
+    color: var(--primary-font-color, #333);
+    white-space: nowrap;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   WIKI tag input context
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.wiki-tags-wrapper .ts-wrapper {
+    width: 100%;
+}

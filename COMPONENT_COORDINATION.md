@@ -9,7 +9,7 @@ This document is the **central coordination file** for the Leantime component st
 4. Update the Progress Tracker when done
 5. Add Phase 2 candidate patterns to the Domain Component Candidates section
 
-Last updated: Dashboard/Widgets domain review. Fixed 3 bugs: (1) dashboard top margin, (2) MyToDos widget disappearing on status/date updates — all action-only HxController methods now return `emptyResponse()`, (3) stale JS init calls removed from myToDos partial.
+Last updated: Post-Phase-3 polish — chip badge colours fixed, chip hover + caret added, SetCacheHeaders HTMX bypass applied. Build clean.
 
 ---
 
@@ -997,6 +997,33 @@ public function updateStatus() {
 - Chip component prop names to use when calling: `status-select` → `:statuses` (not `:statusLabels`); `priority-select` → `:priorities`; `effort-select` → `:efforts`; `milestone-select` → `:milestones` (array of objects with `->id`, `->headline`, `->tags`); `sprint-select` → `:sprints` (array of objects with `->id`, `->name`, `->startDate`, `->endDate`); `type-select` → `:ticketTypes`.
 - The JS init calls (`initStatusDropdown()`, `initMilestoneDropdown()`, etc.) target `.statusDropdown .dropdown-menu a` — the OLD Bootstrap dropdown pattern. They become no-ops when the old chips are replaced with `forms.select variant="chip"`. Leave them in the JS block for now; they are harmless and will be cleaned up as part of a separate JS refactor.
 
+### Tom Select Migration (Phase 3 — COMPLETE)
+- Tom Select v2.5.2 installed via npm (`npm install tom-select`).
+- `dropdownBridge.js` has 4 registrations: chip selects (`select.select-chip`), standard selects (`select.tomselect`), filter-bar selects (`.filterBar select`), tag inputs (`input.tag-input`). Each sets `el._tomSelect` on the element.
+- Chip selects use `dropdownParent: 'body'` (escapes `overflow:auto` containers), `controlInput: null` (no search input), and `render.option`/`render.item` reading `data-chip-html` from `<option>` elements.
+- `jQuery.fn.chosen` shim delegates to TomSelect. `liszt:updated`/`chosen:updated` event shim calls `tomSelect.sync()`.
+- Standard selects use sentinel `data-ts-init`; chip selects use `data-chip-init`.
+- **TomSelect DOM structure** (important for tests/CSS): `.ts-wrapper` wraps the original element; `.ts-control` is the clickable trigger; `.ts-dropdown` is the dropdown panel; `.ts-option` are items in the dropdown; `.ts-input` is the text input inside `.ts-control` for tag inputs.
+- `entry-frameworks.js`: removed `jquery.tagsinput.min.js` import and associated pre-declared globals (`autocomplete_options`, `attrname`, `i`, `str`).
+- **Acceptance test selector mapping**: `.chosen-single` → `.ts-control`; `.chosen-drop` → `.ts-dropdown`; `.chosen-results .active-result` → `.ts-dropdown .ts-option`; `.tagsinput` (jQuery TagsInput container) → `.ts-wrapper .ts-control`.
+- **Wiki tags onChange**: `Wiki/show.blade.php` uses `setInterval` to wait for `el._tomSelect` to be set by componentRegistry, then wires `.on('change', ...)` to call `saveField('tags', value, ...)`. No `jQuery.fn.tagsInput` call needed.
+- **Deleted files**: `slimselect.js`, `slimselect.min.js`, `jquery.tagsinput.min.js`, `slimselect.min.css`, `slimselect.leantime.css`, `jquery.tagsinput.css`, `chosen-sprite-light.png`, `chosen-sprite-light@2x.png`.
+
+### Chip Badge — label-* Colour Classes Must Be Scoped to .chip-badge
+- `todoItem.blade.php` and ticket chip components generate `chip-badge label-info`, `chip-badge label-warning`, `chip-badge label-success`, `chip-badge label-default`, `chip-badge label-important`. These Bootstrap `label-*` classes only have colour rules inside `.ticketDropdown a.label-*` context (`dropdowns.css`) — there is no standalone `.label-info { background: ... }` rule. Without scoped chip rules, "New" status appears white-on-white.
+- Fix: Added `.chip-badge.label-info`, `.chip-badge.label-warning`, `.chip-badge.label-success`, `.chip-badge.label-default`, `.chip-badge.label-important`, `.chip-badge.label-danger`, `.chip-badge.label-primary` rules to `forms.css` (in the chip-badge colour section). These mirror the semantic token values from `dropdowns.css`.
+- **Mapping used**: `label-info` → `--dark-blue`; `label-success` → `--green`; `label-warning` → `--yellow`; `label-important` → `--red`; `label-danger` → `--dark-red`; `label-default` → `--grey`; `label-primary` → `--dark-blue`.
+
+### Chip Select — Caret and Hover
+- A chip with no affordance looks like a static badge. Two CSS changes in `tom-select.css` make it feel interactive:
+  - **Caret**: `.ts-wrapper.select-chip .ts-control::after` renders a small CSS border-triangle (▾). The previous rule had `display: none !important` — replaced with actual caret CSS. The `.open` variant flips it up (▴).
+  - **Hover**: `.ts-wrapper.select-chip .ts-control:hover` applies `opacity: 0.85; filter: brightness(0.93)` — a subtle darkening that works across any badge colour without hardcoding values.
+
+### SetCacheHeaders Middleware — HTMX Bypass
+- `app/Core/Middleware/SetCacheHeaders.php` line 86 called `$response->isNotModified($request)` unconditionally. When the browser has a cached ETag for a widget partial, it returns `304 Not Modified`, and the browser serves stale HTML (e.g. MyToDos showing the old status after a save).
+- Fix: Added `if (! $request->headers->has('HX-Request')) { $response->isNotModified($request); }`. HTMX sets `HX-Request: true` on all partial fetches. Bypassing ETag negotiation for these requests ensures HTMX always receives fresh content.
+- This is the root-cause fix for the MyToDos stale reload bug. The `$this->tpl->setHTMXEvent(HtmxTicketEvents::UPDATE->value)` added to `updateStatus()` is still correct behaviour (it triggers a re-fetch after save), but it would have been neutralised by the 304 response without this fix.
+
 ### Files Domain — cancelLink Button display:none Must Stay Inline
 - The "Cancel" button in file upload forms uses `id="cancelLink"` and `jQuery("#cancelLink").show()/.hide()` to toggle visibility. The `style="display:none;"` must remain inline — using `tw:hidden` would break the jQuery show/hide behavior.
 - Image thumbnails in file lists use `style="max-height:50px; max-width:70px;"` — these can safely be converted to `tw:max-h-[50px] tw:max-w-[70px]` since they are static CSS constraints, not dynamic values.
@@ -1090,3 +1117,142 @@ public function updateStatus() {
 | Domain Component Extraction | Not Started | - | - | Pending Phase 1 completion |
 | **DOMAIN REVIEW PASS** | | | | |
 | Dashboard + Widgets | ✅ Done | 3 bugs fixed | - | (1) home.blade.php top padding tw:pt-4 added; (2) updateStatus/updateDueDate/updateMilestone/toggleTaskCollapse/saveSorting all return emptyResponse() — prevents widget disappear on save; (3) removed stale initMilestoneDropdown/initStatusDropdown JS calls, fixed makeInputReadonly selector to .widgetContent |
+
+---
+
+## JavaScript Architecture Plan
+
+Last updated: Phase 3 prep — componentRegistry enhancement, file restructure, HTMX event pipeline fixes.
+
+### Four Server Patterns
+
+| Pattern | Example | HTML Source | JS Needs |
+|---------|---------|-------------|----------|
+| **1. Primary Page** | `tickets/showKanban` | Full page with scaffolding + layout | Page controller init, domain-specific JS |
+| **2. HTMX Components** | `hx-get="/hx/widgets/myToDos/get"` | Fragment swapped into existing page | Component init/reinit, lifecycle management |
+| **3. Modals/Partials** | `#/tickets/showTicket/53` | Self-contained content loaded into modal overlay | Component init inside modal, cleanup on close |
+| **4. JSON-RPC API** | `leantime.rpc.tickets.tickets.getTicket` | JSON data, no HTML | JS consumes data, updates DOM or component state |
+
+### Component Registry (`componentRegistry.js`, renamed from `componentInitializer.js`)
+
+Central component lifecycle manager. Components register a selector + init/destroy functions. The registry handles:
+
+- **Auto-init**: On `DOMContentLoaded`, `htmx:afterSettle`, and manual `init(container)` calls
+- **Auto-destroy**: On `htmx:beforeSwap` (only when `detail.shouldSwap === true`)
+- **Instance tracking**: Each initialized element gets `el.__ltComponent = { type, state }` — query what's alive
+- **State persistence hooks**: Registry accepts `stateKey` option; passes previous state to init function on re-init. Built into API but not actively used yet — ready for ticket card morphing.
+- **Cross-domain safe**: Selector-based, not domain-based. A `select.select-chip` in a ticket card works whether rendered inside tickets, goals, or a modal.
+
+### HTMX Event Pipeline
+
+**Client side (`entry-htmx.js`):**
+- Custom innerHTML swap handler intercepts `htmx:beforeSwap` for innerHTML swaps (HTMX 2.0.8 bug workaround)
+- After manual swap: dispatches `htmx:afterSettle` + `htmx:afterSwap` to restore lifecycle events
+- `componentRegistry` `htmx:beforeSwap` handler only destroys when `detail.shouldSwap === true` (prevents destroying freshly-init'd components during our custom swap)
+
+**Server side (PHP):**
+- `$this->tpl->setHTMXEvent()` is the ONLY way to set `HX-Trigger` events. Controller-level `$this->setHTMXEvent()` is **deprecated** (silently loses events when used with `emptyResponse()` or when Template headers also set `HX-Trigger`).
+- `getResponse()` merges controller + template headers (bugfix: uses `array_merge_recursive` instead of sequential overwrite)
+- `setNotification()` auto-adds `HTMX.ShowNotification` to template headers
+- Event names should use enum constants (e.g., `HtmxTicketEvents::UPDATE->value`)
+
+### HTMX `hx-select` Inheritance — Widget Scope Pitfall
+- Adding `hx-select="#yourToDoContainer"` to the MyToDos container (or child controls) causes all descendant HTMX elements to inherit that selector.
+- Timer component self-refresh responses (`/hx/timesheets/timer/get-status/...`) return only a timer node (`<li>`/`<div>`), so inherited `hx-select="#yourToDoContainer"` filters the response to nothing and outerHTML swaps remove the timer element.
+- Correct fix is to prevent global `hx-select` inheritance at layout level (`hx-disinherit="hx-select"` on `main.primaryContent`) and avoid local broad `hx-select` on widget containers unless the response actually contains that selector.
+- This is why timer buttons/links appeared to "disappear" despite valid server HTML and `shouldSwap: true`.
+
+### Controller Architecture (No Change Needed)
+
+| Layer | Purpose | Example |
+|-------|---------|---------|
+| **Controllers/** | Full pages + modals | `ShowTicket` loads everything for the ticket modal |
+| **Hxcontrollers/** | Components + mutations | `TicketCard` renders one card; `Ticket` patches a field |
+| **Composers/** | Auto-inject data into layout views | `Header` provides theme data to every page |
+
+HxControllers already ARE component controllers. No separate `ComponentController` type needed.
+
+### HxController Response Contract
+
+```php
+// Pattern A: Render a view (most common — return void, getResponse() handles it)
+public function get(): void {
+    $this->tpl->assign('data', $this->service->getData());
+}
+
+// Pattern B: Action only (no HTML — return emptyResponse())
+public function save(): Response {
+    $this->service->save($data);
+    $this->tpl->setNotification('Saved', 'success');
+    $this->tpl->setHTMXEvent(HtmxTicketEvents::UPDATE->value);
+    return $this->tpl->emptyResponse();
+}
+
+// NEVER: return void from an action method — causes full partial render with empty vars
+```
+
+### Inline Script Migration Strategy
+
+**Goal**: Eliminate all inline `<script>` tags in templates. Use `componentRegistry` registrations instead.
+
+**Pattern**: Templates output semantic HTML with `data-*` attributes. Registry handles init.
+
+```html
+<!-- Before (inline script): -->
+<input class="datepicker" id="duedate">
+<script>jQuery(document).ready(function(){ jQuery('.datepicker').datepicker({...}) })</script>
+
+<!-- After (data-driven): -->
+<input class="datepicker" data-format="Y-m-d" data-enable-time="false">
+<!-- componentRegistry auto-inits flatpickr based on selector -->
+```
+
+For PHP data injection (calendar events, charts):
+```html
+<div data-component="fullcalendar" data-config='@json($calendarConfig)'></div>
+```
+
+### File Structure
+
+```
+public/assets/
+├── css/
+│   ├── entries/          ← Vite CSS entry points (moved from resources/css/)
+│   ├── components/       ← Existing component CSS
+│   └── libs/             ← Third-party CSS
+├── js/
+│   ├── entries/          ← Vite JS entry points (moved from resources/js/)
+│   ├── app/
+│   │   ├── app.js        ← Core app namespace
+│   │   └── core/
+│   │       ├── componentRegistry.js  ← RENAMED from componentInitializer.js
+│   │       ├── dropdownBridge.js     ← Chip select registration
+│   │       ├── datePickers.js        ← FUTURE: flatpickr registration
+│   │       ├── tooltips.js           ← FUTURE: tippy registration
+│   │       ├── editors.js            ← FUTURE: tiptap registration
+│   │       └── tiptap/               ← Existing tiptap code
+│   └── libs/             ← Third-party JS
+```
+
+### Phase Tracker
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| Phase 1: Foundation | ✅ Done | componentRegistry with instance tracking + state hooks; PHP getResponse() merge fix; setHTMXEvent deprecated; shouldSwap guard on destroy |
+| Phase 2: File Restructure | ✅ Done | Deleted 5 stale files + 36MB build/; moved 17 entry files from resources/ → public/assets/entries/; updated vite.config.js + Blade @vite() calls; resources/ directory removed |
+| Phase 3: Component Registrations | ✅ Done | Tom Select v2.5.2 replaces SlimSelect + Chosen.js + jQuery TagsInput. 4 registrations in dropdownBridge.js (chip selects, standard selects, filter-bar selects, tag inputs). jQuery.fn.chosen shim + liszt:updated shim included. All vendor CSS/JS files deleted. Build clean. |
+| Phase 4: Inline Script Migration | Pending | Migrate HTMX partials first, then shared components, then pages |
+
+### Bugs Found and Fixed
+
+| Bug | Status | Description |
+|-----|--------|-------------|
+| `getResponse()` header overwrite | Fixed | Template headers overwrote controller headers. Now uses `array_merge_recursive`. |
+| `$this->setHTMXEvent()` events lost | Fixed | 8 custom events silently dropped in production. Migrated to `$this->tpl->setHTMXEvent()`. |
+| `componentInitializer` `htmx:beforeSwap` destroying fresh chips | Fixed | Destroy handler now checks `detail.shouldSwap === true` before destroying. |
+| HTMX innerHTML swap kills `htmx:afterSettle` | Fixed | Custom handler now dispatches `htmx:afterSettle` + `htmx:afterSwap` after manual swap. |
+| Dashboard `.maincontent` top margin | Fixed | Added `.maincontent.no-pageheader { margin-top: 0 }` CSS class. |
+| SlimSelect `addToBody` for overflow clipping | Fixed | Chip select uses `addToBody: true` to escape `overflow:auto` containers. |
+| Chip badge white-on-white (label-info etc.) | Fixed | `.chip-badge.label-*` colour rules added to `forms.css`; `label-info` was only scoped to `.ticketDropdown` context. |
+| `SetCacheHeaders` returns 304 for HTMX widget GETs | Fixed | Added `HX-Request` header check — ETag/304 negotiation skipped for all HTMX requests. |
+| Chip select has no interactivity affordance | Fixed | Added caret (`::after` border-triangle) and hover `brightness(0.93)` to `.ts-wrapper.select-chip .ts-control` in `tom-select.css`. |

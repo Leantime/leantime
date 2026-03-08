@@ -135,15 +135,7 @@ leantime.projectsController = (function () {
     };
 
     var initSelectFields = function () {
-
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll("#todosettings select.colorChosen").forEach(function (el) {
-                new SlimSelect({
-                    select: el,
-                    settings: { searchHighlight: false }
-                });
-            });
-        });
+        // no-op: selects are enhanced via class="tomselect" on the element
     };
 
     var removeStatus = function (id) {

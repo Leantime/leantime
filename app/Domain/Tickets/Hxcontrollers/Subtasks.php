@@ -47,7 +47,7 @@ class Subtasks extends HtmxController
         $this->tpl->assign('efforts', $efforts);
         $this->tpl->assign('priorities', $priorities);
 
-        $this->setHTMXEvent('subtasksUpdated');
+        $this->tpl->setHTMXEvent('subtasksUpdated');
     }
 
     public function get(): void
@@ -74,7 +74,7 @@ class Subtasks extends HtmxController
 
     }
 
-    public function delete()
+    public function delete(): void
     {
 
         $getVars = $_GET;
@@ -99,6 +99,6 @@ class Subtasks extends HtmxController
         $this->tpl->assign('efforts', $efforts);
         $this->tpl->assign('priorities', $priorities);
 
-        $this->setHTMXEvent('subtasksUpdated');
+        $this->tpl->setHTMXEvent('subtasksUpdated');
     }
 }

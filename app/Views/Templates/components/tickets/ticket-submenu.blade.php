@@ -25,9 +25,7 @@
 
             <li class="nav-header border">{{  __("subtitles.track_time") }}</li>
             @dispatchEvent("beforeTimer", ["ticket"=>$ticket])
-            <li class="timerContainer tw:px-[10px]">
-                <x-globals::tickets.timer-button :parent-ticket-id="$ticket['id']" :on-the-clock="$onTheClock" style="full" />
-            </li>
+            <x-timesheets::timer :parent-ticket-id="$ticket['id']" :on-the-clock="$onTheClock" variant="link" />
             @dispatchEvent("end")
     </x-globals::actions.dropdown-menu>
 

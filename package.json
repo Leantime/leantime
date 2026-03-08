@@ -81,6 +81,7 @@
     "sortablejs": "^1.15.7",
     "tippy.js": "^6.3.7",
     "tiptap-extension-font-size": "^1.2.0",
+    "tom-select": "^2.5.2",
     "uppy": "^3.25.3"
   },
   "devDependencies": {

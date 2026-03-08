@@ -259,11 +259,6 @@
     jQuery(document).ready(function(){
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1);
 
-        // Init Chosen.js for project and ticket selectors
-        var chosenTicketOpts = { no_results_text: "No to-dos found for this project" };
-        jQuery(".project-select").chosen();
-        jQuery(".ticket-select").chosen(chosenTicketOpts);
-
         // Add Hours button scrolls to and highlights the new entry row
         jQuery("#addHoursBtn").click(function () {
             var $row = jQuery("#newEntryRow");
@@ -277,15 +272,17 @@
 
         // Project filters ticket list
         jQuery(".project-select").change(function () {
+            var ticketSelectEl = document.querySelector(".ticket-select");
+            if (ticketSelectEl && ticketSelectEl._tomSelect) {
+                ticketSelectEl._tomSelect.clear(true);
+            }
             jQuery(".ticket-select").val("");
             jQuery(".ticket-select option").show();
-            jQuery("#ticketSelect .chosen-results li").show();
             var selectedValue = jQuery(this).find("option:selected").val();
             if (selectedValue) {
                 jQuery(".ticket-select option").not(".project_" + selectedValue).not('[value=""]').hide();
-                jQuery("#ticketSelect .chosen-results li").not(".project_" + selectedValue).hide();
             }
-            jQuery(".ticket-select").chosen("destroy").chosen(chosenTicketOpts);
+            jQuery(".ticket-select").trigger("liszt:updated");
         });
 
         // Selecting a ticket auto-selects its project
@@ -293,8 +290,8 @@
             var projectId = jQuery(this).find("option:selected").attr("data-value");
             if (projectId) {
                 jQuery(".project-select").val(projectId);
-                jQuery(".project-select").chosen("destroy").chosen();
-                jQuery(".ticket-select").chosen("destroy").chosen(chosenTicketOpts);
+                jQuery(".project-select").trigger("liszt:updated");
+                jQuery(".ticket-select").trigger("liszt:updated");
             }
         });
 

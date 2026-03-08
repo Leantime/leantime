@@ -20,32 +20,34 @@
             projectSelect.find('option[data-client-id="' + selectedClientId + '"]').show();
         }
 
-        // Reset project selection to "all" and trigger chosen update
+        // Reset project selection to "all" and sync TomSelect
         projectSelect.val('all');
-        projectSelect.trigger("chosen:updated");
+        projectSelect.trigger("liszt:updated");
     }
 
     jQuery(document).ready(function() {
-        jQuery(".client-select").chosen();
-        jQuery(".project-select").chosen();
-        jQuery(".ticket-select").chosen();
-
         jQuery(".project-select").change(function () {
-            jQuery(".ticket-select").removeAttr("selected");
+            var ticketSelectEl = document.querySelector(".ticket-select");
+            if (ticketSelectEl && ticketSelectEl._tomSelect) {
+                ticketSelectEl._tomSelect.clear(true);
+            }
             jQuery(".ticket-select").val("");
             jQuery(".ticket-select").trigger("liszt:updated");
 
             jQuery(".ticket-select option").show();
-            jQuery("#ticketSelect .chosen-results li").show();
-
             var selectedValue = jQuery(this).find("option:selected").val();
-            jQuery("#ticketSelect .chosen-results li").not(".project_" + selectedValue).hide();
-       });
+            if (selectedValue) {
+                jQuery(".ticket-select option").not(".project_" + selectedValue).not('[value=""]').hide();
+            }
+            jQuery(".ticket-select").trigger("liszt:updated");
+        });
 
         jQuery(".ticket-select").change(function () {
             var selectedValue = jQuery(this).find("option:selected").attr("data-value");
-            jQuery(".project-select option[value=" + selectedValue + "]").attr("selected", "selected");
-            jQuery(".project-select").trigger("liszt:updated");
+            if (selectedValue) {
+                jQuery(".project-select option[value=" + selectedValue + "]").attr("selected", "selected");
+                jQuery(".project-select").trigger("liszt:updated");
+            }
         });
 
         jQuery(document).ready(function ($) {

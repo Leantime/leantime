@@ -18,8 +18,8 @@
 <link rel="apple-touch-icon" href="{!! BASE_URL !!}/dist/images/apple-touch-icon.png">
 
 @vite([
-    'resources/css/main.css',
-    'resources/css/app.css',
+    'public/assets/css/entries/main.css',
+    'public/assets/css/entries/app.css',
 ])
 
 @dispatchEvent('afterLinkTags')
@@ -31,22 +31,22 @@
 <script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
 @vite([
-    'resources/js/entry-htmx.js',
-    'resources/js/entry-htmx-extensions.js',
-    'resources/js/entry-frameworks.js',
-    'resources/js/entry-global-component.js',
-    'resources/js/entry-calendar-component.js',
-    'resources/js/entry-table-component.js',
-    'resources/js/entry-tiptap-toolbar.js',
-    'resources/js/entry-tiptap-editor.js',
-    'resources/js/entry-gantt-component.js',
-    'resources/js/entry-chart-component.js',
+    'public/assets/js/entries/entry-htmx.js',
+    'public/assets/js/entries/entry-htmx-extensions.js',
+    'public/assets/js/entries/entry-frameworks.js',
+    'public/assets/js/entries/entry-global-component.js',
+    'public/assets/js/entries/entry-calendar-component.js',
+    'public/assets/js/entries/entry-table-component.js',
+    'public/assets/js/entries/entry-tiptap-toolbar.js',
+    'public/assets/js/entries/entry-tiptap-editor.js',
+    'public/assets/js/entries/entry-gantt-component.js',
+    'public/assets/js/entries/entry-chart-component.js',
 ])
 
 @dispatchEvent('afterScriptLibTags')
 
 <!-- app -->
-@vite(['resources/js/entry-app.js'])
+@vite(['public/assets/js/entries/entry-app.js'])
 @dispatchEvent('afterMainScriptTag')
 
 <!-- theme & custom -->

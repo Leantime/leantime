@@ -764,29 +764,14 @@
         flex: 0 0 100%;
     }
 
-    /* Fluid chosen / slim-select containers */
-    .chzn-container,
-    .ss-main {
-        width: 100% !important;
-        max-width: 100% !important;
-    }
-
-    .chzn-drop {
-        width: 100% !important;
-    }
-
-    .chzn-search input {
+    /* Fluid select containers */
+    .ts-wrapper {
         width: 100% !important;
         max-width: 100% !important;
     }
 
     .dualselect select {
         width: 38%;
-    }
-
-    .tagsinput {
-        width: 100% !important;
-        max-width: 100% !important;
     }
 
     /* Form controls full-width on mobile */

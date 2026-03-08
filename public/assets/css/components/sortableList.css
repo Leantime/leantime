@@ -207,16 +207,6 @@
 }
 
 /* Quick Add Form Styles */
-.add-task-button {
-    display: inline-block;
-    margin-left: 10px;
-    color: var(--primary-font-color);
-}
-
-.add-task-button:hover {
-    opacity: 1;
-    color: var(--accent1);
-}
 
 .quickAddForm {
     background: var(--secondary-background);

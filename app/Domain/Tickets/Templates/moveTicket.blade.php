@@ -49,7 +49,4 @@
         leantime.modals.closeModal();
     @endif
 
-    jQuery(document).ready(function(){
-        jQuery("#projectSelector").chosen();
-    });
 </script>

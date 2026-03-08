@@ -1992,21 +1992,6 @@ leantime.ticketsController = (function () {
 
     };
 
-    var initTagsInput = function ( ) {
-        jQuery("#tags").tagsInput({
-            'autocomplete_url': leantime.appUrl + '/api/tags',
-        });
-
-        jQuery("#tags_tag").on("focusout", function () {
-            let tag = jQuery(this).val();
-
-            if (tag != '') {
-                jQuery("#tags").addTag(tag);
-            }
-        });
-
-    };
-
     var addCommentTimesheetContent = function (commentId, taskId) {
         var content = "Discussion on To-Do #" + taskId + ":"
         + "\n\r"
@@ -2057,7 +2042,6 @@ leantime.ticketsController = (function () {
         initUserDropdown:initUserDropdown,
         initSprintDropdown:initSprintDropdown,
         initToolTips:initToolTips,
-        initTagsInput:initTagsInput,
         initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate,
         initAsyncInputChange:initAsyncInputChange,
         initDueDateTimePickers:initDueDateTimePickers,

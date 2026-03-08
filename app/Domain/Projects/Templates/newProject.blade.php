@@ -116,7 +116,6 @@
 
 <script type="text/javascript">
     jQuery(document).ready(function() {
-        jQuery("#projectdetails select").chosen();
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
 
         if (window.leantime && window.leantime.tiptapController) {

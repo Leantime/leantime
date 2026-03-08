@@ -55,7 +55,8 @@
                  hx-select=".primaryContent"
                  hx-swap="outerHTML show:window:top"
                  hx-indicator="#page-loading">
-                <main id="main-content" class="primaryContent" aria-live="polite">
+                <main id="main-content" class="primaryContent" aria-live="polite"
+                      hx-disinherit="hx-select">
                     @isset($action, $module)
                         @include("$module::$action")
                     @else

@@ -64,100 +64,8 @@ body input:focus {
 
 
 
-/* Tags */
-
-body div.tagsinput {
-    border:1px solid var(--main-border-color);
-    overflow:hidden;
-}
-
-body div.tagsinput:hover,
-body div.tagsinput:focus,
-body input[type=text].main-title-input.main-title-input:hover,
-body input[type=text].main-title-input.main-title-input:focus{
-    border: 1px solid var(--main-border-color-hover);
-    border-radius:var(--box-radius);
-}
-
-body div.tagsinput.readonly {
-    display:inline-block;
-    width:auto;
-    padding:0px;
-    border:0px !important;
-    height:auto !important;
-    background:none;
-}
-
-body .ticketBox div.tagsinput.readonly {
-    background:none !important;
-    margin-bottom:0px !important;
-}
-
-body div.tagsinput {
-    background-color: var(--input-background);
-    color:var(--primary-font-color);
-    font-family: var(--primary-font-family);
-    width:100% !important;
-    height:auto !important;
-    border-radius:var(--input-radius);
-    box-shadow: none;
-    padding:var(--input-padding);
-    border:0px;
-}
-
-body div.tagsinput input {
-    font-size:var(--base-font-size);
-    color:var(--primary-font-color) !important;
-    width:auto;
-    padding:0px;
-    margin-bottom:0px;
-    font-family: var(--primary-font-family);
-}
-
-body div.tagsinput span.tag {
-    border-radius: var(--input-radius);
-    padding: 0px 10px;
-    border: 0px solid var(--primary-color);
-}
-
-div.tagsinput span.tag {
-    font-size:var(--font-size-m);
-}
-
-div.tagsinput span.tag a {
-    vertical-align: text-bottom;
-}
-
-/* Tags input in article/wiki dialogs - proper spacing */
-.formModal div.tagsinput {
-    margin-top: 16px;
-    margin-bottom: 16px;
-    display: block;
-    clear: both;
-}
-
-/* Ensure tags input doesn't overlap with Tiptap editor */
-.formModal div.tagsinput + .tiptap-wrapper,
-.formModal div.tagsinput + .tiptap-editor {
-    clear: both;
-}
-
-.ss-main .ss-multi-selected {
-    padding:var(--input-padding);
-}
-
-.ss-main .ss-multi-selected .ss-values,
-.ss-main .ss-multi-selected .ss-disabled{
-    padding:0px;
-    min-height:21px; /* Minimum height matching line height on tags input*/
-}
-
-.ss-main .ss-multi-selected .ss-values .ss-value {
-    border-radius: var(--input-radius);
-    padding: 0px 10px;
-    margin: 0px;
-    border: 0px solid var(--primary-color);
-}
+/* Tags — legacy div.tagsinput and SlimSelect .ss-* rules removed.
+   Tag inputs now use TomSelect (input.tag-input) styled in tom-select.css. */
 
 select {
     min-height:32px;
@@ -359,132 +267,7 @@ body input[type='submit'].btn-primary .caret,
 }
 
 
-.chosen-container-single .chosen-single {
-
-    height: auto;
-    background:none;
-    background-color: var(--secondary-background);
-    line-height:21px;
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: var(--input-shadow);
-    -moz-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    border-radius: var(--input-radius);
-    padding: var(--input-padding);
-    color:var(--primary-font-color);
-}
-
-.chosen-container {
-    font-size:var(--base-font-size);
-    margin-bottom:10px;
-    min-width:175px
-}
-
-/* Search field input styling is handled separately below to avoid conflicts */
-
-.chosen-container-multi .chosen-choices {
-    background-color: var(--secondary-background);
-    line-height: 21px;
-    min-height: 33px;
-    border: 1px solid var(--main-border-color);
-    border-radius: var(--input-radius);
-    box-shadow: none;
-    padding: 4px 6px 4px 8px;
-}
-
-.chosen-container-active .chosen-single {
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow:var(--input-shadow);
-    box-shadow: var(--input-shadow);
-}
-
-.chosen-container-active.chosen-with-drop .chosen-single {
-    border: 1px solid var(--main-border-color);
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    background-image: none;
-    background-image: none;
-    -webkit-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-}
-
-.chosen-container-active .chosen-choices {
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-    padding: 4px 6px 4px 8px;
-}
-
-.chosen-container-active .chosen-choices li.search-field input[type="text"],
-.chosen-container-active .chosen-choices .search-field .chosen-search-input {
-    color:var(--primary-font-color);
-    padding: 0 !important;
-    box-shadow: none !important;
-    -webkit-box-shadow: none !important;
-    border: 0 !important;
-    background: transparent !important;
-}
-
-.chosen-container .chosen-drop {
-    position: absolute;
-    top: 100%;
-    z-index: var(--zlayer-9, 1010);
-    width: 100%;
-    border: 1px solid var(--main-border-color);
-    border-top: 0;
-    background: var(--secondary-background);
-    -webkit-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    clip: rect(0, 0, 0, 0);
-    -webkit-clip-path: inset(100% 100%);
-    clip-path: inset(100% 100%);
-}
-
-.chosen-container .chosen-results li.highlighted {
-    color: var(--dropdown-link-hover-color) !important;
-    background: var(--dropdown-link-hover-bg) !important;
-    background-image: none;
-
-}
-
-.chosen-container-single .chosen-search input[type="text"] {
-
-    border: 1px solid var(--main-border-color);
-
-    font-size: var(--font-size-s);
-
-    line-height: normal;
-    border-radius: 0;
-}
-
-.chosen-container-single .chosen-single div b {
-    background-image:none !important;
-}
-.chosen-container-single .chosen-single div b:after {
-    content: "⌄";
-    line-height: 25px;
-}
-
-.chosen-container-multi .chosen-choices li.search-choice {
-    position: relative;
-    margin: 4px 4px 4px 0;
-    padding: 6px 20px 6px 6px;
-    border: 0px solid #aaa;
-    max-width: 100%;
-    border-radius: var(--box-radius-small);
-    background-color: var(--accent1);
-    color: var(--accent1-color);
-    background-image: none;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    line-height: normal;
-    cursor: default;
-}
-
-.chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
-    position: absolute;
-    top: 8px;
-}
+/* Chosen.js rules removed — replaced by TomSelect (see tom-select.css). */
 
 .btn-group>.btn {
 }
@@ -717,44 +500,7 @@ select,
     margin-right:10px;
 }
 
-.chosen-choices {
 
-}
-
-.chosen-container-multi .chosen-choices .search-choice {
-    border: 0px solid #bbb;
-    line-height: 12px;
-    padding: 1px 20px 1px 10px;
-    margin: 4px 0 2px 4px;
-    position: relative;
-    cursor: default;
-    border-radius:var(--input-radius);
-    font-size:var(--font-size-s);
-}
-
-.chosen-container-multi .chosen-choices .search-choice .search-choice-close {
-    right:4px;
-}
-
-.chosen-container-multi .chosen-choices li.search-field input[type="text"],
-.chosen-container-multi .chosen-choices .search-field .chosen-search-input {
-    height: auto;
-    padding: 0 !important;
-    box-shadow: none !important;
-    -webkit-box-shadow: none !important;
-    border: 0 !important;
-    background: transparent !important;
-    margin: 1px 0 !important;
-}
-
-.chosen-container-single .chosen-search input {
-    background:var(--input-background);
-    border-color:var(--main-border-color);
-}
-
-.chosen-container .chosen-results .no-results {
-    background:var(--input-background);
-}
 
 input[type=checkbox] {
     margin-top:8px;
@@ -1301,81 +1047,7 @@ input[type=range]:focus::-ms-fill-upper {
 
 
 
-.ss-main .ss-single-selected {
-    display: flex;
-    cursor: pointer;
-    width: 100%;
-    height: auto;
-    padding: var(--input-padding);
-    border: 1px solid var(--main-border-color);
-    background-color: var(--input-background);
-    line-height:21px;
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: var(--input-shadow);
-    -moz-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    border-radius: var(--input-radius);
 
-    outline: 0;
-    box-sizing: border-box;
-}
-
-.ss-main {
-    margin-bottom:4px;
-    border: none !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    background: transparent !important;
-    height: auto !important;
-    line-height: normal !important;
-    min-height: 0 !important;
-    width: fit-content !important;
-    max-width: 100%;
-    min-width: 0 !important;
-}
-
-.ss-main .ss-multi-selected {
-    min-height: auto;
-    background-color: var(--input-background);
-    line-height: 21px;
-    padding: 6px 10px;
-    border: 1px solid var(--main-border-color);
-    box-shadow: none;
-    border-radius: var(--input-radius);
-    overflow: hidden;
-}
-
-.ss-main .ss-single-selected .placeholder {
-    line-height: 21px;
-}
-
-.ss-main .ss-multi-selected .ss-values .ss-disabled {
-    color:var(--main-border-color);
-}
-
-.ss-main .ss-multi-selected .ss-values .ss-disabled {
-    padding:0px;
-    margin:0px;
-}
-
-.ss-main .ss-multi-selected .ss-add {
-    display: flex;
-    flex: 1 1 3px;
-    margin: 4px 0px 0 4px;
-}
-
-.ss-main .ss-multi-selected .ss-values .ss-value {
-    background:var(--primary-color);
-}
-
-.ss-main .ss-single-selected .ss-arrow span {
-    padding:0px 4px;
-}
-
-.ss-main .ss-single-selected .ss-arrow span.arrow-up,
-.ss-main .ss-single-selected .ss-arrow span.arrow-down {
-    margin:0px;
-}
 
 
 body .btn.btn-link {
@@ -1421,21 +1093,7 @@ body .croppie-container {
     clear:both;
 }
 
-.maincontent .chosen-container .chosen-results li {
-    margin-bottom:2px;
-    list-style-type:none;
-    padding:6px;
-}
 
-.maincontent .chosen-container .chosen-results li span,
-.maincontent .chosen-container .chosen-single span{
-    margin-left:0px !important;
-}
-
-.maincontent .chosen-container .chosen-results li span:after,
-.maincontent .chosen-container .chosen-single span:after{
-    border-color:transparent;
-}
 
 
 .stdform p, .stdform div.par {
@@ -1820,34 +1478,7 @@ body a.textInputSwitch {
 
 }
 
-body .noteContainer div.tagsinput,
-body .clearForm div.tagsinput {
-    background:transparent;
-    border:none;
-    width:100%;
-}
 
-body div.tagsinput input,
-body div.clearForm input
-{
-    width:50% !important;
-    border:0px;
-}
-
-body .noteContainer div.tagsinput input,
-body .clearForm div.tagsinput input {
-    padding-left:8px;
-    color:var(--secondary-font-color);
-}
-
-body .noteContainer div.tagsinput input:focus,
-body .clearForm div.tagsinput input:focus{
-    border:none;
-}
-
-div.tagsinput span.tag {
-    margin-bottom:0px;
-}
 
 .headerEditDropdown {
     margin-left:10px;
@@ -2248,116 +1879,19 @@ body .btn.btn-round-icon {
 }
 
 /* ── Chip Select (forms.select variant="chip") ────────────────────────────────
-   A <select class="select-chip"> is wrapped by SlimSelect which copies all
-   classes from the <select> to its container div. So the container gets both
-   .ss-main and .select-chip, allowing targeted overrides below.
+   A <select class="select-chip"> is auto-initialized by TomSelect via
+   componentRegistry. TomSelect copies all classes from the
+   <select> to its wrapper div, so the wrapper gets class="ts-wrapper select-chip single".
+   The original <select> gets ts-hidden-accessible (clipped to 1×1px).
 
-   Visual goal: a borderless pill that looks like a badge. Clicking it opens
-   a dropdown whose items render the option's innerHTML (icon + badge markup).
+   Visual goal: a borderless pill that looks like a badge. Clicking opens a
+   body-appended dropdown whose items render badge HTML from data-chip-html.
+   All TomSelect styling is in tom-select.css. Only .chip-badge colour rules
+   are defined below.
    ────────────────────────────────────────────────────────────────────────── */
 
-/* Hide the original <select> — SlimSelect replaces it visually */
-select.select-chip {
-    display: none;
-}
-
-/* Container — override default ss-main sizing to be auto-width, no margin */
-.ss-main.select-chip {
-    display: inline-flex;
-    width: auto !important;
-    min-width: 0 !important;
-    margin-bottom: 0;
-}
-
-/* Trigger button — borderless pill, sized to content */
-.ss-main.select-chip .ss-single-selected {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    height: auto;
-    padding: 2px 6px 2px 4px;
-    border: none !important;
-    border-radius: var(--box-radius-large);
-    background: transparent !important;
-    box-shadow: none !important;
-    cursor: pointer;
-    width: auto;
-    min-width: 0;
-    transition: background-color 0.15s ease;
-}
-
-.ss-main.select-chip .ss-single-selected:hover {
-    background: var(--main-action-hover-bg) !important;
-}
-
-/* Selected value display area — shrink to content */
-.ss-main.select-chip .ss-single-selected .placeholder {
-    flex: 0 0 auto;
-    width: auto;
-    line-height: normal;
-    display: inline-flex;
-    align-items: center;
-}
-
-/* Arrow icon — small, muted */
-.ss-main.select-chip .ss-single-selected .ss-arrow {
-    flex: 0 0 auto;
-    margin: 0 0 0 2px;
-}
-
-.ss-main.select-chip .ss-single-selected .ss-arrow span {
-    border-color: var(--primary-font-color);
-    opacity: 0.5;
-    padding: 2px;
-}
-
-/* Dropdown content panel */
-.ss-main.select-chip .ss-content {
-    border: 1px solid var(--main-border-color);
-    border-radius: var(--box-radius);
-    background: var(--secondary-background);
-    box-shadow: var(--regular-shadow);
-    min-width: 160px;
-    width: auto;
-    z-index: var(--zlayer-5, 1050);
-}
-
-/* Hide the search bar (showSearch: false handles this in JS, CSS as fallback) */
-.ss-main.select-chip .ss-search {
-    display: none !important;
-}
-
-/* List items — comfortable padding, flex so icon + text align */
-.ss-main.select-chip .ss-content .ss-list .ss-option {
-    padding: 6px 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    color: var(--primary-font-color);
-}
-
-.ss-main.select-chip .ss-content .ss-list .ss-option:hover,
-.ss-main.select-chip .ss-content .ss-list .ss-option.ss-highlighted {
-    background: var(--dropdown-link-hover-bg);
-    color: var(--dropdown-link-hover-color);
-}
-
-.ss-main.select-chip .ss-content .ss-list .ss-option.ss-option-selected {
-    background: var(--dropdown-link-hover-bg);
-    opacity: 0.8;
-}
-
-/* Ensure inline elements inside options (spans, icons) lay out correctly */
-.ss-main.select-chip .ss-content .ss-list .ss-option * {
-    display: inline-flex;
-    align-items: center;
-    vertical-align: middle;
-}
-
-/* ── Chip badge colours (used inside <option> innerHTML) ─────────────────
-   These classes mirror the .label-* system from dropdowns.css but scoped
-   to chip badge spans so they don't conflict with the dropdown link rules.
+/* ── Chip badge colours (used inside <option> innerHTML / TomSelect render templates)
+   These classes mirror the .label-* system from dropdowns.css.
    ────────────────────────────────────────────────────────────────────── */
 
 .chip-badge {
@@ -2387,3 +1921,15 @@ select.select-chip {
 .chip-badge.state-low       { background: var(--blue);       color: var(--blue-text-color); }
 .chip-badge.state-trivial   { background: var(--grey);       color: var(--grey-text-color); }
 .chip-badge.state-default   { background: var(--grey);       color: var(--grey-text-color); }
+
+/* Bootstrap label-* aliases — used in chip-badge HTML generated by todoItem.blade.php
+   and ticket chip components. The label-* classes have standalone background rules
+   in dropdowns.css only in ticketDropdown context; we add chip-badge-scoped rules here
+   so chips render correctly everywhere without depending on that context. */
+.chip-badge.label-default   { background: var(--grey);      color: var(--grey-text-color); }
+.chip-badge.label-info      { background: var(--dark-blue);  color: var(--dark-blue-text-color); }
+.chip-badge.label-success   { background: var(--green);      color: var(--green-text-color); }
+.chip-badge.label-warning   { background: var(--yellow);     color: var(--yellow-text-color); }
+.chip-badge.label-important { background: var(--red);        color: var(--red-text-color); }
+.chip-badge.label-danger    { background: var(--dark-red);   color: var(--dark-red-text-color); }
+.chip-badge.label-primary   { background: var(--dark-blue);  color: var(--dark-blue-text-color); }

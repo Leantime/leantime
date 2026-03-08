@@ -26,15 +26,15 @@ class TimesheetCest
         $I->amOnPage('/timesheets/showMy');
         // Select project.
         $I->waitForElementNotVisible('.project-select', 120);
-        $I->clickWithRetry('#projectSelect .chosen-single');
-        $I->waitForElementVisible('.chosen-drop', 120);
-        $I->clickWithRetry('#projectSelect .chosen-results .active-result');
+        $I->clickWithRetry('#projectSelect .ts-control');
+        $I->waitForElementVisible('#projectSelect .ts-dropdown', 120);
+        $I->clickWithRetry('#projectSelect .ts-dropdown .ts-option');
 
         // Select ticket.
         $I->waitForElementNotVisible('.ticket-select', 120);
-        $I->clickWithRetry('#ticketSelect .chosen-single');
-        $I->waitForElementVisible('.chosen-drop', 120);
-        $I->clickWithRetry('#ticketSelect .chosen-results .active-result');
+        $I->clickWithRetry('#ticketSelect .ts-control');
+        $I->waitForElementVisible('#ticketSelect .ts-dropdown', 120);
+        $I->clickWithRetry('#ticketSelect .ts-dropdown .ts-option');
 
         // Select type.
         $I->waitForElementVisible('.kind-select', 120);

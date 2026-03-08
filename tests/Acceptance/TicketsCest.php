@@ -24,8 +24,8 @@ class TicketsCest
         $I->waitForElementVisible('.main-title-input', 120);
         $I->fillField(['class' => 'main-title-input'], 'Test Ticket');
 
-        $I->waitForElementClickable('.tagsinput', 15);
-        $I->clickWithRetry('.tagsinput', 90);
+        $I->waitForElementClickable('.ts-wrapper .ts-control', 15);
+        $I->clickWithRetry('.ts-wrapper .ts-control', 90);
         $I->wait(2);
         $I->type('test-tag,');
         $I->waitForElementClickable('[data-tiptap-editor] .ProseMirror', 120);

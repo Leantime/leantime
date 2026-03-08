@@ -257,7 +257,7 @@
                                                 <x-globals::forms.text-input :bare="true" name="label-{{ $key }}" id="label-{{ $key }}" value="{{ e($ticketStatus['name']) }}" :readonly="$key == -1" />
                                             </div>
                                             <div class="col-md-2">
-                                                <x-globals::forms.select :bare="true" name="labelClass-{{ $key }}" id="labelClass-{{ $key }}" class="colorChosen">
+                                                <x-globals::forms.select :bare="true" name="labelClass-{{ $key }}" id="labelClass-{{ $key }}" class="colorChosen tomselect">
                                                     <option value="label-purple" class="label-purple" {{ $ticketStatus['class'] == 'label-purple' ? 'selected="selected"' : '' }}><span class="label-purple">{{ __('label.purple') }}</span></option>
                                                     <option value="label-pink" class="label-pink" {{ $ticketStatus['class'] == 'label-pink' ? 'selected="selected"' : '' }}><span class="label-pink">{{ __('label.pink') }}</span></option>
                                                     <option value="label-darker-blue" class="label-darker-blue" {{ $ticketStatus['class'] == 'label-darker-blue' ? 'selected="selected"' : '' }}><span class="label-darker-blue">{{ __('label.darker-blue') }}</span></option>
@@ -328,7 +328,7 @@
             <x-globals::forms.text-input :bare="true" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
         </div>
         <div class="col-md-2">
-            <x-globals::forms.select :bare="true" name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen">
+            <x-globals::forms.select :bare="true" name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen tomselect">
                 <option value="label-blue" class="label-blue"><span class="label-blue">{{ __('label.blue') }}</span></option>
                 <option value="label-info" class="label-info"><span class="label-info">{{ __('label.dark-blue') }}</span></option>
                 <option value="label-darker-blue" class="label-darker-blue"><span class="label-darker-blue">{{ __('label.darker-blue') }}</span></option>
@@ -364,7 +364,6 @@
 <script type='text/javascript'>
 
     jQuery(document).ready(function() {
-        jQuery("#projectdetails select").chosen();
 
         @if(isset($_GET['integrationSuccess']))
             window.history.pushState({},document.title, '{{ BASE_URL }}/projects/showProject/{{ (int) $project['id'] }}');

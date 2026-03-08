@@ -83,7 +83,13 @@ class SetCacheHeaders
         }
 
         $response->setCache($options);
-        $response->isNotModified($request);
+
+        // HTMX requests must always receive fresh content — skip ETag/304 negotiation.
+        // The HX-Request header is set by HTMX on every partial fetch. Returning 304
+        // causes the browser to serve its cached copy, which may be stale after a save.
+        if (! $request->headers->has('HX-Request')) {
+            $response->isNotModified($request);
+        }
 
         return $response;
     }

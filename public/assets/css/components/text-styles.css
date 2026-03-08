@@ -71,7 +71,7 @@ h1 small {
 .label-important, .label-warning,
 .label-success, .label-info, .label-inverse,
 .label-default, .label-primary, .label-danger {
-    padding: 2px 8px;
+    padding: 0 8px;
     color: #fff;
     margin-left: 4px;
     border-radius: var(--element-radius);

@@ -36,7 +36,7 @@
         <x-globals::forms.text-input :bare="true" type="text" name="description" class="main-title-input tw:w-full" value="{{ $tpl->escape($canvasItem['description']) }}"
                placeholder="{{ $tpl->__('input.placeholders.short_name') }}" /><br/>
 
-        <x-globals::forms.text-input :bare="true" type="text" value="{{ $tpl->escape($canvasItem['tags']) }}" name="tags" id="tags" />
+        <x-globals::forms.text-input :bare="true" type="text" value="{{ $tpl->escape($canvasItem['tags']) }}" name="tags" id="tags" class="tag-input" data-autocomplete-url="{{ BASE_URL }}/api/tags?term=" />
 
         <textarea rows="3" cols="10" name="data" class="tiptapComplex"
                   placeholder="">{!! $tpl->escapeMinimal($canvasItem['data']) !!}</textarea><br/>
@@ -145,8 +145,6 @@
         if (window.leantime && window.leantime.tiptapController) {
             leantime.tiptapController.initComplexEditor();
         }
-        leantime.ticketsController.initTagsInput();
-
         @if (! $login::userIsAtLeast($roles::$editor))
             leantime.authController.makeInputReadonly("#global-modal-content");
         @endif

@@ -99,7 +99,7 @@
                 @endforeach
             </x-globals::forms.select>
             @if($login::userIsAtLeast($roles::$editor))
-                <a href="javascript:void(0);" class="tw:block tw:mt-1" onclick="jQuery('#editorId').val({{ session('userdata.id') }}).trigger('chosen:updated');">{{ __('label.assign_to_me') }}</a>
+                <a href="javascript:void(0);" class="tw:block tw:mt-1" onclick="jQuery('#editorId').val({{ session('userdata.id') }}).trigger('liszt:updated');">{{ __('label.assign_to_me') }}</a>
             @endif
         </x-globals::forms.form-field>
 
@@ -131,7 +131,7 @@
 
         {{-- Tags --}}
         <x-globals::forms.form-field label-text="{{ __('label.tags') }}" name="tags">
-            <input type="text" value="{{ e($ticket->tags) }}" name="tags" id="tags" />
+            <input type="text" value="{{ e($ticket->tags) }}" name="tags" id="tags" class="tag-input" data-autocomplete-url="{{ BASE_URL }}/api/tags?term=" />
         </x-globals::forms.form-field>
 
         {{-- Organization Section --}}

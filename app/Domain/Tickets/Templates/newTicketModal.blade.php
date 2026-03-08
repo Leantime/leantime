@@ -37,12 +37,8 @@
             leantime.dateController.initDatePicker(".dates");
             leantime.dateController.initDateRangePicker(".editFrom", ".editTo");
 
-            leantime.ticketsController.initTagsInput();
-
             leantime.ticketsController.initEffortDropdown();
             leantime.ticketsController.initStatusDropdown();
-
-            jQuery(".ticketTabs select").chosen();
 
         @else
             leantime.authController.makeInputReadonly("#global-modal-content");

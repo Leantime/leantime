@@ -171,8 +171,8 @@
                                     <div class="wiki-tags-wrapper">
                                         <input type="text"
                                                id="wikiTagsInput"
-                                               class="wiki-tags-input"
-                                               data-role="tagsinput"
+                                               class="wiki-tags-input tag-input"
+                                               data-autocomplete-url="{{ BASE_URL }}/api/tags?term="
                                                value="{{ $tpl->escape($currentArticle->tags ?? '') }}"
                                                placeholder="Add tags..." />
                                     </div>
@@ -931,23 +931,18 @@ jQuery(document).ready(function() {
         });
     }
 
-    // ==========================================
-    // Tags Input
-    // ==========================================
-
     var tagsInput = document.getElementById('wikiTagsInput');
-    if (tagsInput && jQuery.fn.tagsInput) {
-        jQuery('#wikiTagsInput').tagsInput({
-            width: '100%',
-            height: 'auto',
-            defaultText: 'Add tag...',
-            placeholderColor: 'var(--secondary-font-color)',
-            onChange: function(elem, elem_tags) {
-                saveField('tags', elem_tags, function() {
-                    updateLastSaved();
+    if (tagsInput) {
+        var wikiTagsInitInterval = setInterval(function() {
+            if (tagsInput._tomSelect) {
+                clearInterval(wikiTagsInitInterval);
+                tagsInput._tomSelect.on('change', function(value) {
+                    saveField('tags', value, function() {
+                        updateLastSaved();
+                    });
                 });
             }
-        });
+        }, 50);
     }
 
     // ==========================================

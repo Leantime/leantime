@@ -422,16 +422,7 @@
     font-size:var(--font-size-l);
 }
 
-.ticketBox .label-important,
-.ticketBox .label-warning,
-.ticketBox .label-success,
-.ticketBox .label-info,
-.ticketBox .label-inverse,
-.ticketBox .label-default,
-.ticketBox .label-primary{
-    padding-top:0px;
-    padding-bottom:0px;
-}
+
 
  .ticketBox .timerContainer .btn{
     padding-top:1px;

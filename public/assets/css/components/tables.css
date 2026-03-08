@@ -675,13 +675,15 @@ table td{
 }
 
 /* Tags column: constrain and truncate */
-.ticketTable td .tagsinput.readonly {
+.ticketTable td .tagsinput.readonly,
+.ticketTable td .ts-wrapper {
     max-width: 100px;
     overflow: hidden;
     white-space: nowrap;
 }
 
-.ticketTable td .tagsinput.readonly .tag {
+.ticketTable td .tagsinput.readonly .tag,
+.ticketTable td .ts-wrapper .item {
     display: inline;
 }
 

@@ -392,10 +392,6 @@
 
     function initAccountSettings() {
         leantime.usersController.checkPWStrength('newPassword');
-
-        jQuery("#messagesfrequency").chosen();
-        jQuery("#language").chosen();
-        jQuery("#themeSelect").chosen();
     }
 
     jQuery(document).ready(function(){

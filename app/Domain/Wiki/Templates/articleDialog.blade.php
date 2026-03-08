@@ -163,7 +163,7 @@
             <x-globals::forms.text-input :bare="true" type="text" name="title" class="main-title-input tw:w-4/5" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" />
 
             <br />
-            <x-globals::forms.text-input :bare="true" type="text" value="{{ e($currentArticle->tags) }}" name="tags" id="tags" />
+            <x-globals::forms.text-input :bare="true" type="text" value="{{ e($currentArticle->tags) }}" name="tags" id="tags" class="tag-input" data-autocomplete-url="{{ BASE_URL }}/api/tags?term=" />
 
             <textarea class="tiptapComplex" rows="20" cols="80" id="wikiArticleContentEditor"  name="description">{{ htmlentities($currentArticle->description ?? '') }}</textarea>
 
@@ -293,9 +293,6 @@
         jQuery('.iconpicker-container').on('iconpickerSelected', function(event){
            jQuery(".articleIcon").val(event.iconpickerValue);
         });
-
-        leantime.ticketsController.initTagsInput();
-
 
     });
 

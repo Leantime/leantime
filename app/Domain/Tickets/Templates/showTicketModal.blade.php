@@ -37,46 +37,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
                 <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><x-globals::elements.icon name="swap_horiz" /> <?php echo $tpl->__('links.move_todo'); ?></a></li>
                 <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><x-globals::elements.icon name="delete" /> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
                 <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
-                <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
-                    hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
-                    hx-trigger="timerUpdate from:body"
-                    hx-target="this"
-                    hx-select="unset"
-                    hx-swap="outerHTML"
-                    aria-live="assertive"
-                    class="timerContainer">
-
-                    @if ($onTheClock === false)
-                        <a href="javascript:void(0);" data-value="{{ $ticket->id }}"
-                           hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/start-timer/"
-                           hx-target="#timerHeadMenu"
-                           hx-swap="outerHTML"
-                           hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"start"}'>
-                            <x-globals::elements.icon name="schedule" /> {{ __("links.start_work") }}
-                        </a>
-                    @endif
-
-                    @if ($onTheClock !== false && $onTheClock["id"] == $ticket->id)
-                        <a href="javascript:void(0);" data-value="{{ $ticket->id }}"
-                           hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/stop-timer/"
-                           hx-target="#timerHeadMenu"
-                           hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"stop"}'
-                           hx-swap="outerHTML">
-                            <x-globals::elements.icon name="stop" />
-
-                            @if (is_array($onTheClock) == true)
-                                {!!  sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), $onTheClock["since"])) !!}
-                            @else
-                                {!! sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), time())) !!}
-                            @endif
-                        </a>
-                    @endif
-                    @if ($onTheClock !== false && $onTheClock["id"] != $ticket->id)
-                        <span class='working'>
-            {{ __("text.timer_set_other_todo") }}
-        </span>
-                    @endif
-                </li>
+                <x-timesheets::timer :parent-ticket-id="$ticket->id" :on-the-clock="$onTheClock" variant="link" />
         </x-globals::actions.dropdown-menu>
     <?php } ?>
     <div class="lt-tabs tabbedwidget ticketTabs" style="visibility:hidden;" data-tabs data-tabs-persist="url">
@@ -134,12 +95,8 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
             leantime.dateController.initDatePicker(".dates");
             leantime.dateController.initDateRangePicker(".editFrom", ".editTo");
 
-            leantime.ticketsController.initTagsInput();
-
             leantime.ticketsController.initEffortDropdown();
             leantime.ticketsController.initStatusDropdown();
-
-            jQuery(".ticketTabs select").chosen();
 
         <?php } else { ?>
             leantime.authController.makeInputReadonly("#global-modal-content");
