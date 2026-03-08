@@ -171,15 +171,23 @@ if (typeof jQuery !== 'undefined') {
 
     if (typeof leantime === 'undefined' || !leantime.componentInitializer) { return; }
 
+    // SlimSelect is loaded by entry-global-component.js which appears before
+    // entry-app.js in <head>. Both are type="module" (deferred, execute in
+    // source order), so SlimSelect is available when this code runs.
+    // The guard below is a safety net only.
     leantime.componentInitializer.register(
         'select.select-chip',
         function (el) {
-            if (typeof SlimSelect === 'undefined') { return; }
+            if (typeof SlimSelect === 'undefined') {
+                console.warn('[chipSelect] SlimSelect not loaded — skipping', el);
+                return;
+            }
 
-            // Snapshot selected state and chip HTML before SlimSelect rewrites the DOM.
-            // Browsers strip child elements from <option> tags, so badge HTML is stored
-            // in data-chip-html attributes. We feed it to SlimSelect via setData()
-            // which accepts an innerHTML field and renders it in both trigger and list.
+            // Snapshot selected state and chip HTML before SlimSelect rewrites
+            // the DOM. Browsers strip child elements from <option> tags, so
+            // badge HTML is stored in data-chip-html attributes. We feed it to
+            // SlimSelect via setData() which accepts an innerHTML field and
+            // renders it in both the trigger and the dropdown list.
             var optionData = Array.prototype.map.call(el.options, function (opt) {
                 return {
                     value:     opt.value,
@@ -196,11 +204,19 @@ if (typeof jQuery !== 'undefined') {
                     showSearch:    false,
                     allowDeselect: false,
                     openPosition:  'auto',
+                    // Append dropdown panel to document.body so it escapes any
+                    // ancestor with overflow:auto/hidden (e.g. .widgetContent).
+                    // SlimSelect v1 positions the panel via getBoundingClientRect()
+                    // on open, so it renders correctly regardless of scroll offset.
+                    addToBody:     true,
                 });
 
-                // Feed option data with innerHTML so SlimSelect renders badges in
-                // both the trigger display and the dropdown list.
+                console.log('[chipSelect] constructed', el.id, 'ss-main present:', !!el.nextElementSibling?.classList.contains('ss-main'), 'parentNode:', !!el.parentNode);
+
+                // Feed option data with innerHTML so SlimSelect renders badges
+                // in both the trigger display and the dropdown list.
                 el._slimSelect.setData(optionData);
+                console.log('[chipSelect] after setData', el.id, 'ss-main present:', !!el.parentNode?.querySelector('.ss-main'), 'display:', el.style.display);
 
             } catch (e) {
                 console.error('[chipSelect] SlimSelect init failed:', e);
@@ -210,6 +226,7 @@ if (typeof jQuery !== 'undefined') {
             sentinel:  'data-chip-init',
             destroyFn: function (el) {
                 if (el._slimSelect) {
+                    console.log('[chipSelect] DESTROY called on', el.id, new Error().stack);
                     try { el._slimSelect.destroy(); } catch (e) { /* noop */ }
                     el._slimSelect = null;
                 }

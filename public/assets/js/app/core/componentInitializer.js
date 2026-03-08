@@ -52,6 +52,7 @@ leantime.componentInitializer = (function () {
      */
     function register(selector, initFn, opts) {
         opts = opts || {};
+        console.log('[ci] register:', selector);
         registry.push({
             selector:  selector,
             initFn:    initFn,
@@ -70,10 +71,16 @@ leantime.componentInitializer = (function () {
         var root = container || document.body;
         if (!root) { return; }
 
+        console.log('[ci] init called, root=', root.id || root.tagName, 'registry size=', registry.length);
         registry.forEach(function (entry) {
-            root.querySelectorAll(entry.selector).forEach(function (el) {
-                if (el.hasAttribute(entry.sentinel)) { return; }
+            var matches = root.querySelectorAll(entry.selector);
+            if (matches.length > 0) {
+                console.log('[ci]  ->', entry.selector, 'found', matches.length, 'elements');
+            }
+            matches.forEach(function (el) {
+                if (el.hasAttribute(entry.sentinel)) { console.log('[ci]    skip (sentinel)', el.id || el); return; }
                 try {
+                    console.log('[ci]    INIT', entry.selector, el.id || el);
                     el.setAttribute(entry.sentinel, 'true');
                     entry.initFn(el);
                 } catch (err) {
@@ -117,12 +124,17 @@ leantime.componentInitializer = (function () {
 
     // 2. After HTMX swaps — scoped to the swapped subtree only
     document.addEventListener('htmx:afterSettle', function (e) {
+        console.log('[ci] htmx:afterSettle fired, elt=', e.detail?.elt?.id || e.detail?.elt?.tagName || 'none');
         init(e.detail.elt || document.body);
     });
 
-    // 3. Cleanup before HTMX replaces DOM (gives components a chance to tear down)
+    // 3. Cleanup before HTMX replaces DOM (gives components a chance to tear down).
+    //    Only destroy when HTMX will actually perform the swap (shouldSwap=true).
+    //    When shouldSwap is false the swap was either cancelled or already handled
+    //    by a custom handler (e.g. the innerHTML workaround in entry-htmx.js)
+    //    which may have already replaced the content and re-initialized components.
     document.addEventListener('htmx:beforeSwap', function (e) {
-        if (e.detail.target) { destroyWithin(e.detail.target); }
+        if (e.detail.shouldSwap && e.detail.target) { destroyWithin(e.detail.target); }
     });
 
     // ── Public API ────────────────────────────────────────────────────────────

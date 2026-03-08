@@ -76,7 +76,7 @@ document.addEventListener('htmx:beforeSwap', function (evt) {
 // swap styles are left to HTMX's default handling.
 document.addEventListener('htmx:beforeSwap', function (evt) {
     var detail = evt.detail;
-    if (!detail.shouldSwap) return;
+    if (!detail.shouldSwap) { console.log('[htmx-fix] beforeSwap: shouldSwap already false, skipping'); return; }
 
     // Only intercept innerHTML swaps (the broken swap style in 2.0.8)
     var swapStyle = detail.requestConfig
@@ -87,11 +87,14 @@ document.addEventListener('htmx:beforeSwap', function (evt) {
         var swapAttr = detail.target.closest('[hx-swap]');
         swapStyle = swapAttr ? swapAttr.getAttribute('hx-swap').split(/\s/)[0] : 'innerHTML';
     }
+    console.log('[htmx-fix] beforeSwap: swapStyle=', swapStyle, 'target=', detail.target?.id || detail.target);
     if (swapStyle !== 'innerHTML') return;
 
     var target = detail.target;
     var response = detail.serverResponse;
     if (!target || !response) return;
+
+    console.log('[htmx-fix] intercepting innerHTML swap for', target.id, 'response length:', response.length);
 
     // Prevent HTMX's broken default swap
     detail.shouldSwap = false;
@@ -125,6 +128,17 @@ document.addEventListener('htmx:beforeSwap', function (evt) {
 
     // Let HTMX process the new content for hx-* attributes
     htmx.process(target);
+
+    // Dispatch the lifecycle events HTMX would have fired during a normal swap.
+    // Setting shouldSwap = false above skips HTMX's entire swap/settle pipeline,
+    // so htmx:afterSettle, htmx:afterSwap, and htmx.onLoad never fire. Many
+    // subsystems depend on these events (componentInitializer, tabsController,
+    // tiptap editors, accessibility enhancements, etc.). We dispatch them
+    // manually so the rest of the app behaves as if a normal swap occurred.
+    var afterDetail = { elt: target, target: target };
+    console.log('[htmx-fix] dispatching afterSettle+afterSwap for', target.id, 'chips in DOM:', target.querySelectorAll('select.select-chip').length);
+    target.dispatchEvent(new CustomEvent('htmx:afterSettle', { bubbles: true, detail: afterDetail }));
+    target.dispatchEvent(new CustomEvent('htmx:afterSwap',   { bubbles: true, detail: afterDetail }));
 });
 
 // ---------------------------------------------------------------------------

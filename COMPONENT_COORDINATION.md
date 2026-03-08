@@ -9,7 +9,7 @@ This document is the **central coordination file** for the Leantime component st
 4. Update the Progress Tracker when done
 5. Add Phase 2 candidate patterns to the Domain Component Candidates section
 
-Last updated: `actions.chip` migration COMPLETE — all remaining usages in shared components (`tickets/ticket-card.blade.php`, `tickets/subtasks.blade.php`) converted to `x-tickets::chips.*` convenience components. Phase 0 fully done.
+Last updated: Dashboard/Widgets domain review. Fixed 3 bugs: (1) dashboard top margin, (2) MyToDos widget disappearing on status/date updates — all action-only HxController methods now return `emptyResponse()`, (3) stale JS init calls removed from myToDos partial.
 
 ---
 
@@ -944,6 +944,46 @@ Inside a `<x-component ...>` opening tag, the Blade compiler parses attribute va
 - The same rule applies to ALL domain component namespaces (widgets, projects, goals, kanban, etc.) — the `components/` segment is implicit from the namespace registration.
 - All 13 occurrences in showAll, showAllMilestones, showAllMilestonesOverview, showKanban, showList were fixed during the Phase 2 syntax review.
 
+### Dashboard Domain Review (Domain-by-Domain Pass)
+
+**Domain**: Dashboard + Widgets
+**Status**: Reviewed and fixed — 3 bugs found and resolved.
+
+#### Bug 1 — Dashboard top spacing (widgets sit under the menu)
+- `.maincontent` has `margin-top: -95px` in CSS, designed to overlap the `.pageheader` gradient.
+- `home.blade.php` has no pageheader, so it used `tw:mt-0` to cancel the negative margin. But this left zero breathing room between the fixed 48px top nav and the grid.
+- **Fix**: Added `tw:pt-4` to `home.blade.php`'s `.maincontent` div, giving the grid top padding without affecting the negative margin compensation.
+
+#### Bug 2 & 3 — MyToDos widget disappears on status/date update (and any save action)
+- **Root cause**: Action-only methods in `MyToDos.php` (`updateStatus`, `updateDueDate`, `updateMilestone`, `toggleTaskCollapse`, `saveSorting`) returned `void` or a plain string. `Frontcontroller::executeAction()` checks `$response instanceof Response` — on void/string, it falls through to `$controllerClass->getResponse($response)` → `displayFragment($view, null)` which renders the **entire `myToDos` partial** with empty template variables (since `get()` was never called). The rendered empty/broken HTML gets swapped into wherever the HTMX call targeted, replacing the widget content with an empty-state or broken view.
+- **Fix**: All action-only methods now explicitly `return $this->tpl->emptyResponse()`. Added `$this->setHTMXEvent('HTMX.ShowNotification')` so success/error toasts still fire.
+- **Rule for all HxControllers**: Any method that performs a side-effect only (patch, save, toggle) MUST return `$this->tpl->emptyResponse()`. Never return `void` from an HxController action — always return a `Response`.
+
+#### Bug 3b — Stale JS init calls in myToDos.blade.php
+- `initMilestoneDropdown()` and `initStatusDropdown()` targeted old Bootstrap dropdown classes (`.milestoneDropdown`, `.statusDropdown`). These classes no longer exist — chips use SlimSelect now.
+- `.maincontentinner` reference in `makeInputReadonly` fallback was wrong — widgets live inside `.widgetContent`, not `.maincontentinner`.
+- **Fix**: Removed both stale init calls. Changed readonly selector to `.widgetContent`.
+
+#### Key architecture insight — HxController response contract
+```
+// CORRECT — action-only (patch/save/toggle):
+public function updateStatus(): Response {
+    // ...patch...
+    return $this->tpl->emptyResponse();   // ← always return Response
+}
+
+// CORRECT — full re-render:
+public function get(): void {
+    // assigns tpl vars; Frontcontroller calls getResponse() → displayFragment()
+}
+
+// WRONG — do NOT do this:
+public function updateStatus() {
+    // ...patch...
+    // falls through to getResponse() → renders partial with empty vars → widget disappears
+}
+```
+
 ### ticket-card.blade.php and subtasks.blade.php — Final actions.chip Removal
 - `app/Views/Templates/components/tickets/ticket-card.blade.php` used `actions.chip` for status (always) and milestone (when `$cardType == "full"`). Converted to `<x-tickets::chips.status-select :ticket="(object)$row" :statuses="$statusLabels" />` and `<x-tickets::chips.milestone-select :ticket="(object)$row" :milestones="$milestones" />`. The `(object)$row` cast is needed because the chip components expect an object with `->id`, `->status`, `->milestoneid` etc., while ticket-card receives `$row` as an array.
 - `app/Views/Templates/components/tickets/subtasks.blade.php` used `actions.chip` for effort and status per subtask. Converted to `<x-tickets::chips.effort-select :ticket="(object)$subticket" :efforts="$efforts" />` and `<x-tickets::chips.status-select :ticket="(object)$subticket" :statuses="$statusLabels" />`. Removed `initEffortDropdown()` and `initStatusDropdown()` JS calls from the `<script>` block — SlimSelect auto-initializes on `.select-chip` elements.
@@ -1048,3 +1088,5 @@ Inside a `<x-component ...>` opening tag, the Blade compiler parses attribute va
 | Wire up ticket chip components to list/kanban views | ✅ Done | 5 | 5 | showAll, showAllMilestones, showAllMilestonesOverview, showKanban, showList — all inline chip @php blocks replaced with `<x-tickets::chips.*>` components |
 | Syntax Review — Full compile+PHP lint | ✅ Done | 315 | 317 | 315/317 files clean (2 exempt: showCanvasTop/Bottom split-file card). Fixed 9 files: headMenu (single-quote in component attr), canvasHelper (double-quote in component attr), stopwatch (array key quote), userInvite (raw PHP tag in component attr), showCanvasBottom/Top (split-file card — exempt), Files/showAll + browse (escaped quotes in `{{ }}`), showList (missing `</x-globals::elements.card>`), 5 ticket list files (`x-tickets::components.chips.*` → `x-tickets::chips.*`). |
 | Domain Component Extraction | Not Started | - | - | Pending Phase 1 completion |
+| **DOMAIN REVIEW PASS** | | | | |
+| Dashboard + Widgets | ✅ Done | 3 bugs fixed | - | (1) home.blade.php top padding tw:pt-4 added; (2) updateStatus/updateDueDate/updateMilestone/toggleTaskCollapse/saveSorting all return emptyResponse() — prevents widget disappear on save; (3) removed stale initMilestoneDropdown/initStatusDropdown JS calls, fixed makeInputReadonly selector to .widgetContent |

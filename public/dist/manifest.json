@@ -954,12 +954,12 @@
     "isEntry": true
   },
   "resources/css/main.css": {
-    "file": "assets/main-C1liKNgb.css",
+    "file": "assets/main-B1JDTFCG.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
   "resources/js/entry-app.js": {
-    "file": "assets/entry-app-D7tXzo6t.js",
+    "file": "assets/entry-app-Dap6Jumj.js",
     "name": "entry-app",
     "src": "resources/js/entry-app.js",
     "isEntry": true,
@@ -1080,7 +1080,7 @@
     ]
   },
   "resources/js/entry-htmx.js": {
-    "file": "assets/entry-htmx-yURhFR6R.js",
+    "file": "assets/entry-htmx-Dmq6tA_m.js",
     "name": "entry-htmx",
     "src": "resources/js/entry-htmx.js",
     "isEntry": true,

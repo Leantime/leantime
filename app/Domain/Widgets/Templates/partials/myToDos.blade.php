@@ -323,21 +323,16 @@
             var sortableEnabled = {{ $tpl->dispatchFilter('todoWidgetSortableEnabled', 'true') ? 'true' : 'false' }};
 
             @if(session('userdata.id') != null)
-                leantime.ticketsController.initMilestoneDropdown();
-                leantime.ticketsController.initStatusDropdown();
                 leantime.ticketsController.initDueDateTimePickers();
 
-
                 if(sortableEnabled) {
-
                     // Initialize the sortable lists for hierarchical tasks
                     jQuery('.sortable-list').nestedSortable();
-
                 }
 
             @else
                 if(sortableEnabled) {
-                    leantime.authController.makeInputReadonly(".maincontentinner");
+                    leantime.authController.makeInputReadonly(".widgetContent");
                 }
             @endif
         });

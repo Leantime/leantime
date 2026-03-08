@@ -490,6 +490,12 @@ img {
     flex: 1 1 auto;
 }
 
+/* Pages without a .pageheader (e.g. dashboard) need to cancel the negative
+   margin that normally pulls content up under the gradient banner. */
+.maincontent.no-pageheader {
+    margin-top: 0;
+}
+
 .maincontentinner {
     border-radius:var(--box-radius);
     background:var(--glass-background);
