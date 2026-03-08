@@ -20,6 +20,7 @@
     'inputSize' => null,
     'scale' => null,
     'bare' => false,
+    'variant' => null,   // null = standard | 'chip' = borderless pill (SlimSelect chip mode)
 ])
 
 @php
@@ -45,7 +46,24 @@
             . ($hasError ? ' tw:select-error' : '');
 @endphp
 
-@if($bare)
+@if($variant === 'chip')
+    {{--
+        Chip variant — a bare <select class="select-chip"> with no wrapper.
+        SlimSelect (chip mode) is auto-initialized by componentInitializer.
+        The caller puts HTML content (icons + badges) directly in <option> tags;
+        SlimSelect renders that innerHTML in both the trigger and the dropdown list.
+        HTMX attributes on the <select> fire on the native 'change' event.
+    --}}
+    <select
+        name="{{ $name }}"
+        id="{{ $selectId }}"
+        {{ $required ? 'required' : '' }}
+        {{ $disabled ? 'disabled' : '' }}
+        {{ $attributes->merge(['class' => 'select-chip']) }}
+    >
+        {{ $slot }}
+    </select>
+@elseif($bare)
     <select
         name="{{ $name }}{{ $multiple ? '[]' : '' }}"
         id="{{ $selectId }}"

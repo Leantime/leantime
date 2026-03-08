@@ -60,29 +60,19 @@ foreach ($allCanvas as $canvasRow) {
 
 <div class="row tw:mb-8">
     <div class="col-md-5">
-        <div class="bigNumberBox tw:py-7 tw:px-4">
+        <x-global::elements.big-number-box class="tw:py-7 tw:px-4">
             <h2>Progress: {{ round($goalStats['avgPercentComplete']) }}%</h2>
-
             <x-global::feedback.progress :value="round($goalStats['avgPercentComplete'])" :showLabel="false" class="tw:mt-1" />
-        </div>
+        </x-global::elements.big-number-box>
     </div>
     <div class="col-md-2">
-        <div class="bigNumberBox priority-border-4">
-            <h2>On Track</h2>
-            <span class="content">{{ $goalStats['goalsOnTrack'] }}</span>
-        </div>
+        <x-global::elements.big-number-box state="on-track" number="{{ $goalStats['goalsOnTrack'] }}" label="On Track" />
     </div>
     <div class="col-md-2">
-        <div class="bigNumberBox priority-border-3">
-            <h2>At Risk</h2>
-            <span class="content">{{ $goalStats['goalsAtRisk'] }}</span>
-        </div>
+        <x-global::elements.big-number-box state="at-risk" number="{{ $goalStats['goalsAtRisk'] }}" label="At Risk" />
     </div>
     <div class="col-md-3">
-        <div class="bigNumberBox priority-border-1">
-            <h2>Miss</h2>
-            <span class="content">{{ $goalStats['goalsMiss'] }}</span>
-        </div>
+        <x-global::elements.big-number-box state="miss" number="{{ $goalStats['goalsMiss'] }}" label="Miss" />
     </div>
 </div>
 

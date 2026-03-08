@@ -1402,7 +1402,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     background: var(--primary-background);
     color: var(--primary-color);
     border: 0;
-    padding-botom: 12px;
+    padding-bottom: 12px;
 }
 
 .tabbable > .tab-content {

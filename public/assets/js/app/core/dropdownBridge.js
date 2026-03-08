@@ -155,6 +155,71 @@ if (typeof jQuery !== 'undefined') {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// Chip Select — auto-init via componentInitializer
+//
+// Any <select class="select-chip"> is initialized as a SlimSelect in chip
+// mode: no search, no border, pill-shaped trigger that renders the selected
+// option's HTML badge markup.
+//
+// Browsers strip child elements from <option> tags, so badge HTML is stored
+// in data-chip-html on each <option> and injected into SlimSelect's rendered
+// DOM after init and whenever the dropdown opens.
+// ═══════════════════════════════════════════════════════════════════════════
+
+(function () {
+    'use strict';
+
+    if (typeof leantime === 'undefined' || !leantime.componentInitializer) { return; }
+
+    leantime.componentInitializer.register(
+        'select.select-chip',
+        function (el) {
+            if (typeof SlimSelect === 'undefined') { return; }
+
+            // Snapshot selected state and chip HTML before SlimSelect rewrites the DOM.
+            // Browsers strip child elements from <option> tags, so badge HTML is stored
+            // in data-chip-html attributes. We feed it to SlimSelect via setData()
+            // which accepts an innerHTML field and renders it in both trigger and list.
+            var optionData = Array.prototype.map.call(el.options, function (opt) {
+                return {
+                    value:     opt.value,
+                    text:      opt.text,
+                    innerHTML: opt.dataset.chipHtml || opt.text,
+                    selected:  opt.selected,
+                    disabled:  opt.disabled,
+                };
+            });
+
+            try {
+                el._slimSelect = new SlimSelect({
+                    select:        el,
+                    showSearch:    false,
+                    allowDeselect: false,
+                    openPosition:  'auto',
+                });
+
+                // Feed option data with innerHTML so SlimSelect renders badges in
+                // both the trigger display and the dropdown list.
+                el._slimSelect.setData(optionData);
+
+            } catch (e) {
+                console.error('[chipSelect] SlimSelect init failed:', e);
+            }
+        },
+        {
+            sentinel:  'data-chip-init',
+            destroyFn: function (el) {
+                if (el._slimSelect) {
+                    try { el._slimSelect.destroy(); } catch (e) { /* noop */ }
+                    el._slimSelect = null;
+                }
+            }
+        }
+    );
+
+})();
+
+// ═══════════════════════════════════════════════════════════════════════════
 // Chosen.js → SlimSelect Bridge
 // Replaces jQuery('.selector').chosen() with SlimSelect initialization.
 // Handles .chosen('destroy') by destroying the SlimSelect instance.

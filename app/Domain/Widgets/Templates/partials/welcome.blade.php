@@ -29,39 +29,19 @@
         <div class="row">
 
             <div class="col-md-3">
-                <div class="bigNumberBox">
-                    <div class="bigNumberBoxInner">
-                        <div class="bigNumberBoxNumber">⏱️ {{ $doneTodayCount }}/{{ $totalTodayCount }} </div>
-                        <div class="bigNumberBoxText">{{ __("welcome_widget.timeboxed_completed") }}</div>
-                    </div>
-                </div>
+                <x-global::elements.big-number-box number="⏱️ {{ $doneTodayCount }}/{{ $totalTodayCount }}" label="{{ __('welcome_widget.timeboxed_completed') }}" />
             </div>
 
             <div class="col-md-3">
-                <div class="bigNumberBox">
-                    <div class="bigNumberBoxInner">
-                        <div class="bigNumberBoxNumber">🥳 {{ $closedTicketsCount }} </div>
-                        <div class="bigNumberBoxText">{{ __("welcome_widget.tasks_completed") }}</div>
-                    </div>
-                </div>
+                <x-global::elements.big-number-box number="🥳 {{ $closedTicketsCount }}" label="{{ __('welcome_widget.tasks_completed') }}" />
             </div>
 
             <div class="col-md-3">
-                <div class="bigNumberBox">
-                    <div class="bigNumberBoxInner">
-                        <div class="bigNumberBoxNumber">📥 {{ $totalTickets }} </div>
-                        <div class="bigNumberBoxText">{{ __("welcome_widget.tasks_left") }}</div>
-                    </div>
-                </div>
+                <x-global::elements.big-number-box number="📥 {{ $totalTickets }}" label="{{ __('welcome_widget.tasks_left') }}" />
             </div>
 
             <div class="col-md-3">
-                <div class="bigNumberBox">
-                    <div class="bigNumberBoxInner">
-                        <div class="bigNumberBoxNumber">🎯 {{ $ticketsInGoals }} </div>
-                        <div class="bigNumberBoxText">{{ __("welcome_widget.goals_contributing_to") }}</div>
-                    </div>
-                </div>
+                <x-global::elements.big-number-box number="🎯 {{ $ticketsInGoals }}" label="{{ __('welcome_widget.goals_contributing_to') }}" />
             </div>
 
         </div>

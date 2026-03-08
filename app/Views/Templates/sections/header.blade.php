@@ -31,22 +31,22 @@
 <script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
 @vite([
-    'resources/js/compiled-htmx.js',
-    'resources/js/compiled-htmx-extensions.js',
-    'resources/js/compiled-frameworks.js',
-    'resources/js/compiled-global-component.js',
-    'resources/js/compiled-calendar-component.js',
-    'resources/js/compiled-table-component.js',
-    'resources/js/compiled-tiptap-toolbar.js',
-    'resources/js/compiled-tiptap-editor.js',
-    'resources/js/compiled-gantt-component.js',
-    'resources/js/compiled-chart-component.js',
+    'resources/js/entry-htmx.js',
+    'resources/js/entry-htmx-extensions.js',
+    'resources/js/entry-frameworks.js',
+    'resources/js/entry-global-component.js',
+    'resources/js/entry-calendar-component.js',
+    'resources/js/entry-table-component.js',
+    'resources/js/entry-tiptap-toolbar.js',
+    'resources/js/entry-tiptap-editor.js',
+    'resources/js/entry-gantt-component.js',
+    'resources/js/entry-chart-component.js',
 ])
 
 @dispatchEvent('afterScriptLibTags')
 
 <!-- app -->
-@vite(['resources/js/compiled-app.js'])
+@vite(['resources/js/entry-app.js'])
 @dispatchEvent('afterMainScriptTag')
 
 <!-- theme & custom -->

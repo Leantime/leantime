@@ -62,44 +62,32 @@
             <x-global::elements.icon name="star" /> {{ __('subtitles.details') }}
         </h4>
 
-        {{-- Status --}}
-        <x-globals::forms.form-field label-text="{{ __('label.todo_status') }}" name="status">
-            <x-globals::forms.select
-                id="status-select"
-                name="status"
-                data-placeholder="{{ isset($ticket->status) ? ($statusLabels[$ticket->status]['name'] ?? '') : '' }}"
-            >
-                @foreach($statusLabels as $key => $label)
-                    <option value="{{ $key }}"
-                        {{ $ticket->status == $key ? "selected='selected'" : '' }}
-                    >{{ e($label['name']) }}</option>
-                @endforeach
-            </x-globals::forms.select>
-        </x-globals::forms.form-field>
+        {{-- Status chip — patches live via HTMX on selection --}}
+        <div class="form-group">
+            <x-tickets::chips.status-select
+                :ticket="$ticket"
+                :statuses="$statusLabels"
+                :show-label="true"
+            />
+        </div>
 
-        {{-- Priority --}}
-        <x-globals::forms.form-field label-text="{{ __('label.priority') }}" name="priority">
-            <x-globals::forms.select id="priority" name="priority">
-                <option value="">{{ __('label.priority_not_defined') }}</option>
-                @foreach($tpl->get('priorities') as $priorityKey => $priorityValue)
-                    <option value="{{ $priorityKey }}"
-                        {{ $priorityKey == $ticket->priority ? "selected='selected'" : '' }}
-                    >{{ $priorityValue }}</option>
-                @endforeach
-            </x-globals::forms.select>
-        </x-globals::forms.form-field>
+        {{-- Priority chip --}}
+        <div class="form-group">
+            <x-tickets::chips.priority-select
+                :ticket="$ticket"
+                :priorities="$tpl->get('priorities')"
+                :show-label="true"
+            />
+        </div>
 
-        {{-- Effort --}}
-        <x-globals::forms.form-field label-text="{{ __('label.effort') }}" name="storypoints">
-            <x-globals::forms.select id="storypoints" name="storypoints">
-                <option value="">{{ __('label.effort_not_defined') }}</option>
-                @foreach($tpl->get('efforts') as $effortKey => $effortValue)
-                    <option value="{{ $effortKey }}"
-                        {{ $effortKey == $ticket->storypoints ? "selected='selected'" : '' }}
-                    >{{ $effortValue }}</option>
-                @endforeach
-            </x-globals::forms.select>
-        </x-globals::forms.form-field>
+        {{-- Effort chip --}}
+        <div class="form-group">
+            <x-tickets::chips.effort-select
+                :ticket="$ticket"
+                :efforts="$tpl->get('efforts')"
+                :show-label="true"
+            />
+        </div>
 
         {{-- Editor (Assigned to) --}}
         <x-globals::forms.form-field label-text="{{ __('label.editor') }}" name="editorId">
@@ -153,18 +141,16 @@
             <x-global::elements.icon name="folder_open" /> {{ __('subtitles.organization') }}
         </h4>
 
-        {{-- Type --}}
-        <x-globals::forms.form-field label-text="{{ __('label.todo_type') }}" name="type">
-            <x-globals::forms.select id="type" name="type">
-                @foreach($ticketTypes as $types)
-                    <option value="{{ strtolower($types) }}"
-                        {{ strtolower($types) == strtolower($ticket->type ?? '') ? "selected='selected'" : '' }}
-                    >{{ __('label.' . strtolower($types)) }}</option>
-                @endforeach
-            </x-globals::forms.select>
-        </x-globals::forms.form-field>
+        {{-- Type chip --}}
+        <div class="form-group">
+            <x-tickets::chips.type-select
+                :ticket="$ticket"
+                :ticket-types="$ticketTypes"
+                :show-label="true"
+            />
+        </div>
 
-        {{-- Project --}}
+        {{-- Project (keep as plain select — project changes need full-page context) --}}
         <x-globals::forms.form-field label-text="{{ __('label.project') }}" name="projectId">
             <x-globals::forms.select name="projectId" class="tw:w-full">
                 @foreach($allAssignedprojects as $project)
@@ -179,32 +165,23 @@
             </x-globals::forms.select>
         </x-globals::forms.form-field>
 
-        {{-- Milestones --}}
-        <x-globals::forms.form-field label-text="{{ __('label.milestone') }}" name="milestoneid">
-            <x-globals::forms.select name="milestoneid">
-                <option value="">{{ __('label.not_assigned_to_milestone') }}</option>
-                @foreach($tpl->get('milestones') as $milestoneRow)
-                    <option value="{{ $milestoneRow->id }}"
-                        {{ ($ticket->milestoneid == $milestoneRow->id) ? "selected='selected'" : '' }}
-                    >{{ e($milestoneRow->headline) }}</option>
-                @endforeach
-            </x-globals::forms.select>
-        </x-globals::forms.form-field>
+        {{-- Milestone chip --}}
+        <div class="form-group">
+            <x-tickets::chips.milestone-select
+                :ticket="$ticket"
+                :milestones="$tpl->get('milestones')"
+                :show-label="true"
+            />
+        </div>
 
-        {{-- Sprint --}}
-        <x-globals::forms.form-field label-text="{{ __('label.sprint') }}" name="sprint">
-            <x-globals::forms.select id="sprint-select" name="sprint"
-                    data-placeholder="{{ $ticket->sprint }}">
-                <option value="">{{ __('label.backlog') }}</option>
-                @if($tpl->get('sprints'))
-                    @foreach($tpl->get('sprints') as $sprintRow)
-                        <option value="{{ $sprintRow->id }}"
-                            {{ $ticket->sprint == $sprintRow->id ? "selected='selected'" : '' }}
-                        >{{ e($sprintRow->name) }}</option>
-                    @endforeach
-                @endif
-            </x-globals::forms.select>
-        </x-globals::forms.form-field>
+        {{-- Sprint chip --}}
+        <div class="form-group">
+            <x-tickets::chips.sprint-select
+                :ticket="$ticket"
+                :sprints="$tpl->get('sprints') ?: []"
+                :show-label="true"
+            />
+        </div>
 
         {{-- Related --}}
         <x-globals::forms.form-field label-text="{{ __('label.related_to') }}" name="dependingTicketId">

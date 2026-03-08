@@ -193,13 +193,84 @@ leantime.menuController = (function () {
 
     };
 
+    /**
+     * Updates the active state of left nav menu items based on the current URL.
+     * Called after HTMX boosted navigation swaps content without reloading the nav.
+     */
+    var updateLeftNavActiveState = function () {
+
+        var currentPath = window.location.pathname.replace(/\/+$/, '');
+        var navLinks = document.querySelectorAll('.leftmenu .nav-tabs.nav-stacked .dropdown ul li:not(.submenuToggle):not(.title):not(.separator) a[href]');
+        var bestMatch = null;
+        var bestMatchLength = 0;
+
+        navLinks.forEach(function (link) {
+            var linkItem = link.closest('li');
+            if (!linkItem) {
+                return;
+            }
+
+            // Remove active from all items first
+            linkItem.classList.remove('active');
+
+            // Extract path from href (strip origin if absolute URL)
+            var linkPath = link.getAttribute('href');
+            try {
+                var url = new URL(linkPath, window.location.origin);
+                linkPath = url.pathname.replace(/\/+$/, '');
+            } catch (e) {
+                return;
+            }
+
+            // Match: current path starts with or equals the link path
+            // Use the longest match to handle overlapping paths (e.g. /tickets/showKanban vs /tickets/roadmap)
+            if (linkPath && currentPath.indexOf(linkPath) === 0 && linkPath.length > bestMatchLength) {
+                bestMatch = linkItem;
+                bestMatchLength = linkPath.length;
+            }
+        });
+
+        // Also check the fixed settings menu point
+        var fixedItems = document.querySelectorAll('.fixedMenuPoint a[href]');
+        fixedItems.forEach(function (link) {
+            var linkItem = link.closest('.fixedMenuPoint');
+            if (!linkItem) {
+                return;
+            }
+            linkItem.classList.remove('active');
+
+            var linkPath = link.getAttribute('href');
+            try {
+                var url = new URL(linkPath, window.location.origin);
+                linkPath = url.pathname.replace(/\/+$/, '');
+            } catch (e) {
+                return;
+            }
+
+            if (linkPath && currentPath.indexOf(linkPath) === 0 && linkPath.length > bestMatchLength) {
+                bestMatch = linkItem;
+                bestMatchLength = linkPath.length;
+            }
+        });
+
+        if (bestMatch) {
+            bestMatch.classList.add('active');
+        }
+    };
+
+    // Listen for HTMX history pushes to update active nav state after boosted navigation
+    document.addEventListener('htmx:pushedIntoHistory', function () {
+        updateLeftNavActiveState();
+    });
+
     // Make public what you want to have public, everything else is private
     return {
         toggleSubmenu:toggleSubmenu,
         initProjectSelector:initProjectSelector,
         initLeftMenuHamburgerButton:initLeftMenuHamburgerButton,
         updateGroupDropdownSetting: updateGroupDropdownSetting,
-        toggleProjectDropDownList:toggleProjectDropDownList
+        toggleProjectDropDownList:toggleProjectDropDownList,
+        updateLeftNavActiveState:updateLeftNavActiveState
     };
 
 })();

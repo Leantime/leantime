@@ -121,6 +121,10 @@ leantime.modals = (function () {
             typeof window.leantime.tiptapController.initEditors === 'function') {
             window.leantime.tiptapController.initEditors(container);
         }
+        // Initialize all registered components (chips, date pickers, etc.)
+        if (window.leantime && window.leantime.componentInitializer) {
+            window.leantime.componentInitializer.init(container);
+        }
     }
 
     // ── Response Handler (shared by open + form submit) ────────────────

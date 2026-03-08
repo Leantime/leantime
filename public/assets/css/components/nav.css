@@ -258,7 +258,7 @@ a.barmenu:hover {
 
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
-    color: var(--nav-link-color);
+    color: var(--main-menu-link-active-color);
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {
@@ -382,8 +382,9 @@ a.barmenu:hover {
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
-    background: var(--hover-bg);
-
+    background: var(--main-menu-link-active-bg);
+    color: var(--main-menu-link-active-color);
+    font-weight: var(--font-weight-bold);
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {

@@ -5,6 +5,7 @@
     color:var(--main-action-hover-color);
     border-color:var(--main-action-hover-bg);
     border-radius: var(--element-radius);
+    text-decoration: none;
 }
 
 input, button, select, textarea {
@@ -677,6 +678,7 @@ body button.btn.btn-circle:hover {
 .btn-icon-only:hover {
     background: var(--hover-bg);
     color: var(--primary-font-color);
+    text-decoration: none;
 }
 .btn-icon-only:focus-visible {
     outline: 2px solid var(--accent1);
@@ -921,7 +923,7 @@ div.border {
 }
 
 body select {
-    max-witdh:206px;
+    max-width: 206px;
 }
 
 input.secretInput,
@@ -2244,3 +2246,144 @@ body .btn.btn-round-icon {
     border:none;
     color:var(--interactive-icon-color);
 }
+
+/* ── Chip Select (forms.select variant="chip") ────────────────────────────────
+   A <select class="select-chip"> is wrapped by SlimSelect which copies all
+   classes from the <select> to its container div. So the container gets both
+   .ss-main and .select-chip, allowing targeted overrides below.
+
+   Visual goal: a borderless pill that looks like a badge. Clicking it opens
+   a dropdown whose items render the option's innerHTML (icon + badge markup).
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Hide the original <select> — SlimSelect replaces it visually */
+select.select-chip {
+    display: none;
+}
+
+/* Container — override default ss-main sizing to be auto-width, no margin */
+.ss-main.select-chip {
+    display: inline-flex;
+    width: auto !important;
+    min-width: 0 !important;
+    margin-bottom: 0;
+}
+
+/* Trigger button — borderless pill, sized to content */
+.ss-main.select-chip .ss-single-selected {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: auto;
+    padding: 2px 6px 2px 4px;
+    border: none !important;
+    border-radius: var(--box-radius-large);
+    background: transparent !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    width: auto;
+    min-width: 0;
+    transition: background-color 0.15s ease;
+}
+
+.ss-main.select-chip .ss-single-selected:hover {
+    background: var(--main-action-hover-bg) !important;
+}
+
+/* Selected value display area — shrink to content */
+.ss-main.select-chip .ss-single-selected .placeholder {
+    flex: 0 0 auto;
+    width: auto;
+    line-height: normal;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Arrow icon — small, muted */
+.ss-main.select-chip .ss-single-selected .ss-arrow {
+    flex: 0 0 auto;
+    margin: 0 0 0 2px;
+}
+
+.ss-main.select-chip .ss-single-selected .ss-arrow span {
+    border-color: var(--primary-font-color);
+    opacity: 0.5;
+    padding: 2px;
+}
+
+/* Dropdown content panel */
+.ss-main.select-chip .ss-content {
+    border: 1px solid var(--main-border-color);
+    border-radius: var(--box-radius);
+    background: var(--secondary-background);
+    box-shadow: var(--regular-shadow);
+    min-width: 160px;
+    width: auto;
+    z-index: var(--zlayer-5, 1050);
+}
+
+/* Hide the search bar (showSearch: false handles this in JS, CSS as fallback) */
+.ss-main.select-chip .ss-search {
+    display: none !important;
+}
+
+/* List items — comfortable padding, flex so icon + text align */
+.ss-main.select-chip .ss-content .ss-list .ss-option {
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: var(--primary-font-color);
+}
+
+.ss-main.select-chip .ss-content .ss-list .ss-option:hover,
+.ss-main.select-chip .ss-content .ss-list .ss-option.ss-highlighted {
+    background: var(--dropdown-link-hover-bg);
+    color: var(--dropdown-link-hover-color);
+}
+
+.ss-main.select-chip .ss-content .ss-list .ss-option.ss-option-selected {
+    background: var(--dropdown-link-hover-bg);
+    opacity: 0.8;
+}
+
+/* Ensure inline elements inside options (spans, icons) lay out correctly */
+.ss-main.select-chip .ss-content .ss-list .ss-option * {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+/* ── Chip badge colours (used inside <option> innerHTML) ─────────────────
+   These classes mirror the .label-* system from dropdowns.css but scoped
+   to chip badge spans so they don't conflict with the dropdown link rules.
+   ────────────────────────────────────────────────────────────────────── */
+
+.chip-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 7px 1px 5px;
+    border-radius: var(--box-radius-large);
+    font-size: var(--font-size-s);
+    line-height: 20px;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.chip-badge .chip-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* Semantic colour states — solid fill */
+.chip-badge.state-new       { background: var(--grey);      color: var(--grey-text-color); }
+.chip-badge.state-inprogress{ background: var(--dark-blue);  color: var(--dark-blue-text-color); }
+.chip-badge.state-done      { background: var(--green);      color: var(--green-text-color); }
+.chip-badge.state-critical  { background: var(--red);        color: var(--red-text-color); }
+.chip-badge.state-high      { background: var(--dark-red);   color: var(--dark-red-text-color); }
+.chip-badge.state-medium    { background: var(--yellow);     color: var(--yellow-text-color); }
+.chip-badge.state-low       { background: var(--blue);       color: var(--blue-text-color); }
+.chip-badge.state-trivial   { background: var(--grey);       color: var(--grey-text-color); }
+.chip-badge.state-default   { background: var(--grey);       color: var(--grey-text-color); }

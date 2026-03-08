@@ -29,6 +29,6 @@
     </script>
 @endif
 
-@vite(['resources/js/compiled-footer.js'])
+@vite(['resources/js/entry-footer.js'])
 
 @dispatchEvent('beforeBodyClose')
