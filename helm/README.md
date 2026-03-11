@@ -57,7 +57,7 @@ helm install leantime -f values.yaml ./leantime/helm
 | app.s3.region | string | `""` | S3 region |
 | app.s3.secret | string | `""` | S3 secret |
 | app.s3.usePathStyleEndpoint | string | `"false"` | Sets wether or not use path-style endpoint |
-| app.session.expiration | int | `28800` | Session expiration |
+| app.session.expiration | int | `480` | Session expiration in minutes (default: 8 hours) |
 | app.session.password | string | `"changeme"` | Salting sessions. Replace with a strong password |
 | app.sitename | string | `"Leantime"` | Sets the name for the instance |
 | autoscaling.enabled | bool | `false` |  |
