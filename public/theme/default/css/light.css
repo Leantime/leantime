@@ -23,17 +23,17 @@
     --primary-content-bg-opacity: 0.15;
     --main-titles-color: #fff;
 
-    --primary-background: rgba(255, 255, 255, 0.8);
-    --secondary-background: rgba(255, 255, 255, 1);
+    --primary-background: var(--color-surface-page);
+    --secondary-background: var(--color-surface-card);
     --layered-background: rgba(255, 255, 255, 0.9);
     --light-layered-background: rgba(255, 255, 255, 0.4);
 
-    --primary-font-color: #333333;
+    --primary-font-color: var(--color-text-default);
     --secondary-font-color: #000;
 
     --neutral: rgba(230, 230, 230, 0.8);
     --solid-neutral: rgba(220, 220, 220, 1);
-    --neutral-background: rgba(240, 240, 240, 0.7);
+    --neutral-background: var(--color-surface-inset);
 
     --col-title-bg: rgb(255, 255, 255, 1);
     --col-content-bg:  rgba(255,255,255, 0.8);
@@ -47,9 +47,9 @@
     --left-panel-bg: transparent;
     --content-bg: var(--secondary-background);
 
-    --glass-blur: blur( 8px );
+    --glass-blur: blur(8px);
     --glass-background: rgba(255,255,255,0.85);
-    --glass-border: 1px solid rgba(255,255,255,0.9);
+    --glass-border: rgba(255,255,255,0.2);
 
     --main-action-bg: var(--accent1);
     --main-action-color: var(--accent1-color);
@@ -81,7 +81,8 @@
 
     --dropdown-link-bg:var(--secondary-background);
     --dropdown-link-color: var(--primary-font-color);
-    --dropdown-link-hover-bg: var(--tab-active-background);
+    --hover-bg: rgba(0, 0, 0, 0.07);
+    --dropdown-link-hover-bg: var(--hover-bg);
     --dropdown-link-hover-color: var(--primary-font-color);
 
     --input-background: #fff;
@@ -91,7 +92,7 @@
     --header-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 90%);
     --element-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 100%);
 
-    --primary-font-family: 'Roboto', 'Helvetica Neue', Helvetica, sans-serif;
+    --primary-font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 
     --font-size-xs: 10px;
     --font-size-s: 12px;
@@ -101,20 +102,24 @@
     --font-size-xl: 18px;
     --font-size-xxl: 20px;
     --font-size-xxxl: 24px;
+    --font-size-display-sm: 28px;
+    --font-size-display-md: 36px;
+    --font-size-display-lg: 40px;
+    --font-size-display-xl: 120px;
 
     --main-border-color:rgba(220,220,220, 1);
     --main-border-color-hover:rgba(200,200,200, 0.9);
 
     /* Softer shadows */
-    --min-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
-    --regular-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
-    --large-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    --min-shadow: var(--shadow-s);
+    --regular-shadow: var(--shadow-m);
+    --large-shadow: var(--shadow-l);
 
     --box-radius-large: 24px;
     --box-radius: 16px;
     --box-radius-small: 8px;
-    --element-radius: 16px;
-    --input-radius: 15px;
+    --element-radius: 10px;
+    --input-radius: 8px;
 
     --input-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);
     --input-padding: 4px 10px;
@@ -176,15 +181,15 @@
     --teal: #1bbbb1;
     --teal-text-color: #fff;
 
-    --zlayer-1: 1; /*Background*/
-    --zlayer-2: 5; /* Maincontentinnnter */
-    --zlayer-3: 10; /* Element contentinner */
-    --zlayer-4: 15; /* over element contentinnter (headlines, status) */
-    --zlayer-5: 20; /* Highest layer on content inner (Filters) */
-    --zlayer-6: 25; /* modal */
-    --zlayer-7: 30; /* modal dropdowns*/
-    --zlayer-8: 35; /* modal dialogs */
-    --zlayer-9: 40; /* modal modals*/
+    --zlayer-1: 1;      /* Base content (editors, inputs) */
+    --zlayer-2: 2;      /* Content toolbar */
+    --zlayer-3: 5;      /* Elevated content (panels, main content) */
+    --zlayer-4: 10;     /* Over-content (image resizers, sortable, wiki) */
+    --zlayer-5: 15;     /* Header / nav bar */
+    --zlayer-6: 20;     /* Floating elements (kanban lines) */
+    --zlayer-7: 100;    /* Loaders / toggles */
+    --zlayer-8: 1000;   /* Dropdowns / pickers */
+    --zlayer-9: 1010;   /* Dropdown overlays (chosen) */
 
     --transparencyLayer: transparent;
 
@@ -250,17 +255,17 @@
     --accent4-light: rgba(246,16,103,0.06);
 
     /* Color: Text (aliases → existing tokens) */
-    --color-text-primary: var(--color-text-default);
+    --color-text-primary: var(--color-text-default); /* DEPRECATED: use --color-text-default */
     --color-text-secondary: var(--secondary-font-color);
     --color-text-muted: var(--interactive-icon-color);
     --color-text-disabled: var(--solid-neutral);
     --color-text-on-accent: var(--accent1-color);
 
     /* Color: Background (aliases → existing tokens) */
-    --color-bg-page: var(--color-surface-page);
-    --color-bg-card: var(--color-surface-card);
+    --color-bg-page: var(--color-surface-page); /* DEPRECATED: use --color-surface-page */
+    --color-bg-card: var(--color-surface-card); /* DEPRECATED: use --color-surface-card */
     --color-bg-elevated: var(--layered-background);
-    --color-bg-muted: var(--color-surface-inset);
+    --color-bg-muted: var(--color-surface-inset); /* DEPRECATED: use --color-surface-inset */
     --color-bg-hover: var(--col-hover-bg);
     --color-bg-input: var(--input-background);
 
@@ -271,9 +276,9 @@
 
     /* Shadow */
     --shadow-xs: var(--input-shadow);
-    --shadow-sm: var(--shadow-s);
-    --shadow-md: var(--shadow-m);
-    --shadow-lg: var(--shadow-l);
+    --shadow-sm: var(--shadow-s); /* DEPRECATED: use --shadow-s */
+    --shadow-md: var(--shadow-m); /* DEPRECATED: use --shadow-m */
+    --shadow-lg: var(--shadow-l); /* DEPRECATED: use --shadow-l */
     --shadow-xl: 0 14px 48px rgba(0,0,0,0.13);
 
     /* Radius */
@@ -310,12 +315,6 @@
     --line-height-relaxed: 1.6;
     --line-height-loose: 1.75;
 
-    /* Typography: Display sizes */
-    --font-size-display-sm: 28px;
-    --font-size-display-md: 36px;
-    --font-size-display-lg: 40px;
-    --font-size-display-xl: 120px;
-
     /* Motion: Duration */
     --duration-fast: 0.1s;
     --duration-normal: 0.15s;
@@ -329,7 +328,7 @@
     --opacity-subdued: 0.7;
     --opacity-subtle: 0.85;
 
-    /* Glass extensions */
+    /* Glass (aliases → existing tokens) */
     --glass-bg: var(--glass-background);
     --glass-inset: inset 0 1px 0 rgba(255,255,255,0.1);
     --glass-bg-subtle: rgba(255, 255, 255, 0.92);
@@ -340,6 +339,7 @@
     --emboss-highlight: rgba(255,255,255,0.15);
 
     /* ═══ DESIGN SYSTEM v3 — BASE (PRIMITIVE) TOKENS ═══ */
+    /* Raw values. Never used directly in templates. */
 
     --lt-color-blue-300: #66b3ff;
     --lt-color-blue-400: #1976d2;
@@ -363,6 +363,7 @@
     --lt-spacing-12: 3rem;
 
     /* ═══ DESIGN SYSTEM v3 — FUNCTIONAL TOKENS ═══ */
+    /* Naming-doc target names (Section 4.4). Coexist with v2 aliases. */
 
     /* Colors: Brand */
     --color-brand-primary: var(--lt-color-blue-500);
@@ -374,7 +375,7 @@
     --color-surface-inset: rgba(240, 240, 240, 0.7);
     --color-surface-overlay: rgba(0, 0, 0, 0.5);
 
-    /* Colors: Text */
+    /* Colors: Text (naming-doc names) */
     --color-text-default: var(--lt-color-gray-800);
     --color-text-link: var(--color-brand-primary);
     --color-text-on-emphasis: #ffffff;
@@ -388,7 +389,7 @@
     /* Focus */
     --color-focus-ring: var(--lt-color-blue-300);
 
-    /* Typography: naming-doc scale */
+    /* Typography: naming-doc scale (s/m/l) */
     --text-s: 0.875rem;
     --text-m: 1rem;
     --text-l: 1.25rem;
@@ -396,54 +397,58 @@
     --font-family-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
     --font-weight-normal: var(--font-weight-body);
 
-    /* Radius: naming-doc scale */
+    /* Radius: naming-doc scale (s/m/l) */
     --radius-s: 0.25rem;
     --radius-m: 0.5rem;
     --radius-l: 1rem;
 
-    /* Shadow: naming-doc scale */
+    /* Shadow: naming-doc scale (s/m/l) */
     --shadow-s: 0px 2px 4px rgba(0, 0, 0, 0.05);
     --shadow-m: 0px 4px 8px rgba(0, 0, 0, 0.08);
     --shadow-l: 0px 8px 16px rgba(0, 0, 0, 0.1);
 
-    /* Z-index: semantic names */
+    /* Z-index: naming-doc semantic names */
     --z-dropdown: 1000;
     --z-sticky: 1100;
     --z-modal: 1300;
     --z-toast: 1400;
 
     /* ═══ DESIGN SYSTEM v3 — COMPONENT TOKENS ═══ */
+    /* Component-scoped tokens referencing functional layer. */
 
+    /* Button */
     --btn-bg: var(--color-brand-primary);
     --btn-color: var(--color-text-on-emphasis);
     --btn-radius: var(--radius-m);
 
+    /* Card */
     --card-bg: var(--color-surface-card);
     --card-border: var(--color-border-default);
     --card-radius: var(--radius-m);
     --card-shadow: var(--shadow-s);
 
+    /* Input */
     --input-bg: var(--color-bg-input);
     --input-border: var(--color-border-default);
     --input-text: var(--color-text-default);
 
+    /* Modal */
     --modal-bg: var(--color-surface-card);
     --modal-overlay: var(--color-surface-overlay);
     --modal-radius: var(--radius-l);
     --modal-shadow: var(--shadow-l);
 
+    /* Badge */
     --badge-radius: var(--radius-full);
 
+    /* Dropdown */
     --dropdown-bg: var(--color-surface-card);
     --dropdown-border: var(--color-border-default);
     --dropdown-shadow: var(--shadow-m);
 
 }
 
-.ss-option:hover {
-    color: white;
-    background-color: var(--accent1) !important;
-}
+
 
 /* ============================================
    LIGHT MODE ACCESSIBILITY ENHANCEMENTS
@@ -506,33 +511,8 @@ a:hover {
    CUSTOM INPUT COMPONENT FOCUS STATES
    =================================== */
 
-/* Chosen Dropdowns */
-.chosen-container-single .chosen-single:focus-visible,
-.chosen-container-multi .chosen-choices:focus-visible,
-.chosen-container-active.chosen-with-drop .chosen-single {
-    outline: 2px solid var(--accent1) !important;
-    outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
-}
-
-/* Fallback for keyboard focus when :focus-visible doesn't trigger */
-.chosen-container-single .chosen-single:focus,
-.chosen-container-multi .chosen-choices:focus {
-    outline: 2px solid var(--accent1) !important;
-    outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
-}
-
-/* Chosen dropdown search input */
-.chosen-container-active .chosen-search input[type="text"]:focus-visible {
-    outline: 2px solid var(--accent1);
-    outline-offset: 2px;
-}
-
-/* SlimSelect */
-.ss-main:focus-visible,
-.ss-main.ss-open-above:focus-visible,
-.ss-main.ss-open-below:focus-visible {
+/* Tom Select focus ring */
+.ts-wrapper.focus .ts-control {
     outline: 2px solid var(--accent1);
     outline-offset: 2px;
     box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
@@ -553,19 +533,7 @@ input.hasDatepicker:focus-visible {
     outline-offset: 1px;
 }
 
-/* TagsInput Container */
-div.tagsinput:focus-within {
-    outline: 2px solid var(--accent1);
-    outline-offset: 2px;
-    border-color: var(--accent1);
-    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
-}
-
-/* TagsInput Individual Tags */
-.tagsinput span.tag a:focus-visible {
-    outline: 2px solid var(--accent1);
-    outline-offset: 1px;
-}
+/* TomSelect tag input focus — handled by .ts-wrapper.focus rule above */
 
 /* Custom Toggle Switch */
 input[type="checkbox"].toggle:focus-visible + label,
@@ -636,11 +604,4 @@ input[type="time"]:focus-visible {
     }
 }
 
-/* CRITICAL: Remove Bootstrap inset shadow from Chosen search input */
-.chosen-container-multi .chosen-choices li.search-field input[type="text"],
-.chosen-container-multi .chosen-choices .search-field input,
-.chosen-container .chosen-choices input.chosen-search-input,
-#collaborators_chosen input[type="text"] {
-    box-shadow: none !important;
-    -webkit-box-shadow: none !important;
-}
+

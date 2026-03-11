@@ -11,15 +11,15 @@
 
         @if ($login::userIsAtLeast($roles::$editor))
             <br /><br />
-            <a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
-                {{ __('links.icon.create_new_board') }}
-            </a>
+            <x-globals::forms.button link="javascript:void(0)" contentRole="primary" class="addCanvasLink">
+                {!! __('links.icon.create_new_board') !!}
+            </x-globals::forms.button>
         @endif
     </div>
 @endif
 
 @if (!empty($disclaimer) && count($allCanvas) > 0)
-    <small class="align-center">{{ $disclaimer }}</small>
+    <small class="center">{{ $disclaimer }}</small>
 @endif
 
 {!! $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render() !!}
@@ -36,17 +36,21 @@
           });
       }
 
-      leantime.goalCanvasController.setRowHeights();
-      leantime.canvasController.setCanvasName('goal');
-      leantime.canvasController.initFilterBar();
+      if (leantime.goalCanvasController) { leantime.goalCanvasController.setRowHeights(); }
+      if (leantime.canvasController) {
+          leantime.canvasController.setCanvasName('goal');
+          leantime.canvasController.initFilterBar();
+      }
 
       @if ($login::userIsAtLeast($roles::$editor))
-      leantime.canvasController.initCanvasLinks();
-      leantime.canvasController.initUserDropdown();
-      leantime.canvasController.initStatusDropdown();
-      leantime.canvasController.initRelatesDropdown();
+      if (leantime.canvasController) {
+          leantime.canvasController.initCanvasLinks();
+          leantime.canvasController.initUserDropdown();
+          leantime.canvasController.initStatusDropdown();
+          leantime.canvasController.initRelatesDropdown();
+      }
       @else
-      leantime.authController.makeInputReadonly(".maincontentinner");
+      leantime.authController.makeInputReadonly(".maincontent");
       @endif
 
       @if (isset($_GET['showModal']))

@@ -1,0 +1,145 @@
+@php
+    $milestones = $tpl->get('milestones');
+    $clients = $tpl->get('clients');
+
+    $clientNameSelected = __('headline.all_clients');
+    $htmlDropdownClients = '';
+    foreach ($clients as $client) {
+        $href = BASE_URL . '/tickets/roadmapAll?clientId=' . $client['id'];
+        $labelActive = '';
+        if (isset($_GET['clientId']) && $_GET['clientId'] == $client['id']) {
+            $labelActive = ' class="active"';
+            $clientNameSelected = $client['name'];
+        }
+        $htmlDropdownClients .= "<li><a href='$href' $labelActive> {$client['name']} </a></li>";
+    }
+
+    $roadmapView = session('usersettings.views.roadmap', 'Month');
+@endphp
+
+@php $tpl->displaySubmodule('tickets-portfolioHeader') @endphp
+
+<div class="maincontent">
+    @php $tpl->displaySubmodule('tickets-portfolioTabs') @endphp
+
+    <div class="maincontentinner">
+
+        {!! $tpl->displayNotification() !!}
+
+        <div class="tw:flex tw:justify-between tw:items-start">
+            <div>
+            </div>
+            <div>
+                <div class="pull-right">
+
+                    <x-globals::actions.dropdown-menu variant="button" :label="__('label.roles.client') . ': ' . $clientNameSelected" content-role="default">
+                        <li><a href="{{ BASE_URL }}/tickets/roadmapAll" {!! empty($labelActive) ? "class='active'" : '' !!}> {{ __('headline.all_clients') }} </a></li>
+                        {!! $htmlDropdownClients !!}
+                    </x-globals::actions.dropdown-menu>
+
+                    @php
+                        $currentView = '';
+                        if ($roadmapView == 'Day') {
+                            $currentView = __('buttons.day');
+                        } elseif ($roadmapView == 'Week') {
+                            $currentView = __('buttons.week');
+                        } elseif ($roadmapView == 'Month') {
+                            $currentView = __('buttons.month');
+                        }
+                    @endphp
+                    <x-globals::actions.dropdown-menu id="ganttTimeControl" variant="button" content-role="default" :label="__('buttons.timeframe') . ': ' . $currentView">
+                        <x-globals::actions.dropdown-item href="javascript:void(0);" data-value="Day" :state="$roadmapView == 'Day' ? 'active' : null">{{ __('buttons.day') }}</x-globals::actions.dropdown-item>
+                        <x-globals::actions.dropdown-item href="javascript:void(0);" data-value="Week" :state="$roadmapView == 'Week' ? 'active' : null">{{ __('buttons.week') }}</x-globals::actions.dropdown-item>
+                        <x-globals::actions.dropdown-item href="javascript:void(0);" data-value="Month" :state="$roadmapView == 'Month' ? 'active' : null">{{ __('buttons.month') }}</x-globals::actions.dropdown-item>
+                    </x-globals::actions.dropdown-menu>
+
+                </div>
+            </div>
+        </div>
+
+        @if(count($milestones) == 0)
+            <div class="empty tw:text-center" id="emptySprint">
+                <div class="svgContainer tw:w-[30%] tw:mx-auto">
+                    {!! file_get_contents(ROOT . '/dist/images/svg/undraw_adjustments_p22m.svg') !!}
+                </div>
+                <h4>{{ __('headlines.no_milestones') }}<br/>
+                <br />
+                <x-globals::forms.button link="{{ BASE_URL }}/tickets/editMilestone" type="primary" class="milestoneModal addCanvasLink"><x-globals::elements.icon name="map" /> {{ __('label.add_milestone') }}</x-globals::forms.button></h4>
+            </div>
+        @endif
+
+        <div class="gantt-wrapper">
+            <svg id="gantt"></svg>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    jQuery(document).ready(function(){
+
+    @if(isset($_GET['showMilestoneModal']))
+        @php
+            $modalUrl = $_GET['showMilestoneModal'] == '' ? '' : '/' . (int)$_GET['showMilestoneModal'];
+        @endphp
+        leantime.ticketsController.openMilestoneModalManually("{{ BASE_URL }}/tickets/editMilestone{{ $modalUrl }}");
+        window.history.pushState({},document.title, '{{ BASE_URL }}/tickets/roadmap');
+    @endif
+
+    @if(count($milestones) > 0)
+        var tasks = [
+            @php
+                foreach ($milestones as $mlst) {
+                    $headline = '[' . $mlst->projectName . '] ';
+                    $headline .= __('label.' . strtolower($mlst->type)) . ': ' . $mlst->headline;
+                    if ($mlst->type == 'milestone') {
+                        $headline .= ' (' . $mlst->percentDone . '% Done)';
+                    }
+
+                    $color = '#8D99A6';
+                    if ($mlst->type == 'milestone') {
+                        $color = $mlst->tags;
+                    }
+
+                    $sortIndex = 0;
+                    if ($mlst->sortIndex != '' && is_numeric($mlst->sortIndex)) {
+                        $sortIndex = $mlst->sortIndex;
+                    }
+
+                    $dependencyList = [];
+                    if ($mlst->milestoneid != 0) {
+                        $dependencyList[] = $mlst->milestoneid;
+                    }
+                    if ($mlst->dependingTicketId != 0) {
+                        $dependencyList[] = $mlst->dependingTicketId;
+                    }
+
+                    echo "{
+                        projectName :'" . $mlst->projectName . "',
+                        id :'" . $mlst->id . "',
+                        name :" . json_encode($headline) . ",
+                        start :'" . (($mlst->editFrom != '0000-00-00 00:00:00' && !str_starts_with($mlst->editFrom, '1969-12-31')) ? $mlst->editFrom : date('Y-m-d', strtotime('+1 day', time()))) . "',
+                        end :'" . (($mlst->editTo != '0000-00-00 00:00:00' && !str_starts_with($mlst->editTo, '1969-12-31')) ? $mlst->editTo : date('Y-m-d', strtotime('+1 week', time()))) . "',
+                        progress :'" . $mlst->percentDone . "',
+                        dependencies :'" . implode(',', $dependencyList) . "',
+                        custom_class :'',
+                        type: '" . strtolower($mlst->type) . "',
+                        bg_color: '" . $color . "',
+                        thumbnail: '" . BASE_URL . "/api/users?profileImage=" . $mlst->editorId . "',
+                        sortIndex: " . $sortIndex . "
+                    },";
+                }
+            @endphp
+        ];
+
+        @if($login::userIsAtLeast($roles::$editor))
+        if (leantime.ticketsController) { leantime.ticketsController.initGanttChart(tasks, '{{ $roadmapView }}', false); }
+        @else
+        if (leantime.ticketsController) { leantime.ticketsController.initGanttChart(tasks, '{{ $roadmapView }}', true); }
+        @endif
+    @endif
+
+    });
+
+</script>

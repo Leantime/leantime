@@ -257,11 +257,23 @@ class ShowCanvas extends Controller
             }
         }
 
+        $filter['status'] = $_GET['filter_status'] ?? (session('filter_status') ?? 'all');
+        session(['filter_status' => $filter['status']]);
+
+        $relatesLabels = $this->canvasRepo->getRelatesLabels();
+        if (empty($relatesLabels)) {
+            $filter['relates'] = 'all';
+        } else {
+            $filter['relates'] = $_GET['filter_relates'] ?? (session('filter_relates') ?? 'all');
+        }
+        session(['filter_relates' => $filter['relates']]);
+
+        $this->tpl->assign('filter', $filter);
         $this->tpl->assign('currentCanvas', $currentCanvasId);
         $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
-        $this->tpl->assign('relatesLabels', $this->canvasRepo->getRelatesLabels());
+        $this->tpl->assign('relatesLabels', $relatesLabels);
         $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
         $this->tpl->assign('disclaimer', $this->canvasRepo->getDisclaimer());
         $this->tpl->assign('allCanvas', $allCanvas);

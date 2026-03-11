@@ -80,7 +80,7 @@ class MyToDos extends HtmxController
     /**
      * Save the user's personal task sorting preferences
      */
-    public function saveSorting($params)
+    public function saveSorting($params): \Symfony\Component\HttpFoundation\Response
     {
         $post = $_POST;
         $userId = session('userdata.id');
@@ -123,33 +123,31 @@ class MyToDos extends HtmxController
             $this->settingsService->saveSetting($sortingKey, json_encode($taskList));
             $this->updateTicketDependencies($taskList);
 
-            // Return success response without reloading the entire widget
-            return;
+            // Return empty response — sorting saved, no DOM swap needed
+            return $this->tpl->emptyResponse();
         }
 
         $this->tpl->setNotification($this->language->__('notifications.sorting_error'), 'error');
 
+        return $this->tpl->emptyResponse();
     }
 
     /**
-     * Toggle the collapse state of a task
+     * Toggle the collapse state of a task — persists preference, returns empty response.
      */
-    public function toggleTaskCollapse($params)
+    public function toggleTaskCollapse($params): \Symfony\Component\HttpFoundation\Response
     {
         if (isset($params['taskId'])) {
             $taskId = $params['taskId'];
             $userId = session('userdata.id');
             $toggleKey = "user.{$userId}.taskCollapsed.{$taskId}";
 
-            // Get current state
             $currentState = $this->settingsService->getSetting($toggleKey, 'open');
-
-            // Toggle the state
             $newState = ($currentState === 'open') ? 'closed' : 'open';
             $this->settingsService->saveSetting($toggleKey, $newState);
-
-            return $newState;
         }
+
+        return $this->tpl->emptyResponse();
     }
 
     /**
@@ -395,7 +393,7 @@ class MyToDos extends HtmxController
     /**
      * Update task status via HTMX
      */
-    public function updateStatus()
+    public function updateStatus(): \Symfony\Component\HttpFoundation\Response
     {
         $params = $this->incomingRequest->request->all();
 
@@ -407,16 +405,21 @@ class MyToDos extends HtmxController
 
             if ($result) {
                 $this->tpl->setNotification($this->language->__('short_notifications.status_updated'), 'success');
+                // No ticket_update event needed — TomSelect already shows the new value
+                // optimistically, and the SetCacheHeaders middleware now bypasses 304 for
+                // HTMX requests so stale cache is no longer an issue.
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.status_update_error'), 'error');
             }
         }
+
+        return $this->tpl->emptyResponse();
     }
 
     /**
      * Update task milestone via HTMX
      */
-    public function updateMilestone()
+    public function updateMilestone(): \Symfony\Component\HttpFoundation\Response
     {
         $params = $this->incomingRequest->request->all();
 
@@ -432,18 +435,20 @@ class MyToDos extends HtmxController
                 $this->tpl->setNotification($this->language->__('notifications.milestone_update_error'), 'error');
             }
         }
+
+        return $this->tpl->emptyResponse();
     }
 
     /**
      * Update task due date via HTMX
      */
-    public function updateDueDate()
+    public function updateDueDate(): \Symfony\Component\HttpFoundation\Response
     {
         $params = $this->incomingRequest->request->all();
 
-        if (isset($params['id']) && isset($params['date'])) {
+        if (isset($params['id'])) {
             $ticketId = $params['id'];
-            $date = $params['date'];
+            $date = $params['date'] ?? '';
 
             $result = $this->ticketsService->patch($ticketId, ['dateToFinish' => $date]);
 
@@ -453,6 +458,8 @@ class MyToDos extends HtmxController
                 $this->tpl->setNotification($this->language->__('notifications.date_update_error'), 'error');
             }
         }
+
+        return $this->tpl->emptyResponse();
     }
 
     /**

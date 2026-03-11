@@ -1,16 +1,16 @@
 @if($plugin->type !== "system")
-    <div style="padding-top:10px; padding-left:0px;">
+    <div class="tw:flex tw:items-center tw:gap-3 tw:whitespace-nowrap">
         @if (!$plugin->enabled)
-            <a href="{{ BASE_URL }}/plugins/myapps?enable={{ $plugin->id }}" class=""><i class="fa-solid fa-plug-circle-check"></i> {{ __('buttons.enable') }}</a> |
-            <a href="{{ BASE_URL }}/plugins/myapps?remove={{ $plugin->id }}" class="delete"><i class="fa fa-trash"></i> {{ __('buttons.remove')  }}</a>
+            <x-globals::forms.button element="a" href="{{ BASE_URL }}/plugins/myapps?enable={{ $plugin->id }}" contentRole="secondary" leadingVisual="electrical_services">{{ __('buttons.enable') }}</x-globals::forms.button>
+            <x-globals::forms.button element="a" href="{{ BASE_URL }}/plugins/myapps?remove={{ $plugin->id }}" state="danger" leadingVisual="delete">{{ __('buttons.remove') }}</x-globals::forms.button>
         @else
-            <a href="{{ BASE_URL }}/plugins/myapps?disable={{ $plugin->id }}" class="delete"><i class="fa-solid fa-plug-circle-xmark"></i> {{ __('buttons.disable')  }}</a>
+            <x-globals::forms.button element="a" href="{{ BASE_URL }}/plugins/myapps?disable={{ $plugin->id }}" contentRole="secondary" leadingVisual="power_off">{{ __('buttons.disable') }}</x-globals::forms.button>
         @endif
 
         @if ($plugin->enabled && file_exists(APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Controllers/Settings.php'))
-            <a href="{{ BASE_URL }}/{{ $plugin->foldername }}/settings"><i class="fa fa-cog"></i> Settings</a>
+            <x-globals::forms.button element="a" href="{{ BASE_URL }}/{{ $plugin->foldername }}/settings" contentRole="secondary" leadingVisual="settings">Settings</x-globals::forms.button>
         @endif
     </div>
 @else
-    <p>System Plugin, cannot be disabled or removed</p>
+    <span class="tw:text-[color:var(--secondary-font-color)] tw:whitespace-nowrap">System Plugin</span>
 @endif

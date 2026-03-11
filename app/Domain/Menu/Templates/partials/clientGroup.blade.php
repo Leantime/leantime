@@ -33,9 +33,9 @@
                         id="{{ $prefix }}-toggler-{{ $project["clientId"] }}"
                         onclick="leantime.menuController.toggleProjectDropDownList('{{ $project["clientId"] }}', '', '{{ $prefix }}')">
                     @if($parentState == 'closed')
-                        <i class="fa fa-angle-right"></i>
+                        <x-globals::elements.icon name="chevron_right" />
                     @else
-                        <i class="fa fa-angle-down"></i>
+                        <x-globals::elements.icon name="expand_more" />
                     @endif
                     </a>
                     <a href="javascript:void(0)">
@@ -46,7 +46,7 @@
 
             <li class="projectLineItem hasSubtitle {{ session("currentProject") == $project['id'] ? "active" : '' }}" >
                 @include('menu::partials.projectLink')
-                <div class="clear"></div>
+                <div class="tw:clear-both"></div>
             </li>
         @endif
     @endforeach

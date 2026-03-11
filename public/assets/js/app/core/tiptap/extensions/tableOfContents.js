@@ -7,8 +7,8 @@
  * @module tiptap/extensions/tableOfContents
  */
 
-const { Node, mergeAttributes, Extension } = require('@tiptap/core');
-const { Plugin, PluginKey } = require('@tiptap/pm/state');
+import { Node, mergeAttributes, Extension } from '@tiptap/core';
+import { Plugin, PluginKey } from '@tiptap/pm/state';
 
 // Plugin key for TOC state
 var tocPluginKey = new PluginKey('table-of-contents');
@@ -458,11 +458,4 @@ function getHeadings(editor) {
     return extractHeadings(editor.state.doc);
 }
 
-module.exports = {
-    createTableOfContentsExtension: createTableOfContentsExtension,
-    TableOfContents: TableOfContents,
-    TOCTracker: TOCTracker,
-    getHeadings: getHeadings,
-    extractHeadings: extractHeadings,
-    slugify: slugify,
-};
+export { createTableOfContentsExtension, TableOfContents, TOCTracker, getHeadings, extractHeadings, slugify };

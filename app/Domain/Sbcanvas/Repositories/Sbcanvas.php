@@ -21,7 +21,7 @@ class Sbcanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-briefcase';
+    protected string $icon = 'work';
 
     /**
      * canvasTypes - Must be extended
@@ -29,28 +29,28 @@ class Sbcanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'sb_industry' => ['icon' => 'fa-industry',        'title' => 'box.sb.industry'],
-        'sb_description' => ['icon' => 'fa-file-lines',      'title' => 'box.sb.description'],
-        'sb_st_design' => ['icon' => 'fa-user-tie',    'title' => 'box.sb.st_design'],
-        'sb_st_decision' => ['icon' => 'fa-sitemap',         'title' => 'box.sb.st_decision'],
-        'sb_st_experts' => ['icon' => 'fa-chalkboard-user', 'title' => 'box.sb.st_experts'],
-        'sb_st_support' => ['icon' => 'fa-person-circle-question',  'title' => 'box.sb.st_support'],
-        'sb_budget' => ['icon' => 'fa-money-bills',     'title' => 'box.sb.budget'],
-        'sb_time' => ['icon' => 'fa-business-time',   'title' => 'box.sb.time'],
-        'sb_culture' => ['icon' => 'fa-masks-theater',   'title' => 'box.sb.culture'],
-        'sb_change' => ['icon' => 'fa-book-skull',      'title' => 'box.sb.change'],
-        'sb_principles' => ['icon' => 'fa-ruler-combined',  'title' => 'box.sb.principles'],
+        'sb_industry' => ['icon' => 'factory',        'title' => 'box.sb.industry'],
+        'sb_description' => ['icon' => 'description',      'title' => 'box.sb.description'],
+        'sb_st_design' => ['icon' => 'badge',    'title' => 'box.sb.st_design'],
+        'sb_st_decision' => ['icon' => 'account_tree',         'title' => 'box.sb.st_decision'],
+        'sb_st_experts' => ['icon' => 'co_present', 'title' => 'box.sb.st_experts'],
+        'sb_st_support' => ['icon' => 'help',  'title' => 'box.sb.st_support'],
+        'sb_budget' => ['icon' => 'payments',     'title' => 'box.sb.budget'],
+        'sb_time' => ['icon' => 'business_center',   'title' => 'box.sb.time'],
+        'sb_culture' => ['icon' => 'theater_comedy',   'title' => 'box.sb.culture'],
+        'sb_change' => ['icon' => 'menu_book',      'title' => 'box.sb.change'],
+        'sb_principles' => ['icon' => 'straighten',  'title' => 'box.sb.principles'],
     ];
 
     /**
-     * statusLabels - Status labels<i class="fa-solid "></i>
+     * statusLabels - Status labels
      *
      * @acces protected
      */
     protected array $statusLabels = [
-        'status_pending' => ['icon' => 'fa-person-circle-question', 'color' => 'blue',   'title' => 'status.pending',  'dropdown' => 'info',    'active' => true],
-        'status_accepted' => ['icon' => 'fa-person-circle-check',    'color' => 'green',  'title' => 'status.accepted', 'dropdown' => 'success', 'active' => true],
-        'status_rejected' => ['icon' => 'fa-person-circle-xmark',    'color' => 'red',    'title' => 'status.rejected', 'dropdown' => 'danger',  'active' => true],
+        'status_pending' => ['icon' => 'help', 'color' => 'blue',   'title' => 'status.pending',  'dropdown' => 'info',    'active' => true],
+        'status_accepted' => ['icon' => 'how_to_reg',    'color' => 'green',  'title' => 'status.accepted', 'dropdown' => 'success', 'active' => true],
+        'status_rejected' => ['icon' => 'person_off',    'color' => 'red',    'title' => 'status.rejected', 'dropdown' => 'danger',  'active' => true],
     ];
 
     /**

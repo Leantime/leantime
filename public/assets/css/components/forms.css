@@ -5,6 +5,7 @@
     color:var(--main-action-hover-color);
     border-color:var(--main-action-hover-bg);
     border-radius: var(--element-radius);
+    text-decoration: none;
 }
 
 input, button, select, textarea {
@@ -24,15 +25,15 @@ textarea:focus-visible,
 }
 
 form label{
-    padding-top:5px;
+    padding-top:6px;
     margin-bottom: 2px;
-    font-weight:bold;
-    opacity:0.8;
-    padding-bottom:5px;
+    font-weight: var(--font-weight-bold);
+    opacity:var(--opacity-subtle);
+    padding-bottom:6px;
 }
 
 form .switchery {
-    margin-top:5px;
+    margin-top:4px;
 }
 
 tox-edit-area,
@@ -54,7 +55,7 @@ input:disabled,
 .btn-primary[disabled]{
     border:none;
     box-shadow:none;
-    opacity:0.4;
+    opacity:var(--opacity-disabled);
 }
 
 body input:focus {
@@ -63,103 +64,11 @@ body input:focus {
 
 
 
-/* Tags */
-
-body div.tagsinput {
-    border:1px solid transparent;
-    overflow:hidden;
-}
-
-body div.tagsinput:hover,
-body div.tagsinput:focus,
-body input[type=text].main-title-input.main-title-input:hover,
-body input[type=text].main-title-input.main-title-input:focus{
-    border: 1px solid var(--main-border-color-hover);
-    border-radius:var(--box-radius);
-}
-
-body div.tagsinput.readonly {
-    display:inline-block;
-    width:auto;
-    padding:0px;
-    border:0px !important;
-    height:auto !important;
-    background:none;
-}
-
-body .ticketBox div.tagsinput.readonly {
-    background:none !important;
-    margin-bottom:0px !important;
-}
-
-body div.tagsinput {
-    background-color: var(--input-background);
-    color:var(--primary-font-color);
-    font-family: var(--primary-font-family);
-    width:100% !important;
-    height:auto !important;
-    border-radius:var(--input-radius);
-    box-shadow: none;
-    padding:var(--input-padding);
-    border:0px;
-}
-
-body div.tagsinput input {
-    font-size:var(--base-font-size);
-    color:var(--primary-font-color) !important;
-    width:auto;
-    padding:0px;
-    margin-bottom:0px;
-    font-family: var(--primary-font-family);
-}
-
-body div.tagsinput span.tag {
-    border-radius: 12px;
-    padding: 0px 10px;
-    border: 0px solid var(--primary-color);
-}
-
-div.tagsinput span.tag {
-    font-size:var(--font-size-m);
-}
-
-div.tagsinput span.tag a {
-    vertical-align: text-bottom;
-}
-
-/* Tags input in article/wiki dialogs - proper spacing */
-.formModal div.tagsinput {
-    margin-top: 15px;
-    margin-bottom: 15px;
-    display: block;
-    clear: both;
-}
-
-/* Ensure tags input doesn't overlap with Tiptap editor */
-.formModal div.tagsinput + .tiptap-wrapper,
-.formModal div.tagsinput + .tiptap-editor {
-    clear: both;
-}
-
-.ss-main .ss-multi-selected {
-    padding:var(--input-padding);
-}
-
-.ss-main .ss-multi-selected .ss-values,
-.ss-main .ss-multi-selected .ss-disabled{
-    padding:0px;
-    height:21px; /* Equivalend to line height on tags input*/
-}
-
-.ss-main .ss-multi-selected .ss-values .ss-value {
-    border-radius: 12px;
-    padding: 0px 10px;
-    margin: 0px;
-    border: 0px solid var(--primary-color);
-}
+/* Tags — legacy div.tagsinput and SlimSelect .ss-* rules removed.
+   Tag inputs now use TomSelect (input.tag-input) styled in tom-select.css. */
 
 select {
-    min-height:30px;
+    min-height:32px;
 }
 
 ::selection {
@@ -179,26 +88,26 @@ select {
 input:-moz-placeholder,
 textarea:-moz-placeholder{
     color: var(--primary-font-color);
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
 }
 
 input::-webkit-input-placeholder,
 textarea::-webkit-input-placeholder{
     color: var(--primary-font-color);
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
     margin-left: -1px;
 }
 
 input::-moz-placeholder,
 textarea::-moz-placeholder { /* Firefox 19+ */
     color: var(--primary-font-color);
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
 }
 
 input:-ms-input-placeholder,
 textarea:-ms-input-placeholder{
     color: var(--primary-font-color);
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
 }
 
 
@@ -213,7 +122,7 @@ textarea, button {
     height: 205px;
     overflow: auto;
     margin: auto;
-    border: 1px solid #ccc;
+    border: 1px solid var(--main-border-color);
     padding: 10px;
 }
 
@@ -249,7 +158,7 @@ a.btn-default,
 {
     font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
     padding: var(--input-padding);
     line-height:21px;
     background: var(--secondary-action-bg);
@@ -300,7 +209,7 @@ body .btn-default:active,
 body input[type='submit'].btn-default:active,
 .btn-group .btn:active,
 .btn-group.open .btn.dropdown-toggle {
-    box-shadow: inset 0 2px 4px rgb(0 0 0 / 15%), 0 1px 2px rgb(0 0 0 / 5%);
+    box-shadow: var(--input-shadow);
 }
 
 
@@ -320,7 +229,7 @@ input[type='submit'],
     border-radius:var(--element-radius);
     outline:0;
     font-size: var(--base-font-size);
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
     padding: var(--input-padding);
     line-height:21px;
     box-shadow:none;
@@ -358,132 +267,7 @@ body input[type='submit'].btn-primary .caret,
 }
 
 
-.chosen-container-single .chosen-single {
-
-    height: auto;
-    background:none;
-    background-color: var(--secondary-background);
-    line-height:21px;
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: var(--input-shadow);
-    -moz-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    border-radius: var(--input-radius);
-    padding: var(--input-padding);
-    color:var(--primary-font-color);
-}
-
-.chosen-container {
-    font-size:var(--base-font-size);
-    margin-bottom:10px;
-    min-width:175px
-}
-
-/* Search field input styling is handled separately below to avoid conflicts */
-
-.chosen-container-multi .chosen-choices {
-    background-color: var(--secondary-background);
-    line-height: 21px;
-    min-height: 33px;
-    border: 1px solid var(--main-border-color);
-    border-radius: var(--input-radius);
-    box-shadow: none;
-    padding: 3px 5px 3px 8px;
-}
-
-.chosen-container-active .chosen-single {
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow:var(--input-shadow);
-    box-shadow: var(--input-shadow);
-}
-
-.chosen-container-active.chosen-with-drop .chosen-single {
-    border: 1px solid var(--main-border-color);
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    background-image: none;
-    background-image: none;
-    -webkit-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-}
-
-.chosen-container-active .chosen-choices {
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-    padding: 3px 5px 3px 8px;
-}
-
-.chosen-container-active .chosen-choices li.search-field input[type="text"],
-.chosen-container-active .chosen-choices .search-field .chosen-search-input {
-    color:var(--primary-font-color);
-    padding: 0 !important;
-    box-shadow: none !important;
-    -webkit-box-shadow: none !important;
-    border: 0 !important;
-    background: transparent !important;
-}
-
-.chosen-container .chosen-drop {
-    position: absolute;
-    top: 100%;
-    z-index: 1010;
-    width: 100%;
-    border: 1px solid var(--main-border-color);
-    border-top: 0;
-    background: var(--secondary-background);
-    -webkit-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    clip: rect(0, 0, 0, 0);
-    -webkit-clip-path: inset(100% 100%);
-    clip-path: inset(100% 100%);
-}
-
-.chosen-container .chosen-results li.highlighted {
-    color: var(--dropdown-link-hover-color) !important;
-    background: var(--dropdown-link-hover-bg) !important;
-    background-image: none;
-
-}
-
-.chosen-container-single .chosen-search input[type="text"] {
-
-    border: 1px solid var(--main-border-color);
-
-    font-size: var(--font-size-s);
-
-    line-height: normal;
-    border-radius: 0;
-}
-
-.chosen-container-single .chosen-single div b {
-    background-image:none !important;
-}
-.chosen-container-single .chosen-single div b:after {
-    content: "⌄";
-    line-height: 25px;
-}
-
-.chosen-container-multi .chosen-choices li.search-choice {
-    position: relative;
-    margin: 3px 5px 3px 0;
-    padding: 6px 20px 6px 5px;
-    border: 0px solid #aaa;
-    max-width: 100%;
-    border-radius: 3px;
-    background-color: var(--accent1);
-    color: var(--accent1-color);
-    background-image: none;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    line-height: normal;
-    cursor: default;
-}
-
-.chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
-    position: absolute;
-    top: 8px;
-}
+/* Chosen.js rules removed — replaced by TomSelect (see tom-select.css). */
 
 .btn-group>.btn {
 }
@@ -498,7 +282,7 @@ a:link.btn{
 }
 
 .viewText {
-    padding-right:5px;
+    padding-right:6px;
 }
 
 .btn .caret {
@@ -506,16 +290,12 @@ a:link.btn{
 }
 
 .btn-small {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: var(--element-radius);
     font-size: var(--base-font-size);
     text-transform: uppercase;
 }
 
 .btn-large {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: var(--element-radius);
     font-size: var(--font-size-l);
     padding: 10px 20px !important;
@@ -527,7 +307,7 @@ a:link.btn{
     background: var(--red);
     border-color: var(--dark-red);
     color: #fff;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .btn.btn-danger:hover,
@@ -569,8 +349,8 @@ a:link.btn{
 }
 
 .btn-inverse, .btn-inverse:link {
-    background: #555;
-    border-color: #272727;
+    background: var(--primary-font-color);
+    border-color: var(--primary-font-color);
 }
 
 .btn-circle {
@@ -580,12 +360,30 @@ a:link.btn{
     width: 20px;
     padding: 5px;
     background: none;
-    border: 2px solid #ccc;
+    border: 2px solid var(--main-border-color);
 }
 
 .btn-circle:hover {
     background: none;
-    color: #ccc;
+    color: var(--main-border-color);
+}
+
+/* Override btn-default/body .btn when combined with btn-circle */
+body a.btn.btn-circle,
+body button.btn.btn-circle {
+    background: transparent;
+    border: none;
+    border-radius: 50px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body a.btn.btn-circle:hover,
+body button.btn.btn-circle:hover {
+    background: var(--secondary-background);
+    color: var(--primary-font-color);
+    border-color: var(--primary-font-color);
 }
 
 .btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
@@ -631,14 +429,49 @@ a:link.btn{
 .btn-circle.btn-inverse, .btn-circle.btn-inverse:hover, .btn-circle.btn-inverse:focus,
 .btn-circle.btn-inverse:active, .btn-circle.btn-inverse.active,
 .btn-circle.btn-inverse.disabled, .btn-circle.btn-inverse[disabled] {
-    border-color: #555;
-    color: #555;
+    border-color: var(--primary-font-color);
+    color: var(--primary-font-color);
     background: none;
 }
 
 .btn-circle .iconsweets-white {
 
 }
+
+/* ── Icon-only button ──────────────────────────────────────────────────
+   Transparent, borderless icon button with subtle hover background.
+   Used for toolbar actions, close buttons, and inline icon controls.
+   ──────────────────────────────────────────────────────────────────── */
+.btn-icon-only {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    border-radius: var(--element-radius, 4px);
+    cursor: pointer;
+    color: var(--secondary-font-color);
+    font-size: 20px;
+    line-height: 1;
+    transition: background 0.15s ease;
+}
+.btn-icon-only:hover {
+    background: var(--hover-bg);
+    color: var(--primary-font-color);
+    text-decoration: none;
+}
+.btn-icon-only:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+}
+
+/* Scale variants */
+.btn-icon-only.btn-xs { width: 24px; height: 24px; font-size: 16px; }
+.btn-icon-only.btn-sm { width: 28px; height: 28px; font-size: 18px; }
+.btn-icon-only.btn-lg { width: 40px; height: 40px; font-size: 24px; }
 
 .btn-group+.btn-group {
     margin-left: 0px;
@@ -650,11 +483,11 @@ select,
 
 .row-fluid.marginBottom,
 .row.marginBottom{
-    margin-bottom:15px;
+    margin-bottom:16px;
 }
 
 .marginBottomMd {
-    margin-bottom:15px;
+    margin-bottom:16px;
 }
 
 
@@ -667,47 +500,10 @@ select,
     margin-right:10px;
 }
 
-.chosen-choices {
 
-}
-
-.chosen-container-multi .chosen-choices .search-choice {
-    border: 0px solid #bbb;
-    line-height: 12px;
-    padding: 1px 20px 1px 10px;
-    margin: 3px 0 2px 3px;
-    position: relative;
-    cursor: default;
-    border-radius:12px;
-    font-size:var(--font-size-s);
-}
-
-.chosen-container-multi .chosen-choices .search-choice .search-choice-close {
-    right:5px;
-}
-
-.chosen-container-multi .chosen-choices li.search-field input[type="text"],
-.chosen-container-multi .chosen-choices .search-field .chosen-search-input {
-    height: auto;
-    padding: 0 !important;
-    box-shadow: none !important;
-    -webkit-box-shadow: none !important;
-    border: 0 !important;
-    background: transparent !important;
-    margin: 1px 0 !important;
-}
-
-.chosen-container-single .chosen-search input {
-    background:var(--input-background);
-    border-color:var(--main-border-color);
-}
-
-.chosen-container .chosen-results .no-results {
-    background:var(--input-background);
-}
 
 input[type=checkbox] {
-    margin-top:9px;
+    margin-top:8px;
 }
 
 input[type=color] {
@@ -725,38 +521,91 @@ input[type=color] {
 }
 
 .userBox {
-    border:1px solid var(--main-border-color);
+    border: 1px solid var(--main-border-color);
     border-radius: var(--box-radius);
-    padding:10px;
-    margin-bottom:10px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 8px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.userBox .commentImage img{
-    width:50px;
-    height:50px;
-    margin-top: 5px;
+.userBox:hover {
+    border-color: var(--accent1);
+    box-shadow: var(--min-shadow);
+}
+
+.userBox .commentImage {
+    flex-shrink: 0;
+}
+
+.userBox .commentImage img {
+    width: 40px;
+    height: 40px;
+    margin-top: 0;
 }
 
 .userBox input[type=checkbox] {
-    float:left;
-    margin-right:15px;
-    margin-top:23px;
+    float: none;
+    margin: 0;
+    flex-shrink: 0;
 }
 
 .userBox label {
     display: inline-block;
-    width:200px;
+    flex: 1 1 0%;
+    min-width: 50%;
+    width: auto;
+}
+
+.userBox label small {
+    display: block;
+    opacity: 0.7;
+    font-size: var(--font-size-s);
 }
 
 .userBox select,
-.userBox input{
-    margin-bottom:0px;
+.userBox input {
+    margin-bottom: 0;
+}
 
+/* Force role selector/input to a new row */
+.userBox > select,
+.userBox > input:not([type=checkbox]):not([type=hidden]),
+.userBox > div[class*="form-control"] {
+    flex-basis: 100%;
+}
+
+.userBox .clearall {
+    display: none;
+}
+
+/* CTA variant for "Create new user" */
+.userBox--add {
+    justify-content: center;
+    align-items: center;
+    min-height: 100%;
+}
+
+.userBox--add a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary-font-color);
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
+}
+
+.userBox--add:hover a {
+    opacity: 1;
 }
 
 .backlogChartButtons,
 .chartButtons{
-    margin-left:5px !important;
+    margin-left:4px !important;
 }
 
 
@@ -768,7 +617,7 @@ input[type=color] {
     background-color: var(--input-background);
     line-height:21px;
     border: 1px solid var(--main-border-color);
-    border-radius: 3px;
+    border-radius: var(--box-radius-small);
     padding: 6px 12px;
     color:var(--primary-font-color);
 }
@@ -782,11 +631,11 @@ input[type=color] {
 .dropdown-toggle.full-width-select .fa {
     float: right;
     vertical-align: bottom;
-    margin-top: 3px;
+    margin-top: 4px;
 }
 
 .board-select .dropdown-menu {
-    margin-left:15px;
+    margin-left:16px;
     margin-top:2px;
 }
 
@@ -802,7 +651,7 @@ body input[type=text].main-title-input.main-title-input {
     border-radius:var(--box-radius);
     box-shadow:none;
     font-size:var(--font-size-xxxl);
-    margin-bottom:5px;
+    margin-bottom:4px;
 }
 
 /* Title input after icon picker - prevent overlap */
@@ -820,7 +669,7 @@ div.border {
 }
 
 body select {
-    max-witdh:206px;
+    max-width: 206px;
 }
 
 input.secretInput,
@@ -828,8 +677,8 @@ select.secretInput {
     width:126px;
     border:0px;
     height: 21px;
-    margin-left:3px;
-    padding-left:3px;
+    margin-left:4px;
+    padding-left:4px;
     background:none;
     -webkit-box-shadow:none;
     -moz-box-shadow: none;
@@ -857,14 +706,14 @@ input.secretInput:focus {
 }
 
 .fileupload .btn, .fileupload .fileupload-exists {
-    margin-left: 5px;
+    margin-left: 4px;
 }
 
 .input-append .fa-file::before {
     font-family: "Font Awesome 6 Free";
     content: "\f15b";
     font-style: normal;
-    margin-right:5px;
+    margin-right:4px;
 }
 
 .uppy-Webcam-footer {
@@ -936,8 +785,8 @@ input.secretInput:focus {
     border:0px;
     color:var(--primary-color);
     background:transparent;
-    margin-right:15px;
-    margin-left:15px;
+    margin-right:16px;
+    margin-left:16px;
 }
 
 .uppy-FileInput-btn:before {
@@ -953,20 +802,20 @@ input.secretInput:focus {
 }
 
 .fileUploadDrop a {
-    padding-right:15px;
+    padding-right:16px;
 }
 
 .uppy-is-drag-over:after {
     background-color: var(--primary-color);
-    opacity:0.6;
+    opacity:var(--opacity-muted);
     border: 4px dashed var(--input-background);
-    bottom: 7px;
+    bottom: 8px;
     border-radius:var(--box-radius);
     content: "";
-    left: 7px;
+    left: 8px;
     position: absolute;
-    right: 7px;
-    top: 7px;
+    right: 8px;
+    top: 8px;
     z-index: 10000;
 }
 
@@ -1007,16 +856,18 @@ body .btn.btn-outline.active {
     background: var(--main-action-bg);
 }
 
-body .btn.btn-danger-outline {
+body .btn.btn-danger-outline,
+body .btn.btn-danger.btn-outline {
     background:transparent;
     color:var(--red);
     border:1px solid var(--red);
 }
 
-body .btn.btn-danger-outline:hover {
-    color:var(--main-action-hover-color);
-    background:var(--main-action-hover-bg);
-    border:1px solid var(--main-action-hover-bg);
+body .btn.btn-danger-outline:hover,
+body .btn.btn-danger.btn-outline:hover {
+    color:#fff;
+    background:var(--red);
+    border:1px solid var(--dark-red);
 }
 
 
@@ -1060,7 +911,7 @@ body .btn.btn-danger-outline:hover {
 
 .viewDescription {
     border-radius:var(--box-radius);
-    padding:5px;
+    padding:6px;
     border:1px solid transparent;
 }
 
@@ -1076,7 +927,7 @@ body .btn.btn-danger-outline:hover {
 input[type=range] {
     height: 28px;
     -webkit-appearance: none;
-    margin: 5px 0px 5px 0;
+    margin: 4px 0px 4px 0;
     width: 100%;
 }
 /* Range input focus is now handled by theme files using :focus-visible */
@@ -1085,17 +936,17 @@ input[type=range]::-webkit-slider-runnable-track {
     height: 5px;
     cursor: pointer;
     animate: 0.2s;
-    box-shadow: 0px 0px 0px #000000;
+    box-shadow: none;
     background: var(--main-border-color);
     border-radius: 5px;
     border: 0px solid #000000;
 }
 input[type=range]::-webkit-slider-thumb {
-    box-shadow: 0px 0px 0px #000000;
+    box-shadow: none;
     border: 2px solid var(--input-background);
     height: 20px;
     width: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     background: var(--primary-color);
     cursor: pointer;
     -webkit-appearance: none;
@@ -1109,17 +960,17 @@ input[type=range]::-moz-range-track {
     height: 5px;
     cursor: pointer;
     animate: 0.2s;
-    box-shadow: 0px 0px 0px #000000;
+    box-shadow: none;
     background: var(--main-border-color);
     border-radius: 5px;
     border: 0px solid #000000;
 }
 input[type=range]::-moz-range-thumb {
-    box-shadow: 0px 0px 0px #000000;
+    box-shadow: none;
     border: 2px solid var(--input-background);
     height: 20px;
     width: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     background: var(--primary-color);
     cursor: pointer;
 }
@@ -1135,22 +986,22 @@ input[type=range]::-ms-track {
 input[type=range]::-ms-fill-lower {
     background: var(--main-border-color);
     border: 0px solid #000000;
-    border-radius: 10px;
-    box-shadow: 0px 0px 0px #000000;
+    border-radius: 8px;
+    box-shadow: none;
 }
 input[type=range]::-ms-fill-upper {
     background: var(--main-border-color);
     border: 0px solid #000000;
-    border-radius: 10px;
-    box-shadow: 0px 0px 0px #000000;
+    border-radius: 8px;
+    box-shadow: none;
 }
 input[type=range]::-ms-thumb {
     margin-top: 1px;
-    box-shadow: 0px 0px 0px #000000;
+    box-shadow: none;
     border: 2px solid var(--primary-background);
     height: 20px;
     width: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     background:var(--primary-color);
     cursor: pointer;
 }
@@ -1165,7 +1016,7 @@ input[type=range]:focus::-ms-fill-upper {
     border:1px solid var(--main-border-color);
     border-radius:var(--box-radius);
     padding:10px;
-    margin-bottom:5px;
+    margin-bottom:4px;
     display:block;
 }
 
@@ -1181,7 +1032,7 @@ input[type=range]:focus::-ms-fill-upper {
 .radioTab span {
     font-size:var(--font-size-s);
     color:var(--primary-font-color);
-    line-height:1;
+    line-height:var(--line-height-tight);
 }
 
 .radioTab.active {
@@ -1196,70 +1047,7 @@ input[type=range]:focus::-ms-fill-upper {
 
 
 
-.ss-main .ss-single-selected {
-    display: flex;
-    cursor: pointer;
-    width: 100%;
-    height: auto;
-    padding: var(--input-padding);
-    border: 1px solid var(--main-border-color);
-    background-color: var(--input-background);
-    line-height:21px;
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: var(--input-shadow);
-    -moz-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    border-radius: var(--input-radius);
 
-    outline: 0;
-    box-sizing: border-box;
-}
-
-.ss-main {
-    margin-bottom:5px;
-}
-
-.ss-main .ss-multi-selected {
-    min-height: auto;
-    background-color: var(--input-background);
-    line-height: 21px;
-    padding: 6px 10px;
-    border: 1px solid var(--main-border-color);
-    box-shadow: none;
-    border-radius: var(--input-radius);
-}
-
-.ss-main .ss-single-selected .placeholder {
-    line-height: 21px;
-}
-
-.ss-main .ss-multi-selected .ss-values .ss-disabled {
-    color:var(--main-border-color);
-}
-
-.ss-main .ss-multi-selected .ss-values .ss-disabled {
-    padding:0px;
-    margin:0px;
-}
-
-.ss-main .ss-multi-selected .ss-add {
-    display: flex;
-    flex: 1 1 3px;
-    margin: 4px 0px 0 5px;
-}
-
-.ss-main .ss-multi-selected .ss-values .ss-value {
-    background:var(--primary-color);
-}
-
-.ss-main .ss-single-selected .ss-arrow span {
-    padding:0px 4px;
-}
-
-.ss-main .ss-single-selected .ss-arrow span.arrow-up,
-.ss-main .ss-single-selected .ss-arrow span.arrow-down {
-    margin:0px;
-}
 
 
 body .btn.btn-link {
@@ -1305,21 +1093,7 @@ body .croppie-container {
     clear:both;
 }
 
-.maincontent .chosen-container .chosen-results li {
-    margin-bottom:2px;
-    list-style-type:none;
-    padding:5px;
-}
 
-.maincontent .chosen-container .chosen-results li span,
-.maincontent .chosen-container .chosen-single span{
-    margin-left:0px !important;
-}
-
-.maincontent .chosen-container .chosen-results li span:after,
-.maincontent .chosen-container .chosen-single span:after{
-    border-color:transparent;
-}
 
 
 .stdform p, .stdform div.par {
@@ -1333,7 +1107,7 @@ body .croppie-container {
 
 .stdform .formwrapper {
     display: block;
-    padding-top: 5px;
+    padding-top: 6px;
     margin-left: 220px;
     line-height: 25px;
 }
@@ -1342,7 +1116,7 @@ body .croppie-container {
     float: left;
     width: 150px;
     text-align: left;
-    padding: 5px 20px 0 0;
+    padding: 6px 20px 0 0;
 }
 
 .stdform label.error {
@@ -1361,10 +1135,10 @@ body .croppie-container {
 
 .stdform small.desc {
     font-size: var(--base-font-size);
-    color: #999;
+    color: var(--secondary-font-color);
     font-style: italic;
     display: block;
-    margin: 5px 0 0 220px;
+    margin: 4px 0 0 220px;
 }
 
 .stdform .stdformbutton {
@@ -1375,8 +1149,8 @@ body .croppie-container {
 }
 
 .stdform2 p, .stdform2 div.par {
-    border-top: 1px solid #ddd;
-    background: #fcfcfc;
+    border-top: 1px solid var(--main-border-color);
+    background: var(--secondary-background);
     margin: 0;
     clear: both;
 }
@@ -1392,10 +1166,10 @@ body .croppie-container {
 
 .stdform2 label {
     display: inline-block;
-    padding: 15px 0 0 15px;
+    padding: 16px 0 0 16px;
     vertical-align: top;
     text-align: left;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .stdform2 label.error {
@@ -1405,24 +1179,24 @@ body .croppie-container {
 
 .stdform2 label small {
     font-size: var(--base-font-size);
-    color: #999;
+    color: var(--secondary-font-color);
     display: block;
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     line-height: 16px;
 }
 
 .stdform2 span.field, .stdform2 div.field {
     margin-left: 220px;
     display: block;
-    background: #fff;
-    padding: 15px;
-    border-left: 1px solid #ddd;
+    background: var(--primary-background);
+    padding: 16px;
+    border-left: 1px solid var(--main-border-color);
 }
 
 .stdform2 .stdformbutton {
     margin-left: 0;
-    padding: 15px;
-    background: #fff;
+    padding: 16px;
+    background: var(--primary-background);
 }
 
 .stdform2 input {
@@ -1446,7 +1220,7 @@ body .croppie-container {
 }
 
 .dualselect select option {
-    padding: 4px 5px;
+    padding: 4px 6px;
     margin: 0;
     white-space: normal;
 }
@@ -1478,7 +1252,7 @@ body .croppie-container {
 .selectable {
     cursor: pointer;
     display: inline-block;
-    margin-right: 15px;
+    margin-right: 16px;
     vertical-align: middle;
     text-align: center;
     line-height: 20px;
@@ -1495,15 +1269,15 @@ body .croppie-container {
 }
 
 .selectable .selectableContent label {
-    font-weight:normal;
+    font-weight: var(--font-weight-body);
     padding-bottom:0px;
 
 }
 
 .selectable.circle .selectableContent {
     border-radius: 50%;
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
 }
 
 .selectable.circle .selectableContent label {
@@ -1512,12 +1286,12 @@ body .croppie-container {
 }
 
 .selectable.compact .selectableContent {
-    padding:3px 10px;
+    padding:4px 10px;
 }
 
 .selectable .selectableContent .emoji {
     font-size:var(--font-size-xxl);
-    padding-right:5px;
+    padding-right:6px;
     vertical-align: middle;
 }
 
@@ -1529,17 +1303,20 @@ body .croppie-container {
 }
 
 .selectable.active .selectableContent{
-    background: var(--col-hover-bg);
+    background: var(--glass-bg-subtle);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border-color: var(--glass-border);
 }
 
 .selectable.active .selectableContent label,
 .selectable.active .selectableContent{
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .selectable.active .selectable-label {
     color:var(--accent1);
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .selectable:hover .selectableContent{
@@ -1568,14 +1345,14 @@ input[type="checkbox"].toggle {
 input[type="checkbox"].toggle {
     height: 20px;
     width: 40px;
-    border-radius: 16px;
+    border-radius: 12px;
     display: inline-block;
     position: relative;
     margin: 0;
     border: 0px solid var(--primary-font-color);
     background: var(--input-background);
     box-shadow: var(--min-shadow);
-    margin-top: 5px;
+    margin-top: 4px;
 
 }
 
@@ -1598,7 +1375,7 @@ input[type="checkbox"].toggle:checked {
 }
 input[type="checkbox"].toggle:checked:after {
     transform: translatex(20px);
-    background:#fff;
+    background: var(--primary-background);
 }
 
 body a.textInputSwitch {
@@ -1614,7 +1391,7 @@ body a.textInputSwitch {
     padding-left:10px;
     border-radius: var(--element-radius);
     color:var(--primary-font-color);
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .textInputSwitch:hover {
@@ -1701,34 +1478,7 @@ body a.textInputSwitch {
 
 }
 
-body .noteContainer div.tagsinput,
-body .clearForm div.tagsinput {
-    background:transparent;
-    border:none;
-    width:100%;
-}
 
-body div.tagsinput input,
-body div.clearForm input
-{
-    width:50% !important;
-    border:0px;
-}
-
-body .noteContainer div.tagsinput input,
-body .clearForm div.tagsinput input {
-    padding-left:7px;
-    color:var(--secondary-font-color);
-}
-
-body .noteContainer div.tagsinput input:focus,
-body .clearForm div.tagsinput input:focus{
-    border:none;
-}
-
-div.tagsinput span.tag {
-    margin-bottom:0px;
-}
 
 .headerEditDropdown {
     margin-left:10px;
@@ -1741,7 +1491,7 @@ div.tagsinput span.tag {
 
 .commentReply.inactive {
     border:1px solid var(--main-border-color);
-    padding:9px 14px;
+    padding:8px 12px;
     border-radius:var(--box-radius);
     margin-bottom:10px;
 }
@@ -1785,10 +1535,10 @@ label .fa-solid {
     border:none;
     position:absolute;
     top:-1px;
-    right:5px;
+    right:4px;
     color:var(--primary-font-color);
     cursor:pointer;
-    opacity:0.5;
+    opacity:var(--opacity-disabled);
 }
 
 .date-picker-form-control:hover .reset-button {
@@ -1819,13 +1569,13 @@ input[type=number].hide-controls {
     align-items: center;
     text-align:center;
     padding: 4px 8px;
-    background: #f5f5f5;
-    border-radius: 4px;
+    background: var(--neutral);
+    border-radius: var(--box-radius-small);
     cursor: pointer;
 }
 
 .weekday-label:hover {
-    background: #e9ecef;
+    background: var(--col-hover-bg);
 }
 
 .weekday-checkbox {
@@ -1839,36 +1589,36 @@ input[type=number].hide-controls {
 }
 
 .weekday-label input[type="checkbox"]:checked + .weekday-text {
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     color: var(--primary-color);
 }
 
 .text-muted {
-    color: #6c757d;
+    color: var(--secondary-font-color);
 }
 
 .dropdown-form {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: var(--primary-background);
+    border: 1px solid var(--main-border-color);
+    border-radius: var(--box-radius-small);
+    box-shadow: var(--regular-shadow);
     min-width: 300px;
     position: absolute;
-    z-index: 1000;
+    z-index: var(--zlayer-8, 1000);
 }
 
 .dropdown-header {
     padding: 10px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--main-border-color);
 }
 
 .dropdown-title {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--font-size-l);
 }
 
 .dropdown-content {
-    padding: 15px;
+    padding: 16px;
 }
 
 .recurring-form-content {
@@ -1907,7 +1657,7 @@ input[type=number].hide-controls {
 .invalid-tooltip {
     position: absolute;
     top: 100%;
-    z-index: 5;
+    z-index: var(--zlayer-3);
     display: none;
     max-width: 100%;
     padding: 0.25rem 0.5rem;
@@ -2127,3 +1877,59 @@ body .btn.btn-round-icon {
     border:none;
     color:var(--interactive-icon-color);
 }
+
+/* ── Chip Select (forms.select variant="chip") ────────────────────────────────
+   A <select class="select-chip"> is auto-initialized by TomSelect via
+   componentRegistry. TomSelect copies all classes from the
+   <select> to its wrapper div, so the wrapper gets class="ts-wrapper select-chip single".
+   The original <select> gets ts-hidden-accessible (clipped to 1×1px).
+
+   Visual goal: a borderless pill that looks like a badge. Clicking opens a
+   body-appended dropdown whose items render badge HTML from data-chip-html.
+   All TomSelect styling is in tom-select.css. Only .chip-badge colour rules
+   are defined below.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* ── Chip badge colours (used inside <option> innerHTML / TomSelect render templates)
+   These classes mirror the .label-* system from dropdowns.css.
+   ────────────────────────────────────────────────────────────────────── */
+
+.chip-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 7px 1px 5px;
+    border-radius: var(--box-radius-large);
+    font-size: var(--font-size-s);
+    line-height: 20px;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.chip-badge .chip-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* Semantic colour states — solid fill */
+.chip-badge.state-new       { background: var(--grey);      color: var(--grey-text-color); }
+.chip-badge.state-inprogress{ background: var(--dark-blue);  color: var(--dark-blue-text-color); }
+.chip-badge.state-done      { background: var(--green);      color: var(--green-text-color); }
+.chip-badge.state-critical  { background: var(--red);        color: var(--red-text-color); }
+.chip-badge.state-high      { background: var(--dark-red);   color: var(--dark-red-text-color); }
+.chip-badge.state-medium    { background: var(--yellow);     color: var(--yellow-text-color); }
+.chip-badge.state-low       { background: var(--blue);       color: var(--blue-text-color); }
+.chip-badge.state-trivial   { background: var(--grey);       color: var(--grey-text-color); }
+.chip-badge.state-default   { background: var(--grey);       color: var(--grey-text-color); }
+
+/* Bootstrap label-* aliases — used in chip-badge HTML generated by todoItem.blade.php
+   and ticket chip components. The label-* classes have standalone background rules
+   in dropdowns.css only in ticketDropdown context; we add chip-badge-scoped rules here
+   so chips render correctly everywhere without depending on that context. */
+.chip-badge.label-default   { background: var(--grey);      color: var(--grey-text-color); }
+.chip-badge.label-info      { background: var(--dark-blue);  color: var(--dark-blue-text-color); }
+.chip-badge.label-success   { background: var(--green);      color: var(--green-text-color); }
+.chip-badge.label-warning   { background: var(--yellow);     color: var(--yellow-text-color); }
+.chip-badge.label-important { background: var(--red);        color: var(--red-text-color); }
+.chip-badge.label-danger    { background: var(--dark-red);   color: var(--dark-red-text-color); }
+.chip-badge.label-primary   { background: var(--dark-blue);  color: var(--dark-blue-text-color); }

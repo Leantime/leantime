@@ -8,7 +8,7 @@ use Leantime\Domain\Timesheets\Services\Timesheets;
 
 class Subtasks extends HtmxController
 {
-    protected static string $view = 'tickets::partials.subtasks';
+    protected static string $view = 'globals::components.tickets.subtasks';
 
     private Tickets $ticketService;
 
@@ -39,10 +39,15 @@ class Subtasks extends HtmxController
         $statusLabels = $this->ticketService->getStatusLabels(session('currentProject'));
         $efforts = $this->ticketService->getEffortLabels();
 
+        $priorities = $this->ticketService->getPriorityLabels();
+
         $this->tpl->assign('ticket', $ticket);
         $this->tpl->assign('ticketSubtasks', $ticketSubtasks);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('efforts', $efforts);
+        $this->tpl->assign('priorities', $priorities);
+
+        $this->tpl->setHTMXEvent('subtasksUpdated');
     }
 
     public function get(): void
@@ -59,15 +64,17 @@ class Subtasks extends HtmxController
         $ticketSubtasks = $this->ticketService->getAllSubtasks((int) $id);
         $statusLabels = $this->ticketService->getStatusLabels(session('currentProject'));
         $efforts = $this->ticketService->getEffortLabels();
+        $priorities = $this->ticketService->getPriorityLabels();
 
         $this->tpl->assign('ticket', $ticket);
         $this->tpl->assign('ticketSubtasks', $ticketSubtasks);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('efforts', $efforts);
+        $this->tpl->assign('priorities', $priorities);
 
     }
 
-    public function delete()
+    public function delete(): void
     {
 
         $getVars = $_GET;
@@ -84,10 +91,14 @@ class Subtasks extends HtmxController
         $ticketSubtasks = $this->ticketService->getAllSubtasks($parentId);
         $statusLabels = $this->ticketService->getStatusLabels(session('currentProject'));
         $efforts = $this->ticketService->getEffortLabels();
+        $priorities = $this->ticketService->getPriorityLabels();
 
         $this->tpl->assign('ticket', $ticket);
         $this->tpl->assign('ticketSubtasks', $ticketSubtasks);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('efforts', $efforts);
+        $this->tpl->assign('priorities', $priorities);
+
+        $this->tpl->setHTMXEvent('subtasksUpdated');
     }
 }

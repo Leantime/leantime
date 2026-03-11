@@ -7,16 +7,16 @@
         'allProjects' => []
     ])
 
-    <div class="maincontent" style="margin-top:0px">
-        <div style="padding:10px 0px">
+    <div class="maincontent tw:mt-0">
+        <div class="tw:py-2">
             <div class="center">
-                <span style="font-size:38px; color:var(--main-titles-color););">
+                <span class="tw:text-[38px]" style="color:var(--main-titles-color);">
                     {{ __("headline.project_hub") }}
                 </span><br />
-                <span style="font-size:18px; color:var(--main-titles-color););">
+                <span class="tw:text-lg" style="color:var(--main-titles-color);">
                    {{ __("text.project_hub_intro") }}
                     @if ($login::userIsAtLeast("manager"))
-                        <br /><br /><a class="btn btn-default" href="#/projects/createnew">{!! __("menu.create_something_new") !!}</a>
+                        <br /><br /><x-globals::forms.button link="#/projects/createnew" type="secondary">{!! __("menu.create_something_new") !!}</x-globals::forms.button>
                     @endif
                 </span>
                 <br />
@@ -25,8 +25,8 @@
         </div>
 
         @if(is_array($allProjects) && count($allProjects) == 0)
-            <x-global::undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" style="color:var(--main-titles-color);" maxWidth="30%">
-            </x-global::undrawSvg>
+            <x-globals::undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" style="color:var(--main-titles-color);" maxWidth="30%">
+            </x-globals::undrawSvg>
 
         @endif
 
@@ -34,48 +34,45 @@
              hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
              hx-trigger="HTMX.updateProjectList from:body"
              hx-target="#myProjectsHub"
-             hx-swap="outerHTML">
+             hx-select="#myProjectsHub"
+             hx-swap="outerHTML"
+             aria-live="polite">
 
             @if (count($clients) > 0)
-                <div class="dropdown dropdownWrapper pull-right">
-                    <a href="javascript:void(0)" class="btn btn-default dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                        @if ($currentClientName != '')
-                            {{ $currentClientName }}
-                        @else
-                            {{ __("headline.all_clients") }}
-                        @endif
-
-                        <i class="fa fa-caret-down"></i>
-                    </a>
-
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ CURRENT_URL }}">{{ __("headline.all_clients") }}</a></li>
+                <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" :label="$currentClientName != '' ? $currentClientName : __('headline.all_clients')" trigger-class="btn btn-default header-title-dropdown" class="pull-right">
+                        <li>
+                            <a href="javascript:void(0);"
+                               hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
+                               hx-target="#myProjectsHub"
+                               hx-select="#myProjectsHub"
+                               hx-swap="outerHTML">{{ __("headline.all_clients") }}</a>
+                        </li>
                         @foreach ($clients as $key => $value)
                             <li>
                                 <a  href="javascript:void(0);"
                                     hx-get="{{BASE_URL}}/projects/projectHubProjects/get?client={{ $key }}"
                                     hx-target="#myProjectsHub"
+                                    hx-select="#myProjectsHub"
                                     hx-swap="outerHTML">{{ $value['name'] }}</a>
                             </li>
                         @endforeach
-                    </ul>
-                </div>
+                </x-globals::actions.dropdown-menu>
             @endif
 
             @if (count($allProjects) == 0)
                 <br /><br />
                 <div class='center'>
-                    <div style='width:70%; color:var(--main-titles-color)' class='svgContainer'>
+                    <div class='tw:w-4/5 svgContainer' style="color:var(--main-titles-color)">
                         {{ __('notifications.not_assigned_to_any_project') }}
                         @if($login::userIsAtLeast($roles::$manager))
                             <br /><br />
-                            <a href='{{ BASE_URL }}/projects/newProject' class='btn btn-primary'>{{ __('link.new_project') }}</a>
+                            <x-globals::forms.button link="{{ BASE_URL }}/projects/newProject" type="primary">{{ __('link.new_project') }}</x-globals::forms.button>
                         @endif
                     </div>
                 </div>
             @endif
 
-            <x-global::accordion id="myProjectsHub-favorites" class="noBackground">
+            <x-globals::elements.accordion id="myProjectsHub-favorites" class="noBackground">
                 <x-slot name="title">
                     ⭐ My Favorites
                 </x-slot>
@@ -87,7 +84,7 @@
                         @foreach ($allProjects as $project)
                             @if($project['isFavorite'] == true)
                                 <div class="col-md-4">
-                                    @include("projects::partials.projectCard", ["project" => $project,  "type" => "detailed"])
+                                    <x-globals::projects.project-card :project="$project" type="detailed" :project-type-avatars="$projectTypeAvatars ?? []" />
                                 </div>
                                 @php
                                     $hasFavorites = true;
@@ -101,10 +98,10 @@
                         @endif
                     </div>
                 </x-slot>
-            </x-global::accordion>
+            </x-globals::elements.accordion>
 
 
-            <x-global::accordion id="myProjectsHub-otherProjects" class="noBackground">
+            <x-globals::elements.accordion id="myProjectsHub-otherProjects" class="noBackground">
                 <x-slot name="title">
                     {{ __("text.all_assigned_projects")  }}
                 </x-slot>
@@ -115,15 +112,14 @@
                             @if($project['isFavorite'] == false)
 
                                 <div class="col-md-3">
-                                    @include("projects::partials.projectCard", ["project" => $project, "type" => "detailed"])
+                                    <x-globals::projects.project-card :project="$project" type="detailed" :project-type-avatars="$projectTypeAvatars ?? []" />
                                 </div>
 
                             @endif
                         @endforeach
                     </div>
                 </x-slot>
-            </x-global::accordion>
+            </x-globals::elements.accordion>
         </div>
     </div>
 @endsection
-

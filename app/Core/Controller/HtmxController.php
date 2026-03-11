@@ -64,9 +64,13 @@ abstract class HtmxController
     }
 
     /**
-     * Sets the response header to trigger an htmx event
+     * Sets the response header to trigger an htmx event.
      *
-     **/
+     * @deprecated Use $this->tpl->setHTMXEvent() instead. Controller-level
+     *             events are silently lost when the action method returns a
+     *             Response directly (e.g. emptyResponse()). Template-level
+     *             events survive in all code paths.
+     */
     public function setHTMXEvent(string $eventName): void
     {
         $this->headers['HX-Trigger'] ??= [];
@@ -74,19 +78,36 @@ abstract class HtmxController
     }
 
     /**
-     * Gets the response
+     * Gets the response.
      *
-     **/
+     * Merges HTMX headers from both the controller and the template into
+     * the response. Headers with the same key are combined (not overwritten).
+     */
     public function getResponse($fragment): Response
     {
         $this->response = tap(
             $this->tpl->displayFragment($this::$view, $fragment ?? ''),
             function (Response $response): void {
+                // Merge controller + template headers. For array-valued keys
+                // (like HX-Trigger), combine both sources instead of the
+                // template overwriting the controller.
+                $merged = [];
                 foreach ($this->headers as $key => $value) {
-                    $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
+                    $merged[$key] = is_array($value) ? $value : [$value];
                 }
                 foreach ($this->tpl->getHeaders() as $key => $value) {
-                    $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
+                    $vals = is_array($value) ? $value : [$value];
+                    if (isset($merged[$key])) {
+                        $merged[$key] = array_merge($merged[$key], $vals);
+                    } else {
+                        $merged[$key] = $vals;
+                    }
+                }
+                foreach ($merged as $key => $values) {
+                    $flat = implode(',', array_unique(array_filter($values)));
+                    if ($flat !== '') {
+                        $response->headers->set($key, $flat);
+                    }
                 }
             },
         );

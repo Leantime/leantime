@@ -1,5 +1,7 @@
 leantime.usersController = (function () {
 
+    var _croppieInstance = null;
+
     var readURL = function (input) {
 
         clearCroppie();
@@ -7,34 +9,28 @@ leantime.usersController = (function () {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
 
-            var profileImg = jQuery('#profileImg');
+            var profileImg = document.querySelector('#profileImg');
             reader.onload = function (e) {
-                //profileImg.attr('src', e.currentTarget.result);
 
-                _uploadResult = profileImg
-                    .croppie(
-                        {
-                            enableExif: true,
-                            viewport: {
-                                width: 175,
-                                height: 175,
-                                type: 'circle'
-                            },
-                            boundary: {
-                                width: 200,
-                                height: 200
-                            }
-                        }
-                    );
-
-                _uploadResult.croppie(
-                    'bind',
-                    {
-                        url: e.currentTarget.result
+                _croppieInstance = new Croppie(profileImg, {
+                    enableExif: true,
+                    viewport: {
+                        width: 175,
+                        height: 175,
+                        type: 'circle'
+                    },
+                    boundary: {
+                        width: 200,
+                        height: 200
                     }
-                );
+                });
 
-                jQuery("#previousImage").hide();
+                _croppieInstance.bind({
+                    url: e.currentTarget.result
+                });
+
+                var previousImage = document.querySelector("#previousImage");
+                if (previousImage) previousImage.style.display = 'none';
             };
 
             reader.readAsDataURL(input.files[0]);
@@ -42,31 +38,35 @@ leantime.usersController = (function () {
     };
 
     var clearCroppie = function () {
-        jQuery('#profileImg').croppie('destroy');
-        jQuery("#previousImage").show();
+        if (_croppieInstance) {
+            _croppieInstance.destroy();
+            _croppieInstance = null;
+        }
+        var previousImage = document.querySelector("#previousImage");
+        if (previousImage) previousImage.style.display = '';
     };
 
     var saveCroppie = function () {
 
-        jQuery('#save-picture').addClass('running');
+        var saveBtn = document.querySelector('#save-picture');
+        if (saveBtn) saveBtn.classList.add('running');
 
-        jQuery('#profileImg').attr('src', leantime.appUrl + '/images/loaders/loader28.gif');
-        _uploadResult.croppie(
-            'result',
-            {
+        var profileImg = document.querySelector('#profileImg');
+        if (profileImg) profileImg.setAttribute('src', leantime.appUrl + '/images/loaders/loader28.gif');
+
+        if (_croppieInstance) {
+            _croppieInstance.result({
                 type: "blob",
                 circle: true
-            }
-        ).then(
-            function (result) {
-                    leantime.usersService.saveUserPhoto(result);
-            }
-        );
+            }).then(function (result) {
+                leantime.usersService.saveUserPhoto(result);
+            });
+        }
     };
 
     var initUserTable = function () {
 
-        jQuery(document).ready(function () {
+        document.addEventListener('DOMContentLoaded', function () {
 
             var size = 100;
 
@@ -116,7 +116,9 @@ leantime.usersController = (function () {
             autoSizable: true,
             callbacks: {
                 afterShowCont: function () {
-                    jQuery(".showDialogOnLoad").show();
+                    document.querySelectorAll(".showDialogOnLoad").forEach(function (el) {
+                        el.style.display = '';
+                    });
                     jQuery(".userImportModal").nyroModal(userImportModalConfig);
                 }
             }
@@ -136,7 +138,9 @@ leantime.usersController = (function () {
             autoSizable: true,
             callbacks: {
                 afterShowCont: function () {
-                    jQuery(".showDialogOnLoad").show();
+                    document.querySelectorAll(".showDialogOnLoad").forEach(function (el) {
+                        el.style.display = '';
+                    });
                     jQuery(".userEditModal").nyroModal(userEditModal);
                 },
                 beforeClose: function () {

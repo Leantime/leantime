@@ -1,17 +1,17 @@
 /*
-
-Mobile Stylesheet
-Available Breakpoints
-
-min-width: 375px lowest tested resolution
-min-width: 576px
-min-width: 768px //Not used
-min-width: 992px //Not used
-min-width: 1200px
+ * Mobile / Responsive Stylesheet
+ *
+ * Breakpoints:
+ *   max-width: 767px   — mobile  (phones, portrait + landscape)
+ *   768px – 1200px     — tablet  (iPad portrait → small laptop)
+ *   min-width: 1201px  — desktop (wide desktop)
+ *
+ * Lowest tested resolution: 375px
+ * Strategy: sidebar collapses below 768px; hamburger visible below 768px.
  */
 
 
-@media (max-width:575px) {
+@media (max-width:767px) {
 
 
     .tab-primary.ui-tabs .ui-tabs-nav {
@@ -68,31 +68,121 @@ min-width: 1200px
         width:auto;
     }
 
-    .mainwrapper.menuclosed .leftpanel {
-        display:none;
-        z-index: 9999;
+    /* ── Mobile sidebar: slide-in drawer ─────────────────────────────
+       Replaces the old display:none/block toggle.
+       The sidebar slides in from the left using a CSS transform so
+       we get a smooth animation for free — no JS required.
+       ────────────────────────────────────────────────────────────── */
+
+    /* Sidebar base — always in DOM, off-screen by default */
+    .mainwrapper .leftpanel,
+    .mainwrapper.menuopen .leftpanel {
+        position: fixed !important;
+        top: 50px !important;       /* match header height */
+        left: 0;
+        bottom: 0;
+        height: auto !important;
+        width: 260px !important;
+        max-width: 80vw !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        background: var(--header-gradient) !important;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        overflow-y: auto;
+        overflow-x: hidden;
+        /* Layer: above content, strictly below fixed header */
+        z-index: calc(var(--zlayer-5, 15) - 1) !important;
+        /* Slide animation */
+        transform: translateX(0);
+        transition: transform 0.25s ease, visibility 0.25s;
+        visibility: visible;
     }
 
+    /* Closed state: slide off-screen instead of display:none */
+    .mainwrapper.menuclosed .leftpanel {
+        display: flex !important;   /* keep in DOM for animation */
+        transform: translateX(-110%) !important;
+        visibility: hidden !important;
+    }
+
+    /* Backdrop — appears behind the open sidebar, closes it on tap */
+    .mainwrapper.menuopen::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        /* Layer: below sidebar (zlayer-5 - 1 = 14), above page content */
+        z-index: calc(var(--zlayer-5, 15) - 2);
+        cursor: pointer;
+    }
+
+    /* My Work / Company — compact on mobile, can't remove them (only
+       way to switch between dashboard contexts) */
+    .headmenu.work-modes li:not(.dropdown) a {
+        font-size: var(--font-size-xs);
+        padding: 0 4px;
+        white-space: nowrap;
+        max-width: 56px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Keep project selector constrained so it doesn't push other items */
     .headmenu .projectselector {
-        min-width:320px;
-        width:320px;
+        max-width: 140px;
+        min-width: unset;
+        width: auto;
     }
 
     .headmenu > li.appsLink {
-        display:none;
+        display: none;
+    }
+
+    /* ── Right-side header dropdowns (notifications, help, profile) ──
+       These use right:-16px desktop offset which overflows on narrow
+       screens. Fix: position relative to viewport instead. */
+    .headmenu.pull-right .dropdown-menu {
+        position: fixed !important;
+        top: 50px !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        min-width: unset !important;
+        max-width: calc(100vw - 16px) !important;
+        max-height: 70vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Project selector dropdown — full-width, below header */
+    .headmenu.work-modes .dropdown-menu {
+        position: fixed !important;
+        top: 50px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 80vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 0 !important;
+    }
+
+    /* Touch-action: remove 300ms tap delay on all header interactive elements */
+    .headmenu > li > a,
+    .headmenu a {
+        touch-action: manipulation;
+        cursor: pointer;
     }
 
     .mainwrapper .primaryContent {
-        padding-left:0px !important;
+        padding-left: 0 !important;
     }
 
-    .mainwrapper .leftpanel {
-        width:90%;
-        position:absolute;
-        top:50px;
-        left:5px;
-        background:#555;
-        z-index: 999;
+    /* Header stays on top of everything including the sidebar overlay */
+    .header {
+        z-index: var(--zlayer-5, 50) !important;
     }
 
     .barmenu,
@@ -111,8 +201,10 @@ min-width: 1200px
         width:100%;
     }
 
-    .dropdown-menu {
-        width:100%;
+    /* Only full-width dropdowns inside page content — not in the fixed header */
+    .maincontentinner .dropdown-menu,
+    .filterBar .dropdown-menu {
+        width: 100%;
     }
 
     .fc-header {
@@ -122,7 +214,7 @@ min-width: 1200px
     .maincontentinner .btn,
     .maincontentinner .btn-group{
 
-        margin-bottom:5px;
+        margin-bottom:4px;
     }
 
     .maincontentinner .simpleButtons .btn,
@@ -156,7 +248,7 @@ min-width: 1200px
 
 
     .headmenu > li > a {
-        padding: 15px 10px 9px;
+        padding: 16px 10px 8px;
     }
 
     .maincontent {
@@ -171,7 +263,8 @@ min-width: 1200px
 
     /* forms */
     #elm1_toolbargroup {
-        width: 560px;
+        max-width: 100%;
+        width: 100%;
     }
 
     /* media */
@@ -208,14 +301,14 @@ min-width: 1200px
     body.loginpage {
         overflow-x: hidden;
         max-width: 100vw;
-        min-height: 100vh;
+        min-height: 100dvh;
     }
 
     .loginpage .row {
         margin: 0;
         width: 100vw;
         max-width: 100vw;
-        min-height: 100vh;
+        min-height: 100dvh;
         height: auto;
         box-sizing: border-box;
         overflow-x: hidden;
@@ -236,7 +329,7 @@ min-width: 1200px
     }
 
     .headmenu > li > a {
-        padding: 15px 15px 9px;
+        padding: 16px 16px 8px;
     }
 
     .userloggedinfo .userinfo small {
@@ -256,9 +349,23 @@ min-width: 1200px
         width: 400px;
     }
 
-    /* table */
+    /* ── Tables — horizontal scroll so rows never overflow ── */
+    .dataTables_wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+    }
+
+    /* Standard tables without DataTables wrapper */
+    .maincontentinner .table,
+    .maincontentinner table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
     .dataTable th, .dataTable td {
-        padding: 5px;
+        padding: 4px;
     }
 
     .dataTable th:nth-child(2), .dataTable td:nth-child(2) {
@@ -267,11 +374,12 @@ min-width: 1200px
 
     .dataTables_paginate {
         position: relative;
-        margin: -25px 0 0 20px;
+        margin: 8px 0 0 0;
     }
 
     .dataTables_info {
-        height: 50px;
+        height: auto;
+        padding: 4px 0;
     }
 
     #dyntable2_info {
@@ -280,36 +388,80 @@ min-width: 1200px
 
     .dataTables_filter {
         position: relative;
-        margin: -50px 0 20px 20px;
+        margin: 0 0 12px 0;
     }
 
     .dataTables_length {
-        height: 70px;
+        height: auto;
+        margin-bottom: 8px;
     }
 
     #dyntable2_wrapper .dataTables_filter {
         margin: 0;
+    }
+
+    /* ── Kanban / Canvas boards — horizontal scroll on narrow screens ── */
+    .kanbanBoard > .row-fluid,
+    .sortableTicketList > .row-fluid {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;  /* keep columns in a single scrollable row */
+        padding-bottom: 8px; /* room for scrollbar */
+    }
+
+    /* Ensure each column has a useful minimum width for touch interaction */
+    .kanbanBoard .column,
+    .sortableTicketList .column {
+        min-width: 240px;
+        flex: 0 0 240px;
+    }
+
+    /* ── Canvas board sections — stack vertically on phone ──
+       All canvas templates use class="row canvas-row" consistently.
+       Inline style="width: X%" on columns requires !important to override. */
+    .canvas-row {
+        flex-wrap: wrap;
+    }
+
+    .canvas-row .column {
+        width: 100% !important;
+        min-width: 100% !important;
+        flex: 0 0 100% !important;
+        height: auto !important;
+    }
+
+    /* The outer canvas wrapper has min-width: calc(2 * 250px) inline —
+       override it so the board doesn't force horizontal scroll on mobile */
+    #sortableCanvasKanban .row-fluid > .column {
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Reset JS-set minHeight on contentInner for stacked mobile columns */
+    .contentInner {
+        min-height: auto !important;
+        height: auto !important;
     }
     .hidden-gt-sm {
         display:block!important;
     }
 
     .headmenu > li > a {
-        padding: 15px 20px 9px;
+        padding: 16px 20px 8px;
     }
 
     .headmenu > li.right {
-        padding-bottom: 13px;
+        padding-bottom: 12px;
     }
 
     .pageheader {
-        padding: 5px 15px;
-        min-height: 50px;
+        padding: 4px 20px;
+        min-height: 48px;
     }
 
     .searchbar {
         position: static;
-        margin-bottom: 5px;
+        margin-bottom: 4px;
     }
 
     .searchbar input {
@@ -332,8 +484,8 @@ min-width: 1200px
         float: none;
         display: block;
         width: auto;
-        border: 2px solid #0866c6;
-        margin-bottom: 5px;
+        border: 2px solid var(--primary-color);
+        margin-bottom: 4px;
     }
 
     .wizard .hormenu li a {
@@ -349,7 +501,7 @@ min-width: 1200px
     }
 
     .wizard-inverse .hormenu li {
-        border-color: #333;
+        border-color: var(--main-border-color);
     }
 
     .wizard .tabbedmenu {
@@ -384,7 +536,7 @@ min-width: 1200px
         float: none;
         text-align: right;
         display: block;
-        border-top: 1px dashed #ddd;
+        border-top: 1px dashed var(--main-border-color);
         margin-top: 10px;
     }
 
@@ -425,11 +577,11 @@ min-width: 1200px
         margin-left: 0;
         display: none;
         height: auto;
-        border-left: 1px solid #0866c6;
+        border-left: 1px solid var(--primary-color);
     }
 
     .messagesearch input {
-        background-position: 375px 9px;
+        background-position: 375px 10px;
     }
 
     .msglist {
@@ -443,16 +595,16 @@ min-width: 1200px
 
     /* calendar */
     .fc-button {
-        padding: 0 5px;
+        padding: 0 4px;
     }
 
     .fc-header-title {
-        margin-top: 3px;
+        margin-top: 4px;
     }
 
     /* invoice */
     .amountdue h1 {
-        padding: 10px 25px;
+        padding: 10px 24px;
     }
 
     .amountdue .btn {
@@ -494,16 +646,16 @@ min-width: 1200px
     }
 
     .pagetitle h1 {
-        font-size: 18px;
+        font-size: var(--font-size-xl);
     }
 
     .pageheader {
-        padding: 5px 15px;
-        min-height: 50px;
+        padding: 4px 20px;
+        min-height: 48px;
     }
 
     .header {
-        height: 50px;
+        height: 48px;
     }
 
     /* Fix header navigation icon overflow */
@@ -528,7 +680,7 @@ min-width: 1200px
     }
 
     .headmenu > li > a {
-        padding: 0 3px;
+        padding: 0 4px;
         line-height: 50px;
         text-align: center;
         display: flex;
@@ -558,11 +710,11 @@ min-width: 1200px
     }
 
     .leftmenu .nav-tabs.nav-stacked li a {
-        font-size: 13px;
+        font-size: var(--base-font-size);
     }
 
     .leftmenu .nav-tabs.nav-stacked .dropdown ul li a {
-        font-size: 12px;
+        font-size: var(--font-size-s);
     }
 
 
@@ -578,11 +730,11 @@ min-width: 1200px
     /* buttons */
     .tabbable > .nav-tabs > li {
         overflow: hidden;
-        font-size: 11px;
+        font-size: var(--font-size-s);
     }
 
     .tabbable > .nav-tabs > li a {
-        padding: 10px 5px;
+        padding: 10px 4px;
     }
 
     .fontawesomeicons .span3 {
@@ -595,25 +747,46 @@ min-width: 1200px
         float: none;
     }
 
-    /* forms */
+    /* ── Forms — stack columns, fluid inputs ── */
+
+    /* Multi-column form rows collapse to single column */
+    .formContainer .row,
+    .maincontentinner form .row,
+    .modal-body .row {
+        flex-wrap: wrap;
+    }
+
+    .formContainer .row > [class*="col-"],
+    .maincontentinner form .row > [class*="col-"],
+    .modal-body .row > [class*="col-"] {
+        width: 100%;
+        max-width: 100%;
+        flex: 0 0 100%;
+    }
+
+    /* Fluid select containers */
+    .ts-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
     .dualselect select {
         width: 38%;
     }
 
-    .chzn-container {
-        width: 270px !important;
-    }
-
-    .chzn-drop {
-        width: 268px !important;
-    }
-
-    .chzn-search input {
-        width: 220px !important;
-    }
-
-    .tagsinput {
-        width: 260px !important;
+    /* Form controls full-width on mobile */
+    .form-control,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="url"],
+    input[type="search"],
+    input[type="number"],
+    select,
+    textarea {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     #elm1_toolbargroup {
@@ -661,7 +834,7 @@ min-width: 1200px
 
     /* messages */
     .messagemenu ul {
-        height: 45px;
+        height: 48px;
     }
 
     .messagemenu ul li a {
@@ -680,11 +853,11 @@ min-width: 1200px
 
     /* error */
     .errortitle h4 {
-        font-size: 20px;
+        font-size: var(--font-size-xxl);
     }
 
     .errortitle span {
-        font-size: 50px;
+        font-size: var(--font-size-display-lg);
     }
 
     .errortitle span:first-child {
@@ -693,7 +866,7 @@ min-width: 1200px
 
     /* bootstrap */
     .tabbable > .tab-content {
-        padding: 15px;
+        padding: 16px;
     }
 
     .btn-circle {
@@ -701,13 +874,13 @@ min-width: 1200px
     }
 
     .btn-circle i {
-        margin-left: -3px;
+        margin-left: -4px;
     }
 
     .input-append .btn, .input-prepend .btn {
         padding-left: 8px;
         padding-right: 8px;
-        font-size: 12px;
+        font-size: var(--font-size-s);
     }
 
     /* footer */
@@ -762,11 +935,11 @@ min-width: 1200px
     }
 
     .commentlist li .comment-info {
-        margin-left: 55px;
+        margin-left: 56px;
     }
 
     .commentlist li .comment-info h4 {
-        font-size: 14px;
+        font-size: var(--base-font-size);
     }
 
     /* buttons */
@@ -824,8 +997,8 @@ min-width: 1200px
     }
 
     .headerinner {
-        width: calc(100% - 45px);
-        margin-left: 45px !important;
+        width: calc(100% - 48px);
+        margin-left: 48px !important;
 
     }
 
@@ -893,12 +1066,12 @@ min-width: 1200px
     .maincontentinner .dataTables_filter input {
         width: 100%;
         max-width: 200px;
-        margin: 5px 0 0 0;
+        margin: 4px 0 0 0;
     }
 
     /* Project overview mobile improvements */
     .col-md-4, .col-md-8 {
-        margin-bottom: 15px;
+        margin-bottom: 16px;
     }
 
     .rightpanel {
@@ -908,18 +1081,18 @@ min-width: 1200px
 
     /* Better spacing for mobile cards/widgets */
     .maincontentinner .row > div {
-        margin-bottom: 15px;
+        margin-bottom: 16px;
     }
 
     /* Mobile content padding optimization - reclaim horizontal space */
     .maincontent {
-        padding-left: 5px;
-        padding-right: 5px;
+        padding-left: 4px;
+        padding-right: 4px;
     }
 
     .rightpanel {
-        padding-left: 5px;
-        padding-right: 5px;
+        padding-left: 4px;
+        padding-right: 4px;
     }
 
     /* Fix login page layout and text cutoff issues */
@@ -966,7 +1139,7 @@ min-width: 1200px
         max-width: 100%;
         box-sizing: border-box;
         padding: 12px;
-        margin-bottom: 15px;
+        margin-bottom: 16px;
     }
 
     /* Fix "Forgot password?" link positioning and visibility */
@@ -984,7 +1157,7 @@ min-width: 1200px
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
-        margin-bottom: 15px;
+        margin-bottom: 16px;
         padding-right: 0;
         overflow: visible;
     }
@@ -994,12 +1167,12 @@ min-width: 1200px
         display: inline-block !important;
         float: right;
         clear: both;
-        margin-top: 5px;
+        margin-top: 4px;
         margin-bottom: 10px;
         padding-right: 0;
         white-space: nowrap;
-        font-size: 14px;
-        color: #0866c6;
+        font-size: var(--base-font-size);
+        color: var(--primary-color);
         text-decoration: none;
     }
 
@@ -1016,12 +1189,12 @@ min-width: 1200px
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
-        margin-bottom: 15px;
+        margin-bottom: 16px;
         padding: 0;
     }
 }
 
-@media (min-width: 576px) and (max-width:1200px) {
+@media (min-width: 768px) and (max-width:1200px) {
 
     .progressWrapper .step {
         display:none;
@@ -1035,6 +1208,22 @@ min-width: 1200px
 
     .leftmenu .projectselector .projectSelectorTabs .tabs li{
         width:auto;
+    }
+
+    /* Logo — hide at all tablet widths to save header space */
+    .header .logo {
+        display: none;
+    }
+
+    /* My Work / Company — keep visible (only navigation to switch contexts)
+       but compact them to short text at tablet widths */
+    .headmenu.work-modes li:not(.dropdown) a {
+        font-size: var(--font-size-s);
+        padding: 0 6px;
+        white-space: nowrap;
+        max-width: 72px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .barmenu,
@@ -1064,8 +1253,10 @@ min-width: 1200px
         width:100%;
     }
 
-    .dropdown-menu {
-        width:100%;
+    /* Only full-width dropdowns inside page content — not in the fixed header */
+    .maincontentinner .dropdown-menu,
+    .filterBar .dropdown-menu {
+        width: 100%;
     }
 
     .fc-header {
@@ -1075,7 +1266,7 @@ min-width: 1200px
     .maincontentinner .btn,
     .maincontentinner .btn-group{
         width:100%;
-        margin-bottom:5px;
+        margin-bottom:4px;
     }
 
     .currentSprint {
@@ -1083,24 +1274,24 @@ min-width: 1200px
     }
 
     .pageheader {
-        padding: 5px 15px;
-        min-height: 50px;
+        padding: 4px 20px;
+        min-height: 48px;
     }
 
     .leftpanel a.barmenu {
         position: fixed;
         left: 0px;
-        top: 5px;
+        top: 4px;
         margin-left:0px;
-        padding-left:15px;
+        padding-left:16px;
         width:50px;
     }
 
     .leftpanel a.barmenu.open {
         left:240px;
         background:var(--primary-color);
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
         box-shadow:var(--regular-shadow);
 
     }
@@ -1114,6 +1305,10 @@ min-width: 1200px
 
     }
 
+    /* TODO: rightpanel leaves a 63px gap on the right edge because margin-left
+       is missing. Adding margin-left breaks the open-menu state (content shifts
+       right and overlaps). Needs a menu-state-aware fix, e.g. different margins
+       for .menuclosed vs .menuopen. */
     .rightpanel {
         width:calc(100% - 63px);
 
@@ -1392,8 +1587,8 @@ min-width: 1200px
     }
 
     .container {
-        padding-right: 15px;
-        padding-left: 15px
+        padding-right: 16px;
+        padding-left: 16px
     }
 
     .container {
@@ -1402,8 +1597,8 @@ min-width: 1200px
     }
 
     .container-fluid {
-        padding-right: 15px;
-        padding-left: 15px
+        padding-right: 16px;
+        padding-left: 16px
     }
 
     .row {
@@ -1417,7 +1612,7 @@ min-width: 1200px
     }
 
     /* Fix modal responsive issues and content cutoff */
-    .nyroModalCont {
+    #global-modal-content {
         width: 95% !important;
         left: 2.5% !important;
         max-width: 100vw !important;
@@ -1427,58 +1622,51 @@ min-width: 1200px
     }
 
     /* Override fixed min-width from base CSS - key fix for task modal */
-    .nyroModalCont .row .regRight {
+    #global-modal-content .row .regRight {
         min-width: auto !important;
         max-width: 100% !important;
         width: 100% !important;
         box-sizing: border-box;
     }
 
-    /* Ensure modal close button stays visible */
-    .nyroModalCloseButton {
-        right: 15px !important;
-        top: 15px !important;
-        z-index: 101;
-    }
-
     /* Make modal content scrollable if needed */
-    .nyroModalCont .modal-icons {
+    #global-modal-content .modal-icons {
         margin-right: 40px;
     }
 
     /* Fix modal form elements */
-    .nyroModalCont input,
-    .nyroModalCont select,
-    .nyroModalCont textarea {
+    #global-modal-content input,
+    #global-modal-content select,
+    #global-modal-content textarea {
         max-width: 100% !important;
         box-sizing: border-box;
     }
 
     /* Additional fixes for task modal layout */
-    .nyroModalCont .tabbable {
+    #global-modal-content .tabbable {
         width: 100% !important;
         overflow-x: auto;
     }
 
-    .nyroModalCont .tab-content {
+    #global-modal-content .tab-content {
         padding: 10px 5px;
     }
 
     /* Ensure dropdowns and form controls are mobile-friendly */
-    .nyroModalCont .form-control,
-    .nyroModalCont .dropdown-menu {
+    #global-modal-content .form-control,
+    #global-modal-content .dropdown-menu {
         max-width: 100% !important;
         width: 100% !important;
         box-sizing: border-box;
     }
 
     /* Fix sidebar layout in task modal */
-    .nyroModalCont .row {
+    #global-modal-content .row {
         margin-left: 0 !important;
         margin-right: 0 !important;
     }
 
-    .nyroModalCont .row > div {
+    #global-modal-content .row > div {
         padding-left: 5px !important;
         padding-right: 5px !important;
     }
@@ -1500,7 +1688,8 @@ min-width: 1200px
 
     /* forms */
     #elm1_toolbargroup {
-        width: 680px;
+        max-width: 100%;
+        width: 100%;
     }
 
     /* messages */
@@ -1547,7 +1736,7 @@ min-width: 1200px
     /* calendar */
     .ui-datepicker-calendar td a {
         padding: 10px;
-        font-size: 12px;
+        font-size: var(--font-size-s);
     }
 
     /* buttons */
@@ -1589,7 +1778,7 @@ min-width: 1200px
     }
 
     .stepContainer p {
-        margin: 10px 15px;
+        margin: 10px 16px;
     }
 
     #wiz1step2_1 p {
@@ -1597,11 +1786,12 @@ min-width: 1200px
     }
 
     .tabbedwizard .stepContainer {
-        padding: 30px 15px;
+        padding: 32px 16px;
     }
 
     #elm1_toolbargroup {
-        width: 640px;
+        max-width: 100%;
+        width: 100%;
     }
 
     /* boxes */
@@ -1636,7 +1826,7 @@ min-width: 1200px
         float: none;
         text-align: right;
         display: block;
-        border-top: 1px dashed #ddd;
+        border-top: 1px dashed var(--main-border-color);
         margin-top: 10px;
     }
 
@@ -1655,7 +1845,8 @@ min-width: 1200px
 
     /* bootstrap */
     .btn {
-        padding: 4px 12px;
+        padding: 10px 14px;
+        min-height: 44px;
     }
 
     .ticketBox {
@@ -1945,8 +2136,8 @@ min-width: 1200px
     }
 
     .container {
-        padding-right: 15px;
-        padding-left: 15px
+        padding-right: 16px;
+        padding-left: 16px
     }
 
     .col-lg {
@@ -2484,8 +2675,8 @@ min-width: 1200px
     }
 
     .container {
-        padding-right: 15px;
-        padding-left: 15px
+        padding-right: 16px;
+        padding-left: 16px
     }
     .container {
         width: 1140px;
@@ -2493,8 +2684,8 @@ min-width: 1200px
     }
 
     .container-fluid {
-        padding-right: 15px;
-        padding-left: 15px
+        padding-right: 16px;
+        padding-left: 16px
     }
 
     .row {
@@ -2507,5 +2698,108 @@ min-width: 1200px
     }
 }
 
+/* ============================================================
+   TOUCH TARGETS — ensure all interactive elements meet the
+   44×44px minimum touch target on mobile and tablet devices.
+   ============================================================ */
+@media (max-width: 1200px) {
 
+    /* Primary action buttons */
+    .btn {
+        min-height: 36px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
 
+    /* Left-panel navigation links */
+    .leftmenu .nav li a,
+    .leftmenu .nav-tabs li a {
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Dropdown menu items */
+    .dropdown-menu > li > a {
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        padding: 8px 16px;
+    }
+}
+
+/* ============================================================
+   PHONE-ONLY refinements  (<576px)
+   Tighten elements that are still too wide on the narrowest screens.
+   These override the base mobile section (≤767px) where needed.
+   ============================================================ */
+@media (max-width: 575px) {
+
+    /* Project selector — cap width so it doesn't overflow header */
+    .headmenu .projectselector {
+        max-width: 260px;
+        min-width: unset;
+        width: auto;
+    }
+
+    /* Media wrapper — shrink for narrow screens */
+    .mediaWrapper {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Stack filter-bar controls vertically */
+    .filterBar .row {
+        flex-direction: column;
+    }
+
+    .filterBar .row > [class*="col-"] {
+        width: 100%;
+        max-width: 100%;
+        flex: 0 0 100%;
+    }
+
+    /* Allow page-header content to wrap on smallest screens */
+    .pageheader .pull-right,
+    .pageheader .pull-left {
+        float: none !important;
+        display: block;
+        width: 100%;
+    }
+
+    /* Full-width action buttons inside content panels on phones */
+    .maincontentinner .btn:not(.btn-icon):not(.dropdown-toggle) {
+        width: 100%;
+    }
+}
+
+/* ============================================================
+   FLUID TYPOGRAPHY
+   Override CSS custom properties at breakpoints so every
+   element that uses font-size variables scales automatically.
+   No need to touch individual selectors.
+   ============================================================ */
+
+/* Tablet (768–1200px) — moderate downscale */
+@media (min-width: 768px) and (max-width: 1200px) {
+    :root {
+        --font-size-display-xl:  72px;  /* was 120px */
+        --font-size-display-lg:  32px;  /* was 40px  */
+        --font-size-display-md:  28px;  /* was 36px  */
+        --font-size-display-sm:  22px;  /* was 28px  */
+        --font-size-xxxl:        20px;  /* was 24px  */
+    }
+}
+
+/* Mobile (≤767px) — significant downscale for narrow viewports */
+@media (max-width: 767px) {
+    :root {
+        --font-size-display-xl:  40px;  /* was 120px */
+        --font-size-display-lg:  26px;  /* was 40px  */
+        --font-size-display-md:  22px;  /* was 36px  */
+        --font-size-display-sm:  18px;  /* was 28px  */
+        --font-size-xxxl:        18px;  /* was 24px  */
+        --font-size-xxl:         16px;  /* was 20px  */
+        --base-font-size:        14px;  /* retain — already readable */
+    }
+}

@@ -17,13 +17,13 @@
 
         <div class="row">
             <div class="col-md-6">
-                <div class="ticketBox tw-p-[20px]">
+                <div class="ticketBox tw:p-[20px]">
                     <span class="fancyLink">Did you know?</span><br />
-                    <span style="font-size:16px;">Setting Intentions has been shown to <strong>more than double the success rate</strong> of completing a task.</span>
+                    <span class="tw:text-base">Setting Intentions has been shown to <strong>more than double the success rate</strong> of completing a task.</span>
                 </div>
             </div>
             <div class="col-md-6">
-                <x-global::undrawSvg image="undraw_adventure_map_hnin.svg" maxWidth="60%" maxHeight="300px"></x-global::undrawSvg>
+                <x-globals::undrawSvg image="undraw_adventure_map_hnin.svg" maxWidth="60%" maxHeight="300px"></x-globals::undrawSvg>
             </div>
         </div>
 
@@ -32,7 +32,7 @@
             intentions<br />to get the work done.</p> <br />
 
         <br />
-        <input type="submit" name="createAccount" value="Complete Sign up" />
+        <x-globals::forms.button submit type="primary" name="createAccount">Complete Sign up</x-globals::forms.button>
 
 
     </form>

@@ -18,7 +18,11 @@ class Mix
         //     Cache::store('installation')->put('manifest://' . $manifestDir, json_decode(file_get_contents("$manifestDir/mix-manifest.json"), true), 60 * 60 * 24 * 7);
         // }
         // $this->manifest[$manifestDir] = Cache::store('installation')->get('manifest://' . $manifestDir);
-        $this->manifest[$manifestDir = APP_ROOT.'/public/dist'] = json_decode(file_get_contents("$manifestDir/mix-manifest.json"), true);
+        $manifestDir = APP_ROOT.'/public/dist';
+        $manifestPath = "$manifestDir/mix-manifest.json";
+        $this->manifest[$manifestDir] = file_exists($manifestPath)
+            ? json_decode(file_get_contents($manifestPath), true) ?? []
+            : [];
 
         /**
          * WARNING: All files in the manifest directories will be exposed to public queries!

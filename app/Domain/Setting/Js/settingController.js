@@ -17,7 +17,6 @@ leantime.settingController = (function () {
 
             var profileImg = jQuery('#logoImg');
             reader.onload = function (e) {
-                //profileImg.attr('src', e.currentTarget.result);
 
                 _uploadResult = profileImg
                     .croppie(
@@ -43,7 +42,10 @@ leantime.settingController = (function () {
                     }
                 );
 
-                jQuery("#previousImage").hide();
+                var previousImageEl = document.querySelector('#previousImage');
+                if (previousImageEl) {
+                    previousImageEl.style.display = 'none';
+                }
             };
 
             reader.readAsDataURL(input.files[0]);
@@ -52,14 +54,23 @@ leantime.settingController = (function () {
 
     var clearCroppie = function () {
         jQuery('#logoImg').croppie('destroy');
-        jQuery("#previousImage").show();
+        var previousImageEl = document.querySelector('#previousImage');
+        if (previousImageEl) {
+            previousImageEl.style.display = '';
+        }
     };
 
     var saveCroppie = function () {
 
-        jQuery('#save-logo').addClass('running');
+        var saveLogoEl = document.querySelector('#save-logo');
+        if (saveLogoEl) {
+            saveLogoEl.classList.add('running');
+        }
 
-        jQuery('#logoImg').attr('src', leantime.appUrl + '/images/loaders/loader28.gif');
+        var logoImgEl = document.querySelector('#logoImg');
+        if (logoImgEl) {
+            logoImgEl.setAttribute('src', leantime.appUrl + '/images/loaders/loader28.gif');
+        }
         _uploadResult.croppie(
             'result',
             {

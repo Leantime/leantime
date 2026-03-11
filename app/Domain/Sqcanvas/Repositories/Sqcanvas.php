@@ -21,7 +21,7 @@ class Sqcanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-chess';
+    protected string $icon = 'extension';
 
     /**
      * canvasTypes - Must be extended
@@ -29,11 +29,11 @@ class Sqcanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'sq_qa' => ['icon' => 'fa-1', 'title' => 'box.sq.qa'],
-        'sq_qb' => ['icon' => 'fa-2', 'title' => 'box.sq.qb'],
-        'sq_qc' => ['icon' => 'fa-3', 'title' => 'box.sq.qc'],
-        'sq_qd' => ['icon' => 'fa-4', 'title' => 'box.sq.qd'],
-        'sq_qe' => ['icon' => 'fa-5', 'title' => 'box.sq.qe'],
+        'sq_qa' => ['icon' => 'counter_1', 'title' => 'box.sq.qa'],
+        'sq_qb' => ['icon' => 'counter_2', 'title' => 'box.sq.qb'],
+        'sq_qc' => ['icon' => 'counter_3', 'title' => 'box.sq.qc'],
+        'sq_qd' => ['icon' => 'counter_4', 'title' => 'box.sq.qd'],
+        'sq_qe' => ['icon' => 'counter_5', 'title' => 'box.sq.qe'],
     ];
 
     /**
@@ -53,10 +53,10 @@ class Sqcanvas extends Canvas
      * @acces protected
      */
     protected array $statusLabels = [
-        'status_draft' => ['icon' => 'fa-circle-question',    'color' => 'blue',   'title' => 'status.draft',    'dropdown' => 'info',    'active' => true],
-        'status_review' => ['icon' => 'fa-circle-exclamation', 'color' => 'orange', 'title' => 'status.review',   'dropdown' => 'warning', 'active' => true],
-        'status_accepted' => ['icon' => 'fa-circle-check',       'color' => 'green',  'title' => 'status.accepted', 'dropdown' => 'success', 'active' => true],
-        'status_rejected' => ['icon' => 'fa-circle-xmark',       'color' => 'red',    'title' => 'status.rejected', 'dropdown' => 'danger',  'active' => true],
+        'status_draft' => ['icon' => 'help',    'color' => 'blue',   'title' => 'status.draft',    'dropdown' => 'info',    'active' => true],
+        'status_review' => ['icon' => 'error', 'color' => 'orange', 'title' => 'status.review',   'dropdown' => 'warning', 'active' => true],
+        'status_accepted' => ['icon' => 'check_circle',       'color' => 'green',  'title' => 'status.accepted', 'dropdown' => 'success', 'active' => true],
+        'status_rejected' => ['icon' => 'cancel',       'color' => 'red',    'title' => 'status.rejected', 'dropdown' => 'danger',  'active' => true],
     ];
 
     /**

@@ -25,7 +25,7 @@
 
         <li class="dropdown scrollableMenu">
 
-            <ul style="display:block;">
+            <ul class="mainMenuList">
 
                 @foreach ($menuStructure as $key => $menuItem)
 
@@ -35,7 +35,13 @@
 
                 @if ($login::userIsAtLeast(Roles::$manager) && $menuType != 'company' && $menuType != 'personal' && $menuType != 'projecthub')
                     <li class="fixedMenuPoint {{ $module == $settingsLink['module'] && $action == $settingsLink['action'] ? 'active' : '' }}">
-                        <a  href="{{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }}/{{ session("currentProject") }}">
+                        <a  href="{{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }}/{{ session("currentProject") }}"
+                            hx-boost="true"
+                            hx-target=".primaryContent"
+                            hx-select=".primaryContent"
+                            hx-swap="outerHTML show:window:top"
+                            hx-indicator="#page-loading"
+                        >
                             {!! $settingsLink['label']  !!}
                         </a>
                     </li>

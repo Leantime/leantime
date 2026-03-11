@@ -7,11 +7,11 @@
  * @module tiptap/extensions/math
  */
 
-const { Node, mergeAttributes } = require('@tiptap/core');
+import { Node, mergeAttributes } from '@tiptap/core';
 
 // Import KaTeX directly from npm package (bundled with webpack)
 // Note: KaTeX CSS is loaded separately via link tag in pageBottom.blade.php
-const katex = require('katex');
+import katex from 'katex';
 
 // Make KaTeX available globally for consistency
 window.katex = katex;
@@ -452,10 +452,4 @@ function createMathExtension() {
     return [MathInline, MathBlock];
 }
 
-module.exports = {
-    createMathExtension: createMathExtension,
-    MathInline: MathInline,
-    MathBlock: MathBlock,
-    showMathDialog: showMathDialog,
-    loadKaTeX: loadKaTeX,
-};
+export { createMathExtension, MathInline, MathBlock, showMathDialog, loadKaTeX };

@@ -12,31 +12,17 @@
 
 @endphp
 
-<script type="text/javascript">
-    window.onload = function() {
-        if (!window.jQuery) {
-            //It's not a modal
-            location.href = "{{ BASE_URL }}/goalcanvas/showCanvas?showModal={{ $canvasItem['id'] }}";
-        }
-    }
-</script>
+<div class="showDialogOnLoad tw:w-[800px]" style="display:none;">
 
-<div class="showDialogOnLoad" style="display:none;">
+    <x-globals::elements.section-title icon="{{ $canvasTypes[$canvasItem['box']]['icon'] }}" class="tw:pb-0">{{ $canvasTypes[$canvasItem['box']]['title'] }}</x-globals::elements.section-title>
+    <hr class="tw:mt-1 tw:mb-4">
 
-    <h4 class="widgettitle title-light" style="padding-bottom: 0">
-        <i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i>
-        {{ $canvasTypes[$canvasItem['box']]['title'] }}
-    </h4>
-    <hr style="margin-top: 5px; margin-bottom: 15px;">
-
-    <h5 style="padding-left: 40px"><strong>{{ $canvasItem['description'] }}</strong></h5>
+    <h5 class="tw:pl-10"><strong>{{ $canvasItem['description'] }}</strong></h5>
 
     @if ($id !== '')
     <br />
     <input type="hidden" name="comment" value="1" />
-    <h4 class="widgettitle title-light">
-        <span class="fa fa-comments"></span>{{ __('subtitles.discussion') }}
-    </h4>
+    <x-globals::elements.section-title icon="forum">{{ __('subtitles.discussion') }}</x-globals::elements.section-title>
     @php
     $tpl->assign("formUrl", "/goalcanvas/editCanvasComment/" . $id . "");
     $tpl->displaySubmodule('comments-generalComment');
@@ -54,7 +40,7 @@ jQuery(document).ready(function() {
    }
 
    @if(!$login::userIsAtLeast($roles::$editor))
-       leantime.authController.makeInputReadonly(".nyroModalCont");
+       leantime.authController.makeInputReadonly("#global-modal-content");
 
    @endif;
 

@@ -17,7 +17,7 @@
     ];
 @endphp
 
-<span class="comment-reactions" id="reactions-{{ $commentId }}">
+<span class="comment-reactions" id="reactions-{{ $commentId }}" aria-live="polite">
     @if(count($reactions) > 0)
         <span class="reaction-list">
             @foreach($reactions as $reactionData)
@@ -49,7 +49,7 @@
 
     <span class="reaction-picker-toggle">
         <button type="button" class="add-reaction-btn" onclick="toggleReactionPicker(this, {{ $commentId }})">
-            <i class="fa fa-smile-o"></i>
+            <x-globals::elements.icon name="sentiment_satisfied" />
             <span class="sr-only">Add reaction</span>
         </button>
     </span>

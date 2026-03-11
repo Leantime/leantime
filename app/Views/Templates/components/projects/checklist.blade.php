@@ -1,0 +1,79 @@
+@props([
+    'includeTitle' => true,
+    'progressSteps' => [],
+    'percentDone' => 0,
+])
+
+@if ($includeTitle)
+    <h5 class="subtitle">Project Checklist <x-globals::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="The project checklist is list of activities you should do to ensure your projects are well defined, planned and executed." /> </h5><br/>
+
+@endif
+
+<form name="progressForm" id="progressForm" aria-live="polite">
+    <div class="projectSteps">
+        <div class="progressWrapper">
+            <div class="progress">
+                <div
+                    id="progressChecklistBar"
+                    class="progress-bar progress-bar-success tx-transition"
+                    role="progressbar"
+                    aria-valuenow="0"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    style="width: {{ $percentDone }}%"
+                ><span class="sr-only">{{ $percentDone }}%</span></div>
+            </div>
+
+            @foreach ($progressSteps as $step)
+                <div class="step {{ $step['stepType'] }}" style="left: {{ $step['positionLeft'] }}%;">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-tippy-content="{{ __($step['description']) }}">
+                        <span class="innerCircle"></span>
+                        <span class="title">
+                            @if ($step['status'] == 'done')
+                                <x-globals::elements.icon name="check_circle" />
+                            @else
+                                <x-globals::elements.icon name="circle" />
+                            @endif
+                                {{ __("text.step_".$loop->index + 1) }}: {{ __($step['title']) }}
+                            <x-globals::elements.icon name="arrow_drop_down" />
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+
+                        @foreach ($step['tasks'] as $key => $task)
+                            <li @if ($task['status'] == 'done') class="done" @endif>
+                                <input
+                                    type="checkbox"
+                                    name="{{ $key }}"
+                                    id="progress_{{ $key }}"
+                                    hx-patch="{{ BASE_URL }}/hx/projects/checklist/update-subtask/"
+                                    hx-target="#progressForm"
+                                    hx-swap="outerHTML"
+                                    @if ($task['status'] == 'done') checked @endif
+                                    @if (! in_array($step['stepType'], ['complete', 'current']))
+                                        disabled
+
+                                    @endif
+                                />
+                                <label for="progress_{{ $key }}"
+                                       @if (! in_array($step['stepType'], ['complete', 'current']))
+                                           data-tippy-content="Finish the previous steps first"
+
+                                       @endif
+
+                                >{{ __($task['title'] ?? '') }}</label>
+                                <span class="clearall"></span>
+                                <span class="taskDescription">
+                                {{ __($task['description'] ?? '') }}<br />
+                                <a href="{{ $task['link'] ?? '#' }}"><x-globals::elements.icon name="open_in_new" /> Take me there</a>
+                                </span>
+
+
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</form>

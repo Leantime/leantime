@@ -21,7 +21,7 @@ class Insightscanvas extends Canvas
      * @access public
      * @var    string Fontawesome icone
      */
-    protected string $icon = 'fa-note-sticky';
+    protected string $icon = 'sticky_note_2';
 
     /**
      * canvasTypes - Must be extended
@@ -29,12 +29,12 @@ class Insightscanvas extends Canvas
      * @acces protected
      */
     protected array $canvasTypes = [
-        'insights_oberve' => ['icon' => 'fa-tower-observation', 'title' => 'box.insights.observe'],
-        'insights_interview' => ['icon' => 'fa-people-arrows',     'title' => 'box.insights.interview'],
-        'insights_focus_groups' => ['icon' => 'fa-people-line',       'title' => 'box.insights.focus_groups'],
-        'insights_secondary_research' => ['icon' => 'fa-book',              'title' => 'box.insights.secondary_research'],
+        'insights_oberve' => ['icon' => 'cell_tower', 'title' => 'box.insights.observe'],
+        'insights_interview' => ['icon' => 'connecting_airports',     'title' => 'box.insights.interview'],
+        'insights_focus_groups' => ['icon' => 'groups',       'title' => 'box.insights.focus_groups'],
+        'insights_secondary_research' => ['icon' => 'book',              'title' => 'box.insights.secondary_research'],
         'insights_knowledge' => [
-            'icon' => 'fa-file-signature',    'title' => 'box.insights.knowledge',
+            'icon' => 'draw',    'title' => 'box.insights.knowledge',
             'color' => '#e3e3e3',
         ],
     ];

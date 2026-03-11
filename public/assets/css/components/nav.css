@@ -3,11 +3,11 @@
 }
 
 .leftmenu .nav-header {
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     font-size: var(--font-size-l);
-    padding: 15px 20px;
+    padding: 16px 20px;
     text-shadow: none;
-    border-bottom: 1px solid #222;
+    border-bottom: 1px solid var(--main-border-color);
     margin-top: 0;
     color: var(--nav-link-color);
     line-height: 16px;
@@ -22,12 +22,12 @@
 
 .nav li + .nav-header small {
     text-transform: none;
-    color: #999;
+    color: var(--secondary-font-color);
     line-height: 12px;
 }
 
 .headmenu .project-selector {
-    padding: 10px 15px 20px 15px;
+    padding: 10px 16px 20px 16px;
     position: relative;
 
 }
@@ -37,7 +37,7 @@
     clear: both;
     float: none;
     padding-top: 0;
-    font-weight:lighter;
+    font-weight:var(--font-weight-light);
     /*font-family: 'RobotoLight', 'Helvetica Neue', Helvetica, sans-serif;*/
     font-size: var(--font-size-l);
 }
@@ -48,11 +48,11 @@
 }
 
 .headmenu .project-selector .chzn-container .chzn-single {
-    color: #555;
+    color: var(--primary-font-color);
 }
 
 .headmenu .project-selector .chzn-container .chzn-results li {
-    color: #555;
+    color: var(--primary-font-color);
 }
 
 .headmenu .project-selector .chzn-container .chzn-results li.highlighted {
@@ -65,7 +65,7 @@
 
 .headmenu .projectselector  .projectListFilter {
     border-bottom:1px solid var(--main-border-color);
-    padding:0px 15px;
+    padding:0px 16px;
 }
 
 .projectListFilter .fa {
@@ -90,7 +90,7 @@
     width: 170px;
     text-align: center;
     height: 50px;
-    padding:7px 5px 5px 5px;
+    padding:8px 4px 4px 4px;
     margin-left: 55px;
     display: block;
     float: left;
@@ -115,13 +115,13 @@ a.barmenu {
     left:0px;
     margin-top:1px;
     margin-left:20px;
-    font-size:20px;
+    font-size: var(--font-size-xxl);
     color: var(--header-nav-link-color) !important;
     cursor:pointer;
     width:30px;
     height:50px;
     line-height:50px;
-    z-index:11;
+    z-index: var(--zlayer-5, 15);
 }
 
 a.barmenu.open {
@@ -163,7 +163,7 @@ a.barmenu:hover {
 /*
 .bigProjectSelector {
     display:block;
-    font-weight:normal;
+    font-weight: var(--font-weight-body);
     font-size: var(--font-size-l);
     padding:0 15px;
     line-height:59px;
@@ -204,7 +204,7 @@ a.barmenu:hover {
 
 .headmenu .projectselector  li.intro {
     color:var(--primary-font-color);
-    padding:10px 15px 20px 15px;
+    padding:10px 16px 20px 16px;
 }
 
 .headmenu .projectselector  li.intro .title {
@@ -234,9 +234,9 @@ a.barmenu:hover {
 
 .headmenu .projectselector  li.nav-header {
     display: block;
-    padding: 3px 15px;
+    padding: 4px 16px;
     font-size: var(--base-font-size);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     line-height: 20px;
     color: var(--secondary-font-color);
     text-transform: uppercase;
@@ -251,19 +251,19 @@ a.barmenu:hover {
 
 .headmenu .projectselector  li span.info {
     color:var(--primary-font-color);
-    padding: 10px 15px;
+    padding: 10px 16px;
     display: block;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
 }
 
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
-    color: var(--nav-link-color);
+    color: var(--main-menu-link-active-color);
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {
     text-decoration: none;
-    background-color: #555;
+    background-color: var(--hover-bg);
     color: var(--nav-link-color);
 }
 
@@ -274,7 +274,7 @@ a.barmenu:hover {
 .projectselector .projectAvatar {
     width:30px;
     height:30px;
-    font-size:14px;
+    font-size: var(--base-font-size);
     line-height:30px;
     text-align:center;
     background:var(--primary-font-color);
@@ -297,7 +297,7 @@ a.barmenu:hover {
 }
 
 .leftmenu .nav-tabs.nav-stacked a {
-    color: #555;
+    color: var(--primary-font-color);
     padding: 10px 20px 10px 20px;
     font-size: var(--font-size-l);
 }
@@ -306,18 +306,18 @@ a.barmenu:hover {
 }
 
 .leftmenu .nav-tabs.nav-stacked a span {
-    margin-right: 5px;
+    margin-right: 4px;
 }
 
 
 
-.leftmenu .nav-tabs.nav-stacked > li.dropdown ul {
+.leftmenu .nav-tabs.nav-stacked > li.dropdown ul:not(.mainMenuList) {
     display: none;
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown ul.submenu li a{
-    margin-left:15px;
-    padding-left:14px;
+    margin-left:16px;
+    padding-left:12px;
     border-left:0px dotted var(--main-border-color);
     position:relative;
 }
@@ -333,7 +333,7 @@ a.barmenu:hover {
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle a{
     font-size: var(--font-size-s);
     text-transform: uppercase;
-    padding: 10px 5px 10px 10px;
+    padding: 10px 4px 10px 10px;
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle a:has(.fa-angle-right){
@@ -347,7 +347,7 @@ a.barmenu:hover {
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.title a {
     font-size: var(--font-size-xs);
     text-transform: uppercase;
-    padding: 15px 5px 5px 25px;
+    padding: 16px 4px 4px 24px;
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.title a:hover {
@@ -364,7 +364,7 @@ a.barmenu:hover {
     height: 8px;
     background: var(--red);
     border-radius: 50%;
-    margin-left: 5px;
+    margin-left: 4px;
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown > a {
@@ -375,20 +375,21 @@ a.barmenu:hover {
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a {
     display: block;
     font-size: var(--base-font-size);
-    padding: 10px 15px 10px 15px;
+    padding: 10px 16px 10px 16px;
     color: var(--nav-link-color);
     border-radius:var(--box-radius-large);
     position:relative;
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
-    background: var(--main-menu-link-hover-bg);
-
+    background: var(--main-menu-link-active-bg);
+    color: var(--main-menu-link-active-color);
+    font-weight: var(--font-weight-bold);
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {
     text-decoration: none;
-    background:var(--main-menu-link-hover-bg);
+    background: var(--hover-bg);
 }
 
 .fixedMenuPoint {
@@ -412,8 +413,6 @@ a.barmenu:hover {
 }
 
 .nav-tabs > li > a {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: 0;
 }
 
@@ -426,15 +425,15 @@ a.barmenu:hover {
 .nav-tabs li.separator {
     border-bottom:0px dashed var(--main-border-color);
     border-bottom-style: wave;
-    height:5px;
-    margin-bottom:5px;
+    height:4px;
+    margin-bottom:4px;
 }
 
 .nav-tabs li .submenuCaret {
     width: 20px;
     float: right;
-    margin-top: 5px;
-    margin-right: 5px;
+    margin-top: 4px;
+    margin-right: 4px;
     height: 20px;
     line-height: 20px;
     text-align: center;
@@ -465,7 +464,7 @@ a.barmenu:hover {
 /*.header .nav-header {*/
 /*    text-shadow: none;*/
 /*    text-transform: none;*/
-/*    font-weight: normal;*/
+/*    font-weight: var(--font-weight-body);*/
 /*    color:var(--primary-font-color);*/
 /*}*/
 
@@ -475,14 +474,14 @@ a.barmenu:hover {
     left: 45px;
     display: inline-block;
     border-right: 6px solid transparent;
-    border-bottom: 6px solid white;
+    border-bottom: 6px solid var(--primary-background);
     border-left: 6px solid transparent;
     content: '';
 }
 
 .headmenu .dropdown-menu.pull-right::after {
     left: auto;
-    right:15px;
+    right:16px;
 }
 
 .headmenu > li {
@@ -507,7 +506,7 @@ a.barmenu:hover {
     color: var(--header-nav-link-color);
     line-height: 50px;
     cursor: pointer;
-    padding: 0 15px;
+    padding: 0 16px;
 }
 
 .headmenu > li > a.active,
@@ -519,9 +518,9 @@ a.barmenu:hover {
 
 .headmenu > li > a .count {
     position: absolute;
-    top: 5px;
+    top: 4px;
     right: 10px;
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
 }
 
 .headmenu > li > a:hover .count, .headmenu > li.open > a .count {
@@ -577,7 +576,7 @@ a.barmenu:hover {
 
 .leftmenu .nav-tabs.nav-stacked.collapsedMenu .bigProjectSelector {
     display: block;
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     font-size: var(--font-size-l);
     padding:0;
     line-height: 46px;
@@ -613,11 +612,11 @@ a.barmenu:hover {
 .leftmenu .projectselector::after {
     position: absolute;
     top: 30px;
-    left: -9px;
+    left: -8px;
     transform: rotate(-90deg);
     display: inline-block;
     border-right: 6px solid transparent;
-    border-bottom: 6px solid white;
+    border-bottom: 6px solid var(--primary-background);
     border-left: 6px solid transparent;
     content: '';
 }
@@ -631,7 +630,7 @@ a.barmenu:hover {
 
 .projectselector .projectSelectorFooter li a {
     display: block;
-    padding-left: 15px;
+    padding-left: 16px;
 }
 
 .projectselector  li a{
@@ -645,18 +644,18 @@ a.barmenu:hover {
     background-image:none;
     background:var(--main-menu-link-active-bg);
     color:var(--main-menu-link-active-color);
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 }
 
 
 .headmenu .projectselector .head {
-    padding:15px;
+    padding:16px;
     color:var(--primary-font-color);
 }
 
 .headmenu .projectselector .head .searchBar {
     float: right;
-    padding-top: 5px;
+    padding-top: 4px;
 }
 
 
@@ -671,7 +670,7 @@ a.barmenu:hover {
 }
 
 .projectselector ul.tabs li a {
-    padding: 0 15px;
+    padding: 0 16px;
     margin-left: 0px;
 }
 
@@ -680,14 +679,22 @@ a.barmenu:hover {
 }
 
 .projectselector .scrollingTab {
-    padding:0;
-    height:calc(100vh - 310px);
-    overflow:auto;
+    padding: 0;
+    height: calc(100dvh - 310px);
+    overflow: auto;
+}
+
+/* On mobile/tablet the project selector is position:fixed at top:50px.
+   Recalculate scrollable area so it fills the remaining viewport height. */
+@media (max-width: 1200px) {
+    .projectselector .scrollingTab {
+        height: calc(100dvh - 220px);
+    }
 }
 
 /* Project Selection Lists */
 .projectselector ul.selectorList {
-    padding-top:3px;
+    padding-top:4px;
     padding-left: 0;
 }
 
@@ -708,7 +715,7 @@ a.barmenu:hover {
     border-color:transparent;
     font-size: var(--base-font-size);
     text-transform: none;
-    padding:5px 0 5px 15px;
+    padding:4px 0 4px 16px;
     display:block;
     border-bottom:1px dotted var(--main-border-color);
 }
@@ -724,13 +731,13 @@ a.barmenu:hover {
 }
 
 .projectselector ul.selectorList li.projectLineItem ul.projectGroup[class*=level-] {
-    margin-left: 13px;
+    margin-left: 12px;
     margin-top: 0px;
 }
 
 .projectselector ul.selectorList li.projectLineItem ul.projectGroup.level-0,
 .projectselector ul.selectorList li.projectLineItem ul.projectGroup.level-1{
-    margin-left: 18px;
+    margin-left: 20px;
 }
 
 .projectselector ul.selectorList li.projectLineItem  ul.projectGroup.closed {
@@ -748,7 +755,7 @@ a.barmenu:hover {
 .projectselector ul.selectorList li.projectLineItem a {
     line-height:30px;
     min-height:50px;
-    padding-left:15px;
+    padding-left:16px;
     display: block;
 }
 
@@ -765,7 +772,7 @@ a.barmenu:hover {
 
 .projectselector ul.selectorList li.projectLineItem.hasSubtitle a small {
     font-size:var(--font-size-xs);
-    opacity:0.5;
+    opacity:var(--opacity-disabled);
 }
 
 .projectselector ul.selectorList li.projectLineItem .projectAvatar {
@@ -775,13 +782,13 @@ a.barmenu:hover {
     float:left;
     margin-right:10px;
 
-    border-radius:5px;
+    border-radius:var(--box-radius-small);
 }
 
 .projectselector ul.selectorList li .fas {
 
     padding-right:10px;
-    padding-top:5px;
+    padding-top:4px;
 }
 
 
@@ -822,18 +829,18 @@ a.barmenu:hover {
 .projectselector ul.selectorList.projectList li.projectLineItem .toggler {
     float: left;
     line-height: 20px;
-    width: 18px;
+    width: 20px;
     padding: 0;
     text-align: center;
-    margin-left: 9px;
-    margin-right: 3px;
-    margin-top: 15px;
-    border-radius: 5px;
+    margin-left: 8px;
+    margin-right: 4px;
+    margin-top: 16px;
+    border-radius: var(--box-radius-small);
     min-height: 20px;
 }
 
 .projectselector ul.selectorList.projectList li.projectLineItem .projectGroup .toggler {
-    margin-left:5px;
+    margin-left:4px;
 }
 
 .projectselector ul.selectorList.projectList li.projectLineItem .toggler:hover {
@@ -858,12 +865,12 @@ a.barmenu:hover {
 /* Header Navigation */
 
 .header .userloggedinfo img {
-    background-color: #fff;
+    background-color: var(--primary-background);
     width: auto !important;
     max-height: 30px;
     max-width: 30px;
     border-radius: 50%;
-    border: 1px solid white;
+    border: 1px solid var(--primary-background);
     margin-top:10px;
 }
 
@@ -872,11 +879,11 @@ a.barmenu:hover {
     border:0px;
     background:transparent;
     max-width: none;
-    max-height: 18px;
+    max-height: 20px;
     margin: 0px;
-    margin-top: 17px;
+    margin-top: 16px;
     padding: 0px;
-    margin-right: 5px;
+    margin-right: 4px;
     margin-left:10px;
 }
 
@@ -898,23 +905,23 @@ a.barmenu:hover {
 
 .userloggedinfo .userinfo a.profileHandler {
     color: var(--header-nav-link-color);
-    padding:0 5px 0 5px;
+    padding:0 4px 0 4px;
     height:50px;
     line-height:50px;
     display: block;
-    margin-right:15px;
+    margin-right:16px;
 }
 
 .userloggedinfo .userinfo small {
     font-size: var(--base-font-size);
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
     color: var(--nav-link-color);
     font-style: italic;
 }
 
 .userloggedinfo .dropdown-menu
 {
-    right:7px;
+    right:8px;
     left:auto;
 }
 
@@ -925,7 +932,7 @@ a.barmenu:hover {
     left:auto;
     display: inline-block;
     border-right: 6px solid transparent;
-    border-bottom: 6px solid white;
+    border-bottom: 6px solid var(--primary-background);
     border-left: 6px solid transparent;
     content: '';
 }
@@ -942,11 +949,11 @@ a.barmenu:hover {
 }
 
 #notificationsDropdown .scroll-wrapper {
-    height:calc(100vh - 100px);
+    height:calc(100dvh - 100px);
 }
 
 .notificationDropdown .dropdown-menu {
-    right: -15px;
+    right: -16px;
     left: auto;
     min-width:375px;
 }
@@ -960,12 +967,12 @@ a.barmenu:hover {
 .notificationDropdown span.notificationCounter {
     position: absolute;
     top: 10px;
-    right: 5px;
-    height: 15px;
-    width: 15px;
+    right: 4px;
+    height: 16px;
+    width: 16px;
     background: var(--red);
-    border-radius: 10px;
-    line-height: 15px;
+    border-radius: 50%;
+    line-height: 16px;
     text-align: center;
     font-size: var(--font-size-xs);
 }
@@ -976,8 +983,8 @@ a.barmenu:hover {
 }
 
 .notificationDropdown .dropdown-menu li.new {
-    border-left:5px solid var(--primary-color);
-    font-weight:bold;
+    border-left:4px solid var(--primary-color);
+    font-weight: var(--font-weight-bold);
 }
 
 .notificationDropdown .dropdown-menu li {
@@ -988,12 +995,12 @@ a.barmenu:hover {
 
 .notificationDropdown .dropdown-menu li:hover {
     cursor:pointer;
-    background:var(--main-menu-link-hover-bg);
+    background: var(--hover-bg);
 }
 
 .notificationDropdown .dropdown-menu li a:hover {
     cursor:pointer;
-    background:var(--main-menu-link-hover-bg);
+    background: var(--hover-bg);
 }
 
 .notificationDropdown .dropdown-menu li .notificationProfileImage img {
@@ -1003,7 +1010,7 @@ a.barmenu:hover {
     border: 1px solid var(--main-border-color);
     float:left;
     margin-right:10px;
-    margin-top: 5px;
+    margin-top: 4px;
 }
 
 .notificationDropdown .dropdown-menu li .notificationTitle {
@@ -1018,7 +1025,7 @@ a.barmenu:hover {
 }
 
 .notificationDropdown .notifcationTabs.active{
-    font-weight:bold;
+    font-weight: var(--font-weight-bold);
 
 }
 
@@ -1049,7 +1056,7 @@ a.barmenu:hover {
 
 .userloggedinfo ul li a span,
 .appsDropdown ul li a span{
-    margin-right: 5px;
+    margin-right: 4px;
 }
 
 .userloggedinfo ul li a:hover,
@@ -1127,13 +1134,15 @@ a.barmenu:hover {
 
 .mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a {
     font-size: 0px;
-    padding: 12px 0px 8px 0;
-    width: 39px;
+    padding: 6px 0;
+    width: 40px;
     text-align: center;
-    display: block;
-    line-height: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
     margin-left: 0px;
-    margin-bottom:2px;
+    margin-bottom: 2px;
 }
 
 .mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked a span {
@@ -1141,23 +1150,37 @@ a.barmenu:hover {
 }
 
 .mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a span{
-    font-size: var(--base-font-size);
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.mainwrapper.menuclosed .bigProjectSelector i.fa {
+/* Scope all menuclosed bigProjectSelector rules to the leftpanel ONLY.
+   The header also uses .bigProjectSelector (as the project selector trigger)
+   and must not be affected by the sidebar-collapsed styles. */
+.mainwrapper.menuclosed .leftpanel .bigProjectSelector i.fa {
     display:none;
 }
 
-.mainwrapper.menuclosed .bigProjectSelector {
+.mainwrapper.menuclosed .leftpanel .bigProjectSelector i.fa.fa-caret-down {
+    display:inline;
+    font-size: var(--font-size-s);
+    position: static;
+    vertical-align: middle;
+    margin-left: 2px;
+}
+
+.mainwrapper.menuclosed .leftpanel .bigProjectSelector {
     font-size: 0;
     width:auto;
 }
 
-.mainwrapper.menuclosed .bigProjectSelector .fa {
+.mainwrapper.menuclosed .leftpanel .bigProjectSelector .fa {
     font-size:var(--font-size-l);
 }
 
-.mainwrapper.menuclosed .bigProjectSelector > .projectAvatar {
+.mainwrapper.menuclosed .leftpanel .bigProjectSelector > .projectAvatar {
     float:none;
     margin: 10px 0 0;
 }
@@ -1222,11 +1245,11 @@ a.barmenu:hover {
 
 .maincontentinner.tabs {
     height: 50px;
-    margin-bottom: 7px;
-    padding: 9px 14px;
+    margin-bottom: 8px;
+    padding: 8px 12px;
     position:sticky;
     top:55px;
-    z-index: 9;
+    z-index: var(--zlayer-4);
 }
 
 
@@ -1246,14 +1269,14 @@ a.barmenu:hover {
 
 .maincontentinner.tabs ul li.active {
     box-shadow: var(--regular-shadow);
-    border-radius: 5px;
+    border-radius: var(--box-radius-small);
     background:var(--secondary-background);
 }
 
 .maincontentinner.tabs ul li a {
-    font-weight:bold;
-    padding:5px 16px; /*Other buttons have 1px borders so this makes up for it */
-    border-radius: 5px;
+    font-weight: var(--font-weight-bold);
+    padding:4px 16px; /*Other buttons have 1px borders so this makes up for it */
+    border-radius: var(--box-radius-small);
     line-height:21px;
     display:block;
     color:var(--primary-font-color);
@@ -1275,10 +1298,61 @@ a.barmenu:hover {
 
 .maincontentinner.tabs .intro {
     display: inline-block;
-    padding-top: 5px;
+    padding-top: 4px;
     padding-left: 10px;
     float: left;
 
+}
+
+/* ── Navigation Tabs Component (.lt-nav-tabs) ─────────── */
+
+.lt-nav-tabs {
+    margin-bottom: 8px;
+}
+
+.lt-nav-tabs--sticky {
+    position: sticky;
+    top: 55px;
+    z-index: var(--zlayer-4);
+    border-radius: var(--box-radius);
+    background: var(--glass-background);
+    box-shadow: var(--large-shadow);
+    border: 1px solid var(--glass-border);
+    padding: 8px 12px;
+}
+
+.lt-nav-tabs ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 2px;
+}
+
+.lt-nav-tabs ul li.active {
+    box-shadow: var(--regular-shadow);
+    border-radius: var(--box-radius-small);
+    background: var(--secondary-background);
+}
+
+.lt-nav-tabs ul li a {
+    font-weight: var(--font-weight-bold);
+    padding: 4px 16px;
+    border-radius: var(--box-radius-small);
+    line-height: 21px;
+    display: block;
+    color: var(--primary-font-color);
+    white-space: nowrap;
+}
+
+.lt-nav-tabs ul li.active a {
+    color: var(--primary-color);
+}
+
+.lt-nav-tabs ul li a:hover,
+.lt-nav-tabs ul li.active a:hover {
+    background: var(--main-menu-link-active-bg);
+    color: var(--primary-color);
 }
 
 .headerinner .bigProjectSelector {
@@ -1289,86 +1363,86 @@ a.barmenu:hover {
 
 .headerinner .bigProjectSelector > .fa-caret-down {
     float:right;
-    padding-top:17px;
+    padding-top:16px;
 }
 
 .headerinner .bigProjectSelector .projectAvatar img{
     max-height:30px;
-    margin:10px 5px 0px 0px;
-    border-radius:3px;
+    margin:10px 4px 0px 0px;
+    border-radius:var(--box-radius-small);
     float:left;
 }
 
 .headerinner .bigProjectSelector .projectAvatar .fa {
     width: 30px;
     height: 30px;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     line-height: 30px;
     text-align: center;
     background: var(--header-gradient);
     border-radius: var(--element-radius);
-    margin-right: 5px;
+    margin-right: 4px;
 }
 
 
 
 .navbar {
-    margin-bottom: 15px;
+    margin-bottom: 16px;
 }
 
 .navbar-inner {
-    border-color: #ccc;
-    background: #f7f7f7;
+    border-color: var(--main-border-color);
+    background: var(--secondary-background);
 }
 
 .navbar .brand {
     font-size: var(--font-size-l);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .navbar .nav > li {
-    border-left: 1px solid #ccc;
+    border-left: 1px solid var(--main-border-color);
 }
 
 .navbar .nav > li:last-child {
-    border-right: 1px solid #ccc;
+    border-right: 1px solid var(--main-border-color);
 }
 
 .navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus {
-    background: #fff;
+    background: var(--primary-background);
 }
 
 .navbar .nav > li > a {
-    padding: 11px 15px;
+    padding: 12px 16px;
     font-size: var(--base-font-size);
-    font-weight: normal;
+    font-weight: var(--font-weight-body);
     text-transform: uppercase;
 }
 
 .navbar .nav > li > a:hover {
-    background: #f3f4f5;
+    background: var(--layered-background);
 }
 
 .navbar .nav li.dropdown.open > .dropdown-toggle,
 .navbar .nav li.dropdown.active > .dropdown-toggle,
 .navbar .nav li.dropdown.open.active > .dropdown-toggle {
-    background: #fff;
+    background: var(--primary-background);
 }
 
 .navbar .navbar-search.pull-right .search-query {
-    margin-right: -15px;
+    margin-right: -16px;
 }
 
 .navbar .navbar-search.pull-left .search-query {
-    margin-left: -15px;
+    margin-left: -16px;
 }
 
 .navbar .navbar-form.pull-right {
-    margin-right: -15px;
+    margin-right: -16px;
 }
 
 .navbar .navbar-form.pull-left {
-    margin-left: -15px;
+    margin-left: -16px;
 }
 
 .navbar .navbar-form input {
@@ -1376,32 +1450,30 @@ a.barmenu:hover {
 }
 
 .navbar-inverse .navbar-inner {
-    background: #222;
+    background: var(--secondary-action-hover-bg);
 }
 
 .navbar-inverse .nav > .active > a,
 .navbar-inverse .nav > .active > a:hover,
 .navbar-inverse .nav > .active > a:focus {
-    background: #111;
+    background: color-mix(in srgb, var(--primary-font-color) 90%, transparent);
 }
 
 .navbar-inverse .nav > li, .navbar-inverse .nav > li:last-child {
-    border-color: #373737;
+    border-color: color-mix(in srgb, var(--primary-font-color) 30%, transparent);
 }
 
 .navbar-inverse .nav > li > a:hover {
-    background: #171717;
+    background: color-mix(in srgb, var(--primary-font-color) 85%, transparent);
 }
 
 .navbar-inverse .nav li.dropdown.open > .dropdown-toggle,
 .navbar-inverse .nav li.dropdown.active > .dropdown-toggle,
 .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle {
-    background: #171717;
+    background: color-mix(in srgb, var(--primary-font-color) 85%, transparent);
 }
 
 .navbar-search .search-query {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: 0;
 }
 
@@ -1413,13 +1485,13 @@ a.barmenu:hover {
 
 .new-indicator {
     position: absolute;
-    top: 7px;
+    top: 8px;
     right: 2px;
     box-shadow: var(--min-shadow);
     height: 10px;
     width: 10px;
     background: var(--blue);
-    border-radius: 10px;
+    border-radius: 50%;
     line-height: 10px;
     text-align: center;
     font-size: var(--font-size-xs);
@@ -1435,11 +1507,11 @@ a.barmenu:hover {
 
 .onboarding-checklist h3 {
     font-size: var(--font-size-l);
-    font-weight:normal;
+    font-weight: var(--font-weight-body);
     margin-bottom:10px;
 }
 
 .onboarding-checklist ul li {
     list-style: none;
-    margin-bottom:5px;
+    margin-bottom:4px;
 }

@@ -1,0 +1,324 @@
+@php
+    if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
+        session(['usersettings.submenuToggle.myCalendarView' => 'dayGridMonth']);
+    }
+@endphp
+
+<x-globals::layout.page-header :icon="$tpl->getModulePicture()" headline="{{ __('headline.my_calendar') }}" subtitle="{{ __('headline.calendar') }}" />
+
+{!! $tpl->displayNotification() !!}
+
+<div class="maincontent">
+
+    <div class="row">
+        <div class="col-md-2">
+            <div class="maincontentinner">
+                <h5 class="subtitle tw:pb-m">Calendars</h5>
+
+                <ul class="simpleList">
+                    <li><span class="indicatorCircle" style="background:var(--accent1)"></span>Events</li>
+                    <li><span class="indicatorCircle" style="background:var(--accent2)"></span>Projects & Tasks</li>
+
+                @foreach($tpl->get('externalCalendars') as $calendars)
+                    <li>
+                        @if(empty($calendars['managedByPlugin']))
+                        <x-globals::actions.dropdown-menu class="tw:float-right" leadingVisual="more_horiz">
+                            <x-globals::actions.dropdown-item href="#/calendar/editExternal/{{ $calendars['id'] }}" leadingVisual="edit_square">{{ __('links.edit_calendar') }}</x-globals::actions.dropdown-item>
+                            <x-globals::actions.dropdown-item href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" leadingVisual="delete" state="danger">{{ __('links.delete_external_calendar') }}</x-globals::actions.dropdown-item>
+                        </x-globals::actions.dropdown-menu>
+                        @endif
+                        <span class="indicatorCircle" style="background:{{ $calendars['colorClass'] }}"></span>{{ $calendars['name'] }}
+
+                    </li>
+                @endforeach
+
+                </ul>
+                <hr />
+                <a href="#/calendar/connectCalendar" class="formModal tw:block tw:mb-2"><x-globals::elements.icon name="calendar_add_on" /> {{ __('label.connect_calendar') }}</a>
+                <a href="#/calendar/calendarSettings" class="formModal"><x-globals::elements.icon name="settings" /> {{ __('label.calendar_settings') }}</a>
+            </div>
+        </div>
+        <div class="col-md-10">
+            <div class="maincontentinner calendarMainCard">
+                <div class="tw:flex tw:items-center tw:flex-wrap tw:gap-2 tw:mb-4">
+                    <x-globals::forms.button element="a" href="#/calendar/addEvent" contentRole="primary" class="formModal"><x-globals::elements.icon name="add" /> {{ __('buttons.add_event') }}</x-globals::forms.button>
+
+                    <div class="tw:flex-1"></div>
+
+                    <div id="calendarTitle" class="tw:whitespace-nowrap">
+                        <h2 class="tw:m-0" style="font-size:var(--font-size-xl); font-weight:600;">..</h2>
+                    </div>
+
+                    <div class="tw:flex-1"></div>
+
+                    <x-globals::forms.select :bare="true" name="calendarView" id="my-select">
+                        <option value="timeGridDay" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridDay' ? 'selected' : '' }}>Day</option>
+                        <option value="timeGridWeek" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridWeek' ? 'selected' : '' }}>Week</option>
+                        <option value="dayGridMonth" {{ session('usersettings.submenuToggle.myCalendarView') == 'dayGridMonth' ? 'selected' : '' }}>Month</option>
+                        <option value="multiMonthYear" {{ session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear' ? 'selected' : '' }}>Year</option>
+                    </x-globals::forms.select>
+
+                    <x-globals::forms.button class="fc-today-button" contentRole="secondary">today</x-globals::forms.button>
+
+                    <div class="tw:flex tw:items-center tw:gap-1">
+                        <x-globals::forms.button class="fc-prev-button" contentRole="secondary">
+                            <x-globals::elements.icon name="chevron_left" />
+                        </x-globals::forms.button>
+                        <x-globals::forms.button class="fc-next-button" contentRole="secondary">
+                            <x-globals::elements.icon name="chevron_right" />
+                        </x-globals::forms.button>
+                    </div>
+
+                    <x-globals::forms.button element="a" href="#/calendar/export" contentRole="secondary" class="formModal">Export</x-globals::forms.button>
+                </div>
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+    @dispatchEvent('scripts.afterOpen')
+
+
+    jQuery(document).ready(function() {
+
+        //leantime.calendarController.initCalendar(events);
+        leantime.calendarController.initExportModal();
+
+    });
+    var eventSources = [];
+
+    var events = {events: [
+        @foreach($tpl->get('calendar') as $calendar)
+        {
+            title: {!! json_encode($calendar['title']) !!},
+
+            start: new Date({{ format($calendar['dateFrom'])->jsTimestamp() }}),
+            @if(isset($calendar['dateTo']))
+            end: new Date({{ format($calendar['dateTo'])->jsTimestamp() }}),
+            @endif
+            @if(isset($calendar['allDay']) && $calendar['allDay'] === true)
+            allDay: true,
+            @else
+            allDay: false,
+            @endif
+            enitityId: {{ $calendar['id'] }},
+            @if(isset($calendar['eventType']) && $calendar['eventType'] == 'calendar')
+            url: '{{ CURRENT_URL }}#/calendar/editEvent/{{ $calendar['id'] }}',
+            backgroundColor: '{{ $calendar['backgroundColor'] ?? 'var(--accent2)' }}',
+            borderColor: '{{ $calendar['borderColor'] ?? 'var(--accent2)' }}',
+            enitityType: "event",
+            dateContext: '{{ $calendar['dateContext'] ?? 'plan' }}',
+            @else
+            url: '{{ CURRENT_URL }}#/tickets/showTicket/{{ $calendar['id'] }}?projectId={{ $calendar['projectId'] }}',
+            backgroundColor: '{{ $calendar['backgroundColor'] ?? 'var(--accent2)' }}',
+            borderColor: '{{ $calendar['borderColor'] ?? 'var(--accent2)' }}',
+            enitityType: "ticket",
+            dateContext: '{{ $calendar['dateContext'] ?? 'edit' }}',
+            @endif
+        },
+        @endforeach
+    ]};
+
+    eventSources.push(events);
+
+    @php
+        $externalCalendars = $tpl->get('externalCalendars');
+    @endphp
+    @foreach($externalCalendars as $externalCalendar)
+        eventSources.push(
+            {
+                url: '{{ BASE_URL }}/calendar/externalCal/{{ $externalCalendar['id'] }}',
+                format: 'ics',
+                color: '{{ $externalCalendar['colorClass'] }}',
+                editable: false,
+            }
+        );
+    @endforeach
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const heightWindow = jQuery("body").height() - 210;
+
+        const calendarEl = document.getElementById('calendar');
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+                timeZone: leantime.i18n.__("usersettings.timezone"),
+                height: 'calc(100% - 40px)',
+                stickyHeaderDates: true,
+                initialView: '{{ session('usersettings.submenuToggle.myCalendarView') }}',
+                eventSources:eventSources,
+                editable: true,
+                headerToolbar: false,
+                dayHeaderFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
+                eventTimeFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
+                slotLabelFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
+                views: {
+                    timeGridDay: {
+
+                    },
+                    timeGridWeek: {
+
+                    },
+                    dayGridMonth: {
+                        dayHeaderFormat: { weekday: 'short' },
+                    },
+                    multiMonthYear: {
+                        showNonCurrentDates: true,
+                        multiMonthTitleFormat: { month: 'long', year: 'numeric' },
+                        dayHeaderFormat: { weekday: 'short' },
+                    },
+                    multiMonthOneMonth: {
+                        type: 'multiMonth',
+                        duration: {months: 1},
+                        multiMonthTitleFormat: {month: 'long', year: 'numeric'},
+                        dayHeaderFormat: {weekday: 'short'},
+                    },
+                    listWeek: {
+                        listDayFormat: {weekday: 'long'},
+                        listDaySideFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
+                    }
+                },
+                nowIndicator: true,
+                bootstrapFontAwesome: {
+                    close: 'fa-times',
+                    prev: 'fa-chevron-left',
+                    next: 'fa-chevron-right',
+                    prevYear: 'fa-angle-double-left',
+                    nextYear: 'fa-angle-double-right'
+                },
+                eventDrop: function (event) {
+
+                    if(event.event.extendedProps.enitityType == "ticket") {
+
+                        let dataVal = {};
+
+                        if(event.event.extendedProps.dateContext == "due") {
+
+                            dataVal = {
+                                id: event.event.extendedProps.enitityId,
+                                dateToFinish: event.event.startStr
+                            }
+
+                        }else{
+                            dataVal = {
+                                id: event.event.extendedProps.enitityId,
+                                editFrom: event.event.startStr,
+                                editTo: event.event.endStr
+                            }
+                        }
+
+                        jQuery.ajax({
+                            type : 'PATCH',
+                            url  : leantime.appUrl + '/api/tickets',
+                            data : dataVal
+                        });
+
+                    }else if(event.event.extendedProps.enitityType == "event") {
+
+                        jQuery.ajax({
+                            type : 'PATCH',
+                            url  : leantime.appUrl + '/api/calendar',
+                            data : {
+                                id: event.event.extendedProps.enitityId,
+                                dateFrom: event.event.startStr,
+                                dateTo: event.event.endStr
+                            }
+                        })
+                    }
+                },
+                eventResize: function (event) {
+
+                    if(event.event.extendedProps.enitityType == "ticket") {
+
+                        let dataVal = {};
+
+                        if(event.event.extendedProps.dateContext == "due") {
+
+                            dataVal = {
+                                id: event.event.extendedProps.enitityId,
+                                dateToFinish: event.event.startStr
+                            }
+
+                        }else{
+                            dataVal = {
+                                id: event.event.extendedProps.enitityId,
+                                editFrom: event.event.startStr,
+                                editTo: event.event.endStr
+                            }
+                        }
+
+                        jQuery.ajax({
+                            type : 'PATCH',
+                            url  : leantime.appUrl + '/api/tickets',
+                            data : dataVal
+                        });
+
+
+                    }else if(event.event.extendedProps.enitityType == "event") {
+
+                        jQuery.ajax({
+                            type : 'PATCH',
+                            url  : leantime.appUrl + '/api/calendar',
+                            data : {
+                                id: event.event.extendedProps.enitityId,
+                                dateFrom: event.event.startStr,
+                                dateTo: event.event.endStr
+                            }
+                        })
+                    }
+
+                },
+                eventMouseEnter: function() {
+                },
+
+            }
+            );
+        calendar.setOption('locale', leantime.i18n.__("language.code"));
+        calendar.render();
+        calendar.scrollToTime( Date.now() );
+        jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
+
+        jQuery('.fc-prev-button').click(function() {
+            calendar.prev();
+            calendar.getCurrentData()
+            jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
+        });
+        jQuery('.fc-next-button').click(function() {
+            calendar.next();
+            jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
+        });
+        jQuery('.fc-today-button').click(function() {
+            calendar.today();
+            jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
+        });
+        jQuery("#my-select").on("change", function(e){
+
+            calendar.changeView(jQuery("#my-select option:selected").val());
+
+            jQuery.ajax({
+                type : 'PATCH',
+                url  : leantime.appUrl + '/api/submenu',
+                data : {
+                    submenu : "myCalendarView",
+                    state   : jQuery("#my-select option:selected").val()
+                }
+            });
+
+        });
+    });
+
+    @dispatchEvent('scripts.beforeClose')
+
+</script>
+
+<style type="text/css">
+    .calendarMainCard {
+        height:calc(100vh - 165px);
+    }
+</style>

@@ -51,7 +51,7 @@
         "ext-gd": "*",
         "ext-fileinfo": "*",
         "ext-dom": "*",
-        "laravel/framework": "^v11.44",
+        "laravel/framework": "^12.0",
         "guzzlehttp/guzzle": "^7.9",
         "aws/aws-sdk-php": "^3.344.6",
         "phpmailer/phpmailer": "^6.6",

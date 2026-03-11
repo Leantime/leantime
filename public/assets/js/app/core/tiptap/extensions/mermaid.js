@@ -7,7 +7,7 @@
  * @module tiptap/extensions/mermaid
  */
 
-const { Node, mergeAttributes } = require('@tiptap/core');
+import { Node, mergeAttributes } from '@tiptap/core';
 
 // Default diagram template
 var defaultDiagram = 'graph TD\n    A[Start] --> B{Decision}\n    B -->|Yes| C[Do Something]\n    B -->|No| D[Do Something Else]\n    C --> E[End]\n    D --> E';
@@ -411,7 +411,4 @@ function showMermaidDialog(editor) {
     }, 100);
 }
 
-module.exports = {
-    createMermaidExtension: createMermaidExtension,
-    showMermaidDialog: showMermaidDialog,
-};
+export { createMermaidExtension, showMermaidDialog };

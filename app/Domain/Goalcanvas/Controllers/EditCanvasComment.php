@@ -73,6 +73,7 @@ class EditCanvasComment extends Controller
 
             $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvasitem', $canvasItem['id']);
             $this->tpl->assign('numComments', $this->commentsRepo->countComments(static::CANVAS_NAME.'canvasitem', $canvasItem['id']));
+            $this->tpl->assign('id', (int) $params['id']);
         } else {
             if (isset($params['type'])) {
                 $type = strip_tags($params['type']);
@@ -94,6 +95,7 @@ class EditCanvasComment extends Controller
             ];
 
             $comments = [];
+            $this->tpl->assign('id', '');
         }
 
         $this->tpl->assign('comments', $comments);

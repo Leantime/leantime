@@ -1,0 +1,67 @@
+@php
+    $providerEntities = $tpl->get('providerEntities');
+    $provider = $tpl->get('provider');
+    $leantimeEntities = $tpl->get('leantimeEntities');
+    $integrationId = $tpl->get('integrationId');
+
+    $urlAppend = '';
+    if (isset($integrationId) && is_numeric($integrationId)) {
+        $urlAppend = '&integrationId=' . $integrationId;
+    }
+@endphp
+
+<x-globals::layout.page-header icon="hub" headline="{{ $tpl->__('headlines.connector') }} // {{ $provider->name }}" />
+
+    <div class="maincontent">
+        <div class="maincontentinner">
+            @php $tpl->displaySubmodule('connector-importProgress') @endphp
+        </div>
+        <div class="maincontentinner center">
+
+        {!! $tpl->displayNotification() !!}
+
+            <h5 class="subtitle">What are you importing?</h5>
+            <br />
+            On this screen you can choose what you would like to synchronize. Choose an entity on the left and map it to something in Leantime on the right.
+            The arrow indicates that we will synchronize from one location to the other.<br /><br />
+
+            <form method="post" action="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}&step=fields{{ $urlAppend }}">
+
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-2 right">
+                        <h1>From (your integration)</h1>
+                        <label for="providerEntities">{{ $provider->name }}</label>
+                        <x-globals::forms.select name="providerEntities" id="providerEntities" class="tw:w-full">
+                            @foreach ($providerEntities as $key => $entity)
+                                <option value="{{ $key }}">{{ $entity['name'] }}</option>
+                            @endforeach
+                        </x-globals::forms.select>
+                    </div>
+                    <div class="col-md-2 tw:pt-12">
+                        <x-globals::elements.icon name="arrow_forward" />
+                    </div>
+                    <div class="col-md-2">
+                        <h1>To (Leantime)</h1>
+
+                        <label for="leantimeEntities">Leantime</label>
+                        <x-globals::forms.select name="leantimeEntities" id="leantimeEntities" class="tw:w-full">
+                            @foreach ($leantimeEntities as $key => $entity)
+                                <option value="{{ $key }}">{{ $entity['name'] }}</option>
+                            @endforeach
+                        </x-globals::forms.select>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+
+                <div class="left">
+                    <x-globals::forms.button element="a" href="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" contentRole="secondary" class="pull-left">Back</x-globals::forms.button>
+                </div>
+
+                <div class="right">
+                    <x-globals::forms.button :submit="true" contentRole="secondary">Next</x-globals::forms.button>
+                </div>
+                <div class="clearall"></div>
+            </form>
+        </div>
+    </div>

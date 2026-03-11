@@ -1,0 +1,104 @@
+@php
+    $availableStrategyBoards = $tpl->get('availableStrategyBoards');
+    $canvasProgress = $tpl->get('canvasProgress');
+@endphp
+
+<x-globals::layout.page-header icon="extension" headline="{{ $tpl->__('headlines.blueprints') }}" />
+
+{!! $tpl->displayNotification() !!}
+
+<div class="maincontent">
+
+    <div class="maincontentinner">
+        <h5 class="subtitle">Jump right back in</h5>
+        <div class="row">
+            @foreach ($tpl->get('recentProgressCanvas') as $board)
+                <div class="col-md-3"><div class="profileBox">
+                    <div class="commentImage icon">
+                        <x-globals::elements.icon :name="$board['icon']" />
+                    </div>
+                    <span class="userName">
+                            <small>{{ $tpl->__($board['name']) }} ({{ $board['count'] }})</small><br />
+
+                            <a href="{{ BASE_URL }}/{{ $board['module'] }}/showCanvas/{{ $board['lastCanvasId'] }}">
+                                {{ $tpl->escape($board['lastTitle']) }}
+                            </a><br />
+                        <small>{{ $tpl->__('label.last_updated') }} {{ format($board['lastUpdate'])->date() }} {{ format($board['lastUpdate'])->time() }}</p>
+                        </small>
+                        </span>
+                       <div class="clearall"></div>
+                    @php
+                        $percentDone = 0;
+                        if (isset($canvasProgress[$board['module']])) {
+                            $percentDone = round($canvasProgress[$board['module']] * 100);
+                        }
+                    @endphp
+                    <br />
+                    <x-globals::feedback.progress :value="$percentDone" />
+
+
+                </div></div>
+            @endforeach
+        </div>
+
+        @if (! is_array($tpl->get('recentProgressCanvas')) || count($tpl->get('recentProgressCanvas')) == 0)
+            <br /><br /><div class="center">
+                <div class="svgContainer tw:w-[30%]">
+                    {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
+                </div>
+                <h3>{{ $tpl->__('headline.no_blueprints_yet') }}</h3>
+                <br />{{ $tpl->__('text.no_blueprints_yet') }}
+                <br /><x-globals::forms.button link="{{ BASE_URL }}/valuecanvas/showCanvas" contentRole="primary">{{ $tpl->__('button.start_here_project_value') }}</x-globals::forms.button>
+            </div>
+        @endif
+
+    </div>
+
+    @if ($login::userIsAtLeast($roles::$editor))
+    <div class="maincontentinner">
+        <h5 class="accordionTitle" id="accordion_link_other">
+            <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_other" onclick="accordionToggle('other');">
+                <x-globals::elements.icon name="expand_more" /> Templates
+            </a>
+        </h5>
+        <p class="tw:pl-5">{{ $tpl->__('description.other_tools') }}</p>
+        <div id="accordion_other" class="row teamBox tw:pl-5">
+
+            @foreach ($tpl->get('otherBoards') as $board)
+                @if (! isset($board['visible']) || $board['visible'] === 1)
+                    <div class="col-md-3"><div class="profileBox tw:min-h-[125px]">
+                        <div class="commentImage icon">
+                            <x-globals::elements.icon :name="$board['icon']" />
+                        </div>
+                        <span class="userName">
+                            <a href="{{ BASE_URL }}/{{ $board['module'] }}/showCanvas">
+                                {{ $tpl->__($board['name']) }}
+                            </a>
+                        </span>
+                        {{ $tpl->__($board['description']) }}
+                        <div class="clearall"></div>
+
+
+                    </div></div>
+                @endif
+            @endforeach
+        </div>
+
+
+    </div>
+    @endif
+
+</div>
+
+<script>
+    function accordionToggle(id) {
+        let icon = document.querySelector("#accordion_toggle_" + id + " .material-symbols-outlined");
+        if (icon && icon.textContent.trim() === "chevron_right") {
+            icon.textContent = "expand_more";
+            jQuery('#accordion_' + id).slideDown("fast");
+        } else if (icon) {
+            icon.textContent = "chevron_right";
+            jQuery('#accordion_' + id).slideUp("fast");
+        }
+    }
+</script>

@@ -1,0 +1,299 @@
+@php
+    $currentArticle = $tpl->get('article');
+
+    $wikiHL = $tpl->get('wikiHeadlines');
+
+    $wikiHeadlines = [];
+
+    // Adds to $wikiHeadlines all the options and suboptions from $wikiHL for articles with parent $parentId.
+    // The method is called recursively.
+    // $id: current page Id.
+    // $parentId: the id of parent article.
+    // $wikiHeadline: the output, ordered array. will be modified inside the method.
+    // $wikiHL: the array returned from Service.getAllWikiHeadlines.
+    //          Even if it is passed by reference for performance the method will not modify it.
+    // $indent is the string to put before the title, any level will add a space.
+    function createTree($id, $parentId, &$wikiHeadlines, &$wikiHL, $indent)
+    {
+        // Finds the first article
+        $articles = array_filter($wikiHL, function ($v) use ($parentId) {
+            return $v->parent == $parentId;
+        });
+        if (count($articles) > 0) {
+            usort($articles, function ($a1, $a2) {
+                return $a1->title > $a2->title;
+            });
+            if ($parentId != null) {
+                $indent = $indent.'-';
+            }
+            foreach ($articles as $article) {
+                // This check prevents circular references by hiding the current page and its childs from list.
+                if ($article->id != $id) {
+                    $art = $article;
+                    $art->title = $indent.$article->title;
+                    $wikiHeadlines[] = $art;
+                    createTree($id, $article->id, $wikiHeadlines, $wikiHL, $indent);
+                }
+            }
+        }
+    }
+
+    // The following is the second original php block
+    if (! isset($_GET['closeModal'])) {
+        echo $tpl->displayNotification();
+    }
+
+    $id = '';
+    if (isset($currentArticle->id)) {
+        $id = $currentArticle->id;
+    }
+
+    // Populates the options tree
+    createTree($id, null, $wikiHeadlines, $wikiHL, '');
+@endphp
+
+<form class="formModal" method="post" action="{{ CURRENT_URL }}">
+
+    <div class="row">
+        <div class="col-md-2">
+            <div class="marginBottom">
+                <x-globals::elements.section-title icon="folder">{{ __('subtitles.organization') }}</x-globals::elements.section-title>
+                <x-globals::forms.form-field label-text="Parent" name="parent">
+                    <x-globals::forms.select :bare="true" name="parent" class="tw:w-full">
+                        <option value="0">None</option>
+                        @foreach ($wikiHeadlines as $parent)
+                            @if ($id != $parent->id)
+                                <option value="{{ $parent->id }}"
+                                        {{ ($parent->id == $currentArticle->parent) ? "selected='selected'" : '' }} >{{ e($parent->title) }}</option>
+                            @endif
+                        @endforeach
+                    </x-globals::forms.select>
+                </x-globals::forms.form-field>
+
+                <x-globals::forms.form-field label-text="{{ __('label.status') }}" name="status">
+                    <x-globals::forms.select :bare="true" name="status" class="tw:w-full">
+                        <option value="draft" {{ $currentArticle->status == 'draft' ? "selected='selected'" : '' }}>{{ __('label.draft') }}</option>
+                        <option value="published" {{ $currentArticle->status == 'published' ? "selected='selected'" : '' }}>{{ __('label.published') }}</option>
+                    </x-globals::forms.select>
+                </x-globals::forms.form-field>
+            </div>
+
+            @if ($id !== '')
+                <x-globals::elements.section-title icon="link">{{ __('headlines.linked_milestone') }} <x-globals::elements.icon name="help_outline" class="helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}" /></x-globals::elements.section-title>
+
+                <ul class="sortableTicketList tw:w-full">
+                    @if ($currentArticle->milestoneId == '')
+                        <li class="ui-state-default center" id="milestone_0">
+                            <h4>{{ __('headlines.no_milestone_link') }}</h4>
+                            {{ __('text.use_milestone_to_track_leancanvas') }}<br />
+                            <div id="milestoneSelectors">
+                                @if ($login::userIsAtLeast($roles::$editor))
+                                    <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');">{{ __('links.create_link_milestone') }}</a>
+                                    | <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');">{{ __('links.link_existing_milestone') }}</a>
+                                @endif
+                            </div>
+                            <div id="newMilestone" style="display:none;">
+                                <x-globals::forms.textarea name="newMilestone" /><br />
+                                <input type="hidden" name="type" value="milestone" />
+                                <input type="hidden" name="leancanvasitemid" value="{{ $id }} " />
+                                <x-globals::forms.button tag="button" contentRole="primary" onclick="jQuery('#primaryArticleSubmitButton').click()">{{ __('buttons.save') }}</x-globals::forms.button>
+                                <x-globals::forms.button link="javascript:void(0);" contentRole="secondary" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" icon="close">{{ __('links.cancel') }}</x-globals::forms.button>
+                            </div>
+
+                            <div id="existingMilestone" style="display:none;">
+                                <x-globals::forms.select :bare="true" data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" name="existingMilestone"  class="user-select">
+                                    <option value="">{{ __('label.all_milestones') }}</option>
+                                    @foreach ($tpl->get('milestones') as $milestoneRow)
+                                        <option value="{{ $milestoneRow->id }}"
+                                            @if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id))
+                                                selected='selected'
+                                            @endif
+                                        >{{ $milestoneRow->headline }}</option>
+                                    @endforeach
+                                </x-globals::forms.select>
+                                <input type="hidden" name="type" value="milestone" />
+                                <input type="hidden" name="articleId" value="{{ $id }} " />
+                                <x-globals::forms.button tag="button" contentRole="primary" onclick="jQuery('#primaryArticleSubmitButton').click()">Save</x-globals::forms.button>
+                                <a href="javascript:void(0);"  onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
+                                    <x-globals::elements.icon name="close" /> {{ __('links.cancel') }}
+                                </a>
+                            </div>
+
+                        </li>
+                    @else
+                        <li class="ui-state-default" id="milestone_{{ $currentArticle->milestoneId }}" class="leanCanvasMilestone" >
+
+                            <div hx-trigger="load"
+                                 hx-indicator=".htmx-indicator"
+                                 hx-target="this"
+                                 hx-swap="innerHTML"
+                                 hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $currentArticle->milestoneId }}"
+                                 aria-live="polite">
+                                <div class="htmx-indicator" role="status">
+                                    {{ __('label.loading_milestone') }}
+                                </div>
+                            </div>
+                            <a href="{{ CURRENT_URL }}?removeMilestone={{ $currentArticle->milestoneId }}" class="formModal"><x-globals::elements.icon name="close" /> {{ __('links.remove') }}</a>
+
+                        </li>
+                    @endif
+
+                </ul>
+
+            @endif
+
+            <br />
+
+        </div>
+        <div class="col-md-8">
+
+
+            <div class="btn-group inlineDropDownContainerLeft">
+                <div tabindex="0" role="button" data-selected="graduation-cap"
+                        class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker tw:rounded-sm tw:focus-visible:outline tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-[var(--accent1)]">
+                    <span class="iconPlaceholder">
+                        <x-globals::elements.icon name="description" />
+                    </span>
+                    <span class="caret"></span>
+                </div>
+                <div class="dropdown-menu"></div>
+            </div>
+            <input type="hidden" class="articleIcon" value="{{ $currentArticle->data }}" name="articleIcon"/>
+
+            <x-globals::forms.text-input :bare="true" type="text" name="title" class="main-title-input tw:w-4/5" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" />
+
+            <br />
+            <x-globals::forms.text-input :bare="true" type="text" value="{{ e($currentArticle->tags) }}" name="tags" id="tags" class="tag-input" data-autocomplete-url="{{ BASE_URL }}/api/tags?term=" />
+
+            <textarea class="tiptapComplex" rows="20" cols="80" id="wikiArticleContentEditor"  name="description">{{ htmlentities($currentArticle->description ?? '') }}</textarea>
+
+
+                <div class="row">
+                    <div class="col-md-10 padding-top-sm">
+                        <br />
+                        <input type="hidden" name="saveTicket" value="1" />
+                        <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
+                        <x-globals::forms.button :submit="true" contentRole="primary" name="saveArticle" id="primaryArticleSubmitButton">{{ __('buttons.save') }}</x-globals::forms.button>
+                        <x-globals::forms.button :submit="true" contentRole="primary" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" :outline="true">{{ __('buttons.save_and_close') }}</x-globals::forms.button>
+
+                    </div>
+                    <div class="col-md-2 align-right padding-top-sm">
+                        @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))
+                            <br />
+                            <a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete"><x-globals::elements.icon name="delete" /> {{ __('links.delete_article') }}</a>
+                        @endif
+                    </div>
+                </div>
+
+
+
+
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+
+
+
+</form>
+
+<script>
+
+    jQuery(document).ready(function(){
+
+        if (window.leantime && window.leantime.tiptapController) {
+            leantime.tiptapController.initComplexEditor();
+        }
+
+        @if (isset($_GET['closeModal']))
+            jQuery.nmTop().close();
+        @endif
+
+
+
+
+        jQuery('.iconpicker-container').iconpicker({
+            //title: 'Dropdown with picker',
+            component:'.btn > .iconPlaceholder',
+            input:'.articleIcon',
+            inputSearch: true,
+            defaultValue:"far fa-file-alt",
+            selected: "{{ $currentArticle->data }}",
+            showFooter: false,
+            searchInFooter: false,
+            icons: [
+                {title: "far fa-file-alt", searchTerms:['icons']},
+                {title: "fab fa-accessible-icon", searchTerms:['icons']},
+                {title: "far fa-address-book", searchTerms:['icons']},
+                {title: "fas fa-archive", searchTerms:['icons']},
+                {title: "fas fa-asterisk", searchTerms:['icons']},
+                {title: "fas fa-balance-scale", searchTerms:['icons']},
+                {title: "fas fa-ban", searchTerms:['icons']},
+                {title: "fas fa-bell", searchTerms:['icons']},
+                {title: "fas fa-binoculars", searchTerms:['icons']},
+                {title: "fas fa-birthday-cake", searchTerms:['icons']},
+                {title: "fas fa-bolt", searchTerms:['icons']},
+                {title: "fas fa-book", searchTerms:['icons']},
+                {title: "fas fa-bookmark", searchTerms:['icons']},
+                {title: "fas fa-briefcase", searchTerms:['icons']},
+                {title: "fas fa-bug", searchTerms:['icons']},
+                {title: "far fa-building", searchTerms:['icons']},
+                {title: "fas fa-bullhorn", searchTerms:['icons']},
+                {title: "far fa-calendar-alt", searchTerms:['icons']},
+                {title: "fas fa-chart-bar", searchTerms:['icons']},
+                {title: "fas fa-check-circle", searchTerms:['icons']},
+                {title: "fas fa-chart-line", searchTerms:['icons']},
+                {title: "fas fa-chess", searchTerms:['icons']},
+                {title: "fas fa-cogs", searchTerms:['icons']},
+                {title: "fas fa-comments", searchTerms:['icons']},
+                {title: "fas fa-compass", searchTerms:['icons']},
+                {title: "fas fa-database", searchTerms:['icons']},
+                {title: "fas fa-envelope", searchTerms:['icons']},
+                {title: "fas fa-exclamation-triangle", searchTerms:['icons']},
+                {title: "fas fa-flask", searchTerms:['icons']},
+                {title: "fas fa-globe", searchTerms:['icons']},
+                {title: "fas fa-gem", searchTerms:['icons']},
+                {title: "fas fa-graduation-cap", searchTerms:['icons']},
+                {title: "fas fa-hand-spock", searchTerms:['icons']},
+                {title: "fas fa-heart", searchTerms:['icons']},
+                {title: "fas fa-home", searchTerms:['icons']},
+                {title: "fas fa-image", searchTerms:['icons']},
+                {title: "fas fa-info-circle", searchTerms:['icons']},
+                {title: "fas fa-key", searchTerms:['icons']},
+                {title: "fas fa-leaf", searchTerms:['icons']},
+                {title: "fas fa-life-ring", searchTerms:['icons']},
+                {title: "fas fa-lightbulb", searchTerms:['icons']},
+                {title: "fas fa-link", searchTerms:['icons']},
+                {title: "fas fa-location-arrow", searchTerms:['icons']},
+                {title: "fas fa-lock", searchTerms:['icons']},
+                {title: "fas fa-map", searchTerms:['icons']},
+                {title: "fas fa-map-signs", searchTerms:['icons']},
+                {title: "fas fa-money-bill-alt", searchTerms:['icons']},
+                {title: "fas fa-paper-plane", searchTerms:['icons']},
+                {title: "fas fa-paperclip", searchTerms:['icons']},
+                {title: "fas fa-question-circle", searchTerms:['icons']},
+                {title: "fas fa-quote-left", searchTerms:['icons']},
+                {title: "fas fa-road", searchTerms:['icons']},
+                {title: "fas fa-rocket", searchTerms:['icons']},
+                {title: "fas fa-shopping-cart", searchTerms:['icons']},
+                {title: "fas fa-sitemap", searchTerms:['icons']},
+                {title: "fas fa-sliders-h", searchTerms:['icons']},
+                {title: "fas fa-star", searchTerms:['icons']},
+                {title: "fas fa-tachometer-alt", searchTerms:['icons']},
+                {title: "fas fa-thermometer-half", searchTerms:['icons']},
+                {title: "fas fa-thumbs-down", searchTerms:['icons']},
+                {title: "fas fa-thumbs-up", searchTerms:['icons']},
+                {title: "fas fa-trash-alt", searchTerms:['icons']},
+                {title: "fas fa-trophy", searchTerms:['icons']},
+                {title: "fas fa-user-circle", searchTerms:['icons']},
+                {title: "fas fa-utensils", searchTerms:['icons']}
+            ]
+
+        });
+        jQuery('.iconpicker-container').on('iconpickerSelected', function(event){
+           jQuery(".articleIcon").val(event.iconpickerValue);
+        });
+
+    });
+
+</script>

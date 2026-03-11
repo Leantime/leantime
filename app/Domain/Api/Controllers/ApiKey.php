@@ -136,7 +136,7 @@ class ApiKey extends Controller
 
             return $this->tpl->displayPartial('api.apiKey');
         } else {
-            return $this->tpl->display('errors.error403');
+            return $this->tpl->display('errors.error403', layout: 'error', responseCode: 403);
         }
     }
 }

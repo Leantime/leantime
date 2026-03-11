@@ -5,17 +5,20 @@ leantime.reactionsController = (function () {
 
     let addReactions = function (module, moduleId, reaction, clb) {
 
-        jQuery.ajax({
-            type: 'POST',
-            url: leantime.appUrl + '/api/reactions',
-            data: {
+        fetch(leantime.appUrl + '/api/reactions', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
                 'action': 'add',
                 'module': module,
                 'moduleId': moduleId,
                 'reaction': reaction
-            }
-
-        }).done(function () {
+            })
+        }).then(function () {
             clb();
         });
 
@@ -23,16 +26,20 @@ leantime.reactionsController = (function () {
 
     let removeReaction = function (module, moduleId, reaction, clb) {
 
-        jQuery.ajax({
-            type: 'POST',
-            url: leantime.appUrl + '/api/reactions',
-            data: {
+        fetch(leantime.appUrl + '/api/reactions', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
                 'action': 'remove',
                 'module': module,
                 'moduleId': moduleId,
                 'reaction': reaction
-            }
-        }).done(function () {
+            })
+        }).then(function () {
             clb();
         });
 

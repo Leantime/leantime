@@ -1,0 +1,72 @@
+@php
+    $ticket = $tpl->get('ticket');
+    $projectData = $tpl->get('projectData');
+@endphp
+
+<x-globals::layout.page-header :icon="$tpl->getModulePicture()" headline="{{ __('headlines.edit_todo') }}" subtitle="{{ e(session('currentProjectClient') . ' // ' . session('currentProjectName')) }}">
+    <x-slot:actions>
+        <a href="{{ session('lastPage') }}" class="backBtn"><x-globals::elements.icon name="arrow_circle_left" /> {{ __('links.go_back') }}</a>
+    </x-slot:actions>
+</x-globals::layout.page-header>
+
+<div class="maincontent">
+
+    <div class="maincontentinner">
+
+        {!! $tpl->displayNotification() !!}
+
+        <div class="lt-tabs tabbedwidget ticketTabs" style="visibility:hidden;" data-tabs data-tabs-persist="url">
+
+            <ul role="tablist">
+                <li><a href="#ticketdetails">{{ __('tabs.ticketDetails') }}</a></li>
+                <li><a href="#subtasks">{{ __('tabs.subtasks') }} ({{ $tpl->get('numSubTasks') }})</a></li>
+                <li><a href="#files">{{ __('tabs.files') }} ({{ $tpl->get('numFiles') }})</a></li>
+                @if(session('userdata.role') != 'client')
+                    <li><a href="#timesheet" id="timesheetTab">{{ __('tabs.time_tracking') }}</a></li>
+                @endif
+            </ul>
+
+            <div id="ticketdetails">
+                <form class="formModal" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" method="post">
+                    @php $tpl->displaySubmodule('tickets-ticketDetails') @endphp
+                </form>
+            </div>
+
+            <div id="subtasks">
+                @php $tpl->displaySubmodule('tickets-subTasks') @endphp
+            </div>
+
+            <div id="files">
+                <form action='#files' method='POST' enctype="multipart/form-data" class="formModal">
+                    @php $tpl->displaySubmodule('tickets-attachments') @endphp
+                </form>
+            </div>
+
+            @if(session('userdata.role') != 'client')
+                <div id="timesheet">
+                    @php $tpl->displaySubmodule('tickets-timesheet') @endphp
+                </div>
+            @endif
+        </div>
+
+    </div>
+
+    <div class="maincontentinner">
+        <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#comments" class="formModal">
+            <input type="hidden" name="comment" value="1" />
+            @php
+                $tpl->assign('formUrl', BASE_URL . '/tickets/showTicket/' . $ticket->id);
+                $tpl->displaySubmodule('comments-generalComment');
+            @endphp
+        </form>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    jQuery(window).load(function () {
+        jQuery(window).resize();
+    });
+
+</script>

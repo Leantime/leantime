@@ -24,6 +24,13 @@ body a:hover {
     color: var(--primary-font-color);
 }
 
+/* Dropdown links (trigger and items) should never show underlines */
+.dropdown a:hover,
+.dropdown a:focus {
+    text-decoration: none;
+}
+
+
 /* Focus styles for interactive elements */
 button:focus-visible,
 input:focus-visible,
@@ -64,7 +71,7 @@ h1 small {
 .label-important, .label-warning,
 .label-success, .label-info, .label-inverse,
 .label-default, .label-primary, .label-danger {
-    padding: 2px 8px;
+    padding: 0 8px;
     color: #fff;
     margin-left: 4px;
     border-radius: var(--element-radius);
@@ -133,7 +140,6 @@ a .label.feature-label:after {
 
 .maincontentinner .subtitle,
 .stickyHeader .subtitle {
-
     font-size: var(--font-size-xl);
     color: var(--primary-font-color);
     font-weight: var(--font-weight-medium);
@@ -143,8 +149,8 @@ a .label.feature-label:after {
     margin-bottom: 10px;
 }
 
-.grid-stack-item-content .stickyHeader .subtitle {
-    margin: 0;
+.stickyHeader .subtitle {
+    margin-bottom: 0;
 }
 
 

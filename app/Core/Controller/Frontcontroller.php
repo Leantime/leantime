@@ -399,10 +399,6 @@ class Frontcontroller
     public static function redirect(string $url, int $http_response_code = 303, $headers = []): RedirectResponse
     {
 
-        if (app('request')->headers->get('is-modal')) {
-            Frontcontroller::redirectHtmx($url, $headers);
-        }
-
         return new RedirectResponse(
             trim(preg_replace('/\s\s+/', '', strip_tags($url))),
             $http_response_code,

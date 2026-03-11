@@ -9,6 +9,11 @@
         @endif
     >
         <a href="{{ BASE_URL . $menuItem['href'] }}"
+           hx-boost="true"
+           hx-target=".primaryContent"
+           hx-select=".primaryContent"
+           hx-swap="outerHTML show:window:top"
+           hx-indicator="#page-loading"
            data-tippy-content="{{ strip_tags(__($menuItem['tooltip'])) }}"
            data-tippy-placement="right"
            preload="mouseover"
@@ -18,7 +23,14 @@
                @endforeach
            @endif
         >
-            {!! $menuItem['title'] !!}
+            @if(!empty($menuItem['icon']))
+                @if(str_starts_with($menuItem['icon'], 'fa'))
+                    <span class="{{ $menuItem['icon'] }}"></span>
+                @else
+                    <x-globals::elements.icon :name="$menuItem['icon']" />
+                @endif
+            @endif
+            {{ strip_tags(__($menuItem['title'])) }}
         </a>
     </li>
 

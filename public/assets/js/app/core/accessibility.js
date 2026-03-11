@@ -9,165 +9,39 @@
 leantime.accessibilityController = (function () {
 
     /**
-     * Enhance Chosen dropdowns with ARIA attributes
+     * Enhance TomSelect instances with ARIA attributes.
+     * TomSelect renders its own combobox markup with correct ARIA roles.
+     * We supplement with labels derived from associated <label> elements.
      */
-    var enhanceChosenAccessibility = function() {
-        jQuery('.chosen-container').each(function() {
-            var $container = jQuery(this);
+    var enhanceTomSelectAccessibility = function() {
+        document.querySelectorAll('.ts-wrapper').forEach(function(wrapper) {
+            if (wrapper.dataset.a11yEnhanced) { return; }
 
-            // Skip if already enhanced
-            if ($container.data('a11y-enhanced')) {
-                return;
-            }
+            // Find the hidden <select> or <input> that TomSelect replaced
+            var originalEl = wrapper.querySelector('select, input.tag-input');
+            if (!originalEl) { return; }
 
-            var $originalSelect = null;
-
-            // Try to find the original select element
-            var containerId = $container.attr('id');
-
-            if (containerId && containerId.indexOf('_chosen') > -1) {
-                // Standard case: container has ID like "status-select_chosen"
-                var selectId = containerId.replace('_chosen', '');
-                $originalSelect = jQuery('#' + selectId);
-            }
-
-            // Fallback: look for a hidden select element that precedes this container
-            if (!$originalSelect || !$originalSelect.length) {
-                $originalSelect = $container.prev('select[data-placeholder]');
-            }
-
-            // Second fallback: look for any hidden select near this container
-            if (!$originalSelect || !$originalSelect.length) {
-                $originalSelect = $container.siblings('select').first();
-            }
-
-            // If we still can't find the select, skip this container
-            if (!$originalSelect || !$originalSelect.length) {
-                return;
-            }
-
-            // Get label text
             var labelText = '';
-            var selectId = $originalSelect.attr('id');
-            if (selectId) {
-                var $label = jQuery('label[for="' + selectId + '"]');
-                if ($label.length) {
-                    labelText = $label.text().trim();
-                }
+            var elId = originalEl.id;
+            if (elId) {
+                var labelEl = document.querySelector('label[for="' + elId + '"]');
+                if (labelEl) { labelText = labelEl.textContent.trim(); }
             }
 
-            // Set ARIA attributes on Chosen container
-            var $chosenSingle = $container.find('.chosen-single');
-            var $chosenChoices = $container.find('.chosen-choices');
-
-            if ($chosenSingle.length) {
-                // Single select
-                $chosenSingle.attr({
-                    'role': 'combobox',
-                    'aria-haspopup': 'listbox',
-                    'aria-expanded': 'false',
-                    'aria-label': labelText || $originalSelect.attr('data-placeholder') || 'Select option',
-                    'tabindex': '0'
-                });
+            // TomSelect's control div already has role="combobox" — just ensure aria-label
+            var control = wrapper.querySelector('.ts-control');
+            if (control && labelText) {
+                control.setAttribute('aria-label', labelText);
             }
 
-            if ($chosenChoices.length) {
-                // Multi-select
-                $chosenChoices.attr({
-                    'role': 'combobox',
-                    'aria-haspopup': 'listbox',
-                    'aria-expanded': 'false',
-                    'aria-label': labelText || $originalSelect.attr('data-placeholder') || 'Select options',
-                    'aria-multiselectable': 'true',
-                    'tabindex': '0'
-                });
-            }
-
-            // Update aria-expanded on open/close
-            $container.on('chosen:showing_dropdown', function() {
-                $chosenSingle.add($chosenChoices).attr('aria-expanded', 'true');
-            });
-
-            $container.on('chosen:hiding_dropdown', function() {
-                $chosenSingle.add($chosenChoices).attr('aria-expanded', 'false');
-            });
-
-            // Set role on dropdown
-            $container.find('.chosen-drop').attr('role', 'listbox');
-            $container.find('.chosen-results li').attr('role', 'option');
-
-            // Mark as enhanced
-            $container.data('a11y-enhanced', true);
+            wrapper.dataset.a11yEnhanced = 'true';
         });
     };
 
-    /**
-     * Enhance SlimSelect with ARIA attributes
-     */
-    var enhanceSlimSelectAccessibility = function() {
-        jQuery('.ss-main').each(function() {
-            var $ssMain = jQuery(this);
-            var $originalSelect = $ssMain.prev('select');
-
-            if (!$originalSelect.length) {
-                return;
-            }
-
-            var $label = jQuery('label[for="' + $originalSelect.attr('id') + '"]');
-            var labelText = $label.length ? $label.text().trim() : '';
-
-            $ssMain.attr({
-                'role': 'combobox',
-                'aria-haspopup': 'listbox',
-                'aria-label': labelText || $originalSelect.attr('data-placeholder') || 'Select option',
-                'aria-multiselectable': $originalSelect.attr('multiple') ? 'true' : 'false'
-            });
-        });
-    };
-
-    /**
-     * Enhance TagsInput with ARIA attributes
-     */
-    var enhanceTagsInputAccessibility = function() {
-        jQuery('div.tagsinput').each(function() {
-            var $tagsInput = jQuery(this);
-            var $originalInput = $tagsInput.next('input[type="text"]');
-
-            if (!$originalInput.length) {
-                return;
-            }
-
-            var inputId = $originalInput.attr('id');
-            var $label = jQuery('label[for="' + inputId + '"]');
-            var labelText = $label.length ? $label.text().trim() : 'Enter tags';
-
-            $tagsInput.attr({
-                'role': 'list',
-                'aria-label': labelText
-            });
-
-            // Set role on individual tags
-            $tagsInput.find('span.tag').each(function() {
-                jQuery(this).attr('role', 'listitem');
-            });
-
-            // Make tag input accessible
-            var $input = $tagsInput.find('input');
-            $input.attr({
-                'aria-label': 'Add new tag',
-                'aria-describedby': inputId + '-help'
-            });
-
-            // Add help text if doesn't exist
-            if (inputId && !jQuery('#' + inputId + '-help').length) {
-                $tagsInput.after(
-                    '<span id="' + inputId + '-help" class="sr-only">' +
-                    'Type and press enter to add tags. Press backspace to remove the last tag.' +
-                    '</span>'
-                );
-            }
-        });
-    };
+    // Kept as aliases for backward compatibility with any external callers
+    var enhanceChosenAccessibility = enhanceTomSelectAccessibility;
+    var enhanceSlimSelectAccessibility = function() { /* no-op — SlimSelect removed */ };
+    var enhanceTagsInputAccessibility = enhanceTomSelectAccessibility;
 
     /**
      * Enhance Datepickers with ARIA attributes
@@ -286,9 +160,7 @@ leantime.accessibilityController = (function () {
      */
     var init = function() {
         // Run immediately on page load
-        enhanceChosenAccessibility();
-        enhanceSlimSelectAccessibility();
-        enhanceTagsInputAccessibility();
+        enhanceTomSelectAccessibility();
         enhanceDatepickerAccessibility();
         fixTimepickerLabels();
         enhanceKanbanCardAccessibility();
@@ -296,28 +168,22 @@ leantime.accessibilityController = (function () {
         // Re-run when new content is loaded (HTMX, modals, etc.)
         jQuery(document).on('htmx:afterSwap shown.bs.modal', function() {
             setTimeout(function() {
-                enhanceChosenAccessibility();
-                enhanceSlimSelectAccessibility();
-                enhanceTagsInputAccessibility();
+                enhanceTomSelectAccessibility();
                 enhanceDatepickerAccessibility();
                 fixTimepickerLabels();
                 enhanceKanbanCardAccessibility();
             }, 100);
         });
 
-        // Re-run when Chosen is re-initialized
-        jQuery(document).on('chosen:ready', function() {
-            // Wait a bit longer to ensure Chosen is fully ready
-            setTimeout(enhanceChosenAccessibility, 100);
-        });
-
-        // Single retry after initial page load to catch late-initializing dropdowns
-        setTimeout(enhanceChosenAccessibility, 1000);
+        // Retry after initial page load to catch late-initializing TomSelect instances
+        setTimeout(enhanceTomSelectAccessibility, 500);
     };
 
     // Public API
     return {
         init: init,
+        enhanceTomSelectAccessibility: enhanceTomSelectAccessibility,
+        // Backward-compat aliases
         enhanceChosenAccessibility: enhanceChosenAccessibility,
         enhanceSlimSelectAccessibility: enhanceSlimSelectAccessibility,
         enhanceTagsInputAccessibility: enhanceTagsInputAccessibility,

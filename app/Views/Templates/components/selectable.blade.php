@@ -1,13 +1,13 @@
 @dispatchEvent('beforeSelectable')
 
 
-<div {{ $attributes->merge([ 'class' => 'selectable selectable-'.$name.' tw-center '.($selected == "true" ? 'active' : ''). '' ]) }} id="selectableWrapper-{{ $id }}">
+<div {{ $attributes->merge([ 'class' => 'selectable selectable-'.$name.' tw:center '.($selected == "true" ? 'active' : ''). '' ]) }} id="selectableWrapper-{{ $id }}">
 
         <div class="selectableContent">
             {{ $slot }}
         </div>
 
-        <input type="{{ $type ?? 'radio' }}"  name="{{ $name }}" {!!  $selected == "true" ? "checked='checked'" : ""  !!} id="selectable-{{ $id }}" value="{{ $value }}" class="selectableRadio tw-hidden"/>
+        <input type="{{ $type ?? 'radio' }}"  name="{{ $name }}" {!!  $selected == "true" ? "checked='checked'" : ""  !!} id="selectable-{{ $id }}" value="{{ $value }}" class="selectableRadio tw:hidden"/>
         <label for="selectable-{{ $id }}" class="selectable-label" >
             {{ $label }}
         </label>
@@ -57,9 +57,11 @@
             setSelectables();
         });
 
-        htmx.onLoad(function(){
-            setSelectables();
-        });
+        if (typeof htmx !== 'undefined') {
+            htmx.onLoad(function(){
+                setSelectables();
+            });
+        }
 
 
     </script>

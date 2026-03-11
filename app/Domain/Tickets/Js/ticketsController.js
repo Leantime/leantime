@@ -3,6 +3,31 @@ leantime.ticketsController = (function () {
     //Variables
 
 
+    /**
+     * Calculate contrasting text color (black or white) for a given hex background.
+     * Uses WCAG relative luminance formula.
+     *
+     * @param {string} hex - Hex color (e.g., '#FF5733' or 'FF5733')
+     * @returns {string} '#000' for light backgrounds, '#fff' for dark backgrounds
+     */
+    function contrastColor(hex) {
+        hex = hex.replace(/^#/, '');
+        if (hex.length === 3) {
+            hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+        }
+        if (hex.length !== 6 || !/^[0-9a-fA-F]{6}$/.test(hex)) {
+            return '#fff';
+        }
+        var r = parseInt(hex.substring(0, 2), 16) / 255;
+        var g = parseInt(hex.substring(2, 4), 16) / 255;
+        var b = parseInt(hex.substring(4, 6), 16) / 255;
+        r = r <= 0.03928 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
+        g = g <= 0.03928 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
+        b = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
+        var luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        return luminance > 0.179 ? '#000' : '#fff';
+    }
+
     //Functions
     function countTickets()
     {
@@ -227,9 +252,20 @@ leantime.ticketsController = (function () {
 
 
     var toggleFilterBar = function () {
-        jQuery(".filterBar").toggle();
-
+        jQuery(".filterBar").toggleClass("hideOnLoad");
     };
+
+    // Close the filter panel when clicking outside of it or the toggle button
+    document.addEventListener("click", function (e) {
+        var filterBar = document.querySelector(".filterBar");
+        if (!filterBar || filterBar.classList.contains("hideOnLoad")) return;
+        // Don't close if click is inside the filter bar itself
+        if (filterBar.contains(e.target)) return;
+        // Don't close if click is on the filter toggle button
+        var toggleBtn = e.target.closest("[onclick*='toggleFilterBar']");
+        if (toggleBtn) return;
+        filterBar.classList.add("hideOnLoad");
+    });
 
     var initGanttChart = function (tasks, viewMode, readonly) {
 
@@ -278,11 +314,11 @@ leantime.ticketsController = (function () {
                                     popUpHTML += '<h4><a href="#/tickets/editMilestone/' + task.id + '" >' + htmlEntities(task.name) + '</a></h4><br /> ' +
                                      '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                      '' + Math.round(task.progress) + '%</p> ' +
-                                     '<a href="#/tickets/editMilestone/' + task.id + '" ><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
-                                     '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
+                                     '<a href="#/tickets/editMilestone/' + task.id + '" ><span class="material-symbols-outlined">map</span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
+                                     '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="material-symbols-outlined">push_pin</span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
                                 } else {
                                     popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                     '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
+                                     '<a href="#/tickets/showTicket/' + task.id + '"><span class="material-symbols-outlined">push_pin</span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
                                 }
 
                                  popUpHTML += '</div>';
@@ -358,10 +394,10 @@ leantime.ticketsController = (function () {
                                     popUpHTML += '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
                                         '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                         '' + Math.round(task.progress) + '%</p> ' +
-                                        '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
+                                        '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="material-symbols-outlined">push_pin</span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
                                 } else {
                                     popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                        '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
+                                        '<a href="#/tickets/showTicket/' + task.id + '"><span class="material-symbols-outlined">push_pin</span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
                                 }
 
                                 popUpHTML += '</div>';
@@ -791,7 +827,10 @@ leantime.ticketsController = (function () {
                 ).done(
                     function () {
                         jQuery("#milestoneDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
-                        jQuery("#milestoneDropdownMenuLink" + ticketId).css("backgroundColor", color);
+                        jQuery("#milestoneDropdownMenuLink" + ticketId).css({
+                            "backgroundColor": color,
+                            "color": contrastColor(color)
+                        });
                         jQuery.growl({message: leantime.i18n.__("short_notifications.milestone_updated"), style: "success"});
 
                         // Move card to correct swimlane if grouped by milestone
@@ -1095,49 +1134,6 @@ leantime.ticketsController = (function () {
                     }
                 }
             }
-
-        });
-
-    };
-
-    var initTicketTabs = function () {
-
-        jQuery(document).ready(function () {
-
-
-            let url = new URL(window.location.href);
-            let tab = url.searchParams.get("tab");
-
-            let activeTabIndex = 0;
-            if (tab) {
-                activeTabIndex = jQuery('.ticketTabs').find('a[href="#' + tab + '"]').parent().index();
-            }
-
-            jQuery('.ticketTabs').tabs({
-                create: function ( event, ui ) {
-                    jQuery('.ticketTabs').css("visibility", "visible");
-
-                },
-                activate: function (event, ui) {
-
-                    url = new URL(window.location.href);
-
-
-                    url.searchParams.set('tab', ui.newPanel[0].id);
-
-                    window.history.replaceState(null, null, url);
-
-                },
-                load: function () {
-
-                },
-                enable: function () {
-
-                },
-                active: activeTabIndex
-
-            });
-
 
         });
 
@@ -1477,7 +1473,7 @@ leantime.ticketsController = (function () {
 
                             } else if (groupBy === 'dueDate') {
                                 // Update due date display on card
-                                var $dateDisplay = $card.find('.dues .fa-calendar').parent();
+                                var $dateDisplay = $card.find('.dues .material-symbols-outlined').parent();
                                 if ($dateDisplay.length && newGroupValue) {
                                     // Format the date for display (MM/DD/YYYY)
                                     var dateParts = newGroupValue.split('-');
@@ -1708,9 +1704,9 @@ leantime.ticketsController = (function () {
 
                     // Update footer by showing the total with the reference of the column index
                     jQuery(api.column(9).footer()).html('Total');
-                    jQuery(api.column(10).footer()).html(plannedHours);
-                    jQuery(api.column(11).footer()).html(hoursLeft);
-                    jQuery(api.column(12).footer()).html(loggedHours);
+                    jQuery(api.column(10).footer()).html(parseFloat(plannedHours).toFixed(2));
+                    jQuery(api.column(11).footer()).html(parseFloat(hoursLeft).toFixed(2));
+                    jQuery(api.column(12).footer()).html(parseFloat(loggedHours).toFixed(2));
 
                 },
 
@@ -1996,21 +1992,6 @@ leantime.ticketsController = (function () {
 
     };
 
-    var initTagsInput = function ( ) {
-        jQuery("#tags").tagsInput({
-            'autocomplete_url': leantime.appUrl + '/api/tags',
-        });
-
-        jQuery("#tags_tag").on("focusout", function () {
-            let tag = jQuery(this).val();
-
-            if (tag != '') {
-                jQuery("#tags").addTag(tag);
-            }
-        });
-
-    };
-
     var addCommentTimesheetContent = function (commentId, taskId) {
         var content = "Discussion on To-Do #" + taskId + ":"
         + "\n\r"
@@ -2051,7 +2032,6 @@ leantime.ticketsController = (function () {
         updateRemainingHours:updateRemainingHours,
         updatePlannedHours:updatePlannedHours,
         initTimeSheetChart:initTimeSheetChart,
-        initTicketTabs:initTicketTabs,
         initTicketSearchSubmit:initTicketSearchSubmit,
         initTicketKanban:initTicketKanban,
         initTicketsTable:initTicketsTable,
@@ -2062,7 +2042,6 @@ leantime.ticketsController = (function () {
         initUserDropdown:initUserDropdown,
         initSprintDropdown:initSprintDropdown,
         initToolTips:initToolTips,
-        initTagsInput:initTagsInput,
         initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate,
         initAsyncInputChange:initAsyncInputChange,
         initDueDateTimePickers:initDueDateTimePickers,

@@ -25,13 +25,14 @@
         <div class="commentLinks">
             @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$commenter))
                 <a href="javascript:void(0);"
-                   onclick="leantime.commentsController.toggleCommentBoxes({{ $comment['commentParent'] }})">
-                    <span class="fa fa-reply"></span> {{ __('links.reply') }}
+                   onclick="leantime.commentsController.toggleCommentBoxes({{ $comment['commentParent'] }})"
+                   class="tw:inline-flex tw:items-center tw:min-h-[44px] tw:py-2 tw:px-2">
+                    <x-globals::elements.icon name="reply" /> {{ __('links.reply') }}
                 </a>
                 @if($comment['userId'] == session("userdata.id"))
                     <a href="{{ CURRENT_URL }}?delComment={{ $comment['id'] }}"
-                       class="deleteComment">
-                        <span class="fa fa-trash"></span> {{ __('links.delete') }}
+                       class="deleteComment tw:inline-flex tw:items-center tw:min-h-[44px] tw:py-2 tw:px-2">
+                        <x-globals::elements.icon name="delete" /> {{ __('links.delete') }}
                     </a>
                 @endif
             @endif

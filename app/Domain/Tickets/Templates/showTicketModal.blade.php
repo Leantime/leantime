@@ -9,84 +9,44 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
 
 ?>
 <script type="text/javascript">
-    window.onload = function() {
-        if (!window.jQuery) {
-            //It's not a modal
-            location.href="<?= BASE_URL ?>/tickets/showKanban?showTicketModal=<?php echo $ticket->id; ?>";
-        }
+    if (!window.jQuery) {
+        // Not inside a modal — redirect to the full kanban view which will
+        // open the ticket in a modal. Replace the document to prevent further
+        // inline scripts from executing and throwing ReferenceErrors.
+        location.replace("<?= BASE_URL ?>/tickets/showKanban?showTicketModal=<?php echo $ticket->id; ?>");
+        document.write('');
+        document.close();
     }
 </script>
 
-<div style="min-width:70%">
+<x-globals::actions.modal mode="content" style="width: min(1100px, calc(100vw - 4em))">
 
     <?php if ($ticket->dependingTicketId > 0) { ?>
         <small><a href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small> //
     <?php } ?>
-    <small class="tw-float-right tw-pr-md" style="padding:5px 30px 0px 0px">Created by <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | Last Updated: <?= format($ticket->date)->date(); ?> </small>
-    <h1 class="tw-mb-0" style="margin-bottom:0px;"><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
+    <small class="pull-right tw:pr-md tw:pt-1 tw:pr-[30px]">Created by <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | Last Updated: <?= format($ticket->date)->date(); ?> </small>
+    <h1 class="modal-content-title tw:mb-0"><x-globals::elements.icon :name="$todoTypeIcons[strtolower($ticket->type)] ?? 'task_alt'" /> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
 
     <br />
 
     <?php if ($login::userIsAtLeast($roles::$editor)) {
         $onTheClock = $tpl->get('onTheClock');
         ?>
-        <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px; padding-right:10px;">
-
-            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-            </a>
-            <ul class="dropdown-menu">
-                <li class="nav-header"><?php echo $tpl->__('subtitles.todo'); ?></li>
-                <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
-                <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
+        <x-globals::actions.dropdown-menu container-class="pull-right tw:z-50 tw:pt-2 tw:pr-2">
+                <li class="nav-header border"><?php echo $tpl->__('subtitles.todo'); ?></li>
+                <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><x-globals::elements.icon name="swap_horiz" /> <?php echo $tpl->__('links.move_todo'); ?></a></li>
+                <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><x-globals::elements.icon name="delete" /> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
                 <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
-                <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
-                    hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
-                    hx-trigger="timerUpdate from:body"
-                    hx-swap="outerHTML"
-                    class="timerContainer">
-
-                    @if ($onTheClock === false)
-                        <a href="javascript:void(0);" data-value="{{ $ticket->id }}"
-                           hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/start-timer/"
-                           hx-target="#timerHeadMenu"
-                           hx-swap="outerHTML"
-                           hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"start"}'>
-                            <span class="fa-regular fa-clock"></span> {{ __("links.start_work") }}
-                        </a>
-                    @endif
-
-                    @if ($onTheClock !== false && $onTheClock["id"] == $ticket->id)
-                        <a href="javascript:void(0);" data-value="{{ $ticket->id }}"
-                           hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/stop-timer/"
-                           hx-target="#timerHeadMenu"
-                           hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"stop"}'
-                           hx-swap="outerHTML">
-                            <span class="fa fa-stop"></span>
-
-                            @if (is_array($onTheClock) == true)
-                                {!!  sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), $onTheClock["since"])) !!}
-                            @else
-                                {!! sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), time())) !!}
-                            @endif
-                        </a>
-                    @endif
-                    @if ($onTheClock !== false && $onTheClock["id"] != $ticket->id)
-                        <span class='working'>
-            {{ __("text.timer_set_other_todo") }}
-        </span>
-                    @endif
-                </li>
-            </ul>
-        </div>
+                <x-timesheets::timer :parent-ticket-id="$ticket->id" :on-the-clock="$onTheClock" variant="link" />
+        </x-globals::actions.dropdown-menu>
     <?php } ?>
-    <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
+    <div class="lt-tabs tabbedwidget ticketTabs" style="visibility:hidden;" data-tabs data-tabs-persist="url">
 
-        <ul>
-            <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
-            <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__('tabs.files') ?> (<?php echo $tpl->get('numFiles'); ?>)</a></li>
+        <ul role="tablist">
+            <li><a href="#ticketdetails"><x-globals::elements.icon name="star" /> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
+            <li><a href="#files"><x-globals::elements.icon name="description" /> <?php echo $tpl->__('tabs.files') ?> (<?php echo $tpl->get('numFiles'); ?>)</a></li>
             <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
-                <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
+                <li><a href="#timesheet"><x-globals::elements.icon name="schedule" /> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
             <?php } ?>
             <?php $tpl->dispatchTplEvent('ticketTabs', ['ticket' => $ticket]); ?>
         </ul>
@@ -95,6 +55,14 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
             <form class="formModal" action="<?= BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
                 <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
             </form>
+
+            <?php if ($ticket->id) { ?>
+                <x-globals::elements.section-title icon="forum"><?= $tpl->__('subtitles.discussion') ?></x-globals::elements.section-title>
+                <?php
+                    $tpl->assign('formUrl', BASE_URL.'/tickets/showTicket/'.$ticket->id);
+                $tpl->displaySubmodule('comments-generalComment');
+                ?>
+            <?php } ?>
         </div>
 
         <div id="files">
@@ -111,7 +79,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
 
     </div>
 
-</div>
+</x-globals::actions.modal>
 <script type="text/javascript">
 
     jQuery(document).ready(function(){
@@ -120,8 +88,6 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
             jQuery.nmTop().close();
         <?php } ?>
 
-        leantime.ticketsController.initTicketTabs();
-
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
@@ -129,15 +95,11 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
             leantime.dateController.initDatePicker(".dates");
             leantime.dateController.initDateRangePicker(".editFrom", ".editTo");
 
-            leantime.ticketsController.initTagsInput();
-
             leantime.ticketsController.initEffortDropdown();
             leantime.ticketsController.initStatusDropdown();
 
-            jQuery(".ticketTabs select").chosen();
-
         <?php } else { ?>
-            leantime.authController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly("#global-modal-content");
 
         <?php } ?>
 

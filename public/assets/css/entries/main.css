@@ -1,0 +1,385 @@
+/* CSS libs */
+@import "../libs/croppie.css";
+
+@import "../libs/bootstrap-fileupload.min.css";
+
+@import "../components/tom-select.css";
+
+@import "flatpickr/dist/flatpickr.min.css";
+@import "../libs/animate.min.css";
+@import "../libs/animate.delay.css";
+
+@import "../libs/fullcalendar.css";
+@import "../libs/roboto.css";
+@import "../libs/atkinson.css";
+@import "../libs/shantell.css";
+@import "../libs/hankengrotesk.css";
+@import "../libs/fontawesome-free/css/all.css";
+@import "../libs/fontawesome-free/css/v4-shims.css";
+@import "material-symbols/outlined.css";
+
+@import "../libs/frappe_theme.css";
+@import "../libs/shepherd-theme-arrows.css";
+@import "../libs/jstree/style.css";
+
+@import "../libs/uppy/style.css";
+@import "../libs/uppy/dashboard.css";
+
+@import "../libs/tippy.js/tippy.css";
+
+@import "../libs/prism.css";
+
+@import "../libs/iconpicker/css/fontawesome-iconpicker.css";
+
+@import "../libs/gridstack.min.css";
+
+
+/* Components */
+@import "../components/structure.css";
+@import "../components/dropdowns.css";
+@import "../components/kanban.css";
+@import "../components/tables.css";
+@import "../components/masonwall.css";
+@import "../components/tiptap-editor.css";
+@import "../components/wiki.css";
+@import "../components/forms.css";
+@import "../components/gantt-overwrites.css";
+@import "../components/tree-overwrites.css";
+@import "../components/nav.css";
+@import "../components/style.default.css";
+@import "../components/calendar.css";
+@import "../components/text-styles.css";
+@import "../components/accessibility.css";
+@import "../components/progressbars.css";
+@import "../components/mediamanager.css";
+@import "../components/tourBoxes.css";
+@import "../components/sortableList.css";
+@import "../components/mobile.css";
+@import "../components/print.css";
+@import "../components/mermaid.css";
+@import "../components/overwrites.css";
+@import "../components/glass.css";
+
+/* ── Material Symbols global override ────────────────────────────────
+   Reduce default icon size from 24px to 18px and vertically center
+   with surrounding text.
+   ──────────────────────────────────────────────────────────────────── */
+.material-symbols-outlined {
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+/* ── Modal dialog ─────────────────────────────────────────────────────
+   Override the CSS-reset rule (div { background: transparent }) which
+   wins over DaisyUI's layered .tw:modal-box because unlayered CSS
+   always beats @layer CSS in the cascade.
+   ──────────────────────────────────────────────────────────────────── */
+#global-modal-box {
+    position: relative;
+    background-color: var(--secondary-background);
+    border: 1px solid var(--main-border-color);
+    border-radius: var(--box-radius, 0.5rem);
+    max-height: calc(100dvh - 5em);
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--regular-shadow);
+}
+#global-modal-content {
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 20px;
+}
+/* Prevent tiptap editor and other wide content from overflowing modal columns */
+#global-modal-content .row > [class*="col-"],
+#global-modal-content .row-fluid > [class*="col-"] {
+    min-width: 0;
+}
+/* Constrain tiptap toolbar within modal so buttons wrap instead of overhanging */
+#global-modal-content .tiptap-wrapper {
+    overflow: hidden;
+}
+
+/* ── Empty state cards ────────────────────────────────────────
+   Give undraw illustration containers a glass backdrop so they're
+   visible over wallpaper backgrounds. Inside an already-white
+   content card the effect is invisible.
+   ──────────────────────────────────────────────────────────── */
+.undrawContainer {
+    background: var(--glass-background, rgba(255, 255, 255, 0.85));
+    backdrop-filter: var(--glass-blur, blur(10px));
+    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.2));
+    border-radius: var(--box-radius, 8px);
+    padding: 40px 30px;
+    max-width: 500px;
+    margin: 40px auto;
+}
+
+/* Tint near-white SVG fills so illustrations are visible on
+   white/glass backgrounds. The undraw SVGs use #f2f2f2, #e6e6e6,
+   #ccc for background shapes (trees, clouds, etc). */
+.undrawContainer svg [fill="#f2f2f2"],
+.undrawContainer svg [fill="#F2F2F2"],
+.wiki-empty-state svg [fill="#f2f2f2"],
+.wiki-empty-state svg [fill="#F2F2F2"] {
+    fill: #c8d6e5;
+}
+.undrawContainer svg [fill="#e6e6e6"],
+.undrawContainer svg [fill="#E6E6E6"],
+.wiki-empty-state svg [fill="#e6e6e6"],
+.wiki-empty-state svg [fill="#E6E6E6"] {
+    fill: #b0bec5;
+}
+.undrawContainer svg [fill="#ccc"],
+.undrawContainer svg [fill="#CCC"],
+.wiki-empty-state svg [fill="#ccc"],
+.wiki-empty-state svg [fill="#CCC"] {
+    fill: #90a4ae;
+}
+
+/* Frosted-glass overlay behind the modal.
+   We use dialog.show() (not .showModal()) so the dialog stays in normal
+   document flow where backdrop-filter composites correctly with the page.
+   .showModal()'s top-layer ::backdrop blocks blur from reaching the page. */
+#modal-blur-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+#modal-blur-overlay.active {
+    display: block;
+}
+
+
+/* ── Modal content wrapper ───────────────────────────────────────────
+   Structural styles for <x-globals::actions.modal mode="content">.
+   Provides consistent heading size across all global-modal templates.
+   ──────────────────────────────────────────────────────────────────── */
+.modal-content-header {
+    padding-right: 40px;
+    margin-bottom: 12px;
+}
+.modal-content-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold, 600);
+    color: var(--main-titles-color);
+    margin: 0;
+    line-height: 1.3;
+}
+#global-modal .modal-content-title {
+    color: var(--primary-font-color);
+}
+
+/* ── Ticket details tab layout ────────────────────────────────
+   CSS Grid dissolves the ticket <form> and .row-fluid so .col-md-8
+   (main) and .col-md-4 (sidebar) become direct grid items.
+   The Discussion heading + comment form land in column 1 beneath
+   the main content — never pushed down by sidebar height.
+   ──────────────────────────────────────────────────────────── */
+#ticketdetails {
+    display: grid;
+    grid-template-columns: 1fr minmax(200px, 300px);
+    gap: 0 20px;
+}
+/* Make ticket form + .row-fluid transparent to the grid */
+#ticketdetails > form:first-of-type,
+#ticketdetails > form:first-of-type > .row-fluid {
+    display: contents;
+}
+/* Sidebar spans all rows in column 2 */
+#ticketdetails .col-md-4 {
+    grid-column: 2;
+    grid-row: 1 / span 50;
+    min-width: 0;
+    overflow: hidden;
+    flex: none;
+    max-width: 100%;
+    width: 100%;
+}
+/* Everything else (main content, Discussion, comments) → column 1 */
+#ticketdetails .col-md-8,
+#ticketdetails > h4,
+#ticketdetails > form:not(:first-of-type) {
+    grid-column: 1;
+    min-width: 0;
+    flex: none;
+    max-width: 100%;
+    width: 100%;
+}
+
+/* ── Sidebar: full-width inputs + breathing room ─────────── */
+#ticketdetails .col-md-4 {
+    padding-left: 16px;
+    border-left: 1px solid var(--main-border-color);
+}
+#ticketdetails .col-md-4 .chosen-container {
+    width: 100% !important;   /* Chosen.js inlines a px width; override it */
+    min-width: 0;
+}
+#ticketdetails .col-md-4 .form-group {
+    margin-bottom: 12px;
+}
+
+.modal-content-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    margin-top: 15px;
+    border-top: 1px solid var(--main-border-color);
+}
+
+/* Position the dialog ourselves since .show() doesn't auto-center
+   like .showModal(). Fixed + grid centers the modal-box. */
+#global-modal,
+#global-modal[open] {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: none;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 1em;
+    border: none;
+    background-color: transparent;
+    overflow: auto;
+}
+#global-modal[open] {
+    display: grid;
+}
+
+/* DaisyUI .modal-backdrop form — hide it since our overlay handles
+   click-to-close and visual scrim */
+#global-modal > .tw\:modal-backdrop {
+    display: none;
+}
+
+/* ── Bootstrap grid safety net inside modals ─────────────────────────
+   Force Bootstrap float-grid to flex-wrap so columns don't overflow
+   the constrained modal width.
+   ──────────────────────────────────────────────────────────────────── */
+#global-modal-content .row,
+#global-modal-content .row-fluid {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 0;
+    margin-right: 0;
+}
+#global-modal-content .row > [class*="col-"],
+#global-modal-content .row-fluid > [class*="col-"] {
+    float: none;
+    flex: 0 0 auto;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+/* Prevent hardcoded widths from overflowing the modal box */
+#global-modal-content > div {
+    max-width: 100%;
+}
+
+/* ── Detail-panel date values (Linear/Notion style) ──────────────────
+   Clickable text that opens a date picker.  No border, subtle hover bg.
+   ──────────────────────────────────────────────────────────────────── */
+.detail-date-value {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: right;
+    padding: 4px 8px;
+    height: auto;
+    border-radius: var(--element-radius, 4px);
+    transition: background 0.15s ease;
+    width: auto;
+    max-width: 140px;
+    color: var(--primary-font-color);
+}
+.detail-date-value:hover,
+.detail-date-value:focus {
+    background: rgba(0, 0, 0, 0.05);
+    outline: none;
+}
+.detail-date-value::placeholder {
+    color: var(--secondary-font-color);
+    opacity: 0.7;
+}
+
+/* ── Inline date picker ("None" text ↔ date value toggle) ─────────── */
+.date-inline-picker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.date-inline-trigger {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--element-radius, 4px);
+    color: var(--secondary-font-color);
+    opacity: 0.7;
+    font-size: inherit;
+    transition: background 0.15s ease, opacity 0.15s ease;
+}
+.date-inline-trigger:hover,
+.date-inline-trigger:focus {
+    background: rgba(0, 0, 0, 0.05);
+    opacity: 1;
+    outline: none;
+}
+
+/* ── Tabbed widget tabs ───────────────────────────────────────────────
+   Vanilla tabsController.js handles switching; these rules style the
+   tab strip.  .tabbedwidget kept as alias for backward compat.
+   ──────────────────────────────────────────────────────────────────── */
+.lt-tabs > ul[role="tablist"],
+.tabbedwidget > ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border-bottom: 1px solid var(--neutral-border, #ddd);
+    padding: 0;
+    margin: 0 0 15px 0;
+}
+
+.lt-tabs > ul[role="tablist"] > li,
+.tabbedwidget > ul > li {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lt-tabs > ul[role="tablist"] > li > a,
+.tabbedwidget > ul > li > a {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    color: var(--primary-font-color, #555);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+}
+
+.lt-tabs > ul[role="tablist"] > li > a:hover,
+.tabbedwidget > ul > li > a:hover {
+    color: var(--accent1, #1b75bb);
+    text-decoration: none;
+}
+
+.lt-tabs > ul[role="tablist"] > li.tw\:tab-active > a,
+.lt-tabs > ul[role="tablist"] > li.active > a,
+.tabbedwidget > ul > li.active > a,
+.tabbedwidget > ul > li.tw\:tab-active > a,
+.tabbedwidget > ul > li.ui-tabs-active > a,
+.tabbedwidget > ul > li.ui-state-active > a {
+    border-bottom-color: var(--accent1, #1b75bb);
+    color: var(--accent1, #1b75bb);
+}

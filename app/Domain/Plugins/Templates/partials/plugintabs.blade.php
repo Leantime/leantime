@@ -1,15 +1,13 @@
 
-<div class="maincontentinner tabs">
-    <ul>
-        <li class="{{ $currentUrl == 'marketplace' ? "active" : ""  }}">
-            <a href="<?=BASE_URL ?>/plugins/marketplace">
-                <i class="fa-solid fa-store"></i> Explore Apps
-            </a>
-        </li>
-        <li class="{{ $currentUrl == 'installed' ? "active" : ""  }}">
-            <a href="<?=BASE_URL ?>/plugins/myapps">
-                <i class="fa-solid fa-puzzle-piece"></i> My Apps
-            </a>
-        </li>
-    </ul>
-</div>
+<x-globals::navigation.tabs>
+    <x-globals::navigation.tab
+        label="Explore Apps"
+        href="{{ BASE_URL }}/plugins/marketplace"
+        icon="store"
+        :active="$currentUrl == 'marketplace'" />
+    <x-globals::navigation.tab
+        label="My Apps"
+        href="{{ BASE_URL }}/plugins/myapps"
+        icon="extension"
+        :active="$currentUrl == 'installed'" />
+</x-globals::navigation.tabs>

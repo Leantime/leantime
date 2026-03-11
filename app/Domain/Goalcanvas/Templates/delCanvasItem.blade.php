@@ -1,12 +1,13 @@
 @extends($layout)
 @section('content')
 
-<h4 class="widgettitle title-light">{!! __("subtitles.delete") !!}</h4>
-<hr style="margin-top: 5px; margin-bottom: 15px;">
+<x-globals::elements.section-title icon="delete">{{ __('label.delete') }}</x-globals::elements.section-title>
+<hr class="tw:mt-1 tw:mb-4">
 
 <form method="post" action="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}">
+    <input type="hidden" name="del" value="1" />
     <p>{{ __('text.confirm_board_item_deletion') }}</p><br />
-    <input type="submit" value="{{ __('buttons.yes_delete') }}" name="del" class="button" />
-    <a class="btn btn-secondary" href="{{ BASE_URL }}/goalcanvas/showCanvas">{{ __('buttons.back') }}</a>
+    <x-globals::forms.button :submit="true" state="danger">{{ __('buttons.yes_delete') }}</x-globals::forms.button>
+    <x-globals::forms.button link="{{ BASE_URL }}/goalcanvas/showCanvas" contentRole="secondary">{{ __('buttons.back') }}</x-globals::forms.button>
 </form>
 @endsection
