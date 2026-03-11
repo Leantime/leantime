@@ -135,7 +135,7 @@
                     <h4>{{ __("text.no_tasks_assigned") }}</h4>
                     <x-globals::forms.button link="javascript:void(0);" type="link" icon="add_circle" class="add-task-button tw:ml-0" data-group="emptyGroup">{{ __('links.add_task') }}</x-globals::forms.button>
 
-                    <div class="quickAddForm tw:mb-4 tw:pb-1 tw:pl-1" id="quickAddForm-emptyGroup"
+                    <div class="quickAddForm tw:mt-2 tw:mb-4 tw:pb-1 tw:pl-1" id="quickAddForm-emptyGroup"
                          style="display:none;">
                         <form method="post"
                               hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
@@ -170,7 +170,7 @@
                                               placeholder="{{ __('input.placeholders.description') }}" />
                                 </div>
                                 <div>
-                                    <x-globals::forms.button submit type="primary" name="create">{{ __('buttons.save') }}</x-globals::forms.button>
+                                    <x-globals::forms.button submit type="primary" name="create" class="tw:cursor-pointer">{{ __('buttons.save') }}</x-globals::forms.button>
                                     <x-globals::forms.button link="javascript:void(0);" type="secondary" class="cancel-add-task" data-group="emptyGroup">{{ __('buttons.cancel') }}</x-globals::forms.button>
                                 </div>
                             </div>
@@ -208,7 +208,7 @@
                     </x-slot>
                     <x-slot name="content">
                         <!-- Quick Add Form for this group -->
-                        <div class="quickAddForm tw:mb-4 tw:pb-1 tw:pl-1" id="quickAddForm-{{ $groupKey }}"
+                        <div class="quickAddForm tw:mt-2 tw:mb-4 tw:pb-1 tw:pl-1" id="quickAddForm-{{ $groupKey }}"
                              style="display:none;">
                             <form method="post"
                                   hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
@@ -252,7 +252,7 @@
                                                   placeholder="{{ __('input.placeholders.description') }}" />
                                     </div>
                                     <div>
-                                        <x-globals::forms.button submit type="primary" name="create">{{ __('buttons.save') }}</x-globals::forms.button>
+                                        <x-globals::forms.button submit type="primary" name="create" class="tw:cursor-pointer">{{ __('buttons.save') }}</x-globals::forms.button>
                                         <x-globals::forms.button link="javascript:void(0);" type="secondary" class="cancel-add-task" data-group="{{ $groupKey }}">{{ __('buttons.cancel') }}</x-globals::forms.button>
                                     </div>
                                 </div>
@@ -347,15 +347,23 @@
         });
 
         function initAddTaskBtns() {
+            function setTodoSortingDisabled(disabled) {
+                document.querySelectorAll('.sortable-list').forEach(function (list) {
+                    if (list._sortableInstance && typeof list._sortableInstance.option === 'function') {
+                        list._sortableInstance.option('disabled', disabled);
+                    }
+                });
+            }
+
             // Show the quick add form when the + button is clicked
-            jQuery('.add-task-button').on('click', function () {
+            jQuery('.add-task-button').off('click.ltQuickAdd').on('click.ltQuickAdd', function () {
                 var groupKey = jQuery(this).data('group');
                 jQuery('#quickAddForm-' + groupKey).show();
                 jQuery('#quickAddForm-' + groupKey + ' .main-title-input').focus();
             });
 
             // Hide the quick add form when cancel is clicked
-            jQuery('.cancel-add-task').on('click', function () {
+            jQuery('.cancel-add-task').off('click.ltQuickAdd').on('click.ltQuickAdd', function () {
                 var groupKey = jQuery(this).data('group');
                 jQuery('#quickAddForm-' + groupKey).hide();
                 jQuery('#quickAddForm-' + groupKey + ' .main-title-input').val('');
@@ -373,15 +381,22 @@
 
                 });
 
-                jQuery(this).find(".edit-button").click(function() {
+                jQuery(this).find(".edit-button").off('click.ltTodoEdit').on('click.ltTodoEdit', function() {
+                    setTodoSortingDisabled(true);
                     currentTitle.find(".edit-button").hide();
                     currentTitle.find('.title-text').hide();
                     currentTitle.find('.edit-form').show();
+                    currentTitle.find('.edit-form input[name="headline"]').focus().select();
                 });
 
-                jQuery(this).find(".edit-form .cancel-edit-task").click(function() {
+                jQuery(this).find(".edit-form .cancel-edit-task").off('click.ltTodoEdit').on('click.ltTodoEdit', function() {
                     currentTitle.find('.title-text').show();
                     currentTitle.find('.edit-form').hide();
+                    setTodoSortingDisabled(false);
+                });
+
+                jQuery(this).find(".edit-form form").off('submit.ltTodoEdit').on('submit.ltTodoEdit', function() {
+                    setTodoSortingDisabled(false);
                 });
 
             });

@@ -168,8 +168,7 @@
                 });
                 requestData['groupBy'] = groupBy;
             }
-            htmx.ajax('POST', leantime.appUrl + '/hx/widgets/myToDos/saveSorting', {
-                target: '#htmx-indicator',
+            htmx.ajax('POST', leantime.appUrl + '/widgets/myToDos/saveSorting', {
                 swap: 'none',
                 values: requestData
             });
@@ -205,11 +204,13 @@
                 delay: 150,
                 delayOnTouchOnly: true,
                 draggable: '.sortable-item',
+                ignore: 'a, img, input, textarea, select, option, button, [contenteditable]',
                 ghostClass: 'sortable-ghost',
                 chosenClass: 'sortable-chosen',
                 dragClass: 'sortable-drag',
                 handle: '.sortable-item',
-                filter: '.no-drag',
+                filter: 'input,textarea,select,button,a,[contenteditable],.no-drag',
+                preventOnFilter: false,
                 forceFallback: false,
                 scroll: true,
                 scrollSensitivity: 40,

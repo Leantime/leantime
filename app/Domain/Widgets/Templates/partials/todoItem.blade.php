@@ -24,7 +24,6 @@
      data-id="{{ $ticket['id'] }}"
      data-project="{{ $ticket['projectId'] }}"
      data-draggable="true"
-     draggable="true"
      data-sort-index="{{ $ticket['sortIndex'] ?? 10 }}"
      data-event='{!! $ticketDataJson !!}'>
 
@@ -84,19 +83,25 @@
                     <div class="title-text">
                         <small class="tw:inline-block">{{ $ticket['projectName'] }}</small> <br/>
                         <strong><a href="#/tickets/showTicket/{{ $ticket['id'] }}"
+                                   id="ticket-headline-{{ $ticket['id'] }}"
                                    class="ticket-headline-{{ $ticket['id'] }}">{{ $ticket['headline'] }}</a></strong>
                         &nbsp;<a href="javascript:void(0);" class="tw:hidden edit-button"
                                  data-tippy-content="{{ __('text.edit_task_headline') }}"><x-globals::elements.icon name="edit" /></a>
                     </div>
-                    <div class="tw:hidden edit-form">
+                    <div class="tw:hidden edit-form no-drag">
                         <form class="tw:flex tw:flex-row tw:items-center tw:gap-2"
-                              hx-post="{{ BASE_URL }}/hx/widgets/myToDos/updateTitle"
-                              hx-target=".ticket-headline-{{ $ticket['id'] }}"
+                              onmousedown="event.stopPropagation();"
+                              onclick="event.stopPropagation();"
+                              hx-post="{{ BASE_URL }}/widgets/myToDos/updateTitle"
+                              hx-target="#ticket-headline-{{ $ticket['id'] }}"
+                              hx-swap="innerHTML"
                               onsubmit="jQuery(this).closest('.edit-form').find('.cancel-edit-task').click();"
                         >
                             <input type="hidden" name="id" value="{{ $ticket['id'] }}"/>
                             <div>
-                                 <x-globals::forms.text-input :bare="true" type="text" name="headline" class="main-title-input tw:mb-0"
+                                 <x-globals::forms.text-input :bare="true" type="text" name="headline" class="main-title-input tw:mb-0 no-drag"
+                                        onmousedown="event.stopPropagation();"
+                                        onclick="event.stopPropagation();"
                                         style="font-size:var(--base-font-size)"
                                         value="{{ $ticket['headline'] }}" />
                             </div>
