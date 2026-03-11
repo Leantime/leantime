@@ -102,11 +102,12 @@ class ShowKanban extends Controller
                     $formParams[$paramName] = $swimlaneValue;
                 } elseif ($groupBy === 'dueDate') {
                     // Map due date bucket names to actual dates
+                    $now = dtHelper()->userNow();
                     $dueDateMapping = [
-                        'overdue' => dtHelper()->userNow()->formatDateForUser(),
-                        'due-this-week' => dtHelper()->userNow()->endOfWeek(CarbonImmutable::FRIDAY)->formatDateForUser(),
-                        'due-next-week' => dtHelper()->userNow()->addWeek()->endOfWeek(CarbonImmutable::FRIDAY)->formatDateForUser(),
-                        'due-later' => dtHelper()->userNow()->addWeeks(2)->formatDateForUser(),
+                        'overdue' => $now->formatDateForUser(),
+                        'due-this-week' => $now->endOfWeek(CarbonImmutable::FRIDAY)->formatDateForUser(),
+                        'due-next-week' => $now->addWeek()->endOfWeek(CarbonImmutable::FRIDAY)->formatDateForUser(),
+                        'due-later' => $now->addWeeks(2)->formatDateForUser(),
                     ];
 
                     if (isset($dueDateMapping[$swimlaneValue])) {

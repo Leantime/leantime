@@ -2185,10 +2185,14 @@ class Tickets
 
         $return = $this->ticketRepository->patchTicket($id, $params);
 
+        if (! $return) {
+            return false;
+        }
+
         self::dispatchEvent('ticket_updated');
 
         // Todo: create events and move notification logic to notification module
-        if (isset($params['status']) && $return) {
+        if (isset($params['status'])) {
             $ticket = $this->getTicket($id);
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
