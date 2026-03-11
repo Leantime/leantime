@@ -187,6 +187,7 @@ foreach ($externalCalendars as $externalCalendar) {
                 dayHeaderFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
                 eventTimeFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
                 slotLabelFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
+                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                 views: {
                     timeGridDay: {
 

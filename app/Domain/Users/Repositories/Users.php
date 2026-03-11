@@ -488,6 +488,15 @@ class Users
         try {
             $settings = unserialize($result->settings);
 
+            // Ensure settings is an array (unserialize may return stdClass)
+            if (is_object($settings)) {
+                $settings = json_decode(json_encode($settings), true);
+            }
+
+            if (! is_array($settings)) {
+                return [];
+            }
+
             // If we have a specific path to retrieve
             if ($settingPath !== null) {
                 return $this->getNestedSetting($settings, $settingPath);
