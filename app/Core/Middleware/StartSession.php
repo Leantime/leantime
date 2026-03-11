@@ -56,15 +56,19 @@ class StartSession
             return $next($request);
         }
 
-        $session = $this->getSession($request);
-
-        self::dispatchEvent('session_initialized');
-
-        // For API requests, use array driver unless it's coming from js
+        // For API and cron requests, use in-memory array driver to prevent
+        // persistent session accumulation. Must run BEFORE getSession() so the
+        // session object is created with the array handler from the start.
+        // Browser AJAX requests (JS calling JSON-RPC) are excluded so they
+        // continue to share the user's web session.
         if ($request->isApiOrCronRequest() && ! $request->ajax()) {
             config(['session.driver' => 'array']);
             $this->manager->setDefaultDriver('array');
         }
+
+        $session = $this->getSession($request);
+
+        self::dispatchEvent('session_initialized');
 
         if ($this->shouldLockSession($request)) {
             return $this->handleRequestWhileBlocking($request, $session, $next);
@@ -212,12 +216,6 @@ class StartSession
      */
     public function getSession(IncomingRequest $request)
     {
-        // Non logged in cookies will be reduced to 60min.
-        // Extend Session Lifetime
-        if (! $request->cookies->has('esl')) {
-            app('config')->set('session.lifetime', 60);
-        }
-
         return tap($this->manager->driver(), function ($session) use ($request) {
             $session->setId($request->cookies->get($session->getName()));
         });

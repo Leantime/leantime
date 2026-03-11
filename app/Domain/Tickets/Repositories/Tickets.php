@@ -461,6 +461,11 @@ class Tickets
                             ->where('zp_projects.clientId', $clientId);
                     })
                     ->orWhere('requestor.role', '>=', 40);
+            })
+            // Exclude tickets from closed projects
+            ->where(function ($q) {
+                $q->where('zp_projects.state', '<>', -1)
+                    ->orWhereNull('zp_projects.state');
             });
 
         // Apply search criteria filters

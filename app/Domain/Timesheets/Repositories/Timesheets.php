@@ -439,7 +439,11 @@ class Timesheets extends Repository
 
         $groupBySql = match ($this->dbHelper->getDriverName()) {
             'mysql' => "DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d')",
-            'pgsql' => "TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'YYYY-MM-DD')",
+            'pgsql' => "EXTRACT(YEAR FROM zp_timesheets.{$wrappedWorkDate}),
+                        TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'YYYY-MM-DD'),
+                        TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'Month'),
+                        TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'MM'),
+                        zp_timesheets.{$wrappedWorkDate}",
             default => "DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d')",
         };
 
@@ -515,7 +519,11 @@ class Timesheets extends Repository
 
         $groupBySql = match ($this->dbHelper->getDriverName()) {
             'mysql' => "DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d')",
-            'pgsql' => "TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'YYYY-MM-DD')",
+            'pgsql' => "EXTRACT(YEAR FROM zp_timesheets.{$wrappedWorkDate}),
+                        TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'YYYY-MM-DD'),
+                        TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'Month'),
+                        TO_CHAR(zp_timesheets.{$wrappedWorkDate}, 'MM'),
+                        zp_timesheets.{$wrappedWorkDate}",
             default => "DATE_FORMAT(zp_timesheets.{$wrappedWorkDate}, '%Y-%m-%d')",
         };
 

@@ -5,9 +5,6 @@ namespace Leantime\Core\Middleware;
 use Closure;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Factory as Auth;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
@@ -75,13 +72,7 @@ class AuthCheck
 
         self::dispatchEvent('logged_in', ['application' => $this]);
 
-        $response = $next($request);
-
-        if ($authCheckResponse === true) {
-            $this->setCookie($response);
-        }
-
-        return $response;
+        return $next($request);
     }
 
     protected function authenticate($request, array $guards, $loginRedirect, $next)
@@ -162,26 +153,6 @@ class AuthCheck
         }
 
         return new RedirectResponse($destination.$queryParams);
-    }
-
-    public function setCookie($response): void
-    {
-
-        // Set cookie to increase session timeout
-        $response->headers->setCookie(new \Symfony\Component\HttpFoundation\Cookie(
-            'esl', // Extend Session Lifetime
-            'true',
-            Date::instance(
-                Carbon::now()->addRealMinutes($this->config->get('session.lifetime'))
-            ),
-            $this->config->get('session.path'),
-            $this->config->get('session.domain'),
-            false,
-            $this->config->get('session.http_only', true),
-            false,
-            $this->config->get('session.same_site', null),
-            $this->config->get('session.partitioned', false)
-        ));
     }
 
     public function isPublicController($currentPath): bool

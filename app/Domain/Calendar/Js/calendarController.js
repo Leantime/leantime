@@ -200,6 +200,7 @@ leantime.calendarController = (function () {
             dayHeaderFormat: userDateFormat,
             eventTimeFormat: userTimeFormat,
             slotLabelFormat: userTimeFormat,
+            firstDay: leantime.i18n.__("language.firstDayOfWeek"),
             views: {
                 multiMonthOneMonth: {
                     type: 'multiMonth',
