@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Controllers;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
@@ -84,13 +85,13 @@ class ShowKanban extends Controller
             $swimlaneValue = $_POST['swimlane'] ?? null;
             $groupBy = $_POST['groupBy'] ?? null;
 
-            if (! empty($swimlaneValue) && ! empty($groupBy)) {
+            if ($swimlaneValue !== null && $swimlaneValue !== '' && ! empty($groupBy)) {
                 // Map groupBy field to the parameter name expected by quickAddTicket()
                 $fieldMapping = [
                     'priority' => 'priority',
                     'storypoints' => 'storypoints',
-                    'effort' => 'storypoints',  // effort maps to storypoints field
-                    'milestoneid' => 'milestone',  // Note: service expects 'milestone' not 'milestoneid'
+                    'effort' => 'storypoints',
+                    'milestoneid' => 'milestone',
                     'editorId' => 'editorId',
                     'sprint' => 'sprint',
                     'type' => 'type',
@@ -99,6 +100,18 @@ class ShowKanban extends Controller
                 if (isset($fieldMapping[$groupBy])) {
                     $paramName = $fieldMapping[$groupBy];
                     $formParams[$paramName] = $swimlaneValue;
+                } elseif ($groupBy === 'dueDate') {
+                    // Map due date bucket names to actual dates
+                    $dueDateMapping = [
+                        'overdue' => dtHelper()->userNow()->formatDateForUser(),
+                        'due-this-week' => dtHelper()->userNow()->endOfWeek(CarbonImmutable::FRIDAY)->formatDateForUser(),
+                        'due-next-week' => dtHelper()->userNow()->addWeek()->endOfWeek(CarbonImmutable::FRIDAY)->formatDateForUser(),
+                        'due-later' => dtHelper()->userNow()->addWeeks(2)->formatDateForUser(),
+                    ];
+
+                    if (isset($dueDateMapping[$swimlaneValue])) {
+                        $formParams['dateToFinish'] = $dueDateMapping[$swimlaneValue];
+                    }
                 }
             }
 

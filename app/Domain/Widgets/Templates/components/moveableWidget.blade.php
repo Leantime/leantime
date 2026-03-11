@@ -9,7 +9,7 @@
                 </div>
 
                 @if($name != '' && $noTitle == false)
-                    <h5 class="subtitle tw-pb-m tw-float-left tw-mr-sm">{{ __($name) }}</h5>
+                    <h5 class="subtitle tw-pb-m tw-float-left tw-mr-sm" style="margin-top:-5px;">{{ __($name) }}</h5>
                 @endif
                 <div class="inlineDropDownContainer tw-float-right">
                     <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">

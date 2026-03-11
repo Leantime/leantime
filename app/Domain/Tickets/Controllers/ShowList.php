@@ -55,7 +55,15 @@ class ShowList extends Controller
     {
         // QuickAdd
         if (isset($_POST['quickadd'])) {
-            $result = $this->ticketService->quickAddTicket($params);
+            $formParams = [
+                'headline' => $_POST['headline'] ?? '',
+                'milestone' => $_POST['milestone'] ?? '',
+                'sprint' => $_POST['sprint'] ?? '',
+                'projectId' => session('currentProject'),
+                'editorId' => session('userdata.id'),
+            ];
+
+            $result = $this->ticketService->quickAddTicket($formParams);
 
             if (is_array($result)) {
                 $this->tpl->setNotification($result['message'], $result['status']);
