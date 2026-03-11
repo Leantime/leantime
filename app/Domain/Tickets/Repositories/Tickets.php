@@ -1459,25 +1459,73 @@ class Tickets
         return false;
     }
 
+    /**
+     * Patchable columns on the zp_tickets table.
+     * Only these fields will be included in patch UPDATE queries.
+     *
+     * @var array<string, true>
+     */
+    private const PATCHABLE_COLUMNS = [
+        'headline' => true,
+        'type' => true,
+        'description' => true,
+        'projectId' => true,
+        'status' => true,
+        'date' => true,
+        'dateToFinish' => true,
+        'sprint' => true,
+        'storypoints' => true,
+        'priority' => true,
+        'hourRemaining' => true,
+        'planHours' => true,
+        'tags' => true,
+        'editorId' => true,
+        'userId' => true,
+        'editFrom' => true,
+        'editTo' => true,
+        'acceptanceCriteria' => true,
+        'dependingTicketId' => true,
+        'milestoneid' => true,
+        'sortIndex' => true,
+        'kanbanSortIndex' => true,
+    ];
+
+    /**
+     * Patch specific fields on a ticket.
+     *
+     * Only fields present in PATCHABLE_COLUMNS are included in the update.
+     * Non-column fields (e.g. request_parts, saveTicket) are silently ignored.
+     *
+     * @param  int|string  $id  The ticket ID.
+     * @param  array  $params  The fields to update.
+     * @return bool Whether any rows were affected.
+     */
     public function patchTicket($id, array $params): bool
     {
         $this->addTicketChange(session('userdata.id'), $id, $params);
 
-        // Sanitize params to use only valid column names
         $updates = [];
         foreach ($params as $key => $value) {
             $sanitizedKey = DbCore::sanitizeToColumnString($key);
+
+            if (! isset(self::PATCHABLE_COLUMNS[$sanitizedKey])) {
+                continue;
+            }
+
             $updates[$sanitizedKey] = $value;
 
-            // send status update event
             if ($key == 'status') {
                 static::dispatch_event('ticketStatusUpdate', ['ticketId' => $id, 'status' => $value, 'action' => 'ticketStatusUpdate']);
             }
         }
 
+        if (empty($updates)) {
+            return false;
+        }
+
         $updates['modified'] = dtHelper()->userNow()->formatDateTimeForDb();
 
-        return $this->connection->table('zp_tickets')
+        return (bool) $this->connection->table('zp_tickets')
             ->where('id', $id)
             ->update($updates);
     }

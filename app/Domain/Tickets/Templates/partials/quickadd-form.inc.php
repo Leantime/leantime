@@ -15,7 +15,7 @@ $savedHeadline = $isActive ? ($reopenState['headline'] ?? '') : '';
 $hasError = $isActive && ! empty($reopenState['error']);
 ?>
 
-<div class="quickaddContainer <?= $isEmpty ? 'quickaddContainer--empty' : '' ?>" data-status="<?= $statusId ?>" data-swimlane="<?= $swimlaneKey ?? '' ?>">
+<div class="quickaddContainer tw-mb-s <?= $isEmpty ? 'quickaddContainer--empty' : '' ?>" data-status="<?= $statusId ?>" data-swimlane="<?= $swimlaneKey ?? '' ?>">
     <a href="javascript:void(0);"
        class="quickAddLink <?= $isEmpty ? 'empty-state' : 'inline-add' ?>"
        onclick="leantime.kanbanController.toggleQuickAdd(this)"
@@ -39,11 +39,6 @@ $hasError = $isActive && ! empty($reopenState['error']);
         <input type="hidden" name="milestone" value="<?= $searchCriteria['milestone'] ?? '' ?>" />
         <input type="hidden" name="sprint" value="<?= session('currentSprint') ?? '' ?>" />
         <input type="hidden" name="stay_open" value="0" data-stay-open-input />
-
-        <i class="fa fa-circle-question quickAddHelp"
-           data-tippy-content="<strong>Keyboard Shortcuts:</strong><br>• Enter - Save and add another<br>• Shift+Enter - Save and close<br>• Esc - Cancel"
-           tabindex="0"
-           aria-label="Keyboard shortcuts help"></i>
 
         <div class="form-group">
             <label for="headline-<?= $statusId ?>-<?= $swimlaneKey ?? 'default' ?>" class="sr-only">Task name</label>
@@ -71,10 +66,10 @@ $hasError = $isActive && ! empty($reopenState['error']);
                     onclick="leantime.kanbanController.toggleQuickAdd(this.closest('.quickaddContainer').querySelector('.quickAddLink'))">
                 Cancel
             </button>
-            <i class="fa fa-circle-question quickAddHelp"
+            <i class="fa fa-circle-question"
+               data-tippy-content="<strong>Keyboard Shortcuts:</strong><br>Enter: Save and close<br>Shift+Enter: Save and add another<br>Esc: Cancel"
                tabindex="0"
-               title="Enter: Save and close&#10;Shift+Enter: Save and add another&#10;Esc: Cancel"
-               aria-label="Enter: Save and close, Shift+Enter: Save and add another, Esc: Cancel"></i>
+               aria-label="Keyboard shortcuts help"></i>
         </div>
     </form>
 </div>
