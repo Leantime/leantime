@@ -598,6 +598,7 @@ class Tickets
             $ticketGroups['all'] = [
                 'label' => 'all',
                 'id' => 'all',
+                'value' => '',
                 'class' => '',
                 'items' => $tickets,
             ];
@@ -729,6 +730,7 @@ class Tickets
                         'label' => $label,
                         'more-info' => $moreInfo,
                         'id' => $sortId ?? strtolower($groupedFieldValue),
+                        'value' => $groupedFieldValue,
                         'class' => $class,
                         'color' => $groupColor,
                         'items' => [$ticket],
@@ -876,6 +878,7 @@ class Tickets
             $ticketGroups[$bucketKey] = [
                 'label' => $bucketDef['label'],
                 'id' => $bucketDef['id'],
+                'value' => $bucketKey,
                 'class' => $bucketDef['class'],
                 'more-info' => '',
                 'items' => [],
@@ -2159,12 +2162,18 @@ class Tickets
      */
     public function patch($id, $params): bool
     {
-
-        // $params is an array of field names. Exclude id
-        if (is_array($params)) {
-            unset($params['id']);
-            unset($params['act']);
+        if (! is_array($params)) {
+            return false;
         }
+
+        // Strip non-ticket fields that may leak in from the framework or form submissions
+        unset(
+            $params['id'],
+            $params['act'],
+            $params['request_parts'],
+            $params['saveTicket'],
+            $params['saveAndCloseTicket'],
+        );
 
         $ticket = $this->getTicket($id);
 
@@ -2176,10 +2185,14 @@ class Tickets
 
         $return = $this->ticketRepository->patchTicket($id, $params);
 
+        if (! $return) {
+            return false;
+        }
+
         self::dispatchEvent('ticket_updated');
 
         // Todo: create events and move notification logic to notification module
-        if (isset($params['status']) && $return) {
+        if (isset($params['status'])) {
             $ticket = $this->getTicket($id);
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
@@ -2199,14 +2212,9 @@ class Tickets
             $notification->message = $message;
 
             $this->projectService->notifyProjectUsers($notification);
-
-            self::dispatchEvent('ticket_updated');
-
-            // Update ticket
-            return $this->patch($ticket->id, ['projectId' => $ticket->projectId, 'sprint' => '', 'dependingTicketId' => '', 'milestoneid' => '']);
         }
 
-        return false;
+        return (bool) $return;
     }
 
     /**

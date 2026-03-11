@@ -199,7 +199,7 @@ $allTickets = $group['items'];
 
                                     <?php
                                         $statusId = $key;
-                                $swimlaneKey = $group['id'] ?? null;
+                                $swimlaneKey = $group['value'] ?? $group['id'] ?? null;
                                 $isEmpty = isset($emptyColumns[$key]);
                                 $currentGroupBy = $searchCriteria['groupBy'] ?? null;
                                 include __DIR__.'/partials/quickadd-form.inc.php';
