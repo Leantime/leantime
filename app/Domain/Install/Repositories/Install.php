@@ -80,6 +80,7 @@ class Install
         30412,
         30413,
         30500,
+        30501,
     ];
 
     /**
@@ -2464,6 +2465,34 @@ class Install
             } catch (\Exception $e) {
                 Log::error("Migration 30500: Failed to add index {$index['name']} on {$index['table']}: ".$e->getMessage());
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30501: Ensure zp_canvas.color column exists
+     *
+     * Migration 30411 added this column but could fail silently on MySQL servers
+     * with ANSI_QUOTES sql_mode due to DEFAULT "ocean" using double quotes
+     * (interpreted as identifier, not string literal). The SQL was fixed in #3284
+     * but users who already ran the broken migration have the DB version advanced
+     * past 30411 without the column actually existing.
+     *
+     * @return bool|array Returns true on success, array of errors on failure
+     */
+    public function update_sql_30501(): bool|array
+    {
+        try {
+            if (Schema::hasTable('zp_canvas') && ! Schema::hasColumn('zp_canvas', 'color')) {
+                Schema::table('zp_canvas', function (Blueprint $table) {
+                    $table->string('color', 50)->nullable()->default('ocean')->after('description');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30501: '.$e->getMessage());
+
+            return ['Migration 30501 failed: '.$e->getMessage()];
         }
 
         return true;
