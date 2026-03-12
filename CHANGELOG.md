@@ -3,9 +3,31 @@
 ## Bug Fixes
 - **Migration Fails on MySQL Strict Mode** — Fixed SQL syntax error in migrations `update_sql_30200` and `update_sql_30411` caused by using double quotes for string defaults (`DEFAULT "ocean"`); MySQL interprets these as identifier quotes, not string literals (#3284)
 - **Ticket Inline Edits Not Updating UI** — Fixed `patch()` returning false for non-status field changes (assignee, milestone, priority), causing the API to return HTTP 500 and jQuery `.done()` callbacks to never fire; data saved correctly but UI required a page refresh (#3282)
+- **Ticket PATCH 500 on Bulk Updates** — Added `PATCHABLE_COLUMNS` allowlist to the tickets repository so only valid database columns are passed to UPDATE; previously non-column fields like `request_parts` caused SQL errors (#3305)
+- **Quick-Add Loses Swimlane Context** — Fixed quick-add form not inheriting the correct group context (milestone, priority, etc.) on kanban and list views after the query builder migration changed group ID format (#3305)
+- **Session Expiration Too Short for Logged-In Users** — Fixed session driver ordering bug where API/cron requests created persistent session files that were never cleaned up; the `esl` cookie workaround intended to shorten anonymous session lifetime had a chicken-and-egg bug that also limited logged-in sessions to 60 minutes (#3304)
+- **Calendar First Day of Week Ignored** — Added missing `firstDay` locale option to the main calendar view and the dashboard calendar widget (#3299)
+- **PostgreSQL GROUP BY Error on Timesheets** — Fixed `getLoggedHoursForTicket()` and `getTimesheetsByTicket()` selecting non-aggregated columns without grouping them, which PostgreSQL rejects (#3302)
+- **PostgreSQL ROUND() Error on Ticket Queries** — Fixed `getAllBySearchCriteria()` calling `ROUND(double precision, integer)` which PostgreSQL does not support; replaced with `CAST(SUM(hours) AS DECIMAL(10,2))` in the subquery (#3301)
+- **Closed Project Tasks in My Todos** — Added project state filter so tasks from closed projects no longer appear in the My Todos widget (#3297)
+- **User Settings Deserialization Error** — Fixed `getUserSettings()` returning stdClass instead of array after the query builder migration, causing array access failures (#3295)
+- **LDAP Group Assignment JSON Parsing** — Fixed `preg_replace` stripping whitespace inside JSON string values and added `stripslashes()` for env-sourced backslash-escaped JSON (#3308)
 - **File Viewing Broken on Shared Hosting** — Replaced `$storage->download()` (which relies on `fpassthru()`) with a direct file read and manual Response; fixes 500 errors on cPanel/shared hosts where `fpassthru` is in `disable_functions` (#3213)
 - **Ideas Saved to canvasId 0** — Fixed `IdeaDialog` controller never assigning `currentCanvas` to the template, causing the hidden form field to always render as empty; the post handler now also reads the submitted `canvasId` instead of relying solely on session state (#3181)
 - **Plugin Details Page TypeError** — Fixed crash when viewing marketplace plugin details caused by the API returning strings or nulls where the `MarketplacePlugin` model expects arrays or ints; all builder call sites now use explicit type casts and the model has safe property defaults (#3207)
+
+## Improvements
+- **Design Tokens** — Replaced hardcoded color, spacing, and shadow values with CSS custom properties across 10 component stylesheets for consistent theming (#3290, #3291)
+- **Accessibility & View System** — Miscellaneous accessibility improvements and view composer fixes (#3292)
+- **Session Handling** — API and cron requests now use in-memory array sessions from the start, preventing persistent session file accumulation on the server
+
+## Localization
+- Updated Brazilian Portuguese (pt-BR) translations
+
+## Dependency Updates
+- Bumped DOMPurify from 3.2.5 to 3.3.3
+- Bumped SVGO from 2.8.0 to 2.8.2
+- Bumped lodash-es and minimatch
 
 ---
 
