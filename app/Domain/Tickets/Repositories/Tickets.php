@@ -368,7 +368,7 @@ class Tickets
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
             ->selectRaw('CASE WHEN ('.$this->dbHelper->wrapColumn('milestone.tags').' IS NULL OR '.$this->dbHelper->wrapColumn('milestone.tags')." = '') THEN 'var(--grey)' ELSE ".$this->dbHelper->wrapColumn('milestone.tags').' END AS '.$this->dbHelper->wrapColumn('milestoneColor'))
-            ->selectRaw('COALESCE(ROUND(timesheet_agg.total_hours, 2), 0) AS '.$this->dbHelper->wrapColumn('bookedHours'));
+            ->selectRaw('COALESCE(timesheet_agg.total_hours, 0) AS '.$this->dbHelper->wrapColumn('bookedHours'));
 
         if ($includeCounts) {
             $query->selectRaw('COALESCE(comment_agg.comment_count, 0) AS '.$this->dbHelper->wrapColumn('commentCount'))
@@ -399,7 +399,7 @@ class Tickets
             ->leftJoinSub(
                 $this->connection->table('zp_timesheets')
                     ->select('ticketId')
-                    ->selectRaw('SUM(hours) as total_hours')
+                    ->selectRaw('CAST(SUM(hours) AS DECIMAL(10,2)) as total_hours')
                     ->groupBy('ticketId'),
                 'timesheet_agg',
                 'zp_tickets.id',
