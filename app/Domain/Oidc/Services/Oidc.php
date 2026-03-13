@@ -132,6 +132,11 @@ class Oidc
                 'response_type' => 'code',
                 'scope' => $this->scopes,
                 'state' => $this->generateState(),
+                'claims' => json_encode([
+                    'id_token' => [
+                        'email' => ['essential' => true]
+                    ]
+                ]),
             ]);
         }
 
