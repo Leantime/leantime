@@ -2812,6 +2812,7 @@ class Tickets
             $searchUrlString = '?'.http_build_query($this->getSetFilters($searchCriteria, true));
         }
 
+        $allTickets = $this->enrichGroupedTicketsWithCollaborators($allTickets);
         $allTickets = self::dispatchFilter('filterTickets', $allTickets);
 
         return [
@@ -2854,7 +2855,58 @@ class Tickets
      *               - projectFilter: The current project filter.
      *               - groupBy: The current grouping for the assignments.
      */
-    public function getToDoWidgetAssignments($params)
+    
+    /**
+     * Adds collaborator display metadata to grouped ticket collections used by list/kanban views.
+     *
+     * @param  array<string, array<string, mixed>>  $groupedTickets
+     * @return array<string, array<string, mixed>>
+     */
+    private function enrichGroupedTicketsWithCollaborators(array $groupedTickets): array
+    {
+        $ticketIds = [];
+
+        foreach ($groupedTickets as $group) {
+            foreach (($group['items'] ?? []) as $ticket) {
+                if (isset($ticket['id'])) {
+                    $ticketIds[] = (int) $ticket['id'];
+                }
+            }
+        }
+
+        if (empty($ticketIds)) {
+            return $groupedTickets;
+        }
+
+        $collaboratorsByTicket = $this->ticketRepository->getCollaboratorsByTicketIds($ticketIds);
+
+        foreach ($groupedTickets as &$group) {
+            foreach (($group['items'] ?? []) as &$ticket) {
+                $ticketId = (int) ($ticket['id'] ?? 0);
+                $editorId = (int) ($ticket['editorId'] ?? 0);
+                $collaboratorIds = $collaboratorsByTicket[$ticketId] ?? [];
+
+                // Do not duplicate the primary assignee in the collaborator UI stack.
+                if ($editorId > 0) {
+                    $collaboratorIds = array_values(array_filter(
+                        $collaboratorIds,
+                        fn ($userId) => (int) $userId !== $editorId
+                    ));
+                }
+
+                $ticket['collaborators'] = $collaboratorIds;
+                $ticket['collaboratorPreview'] = array_slice($collaboratorIds, 0, 2);
+                $ticket['collaboratorCount'] = count($collaboratorIds);
+                $ticket['collaboratorOverflow'] = max(0, count($collaboratorIds) - count($ticket['collaboratorPreview']));
+            }
+            unset($ticket);
+        }
+        unset($group);
+
+        return $groupedTickets;
+    }
+
+public function getToDoWidgetAssignments($params)
     {
 
         $projectFilter = '';

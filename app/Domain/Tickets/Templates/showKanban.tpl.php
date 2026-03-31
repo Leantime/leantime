@@ -323,12 +323,27 @@ $allTickets = $group['items'];
 
                                                 <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?= $row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        <span class="text">
+                                                        <span class="text" style="display:inline-flex; align-items:center;">
                                                             <?php
                                                             if ($row['editorFirstname'] != '') {
                                                                 echo "<span id='userImage".$row['id']."'><img src='".BASE_URL.'/api/users?profileImage='.$row['editorId']."' width='25' style='vertical-align: middle;'/></span>";
                                                             } else {
                                                                 echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span>";
+                                                            }
+
+                                                            if (! empty($row['collaboratorPreview'])) {
+                                                                echo "<span class='ticket-collaborators' style='display:inline-flex; align-items:center; margin-left:6px;'>";
+
+                                                                foreach ($row['collaboratorPreview'] as $index => $collaboratorId) {
+                                                                    $offset = $index > 0 ? 'margin-left:-8px;' : '';
+                                                                    echo "<span class='ticket-collaborator-avatar' title='".$tpl->__('label.collaborators')."' style='display:inline-flex; width:18px; height:18px; border-radius:999px; border:2px solid var(--main-background-color, #fff); overflow:hidden; ".$offset."'><img src='".BASE_URL.'/api/users?profileImage='.$collaboratorId."' width='18' height='18' style='display:block; width:18px; height:18px;'/></span>";
+                                                                }
+
+                                                                if (($row['collaboratorOverflow'] ?? 0) > 0) {
+                                                                    echo "<span class='ticket-collaborator-more' title='".$tpl->__('label.collaborators')."' style='display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 4px; margin-left:4px; border-radius:999px; background:var(--accent-color, #e9ecef); color:var(--secondary-font-color, #333); font-size:10px; line-height:18px;'>+".(int) $row['collaboratorOverflow'].'</span>";
+                                                                }
+
+                                                                echo '</span>';
                                                             }?>
                                                         </span>
                                                     </a>

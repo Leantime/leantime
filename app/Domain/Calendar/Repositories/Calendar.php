@@ -9,6 +9,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Db\Repository as RepositoryCore;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Support\EntityRelationshipEnum;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
@@ -309,7 +310,16 @@ class Calendar extends RepositoryCore
             ->select('id', 'headline', 'dateToFinish')
             ->where(function ($query) {
                 $query->where('userId', session('userdata.id'))
-                    ->orWhere('editorId', (string) session('userdata.id'));
+                    ->orWhere('editorId', (string) session('userdata.id'))
+                    ->orWhereExists(function ($subquery) {
+                        $subquery->selectRaw('1')
+                            ->from('zp_entity_relationship')
+                            ->whereColumn('zp_entity_relationship.entityA', 'zp_tickets.id')
+                            ->where('zp_entity_relationship.entityAType', 'Ticket')
+                            ->where('zp_entity_relationship.entityBType', 'User')
+                            ->where('zp_entity_relationship.relationship', EntityRelationshipEnum::Collaborator->value)
+                            ->where('zp_entity_relationship.entityB', session('userdata.id'));
+                    });
             })
             ->where('dateToFinish', '<>', '000-00-00 00:00:00')
             ->get();
@@ -323,7 +333,16 @@ class Calendar extends RepositoryCore
             ->select('id', 'headline', 'editFrom', 'editTo')
             ->where(function ($query) {
                 $query->where('userId', session('userdata.id'))
-                    ->orWhere('editorId', (string) session('userdata.id'));
+                    ->orWhere('editorId', (string) session('userdata.id'))
+                    ->orWhereExists(function ($subquery) {
+                        $subquery->selectRaw('1')
+                            ->from('zp_entity_relationship')
+                            ->whereColumn('zp_entity_relationship.entityA', 'zp_tickets.id')
+                            ->where('zp_entity_relationship.entityAType', 'Ticket')
+                            ->where('zp_entity_relationship.entityBType', 'User')
+                            ->where('zp_entity_relationship.relationship', EntityRelationshipEnum::Collaborator->value)
+                            ->where('zp_entity_relationship.entityB', session('userdata.id'));
+                    });
             })
             ->where('editFrom', '<>', '000-00-00 00:00:00')
             ->get();

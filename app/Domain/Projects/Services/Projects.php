@@ -475,6 +475,9 @@ class Projects
             if (isset($entity['editorId']) && (int) $entity['editorId'] === $userId) {
                 return true;
             }
+            if (isset($entity['collaborators']) && is_array($entity['collaborators']) && in_array($userId, array_map('intval', $entity['collaborators']), true)) {
+                return true;
+            }
             if (isset($entity['userId']) && (int) $entity['userId'] === $userId) {
                 return true;
             }
@@ -484,6 +487,9 @@ class Projects
             }
         } elseif (is_object($entity)) {
             if (isset($entity->editorId) && (int) $entity->editorId === $userId) {
+                return true;
+            }
+            if (isset($entity->collaborators) && is_array($entity->collaborators) && in_array($userId, array_map('intval', $entity->collaborators), true)) {
                 return true;
             }
             if (isset($entity->userId) && (int) $entity->userId === $userId) {

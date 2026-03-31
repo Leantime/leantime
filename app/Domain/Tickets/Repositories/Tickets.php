@@ -447,12 +447,7 @@ class Tickets
             $join->on('zp_tickets.projectId', '=', 'rup.projectId')
                 ->where('rup.userId', '=', $userId);
         })
-            ->leftJoin('zp_entity_relationship as er', function ($join) {
-                $join->on('er.entityAType', '=', $this->connection->raw("'Ticket'"))
-                    ->on('er.entityBType', '=', $this->connection->raw("'User'"))
-                    ->on('er.entityA', '=', 'zp_tickets.id')
-                    ->on('er.relationship', '=', $this->connection->raw("'".EntityRelationshipEnum::Collaborator->value."'"));
-            })
+            
             ->where(function ($q) use ($clientId) {
                 $q->whereNotNull('rup.projectId')
                     ->orWhere('zp_projects.psettings', 'all')
@@ -489,7 +484,15 @@ class Tickets
             $userIds = explode(',', $searchCriteria['users']);
             $query->where(function ($q) use ($userIds) {
                 $q->whereIn('zp_tickets.editorId', $userIds)
-                    ->orWhereIn('er.entityB', $userIds);
+                    ->orWhereExists(function ($subquery) use ($userIds) {
+                        $subquery->selectRaw('1')
+                            ->from('zp_entity_relationship')
+                            ->whereColumn('zp_entity_relationship.entityA', 'zp_tickets.id')
+                            ->where('zp_entity_relationship.entityAType', 'Ticket')
+                            ->where('zp_entity_relationship.entityBType', 'User')
+                            ->where('zp_entity_relationship.relationship', EntityRelationshipEnum::Collaborator->value)
+                            ->whereIn('zp_entity_relationship.entityB', $userIds);
+                    });
             });
         }
 
@@ -672,12 +675,7 @@ class Tickets
                 $join->on('requestor.id', '=', $this->connection->raw((int) $requestorId));
             })
             ->leftJoin('zp_tickets as milestones', 'zp_tickets.milestoneid', '=', 'milestones.id')
-            ->leftJoin('zp_entity_relationship as er', function ($join) {
-                $join->on('er.entityAType', '=', $this->connection->raw("'Ticket'"))
-                    ->on('er.entityBType', '=', $this->connection->raw("'User'"))
-                    ->on('er.relationship', '=', $this->connection->raw("'Collaborator'"))
-                    ->on('er.entityA', '=', 'zp_tickets.id');
-            })
+            
             ->where(function ($q) use ($requestorId, $clientId) {
                 $q->whereIn('zp_tickets.projectId', function ($subquery) use ($requestorId) {
                     $subquery->select('projectId')
@@ -699,7 +697,15 @@ class Tickets
         if (isset($userId) && $userId > 0) {
             $query->where(function ($q) use ($userId) {
                 $q->where('zp_tickets.editorId', (string) $userId)
-                    ->orWhere('er.entityB', $userId);
+                    ->orWhereExists(function ($subquery) use ($userId) {
+                        $subquery->selectRaw('1')
+                            ->from('zp_entity_relationship')
+                            ->whereColumn('zp_entity_relationship.entityA', 'zp_tickets.id')
+                            ->where('zp_entity_relationship.entityAType', 'Ticket')
+                            ->where('zp_entity_relationship.entityBType', 'User')
+                            ->where('zp_entity_relationship.relationship', EntityRelationshipEnum::Collaborator->value)
+                            ->where('zp_entity_relationship.entityB', $userId);
+                    });
             });
         }
 
@@ -764,7 +770,18 @@ class Tickets
             ->where('zp_tickets.type', '<>', 'milestone');
 
         if (isset($userId)) {
-            $query->where('zp_tickets.editorId', (string) $userId);
+            $query->where(function ($q) use ($userId) {
+                $q->where('zp_tickets.editorId', (string) $userId)
+                    ->orWhereExists(function ($subquery) use ($userId) {
+                        $subquery->selectRaw('1')
+                            ->from('zp_entity_relationship')
+                            ->whereColumn('zp_entity_relationship.entityA', 'zp_tickets.id')
+                            ->where('zp_entity_relationship.entityAType', 'Ticket')
+                            ->where('zp_entity_relationship.entityBType', 'User')
+                            ->where('zp_entity_relationship.relationship', EntityRelationshipEnum::Collaborator->value)
+                            ->where('zp_entity_relationship.entityB', $userId);
+                    });
+            });
         }
 
         $query->where(function ($q) use ($dateFrom, $dateTo) {
@@ -1129,7 +1146,18 @@ class Tickets
 
         if (isset($searchCriteria['users']) && $searchCriteria['users'] != '') {
             $userIds = explode(',', $searchCriteria['users']);
-            $query->whereIn('zp_tickets.editorId', $userIds);
+            $query->where(function ($q) use ($userIds) {
+                $q->whereIn('zp_tickets.editorId', $userIds)
+                    ->orWhereExists(function ($subquery) use ($userIds) {
+                        $subquery->selectRaw('1')
+                            ->from('zp_entity_relationship')
+                            ->whereColumn('zp_entity_relationship.entityA', 'zp_tickets.id')
+                            ->where('zp_entity_relationship.entityAType', 'Ticket')
+                            ->where('zp_entity_relationship.entityBType', 'User')
+                            ->where('zp_entity_relationship.relationship', EntityRelationshipEnum::Collaborator->value)
+                            ->whereIn('zp_entity_relationship.entityB', $userIds);
+                    });
+            });
         }
 
         if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] != '') {
@@ -1799,6 +1827,44 @@ class Tickets
             ->pluck('userId')
             ->toArray();
     }
+
+
+    /**
+     * Retrieves collaborators for multiple tickets in a single query.
+     *
+     * @param  array<int, int|string>  $ticketIds
+     * @return array<int, array<int, int>>
+     */
+    public function getCollaboratorsByTicketIds(array $ticketIds): array
+    {
+        $ticketIds = array_values(array_filter(array_map('intval', $ticketIds)));
+
+        if (empty($ticketIds)) {
+            return [];
+        }
+
+        $rows = $this->connection->table('zp_entity_relationship')
+            ->select(['entityA', 'entityB'])
+            ->whereIn('entityA', $ticketIds)
+            ->where('entityAType', 'Ticket')
+            ->where('entityBType', 'User')
+            ->where('relationship', EntityRelationshipEnum::Collaborator->value)
+            ->orderBy('entityA')
+            ->orderBy('entityB')
+            ->get();
+
+        $collaboratorsByTicket = [];
+
+        foreach ($rows as $row) {
+            $ticketId = (int) $row->entityA;
+            $userId = (int) $row->entityB;
+            $collaboratorsByTicket[$ticketId] ??= [];
+            $collaboratorsByTicket[$ticketId][] = $userId;
+        }
+
+        return $collaboratorsByTicket;
+    }
+
 
     /**
      * Removes all collaborators from a ticket.
