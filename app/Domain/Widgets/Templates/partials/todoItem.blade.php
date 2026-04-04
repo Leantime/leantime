@@ -29,7 +29,7 @@
 
     @php
         $accordionId = 'task-children-'.$groupKey.$ticket['id'];
-        $accordionState = $tpl->getToggleState($tpl->getToggleState("accordion_content-".$accordionId) === 'closed' ? 'closed' : 'open');
+        $savedState = $tpl->getToggleState('accordion_content-'.$accordionId); $accordionState = ($savedState === 'closed') ? 'closed' : 'open';
     @endphp
 
     <div
