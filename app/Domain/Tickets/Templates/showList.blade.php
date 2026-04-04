@@ -79,8 +79,8 @@
                                         />
                                     </td>
 
-                                    <td data-search="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['name'] : '' }}" data-order="{{ e($row['headline']) }}">
-                                        <a href="javascript:void(0);"><strong>{{ e($row['headline']) }}</strong></a>
+                                    <td data-search="{{ isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['name'] : '' }}" data-order="{!! e(html_entity_decode($row['headline'])) !!}">
+                                        <a href="javascript:void(0);"><strong>{!! e(html_entity_decode($row['headline'])) !!}</strong></a>
                                     </td>
 
                                     @dispatchEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum])
