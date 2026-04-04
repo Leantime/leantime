@@ -50,6 +50,16 @@ jQuery(document).ready(function(){
 
             $isGroupByActive = !empty($searchCriteria['groupBy']) && $searchCriteria['groupBy'] !== 'all';
             $columnHeaderClass = $isGroupByActive ? 'groupby-active' : '';
+
+            $columnCounts = [];
+            foreach ($allTicketGroups as $group) {
+                foreach ($group['items'] as $ticket) {
+                    $status = $ticket['status'] ?? null;
+                    if ($status !== null) {
+                        $columnCounts[$status] = ($columnCounts[$status] ?? 0) + 1;
+                    }
+                }
+            }
         @endphp
 
         <div class="kanban-column-headers {{ $columnHeaderClass }}" style="
@@ -70,7 +80,7 @@ jQuery(document).ready(function(){
                         </x-globals::actions.dropdown-menu>
                     @endif
 
-                    <strong class="count">0</strong>
+                    <strong class="count">{{ $columnCounts[$key] ?? 0 }}</strong>
                     {{ e($statusRow['name']) }}
                 </x-globals::elements.section-title>
             </div>
