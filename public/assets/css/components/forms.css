@@ -1890,6 +1890,13 @@ body .btn.btn-round-icon {
    are defined below.
    ────────────────────────────────────────────────────────────────────────── */
 
+/* Graceful degradation: give native <select> a usable size before TomSelect
+   initializes. Once TomSelect inits it adds .ts-hidden-accessible with
+   !important clip rules, so this has zero effect post-init. */
+select.select-chip {
+    min-width: 80px;
+}
+
 /* ── Chip badge colours (used inside <option> innerHTML / TomSelect render templates)
    These classes mirror the .label-* system from dropdowns.css.
    ────────────────────────────────────────────────────────────────────── */

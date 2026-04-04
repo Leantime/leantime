@@ -59,6 +59,8 @@
         id="{{ $selectId }}"
         {{ $required ? 'required' : '' }}
         {{ $disabled ? 'disabled' : '' }}
+        aria-hidden="true"
+        tabindex="-1"
         {{ $attributes->merge(['class' => 'select-chip']) }}
     >
         {{ $slot }}
