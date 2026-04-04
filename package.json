@@ -86,7 +86,9 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",
+    "@playwright/test": "^1.59.1",
     "@rollup/plugin-commonjs": "^29.0.0",
+    "@types/node": "^25.5.2",
     "dotenv": "^16.4.5",
     "eslint": "^8.50.0",
     "eslint-plugin-vue": "^9.17.0",

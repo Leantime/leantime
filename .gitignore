@@ -148,3 +148,10 @@ tests/Httprequests/http-client.private.env.json
 /dashboard-snapshot.md
 /test4-snapshot.md
 /wiki-console.log
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
