@@ -22,7 +22,7 @@
             {{ $slot }}
         @endif
         @if($label !== null)
-            <div class="bigNumberBoxText">{{ $label }}</div>
+            <div class="bigNumberBoxText tw:whitespace-nowrap tw:overflow-hidden tw:text-ellipsis">{{ $label }}</div>
         @endif
     </div>
 </div>
