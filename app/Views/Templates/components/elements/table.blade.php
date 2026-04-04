@@ -21,6 +21,9 @@
         'id' => $id,
         'class' => $tableClasses,
     ]) }}>
+        @isset($colgroup)
+            {{ $colgroup }}
+        @endisset
         @isset($head)
             <thead>
                 {{ $head }}
