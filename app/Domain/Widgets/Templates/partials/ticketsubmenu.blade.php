@@ -10,7 +10,7 @@
               onclick="jQuery('#subtask-form-{{$ticket['id']}}').slideToggle();"
               class="add-subtask-link">
               <x-globals::elements.icon name="arrow_back" />
-              Add Subtask
+              {{ __("links.add_subtask") }}
         </a></li>
         @endif
     </ul>

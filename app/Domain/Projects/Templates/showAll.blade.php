@@ -19,7 +19,7 @@
             <form action="" method="post" class="tw:flex tw:items-center tw:gap-1">
                 <input type="hidden" name="hideClosedProjects" value="1" />
                 <input type="checkbox" name="showClosedProjects" onclick="form.submit();" id="showClosed" {{ $showClosedProjects ? "checked='checked'" : '' }} />
-                <label for="showClosed">Show Closed Projects</label>
+                <label for="showClosed">{{ __("label.show_closed_projects") }}</label>
             </form>
         </div>
 
