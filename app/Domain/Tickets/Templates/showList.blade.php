@@ -60,7 +60,7 @@
                             @dispatchEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets])
                             <x-slot:head>
                             @dispatchEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets])
-                            <tr class="tw:hidden">
+                            <tr>
                                 <th class="status-col tw:w-auto tw:whitespace-nowrap">{{ __('label.todo_status') }}</th>
                                 <th>{{ __('label.title') }}</th>
                             </tr>
