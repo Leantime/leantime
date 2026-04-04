@@ -61,7 +61,7 @@
                             <x-slot:head>
                             @dispatchEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets])
                             <tr class="tw:hidden">
-                                <th class="status-col tw:w-5">{{ __('label.todo_status') }}</th>
+                                <th class="status-col tw:w-auto tw:whitespace-nowrap">{{ __('label.todo_status') }}</th>
                                 <th>{{ __('label.title') }}</th>
                             </tr>
                             @dispatchEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets])
@@ -72,7 +72,7 @@
                             @foreach($allTickets as $rowNum => $row)
                                 <tr onclick="leantime.ticketsController.loadTicketToContainer('{{ $row['id'] }}', '#ticketContent')" id="row-{{ $row['id'] }}" class="ticket-row">
                                     @dispatchEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets])
-                                    <td data-order="{{ $statusLabels[$row['status']]['sortKey'] ?? '' }}" data-search="{{ $statusLabels[$row['status']]['name'] ?? '' }}" class="roundStatusBtn tw:w-5">
+                                    <td data-order="{{ $statusLabels[$row['status']]['sortKey'] ?? '' }}" data-search="{{ $statusLabels[$row['status']]['name'] ?? '' }}" class="roundStatusBtn tw:w-auto tw:whitespace-nowrap">
                                         <x-tickets::chips.status-select
                                             :ticket="(object)$row"
                                             :statuses="$statusLabels"
