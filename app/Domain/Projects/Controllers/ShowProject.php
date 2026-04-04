@@ -310,7 +310,7 @@ class ShowProject extends Controller
 
             return $this->tpl->display('projects.showProject');
         } else {
-            return $this->tpl->display('errors.error404', responseCode: 404);
+            return FrontcontrollerCore::redirect(BASE_URL.'/errors/error404');
         }
     }
 }
