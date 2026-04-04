@@ -172,7 +172,7 @@ class ShowTicket extends Controller
     public function post($params): Response
     {
         if (! isset($_GET['id'])) {
-            return $this->tpl->display('errors.error400', responseCode: 400);
+            return $this->tpl->displayPartial('errors.error400', responseCode: 400);
         }
 
         $tab = '';
