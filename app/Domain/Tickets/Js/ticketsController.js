@@ -1939,7 +1939,7 @@ leantime.ticketsController = (function () {
             leantime.tiptapController.registry.destroyAll();
         }
 
-        jQuery(".ticketRows").removeClass("active");
+        jQuery(".ticket-row").removeClass("active");
         jQuery("#row-" + id).addClass("active");
 
         jQuery(element).html("<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px' /></div>");
