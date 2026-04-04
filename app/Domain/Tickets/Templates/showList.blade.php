@@ -68,7 +68,6 @@
                             </x-slot:head>
 
                             @dispatchEvent('allTicketsTable.afterHead', ['tickets' => $allTickets])
-                            <tbody>
                             @dispatchEvent('allTicketsTable.beforeFirstRow', ['tickets' => $allTickets])
                             @foreach($allTickets as $rowNum => $row)
                                 <tr onclick="leantime.ticketsController.loadTicketToContainer('{{ $row['id'] }}', '#ticketContent')" id="row-{{ $row['id'] }}" class="ticket-row">
@@ -88,7 +87,6 @@
                                 </tr>
                             @endforeach
                             @dispatchEvent('allTicketsTable.afterLastRow', ['tickets' => $allTickets])
-                            </tbody>
                             @dispatchEvent('allTicketsTable.afterBody', ['tickets' => $allTickets])
                         </x-globals::elements.table>
 
