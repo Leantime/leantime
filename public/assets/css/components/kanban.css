@@ -63,18 +63,21 @@
 }
 
 .kanbanCardContent {
-    overflow:hidden;
+    overflow: visible;
 }
 
 .ticketBox:hover {
     background:var(--kanban-card-hover);
 }
 
-
-
+.ticketBox h4 {
+    overflow: visible;
+}
 
 .ticketBox h4 a {
     font-weight: var(--font-weight-bold);
+    display: inline-block;
+    max-width: 100%;
 }
 
 .column .contentInner .ui-state-highlight {
@@ -423,6 +426,15 @@
 }
 
 
+
+/* Prevent timerContainer from intercepting pointer events on chips inside it */
+.ticketBox .timerContainer {
+    pointer-events: none;
+}
+
+.ticketBox .timerContainer > * {
+    pointer-events: auto;
+}
 
  .ticketBox .timerContainer .btn{
     padding-top:1px;
