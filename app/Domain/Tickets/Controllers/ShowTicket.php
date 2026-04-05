@@ -67,7 +67,7 @@ class ShowTicket extends Controller
         $ticket = $this->ticketService->getTicket($id);
 
         if ($ticket === false) {
-            return $this->tpl->display('errors.error500', responseCode: 500);
+            return $this->tpl->displayPartial('errors.error500', responseCode: 500);
         }
 
         // Ensure this ticket belongs to the current project
@@ -180,7 +180,7 @@ class ShowTicket extends Controller
         $ticket = $this->ticketService->getTicket($id);
 
         if ($ticket === false) {
-            return $this->tpl->display('errors.error500', responseCode: 500);
+            return $this->tpl->displayPartial('errors.error500', responseCode: 500);
         }
 
         // Upload File
