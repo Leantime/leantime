@@ -21,10 +21,13 @@
     variant="chip"
     name="milestoneid"
     :id="'milestone-chip-' . $ticketId"
-    hx-post="{{ $patchUrl }}"
-    hx-trigger="change"
-    hx-swap="none"
-    hx-vals="{{ $hxVals }}"
+    @if(!empty($ticketId))
+        hx-post="{{ $patchUrl }}"
+        hx-trigger="change"
+        hx-swap="none"
+        hx-vals="{{ $hxVals }}"
+        hx-include="this"
+    @endif
 >
     @php
         $emptyLabel = __('label.no_milestone');

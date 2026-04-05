@@ -29,10 +29,13 @@
     variant="chip"
     name="type"
     :id="'type-chip-' . $ticketId"
-    hx-post="{{ $patchUrl }}"
-    hx-trigger="change"
-    hx-swap="none"
-    hx-vals="{{ $hxVals }}"
+    @if(!empty($ticketId))
+        hx-post="{{ $patchUrl }}"
+        hx-trigger="change"
+        hx-swap="none"
+        hx-vals="{{ $hxVals }}"
+        hx-include="this"
+    @endif
 >
     @foreach($ticketTypes as $type)
         @php

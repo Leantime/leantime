@@ -32,10 +32,13 @@
     variant="chip"
     name="status"
     :id="'status-chip-' . $ticketId"
-    hx-post="{{ $patchUrl }}"
-    hx-trigger="change"
-    hx-swap="none"
-    hx-vals="{{ $hxVals }}"
+    @if(!empty($ticketId))
+        hx-post="{{ $patchUrl }}"
+        hx-trigger="change"
+        hx-swap="none"
+        hx-vals="{{ $hxVals }}"
+        hx-include="this"
+    @endif
 >
     @foreach($statuses as $key => $label)
         @php
