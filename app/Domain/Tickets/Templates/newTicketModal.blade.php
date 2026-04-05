@@ -9,7 +9,7 @@
 
     {!! $tpl->displayNotification() !!}
 
-    <div class="lt-tabs tabbedwidget ticketTabs" style="visibility:hidden;" data-tabs>
+    <div class="lt-tabs tabbedwidget ticketTabs" data-tabs>
         <ul role="tablist">
             <li><a href="#ticketdetails">{{ __('tabs.ticketDetails') }}</a></li>
         </ul>

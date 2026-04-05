@@ -99,7 +99,11 @@ class NewTicket extends Controller
         $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'), 'open');
         $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
-        return $this->tpl->displayPartial('tickets.newTicketModal');
+        if ($this->incomingRequest->isHtmxRequest() || $this->incomingRequest->isXmlHttpRequest()) {
+            return $this->tpl->displayPartial('tickets.newTicketModal');
+        }
+
+        return $this->tpl->display('tickets.newTicket');
     }
 
     /**
