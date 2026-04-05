@@ -50,7 +50,7 @@
 
     <x-globals::elements.accordion id="myProjectsHub-favorites" class="noBackground">
         <x-slot name="title">
-            My Favorites
+            {{ __("text.my_favorites") }}
         </x-slot>
         <x-slot name="content">
             <div class="row">
@@ -79,7 +79,7 @@
 
     <x-globals::elements.accordion id="myProjectsHub-otherProjects" class="noBackground">
         <x-slot name="title">
-            All Assigned Projects
+            {{ __("text.all_assigned_projects") }}
         </x-slot>
         <x-slot name="content">
 
