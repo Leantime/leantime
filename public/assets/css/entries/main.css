@@ -262,6 +262,18 @@
     display: none;
 }
 
+/* ── Fileupload state toggle ─────────────────────────────────────────
+   bootstrap-fileupload.css uses .fileupload-new/.fileupload-exists to
+   toggle which buttons are visible. The Blade button component renders
+   <a class="btn btn-primary fileupload-exists"> whose `body a.btn.btn-primary`
+   rule (0,2,2) overrides the original (0,2,0) hide rule. Bump specificity
+   so the state-driven display:none always wins.
+   ──────────────────────────────────────────────────────────────────── */
+.fileupload.fileupload-new .fileupload-exists,
+.fileupload.fileupload-exists .fileupload-new {
+    display: none;
+}
+
 /* ── Bootstrap grid safety net inside modals ─────────────────────────
    Force Bootstrap float-grid to flex-wrap so columns don't overflow
    the constrained modal width.
