@@ -28,7 +28,7 @@
 >
     @php
         $backlogLabel = __('label.backlog');
-        $backlogHtml  = '<span class="chip-badge state-default"><span class="chip-icon material-symbols-rounded">restart_alt</span>' . e($backlogLabel) . '</span>';
+        $backlogHtml  = '<span class="chip-badge state-default"><span class="chip-icon material-symbols-outlined">restart_alt</span>' . e($backlogLabel) . '</span>';
         $backlogSel   = (($ticket->sprint ?? '') == '') ? 'selected' : '';
     @endphp
     <option value="" {{ $backlogSel }} data-chip-html="{{ $backlogHtml }}">{{ $backlogLabel }}</option>
@@ -43,7 +43,7 @@
                 $label .= ' (' . format($sprint->startDate)->date() . ' – ' . format($sprint->endDate)->date() . ')';
             }
             $sel      = (string)($ticket->sprint ?? '') === (string)$sprint->id ? 'selected' : '';
-            $chipHtml = '<span class="chip-badge state-default"><span class="chip-icon material-symbols-rounded">restart_alt</span>' . $label . '</span>';
+            $chipHtml = '<span class="chip-badge state-default"><span class="chip-icon material-symbols-outlined">restart_alt</span>' . $label . '</span>';
         @endphp
         <option value="{{ $sprint->id }}" {{ $sel }} data-chip-html="{{ $chipHtml }}">{{ $label }}</option>
     @endforeach

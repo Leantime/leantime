@@ -40,7 +40,7 @@
             $icon     = $typeIcon[$key] ?? 'category';
             $labelStr = __('label.' . $key);
             $sel      = strtolower($ticket->type ?? 'task') === $key ? 'selected' : '';
-            $chipHtml = '<span class="chip-badge state-default"><span class="chip-icon material-symbols-rounded">' . $icon . '</span>' . e($labelStr) . '</span>';
+            $chipHtml = '<span class="chip-badge state-default"><span class="chip-icon material-symbols-outlined">' . $icon . '</span>' . e($labelStr) . '</span>';
         @endphp
         <option value="{{ $key }}" {{ $sel }} data-chip-html="{{ $chipHtml }}">{{ $labelStr }}</option>
     @endforeach

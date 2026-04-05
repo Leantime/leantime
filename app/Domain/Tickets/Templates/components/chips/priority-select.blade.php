@@ -36,7 +36,7 @@
 >
     @php
         $emptyLabel  = __('label.priority_not_defined');
-        $emptyHtml   = '<span class="chip-badge state-default"><span class="chip-icon material-symbols-rounded">local_fire_department</span>' . e($emptyLabel) . '</span>';
+        $emptyHtml   = '<span class="chip-badge state-default"><span class="chip-icon material-symbols-outlined">local_fire_department</span>' . e($emptyLabel) . '</span>';
         $emptySel    = (($ticket->priority ?? '') == '') ? 'selected' : '';
     @endphp
     <option value="" {{ $emptySel }} data-chip-html="{{ $emptyHtml }}">{{ $emptyLabel }}</option>
@@ -45,7 +45,7 @@
         @php
             $state    = $priorityState[(string)$key] ?? 'state-default';
             $sel      = (string)($ticket->priority ?? '') === (string)$key ? 'selected' : '';
-            $chipHtml = '<span class="chip-badge ' . $state . '"><span class="chip-icon material-symbols-rounded">local_fire_department</span>' . e($label) . '</span>';
+            $chipHtml = '<span class="chip-badge ' . $state . '"><span class="chip-icon material-symbols-outlined">local_fire_department</span>' . e($label) . '</span>';
         @endphp
         <option value="{{ $key }}" {{ $sel }} data-chip-html="{{ $chipHtml }}">{{ $label }}</option>
     @endforeach

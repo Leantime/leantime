@@ -44,7 +44,7 @@
             $state    = $stateMap[$type] ?? 'state-default';
             $name     = $label['name'] ?? $key;
             $sel      = (string)($ticket->status ?? '') === (string)$key ? 'selected' : '';
-            $chipHtml = '<span class="chip-badge ' . $state . '"><span class="chip-icon material-symbols-rounded">' . $icon . '</span>' . e($name) . '</span>';
+            $chipHtml = '<span class="chip-badge ' . $state . '"><span class="chip-icon material-symbols-outlined">' . $icon . '</span>' . e($name) . '</span>';
         @endphp
         <option value="{{ $key }}" {{ $sel }} data-chip-html="{{ $chipHtml }}">{{ $name }}</option>
     @endforeach

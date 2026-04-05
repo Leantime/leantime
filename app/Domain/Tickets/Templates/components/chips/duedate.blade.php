@@ -58,7 +58,7 @@
     onclick="document.getElementById('{{ $inputId }}').dispatchEvent(new MouseEvent('click', {bubbles:true}));"
     data-tippy-content="{{ __('label.due') }}: {{ $displayDate }}"
 >
-    <span class="chip-icon material-symbols-rounded">alarm</span>
+    <span class="chip-icon material-symbols-outlined">alarm</span>
     <span id="{{ $inputId }}-display">{{ $displayDate }}</span>
 </span>
 

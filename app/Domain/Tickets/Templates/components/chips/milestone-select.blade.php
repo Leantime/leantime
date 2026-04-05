@@ -28,7 +28,7 @@
 >
     @php
         $emptyLabel = __('label.no_milestone');
-        $emptyHtml  = '<span class="chip-badge state-default"><span class="chip-icon material-symbols-rounded">label_important</span>' . e($emptyLabel) . '</span>';
+        $emptyHtml  = '<span class="chip-badge state-default"><span class="chip-icon material-symbols-outlined">label_important</span>' . e($emptyLabel) . '</span>';
         $emptySel   = (($ticket->milestoneid ?? '') == '') ? 'selected' : '';
     @endphp
     <option value="" {{ $emptySel }} data-chip-html="{{ $emptyHtml }}">{{ $emptyLabel }}</option>
@@ -56,7 +56,7 @@
                 $style = 'background:' . $color . ';color:' . $fgColor . ';';
             }
             $sel      = (string)($ticket->milestoneid ?? '') === (string)$milestone->id ? 'selected' : '';
-            $chipHtml = '<span class="chip-badge state-default" style="' . $style . '"><span class="chip-icon material-symbols-rounded">label_important</span>' . e($milestone->headline) . '</span>';
+            $chipHtml = '<span class="chip-badge state-default" style="' . $style . '"><span class="chip-icon material-symbols-outlined">label_important</span>' . e($milestone->headline) . '</span>';
         @endphp
         <option value="{{ $milestone->id }}" {{ $sel }} data-chip-html="{{ $chipHtml }}">{{ e($milestone->headline) }}</option>
     @endforeach
