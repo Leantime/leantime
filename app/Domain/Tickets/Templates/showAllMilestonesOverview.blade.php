@@ -171,23 +171,24 @@
     @dispatchEvent('scripts.afterOpen')
 
     jQuery(document).ready(function(){
+
+        leantime.ticketsController.initTicketSearchSubmit("{{ BASE_URL }}/tickets/showAll");
+
+        @if($login::userIsAtLeast($roles::$editor))
+        leantime.ticketsController.initUserDropdown();
+        leantime.ticketsController.initMilestoneDropdown();
+        leantime.ticketsController.initEffortDropdown();
+        leantime.ticketsController.initStatusDropdown();
+        leantime.ticketsController.initSprintDropdown();
+        leantime.ticketsController.initMilestoneDatesAsyncUpdate();
+        @else
+            leantime.authController.makeInputReadonly(".maincontentinner");
+        @endif
+
+        leantime.ticketsController.initMilestoneTable("{{ $searchCriteria['groupBy'] }}");
+
+        @dispatchEvent('scripts.beforeClose')
+
     });
-
-    leantime.ticketsController.initTicketSearchSubmit("{{ BASE_URL }}/tickets/showAll");
-
-    @if($login::userIsAtLeast($roles::$editor))
-    leantime.ticketsController.initUserDropdown();
-    leantime.ticketsController.initMilestoneDropdown();
-    leantime.ticketsController.initEffortDropdown();
-    leantime.ticketsController.initStatusDropdown();
-    leantime.ticketsController.initSprintDropdown();
-    leantime.ticketsController.initMilestoneDatesAsyncUpdate();
-    @else
-        leantime.authController.makeInputReadonly(".maincontentinner");
-    @endif
-
-    leantime.ticketsController.initMilestoneTable("{{ $searchCriteria['groupBy'] }}");
-
-    @dispatchEvent('scripts.beforeClose')
 
 </script>
