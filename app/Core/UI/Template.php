@@ -274,6 +274,8 @@ class Template
 
         $layout = $this->confirmLayoutName($layout, $template);
 
+        app('view')->share(['tpl' => $this]);
+
         $templateParts = $this->parseViewPath($template);
 
         $loadFile = $this->getTemplatePath($templateParts['module'], $templateParts['path']);
