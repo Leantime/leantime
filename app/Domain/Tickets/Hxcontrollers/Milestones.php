@@ -32,6 +32,7 @@ class Milestones extends HtmxController
 
         $this->tpl->assign('progressColor', $getParams['progressColor'] ?? 'default');
         $this->tpl->assign('noText', $getParams['noText'] ?? false);
+        $this->tpl->assign('size', $getParams['size'] ?? 'md');
         $this->tpl->assign('milestone', $milestone);
         $this->tpl->assign('percentDone', $percentDone);
 

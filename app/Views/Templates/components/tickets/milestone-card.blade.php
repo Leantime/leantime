@@ -2,7 +2,8 @@
     'milestone' => null,
     'noText' => false,
     'percentDone' => 0,
-    'progressColor' => 'default'
+    'progressColor' => 'default',
+    'size' => 'md',
  ])
 
 <div class="ticketBox fixed">
@@ -27,6 +28,7 @@
             :value="$percentDone"
             :customColor="$progressColor !== 'default' ? '#'.$progressColor : null"
             :showLabel="false"
+            :size="$size"
         />
 
         <script>
