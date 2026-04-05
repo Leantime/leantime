@@ -89,7 +89,6 @@
                     @dispatchEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets])
                 </x-slot:head>
                 @dispatchEvent('allTicketsTable.afterHead', ['tickets' => $allTickets])
-                <tbody>
                     @dispatchEvent('allTicketsTable.beforeFirstRow', ['tickets' => $allTickets])
                     @foreach($allTickets as $rowNum => $row)
                         <tr class="tw:h-px">
@@ -210,7 +209,6 @@
                         </tr>
                     @endforeach
                     @dispatchEvent('allTicketsTable.afterLastRow', ['tickets' => $allTickets])
-                </tbody>
                 @dispatchEvent('allTicketsTable.afterBody', ['tickets' => $allTickets])
                 <x-slot:foot>
                     <tr><td colspan="9"></td><td></td><td></td><td></td><td></td><td></td></tr>
