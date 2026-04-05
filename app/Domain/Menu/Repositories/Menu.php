@@ -9,6 +9,7 @@ namespace Leantime\Domain\Menu\Repositories;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -301,8 +302,24 @@ class Menu
                     } else {
                         $submenuState = session('usersettings.submenuToggle.'.$element['id']) ?? $element['visual'];
                         session(['usersettings.submenuToggle.'.$element['id'] => $submenuState]);
+                        $menuStructure[$key]['visual'] = $submenuState;
                     }
-                    $menuStructure[$key]['visual'] = $submenuState;
+
+                    // Auto-expand submenu if it contains the active page
+                    $currentModule = FrontcontrollerCore::getModuleName();
+                    $currentAction = FrontcontrollerCore::getActionName();
+                    if (isset($element['submenu'])) {
+                        foreach ($element['submenu'] as $subItem) {
+                            if (
+                                isset($subItem['module'], $subItem['active'])
+                                && $subItem['module'] === $currentModule
+                                && in_array($currentAction, $subItem['active'])
+                            ) {
+                                $menuStructure[$key]['visual'] = 'open';
+                                break;
+                            }
+                        }
+                    }
 
                     // Parse submenu
                     foreach ($element['submenu'] as $subkey => $subelement) {
