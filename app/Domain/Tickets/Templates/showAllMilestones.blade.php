@@ -62,7 +62,7 @@
             @php $allTickets = $group['items']; @endphp
 
             @dispatchEvent('allTicketsTable.before', ['tickets' => $allTickets])
-            <x-globals::elements.table :datatable="true" class="tw:w-full tw:overflow-x-auto">
+            <x-globals::elements.table :datatable="true" class="tw:w-full tw:overflow-x-auto ticketTable">
                 <x-slot:colgroup>
                     <colgroup>
                         <col class="con1"><col class="con0"><col class="con1"><col class="con0">
