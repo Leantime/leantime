@@ -16,6 +16,7 @@
 
     $startUrl = BASE_URL . '/hx/timesheets/stopwatch/start-timer/';
     $stopUrl  = BASE_URL . '/hx/timesheets/stopwatch/stop-timer/';
+    $instanceId = uniqid();
 @endphp
 
 {{-- ── LINK VARIANT ────────────────────────────────────────────────────────────
@@ -24,7 +25,7 @@
      ──────────────────────────────────────────────────────────────────────── --}}
 @if($variant === 'link')
 
-    <li id="timerContainer-{{ $parentTicketId }}"
+    <li id="timerContainer-{{ $parentTicketId }}-{{ $instanceId }}"
         hx-get="{{ $selfRefreshUrl }}"
         hx-trigger="timerUpdate from:body"
         hx-target="this"
@@ -70,7 +71,7 @@
      ──────────────────────────────────────────────────────────────────────── --}}
 @else
 
-    <div id="timer-button-container-{{ $parentTicketId }}"
+    <div id="timer-button-container-{{ $parentTicketId }}-{{ $instanceId }}"
          hx-get="{{ $selfRefreshUrl }}"
          hx-trigger="timerUpdate from:body"
          hx-target="this"

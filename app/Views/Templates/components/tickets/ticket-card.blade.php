@@ -20,7 +20,7 @@
             <strong><a href="#/tickets/showTicket/{{ $row['id'] }}" >{{ $row['headline'] }}</a></strong>
 
         </div>
-        <div class="col-md-4 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
+        <div class="col-md-4 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}-{{ uniqid() }}">
 
             <x-globals::tickets.ticket-submenu :ticket="$row" :on-the-clock="$onTheClock" />
             @if($cardType == "full")

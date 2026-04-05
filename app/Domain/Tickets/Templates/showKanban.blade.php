@@ -180,7 +180,7 @@ jQuery(document).ready(function(){
 
                                             <div class="clearfix tw:pb-2"></div>
 
-                                            <div class="timerContainer" id="timerContainer-{{ $row['id'] }}">
+                                            <div class="timerContainer" id="timerContainer-{{ $row['id'] }}-{{ uniqid() }}">
                                                 <x-tickets::chips.milestone-select
                                                     :ticket="(object)$row"
                                                     :milestones="$tpl->get('milestones')"

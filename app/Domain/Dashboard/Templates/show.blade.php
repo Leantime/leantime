@@ -89,7 +89,7 @@
                     @foreach($tickets as $row)
                         <li class="ui-state-default" id="ticket_{!! $row['id'] !!}">
                             <div class="ticketBox fixed priority-border-{!! $row['priority'] !!}" data-val="{!! $row['id'] !!}">
-                                                    <div class="timerContainer tw:py-[5px] tw:px-[15px]" id="timerContainer-{!! $row['id'] !!}">
+                                                    <div class="timerContainer tw:py-[5px] tw:px-[15px]" id="timerContainer-{!! $row['id'] !!}-{{ uniqid() }}">
                                         @if($row['dependingTicketId'] > 0)
                                         <a href="#/tickets/showTicket/{{  $row['dependingTicketId'] }}">
                                             {{ $row['parentHeadline'] }}
