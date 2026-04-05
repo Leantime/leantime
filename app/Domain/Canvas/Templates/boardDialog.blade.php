@@ -11,7 +11,7 @@
     <div class="tw:mb-4">
         <label>{{ $tpl->__('label.title_new') }}</label><br />
         <x-globals::forms.text-input name="canvastitle" value="{{ $tpl->escape($canvasTitle) }}" placeholder="{{ $tpl->__('input.placeholders.enter_title_for_board') }}"
-               class="tw:w-full" />
+               class="tw:w-full" style="width:100%" />
     </div>
     <div class="tw:flex tw:justify-end tw:gap-2 tw:pt-2">
         @if (isset($_GET['id']))
