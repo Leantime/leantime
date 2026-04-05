@@ -3,38 +3,27 @@
 namespace Leantime\Domain\Timesheets\Controllers;
 
 use Carbon\CarbonInterface;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Controller for the "My Timesheets" list view with inline editing.
+ * Controller for the "My Timesheets" read-only list view with DataTables.
  */
 class ShowMyList extends Controller
 {
     private TimesheetService $timesheetService;
-
-    private ProjectService $projectService;
-
-    private TicketService $ticketService;
 
     /**
      * Initialise controller dependencies.
      */
     public function init(
         TimesheetService $timesheetService,
-        ProjectService $projectService,
-        TicketService $ticketService,
     ): void {
         $this->timesheetService = $timesheetService;
-        $this->projectService = $projectService;
-        $this->ticketService = $ticketService;
 
         session(['lastPage' => BASE_URL.'/timesheets/showMyList']);
     }
@@ -67,9 +56,7 @@ class ShowMyList extends Controller
     }
 
     /**
-     * Handle form submissions (filter or save).
-     *
-     * @throws BindingResolutionException
+     * Handle filter form submissions.
      */
     public function post(array $params): Response
     {
@@ -85,7 +72,7 @@ class ShowMyList extends Controller
                 $dateFrom = dtHelper()->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();
             } catch (\Exception $e) {
                 Log::warning($e);
-                $this->tpl->setNotification('Could not parse date', 'error', 'save_timesheet');
+                $this->tpl->setNotification('Could not parse date', 'error', 'timesheet_filter');
             }
         }
 
@@ -94,133 +81,17 @@ class ShowMyList extends Controller
                 $dateTo = dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
             } catch (\Exception $e) {
                 Log::warning($e);
-                $this->tpl->setNotification('Could not parse date', 'error', 'save_timesheet');
+                $this->tpl->setNotification('Could not parse date', 'error', 'timesheet_filter');
             }
         }
 
-        // Persist filter state in session so GET reloads keep the same filters
         session(['timesheetListDateFrom' => $dateFrom]);
         session(['timesheetListDateTo' => $dateTo]);
         session(['timesheetListKind' => $kind]);
 
-        if (isset($_POST['saveTimeSheet'])) {
-            $this->saveTimeSheet($_POST);
-        }
-
         $this->assignTemplateVars($dateFrom, $dateTo, $kind);
 
         return $this->tpl->display('timesheets.showMyList');
-    }
-
-    /**
-     * Save timesheet entries from the inline-editable form.
-     *
-     * Handles two types of entries:
-     * 1. New entries via explicit fields (newDate, newHours, newTicketId, newKindId)
-     * 2. Existing entries via pipe-delimited input keys: ticketId|kind|formattedDate|timestamp
-     *
-     * @throws BindingResolutionException
-     */
-    private function saveTimeSheet(array $postData): void
-    {
-        // Handle new entry (explicit form fields)
-        $this->saveNewEntry($postData);
-
-        // Handle existing entry updates (pipe-delimited keys)
-        $this->saveExistingEntries($postData);
-    }
-
-    /**
-     * Save a new timesheet entry from explicit form fields.
-     */
-    private function saveNewEntry(array $postData): void
-    {
-        $newDate = trim($postData['newDate'] ?? '');
-        $newHours = (float) ($postData['newHours'] ?? 0);
-        $newTicketId = (int) ($postData['newTicketId'] ?? 0);
-        $newKind = $postData['newKindId'] ?? 'GENERAL_BILLABLE';
-        $newDescription = trim($postData['newDescription'] ?? '');
-
-        // Skip silently only if the user didn't touch the new entry row at all
-        if ($newHours <= 0 && $newDate === '' && $newTicketId === 0) {
-            return;
-        }
-
-        // Validate required fields and give specific feedback
-        $missing = [];
-        if ($newDate === '') {
-            $missing[] = 'date';
-        }
-        if ($newTicketId === 0) {
-            $missing[] = 'to-do';
-        }
-        if ($newHours <= 0) {
-            $missing[] = 'hours';
-        }
-
-        if (! empty($missing)) {
-            $this->tpl->setNotification('Please fill in: '.implode(', ', $missing), 'error', 'save_timesheet');
-
-            return;
-        }
-
-        try {
-            $this->timesheetService->logTime($newTicketId, [
-                'userId' => session('userdata.id'),
-                'ticket' => $newTicketId,
-                'dateString' => $newDate,
-                'hours' => $newHours,
-                'kind' => $newKind,
-                'description' => $newDescription,
-            ]);
-            $this->tpl->setNotification('Timesheet saved successfully', 'success', 'save_timesheet');
-        } catch (\Exception $e) {
-            $this->tpl->setNotification('Error logging time: '.$e->getMessage(), 'error', 'save_timesheet');
-            report($e);
-        }
-    }
-
-    /**
-     * Save updates to existing timesheet entries via pipe-delimited keys.
-     *
-     * Key format: ticketId|kind|formattedDate|timestamp
-     */
-    private function saveExistingEntries(array $postData): void
-    {
-        foreach ($postData as $key => $dateEntry) {
-            $tempData = explode('|', $key);
-
-            if (count($tempData) === 4) {
-                $ticketId = (int) $tempData[0];
-                $kind = $tempData[1];
-                $timestamp = $tempData[3];
-                $hours = $dateEntry;
-
-                // Skip the new entry row (handled separately)
-                if ($tempData[0] === 'new') {
-                    continue;
-                }
-
-                $values = [
-                    'userId' => session('userdata.id'),
-                    'ticket' => $ticketId,
-                    'timestamp' => $timestamp,
-                    'hours' => $hours,
-                    'kind' => $kind,
-                ];
-
-                if ($timestamp !== 'false' && $timestamp != false) {
-                    try {
-                        $this->timesheetService->upsertTime($ticketId, $values);
-                    } catch (\Exception $e) {
-                        $this->tpl->setNotification('Error logging time: '.$e->getMessage(), 'error', 'save_timesheet');
-                        report($e);
-
-                        continue;
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -241,13 +112,6 @@ class ShowMyList extends Controller
             invEmpl: '-1',
             invComp: '-1',
             paid: '-1',
-        ));
-        $this->tpl->assign('allProjects', $this->projectService->getProjectsAssignedToUser(
-            userId: session('userdata.id'),
-            projectTypes: 'project',
-        ));
-        $this->tpl->assign('allTickets', $this->ticketService->getAllOpenUserTickets(
-            userId: session('userdata.id'),
         ));
     }
 }

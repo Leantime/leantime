@@ -336,7 +336,7 @@
     "isDynamicEntry": true
   },
   "app/Domain/Timesheets/Js/timesheetsController.js": {
-    "file": "assets/timesheetsController-DWiTB4wf.js",
+    "file": "assets/timesheetsController-Be2gtZSr.js",
     "name": "timesheetsController",
     "src": "app/Domain/Timesheets/Js/timesheetsController.js",
     "isDynamicEntry": true
@@ -780,7 +780,7 @@
     ]
   },
   "public/assets/css/entries/app.css": {
-    "file": "assets/app-Bm4sahk1.css",
+    "file": "assets/app-BcR97pox.css",
     "src": "public/assets/css/entries/app.css",
     "isEntry": true
   },
@@ -790,7 +790,7 @@
     "isEntry": true
   },
   "public/assets/css/entries/main.css": {
-    "file": "assets/main-BoxpOqJJ.css",
+    "file": "assets/main-DmDQ4tfy.css",
     "src": "public/assets/css/entries/main.css",
     "isEntry": true
   },
@@ -959,7 +959,7 @@
     "src": "public/assets/images/svg/loading-animation.svg"
   },
   "public/assets/js/entries/entry-app.js": {
-    "file": "assets/entry-app-1STIT9-8.js",
+    "file": "assets/entry-app-eELe6KHP.js",
     "name": "entry-app",
     "src": "public/assets/js/entries/entry-app.js",
     "isEntry": true,
