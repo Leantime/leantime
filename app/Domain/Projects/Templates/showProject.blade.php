@@ -291,7 +291,7 @@
                                         </div>
 
                                         @if($key == -1)
-                                            <em>* the archive status is protected cannot be renamed or removed.</em>
+                                            <em>{{ __('text.archive_status_protected') }}</em>
                                         @endif
                                     </div>
                                 </li>

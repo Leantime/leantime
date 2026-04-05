@@ -338,7 +338,7 @@ jQuery(document).ready(function(){
                             {{ __($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']) }}
                         @if ($timeRow['hasTimesheetOffset'])
                                 <x-globals::elements.icon name="history" class="tw:float-right tw:text-[12px]"
-                                   data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone" />
+                                   data-tippy-content="{{ __('tooltip.timesheet_different_timezone') }}" />
                         @endif
                             </td>
 
@@ -361,7 +361,7 @@ jQuery(document).ready(function(){
                                                name="{{ $inputNameKey }}"
                                                value="{{ $timeRow[$dayKey]['hours'] }}"
                                                 @if (empty($timeRow[$dayKey]['actualWorkDate']))
-                                                    data-tippy-content="Cannot add time entry in previous timezone"
+                                                    data-tippy-content="{{ __('tooltip.timesheet_cannot_add_previous_timezone') }}"
                                                 @endif
                                         />
 
@@ -458,7 +458,7 @@ jQuery(document).ready(function(){
             </x-globals::elements.table>
 
             <div class="tw:flex tw:justify-end tw:mt-4 tw:p-5">
-                <x-globals::forms.button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">Save</x-globals::forms.button>
+                <x-globals::forms.button submit type="primary" name="saveTimeSheet" class="saveTimesheetBtn">{{ __('buttons.save') }}</x-globals::forms.button>
             </div>
         </form>
     </div>
