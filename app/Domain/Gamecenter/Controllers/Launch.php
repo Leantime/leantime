@@ -13,5 +13,6 @@ class Launch extends \Leantime\Core\Controller\Controller
             return $this->tpl->displayPartial('gamecenter.launchSnake');
         }
 
+        return $this->tpl->displayPartial('errors.error404', responseCode: 404);
     }
 }
