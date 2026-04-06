@@ -68,7 +68,7 @@
             </div>
         @endif
 
-        <div class="gantt-wrapper">
+        <div class="gantt-wrapper tw:pl-2">
             <svg id="gantt"></svg>
         </div>
 

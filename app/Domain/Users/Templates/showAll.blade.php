@@ -5,7 +5,7 @@
 <x-globals::layout.page-header :icon="$tpl->getModulePicture()" headline="{{ __('headlines.users') }}" subtitle="{{ __('label.administration') }}" />
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <div class="maincontentinner tw:flex-initial">
 
         {!! $tpl->displayNotification() !!}
 
