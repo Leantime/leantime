@@ -51,7 +51,6 @@
 
     <h1>
         {{ __('headline.milestones') }}
-        @if(($tpl->get('sprints') !== false) && ($tpl->get('sprints') !== null) && count($tpl->get('sprints')) > 0)
         //
         <x-globals::actions.dropdown-menu variant="link" trailing-visual="arrow_drop_down" trigger-class="header-title-dropdown" align="end">
             <x-slot:label>
@@ -69,13 +68,12 @@
                 <li>
                     <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ __('links.backlog') }}</a>
                 </li>
-                @foreach($tpl->get('sprints') as $sprintRow)
+                @foreach(($sprints ?? []) as $sprintRow)
                     <li>
                         <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ e($sprintRow->name) }}<br /><small>{{ sprintf(__('label.date_from_date_to'), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) }}</small></a>
                     </li>
                 @endforeach
         </x-globals::actions.dropdown-menu>
-        @endif
     </h1>
     <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
 
