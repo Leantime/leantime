@@ -2906,7 +2906,7 @@ class Tickets
         return $groupedTickets;
     }
 
-public function getToDoWidgetAssignments($params)
+    public function getToDoWidgetAssignments($params)
     {
 
         $projectFilter = '';

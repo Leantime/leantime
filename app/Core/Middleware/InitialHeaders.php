@@ -55,7 +55,7 @@ class InitialHeaders
                 'X-Frame-Options' => 'SAMEORIGIN',
                 'X-XSS-Protection' => '1; mode=block',
                 'X-Content-Type-Options' => 'nosniff',
-                'Referrer-Policy', 'same-origin',
+                'Referrer-Policy' => 'same-origin',
                 'Access-Control-Allow-Origin' => BASE_URL,
                 'Cache-Control' => 'no-cache, no-store, must-revalidate',
                 'Pragma' => 'no-cache',
