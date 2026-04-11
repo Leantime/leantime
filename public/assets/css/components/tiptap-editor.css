@@ -195,16 +195,21 @@
    ========================================================================== */
 
 .tiptap-editor .ProseMirror ul,
-.tiptap-editor .ProseMirror ol {
+.tiptap-editor .ProseMirror ol,
+.tiptap-content ul,
+.tiptap-content ol {
     padding-left: 1.5em;
     margin: 0 0 1em 0;
 }
 
-.tiptap-editor .ProseMirror li {
+.tiptap-editor .ProseMirror li,
+.tiptap-content li {
     margin-bottom: 0.25em;
 }
 
-.tiptap-editor .ProseMirror li p {
+.tiptap-editor .ProseMirror li > p,
+.tiptap-content li > p {
+    display: inline;
     margin: 0;
 }
 
@@ -212,7 +217,11 @@
 .tiptap-editor .ProseMirror ul ul,
 .tiptap-editor .ProseMirror ol ol,
 .tiptap-editor .ProseMirror ul ol,
-.tiptap-editor .ProseMirror ol ul {
+.tiptap-editor .ProseMirror ol ul,
+.tiptap-content ul ul,
+.tiptap-content ol ol,
+.tiptap-content ul ol,
+.tiptap-content ol ul {
     margin-top: 0.25em;
     margin-bottom: 0;
 }

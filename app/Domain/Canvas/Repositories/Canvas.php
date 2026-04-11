@@ -546,7 +546,6 @@ class Canvas
         $parentProject = $this->connection->table('zp_projects')
             ->select('parent')
             ->where('id', $projectId)
-            ->whereIn('type', ['strategy', 'program'])
             ->first();
 
         if ($parentProject && $parentProject->parent) {

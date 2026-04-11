@@ -561,12 +561,12 @@ class Tickets
             });
         }
 
-        if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] > 0 && $searchCriteria['sprint'] != 'all') {
+        if (isset($searchCriteria['sprint']) && is_numeric($searchCriteria['sprint']) && $searchCriteria['sprint'] > 0) {
             $sprintIds = explode(',', $searchCriteria['sprint']);
             $query->whereIn('zp_tickets.sprint', $sprintIds);
         }
 
-        if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] == 'backlog') {
+        if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] === 'backlog') {
             $query->where(function ($q) {
                 $q->whereNull('zp_tickets.sprint')
                     ->orWhere('zp_tickets.sprint', 0)
@@ -1224,7 +1224,7 @@ class Tickets
             });
         }
 
-        if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] > 0 && $searchCriteria['sprint'] != 'all') {
+        if (isset($searchCriteria['sprint']) && is_numeric($searchCriteria['sprint']) && $searchCriteria['sprint'] > 0) {
             $sprintIds = explode(',', $searchCriteria['sprint']);
             $query->where(function ($q) use ($sprintIds) {
                 $q->whereIn('zp_tickets.sprint', $sprintIds)
@@ -1232,7 +1232,7 @@ class Tickets
             });
         }
 
-        if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] == 'backlog') {
+        if (isset($searchCriteria['sprint']) && $searchCriteria['sprint'] === 'backlog') {
             $query->where(function ($q) {
                 $q->whereNull('zp_tickets.sprint')
                     ->orWhere('zp_tickets.sprint', 0)
