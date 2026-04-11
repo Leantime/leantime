@@ -1,0 +1,24 @@
+{
+  "name": "leantime-harness",
+  "version": "1.0.0",
+  "description": "Agent SDK harness for systematic Leantime site evaluation and fixing",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "evaluate": "tsx src/index.ts --phase evaluate",
+    "plan": "tsx src/index.ts --phase plan",
+    "fix": "tsx src/index.ts --phase fix",
+    "login": "tsx src/playwright/login.ts",
+    "eval-page": "tsx src/playwright/evaluate-page.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.92",
+    "@playwright/test": "^1.59.1",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
