@@ -92,22 +92,22 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         </ul>
 
         <div id="ticketdetails">
-            <form class="formModal" action="<?= BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
-                <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
+            <form class="formModal" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" method="post">
+                @include('tickets::submodules.ticketDetails')
             </form>
         </div>
 
         <div id="files">
-            <?php $tpl->displaySubmodule('files-showAll') ?>
+            @include('files::submodules.showAll')
         </div>
 
-        <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
+        @if($login::userIsAtLeast($roles::$editor))
             <div id="timesheet">
-                <?php $tpl->displaySubmodule('tickets-timesheet') ?>
+                @include('tickets::submodules.timesheet')
             </div>
-        <?php } ?>
+        @endif
 
-        <?php $tpl->dispatchTplEvent('ticketTabsContent', ['ticket' => $ticket]); ?>
+        @dispatchEvent('ticketTabsContent', ['ticket' => $ticket])
 
     </div>
 

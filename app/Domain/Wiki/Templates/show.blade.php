@@ -254,10 +254,7 @@
 
                             <form method="post" action="{{ BASE_URL }}/wiki/show/{{ $currentArticle->id }}#comment">
                                 <input type="hidden" name="comment" value="1" />
-                                @php
-                                    $tpl->assign('formUrl', BASE_URL . '/wiki/show/' . $currentArticle->id . '');
-                                    $tpl->displaySubmodule('comments-generalComment');
-                                @endphp
+                                @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/wiki/show/' . $currentArticle->id])
                             </form>
                         </section>
 

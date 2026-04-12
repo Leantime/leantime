@@ -37,10 +37,7 @@
     <h4 class="widgettitle title-light">
         <span class="fa fa-comments"></span>{{ __('subtitles.discussion') }}
     </h4>
-    @php
-    $tpl->assign("formUrl", "/goalcanvas/editCanvasComment/" . $id . "");
-    $tpl->displaySubmodule('comments-generalComment');
-    @endphp
+    @include('comments::submodules.generalComment', ['formUrl' => '/goalcanvas/editCanvasComment/' . $id])
     @endif
 
 </div>

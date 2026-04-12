@@ -29,7 +29,7 @@
 
 <div class="maincontent">
     <div class="maincontentinner">
-        @include('connector::partials.importProgress')
+        @include('connector::submodules.importProgress')
     </div>
     <div class="maincontentinner center">
         {!! $tpl->displayNotification() !!}
@@ -47,9 +47,9 @@
                     @endif
                 @endforeach
             </ul>
-            <a class="btn btn-primary pull-left" href="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}">Go Back</a>
+            <a class="btn btn-primary pull-left" href="{{ BASE_URL }}/submodules.importProgress/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}">Go Back</a>
         @else
-            <a class="btn btn-primary right" href="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import">Confirm</a>
+            <a class="btn btn-primary right" href="{{ BASE_URL }}/submodules.importProgress/integration?provider={{ $provider->id }}&step=import">Confirm</a>
         @endif
         <div class="clearall"></div>
 

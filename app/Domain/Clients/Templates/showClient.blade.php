@@ -25,7 +25,7 @@
 
             <ul>
                 <li><a href="#clientDetails">{!! __('label.client_details') !!}</a></li>
-                <li><a href="#comment">{!! sprintf(__('tabs.discussion_with_count'), count($comments)) !!}</a></li>
+                <li><a href="#comment">{!! sprintf(__('tabs.discussion_with_count'), count($submodules.generalComment)) !!}</a></li>
                 <li><a href="#files">{!! sprintf(__('tabs.files_with_count'), count($files)) !!}</a></li>
             </ul>
 
@@ -189,7 +189,7 @@
                     @php
                         $tpl->assign('formUrl', BASE_URL . '/clients/showClient/' . $tpl->escape($_GET['id']) . '');
                     @endphp
-                    @include('comments::partials.generalComment')
+                    @include('comments::submodules.generalComment')
                 </form>
 
 

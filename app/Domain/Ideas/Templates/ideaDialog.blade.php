@@ -45,12 +45,12 @@
             <hr>
             <input type="hidden" name="comment" value="1"/>
 
-            <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{!! __('subtitles.discussion') !!}</h4>
+            <h4 class="widgettitle title-light"><span class="fa fa-submodules.generalComment"></span>{!! __('subtitles.discussion') !!}</h4>
             @php
                 $tpl->assign('formUrl', BASE_URL . '/ideas/ideaDialog/' . $id . '');
             @endphp
 
-            @include('comments::partials.generalComment')
+            @include('comments::submodules.generalComment')
         @endif
 
     </div>
@@ -168,7 +168,7 @@
         @endif
 
         @if ($login::userHasRole([$roles::$commenter]))
-        leantime.commentsController.enableCommenterForms();
+        leantime.submodules.generalCommentController.enableCommenterForms();
         @endif
 
     })

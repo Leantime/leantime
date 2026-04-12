@@ -89,10 +89,7 @@
                         <input type="hidden" name="comment" value="1" />
                         <h4 class="widgettitle title-light"><span
                                 class="fa fa-comments"></span>{{ __('subtitles.discussion') }}</h4>
-                        @php
-                            $tpl->assign('formUrl', '/goalcanvas/editCanvasItem/' . $id . '');
-                            $tpl->displaySubmodule('comments-generalComment');
-                        @endphp
+                        @include('comments::submodules.generalComment', ['formUrl' => '/goalcanvas/editCanvasItem/' . $id])
                     @endif
                 </div>
 

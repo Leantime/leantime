@@ -168,11 +168,7 @@
         <div class="row-fluid">
         <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" class="formModal">
             <input type="hidden" name="comment" value="1" />
-            @php
-            $tpl->assign('formUrl', '' . BASE_URL . '/tickets/showTicket/' . $ticket->id . '');
-            @endphp
-
-            {!! $tpl->displaySubmodule('comments-generalComment') !!}
+            @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/tickets/showTicket/' . $ticket->id])
         </form>
         </div>
         @endif
