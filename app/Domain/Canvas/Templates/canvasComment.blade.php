@@ -1,4 +1,8 @@
 @php
+    $canvasName = $canvasName ?? '';
+    $canvasItem = $canvasItem ?? ['id' => '', 'box' => '', 'description' => ''];
+    $canvasTypes = $canvasTypes ?? [];
+
     $id = '';
     if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         $id = $canvasItem['id'];

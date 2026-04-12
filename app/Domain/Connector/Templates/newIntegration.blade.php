@@ -19,7 +19,7 @@
 
 <div class="maincontent">
     <div class="maincontentinner">
-        @include('connector::partials.importProgress')
+        @include('connector::submodules.importProgress')
     </div>
 
     <div class="maincontentinner center">

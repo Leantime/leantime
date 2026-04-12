@@ -1,9 +1,16 @@
 @php
+    $canvasName = $canvasName ?? '';
+    $currentCanvas = $currentCanvas ?? '';
+    $canvasItem = $canvasItem ?? ['id' => '', 'box' => '', 'description' => '', 'status' => '', 'relates' => '', 'milestoneId' => '', 'milestoneHeadline' => ''];
+    $canvasTypes = $canvasTypes ?? [];
     $hiddenStatusLabels = $statusLabels ?? [];
-    $statusLabels = $statusLabels ?? $hiddenStatusLabels;
+    $statusLabels = $statusLabels ?? [];
     $hiddenRelatesLabels = $relatesLabels ?? [];
-    $relatesLabels = $relatesLabels ?? $hiddenRelatesLabels;
-    $dataLabels = $dataLabels ?? [];
+    $relatesLabels = $relatesLabels ?? [];
+    $dataLabels = $dataLabels ?? [1 => ['active' => false, 'field' => '', 'title' => ''], 2 => ['active' => false, 'field' => '', 'title' => ''], 3 => ['active' => false, 'field' => '', 'title' => '']];
+    $milestones = $milestones ?? [];
+    $users = $users ?? [];
+    $searchCriteria = $searchCriteria ?? [];
 
     $id = '';
     if (isset($canvasItem['id']) && $canvasItem['id'] != '') {

@@ -88,8 +88,7 @@
 
             leantime.projectsController.initProjectTable();
 
-        }
-    );
+    });
 
 </script>
 @endpush @endonce

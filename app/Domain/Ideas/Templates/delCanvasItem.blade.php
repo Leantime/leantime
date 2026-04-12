@@ -2,10 +2,6 @@
 
 @section('content')
 
-@php
-    $ticket = $tpl->get('ticket');
-@endphp
-
 <h4 class="widgettitle title-light"><i class="fa fa-trash"></i> {!! __('buttons.delete') !!}</h4>
 
 <form method="post" action="{{ BASE_URL }}/ideas/delCanvasItem/{{ (int) $_GET['id'] }}">

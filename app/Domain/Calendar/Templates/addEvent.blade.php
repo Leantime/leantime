@@ -11,6 +11,7 @@
 <h4 class="widgettitle title-light">{!! __('subtitles.event') !!}</h4>
 
 <form action="{{ BASE_URL }}/calendar/addEvent/" method="post" class='formModal'>
+    @csrf
 
     @dispatchEvent('afterFormOpen')
 
