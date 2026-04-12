@@ -127,7 +127,7 @@
                                             <strong>{{ $row['headline'] }}</strong>
                                         </a>
 
-                                        @include("tickets::partials.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])
+                                        @include("tickets::partials.ticketsubmenu", ["ticket" => $row,"onTheClock" => $onTheClock])
                                     </div>
                                 </div>
 

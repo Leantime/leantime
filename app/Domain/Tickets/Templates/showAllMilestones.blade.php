@@ -3,16 +3,16 @@
 @section('content')
 
 @php
-    $sprints = $tpl->get('sprints');
-    $searchCriteria = $tpl->get('searchCriteria');
-    $currentSprint = $tpl->get('currentSprint');
-    $allTickets = $tpl->get('allTickets');
-    $allTicketGroups = $tpl->get('allTickets');
-    $todoTypeIcons = $tpl->get('ticketTypeIcons');
-    $efforts = $tpl->get('efforts');
-    $priorities = $tpl->get('priorities');
-    $statusLabels = $tpl->get('allTicketStates');
-    $numberofColumns = count($tpl->get('allTicketStates')) - 1;
+    $sprints = $sprints;
+    $searchCriteria = $searchCriteria;
+    $currentSprint = $currentSprint;
+    $allTickets = $allTickets;
+    $allTicketGroups = $allTickets;
+    $todoTypeIcons = $ticketTypeIcons;
+    $efforts = $efforts;
+    $priorities = $priorities;
+    $statusLabels = $allTicketStates;
+    $numberofColumns = count($allTicketStates) - 1;
     $size = floor(100 / $numberofColumns);
 @endphp
 
@@ -143,7 +143,7 @@
                                         <li class="nav-header border">{!! __('dropdown.choose_milestone') !!}</li>
                                         <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="{!! __('label.no_milestone') !!}" data-value='{{ $row['id'].'_0_#b0b0b0' }}'> {!! __('label.no_milestone') !!} </a></li>
                                         @php
-                                        foreach ($tpl->get('milestones') as $milestone) {
+                                        foreach ($milestones as $milestone) {
                                             if ($milestone->id != $row['id']) {
                                                 echo "<li class='dropdown-item'>
                                                     <a href='javascript:void(0);' data-label='".$tpl->escape($milestone->headline)."' data-value='".$row['id'].'_'.$milestone->id.'_'.$tpl->escape($milestone->tags)."' id='ticketMilestoneChange".$row['id'].$milestone->id."' style='background-color:".$tpl->escape($milestone->tags)."'>".$tpl->escape($milestone->headline).'</a>';
@@ -201,7 +201,7 @@
                                     <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                         <li class="nav-header border">{!! __('dropdown.choose_user') !!}</li>
                                         @php
-                                        foreach ($tpl->get('users') as $user) {
+                                        foreach ($users as $user) {
                                             echo "<li class='dropdown-item'>
                                                                 <a href='javascript:void(0);' data-label='".sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname']))."' data-value='".$row['id'].'_'.$user['id'].'_'.$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL.'/api/users?profileImage='.$user['id']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])).'</a>';
                                             echo '</li>';

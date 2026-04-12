@@ -3,8 +3,8 @@
 @section('content')
 
 @php
-    $milestones = $tpl->get('milestones');
-    $timelineTasks = $tpl->get('timelineTasks');
+    $milestones = $milestones ?? [];
+    $timelineTasks = $timelineTasks ?? [];
     $roadmapView = session('usersettings.views.roadmap', 'Month');
 @endphp
 

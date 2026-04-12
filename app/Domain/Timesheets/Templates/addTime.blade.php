@@ -2,7 +2,7 @@
 @section('content')
 
 @php
-$values = $values;
+$values = $values ?? [];
 @endphp
 
 <div class="pageheader">
@@ -23,7 +23,7 @@ $values = $values;
 
 
         <div class="fail">
-            @if ($tpl->get('info') != '')
+            @if (($info ?? '') != '')
                 <span class="info">{!! $tpl->displayNotification() !!}</span>
             @endif
         </div>

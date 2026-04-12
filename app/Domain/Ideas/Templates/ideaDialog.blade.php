@@ -3,8 +3,8 @@
 @section('content')
 
 @php
-    $canvasItem = $tpl->get('canvasItem');
-    $canvasTypes = $tpl->get('canvasTypes');
+    $canvasItem = $canvasItem ?? [];
+    $canvasTypes = $canvasTypes ?? [];
 
     $id = '';
     if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
@@ -20,7 +20,7 @@
 
     <div class="col-md-8">
 
-        <input type="hidden" value="{{ $tpl->get('currentCanvas') }}" name="canvasId"/>
+        <input type="hidden" value="{{ $currentCanvas }}" name="canvasId"/>
         <input type="hidden" value="{{ $tpl->escape($canvasItem['box']) }}" name="box" id="box"/>
         <input type="hidden" value="{{ $id }}" name="itemId" id="itemId"/>
         <input type="hidden" name="status" value="{{ $canvasItem['status'] }}" />
@@ -46,11 +46,7 @@
             <input type="hidden" name="comment" value="1"/>
 
             <h4 class="widgettitle title-light"><span class="fa fa-submodules.generalComment"></span>{!! __('subtitles.discussion') !!}</h4>
-            @php
-                $tpl->assign('formUrl', BASE_URL . '/ideas/ideaDialog/' . $id . '');
-            @endphp
-
-            @include('comments::submodules.generalComment')
+            @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/ideas/ideaDialog/' . $id])
         @endif
 
     </div>
@@ -95,7 +91,7 @@
                                 <select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}"
                                         name="existingMilestone" class="user-select">
                                     <option value="">{!! __('text.all_milestones') !!}</option>
-                                    @foreach ($tpl->get('milestones') as $milestoneRow)
+                                    @foreach ($milestones as $milestoneRow)
                                         <option value="{{ $milestoneRow->id }}"
                                             @if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id))
                                                 selected='selected'

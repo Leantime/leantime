@@ -101,7 +101,7 @@
         eventSources.push(events);
 
         <?php
-        $externalCalendars = $tpl->get('externalCalendars');
+        $externalCalendars = $externalCalendars ?? [];
 
         foreach ($externalCalendars as $externalCalendar) { ?>
             eventSources.push(

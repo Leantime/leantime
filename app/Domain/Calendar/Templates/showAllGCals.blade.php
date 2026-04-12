@@ -37,7 +37,7 @@
 
                 <tbody>
 
-                @foreach ($tpl->get('allCalendars') as $row)
+                @foreach ($allCalendars as $row)
                     <tr>
                         <td>{!! $tpl->displayLink('calendar.editGCal', $row['id'], ['id' => $row['id']]) !!}</td>
                         <td>{!! $tpl->displayLink('calendar.editGCal', $row['name'], ['id' => $row['id']]) !!}</td>

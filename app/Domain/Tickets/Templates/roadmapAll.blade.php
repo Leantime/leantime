@@ -3,8 +3,8 @@
 @section('content')
 
 @php
-    $milestones = $tpl->get('milestones');
-    $clients = $tpl->get('clients');
+    $milestones = $milestones ?? [];
+    $clients = $clients ?? [];
 
     $clientNameSelected = __('headline.all_clients');
     $htmlDropdownClients = '';

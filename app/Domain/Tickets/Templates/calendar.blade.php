@@ -3,7 +3,7 @@
 @section('content')
 
 @php
-    $milestones = $tpl->get('milestones');
+    $milestones = $milestones ?? [];
     if (! session()->exists('usersettings.submenuToggle.myProjectCalendarView')) {
         session(['usersettings.submenuToggle.myProjectCalendarView' => 'dayGridMonth']);
     }

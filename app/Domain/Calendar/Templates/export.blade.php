@@ -3,7 +3,7 @@
 @section('content')
 
 @php
-    $url = $tpl->get('url');
+    $url = $url ?? null;
 @endphp
 
 <h4 class="widgettitle title-light"><i class="fa fa-file-export"></i> {!! __('label.ical_export') !!}</h4>

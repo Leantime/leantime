@@ -3,9 +3,9 @@
 @section('content')
 
 @php
-    $currentArticle = $tpl->get('article');
+    $currentArticle = $currentArticle ?? null;
 
-    $wikiHL = $tpl->get('wikiHeadlines');
+    $wikiHL = $wikiHeadlines ?? [];
     $wikiHeadlines = [];
 
     function createTree($id, $parentId, &$wikiHeadlines, &$wikiHL, $indent)
@@ -102,7 +102,7 @@
                                 <div class="col-md-12">
                                     <select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" name="existingMilestone" class="user-select">
                                         <option value="">{!! __('label.all_milestones') !!}</option>
-                                        @foreach ($tpl->get('milestones') as $milestoneRow)
+                                        @foreach ($milestones as $milestoneRow)
                                             <option value="{{ $milestoneRow->id }}"
                                                 @if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id))
                                                     selected='selected'

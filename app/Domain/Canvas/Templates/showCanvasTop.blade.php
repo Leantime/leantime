@@ -22,7 +22,7 @@
         }
     }
 
-    $tpl->assign('canvasTitle', $canvasTitle);
+
 @endphp
 
 <style>

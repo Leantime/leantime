@@ -3,7 +3,7 @@
 @section('content')
 
 @php
-    $values = $tpl->get('values');
+    $values = $values ?? [];
 @endphp
 
 {!! $tpl->displayNotification() !!}

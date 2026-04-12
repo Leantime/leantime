@@ -1,6 +1,6 @@
 @php
-    $projectData = $tpl->get('projectData');
-    $todoTypeIcons = $tpl->get('ticketTypeIcons');
+    $projectData = $projectData ?? [];
+    $todoTypeIcons = $ticketTypeIcons ?? [];
 @endphp
 
 <div style="min-width:90%">

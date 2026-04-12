@@ -33,7 +33,7 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                     <li><span class="indicatorCircle" style="background:var(--accent1)"></span>Events</li>
                     <li><span class="indicatorCircle" style="background:var(--accent2)"></span>Projects & Tasks</li>
 
-                @foreach ($tpl->get('externalCalendars') as $calendars)
+                @foreach ($externalCalendars as $calendars)
                     <li>
                         @if (empty($calendars['managedByPlugin']))
                         <div class="inlineDropDownContainer" style="float:right;">
@@ -115,42 +115,38 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
     var eventSources = [];
 
     var events = {events: [
-        @foreach ($tpl->get('calendar') as $calendar)
+        @foreach ($calendar as $calendarEvent)
         {
-            title: {!! json_encode($calendar['title']) !!},
+            title: {!! json_encode($calendarEvent['title']) !!},
 
-            start: new Date({{ format($calendar['dateFrom'])->jsTimestamp() }}),
-            @if (isset($calendar['dateTo']))
-            end: new Date({{ format($calendar['dateTo'])->jsTimestamp() }}),
+            start: new Date({{ format($calendarEvent['dateFrom'])->jsTimestamp() }}),
+            @if (isset($calendarEvent['dateTo']))
+            end: new Date({{ format($calendarEvent['dateTo'])->jsTimestamp() }}),
             @endif
-            @if (isset($calendar['allDay']) && $calendar['allDay'] === true)
+            @if (isset($calendarEvent['allDay']) && $calendarEvent['allDay'] === true)
             allDay: true,
             @else
             allDay: false,
             @endif
-            enitityId: {{ $calendar['id'] }},
-            @if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar')
-            url: '{{ CURRENT_URL }}#/calendar/editEvent/{{ $calendar['id'] }}',
-            backgroundColor: '{{ $calendar['backgroundColor'] ?? 'var(--accent2)' }}',
-            borderColor: '{{ $calendar['borderColor'] ?? 'var(--accent2)' }}',
+            enitityId: {{ $calendarEvent['id'] }},
+            @if (isset($calendarEvent['eventType']) && $calendarEvent['eventType'] == 'calendar')
+            url: '{{ CURRENT_URL }}#/calendar/editEvent/{{ $calendarEvent['id'] }}',
+            backgroundColor: '{{ $calendarEvent['backgroundColor'] ?? 'var(--accent2)' }}',
+            borderColor: '{{ $calendarEvent['borderColor'] ?? 'var(--accent2)' }}',
             enitityType: "event",
-            dateContext: '{{ $calendar['dateContext'] ?? 'plan' }}',
+            dateContext: '{{ $calendarEvent['dateContext'] ?? 'plan' }}',
             @else
-            url: '{{ CURRENT_URL }}#/tickets/showTicket/{{ $calendar['id'] }}?projectId={{ $calendar['projectId'] }}',
-            backgroundColor: '{{ $calendar['backgroundColor'] ?? 'var(--accent2)' }}',
-            borderColor: '{{ $calendar['borderColor'] ?? 'var(--accent2)' }}',
+            url: '{{ CURRENT_URL }}#/tickets/showTicket/{{ $calendarEvent['id'] }}?projectId={{ $calendarEvent['projectId'] }}',
+            backgroundColor: '{{ $calendarEvent['backgroundColor'] ?? 'var(--accent2)' }}',
+            borderColor: '{{ $calendarEvent['borderColor'] ?? 'var(--accent2)' }}',
             enitityType: "ticket",
-            dateContext: '{{ $calendar['dateContext'] ?? 'edit' }}',
+            dateContext: '{{ $calendarEvent['dateContext'] ?? 'edit' }}',
             @endif
         },
         @endforeach
     ]};
 
     eventSources.push(events);
-
-    @php
-        $externalCalendars = $tpl->get('externalCalendars');
-    @endphp
 
     @foreach ($externalCalendars as $externalCalendar)
         @if (empty($externalCalendar['managedByPlugin']))

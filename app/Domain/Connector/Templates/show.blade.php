@@ -17,7 +17,7 @@
         <p>Available Integrations</p>
 
         <div class="row">
-            @foreach ($tpl->get('providers') as $provider)
+            @foreach ($providers as $provider)
                 <div class="col-md-3">
                     <div class="profileBox">
                         <div class="commentImage gradient">

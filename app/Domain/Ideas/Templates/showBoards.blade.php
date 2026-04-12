@@ -3,13 +3,13 @@
 @section('content')
 
 @php
-    $allCanvas = $tpl->get('allCanvas');
+    $allCanvas = $allCanvas ?? [];
     $canvasTitle = '';
-    $canvasLabels = $tpl->get('canvasLabels');
+    $canvasLabels = $canvasLabels ?? [];
 
     // get canvas title
-    foreach ($tpl->get('allCanvas') as $canvasRow) {
-        if ($canvasRow['id'] == $tpl->get('currentCanvas')) {
+    foreach ($allCanvas as $canvasRow) {
+        if ($canvasRow['id'] == ($currentCanvas ?? '')) {
             $canvasTitle = $canvasRow['title'];
             break;
         }
@@ -25,8 +25,8 @@
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown ">
                     @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/ideas/boardDialog/{{ $tpl->get('currentCanvas') }}">{!! __('links.icon.edit') !!}</a></li>
-                        <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{!! __('links.icon.delete') !!}</a></li>
+                        <li><a href="#/ideas/boardDialog/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
+                        <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}" class="delete">{!! __('links.icon.delete') !!}</a></li>
                     @endif
                 </ul>
             </span>
@@ -44,7 +44,7 @@
                          <li><a href="#/ideas/boardDialog">{!! __('links.icon.create_new_board') !!}</a></li>
                      @endif
                     <li class="border"></li>
-                    @foreach ($tpl->get('allCanvas') as $canvasRow)
+                    @foreach ($allCanvas as $canvasRow)
                         <li><a href='{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow['id'] }}'>{{ $tpl->escape($canvasRow['title']) }}</a></li>
                     @endforeach
                 </ul>
@@ -62,7 +62,7 @@
         <div class="row">
             <div class="col-md-4">
                 @if ($login::userIsAtLeast($roles::$editor))
-                    @if (count($tpl->get('allCanvas')) > 0)
+                    @if (count($allCanvas) > 0)
                         <a href="#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment"><span
                                     class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!}</a>
                     @endif
@@ -87,10 +87,10 @@
 
         <div class="clearfix"></div>
 
-        @if (count($tpl->get('allCanvas')) > 0)
+        @if (count($allCanvas) > 0)
             <div id="ideaMason" class="sortableTicketList" style="padding-top:10px;">
 
-                @foreach ($tpl->get('canvasItems') as $row)
+                @foreach ($canvasItems as $row)
                     <div class="ticketBox" id="item_{{ $row['id'] }}" data-value="{{ $row['id'] }}">
 
                         <div class="row">
@@ -157,7 +157,7 @@
                                     <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                         <li class="nav-header border">{!! __('dropdown.choose_user') !!}</li>
 
-                                        @foreach ($tpl->get('users') as $user)
+                                        @foreach ($users as $user)
                                             {!! "<li class='dropdown-item'>
                                                                     <a href='javascript:void(0);' data-label='" . sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) . "' data-value='" . $row['id'] . '_' . $user['id'] . '_' . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['id'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) . "</a></li>" !!}
                                         @endforeach
@@ -192,7 +192,7 @@
                 @endforeach
 
             </div>
-            @if (count($tpl->get('canvasItems')) == 0)
+            @if (count($canvasItems) == 0)
                 <div class='center'>
                     <div style='width:30%' class='svgContainer'>
                         {!! file_get_contents(ROOT . '/dist/images/svg/undraw_new_ideas_jdea.svg') !!}

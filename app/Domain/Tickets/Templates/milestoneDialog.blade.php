@@ -1,7 +1,7 @@
 @php
-    $currentMilestone = $tpl->get('milestone');
-    $milestones = $tpl->get('milestones');
-    $statusLabels = $tpl->get('statusLabels');
+    $currentMilestone = $currentMilestone ?? null;
+    $milestones = $milestones ?? [];
+    $statusLabels = $statusLabels ?? [];
 @endphp
 
 <script type="text/javascript">
@@ -57,7 +57,7 @@
     <label>{!! __('label.dependent_on') !!}</label>
     <select name="dependentMilestone"  class="span11">
         <option value="">{!! __('label.no_dependency') !!}</option>
-        @foreach ($tpl->get('milestones') as $milestoneRow)
+        @foreach ($milestones as $milestoneRow)
             @if ($milestoneRow->id !== $currentMilestone->id)
                 <option value="{{ $milestoneRow->id }}"
                     @if ($currentMilestone->milestoneid == $milestoneRow->id) selected='selected' @endif
@@ -71,7 +71,7 @@
     <select data-placeholder="{{ __('input.placeholders.filter_by_user') }}"
             name="editorId" class="user-select span11">
         <option value="">{!! __('dropdown.not_assigned') !!}</option>
-        @foreach ($tpl->get('users') as $userRow)
+        @foreach ($users as $userRow)
             <option value="{{ $userRow['id'] }}"
                 @if ($currentMilestone->editorId == $userRow['id']) selected='selected' @endif
             >{{ $userRow['firstname'] }} {{ $userRow['lastname'] }}</option>
@@ -102,10 +102,7 @@
     <br />
     <input type="hidden" name="comment" value="1" />
 
-        @php
-            $tpl->assign('formUrl', '/tickets/editMilestone/'.$currentMilestone->id.'');
-        @endphp
-        @include('comments::submodules.generalComment')
+        @include('comments::submodules.generalComment', ['formUrl' => '/tickets/editMilestone/'.$currentMilestone->id])
     @endif
 
 <script type="text/javascript">

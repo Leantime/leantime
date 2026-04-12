@@ -3,14 +3,14 @@
 @section('content')
 
 @php
-    $tickets = $tpl->get('tickets');
-    $sprints = $tpl->get('sprints');
-    $searchCriteria = $tpl->get('searchCriteria');
-    $currentSprint = $tpl->get('currentSprint');
-    $todoTypeIcons = $tpl->get('ticketTypeIcons');
-    $efforts = $tpl->get('efforts');
-    $priorities = $tpl->get('priorities');
-    $allTicketGroups = $tpl->get('allTickets');
+    $tickets = $tickets ?? [];
+    $sprints = $sprints;
+    $searchCriteria = $searchCriteria;
+    $currentSprint = $currentSprint;
+    $todoTypeIcons = $ticketTypeIcons;
+    $efforts = $efforts;
+    $priorities = $priorities;
+    $allTicketGroups = $allTickets;
     $reopenState = session()->get('quickadd_reopen', null);
     $currentGroupBy = $searchCriteria['groupBy'] ?? 'all';
 @endphp
@@ -60,7 +60,7 @@
             justify-content: flex-start;
             z-index: 9;
             ">
-        @foreach ($tpl->get('allKanbanColumns') as $key => $statusRow)
+        @foreach ($allKanbanColumns as $key => $statusRow)
             <div class="column">
                 <h4 class="widgettitle title-primary title-border-{{ $statusRow['class'] }}">
                     @if ($login::userIsAtLeast($roles::$manager))
@@ -89,7 +89,7 @@
                 @php
                 $swimlaneExpanded = ! in_array($group['id'], session('collapsedSwimlanes', []));
                 $groupBy = $searchCriteria['groupBy'] ?? 'status';
-                $statusBreakdown = $tpl->get('statusBreakdown');
+                $statusBreakdown = $statusBreakdown;
                 $groupIdKey = (string) $group['id'];
                 $swimlaneBreakdown = $statusBreakdown[$groupIdKey] ?? $statusBreakdown[$group['id']] ?? [];
                 $statusCounts = $swimlaneBreakdown['statusCounts'] ?? [];
@@ -116,7 +116,7 @@
                             'label' => $group['label'],
                             'totalCount' => $swimlaneBreakdown['totalCount'] ?? count($group['items']),
                             'statusCounts' => $statusCounts,
-                            'statusColumns' => $tpl->get('allKanbanColumns'),
+                            'statusColumns' => $allKanbanColumns,
                             'expanded' => $swimlaneExpanded,
                             'moreInfo' => $group['more-info'] ?? null,
                             'timeAlert' => $group['timeAlert'] ?? null,
@@ -132,7 +132,7 @@
 
                             @php
                             $emptyColumns = [];
-                            foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) {
+                            foreach ($allKanbanColumns as $key => $statusRow) {
                                 $hasTickets = false;
                                 if (isset($allTickets)) {
                                     foreach ($allTickets as $ticket) {
@@ -148,7 +148,7 @@
                             }
                             @endphp
 
-                            @foreach ($tpl->get('allKanbanColumns') as $key => $statusRow)
+                            @foreach ($allKanbanColumns as $key => $statusRow)
                             <div class="column">
                                 <div class="contentInner status_{{ $key }} {{ isset($emptyColumns[$key]) ? 'empty-column' : '' }}"
                                      data-empty-text="{{ isset($emptyColumns[$key]) ? 'Empty' : '' }}"
@@ -169,7 +169,7 @@
                                             <div class="row" >
                                                 <div class="col-md-12">
 
-                                                    @include('tickets::partials.ticketsubmenu', ['ticket' => $row, 'onTheClock' => $tpl->get('onTheClock')])
+                                                    @include('tickets::partials.ticketsubmenu', ['ticket' => $row, 'onTheClock' => $onTheClock])
 
                                                     @if ($row['dependingTicketId'] > 0)
                                                         <small><a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}" class="form-modal">{{ $row['parentHeadline'] }}</a></small> //
@@ -212,7 +212,7 @@
                                                             <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="{!! __('label.no_milestone') !!}" data-value='{{ $row['id'].'_0_#b0b0b0' }}'> {!! __('label.no_milestone') !!} </a></li>
 
                                                             @php
-                                                            foreach ($tpl->get('milestones') as $milestone) {
+                                                            foreach ($milestones as $milestone) {
                                                                 echo "<li class='dropdown-item'>
                                                                     <a href='javascript:void(0);' data-label='".$tpl->escape($milestone->headline)."' data-value='".$row['id'].'_'.$milestone->id.'_'.$tpl->escape($milestone->tags)."' id='ticketMilestoneChange".$row['id'].$milestone->id."' style='background-color:".$tpl->escape($milestone->tags)."'>".$tpl->escape($milestone->headline).'</a>';
                                                                 echo '</li>';
@@ -287,8 +287,8 @@
                                                     <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                                         <li class="nav-header border">{!! __('dropdown.choose_user') !!}</li>
                                                         @php
-                                                        if (is_array($tpl->get('users'))) {
-                                                            foreach ($tpl->get('users') as $user) {
+                                                        if (is_array($users)) {
+                                                            foreach ($users as $user) {
                                                                 echo "<li class='dropdown-item'>
                                                                     <a href='javascript:void(0);' data-label='".sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname']))."' data-value='".$row['id'].'_'.$user['id'].'_'.$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL.'/api/users?profileImage='.$user['id']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])).'</a>';
                                                                 echo '</li>';
@@ -365,7 +365,7 @@
         leantime.ticketsController.initPriorityDropdown();
 
 
-        var ticketStatusList = [@foreach ($tpl->get('allTicketStates') as $key => $statusRow)'{{ $key }}',@endforeach];
+        var ticketStatusList = [@foreach ($allTicketStates as $key => $statusRow)'{{ $key }}',@endforeach];
         leantime.ticketsController.initTicketKanban(ticketStatusList);
 
     @else

@@ -3,7 +3,7 @@
 @section('content')
 
 @php
-    $projectData = $tpl->get('projectData');
+    $projectData = $projectData ?? [];
 @endphp
 
 <div class="pageheader">
@@ -30,8 +30,8 @@
 
             <ul>
                 <li><a href="#ticketdetails">{!! __('tabs.ticketDetails') !!}</a></li>
-                <li><a href="#subtasks">{!! __('tabs.subtasks') !!} ({{ $tpl->get('numSubTasks') }})</a></li>
-                <li><a href="#files">{!! __('tabs.files') !!} ({{ $tpl->get('numFiles') }})</a></li>
+                <li><a href="#subtasks">{!! __('tabs.subtasks') !!} ({{ $numSubTasks }})</a></li>
+                <li><a href="#files">{!! __('tabs.files') !!} ({{ $numFiles }})</a></li>
                 @if (session('userdata.role') != 'client')
                     <li><a href="#timesheet" id="timesheetTab">{!! __('tabs.time_tracking') !!}</a></li>
                 @endif
@@ -68,10 +68,7 @@
     <div class="maincontentinner">
         <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#comments" class="formModal">
             <input type="hidden" name="comment" value="1" />
-            @php
-                $tpl->assign('formUrl', BASE_URL.'/tickets/showTicket/'.$ticket->id.'');
-            @endphp
-            @include('comments::submodules.generalComment')
+            @include('comments::submodules.generalComment', ['formUrl' => BASE_URL.'/tickets/showTicket/'.$ticket->id])
         </form>
     </div>
 

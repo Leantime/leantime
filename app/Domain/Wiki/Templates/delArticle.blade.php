@@ -3,7 +3,7 @@
 @section('content')
 
 @php
-    $ticket = $tpl->get('ticket');
+    $ticket = $ticket ?? null;
 @endphp
 
 <h4 class="widgettitle title-light"><i class="fa fa-trash"></i> {!! __('buttons.delete') !!}</h4>

@@ -3,7 +3,7 @@
 @section('content')
 
 @php
-    $state = $tpl->get('state');
+    $state = $state ?? null;
 @endphp
 
 <div class="pageheader">
@@ -199,10 +199,10 @@
 
             <div id="integrations">
 
-                @if ($tpl->get('projectMuteCount') > 0)
+                @if ($projectMuteCount > 0)
                     <div class="alert alert-info" style="margin-bottom: 20px;">
                         <i class="fa fa-bell-slash"></i>
-                        {!! sprintf(__('label.project_mute_count'), $tpl->get('projectMuteCount')) !!}
+                        {!! sprintf(__('label.project_mute_count'), $projectMuteCount) !!}
                     </div>
                 @endif
 
@@ -217,7 +217,7 @@
                     <div class="col-md-4">
                         <strong>{!! __('label.webhook_url') !!}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
-                            <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="{{ $tpl->escape($tpl->get('mattermostWebhookURL')) }}"/>
+                            <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="{{ e($mattermostWebhookURL) }}"/>
                             <br />
                             <input type="submit" value="{{ __('buttons.save') }}" name="mattermostSave" />
                         </form>
@@ -236,7 +236,7 @@
                     <div class="col-md-4">
                         <strong>{!! __('label.webhook_url') !!}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
-                            <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="{{ $tpl->escape($tpl->get('slackWebhookURL')) }}"/>
+                            <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="{{ e($slackWebhookURL) }}"/>
                             <br />
                             <input type="submit" value="{{ __('buttons.save') }}" name="slackSave" />
                         </form>
@@ -256,19 +256,19 @@
 
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             <strong>{!! __('label.base_url') !!}</strong><br />
-                            <input type="text" name="zulipURL" id="zulipURL" placeholder="{{ __('input.placeholders.zulip_url') }}" value="{{ $tpl->get('zulipHook')['zulipURL'] }}"/>
+                            <input type="text" name="zulipURL" id="zulipURL" placeholder="{{ __('input.placeholders.zulip_url') }}" value="{{ $zulipHook['zulipURL'] }}"/>
                             <br />
                             <strong>{!! __('label.bot_email') !!}</strong><br />
-                            <input type="text" name="zulipEmail" id="zulipEmail" placeholder="" value="{{ $tpl->escape($tpl->get('zulipHook')['zulipEmail']) }}"/>
+                            <input type="text" name="zulipEmail" id="zulipEmail" placeholder="" value="{{ $tpl->escape($zulipHook['zulipEmail']) }}"/>
                             <br />
                             <strong>{!! __('label.botkey') !!}</strong><br />
-                            <input type="text" name="zulipBotKey" id="zulipBotKey" placeholder="" value="{{ $tpl->escape($tpl->get('zulipHook')['zulipBotKey']) }}"/>
+                            <input type="text" name="zulipBotKey" id="zulipBotKey" placeholder="" value="{{ $tpl->escape($zulipHook['zulipBotKey']) }}"/>
                             <br />
                             <strong>{!! __('label.stream') !!}</strong><br />
-                            <input type="text" name="zulipStream" id="zulipStream" placeholder="" value="{{ $tpl->escape($tpl->get('zulipHook')['zulipStream']) }}"/>
+                            <input type="text" name="zulipStream" id="zulipStream" placeholder="" value="{{ $tpl->escape($zulipHook['zulipStream']) }}"/>
                             <br />
                             <strong>{!! __('label.topic') !!}</strong><br />
-                            <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="{{ $tpl->escape($tpl->get('zulipHook')['zulipTopic']) }}"/>
+                            <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="{{ $tpl->escape($zulipHook['zulipTopic']) }}"/>
                             <br />
                             <input type="submit" value="{{ __('buttons.save') }}" name="zulipSave" />
                         </form>
@@ -289,7 +289,8 @@
                         <strong>{!! __('label.webhook_url') !!}</strong><br/>
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             @for ($i = 1; $i <= 3; $i++)
-                            <input type="text" name="discordWebhookURL{{ $i }}" id="discordWebhookURL{{ $i }}" placeholder="{{ __('input.placeholders.discord_url') }}" value="{{ $tpl->escape($tpl->get('discordWebhookURL'.$i)) }}"/><br/>
+                            @php $discordVarName = 'discordWebhookURL'.$i; $discordVarVal = $$discordVarName ?? ''; @endphp
+                            <input type="text" name="discordWebhookURL{{ $i }}" id="discordWebhookURL{{ $i }}" placeholder="{{ __('input.placeholders.discord_url') }}" value="{{ e($discordVarVal) }}"/><br/>
                             @endfor
                             <input type="submit" value="{{ __('buttons.save') }}" name="discordSave"/>
                         </form>
@@ -301,7 +302,7 @@
             <div id="todosettings">
                 <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#todosettings" method="post">
                     <ul class="sortableTicketList" id="todoStatusList">
-                        @foreach ($tpl->get('todoStatus') as $key => $ticketStatus)
+                        @foreach ($todoStatus as $key => $ticketStatus)
                             <li>
                                 <div class="ticketBox">
 

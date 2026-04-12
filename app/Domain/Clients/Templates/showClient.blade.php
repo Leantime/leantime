@@ -186,10 +186,7 @@
 
                 <form method="post" action="{{ BASE_URL }}/clients/showClient/{{ $_GET['id'] }}#comment">
                     <input type="hidden" name="comment" value="1" />
-                    @php
-                        $tpl->assign('formUrl', BASE_URL . '/clients/showClient/' . $tpl->escape($_GET['id']) . '');
-                    @endphp
-                    @include('comments::submodules.generalComment')
+                    @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/clients/showClient/' . e(request()->query('id', ''))])
                 </form>
 
 

@@ -3,17 +3,17 @@
 @section('content')
 
 @php
-    $sprints = $tpl->get('sprints');
-    $searchCriteria = $tpl->get('searchCriteria');
-    $currentSprint = $tpl->get('currentSprint');
-    $allTickets = $tpl->get('allTickets');
-    $allTicketGroups = $tpl->get('allTickets');
-    $todoTypeIcons = $tpl->get('ticketTypeIcons');
-    $efforts = $tpl->get('efforts');
-    $priorities = $tpl->get('priorities');
-    $statusLabels = $tpl->get('allTicketStates');
-    $newField = $tpl->get('newField');
-    $numberofColumns = count($tpl->get('allTicketStates')) - 1;
+    $sprints = $sprints;
+    $searchCriteria = $searchCriteria;
+    $currentSprint = $currentSprint;
+    $allTickets = $allTickets;
+    $allTicketGroups = $allTickets;
+    $todoTypeIcons = $ticketTypeIcons;
+    $efforts = $efforts;
+    $priorities = $priorities;
+    $statusLabels = $allTicketStates;
+    $newField = $newField;
+    $numberofColumns = count($allTicketStates) - 1;
     $size = floor(100 / $numberofColumns);
 @endphp
 
@@ -171,7 +171,7 @@
                                         <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="{!! __('label.no_milestone') !!}" data-value='{{ $row['id'].'_0_#b0b0b0' }}'> {!! __('label.no_milestone') !!} </a></li>
 
                                         @php
-                                        foreach ($tpl->get('milestones') as $milestone) {
+                                        foreach ($milestones as $milestone) {
                                             echo "<li class='dropdown-item'>
                                                 <a href='javascript:void(0);' data-label='".$tpl->escape($milestone->headline)."' data-value='".$row['id'].'_'.$milestone->id.'_'.$tpl->escape($milestone->tags)."' id='ticketMilestoneChange".$row['id'].$milestone->id."' style='background-color:".$tpl->escape($milestone->tags)."'>".$tpl->escape($milestone->headline).'</a>';
                                             echo '</li>';
@@ -249,7 +249,7 @@
                                             <a href='javascript:void(0);' data-label='{!! __('label.not_assigned_to_user') !!}' data-value='{{ $row['id'].'_0_0' }}' id='userStatusChange{{ $row['id'] }}0' >{!! __('label.not_assigned_to_user') !!}</a>
                                         </li>
                                         @php
-                                        foreach ($tpl->get('users') as $user) {
+                                        foreach ($users as $user) {
                                             echo "<li class='dropdown-item'>";
                                             echo "<a href='javascript:void(0);' data-label='".sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname']))."' data-value='".$row['id'].'_'.$user['id'].'_'.$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL.'/api/users?profileImage='.$user['id']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])).'</a>';
                                             echo '</li>';
@@ -276,8 +276,8 @@
                                     <ul class="dropdown-menu" aria-labelledby="sprintDropdownMenuLink{{ $row['id'] }}">
                                         <li class="nav-header border">{!! __('dropdown.choose_sprint') !!}</li>
                                         <li class='dropdown-item'><a href='javascript:void(0);' data-label="{!! __('label.not_assigned_to_sprint') !!}" data-value='{{ $row['id'].'_0' }}'> {!! __('label.not_assigned_to_sprint') !!} </a></li>
-                                        @if ($tpl->get('sprints'))
-                                            @foreach ($tpl->get('sprints') as $sprint)
+                                        @if ($sprints)
+                                            @foreach ($sprints as $sprint)
                                                 <li class='dropdown-item'>
                                                     <a href='javascript:void(0);' data-label='{{ $sprint->name }}' data-value='{{ $row['id'].'_'.$sprint->id }}' id='ticketSprintChange{{ $row['id'] }}{{ $sprint->id }}' >{{ $sprint->name }}</a>
                                                 </li>
@@ -320,7 +320,7 @@
                                 {{ ($row['bookedHours'] === null || $row['bookedHours'] == '') ? '0' : $row['bookedHours'] }}
                             </td>
                             <td>
-                                @include('tickets::partials.ticketsubmenu', ['ticket' => $row, 'onTheClock' => $tpl->get('onTheClock')])
+                                @include('tickets::partials.ticketsubmenu', ['ticket' => $row, 'onTheClock' => $onTheClock])
                             </td>
                             @dispatchEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum])
                         </tr>

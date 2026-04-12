@@ -3,7 +3,7 @@
 @section('content')
 
 @php
-    $currentWiki = $tpl->get('wiki');
+    $currentWiki = $currentWiki ?? null;
 @endphp
 
 <h4 class="widgettitle title-light"><i class="fa fa-book"></i> {!! __('label.wiki') !!} {{ $tpl->escape($currentWiki->title) }}</h4>

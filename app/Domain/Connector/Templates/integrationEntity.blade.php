@@ -3,10 +3,10 @@
 @section('content')
 
 @php
-    $providerEntities = $tpl->get('providerEntities');
-    $provider = $tpl->get('provider');
-    $leantimeEntities = $tpl->get('leantimeEntities');
-    $integrationId = $tpl->get('integrationId');
+    $providerEntities = $providerEntities ?? [];
+    $provider = $provider ?? null;
+    $leantimeEntities = $leantimeEntities ?? [];
+    $integrationId = $integrationId ?? null;
 
     $urlAppend = '';
     if (isset($integrationId) && is_numeric($integrationId)) {

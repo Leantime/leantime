@@ -3,10 +3,10 @@
 @section('content')
 
 @php
-    $providerFields = $tpl->get('providerFields');
-    $provider = $tpl->get('provider');
-    $leantimeFields = $tpl->get('leantimeFields');
-    $numberOfFields = $tpl->get('maxFields');
+    $providerFields = $providerFields ?? [];
+    $provider = $provider ?? null;
+    $leantimeFields = $leantimeFields ?? [];
+    $numberOfFields = $maxFields ?? 0;
     $urlAppend = '';
     if (isset($integrationId) && is_numeric($integrationId)) {
         $urlAppend = '&integrationId=' . $integrationId;

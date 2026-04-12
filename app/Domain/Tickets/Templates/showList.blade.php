@@ -3,16 +3,16 @@
 @section('content')
 
 @php
-    $sprints = $tpl->get('sprints');
-    $searchCriteria = $tpl->get('searchCriteria');
-    $currentSprint = $tpl->get('currentSprint');
-    $allTicketGroups = $tpl->get('allTickets');
-    $efforts = $tpl->get('efforts');
-    $priorities = $tpl->get('priorities');
-    $statusLabels = $tpl->get('allTicketStates');
-    $groupBy = $tpl->get('groupBy');
-    $newField = $tpl->get('newField');
-    $numberofColumns = count($tpl->get('allTicketStates')) - 1;
+    $sprints = $sprints;
+    $searchCriteria = $searchCriteria;
+    $currentSprint = $currentSprint;
+    $allTicketGroups = $allTickets;
+    $efforts = $efforts;
+    $priorities = $priorities;
+    $statusLabels = $allTicketStates;
+    $groupBy = $groupBy;
+    $newField = $newField;
+    $numberofColumns = count($allTicketStates) - 1;
     $size = floor(100 / $numberofColumns);
 @endphp
 

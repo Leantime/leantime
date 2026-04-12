@@ -3,17 +3,17 @@
 @section('content')
 
 @php
-    $allCanvas = $tpl->get('allCanvas');
-    $canvasLabels = $tpl->get('canvasLabels');
+    $allCanvas = $allCanvas ?? [];
+    $canvasLabels = $canvasLabels ?? [];
     $canvasTitle = '';
 
     // All states >0 (<1 is archive)
-    $numberofColumns = count($tpl->get('canvasLabels'));
+    $numberofColumns = count($canvasLabels);
     $size = floor((100 / $numberofColumns) * 100) / 100;
 
     // get canvas title
-    foreach ($tpl->get('allCanvas') as $canvasRow) {
-        if ($canvasRow['id'] == $tpl->get('currentCanvas')) {
+    foreach ($allCanvas as $canvasRow) {
+        if ($canvasRow['id'] == ($currentCanvas ?? '')) {
             $canvasTitle = $canvasRow['title'];
             break;
         }
@@ -30,7 +30,7 @@
         <ul class="dropdown-menu editCanvasDropdown">
             @if ($login::userIsAtLeast($roles::$editor))
                 <li><a href="javascript:void(0)" class="editCanvasLink ">{!! __('links.icon.edit') !!}</a></li>
-                <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->get('currentCanvas') }}" class="delete">{!! __('links.icon.delete') !!}</a></li>
+                <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}" class="delete">{!! __('links.icon.delete') !!}</a></li>
             @endif
         </ul>
         </span>
@@ -48,7 +48,7 @@
                          <li><a href="javascript:void(0)" class="addCanvasLink">{!! __('links.icon.create_new_board') !!}</a></li>
                      @endif
                     <li class="border"></li>
-                    @foreach ($tpl->get('allCanvas') as $canvasRow)
+                     @foreach ($allCanvas as $canvasRow)
                         <li><a href='{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow['id'] }}'>{{ $tpl->escape($canvasRow['title']) }}</a></li>
                     @endforeach
                 </ul>
@@ -66,7 +66,7 @@
         <div class="row">
             <div class="col-md-4">
                 @if ($login::userIsAtLeast($roles::$editor))
-                    @if (count($tpl->get('allCanvas')) > 0)
+                    @if (count($allCanvas) > 0)
                     <a href="#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment"><span
                                 class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!}</a>
                     @endif
@@ -90,12 +90,12 @@
         </div>
 
         <div class="clearfix"></div>
-        @if (count($tpl->get('allCanvas')) > 0)
+        @if (count($allCanvas) > 0)
             <div id="sortableIdeaKanban" class="sortableTicketList">
 
                 <div class="row-fluid">
 
-                    @foreach ($tpl->get('canvasLabels') as $key => $statusRow)
+                    @foreach ($canvasLabels as $key => $statusRow)
                     <div class="column" style="width:{{ $size }}%;">
 
                         <h4 class="widgettitle title-primary">
@@ -108,7 +108,7 @@
 
                         <div class="contentInner status_{{ $key }}">
 
-                            @foreach ($tpl->get('canvasItems') as $row)
+                            @foreach ($canvasItems as $row)
                                 @if ($row['box'] == $key)
                                     <div class="ticketBox moveable" id="item_{{ $row['id'] }}">
 
@@ -164,7 +164,7 @@
                                                     <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                                         <li class="nav-header border">{!! __('dropdown.choose_user') !!}</li>
 
-                                                        @foreach ($tpl->get('users') as $user)
+                                                        @foreach ($users as $user)
                                                             {!! "<li class='dropdown-item'>
                                                                     <a href='javascript:void(0);' data-label='" . sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) . "' data-value='" . $row['id'] . '_' . $user['id'] . '_' . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['id'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) . "</a></li>" !!}
                                                         @endforeach

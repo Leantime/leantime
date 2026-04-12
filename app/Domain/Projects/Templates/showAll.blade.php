@@ -3,7 +3,7 @@
 @section('content')
 
 @php
-    $showClosedProjects = $tpl->get('showClosedProjects');
+    $showClosedProjects = $showClosedProjects ?? false;
 @endphp
 
 <div class="pageheader">

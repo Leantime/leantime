@@ -3,7 +3,7 @@
 @section('content')
 
 @php
-    $provider = $tpl->get('provider');
+    $provider = $provider ?? null;
 @endphp
 
 <div class="pageheader">
