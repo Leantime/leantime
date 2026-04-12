@@ -53,7 +53,7 @@
                             <x-globals::forms.text-input type="number" step="0.01" name="currentValue" id="currentValueField"
                                 value="{{ $canvasItem['currentValue'] }}"
                                 :readonly="$canvasItem['setting'] == 'linkAndReport'"
-                                @if ($canvasItem['setting'] == 'linkAndReport') data-tippy-content="Current value calculated from child goals" @endif
+                                :data-tippy-content="$canvasItem['setting'] == 'linkAndReport' ? 'Current value calculated from child goals' : null"
                                 class="tw:w-28" />
                         </div>
                         <div class="col-md-3">

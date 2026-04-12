@@ -49,12 +49,7 @@
                     @include('menu::menu')
                 </div><!-- leftmenu -->
             </nav>
-            <div class="rightpanel {{ $section }}"
-                 hx-boost="true"
-                 hx-target=".primaryContent"
-                 hx-select=".primaryContent"
-                 hx-swap="outerHTML show:window:top"
-                 hx-indicator="#page-loading">
+            <div class="rightpanel {{ $section }}">
                 <main id="main-content" class="primaryContent" aria-live="polite"
                       hx-disinherit="hx-select">
                     @isset($action, $module)

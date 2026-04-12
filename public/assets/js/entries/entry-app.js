@@ -71,10 +71,9 @@ if (currentModule) {
 }
 
 // ── Domain JS reloader for hx-boost SPA navigation ─────────────────
-// After hx-boost swaps content from a different domain, the new page's
-// domain JS won't be available because import.meta.glob only loaded the
-// initial module above. These listeners lazy-load domain JS on navigation.
-
+// DISABLED: hx-boost blanket removed. Full page loads handle domain JS.
+// Restore this block if blanket hx-boost is re-enabled.
+/*
 const loadedDomains = new Set();
 if (currentModule) loadedDomains.add(currentModule);
 
@@ -115,3 +114,4 @@ document.addEventListener('htmx:historyRestore', function () {
         loadDomainJs(module);
     }
 });
+*/

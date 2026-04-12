@@ -258,10 +258,11 @@ leantime.menuController = (function () {
         }
     };
 
-    // Listen for HTMX history pushes to update active nav state after boosted navigation
-    document.addEventListener('htmx:pushedIntoHistory', function () {
-        updateLeftNavActiveState();
-    });
+    // DISABLED: hx-boost blanket removed. Full page loads handle nav active state.
+    // Restore this block if blanket hx-boost is re-enabled.
+    // document.addEventListener('htmx:pushedIntoHistory', function () {
+    //     updateLeftNavActiveState();
+    // });
 
     // Make public what you want to have public, everything else is private
     return {
