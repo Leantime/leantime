@@ -3676,6 +3676,11 @@ div[id^="comments-"] > div > .clearall {
     border-color: var(--main-border-color, #334155);
 }
 
+[data-theme="dark"] .tiptap-font-popover__btn,
+.dark .tiptap-font-popover__btn {
+    color: var(--primary-font-color, #f1f5f9);
+}
+
 [data-theme="dark"] .tiptap-column,
 .dark .tiptap-column {
     background: var(--element-bg, #1e293b);

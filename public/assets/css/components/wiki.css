@@ -168,7 +168,7 @@
 
 /* Contents Panel (inside content area, left side) */
 .wiki-contents-panel {
-    width: 220px;
+    width: 320px;
     flex-shrink: 0;
     padding: 20px;
     border-right: 1px solid var(--main-border-color);
@@ -1046,7 +1046,7 @@
     }
 
     .wiki-contents-panel {
-        width: 200px;
+        width: 280px;
     }
 
     .wiki-content-inner {
@@ -1098,7 +1098,7 @@
         left: 0;
         top: 0;
         height: 100%;
-        width: 240px;
+        width: 280px;
         padding: 20px;
         opacity: 1;
         background: var(--secondary-background);

@@ -450,6 +450,7 @@ function createEmojiExtension() {
                                     selectedIndex: 0,
                                 }));
                                 hideEmojiPopup();
+                                event.stopPropagation();
                                 return true;
                             }
 
