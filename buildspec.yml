@@ -1,0 +1,29 @@
+version: 0.2
+run-as: root
+
+phases:
+  pre_build:
+    commands:
+      - echo "========== Pre-build: ECR login =========="
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 970547373533.dkr.ecr.us-east-1.amazonaws.com
+      - REPOSITORY_URI=970547373533.dkr.ecr.us-east-1.amazonaws.com/leantime
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - echo "Building image $REPOSITORY_URI:$IMAGE_TAG"
+
+  build:
+    commands:
+      - echo "========== Build: Docker build =========="
+      - docker build -t $REPOSITORY_URI:latest -t $REPOSITORY_URI:$IMAGE_TAG . --no-cache
+      - echo "========== Build: Push to ECR =========="
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+
+  post_build:
+    commands:
+      - echo "========== Post-build: Deploy to EKS =========="
+      - aws eks update-kubeconfig --name ai-cart-auto-cluster --region us-east-1 --kubeconfig /root/.kube/config
+      - export KUBECONFIG=/root/.kube/config
+      - kubectl rollout restart deploy/leantime -n aicart
+      - kubectl rollout status deploy/leantime -n aicart --timeout=300s
+      - echo "========== Deploy complete =========="
