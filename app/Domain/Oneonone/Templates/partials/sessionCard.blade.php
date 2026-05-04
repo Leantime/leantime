@@ -26,7 +26,11 @@
             <div class="tw-flex-1 tw-min-w-0">
                 <div class="tw-flex tw-items-center tw-gap-s tw-mb-xs tw-flex-wrap">
                     <strong>
-                        {{ dtHelper()->parseDbDateTime($session['meetingDate'])->setToUserTimezone()->format(__('language.dateformat')) }}
+                        @if (!empty($session['meetingDate']))
+                            {{ dtHelper()->parseDbDateTime($session['meetingDate'])->setToUserTimezone()->format(__('language.dateformat')) }}
+                        @else
+                            —
+                        @endif
                     </strong>
                     <span class="label label-{{ $statusClass }}">
                         {{ __('oneonone.status.' . ($session['status'] ?? 'scheduled')) }}
