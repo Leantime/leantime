@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Oneonone\Services;
 
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
@@ -208,8 +210,8 @@ class Oneonone
             return false;
         }
 
-        $meetingDate = trim((string) ($values['meetingDate'] ?? ''));
-        if ($meetingDate === '') {
+        $meetingDate = $this->normalizeUserDateTimeForDb($values['meetingDate'] ?? null);
+        if ($meetingDate === null) {
             return false;
         }
 
@@ -229,7 +231,13 @@ class Oneonone
             'summary' => null,
         ];
 
-        $id = $this->repo->addSession($payload);
+        try {
+            $id = $this->repo->addSession($payload);
+        } catch (\Throwable $e) {
+            Log::error($e);
+
+            return false;
+        }
 
         self::dispatch_event('oneonone_scheduled', ['sessionId' => $id, 'session' => $payload]);
 
@@ -253,7 +261,10 @@ class Oneonone
         $update = [];
 
         if (array_key_exists('meetingDate', $values) && trim((string) $values['meetingDate']) !== '') {
-            $update['meetingDate'] = $values['meetingDate'];
+            $meetingDate = $this->normalizeUserDateTimeForDb($values['meetingDate']);
+            if ($meetingDate !== null) {
+                $update['meetingDate'] = $meetingDate;
+            }
         }
 
         if (array_key_exists('title', $values)) {
@@ -288,7 +299,13 @@ class Oneonone
             return false;
         }
 
-        $ok = $this->repo->updateSession($id, $update);
+        try {
+            $ok = $this->repo->updateSession($id, $update);
+        } catch (\Throwable $e) {
+            Log::error($e);
+
+            return false;
+        }
 
         if ($ok) {
             self::dispatch_event('oneonone_updated', ['sessionId' => $id]);
@@ -317,7 +334,14 @@ class Oneonone
             return false;
         }
 
-        $ok = $this->repo->deleteSession($id);
+        $ok = false;
+        try {
+            $ok = $this->repo->deleteSession($id);
+        } catch (\Throwable $e) {
+            Log::error($e);
+
+            return false;
+        }
 
         if ($ok) {
             self::dispatch_event('oneonone_deleted', ['sessionId' => $id]);
@@ -379,6 +403,8 @@ class Oneonone
         if ($content === '') {
             return false;
         }
+        // Hard cap content length to prevent abuse / matches schema TEXT bounds.
+        $content = function_exists('mb_substr') ? mb_substr($content, 0, 5000) : substr($content, 0, 5000);
 
         $payload = [
             'sessionId' => $sessionId,
@@ -394,14 +420,23 @@ class Oneonone
         }
 
         if (! empty($values['dueDate'])) {
-            $payload['dueDate'] = (string) $values['dueDate'];
+            $due = $this->normalizeUserDateTimeForDb($values['dueDate']);
+            if ($due !== null) {
+                $payload['dueDate'] = $due;
+            }
         }
 
         if (! empty($values['linkedTicketId'])) {
             $payload['linkedTicketId'] = (int) $values['linkedTicketId'];
         }
 
-        $id = $this->repo->addItem($payload);
+        try {
+            $id = $this->repo->addItem($payload);
+        } catch (\Throwable $e) {
+            Log::error($e);
+
+            return false;
+        }
 
         self::dispatch_event('oneonone_item_added', ['sessionId' => $sessionId, 'itemId' => $id]);
 
@@ -430,7 +465,7 @@ class Oneonone
         if (array_key_exists('content', $values)) {
             $content = trim((string) $values['content']);
             if ($content !== '') {
-                $update['content'] = $content;
+                $update['content'] = function_exists('mb_substr') ? mb_substr($content, 0, 5000) : substr($content, 0, 5000);
             }
         }
 
@@ -455,7 +490,14 @@ class Oneonone
         }
 
         if (array_key_exists('dueDate', $values)) {
-            $update['dueDate'] = $values['dueDate'] === '' ? null : (string) $values['dueDate'];
+            if ($values['dueDate'] === '' || $values['dueDate'] === null) {
+                $update['dueDate'] = null;
+            } else {
+                $due = $this->normalizeUserDateTimeForDb($values['dueDate']);
+                if ($due !== null) {
+                    $update['dueDate'] = $due;
+                }
+            }
         }
 
         if (array_key_exists('sortIndex', $values)) {
@@ -466,7 +508,13 @@ class Oneonone
             return false;
         }
 
-        return $this->repo->updateItem($id, $update);
+        try {
+            return $this->repo->updateItem($id, $update);
+        } catch (\Throwable $e) {
+            Log::error($e);
+
+            return false;
+        }
     }
 
     /** Toggle an item's done/open status (for action items and talking points). */
@@ -485,7 +533,13 @@ class Oneonone
         $current = (string) ($item['status'] ?? 'open');
         $next = $current === 'open' ? 'done' : 'open';
 
-        return $this->repo->updateItem($id, ['status' => $next]);
+        try {
+            return $this->repo->updateItem($id, ['status' => $next]);
+        } catch (\Throwable $e) {
+            Log::error($e);
+
+            return false;
+        }
     }
 
     /** Delete an item. */
@@ -501,7 +555,13 @@ class Oneonone
             return false;
         }
 
-        return $this->repo->deleteItem($id);
+        try {
+            return $this->repo->deleteItem($id);
+        } catch (\Throwable $e) {
+            Log::error($e);
+
+            return false;
+        }
     }
 
     /**
@@ -550,5 +610,53 @@ class Oneonone
         }
 
         return isset($this->repo->moodValues[$value]) ? $value : null;
+    }
+
+    /**
+     * Convert a user-supplied datetime string into the `Y-m-d H:i:s` UTC format
+     * used in the database. Accepts the ISO-like value emitted by
+     * `<input type="datetime-local">` (`Y-m-d\TH:i`) as well as common user-format
+     * date/time strings. Returns null when the input cannot be parsed safely.
+     */
+    private function normalizeUserDateTimeForDb(mixed $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+        $value = trim((string) $value);
+        if ($value === '') {
+            return null;
+        }
+
+        $userTz = session('usersettings.timezone') ?? 'UTC';
+
+        // Fast path: HTML5 datetime-local format, e.g. "2024-01-15T14:30".
+        try {
+            $iso = CarbonImmutable::createFromFormat('Y-m-d\TH:i', $value, $userTz);
+            if ($iso !== false) {
+                return $iso->setTimezone('UTC')->format('Y-m-d H:i:s');
+            }
+        } catch (\Throwable $e) {
+            // fall through
+        }
+
+        // Try the user's locale date/time format via dtHelper.
+        try {
+            return dtHelper()->parseUserDateTime($value)
+                ->setTimezone('UTC')
+                ->format('Y-m-d H:i:s');
+        } catch (\Throwable $e) {
+            // fall through to a final permissive parse
+        }
+
+        try {
+            return CarbonImmutable::parse($value, $userTz)
+                ->setTimezone('UTC')
+                ->format('Y-m-d H:i:s');
+        } catch (\Throwable $e) {
+            Log::error($e);
+
+            return null;
+        }
     }
 }

@@ -30,28 +30,19 @@ class SessionItems extends HtmxController
         $this->repo = $repo;
     }
 
+    /** Render the user's own open action items panel (refreshes on oneonone_item_changed). */
+    public function myOpen(): void
+    {
+        static::$view = 'oneonone::partials.myOpenActions';
+        $this->tpl->assign('openActionItems', $this->service->getMyOpenActionItems());
+    }
+
     /** Render the full grouped item list for a session (used for re-rendering after mutations). */
     public function list(): void
     {
         $sessionId = (int) ($this->incomingRequest->query->get('sessionId') ?? 0);
         $type = $this->incomingRequest->query->get('type');
-
-        $session = $this->service->getSession($sessionId);
-        if ($session === null) {
-            $this->tpl->assign('session', null);
-            $this->tpl->assign('itemsByType', []);
-            $this->tpl->assign('itemTypes', $this->repo->itemTypes);
-            $this->tpl->assign('canEdit', false);
-            $this->tpl->assign('focusType', $type);
-
-            return;
-        }
-
-        $this->tpl->assign('session', $session);
-        $this->tpl->assign('itemsByType', $this->service->getItemsGrouped($sessionId));
-        $this->tpl->assign('itemTypes', $this->repo->itemTypes);
-        $this->tpl->assign('canEdit', $this->service->canEditSession($session));
-        $this->tpl->assign('focusType', $type);
+        $this->renderList($sessionId, is_string($type) ? $type : null);
     }
 
     /** Add a new item. Expects sessionId, type, content (and optionally assignedTo, dueDate). */
@@ -123,6 +114,8 @@ class SessionItems extends HtmxController
 
     private function renderList(int $sessionId, ?string $focusType = null): void
     {
+        static::$view = 'oneonone::partials.itemList';
+
         $session = $sessionId > 0 ? $this->service->getSession($sessionId) : null;
 
         $this->tpl->assign('session', $session);

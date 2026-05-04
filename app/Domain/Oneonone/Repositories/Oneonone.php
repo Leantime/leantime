@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Oneonone\Repositories;
 
-use Illuminate\Database\ConnectionInterface;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
 
 /**
@@ -188,16 +188,20 @@ class Oneonone
 
         $update['modified'] = CarbonImmutable::now('UTC')->format('Y-m-d H:i:s');
 
-        return $this->db->table('zp_oneonone_sessions')
+        $this->db->table('zp_oneonone_sessions')
             ->where('id', $id)
-            ->update($update) >= 0;
+            ->update($update);
+
+        return true;
     }
 
     /** Delete a session and cascade-delete its items. */
     public function deleteSession(int $id): bool
     {
-        $this->db->table('zp_oneonone_items')->where('sessionId', $id)->delete();
-        $this->db->table('zp_oneonone_sessions')->where('id', $id)->delete();
+        $this->db->transaction(function () use ($id) {
+            $this->db->table('zp_oneonone_items')->where('sessionId', $id)->delete();
+            $this->db->table('zp_oneonone_sessions')->where('id', $id)->delete();
+        });
 
         return true;
     }
@@ -285,9 +289,11 @@ class Oneonone
 
         $update['modified'] = CarbonImmutable::now('UTC')->format('Y-m-d H:i:s');
 
-        return $this->db->table('zp_oneonone_items')
+        $this->db->table('zp_oneonone_items')
             ->where('id', $id)
-            ->update($update) >= 0;
+            ->update($update);
+
+        return true;
     }
 
     /** Delete an item. */
@@ -323,9 +329,16 @@ class Oneonone
         return array_map(fn ($r) => (array) $r, $results->toArray());
     }
 
-    /** Count items per session, returned as [sessionId => count]. */
+    /**
+     * Count items per session, returned as [sessionId => count].
+     *
+     * @param  array<int, int|string>  $sessionIds
+     * @return array<int, int>
+     */
     public function getItemCountsForSessions(array $sessionIds): array
     {
+        $sessionIds = array_values(array_unique(array_map('intval', $sessionIds)));
+        $sessionIds = array_filter($sessionIds, fn ($v) => $v > 0);
         if ($sessionIds === []) {
             return [];
         }
