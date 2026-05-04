@@ -1,0 +1,547 @@
+<?php
+
+namespace Leantime\Domain\Oneonone\Services;
+
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Oneonone\Repositories\Oneonone as OneononeRepo;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
+
+/**
+ * Oneonone service - business logic for Weekly 1:1 Employee Sheet.
+ *
+ * Permission model:
+ *  - Employees can read & contribute to sessions where they are the employee.
+ *  - Managers (role >= manager) can manage sessions where they are the manager.
+ *  - Admins/Owners can manage all sessions.
+ *
+ * @api
+ */
+class Oneonone
+{
+    use DispatchesEvents;
+
+    public function __construct(
+        private OneononeRepo $repo,
+        private UserRepository $userRepo,
+    ) {}
+
+    // -- Permissions --------------------------------------------------------
+
+    /** Whether the current session user may view this 1:1 session. */
+    public function canViewSession(array $session): bool
+    {
+        $userId = (int) (session('userdata.id') ?? 0);
+        if ($userId === 0) {
+            return false;
+        }
+
+        if (Auth::userIsAtLeast(Roles::$admin)) {
+            return true;
+        }
+
+        return ((int) ($session['employeeId'] ?? 0)) === $userId
+            || ((int) ($session['managerId'] ?? 0)) === $userId;
+    }
+
+    /** Whether the current session user may edit this 1:1 session. */
+    public function canEditSession(array $session): bool
+    {
+        $userId = (int) (session('userdata.id') ?? 0);
+        if ($userId === 0) {
+            return false;
+        }
+
+        if (Auth::userIsAtLeast(Roles::$admin)) {
+            return true;
+        }
+
+        // Only the manager who owns the session, or the employee themselves,
+        // may edit content. Other team members cannot.
+        return ((int) ($session['managerId'] ?? 0)) === $userId
+            || ((int) ($session['employeeId'] ?? 0)) === $userId;
+    }
+
+    // -- Sessions -----------------------------------------------------------
+
+    /**
+     * Get all 1:1 sessions for the current user (as an employee).
+     *
+     * @api
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getMySessions(): array
+    {
+        $userId = (int) (session('userdata.id') ?? 0);
+
+        return $this->repo->getSessionsForEmployee($userId);
+    }
+
+    /**
+     * Get all 1:1 sessions managed by the current user.
+     *
+     * @api
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getTeamSessions(): array
+    {
+        $userId = (int) (session('userdata.id') ?? 0);
+        if (! Auth::userIsAtLeast(Roles::$manager)) {
+            return [];
+        }
+
+        return $this->repo->getSessionsForManager($userId);
+    }
+
+    /**
+     * Build a team dashboard summary for the current manager.
+     *
+     * Returns one row per direct report (employee with at least one session),
+     * with counts and the latest session details.
+     *
+     * @api
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getTeamDashboard(): array
+    {
+        $userId = (int) (session('userdata.id') ?? 0);
+        if (! Auth::userIsAtLeast(Roles::$manager)) {
+            return [];
+        }
+
+        $sessions = $this->repo->getSessionsForManager($userId);
+        $byEmployee = [];
+
+        foreach ($sessions as $session) {
+            $eid = (int) ($session['employeeId'] ?? 0);
+            if ($eid === 0) {
+                continue;
+            }
+
+            if (! isset($byEmployee[$eid])) {
+                $byEmployee[$eid] = [
+                    'employeeId' => $eid,
+                    'firstname' => $session['employeeFirstname'] ?? '',
+                    'lastname' => $session['employeeLastname'] ?? '',
+                    'profileId' => $session['employeeProfileId'] ?? null,
+                    'jobTitle' => $session['employeeJobTitle'] ?? '',
+                    'sessionCount' => 0,
+                    'completedCount' => 0,
+                    'lastSession' => null,
+                    'nextSession' => null,
+                ];
+            }
+
+            $byEmployee[$eid]['sessionCount']++;
+            if (($session['status'] ?? '') === 'completed') {
+                $byEmployee[$eid]['completedCount']++;
+            }
+
+            // sessions are pre-sorted desc; first one we see for an employee is the most recent
+            if ($byEmployee[$eid]['lastSession'] === null) {
+                $byEmployee[$eid]['lastSession'] = $session;
+            }
+
+            // track upcoming scheduled session (in the future)
+            $isFuture = isset($session['meetingDate']) && strtotime((string) $session['meetingDate']) > time();
+            if ($isFuture && ($session['status'] ?? '') === 'scheduled') {
+                $byEmployee[$eid]['nextSession'] = $session;
+            }
+        }
+
+        return array_values($byEmployee);
+    }
+
+    /** Get a single session by id (returns null if not found or no access). */
+    public function getSession(int $id): ?array
+    {
+        $session = $this->repo->getSession($id);
+        if ($session === null) {
+            return null;
+        }
+        if (! $this->canViewSession($session)) {
+            return null;
+        }
+
+        return $session;
+    }
+
+    /**
+     * Schedule a new 1:1 session.
+     *
+     * Required values: employeeId, meetingDate.
+     * The current user becomes the manager unless explicitly overridden by an admin.
+     *
+     * @param  array<string, mixed>  $values
+     *
+     * @api
+     */
+    public function scheduleSession(array $values): int|false
+    {
+        $userId = (int) (session('userdata.id') ?? 0);
+        if ($userId === 0) {
+            return false;
+        }
+
+        if (! Auth::userIsAtLeast(Roles::$manager)) {
+            return false;
+        }
+
+        $employeeId = (int) ($values['employeeId'] ?? 0);
+        if ($employeeId === 0) {
+            return false;
+        }
+
+        $employee = $this->userRepo->getUser($employeeId);
+        if ($employee === false) {
+            return false;
+        }
+
+        $meetingDate = trim((string) ($values['meetingDate'] ?? ''));
+        if ($meetingDate === '') {
+            return false;
+        }
+
+        $managerId = $userId;
+        if (Auth::userIsAtLeast(Roles::$admin) && ! empty($values['managerId'])) {
+            $managerId = (int) $values['managerId'];
+        }
+
+        $payload = [
+            'employeeId' => $employeeId,
+            'managerId' => $managerId,
+            'meetingDate' => $meetingDate,
+            'title' => $this->sanitizeString($values['title'] ?? null, 255),
+            'mood' => $this->sanitizeMood($values['mood'] ?? null),
+            'status' => 'scheduled',
+            'notes' => null,
+            'summary' => null,
+        ];
+
+        $id = $this->repo->addSession($payload);
+
+        self::dispatch_event('oneonone_scheduled', ['sessionId' => $id, 'session' => $payload]);
+
+        return $id;
+    }
+
+    /**
+     * Update an existing session.
+     *
+     * @param  array<string, mixed>  $values
+     *
+     * @api
+     */
+    public function updateSession(int $id, array $values): bool
+    {
+        $session = $this->repo->getSession($id);
+        if ($session === null || ! $this->canEditSession($session)) {
+            return false;
+        }
+
+        $update = [];
+
+        if (array_key_exists('meetingDate', $values) && trim((string) $values['meetingDate']) !== '') {
+            $update['meetingDate'] = $values['meetingDate'];
+        }
+
+        if (array_key_exists('title', $values)) {
+            $update['title'] = $this->sanitizeString($values['title'], 255);
+        }
+
+        if (array_key_exists('mood', $values)) {
+            $update['mood'] = $this->sanitizeMood($values['mood']);
+        }
+
+        if (array_key_exists('status', $values)) {
+            $status = (string) $values['status'];
+            if (isset($this->repo->sessionStatuses[$status])) {
+                $update['status'] = $status;
+            }
+        }
+
+        if (array_key_exists('notes', $values)) {
+            // Only managers can edit private notes.
+            if ((int) ($session['managerId'] ?? 0) === (int) (session('userdata.id') ?? 0)
+                || Auth::userIsAtLeast(Roles::$admin)
+            ) {
+                $update['notes'] = (string) $values['notes'];
+            }
+        }
+
+        if (array_key_exists('summary', $values)) {
+            $update['summary'] = (string) $values['summary'];
+        }
+
+        if ($update === []) {
+            return false;
+        }
+
+        $ok = $this->repo->updateSession($id, $update);
+
+        if ($ok) {
+            self::dispatch_event('oneonone_updated', ['sessionId' => $id]);
+        }
+
+        return $ok;
+    }
+
+    /**
+     * Delete a session and all its items.
+     *
+     * @api
+     */
+    public function deleteSession(int $id): bool
+    {
+        $session = $this->repo->getSession($id);
+        if ($session === null) {
+            return false;
+        }
+
+        // Only the owning manager or an admin may delete a session.
+        $userId = (int) (session('userdata.id') ?? 0);
+        if (! Auth::userIsAtLeast(Roles::$admin)
+            && (int) ($session['managerId'] ?? 0) !== $userId
+        ) {
+            return false;
+        }
+
+        $ok = $this->repo->deleteSession($id);
+
+        if ($ok) {
+            self::dispatch_event('oneonone_deleted', ['sessionId' => $id]);
+        }
+
+        return $ok;
+    }
+
+    // -- Items --------------------------------------------------------------
+
+    /**
+     * Get items for a session, grouped by type.
+     *
+     * @return array<string, array<int, array<string, mixed>>>
+     */
+    public function getItemsGrouped(int $sessionId): array
+    {
+        $session = $this->repo->getSession($sessionId);
+        if ($session === null || ! $this->canViewSession($session)) {
+            return [];
+        }
+
+        $items = $this->repo->getItemsForSession($sessionId);
+        $grouped = [];
+        foreach (array_keys($this->repo->itemTypes) as $type) {
+            $grouped[$type] = [];
+        }
+
+        foreach ($items as $item) {
+            $type = (string) ($item['type'] ?? 'talking_point');
+            if (! isset($grouped[$type])) {
+                $grouped[$type] = [];
+            }
+            $grouped[$type][] = $item;
+        }
+
+        return $grouped;
+    }
+
+    /**
+     * Add an item to a session.
+     *
+     * @param  array<string, mixed>  $values
+     */
+    public function addItem(int $sessionId, array $values): int|false
+    {
+        $session = $this->repo->getSession($sessionId);
+        if ($session === null || ! $this->canEditSession($session)) {
+            return false;
+        }
+
+        $userId = (int) (session('userdata.id') ?? 0);
+        $type = (string) ($values['type'] ?? 'talking_point');
+        if (! isset($this->repo->itemTypes[$type])) {
+            $type = 'talking_point';
+        }
+
+        $content = trim((string) ($values['content'] ?? ''));
+        if ($content === '') {
+            return false;
+        }
+
+        $payload = [
+            'sessionId' => $sessionId,
+            'type' => $type,
+            'author' => $userId,
+            'content' => $content,
+            'status' => 'open',
+            'sortIndex' => (int) ($values['sortIndex'] ?? 0),
+        ];
+
+        if (! empty($values['assignedTo'])) {
+            $payload['assignedTo'] = (int) $values['assignedTo'];
+        }
+
+        if (! empty($values['dueDate'])) {
+            $payload['dueDate'] = (string) $values['dueDate'];
+        }
+
+        if (! empty($values['linkedTicketId'])) {
+            $payload['linkedTicketId'] = (int) $values['linkedTicketId'];
+        }
+
+        $id = $this->repo->addItem($payload);
+
+        self::dispatch_event('oneonone_item_added', ['sessionId' => $sessionId, 'itemId' => $id]);
+
+        return $id;
+    }
+
+    /**
+     * Update an item.
+     *
+     * @param  array<string, mixed>  $values
+     */
+    public function updateItem(int $id, array $values): bool
+    {
+        $item = $this->repo->getItem($id);
+        if ($item === null) {
+            return false;
+        }
+
+        $session = $this->repo->getSession((int) $item['sessionId']);
+        if ($session === null || ! $this->canEditSession($session)) {
+            return false;
+        }
+
+        $update = [];
+
+        if (array_key_exists('content', $values)) {
+            $content = trim((string) $values['content']);
+            if ($content !== '') {
+                $update['content'] = $content;
+            }
+        }
+
+        if (array_key_exists('status', $values)) {
+            $status = (string) $values['status'];
+            if (in_array($status, ['open', 'done', 'discussed'], true)) {
+                $update['status'] = $status;
+            }
+        }
+
+        if (array_key_exists('type', $values)) {
+            $type = (string) $values['type'];
+            if (isset($this->repo->itemTypes[$type])) {
+                $update['type'] = $type;
+            }
+        }
+
+        if (array_key_exists('assignedTo', $values)) {
+            $update['assignedTo'] = $values['assignedTo'] === '' || $values['assignedTo'] === null
+                ? null
+                : (int) $values['assignedTo'];
+        }
+
+        if (array_key_exists('dueDate', $values)) {
+            $update['dueDate'] = $values['dueDate'] === '' ? null : (string) $values['dueDate'];
+        }
+
+        if (array_key_exists('sortIndex', $values)) {
+            $update['sortIndex'] = (int) $values['sortIndex'];
+        }
+
+        if ($update === []) {
+            return false;
+        }
+
+        return $this->repo->updateItem($id, $update);
+    }
+
+    /** Toggle an item's done/open status (for action items and talking points). */
+    public function toggleItem(int $id): bool
+    {
+        $item = $this->repo->getItem($id);
+        if ($item === null) {
+            return false;
+        }
+
+        $session = $this->repo->getSession((int) $item['sessionId']);
+        if ($session === null || ! $this->canEditSession($session)) {
+            return false;
+        }
+
+        $current = (string) ($item['status'] ?? 'open');
+        $next = $current === 'open' ? 'done' : 'open';
+
+        return $this->repo->updateItem($id, ['status' => $next]);
+    }
+
+    /** Delete an item. */
+    public function deleteItem(int $id): bool
+    {
+        $item = $this->repo->getItem($id);
+        if ($item === null) {
+            return false;
+        }
+
+        $session = $this->repo->getSession((int) $item['sessionId']);
+        if ($session === null || ! $this->canEditSession($session)) {
+            return false;
+        }
+
+        return $this->repo->deleteItem($id);
+    }
+
+    /**
+     * Get open action items assigned to the current user.
+     *
+     * @api
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getMyOpenActionItems(): array
+    {
+        $userId = (int) (session('userdata.id') ?? 0);
+        if ($userId === 0) {
+            return [];
+        }
+
+        return $this->repo->getOpenActionItemsForUser($userId);
+    }
+
+    // -- Helpers ------------------------------------------------------------
+
+    private function sanitizeString(mixed $value, int $maxLen): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+        $value = trim((string) $value);
+        if ($value === '') {
+            return null;
+        }
+        if (function_exists('mb_substr')) {
+            return mb_substr($value, 0, $maxLen);
+        }
+
+        return substr($value, 0, $maxLen);
+    }
+
+    private function sanitizeMood(mixed $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+        $value = (string) $value;
+        if ($value === '') {
+            return null;
+        }
+
+        return isset($this->repo->moodValues[$value]) ? $value : null;
+    }
+}

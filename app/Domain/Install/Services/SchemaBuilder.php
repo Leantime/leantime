@@ -57,6 +57,57 @@ class SchemaBuilder
         $this->createAccessTokensTable();
         $this->createJobsTable();
         $this->createRecurringPatternsTable();
+        $this->createOneononeSessionsTable();
+        $this->createOneononeItemsTable();
+    }
+
+    /**
+     * Create zp_oneonone_sessions table - holds 1:1 meeting headers.
+     */
+    private function createOneononeSessionsTable(): void
+    {
+        Schema::create('zp_oneonone_sessions', function (Blueprint $table) {
+            $table->id();
+            $table->integer('employeeId')->nullable();
+            $table->integer('managerId')->nullable();
+            $table->dateTime('meetingDate')->nullable();
+            $table->string('title', 255)->nullable();
+            $table->string('mood', 50)->nullable();
+            $table->string('status', 50)->default('scheduled');
+            $table->text('notes')->nullable();
+            $table->text('summary')->nullable();
+            $table->dateTime('created')->nullable();
+            $table->dateTime('modified')->nullable();
+
+            $table->index(['employeeId', 'meetingDate'], 'idx_oneonone_employee_date');
+            $table->index(['managerId', 'meetingDate'], 'idx_oneonone_manager_date');
+            $table->index(['status'], 'idx_oneonone_status');
+        });
+    }
+
+    /**
+     * Create zp_oneonone_items table - holds talking points, action items,
+     * feedback, goals, and blockers for each session.
+     */
+    private function createOneononeItemsTable(): void
+    {
+        Schema::create('zp_oneonone_items', function (Blueprint $table) {
+            $table->id();
+            $table->integer('sessionId')->nullable();
+            $table->string('type', 50)->default('talking_point');
+            $table->integer('author')->nullable();
+            $table->integer('assignedTo')->nullable();
+            $table->text('content')->nullable();
+            $table->string('status', 50)->default('open');
+            $table->dateTime('dueDate')->nullable();
+            $table->integer('sortIndex')->default(0);
+            $table->integer('linkedTicketId')->nullable();
+            $table->dateTime('created')->nullable();
+            $table->dateTime('modified')->nullable();
+
+            $table->index(['sessionId', 'type'], 'idx_oneonone_items_session_type');
+            $table->index(['assignedTo', 'status'], 'idx_oneonone_items_assignee_status');
+        });
     }
 
     /**
