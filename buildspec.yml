@@ -4,7 +4,8 @@ run-as: root
 phases:
   pre_build:
     commands:
-      - echo "========== Pre-build ECR login =========="
+      - echo "========== Pre-build: Docker Hub + ECR login =========="
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 970547373533.dkr.ecr.us-east-1.amazonaws.com
       - REPOSITORY_URI=970547373533.dkr.ecr.us-east-1.amazonaws.com/leantime
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
