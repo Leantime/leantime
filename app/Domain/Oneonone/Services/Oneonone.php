@@ -218,6 +218,16 @@ class Oneonone
         $managerId = $userId;
         if (Auth::userIsAtLeast(Roles::$admin) && ! empty($values['managerId'])) {
             $managerId = (int) $values['managerId'];
+            // Validate the admin-supplied manager exists.
+            if ($this->userRepo->getUser($managerId) === false) {
+                return false;
+            }
+        }
+
+        // Reject self-1:1s at the service boundary (UI also filters,
+        // but API/RPC paths must enforce too).
+        if ($employeeId === $managerId) {
+            return false;
         }
 
         $payload = [
@@ -416,7 +426,11 @@ class Oneonone
         ];
 
         if (! empty($values['assignedTo'])) {
-            $payload['assignedTo'] = (int) $values['assignedTo'];
+            $assignedTo = (int) $values['assignedTo'];
+            // Validate user exists to avoid orphaned references.
+            if ($assignedTo > 0 && $this->userRepo->getUser($assignedTo) !== false) {
+                $payload['assignedTo'] = $assignedTo;
+            }
         }
 
         if (! empty($values['dueDate'])) {
@@ -484,9 +498,15 @@ class Oneonone
         }
 
         if (array_key_exists('assignedTo', $values)) {
-            $update['assignedTo'] = $values['assignedTo'] === '' || $values['assignedTo'] === null
-                ? null
-                : (int) $values['assignedTo'];
+            if ($values['assignedTo'] === '' || $values['assignedTo'] === null) {
+                $update['assignedTo'] = null;
+            } else {
+                $assignedTo = (int) $values['assignedTo'];
+                // Validate user exists; ignore the field if not.
+                if ($assignedTo > 0 && $this->userRepo->getUser($assignedTo) !== false) {
+                    $update['assignedTo'] = $assignedTo;
+                }
+            }
         }
 
         if (array_key_exists('dueDate', $values)) {
@@ -578,7 +598,37 @@ class Oneonone
             return [];
         }
 
-        return $this->repo->getOpenActionItemsForUser($userId);
+        $items = $this->repo->getOpenActionItemsForUser($userId);
+        if ($items === []) {
+            return [];
+        }
+
+        // Enforce session visibility: an assignee may have lost access to a
+        // session (e.g. role change). Only return items whose parent session
+        // is currently visible to the user. Cache permission per session id
+        // to avoid N+1 calls when many items belong to the same session.
+        $allowed = [];
+        $filtered = [];
+        foreach ($items as $item) {
+            $sessionId = (int) ($item['sessionId'] ?? 0);
+            if ($sessionId === 0) {
+                continue;
+            }
+
+            if (! array_key_exists($sessionId, $allowed)) {
+                $session = [
+                    'employeeId' => $item['employeeId'] ?? null,
+                    'managerId' => $item['managerId'] ?? null,
+                ];
+                $allowed[$sessionId] = $this->canViewSession($session);
+            }
+
+            if ($allowed[$sessionId]) {
+                $filtered[] = $item;
+            }
+        }
+
+        return $filtered;
     }
 
     // -- Helpers ------------------------------------------------------------

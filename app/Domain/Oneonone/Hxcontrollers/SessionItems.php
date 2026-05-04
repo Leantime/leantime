@@ -10,11 +10,17 @@ use Leantime\Domain\Oneonone\Services\Oneonone as OneononeService;
  * HTMX controller for live editing of items inside a 1:1 session.
  *
  * Endpoints:
- *  - POST  /hx/oneonone/sessionItems/addItem
- *  - PATCH /hx/oneonone/sessionItems/toggleItem
- *  - PATCH /hx/oneonone/sessionItems/updateItem
+ *  - POST   /hx/oneonone/sessionItems/addItem
+ *  - PATCH  /hx/oneonone/sessionItems/toggleItem
+ *  - PATCH  /hx/oneonone/sessionItems/updateItem
  *  - DELETE /hx/oneonone/sessionItems/deleteItem
- *  - GET   /hx/oneonone/sessionItems/list
+ *  - GET    /hx/oneonone/sessionItems/list
+ *  - GET    /hx/oneonone/sessionItems/myOpen
+ *
+ * Note on `static::$view`: the HtmxController contract requires a static
+ * `$view` property. Every action method explicitly assigns the static
+ * before rendering (either `myOpen()` or `renderList()`), so the value is
+ * deterministic per request and safe under persistent workers.
  */
 class SessionItems extends HtmxController
 {
