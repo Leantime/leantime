@@ -147,7 +147,14 @@ class Oneonone
             }
 
             // track upcoming scheduled session (in the future)
-            $isFuture = isset($session['meetingDate']) && strtotime((string) $session['meetingDate']) > time();
+            $isFuture = false;
+            if (! empty($session['meetingDate'])) {
+                try {
+                    $isFuture = dtHelper()->parseDbDateTime((string) $session['meetingDate'])->isFuture();
+                } catch (\Exception $e) {
+                    $isFuture = false;
+                }
+            }
             if ($isFuture && ($session['status'] ?? '') === 'scheduled') {
                 $byEmployee[$eid]['nextSession'] = $session;
             }

@@ -39,10 +39,15 @@ class ShowMy extends Controller
             if (($session['status'] ?? '') === 'completed') {
                 $stats['completed']++;
             }
-            if (($session['status'] ?? '') === 'scheduled'
-                && isset($session['meetingDate'])
-                && strtotime((string) $session['meetingDate']) > time()
-            ) {
+            $isUpcoming = false;
+            if (($session['status'] ?? '') === 'scheduled' && ! empty($session['meetingDate'])) {
+                try {
+                    $isUpcoming = dtHelper()->parseDbDateTime((string) $session['meetingDate'])->isFuture();
+                } catch (\Exception $e) {
+                    $isUpcoming = false;
+                }
+            }
+            if ($isUpcoming) {
                 $stats['upcoming']++;
             }
         }

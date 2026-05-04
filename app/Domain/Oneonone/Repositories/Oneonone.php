@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Oneonone\Repositories;
 
 use Illuminate\Database\ConnectionInterface;
+use Carbon\CarbonImmutable;
 use Leantime\Core\Db\Db as DbCore;
 
 /**
@@ -150,7 +151,7 @@ class Oneonone
      */
     public function addSession(array $values): int
     {
-        $now = date('Y-m-d H:i:s');
+        $now = CarbonImmutable::now('UTC')->format('Y-m-d H:i:s');
 
         return (int) $this->db->table('zp_oneonone_sessions')->insertGetId([
             'employeeId' => (int) ($values['employeeId'] ?? 0),
@@ -185,7 +186,7 @@ class Oneonone
             return false;
         }
 
-        $update['modified'] = date('Y-m-d H:i:s');
+        $update['modified'] = CarbonImmutable::now('UTC')->format('Y-m-d H:i:s');
 
         return $this->db->table('zp_oneonone_sessions')
             ->where('id', $id)
@@ -246,7 +247,7 @@ class Oneonone
      */
     public function addItem(array $values): int
     {
-        $now = date('Y-m-d H:i:s');
+        $now = CarbonImmutable::now('UTC')->format('Y-m-d H:i:s');
 
         return (int) $this->db->table('zp_oneonone_items')->insertGetId([
             'sessionId' => (int) ($values['sessionId'] ?? 0),
@@ -282,7 +283,7 @@ class Oneonone
             return false;
         }
 
-        $update['modified'] = date('Y-m-d H:i:s');
+        $update['modified'] = CarbonImmutable::now('UTC')->format('Y-m-d H:i:s');
 
         return $this->db->table('zp_oneonone_items')
             ->where('id', $id)
