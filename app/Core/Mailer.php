@@ -62,6 +62,7 @@ class Mailer
             $host = $_SERVER['HTTP_HOST'] ?? 'leantime';
             $normalizedHost = parse_url('http://'.$host, PHP_URL_HOST) ?: $host;
             $normalizedHost = preg_replace('/[^a-zA-Z0-9.-]/', '', (string) $normalizedHost);
+            $normalizedHost = trim($normalizedHost, '.-');
 
             if ($normalizedHost === '') {
                 $normalizedHost = 'leantime';
