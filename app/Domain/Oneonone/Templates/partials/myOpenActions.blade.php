@@ -3,7 +3,7 @@
 ])
 
 @php
-    $csrfValue = isset($csrf_token) ? $csrf_token : null;
+    $csrfValue = $csrf_token ?? null;
 @endphp
 
 <div class="maincontentinner" id="oneononeMyActionItems"
@@ -17,6 +17,13 @@
     @else
         <ul class="tw-list-none tw-p-0 tw-m-0">
             @foreach ($openActionItems as $item)
+                @php
+                    $itemHxVals = [
+                        'itemId' => (int) ($item['id'] ?? 0),
+                        'sessionId' => (int) ($item['sessionId'] ?? 0),
+                        'csrf_token' => $csrfValue,
+                    ];
+                @endphp
                 <li class="tw-mb-s tw-p-s tw-rounded"
                     style="border:1px solid var(--main-border-color); background:var(--secondary-background);">
                     <div class="tw-flex tw-justify-between tw-items-start tw-gap-s">
@@ -35,7 +42,7 @@
                         <button type="button"
                                 class="btn btn-xs"
                                 hx-patch="{{ BASE_URL }}/hx/oneonone/sessionItems/toggleItem"
-                                hx-vals='@json(["itemId" => (int) ($item["id"] ?? 0), "sessionId" => (int) ($item["sessionId"] ?? 0), "csrf_token" => $csrfValue])'
+                                hx-vals='@json($itemHxVals)'
                                 hx-swap="none"
                                 title="{{ __('buttons.mark_done') }}">
                             <span class="fa fa-check"></span>

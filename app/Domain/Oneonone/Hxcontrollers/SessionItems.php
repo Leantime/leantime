@@ -30,6 +30,9 @@ class SessionItems extends HtmxController
 
     private OneononeRepo $repo;
 
+    /** @var array<string, mixed>|null */
+    private ?array $parsedNonPostBody = null;
+
     public function init(OneononeService $service, OneononeRepo $repo): void
     {
         $this->service = $service;
@@ -168,7 +171,12 @@ class SessionItems extends HtmxController
     }
 
     /**
-     * Read a request value from parsed params, with DELETE/PUT body fallback.
+     * Read a request value using this precedence: parsed params, request bag,
+     * query bag, parsed DELETE/PUT body, then provided default.
+     *
+     * @param  string  $key  Request key to read.
+     * @param  mixed  $default  Default value when no key is present.
+     * @return mixed
      */
     private function getRequestValue(string $key, mixed $default = null): mixed
     {
@@ -177,14 +185,55 @@ class SessionItems extends HtmxController
             return $params[$key];
         }
 
-        if (in_array(strtoupper($this->incomingRequest->method()), ['DELETE', 'PUT'], true)) {
-            $bodyVars = [];
-            parse_str($this->incomingRequest->getContent(), $bodyVars);
-            if (array_key_exists($key, $bodyVars)) {
-                return $bodyVars[$key];
-            }
+        $requestValues = $this->incomingRequest->request->all();
+        if (array_key_exists($key, $requestValues)) {
+            return $requestValues[$key];
         }
 
-        return $_REQUEST[$key] ?? $default;
+        $queryValues = $this->incomingRequest->query->all();
+        if (array_key_exists($key, $queryValues)) {
+            return $queryValues[$key];
+        }
+
+        $bodyValues = $this->getParsedNonPostBody();
+        if (array_key_exists($key, $bodyValues)) {
+            return $bodyValues[$key];
+        }
+
+        return $default;
+    }
+
+    /**
+     * Parse and cache request body variables for non-POST form requests.
+     *
+     * @return array<string, mixed>
+     */
+    private function getParsedNonPostBody(): array
+    {
+        if ($this->parsedNonPostBody !== null) {
+            return $this->parsedNonPostBody;
+        }
+
+        $this->parsedNonPostBody = [];
+        if (! in_array(strtoupper($this->incomingRequest->method()), ['DELETE', 'PUT'], true)) {
+            return $this->parsedNonPostBody;
+        }
+
+        $contentType = strtolower((string) $this->incomingRequest->headers->get('content-type', ''));
+        if ($contentType !== '' && ! str_contains($contentType, 'application/x-www-form-urlencoded')) {
+            return $this->parsedNonPostBody;
+        }
+
+        $rawContent = (string) $this->incomingRequest->getContent();
+        if ($rawContent === '') {
+            return $this->parsedNonPostBody;
+        }
+
+        parse_str($rawContent, $bodyVars);
+        if (is_array($bodyVars)) {
+            $this->parsedNonPostBody = $bodyVars;
+        }
+
+        return $this->parsedNonPostBody;
     }
 }
