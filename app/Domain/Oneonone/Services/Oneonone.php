@@ -95,6 +95,10 @@ class Oneonone
             return [];
         }
 
+        if (Auth::userIsAtLeast(Roles::$admin)) {
+            return $this->repo->getAllSessions();
+        }
+
         return $this->repo->getSessionsForManager($userId);
     }
 
@@ -110,12 +114,11 @@ class Oneonone
      */
     public function getTeamDashboard(): array
     {
-        $userId = (int) (session('userdata.id') ?? 0);
         if (! Auth::userIsAtLeast(Roles::$manager)) {
             return [];
         }
 
-        $sessions = $this->repo->getSessionsForManager($userId);
+        $sessions = $this->getTeamSessions();
         $byEmployee = [];
 
         foreach ($sessions as $session) {
