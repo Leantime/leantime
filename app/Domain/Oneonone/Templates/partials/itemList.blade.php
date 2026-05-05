@@ -63,6 +63,9 @@
                             hx-target="#oneononeItemList"
                             hx-swap="innerHTML"
                             hx-on::after-request="this.querySelector('input[name=content]').value=''">
+                            @if(isset($csrf_token))
+                                <input type="hidden" name="csrf_token" value="{{ $csrf_token }}">
+                            @endif
                             <input type="hidden" name="sessionId" value="{{ $session['id'] }}">
                             <input type="hidden" name="type" value="{{ $typeKey }}">
                             <div class="tw-flex tw-gap-s">

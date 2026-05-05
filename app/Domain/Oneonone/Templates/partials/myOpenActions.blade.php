@@ -2,6 +2,10 @@
     'openActionItems' => [],
 ])
 
+@php
+    $csrfValue = isset($csrf_token) ? $csrf_token : null;
+@endphp
+
 <div class="maincontentinner" id="oneononeMyActionItems"
      hx-get="{{ BASE_URL }}/hx/oneonone/sessionItems/myOpen"
      hx-trigger="oneonone_item_changed from:body"
@@ -31,7 +35,7 @@
                         <button type="button"
                                 class="btn btn-xs"
                                 hx-patch="{{ BASE_URL }}/hx/oneonone/sessionItems/toggleItem"
-                                hx-vals='@json(["itemId" => $item["id"]])'
+                                hx-vals='@json(["itemId" => (int) ($item["id"] ?? 0), "sessionId" => (int) ($item["sessionId"] ?? 0), "csrf_token" => $csrfValue])'
                                 hx-swap="none"
                                 title="{{ __('buttons.mark_done') }}">
                             <span class="fa fa-check"></span>
