@@ -65,7 +65,13 @@ class Mailer
             $normalizedHost = preg_replace('/\.{2,}/', '.', (string) $normalizedHost);
             $normalizedHost = trim($normalizedHost, '.-');
 
-            if ($normalizedHost === '') {
+            if (
+                $normalizedHost === ''
+                || (
+                    $normalizedHost !== 'localhost'
+                    && filter_var($normalizedHost, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) === false
+                )
+            ) {
                 $normalizedHost = 'leantime';
             }
 
