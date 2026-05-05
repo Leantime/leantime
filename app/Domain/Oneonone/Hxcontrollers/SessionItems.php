@@ -30,6 +30,9 @@ class SessionItems extends HtmxController
 
     private OneononeRepo $repo;
 
+    /** @var array<string, mixed>|null */
+    private ?array $parsedNonPostBody = null;
+
     public function init(OneononeService $service, OneononeRepo $repo): void
     {
         $this->service = $service;
@@ -54,15 +57,22 @@ class SessionItems extends HtmxController
     /** Add a new item. Expects sessionId, type, content (and optionally assignedTo, dueDate). */
     public function addItem(): void
     {
-        $sessionId = (int) ($_POST['sessionId'] ?? 0);
+        $sessionId = (int) $this->getRequestValue('sessionId', 0);
         $values = [
-            'type' => $_POST['type'] ?? 'talking_point',
-            'content' => $_POST['content'] ?? '',
-            'assignedTo' => $_POST['assignedTo'] ?? null,
-            'dueDate' => $_POST['dueDate'] ?? null,
+            'type' => $this->getRequestValue('type', 'talking_point'),
+            'content' => $this->getRequestValue('content', ''),
+            'assignedTo' => $this->getRequestValue('assignedTo', null),
+            'dueDate' => $this->getRequestValue('dueDate', null),
         ];
 
-        $this->service->addItem($sessionId, $values);
+        $savedItemId = $this->service->addItem($sessionId, $values);
+
+        if ($savedItemId === false) {
+            $this->tpl->setNotification($this->language->__('notification.oneonone.session_save_failed'), 'error');
+            $this->renderList($sessionId, $values['type']);
+
+            return;
+        }
 
         $this->setHTMXEvent('oneonone_item_changed');
         $this->renderList($sessionId, $values['type']);
@@ -71,10 +81,20 @@ class SessionItems extends HtmxController
     /** Toggle an item's open/done state. */
     public function toggleItem(): void
     {
-        $itemId = (int) ($_REQUEST['itemId'] ?? 0);
+        $itemId = (int) $this->getRequestValue('itemId', 0);
+        $sessionId = (int) $this->getRequestValue('sessionId', 0);
 
-        $sessionId = $this->getSessionIdForItem($itemId);
-        $this->service->toggleItem($itemId);
+        if ($sessionId === 0) {
+            $sessionId = $this->getSessionIdForItem($itemId);
+        }
+
+        $toggled = $this->service->toggleItem($itemId);
+        if (! $toggled) {
+            $this->tpl->setNotification($this->language->__('notification.oneonone.session_save_failed'), 'error');
+            $this->renderList($sessionId);
+
+            return;
+        }
 
         $this->setHTMXEvent('oneonone_item_changed');
         $this->renderList($sessionId);
@@ -83,17 +103,27 @@ class SessionItems extends HtmxController
     /** Update an item's content (inline edit). */
     public function updateItem(): void
     {
-        $itemId = (int) ($_REQUEST['itemId'] ?? 0);
-        $sessionId = $this->getSessionIdForItem($itemId);
+        $itemId = (int) $this->getRequestValue('itemId', 0);
+        $sessionId = (int) $this->getRequestValue('sessionId', 0);
+        if ($sessionId === 0) {
+            $sessionId = $this->getSessionIdForItem($itemId);
+        }
 
         $values = [];
         foreach (['content', 'assignedTo', 'dueDate', 'status', 'type'] as $key) {
-            if (array_key_exists($key, $_REQUEST)) {
-                $values[$key] = $_REQUEST[$key];
+            $value = $this->getRequestValue($key, null);
+            if ($value !== null) {
+                $values[$key] = $value;
             }
         }
 
-        $this->service->updateItem($itemId, $values);
+        $updated = $this->service->updateItem($itemId, $values);
+        if (! $updated) {
+            $this->tpl->setNotification($this->language->__('notification.oneonone.session_save_failed'), 'error');
+            $this->renderList($sessionId);
+
+            return;
+        }
 
         $this->setHTMXEvent('oneonone_item_changed');
         $this->renderList($sessionId);
@@ -102,10 +132,19 @@ class SessionItems extends HtmxController
     /** Delete an item. */
     public function deleteItem(): void
     {
-        $itemId = (int) ($_REQUEST['itemId'] ?? 0);
-        $sessionId = $this->getSessionIdForItem($itemId);
+        $itemId = (int) $this->getRequestValue('itemId', 0);
+        $sessionId = (int) $this->getRequestValue('sessionId', 0);
+        if ($sessionId === 0) {
+            $sessionId = $this->getSessionIdForItem($itemId);
+        }
 
-        $this->service->deleteItem($itemId);
+        $deleted = $this->service->deleteItem($itemId);
+        if (! $deleted) {
+            $this->tpl->setNotification($this->language->__('notification.oneonone.delete_failed'), 'error');
+            $this->renderList($sessionId);
+
+            return;
+        }
 
         $this->setHTMXEvent('oneonone_item_changed');
         $this->renderList($sessionId);
@@ -129,5 +168,72 @@ class SessionItems extends HtmxController
         $this->tpl->assign('itemTypes', $this->repo->itemTypes);
         $this->tpl->assign('canEdit', $session ? $this->service->canEditSession($session) : false);
         $this->tpl->assign('focusType', $focusType);
+    }
+
+    /**
+     * Read a request value using this precedence: parsed params, request bag,
+     * query bag, parsed DELETE/PUT body, then provided default.
+     *
+     * @param  string  $key  Request key to read.
+     * @param  mixed  $default  Default value when no key is present.
+     * @return mixed
+     */
+    private function getRequestValue(string $key, mixed $default = null): mixed
+    {
+        $params = $this->incomingRequest->getRequestParams();
+        if (array_key_exists($key, $params)) {
+            return $params[$key];
+        }
+
+        $requestValues = $this->incomingRequest->request->all();
+        if (array_key_exists($key, $requestValues)) {
+            return $requestValues[$key];
+        }
+
+        $queryValues = $this->incomingRequest->query->all();
+        if (array_key_exists($key, $queryValues)) {
+            return $queryValues[$key];
+        }
+
+        $bodyValues = $this->getParsedNonPostBody();
+        if (array_key_exists($key, $bodyValues)) {
+            return $bodyValues[$key];
+        }
+
+        return $default;
+    }
+
+    /**
+     * Parse and cache request body variables for non-POST form requests.
+     *
+     * @return array<string, mixed>
+     */
+    private function getParsedNonPostBody(): array
+    {
+        if ($this->parsedNonPostBody !== null) {
+            return $this->parsedNonPostBody;
+        }
+
+        $this->parsedNonPostBody = [];
+        if (! in_array(strtoupper($this->incomingRequest->method()), ['DELETE', 'PUT'], true)) {
+            return $this->parsedNonPostBody;
+        }
+
+        $contentType = strtolower((string) $this->incomingRequest->headers->get('content-type', ''));
+        if ($contentType !== '' && ! str_contains($contentType, 'application/x-www-form-urlencoded')) {
+            return $this->parsedNonPostBody;
+        }
+
+        $rawContent = (string) $this->incomingRequest->getContent();
+        if ($rawContent === '') {
+            return $this->parsedNonPostBody;
+        }
+
+        parse_str($rawContent, $bodyVars);
+        if (is_array($bodyVars)) {
+            $this->parsedNonPostBody = $bodyVars;
+        }
+
+        return $this->parsedNonPostBody;
     }
 }

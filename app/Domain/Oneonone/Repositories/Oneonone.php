@@ -100,6 +100,32 @@ class Oneonone
     }
 
     /**
+     * Get all sessions for all managers, newest first.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getAllSessions(): array
+    {
+        $results = $this->db->table('zp_oneonone_sessions as s')
+            ->select(
+                's.*',
+                'm.firstname as managerFirstname',
+                'm.lastname as managerLastname',
+                'm.profileId as managerProfileId',
+                'e.firstname as employeeFirstname',
+                'e.lastname as employeeLastname',
+                'e.profileId as employeeProfileId',
+                'e.jobTitle as employeeJobTitle'
+            )
+            ->leftJoin('zp_user as m', 'm.id', '=', 's.managerId')
+            ->leftJoin('zp_user as e', 'e.id', '=', 's.employeeId')
+            ->orderByDesc('s.meetingDate')
+            ->get();
+
+        return array_map(fn ($r) => (array) $r, $results->toArray());
+    }
+
+    /**
      * Get the latest session per employee, for the manager team dashboard.
      *
      * @return array<int, array<string, mixed>> keyed by employee id

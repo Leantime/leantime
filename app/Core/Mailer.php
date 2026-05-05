@@ -60,7 +60,22 @@ class Mailer
             $this->emailDomain = $config->email;
         } else {
             $host = $_SERVER['HTTP_HOST'] ?? 'leantime';
-            $this->emailDomain = 'no-reply@'.$host;
+            $normalizedHost = parse_url('http://'.$host, PHP_URL_HOST) ?: $host;
+            $normalizedHost = preg_replace('/[^a-zA-Z0-9.-]/', '', (string) $normalizedHost);
+            $normalizedHost = preg_replace('/\.{2,}/', '.', (string) $normalizedHost);
+            $normalizedHost = trim($normalizedHost, '.-');
+
+            if (
+                $normalizedHost === ''
+                || (
+                    $normalizedHost !== 'localhost'
+                    && filter_var($normalizedHost, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) === false
+                )
+            ) {
+                $normalizedHost = 'leantime';
+            }
+
+            $this->emailDomain = 'no-reply@'.$normalizedHost;
         }
 
         $this->emailDomain = self::dispatch_filter('fromEmail', $this->emailDomain, $this);

@@ -5,6 +5,10 @@
 
 @php
     $isDone = ($item['status'] ?? 'open') === 'done';
+    $hxVals = ['itemId' => (int) ($item['id'] ?? 0), 'sessionId' => (int) ($item['sessionId'] ?? 0)];
+    if (isset($csrf_token)) {
+        $hxVals['csrf_token'] = $csrf_token;
+    }
 @endphp
 
 <li class="tw-mb-xs tw-p-s tw-rounded tw-flex tw-items-start tw-gap-s"
@@ -14,7 +18,7 @@
         <button type="button"
                 class="btn btn-xs tw-shrink-0"
                 hx-patch="{{ BASE_URL }}/hx/oneonone/sessionItems/toggleItem"
-                hx-vals='@json(["itemId" => $item["id"]])'
+                hx-vals='@json($hxVals)'
                 hx-target="#oneononeItemList"
                 hx-swap="innerHTML"
                 title="{{ __($isDone ? 'buttons.mark_open' : 'buttons.mark_done') }}">
@@ -54,7 +58,7 @@
         <button type="button"
                 class="btn btn-xs tw-shrink-0"
                 hx-delete="{{ BASE_URL }}/hx/oneonone/sessionItems/deleteItem"
-                hx-vals='@json(["itemId" => $item["id"]])'
+                hx-vals='@json($hxVals)'
                 hx-confirm="{{ __('text.oneonone.confirm_delete_item') }}"
                 hx-target="#oneononeItemList"
                 hx-swap="innerHTML"
