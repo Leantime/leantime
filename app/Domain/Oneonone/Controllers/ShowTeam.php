@@ -27,7 +27,7 @@ class ShowTeam extends Controller
 
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$manager, Roles::$admin, Roles::$owner], true);
+        Auth::authOrRedirect([Roles::$teamlead, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
         $teamDashboard = $this->service->getTeamDashboard();
         $recentSessions = array_slice($this->service->getTeamSessions(), 0, 20);

@@ -219,9 +219,9 @@ class Mailer
     /**
      * sendMail - send the mail with mail()
      *
-     * @throws Exception
+     * @return bool True only if every recipient was accepted for delivery (PHPMailer::send() succeeded).
      */
-    public function sendMail(array $to, $from): void
+    public function sendMail(array $to, $from): bool
     {
         $this->dispatchMailerEvent('beforeSendMail', []);
 
@@ -316,22 +316,35 @@ class Mailer
 
         $this->mailAgent->AltBody = $altBody;
 
-        if (is_array($to)) {
-            $to = array_unique($to);
+        $allOk = true;
 
-            foreach ($to as $recip) {
-                try {
-                    $this->mailAgent->addAddress($recip);
-                    $this->mailAgent->send();
-                } catch (Exception $e) {
-                    Log::error($this->mailAgent->ErrorInfo);
-                    Log::error($e);
+        if (! is_array($to) || $to === []) {
+            $this->dispatchMailerEvent('afterSendMail', $to);
+
+            return false;
+        }
+
+        $to = array_unique($to);
+
+        foreach ($to as $recip) {
+            try {
+                $this->mailAgent->addAddress($recip);
+                $sent = $this->mailAgent->send();
+                if (! $sent) {
+                    Log::error('Mailer send failed for '.$recip.': '.$this->mailAgent->ErrorInfo);
+                    $allOk = false;
                 }
-
-                $this->mailAgent->clearAllRecipients();
+            } catch (Exception $e) {
+                Log::error($this->mailAgent->ErrorInfo);
+                Log::error($e);
+                $allOk = false;
             }
+
+            $this->mailAgent->clearAllRecipients();
         }
 
         $this->dispatchMailerEvent('afterSendMail', $to);
+
+        return $allOk;
     }
 }

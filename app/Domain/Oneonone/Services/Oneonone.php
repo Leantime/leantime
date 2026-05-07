@@ -15,7 +15,7 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
  *
  * Permission model:
  *  - Employees can read & contribute to sessions where they are the employee.
- *  - Managers (role >= manager) can manage sessions where they are the manager.
+ *  - Team leads and managers can manage sessions where they are the manager.
  *  - Admins/Owners can manage all sessions.
  *
  * @api
@@ -91,7 +91,7 @@ class Oneonone
     public function getTeamSessions(): array
     {
         $userId = (int) (session('userdata.id') ?? 0);
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
+        if (! Auth::userIsAtLeast(Roles::$teamlead)) {
             return [];
         }
 
@@ -114,7 +114,7 @@ class Oneonone
      */
     public function getTeamDashboard(): array
     {
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
+        if (! Auth::userIsAtLeast(Roles::$teamlead)) {
             return [];
         }
 
@@ -199,7 +199,7 @@ class Oneonone
             return false;
         }
 
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
+        if (! Auth::userIsAtLeast(Roles::$teamlead)) {
             return false;
         }
 

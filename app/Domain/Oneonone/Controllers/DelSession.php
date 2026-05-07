@@ -23,7 +23,7 @@ class DelSession extends Controller
 
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$manager, Roles::$admin, Roles::$owner], true);
+        Auth::authOrRedirect([Roles::$teamlead, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
         $id = (int) ($params['id'] ?? 0);
         $session = $id > 0 ? $this->service->getSession($id) : null;
@@ -39,7 +39,7 @@ class DelSession extends Controller
 
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$manager, Roles::$admin, Roles::$owner], true);
+        Auth::authOrRedirect([Roles::$teamlead, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
         $id = (int) ($params['id'] ?? 0);
 

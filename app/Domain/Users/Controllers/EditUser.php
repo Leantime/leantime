@@ -85,12 +85,16 @@ class EditUser extends Controller
                         $values['pwReset'] = $inviteCode;
                     }
 
-                    $this->userService->sendUserInvite(
+                    $mailOk = $this->userService->sendUserInvite(
                         inviteCode: $values['pwReset'],
                         user: $values['user']
                     );
 
-                    $this->tpl->setNotification($this->language->__('notification.invitation_sent'), 'success', 'userinvitation_sent');
+                    if ($mailOk) {
+                        $this->tpl->setNotification($this->language->__('notification.invitation_sent'), 'success', 'userinvitation_sent');
+                    } else {
+                        $this->tpl->setNotification($this->language->__('notification.invite_resend_mail_failed'), 'error', 'userinvitation_sent');
+                    }
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.invite_too_soon'), 'error');
                 }

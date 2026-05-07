@@ -244,13 +244,14 @@ class Users
      * createUserInvite - generates a new invite token, creates the user in the db and sends the invitation email TODO: Should accept userModel
      *
      * @param  array  $values  basic user values
+     * @param  bool|null  $mailSent  When non-null, set to whether the invite email was accepted by the mailer.
      * @return bool|int returns new user id on success, false on failure
      *
      * @throws BindingResolutionException
      *
      * @api
      */
-    public function createUserInvite(array $values): bool|int
+    public function createUserInvite(array $values, ?bool &$mailSent = null): bool|int
     {
 
         // Generate strong password
@@ -267,12 +268,15 @@ class Users
             return false;
         }
 
-        $this->sendUserInvite($inviteCode, $values['user']);
+        $sent = $this->sendUserInvite($inviteCode, $values['user']);
+        if ($mailSent !== null) {
+            $mailSent = $sent;
+        }
 
         return $result;
     }
 
-    public function sendUserInvite(string $inviteCode, string $user)
+    public function sendUserInvite(string $inviteCode, string $user): bool
     {
 
         $mailer = app()->make(MailerCore::class);
@@ -292,7 +296,7 @@ class Users
 
         $to = [$user];
 
-        $mailer->sendMail($to, session('userdata.name') ?? 'Leantime');
+        return $mailer->sendMail($to, session('userdata.name') ?? 'Leantime');
     }
 
     /**

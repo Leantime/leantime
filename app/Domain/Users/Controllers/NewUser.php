@@ -80,18 +80,27 @@ class NewUser extends Controller
                 if ($values['user'] !== '') {
                     if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
                         if ($this->userRepo->usernameExist($values['user']) === false) {
-                            $userId = $this->userService->createUserInvite($values);
+                            $mailSent = true;
+                            $userId = $this->userService->createUserInvite($values, $mailSent);
 
-                            // Update Project Relationships
-                            if (isset($_POST['projects']) && count($_POST['projects']) > 0) {
-                                if ($_POST['projects'][0] !== '0') {
-                                    $this->projectsRepo->editUserProjectRelations($userId, $_POST['projects']);
+                            if ($userId === false) {
+                                $this->tpl->setNotification($this->language->__('notification.user_creation_failed'), 'error');
+                            } else {
+                                // Update Project Relationships
+                                if (isset($_POST['projects']) && count($_POST['projects']) > 0) {
+                                    if ($_POST['projects'][0] !== '0') {
+                                        $this->projectsRepo->editUserProjectRelations($userId, $_POST['projects']);
+                                    } else {
+                                        $this->projectsRepo->deleteAllProjectRelations($userId);
+                                    }
+                                }
+
+                                if ($mailSent) {
+                                    $this->tpl->setNotification('notification.user_invited_successfully', 'success', 'user_invited');
                                 } else {
-                                    $this->projectsRepo->deleteAllProjectRelations($userId);
+                                    $this->tpl->setNotification($this->language->__('notification.user_invite_mail_failed'), 'warning', 'user_invited');
                                 }
                             }
-
-                            $this->tpl->setNotification('notification.user_invited_successfully', 'success', 'user_invited');
                         } else {
                             $this->tpl->setNotification($this->language->__('notification.user_exists'), 'error');
                         }

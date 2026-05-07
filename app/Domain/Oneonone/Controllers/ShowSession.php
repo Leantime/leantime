@@ -27,7 +27,7 @@ class ShowSession extends Controller
 
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$commenter, Roles::$editor, Roles::$manager, Roles::$admin, Roles::$owner], true);
+        Auth::authOrRedirect([Roles::$commenter, Roles::$editor, Roles::$teamlead, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
         $id = (int) ($params['id'] ?? 0);
         if ($id === 0) {
@@ -53,7 +53,7 @@ class ShowSession extends Controller
 
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$commenter, Roles::$editor, Roles::$manager, Roles::$admin, Roles::$owner], true);
+        Auth::authOrRedirect([Roles::$commenter, Roles::$editor, Roles::$teamlead, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
         $id = (int) ($params['id'] ?? 0);
         if ($id === 0) {

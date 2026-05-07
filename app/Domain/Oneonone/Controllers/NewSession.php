@@ -27,7 +27,7 @@ class NewSession extends Controller
 
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$manager, Roles::$admin, Roles::$owner], true);
+        Auth::authOrRedirect([Roles::$teamlead, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
         $allUsers = $this->userService->getAll(true);
         // Drop the current user from the employee list to prevent self-1:1
@@ -46,7 +46,7 @@ class NewSession extends Controller
 
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$manager, Roles::$admin, Roles::$owner], true);
+        Auth::authOrRedirect([Roles::$teamlead, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
         $values = [
             'employeeId' => $_POST['employeeId'] ?? '',

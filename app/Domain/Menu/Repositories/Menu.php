@@ -104,10 +104,10 @@ class Menu
         ],
         'company' => [
             10 => [
-                'type' => 'submenu', 'id' => 'Management', 'title' => 'menu.sidemenu_management', 'visual' => 'open', 'role' => 'manager',
+                'type' => 'submenu', 'id' => 'Management', 'title' => 'menu.sidemenu_management', 'visual' => 'open', 'role' => 'teamlead',
                 'submenu' => [
                     5 => ['type' => 'item', 'module' => 'timesheets', 'role' => 'manager', 'title' => 'menu.all_timesheets', 'icon' => 'fa fa-fw fa-business-time', 'tooltip' => 'menu.all_timesheets_tooltip', 'href' => '/timesheets/showAll', 'active' => ['showAll']],
-                    7 => ['type' => 'item', 'module' => 'oneonone', 'role' => 'manager', 'title' => 'menu.team_oneonones', 'icon' => 'fa fa-fw fa-handshake', 'tooltip' => 'menu.team_oneonones_tooltip', 'href' => '/oneonone/showTeam', 'active' => ['showTeam', 'showSession', 'newSession']],
+                    7 => ['type' => 'item', 'module' => 'oneonone', 'role' => 'teamlead', 'title' => 'menu.team_oneonones', 'icon' => 'fa fa-fw fa-handshake', 'tooltip' => 'menu.team_oneonones_tooltip', 'href' => '/oneonone/showTeam', 'active' => ['showTeam', 'showSession', 'newSession']],
                     10 => ['type' => 'item', 'module' => 'projects', 'role' => 'manager', 'title' => 'menu.all_projects', 'icon' => 'fa fa-fw fa-briefcase', 'tooltip' => 'menu.all_projects_tooltip', 'href' => '/projects/showAll', 'active' => ['showAll']],
                     15 => ['type' => 'item', 'module' => 'clients', 'role' => 'admin', 'title' => 'menu.all_clients', 'icon' => 'fa fa-fw fa-address-book', 'tooltip' => 'menu.all_clients_tooltip', 'href' => '/clients/showAll', 'active' => ['showAll']],
                     20 => ['type' => 'item', 'module' => 'users', 'role' => 'admin', 'title' => 'menu.all_users', 'icon' => 'fa fa-fw fa-users', 'tooltip' => 'menu.all_users_tooltip', 'href' => '/users/showAll', 'active' => ['showAll']],

@@ -83,12 +83,18 @@ class InviteTeamStep implements OnboardingSteps
 
                 if (filter_var($params['email'.$i], FILTER_VALIDATE_EMAIL)) {
                     if ($this->userService->usernameExist($params['email'.$i]) === false) {
-                        $userId = $this->userService->createUserInvite($values);
-                        $this->projectService->editUserProjectRelations($userId, [session('currentProject')]);
+                        $mailSent = true;
+                        $userId = $this->userService->createUserInvite($values, $mailSent);
+                        if ($userId !== false) {
+                            $this->projectService->editUserProjectRelations($userId, [session('currentProject')]);
+                            if ($mailSent) {
+                                $this->tplService->setNotification(__('notification.invitation_sent'), 'success', 'user_invited');
+                            } else {
+                                $this->tplService->setNotification(__('notification.user_invite_mail_failed'), 'warning', 'user_invited');
+                            }
+                        }
                     }
                 }
-
-                $this->tplService->setNotification(__('notification.invitation_sent'), 'success', 'user_invited');
             }
         }
 

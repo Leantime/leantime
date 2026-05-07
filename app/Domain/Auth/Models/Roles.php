@@ -18,6 +18,9 @@ class Roles
 
     public static string $editor = 'editor';
 
+    /** Between editor and manager: can run team 1:1 flows like a line lead. */
+    public static string $teamlead = 'teamlead';
+
     public static string $manager = 'manager';
 
     public static string $admin = 'admin';
@@ -28,6 +31,7 @@ class Roles
         5 => 'readonly',      // prev: none
         10 => 'commenter',    // prev: client
         20 => 'editor',       // prev: developer
+        25 => 'teamlead',     // IntelliVerse: team lead (1:1 team view, between editor & manager)
         30 => 'manager',      // prev: clientmanager
         40 => 'admin',        // prev: manager
         50 => 'owner',        // prev: admin

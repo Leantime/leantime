@@ -23,7 +23,7 @@ class ShowMy extends Controller
 
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$commenter, Roles::$editor, Roles::$manager, Roles::$admin, Roles::$owner], true);
+        Auth::authOrRedirect([Roles::$commenter, Roles::$editor, Roles::$teamlead, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
         $sessions = $this->service->getMySessions();
         $openActionItems = $this->service->getMyOpenActionItems();

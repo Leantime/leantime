@@ -17,7 +17,9 @@
     <h1>
         {{ $session['title'] ?: sprintf(__('headlines.oneonone.session_with'), $employeeName) }}
         <small style="color:var(--grey); font-size:14px;">
-            &mdash; {{ dtHelper()->parseDbDateTime($session['meetingDate'])->setToUserTimezone()->format(__('language.dateformat')) }}
+            @if (!empty($session['meetingDate']))
+                &mdash; {{ dtHelper()->parseDbDateTime($session['meetingDate'])->setToUserTimezone()->format(__('language.dateformat')) }}
+            @endif
         </small>
     </h1>
 </x-global::pageheader>
@@ -48,8 +50,9 @@
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <label class="control-label" for="meetingDate">{{ __('label.oneonone.meeting_date') }}</label>
+                    {{-- datetime-local has no timezone — show DB UTC converted to user TZ so it round-trips with scheduleSession()'s parseUserDateTime which assumes user TZ. --}}
                     <input type="datetime-local" id="meetingDate" name="meetingDate" class="form-control"
-                        value="{{ dtHelper()->parseDbDateTime($session['meetingDate'])->format('Y-m-d\\TH:i') }}"
+                        value="{{ !empty($session['meetingDate']) ? dtHelper()->parseDbDateTime($session['meetingDate'])->setToUserTimezone()->format('Y-m-d\\TH:i') : '' }}"
                         @if(!$canEdit) disabled @endif>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-12">

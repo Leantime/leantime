@@ -40,7 +40,7 @@
                             <div class="tw-flex tw-items-center tw-gap-s tw-mb-s">
                                 <div class="tw-w-12 tw-h-12 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-lg tw-font-bold"
                                      style="background:var(--accent1); color:#fff;">
-                                    {{ strtoupper(substr($member['firstname'], 0, 1) . substr($member['lastname'], 0, 1)) }}
+                                    {{ strtoupper(substr((string) ($member['firstname'] ?? ''), 0, 1) . substr((string) ($member['lastname'] ?? ''), 0, 1)) }}
                                 </div>
                                 <div class="tw-flex-1 tw-min-w-0">
                                     <strong class="tw-truncate tw-block">{{ $member['firstname'] }} {{ $member['lastname'] }}</strong>
@@ -65,7 +65,11 @@
                                 <div class="tw-mb-s tw-text-sm">
                                     <small style="color:var(--grey);">{{ __('text.oneonone.last_session') }}:</small><br>
                                     <a href="{{ BASE_URL }}/oneonone/showSession/{{ $member['lastSession']['id'] }}">
-                                        {{ dtHelper()->parseDbDateTime($member['lastSession']['meetingDate'])->setToUserTimezone()->format(__('language.dateformat')) }}
+                                        @if (!empty($member['lastSession']['meetingDate']))
+                                            {{ dtHelper()->parseDbDateTime($member['lastSession']['meetingDate'])->setToUserTimezone()->format(__('language.dateformat')) }}
+                                        @else
+                                            {{ __('text.oneonone.no_date') }}
+                                        @endif
                                     </a>
                                 </div>
                             @endif
@@ -75,7 +79,11 @@
                                     <span class="fa fa-calendar-check"></span>
                                     {{ __('text.oneonone.next_session') }}:
                                     <a href="{{ BASE_URL }}/oneonone/showSession/{{ $member['nextSession']['id'] }}">
-                                        {{ dtHelper()->parseDbDateTime($member['nextSession']['meetingDate'])->setToUserTimezone()->format(__('language.dateformat')) }}
+                                        @if (!empty($member['nextSession']['meetingDate']))
+                                            {{ dtHelper()->parseDbDateTime($member['nextSession']['meetingDate'])->setToUserTimezone()->format(__('language.dateformat')) }}
+                                        @else
+                                            {{ __('text.oneonone.no_date') }}
+                                        @endif
                                     </a>
                                 </div>
                             @endif
@@ -120,12 +128,17 @@
                             <tr>
                                 <td>{{ $session['employeeFirstname'] ?? '' }} {{ $session['employeeLastname'] ?? '' }}</td>
                                 <td>
-                                    {{ dtHelper()->parseDbDateTime($session['meetingDate'])->setToUserTimezone()->format(__('language.dateformat')) }}
+                                    @if (!empty($session['meetingDate']))
+                                        {{ dtHelper()->parseDbDateTime($session['meetingDate'])->setToUserTimezone()->format(__('language.dateformat')) }}
+                                    @else
+                                        <span style="color:var(--grey);">—</span>
+                                    @endif
                                 </td>
                                 <td>{{ $session['title'] ?? '—' }}</td>
                                 <td>
-                                    <span class="label label-{{ $session['status'] === 'completed' ? 'success' : ($session['status'] === 'cancelled' ? 'default' : 'info') }}">
-                                        {{ __('oneonone.status.' . $session['status']) }}
+                                    @php $status = $session['status'] ?? 'scheduled'; @endphp
+                                    <span class="label label-{{ $status === 'completed' ? 'success' : ($status === 'cancelled' ? 'default' : 'info') }}">
+                                        {{ __('oneonone.status.' . $status) }}
                                     </span>
                                 </td>
                                 <td class="tw-text-right">
