@@ -138,3 +138,4 @@ tests/Httprequests/http-client.private.env.json
 .claude/docs/git-workflow.md
 config.bat
 node_modules
+.docker/.env
