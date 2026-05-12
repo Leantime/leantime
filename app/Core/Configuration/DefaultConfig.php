@@ -76,6 +76,12 @@ class DefaultConfig
     public bool $enableMenuType = false;
 
     /**
+     * @var bool Enable simplified workflow mode — hides advanced planning tools (canvas, strategy, retros)
+     *           for everyday users. Set via LEAN_SIMPLE_WORKFLOW=true in .env
+     */
+    public bool $simpleWorkflow = false;
+
+    /**
      * @var bool|int Debug flag
      */
     #[LaravelConfig('app.debug')]

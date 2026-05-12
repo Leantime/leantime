@@ -1168,11 +1168,11 @@ class Tickets
                             'labelName' => 'subtitles.due_later',
                             'groupValue' => '',
                             'tickets' => [$row],
-                            'order' => 3,
+                            'order' => 4,
                         ];
                     }
                 } else {
-                    $today = dtHelper()->userNow()->setToDbTimezone();
+                    $today = dtHelper()->userNow()->startOfDay()->setToDbTimezone();
 
                     try {
                         $dbDueDate = dtHelper()->parseDbDateTime($row['dateToFinish']);
@@ -1182,8 +1182,20 @@ class Tickets
                     }
 
                     $nextFriday = dtHelper()->userNow()->endOfWeek(CarbonInterface::FRIDAY)->setToDbTimezone();
+                    $endOfToday = dtHelper()->userNow()->endOfDay()->setToDbTimezone();
 
-                    if ($dbDueDate <= $nextFriday && $dbDueDate >= $today) {
+                    if ($dbDueDate >= $today && $dbDueDate <= $endOfToday) {
+                        if (isset($tickets['dueToday']['tickets'])) {
+                            $tickets['dueToday']['tickets'][] = $row;
+                        } else {
+                            $tickets['dueToday'] = [
+                                'labelName' => 'subtitles.due_today',
+                                'tickets' => [$row],
+                                'groupValue' => $dbDueDate->formatDateTimeForDb(),
+                                'order' => 2,
+                            ];
+                        }
+                    } elseif ($dbDueDate <= $nextFriday && $dbDueDate > $endOfToday) {
                         if (isset($tickets['thisWeek']['tickets'])) {
                             $tickets['thisWeek']['tickets'][] = $row;
                         } else {
@@ -1191,7 +1203,7 @@ class Tickets
                                 'labelName' => 'subtitles.due_this_week',
                                 'tickets' => [$row],
                                 'groupValue' => $dbDueDate->formatDateTimeForDb(),
-                                'order' => 2,
+                                'order' => 3,
                             ];
                         }
                     } elseif ($dbDueDate <= $today) {
@@ -1213,7 +1225,7 @@ class Tickets
                                 'labelName' => 'subtitles.due_later',
                                 'tickets' => [$row],
                                 'groupValue' => '',
-                                'order' => 3,
+                                'order' => 4,
                             ];
                         }
                     }
@@ -2974,13 +2986,13 @@ class Tickets
         }
 
         if ($groupBy === 'time') {
-            $tickets = $this->getOpenUserTicketsThisWeekAndLater(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
+            $tickets = $this->getOpenUserTicketsThisWeekAndLater(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: false);
         } elseif ($groupBy === 'project') {
-            $tickets = $this->getOpenUserTicketsByProject(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
+            $tickets = $this->getOpenUserTicketsByProject(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: false);
         } elseif ($groupBy === 'priority') {
-            $tickets = $this->getOpenUserTicketsByPriority(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
+            $tickets = $this->getOpenUserTicketsByPriority(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: false);
         } elseif ($groupBy === 'sprint') {
-            $tickets = $this->getOpenUserTicketsBySprint(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
+            $tickets = $this->getOpenUserTicketsBySprint(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: false);
         }
 
         $onTheClock = $this->timesheetService->isClocked(session('userdata.id'));
@@ -3084,30 +3096,7 @@ class Tickets
             $sortingArray = json_decode($userSorting, true);
         }
 
-        // Get all milestones that have tasks assigned to the user
-        $allMilestones = [];
-        $milestoneIds = [];
-        $milestoneCache = [];
-
-        // First collect all milestone IDs from the user's tasks
-        foreach ($tickets as $groupKey => &$ticketGroup) {
-            if (isset($ticketGroup['tickets']) && is_array($ticketGroup['tickets'])) {
-                foreach ($ticketGroup['tickets'] as $ticket) {
-                    if (! empty($ticket['milestoneid']) &&
-                        (is_string($ticketGroup['groupValue']) || is_int($ticketGroup['groupValue'])) &&
-                        ! in_array($ticket['milestoneid'], $milestoneIds[$ticketGroup['groupValue']] ?? [])) {
-
-                        $milestoneId = $ticket['milestoneid'];
-
-                        if (! isset($milestoneCache[$milestoneId])) {
-                            $milestoneCache[$milestoneId] = (array) $this->getTicket($milestoneId);
-                        }
-                        $ticketGroup['tickets'][] = $milestoneCache[$milestoneId];
-                        $milestoneIds[$ticketGroup['groupValue']][] = $milestoneId;
-                    }
-                }
-            }
-        }
+        // Milestones are intentionally excluded from My ToDos — only tasks are shown here.
 
         // Fetch the milestone data for all collected milestone IDs
         //            if (! empty($milestoneIds)) {
@@ -3238,6 +3227,8 @@ class Tickets
 
                 if ($dbDueDate->lt($today->startOfDay())) {
                     return 'overdue';
+                } elseif ($dbDueDate->lte($today->endOfDay())) {
+                    return 'dueToday';
                 } elseif ($dbDueDate->lte($today->endOfWeek())) {
                     return 'thisWeek';
                 } else {
@@ -3267,6 +3258,7 @@ class Tickets
             case 'time':
                 switch ($groupKey) {
                     case 'overdue': return 'subtitles.overdue';
+                    case 'dueToday': return 'subtitles.due_today';
                     case 'thisWeek': return 'subtitles.due_this_week';
                     case 'later': return 'subtitles.due_later';
                     default: return 'subtitles.due_later';
@@ -3303,8 +3295,9 @@ class Tickets
             case 'time':
                 switch ($groupKey) {
                     case 'overdue': return 1;
-                    case 'thisWeek': return 2;
-                    case 'later': return 3;
+                    case 'dueToday': return 2;
+                    case 'thisWeek': return 3;
+                    case 'later': return 4;
                     default: return 999;
                 }
 

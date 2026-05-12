@@ -81,7 +81,13 @@
 
                 <div class="tw-flex-1 ticket-title ticket-title-wrapper">
                     <div class="title-text">
-                        <small style="display:inline-block; ">{{ $ticket['projectName'] }}</small> <br/>
+                        <small style="display:inline-block; ">{{ $ticket['projectName'] }}</small>
+                        @if(!empty($ticket['userFirstname']) && $ticket['userId'] != session('userdata.id'))
+                            <small class="text-muted" style="display:inline-block; margin-left:8px;">
+                                <i class="fa fa-user-tag"></i> {{ $ticket['userFirstname'] }} {{ $ticket['userLastname'] }}
+                            </small>
+                        @endif
+                        <br/>
                         <strong><a href="#/tickets/showTicket/{{ $ticket['id'] }}" preload="mouseover"
                                    class="ticket-headline-{{ $ticket['id'] }}">{{ $ticket['headline'] }}</a></strong>
                         &nbsp;<a href="javascript:void(0);" class="tw-hidden edit-button"

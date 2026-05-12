@@ -514,13 +514,28 @@ class Auth implements Authenticatable
         // Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
         $roleToCheck = self::getRoleToCheck($forceGlobalRoleCheck);
 
-        if (is_array($role) && in_array($roleToCheck, $role)) {
-            return true;
-        } elseif ($role == $roleToCheck) {
-            return true;
+        if ($roleToCheck === false) {
+            return false;
         }
 
-        return false;
+        $allRoles = Roles::getRoles();
+        $currentUserKey = array_search($roleToCheck, $allRoles);
+
+        if (is_array($role)) {
+            // Find the lowest role key in the allowed list and check if user meets or exceeds it.
+            // This ensures intermediate roles like teamlead (25) pass checks that include editor (20).
+            $minAllowedKey = PHP_INT_MAX;
+            foreach ($role as $r) {
+                $key = array_search($r, $allRoles);
+                if ($key !== false && $key < $minAllowedKey) {
+                    $minAllowedKey = $key;
+                }
+            }
+
+            return $currentUserKey !== false && $minAllowedKey !== PHP_INT_MAX && $currentUserKey >= $minAllowedKey;
+        }
+
+        return $role == $roleToCheck;
     }
 
     public static function getRole(): void {}

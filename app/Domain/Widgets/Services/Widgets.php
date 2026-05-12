@@ -155,7 +155,7 @@ class Widgets
      */
     public function getAll(): array
     {
-        return DispatchesEvents::dispatch_filter('availableWidgets', $this->availableWidgets);
+        return self::dispatch_filter('availableWidgets', $this->availableWidgets);
     }
 
     /**

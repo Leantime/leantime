@@ -58,7 +58,7 @@ class FirstTaskStep implements OnboardingSteps
     public function handle($params): bool
     {
 
-        if (isset($params['headline'])) {
+        if (!empty($params['headline'])) {
             $this->ticketService->quickAddTicket(['headline' => $params['headline']], session('currentProject'));
         }
 
