@@ -9,11 +9,11 @@ RUNNING_DOCKER_VOLUMES:= $(shell docker volume ls -q)
 
 install-deps-dev:
 	npm install
-	composer install
+	composer install --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix
 
 install-deps:
 	npm install
-	composer install --no-dev --optimize-autoloader
+	composer install --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix --no-dev --optimize-autoloader
 
 build: install-deps clear-cache
 	npx mix --production

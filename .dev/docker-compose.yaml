@@ -49,7 +49,7 @@ services:
   leantime-db:
     image: mysql:8.4
     ports:
-      - "3306"
+      - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: 'leantime'
       MYSQL_USER: 'leantime'
