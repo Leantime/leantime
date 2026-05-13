@@ -58,7 +58,7 @@ $roles = $tpl->get('roles');
                         </td>
                         <td><a href="<?= BASE_URL ?>/users/editUser/<?= $row['id']?>"><?= $tpl->escape($row['username']); ?></a></td>
                         <td><?= $tpl->escape($row['clientName']); ?></td>
-                        <td><?= $tpl->__('label.roles.'.$roles[$row['role']]); ?></td>
+                        <td><?= $tpl->__('label.roles.'.($roles[$row['role']] ?? $row['role'])); ?></td>
                         <td><?php if (strtolower($row['status']) == 'a') {
                             echo $tpl->__('label.active');
                         } elseif (strtolower($row['status']) == 'i') {

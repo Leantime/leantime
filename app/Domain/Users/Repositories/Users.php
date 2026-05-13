@@ -283,6 +283,7 @@ class Users
             'jobTitle' => $values['jobTitle'] ?? '',
             'jobLevel' => $values['jobLevel'] ?? '',
             'department' => $values['department'] ?? '',
+            'managerId' => ! empty($values['managerId']) ? (int) $values['managerId'] : null,
             'modified' => now(),
         ];
 
@@ -376,10 +377,41 @@ class Users
             'jobTitle' => $values['jobTitle'] ?? '',
             'jobLevel' => $values['jobLevel'] ?? '',
             'department' => $values['department'] ?? '',
+            'managerId' => ! empty($values['managerId']) ? (int) $values['managerId'] : null,
             'modified' => now(),
         ]);
 
         return $userId !== false ? (string) $userId : false;
+    }
+
+    /**
+     * Get users eligible to be set as a manager — anyone at teamlead level or above.
+     * Used by the user-edit dropdown so admins can assign direct reports.
+     *
+     * @return array<int, array{id: int, firstname: string, lastname: string, role: string}>
+     */
+    public function getEligibleManagers(): array
+    {
+        $eligibleRoleNames = [
+            \Leantime\Domain\Auth\Models\Roles::$teamlead,
+            \Leantime\Domain\Auth\Models\Roles::$manager,
+            \Leantime\Domain\Auth\Models\Roles::$admin,
+            \Leantime\Domain\Auth\Models\Roles::$owner,
+        ];
+
+        $eligibleRoleKeys = array_keys(array_filter(
+            \Leantime\Domain\Auth\Models\Roles::getRoles(),
+            static fn (string $name): bool => in_array($name, $eligibleRoleNames, true)
+        ));
+
+        $results = $this->connection->table('zp_user')
+            ->select('id', 'firstname', 'lastname', 'role')
+            ->whereIn('role', $eligibleRoleKeys)
+            ->whereIn('status', ['A', 'I'])
+            ->orderBy('firstname')
+            ->get();
+
+        return array_map(fn ($r) => (array) $r, $results->toArray());
     }
 
     /**

@@ -13,7 +13,7 @@ class Providers extends Controller
      */
     public function init()
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
     }
 
     /**

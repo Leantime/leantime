@@ -15,7 +15,7 @@ class DelTicket extends Controller
 
     public function init(TicketService $ticketService): void
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead]);
 
         $this->ticketService = $ticketService;
     }
@@ -27,7 +27,7 @@ class DelTicket extends Controller
     {
 
         // Only admins
-        if (Auth::userIsAtLeast(Roles::$editor)) {
+        if (Auth::userIsAtLeast(Roles::$teamlead)) {
 
             if (isset($_GET['id'])) {
                 $id = (int) ($_GET['id']);
@@ -66,7 +66,7 @@ class DelTicket extends Controller
         }
 
         // Only admins
-        if (Auth::userIsAtLeast(Roles::$editor)) {
+        if (Auth::userIsAtLeast(Roles::$teamlead)) {
             if (isset($params['del'])) {
                 $result = $this->ticketService->delete($id);
 

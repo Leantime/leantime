@@ -154,7 +154,7 @@ class Show extends Controller
     public function post($params): Response
     {
 
-        if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {
+        if (AuthService::userHasRole([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor, Roles::$commenter])) {
             if (isset($params['quickadd'])) {
                 $result = $this->ticketService->quickAddTicket($params);
 

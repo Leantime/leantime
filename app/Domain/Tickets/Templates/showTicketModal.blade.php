@@ -7,6 +7,16 @@ $ticket = $tpl->get('ticket');
 $projectData = $tpl->get('projectData');
 $todoTypeIcons = $tpl->get('ticketTypeIcons');
 
+// Hierarchical edit/delete permissions
+$currentUserId  = (int) session('userdata.id');
+$isCreator      = isset($ticket->userId) && (int) $ticket->userId === $currentUserId;
+$isTeamLeadPlus = $login::userIsAtLeast($roles::$teamlead);
+$isEditorPlus   = $login::userIsAtLeast($roles::$editor);
+// Full edit: team lead+ always; developers only for tasks they created
+$canFullEdit    = $isTeamLeadPlus || $isCreator;
+// Status-only: editor assigned to a task they didn't create can still change status
+$canStatusOnly  = $isEditorPlus && ! $canFullEdit;
+
 ?>
 <script type="text/javascript">
     window.onload = function() {
@@ -27,7 +37,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
 
     <br />
 
-    <?php if ($login::userIsAtLeast($roles::$editor)) {
+    <?php if ($isEditorPlus) {
         $onTheClock = $tpl->get('onTheClock');
         ?>
         <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px; padding-right:10px;">
@@ -38,7 +48,9 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
             <ul class="dropdown-menu">
                 <li class="nav-header"><?php echo $tpl->__('subtitles.todo'); ?></li>
                 <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
+                <?php if ($isTeamLeadPlus) { ?>
                 <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
+                <?php } ?>
                 <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
                 <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
                     hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
@@ -85,7 +97,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         <ul>
             <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
             <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__('tabs.files') ?> (<?php echo $tpl->get('numFiles'); ?>)</a></li>
-            <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
+            <?php if ($isEditorPlus) {  ?>
                 <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
             <?php } ?>
             <?php $tpl->dispatchTplEvent('ticketTabs', ['ticket' => $ticket]); ?>
@@ -101,7 +113,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
             <?php $tpl->displaySubmodule('files-showAll') ?>
         </div>
 
-        <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
+        <?php if ($isEditorPlus) {  ?>
             <div id="timesheet">
                 <?php $tpl->displaySubmodule('tickets-timesheet') ?>
             </div>
@@ -122,7 +134,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
 
         leantime.ticketsController.initTicketTabs();
 
-        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+        <?php if ($canFullEdit) { ?>
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
 
@@ -135,6 +147,10 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
             leantime.ticketsController.initStatusDropdown();
 
             jQuery(".ticketTabs select").chosen();
+
+        <?php } elseif ($canStatusOnly) { ?>
+            leantime.authController.makeInputReadonly(".nyroModalCont");
+            leantime.ticketsController.initStatusDropdown();
 
         <?php } else { ?>
             leantime.authController.makeInputReadonly(".nyroModalCont");

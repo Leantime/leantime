@@ -725,6 +725,83 @@ class Tickets
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
+    /**
+     * Get tickets assigned to (or authored by) a user that were updated recently.
+     * Used by the "Recently Updated" dashboard widget.
+     *
+     * @param  int  $userId    The user we're scoping to.
+     * @param  int  $limit     Max number of tickets to return.
+     * @param  int  $sinceDays Only return tickets edited within the last N days.
+     * @return array<int, array<string, mixed>>
+     */
+    public function getRecentlyUpdatedTicketsForUser(int $userId, int $limit = 10, int $sinceDays = 14): array
+    {
+        $since = \Carbon\CarbonImmutable::now()->subDays($sinceDays)->format('Y-m-d H:i:s');
+
+        $results = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.status',
+                'zp_tickets.priority',
+                'zp_tickets.dateToFinish',
+                'zp_tickets.editFrom',
+                'zp_tickets.projectId',
+                'zp_tickets.userId',
+                'zp_tickets.editorId',
+                'zp_projects.name as projectName',
+            ])
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->where(function ($q) use ($userId) {
+                $q->where('zp_tickets.editorId', (string) $userId)
+                    ->orWhere('zp_tickets.userId', $userId);
+            })
+            ->where('zp_tickets.editFrom', '>=', $since)
+            ->orderByDesc('zp_tickets.editFrom')
+            ->limit($limit)
+            ->get();
+
+        return array_map(fn ($item) => (array) $item, $results->toArray());
+    }
+
+    /**
+     * Get "waiting on me" tickets: assigned to the user, in WAITING status,
+     * OR stale (open for > $staleDays without an update).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getWaitingTicketsForUser(int $userId, int $limit = 10, int $staleDays = 7): array
+    {
+        $staleCutoff = \Carbon\CarbonImmutable::now()->subDays($staleDays)->format('Y-m-d H:i:s');
+
+        $results = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.status',
+                'zp_tickets.priority',
+                'zp_tickets.dateToFinish',
+                'zp_tickets.editFrom',
+                'zp_tickets.projectId',
+                'zp_projects.name as projectName',
+            ])
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->where('zp_tickets.editorId', (string) $userId)
+            ->where(function ($q) use ($staleCutoff) {
+                // Status = waiting/approval OR stale (no update for N+ days AND not done/closed/archived)
+                $q->where('zp_tickets.status', '=', 4) // 4 = "Waiting for approval" in default statuses
+                    ->orWhere(function ($q2) use ($staleCutoff) {
+                        $q2->where('zp_tickets.editFrom', '<=', $staleCutoff)
+                            ->whereNotIn('zp_tickets.status', [-1, 0, 5]); // exclude archived/done
+                    });
+            })
+            ->orderBy('zp_tickets.editFrom')
+            ->limit($limit)
+            ->get();
+
+        return array_map(fn ($item) => (array) $item, $results->toArray());
+    }
+
     public function getScheduledTasks(CarbonImmutable $dateFrom, CarbonImmutable $dateTo, ?int $userId = null)
     {
         $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;

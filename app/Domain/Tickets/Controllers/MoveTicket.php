@@ -21,7 +21,7 @@ class MoveTicket extends Controller
         TicketService $ticketService,
         ProjectService $projectService
     ): void {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
 
         $this->ticketService = $ticketService;
         $this->projectService = $projectService;

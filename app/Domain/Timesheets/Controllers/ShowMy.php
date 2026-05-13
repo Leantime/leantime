@@ -52,7 +52,7 @@ class ShowMy extends Controller
      */
     public function run(): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor], true);
 
         // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
         // The front end javascript is hardcode to start the week on mondays, so we use that here too.

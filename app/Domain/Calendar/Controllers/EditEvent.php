@@ -23,7 +23,7 @@ class EditEvent extends Controller
      */
     public function init(CalendarService $calendarService): void
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
         $this->calendarService = $calendarService;
     }
 

@@ -120,7 +120,7 @@ class ApiKey extends Controller
 
             // Assign vars
             $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
-            $this->tpl->assign('roles', Roles::getRoles());
+            $this->tpl->assign('roles', Roles::getAssignableRoles());
             $this->tpl->assign('clients', $this->clientsRepo->getAll());
 
             // Sensitive Form, generate form tokens

@@ -4,6 +4,8 @@ namespace Leantime\Domain\Tickets\Services;
 
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use DateTime;
 use Illuminate\Container\EntryNotFoundException;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -500,6 +502,24 @@ class Tickets
      *
      * @api
      */
+    /**
+     * @api
+     * @return array<int, array<string, mixed>>
+     */
+    public function getRecentlyUpdatedTicketsForUser(int $userId, int $limit = 10, int $sinceDays = 14): array
+    {
+        return $this->ticketRepository->getRecentlyUpdatedTicketsForUser($userId, $limit, $sinceDays);
+    }
+
+    /**
+     * @api
+     * @return array<int, array<string, mixed>>
+     */
+    public function getWaitingTicketsForUser(int $userId, int $limit = 10, int $staleDays = 7): array
+    {
+        return $this->ticketRepository->getWaitingTicketsForUser($userId, $limit, $staleDays);
+    }
+
     public function getAllOpenUserTickets(?int $userId = null, ?int $project = null): array
     {
 
@@ -850,24 +870,29 @@ class Tickets
                 'id' => '0',
                 'class' => '',
             ],
+            'due-today' => [
+                'label' => 'Due Today',
+                'id' => '1',
+                'class' => '',
+            ],
             'due-this-week' => [
                 'label' => 'Due This Week',
-                'id' => '1',
+                'id' => '2',
                 'class' => '',
             ],
             'due-next-week' => [
                 'label' => 'Due Next Week',
-                'id' => '2',
+                'id' => '3',
                 'class' => '',
             ],
             'due-later' => [
                 'label' => 'Due Later',
-                'id' => '3',
+                'id' => '4',
                 'class' => '',
             ],
             'no-due-date' => [
                 'label' => 'No Due Date',
-                'id' => '4',
+                'id' => '5',
                 'class' => '',
             ],
         ];
@@ -945,8 +970,11 @@ class Tickets
         if ($diffDays < 0) {
             return 'overdue';
         }
+        if ($diffDays === 0) {
+            return 'due-today';
+        }
         if ($diffDays <= 6) {
-            return 'due-this-week'; // 0-6 days (includes today)
+            return 'due-this-week'; // 1-6 days
         }
         if ($diffDays <= 13) {
             return 'due-next-week'; // 7-13 days
@@ -2555,6 +2583,9 @@ class Tickets
 
     public function canDelete($id)
     {
+        if (! Auth::userIsAtLeast(Roles::$teamlead)) {
+            throw new \Exception('notifications.error_no_permissions');
+        }
 
         $ticket = $this->getTicket($id);
 

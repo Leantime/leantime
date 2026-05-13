@@ -63,16 +63,13 @@
             @endif
 
             @if (count($allProjects) == 0)
-                <br /><br />
-                <div class='center'>
-                    <div style='width:70%; color:var(--main-titles-color)' class='svgContainer'>
-                        {{ __('notifications.not_assigned_to_any_project') }}
-                        @if($login::userIsAtLeast($roles::$manager))
-                            <br /><br />
-                            <a href='{{ BASE_URL }}/projects/newProject' class='btn btn-primary'>{{ __('link.new_project') }}</a>
-                        @endif
-                    </div>
-                </div>
+                <x-global::emptyState
+                    icon="fa-suitcase"
+                    headline="{{ __('text.no_projects_yet') }}"
+                    description="{{ __('text.no_projects_hint') }}"
+                    actionLabel="{{ $login::userIsAtLeast($roles::$manager) ? __('link.new_project') : '' }}"
+                    actionHref="{{ BASE_URL }}/projects/newProject"
+                />
             @endif
 
             <x-global::accordion id="myProjectsHub-favorites" class="noBackground">

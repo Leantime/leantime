@@ -502,7 +502,7 @@ class MyToDos extends HtmxController
     {
         $params = $_POST;
 
-        if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor])) {
+        if (AuthService::userHasRole([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor])) {
             if (isset($params['quickadd']) == true) {
                 // Set appropriate due date based on group context
                 if (isset($params['dateToFinish']) && $params['dateToFinish'] == '') {

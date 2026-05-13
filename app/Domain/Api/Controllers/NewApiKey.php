@@ -103,7 +103,7 @@ class NewApiKey extends Controller
             $this->tpl->assign('values', $values);
 
             $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
-            $this->tpl->assign('roles', Roles::getRoles());
+            $this->tpl->assign('roles', Roles::getAssignableRoles());
 
             $this->tpl->assign('relations', $projectRelation);
 

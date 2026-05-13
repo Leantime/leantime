@@ -26,7 +26,7 @@ class DelSprint extends Controller
     public function run()
     {
 
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
 
         // Only admins
         if (Auth::userIsAtLeast(Roles::$editor)) {

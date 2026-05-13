@@ -41,7 +41,7 @@ class Import extends Controller
 
         $this->tpl->assign('allUsers', $this->userRepo->getAll());
         $this->tpl->assign('admin', true);
-        $this->tpl->assign('roles', Roles::getRoles());
+        $this->tpl->assign('roles', Roles::getAssignableRoles());
 
         if (session()->exist('tmp.ldapUsers') && count(session('tmp.ldapUsers')) > 0) {
             $this->tpl->assign('allLdapUsers', session('tmp.ldapUsers'));

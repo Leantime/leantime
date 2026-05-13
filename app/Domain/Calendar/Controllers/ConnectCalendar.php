@@ -42,7 +42,7 @@ class ConnectCalendar extends Controller
      */
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
 
         $providers = self::dispatchFilter('connectOptions.providers', []);
 
@@ -56,7 +56,7 @@ class ConnectCalendar extends Controller
      */
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
 
         if (isset($params['name']) || isset($params['url'])) {
             $values = [

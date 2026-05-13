@@ -46,7 +46,7 @@ class EditCompanySettings extends Controller
      */
     public function get($params)
     {
-        if (! Auth::userIsAtLeast(Roles::$owner)) {
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
 
@@ -96,6 +96,11 @@ class EditCompanySettings extends Controller
         if ($messageFrequency !== false) {
             $companySettings['messageFrequency'] = $messageFrequency;
         }
+
+        $simpleWorkflow = $this->settingsRepo->getSetting('companysettings.simpleWorkflow');
+        $companySettings['simpleWorkflow'] = $simpleWorkflow !== false
+            ? in_array($simpleWorkflow, ['1', 'true', 1, true], true)
+            : false;
 
         // Load default notification event types
         $defaultNotificationTypes = $this->settingsRepo->getSetting('companysettings.defaultNotificationEventTypes');
@@ -189,6 +194,8 @@ class EditCompanySettings extends Controller
                 // Set remote telemetry to false:
                 app()->make(ReportService::class)->optOutTelemetry();
             }
+
+            $this->settingsRepo->saveSetting('companysettings.simpleWorkflow', isset($_POST['simpleWorkflow']) ? '1' : '0');
 
             $this->tpl->setNotification($this->language->__('notifications.company_settings_edited_successfully'), 'success');
         }

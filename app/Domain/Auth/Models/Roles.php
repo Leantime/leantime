@@ -38,6 +38,12 @@ class Roles
     ];
 
     /**
+     * Roles hidden from the UI assignment dropdown.
+     * readonly: too restrictive, no use case. owner: merged into admin.
+     */
+    private static array $hiddenRoles = ['readonly', 'owner'];
+
+    /**
      * @throws BindingResolutionException
      */
     private static function getFilteredRoles(): mixed
@@ -61,5 +67,20 @@ class Roles
     public static function getRoles(): mixed
     {
         return self::getFilteredRoles();
+    }
+
+    /**
+     * Returns only the roles that should appear in user-facing dropdowns.
+     * Excludes readonly (too restrictive) and owner (merged into admin).
+     * Display order: Client, Developer, Team Lead, Manager, Administrator.
+     *
+     * @throws BindingResolutionException
+     */
+    public static function getAssignableRoles(): array
+    {
+        return array_filter(
+            self::getFilteredRoles(),
+            static fn (string $role): bool => ! in_array($role, self::$hiddenRoles, true)
+        );
     }
 }

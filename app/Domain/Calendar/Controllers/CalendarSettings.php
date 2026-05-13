@@ -43,7 +43,7 @@ class CalendarSettings extends Controller
      */
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
 
         // Get external calendars for the current user
         $externalCalendars = $this->calendarRepo->getMyExternalCalendars(session('userdata.id'));

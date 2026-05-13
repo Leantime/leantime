@@ -594,10 +594,12 @@ class SchemaBuilder
             $table->string('jobTitle', 200)->nullable();
             $table->string('jobLevel', 50)->nullable();
             $table->string('department', 200)->nullable();
+            $table->integer('managerId')->nullable();
             $table->dateTime('modified')->nullable();
 
             $table->unique(['username'], 'username');
             $table->index(['clientId'], 'idx_user_clientId');
+            $table->index(['managerId'], 'idx_user_managerId');
         });
     }
 

@@ -64,6 +64,17 @@ $moduleId = session('currentProject');
 
             <div class="mediamgr_content">
 
+                <?php if (empty($tpl->get('files'))) { ?>
+                    <div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-10 tw-text-center tw-gap-3">
+                        <span class="fa fa-file-arrow-up tw-text-4xl" style="color: var(--accent2); opacity: 0.6;"></span>
+                        <p class="tw-text-base tw-font-semibold" style="color: var(--primary-font-color);">
+                            <?php echo $tpl->__('text.no_files_yet'); ?>
+                        </p>
+                        <p class="tw-text-sm" style="color: var(--primary-font-color); opacity: 0.65;">
+                            <?php echo $tpl->__('text.no_files_hint'); ?>
+                        </p>
+                    </div>
+                <?php } ?>
                 <ul id='medialist' class='listfile'>
                     <?php foreach ($tpl->get('files') as $file) {?>
                         <li class="file-module-<?php echo $file['moduleId'] ?>">

@@ -23,7 +23,7 @@ class DelExternalCalendar extends Controller
     public function init(CalendarService $calendarService): void
     {
         $this->calendarService = $calendarService;
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
     }
 
     /**

@@ -139,3 +139,6 @@ tests/Httprequests/http-client.private.env.json
 config.bat
 node_modules
 .docker/.env
+
+# Claude Code memory (local only)
+memory/

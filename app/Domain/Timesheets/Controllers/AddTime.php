@@ -47,7 +47,7 @@ class AddTime extends Controller
      */
     public function run(): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor], true);
 
         $info = '';
         // Only admins and employees

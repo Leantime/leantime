@@ -45,7 +45,7 @@ class Show extends Controller
         TimesheetService $timesheetService,
         ReportService $reportService
     ): void {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
 
         $this->dashboardRepo = $dashboardRepo;
         $this->projectService = $projectService;

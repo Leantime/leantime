@@ -2,12 +2,5 @@
 
 use Leantime\Core\Events\EventDispatcher;
 
-EventDispatcher::addEventListener('leantime.domain.auth.*.userSignUpSuccess', function ($params) {
-
-    $userId = session('userdata.id');
-    $userRole = session('userdata.role');
-
-    $helperService = app()->make(\Leantime\Domain\Help\Services\Helper::class);
-    $helperService->createDefaultProject($userId, $userRole);
-
-});
+// Default project creation on signup intentionally removed.
+// New users start with a clean state and no pre-created projects.

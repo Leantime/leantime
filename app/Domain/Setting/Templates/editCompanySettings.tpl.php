@@ -138,6 +138,31 @@ $companySettings = $tpl->get('companySettings');
                                     </div>
                                     <br />
                                     <h4 class="widgettitle title-light"><span
+                                            class="fa fa-toggle-on"></span><?php echo $tpl->__('label.workflow_mode'); ?>
+                                    </h4>
+                                    <p><?php echo $tpl->__('label.workflow_mode_description'); ?></p>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; padding:4px 0;">
+                                                    <input type="checkbox"
+                                                           name="simpleWorkflow"
+                                                           value="1"
+                                                           style="margin-top:3px;"
+                                                           <?php if (! empty($companySettings['simpleWorkflow'])) {
+                                                               echo 'checked="checked"';
+                                                           } ?>
+                                                    />
+                                                    <span>
+                                                        <strong><?php echo $tpl->__('label.simple_workflow_label') ?></strong><br />
+                                                        <small style="color:#888;"><?php echo $tpl->__('label.simple_workflow_hint') ?></small>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <h4 class="widgettitle title-light"><span
                                             class="fa fa-bell"></span><?php echo $tpl->__('label.default_notification_types'); ?>
                                     </h4>
                                     <p><?php echo $tpl->__('label.default_notification_types_description'); ?></p>

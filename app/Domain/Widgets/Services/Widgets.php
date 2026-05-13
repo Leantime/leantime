@@ -112,6 +112,38 @@ class Widgets
             'fixed' => false,
         ]);
 
+        $this->availableWidgets['recentlyupdated'] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
+            'id' => 'recentlyupdated',
+            'name' => 'widgets.title.recently_updated',
+            'description' => 'widgets.descriptions.recently_updated',
+            'gridHeight' => 18,
+            'gridWidth' => 4,
+            'gridMinHeight' => 8,
+            'gridMinWidth' => 2,
+            'gridX' => 8,
+            'gridY' => 43,
+            'alwaysVisible' => false,
+            'noTitle' => true,
+            'widgetUrl' => BASE_URL.'/widgets/recentlyUpdated/get',
+            'fixed' => false,
+        ]);
+
+        $this->availableWidgets['waitingonme'] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
+            'id' => 'waitingonme',
+            'name' => 'widgets.title.waiting_on_me',
+            'description' => 'widgets.descriptions.waiting_on_me',
+            'gridHeight' => 18,
+            'gridWidth' => 4,
+            'gridMinHeight' => 8,
+            'gridMinWidth' => 2,
+            'gridX' => 8,
+            'gridY' => 61,
+            'alwaysVisible' => false,
+            'noTitle' => true,
+            'widgetUrl' => BASE_URL.'/widgets/waitingOnMe/get',
+            'fixed' => false,
+        ]);
+
         $this->defaultWidgets = [
             'welcome' => $this->availableWidgets['welcome'],
             'calendar' => $this->availableWidgets['calendar'],

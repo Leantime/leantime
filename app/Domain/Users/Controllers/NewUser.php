@@ -49,6 +49,7 @@ class NewUser extends Controller
             'jobTitle' => '',
             'jobLevel' => '',
             'department' => '',
+            'managerId' => null,
 
         ];
 
@@ -69,6 +70,7 @@ class NewUser extends Controller
                     'jobTitle' => ($_POST['jobTitle']),
                     'jobLevel' => ($_POST['jobLevel']),
                     'department' => ($_POST['department']),
+                    'managerId' => $_POST['managerId'] ?? null,
                     'clientId' => Auth::userHasRole(Roles::$manager) ? session('userdata.clientId') : $_POST['client'],
                 ];
                 if (isset($_POST['projects']) && is_array($_POST['projects'])) {
@@ -131,7 +133,8 @@ class NewUser extends Controller
             $this->tpl->assign('preSelectedClient', $preSelectedClient);
             $this->tpl->assign('clients', $clients->getAll());
             $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
-            $this->tpl->assign('roles', Roles::getRoles());
+            $this->tpl->assign('roles', Roles::getAssignableRoles());
+            $this->tpl->assign('eligibleManagers', $this->userRepo->getEligibleManagers());
 
             $this->tpl->assign('relations', $projectrelation);
 

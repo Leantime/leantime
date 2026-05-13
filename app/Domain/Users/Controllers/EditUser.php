@@ -70,6 +70,7 @@ class EditUser extends Controller
                 'jobTitle' => $row['jobTitle'],
                 'jobLevel' => $row['jobLevel'],
                 'department' => $row['department'],
+                'managerId' => $row['managerId'] ?? null,
 
             ];
 
@@ -120,6 +121,7 @@ class EditUser extends Controller
                         'jobTitle' => ($_POST['jobTitle'] ?? $row['jobTitle']),
                         'jobLevel' => ($_POST['jobLevel'] ?? $row['jobLevel']),
                         'department' => ($_POST['department'] ?? $row['department']),
+                        'managerId' => $_POST['managerId'] ?? ($row['managerId'] ?? null),
                     ];
 
                     $changedEmail = 0;
@@ -182,8 +184,9 @@ class EditUser extends Controller
 
             // Assign vars
             $this->tpl->assign('allProjects', $this->projectsRepo->getAll(true));
-            $this->tpl->assign('roles', Roles::getRoles());
+            $this->tpl->assign('roles', Roles::getAssignableRoles());
             $this->tpl->assign('clients', $this->clientsRepo->getAll());
+            $this->tpl->assign('eligibleManagers', $this->userRepo->getEligibleManagers());
 
             // Sensitive Form, generate form tokens
             $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';

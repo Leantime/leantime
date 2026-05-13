@@ -28,7 +28,7 @@ class ImportGCal extends Controller
      */
     public function run(): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
 
         $values = [
             'url' => '',

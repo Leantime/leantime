@@ -34,7 +34,7 @@ class ShowMyCalendar extends Controller
      */
     public function run(): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
 
         $this->tpl->assign('calendar', $this->calendarRepo->getCalendar(session('userdata.id')));
         // $this->tpl->assign('gCalLink', $this->calendarRepo->getMyGoogleCalendars());

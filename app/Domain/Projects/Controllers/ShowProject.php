@@ -97,8 +97,8 @@ class ShowProject extends Controller
 
             $id = (int) ($_GET['id']);
 
-            // Additional check. Managers should only access their own projects if not directly assigned
-            if (Auth::userHasRole(Roles::$manager)) {
+            // Additional check. Managers and team leads should only access their own projects if not directly assigned
+            if (Auth::userHasRole([Roles::$manager, Roles::$teamlead])) {
                 if ($this->projectService->isUserAssignedToProject(session('userdata.id'), $id) === false) {
                     throw new HttpResponseException(FrontcontrollerCore::redirect(BASE_URL.'/errors/error403'));
                 }

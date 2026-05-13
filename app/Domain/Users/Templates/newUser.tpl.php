@@ -141,6 +141,17 @@ $projects = $tpl->get('relations');
                 <label for="department"><?php echo $tpl->__('label.department'); ?></label> <input
                     type="text" name="department" id="department" value="<?php echo $values['department'] ?>" /><br />
 
+                <label for="managerId"><?php echo $tpl->__('label.manager'); ?></label>
+                <select name="managerId" id="managerId" class="chosen-select">
+                    <option value=""><?php echo $tpl->__('label.no_manager'); ?></option>
+                    <?php foreach ($tpl->get('eligibleManagers') as $manager) : ?>
+                        <option value="<?php echo $manager['id']; ?>"
+                            <?php echo ((int) ($values['managerId'] ?? 0) === (int) $manager['id']) ? 'selected' : ''; ?>>
+                            <?php echo $tpl->escape($manager['firstname'].' '.$manager['lastname']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select><br />
+
 
                     <p class="stdformbutton">
                         <input type="hidden" name="save" value="1" />

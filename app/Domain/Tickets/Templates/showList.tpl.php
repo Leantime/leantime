@@ -69,7 +69,23 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                     </form>
 
 
-                    <?php foreach ($allTicketGroups as $group) {?>
+                    <?php
+                    $totalTickets = 0;
+                    foreach ($allTicketGroups as $g) {
+                        $totalTickets += count($g['items'] ?? []);
+                    }
+                    if ($totalTickets === 0) { ?>
+                        <div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-10 tw-text-center tw-gap-3">
+                            <span class="fa fa-thumb-tack tw-text-4xl" style="color: var(--accent2); opacity: 0.6;"></span>
+                            <p class="tw-text-base tw-font-semibold" style="color: var(--primary-font-color);">
+                                <?php echo $tpl->__('text.no_tasks_yet'); ?>
+                            </p>
+                            <p class="tw-text-sm" style="color: var(--primary-font-color); opacity: 0.65;">
+                                <?php echo $tpl->__('text.no_tasks_hint'); ?>
+                            </p>
+                        </div>
+                    <?php } ?>
+                    <?php if ($totalTickets > 0): foreach ($allTicketGroups as $group): ?>
                         <?php if ($group['label'] != 'all') { ?>
                             <h5 class="accordionTitle <?= $group['class']?>" <?php if (! empty($group['color'])) { ?>style="color:<?= htmlspecialchars($group['color']) ?>"<?php } ?> id="accordion_link_<?= $group['id'] ?>">
                                 <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?= $group['id'] ?>" onclick="leantime.snippets.accordionToggle('<?= $group['id'] ?>');">
@@ -131,7 +147,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                         <?php if ($group['label'] != 'all') { ?>
                             </div>
                         <?php } ?>
-                    <?php } ?>
+                    <?php endforeach; endif; ?>
 
                 </div>
             </div>

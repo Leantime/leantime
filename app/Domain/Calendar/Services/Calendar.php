@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Language as LanguageCore;
@@ -22,6 +23,8 @@ use Spatie\IcalendarGenerator\Enums\Display;
 
 class Calendar
 {
+    use DispatchesEvents;
+
     private CalendarRepository $calendarRepo;
 
     private LanguageCore $language;
@@ -295,7 +298,7 @@ class Calendar
                 $description = str_replace("\r\n", '\\n', strip_tags($event['description']));
 
                 $currentEvent = IcalEvent::create()
-                    ->image(BASE_URL.'/dist/images/favicon.png', 'image/png', Display::badge())
+                    ->image(BASE_URL . '/dist/images/favicon.png', 'image/png', Display::badge())
                     ->startsAt(dtHelper()->parseDbDateTime($event['dateFrom'])->setToUserTimezone())
                     ->endsAt(dtHelper()->parseDbDateTime($event['dateTo'])->setToUserTimezone())
                     ->name($event['title'])
@@ -316,7 +319,6 @@ class Calendar
                 }
 
                 $eventObjects[] = $currentEvent;
-
             } catch (\Exception $e) {
                 // Do not include event in ical
                 Log::error($e);
@@ -386,7 +388,7 @@ class Calendar
                 'dateContext' => 'plan',
                 'backgroundColor' => 'var(--accent1)',
                 'borderColor' => 'var(--accent1)',
-                'url' => BASE_URL.'/calendar/showMyCalendar/#/calendar/editEvent/'.$value['id'],
+                'url' => BASE_URL . '/calendar/showMyCalendar/#/calendar/editEvent/' . $value['id'],
             ];
         }
 
@@ -412,7 +414,7 @@ class Calendar
 
                 if (dtHelper()->isValidDateString($ticket['dateToFinish'])) {
 
-                    $context = '❕ '.$this->language->__('label.due_todo');
+                    $context = '❕ ' . $this->language->__('label.due_todo');
 
                     $dueDate = dtHelper()->parseDbDateTime($ticket['dateToFinish']);
                     if ($from || $until) {
@@ -432,7 +434,7 @@ class Calendar
                     $allDay = $isEndOfDay;
 
                     $newValues[] = $this->mapEventData(
-                        title: $context.$ticket['headline'].' ('.$statusName.')',
+                        title: $context . $ticket['headline'] . ' (' . $statusName . ')',
                         description: $ticket['description'],
                         allDay: $allDay,
                         id: $ticket['id'],
@@ -470,7 +472,7 @@ class Calendar
                     $context = $this->language->__('label.planned_edit');
 
                     $newValues[] = $this->mapEventData(
-                        title: $context.$ticket['headline'].' ('.$statusName.')',
+                        title: $context . $ticket['headline'] . ' (' . $statusName . ')',
                         description: $ticket['description'],
                         allDay: $allDay,
                         id: $ticket['id'],
@@ -486,6 +488,13 @@ class Calendar
             }
         }
 
+        // Allow other domains to inject their own calendar events.
+        $newValues = self::dispatch_filter('calendar_events', $newValues, [
+            'userId' => $userId,
+            'from'   => $from,
+            'until'  => $until,
+        ]);
+
         return $newValues;
     }
 
@@ -496,14 +505,14 @@ class Calendar
             $userId = session('userdata.id');
         }
 
-        $userHash = hash('sha1', $userId.$this->config->sessionPassword);
-        $icalHash = $this->settingsRepo->getSetting('usersettings.'.$userId.'.icalSecret');
+        $userHash = hash('sha1', $userId . $this->config->sessionPassword);
+        $icalHash = $this->settingsRepo->getSetting('usersettings.' . $userId . '.icalSecret');
 
         if (empty($icalHash)) {
             throw new \Exception('User has no ical hash');
         }
 
-        return BASE_URL.'/calendar/ical/'.$icalHash.'_'.$userHash;
+        return BASE_URL . '/calendar/ical/' . $icalHash . '_' . $userHash;
     }
 
     /**
@@ -516,7 +525,7 @@ class Calendar
      */
     public function getExternalCalendarEvents(null|string|CarbonImmutable $from = null, null|string|CarbonImmutable $until = null): array
     {
-        $cacheKey = 'calendar.external.'.session('userdata.id');
+        $cacheKey = 'calendar.external.' . session('userdata.id');
         $cached = Cache::get($cacheKey);
         if (is_array($cached) && ! empty($cached)) {
             return $cached;
@@ -540,7 +549,7 @@ class Calendar
                 $until = CarbonImmutable::parse($until);
             }
         } catch (\Exception $e) {
-            Log::error('Error converting date parameters to Carbon instances: '.$e->getMessage());
+            Log::error('Error converting date parameters to Carbon instances: ' . $e->getMessage());
             Log::error($e);
 
             return [];
@@ -605,16 +614,15 @@ class Calendar
                         'source' => $calendar['name'],
                     ];
                 }
-
             } catch (\Exception $e) {
                 // Log error but continue with other calendars
-                Log::error("Error fetching calendar {$calendar['name']}: ".$e->getMessage());
+                Log::error("Error fetching calendar {$calendar['name']}: " . $e->getMessage());
 
                 continue;
             }
         }
 
-        Cache::put('calendar.external.'.session('userdata.id'), $allEvents, 240);
+        Cache::put('calendar.external.' . session('userdata.id'), $allEvents, 240);
 
         return $allEvents;
     }
@@ -639,7 +647,7 @@ class Calendar
             $response = $client->get($url, [
                 'headers' => [
                     'Accept' => 'text/calendar',
-                    'User-Agent' => 'Leantime Calendar Integration v'.$this->config->appVersion,
+                    'User-Agent' => 'Leantime Calendar Integration v' . $this->config->appVersion,
                 ],
             ]);
 
@@ -647,9 +655,9 @@ class Calendar
                 return (string) $response->getBody();
             }
 
-            throw new \Exception('Failed to load iCal feed: HTTP '.$response->getStatusCode());
+            throw new \Exception('Failed to load iCal feed: HTTP ' . $response->getStatusCode());
         } catch (\Exception $e) {
-            throw new \Exception('Error loading iCal feed: '.$e->getMessage());
+            throw new \Exception('Error loading iCal feed: ' . $e->getMessage());
         }
     }
 
@@ -663,8 +671,7 @@ class Calendar
         $uuid = Uuid::uuid4();
         $icalHash = $uuid->toString();
 
-        $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.icalSecret', $icalHash);
-
+        $this->settingsRepo->saveSetting('usersettings.' . session('userdata.id') . '.icalSecret', $icalHash);
     }
 
     /**
@@ -700,7 +707,7 @@ class Calendar
             'dateContext' => $dateContext,
             'backgroundColor' => $backgroundColor,
             'borderColor' => $borderColor,
-            'url' => BASE_URL.'/dashboard/home/#/tickets/showTicket/'.$id,
+            'url' => BASE_URL . '/dashboard/home/#/tickets/showTicket/' . $id,
         ];
     }
 }

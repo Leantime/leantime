@@ -23,7 +23,9 @@
                   <i class="fa-solid fa-diagram-predecessor"></i> Add Subtask</a></li>
             @endif
             @dispatchEvent("beforeDeleteTicket", ["ticket"=>$ticket])
+            @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$teamlead))
             <li><a href="#/tickets/delTicket/{{ $ticket["id"] }}" class="delete"><i class="fa fa-trash"></i> {{  __("links.delete_todo") }}</a></li>
+            @endif
 
 
             @dispatchEvent("submenuSection", ["ticket"=>$ticket])

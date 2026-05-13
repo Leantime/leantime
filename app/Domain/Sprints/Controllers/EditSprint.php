@@ -22,7 +22,7 @@ class EditSprint extends Controller
         SprintService $sprintService,
         Projects $projectService,
     ) {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
 
         $this->sprintService = $sprintService;
         $this->projectService = $projectService;

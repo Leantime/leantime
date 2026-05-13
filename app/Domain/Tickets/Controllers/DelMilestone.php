@@ -16,7 +16,7 @@ class DelMilestone extends Controller
 
     public function init(TicketService $ticketService): void
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
 
         $this->ticketService = $ticketService;
     }

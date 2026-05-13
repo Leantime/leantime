@@ -26,7 +26,7 @@ class DelWiki extends Controller
     public function run()
     {
 
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
 
         if (isset($_GET['id'])) {
             $id = (int) ($_GET['id']);

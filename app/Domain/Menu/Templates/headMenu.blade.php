@@ -4,6 +4,48 @@
 <ul class="headmenu pull-right">
     @dispatchEvent('insideHeadMenu')
 
+    <li class="notificationDropdown quickAddDropdown">
+        <a
+            href="javascript:void(0);"
+            class="dropdown-toggle profileHandler"
+            data-toggle="dropdown"
+            data-tippy-content="{{ __('popover.quick_add') }}"
+        >
+            <span class="fa-solid fa-plus"></span>
+            <span class="tw-ml-xs tw-hidden md:tw-inline">{{ __('menu.quick_add') }}</span>
+        </a>
+        <ul class="dropdown-menu pull-right">
+            <li class="nav-header">{{ __('menu.quick_add_header') }}</li>
+            <li>
+                <a href="#/tickets/newTicket">
+                    <i class="fa fa-fw fa-thumb-tack"></i> {{ __('menu.quick_add_task') }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ BASE_URL }}/wiki/show">
+                    <i class="fa fa-fw fa-sticky-note"></i> {{ __('menu.quick_add_note') }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ BASE_URL }}/files/browse">
+                    <i class="fa fa-fw fa-file-arrow-up"></i> {{ __('menu.quick_add_file') }}
+                </a>
+            </li>
+            @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$manager, true))
+                <li>
+                    <a href="{{ BASE_URL }}/projects/newProject">
+                        <i class="fa fa-fw fa-suitcase"></i> {{ __('menu.quick_add_project') }}
+                    </a>
+                </li>
+                <li>
+                    <a href="#/users/newUser">
+                        <i class="fa fa-fw fa-user-plus"></i> {{ __('menu.quick_add_invite') }}
+                    </a>
+                </li>
+            @endif
+        </ul>
+    </li>
+
     @include('timesheets::partials.stopwatch', [
                'onTheClock' => $onTheClock
            ])
@@ -228,7 +270,7 @@
             data-tippy-content="{{ __('popover.my_work') }}"
         >{!! __('menu.my_work') !!}</a>
     </li>
-    @if ($login::userIsAtLeast("manager", true))
+    @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$teamlead, true))
         <li>
             @if($login::userHasRole("manager"))
                 <a
@@ -238,14 +280,23 @@
                     @endif
                     data-tippy-content="{{ __('popover.company') }}"
                 >{!! __('menu.company') !!}</a>
+            @elseif($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin, true))
+                <a
+                    href="{{ BASE_URL }}/setting/editCompanySettings/"
+                    @if ($menuType == 'company')
+                        class="active"
+                    @endif
+                    data-tippy-content="{{ __('popover.company') }}"
+                >{!! __('menu.company') !!}</a>
             @else
-            <a
-                href="{{ BASE_URL }}/setting/editCompanySettings/"
-                @if ($menuType == 'company')
-                    class="active"
-                @endif
-                data-tippy-content="{{ __('popover.company') }}"
-            >{!! __('menu.company') !!}</a>
+                {{-- Team leads land on their weekly team view --}}
+                <a
+                    href="{{ BASE_URL }}/weeklyplanning/showTeam"
+                    @if ($menuType == 'company')
+                        class="active"
+                    @endif
+                    data-tippy-content="{{ __('popover.company') }}"
+                >{!! __('menu.company') !!}</a>
             @endif
         </li>
     @endif

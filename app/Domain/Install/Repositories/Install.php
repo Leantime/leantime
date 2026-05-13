@@ -82,6 +82,7 @@ class Install
         30500,
         30501,
         30502,
+        30503,
     ];
 
     /**
@@ -2548,6 +2549,107 @@ class Install
             Log::error('Migration 30502: '.$e->getMessage());
 
             return ['Migration 30502 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30503 — Weekly Planning tables.
+     *
+     * Creates zp_weekly_plans, zp_weekly_plan_items,
+     * zp_weekly_plan_feedback, and zp_weekly_plan_commitments.
+     */
+    public function update_sql_30503(): bool|array
+    {
+        try {
+            if (! Schema::hasColumn('zp_user', 'managerId')) {
+                Schema::table('zp_user', function (Blueprint $table) {
+                    $table->integer('managerId')->nullable()->after('department');
+                    $table->index(['managerId'], 'idx_user_managerId');
+                });
+            }
+
+            if (! Schema::hasTable('zp_weekly_plans')) {
+                Schema::create('zp_weekly_plans', function (Blueprint $table) {
+                    $table->id();
+                    $table->integer('employeeId')->nullable();
+                    $table->integer('teamLeadId')->nullable();
+                    $table->string('month', 20)->nullable();
+                    $table->string('weekLabel', 50)->nullable();
+                    $table->date('weekStart')->nullable();
+                    $table->date('weekEnd')->nullable();
+                    $table->date('dateOfOneOnOne')->nullable();
+                    $table->string('status', 20)->default('draft');
+                    $table->text('topPriorities')->nullable();
+                    $table->text('winsAndProgress')->nullable();
+                    $table->text('challengesAndBlockers')->nullable();
+                    $table->text('managerSupportNeeded')->nullable();
+                    $table->text('ideasAndSuggestions')->nullable();
+                    $table->string('growthCurrentFocus', 500)->nullable();
+                    $table->string('growthSupportNeeded', 500)->nullable();
+                    $table->string('growthNextMilestone', 500)->nullable();
+                    $table->text('nextWeekPriorities')->nullable();
+                    $table->text('summary')->nullable();
+                    $table->dateTime('createdAt')->nullable();
+                    $table->dateTime('updatedAt')->nullable();
+
+                    $table->index(['employeeId', 'weekStart'], 'idx_wp_employee_week');
+                    $table->index(['teamLeadId', 'weekStart'], 'idx_wp_lead_week');
+                    $table->index(['status'], 'idx_wp_status');
+                });
+            }
+
+            if (! Schema::hasTable('zp_weekly_plan_items')) {
+                Schema::create('zp_weekly_plan_items', function (Blueprint $table) {
+                    $table->id();
+                    $table->integer('weeklyPlanId')->nullable();
+                    $table->integer('ticketId')->nullable();
+                    $table->integer('priority')->default(0);
+                    $table->string('expectedOutcome', 1000)->nullable();
+                    $table->string('status', 30)->default('not_started');
+                    $table->text('completionReason')->nullable();
+                    $table->text('supportNeeded')->nullable();
+                    $table->date('newDueDate')->nullable();
+
+                    $table->index(['weeklyPlanId'], 'idx_wpi_plan');
+                    $table->index(['ticketId'], 'idx_wpi_ticket');
+                    $table->index(['status'], 'idx_wpi_status');
+                });
+            }
+
+            if (! Schema::hasTable('zp_weekly_plan_feedback')) {
+                Schema::create('zp_weekly_plan_feedback', function (Blueprint $table) {
+                    $table->id();
+                    $table->integer('weeklyPlanId')->nullable();
+                    $table->integer('fromUserId')->nullable();
+                    $table->integer('toUserId')->nullable();
+                    $table->string('type', 60)->default('manager_to_employee_working');
+                    $table->text('message')->nullable();
+                    $table->dateTime('createdAt')->nullable();
+
+                    $table->index(['weeklyPlanId', 'type'], 'idx_wpf_plan_type');
+                });
+            }
+
+            if (! Schema::hasTable('zp_weekly_plan_commitments')) {
+                Schema::create('zp_weekly_plan_commitments', function (Blueprint $table) {
+                    $table->id();
+                    $table->integer('weeklyPlanId')->nullable();
+                    $table->string('task', 1000)->nullable();
+                    $table->integer('ownerId')->nullable();
+                    $table->date('deadline')->nullable();
+                    $table->string('status', 20)->default('pending');
+                    $table->dateTime('createdAt')->nullable();
+
+                    $table->index(['weeklyPlanId'], 'idx_wpc_plan');
+                    $table->index(['ownerId', 'status'], 'idx_wpc_owner_status');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30503: '.$e->getMessage());
+
+            return ['Migration 30503 failed: '.$e->getMessage()];
         }
 
         return true;

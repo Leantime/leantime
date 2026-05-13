@@ -24,7 +24,7 @@ class AddEvent extends Controller
     public function init(Calendar $calendarService): void
     {
         $this->calendarService = $calendarService;
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
     }
 
     public function get(array $params): Response

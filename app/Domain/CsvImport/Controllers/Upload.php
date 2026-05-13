@@ -26,7 +26,7 @@ class Upload extends Controller
      */
     public function init(CsvImportService $providerService): void
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
 
         $this->providerService = $providerService;
     }
