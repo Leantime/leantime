@@ -10,9 +10,9 @@ use Leantime\Domain\WeeklyPlanning\Services\WeeklyPlanning as WeeklyPlanningServ
 /**
  * Feedback — HTMX controller for 4-direction feedback entries.
  *
- * GET  /hx/weeklyplanning/feedback/editForm?planId=X&type=Y  → feedback edit form
- * POST /hx/weeklyplanning/feedback/save                       → save and re-render display
- * GET  /hx/weeklyplanning/feedback/view?planId=X&type=Y       → re-render display (cancel)
+ * GET  /hx/weekly-planning/feedback/editForm?planId=X&type=Y  → feedback edit form
+ * POST /hx/weekly-planning/feedback/save                       → save and re-render display
+ * GET  /hx/weekly-planning/feedback/view?planId=X&type=Y       → re-render display (cancel)
  */
 class Feedback extends HtmxController
 {

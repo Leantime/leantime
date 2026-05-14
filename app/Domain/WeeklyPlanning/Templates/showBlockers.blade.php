@@ -11,7 +11,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <a href="{{ BASE_URL }}/weeklyplanning/showTeam" class="btn btn-default btn-sm tw-mb-m">
+        <a href="{{ BASE_URL }}/weekly-planning/showTeam" class="btn btn-default btn-sm tw-mb-m">
             <i class="fa fa-arrow-left"></i> {{ __('weeklyplanning.buttons.back_to_team') }}
         </a>
 
@@ -61,7 +61,7 @@
                                 <td class="tw-text-sm">{{ $item['supportNeeded'] ?? '—' }}</td>
                                 <td class="tw-text-sm">{{ $item['weekLabel'] }} / {{ $item['month'] }}</td>
                                 <td>
-                                    <a href="{{ BASE_URL }}/weeklyplanning/showPlan/{{ $item['weeklyPlanId'] }}" class="btn btn-default btn-xs">
+                                    <a href="{{ BASE_URL }}/weekly-planning/showPlan/{{ $item['weeklyPlanId'] }}" class="btn btn-default btn-xs">
                                         {{ __('weeklyplanning.buttons.view_plan') }}
                                     </a>
                                 </td>

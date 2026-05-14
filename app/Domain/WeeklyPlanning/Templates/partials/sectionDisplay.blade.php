@@ -21,7 +21,7 @@
             <i class="fa {{ $meta['icon'] }}"></i> {{ __($meta['label']) }}
         </h4>
         <button class="btn btn-xs btn-link"
-                hx-get="{{ BASE_URL }}/hx/weeklyplanning/planItems/editSection?planId={{ $planId }}&field={{ $field }}"
+                hx-get="{{ BASE_URL }}/hx/weekly-planning/planItems/editSection?planId={{ $planId }}&field={{ $field }}"
                 hx-target="#section-{{ $field }}"
                 hx-swap="outerHTML">
             <i class="fa fa-pencil"></i>

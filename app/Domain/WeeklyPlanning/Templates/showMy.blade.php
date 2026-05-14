@@ -13,14 +13,14 @@
 
         {{-- Month navigation --}}
         <div class="tw-flex tw-items-center tw-justify-between tw-mb-l">
-            <a href="{{ BASE_URL }}/weeklyplanning/showMy?year={{ $prevMonth->year }}&month={{ $prevMonth->month }}"
+            <a href="{{ BASE_URL }}/weekly-planning/showMy?year={{ $prevMonth->year }}&month={{ $prevMonth->month }}"
                 class="btn btn-default btn-sm">
                 <i class="fa fa-chevron-left"></i> {{ $prevMonth->format('M Y') }}
             </a>
             <h3 class="tw-m-0" style="color:var(--primary-font-color);">
                 <i class="fa fa-calendar tw-mr-xs"></i> {{ $monthDate->format('F Y') }}
             </h3>
-            <a href="{{ BASE_URL }}/weeklyplanning/showMy?year={{ $nextMonth->year }}&month={{ $nextMonth->month }}"
+            <a href="{{ BASE_URL }}/weekly-planning/showMy?year={{ $nextMonth->year }}&month={{ $nextMonth->month }}"
                 class="btn btn-default btn-sm">
                 {{ $nextMonth->format('M Y') }} <i class="fa fa-chevron-right"></i>
             </a>
@@ -79,7 +79,7 @@
                     @endif
                 </div>
                 @if($plan)
-                <a href="{{ BASE_URL }}/weeklyplanning/showPlan/{{ $plan['id'] }}"
+                <a href="{{ BASE_URL }}/weekly-planning/showPlan/{{ $plan['id'] }}"
                     class="btn btn-default btn-xs" preload="mouseover">
                     <i class="fa fa-expand"></i> {{ __('weeklyplanning.buttons.view_full_plan') }}
                 </a>
@@ -121,7 +121,7 @@
                             </td>
                             <td>
                                 @if($isCurrent && $plan)
-                                <div hx-get="{{ BASE_URL }}/hx/weeklyplanning/statusUpdate/get?itemId={{ $item['id'] }}"
+                                <div hx-get="{{ BASE_URL }}/hx/weekly-planning/statusUpdate/get?itemId={{ $item['id'] }}"
                                     hx-trigger="load"
                                     hx-swap="innerHTML">
                                     <span class="label label-{{ match($item['status'] ?? 'not_started') {
@@ -160,7 +160,7 @@
 
         {{-- Links --}}
         <div class="tw-text-center tw-mt-m">
-            <a href="{{ BASE_URL }}/weeklyplanning/showMyHistory" class="btn btn-default">
+            <a href="{{ BASE_URL }}/weekly-planning/showMyHistory" class="btn btn-default">
                 <i class="fa fa-history"></i> {{ __('weeklyplanning.buttons.view_history') }}
             </a>
         </div>

@@ -5,7 +5,7 @@
 <div class="tw-p-m tw-mb-s tw-rounded" style="background:var(--secondary-background); border:1px solid var(--main-border-color);">
     <h5 class="tw-mb-s">{{ __('weeklyplanning.headlines.add_commitment') }}</h5>
 
-    <form hx-post="{{ BASE_URL }}/hx/weeklyplanning/planItems/addCommitment"
+    <form hx-post="{{ BASE_URL }}/hx/weekly-planning/planItems/addCommitment"
           hx-target="#commitments-list"
           hx-swap="innerHTML">
         <input type="hidden" name="planId" value="{{ $planId }}">

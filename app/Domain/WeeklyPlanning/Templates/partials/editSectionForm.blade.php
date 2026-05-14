@@ -4,7 +4,7 @@
     Replaces the outer section div identified by #section-{field} in showPlan.blade.php.
 --}}
 <div id="section-{{ $field }}">
-    <form hx-post="{{ BASE_URL }}/hx/weeklyplanning/planItems/saveSection"
+    <form hx-post="{{ BASE_URL }}/hx/weekly-planning/planItems/saveSection"
           hx-target="#section-{{ $field }}"
           hx-swap="outerHTML">
         <input type="hidden" name="planId" value="{{ $planId }}">
@@ -20,7 +20,7 @@
                 {{ __('weeklyplanning.buttons.save') }}
             </button>
             <button type="button" class="btn btn-default btn-sm"
-                    hx-get="{{ BASE_URL }}/hx/weeklyplanning/planItems/viewSection?planId={{ $planId }}&field={{ $field }}"
+                    hx-get="{{ BASE_URL }}/hx/weekly-planning/planItems/viewSection?planId={{ $planId }}&field={{ $field }}"
                     hx-target="#section-{{ $field }}"
                     hx-swap="outerHTML">
                 {{ __('weeklyplanning.buttons.cancel') }}

@@ -509,7 +509,7 @@ class WeeklyPlanning
                         $nextWeekStart
                     ),
                     'datetime' => CarbonImmutable::now()->toDateTimeString(),
-                    'url'      => '/weeklyplanning/myPlan',
+                    'url'      => '/weekly-planning/myPlan',
                     'authorId' => $actorId,
                 ],
             ]);

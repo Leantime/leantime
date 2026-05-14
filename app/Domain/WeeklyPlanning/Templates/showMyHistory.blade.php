@@ -11,7 +11,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <a href="{{ BASE_URL }}/weeklyplanning/showMy" class="btn btn-default btn-sm tw-mb-m">
+        <a href="{{ BASE_URL }}/weekly-planning/showMy" class="btn btn-default btn-sm tw-mb-m">
             <i class="fa fa-arrow-left"></i> {{ __('weeklyplanning.buttons.back_to_my_plan') }}
         </a>
 
@@ -49,7 +49,7 @@
                                         {{ __('weeklyplanning.plan_status.'.$plan['status']) }}
                                     </span>
                                 </p>
-                                <a href="{{ BASE_URL }}/weeklyplanning/showPlan/{{ $plan['id'] }}" class="btn btn-default btn-xs">
+                                <a href="{{ BASE_URL }}/weekly-planning/showPlan/{{ $plan['id'] }}" class="btn btn-default btn-xs">
                                     {{ __('weeklyplanning.buttons.view_plan') }}
                                 </a>
                             </div>

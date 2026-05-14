@@ -11,7 +11,7 @@
         </small>
     </div>
 
-    <form hx-post="{{ BASE_URL }}/hx/weeklyplanning/feedback/save"
+    <form hx-post="{{ BASE_URL }}/hx/weekly-planning/feedback/save"
           hx-target="#feedback-{{ $type }}"
           hx-swap="outerHTML">
         <input type="hidden" name="planId" value="{{ $planId }}">
@@ -27,7 +27,7 @@
                 {{ __('weeklyplanning.buttons.save') }}
             </button>
             <button type="button" class="btn btn-default btn-xs"
-                    hx-get="{{ BASE_URL }}/hx/weeklyplanning/feedback/view?planId={{ $planId }}&type={{ $type }}"
+                    hx-get="{{ BASE_URL }}/hx/weekly-planning/feedback/view?planId={{ $planId }}&type={{ $type }}"
                     hx-target="#feedback-{{ $type }}"
                     hx-swap="outerHTML">
                 {{ __('weeklyplanning.buttons.cancel') }}

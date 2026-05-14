@@ -62,7 +62,7 @@ class InjectCalendarEvents
                     'dateContext'     => 'plan',
                     'backgroundColor' => '#8b5cf6',
                     'borderColor'     => '#7c3aed',
-                    'url'             => BASE_URL . '/weeklyplanning/showMy',
+                    'url'             => BASE_URL . '/weekly-planning/showMy',
                 ];
             }
         }

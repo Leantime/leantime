@@ -10,8 +10,8 @@ use Leantime\Domain\WeeklyPlanning\Services\WeeklyPlanning as WeeklyPlanningServ
 /**
  * StatusUpdate — inline task status control rendered via HTMX.
  *
- * GET  /hx/weeklyplanning/statusUpdate/get?itemId=X  → renders status dropdown
- * POST /hx/weeklyplanning/statusUpdate/save          → saves status, re-renders control
+ * GET  /hx/weekly-planning/statusUpdate/get?itemId=X  → renders status dropdown
+ * POST /hx/weekly-planning/statusUpdate/save          → saves status, re-renders control
  *
  * The rendered partial (statusControl) shows the dropdown plus a blocker-reason
  * form inline when the selected status requires a reason.

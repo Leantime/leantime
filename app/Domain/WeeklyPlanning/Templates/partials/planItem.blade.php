@@ -35,7 +35,7 @@
         </span>
         @else
         {{-- Developer gets the interactive HTMX status control --}}
-        <div hx-get="{{ BASE_URL }}/hx/weeklyplanning/statusUpdate/get?itemId={{ $item['id'] }}"
+        <div hx-get="{{ BASE_URL }}/hx/weekly-planning/statusUpdate/get?itemId={{ $item['id'] }}"
             hx-trigger="load"
             hx-swap="innerHTML">
             <span class="label label-{{ match($item['status']) {
@@ -53,7 +53,7 @@
     @if(isset($isTeamLead) && $isTeamLead)
     <td>
         <button class="btn btn-xs btn-link tw-text-red-500"
-            hx-post="{{ BASE_URL }}/hx/weeklyplanning/planItems/remove?itemId={{ $item['id'] }}"
+            hx-post="{{ BASE_URL }}/hx/weekly-planning/planItems/remove?itemId={{ $item['id'] }}"
             hx-target="#plan-items-list"
             hx-swap="innerHTML"
             hx-confirm="{{ __('weeklyplanning.text.confirm_remove_task') }}">

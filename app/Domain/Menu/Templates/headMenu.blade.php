@@ -291,7 +291,7 @@
             @else
                 {{-- Team leads land on their weekly team view --}}
                 <a
-                    href="{{ BASE_URL }}/weeklyplanning/showTeam"
+                    href="{{ BASE_URL }}/weekly-planning/showTeam"
                     @if ($menuType == 'company')
                         class="active"
                     @endif

@@ -12,8 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * NewPlan — Create a weekly plan for a team member.
  *
- * GET  /weeklyplanning/newPlan?employeeId=X  → show creation form
- * POST /weeklyplanning/newPlan               → create and redirect to plan
+ * GET  /weekly-planning/newPlan?employeeId=X  → show creation form
+ * POST /weekly-planning/newPlan               → create and redirect to plan
  */
 class NewPlan extends Controller
 {
@@ -41,7 +41,7 @@ class NewPlan extends Controller
         $memberIds   = array_column($teamMembers, 'id');
 
         if ($employeeId === 0 || ! in_array($employeeId, $memberIds, true)) {
-            return Frontcontroller::redirect(BASE_URL.'/weeklyplanning/showTeam');
+            return Frontcontroller::redirect(BASE_URL.'/weekly-planning/showTeam');
         }
 
         // Pre-fill: current week Monday→Friday
@@ -71,7 +71,7 @@ class NewPlan extends Controller
         $dateOfOneOnOne = (string) ($_POST['dateOfOneOnOne'] ?? '');
 
         if ($employeeId === 0 || empty($weekStart)) {
-            return Frontcontroller::redirect(BASE_URL.'/weeklyplanning/showTeam');
+            return Frontcontroller::redirect(BASE_URL.'/weekly-planning/showTeam');
         }
 
         $planId = $this->weeklyPlanningService->createPlan([
@@ -83,11 +83,11 @@ class NewPlan extends Controller
         ]);
 
         if ($planId) {
-            return Frontcontroller::redirect(BASE_URL.'/weeklyplanning/showPlan/'.$planId);
+            return Frontcontroller::redirect(BASE_URL.'/weekly-planning/showPlan/'.$planId);
         }
 
         $this->tpl->setNotification(__('weeklyplanning.text.plan_create_error'), 'error');
 
-        return Frontcontroller::redirect(BASE_URL.'/weeklyplanning/showTeam');
+        return Frontcontroller::redirect(BASE_URL.'/weekly-planning/showTeam');
     }
 }

@@ -11,7 +11,7 @@
     </div>
     @if(isset($isTeamLead) && $isTeamLead && $c['status'] !== 'done')
         <button class="btn btn-xs btn-link"
-                hx-post="{{ BASE_URL }}/hx/weeklyplanning/planItems/markCommitmentDone?commitmentId={{ $c['id'] }}"
+                hx-post="{{ BASE_URL }}/hx/weekly-planning/planItems/markCommitmentDone?commitmentId={{ $c['id'] }}"
                 hx-target="#commitment-{{ $c['id'] }}"
                 hx-swap="outerHTML">
             <i class="fa fa-check"></i>

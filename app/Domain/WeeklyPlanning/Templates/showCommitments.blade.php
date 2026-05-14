@@ -12,14 +12,14 @@
     <div class="maincontentinner">
 
         <div class="tw-flex tw-justify-between tw-items-center tw-mb-m">
-            <a href="{{ BASE_URL }}/weeklyplanning/showTeam" class="btn btn-default btn-sm">
+            <a href="{{ BASE_URL }}/weekly-planning/showTeam" class="btn btn-default btn-sm">
                 <i class="fa fa-arrow-left"></i> {{ __('weeklyplanning.buttons.back_to_team') }}
             </a>
             <div class="btn-group">
-                <a href="{{ BASE_URL }}/weeklyplanning/showCommitments" class="btn btn-sm {{ $openOnly ? 'btn-primary' : 'btn-default' }}">
+                <a href="{{ BASE_URL }}/weekly-planning/showCommitments" class="btn btn-sm {{ $openOnly ? 'btn-primary' : 'btn-default' }}">
                     {{ __('weeklyplanning.buttons.open_only') }}
                 </a>
-                <a href="{{ BASE_URL }}/weeklyplanning/showCommitments?showAll=1" class="btn btn-sm {{ ! $openOnly ? 'btn-primary' : 'btn-default' }}">
+                <a href="{{ BASE_URL }}/weekly-planning/showCommitments?showAll=1" class="btn btn-sm {{ ! $openOnly ? 'btn-primary' : 'btn-default' }}">
                     {{ __('weeklyplanning.buttons.show_all') }}
                 </a>
             </div>
@@ -65,7 +65,7 @@
                                 </td>
                                 <td class="tw-text-sm">{{ $c['weekLabel'] }} / {{ $c['month'] }}</td>
                                 <td>
-                                    <a href="{{ BASE_URL }}/weeklyplanning/showPlan/{{ $c['weeklyPlanId'] }}" class="btn btn-default btn-xs">
+                                    <a href="{{ BASE_URL }}/weekly-planning/showPlan/{{ $c['weeklyPlanId'] }}" class="btn btn-default btn-xs">
                                         {{ __('weeklyplanning.buttons.view_plan') }}
                                     </a>
                                 </td>

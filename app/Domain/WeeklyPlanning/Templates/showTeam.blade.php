@@ -17,7 +17,7 @@
             <span class="tw-font-semibold tw-text-sm" style="color:var(--grey);">{{ __('weeklyplanning.labels.month') }}:</span>
             <div class="btn-group">
                 @foreach($months as $month)
-                <a href="{{ BASE_URL }}/weeklyplanning/showTeam?month={{ urlencode($month) }}"
+                <a href="{{ BASE_URL }}/weekly-planning/showTeam?month={{ urlencode($month) }}"
                     class="btn btn-sm {{ $selectedMonth === $month ? 'btn-primary' : 'btn-default' }}">
                     {{ $month }}
                 </a>
@@ -38,7 +38,7 @@
                 <ul class="dropdown-menu dropdown-menu-right">
                     @foreach($teamMembers as $member)
                     <li>
-                        <a href="{{ BASE_URL }}/weeklyplanning/newPlan?employeeId={{ $member['id'] }}">
+                        <a href="{{ BASE_URL }}/weekly-planning/newPlan?employeeId={{ $member['id'] }}">
                             {{ $member['firstname'] }} {{ $member['lastname'] }}
                         </a>
                     </li>
@@ -115,7 +115,7 @@
                         </div>
                         @endif
 
-                        <a href="{{ BASE_URL }}/weeklyplanning/showPlan/{{ $plan['id'] }}"
+                        <a href="{{ BASE_URL }}/weekly-planning/showPlan/{{ $plan['id'] }}"
                             class="btn btn-xs btn-default">
                             {{ __('weeklyplanning.buttons.view_plan') }}
                         </a>
@@ -124,7 +124,7 @@
                     @endif
 
                     {{-- Always allow creating a new plan for this member (e.g. next week) --}}
-                    <a href="{{ BASE_URL }}/weeklyplanning/newPlan?employeeId={{ $member['id'] }}"
+                    <a href="{{ BASE_URL }}/weekly-planning/newPlan?employeeId={{ $member['id'] }}"
                         class="btn btn-sm btn-default tw-w-full tw-text-center tw-mt-xs">
                         <i class="fa fa-plus"></i> {{ __('weeklyplanning.buttons.create_plan') }}
                     </a>

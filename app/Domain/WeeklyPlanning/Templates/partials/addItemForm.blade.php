@@ -3,7 +3,7 @@
      style="background:var(--secondary-background); border:1px solid var(--main-border-color);">
     <h5 class="tw-mb-s">{{ __('weeklyplanning.headlines.add_task') }}</h5>
 
-    <form hx-post="{{ BASE_URL }}/hx/weeklyplanning/planItems/add"
+    <form hx-post="{{ BASE_URL }}/hx/weekly-planning/planItems/add"
           hx-target="#plan-items-list"
           hx-swap="innerHTML">
         <input type="hidden" name="planId" value="{{ $planId }}">

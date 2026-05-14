@@ -151,7 +151,7 @@
 
     {{-- Weekly Plan Tasks --}}
     <div id="my-plan-tasks-wrapper"
-         hx-get="{{ BASE_URL }}/hx/weeklyplanning/myPlanTasks/get"
+         hx-get="{{ BASE_URL }}/hx/weekly-planning/myPlanTasks/get"
          hx-trigger="load, weeklyplan_item_updated from:body"
          hx-swap="innerHTML">
     </div>

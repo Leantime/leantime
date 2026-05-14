@@ -11,7 +11,7 @@
         </small>
         @if($canEdit)
             <button class="btn btn-xs btn-link"
-                    hx-get="{{ BASE_URL }}/hx/weeklyplanning/feedback/editForm?planId={{ $planId }}&type={{ $type }}"
+                    hx-get="{{ BASE_URL }}/hx/weekly-planning/feedback/editForm?planId={{ $planId }}&type={{ $type }}"
                     hx-target="#feedback-{{ $type }}"
                     hx-swap="outerHTML">
                 <i class="fa fa-pencil"></i>

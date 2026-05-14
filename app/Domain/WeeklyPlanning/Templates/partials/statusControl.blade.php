@@ -13,7 +13,7 @@ $showReason = ($isEmployee ?? false)
 @endphp
 
 <div id="status-control-{{ $itemId }}">
-    <form hx-post="{{ BASE_URL }}/hx/weeklyplanning/statusUpdate/save"
+    <form hx-post="{{ BASE_URL }}/hx/weekly-planning/statusUpdate/save"
         hx-target="#status-control-{{ $itemId }}"
         hx-swap="outerHTML">
         <input type="hidden" name="itemId" value="{{ $itemId }}">

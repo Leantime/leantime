@@ -16,7 +16,7 @@
 
         {{-- Back link --}}
         @if($isTeamLead)
-            <a href="{{ BASE_URL }}/weeklyplanning/showTeam" class="btn btn-default btn-sm tw-mb-m">
+            <a href="{{ BASE_URL }}/weekly-planning/showTeam" class="btn btn-default btn-sm tw-mb-m">
                 <i class="fa fa-arrow-left"></i> {{ __('weeklyplanning.buttons.back_to_team') }}
             </a>
         @endif
@@ -65,11 +65,11 @@
                             <div class="tw-flex tw-gap-xs">
                                 <button type="button"
                                         class="btn btn-sm btn-default"
-                                        onclick="htmx.ajax('GET', '{{ BASE_URL }}/hx/weeklyplanning/planItems/addForm?planId={{ $plan['id'] }}', {target:'#add-item-container', swap:'innerHTML'})">
+                                        onclick="htmx.ajax('GET', '{{ BASE_URL }}/hx/weekly-planning/planItems/addForm?planId={{ $plan['id'] }}', {target:'#add-item-container', swap:'innerHTML'})">
                                     <i class="fa fa-plus"></i> {{ __('weeklyplanning.buttons.add_task') }}
                                 </button>
                                 <button class="btn btn-sm btn-default"
-                                        hx-post="{{ BASE_URL }}/hx/weeklyplanning/planItems/carryOver?planId={{ $plan['id'] }}"
+                                        hx-post="{{ BASE_URL }}/hx/weekly-planning/planItems/carryOver?planId={{ $plan['id'] }}"
                                         hx-target="#plan-items-list"
                                         hx-swap="innerHTML"
                                         hx-confirm="{{ __('weeklyplanning.buttons.carry_over') }}?">
@@ -123,7 +123,7 @@
                             </h4>
                             @if($section['editable'])
                                 <button class="btn btn-xs btn-link"
-                                        hx-get="{{ BASE_URL }}/hx/weeklyplanning/planItems/editSection?planId={{ $plan['id'] }}&field={{ $section['key'] }}"
+                                        hx-get="{{ BASE_URL }}/hx/weekly-planning/planItems/editSection?planId={{ $plan['id'] }}&field={{ $section['key'] }}"
                                         hx-target="#section-{{ $section['key'] }}"
                                         hx-swap="outerHTML">
                                     <i class="fa fa-pencil"></i>
@@ -159,7 +159,7 @@
                                 <small class="tw-font-semibold" style="color:var(--grey);">{{ __($label) }}</small>
                                 @if($canEdit)
                                     <button class="btn btn-xs btn-link"
-                                            hx-get="{{ BASE_URL }}/hx/weeklyplanning/feedback/editForm?planId={{ $plan['id'] }}&type={{ $type }}"
+                                            hx-get="{{ BASE_URL }}/hx/weekly-planning/feedback/editForm?planId={{ $plan['id'] }}&type={{ $type }}"
                                             hx-target="#feedback-{{ $type }}"
                                             hx-swap="outerHTML">
                                         <i class="fa fa-pencil"></i>
@@ -200,7 +200,7 @@
                         </h4>
                         @if($isTeamLead)
                             <button class="btn btn-xs btn-default"
-                                    hx-get="{{ BASE_URL }}/hx/weeklyplanning/planItems/commitmentForm?planId={{ $plan['id'] }}"
+                                    hx-get="{{ BASE_URL }}/hx/weekly-planning/planItems/commitmentForm?planId={{ $plan['id'] }}"
                                     hx-target="#commitment-container"
                                     hx-swap="innerHTML">
                                 <i class="fa fa-plus"></i>
