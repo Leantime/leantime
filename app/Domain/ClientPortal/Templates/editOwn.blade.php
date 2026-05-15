@@ -1,0 +1,292 @@
+@extends($layout)
+
+@section('content')
+
+<x-global::pageheader :icon="'fa fa-user'">
+    <h5>{{ __('label.overview') }}</h5>
+    <h1>{!! __('headlines.accountSettings') !!}</h1>
+</x-global::pageheader>
+
+<div class="maincontent">
+
+    {!! $tpl->displayNotification() !!}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="maincontentinner">
+                <div class="tabbedwidget tab-primary accountTabs">
+
+                    <ul>
+                        <li><a href="#myProfile">{!! __('tabs.myProfile') !!}</a></li>
+                        <li><a href="#security">{!! __('tabs.security') !!}</a></li>
+                        <li><a href="#theme">{!! __('tabs.theme') !!}</a></li>
+                    </ul>
+
+                    {{-- ============================================================
+                         My Profile (name / email / phone / avatar)
+                    ============================================================ --}}
+                    <div id="myProfile">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <form action="" method="post">
+                                    <h4 class="widgettitle title-light">{{ __('label.profile_information') }}</h4>
+                                    <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
+
+                                    <div class="row-fluid">
+                                        <div class="form-group">
+                                            <label for="firstname">{{ __('label.firstname') }}</label>
+                                            <span>
+                                                <input type="text" class="input" name="firstname" id="firstname"
+                                                       {{ session('userdata.isExternalAuth') ? "disabled='disabled'" : '' }}
+                                                       value="{{ $values['firstname'] }}" /><br />
+                                            </span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="lastname">{{ __('label.lastname') }}</label>
+                                            <span>
+                                                <input type="text" name="lastname" class="input" id="lastname"
+                                                       {{ session('userdata.isExternalAuth') ? "disabled='disabled'" : '' }}
+                                                       value="{{ $values['lastname'] }}" /><br />
+                                            </span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="user">{{ __('label.email') }}</label>
+                                            <span>
+                                                <input type="text" name="user" class="input" id="user"
+                                                       {{ session('userdata.isExternalAuth') ? "disabled='disabled'" : '' }}
+                                                       value="{{ $values['user'] }}" /><br />
+                                            </span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="phone">{{ __('label.phone') }}</label>
+                                            <span>
+                                                <input type="text" name="phone" class="input" id="phone"
+                                                       {{ session('userdata.isExternalAuth') ? "disabled='disabled'" : '' }}
+                                                       value="{{ $values['phone'] }}" /><br />
+                                            </span>
+                                        </div>
+
+                                        <p class="stdformbutton">
+                                            <input type="hidden" name="profileInfo" value="1" />
+                                            <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="button" />
+                                        </p>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="center">
+                                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}?v={{ format($user['modified'])->timestamp() }}"
+                                         class="profileImg tw-rounded-full" alt="Profile Picture" id="previousImage" />
+                                    <div id="profileImg"></div>
+
+                                    <div class="par">
+                                        <label>{{ __('label.upload') }}</label>
+
+                                        <div class="fileupload fileupload-new" data-provides="fileupload">
+                                            <input type="hidden" />
+                                            <div class="input-append">
+                                                <div class="uneditable-input span3">
+                                                    <i class="fa-file fileupload-exists"></i>
+                                                    <span class="fileupload-preview"></span>
+                                                </div>
+                                                <span class="btn btn-file">
+                                                    <span class="fileupload-new">{{ __('buttons.select_file') }}</span>
+                                                    <span class="fileupload-exists">{{ __('buttons.change') }}</span>
+                                                    <input type="file" name="file"
+                                                           onchange="leantime.usersController.readURL(this)"
+                                                           accept=".jpg,.png,.gif,.webp" />
+                                                </span>
+                                                <a href="#" class="btn fileupload-exists" data-dismiss="fileupload"
+                                                   onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</a>
+                                            </div>
+                                            <p class="stdformbutton">
+                                                <span id="save-picture" class="btn btn-primary fileupload-exists ld-ext-right">
+                                                    <span onclick="leantime.usersController.saveCroppie()">{{ __('buttons.save') }}</span>
+                                                    <span class="ld ld-ring ld-spin"></span>
+                                                </span>
+                                                <input type="hidden" name="profileImage" value="1" />
+                                                <input id="picSubmit" type="submit" name="savePic" class="hidden"
+                                                       value="{{ __('buttons.upload') }}" />
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ============================================================
+                         Security (password + 2FA)
+                    ============================================================ --}}
+                    <div id="security">
+                        <h4 class="widgettitle title-light">
+                            {!! __('headlines.change_password') !!}
+                        </h4>
+                        @if (session('userdata.isExternalAuth'))
+                            <strong>{{ __('text.account_managed_external_auth') }}</strong><br /><br />
+                        @endif
+
+                        <form method="post">
+                            <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
+
+                            <div class="row-fluid">
+                                <div class="form-group">
+                                    <label for="currentPassword">{{ __('label.old_password') }}</label>
+                                    <span>
+                                        <input type="password" value="" name="currentPassword" class="input"
+                                               {{ session('userdata.isExternalAuth') ? "disabled='disabled'" : '' }}
+                                               id="currentPassword" /><br />
+                                    </span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="newPassword">{{ __('label.new_password') }}</label>
+                                    <span>
+                                        <input type="password" value="" name="newPassword" class="input"
+                                               {{ session('userdata.isExternalAuth') ? "disabled='disabled'" : '' }}
+                                               id="newPassword" />
+                                        <span id="pwStrength"></span>
+                                    </span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="confirmPassword">{{ __('label.password_repeat') }}</label>
+                                    <span>
+                                        <input type="password" value="" name="confirmPassword" class="input"
+                                               {{ session('userdata.isExternalAuth') ? "disabled='disabled'" : '' }}
+                                               id="confirmPassword" /><br />
+                                        @if (! session('userdata.isExternalAuth'))
+                                            <small>{{ __('label.passwordRequirements') }}</small>
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+
+                            @if (! session('userdata.isExternalAuth'))
+                                <input type="hidden" name="savepw" value="1" />
+                                <input type="submit" name="save" id="savePw" value="{{ __('buttons.save') }}" class="button" />
+                            @endif
+                        </form>
+
+                        <br /><br />
+                        <h4 class="widgettitle title-light">
+                            <i class="fa-solid fa-shield-halved"></i> {{ __('headlines.twoFA') }}
+                        </h4>
+                        @if ($values['twoFAEnabled'])
+                            <p>{!! __('text.twoFA_enabled') !!}</p>
+                        @else
+                            <p>{!! __('text.twoFA_disabled') !!}</p>
+                        @endif
+                        <p><a href="{{ BASE_URL }}/twoFA/edit">{!! __('text.twoFA_manage') !!}</a></p>
+                    </div>
+
+                    {{-- ============================================================
+                         Theme
+                    ============================================================ --}}
+                    <div id="theme">
+                        <form action="" method="post">
+                            <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
+
+                            <div class="row-fluid">
+                                <div class="form-group">
+                                    <label for="themeSelect">Optimal Stimulation</label>
+                                    <span class="field tw-flex tw-w-80">
+                                        @foreach ($availableThemes as $key => $theme)
+                                            <x-global::selectable :selected="$userTheme == $key ? 'true' : 'false'"
+                                                                  :id="''" :name="'theme'" :value="$key" :label="''"
+                                                                  class="tw-w-1/2"
+                                                                  onclick="leantime.snippets.toggleBg('{{ $key }}')">
+                                                <img src="{{ BASE_URL }}/dist/images/background-{{ $key }}.png"
+                                                     style="margin:0; border-radius:10px;" />
+                                                <br />{{ $tpl->__($theme['name']) }}
+                                            </x-global::selectable>
+                                        @endforeach
+                                    </span>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr />
+                                        <label for="colormode">{{ __('label.colormode') }}</label>
+
+                                        <x-global::selectable :selected="$userColorMode == 'light' ? 'true' : ''"
+                                                              :id="'light'" :name="'colormode'" :value="'light'"
+                                                              :label="'Light'"
+                                                              onclick="leantime.snippets.toggleTheme('light')">
+                                            <label for="colormode-light" class="tw-w-[100px]">
+                                                <i class="fa-solid fa-sun tw-font-xxl"></i>
+                                            </label>
+                                        </x-global::selectable>
+
+                                        <x-global::selectable :selected="$userColorMode == 'dark' ? 'true' : ''"
+                                                              :id="'dark'" :name="'colormode'" :value="'dark'"
+                                                              :label="'Dark'"
+                                                              onclick="leantime.snippets.toggleTheme('dark')">
+                                            <label for="colormode-light" class="tw-w-[100px]">
+                                                <i class="fa-solid fa-moon tw-font-xxl"></i>
+                                            </label>
+                                        </x-global::selectable>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr />
+                                        <label>Font</label>
+                                        @foreach ($availableFonts as $key => $font)
+                                            <x-global::selectable :selected="$themeFont == $font ? 'true' : ''"
+                                                                  :id="$key" :name="'themeFont'" :value="$font"
+                                                                  :label="$font"
+                                                                  onclick="leantime.snippets.toggleFont('{{ $font }}')">
+                                                <label for="selectable-{{ $key }}" class="font tw-w-[200px]"
+                                                       style="font-family:'{{ $font }}'; font-size:16px;">
+                                                    The quick brown fox jumps over the lazy dog
+                                                </label>
+                                            </x-global::selectable>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr />
+                                        <label>Color Scheme</label>
+                                        @foreach ($availableColorSchemes as $key => $scheme)
+                                            <x-global::selectable class="circle"
+                                                                  :selected="$userColorScheme == $key ? 'true' : ''"
+                                                                  :id="$key" :name="'colorscheme'" :value="$key"
+                                                                  :label="__($scheme['name'])"
+                                                                  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
+                                                <label for="color-{{ $key }}" class="colorCircle"
+                                                       style="background:linear-gradient(135deg, {{ $scheme['primaryColor'] }} 20%, {{ $scheme['secondaryColor'] }} 100%);">
+                                                </label>
+                                            </x-global::selectable>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br /><br />
+                            <input type="hidden" name="saveTheme" value="1" />
+                            <input type="submit" name="save" id="saveTheme" value="{{ __('buttons.save') }}" class="button" />
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        leantime.usersController.checkPWStrength('newPassword');
+        jQuery('.accountTabs').tabs();
+    });
+</script>
+
+@endsection

@@ -781,6 +781,28 @@ class Projects
     }
 
     /**
+     * Assign a list of projects to a client org, and clear the org from any projects
+     * that were previously linked to it but are no longer in the list.
+     *
+     * @param  int[]  $projectIds
+     */
+    public function setClientProjects(int $clientId, array $projectIds): void
+    {
+        // Clear org from projects currently linked to this client but not in the new list
+        $this->connection->table('zp_projects')
+            ->where('clientId', $clientId)
+            ->whereNotIn('id', $projectIds ?: [0])
+            ->update(['clientId' => 0]);
+
+        // Assign the selected projects to this client org
+        if (! empty($projectIds)) {
+            $this->connection->table('zp_projects')
+                ->whereIn('id', $projectIds)
+                ->update(['clientId' => $clientId]);
+        }
+    }
+
+    /**
      * editProject - edit a project
      */
     public function editProjectRelations(array $values, $projectId): void

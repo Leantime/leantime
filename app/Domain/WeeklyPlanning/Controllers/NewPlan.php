@@ -74,6 +74,16 @@ class NewPlan extends Controller
             return Frontcontroller::redirect(BASE_URL.'/weekly-planning/showTeam');
         }
 
+        // Authorization: same membership guard as the GET form — a team lead
+        // may only create plans for users in their own team (managerId match).
+        $teamMembers = $this->weeklyPlanningService->getTeamMembers((int) session('userdata.id'));
+        $memberIds   = array_column($teamMembers, 'id');
+        if (! in_array($employeeId, $memberIds, true)) {
+            $this->tpl->setNotification($this->language->__('weeklyplanning.text.plan_create_error'), 'error');
+
+            return Frontcontroller::redirect(BASE_URL.'/weekly-planning/showTeam');
+        }
+
         $planId = $this->weeklyPlanningService->createPlan([
             'employeeId'     => $employeeId,
             'teamLeadId'     => (int) session('userdata.id'),

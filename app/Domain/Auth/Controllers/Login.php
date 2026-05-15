@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Setting\Services\Setting;
 use Symfony\Component\HttpFoundation\Response;
@@ -120,6 +121,11 @@ class Login extends Controller
 
                 if ($this->authService->use2FA()) {
                     return FrontcontrollerCore::redirect(BASE_URL.'/auth/twoFA');
+                }
+
+                // Client role (commenter) lands on their portal, not the main dashboard
+                if (session('userdata.role') === Roles::$commenter) {
+                    return FrontcontrollerCore::redirect(BASE_URL.'/clientportal/showDashboard');
                 }
 
                 return FrontcontrollerCore::redirect($redirectUrl);

@@ -30,9 +30,17 @@ class Feedback extends HtmxController
     /** Render the inline edit form for one feedback type. */
     public function editForm(): void
     {
+        $planId = (int) $this->incomingRequest->query->get('planId', 0);
+        $plan   = $this->service->getPlanById($planId);
+
+        if (! $this->canAccessPlan($plan)) {
+            $this->denyAccess();
+
+            return;
+        }
+
         static::$view = 'weeklyplanning::partials.feedbackForm';
 
-        $planId   = (int) $this->incomingRequest->query->get('planId', 0);
         $type     = (string) $this->incomingRequest->query->get('type', '');
         $feedback = $this->service->getFeedbackForPlan($planId);
         $existing = collect($feedback)->firstWhere('type', $type);
@@ -53,6 +61,21 @@ class Feedback extends HtmxController
         $userId  = (int) session('userdata.id');
         $plan    = $this->service->getPlanById($planId);
 
+        // Authorization: must be a participant in the plan (or admin/owner)…
+        if (! $this->canAccessPlan($plan)) {
+            $this->denyAccess();
+
+            return;
+        }
+
+        // …and the current role must be allowed to write THIS feedback type.
+        // (Without this, an employee could POST manager_* feedback, forging it.)
+        if (! $this->resolveCanEdit($type)) {
+            $this->denyAccess();
+
+            return;
+        }
+
         $toUserId = str_starts_with($type, 'manager_')
             ? (int) ($plan['employeeId'] ?? 0)
             : (int) ($plan['teamLeadId'] ?? 0);
@@ -65,8 +88,16 @@ class Feedback extends HtmxController
     /** Re-render the display block without saving (cancel). */
     public function view(): void
     {
-        $planId  = (int) $this->incomingRequest->query->get('planId', 0);
-        $type    = (string) $this->incomingRequest->query->get('type', '');
+        $planId = (int) $this->incomingRequest->query->get('planId', 0);
+        $plan   = $this->service->getPlanById($planId);
+
+        if (! $this->canAccessPlan($plan)) {
+            $this->denyAccess();
+
+            return;
+        }
+
+        $type     = (string) $this->incomingRequest->query->get('type', '');
         $feedback = $this->service->getFeedbackForPlan($planId);
         $existing = collect($feedback)->firstWhere('type', $type);
 
@@ -84,6 +115,34 @@ class Feedback extends HtmxController
 
         return ($isTeamLead && str_starts_with($type, 'manager_'))
             || (! $isTeamLead && str_starts_with($type, 'employee_'));
+    }
+
+    /**
+     * Whether the current user is a participant in this plan (the employee or
+     * the team lead) — or a manager/admin/owner who can see any plan.
+     * Mirrors the access rule used by ShowPlan.
+     */
+    private function canAccessPlan(?array $plan): bool
+    {
+        if ($plan === null) {
+            return false;
+        }
+
+        if (Auth::userIsAtLeast(Roles::$manager, true)) {
+            return true;
+        }
+
+        $uid = (int) session('userdata.id');
+
+        return (int) ($plan['employeeId'] ?? 0) === $uid
+            || (int) ($plan['teamLeadId'] ?? 0) === $uid;
+    }
+
+    /** Emit a 403 notification for a denied feedback action. */
+    private function denyAccess(): void
+    {
+        $this->tpl->setNotification('errors.error403', 'error');
+        $this->setHTMXEvent('HTMX.ShowNotification');
     }
 
     private function assignDisplay(int $planId, string $type, string $message): void

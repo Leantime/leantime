@@ -144,6 +144,26 @@ class Clients extends Repository
     }
 
     /**
+     * Get only client-portal users (role=10 / commenter) assigned to a client org.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getClientPortalUsers(int $clientId): array
+    {
+        $results = $this->db->table('zp_user')
+            ->select('id', 'firstname', 'lastname', 'username', 'phone', 'status', 'pwReset')
+            ->where('clientId', $clientId)
+            ->where('role', 10)
+            ->where(function ($query) {
+                $query->whereNull('source')
+                    ->orWhere('source', '!=', 'api');
+            })
+            ->get();
+
+        return array_map(fn ($item) => (array) $item, $results->toArray());
+    }
+
+    /**
      * addClient - add a client and postback test
      */
     public function addClient(array $values): false|string

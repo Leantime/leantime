@@ -4,6 +4,7 @@
 <ul class="headmenu pull-right">
     @dispatchEvent('insideHeadMenu')
 
+    @if(session('userdata.role') !== Roles::$commenter)
     <li class="notificationDropdown quickAddDropdown">
         <a
             href="javascript:void(0);"
@@ -73,6 +74,7 @@
         </div>
     </li>
     @endif
+    @endif {{-- end commenter hide --}}
 
     <li class="notificationDropdown">
         <a
@@ -258,6 +260,8 @@
 <ul class="headmenu work-modes" style="height: 50px; float: left;">
 
     @dispatchEvent('afterHeadMenuOpen')
+
+    @if(session('userdata.role') !== Roles::$commenter)
     <li>
         @include('menu::projectSelector')
     </li>
@@ -300,6 +304,7 @@
             @endif
         </li>
     @endif
+    @endif {{-- end commenter hide --}}
 
 </ul>
 

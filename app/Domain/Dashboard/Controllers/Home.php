@@ -5,6 +5,7 @@ namespace Leantime\Domain\Dashboard\Controllers;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Setting\Services\Setting;
 use Leantime\Domain\Widgets\Services\Widgets;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -32,6 +33,10 @@ class Home extends Controller
      */
     public function get(): Response
     {
+        if (session('userdata.role') === Roles::$commenter) {
+            return Frontcontroller::redirect(BASE_URL.'/clientportal/showDashboard');
+        }
+
         // Debug uncomment to reset dashboard
         if (isset($_GET['resetDashboard']) === true) {
             $this->widgetService->resetDashboard(session('userdata.id'));

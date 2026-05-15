@@ -1,8 +1,10 @@
 <script>
     jQuery(document).ready(function () {
 
-        // First login flow
-        @if($isFirstLogin === true || $isFirstLogin === "true")
+        // First login flow — skip entirely for client portal (commenter) users
+        @if(session('userdata.role') === 'commenter')
+            // no onboarding modal for client portal users
+        @elseif($isFirstLogin === true || $isFirstLogin === "true")
             leantime.helperController.firstLoginModal();
         @else
 

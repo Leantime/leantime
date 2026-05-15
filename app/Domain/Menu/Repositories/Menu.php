@@ -22,6 +22,9 @@ class Menu
 
     // Menu structures
     public array $menuStructures = [
+        'clientportal' => [
+            5  => ['type' => 'item', 'module' => 'clientportal', 'title' => 'menu.client_my_projects', 'icon' => 'fa fa-fw fa-folder-open', 'tooltip' => 'menu.client_my_projects', 'href' => '/clientportal/showDashboard', 'active' => ['showDashboard', 'showProject']],
+        ],
         'default' => [
             5  => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.overview', 'icon' => 'fa fa-fw fa-gauge-high', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/show', 'active' => ['show']],
             10 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'icon' => 'fa fa-fw fa-thumb-tack', 'tooltip' => 'menu.todos_tooltip', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket', 'showList']],
@@ -86,8 +89,6 @@ class Menu
             5  => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.sidemenu_home', 'icon' => 'fa fa-fw fa-house', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/home', 'active' => ['home']],
             10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.sidemenu_my_project_hub', 'icon' => 'fa fa-fw fa-house-flag', 'tooltip' => 'menu.projecthub_tooltip', 'href' => '/projects/showMy', 'active' => ['showMy'], 'role' => 'editor'],
             15 => ['type' => 'item', 'module' => 'calendar', 'title' => 'menu.sidemenu_my_calendar', 'icon' => 'fa fa-fw fa-calendar', 'tooltip' => 'menu.my_calendar_tooltip', 'href' => '/calendar/showMyCalendar', 'active' => ['showMyCalendar']],
-            20 => ['type' => 'item', 'module' => 'files', 'title' => 'menu.files', 'icon' => 'fa fa-fw fa-file', 'tooltip' => 'menu.files_tooltip', 'href' => '/files/browse'],
-            25 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'icon' => 'fa fa-fw fa-chart-bar', 'tooltip' => 'menu.reports_tooltip', 'href' => '/reports/show', 'role' => 'teamlead'],
             30 => ['type' => 'item', 'module' => 'timesheets', 'title' => 'menu.sidemenu_my_timesheets', 'icon' => 'fa fa-fw fa-clock', 'tooltip' => 'menu.my_timesheets_tooltip', 'href' => '/timesheets/showMy', 'active' => ['showMy']],
             35 => ['type' => 'item', 'module' => 'oneonone', 'title' => 'menu.sidemenu_my_oneonones', 'icon' => 'fa fa-fw fa-handshake', 'tooltip' => 'menu.my_oneonones_tooltip', 'href' => '/oneonone/showMy', 'active' => ['showMy', 'showSession']],
             40 => ['type' => 'item', 'module' => 'weekly-planning', 'title' => 'menu.my_weekly_plan', 'icon' => 'fa fa-fw fa-calendar-week', 'tooltip' => 'menu.my_weekly_plan_tooltip', 'href' => '/weekly-planning/showMy', 'active' => ['showMy', 'showMyHistory'], 'role' => 'editor'],
@@ -462,6 +463,8 @@ class Menu
             'weekly-planning.showCommitments' => 'company',
             'weekly-planning.showMy'          => 'personal',
             'weekly-planning.showMyHistory'   => 'personal',
+            'clientportal.showDashboard'      => 'clientportal',
+            'clientportal.showProject'        => 'clientportal',
         ];
 
         $sections = self::dispatch_filter('menuSections', $sections, ['currentRoute' => $currentRoute, 'default' => $default]);

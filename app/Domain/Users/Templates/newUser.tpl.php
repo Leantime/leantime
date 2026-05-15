@@ -71,6 +71,19 @@ $projects = $tpl->get('relations');
 <?php echo $tpl->displayNotification() ?>
 
 <form action="<?= BASE_URL?>/users/newUser" method="post" class="stdform userEditModal formModal">
+    <?php
+    // Round-trip the "invite from client org" context across POST so that if
+    // the modal stays open after submit (success notification or validation
+    // error), it re-renders with the preset still applied.
+    $_pcClient = (int) $tpl->get('preSelectedClient');
+    $_pcRole   = (int) $tpl->get('preSelectedRole');
+    ?>
+    <?php if ($_pcClient > 0) { ?>
+        <input type="hidden" name="preSelectedClient" value="<?= $_pcClient ?>" />
+    <?php } ?>
+    <?php if ($_pcRole > 0) { ?>
+        <input type="hidden" name="preSelectedRole" value="<?= $_pcRole ?>" />
+    <?php } ?>
     <div class="row" style="width:800px;">
         <div class="col-md-7">
 
@@ -85,10 +98,23 @@ $projects = $tpl->get('relations');
                         value="<?php echo $values['lastname'] ?>" /><br />
 
             <label for="role"><?php echo $tpl->__('label.role'); ?></label>
+            <?php if ((int) $tpl->get('preSelectedRole') > 0) { ?>
+                <select name="role" id="role" disabled>
+                    <?php foreach ($tpl->get('roles') as $key => $role) { ?>
+                        <?php if ($key != (int) $tpl->get('preSelectedRole')) { continue; } ?>
+                        <option value="<?php echo $key; ?>" selected="selected">
+                            <?= $tpl->__('label.roles.'.$role) ?>
+                        </option>
+                    <?php } ?>
+                </select>
+                <input type="hidden" name="role" value="<?= (int) $tpl->get('preSelectedRole') ?>" />
+            <?php } else { ?>
             <select name="role" id="role">
-
                 <?php foreach ($tpl->get('roles') as $key => $role) { ?>
                     <?php if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30) {
+                        continue;
+                    }?>
+                    <?php if ($key == 10 && (int) $tpl->get('preSelectedClient') === 0) {
                         continue;
                     }?>
                         <option value="<?php echo $key; ?>"
@@ -98,9 +124,23 @@ $projects = $tpl->get('relations');
                         <?= $tpl->__('label.roles.'.$role) ?>
                     </option>
                 <?php } ?>
+            </select>
+            <?php } ?>
+            <br />
 
-            </select> <br />
-
+            <div id="client-field-wrapper">
+            <?php if ((int) $tpl->get('preSelectedClient') > 0) { ?>
+                <?php
+                $preClientId = (int) $tpl->get('preSelectedClient');
+                $preClientName = '';
+                foreach ($tpl->get('clients') as $c) {
+                    if ($c['id'] == $preClientId) { $preClientName = $c['name']; break; }
+                }
+                ?>
+                <label><?php echo $tpl->__('label.client') ?></label>
+                <input type="text" value="<?= $tpl->escape($preClientName) ?>" disabled style="background:var(--secondary-background);" />
+                <input type="hidden" name="client" value="<?= $preClientId ?>" />
+            <?php } else { ?>
             <label for="client"><?php echo $tpl->__('label.client') ?></label>
             <select name='client' id="client">
                 <?php if ($login::userIsAtLeast('admin')) {?>
@@ -112,11 +152,14 @@ $projects = $tpl->get('relations');
                     }
                     ?>
                     <option value="<?php echo $client['id'] ?>"
-                            <?php if ($client['id'] == $values['clientId'] || $tpl->get('preSelectedClient') == $client['id']) {
+                            <?php if ($client['id'] == $values['clientId']) {
                                 ?>selected="selected"<?php
                             } ?>><?php $tpl->e($client['name']) ?></option>
                 <?php } ?>
-            </select><br/>
+            </select>
+            <?php } ?>
+            <br/>
+            </div>
             <br/>
 
 
@@ -131,6 +174,7 @@ $projects = $tpl->get('relations');
                         value="<?php echo $values['phone'] ?>" /><br />
             <br/>
 
+            <div id="employee-info-wrapper" <?php if ((int) $tpl->get('preSelectedClient') > 0) { ?>style="display:none;"<?php } ?>>
             <h4 class="widgettitle title-light"><?php echo $tpl->__('label.employee_information'); ?></h4>
                 <label for="jobTitle"><?php echo $tpl->__('label.jobTitle'); ?></label> <input
                     type="text" name="jobTitle" id="jobTitle" value="<?php echo $values['jobTitle'] ?>" /><br />
@@ -151,7 +195,7 @@ $projects = $tpl->get('relations');
                         </option>
                     <?php endforeach; ?>
                 </select><br />
-
+            </div>
 
                     <p class="stdformbutton">
                         <input type="hidden" name="save" value="1" />
@@ -159,7 +203,7 @@ $projects = $tpl->get('relations');
                     </p>
 
         </div>
-        <div class="col-md-5">
+        <div class="col-md-5" <?php if ((int) $tpl->get('preSelectedClient') > 0) { ?>style="display:none;"<?php } ?>>
 
                 <h4 class="widgettitle title-light"><?php echo $tpl->__('label.project_assignment'); ?></h4>
 
@@ -211,6 +255,24 @@ foreach ($tpl->get('allProjects') as $row) {
 </form>
 
 <script>
+    // For Client role (10): show the Client Organisation field (required to link to projects),
+    // but hide Employee Information. For all other roles: show both.
+    function toggleClientField() {
+        var roleVal = parseInt(jQuery('#role').val(), 10);
+        if (roleVal === 10) {
+            jQuery('#client-field-wrapper').show();
+            jQuery('#employee-info-wrapper').hide();
+        } else {
+            jQuery('#client-field-wrapper').show();
+            jQuery('#employee-info-wrapper').show();
+        }
+    }
+
+    jQuery(document).ready(function () {
+        toggleClientField();
+        jQuery('#role').on('change', toggleClientField);
+    });
+
     function accordionToggle(id) {
 
         let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");

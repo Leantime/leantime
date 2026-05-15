@@ -113,6 +113,7 @@ $projects = $tpl->get('relations');
                             value="<?php echo $tpl->escape($values['phone']) ?>" /><br /><br />
 
 
+                        <div id="employee-info-wrapper">
                         <h4 class="widgettitle title-light"><?php echo $tpl->__('label.employee_information'); ?></h4>
                         <label for="jobTitle"><?php echo $tpl->__('label.jobTitle'); ?></label> <input
                             type="text" name="jobTitle" id="jobTitle" value="<?php echo $tpl->escape($values['jobTitle']) ?>" /><br />
@@ -136,6 +137,7 @@ $projects = $tpl->get('relations');
                                 </option>
                             <?php endforeach; ?>
                         </select><br />
+                        </div>
 
 
 
@@ -196,6 +198,19 @@ foreach ($tpl->get('allProjects') as $row) {
 
     jQuery(".noClickProp.dropdown-menu").on("click", function(e) {
         e.stopPropagation();
+    });
+
+    function toggleEmployeeInfo() {
+        var roleVal = parseInt(jQuery('#role').val(), 10);
+        if (roleVal === 10) {
+            jQuery('#employee-info-wrapper').hide();
+        } else {
+            jQuery('#employee-info-wrapper').show();
+        }
+    }
+    jQuery(document).ready(function () {
+        toggleEmployeeInfo();
+        jQuery('#role').on('change', toggleEmployeeInfo);
     });
 
     function accordionToggle(id) {

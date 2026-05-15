@@ -31,7 +31,11 @@ class ShowAll extends Controller
         // Only Admins
         if (Auth::userIsAtLeast(Roles::$admin)) {
             if (Auth::userIsAtLeast(Roles::$admin)) {
-                $this->tpl->assign('allUsers', $this->userRepo->getAll());
+                $allUsers = array_values(array_filter(
+                    $this->userRepo->getAll(),
+                    fn ($u) => (int) ($u['role'] ?? 0) !== 10
+                ));
+                $this->tpl->assign('allUsers', $allUsers);
             } else {
                 $this->tpl->assign('allUsers', $this->userRepo->getAllClientUsers(Auth::getUserClientId()));
             }

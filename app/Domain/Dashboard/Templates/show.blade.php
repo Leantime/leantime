@@ -51,6 +51,14 @@
                     </div>
                 @endif
 
+                @if($login::userIsAtLeast($roles::$teamlead))
+                <a href="{{ BASE_URL }}/clientportal/adminRequests?projectId={{ $project['id'] }}"
+                   class="btn btn-default pull-right tw-mr-[5px]"
+                   data-tippy-content="{{ __('clientportal.buttons.client_requests') }}">
+                    <i class="fa fa-inbox tw-mr-xs"></i>{{ __('clientportal.buttons.client_requests') }}
+                </a>
+                @endif
+
                 <div class="pull-right dropdownWrapper tw-mr-[5px]">
                     <a
                         class="dropdown-toggle btn round-button"

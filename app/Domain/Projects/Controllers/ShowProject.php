@@ -288,8 +288,19 @@ class ShowProject extends Controller
 
             $employees = $this->userRepo->getEmployees();
 
+            // Exclude client portal users (role=10/commenter) from project team
+            // assignment lists — clients belong to client orgs, not project teams.
+            $availableUsers = array_values(array_filter(
+                $this->userRepo->getAll(),
+                fn ($u) => (int) ($u['role'] ?? 0) !== 10,
+            ));
+            $project['assignedUsers'] = array_values(array_filter(
+                $project['assignedUsers'] ?? [],
+                fn ($u) => (int) ($u['role'] ?? 0) !== 10,
+            ));
+
             // Assign vars
-            $this->tpl->assign('availableUsers', $this->userRepo->getAll());
+            $this->tpl->assign('availableUsers', $availableUsers);
             $this->tpl->assign('clients', $this->clientsRepo->getAll());
 
             $this->tpl->assign('todoStatus', $this->ticketService->getStatusLabels());

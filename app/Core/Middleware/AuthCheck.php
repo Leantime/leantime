@@ -10,6 +10,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Domain\Auth\Models\Roles;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -71,6 +72,41 @@ class AuthCheck
         }
 
         self::dispatchEvent('logged_in', ['application' => $this]);
+
+        // Commenter (client) role may only access client portal, auth, and shared utility routes.
+        if (session('userdata.role') === Roles::$commenter && ! $request->isApiOrCronRequest()) {
+            $route = $request->getCurrentRoute() ?? '';
+            $allowed = self::dispatchFilter('commenterAllowedRoutes', [
+                'clientportal',
+                'hx.clientportal',
+                'auth',
+                'errors',
+                'api.i18n',
+                'api.static-asset',
+                'notifications',
+                'hx.notifications',
+                'files',
+                'hx.files',
+            ]);
+
+            $isAllowed = false;
+            foreach ($allowed as $prefix) {
+                if ($route === $prefix || str_starts_with($route, $prefix . '.')) {
+                    $isAllowed = true;
+                    break;
+                }
+            }
+
+            if (! $isAllowed) {
+                // For HTMX partial requests, trigger a client-side full-page redirect
+                // instead of a server-side redirect (which HTMX would inject into the swap target).
+                if ($request->headers->get('HX-Request') === 'true') {
+                    return new Response('', 204, ['HX-Redirect' => BASE_URL . '/clientportal/showDashboard']);
+                }
+
+                return new RedirectResponse(BASE_URL . '/clientportal/showDashboard');
+            }
+        }
 
         return $next($request);
     }

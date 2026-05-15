@@ -94,16 +94,6 @@ $state = $tpl->get('state');
                                                     <input type="text" readonly disabled value="<?php echo $tpl->__('label.roles.' . $roles::getRoles()[$assignedUser['role']]) ?>" />
                                                 <?php } else { ?>
                                                     <select name="userProjectRole-<?php echo $assignedUser['id'] ?>">
-                                                        <option value="inherit">Inherit</option>
-                                                        <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
-                                                            <?php if ($assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) {
-                                                                echo " selected='selected' ";
-                                                            } ?>><?php echo $tpl->__('label.roles.' . $roles::$readonly) ?></option>
-
-                                                        <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
-                                                            <?php if ($assignedUser['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) {
-                                                                echo " selected='selected' ";
-                                                            } ?>><?php echo $tpl->__('label.roles.' . $roles::$commenter) ?></option>
                                                         <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
                                                             <?php if ($assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles())) {
                                                                 echo " selected='selected' ";
@@ -150,16 +140,6 @@ $state = $tpl->get('state');
                                                     <?php } else { ?>
                                                         <?php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); ?>
                                                         <select name="userProjectRole-<?php echo $row['id'] ?>">
-                                                            <option value="inherit">Inherit</option>
-                                                            <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
-                                                                <?php if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) {
-                                                                    echo " selected='selected' ";
-                                                                } ?>><?php echo $tpl->__('label.roles.' . $roles::$readonly) ?></option>
-
-                                                            <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
-                                                                <?php if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) {
-                                                                    echo " selected='selected' ";
-                                                                } ?>><?php echo $tpl->__('label.roles.' . $roles::$commenter) ?></option>
                                                             <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
                                                                 <?php if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$editor, $roles::getRoles())) {
                                                                     echo " selected='selected' ";

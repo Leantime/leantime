@@ -125,12 +125,21 @@ class NewUser extends Controller
                 }
             }
 
-            $preSelectedClient = '';
-            if (isset($_GET['preSelectedClient'])) {
-                $preSelectedClient = (int) $_GET['preSelectedClient'];
-            }
+            // Read the "invite from client org" context from the request.
+            // GET carries the params on first open; POST round-trips them via
+            // hidden inputs so the modal stays in client-invite mode after
+            // submit (otherwise the re-rendered form would lose its preset).
+            $preSelectedClient = (int) ($this->incomingRequest->query->get('preSelectedClient')
+                ?? $_POST['preSelectedClient']
+                ?? $_GET['preSelectedClient']
+                ?? 0);
+            $preSelectedRole = (int) ($this->incomingRequest->query->get('preSelectedRole')
+                ?? $_POST['preSelectedRole']
+                ?? $_GET['preSelectedRole']
+                ?? 0);
 
             $this->tpl->assign('preSelectedClient', $preSelectedClient);
+            $this->tpl->assign('preSelectedRole', $preSelectedRole);
             $this->tpl->assign('clients', $clients->getAll());
             $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
             $this->tpl->assign('roles', Roles::getAssignableRoles());
