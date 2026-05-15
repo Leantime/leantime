@@ -53,7 +53,7 @@ return [
             Illuminate\Foundation\Providers\ComposerServiceProvider::class,
 
         ],
-        'name' => env('LEAN_SITENAME', 'Leantime'),
+        'name' => env('LEAN_SITENAME', 'Toba Tech Portal'),
         'locale' => env('LEAN_LANGUAGE', 'en-US'),
         'url' => env('LEAN_APP_URL', ''),
         'timezone' => env('LEAN_DEFAULT_TIMEZONE', 'America/Los_Angeles'),
