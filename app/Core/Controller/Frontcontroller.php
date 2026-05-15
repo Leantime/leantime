@@ -75,13 +75,12 @@ class Frontcontroller
         // Setting default response code to 200, can be changed in controller
         $this->setResponseCode(200);
 
-        $this->lastAction = $moduleName.'.'.$controllerName.'.'.$method;
+        $this->lastAction = $moduleName . '.' . $controllerName . '.' . $method;
 
         $this->dispatchEvent('execute_action_end', ['action' => $controllerName, 'module' => $moduleName]);
 
         // execute action
         return $this->executeAction($routeParts['class'], $routeParts['method']);
-
     }
 
     public static function dispatch_request(IncomingRequest $request): Response
@@ -129,7 +128,8 @@ class Frontcontroller
 
         // third is either id or method
         // we can say that a numeric value always represents an id
-        if (isset($segments[2]) &&
+        if (
+            isset($segments[2]) &&
             (is_numeric($segments[2]) || Str::isUuid($segments[2]))
         ) {
             $id = $segments[2];
@@ -137,7 +137,8 @@ class Frontcontroller
 
         // If not numeric, it's quite likely this is a method name
         // But it needs to be double checked.
-        if (isset($segments[2]) &&
+        if (
+            isset($segments[2]) &&
             ! (is_numeric($segments[2]) || Str::isUuid($segments[2]))
         ) {
             $method = $segments[2];
@@ -151,8 +152,8 @@ class Frontcontroller
             $this->incomingRequest->query->set('request_parts', $request_parts);
         }
 
-        $this->incomingRequest->query->set('act', $moduleName.'.'.$controllerName.'.'.$method);
-        $this->incomingRequest->setCurrentRoute($moduleName.'.'.$controllerName);
+        $this->incomingRequest->query->set('act', $moduleName . '.' . $controllerName . '.' . $method);
+        $this->incomingRequest->setCurrentRoute($moduleName . '.' . $controllerName);
 
         if ($id === '0' || ! empty($id)) {
             $this->incomingRequest->query->set('id', $id);
@@ -163,7 +164,6 @@ class Frontcontroller
         $this->incomingRequest->overrideGlobals();
 
         return [$moduleName, $controllerType, $controllerName, $method];
-
     }
 
     /**
@@ -222,19 +222,19 @@ class Frontcontroller
         $moduleName = $this->normalizeModuleName($moduleName);
         $actionName = Str::studly($actionName);
         $methodNameLower = Str::lower($methodName);
-        $routepath = $moduleName.'.'.$controllerType.'.'.$actionName;
-        $actionPath = $moduleName.'\\'.$controllerType.'\\'.$actionName;
+        $routepath = $moduleName . '.' . $controllerType . '.' . $actionName;
+        $actionPath = $moduleName . '\\' . $controllerType . '\\' . $actionName;
 
         if ($this->config->debug == false) {
-            if (Cache::store('installation')->has('routes.'.$routepath.'.'.$methodNameLower)) {
-                return Cache::store('installation')->get('routes.'.$routepath.'.'.$methodNameLower);
+            if (Cache::store('installation')->has('routes.' . $routepath . '.' . $methodNameLower)) {
+                return Cache::store('installation')->get('routes.' . $routepath . '.' . $methodNameLower);
             }
         }
 
         $classPath = $this->getClassPath($controllerType, $moduleName, $actionName);
         $classMethod = $this->getValidControllerMethod($classPath, $methodName);
 
-        Cache::store('installation')->set('routes.'.$routepath.'.'.($classMethod == 'run' ? $methodNameLower : $classMethod), ['class' => $classPath, 'method' => $classMethod]);
+        Cache::store('installation')->set('routes.' . $routepath . '.' . ($classMethod == 'run' ? $methodNameLower : $classMethod), ['class' => $classPath, 'method' => $classMethod]);
 
         return ['class' => $classPath, 'method' => $classMethod];
     }
@@ -248,20 +248,20 @@ class Frontcontroller
     {
 
         $controllerNs = 'Domain';
-        $classname = 'Leantime\\Domain\\'.$moduleName.'\\'.$controllerType.'\\'.$actionName;
+        $classname = 'Leantime\\Domain\\' . $moduleName . '\\' . $controllerType . '\\' . $actionName;
 
         if (class_exists($classname)) {
             return $classname;
         }
 
         // Check if hxcontroller exists
-        $classname = 'Leantime\\Domain\\'.$moduleName.'\\Hxcontrollers\\'.$actionName;
+        $classname = 'Leantime\\Domain\\' . $moduleName . '\\Hxcontrollers\\' . $actionName;
 
         if (class_exists($classname)) {
             return $classname;
         }
 
-        $classname = 'Leantime\\Plugins\\'.$moduleName.'\\'.$controllerType.'\\'.$actionName;
+        $classname = 'Leantime\\Plugins\\' . $moduleName . '\\' . $controllerType . '\\' . $actionName;
 
         $enabledPlugins = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
 
@@ -282,7 +282,7 @@ class Frontcontroller
             return $classname;
         }
 
-        $classname = 'Leantime\\Plugins\\'.$moduleName.'\\Hxcontrollers\\'.$actionName;
+        $classname = 'Leantime\\Plugins\\' . $moduleName . '\\Hxcontrollers\\' . $actionName;
         if (class_exists($classname)) {
             return $classname;
         }
@@ -343,7 +343,7 @@ class Frontcontroller
             return 'run';
         }
 
-        throw new NotFoundHttpException("Can't find valid method for ".strip_tags($method).' in '.strip_tags($controllerClass));
+        throw new NotFoundHttpException("Can't find valid method for " . strip_tags($method) . ' in ' . strip_tags($controllerClass));
     }
 
     /**
@@ -436,7 +436,7 @@ class Frontcontroller
         if (Str::start($url, '#')) {
             $hxCurrentUrl = app('request')->headers->get('hx-current-url');
             $mainPageUrl = Str::before($hxCurrentUrl, '#');
-            $url = $mainPageUrl.''.$url;
+            $url = $mainPageUrl . '' . $url;
         }
 
         $headers['HX-Redirect'] = $url;
