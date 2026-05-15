@@ -219,7 +219,7 @@ class Frontcontroller
     public function getValidControllerCall(string $moduleName, string $actionName, string $methodName, string $controllerType): array
     {
 
-        $moduleName = Str::studly($moduleName);
+        $moduleName = $this->normalizeModuleName($moduleName);
         $actionName = Str::studly($actionName);
         $methodNameLower = Str::lower($methodName);
         $routepath = $moduleName.'.'.$controllerType.'.'.$actionName;
@@ -288,6 +288,20 @@ class Frontcontroller
         }
 
         return false;
+    }
+
+    /**
+     * Normalizes module names that do not follow simple StudlyCase conversion.
+     *
+     * @param  string  $moduleName  The incoming module segment from the URL.
+     */
+    private function normalizeModuleName(string $moduleName): string
+    {
+        if (Str::lower($moduleName) === 'clientportal') {
+            return 'ClientPortal';
+        }
+
+        return Str::studly($moduleName);
     }
 
     /**
