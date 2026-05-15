@@ -59,6 +59,8 @@ class SchemaBuilder
         $this->createRecurringPatternsTable();
         $this->createOneononeSessionsTable();
         $this->createOneononeItemsTable();
+        $this->createClientRequestsTable();
+        $this->createClientRequestResponsesTable();
     }
 
     /**
@@ -107,6 +109,48 @@ class SchemaBuilder
 
             $table->index(['sessionId', 'type'], 'idx_oneonone_items_session_type');
             $table->index(['assignedTo', 'status'], 'idx_oneonone_items_assignee_status');
+        });
+    }
+
+    /**
+     * Create zp_client_requests table — stores client-submitted requests.
+     */
+    private function createClientRequestsTable(): void
+    {
+        Schema::create('zp_client_requests', function (Blueprint $table) {
+            $table->id();
+            $table->integer('projectId');
+            $table->integer('clientUserId');
+            $table->string('title', 255);
+            $table->text('description')->nullable();
+            $table->string('filePath', 500)->nullable();
+            $table->string('status', 50)->default('open');
+            $table->string('clientReviewAction', 50)->nullable();
+            $table->text('clientReviewReason')->nullable();
+            $table->dateTime('clientReviewedAt')->nullable();
+            $table->dateTime('createdAt')->nullable();
+
+            $table->index(['projectId'], 'idx_client_requests_projectId');
+            $table->index(['clientUserId'], 'idx_client_requests_clientUserId');
+            $table->index(['status'], 'idx_client_requests_status');
+        });
+    }
+
+    /**
+     * Create zp_client_request_responses table — stores team responses to client requests.
+     */
+    private function createClientRequestResponsesTable(): void
+    {
+        Schema::create('zp_client_request_responses', function (Blueprint $table) {
+            $table->id();
+            $table->integer('requestId');
+            $table->integer('respondedByUserId');
+            $table->text('notes')->nullable();
+            $table->string('driveLink', 1000)->nullable();
+            $table->string('documentPath', 500)->nullable();
+            $table->dateTime('createdAt')->nullable();
+
+            $table->index(['requestId'], 'idx_client_request_responses_requestId');
         });
     }
 
