@@ -25,6 +25,17 @@ class Menu
         'clientportal' => [
             5  => ['type' => 'item', 'module' => 'clientportal', 'title' => 'menu.client_my_projects', 'icon' => 'fa fa-fw fa-folder-open', 'tooltip' => 'menu.client_my_projects', 'href' => '/clientportal/showDashboard', 'active' => ['showDashboard', 'showProject']],
         ],
+        'admin' => [
+            5  => ['type' => 'item', 'module' => 'dashboard',     'title' => 'menu.admin_dashboard',     'icon' => 'fa fa-fw fa-gauge-high',    'tooltip' => 'Admin Dashboard',         'href' => '/dashboard/adminHome',              'active' => ['adminHome'],   'role' => 'admin'],
+            10 => ['type' => 'item', 'module' => 'projects',       'title' => 'menu.all_projects',        'icon' => 'fa fa-fw fa-briefcase',     'tooltip' => 'All Projects',            'href' => '/projects/showAll',                 'active' => ['showAll'],     'role' => 'admin'],
+            20 => ['type' => 'item', 'module' => 'users',          'title' => 'menu.admin_users',         'icon' => 'fa fa-fw fa-users',         'tooltip' => 'User Management',         'href' => '/users/showAll',                    'active' => ['showAll', 'editUser', 'newUser'], 'role' => 'admin'],
+            30 => ['type' => 'item', 'module' => 'clients',        'title' => 'menu.admin_clients',       'icon' => 'fa fa-fw fa-building',      'tooltip' => 'Client Organisations',    'href' => '/clients/showAll',                  'active' => ['showAll', 'newClient', 'showClient'], 'role' => 'admin'],
+            50 => ['type' => 'item', 'module' => 'oneonone',       'title' => 'menu.admin_1on1',          'icon' => 'fa fa-fw fa-handshake',     'tooltip' => '1:1 Sessions',            'href' => '/oneonone/showTeam',                'active' => ['showTeam', 'showSession', 'newSession'], 'role' => 'admin'],
+            60 => ['type' => 'item', 'module' => 'weekly-planning','title' => 'menu.admin_weekly_plans',  'icon' => 'fa fa-fw fa-calendar-week', 'tooltip' => 'Weekly Planning',         'href' => '/weekly-planning/showTeam',         'active' => ['showTeam', 'showPlan', 'newPlan', 'showBlockers', 'showCommitments'], 'role' => 'admin'],
+            70 => ['type' => 'item', 'module' => 'timesheets',     'title' => 'menu.all_timesheets',      'icon' => 'fa fa-fw fa-business-time', 'tooltip' => 'All Timesheets',          'href' => '/timesheets/showAll',               'active' => ['showAll'],     'role' => 'admin'],
+            90 => ['type' => 'separator'],
+            95 => ['type' => 'item', 'module' => 'setting',        'title' => 'menu.company_settings',    'icon' => 'fa fa-fw fa-cogs',          'tooltip' => 'Company Settings',        'href' => '/setting/editCompanySettings',       'active' => ['editCompanySettings'], 'role' => 'admin'],
+        ],
         'default' => [
             5  => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.overview', 'icon' => 'fa fa-fw fa-gauge-high', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/show', 'active' => ['show']],
             10 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'icon' => 'fa fa-fw fa-thumb-tack', 'tooltip' => 'menu.todos_tooltip', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket', 'showList']],
@@ -430,6 +441,28 @@ class Menu
             return self::$sectionMenuTypeCache[$cacheKey];
         }
 
+        $isAdmin = AuthService::userHasRole([\Leantime\Domain\Auth\Models\Roles::$owner, \Leantime\Domain\Auth\Models\Roles::$admin]);
+
+        // Routes that always belong to the admin menu when accessed by an admin/owner
+        $adminRoutes = [
+            'dashboard.adminHome',
+            'users.showAll', 'users.editUser', 'users.newUser', 'users.editOwn',
+            'clients.showAll', 'clients.newClient', 'clients.showClient',
+            'oneonone.showTeam', 'oneonone.showSession', 'oneonone.newSession',
+            'timesheets.showAll',
+            'projects.showAll',
+            'weekly-planning.showTeam', 'weekly-planning.showPlan', 'weekly-planning.newPlan',
+            'weekly-planning.showBlockers', 'weekly-planning.showCommitments',
+            'setting.editCompanySettings',
+        ];
+
+        if ($isAdmin && in_array($currentRoute, $adminRoutes)) {
+            $result = 'admin';
+            self::$sectionMenuTypeCache[$cacheKey] = $result;
+
+            return $result;
+        }
+
         $sections = [
             'dashboard.home' => 'personal',
             'projects.showMy' => 'personal',
@@ -456,15 +489,15 @@ class Menu
             'connector.integration' => 'company',
             'billing.subscriptions' => 'company',
             'llamadorian.statusCollector' => 'personal',
-            'weekly-planning.showTeam'        => 'company',
-            'weekly-planning.showPlan'        => 'company',
-            'weekly-planning.newPlan'         => 'company',
-            'weekly-planning.showBlockers'    => 'company',
+            'weekly-planning.showTeam' => 'company',
+            'weekly-planning.showPlan' => 'company',
+            'weekly-planning.newPlan' => 'company',
+            'weekly-planning.showBlockers' => 'company',
             'weekly-planning.showCommitments' => 'company',
-            'weekly-planning.showMy'          => 'personal',
-            'weekly-planning.showMyHistory'   => 'personal',
-            'clientportal.showDashboard'      => 'clientportal',
-            'clientportal.showProject'        => 'clientportal',
+            'weekly-planning.showMy' => 'personal',
+            'weekly-planning.showMyHistory' => 'personal',
+            'clientportal.showDashboard' => 'clientportal',
+            'clientportal.showProject' => 'clientportal',
         ];
 
         $sections = self::dispatch_filter('menuSections', $sections, ['currentRoute' => $currentRoute, 'default' => $default]);

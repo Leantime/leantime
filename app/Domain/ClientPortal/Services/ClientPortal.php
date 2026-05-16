@@ -373,6 +373,30 @@ class ClientPortal
         return $requests;
     }
 
+    /**
+     * Count open (pending TL response) client requests across all projects.
+     *
+     * @return int
+     *
+     * @api
+     */
+    public function countOpenRequests(): int
+    {
+        $userId  = (int) session('userdata.id');
+        $role    = session('userdata.role');
+
+        // Commenters (client-portal users) shouldn't see admin-level KPI counts at all
+        if ($role === \Leantime\Domain\Auth\Models\Roles::$commenter) {
+            return 0;
+        }
+
+        $isAdmin = in_array($role, [\Leantime\Domain\Auth\Models\Roles::$admin, \Leantime\Domain\Auth\Models\Roles::$owner], true);
+
+        $requests = $this->repo->getAllRequests($userId, $isAdmin, 0);
+
+        return count(array_filter($requests, fn ($r) => ($r['status'] ?? '') === 'open'));
+    }
+
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------

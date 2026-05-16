@@ -32,7 +32,8 @@ class ShowAll extends Controller
 
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-        if (session('userdata.role') == 'admin') {
+        // Both admin and owner should get the admin template controls
+        if (in_array(session('userdata.role'), [Roles::$owner, Roles::$admin])) {
             $this->tpl->assign('admin', true);
         }
 

@@ -3,15 +3,7 @@
 @section('content')
 
 <x-global::pageheader :icon="'fa fa-users-gear'">
-    <h1>
-        {{ __('headlines.oneonone.team_oneonones') }}
-        <span class="tw-float-right">
-            <a href="{{ BASE_URL }}/oneonone/newSession" class="btn btn-primary btn-sm">
-                <span class="fa fa-plus"></span>
-                {{ __('buttons.oneonone.schedule_session') }}
-            </a>
-        </span>
-    </h1>
+    <h1>{{ __('headlines.oneonone.team_oneonones') }}</h1>
 </x-global::pageheader>
 
 @displayNotification()

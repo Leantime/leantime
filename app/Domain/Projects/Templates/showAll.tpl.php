@@ -51,7 +51,6 @@ $tpl->__('') ?></h5>
                 <tr>
                     <th class="head0"><?php echo $tpl->__('label.project_name'); ?></th>
                     <th class="head1"><?php echo $tpl->__('label.client_product'); ?></th>
-                    <th class="head1"><?php echo $tpl->__('label.project_type'); ?></th>
                     <th class="head0"><?php echo $tpl->__('label.project_state'); ?></th>
                     <th class="head0"><?php echo $tpl->__('label.hourly_budget'); ?></th>
                     <th class="head1"><?php echo $tpl->__('label.budget_cost'); ?></th>
@@ -69,7 +68,6 @@ $tpl->__('') ?></h5>
                         <a class="" href="<?= BASE_URL?>/clients/showClient/<?= $row['clientId']?>"><?= $tpl->escape($row['clientName']) ?></a>
                     </td>
 
-                    <td> <?= $row['type'] ?> </td>
 
                     <td><?php if ($row['state'] == -1) {
                         echo $tpl->__('label.closed');

@@ -37,6 +37,10 @@ class Home extends Controller
             return Frontcontroller::redirect(BASE_URL.'/clientportal/showDashboard');
         }
 
+        if (in_array(session('userdata.role'), [Roles::$owner, Roles::$admin])) {
+            return Frontcontroller::redirect(BASE_URL.'/dashboard/adminHome');
+        }
+
         // Debug uncomment to reset dashboard
         if (isset($_GET['resetDashboard']) === true) {
             $this->widgetService->resetDashboard(session('userdata.id'));

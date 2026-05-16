@@ -1649,7 +1649,8 @@ class Projects
     }
 
     /**
-     * Retrieves all projects.
+     * Retrieves all projects. Restricted to admin/owner — lower roles get an empty array
+     * to prevent enumeration via JSON-RPC (`leantime.rpc.projects.projects.getAllProjects`).
      *
      * @return array The projects.
      *
@@ -1657,6 +1658,10 @@ class Projects
      */
     public function getAllProjects()
     {
+        if (! \Leantime\Domain\Auth\Services\Auth::userHasRole([Roles::$owner, Roles::$admin])) {
+            return [];
+        }
+
         return $this->projectRepository->getAll();
     }
 

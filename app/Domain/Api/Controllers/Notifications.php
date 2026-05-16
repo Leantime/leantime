@@ -23,7 +23,11 @@ class Notifications extends Controller
      */
     public function get(array $params): Response
     {
-        $notifications = $this->notificationService->getAllNotifications($params['userId'], $params['read']);
+        // Always use the authenticated session user — never trust a userId from the request
+        $userId = (int) session('userdata.id');
+        $showNewOnly = isset($params['read']) ? (int) $params['read'] : 0;
+
+        $notifications = $this->notificationService->getAllNotifications($userId, $showNewOnly);
 
         return $this->tpl->displayJson($notifications);
     }

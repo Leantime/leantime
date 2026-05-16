@@ -3,7 +3,7 @@
 @php
     // Client portal users (commenters) get a slimmed-down account page that only
     // exposes personal data + theme; everyone else uses the full /users/editOwn.
-    $editOwnBase = session('userdata.role') === 'commenter'
+    $editOwnBase = session('userdata.role') === \Leantime\Domain\Auth\Models\Roles::$commenter
         ? BASE_URL.'/clientportal/editOwn'
         : BASE_URL.'/users/editOwn';
 @endphp
@@ -34,24 +34,13 @@
             </a>
         </li>
         @dispatchEvent('afterTheme')
-        @if(session('userdata.role') !== 'commenter')
+        @if(session('userdata.role') !== \Leantime\Domain\Auth\Models\Roles::$commenter)
             <li>
                 <a href='{{ $editOwnBase }}#settings' preload="mouseover">
                     {!! __("menu.settings") !!}
                 </a>
             </li>
             @dispatchEvent('afterSettings')
-            <li class="border">
-                @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin))
-                    <a href='{{BASE_URL}}/plugins/marketplace#/help/support' >
-                        <span class="fa-solid fa-hand-holding-heart" style="color:#f61067;"></span> {{ __('link.support_us') }}
-                    </a>
-                @else
-                    <a href='#/help/support'  >
-                        <span class="fa-solid fa-hand-holding-heart" style="color:#f61067;"></span> {{ __('link.support_us') }}
-                    </a>
-                @endif
-            </li>
         @endif
 
 <li class="border">

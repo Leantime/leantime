@@ -1,10 +1,38 @@
-@php use Leantime\Domain\Auth\Models\Roles; @endphp
+@php
+use Leantime\Domain\Auth\Models\Roles;
+$isAdmin = in_array(session('userdata.role'), [Roles::$owner, Roles::$admin]);
+$adminRouteTitles = [
+    'dashboard.adminHome'         => 'Admin Dashboard',
+    'users.showAll'               => 'User Management',
+    'users.editUser'              => 'Edit User',
+    'users.newUser'               => 'New User',
+    'clients.showAll'             => 'Client Orgs',
+    'clients.newClient'           => 'New Client',
+    'clients.showClient'          => 'Client Details',
+    'oneonone.showTeam'           => '1:1 Sessions',
+    'oneonone.showSession'        => '1:1 Session',
+    'oneonone.newSession'         => 'New 1:1 Session',
+    'users.editOwn'               => 'My Profile',
+    'timesheets.showAll'          => 'All Timesheets',
+    'projects.showAll'            => 'All Projects',
+    'weekly-planning.showTeam'    => 'Weekly Planning',
+    'weekly-planning.showBlockers'=> 'Team Blockers',
+    'weekly-planning.showCommitments' => 'Team Commitments',
+    'setting.editCompanySettings' => 'Company Settings',
+];
+@endphp
 @dispatchEvent('beforeHeadMenu')
+
+@if($isAdmin)
+<div style="float:left; display:flex; align-items:center; height:50px; padding-left:20px; color:#fff; font-size:16px; font-weight:600; letter-spacing:.3px; opacity:.95;">
+    {{ $adminRouteTitles[\Leantime\Core\Controller\Frontcontroller::getCurrentRoute()] ?? 'Admin' }}
+</div>
+@endif
 
 <ul class="headmenu pull-right">
     @dispatchEvent('insideHeadMenu')
 
-    @if(session('userdata.role') !== Roles::$commenter)
+    @if(!$isAdmin && session('userdata.role') !== Roles::$commenter)
     <li class="notificationDropdown quickAddDropdown">
         <a
             href="javascript:void(0);"
@@ -76,6 +104,7 @@
     @endif
     @endif {{-- end commenter hide --}}
 
+    @if(!$isAdmin)
     <li class="notificationDropdown">
         <a
             class="dropdown-toggle profileHandler newsDropDownHandler"
@@ -89,15 +118,14 @@
         >
             <span class="fa-solid fa-bolt-lightning"></span>
             <span hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
-
         </a>
-
         <div class='dropdown-menu tw-p-m tw-h-screen tw-overflow-y-auto' id='newsDropdown'>
             <div class="htmx-indicator htmx-news-indicator">
                 <x-global::loadingText type="text" count="3" includeHeadline="true" />
             </div>
         </div>
     </li>
+    @endif
 
     <li class="notificationDropdown">
         <a
@@ -198,6 +226,7 @@
 
     </li>
 
+    @if(!$isAdmin)
     <li class="userloggedinfo">
         <a
             href='javascript:void(0);'
@@ -241,6 +270,7 @@
             <li><a href="https://github.com/Leantime/leantime/releases" target="_blank">Leantime V{{ app(\Leantime\Core\Configuration\AppSettings::class)->appVersion }}</a></li>
         </ul>
     </li>
+    @endif {{-- end !isAdmin help --}}
 
     <li>
         <div class="userloggedinfo">
@@ -261,7 +291,7 @@
 
     @dispatchEvent('afterHeadMenuOpen')
 
-    @if(session('userdata.role') !== Roles::$commenter)
+    @if(!in_array(session('userdata.role'), [Roles::$owner, Roles::$admin]) && session('userdata.role') !== Roles::$commenter)
     <li>
         @include('menu::projectSelector')
     </li>
