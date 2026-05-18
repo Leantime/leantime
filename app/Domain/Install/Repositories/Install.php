@@ -84,7 +84,6 @@ class Install
         30502,
         30503,
         30504,
-        30505,
     ];
 
     /**
@@ -2732,39 +2731,6 @@ class Install
             Log::error('Migration 30505: '.$e->getMessage());
 
             return ['Migration 30505 failed: '.$e->getMessage()];
-        }
-
-        return true;
-    }
-
-    /**
-     * Migration 30505: Create personal notepad table.
-     *
-     * Per-user private daily checklist. Each row is a single task on a single date.
-     * No project association — strictly personal. Even admins cannot read other users' rows.
-     */
-    public function update_sql_30505(): bool|array
-    {
-        try {
-            if (! Schema::hasTable('zp_personal_notepad')) {
-                Schema::create('zp_personal_notepad', function (Blueprint $table) {
-                    $table->id();
-                    $table->integer('userId');
-                    $table->date('taskDate');
-                    $table->text('content');
-                    $table->boolean('done')->default(false);
-                    $table->integer('sortOrder')->default(0);
-                    $table->dateTime('createdAt')->nullable();
-                    $table->dateTime('updatedAt')->nullable();
-
-                    $table->index(['userId', 'taskDate'], 'idx_notepad_user_date');
-                    $table->index(['userId'], 'idx_notepad_user');
-                });
-            }
-        } catch (\Exception $e) {
-            Log::error('Migration 30505: ' . $e->getMessage());
-
-            return ['Migration 30505 failed: ' . $e->getMessage()];
         }
 
         return true;
