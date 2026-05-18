@@ -44,7 +44,10 @@ class Menu
             40 => ['type' => 'item', 'module' => 'files', 'title' => 'menu.files', 'icon' => 'fa fa-fw fa-file', 'tooltip' => 'menu.files_tooltip', 'href' => '/files/browse'],
             50 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'icon' => 'fa fa-fw fa-chart-bar', 'tooltip' => 'menu.reports_tooltip', 'href' => '/reports/show', 'role' => 'editor'],
             60 => [
-                'type' => 'submenu', 'id' => 'advanced', 'title' => 'menu.advanced', 'visual' => 'closed',
+                'type' => 'submenu',
+                'id' => 'advanced',
+                'title' => 'menu.advanced',
+                'visual' => 'closed',
                 'submenu' => [
                     10 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideas', 'icon' => 'fa fa-fw fa-lightbulb', 'tooltip' => 'menu.ideas_tooltip', 'href' => '', 'hrefFunction' => 'getIdeaMenu', 'active' => ['showBoards', 'advancedBoards']],
                     20 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.blueprints', 'icon' => 'fa fa-fw fa-compass-drafting', 'tooltip' => 'menu.blueprints_tooltip', 'href' => '/strategy/showBoards', 'active' => ['showBoards']],
@@ -56,7 +59,10 @@ class Menu
         // Display all menu items
         'full_menu' => [
             10 => [
-                'type' => 'submenu', 'id' => 'planning', 'title' => 'menu.planning_execution', 'visual' => 'open',
+                'type' => 'submenu',
+                'id' => 'planning',
+                'title' => 'menu.planning_execution',
+                'visual' => 'open',
                 'submenu' => [
                     11 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'icon' => 'fa fa-fw fa-home', 'tooltip' => 'menu.dashboard_tooltip', 'href' => '/dashboard/show', 'active' => ['show']],
                     21 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'icon' => 'fa fa-fw fa-thumb-tack', 'tooltip' => 'menu.todos_tooltip', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
@@ -65,14 +71,20 @@ class Menu
                 ],
             ],
             50 => [
-                'type' => 'submenu', 'id' => 'dts-process', 'title' => 'menu.dts.process', 'visual' => 'closed',
+                'type' => 'submenu',
+                'id' => 'dts-process',
+                'title' => 'menu.dts.process',
+                'visual' => 'closed',
                 'submenu' => [
                     51 => ['type' => 'item', 'module' => 'insightscanvas', 'icon' => 'far fa-fw fa-note-sticky', 'tooltip' => 'menu.insightscanvas_tooltip', 'title' => 'menu.insightscanvas', 'href' => '/insightscanvas/showCanvas'],
                     52 => ['type' => 'item', 'module' => 'ideas', 'icon' => 'fa fa-fw fa-lightbulb', 'tooltip' => 'menu.ideas_tooltip', 'title' => 'menu.ideation', 'href' => '/ideas/showBoards'],
                 ],
             ],
             60 => [
-                'type' => 'submenu', 'id' => 'dts-frameworks',  'title' => 'menu.dts.frameworks', 'visual' => 'closed',
+                'type' => 'submenu',
+                'id' => 'dts-frameworks',
+                'title' => 'menu.dts.frameworks',
+                'visual' => 'closed',
                 'submenu' => [
                     61 => ['type' => 'header', 'title' => 'menu.dts.observe'],
                     62 => ['type' => 'item', 'module' => 'sbcanvas', 'title' => 'menu.sbcanvas', 'icon' => 'fas fa-fw fa-list-check', 'tooltip' => 'menu.sbcanvas_tooltip', 'href' => '/sbcanvas/showCanvas'],
@@ -88,7 +100,10 @@ class Menu
                 ],
             ],
             80 => [
-                'type' => 'submenu', 'id' => 'dts-admin', 'title' => 'menu.dts.admin', 'visual' => 'open',
+                'type' => 'submenu',
+                'id' => 'dts-admin',
+                'title' => 'menu.dts.admin',
+                'visual' => 'open',
                 'submenu' => [
                     81 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'icon' => 'fa fa-fw fa-book', 'tooltip' => 'menu.wiki_tooltip', 'href' => '/wiki/show'],
                     82 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'icon' => 'fa fa-fw fa-hand-spock', 'tooltip' => 'menu.retroscanvas_tooltip', 'href' => '/retroscanvas/showCanvas'],
@@ -141,7 +156,7 @@ class Menu
             $setting = $this->settingsRepo;
             session([
                 'usersettings.submenuToggle' => unserialize(
-                    $setting->getSetting('usersetting.'.session('userdata.id').'.submenuToggle')
+                    $setting->getSetting('usersetting.' . session('userdata.id') . '.submenuToggle')
                 ),
             ]);
         }
@@ -158,7 +173,7 @@ class Menu
         $config = $this->config;
 
         if (! isset($config->enableMenuType) || (isset($config->enableMenuType) && $config->enableMenuType === false)) {
-            return [self::DEFAULT_MENU => $language->__('label.menu_type.'.self::DEFAULT_MENU)];
+            return [self::DEFAULT_MENU => $language->__('label.menu_type.' . self::DEFAULT_MENU)];
         }
 
         $menuTypes = [];
@@ -180,11 +195,11 @@ class Menu
     {
 
         if (session()->exists('usersettings.submenuToggle') && is_array(session('usersettings.submenuToggle')) && $submenu !== false) {
-            session(['usersettings.submenuToggle.'.$submenu => $state]);
+            session(['usersettings.submenuToggle.' . $submenu => $state]);
         }
 
         $setting = $this->settingsRepo;
-        $setting->saveSetting('usersetting.'.session('userdata.id').'.submenuToggle', serialize(session('usersettings.submenuToggle')));
+        $setting->saveSetting('usersetting.' . session('userdata.id') . '.submenuToggle', serialize(session('usersettings.submenuToggle')));
     }
 
     /**
@@ -195,11 +210,11 @@ class Menu
     public function getSubmenuState(string $submenu)
     {
         $setting = $this->settingsRepo;
-        $subStructure = $setting->getSetting('usersetting.'.session('userdata.id').'.submenuToggle');
+        $subStructure = $setting->getSetting('usersetting.' . session('userdata.id') . '.submenuToggle');
 
         session(['usersettings.submenuToggle' => unserialize($subStructure)]);
 
-        return session('usersettings.submenuToggle.'.$submenu) ?? false;
+        return session('usersettings.submenuToggle.' . $submenu) ?? false;
     }
 
     /**
@@ -220,14 +235,13 @@ class Menu
 
             $menuItem['submenu'] = $this->buildMenuStructure($menuItem['submenu'], $filter);
 
-            $filter = $filter.'.'.$menuItem['id'];
+            $filter = $filter . '.' . $menuItem['id'];
 
             return self::dispatch_filter(
                 hook: $filter,
                 payload: $menuItem['submenu'],
                 function: 'getMenuStructure'
             );
-
         }
 
         return $menuStructure;
@@ -279,7 +293,7 @@ class Menu
         if ($simpleWorkflowEnabled && $menuType === 'default') {
             $menuStructure = array_filter(
                 $menuStructure,
-                static fn (array $item): bool => ! (isset($item['id']) && $item['id'] === 'advanced')
+                static fn(array $item): bool => ! (isset($item['id']) && $item['id'] === 'advanced')
             );
         }
 
@@ -315,8 +329,8 @@ class Menu
                     if ($element['visual'] == 'always') {
                         $menuStructure[$key]['visual'] = 'open';
                     } else {
-                        $submenuState = session('usersettings.submenuToggle.'.$element['id']) ?? $element['visual'];
-                        session(['usersettings.submenuToggle.'.$element['id'] => $submenuState]);
+                        $submenuState = session('usersettings.submenuToggle.' . $element['id']) ?? $element['visual'];
+                        session(['usersettings.submenuToggle.' . $element['id'] => $submenuState]);
                     }
                     $menuStructure[$key]['visual'] = $submenuState;
 
@@ -334,14 +348,14 @@ class Menu
                                 break;
 
                             default:
-                                exit("Cannot proceed due to invalid submenu element: '".$subelement['type']."'");
+                                exit("Cannot proceed due to invalid submenu element: '" . $subelement['type'] . "'");
                         }
                     }
 
                     break;
 
                 default:
-                    exit("Cannot proceed due to invalid menu element: '".$element['type']."'");
+                    exit("Cannot proceed due to invalid menu element: '" . $element['type'] . "'");
             }
         }
 
@@ -374,7 +388,6 @@ class Menu
                 $structure['href'] = $this->{$element['hrefFunction']}();
             }
         }
-
     }
 
     /**
@@ -427,7 +440,7 @@ class Menu
     {
         // Cache key includes both route and default since the result depends on both.
         // Different composers may pass different defaults for routes not in the sections map.
-        $cacheKey = $currentRoute.'|'.$default;
+        $cacheKey = $currentRoute . '|' . $default;
         if (isset(self::$sectionMenuTypeCache[$cacheKey])) {
             return self::$sectionMenuTypeCache[$cacheKey];
         }
@@ -437,13 +450,25 @@ class Menu
         // Routes that always belong to the admin menu when accessed by an admin/owner
         $adminRoutes = [
             'dashboard.adminHome',
-            'users.showAll', 'users.editUser', 'users.newUser', 'users.editOwn',
-            'clients.showAll', 'clients.newClient', 'clients.showClient',
-            'oneonone.show', 'oneonone.showMy', 'oneonone.showTeam', 'oneonone.showSession', 'oneonone.newSession',
+            'users.showAll',
+            'users.editUser',
+            'users.newUser',
+            'users.editOwn',
+            'clients.showAll',
+            'clients.newClient',
+            'clients.showClient',
+            'oneonone.show',
+            'oneonone.showMy',
+            'oneonone.showTeam',
+            'oneonone.showSession',
+            'oneonone.newSession',
             'timesheets.showAll',
             'projects.showAll',
-            'weekly-planning.showTeam', 'weekly-planning.showPlan', 'weekly-planning.newPlan',
-            'weekly-planning.showBlockers', 'weekly-planning.showCommitments',
+            'weekly-planning.showTeam',
+            'weekly-planning.showPlan',
+            'weekly-planning.newPlan',
+            'weekly-planning.showBlockers',
+            'weekly-planning.showCommitments',
             'setting.editCompanySettings',
         ];
 

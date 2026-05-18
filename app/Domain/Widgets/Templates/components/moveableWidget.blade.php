@@ -9,9 +9,9 @@
                 </div>
 
                 @if($name != '' && $noTitle == false)
-                    <h5 class="subtitle tw-flex-1" style="margin:0; font-size:var(--base-font-size); font-weight:600;">{{ __($name) }}</h5>
+                <h5 class="subtitle tw-flex-1" style="margin:0; font-size:var(--base-font-size); font-weight:600;">{{ __($name) }}</h5>
                 @else
-                    <span class="tw-flex-1"></span>
+                <span class="tw-flex-1"></span>
                 @endif
 
                 <div class="inlineDropDownContainer">
@@ -21,7 +21,7 @@
                     <ul class="dropdown-menu pull-right">
                         <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Resize to fit content</a></li>
                         @if(empty($alwaysVisible))
-                            <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> Hide</a></li>
+                        <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> Hide</a></li>
                         @endif
                     </ul>
                 </div>

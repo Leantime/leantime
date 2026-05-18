@@ -38,14 +38,14 @@ class TlcmHome extends Controller
         ClientPortalService $clientPortalService,
     ): void {
         if (! AuthService::userHasRole([Roles::$teamlead, Roles::$manager], true)) {
-            Frontcontroller::redirect(BASE_URL.'/dashboard/home');
+            Frontcontroller::redirect(BASE_URL . '/dashboard/home');
         }
 
         $this->projectService = $projectService;
         $this->ticketRepository = $ticketRepository;
         $this->clientPortalService = $clientPortalService;
 
-        session(['lastPage' => BASE_URL.'/dashboard/tlcmHome']);
+        session(['lastPage' => BASE_URL . '/dashboard/tlcmHome']);
     }
 
     /**
@@ -60,7 +60,7 @@ class TlcmHome extends Controller
 
         // All active projects assigned to the user
         $myProjects = $this->projectService->getProjectsAssignedToUser($userId) ?: [];
-        $myProjects = array_filter($myProjects, fn ($p) => ($p['state'] ?? 0) != -1);
+        $myProjects = array_filter($myProjects, fn($p) => ($p['state'] ?? 0) != -1);
 
         $cards = [];
         $totalOverdue = 0;
@@ -130,11 +130,11 @@ class TlcmHome extends Controller
                 }
             }
 
-            usort($recentActivity, fn ($a, $b) => strcmp($b['modified'], $a['modified']));
+            usort($recentActivity, fn($a, $b) => strcmp($b['modified'], $a['modified']));
             $recentActivity = array_slice($recentActivity, 0, 4);
 
             $reqs = $this->clientPortalService->getRequestsForProject($pid) ?: [];
-            $openRequests = array_values(array_filter($reqs, fn ($r) => ($r['status'] ?? '') === 'open'));
+            $openRequests = array_values(array_filter($reqs, fn($r) => ($r['status'] ?? '') === 'open'));
 
             // Milestones waiting for senior review (status = 5)
             $pendingMilestones = $this->ticketRepository->getMilestonesReadyForReview($pid);
