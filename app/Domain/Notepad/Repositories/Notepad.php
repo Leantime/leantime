@@ -22,11 +22,11 @@ class Notepad
      * Get the last $days days of tasks for the given user, grouped by date (desc).
      * Only dates that have at least one task are returned.
      *
-     * @return array<string, array<int, array<string,mixed>>> Keyed by Y-m-d.
+     * @return array<string, array<int, array<string,mixed>>>  Keyed by Y-m-d.
      */
     public function getRecentTasksByDay(int $userId, int $days = 7): array
     {
-        $cutoff = (new \DateTime('-'.($days - 1).' days'))->format('Y-m-d');
+        $cutoff = (new \DateTime('-' . ($days - 1) . ' days'))->format('Y-m-d');
 
         $rows = $this->db->table('zp_personal_notepad')
             ->where('userId', $userId)
