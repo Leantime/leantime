@@ -56,6 +56,7 @@ class TlcmHome extends Controller
         $userId = (int) session('userdata.id');
         $role = session('userdata.role');
         $isCM = $role === Roles::$manager;
+        $isAdmin = AuthService::userIsAtLeast(Roles::$admin, true);
 
         // All active projects assigned to the user
         $myProjects = $this->projectService->getProjectsAssignedToUser($userId) ?: [];
@@ -180,6 +181,7 @@ class TlcmHome extends Controller
         });
 
         $this->tpl->assign('isCM', $isCM);
+        $this->tpl->assign('isAdmin', $isAdmin);
         $this->tpl->assign('cards', $cards);
         $this->tpl->assign('totalActiveProjects', count($cards));
         $this->tpl->assign('totalOpenTasks', $totalOpenTasks);

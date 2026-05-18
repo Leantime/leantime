@@ -159,9 +159,9 @@ return $count;
 
             <x-global::emptyState
                 icon="fa-check-circle"
-                headline="{{ __('text.no_tasks_assigned') }}"
-                description="{{ __('text.create_first_task_hint') }}"
-                actionLabel="{{ __('links.add_task') }}"
+                :headline="__('text.no_tasks_assigned')"
+                :description="__('text.create_first_task_hint')"
+                :actionLabel="__('links.add_task')"
                 actionAttrs="class='add-task-button btn btn-primary' data-group='emptyGroup'" />
 
             <div class="quickAddForm" id="quickAddForm-emptyGroup"

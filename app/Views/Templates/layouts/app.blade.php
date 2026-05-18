@@ -18,43 +18,12 @@
     @endphp
     <div class="mainwrapper menu{{ $ltMenuState }}">
 
-        <script>
-            function ltToggleSidebar() {
-                var w = document.querySelector('.mainwrapper');
-                if (!w) {
-                    console.warn('ltToggleSidebar: .mainwrapper not found');
-                    return;
-                }
-                var isOpen = w.classList.contains('menuopen');
-                if (isOpen) {
-                    w.classList.remove('menuopen');
-                    w.classList.add('menuclosed');
-                } else {
-                    w.classList.remove('menuclosed');
-                    w.classList.add('menuopen');
-                }
-                // Persist state — Leantime's /api/sessions requires PATCH
-                try {
-                    if (window.jQuery && jQuery.ajax) {
-                        jQuery.ajax({
-                            url: '{{ BASE_URL }}/api/sessions',
-                            method: 'PATCH',
-                            data: {
-                                menuState: isOpen ? 'closed' : 'open'
-                            }
-                        });
-                    }
-                } catch (e) {}
-            }
-        </script>
-
         <div class="header">
 
             <div class="headerinner">
                 <a class="btnmenu" href="javascript:void(0);"></a>
 
-                <a class="barmenu" href="javascript:void(0);" aria-label="Toggle menu"
-                    onclick="ltToggleSidebar(); return false;">
+                <a class="barmenu" href="javascript:void(0);" aria-label="Toggle menu">
                     <span class="fa fa-bars"></span>
                 </a>
 

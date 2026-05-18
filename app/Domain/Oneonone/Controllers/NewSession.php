@@ -31,13 +31,34 @@ class NewSession extends Controller
 
         $currentUserId = (int) (session('userdata.id') ?? 0);
 
-        // All TL/CM/admin/owner roles can see all active users.
-        // (Direct-report filtering was removed because managerId may not be set
-        //  on user records, which would cause an empty dropdown and silent failure.)
         $allUsers = $this->userService->getAll(true);
 
-        // Drop the current user from the employee list to prevent self-1:1
-        $allUsers = array_values(array_filter($allUsers, fn ($u) => (int) ($u['id'] ?? 0) !== $currentUserId));
+        // Determine current user's numeric role level for junior-only filtering.
+        $allRoles = Roles::getRoles(); // [5 => 'readonly', 10 => 'commenter', ...]
+        $currentRoleLevel = (int) array_search(session('userdata.role') ?? '', $allRoles);
+        $isAdmin = Auth::userIsAtLeast(Roles::$admin);
+
+        // Minimum role level an employee must have to appear in the dropdown.
+        // commenter (10) = legacy client role, readonly (5) — both are external
+        // and must never appear as 1:1 employees.
+        $minEmployeeLevel = (int) array_search(Roles::$editor, $allRoles); // 20
+
+        // Exclude self, external/client roles, and — for non-admins — anyone
+        // whose role level is equal to or higher than the current user's.
+        $allUsers = array_values(array_filter($allUsers, function ($u) use ($currentUserId, $currentRoleLevel, $isAdmin, $minEmployeeLevel) {
+            if ((int) ($u['id'] ?? 0) === $currentUserId) {
+                return false;
+            }
+            $userRoleLevel = (int) ($u['role'] ?? 0);
+            if ($userRoleLevel < $minEmployeeLevel) {
+                return false; // exclude commenter / readonly (client accounts)
+            }
+            if (! $isAdmin && $userRoleLevel >= $currentRoleLevel) {
+                return false; // exclude peers and superiors
+            }
+
+            return true;
+        }));
 
         $this->tpl->assign('allUsers', $allUsers);
         $this->tpl->assign('values', [
@@ -65,11 +86,11 @@ class NewSession extends Controller
         if ($id === false) {
             $this->tpl->setNotification($this->language->__('notification.oneonone.schedule_failed'), 'error');
 
-            return Frontcontroller::redirect(BASE_URL.'/oneonone/newSession');
+            return Frontcontroller::redirect(BASE_URL . '/oneonone/newSession');
         }
 
         $this->tpl->setNotification($this->language->__('notification.oneonone.scheduled'), 'success');
 
-        return Frontcontroller::redirect(BASE_URL.'/oneonone/showSession/'.$id);
+        return Frontcontroller::redirect(BASE_URL . '/oneonone/showSession/' . $id);
     }
 }

@@ -220,6 +220,25 @@ class Oneonone
             return false;
         }
 
+        // Enforce junior-only rule: the employee must be an internal staff member
+        // (at least editor/20) with a strictly lower role than the manager.
+        // commenter (10) = legacy client role; readonly (5) — both excluded.
+        // Admins/owners are exempt from the hierarchy check but not the client check.
+        $allRoles = Roles::getRoles(); // [5 => 'readonly', 10 => 'commenter', ...]
+        $minEmployeeLevel = (int) array_search(Roles::$editor, $allRoles); // 20
+        $employeeRoleLevel = (int) ($employee['role'] ?? 0);
+
+        if ($employeeRoleLevel < $minEmployeeLevel) {
+            return false; // refuse client / readonly accounts regardless of scheduler role
+        }
+
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
+            $managerRoleLevel = (int) array_search(session('userdata.role') ?? '', $allRoles);
+            if ($employeeRoleLevel >= $managerRoleLevel) {
+                return false;
+            }
+        }
+
         $meetingDate = $this->normalizeUserDateTimeForDb($values['meetingDate'] ?? null);
         if ($meetingDate === null) {
             return false;
@@ -270,8 +289,8 @@ class Oneonone
         // (i.e. when the resolved managerId differs from the user who clicked Schedule).
         try {
             $scheduler = $this->userRepo->getUser($userId) ?: [];
-            $schedulerName = trim(($scheduler['firstname'] ?? '').' '.($scheduler['lastname'] ?? '')) ?: 'Someone';
-            $sessionUrl = BASE_URL.'/oneonone/showSession/'.$id;
+            $schedulerName = trim(($scheduler['firstname'] ?? '') . ' ' . ($scheduler['lastname'] ?? '')) ?: 'Someone';
+            $sessionUrl = BASE_URL . '/oneonone/showSession/' . $id;
             $whenLabel = '';
             try {
                 $whenLabel = CarbonImmutable::parse($meetingDate)->format('M j, g:i A');
@@ -291,7 +310,7 @@ class Oneonone
                 'message' => sprintf(
                     $this->language->__('notifications.oneonone.scheduled_with_you'),
                     $schedulerName,
-                    $whenLabel !== '' ? ' on '.$whenLabel : ''
+                    $whenLabel !== '' ? ' on ' . $whenLabel : ''
                 ),
                 'datetime' => $now,
                 'url' => $sessionUrl,
@@ -309,7 +328,7 @@ class Oneonone
                     'message' => sprintf(
                         $this->language->__('notifications.oneonone.scheduled_on_your_behalf'),
                         $schedulerName,
-                        $whenLabel !== '' ? ' on '.$whenLabel : ''
+                        $whenLabel !== '' ? ' on ' . $whenLabel : ''
                     ),
                     'datetime' => $now,
                     'url' => $sessionUrl,

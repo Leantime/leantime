@@ -63,9 +63,11 @@
                     <a href="{{ BASE_URL }}/projects/showAll" class="btn btn-default btn-sm">
                         <i class="fa fa-briefcase"></i> All Projects
                     </a>
+                    @if($isAdmin)
                     <a href="{{ BASE_URL }}/clients/showAll" class="btn btn-default btn-sm">
                         <i class="fa fa-building"></i> Manage Clients
                     </a>
+                    @endif
                     <a href="{{ BASE_URL }}/projects/newProject" class="btn btn-primary btn-sm">
                         <i class="fa fa-plus"></i> New Project
                     </a>
