@@ -95,52 +95,7 @@ $adminRouteTitles = [
     'onTheClock' => $onTheClock
     ])
 
-    @if ($login::userIsAtLeast("manager", true))
-    <li class="notificationDropdown appsLink">
-        <a
-            class="dropdown-toggle profileHandler newsDropDownHandler"
-            hx-get="{{ BASE_URL }}/plugins/marketplaceplugins/getLatest"
-            hx-target="#pluginNewsDropdown"
-            hx-indicator=".htmx-news-indicator"
-            hx-trigger="click"
-            preload="mouseover"
-            data-toggle='dropdown'
-            data-tippy-content='{{ __('popover.latest_plugins') }}'>
-            <i class="fa-solid fa-puzzle-piece"></i>
-
-        </a>
-
-        <div class='dropdown-menu tw-p-m tw-h-screen tw-overflow-y-auto' id='pluginNewsDropdown'>
-            <div class="htmx-indicator htmx-news-indicator">
-                <x-global::loadingText type="text" count="3" includeHeadline="true" />
-            </div>
-        </div>
-    </li>
-    @endif
     @endif {{-- end commenter hide --}}
-
-    @if(!$isAdmin)
-    <li class="notificationDropdown">
-        <a
-            class="dropdown-toggle profileHandler newsDropDownHandler"
-            hx-get="{{ BASE_URL }}/notifications/news/get"
-            hx-target="#newsDropdown"
-            hx-indicator=".htmx-news-indicator"
-            hx-trigger="click"
-            preload="mouseover"
-            data-toggle='dropdown'
-            data-tippy-content='{{ __('popover.latest_updates') }}'
-        >
-            <span class="fa-solid fa-bolt-lightning"></span>
-            <span hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
-        </a>
-        <div class='dropdown-menu tw-p-m tw-h-screen tw-overflow-y-auto' id='newsDropdown'>
-            <div class="htmx-indicator htmx-news-indicator">
-                <x-global::loadingText type="text" count="3" includeHeadline="true" />
-            </div>
-        </div>
-    </li>
-    @endif
 
     <li class="notificationDropdown">
         <a
@@ -367,50 +322,33 @@ $adminRouteTitles = [
     @endif
     @endif {{-- end project context --}}
 
-    {{-- The old project selector is only shown when NOT in project context (home/dashboard).
-         Inside a project, the new Home + project switcher above replaces it. --}}
     @if(! $hideWorkModes && $menuType !== 'project')
-    <li>
-        @include('menu::projectSelector')
-    </li>
-    <li>
-        <a
-            href="{{ BASE_URL }}/dashboard/home"
-            @if ($menuType == 'personal')
-                class="active"
-            @endif
-            data-tippy-content="{{ __('popover.my_work') }}"
-        >{!! __('menu.my_work') !!}</a>
-    </li>
     @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$teamlead, true))
-        <li>
-            @if($login::userHasRole("manager"))
-                <a
-                    href="{{ BASE_URL }}/projects/showAll/"
-                    @if ($menuType == 'company')
-                        class="active"
-                    @endif
-                    data-tippy-content="{{ __('popover.company') }}"
-                >{!! __('menu.company') !!}</a>
-            @elseif($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin, true))
-                <a
-                    href="{{ BASE_URL }}/setting/editCompanySettings/"
-                    @if ($menuType == 'company')
-                        class="active"
-                    @endif
-                    data-tippy-content="{{ __('popover.company') }}"
-                >{!! __('menu.company') !!}</a>
-            @else
-                {{-- Team leads land on their weekly team view --}}
-                <a
-                    href="{{ BASE_URL }}/weekly-planning/showTeam"
-                    @if ($menuType == 'company')
-                        class="active"
-                    @endif
-                    data-tippy-content="{{ __('popover.company') }}"
-                >{!! __('menu.company') !!}</a>
+    <li>
+        @if($login::userHasRole("manager"))
+        <a
+            href="{{ BASE_URL }}/projects/showAll/"
+            @if ($menuType=='company' )
+            class="active"
             @endif
-        </li>
+            data-tippy-content="{{ __('popover.company') }}">{!! __('menu.company') !!}</a>
+        @elseif($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin, true))
+        <a
+            href="{{ BASE_URL }}/setting/editCompanySettings/"
+            @if ($menuType=='company' )
+            class="active"
+            @endif
+            data-tippy-content="{{ __('popover.company') }}">{!! __('menu.company') !!}</a>
+        @else
+        {{-- Team leads land on their weekly team view --}}
+        <a
+            href="{{ BASE_URL }}/weekly-planning/showTeam"
+            @if ($menuType=='company' )
+            class="active"
+            @endif
+            data-tippy-content="{{ __('popover.company') }}">{!! __('menu.company') !!}</a>
+        @endif
+    </li>
     @endif
     @endif {{-- end work-modes hide --}}
 
@@ -419,16 +357,6 @@ $adminRouteTitles = [
 
 
 @dispatchEvent('afterHeadMenu')
-
-@once
-    @push('scripts')
-        <script>
-            function toggleNotificationTabs(active) {
-                jQuery(".notifcationTabs").removeClass("active");
-                jQuery('#' + active + 'ListLink').addClass("active");
-                jQuery('.notifcationViewLists').hide();
-                jQuery('#' + active + 'List').show();
-            }
 
 <style>
     #notepadPopupOverlay {
@@ -825,7 +753,6 @@ $adminRouteTitles = [
         };
     })();
 </script>
-@endif
 {{-- ====================== END PERSONAL NOTEPAD POPUP ====================== --}}
 
 @once
