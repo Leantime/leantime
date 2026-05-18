@@ -63,14 +63,12 @@ class Users
             if ($file) {
                 return $file;
             }
-
         }
 
         // Otherwise return avatar
         $name = $profile['firstname'].' '.$profile['lastname'];
 
         return $this->avatarcreator->getAvatar($name);
-
     }
 
     /**
@@ -115,6 +113,25 @@ class Users
         $users = self::dispatch_filter('getAll', $users);
 
         return $users;
+    }
+
+    /**
+     * Active users whose managerId points to $managerId.
+     * Use this whenever a Team Lead / Company Manager needs the list
+     * of people they directly manage (1:1s, weekly plans, team views).
+     *
+     * @return array<int, array<string, mixed>>
+     *
+     * @api
+     */
+    public function getDirectReports(int $managerId): array
+    {
+        $currentUserId = (int) (session('userdata.id') ?? 0);
+        if ($currentUserId !== $managerId && ! Auth::userIsAtLeast(Roles::$admin, true)) {
+            return [];
+        }
+
+        return $this->userRepo->getDirectReports($managerId);
     }
 
     /**
@@ -175,9 +192,11 @@ class Users
 
         $leantimeFile = $this->fileService->upload($photo, 'user', $id);
 
-        if ($leantimeFile
+        if (
+            $leantimeFile
             && $this->userRepo->setPicture($leantimeFile['fileId'], $id)
-            && $oldPicture) {
+            && $oldPicture
+        ) {
 
             try {
                 $this->fileService->deleteFile($oldPicture);
@@ -185,9 +204,7 @@ class Users
                 Log::warning('Could not delete old profile picture: '.$e->getMessage());
                 Log::warning($e);
             }
-
         }
-
     }
 
     /**

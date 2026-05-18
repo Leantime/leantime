@@ -35,9 +35,9 @@ class ShowMy extends Controller
     public function get(array $params): Response
     {
         $employeeId = (int) session('userdata.id');
-        $now        = CarbonImmutable::now();
+        $now = CarbonImmutable::now();
 
-        $year  = isset($params['year'])  ? (int) $params['year']  : (int) $now->year;
+        $year = isset($params['year']) ? (int) $params['year'] : (int) $now->year;
         $month = isset($params['month']) ? (int) $params['month'] : (int) $now->month;
 
         // Clamp to valid month range.
@@ -47,20 +47,20 @@ class ShowMy extends Controller
         $prevMonth = $monthDate->subMonth();
         $nextMonth = $monthDate->addMonth();
 
-        $weekSlots   = $this->weeklyPlanningService->getMonthWeekSlots($employeeId, $year, $month);
+        $weekSlots = $this->weeklyPlanningService->getMonthWeekSlots($employeeId, $year, $month);
         $feedbackTypes = $this->weeklyPlanningService->feedbackTypes;
 
         // Determine which slot is "this week" for visual highlighting.
-        $todayStr  = $now->toDateString();
+        $todayStr = $now->toDateString();
         foreach ($weekSlots as &$slot) {
             $slot['isCurrent'] = ($slot['weekStart'] <= $todayStr && $slot['weekEnd'] >= $todayStr);
         }
         unset($slot);
 
-        $this->tpl->assign('weekSlots',    $weekSlots);
-        $this->tpl->assign('monthDate',    $monthDate);
-        $this->tpl->assign('prevMonth',    $prevMonth);
-        $this->tpl->assign('nextMonth',    $nextMonth);
+        $this->tpl->assign('weekSlots', $weekSlots);
+        $this->tpl->assign('monthDate', $monthDate);
+        $this->tpl->assign('prevMonth', $prevMonth);
+        $this->tpl->assign('nextMonth', $nextMonth);
         $this->tpl->assign('itemStatuses', $this->weeklyPlanningService->itemStatuses);
         $this->tpl->assign('feedbackTypes', $feedbackTypes);
 

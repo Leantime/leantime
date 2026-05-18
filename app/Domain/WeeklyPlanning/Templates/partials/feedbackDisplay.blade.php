@@ -4,19 +4,22 @@
                $canEdit (bool), $feedbackTypes (array)
     Replaces #feedback-{type} div (outerHTML swap).
 --}}
-<div class="tw-mb-s" id="feedback-{{ $type }}">
-    <div class="tw-flex tw-justify-between tw-items-center">
-        <small class="tw-font-semibold" style="color:var(--grey);">
-            {{ __($feedbackTypes[$type] ?? $type) }}
-        </small>
+<div class="wp-fb-row" id="feedback-{{ $type }}">
+    <div class="wp-fb-edit-row">
+        <span class="wp-fb-label">{{ __($feedbackTypes[$type] ?? $type) }}</span>
         @if($canEdit)
-            <button class="btn btn-xs btn-link"
-                    hx-get="{{ BASE_URL }}/hx/weekly-planning/feedback/editForm?planId={{ $planId }}&type={{ $type }}"
-                    hx-target="#feedback-{{ $type }}"
-                    hx-swap="outerHTML">
-                <i class="fa fa-pencil"></i>
-            </button>
+        <button class="wp-edit-btn"
+                hx-get="{{ BASE_URL }}/hx/weekly-planning/feedback/editForm?planId={{ $planId }}&type={{ $type }}"
+                hx-target="#feedback-{{ $type }}"
+                hx-swap="outerHTML"
+                title="Edit">
+            <i class="fa fa-pencil"></i>
+        </button>
         @endif
     </div>
-    <p class="tw-text-sm tw-mb-0">{{ $message ?: '—' }}</p>
+    @if($message)
+    <div class="wp-fb-text">{{ $message }}</div>
+    @else
+    <div class="wp-fb-empty">Not provided yet</div>
+    @endif
 </div>

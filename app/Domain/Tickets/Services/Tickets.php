@@ -4,8 +4,6 @@ namespace Leantime\Domain\Tickets\Services;
 
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use DateTime;
 use Illuminate\Container\EntryNotFoundException;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -18,6 +16,8 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Core\UI\Template as TemplateCore;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -81,6 +81,24 @@ class Tickets
     public function getStatusLabels($projectId = null): array
     {
         return $this->ticketRepository->getStateLabels($projectId);
+    }
+
+    /**
+     * Resolve the status ID that represents "ready for review" for a given project.
+     * Falls back to the system default (5) if the project-specific label is not found.
+     *
+     * @api
+     */
+    public function getReadyForReviewStatusId(?int $projectId = null): int
+    {
+        $statusLabels = $this->getStatusLabels($projectId);
+        foreach ($statusLabels as $id => $label) {
+            if (($label['name'] ?? '') === 'status.ready_for_review') {
+                return (int) $id;
+            }
+        }
+
+        return 5;
     }
 
     /**
@@ -439,16 +457,16 @@ class Tickets
                     $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
                 }
 
-                if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
-                    $projectStatusLabels[$ticket['projectId']][$ticket['status']]['statusType'] !== 'DONE') {
+                if (
+                    isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
+                    $projectStatusLabels[$ticket['projectId']][$ticket['status']]['statusType'] !== 'DONE'
+                ) {
                     $ticket['statusLabel'] = $projectStatusLabels[$ticket['projectId']][$ticket['status']]['name'];
                 }
-
             }
         }
 
         return $tickets;
-
     }
 
     public function simpleTicketCounter(?int $userId = null, ?int $project = null, string $status = '', array $types = []): int
@@ -504,6 +522,7 @@ class Tickets
      */
     /**
      * @api
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getRecentlyUpdatedTicketsForUser(int $userId, int $limit = 10, int $sinceDays = 14): array
@@ -513,6 +532,7 @@ class Tickets
 
     /**
      * @api
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getWaitingTicketsForUser(int $userId, int $limit = 10, int $staleDays = 7): array
@@ -538,8 +558,10 @@ class Tickets
                         $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
                     }
 
-                    if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
-                        $projectStatusLabels[$ticket['projectId']][$ticket['status']]['statusType'] !== 'DONE') {
+                    if (
+                        isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
+                        $projectStatusLabels[$ticket['projectId']][$ticket['status']]['statusType'] !== 'DONE'
+                    ) {
                         $ticket['statusLabel'] = $projectStatusLabels[$ticket['projectId']][$ticket['status']]['name'];
                         $ticketArray[] = $ticket;
                     }
@@ -644,7 +666,8 @@ class Tickets
             $groupColor = '';
             $sortId = null; // Custom sort ID, defaults to groupedFieldValue if null
 
-            if (isset($ticket[$searchCriteria['groupBy']])
+            if (
+                isset($ticket[$searchCriteria['groupBy']])
                 || ($searchCriteria['groupBy'] === 'dependingTicketId' && array_key_exists('dependingTicketId', $ticket))
             ) {
                 $groupedFieldValue = strtolower((string) ($ticket[$searchCriteria['groupBy']] ?? '0'));
@@ -1173,7 +1196,8 @@ class Tickets
             sort: 'duedate',
             limit: $limit,
             includeCounts: false,
-            offset: $offset);
+            offset: $offset
+        );
 
         $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
@@ -1261,7 +1285,7 @@ class Tickets
             }
         }
 
-        // $ticketsSorted = array_sort($tickets, 'order');
+        uasort($tickets, fn (array $a, array $b) => ($a['order'] ?? 0) <=> ($b['order'] ?? 0));
 
         return $tickets;
     }
@@ -1281,7 +1305,8 @@ class Tickets
             sort: 'duedate',
             limit: $limit,
             includeCounts: false,
-            offset: $offset);
+            offset: $offset
+        );
 
         $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
@@ -1325,7 +1350,8 @@ class Tickets
             sort: 'priority',
             limit: $limit,
             includeCounts: false,
-            offset: $offset);
+            offset: $offset
+        );
         $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
         $tickets = [];
@@ -1382,7 +1408,8 @@ class Tickets
             sort: 'duedate',
             limit: $limit,
             includeCounts: false,
-            offset: $offset);
+            offset: $offset
+        );
 
         $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
@@ -1696,6 +1723,40 @@ class Tickets
         return (float) $percentDone;
     }
 
+    /**
+     * If all tasks inside a milestone are DONE and the milestone is still In Progress,
+     * automatically advance it to Ready for Review (status 5).
+     */
+    private function checkAndAutoAdvanceMilestone(int $milestoneId): void
+    {
+        $milestone = $this->getTicket($milestoneId);
+
+        if (! $milestone || $milestone->type !== 'milestone') {
+            return;
+        }
+
+        // Only auto-advance from an in-progress state — never override completed/reviewed
+        $statusLabels = $this->getStatusLabels($milestone->projectId);
+        $currentStatus = (int) $milestone->status;
+        $doneTypes = ['DONE'];
+
+        if (
+            isset($statusLabels[$currentStatus])
+            && (
+                $statusLabels[$currentStatus]['statusType'] === 'DONE'
+                || $currentStatus === $this->getReadyForReviewStatusId((int) $milestone->projectId)
+            )
+        ) {
+            return;
+        }
+
+        $progress = $this->getMilestoneProgress($milestoneId);
+
+        if ($progress >= 100.0) {
+            $this->patch($milestoneId, ['status' => $this->getReadyForReviewStatusId((int) $milestone->projectId)]);
+        }
+    }
+
     public function getBulkMilestoneProgress(array $milestones)
     {
         if (empty($milestones)) {
@@ -1911,6 +1972,8 @@ class Tickets
     public function quickAddMilestone(array $params): array|bool|int
     {
 
+        $weight = (int) ($params['weight'] ?? 0);
+
         $values = [
             'headline' => $params['headline'],
             'type' => 'milestone',
@@ -1921,7 +1984,7 @@ class Tickets
             'date' => dtHelper()->userNow()->formatDateTimeForDb(),
             'dateToFinish' => '',
             'status' => 3,
-            'storypoints' => '',
+            'storypoints' => $weight > 0 ? $weight : '',
             'hourRemaining' => '',
             'planHours' => '',
             'sprint' => '',
@@ -2231,6 +2294,11 @@ class Tickets
 
         self::dispatchEvent('ticket_updated');
 
+        // When a task status changes, check if its milestone should auto-advance to Ready for Review
+        if (isset($params['status']) && $ticket->type !== 'milestone' && (int) $ticket->milestoneid > 0) {
+            $this->checkAndAutoAdvanceMilestone((int) $ticket->milestoneid);
+        }
+
         // Todo: create events and move notification logic to notification module
         if (isset($params['status'])) {
             $ticket = $this->getTicket($id);
@@ -2379,7 +2447,6 @@ class Tickets
             }
 
             self::dispatchEvent('ticket_created');
-
         } else {
             // Update Ticket
 
@@ -2600,7 +2667,6 @@ class Tickets
         }
 
         return true;
-
     }
 
     /**
@@ -3207,9 +3273,11 @@ class Tickets
 
         foreach ($allTickets as $row) {
             // Skip tickets that are done or don't have proper status labels
-            if (! isset($statusLabels[$row['projectId']]) ||
+            if (
+                ! isset($statusLabels[$row['projectId']]) ||
                 ! isset($statusLabels[$row['projectId']][$row['status']]) ||
-                $statusLabels[$row['projectId']][$row['status']]['statusType'] === 'DONE') {
+                $statusLabels[$row['projectId']][$row['status']]['statusType'] === 'DONE'
+            ) {
                 continue;
             }
 
@@ -3243,9 +3311,11 @@ class Tickets
     {
         switch ($groupBy) {
             case 'time':
-                if ($ticket['dateToFinish'] == '0000-00-00 00:00:00' ||
+                if (
+                    $ticket['dateToFinish'] == '0000-00-00 00:00:00' ||
                     $ticket['dateToFinish'] == '1969-12-31 00:00:00' ||
-                    $ticket['dateToFinish'] == null) {
+                    $ticket['dateToFinish'] == null
+                ) {
                     return 'later';
                 }
 
@@ -3288,11 +3358,16 @@ class Tickets
         switch ($groupBy) {
             case 'time':
                 switch ($groupKey) {
-                    case 'overdue': return 'subtitles.overdue';
-                    case 'dueToday': return 'subtitles.due_today';
-                    case 'thisWeek': return 'subtitles.due_this_week';
-                    case 'later': return 'subtitles.due_later';
-                    default: return 'subtitles.due_later';
+                    case 'overdue':
+                        return 'subtitles.overdue';
+                    case 'dueToday':
+                        return 'subtitles.due_today';
+                    case 'thisWeek':
+                        return 'subtitles.due_this_week';
+                    case 'later':
+                        return 'subtitles.due_later';
+                    default:
+                        return 'subtitles.due_later';
                 }
 
             case 'project':
@@ -3325,11 +3400,16 @@ class Tickets
         switch ($groupBy) {
             case 'time':
                 switch ($groupKey) {
-                    case 'overdue': return 1;
-                    case 'dueToday': return 2;
-                    case 'thisWeek': return 3;
-                    case 'later': return 4;
-                    default: return 999;
+                    case 'overdue':
+                        return 1;
+                    case 'dueToday':
+                        return 2;
+                    case 'thisWeek':
+                        return 3;
+                    case 'later':
+                        return 4;
+                    default:
+                        return 999;
                 }
 
             case 'priority':
@@ -3390,7 +3470,6 @@ class Tickets
                     $rootTickets[] = &$ticketMap[$ticket['id']];
                 }
             }
-
         }
 
         // Sort the tickets at each level
@@ -3582,12 +3661,10 @@ class Tickets
                         )->formatDateTimeForDb();
                     }
                 }
-
             } catch (\Exception $e) {
                 $values['editTo'] = '';
                 unset($values['timeTo']);
             }
-
         }
 
         return $values;

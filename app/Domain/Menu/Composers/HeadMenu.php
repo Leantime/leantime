@@ -9,6 +9,7 @@ use Leantime\Core\UI\Theme;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Help\Services\Helper;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepo;
+use Leantime\Domain\Menu\Services\Menu as MenuService;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
@@ -33,6 +34,8 @@ class HeadMenu extends Composer
 
     private MenuRepo $menuRepo;
 
+    private MenuService $menuService;
+
     public function init(
         NotificationService $notificationService,
         TimesheetService $timesheets,
@@ -40,7 +43,8 @@ class HeadMenu extends Composer
         AuthService $authService,
         Helper $helperService,
         MenuRepo $menuRepo,
-        Theme $themeCore
+        Theme $themeCore,
+        MenuService $menuService
     ): void {
         $this->notificationService = $notificationService;
         $this->timesheets = $timesheets;
@@ -49,6 +53,7 @@ class HeadMenu extends Composer
         $this->helperService = $helperService;
         $this->menuRepo = $menuRepo;
         $this->themeCore = $themeCore;
+        $this->menuService = $menuService;
     }
 
     /**
@@ -101,6 +106,15 @@ class HeadMenu extends Composer
             session(['companysettings.logoPath' => $this->themeCore->getLogoUrl()]);
         }
 
+        // Load project list for the project switcher dropdown (only when in project context)
+        $currentProject = [];
+        $allProjects = [];
+        if ($menuType === 'project' && session()->exists('userdata')) {
+            $projectVars = $this->menuService->getUserProjectList(session('userdata.id'));
+            $currentProject = $projectVars['currentProject'] ?? [];
+            $allProjects = $projectVars['assignedProjects'] ?? [];
+        }
+
         return [
             'newNotificationCount' => $nCount,
             'totalNotificationCount' => $totalNotificationCount,
@@ -115,6 +129,8 @@ class HeadMenu extends Composer
             'module' => FrontcontrollerCore::getModuleName(),
             'user' => $user ?? [],
             'modal' => $modal,
+            'headMenuCurrentProject' => $currentProject,
+            'headMenuAllProjects' => $allProjects,
         ];
     }
 }

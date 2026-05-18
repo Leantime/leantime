@@ -57,6 +57,65 @@ $project = $tpl->get('project');
 
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <br />
+                                    <h4 class="widgettitle title-light"><span class="fa fa-map"></span><?php echo $tpl->__('headline.milestones'); ?></h4>
+                                    <p><?php echo $tpl->__('text.milestones_help_organize_projects'); ?></p>
+
+                                    <div id="projectMilestones">
+                                        <?php
+                                        $milestones = $project['milestones'] ?? [['headline' => '', 'editFrom' => '', 'editTo' => '']];
+foreach ($milestones as $index => $milestone) {
+    ?>
+                                            <div class="project-milestone-row row" style="margin-bottom: 12px;">
+                                                <div class="col-md-4">
+                                                    <input type="text"
+                                                           name="milestones[<?php echo $index; ?>][headline]"
+                                                           value="<?php $tpl->e($milestone['headline'] ?? '') ?>"
+                                                           placeholder="<?php echo $tpl->__('label.milestone_title'); ?>"
+                                                           style="width: 100%;" />
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="text"
+                                                           class="dates milestoneDateFrom"
+                                                           name="milestones[<?php echo $index; ?>][editFrom]"
+                                                           value="<?php $tpl->e($milestone['editFrom'] ?? '') ?>"
+                                                           placeholder="<?php echo $tpl->__('label.planned_start_date'); ?>"
+                                                           autocomplete="off"
+                                                           style="width: 100%;" />
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="text"
+                                                           class="dates milestoneDateTo"
+                                                           name="milestones[<?php echo $index; ?>][editTo]"
+                                                           value="<?php $tpl->e($milestone['editTo'] ?? '') ?>"
+                                                           placeholder="<?php echo $tpl->__('label.planned_end_date'); ?>"
+                                                           autocomplete="off"
+                                                           style="width: 100%;" />
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="number"
+                                                           name="milestones[<?php echo $index; ?>][weight]"
+                                                           value="<?php $tpl->e($milestone['weight'] ?? '') ?>"
+                                                           placeholder="<?php echo $tpl->__('label.milestone_weight'); ?>"
+                                                           min="1" max="100"
+                                                           style="width: 100%;" />
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <button type="button" class="btn btn-default removeMilestone" data-tippy-content="<?php echo $tpl->__('buttons.delete'); ?>">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                    </div>
+
+                                    <button type="button" id="addMilestone" class="btn btn-default">
+                                        <?php echo $tpl->__('links.add_milestone'); ?>
+                                    </button>
+                                </div>
+                            </div>
                             <div class="padding-top">
                                 <?php if (isset($project['id']) && $project['id'] != '') { ?>
                                     <div class="pull-right padding-top">
@@ -161,6 +220,47 @@ $project = $tpl->get('project');
 
         jQuery("#projectdetails select").chosen();
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
+        leantime.dateController.initDateRangePicker(".milestoneDateFrom", ".milestoneDateTo", 2);
+
+        var milestoneIndex = jQuery("#projectMilestones .project-milestone-row").length;
+        var updateRemoveButtons = function() {
+            jQuery("#projectMilestones .removeMilestone").prop("disabled", jQuery("#projectMilestones .project-milestone-row").length <= 1);
+        };
+
+        jQuery("#addMilestone").on("click", function() {
+            var row = '' +
+                '<div class="project-milestone-row row" style="margin-bottom: 12px;">' +
+                    '<div class="col-md-4">' +
+                        '<input type="text" name="milestones[' + milestoneIndex + '][headline]" placeholder="<?php echo $tpl->__('label.milestone_title'); ?>" style="width: 100%;" />' +
+                    '</div>' +
+                    '<div class="col-md-2">' +
+                        '<input type="text" class="dates milestoneDateFrom" name="milestones[' + milestoneIndex + '][editFrom]" placeholder="<?php echo $tpl->__('label.planned_start_date'); ?>" autocomplete="off" style="width: 100%;" />' +
+                    '</div>' +
+                    '<div class="col-md-2">' +
+                        '<input type="text" class="dates milestoneDateTo" name="milestones[' + milestoneIndex + '][editTo]" placeholder="<?php echo $tpl->__('label.planned_end_date'); ?>" autocomplete="off" style="width: 100%;" />' +
+                    '</div>' +
+                    '<div class="col-md-3">' +
+                        '<input type="number" name="milestones[' + milestoneIndex + '][weight]" placeholder="<?php echo $tpl->__('label.milestone_weight'); ?>" min="1" max="100" style="width: 100%;" />' +
+                    '</div>' +
+                    '<div class="col-md-1">' +
+                        '<button type="button" class="btn btn-default removeMilestone" data-tippy-content="<?php echo $tpl->__('buttons.delete'); ?>"><i class="fa fa-trash"></i></button>' +
+                    '</div>' +
+                '</div>';
+
+            jQuery("#projectMilestones").append(row);
+            milestoneIndex++;
+            leantime.dateController.initDateRangePicker(".milestoneDateFrom", ".milestoneDateTo", 2);
+            updateRemoveButtons();
+        });
+
+        jQuery("#projectMilestones").on("click", ".removeMilestone", function() {
+            if (jQuery("#projectMilestones .project-milestone-row").length > 1) {
+                jQuery(this).closest(".project-milestone-row").remove();
+            }
+            updateRemoveButtons();
+        });
+
+        updateRemoveButtons();
 
         leantime.projectsController.initProjectTabs();
         if (window.leantime && window.leantime.tiptapController) {

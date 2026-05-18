@@ -50,8 +50,8 @@ class ShowPlan extends Controller
             return $this->tpl->displayPartial('errors.error403', responseCode: 403);
         }
 
-        $items       = $this->weeklyPlanningService->getItemsForPlan($planId);
-        $feedback    = $this->weeklyPlanningService->getFeedbackForPlan($planId);
+        $items = $this->weeklyPlanningService->getItemsForPlan($planId);
+        $feedback = $this->weeklyPlanningService->getFeedbackForPlan($planId);
         $commitments = $this->weeklyPlanningService->getCommitmentsForPlan($planId);
 
         $this->tpl->assign('plan', $plan);

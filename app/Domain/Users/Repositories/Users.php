@@ -191,6 +191,40 @@ class Users
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
+    /**
+     * Get all active users whose managerId points to the given user.
+     * Drives "my direct reports" UX for Team Leads and Managers.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getDirectReports(int $managerId): array
+    {
+        if ($managerId <= 0) {
+            return [];
+        }
+
+        $rows = $this->connection->table('zp_user')
+            ->select([
+                'id',
+                'lastname',
+                'firstname',
+                'role',
+                'profileId',
+                'jobTitle',
+                'department',
+                'clientId',
+            ])
+            ->where('managerId', $managerId)
+            ->where('status', 'a')
+            ->where(function ($q) {
+                $q->whereNull('source')->orWhere('source', '!=', 'api');
+            })
+            ->orderBy('firstname')
+            ->get();
+
+        return array_map(fn ($r) => (array) $r, $rows->toArray());
+    }
+
     public function getAllBySource($source): false|array
     {
         $query = $this->connection->table('zp_user')

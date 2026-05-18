@@ -23,21 +23,21 @@ class Menu
     // Menu structures
     public array $menuStructures = [
         'clientportal' => [
-            5  => ['type' => 'item', 'module' => 'clientportal', 'title' => 'menu.client_my_projects', 'icon' => 'fa fa-fw fa-folder-open', 'tooltip' => 'menu.client_my_projects', 'href' => '/clientportal/showDashboard', 'active' => ['showDashboard', 'showProject']],
+            5 => ['type' => 'item', 'module' => 'clientportal', 'title' => 'menu.client_my_projects', 'icon' => 'fa fa-fw fa-folder-open', 'tooltip' => 'menu.client_my_projects', 'href' => '/clientportal/showDashboard', 'active' => ['showDashboard', 'showProject']],
         ],
         'admin' => [
-            5  => ['type' => 'item', 'module' => 'dashboard',     'title' => 'menu.admin_dashboard',     'icon' => 'fa fa-fw fa-gauge-high',    'tooltip' => 'Admin Dashboard',         'href' => '/dashboard/adminHome',              'active' => ['adminHome'],   'role' => 'admin'],
+            5 => ['type' => 'item', 'module' => 'dashboard',     'title' => 'menu.admin_dashboard',     'icon' => 'fa fa-fw fa-gauge-high',    'tooltip' => 'Admin Dashboard',         'href' => '/dashboard/adminHome',              'active' => ['adminHome'],   'role' => 'admin'],
             10 => ['type' => 'item', 'module' => 'projects',       'title' => 'menu.all_projects',        'icon' => 'fa fa-fw fa-briefcase',     'tooltip' => 'All Projects',            'href' => '/projects/showAll',                 'active' => ['showAll'],     'role' => 'admin'],
             20 => ['type' => 'item', 'module' => 'users',          'title' => 'menu.admin_users',         'icon' => 'fa fa-fw fa-users',         'tooltip' => 'User Management',         'href' => '/users/showAll',                    'active' => ['showAll', 'editUser', 'newUser'], 'role' => 'admin'],
             30 => ['type' => 'item', 'module' => 'clients',        'title' => 'menu.admin_clients',       'icon' => 'fa fa-fw fa-building',      'tooltip' => 'Client Organisations',    'href' => '/clients/showAll',                  'active' => ['showAll', 'newClient', 'showClient'], 'role' => 'admin'],
             50 => ['type' => 'item', 'module' => 'oneonone',       'title' => 'menu.admin_1on1',          'icon' => 'fa fa-fw fa-handshake',     'tooltip' => '1:1 Sessions',            'href' => '/oneonone/showTeam',                'active' => ['showTeam', 'showSession', 'newSession'], 'role' => 'admin'],
-            60 => ['type' => 'item', 'module' => 'weekly-planning','title' => 'menu.admin_weekly_plans',  'icon' => 'fa fa-fw fa-calendar-week', 'tooltip' => 'Weekly Planning',         'href' => '/weekly-planning/showTeam',         'active' => ['showTeam', 'showPlan', 'newPlan', 'showBlockers', 'showCommitments'], 'role' => 'admin'],
+            60 => ['type' => 'item', 'module' => 'weekly-planning', 'title' => 'menu.admin_weekly_plans',  'icon' => 'fa fa-fw fa-calendar-week', 'tooltip' => 'Weekly Planning',         'href' => '/weekly-planning/showTeam',         'active' => ['showTeam', 'showPlan', 'newPlan', 'showBlockers', 'showCommitments'], 'role' => 'admin'],
             70 => ['type' => 'item', 'module' => 'timesheets',     'title' => 'menu.all_timesheets',      'icon' => 'fa fa-fw fa-business-time', 'tooltip' => 'All Timesheets',          'href' => '/timesheets/showAll',               'active' => ['showAll'],     'role' => 'admin'],
             90 => ['type' => 'separator'],
             95 => ['type' => 'item', 'module' => 'setting',        'title' => 'menu.company_settings',    'icon' => 'fa fa-fw fa-cogs',          'tooltip' => 'Company Settings',        'href' => '/setting/editCompanySettings',       'active' => ['editCompanySettings'], 'role' => 'admin'],
         ],
         'default' => [
-            5  => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.overview', 'icon' => 'fa fa-fw fa-gauge-high', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/show', 'active' => ['show']],
+            5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.overview', 'icon' => 'fa fa-fw fa-gauge-high', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/show', 'active' => ['show']],
             10 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'icon' => 'fa fa-fw fa-thumb-tack', 'tooltip' => 'menu.todos_tooltip', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket', 'showList']],
             20 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'icon' => 'fa fa-fw fa-chart-gantt', 'tooltip' => 'menu.milestones_tooltip', 'href' => '', 'hrefFunction' => 'getTimelineMenu', 'active' => ['roadmap', 'showAllMilestones', 'showProjectCalendar']],
             30 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'icon' => 'fa fa-fw fa-bullseye', 'tooltip' => 'menu.goals_tooltip', 'href' => '/goalcanvas/dashboard', 'active' => ['showCanvas', 'dashboard']],
@@ -97,7 +97,7 @@ class Menu
             ],
         ],
         'personal' => [
-            5  => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.sidemenu_home', 'icon' => 'fa fa-fw fa-house', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/home', 'active' => ['home']],
+            5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.sidemenu_home', 'icon' => 'fa fa-fw fa-house', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/home', 'active' => ['home']],
             10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.sidemenu_my_project_hub', 'icon' => 'fa fa-fw fa-house-flag', 'tooltip' => 'menu.projecthub_tooltip', 'href' => '/projects/showMy', 'active' => ['showMy'], 'role' => 'editor'],
             15 => ['type' => 'item', 'module' => 'calendar', 'title' => 'menu.sidemenu_my_calendar', 'icon' => 'fa fa-fw fa-calendar', 'tooltip' => 'menu.my_calendar_tooltip', 'href' => '/calendar/showMyCalendar', 'active' => ['showMyCalendar']],
             30 => ['type' => 'item', 'module' => 'timesheets', 'title' => 'menu.sidemenu_my_timesheets', 'icon' => 'fa fa-fw fa-clock', 'tooltip' => 'menu.my_timesheets_tooltip', 'href' => '/timesheets/showMy', 'active' => ['showMy']],
@@ -108,28 +108,19 @@ class Menu
             10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.sidemenu_my_project_hub', 'icon' => 'fa-solid fa-house-flag', 'tooltip' => 'menu.my_projects_tooltip', 'href' => '/projects/showMy', 'active' => ['showMy']],
         ],
         'company' => [
-            10 => [
-                'type' => 'submenu', 'id' => 'Management', 'title' => 'menu.sidemenu_management', 'visual' => 'open', 'role' => 'teamlead',
-                'submenu' => [
-                    5 => ['type' => 'item', 'module' => 'timesheets', 'role' => 'teamlead', 'title' => 'menu.all_timesheets', 'icon' => 'fa fa-fw fa-business-time', 'tooltip' => 'menu.all_timesheets_tooltip', 'href' => '/timesheets/showAll', 'active' => ['showAll']],
-                    7 => ['type' => 'item', 'module' => 'oneonone', 'role' => 'teamlead', 'title' => 'menu.team_oneonones', 'icon' => 'fa fa-fw fa-handshake', 'tooltip' => 'menu.team_oneonones_tooltip', 'href' => '/oneonone/showTeam', 'active' => ['showTeam', 'showSession', 'newSession']],
-                    8 => ['type' => 'item', 'module' => 'weekly-planning', 'role' => 'teamlead', 'title' => 'menu.team_weekly_plans', 'icon' => 'fa fa-fw fa-calendar-week', 'tooltip' => 'menu.team_weekly_plans_tooltip', 'href' => '/weekly-planning/showTeam', 'active' => ['showTeam', 'showPlan', 'newPlan']],
-                    9 => ['type' => 'item', 'module' => 'weekly-planning', 'role' => 'teamlead', 'title' => 'menu.team_blockers', 'icon' => 'fa fa-fw fa-ban', 'tooltip' => 'menu.team_blockers_tooltip', 'href' => '/weekly-planning/showBlockers', 'active' => ['showBlockers']],
-                    11 => ['type' => 'item', 'module' => 'weekly-planning', 'role' => 'teamlead', 'title' => 'menu.team_commitments', 'icon' => 'fa fa-fw fa-handshake', 'tooltip' => 'menu.team_commitments_tooltip', 'href' => '/weekly-planning/showCommitments', 'active' => ['showCommitments']],
-                    10 => ['type' => 'item', 'module' => 'projects', 'role' => 'manager', 'title' => 'menu.all_projects', 'icon' => 'fa fa-fw fa-briefcase', 'tooltip' => 'menu.all_projects_tooltip', 'href' => '/projects/showAll', 'active' => ['showAll']],
-                    15 => ['type' => 'item', 'module' => 'clients', 'role' => 'admin', 'title' => 'menu.all_clients', 'icon' => 'fa fa-fw fa-address-book', 'tooltip' => 'menu.all_clients_tooltip', 'href' => '/clients/showAll', 'active' => ['showAll']],
-                    20 => ['type' => 'item', 'module' => 'users', 'role' => 'admin', 'title' => 'menu.all_users', 'icon' => 'fa fa-fw fa-users', 'tooltip' => 'menu.all_users_tooltip', 'href' => '/users/showAll', 'active' => ['showAll']],
-                ],
-            ],
-            15 => [
-                'type' => 'submenu', 'id' => 'administration', 'title' => 'menu.sidemenu_administration', 'visual' => 'open', 'role' => 'admin',
-                'submenu' => [
-                    5 => ['type' => 'item', 'module' => 'plugins', 'title' => 'menu.leantime_apps', 'icon' => 'fa fa-fw fa-puzzle-piece', 'tooltip' => 'menu.leantime_apps_tooltip', 'href' => '/plugins/marketplace', 'active' => ['marketplace', 'myapps']],
-                    10 => ['type' => 'item', 'module' => 'connector', 'title' => 'menu.integrations', 'icon' => 'fa fa-fw fa-circle-nodes', 'tooltip' => 'menu.connector_tooltip', 'href' => '/connector/show', 'active' => ['show']],
-                    15 => ['type' => 'item', 'module' => 'setting', 'title' => 'menu.company_settings', 'icon' => 'fa fa-fw fa-cogs', 'tooltip' => 'menu.company_settings_tooltip', 'href' => '/setting/editCompanySettings', 'active' => ['editCompanySettings']],
-
-                ],
-            ],
+            5 => ['type' => 'item', 'module' => 'dashboard',       'role' => 'teamlead', 'title' => 'menu.tlcm_home',          'icon' => 'fa fa-fw fa-house',          'tooltip' => 'menu.tlcm_home_tooltip',          'href' => '/dashboard/tlcmHome',                  'active' => ['tlcmHome']],
+            10 => ['type' => 'item', 'module' => 'timesheets',      'role' => 'teamlead', 'title' => 'menu.all_timesheets',     'icon' => 'fa fa-fw fa-business-time',  'tooltip' => 'menu.all_timesheets_tooltip',     'href' => '/timesheets/showAll',                  'active' => ['showAll']],
+            15 => ['type' => 'item', 'module' => 'oneonone',        'role' => 'teamlead', 'title' => 'menu.oneonone_sessions',   'icon' => 'fa fa-fw fa-handshake',      'tooltip' => 'menu.oneonone_sessions_tooltip',  'href' => '/oneonone/show',                       'active' => ['show', 'showTeam', 'showMy', 'showSession', 'newSession']],
+            20 => ['type' => 'item', 'module' => 'weekly-planning', 'role' => 'teamlead', 'title' => 'menu.team_weekly_plans',  'icon' => 'fa fa-fw fa-calendar-week',  'tooltip' => 'menu.team_weekly_plans_tooltip',  'href' => '/weekly-planning/showTeam',            'active' => ['showTeam', 'showPlan', 'newPlan']],
+            25 => ['type' => 'item', 'module' => 'weekly-planning', 'role' => 'teamlead', 'title' => 'menu.team_blockers',      'icon' => 'fa fa-fw fa-ban',            'tooltip' => 'menu.team_blockers_tooltip',      'href' => '/weekly-planning/showBlockers',        'active' => ['showBlockers']],
+            30 => ['type' => 'item', 'module' => 'weekly-planning', 'role' => 'teamlead', 'title' => 'menu.team_commitments',   'icon' => 'fa fa-fw fa-handshake',      'tooltip' => 'menu.team_commitments_tooltip',   'href' => '/weekly-planning/showCommitments',     'active' => ['showCommitments']],
+            35 => ['type' => 'item', 'module' => 'projects',        'role' => 'manager',  'title' => 'menu.all_projects',       'icon' => 'fa fa-fw fa-briefcase',      'tooltip' => 'menu.all_projects_tooltip',       'href' => '/projects/showAll',                    'active' => ['showAll']],
+            40 => ['type' => 'item', 'module' => 'clients',         'role' => 'manager',  'title' => 'menu.all_clients',        'icon' => 'fa fa-fw fa-address-book',   'tooltip' => 'menu.all_clients_tooltip',        'href' => '/clients/showAll',                     'active' => ['showAll']],
+            45 => ['type' => 'item', 'module' => 'users',           'role' => 'admin',    'title' => 'menu.all_users',          'icon' => 'fa fa-fw fa-users',          'tooltip' => 'menu.all_users_tooltip',          'href' => '/users/showAll',                       'active' => ['showAll']],
+            50 => ['type' => 'separator'],
+            55 => ['type' => 'item', 'module' => 'plugins',         'role' => 'admin',    'title' => 'menu.leantime_apps',      'icon' => 'fa fa-fw fa-puzzle-piece',   'tooltip' => 'menu.leantime_apps_tooltip',      'href' => '/plugins/marketplace',                 'active' => ['marketplace', 'myapps']],
+            60 => ['type' => 'item', 'module' => 'connector',       'role' => 'admin',    'title' => 'menu.integrations',       'icon' => 'fa fa-fw fa-circle-nodes',   'tooltip' => 'menu.connector_tooltip',          'href' => '/connector/show',                      'active' => ['show']],
+            65 => ['type' => 'item', 'module' => 'setting',         'role' => 'admin',    'title' => 'menu.company_settings',   'icon' => 'fa fa-fw fa-cogs',           'tooltip' => 'menu.company_settings_tooltip',   'href' => '/setting/editCompanySettings',         'active' => ['editCompanySettings']],
         ],
     ];
 
@@ -448,7 +439,7 @@ class Menu
             'dashboard.adminHome',
             'users.showAll', 'users.editUser', 'users.newUser', 'users.editOwn',
             'clients.showAll', 'clients.newClient', 'clients.showClient',
-            'oneonone.showTeam', 'oneonone.showSession', 'oneonone.newSession',
+            'oneonone.show', 'oneonone.showMy', 'oneonone.showTeam', 'oneonone.showSession', 'oneonone.newSession',
             'timesheets.showAll',
             'projects.showAll',
             'weekly-planning.showTeam', 'weekly-planning.showPlan', 'weekly-planning.newPlan',
@@ -474,6 +465,12 @@ class Menu
             'notes.showNotesList' => 'personal',
             'tickets.showAllMilestonesOverview' => 'personal',
             'users.editOwn' => 'personal',
+            'dashboard.tlcmHome' => 'company',
+            'oneonone.show' => 'company',
+            'oneonone.showMy' => 'company',
+            'oneonone.showTeam' => 'company',
+            'oneonone.showSession' => 'company',
+            'oneonone.newSession' => 'company',
             'setting.editCompanySettings' => 'company',
             'timesheets.showAll' => 'company',
             'projects.showAll' => 'company',

@@ -38,7 +38,7 @@ class NewPlan extends Controller
 
         // Guard: only team leads can create plans for their direct reports
         $teamMembers = $this->weeklyPlanningService->getTeamMembers((int) session('userdata.id'));
-        $memberIds   = array_column($teamMembers, 'id');
+        $memberIds = array_column($teamMembers, 'id');
 
         if ($employeeId === 0 || ! in_array($employeeId, $memberIds, true)) {
             return Frontcontroller::redirect(BASE_URL.'/weekly-planning/showTeam');
@@ -46,11 +46,11 @@ class NewPlan extends Controller
 
         // Pre-fill: current week Monday→Friday
         $weekStart = now()->startOfWeek(\Carbon\Carbon::MONDAY)->toDateString();
-        $weekEnd   = now()->endOfWeek(\Carbon\Carbon::FRIDAY)->toDateString();
+        $weekEnd = now()->endOfWeek(\Carbon\Carbon::FRIDAY)->toDateString();
 
         // Find the employee in team members array
         $employeeKey = array_search($employeeId, $memberIds, true);
-        $employee    = $employeeKey !== false ? $teamMembers[$employeeKey] : null;
+        $employee = $employeeKey !== false ? $teamMembers[$employeeKey] : null;
 
         $this->tpl->assign('employee', $employee);
         $this->tpl->assign('employeeId', $employeeId);
@@ -65,9 +65,9 @@ class NewPlan extends Controller
      */
     public function post(array $_params): Response
     {
-        $employeeId     = (int) ($_POST['employeeId'] ?? 0);
-        $weekStart      = (string) ($_POST['weekStart'] ?? '');
-        $weekEnd        = (string) ($_POST['weekEnd'] ?? '');
+        $employeeId = (int) ($_POST['employeeId'] ?? 0);
+        $weekStart = (string) ($_POST['weekStart'] ?? '');
+        $weekEnd = (string) ($_POST['weekEnd'] ?? '');
         $dateOfOneOnOne = (string) ($_POST['dateOfOneOnOne'] ?? '');
 
         if ($employeeId === 0 || empty($weekStart)) {
@@ -77,7 +77,7 @@ class NewPlan extends Controller
         // Authorization: same membership guard as the GET form — a team lead
         // may only create plans for users in their own team (managerId match).
         $teamMembers = $this->weeklyPlanningService->getTeamMembers((int) session('userdata.id'));
-        $memberIds   = array_column($teamMembers, 'id');
+        $memberIds = array_column($teamMembers, 'id');
         if (! in_array($employeeId, $memberIds, true)) {
             $this->tpl->setNotification($this->language->__('weeklyplanning.text.plan_create_error'), 'error');
 
@@ -85,10 +85,10 @@ class NewPlan extends Controller
         }
 
         $planId = $this->weeklyPlanningService->createPlan([
-            'employeeId'     => $employeeId,
-            'teamLeadId'     => (int) session('userdata.id'),
-            'weekStart'      => $weekStart,
-            'weekEnd'        => $weekEnd ?: now()->endOfWeek(\Carbon\Carbon::FRIDAY)->toDateString(),
+            'employeeId' => $employeeId,
+            'teamLeadId' => (int) session('userdata.id'),
+            'weekStart' => $weekStart,
+            'weekEnd' => $weekEnd ?: now()->endOfWeek(\Carbon\Carbon::FRIDAY)->toDateString(),
             'dateOfOneOnOne' => $dateOfOneOnOne ?: null,
         ]);
 

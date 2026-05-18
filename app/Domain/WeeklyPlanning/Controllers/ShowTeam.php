@@ -30,10 +30,10 @@ class ShowTeam extends Controller
      */
     public function get(array $params): Response
     {
-        $teamLeadId    = (int) session('userdata.id');
+        $teamLeadId = (int) session('userdata.id');
         $selectedMonth = $_GET['month'] ?? null;
 
-        $months      = $this->weeklyPlanningService->getMonthsForTeamLead($teamLeadId);
+        $months = $this->weeklyPlanningService->getMonthsForTeamLead($teamLeadId);
         $teamMembers = $this->weeklyPlanningService->getTeamDashboard($teamLeadId, $selectedMonth);
 
         // Default to most recent month if none selected and months exist

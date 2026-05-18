@@ -2,42 +2,48 @@
     Rendered by PlanItems::commitmentForm().
     Variables: $planId (int), $teamMembers (array)
 --}}
-<div class="tw-p-m tw-mb-s tw-rounded" style="background:var(--secondary-background); border:1px solid var(--main-border-color);">
-    <h5 class="tw-mb-s">{{ __('weeklyplanning.headlines.add_commitment') }}</h5>
+<div style="background:var(--layered-background); border:1px solid var(--main-border-color);
+            border-radius:var(--box-radius-small); padding:14px; margin-bottom:10px;">
+    <h5 style="margin:0 0 12px; font-size:13px; font-weight:700; display:flex; align-items:center; gap:6px;">
+        <i class="fa fa-plus" style="color:var(--accent1);"></i>
+        {{ __('weeklyplanning.headlines.add_commitment') }}
+    </h5>
 
     <form hx-post="{{ BASE_URL }}/hx/weekly-planning/planItems/addCommitment"
           hx-target="#commitments-list"
           hx-swap="innerHTML">
         <input type="hidden" name="planId" value="{{ $planId }}">
 
-        <div class="form-group tw-mb-xs">
+        <div style="margin-bottom:8px;">
             <input type="text"
                    name="task"
                    class="form-control"
                    placeholder="{{ __('weeklyplanning.placeholders.commitment_task') }}"
-                   required>
+                   required
+                   style="border-radius:var(--element-radius);">
         </div>
 
-        <div class="form-group tw-mb-xs">
-            <select name="ownerId" class="form-control">
+        <div style="margin-bottom:8px;">
+            <select name="ownerId" class="form-control" style="border-radius:var(--element-radius);">
                 @foreach($teamMembers as $member)
-                    <option value="{{ $member['id'] }}">
-                        {{ $member['firstname'] }} {{ $member['lastname'] }}
-                    </option>
+                <option value="{{ $member['id'] }}">
+                    {{ $member['firstname'] }} {{ $member['lastname'] }}
+                </option>
                 @endforeach
             </select>
         </div>
 
-        <div class="form-group tw-mb-xs">
+        <div style="margin-bottom:10px;">
             <input type="date"
                    name="deadline"
                    class="form-control"
-                   required>
+                   required
+                   style="border-radius:var(--element-radius);">
         </div>
 
-        <div class="tw-flex tw-gap-xs">
+        <div style="display:flex; gap:6px;">
             <button type="submit" class="btn btn-primary btn-sm">
-                {{ __('weeklyplanning.buttons.add') }}
+                <i class="fa fa-check"></i> {{ __('weeklyplanning.buttons.add') }}
             </button>
             <button type="button" class="btn btn-default btn-sm"
                     onclick="document.getElementById('commitment-container').innerHTML = ''">

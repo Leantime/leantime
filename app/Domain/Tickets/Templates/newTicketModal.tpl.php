@@ -22,7 +22,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
             </ul>
 
             <div id="ticketdetails">
-                <form class="formModal" action="<?= BASE_URL ?>/tickets/newTicket" method="post">
+                <form class="formModal" action="<?= BASE_URL ?>/tickets/newTicket" method="post" enctype="multipart/form-data">
                     <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
                 </form>
             </div>

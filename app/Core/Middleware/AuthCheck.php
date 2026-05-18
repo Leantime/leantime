@@ -91,7 +91,7 @@ class AuthCheck
 
             $isAllowed = false;
             foreach ($allowed as $prefix) {
-                if ($route === $prefix || str_starts_with($route, $prefix . '.')) {
+                if ($route === $prefix || str_starts_with($route, $prefix.'.')) {
                     $isAllowed = true;
                     break;
                 }
@@ -101,10 +101,10 @@ class AuthCheck
                 // For HTMX partial requests, trigger a client-side full-page redirect
                 // instead of a server-side redirect (which HTMX would inject into the swap target).
                 if ($request->headers->get('HX-Request') === 'true') {
-                    return new Response('', 204, ['HX-Redirect' => BASE_URL . '/clientportal/showDashboard']);
+                    return new Response('', 204, ['HX-Redirect' => BASE_URL.'/clientportal/showDashboard']);
                 }
 
-                return new RedirectResponse(BASE_URL . '/clientportal/showDashboard');
+                return new RedirectResponse(BASE_URL.'/clientportal/showDashboard');
             }
         }
 

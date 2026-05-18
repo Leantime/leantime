@@ -42,12 +42,12 @@ class ShowClient extends Controller
         UserRepository $userRepo,
         UserService $userService
     ): void {
-        $this->clientRepo     = $clientRepo;
+        $this->clientRepo = $clientRepo;
         $this->commentService = $commentService;
-        $this->fileService    = $fileService;
-        $this->projectRepo    = $projectRepo;
-        $this->userRepo       = $userRepo;
-        $this->userService    = $userService;
+        $this->fileService = $fileService;
+        $this->projectRepo = $projectRepo;
+        $this->userRepo = $userRepo;
+        $this->userService = $userService;
 
         if (! session()->exists('lastPage')) {
             session(['lastPage' => BASE_URL.'/clients/showAll']);
@@ -72,16 +72,16 @@ class ShowClient extends Controller
         }
 
         $clientValues = [
-            'id'       => $row['id'],
-            'name'     => $row['name'],
-            'street'   => $row['street'],
-            'zip'      => $row['zip'],
-            'city'     => $row['city'],
-            'state'    => $row['state'],
-            'country'  => $row['country'],
-            'phone'    => $row['phone'],
+            'id' => $row['id'],
+            'name' => $row['name'],
+            'street' => $row['street'],
+            'zip' => $row['zip'],
+            'city' => $row['city'],
+            'state' => $row['state'],
+            'country' => $row['country'],
+            'phone' => $row['phone'],
             'internet' => $row['internet'],
-            'email'    => $row['email'],
+            'email' => $row['email'],
         ];
 
         if (! empty($row) && Auth::userIsAtLeast(Roles::$admin)) {
@@ -126,16 +126,16 @@ class ShowClient extends Controller
             // Save client details
             if (isset($_POST['save'])) {
                 $clientValues = [
-                    'id'       => $row['id'],
-                    'name'     => $_POST['name'],
-                    'street'   => $_POST['street'],
-                    'zip'      => $_POST['zip'],
-                    'city'     => $_POST['city'],
-                    'state'    => $_POST['state'],
-                    'country'  => $_POST['country'],
-                    'phone'    => $_POST['phone'],
+                    'id' => $row['id'],
+                    'name' => $_POST['name'],
+                    'street' => $_POST['street'],
+                    'zip' => $_POST['zip'],
+                    'city' => $_POST['city'],
+                    'state' => $_POST['state'],
+                    'country' => $_POST['country'],
+                    'phone' => $_POST['phone'],
                     'internet' => $_POST['internet'],
-                    'email'    => $_POST['email'],
+                    'email' => $_POST['email'],
                 ];
 
                 if ($clientValues['name'] !== '') {
@@ -151,7 +151,7 @@ class ShowClient extends Controller
             // crafted POST can't be used to delete arbitrary users).
             if (isset($_POST['deletePortalUser'])) {
                 $delUserId = (int) ($_POST['userId'] ?? 0);
-                $delUser   = $delUserId > 0 ? $this->userRepo->getUser($delUserId) : null;
+                $delUser = $delUserId > 0 ? $this->userRepo->getUser($delUserId) : null;
 
                 if ($delUser
                     && (int) ($delUser['role'] ?? 0) === 10
@@ -171,13 +171,13 @@ class ShowClient extends Controller
                 $this->tpl->setNotification($this->language->__('notification.client_saved_successfully'), 'success');
             }
 
-            $this->tpl->assign('portalUsers',    $this->clientRepo->getClientPortalUsers($id));
-            $this->tpl->assign('comments',       $this->commentService->getComments('client', $id));
-            $this->tpl->assign('imgExtensions',  ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
-            $this->tpl->assign('client',         $clientValues);
+            $this->tpl->assign('portalUsers', $this->clientRepo->getClientPortalUsers($id));
+            $this->tpl->assign('comments', $this->commentService->getComments('client', $id));
+            $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
+            $this->tpl->assign('client', $clientValues);
             $this->tpl->assign('clientProjects', $this->projectRepo->getClientProjects($id));
-            $this->tpl->assign('allProjects',    $this->projectRepo->getAll());
-            $this->tpl->assign('files',          $this->fileService->getFilesByModule('client', $id));
+            $this->tpl->assign('allProjects', $this->projectRepo->getAll());
+            $this->tpl->assign('files', $this->fileService->getFilesByModule('client', $id));
 
             return $this->tpl->display('clients.showClient');
         } else {

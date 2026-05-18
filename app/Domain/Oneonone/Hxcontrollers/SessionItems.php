@@ -176,7 +176,6 @@ class SessionItems extends HtmxController
      *
      * @param  string  $key  Request key to read.
      * @param  mixed  $default  Default value when no key is present.
-     * @return mixed
      */
     private function getRequestValue(string $key, mixed $default = null): mixed
     {

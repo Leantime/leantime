@@ -467,7 +467,12 @@
 
                 <div class="row" id="milestoneProgressContainer">
                     <div class="col-md-12">
-                        <h5 class="subtitle">{{ __('headline.milestones') }}</h5>
+                        <h5 class="subtitle" style="display:flex; align-items:center; justify-content:space-between;">
+                            {{ __('headline.milestones') }}
+                            <a href="#/tickets/editMilestone" class="btn btn-default btn-xs" style="font-size:11px;">
+                                <i class="fa fa-plus"></i> Add Milestone
+                            </a>
+                        </h5>
                         <ul class="sortableTicketList">
                             @if (count($milestones) == 0)
                                 <div class="center">

@@ -29,16 +29,21 @@ class NewSession extends Controller
     {
         Auth::authOrRedirect([Roles::$teamlead, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
-        $allUsers = $this->userService->getAll(true);
-        // Drop the current user from the employee list to prevent self-1:1
         $currentUserId = (int) (session('userdata.id') ?? 0);
+
+        // All TL/CM/admin/owner roles can see all active users.
+        // (Direct-report filtering was removed because managerId may not be set
+        //  on user records, which would cause an empty dropdown and silent failure.)
+        $allUsers = $this->userService->getAll(true);
+
+        // Drop the current user from the employee list to prevent self-1:1
         $allUsers = array_values(array_filter($allUsers, fn ($u) => (int) ($u['id'] ?? 0) !== $currentUserId));
 
         $this->tpl->assign('allUsers', $allUsers);
         $this->tpl->assign('values', [
             'employeeId' => $params['employeeId'] ?? '',
-            'meetingDate' => '',
-            'title' => '',
+            'meetingDate' => $params['meetingDate'] ?? '',
+            'title' => $params['title'] ?? '',
         ]);
 
         return $this->tpl->display('oneonone.newSession');

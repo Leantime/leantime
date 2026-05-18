@@ -94,7 +94,7 @@ class ClientPortal
             ->where('status', '!=', -1);
 
         $total = (clone $base)->count();
-        $done  = (clone $base)->where('status', 0)->count();
+        $done = (clone $base)->where('status', 0)->count();
 
         return ['total' => $total, 'done' => $done];
     }
@@ -193,13 +193,13 @@ class ClientPortal
     public function createRequest(ClientRequest $req): int
     {
         return (int) $this->db->table('zp_client_requests')->insertGetId([
-            'projectId'    => $req->projectId,
+            'projectId' => $req->projectId,
             'clientUserId' => $req->clientUserId,
-            'title'        => $req->title,
-            'description'  => $req->description,
-            'filePath'     => $req->filePath,
-            'status'       => 'open',
-            'createdAt'    => date('Y-m-d H:i:s'),
+            'title' => $req->title,
+            'description' => $req->description,
+            'filePath' => $req->filePath,
+            'status' => 'open',
+            'createdAt' => date('Y-m-d H:i:s'),
         ]);
     }
 
@@ -247,10 +247,10 @@ class ClientPortal
     public function recordClientReview(int $requestId, string $action, ?string $reason): bool
     {
         $newStatus = match ($action) {
-            'accepted'          => 'accepted',
-            'rejected'          => 'rejected',
+            'accepted' => 'accepted',
+            'rejected' => 'rejected',
             'changes_requested' => 'open',
-            default             => null,
+            default => null,
         };
 
         if ($newStatus === null) {
@@ -262,8 +262,8 @@ class ClientPortal
             ->update([
                 'clientReviewAction' => $action,
                 'clientReviewReason' => $reason,
-                'clientReviewedAt'   => date('Y-m-d H:i:s'),
-                'status'             => $newStatus,
+                'clientReviewedAt' => date('Y-m-d H:i:s'),
+                'status' => $newStatus,
             ]) > 0;
     }
 
@@ -273,12 +273,12 @@ class ClientPortal
     public function createResponse(ClientRequestResponse $resp): int
     {
         return (int) $this->db->table('zp_client_request_responses')->insertGetId([
-            'requestId'         => $resp->requestId,
+            'requestId' => $resp->requestId,
             'respondedByUserId' => $resp->respondedByUserId,
-            'driveLink'         => $resp->driveLink,
-            'documentPath'      => $resp->documentPath,
-            'notes'             => $resp->notes,
-            'createdAt'         => date('Y-m-d H:i:s'),
+            'driveLink' => $resp->driveLink,
+            'documentPath' => $resp->documentPath,
+            'notes' => $resp->notes,
+            'createdAt' => date('Y-m-d H:i:s'),
         ]);
     }
 

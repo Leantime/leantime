@@ -33,7 +33,7 @@ class StatusUpdate extends HtmxController
     public function get(): void
     {
         $itemId = (int) ($_GET['itemId'] ?? 0);
-        $item   = $this->service->getItemById($itemId);
+        $item = $this->service->getItemById($itemId);
 
         $this->assignCommon($item);
     }
@@ -41,16 +41,16 @@ class StatusUpdate extends HtmxController
     /** Save a status update, then re-render the control. */
     public function save(): void
     {
-        $itemId  = (int) ($_POST['itemId'] ?? 0);
-        $status  = $_POST['status'] ?? '';
-        $reason  = $_POST['completionReason'] ?? '';
+        $itemId = (int) ($_POST['itemId'] ?? 0);
+        $status = $_POST['status'] ?? '';
+        $reason = $_POST['completionReason'] ?? '';
         $support = $_POST['supportNeeded'] ?? '';
-        $newDue  = $_POST['newDueDate'] ?? null;
+        $newDue = $_POST['newDueDate'] ?? null;
 
         // Guard: only the assigned employee may change item status.
         $item = $this->service->getItemById($itemId);
         if ($item) {
-            $plan      = $this->service->getPlanById((int) $item['weeklyPlanId']);
+            $plan = $this->service->getPlanById((int) $item['weeklyPlanId']);
             $currentId = (int) session('userdata.id');
             if ($plan && (int) $plan['employeeId'] !== $currentId) {
                 // Non-employee (e.g. Team Lead) attempted to change status — silently re-render read-only.
@@ -61,10 +61,10 @@ class StatusUpdate extends HtmxController
         }
 
         $result = $this->service->updateItemStatus($itemId, [
-            'status'           => $status,
+            'status' => $status,
             'completionReason' => $reason,
-            'supportNeeded'    => $support,
-            'newDueDate'       => $newDue ?: null,
+            'supportNeeded' => $support,
+            'newDueDate' => $newDue ?: null,
         ], $this->currentUserIsEmployee());
 
         $updatedItem = $this->service->getItemById($itemId);

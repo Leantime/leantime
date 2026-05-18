@@ -5,8 +5,10 @@ namespace Leantime\Domain\Oneonone\Services;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Notifications\Services\Notifications as NotificationsService;
 use Leantime\Domain\Oneonone\Repositories\Oneonone as OneononeRepo;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
@@ -27,6 +29,8 @@ class Oneonone
     public function __construct(
         private OneononeRepo $repo,
         private UserRepository $userRepo,
+        private NotificationsService $notifications,
+        private LanguageCore $language,
     ) {}
 
     // -- Permissions --------------------------------------------------------
@@ -82,7 +86,10 @@ class Oneonone
     }
 
     /**
-     * Get all 1:1 sessions managed by the current user.
+     * Get all 1:1 sessions the current user MANAGES (i.e. where they are
+     * the manager). For admins/owners this returns all sessions in the
+     * system. Sessions where the user is the employee are surfaced
+     * separately via {@see getMySessions()}.
      *
      * @api
      *
@@ -233,6 +240,12 @@ class Oneonone
             return false;
         }
 
+        // Note: we intentionally do NOT enforce that the employee's managerId
+        // field matches this TL/CM. User records may not have managerId set,
+        // and TLs should be able to schedule 1:1s with any team member they
+        // work with. The employee dropdown in NewSession already scopes what
+        // the TL can see; admins bypass further.
+
         $payload = [
             'employeeId' => $employeeId,
             'managerId' => $managerId,
@@ -250,6 +263,64 @@ class Oneonone
             Log::error($e);
 
             return false;
+        }
+
+        // In-app notification for the recipient(s). The employee always gets one.
+        // The manager also gets one when an admin scheduled it on their behalf
+        // (i.e. when the resolved managerId differs from the user who clicked Schedule).
+        try {
+            $scheduler = $this->userRepo->getUser($userId) ?: [];
+            $schedulerName = trim(($scheduler['firstname'] ?? '').' '.($scheduler['lastname'] ?? '')) ?: 'Someone';
+            $sessionUrl = BASE_URL.'/oneonone/showSession/'.$id;
+            $whenLabel = '';
+            try {
+                $whenLabel = CarbonImmutable::parse($meetingDate)->format('M j, g:i A');
+            } catch (\Exception) {
+            }
+
+            $now = CarbonImmutable::now()->toDateTimeString();
+            $toCreate = [];
+
+            // Employee notification
+            $toCreate[] = [
+                'userId' => $employeeId,
+                'read' => '0',
+                'type' => 'oneonone_scheduled',
+                'module' => 'oneonone',
+                'moduleId' => $id,
+                'message' => sprintf(
+                    $this->language->__('notifications.oneonone.scheduled_with_you'),
+                    $schedulerName,
+                    $whenLabel !== '' ? ' on '.$whenLabel : ''
+                ),
+                'datetime' => $now,
+                'url' => $sessionUrl,
+                'authorId' => $userId,
+            ];
+
+            // Manager notification — only when an admin scheduled on their behalf
+            if ($managerId !== $userId) {
+                $toCreate[] = [
+                    'userId' => $managerId,
+                    'read' => '0',
+                    'type' => 'oneonone_scheduled',
+                    'module' => 'oneonone',
+                    'moduleId' => $id,
+                    'message' => sprintf(
+                        $this->language->__('notifications.oneonone.scheduled_on_your_behalf'),
+                        $schedulerName,
+                        $whenLabel !== '' ? ' on '.$whenLabel : ''
+                    ),
+                    'datetime' => $now,
+                    'url' => $sessionUrl,
+                    'authorId' => $userId,
+                ];
+            }
+
+            $this->notifications->addNotifications($toCreate);
+        } catch (\Throwable $e) {
+            // Don't fail the scheduling because the notification couldn't be saved.
+            Log::error($e);
         }
 
         self::dispatch_event('oneonone_scheduled', ['sessionId' => $id, 'session' => $payload]);
@@ -297,7 +368,8 @@ class Oneonone
 
         if (array_key_exists('notes', $values)) {
             // Only managers can edit private notes.
-            if ((int) ($session['managerId'] ?? 0) === (int) (session('userdata.id') ?? 0)
+            if (
+                (int) ($session['managerId'] ?? 0) === (int) (session('userdata.id') ?? 0)
                 || Auth::userIsAtLeast(Roles::$admin)
             ) {
                 $update['notes'] = (string) $values['notes'];
@@ -341,7 +413,8 @@ class Oneonone
 
         // Only the owning manager or an admin may delete a session.
         $userId = (int) (session('userdata.id') ?? 0);
-        if (! Auth::userIsAtLeast(Roles::$admin)
+        if (
+            ! Auth::userIsAtLeast(Roles::$admin)
             && (int) ($session['managerId'] ?? 0) !== $userId
         ) {
             return false;

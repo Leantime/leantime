@@ -91,21 +91,21 @@ $state = $tpl->get('state');
                                                 </label>
                                                 <?php
                                                 if (($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) { ?>
-                                                    <input type="text" readonly disabled value="<?php echo $tpl->__('label.roles.' . $roles::getRoles()[$assignedUser['role']]) ?>" />
+                                                    <input type="text" readonly disabled value="<?php echo $tpl->__('label.roles.'.$roles::getRoles()[$assignedUser['role']]) ?>" />
                                                 <?php } else { ?>
                                                     <select name="userProjectRole-<?php echo $assignedUser['id'] ?>">
                                                         <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
                                                             <?php if ($assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles())) {
                                                                 echo " selected='selected' ";
-                                                            } ?>><?php echo $tpl->__('label.roles.' . $roles::$editor) ?></option>
+                                                            } ?>><?php echo $tpl->__('label.roles.'.$roles::$editor) ?></option>
                                                         <option value="<?php echo array_search($roles::$teamlead, $roles::getRoles()); ?>"
                                                             <?php if ($assignedUser['projectRole'] == array_search($roles::$teamlead, $roles::getRoles())) {
                                                                 echo " selected='selected' ";
-                                                            } ?>><?php echo $tpl->__('label.roles.' . $roles::$teamlead) ?></option>
+                                                            } ?>><?php echo $tpl->__('label.roles.'.$roles::$teamlead) ?></option>
                                                         <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
                                                             <?php if ($assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles())) {
                                                                 echo " selected='selected' ";
-                                                            } ?>><?php echo $tpl->__('label.roles.' . $roles::$manager) ?></option>
+                                                            } ?>><?php echo $tpl->__('label.roles.'.$roles::$manager) ?></option>
                                                     </select>
                                                 <?php } ?>
                                                 <div class="clearall"></div>
@@ -136,22 +136,22 @@ $state = $tpl->get('state');
                                                     </div>
                                                     <label for="user-<?php echo $row['id'] ?>"><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></label>
                                                     <?php if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>
-                                                        <input type="text" readonly disabled value="<?php echo $tpl->__('label.roles.' . $roles::getRoles()[$row['role']]) ?>" />
+                                                        <input type="text" readonly disabled value="<?php echo $tpl->__('label.roles.'.$roles::getRoles()[$row['role']]) ?>" />
                                                     <?php } else { ?>
                                                         <?php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); ?>
                                                         <select name="userProjectRole-<?php echo $row['id'] ?>">
                                                             <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
                                                                 <?php if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$editor, $roles::getRoles())) {
                                                                     echo " selected='selected' ";
-                                                                } ?>><?php echo $tpl->__('label.roles.' . $roles::$editor) ?></option>
+                                                                } ?>><?php echo $tpl->__('label.roles.'.$roles::$editor) ?></option>
                                                             <option value="<?php echo array_search($roles::$teamlead, $roles::getRoles()); ?>"
                                                                 <?php if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$teamlead, $roles::getRoles())) {
                                                                     echo " selected='selected' ";
-                                                                } ?>><?php echo $tpl->__('label.roles.' . $roles::$teamlead) ?></option>
+                                                                } ?>><?php echo $tpl->__('label.roles.'.$roles::$teamlead) ?></option>
                                                             <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
                                                                 <?php if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$manager, $roles::getRoles())) {
                                                                     echo " selected='selected' ";
-                                                                } ?>><?php echo $tpl->__('label.roles.' . $roles::$manager) ?></option>
+                                                                } ?>><?php echo $tpl->__('label.roles.'.$roles::$manager) ?></option>
                                                         </select>
                                                     <?php } ?>
                                                     <div class="clearall"></div>
@@ -162,7 +162,7 @@ $state = $tpl->get('state');
 
 
                                     <?php }
-                                    } ?>
+                                        } ?>
                                     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                                         <div class="col-md-4">
 
@@ -283,7 +283,7 @@ $state = $tpl->get('state');
                         <strong><?= $tpl->__('label.webhook_url'); ?></strong><br />
                         <form action="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
                             <?php for ($i = 1; $i <= 3; $i++) { ?>
-                                <input type="text" name="discordWebhookURL<?= $i; ?>" id="discordWebhookURL<?= $i; ?>" placeholder="<?= $tpl->__('input.placeholders.discord_url'); ?>" value="<?php echo $tpl->escape($tpl->get('discordWebhookURL' . $i)); ?>" /><br />
+                                <input type="text" name="discordWebhookURL<?= $i; ?>" id="discordWebhookURL<?= $i; ?>" placeholder="<?= $tpl->__('input.placeholders.discord_url'); ?>" value="<?php echo $tpl->escape($tpl->get('discordWebhookURL'.$i)); ?>" /><br />
                             <?php } ?>
                             <input type="submit" value="<?= $tpl->__('buttons.save'); ?>" name="discordSave" />
                         </form>

@@ -26,7 +26,7 @@ class PlanItems extends HtmxController
     {
         Auth::authOrRedirect([Roles::$teamlead, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
-        $this->service       = $service;
+        $this->service = $service;
         $this->ticketService = $ticketService;
     }
 
@@ -43,7 +43,7 @@ class PlanItems extends HtmxController
     /** Add a task to the plan, then re-render the items list. */
     public function add(): void
     {
-        $planId          = (int) ($this->incomingRequest->request->get('planId') ?? 0);
+        $planId = (int) ($this->incomingRequest->request->get('planId') ?? 0);
         $expectedOutcome = trim((string) ($this->incomingRequest->request->get('expectedOutcome') ?? ''));
 
         if ($expectedOutcome) {
@@ -58,7 +58,7 @@ class PlanItems extends HtmxController
     public function remove(): void
     {
         $itemId = (int) ($this->incomingRequest->query->get('itemId') ?? 0);
-        $item   = $this->service->getItemById($itemId);
+        $item = $this->service->getItemById($itemId);
         $planId = $item ? (int) $item['weeklyPlanId'] : 0;
 
         $this->service->removeItem($itemId);
@@ -72,8 +72,8 @@ class PlanItems extends HtmxController
         static::$view = 'weeklyplanning::partials.editSectionForm';
 
         $planId = (int) $this->incomingRequest->query->get('planId', 0);
-        $field  = (string) $this->incomingRequest->query->get('field', '');
-        $plan   = $this->service->getPlanById($planId);
+        $field = (string) $this->incomingRequest->query->get('field', '');
+        $plan = $this->service->getPlanById($planId);
 
         $this->tpl->assign('planId', $planId);
         $this->tpl->assign('field', $field);
@@ -86,8 +86,8 @@ class PlanItems extends HtmxController
         static::$view = 'weeklyplanning::partials.sectionDisplay';
 
         $planId = (int) $this->incomingRequest->query->get('planId', 0);
-        $field  = (string) $this->incomingRequest->query->get('field', '');
-        $plan   = $this->service->getPlanById($planId);
+        $field = (string) $this->incomingRequest->query->get('field', '');
+        $plan = $this->service->getPlanById($planId);
 
         $this->tpl->assign('planId', $planId);
         $this->tpl->assign('field', $field);
@@ -100,8 +100,8 @@ class PlanItems extends HtmxController
         static::$view = 'weeklyplanning::partials.sectionDisplay';
 
         $planId = (int) ($this->incomingRequest->request->get('planId') ?? 0);
-        $field  = (string) ($this->incomingRequest->request->get('field') ?? '');
-        $value  = (string) ($this->incomingRequest->request->get('value') ?? '');
+        $field = (string) ($this->incomingRequest->request->get('field') ?? '');
+        $value = (string) ($this->incomingRequest->request->get('value') ?? '');
 
         $this->service->updatePlan($planId, [$field => $value]);
 
@@ -116,7 +116,7 @@ class PlanItems extends HtmxController
         static::$view = 'weeklyplanning::partials.addCommitmentForm';
 
         $planId = (int) $this->incomingRequest->query->get('planId', 0);
-        $plan   = $this->service->getPlanById($planId);
+        $plan = $this->service->getPlanById($planId);
 
         // Provide team members as owner options
         $teamMembers = $plan ? $this->service->getTeamMembers((int) $plan['teamLeadId']) : [];
@@ -128,8 +128,8 @@ class PlanItems extends HtmxController
     /** Save a new commitment, then re-render the commitments list. */
     public function addCommitment(): void
     {
-        $planId  = (int) ($this->incomingRequest->request->get('planId') ?? 0);
-        $task    = trim((string) ($this->incomingRequest->request->get('task') ?? ''));
+        $planId = (int) ($this->incomingRequest->request->get('planId') ?? 0);
+        $task = trim((string) ($this->incomingRequest->request->get('task') ?? ''));
         $ownerId = (int) ($this->incomingRequest->request->get('ownerId') ?? session('userdata.id'));
         $deadline = (string) ($this->incomingRequest->request->get('deadline') ?? '');
 
@@ -147,7 +147,7 @@ class PlanItems extends HtmxController
             ?? $this->incomingRequest->query->get('commitmentId', 0));
 
         $commitment = $this->service->getCommitmentById($commitmentId);
-        $planId     = $commitment ? (int) $commitment['weeklyPlanId'] : 0;
+        $planId = $commitment ? (int) $commitment['weeklyPlanId'] : 0;
 
         $this->service->markCommitmentDone($commitmentId);
         $this->renderCommitmentsList($planId);
@@ -162,9 +162,9 @@ class PlanItems extends HtmxController
         $result = $this->service->carryOverUnfinished($sourcePlanId);
 
         $messages = [
-            'success'   => ['weeklyplanning.text.carry_over_success', 'success'],
+            'success' => ['weeklyplanning.text.carry_over_success', 'success'],
             'no_target' => ['weeklyplanning.text.carry_over_no_target', 'error'],
-            'nothing'   => ['weeklyplanning.text.carry_over_none', 'info'],
+            'nothing' => ['weeklyplanning.text.carry_over_none', 'info'],
         ];
         [$key, $type] = $messages[$result] ?? $messages['nothing'];
         $this->tpl->setNotification(__($key), $type);

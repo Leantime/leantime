@@ -46,11 +46,11 @@ class EditOwn extends Controller
             FrontcontrollerCore::redirect(BASE_URL.'/dashboard/home');
         }
 
-        $this->themeCore       = $themeCore;
-        $this->userRepo        = $userRepo;
+        $this->themeCore = $themeCore;
+        $this->userRepo = $userRepo;
         $this->settingsService = $settingsService;
-        $this->userService     = $userService;
-        $this->userId          = (int) session('userdata.id');
+        $this->userService = $userService;
+        $this->userId = (int) session('userdata.id');
     }
 
     /**
@@ -60,26 +60,26 @@ class EditOwn extends Controller
     {
         $row = $this->userRepo->getUser($this->userId);
 
-        $userTheme       = $this->settingsService->getSetting('usersettings.'.$this->userId.'.theme') ?: 'default';
-        $userColorMode   = $this->settingsService->getSetting('usersettings.'.$this->userId.'.colorMode') ?: 'light';
-        $themeFont       = $this->settingsService->getSetting('usersettings.'.$this->userId.'.themeFont') ?: 'Roboto';
+        $userTheme = $this->settingsService->getSetting('usersettings.'.$this->userId.'.theme') ?: 'default';
+        $userColorMode = $this->settingsService->getSetting('usersettings.'.$this->userId.'.colorMode') ?: 'light';
+        $themeFont = $this->settingsService->getSetting('usersettings.'.$this->userId.'.themeFont') ?: 'Roboto';
 
         $availableColorSchemes = $this->themeCore->getAvailableColorSchemes();
-        $userColorScheme       = $this->settingsService->getSetting('usersettings.'.$this->userId.'.colorScheme');
+        $userColorScheme = $this->settingsService->getSetting('usersettings.'.$this->userId.'.colorScheme');
         if (! $userColorScheme) {
             $userColorScheme = isset($availableColorSchemes['companyColors']) ? 'companyColors' : 'themeDefault';
         }
 
         $values = [
-            'firstname'    => $row['firstname'],
-            'lastname'     => $row['lastname'],
-            'user'         => $row['username'],
-            'phone'        => $row['phone'],
+            'firstname' => $row['firstname'],
+            'lastname' => $row['lastname'],
+            'user' => $row['username'],
+            'phone' => $row['phone'],
             'twoFAEnabled' => $row['twoFAEnabled'],
         ];
 
         $permitted = '123456789abcdefghijklmnopqrstuvwxyz';
-        session(['formTokenName'  => substr(str_shuffle($permitted), 0, 32)]);
+        session(['formTokenName' => substr(str_shuffle($permitted), 0, 32)]);
         session(['formTokenValue' => substr(str_shuffle($permitted), 0, 32)]);
 
         $this->tpl->assign('profilePic', $this->userRepo->getProfilePicture($this->userId));
@@ -119,12 +119,12 @@ class EditOwn extends Controller
             $tab = '#myProfile';
 
             $values = [
-                'firstname'     => $_POST['firstname'] ?? $row['firstname'],
-                'lastname'      => $_POST['lastname']  ?? $row['lastname'],
-                'user'          => $_POST['user']      ?? $row['username'],
-                'phone'         => $_POST['phone']     ?? $row['phone'],
+                'firstname' => $_POST['firstname'] ?? $row['firstname'],
+                'lastname' => $_POST['lastname'] ?? $row['lastname'],
+                'user' => $_POST['user'] ?? $row['username'],
+                'phone' => $_POST['phone'] ?? $row['phone'],
                 'notifications' => $row['notifications'],
-                'twoFAEnabled'  => $row['twoFAEnabled'],
+                'twoFAEnabled' => $row['twoFAEnabled'],
             ];
 
             $changedEmail = $row['username'] !== $values['user'] ? 1 : 0;
@@ -146,13 +146,13 @@ class EditOwn extends Controller
             $tab = '#security';
 
             $values = [
-                'firstname'     => $row['firstname'],
-                'lastname'      => $row['lastname'],
-                'user'          => $row['username'],
-                'phone'         => $row['phone'],
-                'password'      => $row['password'],
+                'firstname' => $row['firstname'],
+                'lastname' => $row['lastname'],
+                'user' => $row['username'],
+                'phone' => $row['phone'],
+                'password' => $row['password'],
                 'notifications' => $row['notifications'],
-                'twoFAEnabled'  => $row['twoFAEnabled'],
+                'twoFAEnabled' => $row['twoFAEnabled'],
             ];
 
             if (! password_verify($_POST['currentPassword'] ?? '', $values['password'])) {
@@ -177,10 +177,10 @@ class EditOwn extends Controller
         if (isset($_POST['saveTheme'])) {
             $tab = '#theme';
 
-            $postTheme       = htmlentities($_POST['theme']       ?? 'default');
-            $postColorMode   = htmlentities($_POST['colormode']   ?? 'light');
+            $postTheme = htmlentities($_POST['theme'] ?? 'default');
+            $postColorMode = htmlentities($_POST['colormode'] ?? 'light');
             $postColorScheme = htmlentities($_POST['colorscheme'] ?? 'themeDefault');
-            $themeFont       = htmlentities($_POST['themeFont']   ?? 'Roboto');
+            $themeFont = htmlentities($_POST['themeFont'] ?? 'Roboto');
 
             $this->settingsService->saveSetting('usersettings.'.$this->userId.'.theme', $postTheme);
             $this->settingsService->saveSetting('usersettings.'.$this->userId.'.colorMode', $postColorMode);

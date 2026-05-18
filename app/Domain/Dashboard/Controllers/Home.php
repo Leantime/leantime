@@ -41,6 +41,10 @@ class Home extends Controller
             return Frontcontroller::redirect(BASE_URL.'/dashboard/adminHome');
         }
 
+        if (in_array(session('userdata.role'), [Roles::$teamlead, Roles::$manager])) {
+            return Frontcontroller::redirect(BASE_URL.'/dashboard/tlcmHome');
+        }
+
         // Debug uncomment to reset dashboard
         if (isset($_GET['resetDashboard']) === true) {
             $this->widgetService->resetDashboard(session('userdata.id'));

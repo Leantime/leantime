@@ -5,10 +5,8 @@
     Replaces #feedback-{type} div (outerHTML swap).
 --}}
 <div id="feedback-{{ $type }}">
-    <div class="tw-flex tw-justify-between tw-items-center tw-mb-xs">
-        <small class="tw-font-semibold" style="color:var(--grey);">
-            {{ __($feedbackTypes[$type] ?? $type) }}
-        </small>
+    <div class="wp-fb-edit-row">
+        <span class="wp-fb-label">{{ __($feedbackTypes[$type] ?? $type) }}</span>
     </div>
 
     <form hx-post="{{ BASE_URL }}/hx/weekly-planning/feedback/save"
@@ -18,13 +16,14 @@
         <input type="hidden" name="type" value="{{ $type }}">
 
         <textarea name="message"
-                  class="form-control tw-w-full tw-mb-xs"
+                  class="form-control"
                   rows="3"
-                  placeholder="{{ __('weeklyplanning.placeholders.feedback_message') }}">{{ $currentMessage }}</textarea>
+                  placeholder="{{ __('weeklyplanning.placeholders.feedback_message') }}"
+                  style="margin-bottom:8px; font-size:13px; border-radius:var(--element-radius);">{{ $currentMessage }}</textarea>
 
-        <div class="tw-flex tw-gap-xs">
+        <div style="display:flex; gap:6px;">
             <button type="submit" class="btn btn-primary btn-xs">
-                {{ __('weeklyplanning.buttons.save') }}
+                <i class="fa fa-check"></i> {{ __('weeklyplanning.buttons.save') }}
             </button>
             <button type="button" class="btn btn-default btn-xs"
                     hx-get="{{ BASE_URL }}/hx/weekly-planning/feedback/view?planId={{ $planId }}&type={{ $type }}"

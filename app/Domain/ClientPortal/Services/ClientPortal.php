@@ -39,13 +39,13 @@ class ClientPortal
             $progress = $this->repo->getProjectProgress((int) $project['id']);
             $milestones = $this->repo->getMilestones((int) $project['id']);
 
-            $project['progress']         = $progress;
-            $project['percent']          = $progress['total'] > 0
+            $project['progress'] = $progress;
+            $project['percent'] = $progress['total'] > 0
                 ? (int) round(($progress['done'] / $progress['total']) * 100)
                 : 0;
-            $project['milestoneTotal']   = count($milestones);
-            $project['milestoneDone']    = count(array_filter($milestones, fn ($m) => (int) ($m['status'] ?? 1) === 0));
-            $project['nextMilestone']    = $this->findNextMilestone($milestones);
+            $project['milestoneTotal'] = count($milestones);
+            $project['milestoneDone'] = count(array_filter($milestones, fn ($m) => (int) ($m['status'] ?? 1) === 0));
+            $project['nextMilestone'] = $this->findNextMilestone($milestones);
         }
 
         return $projects;
@@ -54,7 +54,7 @@ class ClientPortal
     /**
      * Get full project detail: progress, milestones, team contacts, and requests.
      *
-     * @return array<string, mixed>|null  null if project not found or client has no access
+     * @return array<string, mixed>|null null if project not found or client has no access
      */
     public function getProjectDetail(int $projectId, int $userId): ?array
     {
@@ -62,15 +62,15 @@ class ClientPortal
             return null;
         }
 
-        $project    = $this->repo->getProject($projectId);
-        $progress   = $this->repo->getProjectProgress($projectId);
+        $project = $this->repo->getProject($projectId);
+        $progress = $this->repo->getProjectProgress($projectId);
         $milestones = $this->repo->getMilestones($projectId);
-        $contacts   = $this->repo->getTeamContacts($projectId);
-        $requests   = $this->repo->getRequestsForProject($projectId);
+        $contacts = $this->repo->getTeamContacts($projectId);
+        $requests = $this->repo->getRequestsForProject($projectId);
 
         // Attach response to each request
         foreach ($requests as &$req) {
-            $req['response']  = $this->repo->getResponseForRequest((int) $req['id']);
+            $req['response'] = $this->repo->getResponseForRequest((int) $req['id']);
             $req['responses'] = $this->repo->getResponsesForRequest((int) $req['id']);
         }
 
@@ -79,27 +79,27 @@ class ClientPortal
             : 0;
 
         return [
-            'project'    => $project,
-            'progress'   => $progress,
-            'percent'    => $percent,
+            'project' => $project,
+            'progress' => $progress,
+            'percent' => $percent,
             'milestones' => $milestones,
-            'contacts'   => $contacts,
-            'requests'   => $requests,
+            'contacts' => $contacts,
+            'requests' => $requests,
         ];
     }
 
     /**
      * Submit a new client request. Notifies all TL/CM on the project.
      *
-     * @return int|false  New request ID on success, false on failure.
+     * @return int|false New request ID on success, false on failure.
      */
     public function submitRequest(array $data, ?array $uploadedFile): int|false
     {
-        $req = new ClientRequest();
-        $req->projectId    = (int) ($data['projectId'] ?? 0);
+        $req = new ClientRequest;
+        $req->projectId = (int) ($data['projectId'] ?? 0);
         $req->clientUserId = (int) session('userdata.id');
-        $req->title        = trim((string) ($data['title'] ?? ''));
-        $req->description  = trim((string) ($data['description'] ?? ''));
+        $req->title = trim((string) ($data['title'] ?? ''));
+        $req->description = trim((string) ($data['description'] ?? ''));
 
         if ($req->title === '' || $req->projectId === 0) {
             return false;
@@ -121,7 +121,7 @@ class ClientPortal
         try {
             $requestId = $this->repo->createRequest($req);
         } catch (\Throwable $e) {
-            Log::error('ClientPortal: failed to create request — ' . $e->getMessage());
+            Log::error('ClientPortal: failed to create request — '.$e->getMessage());
 
             return false;
         }
@@ -133,8 +133,6 @@ class ClientPortal
 
     /**
      * Save a TL/CM response to a client request.
-     *
-     * @return bool
      */
     public function respondToRequest(array $data, ?array $uploadedFile): bool
     {
@@ -158,8 +156,8 @@ class ClientPortal
         // Authorization: the responder must be assigned to the request's project
         // (admins/owners may respond to any request).
         $responderId = (int) session('userdata.id');
-        $role        = session('userdata.role');
-        $isAdmin     = in_array($role, [Roles::$admin, Roles::$owner], true);
+        $role = session('userdata.role');
+        $isAdmin = in_array($role, [Roles::$admin, Roles::$owner], true);
 
         if (! $isAdmin && ! $this->repo->isUserAssignedToProject($responderId, (int) $request['projectId'])) {
             return false;
@@ -172,11 +170,11 @@ class ClientPortal
             return false;
         }
 
-        $resp = new ClientRequestResponse();
-        $resp->requestId           = $requestId;
-        $resp->respondedByUserId   = $responderId;
-        $resp->driveLink           = $driveLink ?: null;
-        $resp->notes               = trim((string) ($data['notes'] ?? '')) ?: null;
+        $resp = new ClientRequestResponse;
+        $resp->requestId = $requestId;
+        $resp->respondedByUserId = $responderId;
+        $resp->driveLink = $driveLink ?: null;
+        $resp->notes = trim((string) ($data['notes'] ?? '')) ?: null;
 
         if (! empty($uploadedFile) && $uploadedFile['error'] === UPLOAD_ERR_OK) {
             $stored = $this->storeUploadedFile($uploadedFile);
@@ -190,7 +188,7 @@ class ClientPortal
             $this->repo->createResponse($resp);
             $this->repo->markRequestReviewed($requestId);
         } catch (\Throwable $e) {
-            Log::error('ClientPortal: failed to save response — ' . $e->getMessage());
+            Log::error('ClientPortal: failed to save response — '.$e->getMessage());
 
             return false;
         }
@@ -198,13 +196,13 @@ class ClientPortal
         // Notify the client who submitted the request
         $clientId = (int) $request['clientUserId'];
         $this->notificationsService->addNotifications([[
-            'userId'   => $clientId,
-            'type'     => 'info',
-            'module'   => 'clientportal',
+            'userId' => $clientId,
+            'type' => 'info',
+            'module' => 'clientportal',
             'moduleId' => $requestId,
-            'message'  => __('clientportal.notifications.request_responded'),
+            'message' => __('clientportal.notifications.request_responded'),
             'datetime' => date('Y-m-d H:i:s'),
-            'url'      => '/clientportal/showProject/' . $request['projectId'],
+            'url' => '/clientportal/showProject/'.$request['projectId'],
             'authorId' => (int) session('userdata.id'),
         ]]);
 
@@ -243,9 +241,9 @@ class ClientPortal
         // request may review the response. Other clients in the same org —
         // even on the same project — cannot decide on someone else's request.
         // Admin/owner may review on behalf for testing/support.
-        $userId   = (int) session('userdata.id');
-        $role     = session('userdata.role');
-        $isAdmin  = in_array($role, [Roles::$admin, Roles::$owner], true);
+        $userId = (int) session('userdata.id');
+        $role = session('userdata.role');
+        $isAdmin = in_array($role, [Roles::$admin, Roles::$owner], true);
         $sameUser = (int) $request['clientUserId'] === $userId;
 
         if (! $isAdmin && ! $sameUser) {
@@ -265,23 +263,23 @@ class ClientPortal
 
         // Notify the latest responder so they know the client has acted.
         $latestResponse = $this->repo->getResponseForRequest($requestId);
-        $notifyUserId   = $latestResponse ? (int) ($latestResponse['respondedByUserId'] ?? 0) : 0;
+        $notifyUserId = $latestResponse ? (int) ($latestResponse['respondedByUserId'] ?? 0) : 0;
 
         if ($notifyUserId > 0 && $notifyUserId !== $userId) {
             $messageKey = match ($action) {
-                'accepted'          => 'clientportal.notifications.review_accepted',
-                'rejected'          => 'clientportal.notifications.review_rejected',
+                'accepted' => 'clientportal.notifications.review_accepted',
+                'rejected' => 'clientportal.notifications.review_rejected',
                 'changes_requested' => 'clientportal.notifications.review_changes_requested',
             };
 
             $this->notificationsService->addNotifications([[
-                'userId'   => $notifyUserId,
-                'type'     => 'info',
-                'module'   => 'clientportal',
+                'userId' => $notifyUserId,
+                'type' => 'info',
+                'module' => 'clientportal',
                 'moduleId' => $requestId,
-                'message'  => __($messageKey),
+                'message' => __($messageKey),
                 'datetime' => date('Y-m-d H:i:s'),
-                'url'      => '/clientportal/adminRequests?projectId=' . (int) $request['projectId'],
+                'url' => '/clientportal/adminRequests?projectId='.(int) $request['projectId'],
                 'authorId' => $userId,
             ]]);
         }
@@ -295,7 +293,7 @@ class ClientPortal
      */
     public function canAccessProject(int $projectId): bool
     {
-        $userId   = (int) session('userdata.id');
+        $userId = (int) session('userdata.id');
         $clientId = (int) session('userdata.clientId');
 
         if ($userId === 0 || $clientId === 0) {
@@ -313,7 +311,7 @@ class ClientPortal
     public function canAccessProjectRequests(int $projectId): bool
     {
         $userId = (int) session('userdata.id');
-        $role   = session('userdata.role');
+        $role = session('userdata.role');
 
         if ($userId === 0 || $projectId === 0) {
             return false;
@@ -344,7 +342,7 @@ class ClientPortal
         $requests = $this->repo->getRequestsForProject($projectId);
 
         foreach ($requests as &$req) {
-            $req['response']  = $this->repo->getResponseForRequest((int) $req['id']);
+            $req['response'] = $this->repo->getResponseForRequest((int) $req['id']);
             $req['responses'] = $this->repo->getResponsesForRequest((int) $req['id']);
         }
 
@@ -355,18 +353,19 @@ class ClientPortal
      * Get all client requests visible to the current TL/CM/Admin, with responses attached.
      *
      * @api
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getAllRequests(int $filterProjectId = 0): array
     {
-        $userId  = (int) session('userdata.id');
-        $role    = session('userdata.role');
+        $userId = (int) session('userdata.id');
+        $role = session('userdata.role');
         $isAdmin = in_array($role, ['admin', 'owner'], true);
 
         $requests = $this->repo->getAllRequests($userId, $isAdmin, $filterProjectId);
 
         foreach ($requests as &$req) {
-            $req['response']  = $this->repo->getResponseForRequest((int) $req['id']);
+            $req['response'] = $this->repo->getResponseForRequest((int) $req['id']);
             $req['responses'] = $this->repo->getResponsesForRequest((int) $req['id']);
         }
 
@@ -376,14 +375,13 @@ class ClientPortal
     /**
      * Count open (pending TL response) client requests across all projects.
      *
-     * @return int
      *
      * @api
      */
     public function countOpenRequests(): int
     {
-        $userId  = (int) session('userdata.id');
-        $role    = session('userdata.role');
+        $userId = (int) session('userdata.id');
+        $role = session('userdata.role');
 
         // Commenters (client-portal users) shouldn't see admin-level KPI counts at all
         if ($role === \Leantime\Domain\Auth\Models\Roles::$commenter) {
@@ -438,7 +436,7 @@ class ClientPortal
         $ext = strtolower(pathinfo((string) ($file['name'] ?? ''), PATHINFO_EXTENSION));
 
         if ($ext === '' || ! in_array($ext, self::ALLOWED_UPLOAD_EXTENSIONS, true)) {
-            Log::warning('ClientPortal: rejected upload with disallowed extension "' . $ext . '"');
+            Log::warning('ClientPortal: rejected upload with disallowed extension "'.$ext.'"');
 
             return null;
         }
@@ -451,27 +449,27 @@ class ClientPortal
 
         // Defense in depth: ensure the upload dir cannot execute PHP even if a
         // bad file somehow lands there.
-        $htaccess = $uploadDir . DIRECTORY_SEPARATOR . '.htaccess';
+        $htaccess = $uploadDir.DIRECTORY_SEPARATOR.'.htaccess';
         if (! file_exists($htaccess)) {
             file_put_contents(
                 $htaccess,
                 "php_flag engine off\n"
-                . "<FilesMatch \"\\.(php|phtml|php3|php4|php5|php7|phps|pht|phar)$\">\n"
-                . "    Require all denied\n"
-                . "</FilesMatch>\n"
+                ."<FilesMatch \"\\.(php|phtml|php3|php4|php5|php7|phps|pht|phar)$\">\n"
+                ."    Require all denied\n"
+                ."</FilesMatch>\n"
             );
         }
 
-        $safeName = bin2hex(random_bytes(16)) . '.' . $ext;
-        $dest     = $uploadDir . DIRECTORY_SEPARATOR . $safeName;
+        $safeName = bin2hex(random_bytes(16)).'.'.$ext;
+        $dest = $uploadDir.DIRECTORY_SEPARATOR.$safeName;
 
         if (! move_uploaded_file($file['tmp_name'], $dest)) {
-            Log::error('ClientPortal: failed to move uploaded file to ' . $dest);
+            Log::error('ClientPortal: failed to move uploaded file to '.$dest);
 
             return null;
         }
 
-        return 'userfiles/client-requests/' . $safeName;
+        return 'userfiles/client-requests/'.$safeName;
     }
 
     /**
@@ -486,18 +484,18 @@ class ClientPortal
         }
 
         $actorId = (int) session('userdata.id');
-        $message = sprintf(__('clientportal.notifications.' . $eventKey), $title);
-        $url     = '/clientportal/showProject/' . $projectId;
-        $now     = date('Y-m-d H:i:s');
+        $message = sprintf(__('clientportal.notifications.'.$eventKey), $title);
+        $url = '/clientportal/showProject/'.$projectId;
+        $now = date('Y-m-d H:i:s');
 
         $notifications = array_map(fn ($uid) => [
-            'userId'   => $uid,
-            'type'     => 'info',
-            'module'   => 'clientportal',
+            'userId' => $uid,
+            'type' => 'info',
+            'module' => 'clientportal',
             'moduleId' => $requestId,
-            'message'  => $message,
+            'message' => $message,
             'datetime' => $now,
-            'url'      => $url,
+            'url' => $url,
             'authorId' => $actorId,
         ], array_filter($teamIds, fn ($uid) => $uid !== $actorId));
 

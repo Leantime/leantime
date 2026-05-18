@@ -58,6 +58,13 @@ class Tickets
             'kanbanCol' => true,
             'sortKey' => 4,
         ],
+        5 => [
+            'name' => 'status.ready_for_review',
+            'class' => 'label-info',
+            'statusType' => 'INPROGRESS',
+            'kanbanCol' => false,
+            'sortKey' => 45,
+        ],
         0 => [
             'name' => 'status.done',
             'class' => 'label-success',
@@ -729,9 +736,9 @@ class Tickets
      * Get tickets assigned to (or authored by) a user that were updated recently.
      * Used by the "Recently Updated" dashboard widget.
      *
-     * @param  int  $userId    The user we're scoping to.
-     * @param  int  $limit     Max number of tickets to return.
-     * @param  int  $sinceDays Only return tickets edited within the last N days.
+     * @param  int  $userId  The user we're scoping to.
+     * @param  int  $limit  Max number of tickets to return.
+     * @param  int  $sinceDays  Only return tickets edited within the last N days.
      * @return array<int, array<string, mixed>>
      */
     public function getRecentlyUpdatedTicketsForUser(int $userId, int $limit = 10, int $sinceDays = 14): array
@@ -1472,6 +1479,69 @@ class Tickets
         }
 
         return $query->count();
+    }
+
+    public function getMilestoneBasedProjectProgress($projectId): ?float
+    {
+        $milestones = $this->connection->table('zp_tickets')
+            ->select(['id', 'status', 'storypoints'])
+            ->where('projectId', $projectId)
+            ->where('type', 'milestone')
+            ->where('status', '<>', -1)
+            ->get();
+
+        if ($milestones->isEmpty()) {
+            return null;
+        }
+
+        $statusGroupsSQL = $this->getStatusListGroupedByType($projectId);
+        $statusGroups = $this->dbHelper->parseStatusGroups($statusGroupsSQL);
+        $doneStatuses = array_map('intval', $statusGroups['DONE'] ?? []);
+
+        // Check if any milestone has a weight set — if so, use weighted calculation
+        $hasWeights = $milestones->contains(fn ($m) => (int) $m->storypoints > 0);
+
+        if ($hasWeights) {
+            $totalWeight = 0;
+            $doneWeight = 0;
+
+            foreach ($milestones as $milestone) {
+                $weight = max(1, (int) $milestone->storypoints);
+                $totalWeight += $weight;
+
+                if (in_array((int) $milestone->status, $doneStatuses, true)) {
+                    $doneWeight += $weight;
+                }
+            }
+
+            return $totalWeight > 0 ? ($doneWeight / $totalWeight) * 100 : 0.0;
+        }
+
+        // Fallback: equal weight per milestone
+        $totalProgress = 0;
+        foreach ($milestones as $milestone) {
+            if (in_array((int) $milestone->status, $doneStatuses, true)) {
+                $totalProgress += 100;
+            }
+        }
+
+        return $totalProgress / $milestones->count();
+    }
+
+    /**
+     * Returns milestones with status = 5 (Ready for Review) for the given project.
+     */
+    public function getMilestonesReadyForReview(int $projectId): array
+    {
+        return $this->connection->table('zp_tickets')
+            ->select(['id', 'headline', 'editTo', 'storypoints'])
+            ->where('projectId', $projectId)
+            ->where('type', 'milestone')
+            ->where('status', 5)
+            ->orderBy('editTo')
+            ->get()
+            ->map(fn ($m) => (array) $m)
+            ->toArray();
     }
 
     public function getNumberOfClosedTickets($projectId): mixed

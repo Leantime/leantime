@@ -6,6 +6,8 @@ use DateInterval;
 use DateTime;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -74,6 +76,16 @@ class EditMilestone extends Controller
             }
 
             $comments = $this->commentsService->getComments('ticket', $params['id']);
+            $milestoneProgress = $this->ticketService->getMilestoneProgress($params['id']);
+
+            // Tasks belonging to this milestone for the review page
+            $searchCriteria = $this->ticketService->prepareTicketSearchArray([
+                'milestone' => (int) $params['id'],
+                'currentProject' => $milestone->projectId,
+                'currentSprint' => '',
+                'type' => 'task',
+            ]);
+            $milestoneTasks = $this->ticketRepo->getAllBySearchCriteria($searchCriteria, 'standard', null, false) ?: [];
         } else {
             $milestone = app()->make(TicketModel::class);
             $milestone->status = 3;
@@ -88,18 +100,31 @@ class EditMilestone extends Controller
             $milestone->editTo = $next_week->format('Y-m-d');
 
             $comments = [];
+            $milestoneProgress = 0;
+            $milestoneTasks = [];
         }
 
+        $doneStatusId = $this->getDoneStatusId();
         $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session('userdata.id'), 'open');
         $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
         $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
         $this->tpl->assign('comments', $comments);
+        $this->tpl->assign('milestoneProgress', $milestoneProgress);
+        $this->tpl->assign('doneStatusId', $doneStatusId);
+        $this->tpl->assign('readyForReviewStatusId', $this->ticketService->getReadyForReviewStatusId());
+        $this->tpl->assign('canCompleteMilestone', Auth::userIsAtLeast(Roles::$teamlead, true));
 
         $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
         $this->tpl->assign('milestones', $allProjectMilestones);
         $this->tpl->assign('users', $this->projectRepo->getUsersAssignedToProject(session('currentProject')));
         $this->tpl->assign('milestone', $milestone);
+        $this->tpl->assign('milestoneTasks', $milestoneTasks);
+
+        // Full-page review when viewing an existing milestone; modal dialog for new
+        if (isset($params['id'])) {
+            return $this->tpl->display('tickets.milestoneReview');
+        }
 
         return $this->tpl->displayPartial('tickets.milestoneDialog');
     }
@@ -113,6 +138,75 @@ class EditMilestone extends Controller
         if (isset($_GET['id']) && (int) $_GET['id'] > 0) {
             $params['id'] = (int) $_GET['id'];
             $milestone = $this->ticketRepo->getTicket($params['id']);
+
+            if (isset($params['markComplete']) === true) {
+                if (! Auth::userIsAtLeast(Roles::$teamlead, true)) {
+                    $this->tpl->setNotification($this->language->__('notifications.not_authorized'), 'error');
+
+                    return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
+                }
+
+                $doneStatusId = $this->getDoneStatusId();
+                if ($doneStatusId === null) {
+                    $this->tpl->setNotification($this->language->__('notification.saving_milestone_error'), 'error');
+
+                    return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
+                }
+
+                if ($this->ticketService->patch($params['id'], ['status' => $doneStatusId])) {
+                    $this->tpl->setNotification($this->language->__('notifications.milestone_marked_complete'), 'success');
+                } else {
+                    $this->tpl->setNotification($this->language->__('notification.saving_milestone_error'), 'error');
+                }
+
+                return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
+            }
+
+            if (isset($params['sendForReview']) === true) {
+                if (! Auth::userIsAtLeast(Roles::$editor, true)) {
+                    $this->tpl->setNotification($this->language->__('notifications.not_authorized'), 'error');
+
+                    return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
+                }
+
+                if ($this->ticketService->getMilestoneProgress($params['id']) < 100) {
+                    $this->tpl->setNotification($this->language->__('notifications.milestone_tasks_not_complete'), 'error');
+
+                    return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
+                }
+
+                if ($this->ticketService->patch($params['id'], ['status' => $this->ticketService->getReadyForReviewStatusId()])) {
+                    $this->tpl->setNotification($this->language->__('notifications.milestone_sent_for_review'), 'success');
+                } else {
+                    $this->tpl->setNotification($this->language->__('notification.saving_milestone_error'), 'error');
+                }
+
+                return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
+            }
+
+            if (isset($params['rejectMilestone']) === true) {
+                if (! Auth::userIsAtLeast(Roles::$teamlead, true)) {
+                    $this->tpl->setNotification($this->language->__('notifications.not_authorized'), 'error');
+
+                    return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
+                }
+
+                $note = trim($params['rejectionNote'] ?? '');
+                $patchData = ['status' => 4]; // Back to IN_PROGRESS
+                if ($note !== '') {
+                    $milestone = $this->ticketRepo->getTicket($params['id']);
+                    $existingDesc = is_object($milestone) ? ($milestone->description ?? '') : '';
+                    $patchData['description'] = $existingDesc."\n\n**Rejected:** ".htmlspecialchars($note, ENT_QUOTES);
+                }
+
+                if ($this->ticketService->patch($params['id'], $patchData)) {
+                    $this->tpl->setNotification($this->language->__('notifications.milestone_rejected'), 'warning');
+                } else {
+                    $this->tpl->setNotification($this->language->__('notification.saving_milestone_error'), 'error');
+                }
+
+                return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
+            }
 
             if (isset($params['comment']) === true) {
                 $values = [
@@ -225,6 +319,23 @@ class EditMilestone extends Controller
         $this->tpl->assign('milestone', (object) $params);
 
         return $this->tpl->displayPartial('tickets.milestoneDialog');
+    }
+
+    private function getDoneStatusId(): int|string|null
+    {
+        $statusLabels = $this->ticketService->getStatusLabels();
+
+        if (isset($statusLabels[0]) && ($statusLabels[0]['statusType'] ?? '') === 'DONE') {
+            return 0;
+        }
+
+        foreach ($statusLabels as $statusId => $statusLabel) {
+            if ((int) $statusId !== -1 && ($statusLabel['statusType'] ?? '') === 'DONE') {
+                return $statusId;
+            }
+        }
+
+        return null;
     }
 
     /**

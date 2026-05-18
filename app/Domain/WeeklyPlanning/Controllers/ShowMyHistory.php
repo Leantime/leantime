@@ -31,7 +31,7 @@ class ShowMyHistory extends Controller
     public function get(array $_params): Response
     {
         $employeeId = (int) session('userdata.id');
-        $plans      = $this->weeklyPlanningService->getPlansForEmployee($employeeId);
+        $plans = $this->weeklyPlanningService->getPlansForEmployee($employeeId);
 
         // Group plans by month label for accordion display
         $plansByMonth = [];

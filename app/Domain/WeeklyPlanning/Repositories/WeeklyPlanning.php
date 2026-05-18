@@ -3,7 +3,6 @@
 namespace Leantime\Domain\WeeklyPlanning\Repositories;
 
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Support\Facades\Log;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\WeeklyPlanning\Models\WeeklyPlan;
 use Leantime\Domain\WeeklyPlanning\Models\WeeklyPlanCommitment;
@@ -149,39 +148,58 @@ class WeeklyPlanning
     public function createPlan(WeeklyPlan $plan): int
     {
         return $this->db->table('zp_weekly_plans')->insertGetId([
-            'employeeId'            => $plan->employeeId,
-            'teamLeadId'            => $plan->teamLeadId,
-            'month'                 => $plan->month,
-            'weekLabel'             => $plan->weekLabel,
-            'weekStart'             => $plan->weekStart,
-            'weekEnd'               => $plan->weekEnd,
-            'dateOfOneOnOne'        => $plan->dateOfOneOnOne,
-            'status'                => $plan->status,
-            'topPriorities'         => $plan->topPriorities,
-            'winsAndProgress'       => $plan->winsAndProgress,
+            'employeeId' => $plan->employeeId,
+            'teamLeadId' => $plan->teamLeadId,
+            'month' => $plan->month,
+            'weekLabel' => $plan->weekLabel,
+            'weekStart' => $plan->weekStart,
+            'weekEnd' => $plan->weekEnd,
+            'dateOfOneOnOne' => $plan->dateOfOneOnOne,
+            'status' => $plan->status,
+            'topPriorities' => $plan->topPriorities,
+            'winsAndProgress' => $plan->winsAndProgress,
             'challengesAndBlockers' => $plan->challengesAndBlockers,
-            'managerSupportNeeded'  => $plan->managerSupportNeeded,
-            'ideasAndSuggestions'   => $plan->ideasAndSuggestions,
-            'growthCurrentFocus'    => $plan->growthCurrentFocus,
-            'growthSupportNeeded'   => $plan->growthSupportNeeded,
-            'growthNextMilestone'   => $plan->growthNextMilestone,
-            'nextWeekPriorities'    => $plan->nextWeekPriorities,
-            'summary'               => $plan->summary,
-            'createdAt'             => now()->toDateTimeString(),
-            'updatedAt'             => now()->toDateTimeString(),
+            'managerSupportNeeded' => $plan->managerSupportNeeded,
+            'ideasAndSuggestions' => $plan->ideasAndSuggestions,
+            'growthCurrentFocus' => $plan->growthCurrentFocus,
+            'growthSupportNeeded' => $plan->growthSupportNeeded,
+            'growthNextMilestone' => $plan->growthNextMilestone,
+            'nextWeekPriorities' => $plan->nextWeekPriorities,
+            'summary' => $plan->summary,
+            'createdAt' => now()->toDateTimeString(),
+            'updatedAt' => now()->toDateTimeString(),
         ]);
     }
 
     /**
      * Update text sections and header fields of an existing plan.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updatePlan(int $id, array $data): bool
     {
         $data['updatedAt'] = now()->toDateTimeString();
 
         return (bool) $this->db->table('zp_weekly_plans')->where('id', $id)->update($data);
+    }
+
+    /**
+     * Delete a plan and all its related items, feedback, and commitments.
+     */
+    public function deletePlan(int $id): bool
+    {
+        if (! $this->db->table('zp_weekly_plans')->where('id', $id)->exists()) {
+            return false;
+        }
+
+        $this->db->transaction(function () use ($id) {
+            $this->db->table('zp_weekly_plan_items')->where('weeklyPlanId', $id)->delete();
+            $this->db->table('zp_weekly_plan_feedback')->where('weeklyPlanId', $id)->delete();
+            $this->db->table('zp_weekly_plan_commitments')->where('weeklyPlanId', $id)->delete();
+            $this->db->table('zp_weekly_plans')->where('id', $id)->delete();
+        });
+
+        return true;
     }
 
     // -------------------------------------------------------------------------
@@ -196,8 +214,16 @@ class WeeklyPlanning
     public function getItemsForPlan(int $planId): array
     {
         $rows = $this->db->table('zp_weekly_plan_items as i')
-            ->select('i.*', 't.headline as ticketHeadline', 't.dateToFinish as ticketDueDate', 't.status as ticketStatus')
+            ->select(
+                'i.*',
+                't.headline as ticketHeadline',
+                't.dateToFinish as ticketDueDate',
+                't.status as ticketStatus',
+                't.projectId as ticketProjectId',
+                'p.name as projectName'
+            )
             ->leftJoin('zp_tickets as t', 't.id', '=', 'i.ticketId')
+            ->leftJoin('zp_projects as p', 'p.id', '=', 't.projectId')
             ->where('i.weeklyPlanId', $planId)
             ->orderBy('i.priority')
             ->get();
@@ -227,18 +253,18 @@ class WeeklyPlanning
     public function addItem(WeeklyPlanItem $item): int
     {
         return $this->db->table('zp_weekly_plan_items')->insertGetId([
-            'weeklyPlanId'    => $item->weeklyPlanId,
-            'ticketId'        => $item->ticketId,
-            'priority'        => $item->priority,
+            'weeklyPlanId' => $item->weeklyPlanId,
+            'ticketId' => $item->ticketId,
+            'priority' => $item->priority,
             'expectedOutcome' => $item->expectedOutcome,
-            'status'          => $item->status,
+            'status' => $item->status,
         ]);
     }
 
     /**
      * Update item status and optional blocker fields.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateItem(int $id, array $data): bool
     {
@@ -289,11 +315,11 @@ class WeeklyPlanning
 
         return (bool) $this->db->table('zp_weekly_plan_feedback')->insert([
             'weeklyPlanId' => $feedback->weeklyPlanId,
-            'fromUserId'   => $feedback->fromUserId,
-            'toUserId'     => $feedback->toUserId,
-            'type'         => $feedback->type,
-            'message'      => $feedback->message,
-            'createdAt'    => now()->toDateTimeString(),
+            'fromUserId' => $feedback->fromUserId,
+            'toUserId' => $feedback->toUserId,
+            'type' => $feedback->type,
+            'message' => $feedback->message,
+            'createdAt' => now()->toDateTimeString(),
         ]);
     }
 
@@ -325,11 +351,11 @@ class WeeklyPlanning
     {
         return $this->db->table('zp_weekly_plan_commitments')->insertGetId([
             'weeklyPlanId' => $commitment->weeklyPlanId,
-            'task'         => $commitment->task,
-            'ownerId'      => $commitment->ownerId,
-            'deadline'     => $commitment->deadline,
-            'status'       => $commitment->status,
-            'createdAt'    => now()->toDateTimeString(),
+            'task' => $commitment->task,
+            'ownerId' => $commitment->ownerId,
+            'deadline' => $commitment->deadline,
+            'status' => $commitment->status,
+            'createdAt' => now()->toDateTimeString(),
         ]);
     }
 
@@ -386,9 +412,12 @@ class WeeklyPlanning
         $rows = $this->db->table('zp_weekly_plan_items as i')
             ->select(
                 'i.*',
-                'p.weekLabel', 'p.weekStart', 'p.month',
+                'p.weekLabel',
+                'p.weekStart',
+                'p.month',
                 'p.employeeId',
-                'e.firstname as employeeFirstname', 'e.lastname as employeeLastname',
+                'e.firstname as employeeFirstname',
+                'e.lastname as employeeLastname',
                 't.headline as ticketHeadline'
             )
             ->join('zp_weekly_plans as p', 'p.id', '=', 'i.weeklyPlanId')
@@ -413,10 +442,14 @@ class WeeklyPlanning
         $q = $this->db->table('zp_weekly_plan_commitments as c')
             ->select(
                 'c.*',
-                'p.weekLabel', 'p.weekStart', 'p.month',
+                'p.weekLabel',
+                'p.weekStart',
+                'p.month',
                 'p.employeeId',
-                'e.firstname as employeeFirstname', 'e.lastname as employeeLastname',
-                'u.firstname as ownerFirstname', 'u.lastname as ownerLastname'
+                'e.firstname as employeeFirstname',
+                'e.lastname as employeeLastname',
+                'u.firstname as ownerFirstname',
+                'u.lastname as ownerLastname'
             )
             ->join('zp_weekly_plans as p', 'p.id', '=', 'c.weeklyPlanId')
             ->leftJoin('zp_user as e', 'e.id', '=', 'p.employeeId')

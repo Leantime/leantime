@@ -65,9 +65,9 @@ class Requests extends HtmxController
         }
 
         $projectId = (int) ($this->incomingRequest->request->get('projectId') ?? 0);
-        $data      = [
-            'projectId'   => $projectId,
-            'title'       => $this->incomingRequest->request->get('title') ?? '',
+        $data = [
+            'projectId' => $projectId,
+            'title' => $this->incomingRequest->request->get('title') ?? '',
             'description' => $this->incomingRequest->request->get('description') ?? '',
         ];
 
@@ -84,7 +84,7 @@ class Requests extends HtmxController
 
         // Re-render the request list for this project
         $requests = $this->portalService->getRequestsForProject($projectId);
-        $this->tpl->assign('requests',  $requests);
+        $this->tpl->assign('requests', $requests);
         $this->tpl->assign('projectId', $projectId);
         static::$view = 'clientportal::partials.requestList';
     }
@@ -112,7 +112,7 @@ class Requests extends HtmxController
      */
     public function saveResponse(): void
     {
-        $role      = session('userdata.role');
+        $role = session('userdata.role');
         $canRespond = in_array($role, [Roles::$teamlead, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
         if (! $canRespond) {
@@ -122,13 +122,13 @@ class Requests extends HtmxController
         }
 
         $requestId = (int) ($this->incomingRequest->request->get('requestId') ?? 0);
-        $data      = [
+        $data = [
             'requestId' => $requestId,
             'driveLink' => $this->incomingRequest->request->get('driveLink') ?? '',
-            'notes'     => $this->incomingRequest->request->get('notes') ?? '',
+            'notes' => $this->incomingRequest->request->get('notes') ?? '',
         ];
 
-        $file   = $_FILES['responseFile'] ?? null;
+        $file = $_FILES['responseFile'] ?? null;
         $result = $this->portalService->respondToRequest($data, $file ?: null);
 
         if ($result) {
@@ -162,8 +162,8 @@ class Requests extends HtmxController
         }
 
         $requestId = (int) ($this->incomingRequest->request->get('requestId') ?? 0);
-        $action    = (string) ($this->incomingRequest->request->get('action') ?? '');
-        $reason    = (string) ($this->incomingRequest->request->get('reason') ?? '');
+        $action = (string) ($this->incomingRequest->request->get('action') ?? '');
+        $reason = (string) ($this->incomingRequest->request->get('reason') ?? '');
         $projectId = (int) ($this->incomingRequest->request->get('projectId') ?? 0);
 
         $result = $this->portalService->submitClientReview($requestId, $action, $reason);
@@ -197,7 +197,7 @@ class Requests extends HtmxController
 
         $requests = $this->portalService->getRequestsForProject($projectId);
 
-        $this->tpl->assign('requests',  $requests);
+        $this->tpl->assign('requests', $requests);
         $this->tpl->assign('projectId', $projectId);
     }
 }

@@ -22,7 +22,7 @@ class RecentlyUpdated extends HtmxController
 
     public function get(): void
     {
-        $userId  = (int) session('userdata.id');
+        $userId = (int) session('userdata.id');
         $tickets = $this->ticketsService->getRecentlyUpdatedTicketsForUser($userId, 10, 14);
 
         $this->tpl->assign('tickets', $tickets);

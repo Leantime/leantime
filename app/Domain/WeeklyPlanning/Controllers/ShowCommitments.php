@@ -30,8 +30,8 @@ class ShowCommitments extends Controller
      */
     public function get(array $_params): Response
     {
-        $teamLeadId  = (int) session('userdata.id');
-        $openOnly    = ! isset($_GET['showAll']);
+        $teamLeadId = (int) session('userdata.id');
+        $openOnly = ! isset($_GET['showAll']);
         $commitments = $this->weeklyPlanningService->getCommitmentsForTeamLead($teamLeadId, $openOnly);
 
         $this->tpl->assign('commitments', $commitments);

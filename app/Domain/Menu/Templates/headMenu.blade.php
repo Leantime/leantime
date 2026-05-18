@@ -33,47 +33,65 @@ $adminRouteTitles = [
     @dispatchEvent('insideHeadMenu')
 
     @if(!$isAdmin && session('userdata.role') !== Roles::$commenter)
-    <li class="notificationDropdown quickAddDropdown">
-        <a
-            href="javascript:void(0);"
-            class="dropdown-toggle profileHandler"
-            data-toggle="dropdown"
-            data-tippy-content="{{ __('popover.quick_add') }}"
-        >
-            <span class="fa-solid fa-plus"></span>
-            <span class="tw-ml-xs tw-hidden md:tw-inline">{{ __('menu.quick_add') }}</span>
-        </a>
-        <ul class="dropdown-menu pull-right">
-            <li class="nav-header">{{ __('menu.quick_add_header') }}</li>
-            <li>
-                <a href="#/tickets/newTicket">
-                    <i class="fa fa-fw fa-thumb-tack"></i> {{ __('menu.quick_add_task') }}
-                </a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" onclick="leantimeNotepad.open();">
-                    <i class="fa fa-fw fa-sticky-note"></i> {{ __('menu.quick_add_note') }}
-                </a>
-            </li>
-            <li>
-                <a href="{{ BASE_URL }}/files/browse">
-                    <i class="fa fa-fw fa-file-arrow-up"></i> {{ __('menu.quick_add_file') }}
-                </a>
-            </li>
-            @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$manager, true))
+    @php
+        $isDeveloper = session('userdata.role') === Roles::$editor;
+    @endphp
+
+    @if($isDeveloper)
+        {{-- Developers get only the Notepad icon (no quick-add dropdown). --}}
+        <li>
+            <a
+                href="javascript:void(0);"
+                onclick="leantimeNotepad.open();"
+                data-tippy-content="My Notepad"
+            >
+                <span class="fa-solid fa-sticky-note"></span>
+            </a>
+        </li>
+    @else
+        {{-- TL / CM get the full +New quick-add dropdown. --}}
+        <li class="notificationDropdown quickAddDropdown">
+            <a
+                href="javascript:void(0);"
+                class="dropdown-toggle profileHandler"
+                data-toggle="dropdown"
+                data-tippy-content="{{ __('popover.quick_add') }}"
+            >
+                <span class="fa-solid fa-plus"></span>
+                <span class="tw-ml-xs tw-hidden md:tw-inline">{{ __('menu.quick_add') }}</span>
+            </a>
+            <ul class="dropdown-menu pull-right">
+                <li class="nav-header">{{ __('menu.quick_add_header') }}</li>
                 <li>
-                    <a href="{{ BASE_URL }}/projects/newProject">
-                        <i class="fa fa-fw fa-suitcase"></i> {{ __('menu.quick_add_project') }}
+                    <a href="#/tickets/newTicket">
+                        <i class="fa fa-fw fa-thumb-tack"></i> {{ __('menu.quick_add_task') }}
                     </a>
                 </li>
                 <li>
-                    <a href="#/users/newUser">
-                        <i class="fa fa-fw fa-user-plus"></i> {{ __('menu.quick_add_invite') }}
+                    <a href="javascript:void(0);" onclick="leantimeNotepad.open();">
+                        <i class="fa fa-fw fa-sticky-note"></i> {{ __('menu.quick_add_note') }}
                     </a>
                 </li>
-            @endif
-        </ul>
-    </li>
+                <li>
+                    <a href="{{ BASE_URL }}/files/browse">
+                        <i class="fa fa-fw fa-file-arrow-up"></i> {{ __('menu.quick_add_file') }}
+                    </a>
+                </li>
+                @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$manager, true))
+                    <li>
+                        <a href="{{ BASE_URL }}/projects/newProject">
+                            <i class="fa fa-fw fa-suitcase"></i> {{ __('menu.quick_add_project') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#/users/newUser">
+                            <i class="fa fa-fw fa-user-plus"></i> {{ __('menu.quick_add_invite') }}
+                        </a>
+                    </li>
+                @endif
+            </ul>
+        </li>
+    @endif
 
     @include('timesheets::partials.stopwatch', [
                'onTheClock' => $onTheClock
@@ -282,41 +300,91 @@ $adminRouteTitles = [
 
     @dispatchEvent('afterHeadMenuOpen')
 
-    @if(!in_array(session('userdata.role'), [Roles::$owner, Roles::$admin]) && session('userdata.role') !== Roles::$commenter)
+    {{-- TL (teamlead) and CM (manager) get their own dashboard with project list + company actions,
+         so the Projects selector and Company tab are redundant for them. Hide entirely. --}}
+    @php
+        $hideWorkModes = in_array(session('userdata.role'), [Roles::$owner, Roles::$admin, Roles::$teamlead, Roles::$manager])
+                      || session('userdata.role') === Roles::$commenter;
+    @endphp
+
+    {{-- Home button + project switcher — shown for ALL roles when inside a project --}}
+    @if($menuType === 'project')
+    <li style="display:flex; align-items:center; height:50px; padding-left:8px;">
+        <a href="{{ BASE_URL }}/dashboard/home"
+            style="display:inline-flex; align-items:center; gap:6px;
+                   padding:5px 12px; border-radius:var(--element-radius);
+                   background:rgba(255,255,255,.1); color:#fff;
+                   text-decoration:none; font-size:13px; font-weight:600;
+                   transition:background .15s; white-space:nowrap;"
+            onmouseover="this.style.background='rgba(255,255,255,.2)'"
+            onmouseout="this.style.background='rgba(255,255,255,.1)'"
+            data-tippy-content="Back to Home">
+            <i class="fa fa-home"></i>
+            <span class="tw-hidden md:tw-inline">Home</span>
+        </a>
+    </li>
+
+    @if(!empty($headMenuAllProjects))
+    <li style="display:flex; align-items:center; height:50px; padding-left:4px;" class="notificationDropdown">
+        <a href="javascript:void(0);"
+            class="dropdown-toggle"
+            data-toggle="dropdown"
+            style="display:inline-flex; align-items:center; gap:6px;
+                   padding:5px 12px; border-radius:var(--element-radius);
+                   background:rgba(255,255,255,.1); color:#fff;
+                   text-decoration:none; font-size:13px; font-weight:600;
+                   max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+                   transition:background .15s;"
+            onmouseover="this.style.background='rgba(255,255,255,.2)'"
+            onmouseout="this.style.background='rgba(255,255,255,.1)'"
+            data-tippy-content="Switch Project">
+            <i class="fa fa-layer-group"></i>
+            <span class="tw-hidden md:tw-inline" style="overflow:hidden; text-overflow:ellipsis; max-width:130px;">
+                {{ !empty($headMenuCurrentProject['name']) ? $headMenuCurrentProject['name'] : 'Switch Project' }}
+            </span>
+            <i class="fa fa-caret-down" style="font-size:11px; opacity:.7; flex-shrink:0;"></i>
+        </a>
+        <ul class="dropdown-menu" style="min-width:220px; max-height:360px; overflow-y:auto;">
+            <li class="nav-header" style="padding:8px 14px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; opacity:.6;">
+                <i class="fa fa-layer-group" style="margin-right:5px;"></i> Switch Project
+            </li>
+            @foreach($headMenuAllProjects as $proj)
+            <li>
+                <a href="{{ BASE_URL }}/projects/changeCurrentProject/{{ $proj['id'] }}"
+                    style="display:flex; align-items:center; gap:8px; padding:7px 14px; font-size:13px;
+                           {{ (!empty($headMenuCurrentProject['id']) && (int)$headMenuCurrentProject['id'] === (int)$proj['id']) ? 'font-weight:700; color:var(--accent1);' : '' }}">
+                    @if(!empty($headMenuCurrentProject['id']) && (int)$headMenuCurrentProject['id'] === (int)$proj['id'])
+                    <i class="fa fa-check" style="color:var(--accent1); width:12px; flex-shrink:0;"></i>
+                    @else
+                    <i class="fa fa-fw" style="width:12px; flex-shrink:0;"></i>
+                    @endif
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $proj['name'] }}</span>
+                </a>
+            </li>
+            @endforeach
+        </ul>
+    </li>
+    @endif
+    @endif {{-- end project context --}}
+
+    {{-- The old project selector is only shown when NOT in project context (home/dashboard).
+         Inside a project, the new Home + project switcher above replaces it. --}}
+    @if(! $hideWorkModes && $menuType !== 'project')
     <li>
         @include('menu::projectSelector')
     </li>
-    @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$teamlead, true))
+    @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin, true))
         <li>
-            @if($login::userHasRole("manager"))
-                <a
-                    href="{{ BASE_URL }}/projects/showAll/"
-                    @if ($menuType == 'company')
-                        class="active"
-                    @endif
-                    data-tippy-content="{{ __('popover.company') }}"
-                >{!! __('menu.company') !!}</a>
-            @elseif($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin, true))
-                <a
-                    href="{{ BASE_URL }}/setting/editCompanySettings/"
-                    @if ($menuType == 'company')
-                        class="active"
-                    @endif
-                    data-tippy-content="{{ __('popover.company') }}"
-                >{!! __('menu.company') !!}</a>
-            @else
-                {{-- Team leads land on their weekly team view --}}
-                <a
-                    href="{{ BASE_URL }}/weekly-planning/showTeam"
-                    @if ($menuType == 'company')
-                        class="active"
-                    @endif
-                    data-tippy-content="{{ __('popover.company') }}"
-                >{!! __('menu.company') !!}</a>
-            @endif
+            <a
+                href="{{ BASE_URL }}/setting/editCompanySettings/"
+                @if ($menuType == 'company')
+                    class="active"
+                @endif
+                data-tippy-content="{{ __('popover.company') }}"
+            >{!! __('menu.company') !!}</a>
         </li>
     @endif
-    @endif {{-- end commenter hide --}}
+    @endif {{-- end work-modes hide --}}
 
 </ul>
 

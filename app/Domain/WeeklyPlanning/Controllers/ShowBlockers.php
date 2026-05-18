@@ -30,8 +30,8 @@ class ShowBlockers extends Controller
      */
     public function get(array $_params): Response
     {
-        $teamLeadId    = (int) session('userdata.id');
-        $blockedItems  = $this->weeklyPlanningService->getBlockedItemsForTeamLead($teamLeadId);
+        $teamLeadId = (int) session('userdata.id');
+        $blockedItems = $this->weeklyPlanningService->getBlockedItemsForTeamLead($teamLeadId);
 
         $this->tpl->assign('blockedItems', $blockedItems);
         $this->tpl->assign('itemStatuses', $this->weeklyPlanningService->itemStatuses);

@@ -1,4 +1,4 @@
-@if(!isset($menuItem['role']) || $login::userIsAtLeast($menuItem['role'] ?? 'editor'))
+@if(!isset($menuItem['role']) || $login::userIsAtLeast($menuItem['role'] ?? 'editor', true))
 
     <li
         @if(

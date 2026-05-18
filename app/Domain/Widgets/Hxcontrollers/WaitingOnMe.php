@@ -22,7 +22,7 @@ class WaitingOnMe extends HtmxController
 
     public function get(): void
     {
-        $userId  = (int) session('userdata.id');
+        $userId = (int) session('userdata.id');
         $tickets = $this->ticketsService->getWaitingTicketsForUser($userId, 10, 7);
 
         $this->tpl->assign('tickets', $tickets);

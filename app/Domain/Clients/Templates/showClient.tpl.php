@@ -208,8 +208,8 @@ $users = $tpl->get('users');
             <div id='clientProjects'>
                 <?php
                 $clientProjectIds = array_column($tpl->get('clientProjects'), 'id');
-                $allProjects      = $tpl->get('allProjects');
-                ?>
+$allProjects = $tpl->get('allProjects');
+?>
                 <form method="post" action="<?= BASE_URL ?>/clients/showClient/<?php $tpl->e($values['id']); ?>">
                     <input type="hidden" name="saveProjects" value="1" />
                     <input type="hidden" name="<?= session('formTokenName') ?>" value="<?= session('formTokenValue') ?>" />
@@ -254,8 +254,8 @@ $users = $tpl->get('users');
                 <form method="post" action="<?= BASE_URL ?>/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>#comment">
                     <input type="hidden" name="comment" value="1" />
                     <?php
-                    $tpl->assign('formUrl', BASE_URL . '/clients/showClient/' . $tpl->escape($_GET['id']) . '');
-                    $tpl->displaySubmodule('comments-generalComment') ?>
+                    $tpl->assign('formUrl', BASE_URL.'/clients/showClient/'.$tpl->escape($_GET['id']).'');
+$tpl->displaySubmodule('comments-generalComment') ?>
                 </form>
 
 
@@ -304,7 +304,7 @@ $users = $tpl->get('users');
                                         <li><a href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__('links.download'); ?></a></li>
 
                                         <?php
-                                        if ($login::userIsAtLeast($roles::$admin)) { ?>
+                    if ($login::userIsAtLeast($roles::$admin)) { ?>
                                             <li><a href="<?= BASE_URL ?>/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete'); ?></a></li>
                                         <?php } ?>
 

@@ -8,6 +8,7 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Setting\Services\Setting;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Domain\WeeklyPlanning\Services\WeeklyPlanning as WeeklyPlanningService;
 
 /**
  * Class MyToDos
@@ -22,14 +23,18 @@ class MyToDos extends HtmxController
 
     private Setting $settingsService;
 
+    private WeeklyPlanningService $weeklyPlanningService;
+
     private int $limit = 50;
 
     public function init(
         TicketService $ticketsService,
         Setting $settingsService,
+        WeeklyPlanningService $weeklyPlanningService,
     ) {
         $this->ticketsService = $ticketsService;
         $this->settingsService = $settingsService;
+        $this->weeklyPlanningService = $weeklyPlanningService;
         session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
@@ -49,6 +54,23 @@ class MyToDos extends HtmxController
 
         // Get hierarchical tasks
         $tplVars = $this->ticketsService->getToDoWidgetHierarchicalAssignments($params);
+
+        // Remove tickets already shown in the current week's plan section
+        $planTicketIds = $this->weeklyPlanningService->getCurrentPlanTicketIds((int) session('userdata.id'));
+        if (! empty($planTicketIds)) {
+            foreach ($tplVars['tickets'] as $groupKey => &$group) {
+                $group['tickets'] = array_values(array_filter(
+                    $group['tickets'],
+                    fn (array $t) => ! in_array((int) $t['id'], $planTicketIds, true)
+                ));
+            }
+            unset($group);
+            // Drop groups that are now empty
+            $tplVars['tickets'] = array_filter(
+                $tplVars['tickets'],
+                fn (array $g) => ! empty($g['tickets'])
+            );
+        }
 
         // Get user's personal sorting preferences
         $userId = session('userdata.id');
@@ -128,7 +150,6 @@ class MyToDos extends HtmxController
         }
 
         $this->tpl->setNotification($this->language->__('notifications.sorting_error'), 'error');
-
     }
 
     /**
@@ -337,7 +358,6 @@ class MyToDos extends HtmxController
             // Additional permission checks can be added here if needed
             // For now, if user can view the ticket, they can update it
             return true;
-
         } catch (\Exception $e) {
             Log::error("Permission check failed for task {$taskId}: ".$e->getMessage());
 
@@ -561,6 +581,5 @@ class MyToDos extends HtmxController
         $tplVars['isLoadMore'] = true;
         $this->tpl->assign('limit', $params['limit']);
         array_map([$this->tpl, 'assign'], array_keys($tplVars), array_values($tplVars));
-
     }
 }

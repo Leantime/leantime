@@ -31,7 +31,7 @@ class Feedback extends HtmxController
     public function editForm(): void
     {
         $planId = (int) $this->incomingRequest->query->get('planId', 0);
-        $plan   = $this->service->getPlanById($planId);
+        $plan = $this->service->getPlanById($planId);
 
         if (! $this->canAccessPlan($plan)) {
             $this->denyAccess();
@@ -41,7 +41,7 @@ class Feedback extends HtmxController
 
         static::$view = 'weeklyplanning::partials.feedbackForm';
 
-        $type     = (string) $this->incomingRequest->query->get('type', '');
+        $type = (string) $this->incomingRequest->query->get('type', '');
         $feedback = $this->service->getFeedbackForPlan($planId);
         $existing = collect($feedback)->firstWhere('type', $type);
 
@@ -55,11 +55,11 @@ class Feedback extends HtmxController
     /** Save feedback and re-render the display block. */
     public function save(): void
     {
-        $planId  = (int) ($this->incomingRequest->request->get('planId') ?? 0);
-        $type    = (string) ($this->incomingRequest->request->get('type') ?? '');
+        $planId = (int) ($this->incomingRequest->request->get('planId') ?? 0);
+        $type = (string) ($this->incomingRequest->request->get('type') ?? '');
         $message = trim((string) ($this->incomingRequest->request->get('message') ?? ''));
-        $userId  = (int) session('userdata.id');
-        $plan    = $this->service->getPlanById($planId);
+        $userId = (int) session('userdata.id');
+        $plan = $this->service->getPlanById($planId);
 
         // Authorization: must be a participant in the plan (or admin/owner)…
         if (! $this->canAccessPlan($plan)) {
@@ -89,7 +89,7 @@ class Feedback extends HtmxController
     public function view(): void
     {
         $planId = (int) $this->incomingRequest->query->get('planId', 0);
-        $plan   = $this->service->getPlanById($planId);
+        $plan = $this->service->getPlanById($planId);
 
         if (! $this->canAccessPlan($plan)) {
             $this->denyAccess();
@@ -97,7 +97,7 @@ class Feedback extends HtmxController
             return;
         }
 
-        $type     = (string) $this->incomingRequest->query->get('type', '');
+        $type = (string) $this->incomingRequest->query->get('type', '');
         $feedback = $this->service->getFeedbackForPlan($planId);
         $existing = collect($feedback)->firstWhere('type', $type);
 
@@ -110,7 +110,7 @@ class Feedback extends HtmxController
 
     private function resolveCanEdit(string $type): bool
     {
-        $role       = session('userdata.role');
+        $role = session('userdata.role');
         $isTeamLead = in_array($role, [Roles::$teamlead, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
         return ($isTeamLead && str_starts_with($type, 'manager_'))

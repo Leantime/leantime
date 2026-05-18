@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html dir="{{ __('language.direction') }}" lang="{{ __('language.code') }}">
+
 <head>
     @include('global::sections.header')
     @stack('styles')
@@ -9,22 +10,58 @@
 
     @include('global::sections.appAnnouncement')
 
-    <div class="mainwrapper menu{{ session("menuState") ?? "closed" }}">
+    @php
+    // Sidebar defaults to OPEN. Only respect 'closed' if the user explicitly
+    // set it that way via the hamburger toggle — every other value (null,
+    // empty string, missing key, anything truthy) renders open.
+    $ltMenuState = session('menuState') === 'closed' ? 'closed' : 'open';
+    @endphp
+    <div class="mainwrapper menu{{ $ltMenuState }}">
+
+        <script>
+            function ltToggleSidebar() {
+                var w = document.querySelector('.mainwrapper');
+                if (!w) {
+                    console.warn('ltToggleSidebar: .mainwrapper not found');
+                    return;
+                }
+                var isOpen = w.classList.contains('menuopen');
+                if (isOpen) {
+                    w.classList.remove('menuopen');
+                    w.classList.add('menuclosed');
+                } else {
+                    w.classList.remove('menuclosed');
+                    w.classList.add('menuopen');
+                }
+                // Persist state — Leantime's /api/sessions requires PATCH
+                try {
+                    if (window.jQuery && jQuery.ajax) {
+                        jQuery.ajax({
+                            url: '{{ BASE_URL }}/api/sessions',
+                            method: 'PATCH',
+                            data: {
+                                menuState: isOpen ? 'closed' : 'open'
+                            }
+                        });
+                    }
+                } catch (e) {}
+            }
+        </script>
 
         <div class="header">
 
             <div class="headerinner">
                 <a class="btnmenu" href="javascript:void(0);"></a>
 
-                <a class="barmenu" href="javascript:void(0);">
+                <a class="barmenu" href="javascript:void(0);" aria-label="Toggle menu"
+                    onclick="ltToggleSidebar(); return false;">
                     <span class="fa fa-bars"></span>
                 </a>
 
                 <div class="logo">
                     <a
                         href="{{ BASE_URL }}"
-                        style="background-image: url('{{ BASE_URL }}/dist/images/logo.svg')"
-                    >&nbsp;</a>
+                        style="background-image: url('{{ BASE_URL }}/dist/images/logo.svg')">&nbsp;</a>
                 </div>
 
                 @include('menu::headMenu')
@@ -43,9 +80,9 @@
             <div class="rightpanel {{ $section }}">
                 <div class="primaryContent">
                     @isset($action, $module)
-                        @include("$module::$action")
+                    @include("$module::$action")
                     @else
-                        @yield('content')
+                    @yield('content')
                     @endisset
                     <div class="clearfix"></div>
                     @include('global::sections.footer')

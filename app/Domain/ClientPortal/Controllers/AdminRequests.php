@@ -24,7 +24,7 @@ class AdminRequests extends Controller
     public function init(ClientPortalService $portalService): void
     {
         if (! Auth::userIsAtLeast(Roles::$teamlead, true)) {
-            Frontcontroller::redirect(BASE_URL . '/errors/error403');
+            Frontcontroller::redirect(BASE_URL.'/errors/error403');
         }
 
         $this->portalService = $portalService;

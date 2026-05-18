@@ -119,7 +119,7 @@ class Install
         try {
             $this->connection = $this->dbManager->connection($defaultConnection);
         } catch (\Exception $e) {
-            Log::error('Failed to establish database connection during installation: ' . $e->getMessage());
+            Log::error('Failed to establish database connection during installation: '.$e->getMessage());
             // During installation, we may need to create a temporary connection without database selection
             $this->createTemporaryConnection();
         }
@@ -181,7 +181,7 @@ class Install
             config(['database.connections.install_temp' => $config]);
             $this->connection = $this->dbManager->connection('install_temp');
         } catch (\Exception $e) {
-            Log::error('Failed to create temporary database connection: ' . $e->getMessage());
+            Log::error('Failed to create temporary database connection: '.$e->getMessage());
             throw $e;
         }
     }
@@ -231,7 +231,7 @@ class Install
             $this->connection->getPdo()->exec('SET search_path TO public');
         } else {
             // MySQL: USE statement
-            $this->connection->statement('USE `' . $database . '`');
+            $this->connection->statement('USE `'.$database.'`');
         }
     }
 
@@ -286,7 +286,7 @@ class Install
             $major = $versionArray[0];
             $minor = str_pad($versionArray[1], 2, '0', STR_PAD_LEFT);
             $patch = str_pad($versionArray[2], 2, '0', STR_PAD_LEFT);
-            $newDBVersion = $major . $minor . $patch;
+            $newDBVersion = $major.$minor.$patch;
         } else {
             $errors[0] = 'Problem identifying the version number';
 
@@ -302,7 +302,7 @@ class Install
                 $major = $versionArray[0];
                 $minor = str_pad($versionArray[1], 2, '0', STR_PAD_LEFT);
                 $patch = str_pad($versionArray[2], 2, '0', STR_PAD_LEFT);
-                $currentDBVersion = $major . $minor . $patch;
+                $currentDBVersion = $major.$minor.$patch;
             } else {
                 $errors[0] = 'Problem identifying the version number';
 
@@ -321,7 +321,7 @@ class Install
         // Find all update functions that need to be executed
         foreach ($this->dbUpdates as $updateVersion) {
             if ($currentDBVersion < $updateVersion) {
-                $functionName = 'update_sql_' . $updateVersion;
+                $functionName = 'update_sql_'.$updateVersion;
 
                 $result = $this->$functionName();
 
@@ -367,7 +367,7 @@ class Install
         $minor = intval(substr($versionString, -4, 2));
         $patch = intval(substr($versionString, -2));
 
-        return $major . '.' . $minor . '.' . $patch;
+        return $major.'.'.$minor.'.'.$patch;
     }
 
     /**
@@ -964,9 +964,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -993,9 +993,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1044,9 +1044,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1070,9 +1070,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1096,9 +1096,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1125,9 +1125,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1150,9 +1150,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1175,9 +1175,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1200,9 +1200,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1227,9 +1227,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1264,9 +1264,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1307,9 +1307,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1334,13 +1334,13 @@ class Install
 
         $sql = [
             'ALTER TABLE zp_projects ADD menuType MEDIUMTEXT null',
-            "UPDATE zp_projects SET menuType = '" . MenuRepository::DEFAULT_MENU . "'",
+            "UPDATE zp_projects SET menuType = '".MenuRepository::DEFAULT_MENU."'",
             'ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) null',
-            'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ' .
+            'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id '.
                 "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
-            'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ' .
+            'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id '.
                 "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
-            'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ' .
+            'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id '.
                 "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
             "UPDATE zp_canvas SET zp_canvas.type = 'retroscanvas' WHERE zp_canvas.type = 'retrospective'",
         ];
@@ -1349,9 +1349,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1411,9 +1411,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1444,9 +1444,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1475,9 +1475,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1515,9 +1515,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1555,9 +1555,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1591,9 +1591,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1625,9 +1625,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1679,9 +1679,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1706,9 +1706,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1738,9 +1738,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1766,9 +1766,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1792,7 +1792,7 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 $errors[] = "$statement Failed: {$e->getMessage()}";
             }
@@ -1821,9 +1821,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1855,9 +1855,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1896,9 +1896,9 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
@@ -1923,7 +1923,7 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
             }
         }
@@ -1949,7 +1949,7 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
             }
         }
@@ -2012,7 +2012,7 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
             }
         }
@@ -2038,7 +2038,7 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
             }
         }
@@ -2121,11 +2121,11 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed:' . $e->getMessage());
+                Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 // Don't fail the entire migration for duplicate indexes
                 if (! str_contains($e->getMessage(), 'Duplicate key name')) {
-                    array_push($errors, $statement . ' Failed:' . $e->getMessage());
+                    array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
         }
@@ -2176,7 +2176,7 @@ class Install
             // Ensure correct index exists
             $this->ensureEntityAIndex($singularTable);
         } catch (\Exception $e) {
-            Log::error('Migration 30410: ' . $e->getMessage());
+            Log::error('Migration 30410: '.$e->getMessage());
             // Don't fail the migration - log and continue
         }
 
@@ -2254,7 +2254,7 @@ class Install
             // Drop the source (plural) table
             $this->connection->statement("DROP TABLE `{$sourceTable}`");
         } catch (\Exception $e) {
-            Log::error('Migration 30410: Failed to merge tables: ' . $e->getMessage());
+            Log::error('Migration 30410: Failed to merge tables: '.$e->getMessage());
         }
     }
 
@@ -2293,7 +2293,7 @@ class Install
                 );
             }
         } catch (\Exception $e) {
-            Log::error("Migration 30410: Failed to fix column typo in {$tableName}: " . $e->getMessage());
+            Log::error("Migration 30410: Failed to fix column typo in {$tableName}: ".$e->getMessage());
         }
     }
 
@@ -2313,7 +2313,7 @@ class Install
                 "ALTER TABLE `{$tableName}` ADD INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC)"
             );
         } catch (\Exception $e) {
-            Log::error("Migration 30410: Failed to ensure entityA index on {$tableName}: " . $e->getMessage());
+            Log::error("Migration 30410: Failed to ensure entityA index on {$tableName}: ".$e->getMessage());
         }
     }
 
@@ -2330,11 +2330,11 @@ class Install
             try {
                 $this->connection->statement($statement);
             } catch (\Exception $e) {
-                Log::error($statement . ' Failed: ' . $e->getMessage());
+                Log::error($statement.' Failed: '.$e->getMessage());
                 Log::error($e);
                 // Don't fail for duplicate column
                 if (! str_contains($e->getMessage(), 'Duplicate column name')) {
-                    array_push($errors, $statement . ' Failed: ' . $e->getMessage());
+                    array_push($errors, $statement.' Failed: '.$e->getMessage());
                 }
             }
         }
@@ -2378,7 +2378,7 @@ class Install
             $this->fixEntityAColumnTypo($singularTable);
             $this->ensureEntityAIndex($singularTable);
         } catch (\Exception $e) {
-            Log::error('Migration 30412: ' . $e->getMessage());
+            Log::error('Migration 30412: '.$e->getMessage());
         }
 
         return true;
@@ -2421,7 +2421,7 @@ class Install
             $this->fixEntityAColumnTypo($singularTable);
             $this->ensureEntityAIndex($singularTable);
         } catch (\Exception $e) {
-            Log::error('Migration 30413: ' . $e->getMessage());
+            Log::error('Migration 30413: '.$e->getMessage());
         }
 
         return true;
@@ -2463,7 +2463,7 @@ class Install
                     });
                 }
             } catch (\Exception $e) {
-                Log::error("Migration 30500: Failed to add index {$index['name']} on {$index['table']}: " . $e->getMessage());
+                Log::error("Migration 30500: Failed to add index {$index['name']} on {$index['table']}: ".$e->getMessage());
             }
         }
 
@@ -2490,9 +2490,9 @@ class Install
                 });
             }
         } catch (\Exception $e) {
-            Log::error('Migration 30501: ' . $e->getMessage());
+            Log::error('Migration 30501: '.$e->getMessage());
 
-            return ['Migration 30501 failed: ' . $e->getMessage()];
+            return ['Migration 30501 failed: '.$e->getMessage()];
         }
 
         return true;
@@ -2544,9 +2544,9 @@ class Install
                 });
             }
         } catch (\Exception $e) {
-            Log::error('Migration 30502: ' . $e->getMessage());
+            Log::error('Migration 30502: '.$e->getMessage());
 
-            return ['Migration 30502 failed: ' . $e->getMessage()];
+            return ['Migration 30502 failed: '.$e->getMessage()];
         }
 
         return true;
@@ -2645,9 +2645,9 @@ class Install
                 });
             }
         } catch (\Exception $e) {
-            Log::error('Migration 30503: ' . $e->getMessage());
+            Log::error('Migration 30503: '.$e->getMessage());
 
-            return ['Migration 30503 failed: ' . $e->getMessage()];
+            return ['Migration 30503 failed: '.$e->getMessage()];
         }
 
         return true;
@@ -2696,9 +2696,9 @@ class Install
                 });
             }
         } catch (\Exception $e) {
-            Log::error('Migration 30504: ' . $e->getMessage());
+            Log::error('Migration 30504: '.$e->getMessage());
 
-            return ['Migration 30504 failed: ' . $e->getMessage()];
+            return ['Migration 30504 failed: '.$e->getMessage()];
         }
 
         return true;
@@ -2729,9 +2729,9 @@ class Install
                 });
             }
         } catch (\Exception $e) {
-            Log::error('Migration 30505: ' . $e->getMessage());
+            Log::error('Migration 30505: '.$e->getMessage());
 
-            return ['Migration 30505 failed: ' . $e->getMessage()];
+            return ['Migration 30505 failed: '.$e->getMessage()];
         }
 
         return true;

@@ -82,8 +82,8 @@ class NewTicket extends Controller
         $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
         $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
 
-        $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
-        $this->tpl->assign('milestones', $allProjectMilestones);
+        // Milestones are loaded client-side via /hx/tickets/milestones/byProject on form open
+        $this->tpl->assign('milestones', []);
         $this->tpl->assign('sprints', $this->sprintService->getAllSprints(session('currentProject')));
 
         $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
@@ -94,7 +94,8 @@ class NewTicket extends Controller
         $this->tpl->assign('remainingHours', 0);
 
         $this->tpl->assign('userInfo', $this->userService->getUser(session('userdata.id')));
-        $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
+        // Users are loaded client-side via /hx/tickets/milestones/usersByProject on form open
+        $this->tpl->assign('users', []);
 
         $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'), 'open');
         $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
@@ -116,6 +117,7 @@ class NewTicket extends Controller
             $result = $this->ticketService->addTicket($params);
 
             if (is_array($result) === false) {
+                $this->uploadReferenceFile((int) $result);
                 $this->tpl->setNotification($this->language->__('notifications.ticket_saved'), 'success');
 
                 if (isset($params['saveAndCloseTicket']) === true && $params['saveAndCloseTicket'] == 1) {
@@ -134,7 +136,7 @@ class NewTicket extends Controller
                 $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
                 $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
                 $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
-                $this->tpl->assign('milestones', $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]));
+                $this->tpl->assign('milestones', []);
                 $this->tpl->assign('sprints', $this->sprintService->getAllSprints(session('currentProject')));
 
                 $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
@@ -145,7 +147,7 @@ class NewTicket extends Controller
                 $this->tpl->assign('remainingHours', 0);
 
                 $this->tpl->assign('userInfo', $this->userService->getUser(session('userdata.id')));
-                $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
+                $this->tpl->assign('users', []);
 
                 $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'), 'open');
                 $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
@@ -155,5 +157,20 @@ class NewTicket extends Controller
         }
 
         return Frontcontroller::redirect(BASE_URL.'/tickets/newTicket');
+    }
+
+    private function uploadReferenceFile(int $ticketId): void
+    {
+        if (
+            isset($_FILES['referenceFile'])
+            && is_array($_FILES['referenceFile'])
+            && ($_FILES['referenceFile']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK
+        ) {
+            $this->fileService->upload(
+                ['file' => $_FILES['referenceFile']],
+                'ticket',
+                $ticketId
+            );
+        }
     }
 }

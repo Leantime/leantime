@@ -76,8 +76,8 @@ $projects = $tpl->get('relations');
     // the modal stays open after submit (success notification or validation
     // error), it re-renders with the preset still applied.
     $_pcClient = (int) $tpl->get('preSelectedClient');
-    $_pcRole   = (int) $tpl->get('preSelectedRole');
-    ?>
+$_pcRole = (int) $tpl->get('preSelectedRole');
+?>
     <?php if ($_pcClient > 0) { ?>
         <input type="hidden" name="preSelectedClient" value="<?= $_pcClient ?>" />
     <?php } ?>
@@ -101,7 +101,9 @@ $projects = $tpl->get('relations');
             <?php if ((int) $tpl->get('preSelectedRole') > 0) { ?>
                 <select name="role" id="role" disabled>
                     <?php foreach ($tpl->get('roles') as $key => $role) { ?>
-                        <?php if ($key != (int) $tpl->get('preSelectedRole')) { continue; } ?>
+                        <?php if ($key != (int) $tpl->get('preSelectedRole')) {
+                            continue;
+                        } ?>
                         <option value="<?php echo $key; ?>" selected="selected">
                             <?= $tpl->__('label.roles.'.$role) ?>
                         </option>
@@ -134,7 +136,10 @@ $projects = $tpl->get('relations');
                 $preClientId = (int) $tpl->get('preSelectedClient');
                 $preClientName = '';
                 foreach ($tpl->get('clients') as $c) {
-                    if ($c['id'] == $preClientId) { $preClientName = $c['name']; break; }
+                    if ($c['id'] == $preClientId) {
+                        $preClientName = $c['name'];
+                        break;
+                    }
                 }
                 ?>
                 <label><?php echo $tpl->__('label.client') ?></label>
@@ -188,12 +193,12 @@ $projects = $tpl->get('relations');
                 <label for="managerId"><?php echo $tpl->__('label.manager'); ?></label>
                 <select name="managerId" id="managerId" class="chosen-select">
                     <option value=""><?php echo $tpl->__('label.no_manager'); ?></option>
-                    <?php foreach ($tpl->get('eligibleManagers') as $manager) : ?>
+                    <?php foreach ($tpl->get('eligibleManagers') as $manager) { ?>
                         <option value="<?php echo $manager['id']; ?>"
                             <?php echo ((int) ($values['managerId'] ?? 0) === (int) $manager['id']) ? 'selected' : ''; ?>>
                             <?php echo $tpl->escape($manager['firstname'].' '.$manager['lastname']); ?>
                         </option>
-                    <?php endforeach; ?>
+                    <?php } ?>
                 </select><br />
             </div>
 

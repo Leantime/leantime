@@ -1,45 +1,81 @@
 {{-- This Week's Plan section — embedded in MyToDos widget --}}
 @if(!empty($items))
-<div id="my-plan-tasks-section" class="tw-mb-m">
-    <div class="tw-flex tw-items-center tw-gap-xs tw-mb-xs"
-         style="border-bottom:1px solid var(--main-border-color); padding-bottom:6px;">
-        <i class="fa fa-calendar-week" style="color:var(--accent1);"></i>
-        <strong class="tw-text-sm">{{ __('weeklyplanning.sections.this_weeks_plan') }}</strong>
-        @if($plan)
-            <span class="tw-text-xs" style="color:var(--grey);">
-                {{ $plan['weekLabel'] }}, {{ $plan['month'] }}
-            </span>
-        @endif
-    </div>
+{{-- Reveal the static section label in the parent widget, init datepicker and hover-to-open --}}
+<script>
+    (function() {
+        var lbl = document.getElementById('my-plan-tasks-label');
+        if (lbl) lbl.style.display = '';
 
-    <ul class="tw-list-none tw-p-0 tw-m-0 tw-flex tw-flex-col tw-gap-xs">
+        jQuery(function() {
+            var $section = jQuery('#my-plan-tasks-section');
+
+            // Initialize datepicker on newly HTMX-loaded due-date inputs
+            $section.find('.duedates').each(function() {
+                if (!jQuery(this).hasClass('hasDatepicker')) {
+                    leantime.dateController.initDatePicker(this, null);
+                }
+            });
+
+            // Show calendar picker on hover over the due-date cell
+            $section.find('.due-date-wrapper').on('mouseenter.planDue', function() {
+                jQuery(this).find('.duedates').datepicker('show');
+            });
+        });
+    }());
+</script>
+<style>
+    #my-plan-tasks-section .fa-business-time {
+        display: none;
+    }
+
+    #my-plan-tasks-section .reset-button {
+        display: none;
+    }
+
+    #my-plan-tasks-section .due-date-container {
+        display: none;
+    }
+</style>
+<div id="my-plan-tasks-section">
+
+    <div class="sortable-list" style="padding-left:5px;">
         @foreach($items as $item)
-            <li class="tw-flex tw-items-center tw-gap-xs tw-py-xs"
-                style="border-bottom:1px solid var(--secondary-background);">
-
-                <span class="label label-{{ match($item['status']) {
-                    'completed'     => 'success',
-                    'in_progress'   => 'primary',
-                    'blocked'       => 'warning',
-                    'not_completed' => 'danger',
-                    default         => 'default'
-                } }} tw-text-xs" style="white-space:nowrap;">
-                    {{ __('weeklyplanning.status.'.$item['status']) }}
-                </span>
-
-                <span class="tw-flex-1 tw-text-sm {{ $item['status'] === 'completed' ? 'tw-line-through' : '' }}"
-                      style="{{ $item['status'] === 'completed' ? 'color:var(--grey);' : '' }}">
-                    @if(!empty($item['ticketId']))
-                        <a href="{{ BASE_URL }}/tickets/showTicket/{{ $item['ticketId'] }}" preload="mouseover">
-                            {{ $item['ticketHeadline'] ?? $item['expectedOutcome'] ?? '—' }}
-                        </a>
-                    @else
+        @if(!empty($item['ticketData']))
+        @php
+        $ticket = $item['ticketData'];
+        $groupKey = 'planTasks';
+        @endphp
+        @include('widgets::partials.todoItem', [
+        'ticket' => $ticket,
+        'statusLabels' => $statusLabels,
+        'onTheClock' => $onTheClock,
+        'tpl' => $tpl,
+        'level' => 0,
+        'groupKey' => $groupKey,
+        ])
+        @else
+        {{-- Free-text plan item (no linked ticket) --}}
+        @php
+        $isCompleted = ($item['status'] ?? '') === 'completed';
+        @endphp
+        <div class="ticketBox priority-border-"
+            style="{{ $isCompleted ? 'opacity:0.6;' : '' }}">
+            <div class="tw-flex tw-flex-row tw-items-center tw-gap-s tw-py-xs">
+                <div class="tw-flex-1 {{ $isCompleted ? 'tw-line-through' : '' }}"
+                    style="{{ $isCompleted ? 'color:var(--grey);' : '' }}">
+                    <span class="tw-text-sm tw-font-semibold">
                         {{ $item['expectedOutcome'] ?? '—' }}
-                    @endif
-                </span>
-
-            </li>
+                    </span>
+                </div>
+                <div style="min-width:140px;"
+                    hx-get="{{ BASE_URL }}/hx/weekly-planning/statusUpdate/get?itemId={{ (int) $item['id'] }}"
+                    hx-trigger="load"
+                    hx-swap="innerHTML">
+                </div>
+            </div>
+        </div>
+        @endif
         @endforeach
-    </ul>
+    </div>
 </div>
 @endif

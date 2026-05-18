@@ -5,6 +5,16 @@ foreach ($__data as $var => $val) {
 $currentMilestone = $tpl->get('milestone');
 $milestones = $tpl->get('milestones');
 $statusLabels = $tpl->get('statusLabels');
+$milestoneProgress = $tpl->get('milestoneProgress') ?? 0;
+$doneStatusId = $tpl->get('doneStatusId');
+$readyForReviewStatusId = $tpl->get('readyForReviewStatusId') ?? 5;
+$canCompleteMilestone = $tpl->get('canCompleteMilestone') ?? false;
+
+$milestoneStatus = (int) ($currentMilestone->status ?? 3);
+$isReadyForReview = $milestoneStatus === $readyForReviewStatusId;
+$isCompleted = $doneStatusId !== null && (string) $milestoneStatus === (string) $doneStatusId;
+$isInProgress = ! $isReadyForReview && ! $isCompleted;
+$allTasksDone = $milestoneProgress >= 100;
 ?>
 
 <script type="text/javascript">
@@ -65,6 +75,21 @@ $statusLabels = $tpl->get('statusLabels');
         <?php } ?>
     </select>
 
+    <?php if (isset($currentMilestone->id) && $currentMilestone->id != '') { ?>
+        <label><?= $tpl->__('subtitles.milestone_progress'); ?></label>
+        <div class="progress">
+            <div class="progress-bar progress-bar-success"
+                 role="progressbar"
+                 aria-valuenow="<?= (int) round($milestoneProgress); ?>"
+                 aria-valuemin="0"
+                 aria-valuemax="100"
+                 style="width: <?= (int) round($milestoneProgress); ?>%">
+                <span class="sr-only"><?= (int) round($milestoneProgress); ?>%</span>
+            </div>
+        </div>
+        <p><?= sprintf($tpl->__('text.percent_complete'), (int) round($milestoneProgress)); ?></p>
+    <?php } ?>
+
     <label><?= $tpl->__('label.dependent_on'); ?></label>
     <select name="dependentMilestone"  class="span11">
         <option value=""><?= $tpl->__('label.no_dependency'); ?></option>
@@ -108,14 +133,80 @@ $statusLabels = $tpl->get('statusLabels');
     <label><?= $tpl->__('label.planned_end_date'); ?></label>
     <input type="text" name="editTo" autocomplete="off" value="<?php echo format($currentMilestone->editTo)->date() ?>"  placeholder="<?= $tpl->__('language.dateformat'); ?>" id="milestoneEditTo" /><br />
 
+    <?php if (isset($currentMilestone->id) && $currentMilestone->id != '') { ?>
+
+        <!-- Milestone status badge -->
+        <div style="margin-bottom: 12px;">
+            <?php if ($isCompleted) { ?>
+                <span class="label label-success" style="font-size:var(--font-size-s); padding: 4px 10px;">
+                    <i class="fa fa-check-circle"></i> <?= $tpl->__('label.milestone_completed'); ?>
+                </span>
+            <?php } elseif ($isReadyForReview) { ?>
+                <span class="label label-info" style="font-size:var(--font-size-s); padding: 4px 10px;">
+                    <i class="fa fa-hourglass-half"></i> <?= $tpl->__('label.milestone_ready_for_review'); ?>
+                </span>
+            <?php } elseif ($allTasksDone) { ?>
+                <span class="label label-warning" style="font-size:var(--font-size-s); padding: 4px 10px;">
+                    <i class="fa fa-tasks"></i> <?= $tpl->__('label.milestone_all_tasks_done'); ?>
+                </span>
+            <?php } ?>
+        </div>
+
+    <?php } ?>
+
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="<?= $tpl->__('buttons.save'); ?>" class="btn btn-primary"/>
+            <?php if (! $isCompleted) { ?>
+                <input type="submit" value="<?= $tpl->__('buttons.save'); ?>" class="btn btn-primary"/>
+            <?php } ?>
         </div>
-        <div class="col-md-6 align-right padding-top-sm">
+        <div class="col-md-6 align-right padding-top-sm" style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+
+            <?php if (isset($currentMilestone->id) && $currentMilestone->id != '' && ! $isCompleted) { ?>
+
+                <?php if ($isReadyForReview && $canCompleteMilestone) { ?>
+                    <!-- Senior: Approve or Reject -->
+                    <button type="submit" name="markComplete" value="1" class="btn btn-success">
+                        <i class="fa fa-check"></i> <?= $tpl->__('buttons.approve_milestone'); ?>
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="document.getElementById('rejectPanel').style.display='block'; this.style.display='none';">
+                        <i class="fa fa-times"></i> <?= $tpl->__('buttons.reject_milestone'); ?>
+                    </button>
+
+                <?php } elseif ($isInProgress && ! $isReadyForReview) { ?>
+                    <?php if ($canCompleteMilestone) { ?>
+                        <!-- Senior can still force-complete or send for review -->
+                        <button type="submit" name="sendForReview" value="1" class="btn btn-default">
+                            <i class="fa fa-paper-plane"></i> <?= $tpl->__('buttons.send_for_review'); ?>
+                        </button>
+                        <button type="submit" name="markComplete" value="1" class="btn btn-success">
+                            <i class="fa fa-check"></i> <?= $tpl->__('buttons.mark_milestone_complete'); ?>
+                        </button>
+                    <?php } else { ?>
+                        <!-- Junior/Editor: can only send for review when all tasks done -->
+                        <?php if ($allTasksDone) { ?>
+                            <button type="submit" name="sendForReview" value="1" class="btn btn-primary">
+                                <i class="fa fa-paper-plane"></i> <?= $tpl->__('buttons.send_for_review'); ?>
+                            </button>
+                        <?php } ?>
+                    <?php } ?>
+                <?php } ?>
+
+            <?php } ?>
 
         </div>
     </div>
+
+    <!-- Rejection panel (hidden by default) -->
+    <?php if (isset($currentMilestone->id) && $currentMilestone->id != '' && $isReadyForReview && $canCompleteMilestone) { ?>
+        <div id="rejectPanel" style="display:none; margin-top:12px; padding:12px; background:var(--secondary-background); border-radius:var(--box-radius-small);">
+            <label><?= $tpl->__('label.rejection_note'); ?></label>
+            <textarea name="rejectionNote" rows="3" style="width:100%; margin-bottom:8px;" placeholder="<?= $tpl->__('input.placeholders.rejection_reason'); ?>"></textarea>
+            <button type="submit" name="rejectMilestone" value="1" class="btn btn-danger">
+                <i class="fa fa-times"></i> <?= $tpl->__('buttons.confirm_reject'); ?>
+            </button>
+        </div>
+    <?php } ?>
 
 </form>
 
@@ -147,4 +238,3 @@ $statusLabels = $tpl->get('statusLabels');
 
     })
 </script>
-

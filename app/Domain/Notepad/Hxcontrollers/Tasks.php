@@ -59,7 +59,7 @@ class Tasks extends HtmxController
         }
 
         $taskDate = (string) ($this->incomingRequest->request->get('taskDate') ?? date('Y-m-d'));
-        $content  = (string) ($this->incomingRequest->request->get('content') ?? '');
+        $content = (string) ($this->incomingRequest->request->get('content') ?? '');
 
         $this->service->addTask($taskDate, $content);
 
@@ -72,7 +72,7 @@ class Tasks extends HtmxController
             return;
         }
 
-        $id      = (int) ($this->incomingRequest->request->get('id') ?? 0);
+        $id = (int) ($this->incomingRequest->request->get('id') ?? 0);
         $content = (string) ($this->incomingRequest->request->get('content') ?? '');
 
         $this->service->updateTask($id, $content);
@@ -87,7 +87,7 @@ class Tasks extends HtmxController
             return;
         }
 
-        $id   = (int) ($this->incomingRequest->request->get('id') ?? 0);
+        $id = (int) ($this->incomingRequest->request->get('id') ?? 0);
         $done = (bool) ($this->incomingRequest->request->get('done') ?? false);
 
         $this->service->toggleTask($id, $done);
@@ -101,7 +101,7 @@ class Tasks extends HtmxController
             return;
         }
 
-        $id       = (int) ($this->incomingRequest->request->get('id') ?? 0);
+        $id = (int) ($this->incomingRequest->request->get('id') ?? 0);
         $taskDate = (string) ($this->incomingRequest->request->get('taskDate') ?? '');
 
         $this->service->deleteTask($id);
@@ -119,7 +119,7 @@ class Tasks extends HtmxController
     private function renderDaySection(string $taskDate): void
     {
         $tasksByDay = $this->service->getMyRecentTasks(7);
-        $tasks      = $tasksByDay[$taskDate] ?? [];
+        $tasks = $tasksByDay[$taskDate] ?? [];
 
         $this->tpl->assign('taskDate', $taskDate);
         $this->tpl->assign('tasks', $tasks);

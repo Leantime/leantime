@@ -78,12 +78,12 @@ class AdminHome extends Controller
                 foreach ($allTickets as $ticket) {
                     // Tickets model uses object properties
                     $dateToFinish = is_object($ticket) ? ($ticket->dateToFinish ?? '') : ($ticket['dateToFinish'] ?? '');
-                    $status       = is_object($ticket) ? ($ticket->status ?? 0)        : ($ticket['status'] ?? 0);
-                    $modified     = is_object($ticket) ? ($ticket->modified ?? '')      : ($ticket['modified'] ?? '');
-                    $date         = is_object($ticket) ? ($ticket->date ?? '')          : ($ticket['date'] ?? '');
-                    $headline     = is_object($ticket) ? ($ticket->headline ?? '')      : ($ticket['headline'] ?? '');
-                    $editorFirst  = is_object($ticket) ? ($ticket->editorFirstname ?? '') : ($ticket['editorFirstname'] ?? '');
-                    $editorLast   = is_object($ticket) ? ($ticket->editorLastname ?? '')  : ($ticket['editorLastname'] ?? '');
+                    $status = is_object($ticket) ? ($ticket->status ?? 0) : ($ticket['status'] ?? 0);
+                    $modified = is_object($ticket) ? ($ticket->modified ?? '') : ($ticket['modified'] ?? '');
+                    $date = is_object($ticket) ? ($ticket->date ?? '') : ($ticket['date'] ?? '');
+                    $headline = is_object($ticket) ? ($ticket->headline ?? '') : ($ticket['headline'] ?? '');
+                    $editorFirst = is_object($ticket) ? ($ticket->editorFirstname ?? '') : ($ticket['editorFirstname'] ?? '');
+                    $editorLast = is_object($ticket) ? ($ticket->editorLastname ?? '') : ($ticket['editorLastname'] ?? '');
 
                     // Overdue: has a due date, not done, past due
                     if (! empty($dateToFinish) && $dateToFinish !== '0000-00-00 00:00:00' && (int) $status < 3) {
@@ -104,10 +104,10 @@ class AdminHome extends Controller
                     $activityDate = $modified ?: $date;
                     if (! empty($activityDate)) {
                         $recentActivity[] = [
-                            'headline'        => $headline,
-                            'modified'        => $activityDate,
+                            'headline' => $headline,
+                            'modified' => $activityDate,
                             'editorFirstname' => $editorFirst,
-                            'editorLastname'  => $editorLast,
+                            'editorLastname' => $editorLast,
                         ];
                     }
                 }
@@ -128,9 +128,9 @@ class AdminHome extends Controller
                 $now = new \DateTime;
                 foreach ($milestones as $ms) {
                     // getAllMilestones also returns Tickets model objects
-                    $editTo   = is_object($ms) ? ($ms->editTo ?? '')   : ($ms['editTo'] ?? '');
-                    $msStatus = is_object($ms) ? ($ms->status ?? 0)    : ($ms['status'] ?? 0);
-                    $msTitle  = is_object($ms) ? ($ms->headline ?? '')  : ($ms['headline'] ?? '');
+                    $editTo = is_object($ms) ? ($ms->editTo ?? '') : ($ms['editTo'] ?? '');
+                    $msStatus = is_object($ms) ? ($ms->status ?? 0) : ($ms['status'] ?? 0);
+                    $msTitle = is_object($ms) ? ($ms->headline ?? '') : ($ms['headline'] ?? '');
 
                     if (! empty($editTo) && $editTo !== '0000-00-00 00:00:00' && (int) $msStatus < 3) {
                         try {
@@ -138,7 +138,7 @@ class AdminHome extends Controller
                             if ($msDate >= $now) {
                                 $upcomingMilestones[] = [
                                     'headline' => $msTitle,
-                                    'date'     => $editTo,
+                                    'date' => $editTo,
                                 ];
                             }
                         } catch (\Exception) {

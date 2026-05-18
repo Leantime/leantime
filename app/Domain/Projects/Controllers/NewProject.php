@@ -13,6 +13,7 @@ use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 class NewProject extends Controller
@@ -29,6 +30,8 @@ class NewProject extends Controller
 
     private ProjectService $projectService;
 
+    private TicketService $ticketService;
+
     /**
      * init - initialize private variables
      */
@@ -38,7 +41,8 @@ class NewProject extends Controller
         UserRepository $userRepo,
         ClientRepository $clientsRepo,
         QueueRepository $queueRepo,
-        ProjectService $projectService
+        ProjectService $projectService,
+        TicketService $ticketService
     ) {
         $this->projectRepo = $projectRepo;
         $this->menuRepo = $menuRepo;
@@ -46,6 +50,7 @@ class NewProject extends Controller
         $this->clientsRepo = $clientsRepo;
         $this->queueRepo = $queueRepo;
         $this->projectService = $projectService;
+        $this->ticketService = $ticketService;
     }
 
     /**
@@ -75,6 +80,9 @@ class NewProject extends Controller
             'psettings' => '',
             'start' => '',
             'end' => '',
+            'milestones' => [
+                ['headline' => '', 'editFrom' => '', 'editTo' => ''],
+            ],
         ];
 
         if (isset($_POST['save']) === true) {
@@ -107,16 +115,20 @@ class NewProject extends Controller
                 'parent' => $_POST['parent'] ?? '',
                 'start' => format(value: $_POST['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
                 'end' => $_POST['end'] ? format(value: $_POST['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime() : '',
+                'milestones' => $this->sanitizeMilestones($_POST['milestones'] ?? []),
             ];
 
             if ($values['name'] === '') {
                 $this->tpl->setNotification($this->language->__('notification.no_project_name'), 'error');
             } elseif ($values['clientId'] === '') {
                 $this->tpl->setNotification($this->language->__('notification.no_client'), 'error');
+            } elseif ($values['type'] === 'project' && count($values['milestones']) === 0) {
+                $this->tpl->setNotification($this->language->__('notifications.project_milestones_required'), 'error');
             } else {
                 $projectName = $values['name'];
                 $id = $this->projectRepo->addProject($values);
                 $this->projectService->changeCurrentSessionProject($id);
+                $this->createProjectMilestones($id, $values['milestones']);
 
                 $users = $this->projectRepo->getUsersAssignedToProject($id);
 
@@ -159,5 +171,44 @@ class NewProject extends Controller
         $this->tpl->assign('info', $msgKey);
 
         return $this->tpl->display('projects.newProject');
+    }
+
+    private function sanitizeMilestones(array $milestones): array
+    {
+        $cleanMilestones = [];
+
+        foreach ($milestones as $milestone) {
+            $headline = trim($milestone['headline'] ?? '');
+
+            if ($headline === '') {
+                continue;
+            }
+
+            $weight = (int) ($milestone['weight'] ?? 0);
+
+            $cleanMilestones[] = [
+                'headline' => $headline,
+                'editFrom' => trim($milestone['editFrom'] ?? ''),
+                'editTo' => trim($milestone['editTo'] ?? ''),
+                'weight' => $weight > 0 ? $weight : 0,
+            ];
+        }
+
+        return $cleanMilestones;
+    }
+
+    private function createProjectMilestones(int $projectId, array $milestones): void
+    {
+        foreach ($milestones as $milestone) {
+            $this->ticketService->quickAddMilestone([
+                'headline' => $milestone['headline'],
+                'projectId' => $projectId,
+                'editorId' => session('userdata.id'),
+                'userId' => session('userdata.id'),
+                'editFrom' => $milestone['editFrom'],
+                'editTo' => $milestone['editTo'],
+                'weight' => $milestone['weight'] ?? 0,
+            ]);
+        }
     }
 }

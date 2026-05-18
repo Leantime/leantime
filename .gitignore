@@ -5,7 +5,7 @@
 .DS_Store
 .vscode
 *.swp
-
+SECURITY-REVIEW.md
 config/_configuration.php
 config/configuration.php
 resources/logs/*

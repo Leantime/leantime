@@ -5,7 +5,11 @@ namespace Leantime\Domain\WeeklyPlanning\Services;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationsService;
+use Leantime\Domain\Oneonone\Services\Oneonone as OneononeService;
+use Leantime\Domain\Tickets\Repositories\Tickets as TicketsRepo;
 use Leantime\Domain\WeeklyPlanning\Models\WeeklyPlan;
 use Leantime\Domain\WeeklyPlanning\Models\WeeklyPlanCommitment;
 use Leantime\Domain\WeeklyPlanning\Models\WeeklyPlanFeedback;
@@ -21,10 +25,10 @@ class WeeklyPlanning
 
     /** Valid item statuses. */
     public array $itemStatuses = [
-        'not_started'   => 'weeklyplanning.status.not_started',
-        'in_progress'   => 'weeklyplanning.status.in_progress',
-        'blocked'       => 'weeklyplanning.status.blocked',
-        'completed'     => 'weeklyplanning.status.completed',
+        'not_started' => 'weeklyplanning.status.not_started',
+        'in_progress' => 'weeklyplanning.status.in_progress',
+        'blocked' => 'weeklyplanning.status.blocked',
+        'completed' => 'weeklyplanning.status.completed',
         'not_completed' => 'weeklyplanning.status.not_completed',
     ];
 
@@ -33,15 +37,17 @@ class WeeklyPlanning
 
     /** 4-direction feedback types. */
     public array $feedbackTypes = [
-        'manager_to_employee_working'  => 'weeklyplanning.feedback.manager_to_employee_working',
-        'manager_to_employee_improve'  => 'weeklyplanning.feedback.manager_to_employee_improve',
-        'employee_to_manager_helping'  => 'weeklyplanning.feedback.employee_to_manager_helping',
-        'employee_to_manager_improve'  => 'weeklyplanning.feedback.employee_to_manager_improve',
+        'manager_to_employee_working' => 'weeklyplanning.feedback.manager_to_employee_working',
+        'manager_to_employee_improve' => 'weeklyplanning.feedback.manager_to_employee_improve',
+        'employee_to_manager_helping' => 'weeklyplanning.feedback.employee_to_manager_helping',
+        'employee_to_manager_improve' => 'weeklyplanning.feedback.employee_to_manager_improve',
     ];
 
     public function __construct(
         private WeeklyPlanningRepo $repo,
         private NotificationsService $notificationsService,
+        private OneononeService $oneononeService,
+        private TicketsRepo $ticketsRepo,
     ) {}
 
     // -------------------------------------------------------------------------
@@ -70,6 +76,7 @@ class WeeklyPlanning
      * Get all plans for an employee (history), newest first.
      *
      * @api
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getPlansForEmployee(int $employeeId): array
@@ -92,29 +99,30 @@ class WeeklyPlanning
     public function getMonthWeekSlots(int $employeeId, int $year, int $month): array
     {
         $monthStart = CarbonImmutable::create($year, $month, 1)->startOfDay();
-        $monthEnd   = $monthStart->endOfMonth()->endOfDay();
+        $monthEnd = $monthStart->endOfMonth()->endOfDay();
 
         // Always start on Monday so slots align with how plans store weekStart (Monday).
-        $slots     = [];
+        $slots = [];
         $weekStart = $monthStart->startOfWeek(\Carbon\Carbon::MONDAY);
 
         while ($weekStart->lte($monthEnd)) {
             $weekEnd = $weekStart->endOfWeek(\Carbon\Carbon::SUNDAY);
             $slots[] = [
-                'weekNum'   => (int) $weekStart->format('W'),
+                'weekNum' => (int) $weekStart->format('W'),
                 'weekStart' => $weekStart->toDateString(),
-                'weekEnd'   => $weekEnd->toDateString(),
-                'plan'      => null,
-                'items'     => [],
+                'weekEnd' => $weekEnd->toDateString(),
+                'plan' => null,
+                'items' => [],
             ];
             $weekStart = $weekStart->addWeek();
         }
 
         // Fetch all plans for the employee in this month and match to slots.
-        $allPlans   = $this->repo->getPlansForEmployee($employeeId);
+        $allPlans = $this->repo->getPlansForEmployee($employeeId);
         $monthPlans = array_filter($allPlans, function (array $p) use ($monthStart, $monthEnd) {
             $ws = CarbonImmutable::parse($p['weekStart']);
             $we = CarbonImmutable::parse($p['weekEnd']);
+
             return $ws->between($monthStart, $monthEnd) || $we->between($monthStart, $monthEnd);
         });
 
@@ -122,14 +130,14 @@ class WeeklyPlanning
             $planStart = CarbonImmutable::parse($plan['weekStart']);
             foreach ($slots as &$slot) {
                 $slotStart = CarbonImmutable::parse($slot['weekStart']);
-                $slotEnd   = CarbonImmutable::parse($slot['weekEnd']);
+                $slotEnd = CarbonImmutable::parse($slot['weekEnd']);
                 // Match: plan's weekStart falls anywhere within the slot's Mon–Sun range.
                 if ($planStart->between($slotStart, $slotEnd)) {
                     // Prefer TL-assigned plans over self-created ones.
-                    $existingHasTL = !empty($slot['plan']['teamLeadId']);
-                    $newHasTL      = !empty($plan['teamLeadId']);
-                    if ($slot['plan'] === null || ($newHasTL && !$existingHasTL)) {
-                        $slot['plan']  = $plan;
+                    $existingHasTL = ! empty($slot['plan']['teamLeadId']);
+                    $newHasTL = ! empty($plan['teamLeadId']);
+                    if ($slot['plan'] === null || ($newHasTL && ! $existingHasTL)) {
+                        $slot['plan'] = $plan;
                         $slot['items'] = $this->repo->getItemsForPlan((int) $plan['id']);
                     }
                     break;
@@ -145,6 +153,7 @@ class WeeklyPlanning
      * Get all plans for a team lead, optionally filtered by month label.
      *
      * @api
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getPlansForTeamLead(int $teamLeadId, ?string $month = null): array
@@ -156,6 +165,7 @@ class WeeklyPlanning
      * Distinct months that have at least one plan for this team lead.
      *
      * @api
+     *
      * @return array<int, string>
      */
     public function getMonthsForTeamLead(int $teamLeadId): array
@@ -168,24 +178,44 @@ class WeeklyPlanning
      * weekStart must be a Monday; weekEnd is computed as the following Friday.
      *
      * @api
-     * @param array<string, mixed> $params
+     *
+     * @param  array<string, mixed>  $params
      */
     public function createPlan(array $params): int|false
     {
         try {
-            $plan = new WeeklyPlan();
-            $plan->employeeId     = (int) ($params['employeeId'] ?? 0);
-            $plan->teamLeadId     = (int) ($params['teamLeadId'] ?? session('userdata.id'));
-            $plan->weekStart      = $params['weekStart'] ?? now()->startOfWeek()->toDateString();
-            $plan->weekEnd        = $params['weekEnd'] ?? now()->endOfWeek()->toDateString();
-            $plan->month          = $params['month'] ?? now()->format('M y');
-            $plan->weekLabel      = $params['weekLabel'] ?? $this->generateWeekLabel($plan->weekStart);
+            $plan = new WeeklyPlan;
+            $plan->employeeId = (int) ($params['employeeId'] ?? 0);
+            $plan->teamLeadId = (int) ($params['teamLeadId'] ?? session('userdata.id'));
+            $plan->weekStart = $params['weekStart'] ?? now()->startOfWeek()->toDateString();
+            $plan->weekEnd = $params['weekEnd'] ?? now()->endOfWeek()->toDateString();
+            $plan->month = $params['month'] ?? now()->format('M y');
+            $plan->weekLabel = $params['weekLabel'] ?? $this->generateWeekLabel($plan->weekStart);
             $plan->dateOfOneOnOne = $params['dateOfOneOnOne'] ?? null;
-            $plan->status         = 'active';
+            $plan->status = 'active';
 
-            return $this->repo->createPlan($plan);
+            $planId = $this->repo->createPlan($plan);
+
+            // When a 1:1 date is set on the plan, automatically create a real
+            // 1:1 session record so it appears on both the TL's and employee's
+            // "1:1 Sessions" pages. The datetime is stored as noon UTC on that day
+            // to avoid timezone edge cases with a date-only value.
+            if ($planId && ! empty($plan->dateOfOneOnOne)) {
+                try {
+                    $this->oneononeService->scheduleSession([
+                        'employeeId' => $plan->employeeId,
+                        'meetingDate' => $plan->dateOfOneOnOne.'T12:00:00Z',
+                        'title' => 'Weekly 1:1 — '.$plan->weekLabel,
+                    ]);
+                } catch (\Throwable $e) {
+                    // Non-fatal: plan was saved; log but don't fail the whole request.
+                    Log::error('WeeklyPlanning::createPlan — could not auto-create 1:1 session: '.$e->getMessage());
+                }
+            }
+
+            return $planId;
         } catch (\Throwable $e) {
-            Log::error('WeeklyPlanning::createPlan — ' . $e->getMessage());
+            Log::error('WeeklyPlanning::createPlan — '.$e->getMessage());
 
             return false;
         }
@@ -195,7 +225,8 @@ class WeeklyPlanning
      * Update text sections of a plan (called when employee or TL saves their sections).
      *
      * @api
-     * @param array<string, mixed> $data
+     *
+     * @param  array<string, mixed>  $data
      */
     public function updatePlan(int $id, array $data): bool
     {
@@ -214,7 +245,57 @@ class WeeklyPlanning
             'dateOfOneOnOne',
         ];
 
-        return $this->repo->updatePlan($id, array_intersect_key($data, array_flip($allowed)));
+        // Snapshot the current date before the update to detect when it actually changes.
+        $currentPlan = $this->repo->getPlanById($id);
+        $oldDate = $currentPlan['dateOfOneOnOne'] ?? null;
+
+        $result = $this->repo->updatePlan($id, array_intersect_key($data, array_flip($allowed)));
+
+        // Only schedule a new 1:1 session when the date is first set or explicitly changed.
+        $newDate = $data['dateOfOneOnOne'] ?? null;
+        if ($result && ! empty($newDate) && $newDate !== $oldDate && $currentPlan) {
+            try {
+                $this->oneononeService->scheduleSession([
+                    'employeeId' => (int) ($currentPlan['employeeId'] ?? 0),
+                    'meetingDate' => $newDate.'T12:00:00Z',
+                    'title' => 'Weekly 1:1 — '.($currentPlan['weekLabel'] ?? ''),
+                ]);
+            } catch (\Throwable $e) {
+                Log::error('WeeklyPlanning::updatePlan — could not auto-create 1:1 session: '.$e->getMessage());
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Delete a plan. Only the team lead who created it or an admin may delete.
+     *
+     * @api
+     */
+    public function deletePlan(int $id): bool
+    {
+        $plan = $this->repo->getPlanById($id);
+        if (! $plan) {
+            return false;
+        }
+
+        $userId = (int) (session('userdata.id') ?? 0);
+
+        $isOwner = (int) ($plan['teamLeadId'] ?? 0) === $userId;
+        $isAdmin = \Leantime\Domain\Auth\Services\Auth::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin);
+
+        if (! $isOwner && ! $isAdmin) {
+            return false;
+        }
+
+        try {
+            return $this->repo->deletePlan($id);
+        } catch (\Throwable $e) {
+            Log::error('WeeklyPlanning::deletePlan — '.$e->getMessage());
+
+            return false;
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -222,16 +303,88 @@ class WeeklyPlanning
     // -------------------------------------------------------------------------
 
     /**
+     * Get items for a plan and auto-sync item status from the linked ticket's current status.
+     * If the ticket has been marked DONE in Leantime, the plan item is automatically set to
+     * 'completed'. This keeps the weekly plan in sync without requiring manual double-entry.
+     *
      * @api
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getItemsForPlan(int $planId): array
     {
-        return $this->repo->getItemsForPlan($planId);
+        $items = $this->repo->getItemsForPlan($planId);
+
+        // Build a map of projectId -> status labels (cached per project within this call)
+        $labelCache = [];
+
+        foreach ($items as &$item) {
+            $ticketId = isset($item['ticketId']) ? (int) $item['ticketId'] : 0;
+            $ticketProjectId = isset($item['ticketProjectId']) ? (int) $item['ticketProjectId'] : 0;
+            $ticketStatus = $item['ticketStatus'] ?? null;
+            $currentStatus = $item['status'] ?? 'not_started';
+
+            if (! $ticketId || $ticketProjectId === 0 || $ticketStatus === null) {
+                continue;
+            }
+
+            if (! isset($labelCache[$ticketProjectId])) {
+                $labelCache[$ticketProjectId] = $this->ticketsRepo->getStateLabels($ticketProjectId);
+            }
+
+            $labels = $labelCache[$ticketProjectId];
+            $statusType = $labels[$ticketStatus]['statusType'] ?? null;
+            $isDone = $statusType === 'DONE';
+            $isInProgress = $statusType === 'INPROGRESS';
+
+            // Sync DONE: ticket done but item not yet marked completed
+            if ($isDone && $currentStatus !== 'completed') {
+                $this->repo->updateItem((int) $item['id'], ['status' => 'completed']);
+                $item['status'] = 'completed';
+            }
+
+            // Sync re-opened: ticket back to in-progress but item was completed
+            if ($isInProgress && $currentStatus === 'completed') {
+                $this->repo->updateItem((int) $item['id'], ['status' => 'in_progress']);
+                $item['status'] = 'in_progress';
+            }
+        }
+        unset($item);
+
+        return $items;
+    }
+
+    /**
+     * Get all ticket IDs linked to the current week's plan for a given employee.
+     * Returns an empty array if there is no current plan or no linked tickets.
+     *
+     * @api
+     *
+     * @return int[]
+     */
+    public function getCurrentPlanTicketIds(int $employeeId): array
+    {
+        $currentUserId = (int) (session('userdata.id') ?? 0);
+        if ($employeeId !== $currentUserId && ! Auth::userIsAtLeast(Roles::$teamlead)) {
+            return [];
+        }
+
+        $plan = $this->repo->getCurrentPlanForEmployee($employeeId);
+        if (! $plan) {
+            return [];
+        }
+
+        $items = $this->repo->getItemsForPlan((int) $plan['id']);
+
+        return array_values(array_filter(array_map(
+            fn (array $item) => isset($item['ticketId']) ? (int) $item['ticketId'] : null,
+            $items
+        )));
     }
 
     /**
      * @api
+     *
      * @return array<string, mixed>|null
      */
     public function getItemById(int $itemId): ?array
@@ -247,15 +400,15 @@ class WeeklyPlanning
     public function addItem(int $planId, ?int $ticketId, ?string $expectedOutcome = null): int|false
     {
         try {
-            $item                  = new WeeklyPlanItem();
-            $item->weeklyPlanId    = $planId;
-            $item->ticketId        = $ticketId;
+            $item = new WeeklyPlanItem;
+            $item->weeklyPlanId = $planId;
+            $item->ticketId = $ticketId;
             $item->expectedOutcome = $expectedOutcome;
-            $item->priority        = $this->nextPriority($planId);
+            $item->priority = $this->nextPriority($planId);
 
             return $this->repo->addItem($item);
         } catch (\Throwable $e) {
-            Log::error('WeeklyPlanning::addItem — ' . $e->getMessage());
+            Log::error('WeeklyPlanning::addItem — '.$e->getMessage());
 
             return false;
         }
@@ -267,8 +420,9 @@ class WeeklyPlanning
      * statuses require a completionReason. Team Leads and above bypass this check.
      *
      * @api
-     * @param array<string, mixed> $data         Keys: status, completionReason, supportNeeded, newDueDate
-     * @param bool                 $enforceReason Pass false to skip the reason requirement (Team Lead+)
+     *
+     * @param  array<string, mixed>  $data  Keys: status, completionReason, supportNeeded, newDueDate
+     * @param  bool  $enforceReason  Pass false to skip the reason requirement (Team Lead+)
      */
     public function updateItemStatus(int $itemId, array $data, bool $enforceReason = true): bool|string
     {
@@ -299,6 +453,7 @@ class WeeklyPlanning
 
     /**
      * @api
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getFeedbackForPlan(int $planId): array
@@ -317,12 +472,12 @@ class WeeklyPlanning
             return false;
         }
 
-        $feedback               = new WeeklyPlanFeedback();
+        $feedback = new WeeklyPlanFeedback;
         $feedback->weeklyPlanId = $planId;
-        $feedback->fromUserId   = $fromUserId;
-        $feedback->toUserId     = $toUserId;
-        $feedback->type         = $type;
-        $feedback->message      = $message;
+        $feedback->fromUserId = $fromUserId;
+        $feedback->toUserId = $toUserId;
+        $feedback->type = $type;
+        $feedback->message = $message;
 
         return $this->repo->saveFeedback($feedback);
     }
@@ -333,6 +488,7 @@ class WeeklyPlanning
 
     /**
      * @api
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getCommitmentsForPlan(int $planId): array
@@ -346,15 +502,15 @@ class WeeklyPlanning
     public function addCommitment(int $planId, string $task, int $ownerId, string $deadline): int|false
     {
         try {
-            $c               = new WeeklyPlanCommitment();
+            $c = new WeeklyPlanCommitment;
             $c->weeklyPlanId = $planId;
-            $c->task         = $task;
-            $c->ownerId      = $ownerId;
-            $c->deadline     = $deadline;
+            $c->task = $task;
+            $c->ownerId = $ownerId;
+            $c->deadline = $deadline;
 
             return $this->repo->addCommitment($c);
         } catch (\Throwable $e) {
-            Log::error('WeeklyPlanning::addCommitment — ' . $e->getMessage());
+            Log::error('WeeklyPlanning::addCommitment — '.$e->getMessage());
 
             return false;
         }
@@ -376,6 +532,7 @@ class WeeklyPlanning
      * Get a single commitment by ID.
      *
      * @api
+     *
      * @return array<string, mixed>|null
      */
     public function getCommitmentById(int $id): ?array
@@ -387,6 +544,7 @@ class WeeklyPlanning
      * Get direct reports for a team lead (no plan summary).
      *
      * @api
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getTeamMembers(int $teamLeadId): array
@@ -398,12 +556,13 @@ class WeeklyPlanning
      * Get direct reports for a team lead with their current-week plan summary.
      *
      * @api
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getTeamDashboard(int $teamLeadId, ?string $month = null): array
     {
         $members = $this->repo->getTeamMembers($teamLeadId);
-        $plans   = $this->getPlansForTeamLead($teamLeadId, $month);
+        $plans = $this->getPlansForTeamLead($teamLeadId, $month);
 
         // Index plans by employeeId for quick lookup
         $plansByEmployee = [];
@@ -412,9 +571,16 @@ class WeeklyPlanning
         }
 
         foreach ($members as &$member) {
-            $memberPlans           = $plansByEmployee[$member['id']] ?? [];
-            $member['plans']       = $memberPlans;
-            $member['planCount']   = count($memberPlans);
+            $memberPlans = $plansByEmployee[$member['id']] ?? [];
+
+            // Attach items to each plan (triggers ticket-status sync via getItemsForPlan)
+            foreach ($memberPlans as &$plan) {
+                $plan['_items'] = $this->getItemsForPlan((int) $plan['id']);
+            }
+            unset($plan);
+
+            $member['plans'] = $memberPlans;
+            $member['planCount'] = count($memberPlans);
             $member['currentPlan'] = $this->repo->getCurrentPlanForEmployee($member['id']);
         }
 
@@ -425,6 +591,7 @@ class WeeklyPlanning
      * All blocked / not_completed items across a team lead's reports.
      *
      * @api
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getBlockedItemsForTeamLead(int $teamLeadId): array
@@ -436,6 +603,7 @@ class WeeklyPlanning
      * All commitments across a team lead's reports.
      *
      * @api
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getCommitmentsForTeamLead(int $teamLeadId, bool $openOnly = false): array
@@ -461,9 +629,9 @@ class WeeklyPlanning
         }
 
         $nextWeekStart = \Carbon\Carbon::parse($sourcePlan['weekStart'])->addWeek()->toDateString();
-        $nextWeekEnd   = \Carbon\Carbon::parse($sourcePlan['weekEnd'])->addWeek()->toDateString();
+        $nextWeekEnd = \Carbon\Carbon::parse($sourcePlan['weekEnd'])->addWeek()->toDateString();
 
-        $candidates   = $this->repo->getPlansForEmployee((int) $sourcePlan['employeeId']);
+        $candidates = $this->repo->getPlansForEmployee((int) $sourcePlan['employeeId']);
         $targetPlanId = null;
         foreach ($candidates as $c) {
             if ($c['weekStart'] === $nextWeekStart && $c['weekEnd'] === $nextWeekEnd) {
@@ -492,24 +660,24 @@ class WeeklyPlanning
         }
 
         // Notify the developer (plan owner) that their tasks were carried over.
-        $actorId   = (int) session('userdata.id');
+        $actorId = (int) session('userdata.id');
         $actorName = session('userdata.name') ?? '';
         $employeeId = (int) $sourcePlan['employeeId'];
 
         if ($employeeId && $employeeId !== $actorId) {
             $this->notificationsService->addNotifications([
                 [
-                    'userId'   => $employeeId,
-                    'type'     => 'info',
-                    'module'   => 'weeklyplanning',
+                    'userId' => $employeeId,
+                    'type' => 'info',
+                    'module' => 'weeklyplanning',
                     'moduleId' => $targetPlanId,
-                    'message'  => sprintf(
+                    'message' => sprintf(
                         __('weeklyplanning.text.carry_over_notification'),
                         $actorName,
                         $nextWeekStart
                     ),
                     'datetime' => CarbonImmutable::now()->toDateTimeString(),
-                    'url'      => '/weekly-planning/myPlan',
+                    'url' => '/weekly-planning/myPlan',
                     'authorId' => $actorId,
                 ],
             ]);
@@ -528,9 +696,9 @@ class WeeklyPlanning
     private function generateWeekLabel(string $weekStart): string
     {
         $weekOfMonth = (int) date('W', strtotime($weekStart)) - (int) date('W', strtotime(date('Y-m-01', strtotime($weekStart)))) + 1;
-        $suffixes    = ['', '1st', '2nd', '3rd', '4th', '5th'];
+        $suffixes = ['', '1st', '2nd', '3rd', '4th', '5th'];
 
-        return ($suffixes[$weekOfMonth] ?? $weekOfMonth . 'th') . ' Week';
+        return ($suffixes[$weekOfMonth] ?? $weekOfMonth.'th').' Week';
     }
 
     /**

@@ -24,7 +24,7 @@ class ShowDashboard extends Controller
         // Only commenter (client) role can access; admins/owners can preview.
         $role = session('userdata.role');
         if ($role !== Roles::$commenter && ! Auth::userIsAtLeast(Roles::$admin, true)) {
-            FrontcontrollerCore::redirect(BASE_URL . '/dashboard/home');
+            FrontcontrollerCore::redirect(BASE_URL.'/dashboard/home');
         }
 
         $this->portalService = $portalService;
@@ -35,7 +35,7 @@ class ShowDashboard extends Controller
      */
     public function get(array $params): Response
     {
-        $userId   = (int) session('userdata.id');
+        $userId = (int) session('userdata.id');
         $projects = $this->portalService->getProjectsForClient($userId);
 
         $this->tpl->assign('projects', $projects);
