@@ -342,6 +342,13 @@ class Tickets
             session(['currentSprint' => $searchCriteria['sprint']]);
         }
 
+        // Developers (editor role) may only see tickets where they are the assignee or a collaborator.
+        // Force-overrides any caller-supplied 'users' filter so the scope cannot be widened from the UI.
+        // The repository's `users` filter already matches editorId OR collaborator entity relationship.
+        if (Auth::userHasRole(Roles::$editor, true) && ! Auth::userIsAtLeast(Roles::$teamlead, true)) {
+            $searchCriteria['users'] = (string) (session('userdata.id') ?? '');
+        }
+
         return $searchCriteria;
     }
 
@@ -1133,6 +1140,21 @@ class Tickets
 
         // Check if user is allowed to see ticket
         if ($ticket && $this->projectService->isUserAssignedToProject(session('userdata.id'), $ticket->projectId)) {
+
+            // Developers (editor role) can only see tickets they are the assignee, creator, or a collaborator on.
+            // TL+ and admin retain full visibility.
+            if (Auth::userHasRole(Roles::$editor, true) && ! Auth::userIsAtLeast(Roles::$teamlead, true)) {
+                $currentUserId = (int) session('userdata.id');
+                $isAssignee = (int) ($ticket->editorId ?? 0) === $currentUserId;
+                $isCreator = (int) ($ticket->userId ?? 0) === $currentUserId;
+                $collaboratorIds = array_map('intval', $ticket->collaborators ?? []);
+                $isCollaborator = in_array($currentUserId, $collaboratorIds, true);
+
+                if (! ($isAssignee || $isCreator || $isCollaborator)) {
+                    return false;
+                }
+            }
+
             return $ticket;
         }
 

@@ -1,6 +1,10 @@
 .metadata
 .project
-
+Calendar_text.txt
+FAB_text.txt
+NewTask_text.txt
+Home_text.txt
+Projects_text.txt
 .settings
 .DS_Store
 .vscode

@@ -209,13 +209,26 @@ $allTickets = $group['items'];
                                         <?php if ($row['status'] == $key) {?>
                                         <div class="ticketBox moveable container priority-border-<?= $row['priority']?>" id="ticket_<?php echo $row['id']; ?>">
 
-                                            <div class="kanbanCardContent" style="margin-bottom:8px;">
+                                            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                                <?php echo app('blade.compiler')::render('@include("tickets::partials.ticketsubmenu", ["ticket" => $ticket, "onTheClock" => $onTheClock])', ['ticket' => $row, 'onTheClock' => $tpl->get('onTheClock') ?? false]); ?>
+                                            <?php } ?>
+
+                                            <div class="kanbanCardContent" style="margin-bottom:8px; padding-right:20px;">
                                                 <a href="#/tickets/showTicket/<?php echo $row['id']; ?>"
                                                     preload="mouseover"
                                                     style="font-weight:600; font-size:var(--base-font-size); color:var(--primary-font-color); text-decoration:none; display:block; line-height:1.4;">
                                                     <?php $tpl->e($row['headline']); ?>
                                                 </a>
                                             </div>
+
+                                            <?php if (! empty($row['editorId']) && (int) $row['editorId'] > 0) { ?>
+                                                <div style="display:flex; align-items:center; gap:6px; margin-top:6px; font-size:var(--font-size-xs); color:var(--primary-font-color); opacity:.85;">
+                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= (int) $row['editorId'] ?>"
+                                                         alt=""
+                                                         style="width:18px; height:18px; border-radius:50%; object-fit:cover; flex-shrink:0;" />
+                                                    <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?php $tpl->e($row['editorFirstname'] ?? ''); ?></span>
+                                                </div>
+                                            <?php } ?>
 
                                             <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:6px;">
                                                 <?php if ($row['dateToFinish'] != '0000-00-00 00:00:00' && $row['dateToFinish'] != '1969-12-31 00:00:00') { ?>

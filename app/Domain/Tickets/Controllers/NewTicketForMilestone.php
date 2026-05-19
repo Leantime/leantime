@@ -48,7 +48,7 @@ class NewTicketForMilestone extends Controller
         TimesheetService $timesheetService,
         UserService $userService
     ): void {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead, Roles::$editor]);
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$teamlead]);
 
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;

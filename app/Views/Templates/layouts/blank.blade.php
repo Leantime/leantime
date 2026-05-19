@@ -1,5 +1,5 @@
-@isset($action, $module)
+@if(isset($action) && isset($module))
     @include("$module::$action")
 @else
     @yield('content')
-@endisset
+@endif

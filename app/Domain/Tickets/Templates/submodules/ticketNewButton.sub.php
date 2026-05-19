@@ -1,7 +1,7 @@
 <?php
 
 $newField = $tpl->get('newField');
-if ($login::userIsAtLeast($roles::$editor) && ! empty($newField)) { ?>
+if ($login::userIsAtLeast($roles::$teamlead) && ! empty($newField)) { ?>
     <div class="btn-group">
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?= $tpl->__('links.new_with_icon') ?> <span class="caret"></span></button>
         <ul class="dropdown-menu">

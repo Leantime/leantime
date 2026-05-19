@@ -67,7 +67,16 @@ class ShowTicket extends Controller
         $ticket = $this->ticketService->getTicket($id);
 
         if ($ticket === false) {
-            return $this->tpl->display('errors.error500', responseCode: 500);
+            // Distinguish "no access" (403) from "doesn't exist" (404). getTicket returns false for both cases;
+            // a raw repository lookup tells us whether the ticket exists, so a Developer hitting another dev's
+            // ticket via URL gets a clean 403 instead of a misleading 404 / 500.
+            $rawExists = app(\Leantime\Domain\Tickets\Repositories\Tickets::class)->getTicket($id) !== false;
+
+            if ($rawExists) {
+                return $this->tpl->display('errors.error403', responseCode: 403);
+            }
+
+            return $this->tpl->display('errors.error404', responseCode: 404);
         }
 
         // Ensure this ticket belongs to the current project

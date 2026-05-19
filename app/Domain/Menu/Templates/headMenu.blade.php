@@ -60,11 +60,13 @@ $adminRouteTitles = [
         </a>
         <ul class="dropdown-menu pull-right">
             <li class="nav-header">{{ __('menu.quick_add_header') }}</li>
+            @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$teamlead, true))
             <li>
                 <a href="#/tickets/newTicket">
                     <i class="fa fa-fw fa-thumb-tack"></i> {{ __('menu.quick_add_task') }}
                 </a>
             </li>
+            @endif
             <li>
                 <a href="{{ BASE_URL }}/wiki/show">
                     <i class="fa fa-fw fa-sticky-note"></i> {{ __('menu.quick_add_note') }}

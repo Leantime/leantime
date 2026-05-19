@@ -76,10 +76,30 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.editor'); ?></label>
                     <div class="">
 
+                        <?php
+                        $editorUsers = $tpl->get('users') ?: [];
+                        $assignedEditorInList = false;
+                        if (! empty($ticket->editorId)) {
+                            foreach ($editorUsers as $u) {
+                                if ((int) $u['id'] === (int) $ticket->editorId) {
+                                    $assignedEditorInList = true;
+                                    break;
+                                }
+                            }
+                        }
+                        ?>
                         <select data-placeholder="<?php echo $tpl->__('label.filter_by_user'); ?>" style="width:175px;"
                             name="editorId" id="editorId-select" class="user-select tw-mr-sm">
                             <option value=""><?php echo $tpl->__('label.not_assigned_to_user'); ?></option>
-                            <?php foreach ($tpl->get('users') as $userRow) { ?>
+                            <?php if (! empty($ticket->editorId) && ! $assignedEditorInList) {
+                                $assignedName = trim(($ticket->editorFirstname ?? '').' '.($ticket->editorLastname ?? ''));
+                                if ($assignedName === '') {
+                                    $assignedName = '#'.$ticket->editorId;
+                                }
+                                echo "<option value='".$tpl->escape($ticket->editorId)."' selected='selected'>"
+                                    .$tpl->escape($assignedName).' (not on project)</option>';
+                            } ?>
+                            <?php foreach ($editorUsers as $userRow) { ?>
                                 <?php echo "<option value='".$userRow['id']."'";
 
                                 if ($ticket->editorId == $userRow['id']) {
@@ -389,6 +409,16 @@ $ticketTypes = $tpl->get('ticketTypes');
         function loadUsersForProject(projectId) {
             var $editor = jQuery('#editorId-select');
             var $collabs = jQuery('#collaborators-select');
+
+            // Preserve current selections so a project re-fetch doesn't wipe the assignee.
+            var preservedEditorId = String($editor.val() || '');
+            var preservedEditorName = '';
+            var preservedEditorOpt = $editor.find('option[value="' + preservedEditorId + '"]').first();
+            if (preservedEditorOpt.length) {
+                preservedEditorName = preservedEditorOpt.text();
+            }
+            var preservedCollabs = ($collabs.val() || []).map(String);
+
             [$editor, $collabs].forEach(function ($s) { $s.prop('disabled', true); });
 
             fetch(baseUrl + '/hx/tickets/milestones/usersByProject?projectId=' + encodeURIComponent(projectId), {
@@ -397,15 +427,29 @@ $ticketTypes = $tpl->get('ticketTypes');
             })
             .then(function (r) { return r.json(); })
             .then(function (users) {
-                // Build editor options
                 var editorOpts = '<option value=""><?= $tpl->__('label.not_assigned_to_user') ?></option>';
-                // Build collaborator options
                 var collabOpts = '';
+                var preservedEditorInList = false;
+
                 users.forEach(function (u) {
                     var escaped = jQuery('<span>').text(u.name).html();
-                    editorOpts += '<option value="' + u.id + '">' + escaped + '</option>';
-                    collabOpts += '<option value="' + u.id + '">' + escaped + '</option>';
+                    var isEditor = (String(u.id) === preservedEditorId);
+                    if (isEditor) { preservedEditorInList = true; }
+                    editorOpts += '<option value="' + u.id + '"' + (isEditor ? ' selected="selected"' : '') + '>' + escaped + '</option>';
+
+                    var isCollab = preservedCollabs.indexOf(String(u.id)) !== -1;
+                    collabOpts += '<option value="' + u.id + '"' + (isCollab ? ' selected="selected"' : '') + '>' + escaped + '</option>';
                 });
+
+                // If the saved editor isn't a member of this project, keep them as a synthetic option so the assignment is honoured.
+                if (preservedEditorId && !preservedEditorInList) {
+                    var name = preservedEditorName || ('#' + preservedEditorId);
+                    var escaped = jQuery('<span>').text(name + ' (not on project)').html();
+                    editorOpts = '<option value=""><?= $tpl->__('label.not_assigned_to_user') ?></option>' +
+                                 '<option value="' + preservedEditorId + '" selected="selected">' + escaped + '</option>' +
+                                 editorOpts.replace('<option value=""><?= $tpl->__('label.not_assigned_to_user') ?></option>', '');
+                }
+
                 $editor.html(editorOpts).prop('disabled', false);
                 $collabs.html(collabOpts).prop('disabled', false);
                 reloadChosen($editor);

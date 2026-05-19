@@ -12,7 +12,7 @@
                   </div>
         <div class="col-md-6">
             <div class='svgContainer' style="width:300px; margin-top:60px;">
-                {!! file_get_contents(ROOT . "/dist/images/svg/undraw_children_re_c37f.svg"); !!}
+                {!! file_get_contents(ROOT . "/dist/images/svg/undraw_children_re_c37f.svg") !!}
             </div>
         </div>
     </div>
