@@ -40,6 +40,44 @@ return $count;
 
     <div class="clear" style="position:absolute; top:10px; right:35px;">
 
+        {{-- View toggle: List | Kanban | Calendar | Recently Updated --}}
+        <div class="btn-group left" style="margin-right:4px;">
+            <button class="btn btn-link btn-round-icon active"
+                title="{{ __('buttons.list_view') }}"
+                style="color:var(--accent1);"
+                aria-label="{{ __('buttons.list_view') }}">
+                <span class="fa-solid fa-list"></span>
+            </button>
+            <button class="btn btn-link btn-round-icon"
+                title="Kanban"
+                aria-label="Kanban"
+                hx-get="{{ BASE_URL }}/hx/widgets/myToDosKanban/get"
+                hx-target="#yourToDoContainer"
+                hx-swap="outerHTML"
+                hx-indicator=".htmx-indicator"
+                hx-vals='{"projectFilter": "{{ $projectFilter }}"}'>
+                <span class="fa-solid fa-table-columns"></span>
+            </button>
+            <button class="btn btn-link btn-round-icon"
+                title="Calendar"
+                aria-label="Calendar"
+                hx-get="{{ BASE_URL }}/hx/widgets/myToDosCalendar/get"
+                hx-target="#yourToDoContainer"
+                hx-swap="outerHTML"
+                hx-indicator=".htmx-indicator">
+                <span class="fa-solid fa-calendar-days"></span>
+            </button>
+            <button class="btn btn-link btn-round-icon"
+                title="Recently Updated"
+                aria-label="Recently Updated"
+                hx-get="{{ BASE_URL }}/hx/widgets/myToDosRecentlyUpdated/get"
+                hx-target="#yourToDoContainer"
+                hx-swap="outerHTML"
+                hx-indicator=".htmx-indicator">
+                <span class="fa-solid fa-clock-rotate-left"></span>
+            </button>
+        </div>
+
         @dispatchEvent("beforeTodoWidgetGroupByDropdown")
 
         <div class="btn-group left">
@@ -331,11 +369,7 @@ return $count;
                 console.log.apply(this, arguments);
             };
 
-            var sortableEnabled = {
-                {
-                    $tpl - > dispatchFilter('todoWidgetSortableEnabled', 'true') ? 'true' : 'false'
-                }
-            };
+            var sortableEnabled = {{ $tpl->dispatchFilter('todoWidgetSortableEnabled', 'true') ? 'true' : 'false' }};
 
             @if(session('userdata.id') != null)
             leantime.ticketsController.initMilestoneDropdown();

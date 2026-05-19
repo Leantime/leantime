@@ -69,30 +69,13 @@ class Widgets
             'description' => 'widgets.descriptions.my_todos',
             'widgetUrl' => BASE_URL . '/widgets/myToDos/get',
             'gridHeight' => 30,
-            'gridWidth' => 8,
+            'gridWidth' => 12,
             'gridMinHeight' => 16,
-            'gridMinWidth' => 3,
+            'gridMinWidth' => 6,
             'gridX' => 0,
             'gridY' => 3,
             'alwaysVisible' => false,
             'noTitle' => false,
-            'fixed' => false,
-
-        ]);
-
-        $this->availableWidgets['calendar'] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
-            'id' => 'calendar',
-            'name' => 'widgets.title.calendar',
-            'description' => 'widgets.descriptions.calendar',
-            'gridHeight' => 30,
-            'gridWidth' => 4,
-            'gridMinHeight' => 12,
-            'gridMinWidth' => 3,
-            'gridX' => 8,
-            'gridY' => 3,
-            'alwaysVisible' => false,
-            'noTitle' => false,
-            'widgetUrl' => BASE_URL . '/widgets/calendar/get',
             'fixed' => false,
         ]);
 
@@ -109,22 +92,6 @@ class Widgets
             'alwaysVisible' => false,
             'noTitle' => false,
             'widgetUrl' => BASE_URL . '/widgets/myProjects/get',
-            'fixed' => false,
-        ]);
-
-        $this->availableWidgets['recentlyupdated'] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
-            'id' => 'recentlyupdated',
-            'name' => 'widgets.title.recently_updated',
-            'description' => 'widgets.descriptions.recently_updated',
-            'gridHeight' => 18,
-            'gridWidth' => 4,
-            'gridMinHeight' => 8,
-            'gridMinWidth' => 2,
-            'gridX' => 8,
-            'gridY' => 43,
-            'alwaysVisible' => false,
-            'noTitle' => true,
-            'widgetUrl' => BASE_URL . '/widgets/recentlyUpdated/get',
             'fixed' => false,
         ]);
 
@@ -146,7 +113,6 @@ class Widgets
 
         $this->defaultWidgets = [
             'welcome' => $this->availableWidgets['welcome'],
-            'calendar' => $this->availableWidgets['calendar'],
             'todos' => $this->availableWidgets['todos'],
         ];
 
