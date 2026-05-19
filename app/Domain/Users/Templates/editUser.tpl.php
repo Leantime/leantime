@@ -10,12 +10,59 @@ $projects = $tpl->get('relations');
 <?php echo $tpl->displayNotification(); ?>
 
 <div class="pageheader">
+    <a href="<?= BASE_URL ?>/users/showAll"
+       class="editUserBackBtn"
+       title="<?php echo $tpl->__('buttons.back_to_users'); ?>"
+       data-tippy-content="<?php echo $tpl->__('buttons.back_to_users'); ?>">
+        <span class="fa fa-arrow-left"></span>
+        <span class="editUserBackLabel"><?php echo $tpl->__('buttons.back_to_users'); ?></span>
+    </a>
     <div class="pageicon"><span class="fa <?php echo $tpl->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $tpl->__('label.administration') ?></h5>
         <h1><?php echo $tpl->__('headlines.edit_user'); ?></h1>
     </div>
 </div><!--pageheader-->
+
+<style>
+/* Back-to-users-list pill inside the Edit User pageheader.
+   Sits at the top-right corner of the pageheader, away from the
+   icon+title so it doesn't disturb the default 60px header layout. */
+.pageheader .editUserBackBtn {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .15);
+    border: 1px solid rgba(255, 255, 255, .35);
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    transition: background .15s, color .15s, transform .15s, border-color .15s;
+    z-index: 2;
+}
+.pageheader .editUserBackBtn:hover,
+.pageheader .editUserBackBtn:focus {
+    background: #fff;
+    color: var(--accent1, #4a9eff);
+    border-color: #fff;
+    transform: translateX(-2px);
+}
+.pageheader .editUserBackBtn .editUserBackLabel {
+    white-space: nowrap;
+}
+@media (max-width: 640px) {
+    .pageheader .editUserBackBtn { padding: 0 10px; }
+    .pageheader .editUserBackBtn .editUserBackLabel { display: none; }
+}
+</style>
 
 <form action="" method="post" class="stdform userEditModal">
         <input type="hidden" name="<?= session('formTokenName')?>" value="<?= session('formTokenValue')?>" />

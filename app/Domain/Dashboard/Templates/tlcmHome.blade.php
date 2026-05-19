@@ -298,6 +298,13 @@
                         <a href="{{ BASE_URL }}/tickets/roadmap?projectId={{ $pid }}" class="btn btn-default btn-sm">
                             <i class="fa fa-chart-gantt"></i> Timeline
                         </a>
+                        @if($isCM)
+                            <a href="{{ BASE_URL }}/projects/delProject?id={{ $pid }}"
+                               class="btn btn-sm tlcm-btn-danger"
+                               onclick="return confirm('Delete project &quot;{{ addslashes($p['name'] ?? 'this project') }}&quot;?\n\nYou will be taken to a confirmation page. This action cannot be undone once confirmed.');">
+                                <i class="fa fa-trash"></i> Delete Project
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -715,6 +722,21 @@
 
     .tlcm-detail-actions .btn {
         font-size: 12px;
+    }
+
+    /* Danger button — Delete Project. Subtle by default so it doesn't
+       compete with primary actions; hover makes intent clear. */
+    .tlcm-btn-danger {
+        background: transparent;
+        color: #d9534f;
+        border: 1px solid rgba(217, 83, 79, .35);
+        transition: background .15s, color .15s, border-color .15s;
+    }
+    .tlcm-btn-danger:hover,
+    .tlcm-btn-danger:focus {
+        background: #d9534f;
+        color: #fff;
+        border-color: #d9534f;
     }
 
     /* Empty state */
