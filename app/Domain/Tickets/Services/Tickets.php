@@ -2702,7 +2702,7 @@ class Tickets
 
     public function canDelete($id)
     {
-        if (! Auth::userIsAtLeast(Roles::$teamlead)) {
+        if (! Auth::userIsAtLeast(Roles::$teamlead, true)) {
             throw new \Exception('notifications.error_no_permissions');
         }
 

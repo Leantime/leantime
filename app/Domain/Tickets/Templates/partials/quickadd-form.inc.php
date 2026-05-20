@@ -10,7 +10,7 @@
  */
 ?>
 
-<?php if ($login::userIsAtLeast($roles::$teamlead)) { ?>
+<?php if ($login::userIsAtLeast($roles::$teamlead, true)) { ?>
     <div class="quickaddContainer tw-mb-s <?= $isEmpty ? 'quickaddContainer--empty' : '' ?>">
         <a href="<?= BASE_URL ?>/tickets/newTicket"
            class="quickAddLink form-modal <?= $isEmpty ? 'empty-state' : 'inline-add' ?>">

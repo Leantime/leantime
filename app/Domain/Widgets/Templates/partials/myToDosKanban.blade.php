@@ -104,7 +104,7 @@
                     data-empty-text="{{ !$hasTickets ? 'Empty' : '' }}">
 
                     {{-- Quick-add link (teamlead+ only — Developers should not create top-level tasks) --}}
-                    @if($login::userIsAtLeast($roles::$teamlead))
+                    @if($login::userIsAtLeast($roles::$teamlead, true))
                         <a href="{{ BASE_URL }}/tickets/newTicket"
                             id="ticket_new_link_group_{{ $statusKey }}"
                             style="display:block; padding:6px 4px; opacity:.6; font-size:var(--font-size-s); text-decoration:none; color:var(--primary-font-color);">
