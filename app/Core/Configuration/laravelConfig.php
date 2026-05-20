@@ -38,6 +38,7 @@ return [
             \Illuminate\Validation\ValidationServiceProvider::class,
 
             \Leantime\Core\Auth\AuthenticationServiceProvider::class,
+            \Leantime\Core\Mcp\McpServiceProvider::class,
             \Leantime\Core\Middleware\RateLimiter::class,
             \Leantime\Core\Database\DatabaseServiceProvider::class,
             \Leantime\Core\i18n\LanguageServiceProvider::class,

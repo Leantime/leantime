@@ -15,7 +15,7 @@ class AccessTokenRepository
         $this->db = $db->getConnection();
     }
 
-    public function createToken(int $userId, string $name, array $abilities = ['*']): array
+    public function createToken(int $userId, string $name, array $abilities = ['*'], ?string $expiresAt = null): array
     {
         $token = Str::random(40);
         $hashedToken = hash('sha256', $token);
@@ -26,6 +26,7 @@ class AccessTokenRepository
             'name' => $name,
             'token' => $hashedToken,
             'abilities' => json_encode($abilities),
+            'expires_at' => $expiresAt,
             'created_at' => now(),
         ]);
 

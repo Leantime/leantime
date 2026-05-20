@@ -87,6 +87,10 @@ class RequestRateLimiter
 
         // API Routes Limit
         if ($request instanceof ApiRequest) {
+            if ($request->getBearerToken()) {
+                $key = 'ratelimit-token-'.hash('sha256', $request->getBearerToken());
+            }
+
             $apiKey = '';
             // $key = app()->make(Api::class)->getAPIKeyUser($apiKey);
             $limit = $rateLimitApi;

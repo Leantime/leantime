@@ -893,6 +893,7 @@ class Tickets
                 'zp_tickets.url',
                 'zp_tickets.editFrom',
                 'zp_tickets.editTo',
+                'zp_tickets.modified',
                 'zp_tickets.dependingTicketId',
                 'zp_tickets.milestoneid',
                 'milestones.headline as milestoneHeadline',
@@ -930,6 +931,14 @@ class Tickets
         $values->collaborators = $this->getCollaborators($id);
 
         return $values;
+    }
+
+    public function projectHasTicket(int $projectId, int $ticketId): bool
+    {
+        return $this->connection->table('zp_tickets')
+            ->where('id', $ticketId)
+            ->where('projectId', $projectId)
+            ->exists();
     }
 
     public function getAllSubtasks($id): false|array
@@ -1574,6 +1583,42 @@ class Tickets
             ->update($updates);
     }
 
+    public function patchTicketForActor(int $actorId, int $ticketId, array $params, ?string $expectedModified = null): bool
+    {
+        $updates = [];
+        foreach ($params as $key => $value) {
+            $sanitizedKey = DbCore::sanitizeToColumnString($key);
+
+            if (! isset(self::PATCHABLE_COLUMNS[$sanitizedKey])) {
+                continue;
+            }
+
+            $updates[$sanitizedKey] = $value;
+
+            if ($key == 'status') {
+                static::dispatch_event('ticketStatusUpdate', ['ticketId' => $ticketId, 'status' => $value, 'action' => 'ticketStatusUpdate']);
+            }
+        }
+
+        if (empty($updates)) {
+            return false;
+        }
+
+        $updates['modified'] = dtHelper()->userNow()->formatDateTimeForDb();
+
+        $query = $this->connection->table('zp_tickets')->where('id', $ticketId);
+        if ($expectedModified !== null) {
+            $query->where('modified', $expectedModified);
+        }
+
+        $updated = (bool) $query->update($updates);
+        if ($updated) {
+            $this->addTicketChange($actorId, $ticketId, $params);
+        }
+
+        return $updated;
+    }
+
     /**
      * updateTicket - Update Ticketinformation
      */
@@ -1632,6 +1677,34 @@ class Tickets
         return $this->connection->table('zp_tickets')
             ->where('id', $ticketId)
             ->update($updates);
+    }
+
+    public function updateTicketStatusForActor(int $actorId, int $ticketId, int $status, int $ticketSorting = -1, $handler = null, ?string $expectedModified = null): bool
+    {
+        $updates = [
+            'status' => $status,
+            'modified' => dtHelper()->userNow()->formatDateTimeForDb(),
+        ];
+
+        if ($ticketSorting > -1) {
+            $updates['kanbanSortIndex'] = $ticketSorting;
+        }
+
+        static::dispatch_event('ticketStatusUpdate', ['ticketId' => $ticketId, 'status' => $status, 'action' => 'ticketStatusUpdate', 'handler' => $handler]);
+
+        $query = $this->connection->table('zp_tickets')->where('id', $ticketId);
+        if ($expectedModified !== null) {
+            $query->where('modified', $expectedModified);
+        }
+
+        $updated = $query->update($updates) > 0;
+
+        if ($updated) {
+            $this->addTicketChange($actorId, $ticketId, ['status' => $status]);
+            static::dispatch_event('ticketStatusUpdate', ['ticketId' => $ticketId, 'status' => $status, 'action' => 'ticketStatusUpdate', 'handler' => $handler]);
+        }
+
+        return $updated;
     }
 
     /**

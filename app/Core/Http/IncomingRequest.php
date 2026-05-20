@@ -192,7 +192,9 @@ class IncomingRequest extends \Illuminate\Http\Request
     {
         $requestUri = $this->getRequestUri();
 
-        return str_starts_with(strtolower($requestUri), '/api/jsonrpc') || str_starts_with($requestUri, '/cron');
+        return str_starts_with(strtolower($requestUri), '/api/jsonrpc')
+            || str_starts_with(strtolower($requestUri), '/mcp')
+            || str_starts_with($requestUri, '/cron');
     }
 
     /**

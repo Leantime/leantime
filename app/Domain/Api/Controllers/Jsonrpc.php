@@ -379,11 +379,11 @@ class Jsonrpc extends Controller
             return new Response;
         }
 
-        return $this->tpl->displayJson([
+        return $this->withAutomationHeaders($this->tpl->displayJson([
             'jsonrpc' => '2.0',
             'result' => $returnValue,
             'id' => $id,
-        ]);
+        ]));
     }
 
     /**
@@ -395,7 +395,7 @@ class Jsonrpc extends Controller
     {
 
         // TODO: And FYI. json_encode cannot encode throwable. https://github.com/pmjones/throwable-properties
-        return $this->tpl->displayJson([
+        return $this->withAutomationHeaders($this->tpl->displayJson([
             'jsonrpc' => '2.0',
             'error' => [
                 'code' => $errorcode,
@@ -403,7 +403,16 @@ class Jsonrpc extends Controller
                 'data' => $additional_info instanceof \Throwable ? $additional_info->getMessage() : $additional_info,
             ],
             'id' => $id,
-        ]);
+        ]));
+    }
+
+    private function withAutomationHeaders(Response $response): Response
+    {
+        $response->headers->set('Link', '</mcp>; rel="successor-version"');
+        $response->headers->set('Sunset', 'Wed, 31 Dec 2026 23:59:59 GMT');
+        $response->headers->set('X-Leantime-Automation-Preferred', '/mcp');
+
+        return $response;
     }
 
     /**

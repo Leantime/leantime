@@ -150,7 +150,7 @@
                         @if (session("userdata.isExternalAuth") )
                             <strong> {{  __("text.account_managed_external_auth") }}</strong><br /><br />
                         @endif
-                        <form method="post">
+                        <form method="post" id="mcp-token-create-form">
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
@@ -198,6 +198,85 @@
                             <p>{!! __('text.twoFA_disabled')  !!}</p>
                         @endif
                         <p><a href="{{ BASE_URL }}/twoFA/edit">{!! __('text.twoFA_manage') !!}</a></p>
+
+                        <br /><br />
+                        <h4 class="widgettitle title-light">
+                            <i class="fa-solid fa-robot"></i> {{ __('headlines.mcp_tokens') }}
+                        </h4>
+                        <p>{{ __('text.mcp_tokens_help') }}</p>
+
+                        @if (!empty($newMcpToken))
+                            <div class="alert alert-success">
+                                <strong>{{ __('label.new_token') }}:</strong>
+                                <code>{{ $newMcpToken }}</code><br />
+                                <small>{{ __('text.mcp_token_show_once') }}</small>
+                            </div>
+                        @endif
+
+                        <form method="post">
+                            <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
+                            <div class="row-fluid">
+                                <div class="form-group">
+                                    <label for="mcpTokenName">{{ __('label.name') }}</label>
+                                    <span>
+                                        <input type="text" name="mcpTokenName" id="mcpTokenName" class="input" value="mcp-agent" />
+                                    </span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="mcpTokenPreset">{{ __('label.preset') }}</label>
+                                    <span>
+                                        <select name="mcpTokenPreset" id="mcpTokenPreset" class="input">
+                                            @foreach($mcpTokenPresets as $presetName => $presetAbilities)
+                                                <option value="{{ $presetName }}">{{ $presetName }}</option>
+                                            @endforeach
+                                        </select>
+                                    </span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="mcpTokenExpiresDays">{{ __('label.expires_days') }}</label>
+                                    <span>
+                                        <input type="number" min="1" name="mcpTokenExpiresDays" id="mcpTokenExpiresDays" class="input" value="" />
+                                    </span>
+                                </div>
+                            </div>
+                            <input type="hidden" name="createmcptoken" value="1" />
+                            <input type="submit" name="save" id="createMcpToken" value="{{ __('buttons.create') }}" class="button" />
+                        </form>
+
+                        <br />
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('label.name') }}</th>
+                                    <th>{{ __('label.abilities') }}</th>
+                                    <th>{{ __('label.expires_at') }}</th>
+                                    <th>{{ __('label.last_used_at') }}</th>
+                                    <th>{{ __('label.actions') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($mcpTokens as $token)
+                                    <tr>
+                                        <td>{{ $token['name'] }}</td>
+                                        <td>{{ implode(', ', $token['abilitiesDecoded']) }}</td>
+                                        <td>{{ $token['expires_at'] ?? '' }}</td>
+                                        <td>{{ $token['last_used_at'] ?? '' }}</td>
+                                        <td>
+                                            <form method="post" style="margin:0;">
+                                                <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
+                                                <input type="hidden" name="tokenId" value="{{ $token['id'] }}" />
+                                                <input type="hidden" name="revokemcptoken" value="1" />
+                                                <button type="submit" class="button" id="revokeMcpToken-{{ $token['id'] }}">{{ __('buttons.remove') }}</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5">{{ __('text.no_mcp_tokens') }}</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
 
                     <div id="settings">

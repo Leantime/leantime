@@ -37,6 +37,7 @@ class AuthCheck
         'cron.run',
         'auth.callback',
         'auth.redirect',
+        'mcp',
     ];
 
     public function __construct(

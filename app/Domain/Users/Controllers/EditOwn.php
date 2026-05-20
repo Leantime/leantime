@@ -5,6 +5,7 @@ namespace Leantime\Domain\Users\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\UI\Theme as ThemeCore;
+use Leantime\Domain\Mcp\Services\McpTokenManager;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
@@ -24,6 +25,8 @@ class EditOwn extends Controller
 
     private ProjectService $projectService;
 
+    private McpTokenManager $mcpTokenManager;
+
     private int $userId;
 
     /**
@@ -34,13 +37,15 @@ class EditOwn extends Controller
         UserRepository $userRepo,
         SettingService $settingsService,
         UserService $userService,
-        ProjectService $projectService
+        ProjectService $projectService,
+        McpTokenManager $mcpTokenManager,
     ): void {
         $this->themeCore = $themeCore;
         $this->userRepo = $userRepo;
         $this->settingsService = $settingsService;
         $this->userService = $userService;
         $this->projectService = $projectService;
+        $this->mcpTokenManager = $mcpTokenManager;
 
         $this->userId = session('userdata.id');
     }
@@ -167,6 +172,9 @@ class EditOwn extends Controller
         $this->tpl->assign('companyDefaultRelevance', $companyDefaultRelevance);
         $this->tpl->assign('relevanceLevels', Notification::RELEVANCE_LEVELS);
         $this->tpl->assign('userProjects', $userProjects);
+        $this->tpl->assign('mcpTokenPresets', \Leantime\Core\Mcp\Auth\McpAbilityCatalog::presets());
+        $this->tpl->assign('mcpTokens', $this->mcpTokenManager->listTokens($this->userId));
+        $this->tpl->assign('newMcpToken', session()->pull('newMcpToken'));
 
         return $this->tpl->display('users.editOwn');
     }
@@ -265,6 +273,45 @@ class EditOwn extends Controller
                         $this->language->__('notification.previous_password_incorrect'),
                         'error'
                     );
+                }
+            }
+
+            if (isset($_POST['createmcptoken'])) {
+                $tab = '#security';
+
+                try {
+                    $tokenName = trim((string) ($_POST['mcpTokenName'] ?? 'mcp-agent'));
+                    $preset = trim((string) ($_POST['mcpTokenPreset'] ?? 'read-only'));
+                    $expiresDaysRaw = trim((string) ($_POST['mcpTokenExpiresDays'] ?? ''));
+                    $expiresDays = $expiresDaysRaw !== '' ? (int) $expiresDaysRaw : null;
+
+                    $token = $this->mcpTokenManager->createToken(
+                        userId: $this->userId,
+                        name: $tokenName !== '' ? $tokenName : 'mcp-agent',
+                        preset: $preset,
+                        expiresDays: $expiresDays,
+                    );
+
+                    session()->flash('newMcpToken', $token['token']);
+                    $this->tpl->setNotification($this->language->__('notifications.mcp_token_created'), 'success');
+                } catch (\Throwable $throwable) {
+                    $this->tpl->setNotification($throwable->getMessage(), 'error');
+                }
+            }
+
+            if (isset($_POST['revokemcptoken'])) {
+                $tab = '#security';
+
+                try {
+                    $tokenId = (int) ($_POST['tokenId'] ?? 0);
+                    if ($tokenId <= 0) {
+                        throw new \InvalidArgumentException('Token id is required');
+                    }
+
+                    $this->mcpTokenManager->revokeToken($tokenId, $this->userId);
+                    $this->tpl->setNotification($this->language->__('notifications.mcp_token_revoked'), 'success');
+                } catch (\Throwable $throwable) {
+                    $this->tpl->setNotification($throwable->getMessage(), 'error');
                 }
             }
 

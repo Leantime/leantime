@@ -55,6 +55,11 @@ class SchemaBuilder
         $this->createIntegrationTable();
         $this->createReactionsTable();
         $this->createAccessTokensTable();
+        $this->createMcpAgentsTable();
+        $this->createMcpRequestsTable();
+        $this->createMcpToolCallsTable();
+        $this->createMcpIdempotencyKeysTable();
+        $this->createMcpApprovalsTable();
         $this->createJobsTable();
         $this->createRecurringPatternsTable();
     }
@@ -784,6 +789,138 @@ class SchemaBuilder
 
             $table->unique(['token'], 'personal_access_tokens_token_unique');
             $table->index(['tokenable_type', 'tokenable_id'], 'personal_access_tokens_tokenable_type_tokenable_id_index');
+        });
+    }
+
+    /**
+     * Create zp_mcp_agents table.
+     */
+    private function createMcpAgentsTable(): void
+    {
+        Schema::create('zp_mcp_agents', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('accessTokenId');
+            $table->integer('userId');
+            $table->string('name', 255);
+            $table->string('status', 50)->default('active');
+            $table->timestamp('lastSeenAt')->nullable();
+            $table->timestamp('createdAt')->nullable();
+            $table->timestamp('updatedAt')->nullable();
+
+            $table->unique(['accessTokenId'], 'zp_mcp_agents_access_token_unique');
+            $table->index(['userId'], 'idx_mcp_agents_userId');
+        });
+    }
+
+    /**
+     * Create zp_mcp_requests table.
+     */
+    private function createMcpRequestsTable(): void
+    {
+        Schema::create('zp_mcp_requests', function (Blueprint $table) {
+            $table->id();
+            $table->string('requestId', 100);
+            $table->unsignedBigInteger('agentId')->nullable();
+            $table->unsignedBigInteger('accessTokenId')->nullable();
+            $table->integer('userId')->nullable();
+            $table->string('method', 100)->nullable();
+            $table->string('mcpSessionId', 100)->nullable();
+            $table->string('correlationId', 100)->nullable();
+            $table->string('idempotencyKey', 150)->nullable();
+            $table->string('status', 50)->default('received');
+            $table->integer('httpStatus')->nullable();
+            $table->string('errorCode', 100)->nullable();
+            $table->string('remoteIp', 100)->nullable();
+            $table->string('userAgent', 255)->nullable();
+            $table->longText('requestBody')->nullable();
+            $table->longText('responseBody')->nullable();
+            $table->timestamp('createdAt')->nullable();
+            $table->timestamp('updatedAt')->nullable();
+
+            $table->unique(['requestId'], 'zp_mcp_requests_request_id_unique');
+            $table->index(['userId', 'createdAt'], 'idx_mcp_requests_user_created');
+            $table->index(['status'], 'idx_mcp_requests_status');
+        });
+    }
+
+    /**
+     * Create zp_mcp_tool_calls table.
+     */
+    private function createMcpToolCallsTable(): void
+    {
+        Schema::create('zp_mcp_tool_calls', function (Blueprint $table) {
+            $table->id();
+            $table->string('operationId', 100);
+            $table->unsignedBigInteger('requestLogId')->nullable();
+            $table->unsignedBigInteger('agentId')->nullable();
+            $table->unsignedBigInteger('accessTokenId')->nullable();
+            $table->integer('userId')->nullable();
+            $table->integer('projectId')->default(0);
+            $table->string('toolName', 120);
+            $table->string('toolVersion', 40)->default('1.0.0');
+            $table->string('riskLevel', 40)->default('read');
+            $table->string('status', 50)->default('pending');
+            $table->string('argumentsHash', 64)->nullable();
+            $table->longText('context')->nullable();
+            $table->longText('arguments')->nullable();
+            $table->longText('responseBody')->nullable();
+            $table->string('errorCode', 100)->nullable();
+            $table->timestamp('startedAt')->nullable();
+            $table->timestamp('completedAt')->nullable();
+            $table->timestamp('createdAt')->nullable();
+            $table->timestamp('updatedAt')->nullable();
+
+            $table->unique(['operationId'], 'zp_mcp_tool_calls_operation_id_unique');
+            $table->index(['toolName', 'status'], 'idx_mcp_tool_calls_tool_status');
+            $table->index(['userId', 'createdAt'], 'idx_mcp_tool_calls_user_created');
+        });
+    }
+
+    /**
+     * Create zp_mcp_idempotency_keys table.
+     */
+    private function createMcpIdempotencyKeysTable(): void
+    {
+        Schema::create('zp_mcp_idempotency_keys', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('accessTokenId');
+            $table->integer('userId')->nullable();
+            $table->integer('projectId')->default(0);
+            $table->string('toolName', 120);
+            $table->string('idempotencyKey', 150);
+            $table->string('argumentsHash', 64);
+            $table->string('status', 50)->default('pending');
+            $table->unsignedBigInteger('toolCallId')->nullable();
+            $table->longText('responseBody')->nullable();
+            $table->timestamp('lastUsedAt')->nullable();
+            $table->timestamp('createdAt')->nullable();
+            $table->timestamp('updatedAt')->nullable();
+
+            $table->unique(['accessTokenId', 'toolName', 'projectId', 'idempotencyKey'], 'zp_mcp_idempotency_unique');
+        });
+    }
+
+    /**
+     * Create zp_mcp_approvals table.
+     */
+    private function createMcpApprovalsTable(): void
+    {
+        Schema::create('zp_mcp_approvals', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('toolCallId');
+            $table->integer('projectId')->default(0);
+            $table->integer('requestedByUserId');
+            $table->integer('resolvedByUserId')->nullable();
+            $table->string('toolName', 120);
+            $table->string('status', 50)->default('pending');
+            $table->text('reason')->nullable();
+            $table->longText('payload')->nullable();
+            $table->timestamp('requestedAt')->nullable();
+            $table->timestamp('resolvedAt')->nullable();
+            $table->timestamp('createdAt')->nullable();
+            $table->timestamp('updatedAt')->nullable();
+
+            $table->index(['status', 'projectId'], 'idx_mcp_approvals_status_project');
         });
     }
 

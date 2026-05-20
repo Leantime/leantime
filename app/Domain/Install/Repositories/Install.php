@@ -81,6 +81,7 @@ class Install
         30413,
         30500,
         30501,
+        30502,
     ];
 
     /**
@@ -2493,6 +2494,127 @@ class Install
             Log::error('Migration 30501: '.$e->getMessage());
 
             return ['Migration 30501 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30502: Create MCP persistence tables.
+     */
+    public function update_sql_30502(): bool|array
+    {
+        try {
+            if (! Schema::hasTable('zp_mcp_agents')) {
+                Schema::create('zp_mcp_agents', function (Blueprint $table) {
+                    $table->id();
+                    $table->unsignedBigInteger('accessTokenId');
+                    $table->integer('userId');
+                    $table->string('name', 255);
+                    $table->string('status', 50)->default('active');
+                    $table->timestamp('lastSeenAt')->nullable();
+                    $table->timestamp('createdAt')->nullable();
+                    $table->timestamp('updatedAt')->nullable();
+                    $table->unique(['accessTokenId'], 'zp_mcp_agents_access_token_unique');
+                    $table->index(['userId'], 'idx_mcp_agents_userId');
+                });
+            }
+
+            if (! Schema::hasTable('zp_mcp_requests')) {
+                Schema::create('zp_mcp_requests', function (Blueprint $table) {
+                    $table->id();
+                    $table->string('requestId', 100);
+                    $table->unsignedBigInteger('agentId')->nullable();
+                    $table->unsignedBigInteger('accessTokenId')->nullable();
+                    $table->integer('userId')->nullable();
+                    $table->string('method', 100)->nullable();
+                    $table->string('mcpSessionId', 100)->nullable();
+                    $table->string('correlationId', 100)->nullable();
+                    $table->string('idempotencyKey', 150)->nullable();
+                    $table->string('status', 50)->default('received');
+                    $table->integer('httpStatus')->nullable();
+                    $table->string('errorCode', 100)->nullable();
+                    $table->string('remoteIp', 100)->nullable();
+                    $table->string('userAgent', 255)->nullable();
+                    $table->longText('requestBody')->nullable();
+                    $table->longText('responseBody')->nullable();
+                    $table->timestamp('createdAt')->nullable();
+                    $table->timestamp('updatedAt')->nullable();
+                    $table->unique(['requestId'], 'zp_mcp_requests_request_id_unique');
+                    $table->index(['userId', 'createdAt'], 'idx_mcp_requests_user_created');
+                    $table->index(['status'], 'idx_mcp_requests_status');
+                });
+            }
+
+            if (! Schema::hasTable('zp_mcp_tool_calls')) {
+                Schema::create('zp_mcp_tool_calls', function (Blueprint $table) {
+                    $table->id();
+                    $table->string('operationId', 100);
+                    $table->unsignedBigInteger('requestLogId')->nullable();
+                    $table->unsignedBigInteger('agentId')->nullable();
+                    $table->unsignedBigInteger('accessTokenId')->nullable();
+                    $table->integer('userId')->nullable();
+                    $table->integer('projectId')->default(0);
+                    $table->string('toolName', 120);
+                    $table->string('toolVersion', 40)->default('1.0.0');
+                    $table->string('riskLevel', 40)->default('read');
+                    $table->string('status', 50)->default('pending');
+                    $table->string('argumentsHash', 64)->nullable();
+                    $table->longText('context')->nullable();
+                    $table->longText('arguments')->nullable();
+                    $table->longText('responseBody')->nullable();
+                    $table->string('errorCode', 100)->nullable();
+                    $table->timestamp('startedAt')->nullable();
+                    $table->timestamp('completedAt')->nullable();
+                    $table->timestamp('createdAt')->nullable();
+                    $table->timestamp('updatedAt')->nullable();
+                    $table->unique(['operationId'], 'zp_mcp_tool_calls_operation_id_unique');
+                    $table->index(['toolName', 'status'], 'idx_mcp_tool_calls_tool_status');
+                    $table->index(['userId', 'createdAt'], 'idx_mcp_tool_calls_user_created');
+                });
+            }
+
+            if (! Schema::hasTable('zp_mcp_idempotency_keys')) {
+                Schema::create('zp_mcp_idempotency_keys', function (Blueprint $table) {
+                    $table->id();
+                    $table->unsignedBigInteger('accessTokenId');
+                    $table->integer('userId')->nullable();
+                    $table->integer('projectId')->default(0);
+                    $table->string('toolName', 120);
+                    $table->string('idempotencyKey', 150);
+                    $table->string('argumentsHash', 64);
+                    $table->string('status', 50)->default('pending');
+                    $table->unsignedBigInteger('toolCallId')->nullable();
+                    $table->longText('responseBody')->nullable();
+                    $table->timestamp('lastUsedAt')->nullable();
+                    $table->timestamp('createdAt')->nullable();
+                    $table->timestamp('updatedAt')->nullable();
+                    $table->unique(['accessTokenId', 'toolName', 'projectId', 'idempotencyKey'], 'zp_mcp_idempotency_unique');
+                });
+            }
+
+            if (! Schema::hasTable('zp_mcp_approvals')) {
+                Schema::create('zp_mcp_approvals', function (Blueprint $table) {
+                    $table->id();
+                    $table->unsignedBigInteger('toolCallId');
+                    $table->integer('projectId')->default(0);
+                    $table->integer('requestedByUserId');
+                    $table->integer('resolvedByUserId')->nullable();
+                    $table->string('toolName', 120);
+                    $table->string('status', 50)->default('pending');
+                    $table->text('reason')->nullable();
+                    $table->longText('payload')->nullable();
+                    $table->timestamp('requestedAt')->nullable();
+                    $table->timestamp('resolvedAt')->nullable();
+                    $table->timestamp('createdAt')->nullable();
+                    $table->timestamp('updatedAt')->nullable();
+                    $table->index(['status', 'projectId'], 'idx_mcp_approvals_status_project');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30502: '.$e->getMessage());
+
+            return ['Migration 30502 failed: '.$e->getMessage()];
         }
 
         return true;

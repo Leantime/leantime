@@ -282,13 +282,13 @@ class Auth implements Authenticatable
     /**
      * Create a new personal access token
      */
-    public function createToken(string $name, array $abilities = ['*']): array
+    public function createToken(string $name, array $abilities = ['*'], ?string $expiresAt = null): array
     {
         if (! $this->loggedIn()) {
             throw new \Exception('User must be authenticated to create token');
         }
 
-        return $this->tokenRepo->createToken($this->getUserId(), $name, $abilities);
+        return $this->tokenRepo->createToken($this->getUserId(), $name, $abilities, $expiresAt);
     }
 
     /**
