@@ -99,6 +99,21 @@ $adminRouteTitles = [
 
     @endif {{-- end commenter hide --}}
 
+    {{-- ── Work Session Tracker (editor+; partial gates internally) ── --}}
+    @php
+        $wtStatus = session()->exists('userdata')
+            ? app(\Leantime\Domain\Worktracker\Services\WorkTracker::class)
+                ->getTimerStatus((int) session('userdata.id'))
+            : ['running' => false];
+        $wtFormatted = isset($wtStatus['running']) && $wtStatus['running']
+            ? \Leantime\Domain\Worktracker\Services\WorkTracker::formatDuration($wtStatus['elapsed_seconds'])
+            : '00:00:00';
+    @endphp
+    @include('worktracker::partials.timer', [
+        'timerStatus'   => $wtStatus,
+        'formattedTime' => $wtFormatted,
+    ])
+
     <li class="notificationDropdown">
         <a
             href='javascript:void(0);'
