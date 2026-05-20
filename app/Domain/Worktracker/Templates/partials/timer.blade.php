@@ -173,7 +173,7 @@
 
             btn.innerHTML = '<i class="fa fa-spinner fa-spin tw-mr-xs"></i> Starting session…';
 
-            fetch(BASE_URL + '/api/worktracker', {
+            fetch(BASE_URL + '/worktracker/api', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -215,7 +215,7 @@
 
         btn.innerHTML = '<i class="fa fa-spinner fa-spin tw-mr-xs"></i> Stopping…';
 
-        fetch(BASE_URL + '/api/worktracker', {
+        fetch(BASE_URL + '/worktracker/api', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',

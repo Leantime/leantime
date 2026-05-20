@@ -256,7 +256,7 @@
                     startBtn.innerHTML = '<i class="fa fa-desktop tw-mr-xs"></i> Start Session';
                     return;
                 }
-                fetch('{{ BASE_URL }}/api/worktracker', {
+                fetch('{{ BASE_URL }}/worktracker/api', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                     body: JSON.stringify({ screenshot: b64 })
@@ -276,7 +276,7 @@
             stopBtn.innerHTML = '<i class="fa fa-spinner fa-spin tw-mr-xs"></i> Stopping…';
             var sessionId = parseInt(stopBtn.dataset.sessionId, 10);
             var sendStop = function (b64) {
-                fetch('{{ BASE_URL }}/api/worktracker', {
+                fetch('{{ BASE_URL }}/worktracker/api', {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                     body: JSON.stringify({ session_id: sessionId, screenshot: b64 || '' })
@@ -305,7 +305,7 @@
             cancelBtn.disabled = true;
             cancelBtn.innerHTML = '<i class="fa fa-spinner fa-spin tw-mr-xs"></i> Cancelling…';
             var sessionId = parseInt(cancelBtn.dataset.sessionId, 10);
-            fetch('{{ BASE_URL }}/api/worktracker', {
+            fetch('{{ BASE_URL }}/worktracker/api', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 body: JSON.stringify({ session_id: sessionId })

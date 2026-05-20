@@ -11,7 +11,7 @@ use Leantime\Domain\Worktracker\Services\WorkTracker as WorkTrackerService;
  * Routes:
  *   GET /hx/worktracker/timer/get-status → getStatus()
  *
- * NOTE: start/stop happen via the REST API (POST/PATCH /api/worktracker)
+ * NOTE: start/stop happen via the JSON endpoint (POST/PATCH /worktracker/api)
  * directly from the JS in the timer partial. Keeping all session-lifecycle
  * logic on one endpoint avoids the consistency bug we hit during QA where
  * the HX path required a screenshot but the REST path did not.

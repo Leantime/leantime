@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Domain\Api\Controllers;
+namespace Leantime\Domain\Worktracker\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
@@ -9,15 +9,23 @@ use Leantime\Domain\Worktracker\Services\WorkTracker as WorkTrackerService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * REST API controller for the WorkTracker module.
+ * REST-ish JSON controller for the WorkTracker module.
  *
- * Routes (resolved by Leantime's Frontcontroller):
- *   GET    /api/worktracker  → get()    — current timer status
- *   POST   /api/worktracker  → post()   — start a session
- *   PATCH  /api/worktracker  → patch()  — stop a session (with end screenshot)
- *   DELETE /api/worktracker  → delete() — cancel an orphan session (no screenshot needed)
+ * Lives at /worktracker/api (NOT /api/worktracker) on purpose — Leantime
+ * treats anything under /api/ as an external-integration endpoint that
+ * requires an API key (see Core\Middleware\AuthCheck::authenticateWeb
+ * and Http\IncomingRequest::$apiEndpoints). Our navbar widget and
+ * dashboard JS authenticate via the user's session cookie, so we route
+ * through a normal module controller path instead.
+ *
+ * Routes (resolved by Leantime's Frontcontroller using the HTTP method
+ * as the action name on a 2-segment URL):
+ *   GET    /worktracker/api  → get()    — current timer status
+ *   POST   /worktracker/api  → post()   — start a session
+ *   PATCH  /worktracker/api  → patch()  — stop a session (optionally with end screenshot)
+ *   DELETE /worktracker/api  → delete() — cancel an orphan session (no screenshot needed)
  */
-class Worktracker extends Controller
+class Api extends Controller
 {
     private WorkTrackerService $workTrackerService;
 
@@ -27,7 +35,7 @@ class Worktracker extends Controller
     }
 
     /**
-     * GET /api/worktracker
+     * GET /worktracker/api
      * Returns the current timer status for the authenticated user.
      */
     public function get(array $params): Response
@@ -45,7 +53,7 @@ class Worktracker extends Controller
     }
 
     /**
-     * POST /api/worktracker
+     * POST /worktracker/api
      * Starts a new work session.
      *
      * JSON body: { "screenshot": "<base64 string>" }
@@ -70,7 +78,7 @@ class Worktracker extends Controller
     }
 
     /**
-     * PATCH /api/worktracker
+     * PATCH /worktracker/api
      * Stops an active work session.
      *
      * JSON body: { "session_id": 101, "screenshot": "<base64 string>" }
@@ -79,9 +87,9 @@ class Worktracker extends Controller
     {
         Auth::authOrRedirect([Roles::$editor, Roles::$manager, Roles::$admin, Roles::$owner], true);
 
-        $userId    = (int) session('userdata.id');
-        $body      = $this->jsonBody();
-        $sessionId = isset($body['session_id']) ? (int) $body['session_id'] : 0;
+        $userId     = (int) session('userdata.id');
+        $body       = $this->jsonBody();
+        $sessionId  = isset($body['session_id']) ? (int) $body['session_id'] : 0;
         $screenshot = $body['screenshot'] ?? '';
 
         if ($sessionId <= 0) {
@@ -95,7 +103,7 @@ class Worktracker extends Controller
     }
 
     /**
-     * DELETE /api/worktracker
+     * DELETE /worktracker/api
      * Cancels an orphaned running session without saving a stop screenshot.
      *
      * JSON body: { "session_id": 101 }
