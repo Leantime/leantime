@@ -210,11 +210,11 @@
     // is still available from My Sessions → Stop Session button if needed.
     //
     // IMPORTANT: read sessionId from the data-attribute at click time, NOT
-    // from a Blade-baked literal. The script block lives inside `@once
-    // @push('scripts')` and is therefore rendered ONLY at the initial page
-    // load. After HTMX swaps in the running-state widget, any baked-in JS
-    // literal would still be 0 (the value at page load) — which made every
-    // Stop click show "No active session to stop."
+    // from a Blade-baked literal. The script block lives inside the once+
+    // push wrapper below and is therefore rendered ONLY at the initial
+    // page load. After HTMX swaps in the running-state widget, any baked-in
+    // JS literal would still be 0 (the value at page load) — which made
+    // every Stop click show "No active session to stop."
     document.addEventListener('click', function (e) {
         var btn = e.target.closest('#workTracker-stopBtn');
         if (!btn) return;
