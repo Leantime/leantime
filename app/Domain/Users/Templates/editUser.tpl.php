@@ -184,6 +184,20 @@ $projects = $tpl->get('relations');
                                 </option>
                             <?php } ?>
                         </select><br />
+
+                        <label for="coManagerId"><?php echo $tpl->__('label.co_manager'); ?></label>
+                        <select name="coManagerId" id="coManagerId" class="chosen-select">
+                            <option value=""><?php echo $tpl->__('label.no_co_manager'); ?></option>
+                            <?php foreach ($tpl->get('eligibleManagers') as $manager) {
+                                if ((int) $manager['id'] === (int) $values['id']) {
+                                    continue; // A user can't be their own co-manager
+                                } ?>
+                                <option value="<?php echo $manager['id']; ?>"
+                                    <?php echo ((int) ($values['coManagerId'] ?? 0) === (int) $manager['id']) ? 'selected' : ''; ?>>
+                                    <?php echo $tpl->escape($manager['firstname'].' '.$manager['lastname']); ?>
+                                </option>
+                            <?php } ?>
+                        </select><br />
                         </div>
 
 

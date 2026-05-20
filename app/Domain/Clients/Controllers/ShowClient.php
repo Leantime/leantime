@@ -50,7 +50,7 @@ class ShowClient extends Controller
         $this->userService = $userService;
 
         if (! session()->exists('lastPage')) {
-            session(['lastPage' => BASE_URL.'/clients/showAll']);
+            session(['lastPage' => BASE_URL . '/clients/showAll']);
         }
     }
 
@@ -92,7 +92,18 @@ class ShowClient extends Controller
 
             // File upload
             if (isset($_POST['upload'])) {
-                if (isset($_FILES['file']) && $_FILES['file']['tmp_name'] != '') {
+                $uploadType = $_POST['uploadType'] ?? 'file';
+
+                if ($uploadType === 'link') {
+                    $linkUrl = trim((string) ($_POST['linkUrl'] ?? ''));
+                    $linkName = trim((string) ($_POST['linkName'] ?? ''));
+
+                    if ($linkUrl !== '' && $this->fileService->addLink($linkUrl, $linkName, 'client', $id) !== false) {
+                        $this->tpl->setNotification($this->language->__('notifications.file_upload_success'), 'success', 'clientfile_uploaded');
+                    } else {
+                        $this->tpl->setNotification($this->language->__('notifications.file_upload_error'), 'error');
+                    }
+                } elseif (isset($_FILES['file']) && $_FILES['file']['tmp_name'] != '') {
                     $this->fileService->upload($_FILES, 'client', $id);
                     $this->tpl->setNotification($this->language->__('notifications.file_upload_success'), 'success', 'clientfile_uploaded');
                 } else {
@@ -107,7 +118,7 @@ class ShowClient extends Controller
                 if ($result === true) {
                     $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'clientfile_deleted');
 
-                    return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id.'#files');
+                    return Frontcontroller::redirect(BASE_URL . '/clients/showClient/' . $id . '#files');
                 } else {
                     $msg = is_array($result) ? ($result['msg'] ?? '') : '';
                     $this->tpl->setNotification($msg, 'error');
@@ -153,7 +164,8 @@ class ShowClient extends Controller
                 $delUserId = (int) ($_POST['userId'] ?? 0);
                 $delUser = $delUserId > 0 ? $this->userRepo->getUser($delUserId) : null;
 
-                if ($delUser
+                if (
+                    $delUser
                     && (int) ($delUser['role'] ?? 0) === 10
                     && (int) ($delUser['clientId'] ?? 0) === $id
                 ) {

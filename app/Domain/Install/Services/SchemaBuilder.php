@@ -639,11 +639,13 @@ class SchemaBuilder
             $table->string('jobLevel', 50)->nullable();
             $table->string('department', 200)->nullable();
             $table->integer('managerId')->nullable();
+            $table->integer('coManagerId')->nullable();
             $table->dateTime('modified')->nullable();
 
             $table->unique(['username'], 'username');
             $table->index(['clientId'], 'idx_user_clientId');
             $table->index(['managerId'], 'idx_user_managerId');
+            $table->index(['coManagerId'], 'idx_user_coManagerId');
         });
     }
 

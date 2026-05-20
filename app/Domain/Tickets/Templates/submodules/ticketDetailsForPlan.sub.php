@@ -47,11 +47,11 @@ $planWeekEnd = $tpl->get('planWeekEnd');
                         <select id='priority' name='priority' class="">
                             <option value=""><?php echo $tpl->__('label.priority_not_defined'); ?></option>
                             <?php foreach ($tpl->get('priorities') as $priorityKey => $priorityValue) {
-                                echo "<option value='".$priorityKey."' ";
+                                echo "<option value='" . $priorityKey . "' ";
                                 if ($priorityKey == $ticket->priority) {
                                     echo "selected='selected'";
                                 }
-                                echo '>'.$priorityValue.'</option>';
+                                echo '>' . $priorityValue . '</option>';
                             } ?>
                         </select>
                     </div>
@@ -64,11 +64,11 @@ $planWeekEnd = $tpl->get('planWeekEnd');
                         <select id='storypoints' name='storypoints' class="">
                             <option value=""><?php echo $tpl->__('label.effort_not_defined'); ?></option>
                             <?php foreach ($tpl->get('efforts') as $effortKey => $effortValue) {
-                                echo "<option value='".$effortKey."' ";
+                                echo "<option value='" . $effortKey . "' ";
                                 if ($effortKey == $ticket->storypoints) {
                                     echo "selected='selected'";
                                 }
-                                echo '>'.$effortValue.'</option>';
+                                echo '>' . $effortValue . '</option>';
                             } ?>
                         </select>
                     </div>
@@ -105,7 +105,7 @@ $planWeekEnd = $tpl->get('planWeekEnd');
                                     <?php if (in_array($userRow['id'], $ticket->collaborators ?? [])) {
                                         echo "selected='selected'";
                                     } ?>>
-                                    <?php echo $tpl->escape($userRow['firstname'].' '.$userRow['lastname']); ?>
+                                    <?php echo $tpl->escape($userRow['firstname'] . ' ' . $userRow['lastname']); ?>
                                 </option>
                             <?php } ?>
                         </select>
@@ -143,37 +143,63 @@ $planWeekEnd = $tpl->get('planWeekEnd');
                     </div>
                 </div>
 
-                <!-- Reference File Upload (optional — for TL to attach visual/document reference) -->
+                <!-- Reference attachment (optional) -->
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]">
-                        <?php echo $tpl->__('label.select_file'); ?>
-                        <small style="display:block; font-weight:normal; color:var(--grey);">Optional</small>
+                        <?php echo $tpl->__('label.attach_reference'); ?>
+                        <br />
+                        <small><?php echo $tpl->__('label.optional'); ?></small>
                     </label>
                     <div class="">
-                        <div class="fileupload fileupload-new" data-provides="fileupload">
-                            <input type="hidden" />
-                            <div class="input-append">
-                                <div class="uneditable-input span3">
-                                    <i class="fa-file fileupload-exists"></i>
-                                    <span class="fileupload-preview"></span>
-                                </div>
-                                <span class="btn btn-file">
-                                    <span class="fileupload-new"><?php echo $tpl->__('buttons.select_file'); ?></span>
-                                    <span class="fileupload-exists"><?php echo $tpl->__('buttons.change'); ?></span>
-                                    <input type="file"
-                                        name="referenceFile"
-                                        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.png,.jpg,.jpeg,.gif,.webp" />
-                                </span>
-                                <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">
-                                    <?php echo $tpl->__('buttons.remove'); ?>
-                                </a>
-                            </div>
+                        <div class="tw-mb-s" style="margin-bottom:8px;">
+                            <label style="margin-right:15px; font-weight:normal; cursor:pointer;">
+                                <input type="radio" name="referenceType" value="file" class="referenceTypeTogglePlan" checked />
+                                <?php echo $tpl->__('label.upload_file'); ?>
+                            </label>
+                            <label style="font-weight:normal; cursor:pointer;">
+                                <input type="radio" name="referenceType" value="link" class="referenceTypeTogglePlan" />
+                                <?php echo $tpl->__('label.attach_link'); ?>
+                            </label>
                         </div>
-                        <small style="color:var(--grey); display:block; margin-top:4px;">
-                            Attach an image or document as reference for this task.
-                        </small>
+
+                        <div class="referenceFileInputPlan">
+                            <div class="fileupload fileupload-new" data-provides="fileupload">
+                                <input type="hidden" />
+                                <div class="input-append">
+                                    <div class="uneditable-input span3">
+                                        <i class="fa-file fileupload-exists"></i>
+                                        <span class="fileupload-preview"></span>
+                                    </div>
+                                    <span class="btn btn-file">
+                                        <span class="fileupload-new"><?php echo $tpl->__('buttons.select_file'); ?></span>
+                                        <span class="fileupload-exists"><?php echo $tpl->__('buttons.change'); ?></span>
+                                        <input type="file" name="referenceFile" />
+                                    </span>
+                                    <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">
+                                        <?php echo $tpl->__('buttons.remove'); ?>
+                                    </a>
+                                </div>
+                            </div>
+                            <small><?php echo $tpl->__('text.attach_reference_file_to_todo'); ?></small>
+                        </div>
+
+                        <div class="referenceLinkInputPlan" style="display:none;">
+                            <input type="url" name="referenceLinkUrl" placeholder="https://example.com/document" style="width:280px;" />
+                            <input type="text" name="referenceLinkName" placeholder="<?php echo $tpl->__('label.link_name_optional'); ?>" style="width:280px; margin-top:5px;" />
+                            <br /><small><?php echo $tpl->__('text.attach_reference_link_to_todo'); ?></small>
+                        </div>
                     </div>
                 </div>
+
+                <script>
+                    jQuery(function() {
+                        jQuery(document).on('change', '.referenceTypeTogglePlan', function() {
+                            var isLink = jQuery('.referenceTypeTogglePlan:checked').val() === 'link';
+                            jQuery('.referenceFileInputPlan').toggle(!isLink);
+                            jQuery('.referenceLinkInputPlan').toggle(isLink);
+                        });
+                    });
+                </script>
 
                 <br />
 
@@ -219,9 +245,9 @@ $planWeekEnd = $tpl->get('planWeekEnd');
                 <form method="post" action="<?= BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>" class="formModal">
                     <input type="hidden" name="comment" value="1" />
                     <?php
-                    $tpl->assign('formUrl', ''.BASE_URL.'/tickets/showTicket/'.$ticket->id.'');
-            $tpl->displaySubmodule('comments-generalComment');
-            ?>
+                    $tpl->assign('formUrl', '' . BASE_URL . '/tickets/showTicket/' . $ticket->id . '');
+                    $tpl->displaySubmodule('comments-generalComment');
+                    ?>
                 </form>
             </div>
         <?php } ?>
@@ -249,11 +275,11 @@ $planWeekEnd = $tpl->get('planWeekEnd');
                         <div class="">
                             <select id='type' name='type' class="span11">
                                 <?php foreach ($ticketTypes as $types) {
-                                    echo "<option value='".strtolower($types)."' ";
+                                    echo "<option value='" . strtolower($types) . "' ";
                                     if (strtolower($types) == strtolower($ticket->type ?? '')) {
                                         echo "selected='selected'";
                                     }
-                                    echo '>'.$tpl->__('label.'.strtolower($types)).'</option>';
+                                    echo '>' . $tpl->__('label.' . strtolower($types)) . '</option>';
                                 } ?>
                             </select><br />
                         </div>
@@ -271,7 +297,7 @@ $planWeekEnd = $tpl->get('planWeekEnd');
                                     } elseif (session('currentProject') == $project['id']) {
                                         echo 'selected';
                                     }
-                                ?>><?= $tpl->escape($project['name']); ?></option>
+                                    ?>><?= $tpl->escape($project['name']); ?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -284,11 +310,11 @@ $planWeekEnd = $tpl->get('planWeekEnd');
                                 <select name="milestoneid" class="span11">
                                     <option value=""><?php echo $tpl->__('label.not_assigned_to_milestone'); ?></option>
                                     <?php foreach ($tpl->get('milestones') as $milestoneRow) { ?>
-                                        <?php echo "<option value='".$milestoneRow->id."'";
+                                        <?php echo "<option value='" . $milestoneRow->id . "'";
                                         if ($ticket->milestoneid == $milestoneRow->id) {
                                             echo " selected='selected' ";
                                         }
-                                        echo '>'.$tpl->escape($milestoneRow->headline).'</option>'; ?>
+                                        echo '>' . $tpl->escape($milestoneRow->headline) . '</option>'; ?>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -310,7 +336,7 @@ $planWeekEnd = $tpl->get('planWeekEnd');
                                                 echo "selected='selected'";
                                             } ?>><?php $tpl->e($sprintRow->name); ?></option>
                                 <?php }
-                                    } ?>
+                                } ?>
                             </select>
                         </div>
                     </div>
@@ -323,15 +349,15 @@ $planWeekEnd = $tpl->get('planWeekEnd');
                                 <select name="dependingTicketId" class="span11">
                                     <option value=""><?php echo $tpl->__('label.not_related'); ?></option>
                                     <?php
-                                        if (is_array($tpl->get('ticketParents'))) {
-                                            foreach ($tpl->get('ticketParents') as $ticketRow) { ?>
-                                            <?php echo "<option value='".$ticketRow->id."'";
-                                                if (($ticket->dependingTicketId == $ticketRow->id)) {
-                                                    echo " selected='selected' ";
-                                                }
-                                                echo '>'.$tpl->escape($ticketRow->headline).'</option>'; ?>
+                                    if (is_array($tpl->get('ticketParents'))) {
+                                        foreach ($tpl->get('ticketParents') as $ticketRow) { ?>
+                                            <?php echo "<option value='" . $ticketRow->id . "'";
+                                            if (($ticket->dependingTicketId == $ticketRow->id)) {
+                                                echo " selected='selected' ";
+                                            }
+                                            echo '>' . $tpl->escape($ticketRow->headline) . '</option>'; ?>
                                     <?php }
-                                            } ?>
+                                    } ?>
                                 </select>
                             </div>
                         </div>

@@ -208,8 +208,8 @@ $users = $tpl->get('users');
             <div id='clientProjects'>
                 <?php
                 $clientProjectIds = array_column($tpl->get('clientProjects'), 'id');
-$allProjects = $tpl->get('allProjects');
-?>
+                $allProjects = $tpl->get('allProjects');
+                ?>
                 <form method="post" action="<?= BASE_URL ?>/clients/showClient/<?php $tpl->e($values['id']); ?>">
                     <input type="hidden" name="saveProjects" value="1" />
                     <input type="hidden" name="<?= session('formTokenName') ?>" value="<?= session('formTokenValue') ?>" />
@@ -254,8 +254,8 @@ $allProjects = $tpl->get('allProjects');
                 <form method="post" action="<?= BASE_URL ?>/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>#comment">
                     <input type="hidden" name="comment" value="1" />
                     <?php
-                    $tpl->assign('formUrl', BASE_URL.'/clients/showClient/'.$tpl->escape($_GET['id']).'');
-$tpl->displaySubmodule('comments-generalComment') ?>
+                    $tpl->assign('formUrl', BASE_URL . '/clients/showClient/' . $tpl->escape($_GET['id']) . '');
+                    $tpl->displaySubmodule('comments-generalComment') ?>
                 </form>
 
 
@@ -268,19 +268,38 @@ $tpl->displaySubmodule('comments-generalComment') ?>
 
                         <div class="par f-left" style="margin-right: 15px;">
 
-                            <div class='fileupload fileupload-new' data-provides='fileupload'>
-                                <input type="hidden" />
-                                <div class="input-append">
-                                    <div class="uneditable-input span3">
-                                        <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+                            <div class="tw-mb-s" style="margin-bottom:8px;">
+                                <label style="margin-right:15px; font-weight:normal; cursor:pointer;">
+                                    <input type="radio" name="uploadType" value="file" class="clientUploadTypeToggle" checked />
+                                    <?php echo $tpl->__('label.upload_file'); ?>
+                                </label>
+                                <label style="font-weight:normal; cursor:pointer;">
+                                    <input type="radio" name="uploadType" value="link" class="clientUploadTypeToggle" />
+                                    <?php echo $tpl->__('label.attach_link'); ?>
+                                </label>
+                            </div>
+
+                            <div class="clientFileInput">
+
+                                <div class='fileupload fileupload-new' data-provides='fileupload'>
+                                    <input type="hidden" />
+                                    <div class="input-append">
+                                        <div class="uneditable-input span3">
+                                            <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+                                        </div>
+                                        <span class="btn btn-file">
+                                            <span class="fileupload-new"><?= $tpl->__('label.select_file'); ?></span>
+                                            <span class='fileupload-exists'><?= $tpl->__('label.change'); ?></span>
+                                            <input type='file' name='file' />
+                                        </span>
+                                        <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'><?= $tpl->__('buttons.remove'); ?></a>
                                     </div>
-                                    <span class="btn btn-file">
-                                        <span class="fileupload-new"><?= $tpl->__('label.select_file'); ?></span>
-                                        <span class='fileupload-exists'><?= $tpl->__('label.change'); ?></span>
-                                        <input type='file' name='file' />
-                                    </span>
-                                    <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'><?= $tpl->__('buttons.remove'); ?></a>
                                 </div>
+                            </div>
+
+                            <div class="clientLinkInput" style="display:none;">
+                                <input type="url" name="linkUrl" placeholder="https://example.com/document" style="width:280px;" />
+                                <input type="text" name="linkName" placeholder="<?php echo $tpl->__('label.link_name_optional'); ?>" style="width:280px; margin-top:5px;" />
                             </div>
                         </div>
 
@@ -293,6 +312,10 @@ $tpl->displaySubmodule('comments-generalComment') ?>
 
                     <ul id='medialist' class='listfile'>
                         <?php foreach ($tpl->get('files') as $file) { ?>
+                            <?php
+                            $isLink = strtolower($file['extension'] ?? '') === 'link';
+                            $linkUrl = $isLink ? $tpl->escape($file['encName']) : '';
+                            ?>
                             <li class="<?php echo $file['moduleId'] ?>">
                                 <div class="inlineDropDownContainer" style="float:right;">
 
@@ -300,24 +323,37 @@ $tpl->displaySubmodule('comments-generalComment') ?>
                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li class="nav-header"><?php echo $tpl->__('subtitles.file'); ?></li>
-                                        <li><a href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__('links.download'); ?></a></li>
+                                        <li class="nav-header"><?php echo $isLink ? $tpl->__('subtitles.link') : $tpl->__('subtitles.file'); ?></li>
+                                        <?php if ($isLink) { ?>
+                                            <li><a href="<?php echo $linkUrl; ?>" target="_blank" rel="noopener noreferrer"><?php echo $tpl->__('links.open_link'); ?></a></li>
+                                        <?php } else { ?>
+                                            <li><a href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__('links.download'); ?></a></li>
+                                        <?php } ?>
 
                                         <?php
-                    if ($login::userIsAtLeast($roles::$admin)) { ?>
+                                        if ($login::userIsAtLeast($roles::$admin)) { ?>
                                             <li><a href="<?= BASE_URL ?>/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete'); ?></a></li>
                                         <?php } ?>
 
                                     </ul>
                                 </div>
-                                <a class="cboxElement" href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>">
-                                    <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) {  ?>
-                                        <img style='max-height: 50px; max-width: 70px;' src="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>" alt="" />
-                                    <?php } else { ?>
-                                        <img style='max-height: 50px; max-width: 70px;' src='<?= BASE_URL ?>/dist/images/thumbs/doc.png' />
-                                    <?php } ?>
-                                    <span class="filename"><?php $tpl->e($file['realName']); ?></span>
-                                </a>
+                                <?php if ($isLink) { ?>
+                                    <a href="<?php echo $linkUrl; ?>" target="_blank" rel="noopener noreferrer">
+                                        <div style="font-size:50px; margin-bottom:10px;">
+                                            <span class="fa fa-link"></span>
+                                        </div>
+                                        <span class="filename"><?php $tpl->e($file['realName']); ?></span>
+                                    </a>
+                                <?php } else { ?>
+                                    <a class="cboxElement" href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>">
+                                        <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) {  ?>
+                                            <img style='max-height: 50px; max-width: 70px;' src="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>" alt="" />
+                                        <?php } else { ?>
+                                            <img style='max-height: 50px; max-width: 70px;' src='<?= BASE_URL ?>/dist/images/thumbs/doc.png' />
+                                        <?php } ?>
+                                        <span class="filename"><?php $tpl->e($file['realName']); ?></span>
+                                    </a>
+                                <?php } ?>
                             </li>
                         <?php } ?>
                         <br class="clearall" />
@@ -337,6 +373,12 @@ $tpl->displaySubmodule('comments-generalComment') ?>
 
     jQuery(document).ready(function($) {
         leantime.clientsController.initClientTabs();
+
+        jQuery(document).on('change', '.clientUploadTypeToggle', function() {
+            var isLink = jQuery('.clientUploadTypeToggle:checked').val() === 'link';
+            jQuery('.clientFileInput').toggle(!isLink);
+            jQuery('.clientLinkInput').toggle(isLink);
+        });
     });
 
     <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>

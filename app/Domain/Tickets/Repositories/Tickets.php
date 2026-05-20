@@ -267,7 +267,7 @@ class Tickets
     /**
      * @throws BindingResolutionException
      */
-    public function getUsersTickets($id, $limit): false|array
+    public function getUsersTickets($id, $limit, bool $assignedOnly = false): false|array
     {
         $users = app()->make(Users::class);
         $user = $users->getUser($id);
@@ -310,8 +310,27 @@ class Tickets
                             ->where('project.clientId', $user['clientId'] ?? '');
                     });
             })
-            ->where('ticket.type', '<>', 'milestone')
-            ->orderByDesc('ticket.id');
+            ->where('ticket.type', '<>', 'milestone');
+
+        // When restricted (e.g. a Developer's timesheet), limit to tickets the user
+        // is the assignee of, the creator of, or a collaborator on.
+        if ($assignedOnly === true) {
+            $query->where(function ($q) use ($id) {
+                $q->where('ticket.editorId', $id)
+                    ->orWhere('ticket.userId', $id)
+                    ->orWhereExists(function ($subquery) use ($id) {
+                        $subquery->selectRaw('1')
+                            ->from('zp_entity_relationship')
+                            ->whereColumn('zp_entity_relationship.entityA', 'ticket.id')
+                            ->where('zp_entity_relationship.entityAType', 'Ticket')
+                            ->where('zp_entity_relationship.entityBType', 'User')
+                            ->where('zp_entity_relationship.relationship', EntityRelationshipEnum::Collaborator->value)
+                            ->where('zp_entity_relationship.entityB', $id);
+                    });
+            });
+        }
+
+        $query->orderByDesc('ticket.id');
 
         if ($limit > -1) {
             $query->limit($limit);

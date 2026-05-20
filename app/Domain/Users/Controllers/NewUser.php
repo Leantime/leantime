@@ -50,6 +50,7 @@ class NewUser extends Controller
             'jobLevel' => '',
             'department' => '',
             'managerId' => null,
+            'coManagerId' => null,
 
         ];
 
@@ -71,6 +72,7 @@ class NewUser extends Controller
                     'jobLevel' => ($_POST['jobLevel']),
                     'department' => ($_POST['department']),
                     'managerId' => $_POST['managerId'] ?? null,
+                    'coManagerId' => $_POST['coManagerId'] ?? null,
                     'clientId' => Auth::userHasRole(Roles::$manager) ? session('userdata.clientId') : $_POST['client'],
                 ];
                 if (isset($_POST['projects']) && is_array($_POST['projects'])) {

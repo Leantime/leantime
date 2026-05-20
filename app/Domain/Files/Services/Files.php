@@ -121,6 +121,43 @@ class Files
         return false;
     }
 
+    /**
+     * Attach an external URL to a module as a link "file" record.
+     *
+     * @param  string  $url  The external URL (validated to http/https).
+     * @param  string  $realName  Optional display label; falls back to the URL.
+     * @return false|string The new file record id, or false on invalid URL.
+     */
+    public function addLink(string $url, string $realName, string $module, int $moduleId): false|string
+    {
+        $url = trim($url);
+
+        if ($url === '' || filter_var($url, FILTER_VALIDATE_URL) === false) {
+            return false;
+        }
+
+        // Only allow http/https to avoid javascript:/data: scheme injection.
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+        if (! in_array($scheme, ['http', 'https'], true)) {
+            return false;
+        }
+
+        if ($module === 'projects') {
+            $module = 'project';
+        }
+        if ($module === 'tickets') {
+            $module = 'ticket';
+        }
+
+        return $this->fileRepository->addLink(
+            $url,
+            trim($realName),
+            $module,
+            $moduleId,
+            (int) session('userdata.id')
+        );
+    }
+
     public function getModules($id): array
     {
         $modules = $this->fileRepository->userModules;

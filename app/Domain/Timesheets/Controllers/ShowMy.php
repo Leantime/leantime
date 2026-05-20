@@ -90,9 +90,15 @@ class ShowMy extends Controller
             userId: session('userdata.id'),
             projectTypes: 'project'
         ));
+        // Developers (editor) may only log time against tickets they're assigned to,
+        // created, or collaborate on. TL+ keep full project visibility.
+        $restrictToAssigned = Auth::userHasRole(Roles::$editor, true)
+            && ! Auth::userIsAtLeast(Roles::$teamlead, true);
+
         $this->tpl->assign('allTickets', $this->tickets->getUsersTickets(
             id: session('userdata.id'),
-            limit: -1
+            limit: -1,
+            assignedOnly: $restrictToAssigned
         ));
         $this->tpl->assign('allTimesheets', $myTimesheets);
 

@@ -247,7 +247,7 @@ class EditMilestone extends Controller
                 return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
             }
 
-            if (isset($params['headline']) === true) {
+            if (isset($params['saveMilestone']) === true || isset($params['headline']) === true) {
                 if ($this->ticketService->quickUpdateMilestone($params)) {
                     $this->tpl->setNotification($this->language->__('notification.milestone_edited_successfully'), 'success');
 

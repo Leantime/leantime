@@ -106,7 +106,7 @@ $canStatusOnly  = $isEditorPlus && ! $canFullEdit;
         </ul>
 
         <div id="ticketdetails">
-            <form class="formModal" action="<?= BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
+            <form class="formModal" action="<?= BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post" enctype="multipart/form-data">
                 <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
             </form>
         </div>
