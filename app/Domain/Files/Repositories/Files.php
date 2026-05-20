@@ -39,6 +39,26 @@ class Files
         return (string) $id;
     }
 
+    /**
+     * Store an external URL as an attachment record (no physical file).
+     * The URL is kept in encName and the sentinel extension "link" marks it
+     * so the UI renders a clickable external link instead of a download.
+     */
+    public function addLink(string $url, string $realName, string $module, int $moduleId, int $userId): false|string
+    {
+        $id = $this->db->table('zp_file')->insertGetId([
+            'encName' => $url,
+            'realName' => $realName !== '' ? $realName : $url,
+            'extension' => 'link',
+            'module' => $module,
+            'moduleId' => $moduleId,
+            'userId' => $userId,
+            'date' => now(),
+        ]);
+
+        return (string) $id;
+    }
+
     public function getFile(int $id): array|false
     {
         $result = $this->db->table('zp_file as file')
@@ -171,8 +191,8 @@ class Files
             ->where('id', $id)
             ->first();
 
-        if ($result && isset($result->encName) && isset($result->extension)) {
-            // Use FileManager to delete the file
+        if ($result && isset($result->encName) && isset($result->extension) && $result->extension !== 'link') {
+            // Use FileManager to delete the file (links have no physical file)
             $fileName = $result->encName.'.'.$result->extension;
 
             // Delete file from default storage

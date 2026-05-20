@@ -97,6 +97,7 @@ foreach ($__data as $var => $val) {
 
         <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
             leantime.timesheetsController.initEditTimeModal();
+            leantime.timesheetsController.initDelTimeModal();
         <?php } ?>
 
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1)
@@ -298,6 +299,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                         <td data-order="<?= $tpl->e($row['id']); ?>">
                                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                                 <a href="<?= BASE_URL?>/timesheets/editTime/<?= $row['id']?>" class="editTimeModal">#<?= $row['id'].' - '.$tpl->__('label.edit'); ?> </a>
+                                <a href="<?= BASE_URL?>/timesheets/delTime/<?= $row['id']?>" class="delete delTimeModal" style="margin-left:6px;"><i class="fa fa-trash"></i> <?= $tpl->__('links.delete'); ?></a>
                                 <?php } else { ?>
                                 #<?= $row['id']?>
                                 <?php } ?>

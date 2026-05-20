@@ -192,7 +192,8 @@ class Users
     }
 
     /**
-     * Get all active users whose managerId points to the given user.
+     * Get all active users supervised by the given user — as either the primary
+     * manager (managerId) or the co-manager (coManagerId).
      * Drives "my direct reports" UX for Team Leads and Managers.
      *
      * @return array<int, array<string, mixed>>
@@ -214,7 +215,10 @@ class Users
                 'department',
                 'clientId',
             ])
-            ->where('managerId', $managerId)
+            ->where(function ($q) use ($managerId) {
+                $q->where('managerId', $managerId)
+                    ->orWhere('coManagerId', $managerId);
+            })
             ->where('status', 'a')
             ->where(function ($q) {
                 $q->whereNull('source')->orWhere('source', '!=', 'api');
@@ -318,6 +322,7 @@ class Users
             'jobLevel' => $values['jobLevel'] ?? '',
             'department' => $values['department'] ?? '',
             'managerId' => ! empty($values['managerId']) ? (int) $values['managerId'] : null,
+            'coManagerId' => ! empty($values['coManagerId']) ? (int) $values['coManagerId'] : null,
             'modified' => now(),
         ];
 
@@ -412,6 +417,7 @@ class Users
             'jobLevel' => $values['jobLevel'] ?? '',
             'department' => $values['department'] ?? '',
             'managerId' => ! empty($values['managerId']) ? (int) $values['managerId'] : null,
+            'coManagerId' => ! empty($values['coManagerId']) ? (int) $values['coManagerId'] : null,
             'modified' => now(),
         ]);
 

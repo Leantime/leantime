@@ -459,6 +459,11 @@ body {
 }
 
 .maincontentinner {
+    /* Cap readable width on large screens; scales fluidly below the cap, then
+       centers with auto side margins on ultrawide displays. */
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
     border-radius:var(--box-radius);
     background:var(--glass-background);
     position:relative;
@@ -467,6 +472,16 @@ body {
     box-shadow: var(--large-shadow);
 
     border: var(--glass-border);
+}
+
+/* When content (e.g. the wide Table view) is wider than the available space,
+   scroll horizontally inside the card instead of clipping it. .primaryContent
+   keeps overflow-x:hidden to stop page-wide scroll, so the bar lives on the card.
+   Excludes the Kanban board, which manages its own horizontal scroll and uses
+   absolute/sticky positioning that an overflow context would break. */
+.maincontentinner:not(.kanban-board-wrapper) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .footer {

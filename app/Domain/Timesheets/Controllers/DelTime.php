@@ -32,6 +32,20 @@ class DelTime extends Controller
         if (isset($_GET['id']) === true) {
             $id = (int) ($_GET['id']);
 
+            // Ownership check: a user may only delete their own time entries.
+            // TL+ / managers / admins may delete any entry.
+            $timesheet = $this->timesheetsRepo->getTimesheet($id);
+
+            if ($timesheet === false) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
+            $isOwner = (int) ($timesheet['userId'] ?? 0) === (int) session('userdata.id');
+
+            if (! $isOwner && ! Auth::userIsAtLeast(Roles::$teamlead, true)) {
+                return $this->tpl->displayPartial('errors.error403');
+            }
+
             if (isset($_POST['del']) === true) {
                 $this->timesheetsRepo->deleteTime($id);
 

@@ -25,7 +25,18 @@ class Browse extends Controller
         $currentModule = session('currentProject');
 
         if (isset($_POST['upload']) || isset($_FILES['file'])) {
-            if (isset($_FILES['file'])) {
+            $uploadType = $_POST['uploadType'] ?? 'file';
+
+            if ($uploadType === 'link') {
+                $linkUrl = trim((string) ($_POST['linkUrl'] ?? ''));
+                $linkName = trim((string) ($_POST['linkName'] ?? ''));
+
+                if ($linkUrl !== '' && $this->filesService->addLink($linkUrl, $linkName, 'project', (int) session('currentProject')) !== false) {
+                    $this->tpl->setNotification('notifications.file_upload_success', 'success', 'file_created');
+                } else {
+                    $this->tpl->setNotification('notifications.file_upload_error', 'error');
+                }
+            } elseif (isset($_FILES['file'])) {
                 $this->filesService->upload($_FILES, 'project', session('currentProject'));
                 $this->tpl->setNotification('notifications.file_upload_success', 'success', 'file_created');
             } else {
@@ -39,7 +50,7 @@ class Browse extends Controller
             if ($result === true) {
                 $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
 
-                return Frontcontroller::redirect(BASE_URL.'/files/showAll'.($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : '');
+                return Frontcontroller::redirect(BASE_URL . '/files/showAll' . ($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : '');
             } else {
                 $this->tpl->setNotification($result['msg'], 'success');
             }

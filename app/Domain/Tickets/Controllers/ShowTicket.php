@@ -50,7 +50,7 @@ class ShowTicket extends Controller
         $this->userService = $userService;
 
         if (session()->exists('lastPage') === false) {
-            session(['lastPage' => BASE_URL.'/tickets/showKanban']);
+            session(['lastPage' => BASE_URL . '/tickets/showKanban']);
         }
     }
 
@@ -83,7 +83,7 @@ class ShowTicket extends Controller
         if (session('currentProject') != $ticket->projectId) {
             $this->projectService->changeCurrentSessionProject($ticket->projectId);
 
-            return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id);
+            return Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id);
         }
 
         // Delete file
@@ -91,7 +91,7 @@ class ShowTicket extends Controller
             if ($result = $this->fileService->deleteFile($params['delFile'])) {
                 $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success');
 
-                return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'#files');
+                return Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id . '#files');
             }
 
             $this->tpl->setNotification($result['msg'], 'error');
@@ -103,7 +103,7 @@ class ShowTicket extends Controller
 
             if ($this->commentService->deleteComment($commentId)) {
                 $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
-                $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id);
+                $response = Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id);
                 $response->headers->set('HX-Trigger', 'ticketUpdate');
 
                 return $response;
@@ -113,7 +113,6 @@ class ShowTicket extends Controller
         }
         // Delete Subtask
         if (isset($params['delSubtask']) === true) {
-
         }
 
         $this->tpl->assign('ticket', $ticket);
@@ -192,9 +191,20 @@ class ShowTicket extends Controller
             return $this->tpl->display('errors.error500', responseCode: 500);
         }
 
-        // Upload File
+        // Upload file or attach external link
         if (isset($params['upload'])) {
-            if ($this->fileService->upload($_FILES, 'ticket', $id, $ticket)) {
+            $uploadType = $params['uploadType'] ?? 'file';
+
+            if ($uploadType === 'link') {
+                $linkUrl = trim((string) ($params['linkUrl'] ?? ''));
+                $linkName = trim((string) ($params['linkName'] ?? ''));
+
+                if ($linkUrl !== '' && $this->fileService->addLink($linkUrl, $linkName, 'ticket', $id) !== false) {
+                    $this->tpl->setNotification($this->language->__('notifications.file_upload_success'), 'success');
+                } else {
+                    $this->tpl->setNotification($this->language->__('notifications.file_upload_error'), 'error');
+                }
+            } elseif ($this->fileService->upload($_FILES, 'ticket', $id, $ticket)) {
                 $this->tpl->setNotification($this->language->__('notifications.file_upload_success'), 'success');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.file_upload_error'), 'error');
@@ -230,7 +240,6 @@ class ShowTicket extends Controller
             } catch (\Exception $e) {
                 $this->tpl->setNotification($e->getMessage(), 'error');
             }
-
         }
 
         // Save Ticket
@@ -246,22 +255,60 @@ class ShowTicket extends Controller
             $result = $this->ticketService->updateTicket($params);
 
             if ($result === true) {
+                $this->saveReferenceAttachment($id, $ticket);
                 $this->tpl->setNotification($this->language->__('notifications.ticket_saved'), 'success');
             } else {
                 $this->tpl->setNotification($this->language->__($result['msg']), 'error');
             }
 
             if (isset($params['saveAndCloseTicket']) === true && $params['saveAndCloseTicket'] == 1) {
-                $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'?closeModal=1');
+                $response = Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id . '?closeModal=1');
                 $response->headers->set('HX-Trigger', 'ticketUpdate');
 
                 return $response;
             }
         }
 
-        $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.''.$tab);
+        $response = Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id . '' . $tab);
         $response->headers->set('HX-Trigger', 'ticketUpdate');
 
         return $response;
+    }
+
+    /**
+     * Attach a reference file OR link submitted alongside the ticket edit form.
+     * Mirrors the New Task form's File/Link toggle.
+     */
+    private function saveReferenceAttachment(int $ticketId, mixed $ticket): void
+    {
+        $referenceType = $_POST['referenceType'] ?? 'file';
+
+        if ($referenceType === 'link') {
+            $url = trim($_POST['referenceLinkUrl'] ?? '');
+
+            if ($url !== '') {
+                $this->fileService->addLink(
+                    $url,
+                    trim($_POST['referenceLinkName'] ?? ''),
+                    'ticket',
+                    $ticketId
+                );
+            }
+
+            return;
+        }
+
+        if (
+            isset($_FILES['referenceFile'])
+            && is_array($_FILES['referenceFile'])
+            && ($_FILES['referenceFile']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK
+        ) {
+            $this->fileService->upload(
+                ['file' => $_FILES['referenceFile']],
+                'ticket',
+                $ticketId,
+                $ticket
+            );
+        }
     }
 }

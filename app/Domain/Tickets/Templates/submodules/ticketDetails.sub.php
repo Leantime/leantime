@@ -164,14 +164,25 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
                 </div>
 
-                <?php if (empty($ticket->id)) { ?>
-                    <div class="form-group tw-flex tw-w-3/5">
-                        <label class="control-label tw-mx-m tw-w-[100px]">
-                            <?php echo $tpl->__('label.select_file'); ?>
-                            <br />
-                            <small><?php echo $tpl->__('label.optional'); ?></small>
-                        </label>
-                        <div>
+                <div class="form-group tw-flex tw-w-3/5">
+                    <label class="control-label tw-mx-m tw-w-[100px]">
+                        <?php echo $tpl->__('label.attach_reference'); ?>
+                        <br />
+                        <small><?php echo $tpl->__('label.optional'); ?></small>
+                    </label>
+                    <div>
+                        <div class="tw-mb-s" style="margin-bottom:8px;">
+                            <label style="margin-right:15px; font-weight:normal; cursor:pointer;">
+                                <input type="radio" name="referenceType" value="file" class="referenceTypeToggle" checked />
+                                <?php echo $tpl->__('label.upload_file'); ?>
+                            </label>
+                            <label style="font-weight:normal; cursor:pointer;">
+                                <input type="radio" name="referenceType" value="link" class="referenceTypeToggle" />
+                                <?php echo $tpl->__('label.attach_link'); ?>
+                            </label>
+                        </div>
+
+                        <div class="referenceFileInput">
                             <div class="fileupload fileupload-new" data-provides="fileupload">
                                 <input type="hidden" />
                                 <div class="input-append">
@@ -191,8 +202,24 @@ $ticketTypes = $tpl->get('ticketTypes');
                             </div>
                             <small><?php echo $tpl->__('text.attach_reference_file_to_todo'); ?></small>
                         </div>
+
+                        <div class="referenceLinkInput" style="display:none;">
+                            <input type="url" name="referenceLinkUrl" placeholder="https://example.com/document" style="width:280px;" />
+                            <input type="text" name="referenceLinkName" placeholder="<?php echo $tpl->__('label.link_name_optional'); ?>" style="width:280px; margin-top:5px;" />
+                            <br /><small><?php echo $tpl->__('text.attach_reference_link_to_todo'); ?></small>
+                        </div>
                     </div>
-                <?php } ?>
+                </div>
+
+                <script>
+                    jQuery(function () {
+                        jQuery(document).on('change', '.referenceTypeToggle', function () {
+                            var isLink = jQuery('.referenceTypeToggle:checked').val() === 'link';
+                            jQuery('.referenceFileInput').toggle(! isLink);
+                            jQuery('.referenceLinkInput').toggle(isLink);
+                        });
+                    });
+                </script>
                 <br />
 
                 <div class="form-group" id="descriptionEditor">

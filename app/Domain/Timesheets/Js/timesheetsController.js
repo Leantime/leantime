@@ -100,9 +100,33 @@ leantime.timesheetsController = (function () {
         jQuery(".editTimeModal").nyroModal(canvasoptions);
     };
 
+    var initDelTimeModal = function () {
+        // Small confirm dialog — the edit modal's tall sizing is wrong for a 2-line prompt.
+        var deloptions = {
+            sizes: {
+                minW: 420,
+                minH: 160,
+            },
+            resizable: false,
+            autoSizable: true,
+            callbacks: {
+                afterShowCont: function () {
+                    jQuery(".delTimeModal").nyroModal(deloptions);
+                },
+                beforeClose: function () {
+                    location.reload();
+                }
+            },
+            titleFromIframe: true
+        };
+
+        jQuery(".delTimeModal").nyroModal(deloptions);
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         initTimesheetsTable:initTimesheetsTable,
         initEditTimeModal:initEditTimeModal,
+        initDelTimeModal:initDelTimeModal,
     };
 })();

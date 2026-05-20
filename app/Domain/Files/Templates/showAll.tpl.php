@@ -15,24 +15,42 @@ foreach ($__data as $var => $val) {
                 <div class="mediamgr_category">
 
                     <form action='<?= BASE_URL ?>/files/showAll<?php if (isset($_GET['modalPopUp'])) {
-                        echo '?modalPopUp=true';
-                    }?>' method='post' enctype="multipart/form-data" class="fileModal" >
+                                                                    echo '?modalPopUp=true';
+                                                                } ?>' method='post' enctype="multipart/form-data" class="fileModal">
                         <div class="par f-left" style="margin-right: 15px;">
 
-                            <div class='fileupload fileupload-new' data-provides='fileupload'>
-                                <input type="hidden" />
-                                <div class="input-append">
-                                    <div class="uneditable-input span3">
-                                        <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
-                                    </div>
-                                    <span class="btn btn-file">
-                                    <span class="fileupload-new">Select file</span>
-                                    <span class='fileupload-exists'>Change</span>
-                                    <input type='file' name='file' />
-                                </span>
+                            <div class="tw-mb-s" style="margin-bottom:8px;">
+                                <label style="margin-right:15px; font-weight:normal; cursor:pointer;">
+                                    <input type="radio" name="uploadType" value="file" class="filesUploadTypeToggle" checked />
+                                    <?php echo $tpl->__('label.upload_file'); ?>
+                                </label>
+                                <label style="font-weight:normal; cursor:pointer;">
+                                    <input type="radio" name="uploadType" value="link" class="filesUploadTypeToggle" />
+                                    <?php echo $tpl->__('label.attach_link'); ?>
+                                </label>
+                            </div>
 
-                                    <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>Remove</a>
+                            <div class="filesFileInput">
+                                <div class='fileupload fileupload-new' data-provides='fileupload'>
+                                    <input type="hidden" />
+                                    <div class="input-append">
+                                        <div class="uneditable-input span3">
+                                            <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+                                        </div>
+                                        <span class="btn btn-file">
+                                            <span class="fileupload-new">Select file</span>
+                                            <span class='fileupload-exists'>Change</span>
+                                            <input type='file' name='file' />
+                                        </span>
+
+                                        <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>Remove</a>
+                                    </div>
                                 </div>
+                            </div>
+
+                            <div class="filesLinkInput" style="display:none;">
+                                <input type="url" name="linkUrl" placeholder="https://example.com/document" style="width:280px;" />
+                                <input type="text" name="linkName" placeholder="<?php echo $tpl->__('label.link_name_optional'); ?>" style="width:280px; margin-top:5px;" />
                             </div>
                         </div>
 
@@ -46,6 +64,10 @@ foreach ($__data as $var => $val) {
 
                     <ul id='medialist' class='listfile'>
                         <?php foreach ($tpl->get('files') as $file) { ?>
+                            <?php
+                            $isLink = strtolower($file['extension'] ?? '') === 'link';
+                            $linkUrl = $isLink ? $tpl->escape($file['encName']) : '';
+                            ?>
                             <li class="<?php echo $file['moduleId'] ?>">
                                 <div class="inlineDropDownContainer dropright" style="float:right;">
 
@@ -53,25 +75,38 @@ foreach ($__data as $var => $val) {
                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li class="nav-header"><?php echo $tpl->__('subtitles.file'); ?></li>
-                                        <li><a target="_blank" href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__('links.download'); ?></a></li>
+                                        <li class="nav-header"><?php echo $isLink ? $tpl->__('subtitles.link') : $tpl->__('subtitles.file'); ?></li>
+                                        <?php if ($isLink) { ?>
+                                            <li><a target="_blank" rel="noopener noreferrer" href="<?php echo $linkUrl; ?>"><?php echo $tpl->__('links.open_link'); ?></a></li>
+                                        <?php } else { ?>
+                                            <li><a target="_blank" href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__('links.download'); ?></a></li>
+                                        <?php } ?>
 
                                         <?php
 
-                          if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                        if ($login::userIsAtLeast($roles::$editor)) { ?>
                                             <li><a href="<?= BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete'); ?></a></li>
                                         <?php } ?>
 
                                     </ul>
                                 </div>
-                                <a class="imageLink" href="<?= BASE_URL?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
-                                    <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) {  ?>
-                                        <img style='max-height: 50px; max-width: 70px;' src="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
-                                    <?php } else { ?>
-                                        <img style='max-height: 50px; max-width: 70px;' src='<?= BASE_URL ?>/dist/images/thumbs/doc.png' />
-                                    <?php } ?>
-                                    <span class="filename"><?php echo substr($file['realName'], 0, 10).'(...).'.$file['extension'] ?></span>
-                                </a>
+                                <?php if ($isLink) { ?>
+                                    <a class="imageLink" href="<?php echo $linkUrl; ?>" target="_blank" rel="noopener noreferrer">
+                                        <div style="font-size:50px; margin-bottom:10px;">
+                                            <span class="fa fa-link"></span>
+                                        </div>
+                                        <span class="filename"><?php echo $tpl->escape($file['realName']); ?></span>
+                                    </a>
+                                <?php } else { ?>
+                                    <a class="imageLink" href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
+                                        <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) {  ?>
+                                            <img style='max-height: 50px; max-width: 70px;' src="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
+                                        <?php } else { ?>
+                                            <img style='max-height: 50px; max-width: 70px;' src='<?= BASE_URL ?>/dist/images/thumbs/doc.png' />
+                                        <?php } ?>
+                                        <span class="filename"><?php echo substr($file['realName'], 0, 10) . '(...).' . $file['extension'] ?></span>
+                                    </a>
+                                <?php } ?>
                             </li>
                         <?php } ?>
                         <br class="clearall" />
@@ -93,7 +128,13 @@ foreach ($__data as $var => $val) {
 
 
 <script type="text/javascript">
-    jQuery(document).ready(function(){
+    jQuery(document).ready(function() {
+
+        jQuery(document).on('change', '.filesUploadTypeToggle', function() {
+            var isLink = jQuery('.filesUploadTypeToggle:checked').val() === 'link';
+            jQuery('.filesFileInput').toggle(!isLink);
+            jQuery('.filesLinkInput').toggle(isLink);
+        });
 
         //Replaces data-rel attribute to rel.
         //We use data-rel because of w3c validation issue
@@ -104,26 +145,30 @@ foreach ($__data as $var => $val) {
         //jQuery("#medialist a").colorbox();
 
         <?php if (isset($_GET['modalPopUp'])) { ?>
-        jQuery('#medialist a.imageLink').on("click", function(event){
+            jQuery('#medialist a.imageLink').on("click", function(event) {
 
-            event.preventDefault();
-            event.stopImmediatePropagation();
+                event.preventDefault();
+                event.stopImmediatePropagation();
 
-            var url = jQuery(this).attr("href");
+                var url = jQuery(this).attr("href");
 
-            //File picker upload callback from editor
-            window.filePickerCallback(url, {text: "file"});
+                //File picker upload callback from editor
+                window.filePickerCallback(url, {
+                    text: "file"
+                });
 
-            jQuery.nmTop().close();
-        });
+                jQuery.nmTop().close();
+            });
 
         <?php } ?>
 
         // Media Filter
-        jQuery('#mediafilter a').on("click", function(){
+        jQuery('#mediafilter a').on("click", function() {
 
-            var filter = (jQuery(this).attr('href') != 'all')? '.'+jQuery(this).attr('href') : '*';
-            jQuery('#medialist').isotope({ filter: filter });
+            var filter = (jQuery(this).attr('href') != 'all') ? '.' + jQuery(this).attr('href') : '*';
+            jQuery('#medialist').isotope({
+                filter: filter
+            });
 
             jQuery('#mediafilter li').removeClass('current');
             jQuery(this).parent().addClass('current');

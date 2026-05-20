@@ -161,6 +161,23 @@ class NewTicket extends Controller
 
     private function uploadReferenceFile(int $ticketId): void
     {
+        $referenceType = $_POST['referenceType'] ?? 'file';
+
+        if ($referenceType === 'link') {
+            $url = trim($_POST['referenceLinkUrl'] ?? '');
+
+            if ($url !== '') {
+                $this->fileService->addLink(
+                    $url,
+                    trim($_POST['referenceLinkName'] ?? ''),
+                    'ticket',
+                    $ticketId
+                );
+            }
+
+            return;
+        }
+
         if (
             isset($_FILES['referenceFile'])
             && is_array($_FILES['referenceFile'])

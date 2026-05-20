@@ -2391,29 +2391,38 @@ class Tickets
      */
     public function quickUpdateMilestone($params): array|bool
     {
+        // Load the existing milestone so a partial edit form (e.g. the milestone
+        // review page, which only submits a subset of fields) doesn't clobber
+        // columns it didn't send.
+        $existing = $this->ticketRepository->getTicket((int) $params['id']);
+        if (! $existing) {
+            return ['status' => 'error', 'message' => 'Milestone not found'];
+        }
 
         $values = [
-            'headline' => $params['headline'],
+            'headline' => $params['headline'] ?? $existing->headline,
             'type' => 'milestone',
-            'description' => '',
-            'projectId' => session('currentProject'),
-            'editorId' => $params['editorId'],
-            'userId' => session('userdata.id'),
+            'description' => $params['description'] ?? $existing->description ?? '',
+            'projectId' => $existing->projectId ?? session('currentProject'),
+            'editorId' => $params['editorId'] ?? $existing->editorId ?? '',
+            'userId' => $existing->userId ?? session('userdata.id'),
             'date' => dtHelper()->userNow()->formatDateTimeForDb(),
-            'dateToFinish' => '',
-            'status' => $params['status'],
-            'storypoints' => isset($params['storypoints']) && $params['storypoints'] !== '' ? (int) $params['storypoints'] : '',
-            'hourRemaining' => '',
-            'planHours' => '',
-            'sprint' => '',
-            'acceptanceCriteria' => '',
-            'priority' => 3,
-            'dependingTicketId' => '',
-            'milestoneid' => $params['dependentMilestone'],
-
-            'tags' => $params['tags'],
-            'editFrom' => $params['editFrom'] ?? '',
-            'editTo' => $params['editTo'] ?? '',
+            'dateToFinish' => $existing->dateToFinish ?? '',
+            'status' => $params['status'] ?? $existing->status,
+            'storypoints' => isset($params['storypoints']) && $params['storypoints'] !== '' ? (int) $params['storypoints'] : ($existing->storypoints ?? ''),
+            'hourRemaining' => $existing->hourRemaining ?? '',
+            'planHours' => $existing->planHours ?? '',
+            'sprint' => $existing->sprint ?? '',
+            'acceptanceCriteria' => $existing->acceptanceCriteria ?? '',
+            'priority' => $existing->priority ?? 3,
+            'dependingTicketId' => $existing->dependingTicketId ?? '',
+            'milestoneid' => $params['dependentMilestone'] ?? $existing->milestoneid ?? '',
+            'tags' => $params['tags'] ?? $existing->tags ?? '',
+            // Form sends user-format dates; fallback uses the existing DB datetime
+            // wrapped as CarbonImmutable so prepareTicketDates formats it correctly
+            // instead of trying to parse a DB string as user input.
+            'editFrom' => $params['editFrom'] ?? $this->dbDateOrEmpty($existing->editFrom ?? null),
+            'editTo' => $params['editTo'] ?? $this->dbDateOrEmpty($existing->editTo ?? null),
         ];
 
         if ($values['headline'] == '') {
@@ -2428,6 +2437,26 @@ class Tickets
 
         // $params is an array of field names. Exclude id
         return $this->ticketRepository->updateTicket($values, $params['id']);
+    }
+
+    /**
+     * Convert a stored DB datetime string into a CarbonImmutable for re-saving,
+     * or return '' for empty/zero dates. Used when a partial edit form falls back
+     * to a milestone's existing dates.
+     */
+    private function dbDateOrEmpty(?string $dbDate): CarbonImmutable|string
+    {
+        if (empty($dbDate)
+            || $dbDate === '0000-00-00 00:00:00'
+            || $dbDate === '1969-12-31 00:00:00') {
+            return '';
+        }
+
+        try {
+            return dtHelper()->parseDbDateTime($dbDate);
+        } catch (\Exception $e) {
+            return '';
+        }
     }
 
     /**

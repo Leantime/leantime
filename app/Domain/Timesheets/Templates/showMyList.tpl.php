@@ -128,7 +128,8 @@ foreach ($tpl->get('allTimesheets') as $row) {
     $sum = $sum + $row['hours']; ?>
                     <tr>
                         <td data-order="<?php echo $tpl->e($row['id']); ?>">
-                            <a href="<?= BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal" id="editTimesheet-<?php echo $row['id']?>">#<?php echo $row['id'].' - '.$tpl->__('label.edit'); ?> </a></td>
+                            <a href="<?= BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal" id="editTimesheet-<?php echo $row['id']?>">#<?php echo $row['id'].' - '.$tpl->__('label.edit'); ?> </a>
+                            <a href="<?= BASE_URL?>/timesheets/delTime/<?php echo $row['id']?>" class="delete delTimeModal" id="delTimesheet-<?php echo $row['id']?>" style="margin-left:8px;"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete'); ?></a></td>
                         <td data-order="<?php echo format($row['workDate'])->isoDateTime(); ?>">
                             <?php echo format($row['workDate'])->date(); ?>
                             <?php echo format($row['workDate'])->time(); ?>
@@ -205,6 +206,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
     jQuery(document).ready(function(){
         leantime.timesheetsController.initTimesheetsTable();
         leantime.timesheetsController.initEditTimeModal();
+        leantime.timesheetsController.initDelTimeModal();
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1);
     });
 </script>

@@ -317,7 +317,7 @@ try { $dueDateStr = \Carbon\Carbon::parse($rawDue)->format('M j, Y'); } catch (\
                         <div class="mr-label" style="font-weight:400; opacity:.7;">{{ $doneTasks }} / {{ $totalTasks }} done</div>
                     </div>
                     <div style="margin-top:12px;">
-                        <button type="submit" name="headline" class="btn btn-primary btn-block" style="font-size:12px;">
+                        <button type="submit" name="saveMilestone" value="1" class="btn btn-primary btn-block" style="font-size:12px;">
                             <i class="fa fa-save"></i> Save Changes
                         </button>
                     </div>

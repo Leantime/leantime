@@ -71,6 +71,7 @@ class EditUser extends Controller
                 'jobLevel' => $row['jobLevel'],
                 'department' => $row['department'],
                 'managerId' => $row['managerId'] ?? null,
+                'coManagerId' => $row['coManagerId'] ?? null,
 
             ];
 
@@ -122,6 +123,7 @@ class EditUser extends Controller
                         'jobLevel' => ($_POST['jobLevel'] ?? $row['jobLevel']),
                         'department' => ($_POST['department'] ?? $row['department']),
                         'managerId' => $_POST['managerId'] ?? ($row['managerId'] ?? null),
+                        'coManagerId' => $_POST['coManagerId'] ?? ($row['coManagerId'] ?? null),
                     ];
 
                     $changedEmail = 0;
