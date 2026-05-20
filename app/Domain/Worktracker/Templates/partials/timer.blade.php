@@ -41,7 +41,12 @@
             @endif
             <li class="divider"></li>
             <li>
-                <a href="javascript:void(0);" id="workTracker-stopBtn" title="One-click stop. To save an end screenshot, use the Stop button on the My Sessions page.">
+                <a
+                    href="javascript:void(0);"
+                    id="workTracker-stopBtn"
+                    data-session-id="{{ (int) ($timerStatus['session_id'] ?? 0) }}"
+                    title="One-click stop. To save an end screenshot, use the Stop button on the My Sessions page."
+                >
                     <i class="fa fa-stop-circle tw-mr-xs tw-text-red-500"></i> Stop Session
                 </a>
             </li>
@@ -203,13 +208,36 @@
     // ── Stop button (quick stop — no end-screenshot prompt) ──
     // The navbar Stop is one-click for ergonomics. The end-screenshot flow
     // is still available from My Sessions → Stop Session button if needed.
+    //
+    // IMPORTANT: read sessionId from the data-attribute at click time, NOT
+    // from a Blade-baked literal. The script block lives inside `@once
+    // @push('scripts')` and is therefore rendered ONLY at the initial page
+    // load. After HTMX swaps in the running-state widget, any baked-in JS
+    // literal would still be 0 (the value at page load) — which made every
+    // Stop click show "No active session to stop."
     document.addEventListener('click', function (e) {
         var btn = e.target.closest('#workTracker-stopBtn');
         if (!btn) return;
 
-        var sessionId = {{ isset($timerStatus['session_id']) ? (int)$timerStatus['session_id'] : 0 }};
+        var sessionId = parseInt(btn.dataset.sessionId || '0', 10);
         if (sessionId <= 0) {
-            showNotification('No active session to stop.', 'error');
+            // Fallback: ask the server for the current status before complaining
+            fetch(BASE_URL + '/worktracker/api', {
+                method: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data && data.running && data.session_id) {
+                    btn.dataset.sessionId = data.session_id;
+                    btn.click();
+                } else {
+                    showNotification('No active session to stop.', 'error');
+                }
+            })
+            .catch(function () {
+                showNotification('No active session to stop.', 'error');
+            });
             return;
         }
 
