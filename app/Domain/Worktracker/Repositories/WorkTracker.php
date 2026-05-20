@@ -147,34 +147,57 @@ class WorkTracker
     }
 
     /**
-     * Total tracked seconds for a user on a given calendar day (UTC).
+     * Total tracked seconds for a user on a given IST calendar day.
+     * Storage is UTC, so we translate the IST date into the matching UTC
+     * datetime range and use whereBetween. This keeps "Today" rolling over
+     * at midnight IST instead of midnight UTC (which would be 05:30 IST).
      */
-    public function getDayTotal(int $userId, string $date): int
+    public function getDayTotal(int $userId, string $istDate): int
     {
+        [$fromUtc, $toUtc] = $this->istDateToUtcRange($istDate);
+
         $result = $this->db->table('zp_work_sessions')
             ->where('user_id', $userId)
             ->where('status', 'completed')
-            ->whereDate('start_time', $date)
+            ->whereBetween('start_time', [$fromUtc, $toUtc])
             ->sum('total_duration');
 
         return (int) $result;
     }
 
     /**
-     * Total tracked seconds for a user in the current ISO week.
+     * Total tracked seconds for a user in the current IST week (Mon–Sun).
      */
     public function getWeekTotal(int $userId): int
     {
-        $monday = now()->startOfWeek()->toDateString();
-        $sunday = now()->endOfWeek()->toDateString();
+        $tz       = \Leantime\Domain\Worktracker\Services\WorkTracker::DISPLAY_TZ;
+        $monday   = \Carbon\Carbon::now($tz)->startOfWeek()->format('Y-m-d 00:00:00');
+        $sunday   = \Carbon\Carbon::now($tz)->endOfWeek()->format('Y-m-d 23:59:59');
+        $mondayUtc = \Carbon\Carbon::parse($monday, $tz)->setTimezone('UTC')->format('Y-m-d H:i:s');
+        $sundayUtc = \Carbon\Carbon::parse($sunday, $tz)->setTimezone('UTC')->format('Y-m-d H:i:s');
 
         $result = $this->db->table('zp_work_sessions')
             ->where('user_id', $userId)
             ->where('status', 'completed')
-            ->whereBetween('start_time', [$monday . ' 00:00:00', $sunday . ' 23:59:59'])
+            ->whereBetween('start_time', [$mondayUtc, $sundayUtc])
             ->sum('total_duration');
 
         return (int) $result;
+    }
+
+    /**
+     * Translate an IST calendar date "Y-m-d" into the matching UTC
+     * datetime range [00:00:00 IST → 23:59:59 IST] expressed in UTC.
+     *
+     * @return array{0:string,1:string}  [fromUtc, toUtc] in "Y-m-d H:i:s"
+     */
+    private function istDateToUtcRange(string $istDate): array
+    {
+        $tz = \Leantime\Domain\Worktracker\Services\WorkTracker::DISPLAY_TZ;
+        $from = \Carbon\Carbon::parse($istDate . ' 00:00:00', $tz)->setTimezone('UTC')->format('Y-m-d H:i:s');
+        $to   = \Carbon\Carbon::parse($istDate . ' 23:59:59', $tz)->setTimezone('UTC')->format('Y-m-d H:i:s');
+
+        return [$from, $to];
     }
 
     /**
@@ -207,12 +230,16 @@ class WorkTracker
 
     /**
      * Today's total in seconds across all employees, for admin summary.
+     * "Today" is the calendar day in IST (the display/business timezone).
      */
     public function getTodayGrandTotal(): int
     {
+        $tz = \Leantime\Domain\Worktracker\Services\WorkTracker::DISPLAY_TZ;
+        [$fromUtc, $toUtc] = $this->istDateToUtcRange(\Carbon\Carbon::now($tz)->toDateString());
+
         $result = $this->db->table('zp_work_sessions')
             ->where('status', 'completed')
-            ->whereDate('start_time', now()->toDateString())
+            ->whereBetween('start_time', [$fromUtc, $toUtc])
             ->sum('total_duration');
 
         return (int) $result;

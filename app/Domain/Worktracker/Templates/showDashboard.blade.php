@@ -2,6 +2,18 @@
 
 @section('content')
 
+@php
+    /**
+     * All work-session timestamps in the database are stored in UTC.
+     * The team works in IST (Asia/Kolkata = UTC+05:30), so we convert at
+     * display time. Keeping storage as UTC means timezone-correctness is
+     * preserved if the team ever expands to other regions.
+     */
+    $ist = static fn ($utcValue) => $utcValue
+        ? \Carbon\Carbon::parse($utcValue, 'UTC')->setTimezone('Asia/Kolkata')
+        : null;
+@endphp
+
 <x-global::pageheader :icon="'fa fa-clock-o'">
     <h1>My Work Sessions</h1>
 </x-global::pageheader>
@@ -54,7 +66,7 @@
                     <div>
                         <i class="fa fa-circle tw-text-green-500 tw-mr-xs"></i>
                         <strong>Session running</strong> — started at
-                        {{ \Carbon\Carbon::parse($activeSession->start_time)->format('H:i:s') }}
+                        {{ $ist($activeSession->start_time)->format('H:i:s') }} IST
                     </div>
                     <div class="tw-flex tw-gap-xs">
                         <button
@@ -110,8 +122,8 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Date</th>
-                                        <th>Start Time</th>
-                                        <th>End Time</th>
+                                        <th>Start Time (IST)</th>
+                                        <th>End Time (IST)</th>
                                         <th>Duration</th>
                                         <th>Status</th>
                                         <th>Start Screenshot</th>
@@ -122,11 +134,11 @@
                                     @foreach ($sessions as $session)
                                     <tr>
                                         <td>{{ $session['id'] }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($session['start_time'])->format('Y-m-d') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($session['start_time'])->format('H:i:s') }}</td>
+                                        <td>{{ $ist($session['start_time'])->format('Y-m-d') }}</td>
+                                        <td>{{ $ist($session['start_time'])->format('H:i:s') }}</td>
                                         <td>
                                             @if ($session['end_time'])
-                                                {{ \Carbon\Carbon::parse($session['end_time'])->format('H:i:s') }}
+                                                {{ $ist($session['end_time'])->format('H:i:s') }}
                                             @else
                                                 <span class="tw-text-green-600">Running…</span>
                                             @endif

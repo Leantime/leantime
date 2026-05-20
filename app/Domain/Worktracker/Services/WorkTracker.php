@@ -19,6 +19,14 @@ class WorkTracker
      */
     private const SCREENSHOT_DIR = 'worktracker/screenshots';
 
+    /**
+     * Display timezone used for all WorkTracker UI rendering and day/week
+     * boundary calculations. Storage remains in UTC; this is purely a
+     * display/aggregation concern. Kept in one place so a future move to
+     * per-user timezones only touches this constant.
+     */
+    public const DISPLAY_TZ = 'Asia/Kolkata';
+
     private WorkTrackerRepository $repo;
 
     private Environment $config;
@@ -197,7 +205,10 @@ class WorkTracker
      */
     public function getEmployeeDashboard(int $userId): array
     {
-        $today        = now()->toDateString();
+        // Dashboard stats are scoped to the user's local day/week (IST).
+        // Storage is UTC, so the repository translates this IST date to a
+        // UTC range before querying.
+        $today        = now(self::DISPLAY_TZ)->toDateString();
         $activeSession = $this->repo->getActiveSession($userId);
 
         $elapsed = 0;

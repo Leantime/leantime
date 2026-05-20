@@ -2,6 +2,15 @@
 
 @section('content')
 
+@php
+    /**
+     * UTC in DB → IST for display. See showDashboard.blade.php for rationale.
+     */
+    $ist = static fn ($utcValue) => $utcValue
+        ? \Carbon\Carbon::parse($utcValue, 'UTC')->setTimezone('Asia/Kolkata')
+        : null;
+@endphp
+
 <x-global::pageheader :icon="'fa fa-users'">
     <h1>Work Session Monitor</h1>
 </x-global::pageheader>
@@ -62,8 +71,8 @@
                                         <th>#</th>
                                         <th>Employee</th>
                                         <th>Date</th>
-                                        <th>Start</th>
-                                        <th>End</th>
+                                        <th>Start (IST)</th>
+                                        <th>End (IST)</th>
                                         <th>Duration</th>
                                         <th>Status</th>
                                         <th>Start SS</th>
@@ -80,11 +89,11 @@
                                                 <br><small class="tw-text-muted">{{ $session['username'] }}</small>
                                             @endif
                                         </td>
-                                        <td>{{ \Carbon\Carbon::parse($session['start_time'])->format('Y-m-d') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($session['start_time'])->format('H:i:s') }}</td>
+                                        <td>{{ $ist($session['start_time'])->format('Y-m-d') }}</td>
+                                        <td>{{ $ist($session['start_time'])->format('H:i:s') }}</td>
                                         <td>
                                             @if ($session['end_time'])
-                                                {{ \Carbon\Carbon::parse($session['end_time'])->format('H:i:s') }}
+                                                {{ $ist($session['end_time'])->format('H:i:s') }}
                                             @else
                                                 <span class="tw-text-green-600 tw-font-semibold">Running…</span>
                                             @endif
