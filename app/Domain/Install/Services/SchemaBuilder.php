@@ -61,6 +61,7 @@ class SchemaBuilder
         $this->createOneononeItemsTable();
         $this->createClientRequestsTable();
         $this->createClientRequestResponsesTable();
+        $this->createWorkSessionsTable();
     }
 
     /**
@@ -925,6 +926,32 @@ class SchemaBuilder
             $table->tinyInteger('enabled')->default(1);
 
             $table->index(['entityId'], 'idx_recurring_patterns_entityId');
+        });
+    }
+
+    /**
+     * Create zp_work_sessions table — WorkTracker MVP.
+     */
+    private function createWorkSessionsTable(): void
+    {
+        if (Schema::hasTable('zp_work_sessions')) {
+            return;
+        }
+
+        Schema::create('zp_work_sessions', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedInteger('user_id');
+            $table->dateTime('start_time')->nullable();
+            $table->dateTime('end_time')->nullable();
+            $table->unsignedInteger('total_duration')->nullable()->comment('Session duration in seconds');
+            $table->enum('status', ['running', 'completed'])->default('running');
+            $table->string('start_screenshot', 512)->nullable();
+            $table->string('end_screenshot', 512)->nullable();
+            $table->timestamps();
+
+            $table->index('user_id');
+            $table->index(['user_id', 'status']);
+            $table->index('start_time');
         });
     }
 }
