@@ -10,7 +10,9 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
 // Hierarchical edit/delete permissions
 $currentUserId  = (int) session('userdata.id');
 $isCreator      = isset($ticket->userId) && (int) $ticket->userId === $currentUserId;
-$isTeamLeadPlus = $login::userIsAtLeast($roles::$teamlead);
+// Force global role: a Team Lead added to a project as "Developer" has a lower projectRole,
+// but their global role still grants full task management. (See sidebar role-check gotcha.)
+$isTeamLeadPlus = $login::userIsAtLeast($roles::$teamlead, true);
 $isEditorPlus   = $login::userIsAtLeast($roles::$editor);
 // Full edit: team lead+ always; developers only for tasks they created
 $canFullEdit    = $isTeamLeadPlus || $isCreator;
