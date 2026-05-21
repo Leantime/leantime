@@ -130,7 +130,16 @@ class Comments
                 $notification->entity = $mapper;
                 $notification->module = 'comments';
                 $notification->action = 'commented';
-                $notification->projectId = session('currentProject');
+                // session('currentProject') is set when a user is browsing
+                // a project on web; RPC callers (mobile) don't have that
+                // session key populated, and the Notification model types
+                // projectId as `int` (rejects null). Fall back to the
+                // commented-on entity's project so we always have a real
+                // integer.
+                $entityProjectId = is_object($entity)
+                    ? ($entity->projectId ?? 0)
+                    : (is_array($entity) ? ($entity['projectId'] ?? $entity['id'] ?? 0) : 0);
+                $notification->projectId = (int) (session('currentProject') ?? $entityProjectId);
                 $notification->subject = $subject;
                 $notification->authorId = session('userdata.id');
                 $notification->message = $message;
