@@ -128,15 +128,30 @@ class Users
 
     /**
      * @api
+     *
+     * Default to the session user when no id is provided. Same server-
+     * authoritative pattern as getUsersWithProjectAccess — mobile clients
+     * authenticate via Bearer token and don't always know their own real
+     * user id (the login response returns the access-token row id, not
+     * the underlying user id), so they need a "who am I" endpoint that
+     * doesn't require the answer they're trying to look up.
      */
-    public function getUser($id): array|bool
+    public function getUser($id = null): array|bool
     {
-        if (isset($this->userCache[$id])) {
-            return $this->userCache[$id];
+        $resolvedId = $id;
+        if ($resolvedId === null || (int) $resolvedId === 0) {
+            $resolvedId = (int) session('userdata.id');
+            if ($resolvedId === 0) {
+                return false;
+            }
         }
 
-        $user = $this->userRepo->getUser($id);
-        $this->userCache[$id] = $user;
+        if (isset($this->userCache[$resolvedId])) {
+            return $this->userCache[$resolvedId];
+        }
+
+        $user = $this->userRepo->getUser($resolvedId);
+        $this->userCache[$resolvedId] = $user;
 
         return $user;
     }
