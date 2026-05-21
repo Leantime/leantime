@@ -49,7 +49,7 @@ class Users extends Controller
                 $projectId = $params['projectUsersAccess'];
             }
 
-            $users = $this->userService->getUsersWithProjectAccess(session('userdata.id'), $projectId);
+            $users = $this->userService->getUsersWithProjectAccess($projectId);
 
             if (isset($params['query'])) {
                 $query = $params['query'];

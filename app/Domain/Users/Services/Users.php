@@ -357,8 +357,15 @@ class Users
      *
      * @api
      */
-    public function getUsersWithProjectAccess(int $currentUser, int $projectId): array
+    public function getUsersWithProjectAccess(int $projectId): array
     {
+        // Server-authoritative: never accept user identity from the client (IDOR risk).
+        // Matches the codebase convention used in Tickets.php, ShowCanvas.php, Calendar.php, etc.
+        $currentUser = (int) session('userdata.id');
+        if ($currentUser === 0) {
+            return [];
+        }
+
         $users = [];
 
         if ($this->projectRepository->isUserAssignedToProject($currentUser, $projectId)) {
