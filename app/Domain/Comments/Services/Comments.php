@@ -30,6 +30,30 @@ class Comments
     }
 
     /**
+     * Resolve the entity object backing a comment when the caller didn't
+     * pass one. Web controllers usually already have the entity loaded
+     * before invoking addComment(); RPC callers don't, and shouldn't
+     * have to pre-fetch the entire ticket just to leave a comment.
+     */
+    private function loadEntityForComment(string $module, int $entityId)
+    {
+        try {
+            if ($module === 'ticket') {
+                $ticketService = app()->make(\Leantime\Domain\Tickets\Services\Tickets::class);
+                $ticket = $ticketService->getTicket($entityId);
+                return $ticket ?: null;
+            }
+            if ($module === 'project') {
+                $projectService = app()->make(\Leantime\Domain\Projects\Services\Projects::class);
+                return $projectService->getProject($entityId) ?: null;
+            }
+        } catch (\Throwable $e) {
+            return null;
+        }
+        return null;
+    }
+
+    /**
      * @api
      */
     public function getComments($module, $entityId, int $commentOrder = 0, int $parent = 0): false|array
@@ -42,8 +66,23 @@ class Comments
      *
      * @api
      */
-    public function addComment($values, $module, $entityId, $entity): bool
+    public function addComment($values, $module, $entityId, $entity = null): bool
     {
+        // RPC callers (mobile) typically don't pre-load the entity — they
+        // just know module + entityId. Load it server-side so they don't
+        // have to ship a whole ticket payload over the wire just to comment.
+        if ($entity === null && $module && $entityId) {
+            $entity = $this->loadEntityForComment($module, (int) $entityId);
+        }
+
+        // Default father (parent comment id) to 0 if not provided. The
+        // original code REQUIRED it via isset(), which forced every caller
+        // to send a value even when there was no parent. 0 is the sentinel
+        // for "top-level comment, no parent."
+        if (! isset($values['father'])) {
+            $values['father'] = $values['parentId'] ?? 0;
+        }
+
         if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) && isset($entityId) && isset($entity)) {
             $mapper = [
                 'text' => $values['text'],
