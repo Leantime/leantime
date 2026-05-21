@@ -679,8 +679,8 @@ class Calendar
         string $title,
         ?string $description,
         bool $allDay,
-        int $id,
-        int $projectId,
+        ?int $id,
+        ?int $projectId,
         string $eventType,
         string $dateContext,
         ?string $backgroundColor,
@@ -688,26 +688,29 @@ class Calendar
         ?string $dateFrom,
         ?string $dateTo
     ): array {
-        // Ticket records in MySQL can legitimately have NULL for
-        // description / colour / date fields (the columns are nullable and
-        // older rows pre-date the optional fields). PHP 8's strict-type
-        // declarations rejected those with a 500. Making the signature
-        // nullable and coercing to '' in the output array preserves the
-        // payload shape for the calendar consumer (which expects strings)
-        // without rewriting every call site.
+        // Ticket records in MySQL can legitimately have NULL for any of
+        // the user-facing optional fields here (description, dates, colours)
+        // AND for the foreign-key-style id columns (orphaned tickets, soft-
+        // deleted projects, etc.). PHP 8's strict-type declarations rejected
+        // those with a hard 500. Widening the genuinely-nullable params to
+        // accept null and coercing to safe defaults (empty string / 0)
+        // in the output preserves the payload shape for calendar
+        // consumers — both mobile and web expect strings + numeric ids
+        // — without rewriting every call site or pre-filtering at the
+        // query layer.
         return [
             'title' => $title,
             'allDay' => $allDay,
             'description' => $description ?? '',
             'dateFrom' => $dateFrom ?? '',
             'dateTo' => $dateTo ?? '',
-            'id' => $id,
-            'projectId' => $projectId,
+            'id' => $id ?? 0,
+            'projectId' => $projectId ?? 0,
             'eventType' => $eventType,
             'dateContext' => $dateContext,
             'backgroundColor' => $backgroundColor ?? '',
             'borderColor' => $borderColor ?? '',
-            'url' => BASE_URL.'/dashboard/home/#/tickets/showTicket/'.$id,
+            'url' => BASE_URL.'/dashboard/home/#/tickets/showTicket/'.($id ?? 0),
         ];
     }
 }
