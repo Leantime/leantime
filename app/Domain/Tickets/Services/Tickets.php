@@ -3492,6 +3492,30 @@ class Tickets
             try {
                 if ($values['dateToFinish'] instanceof CarbonImmutable) {
                     $values['dateToFinish'] = $values['dateToFinish']->formatDateTimeForDb();
+                } elseif (
+                    is_string($values['dateToFinish'])
+                    && (empty($values['timeToFinish']) || $values['timeToFinish'] === null)
+                    && preg_match('/^\d{4}-\d{2}-\d{2}$/', $values['dateToFinish'])
+                ) {
+                    // Calendar-date input (e.g. "2026-05-21" from mobile) — store as
+                    // midnight without any timezone conversion.
+                    //
+                    // dateToFinish is semantically a calendar-date field: "due on
+                    // this day on the user's calendar", no time, no TZ. Running it
+                    // through parseUserDateTime (which interprets it as user-local
+                    // wall-clock end-of-day and converts to UTC for storage) caused
+                    // the visible "Hi Claude due May 21 stored as May 22" bug, because
+                    // the LA-default end-of-day rolls past UTC midnight. Per the
+                    // mobile audit (date-handling Tier 1), calendar-date fields
+                    // should round-trip as YYYY-MM-DD strings with no TZ math.
+                    //
+                    // This branch only activates when:
+                    //   - dateToFinish looks like "YYYY-MM-DD" with no time, AND
+                    //   - timeToFinish is absent
+                    // so existing web UI paths that submit dates with companion times
+                    // continue to use parseUserDateTime unchanged.
+                    $values['dateToFinish'] = $values['dateToFinish'] . ' 00:00:00';
+                    unset($values['timeToFinish']);
                 } else {
                     if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
                         $values['dateToFinish'] = dtHelper()->parseUserDateTime(
