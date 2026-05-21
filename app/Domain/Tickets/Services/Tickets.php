@@ -1788,7 +1788,7 @@ class Tickets
      *
      * @api
      */
-    public function quickAddTicket($params): array|bool
+    public function quickAddTicket($params): array|bool|int
     {
 
         $values = [
