@@ -922,13 +922,21 @@ class Projects
     /**
      * Gets the projects that a user has access to.
      *
-     * @param  int  $userId  The ID of the user.
      * @return array|false The array of projects if the user has access, false otherwise.
      *
      * @api
      */
-    public function getProjectsUserHasAccessTo($userId): false|array
+    public function getProjectsUserHasAccessTo(): false|array
     {
+        // Server-authoritative: resolve the user from the auth session.
+        // Never accept user identity from the client (IDOR risk). The project
+        // role/permission filtering inside getUserProjects() runs identically
+        // regardless of where the user ID comes from.
+        $userId = (int) session('userdata.id');
+        if ($userId === 0) {
+            return false;
+        }
+
         $projects = $this->projectRepository->getUserProjects(userId: $userId, accessStatus: 'all');
 
         if ($projects) {
