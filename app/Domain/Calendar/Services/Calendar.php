@@ -677,29 +677,36 @@ class Calendar
      */
     private function mapEventData(
         string $title,
-        string $description,
+        ?string $description,
         bool $allDay,
         int $id,
         int $projectId,
         string $eventType,
         string $dateContext,
-        string $backgroundColor,
-        string $borderColor,
-        string $dateFrom,
-        string $dateTo
+        ?string $backgroundColor,
+        ?string $borderColor,
+        ?string $dateFrom,
+        ?string $dateTo
     ): array {
+        // Ticket records in MySQL can legitimately have NULL for
+        // description / colour / date fields (the columns are nullable and
+        // older rows pre-date the optional fields). PHP 8's strict-type
+        // declarations rejected those with a 500. Making the signature
+        // nullable and coercing to '' in the output array preserves the
+        // payload shape for the calendar consumer (which expects strings)
+        // without rewriting every call site.
         return [
             'title' => $title,
             'allDay' => $allDay,
-            'description' => $description,
-            'dateFrom' => $dateFrom,
-            'dateTo' => $dateTo,
+            'description' => $description ?? '',
+            'dateFrom' => $dateFrom ?? '',
+            'dateTo' => $dateTo ?? '',
             'id' => $id,
             'projectId' => $projectId,
             'eventType' => $eventType,
             'dateContext' => $dateContext,
-            'backgroundColor' => $backgroundColor,
-            'borderColor' => $borderColor,
+            'backgroundColor' => $backgroundColor ?? '',
+            'borderColor' => $borderColor ?? '',
             'url' => BASE_URL.'/dashboard/home/#/tickets/showTicket/'.$id,
         ];
     }
