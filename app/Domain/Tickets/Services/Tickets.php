@@ -2170,6 +2170,48 @@ class Tickets
      *
      * @api
      */
+    /**
+     * @api
+     *
+     * Convenience method for "mark this ticket done" without the client
+     * needing to know the project's status ID for DONE. Looks up the
+     * project's status config, finds the first status with statusType
+     * === 'DONE', and patches the ticket's status to that ID.
+     *
+     * The mobile app calls this from its list-view quick-complete
+     * checkbox; without it, mobile would have to preload every project's
+     * status config just to mark a single task as done.
+     *
+     * Returns true on success, false if the ticket doesn't exist or the
+     * project has no DONE-type status configured.
+     */
+    public function markTicketDone(int $id): bool
+    {
+        $ticket = $this->ticketRepository->getTicket($id);
+        if (! $ticket || empty($ticket->projectId)) {
+            return false;
+        }
+
+        $statusLabels = $this->ticketRepository->getStateLabels((int) $ticket->projectId);
+        if (! is_array($statusLabels)) {
+            return false;
+        }
+
+        $doneStatusId = null;
+        foreach ($statusLabels as $statusId => $config) {
+            if (($config['statusType'] ?? '') === 'DONE') {
+                $doneStatusId = (int) $statusId;
+                break;
+            }
+        }
+
+        if ($doneStatusId === null) {
+            return false;
+        }
+
+        return $this->patch($id, ['status' => $doneStatusId]);
+    }
+
     public function patch($id, $params): bool
     {
         if (! is_array($params)) {
