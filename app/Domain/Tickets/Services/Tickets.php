@@ -520,7 +520,17 @@ class Tickets
 
                     if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
                         $projectStatusLabels[$ticket['projectId']][$ticket['status']]['statusType'] !== 'DONE') {
-                        $ticket['statusLabel'] = $projectStatusLabels[$ticket['projectId']][$ticket['status']]['name'];
+                        // Ship the resolved status label, class, and type
+                        // so mobile (which doesn't preload each project's
+                        // status config) can render the correct label
+                        // and colour without an extra round trip per
+                        // project. Web doesn't need these because it
+                        // already has the project config loaded
+                        // server-side at render time.
+                        $statusConfig = $projectStatusLabels[$ticket['projectId']][$ticket['status']];
+                        $ticket['statusLabel'] = $statusConfig['name'];
+                        $ticket['statusClass'] = $statusConfig['class'] ?? '';
+                        $ticket['statusType'] = $statusConfig['statusType'] ?? '';
                         $ticketArray[] = $ticket;
                     }
                 }
