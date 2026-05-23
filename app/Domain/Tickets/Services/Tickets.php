@@ -2185,6 +2185,76 @@ class Tickets
      * Returns true on success, false if the ticket doesn't exist or the
      * project has no DONE-type status configured.
      */
+    /**
+     * @api
+     *
+     * Inverse of getAllOpenUserTickets — returns the user's DONE tasks
+     * (statusType === 'DONE' for the project). Used by mobile's
+     * "Done" filter to show completed work.
+     */
+    public function getAllDoneUserTickets(?int $userId = null, ?int $project = null): array
+    {
+        $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
+
+        $ticketArray = [];
+        if (is_array($tickets)) {
+            $projectStatusLabels = [];
+
+            foreach ($tickets as $ticket) {
+                if ($ticket['type'] !== 'milestone') {
+                    if (! isset($projectStatusLabels[$ticket['projectId']])) {
+                        $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
+                    }
+
+                    $statusConfig = $projectStatusLabels[$ticket['projectId']][$ticket['status']] ?? null;
+                    if ($statusConfig && ($statusConfig['statusType'] ?? '') === 'DONE') {
+                        $ticket['statusLabel'] = $statusConfig['name'];
+                        $ticket['statusClass'] = $statusConfig['class'] ?? '';
+                        $ticket['statusType'] = $statusConfig['statusType'] ?? '';
+                        $ticketArray[] = $ticket;
+                    }
+                }
+            }
+        }
+
+        return $ticketArray;
+    }
+
+    /**
+     * @api
+     *
+     * Companion to markTicketDone for un-completing. Resolves the
+     * project's first NEW-statusType status and patches to it. Used by
+     * mobile's "Done" filter — tap the checked checkbox to bring a task
+     * back into the active list.
+     */
+    public function markTicketReopen(int $id): bool
+    {
+        $ticket = $this->ticketRepository->getTicket($id);
+        if (! $ticket || empty($ticket->projectId)) {
+            return false;
+        }
+
+        $statusLabels = $this->ticketRepository->getStateLabels((int) $ticket->projectId);
+        if (! is_array($statusLabels)) {
+            return false;
+        }
+
+        $newStatusId = null;
+        foreach ($statusLabels as $statusId => $config) {
+            if (($config['statusType'] ?? '') === 'NEW') {
+                $newStatusId = (int) $statusId;
+                break;
+            }
+        }
+
+        if ($newStatusId === null) {
+            return false;
+        }
+
+        return $this->patch($id, ['status' => $newStatusId]);
+    }
+
     public function markTicketDone(int $id): bool
     {
         $ticket = $this->ticketRepository->getTicket($id);
