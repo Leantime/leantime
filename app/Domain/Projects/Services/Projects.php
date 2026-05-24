@@ -947,6 +947,78 @@ class Projects
     }
 
     /**
+     * @api
+     *
+     * Returns the user's accessible projects ordered by the user's OWN
+     * most-recent activity in each — specifically, the most recent
+     * `zp_tickets.modified` timestamp where the user is the ticket's
+     * editor or creator within that project. Projects with no
+     * user-touched tickets fall to the bottom, sorted alphabetically.
+     *
+     * Distinct from getProjectsUserHasAccessTo (alphabetical) — this
+     * surfaces "projects I'm actively working in" to the top, which is
+     * what mobile's filter sheet wants for its top-N preview. Using
+     * `project.modified` would pick up activity by anyone on the
+     * project (not what the user asked for); this uses ticket-edit
+     * activity scoped to the user.
+     */
+    public function getProjectsByUserActivity(): false|array
+    {
+        $userId = (int) session('userdata.id');
+        if ($userId === 0) {
+            return false;
+        }
+
+        $projects = $this->projectRepository->getUserProjects(userId: $userId, accessStatus: 'all');
+        if (! $projects) {
+            return false;
+        }
+
+        $projectIds = array_filter(array_map(fn ($p) => (int) ($p['id'] ?? 0), $projects));
+        if (empty($projectIds)) {
+            return $projects;
+        }
+
+        // Bulk-fetch per-project max(modified) where the user touched a
+        // ticket — one query, then merge into the projects array. No N+1.
+        $connection = app()->make(\Illuminate\Database\Connection::class);
+        $rows = $connection->table('zp_tickets')
+            ->select('projectId')
+            ->selectRaw('MAX(modified) AS user_last_activity')
+            ->whereIn('projectId', $projectIds)
+            ->where(function ($q) use ($userId) {
+                $q->where('editorId', (string) $userId)
+                    ->orWhere('userId', $userId);
+            })
+            ->groupBy('projectId')
+            ->get();
+
+        $activity = [];
+        foreach ($rows as $row) {
+            $activity[(int) $row->projectId] = $row->user_last_activity;
+        }
+
+        foreach ($projects as &$p) {
+            $p['userLastActivity'] = $activity[(int) ($p['id'] ?? 0)] ?? null;
+        }
+        unset($p);
+
+        usort($projects, function ($a, $b) {
+            $aActivity = $a['userLastActivity'] ?? null;
+            $bActivity = $b['userLastActivity'] ?? null;
+            if ($aActivity && $bActivity) {
+                // YYYY-MM-DD HH:MM:SS sorts correctly via strcmp; desc.
+                return strcmp($bActivity, $aActivity);
+            }
+            if ($aActivity) return -1;
+            if ($bActivity) return 1;
+            return strcmp((string) ($a['name'] ?? ''), (string) ($b['name'] ?? ''));
+        });
+
+        return $projects;
+    }
+
+    /**
      * Sets the current project for the user.
      * If projectId is present in the query string, it sets the project based on that.
      * If projectId is not present, it checks if the currentProject is set in the session and sets the project based on that.
