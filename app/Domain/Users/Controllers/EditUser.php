@@ -73,7 +73,7 @@ class EditUser extends Controller
 
             ];
 
-            if (isset($_GET['resendInvite']) && $row !== false) {
+            if (array_key_exists('resendInvite', $_GET) && $row !== false) {
                 if (! session()->exists('lastInvite.'.$values['id']) ||
                     session('lastInvite.'.$values['id']) < time() - 240) {
                     session(['lastInvite.'.$values['id'] => time()]);
