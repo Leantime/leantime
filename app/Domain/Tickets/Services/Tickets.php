@@ -1801,16 +1801,39 @@ class Tickets
     public function quickAddTicket($params): array|bool|int
     {
 
+        $projectId = $params['projectId'] ?? session('currentProject');
+
+        // Resolve the default status from the PROJECT's status config
+        // rather than hardcoding `3`. The hardcoded `3` was the "New"
+        // status for the default Leantime install, but custom projects
+        // can have status `3` mean "Done", "Blocked", or anything else,
+        // and we don't want to silently create new tasks in those
+        // statuses. Fall back to `3` only if the project has no
+        // NEW-statusType status configured (which would itself be a
+        // misconfiguration but shouldn't break task creation).
+        $defaultStatus = 3;
+        if ($projectId) {
+            $statusLabels = $this->ticketRepository->getStateLabels((int) $projectId);
+            if (is_array($statusLabels)) {
+                foreach ($statusLabels as $statusId => $config) {
+                    if (($config['statusType'] ?? '') === 'NEW') {
+                        $defaultStatus = (int) $statusId;
+                        break;
+                    }
+                }
+            }
+        }
+
         $values = [
             'headline' => $params['headline'],
             'type' => $params['type'] ?? 'task',
             'description' => $params['description'] ?? '',
-            'projectId' => $params['projectId'] ?? session('currentProject'),
+            'projectId' => $projectId,
             'editorId' => $params['editorId'] ?? session('userdata.id'),
             'userId' => session('userdata.id') ?? $params['userId'] ?? null,
             'date' => date('Y-m-d H:i:s'),
             'dateToFinish' => isset($params['dateToFinish']) ? strip_tags($params['dateToFinish']) : '',
-            'status' => isset($params['status']) ? (int) $params['status'] : 3,
+            'status' => isset($params['status']) ? (int) $params['status'] : $defaultStatus,
             'storypoints' => isset($params['storypoints']) ? (int) $params['storypoints'] : '',
             'hourRemaining' => '',
             'planHours' => isset($params['planHours']) ? (int) $params['planHours'] : '',
