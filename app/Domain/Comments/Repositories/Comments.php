@@ -86,9 +86,9 @@ class Comments
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
-    public function getComment(int $id): void
+    public function getComment(int $id): array|false
     {
-        $this->db->table('zp_comment as comment')
+        $result = $this->db->table('zp_comment as comment')
             ->select(
                 'comment.id',
                 'comment.text',
@@ -103,6 +103,8 @@ class Comments
             ->join('zp_user as user', 'comment.userId', '=', 'user.id')
             ->where('comment.id', $id)
             ->first();
+
+        return $result ? (array) $result : false;
     }
 
     public function addComment(array $values, string $module): false|string

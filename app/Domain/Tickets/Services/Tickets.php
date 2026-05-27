@@ -2605,6 +2605,29 @@ class Tickets
      */
     public function updateTicketStatusAndSorting($params, $handler = null): bool
     {
+        // Verify the current user has access to the project for the tickets being updated.
+        // Extract the first ticket ID from params to determine the project.
+        $firstTicketId = null;
+        if ($handler) {
+            $firstTicketId = substr($handler, 7);
+        } else {
+            foreach ($params as $status => $ticketList) {
+                if (is_numeric($status) && ! empty($ticketList)) {
+                    $tickets = explode('&', $ticketList);
+                    if (! empty($tickets[0])) {
+                        $firstTicketId = substr($tickets[0], 9);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ($firstTicketId) {
+            $checkTicket = $this->getTicket($firstTicketId);
+            if ($checkTicket && ! $this->projectService->isUserAssignedToProject(session('userdata.id'), $checkTicket->projectId)) {
+                return false;
+            }
+        }
 
         // Jquery sortable serializes the array for kanban in format
         // statusKey: ticket[]=X&ticket[]=X2...,

@@ -145,7 +145,7 @@ class Tickets
             // Adding the original version back in case folks removed it
             $statusList[-1] = $this->statusListSeed[-1];
 
-            foreach (unserialize($result->value) as $key => $status) {
+            foreach (safe_unserialize($result->value, []) as $key => $status) {
                 if (is_int($key)) {
                     // Backwards Compatibility with existing labels in db
                     // Prior to 2.1.9 labels were stored as <<statuskey>>:<<labelString>>

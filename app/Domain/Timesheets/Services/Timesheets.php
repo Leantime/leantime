@@ -7,6 +7,8 @@ use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Exceptions\MissingParameterException;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Users\Repositories\Users;
@@ -212,15 +214,39 @@ class Timesheets
     }
 
     /**
-     * Delete a timesheet entry
+     * Delete a timesheet entry.
+     * The caller must be the entry owner or have at least manager role.
      *
      * @param  int  $id  The ID of the timesheet entry to delete
+     * @return bool True if deleted, false if unauthorized or not found
      *
      * @api
      */
-    public function deleteTime(int $id): void
+    public function deleteTime(int $id): bool
     {
-        $this->timesheetsRepo->deleteTime($id);
+        $timesheet = $this->timesheetsRepo->getTimesheet($id);
+
+        if (! $timesheet) {
+            return false;
+        }
+
+        $currentUserId = session('userdata.id');
+
+        // Entry owner can delete their own time
+        if ((int) $timesheet['userId'] === (int) $currentUserId) {
+            $this->timesheetsRepo->deleteTime($id);
+
+            return true;
+        }
+
+        // Managers and above can delete any entry
+        if (Auth::userIsAtLeast(Roles::$manager)) {
+            $this->timesheetsRepo->deleteTime($id);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

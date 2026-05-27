@@ -6,9 +6,13 @@ use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
+use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Files\FileManager;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -22,19 +26,39 @@ class Get extends Controller
 
     private FileManager $fileManager;
 
+    private ProjectService $projectService;
+
+    /**
+     * Initializes the controller with required dependencies.
+     *
+     * @param  FileRepository  $filesRepo  The file repository for database lookups.
+     * @param  FileService  $filesService  The file service for business logic.
+     * @param  Environment  $config  The environment configuration.
+     * @param  FileManager  $fileManager  The file manager for filesystem operations.
+     * @param  ProjectService  $projectService  The project service for access checks.
+     */
     public function init(
         FileRepository $filesRepo,
         FileService $filesService,
         Environment $config,
-        FileManager $fileManager
+        FileManager $fileManager,
+        ProjectService $projectService
     ): void {
         $this->filesRepo = $filesRepo;
         $this->filesService = $filesService;
         $this->config = $config;
         $this->fileManager = $fileManager;
+        $this->projectService = $projectService;
     }
 
     /**
+     * Handles GET requests to download/view a file.
+     *
+     * Validates that the current user has access to the project the file belongs to
+     * before serving the file content.
+     *
+     * @return Response The file content response, 403 if unauthorized, or 404 if not found.
+     *
      * @throws \Exception
      */
     public function get(): Response
@@ -43,6 +67,31 @@ class Get extends Controller
         $realName = $_GET['realName'];
         $ext = preg_replace('/[^a-zA-Z0-9]+/', '', $_GET['ext']);
         $module = preg_replace('/[^a-zA-Z0-9]+/', '', $_GET['module'] ?? '');
+
+        // Look up the file record to check authorization
+        $fileRecord = $this->filesRepo->getFileByEncName($encName);
+
+        if ($fileRecord === false) {
+            return new Response('File not found', 404);
+        }
+
+        // Check project-level access unless user is admin or owner
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
+            $projectId = $this->resolveProjectId($fileRecord);
+
+            if ($projectId !== null) {
+                $userId = (int) session('userdata.id');
+                if (! $this->projectService->isUserAssignedToProject($userId, $projectId)) {
+                    Log::warning('Unauthorized file access attempt', [
+                        'userId' => $userId,
+                        'fileId' => $fileRecord['id'],
+                        'projectId' => $projectId,
+                    ]);
+
+                    return new Response('', 403);
+                }
+            }
+        }
 
         // Construct the file name
         $fileName = $encName.'.'.$ext;
@@ -55,6 +104,44 @@ class Get extends Controller
         }
 
         return $response;
+    }
+
+    /**
+     * Resolves the project ID for a given file record based on its module type.
+     *
+     * For 'project' module files, the moduleId is the project ID directly.
+     * For 'ticket' module files, looks up the ticket to find its project.
+     * For other module types (private, etc.), returns null (no project-level check needed).
+     *
+     * @param  array  $fileRecord  The file record from the database.
+     * @return int|null The project ID, or null if project context cannot be determined.
+     */
+    private function resolveProjectId(array $fileRecord): ?int
+    {
+        $module = $fileRecord['module'] ?? '';
+        $moduleId = (int) ($fileRecord['moduleId'] ?? 0);
+
+        if ($moduleId <= 0) {
+            return null;
+        }
+
+        if ($module === 'project') {
+            return $moduleId;
+        }
+
+        if ($module === 'ticket') {
+            $db = app()->make(DbCore::class)->getConnection();
+            $ticket = $db->table('zp_tickets')
+                ->select('projectId')
+                ->where('id', $moduleId)
+                ->first();
+
+            if ($ticket) {
+                return (int) $ticket->projectId;
+            }
+        }
+
+        return null;
     }
 
     /**

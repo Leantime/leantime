@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Exceptions\MissingParameterException;
 use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Component\HttpFoundation\Response;
 
 class Jsonrpc extends Controller
@@ -206,8 +207,10 @@ class Jsonrpc extends Controller
             return $this->returnMethodNotFound("Method doesn't exist: $methodName", $id);
         }
 
-        // Check method attributes
-        // TODO: Check if method is available for api
+        // Only allow methods explicitly marked with @api annotation
+        if (! $this->isApiMethod($serviceName, $methodName)) {
+            return $this->returnMethodNotFound("Method is not available via API: $methodName", $id);
+        }
 
         if ($jsonRpcVer == null) {
             return $this->returnInvalidRequest('You must include a "jsonrpc" parameter with a value of "2.0"', $id);
@@ -289,6 +292,29 @@ class Jsonrpc extends Controller
             ];
         }
 
+    }
+
+    /**
+     * Checks if a service method is marked with the @api annotation.
+     *
+     * @param  string  $serviceName  Fully qualified class name
+     * @param  string  $methodName   Method name
+     * @return bool True if the method has an @api docblock tag
+     */
+    private function isApiMethod(string $serviceName, string $methodName): bool
+    {
+        try {
+            $reflection = new ReflectionMethod($serviceName, $methodName);
+            $docComment = $reflection->getDocComment();
+
+            if ($docComment === false) {
+                return false;
+            }
+
+            return (bool) preg_match('/@api\b/', $docComment);
+        } catch (\ReflectionException $e) {
+            return false;
+        }
     }
 
     /**

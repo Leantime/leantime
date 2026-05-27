@@ -23,7 +23,7 @@ class DefaultWorker
 
         foreach ($messages as $message) {
             try {
-                $payload = unserialize($message['message']);
+                $payload = safe_unserialize($message['message']);
                 $subjectClass = $message['subject'];
 
                 $jobClass = app()->make($subjectClass);

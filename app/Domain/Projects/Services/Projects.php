@@ -1189,7 +1189,7 @@ class Projects
                 $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.lastProject', session('currentProject'));
 
                 $recentProjects = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.recentProjects');
-                $recent = unserialize($recentProjects);
+                $recent = safe_unserialize($recentProjects, []);
 
                 if (is_array($recent) === false) {
                     $recent = [];
@@ -1915,7 +1915,7 @@ class Projects
         if (! $stepsCompleted = $this->settingsRepo->getSetting("projectsettings.$projectId.stepsComplete")) {
             $stepsCompleted = [];
         } else {
-            $stepsCompleted = unserialize($stepsCompleted);
+            $stepsCompleted = safe_unserialize($stepsCompleted, []);
         }
 
         $stepsCompleted = array_map(fn ($status) => 'done', $stepsCompleted);

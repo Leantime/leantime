@@ -59,6 +59,8 @@ class HttpKernel extends Kernel
         \Leantime\Core\Middleware\InitialHeaders::class,
         // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
 
+        \Leantime\Core\Middleware\VerifyCsrfToken::class,
+
         \Leantime\Core\Middleware\AuthCheck::class,
         \Leantime\Core\Middleware\AuthenticateSession::class,
 

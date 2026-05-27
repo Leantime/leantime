@@ -132,11 +132,31 @@ class Files
     }
 
     /**
+     * Delete a file. The caller must be the file owner or have at least manager role.
+     *
      * @api
      */
     public function deleteFile($fileId): bool
     {
-        return $this->fileRepository->deleteFile($fileId);
+        $file = $this->fileRepository->getFile((int) $fileId);
+
+        if (! $file) {
+            return false;
+        }
+
+        $currentUserId = session('userdata.id');
+
+        // File owner can delete their own file
+        if ((int) $file['userId'] === (int) $currentUserId) {
+            return $this->fileRepository->deleteFile((int) $fileId);
+        }
+
+        // Managers and above can delete any file
+        if (Auth::userIsAtLeast(Roles::$manager)) {
+            return $this->fileRepository->deleteFile((int) $fileId);
+        }
+
+        return false;
     }
 
     public function getFilePathById($fileId): false|string

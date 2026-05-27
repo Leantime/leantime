@@ -286,6 +286,45 @@ if (! function_exists('currentRoute')) {
     }
 }
 
+if (! function_exists('safe_unserialize')) {
+    /**
+     * Safely unserialize data without allowing object instantiation.
+     *
+     * Tries json_decode first (forward-compatible with future JSON storage).
+     * Falls back to unserialize with allowed_classes=false to prevent
+     * PHP object instantiation, which mitigates deserialization RCE attacks.
+     *
+     * @param  string|null  $data  The serialized/encoded data
+     * @param  mixed  $default  Default value if data is empty or unparseable
+     * @return mixed The decoded data
+     */
+    function safe_unserialize(?string $data, mixed $default = []): mixed
+    {
+        if ($data === null || $data === '') {
+            return $default;
+        }
+
+        // Try JSON first (forward-compatible)
+        $jsonResult = json_decode($data, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $jsonResult;
+        }
+
+        // Fall back to PHP unserialize with no class instantiation
+        $result = @unserialize($data, ['allowed_classes' => false]);
+        if ($result !== false) {
+            return $result;
+        }
+
+        // Handle the edge case where the serialized value is literally boolean false
+        if ($data === 'b:0;') {
+            return false;
+        }
+
+        return $default;
+    }
+}
+
 if (! function_exists('get_release_version')) {
 
     /**

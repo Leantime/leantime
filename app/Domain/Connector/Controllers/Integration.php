@@ -151,8 +151,8 @@ class Integration extends Controller
             // STEP 6: Do the import
             if ($params['step'] == 'import') {
                 // Store data in DB
-                $values = unserialize(session('serValues'));
-                $fields = unserialize(session('serFields'));
+                $values = safe_unserialize(session('serValues'), []);
+                $fields = safe_unserialize(session('serFields'), []);
 
                 // confirm and store in DB
                 $result = $this->connectorService->importValues($fields, $values, session('currentImportEntity'));

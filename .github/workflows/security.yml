@@ -1,0 +1,61 @@
+name: Security Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master", "*.*-dev" ]
+  pull_request:
+    branches: [ "master", "*.*-dev" ]
+  schedule:
+    - cron: '0 8 * * 1'  # Weekly on Monday at 8am UTC
+
+jobs:
+  composer-audit:
+    name: Composer Security Audit
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+
+    - name: Install Composer Dependencies
+      run: composer install --no-dev --no-interaction --prefer-dist
+
+    - name: Run Composer Audit
+      run: composer audit --format=summary
+
+  npm-audit:
+    name: NPM Security Audit
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install NPM Dependencies
+      run: npm ci
+
+    - name: Run NPM Audit
+      run: npm audit --audit-level=high
+
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-24.04
+    permissions:
+      security-events: write
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3

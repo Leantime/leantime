@@ -634,17 +634,122 @@ class Calendar
     }
 
     /**
-     * Load an iCal URL and return its contents
+     * Validates that a URL is safe to fetch, preventing SSRF attacks.
      *
-     * @param  string  $url  The URL of the iCal feed
-     * @return string The iCal content
+     * Checks that the URL uses an allowed scheme (http/https) and that
+     * the resolved IP address is not in a private or reserved range.
      *
-     * @throws \Exception If there is an error loading the URL
+     * @param  string  $url  The URL to validate.
+     * @return bool True if the URL is safe to fetch, false otherwise.
+     */
+    private function isUrlSafe(string $url): bool
+    {
+        $parsed = parse_url($url);
+
+        if ($parsed === false || ! isset($parsed['scheme']) || ! isset($parsed['host'])) {
+            return false;
+        }
+
+        // Only allow http and https schemes
+        $allowedSchemes = ['http', 'https'];
+        if (! in_array(strtolower($parsed['scheme']), $allowedSchemes, true)) {
+            Log::warning('Calendar SSRF protection: blocked disallowed scheme', [
+                'scheme' => $parsed['scheme'],
+                'url' => $url,
+            ]);
+
+            return false;
+        }
+
+        // Resolve hostname to IP address
+        $host = $parsed['host'];
+        $ip = gethostbyname($host);
+
+        // gethostbyname returns the original hostname on failure
+        if ($ip === $host && ! filter_var($host, FILTER_VALIDATE_IP)) {
+            Log::warning('Calendar SSRF protection: unable to resolve hostname', [
+                'host' => $host,
+            ]);
+
+            return false;
+        }
+
+        // Deny private and reserved IP ranges
+        $denyRanges = [
+            '127.0.0.0/8',      // Loopback
+            '10.0.0.0/8',       // Private (Class A)
+            '172.16.0.0/12',    // Private (Class B)
+            '192.168.0.0/16',   // Private (Class C)
+            '169.254.0.0/16',   // Link-local
+            '0.0.0.0/8',       // Current network
+        ];
+
+        // Check IPv6 loopback
+        if ($ip === '::1') {
+            Log::warning('Calendar SSRF protection: blocked IPv6 loopback address', [
+                'host' => $host,
+            ]);
+
+            return false;
+        }
+
+        foreach ($denyRanges as $range) {
+            if ($this->ipInRange($ip, $range)) {
+                Log::warning('Calendar SSRF protection: blocked private/reserved IP', [
+                    'host' => $host,
+                    'resolved_ip' => $ip,
+                    'matched_range' => $range,
+                ]);
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether an IPv4 address falls within a given CIDR range.
+     *
+     * @param  string  $ip  The IPv4 address to check.
+     * @param  string  $range  The CIDR range (e.g. "10.0.0.0/8").
+     * @return bool True if the IP is within the range, false otherwise.
+     */
+    private function ipInRange(string $ip, string $range): bool
+    {
+        [$subnet, $bits] = explode('/', $range);
+
+        $ipLong = ip2long($ip);
+        $subnetLong = ip2long($subnet);
+
+        if ($ipLong === false || $subnetLong === false) {
+            return false;
+        }
+
+        $mask = -1 << (32 - (int) $bits);
+        $subnetLong &= $mask;
+
+        return ($ipLong & $mask) === $subnetLong;
+    }
+
+    /**
+     * Load an iCal URL and return its contents.
+     *
+     * Validates the URL against SSRF attacks before making the request.
+     *
+     * @param  string  $url  The URL of the iCal feed.
+     * @return string The iCal content.
+     *
+     * @throws \Exception If the URL is unsafe or there is an error loading the URL.
      */
     private function loadIcalUrl(string $url): string
     {
         if (str_contains($url, 'webcal://')) {
             $url = str_replace('webcal://', 'https://', $url);
+        }
+
+        if (! $this->isUrlSafe($url)) {
+            throw new \Exception('Refused to fetch iCal feed: URL failed SSRF safety check');
         }
 
         $client = new \GuzzleHttp\Client;

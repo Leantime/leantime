@@ -123,7 +123,7 @@ class UserInvite extends Controller
                     ],
                 ];
             } else {
-                $workdays = unserialize($workdays);
+                $workdays = safe_unserialize($workdays, []);
             }
 
             $dayHourOptions = [
@@ -144,7 +144,7 @@ class UserInvite extends Controller
             $daySchedule = $this->settingService->getSetting('usersettings.'.$user['id'].'.daySchedule');
 
             if ($daySchedule) {
-                $daySchedule = unserialize($daySchedule);
+                $daySchedule = safe_unserialize($daySchedule, []);
             } else {
                 $daySchedule = [
                     'wakeup' => 6,

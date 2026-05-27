@@ -67,7 +67,7 @@ class Menu
         $clients = $this->projectService->getAllClientsAvailableToUser($userId, 'open', $client);
 
         $recent = $this->settingSvc->getSetting('usersettings.'.$userId.'.recentProjects');
-        $recentArr = unserialize($recent);
+        $recentArr = safe_unserialize($recent, []);
 
         // Make sure the suer has access to the project
         if (is_array($recentArr) && is_array($allAvailableProjects)) {

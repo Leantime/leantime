@@ -66,6 +66,21 @@ class FileManager implements FileManagerInterface
     public function filter_filename($filename, $beautify = true) {}
 
     /**
+     * File extensions that are never allowed to be uploaded.
+     * These can be executed server-side or used to override server configuration.
+     */
+    private const DENIED_EXTENSIONS = [
+        'php',
+        'phtml',
+        'php3',
+        'php4',
+        'php5',
+        'phar',
+        'htaccess',
+        'shtml',
+    ];
+
+    /**
      * Validates a file before upload
      *
      * @param  UploadedFile  $file  The file to validate
@@ -87,12 +102,48 @@ class FileManager implements FileManagerInterface
             throw new FileValidationException('File size exceeds the maximum allowed size of '.format($maxSize)->formatBytes(), FileValidationException::FILE_TOO_LARGE);
         }
 
-        //        // Sanitize the real name for security
-        //        $originalName = $file->getClientOriginalName();
-        //        if ($this->sanitizeFilename($originalName) !== $originalName) {
-        //            throw new FileValidationException('Filename contains invalid characters', FileValidationException::INVALID_FILE);
-        //        }
+        // Reject dangerous file extensions that could be executed server-side
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (in_array($extension, self::DENIED_EXTENSIONS, true)) {
+            Log::warning('Blocked upload of dangerous file type', [
+                'extension' => $extension,
+                'originalName' => $file->getClientOriginalName(),
+                'userId' => session('userdata.id'),
+            ]);
+            throw new FileValidationException(
+                'File type .'.$extension.' is not allowed',
+                FileValidationException::INVALID_MIME_TYPE
+            );
+        }
 
+        // Also check for double extensions like file.php.jpg that could bypass
+        // some server configurations
+        $originalName = strtolower($file->getClientOriginalName());
+        foreach (self::DENIED_EXTENSIONS as $deniedExt) {
+            if (str_contains($originalName, '.'.$deniedExt.'.')) {
+                Log::warning('Blocked upload with dangerous double extension', [
+                    'originalName' => $file->getClientOriginalName(),
+                    'userId' => session('userdata.id'),
+                ]);
+                throw new FileValidationException(
+                    'File contains a disallowed extension in its name',
+                    FileValidationException::INVALID_MIME_TYPE
+                );
+            }
+        }
+
+        // SVG files can contain embedded scripts and event handlers.
+        // Reject them outright to prevent stored XSS attacks.
+        if ($extension === 'svg' || $extension === 'svgz') {
+            Log::info('Blocked SVG upload for security', [
+                'originalName' => $file->getClientOriginalName(),
+                'userId' => session('userdata.id'),
+            ]);
+            throw new FileValidationException(
+                'SVG file uploads are not allowed for security reasons',
+                FileValidationException::INVALID_MIME_TYPE
+            );
+        }
     }
 
     /**
@@ -200,6 +251,24 @@ class FileManager implements FileManagerInterface
             $response->headers->set('Content-Type', $mimeType);
             $response->headers->set('Content-Length', (string) $storage->size($fileName));
             $response->headers->set('Content-Disposition', 'inline; filename="'.$realName.'"');
+
+            // Sandbox all user-uploaded files to prevent script execution
+            $response->headers->set('Content-Security-Policy', 'sandbox');
+
+            // Force download for content types that can execute scripts (HTML, SVG, XML)
+            // to prevent inline rendering of potentially malicious content
+            $dangerousMimeTypes = [
+                'text/html',
+                'application/xhtml+xml',
+                'image/svg+xml',
+                'application/xml',
+                'text/xml',
+            ];
+
+            if (in_array(strtolower($mimeType), $dangerousMimeTypes, true)) {
+                $response->headers->set('Content-Disposition', 'attachment; filename="'.$realName.'"');
+                $response->headers->set('X-Content-Type-Options', 'nosniff');
+            }
 
             if (! $this->config->debug) {
                 $response->headers->set('Pragma', 'public');

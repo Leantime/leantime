@@ -141,7 +141,7 @@ class ShowProject extends Controller
                 ];
                 $this->tpl->assign('zulipHook', $zulipHook);
             } else {
-                $this->tpl->assign('zulipHook', unserialize($zulipWebhook));
+                $this->tpl->assign('zulipHook', safe_unserialize($zulipWebhook, []));
             }
 
             if (isset($_POST['zulipSave'])) {

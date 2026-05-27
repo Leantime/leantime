@@ -93,7 +93,7 @@ class Ideas
             }
 
             if ($result !== null) {
-                foreach (unserialize($result->value) as $key => $label) {
+                foreach (safe_unserialize($result->value, []) as $key => $label) {
                     $labels[$key] = [
                         'name' => $label,
                         'class' => $this->statusClasses[$key],

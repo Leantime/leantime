@@ -63,14 +63,31 @@ class Canvas extends Controller
     }
 
     /**
-     * put - handle put requests
+     * patch - handle patch requests with authorization check
      */
     public function patch(array $params): Response
     {
-        if (
-            ! isset($params['id'])
-            || ! $this->canvasRepo->patchCanvasItem($params['id'], $params)
-        ) {
+        if (! isset($params['id'])) {
+            return $this->tpl->displayJson(['status' => 'failure'], 400);
+        }
+
+        // Verify the canvas item exists and user has access to its project
+        $canvasItem = $this->canvasRepo->getSingleCanvasItem($params['id']);
+        if ($canvasItem === false) {
+            return $this->tpl->displayJson(['status' => 'not found'], 404);
+        }
+
+        $canvas = $this->canvasRepo->getSingleCanvas($canvasItem['canvasId']);
+        if ($canvas === false || empty($canvas)) {
+            return $this->tpl->displayJson(['status' => 'not found'], 404);
+        }
+
+        $projectId = $canvas[0]['projectId'] ?? null;
+        if ($projectId === null || ! $this->projects->isUserAssignedToProject(session('userdata.id'), $projectId)) {
+            return $this->tpl->displayJson(['status' => 'unauthorized'], 403);
+        }
+
+        if (! $this->canvasRepo->patchCanvasItem($params['id'], $params)) {
             return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
 

@@ -139,8 +139,8 @@ class Menu
         if (session()->exists('usersettings.submenuToggle') === false && session()->exists('userdata') === true) {
             $setting = $this->settingsRepo;
             session([
-                'usersettings.submenuToggle' => unserialize(
-                    $setting->getSetting('usersetting.'.session('userdata.id').'.submenuToggle')
+                'usersettings.submenuToggle' => safe_unserialize(
+                    $setting->getSetting('usersetting.'.session('userdata.id').'.submenuToggle'), []
                 ),
             ]);
         }
@@ -196,7 +196,7 @@ class Menu
         $setting = $this->settingsRepo;
         $subStructure = $setting->getSetting('usersetting.'.session('userdata.id').'.submenuToggle');
 
-        session(['usersettings.submenuToggle' => unserialize($subStructure)]);
+        session(['usersettings.submenuToggle' => safe_unserialize($subStructure, [])]);
 
         return session('usersettings.submenuToggle.'.$submenu) ?? false;
     }
