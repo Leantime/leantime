@@ -361,22 +361,24 @@ class Calendar
         foreach ($dbUserEvents as $value) {
             $allDay = filter_var($value['allDay'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-            // Skip events whose stored dates are the MySQL zero-date sentinel
-            // (`0000-00-00 00:00:00`) or empty. Carbon refuses to parse these
-            // and would throw a "not a valid date time string" exception that
-            // kills the entire getCalendar response. Treating them as invalid
-            // and filtering them out is safer than dropping the whole feed —
-            // see project_calendar_zero_date_backend memo for the data-cleanup
-            // followup.
-            if ($this->isZeroDate($value['dateFrom'] ?? null)
-                || $this->isZeroDate($value['dateTo'] ?? null)) {
-                continue;
-            }
-
-            // Filter events by date range if specified
+            // Filter events by date range if specified. Use dtHelper()
+            // rather than CarbonImmutable::parse directly so the
+            // existing isValidDateString() guard catches MySQL zero-date
+            // sentinel (`0000-00-00 00:00:00`), epoch sentinel
+            // (`1969-12-31 00:00:00`), and empty values BEFORE parsing,
+            // and so the parse itself respects Leantime's DB timezone.
+            // Without this, one bad row took down the entire getCalendar
+            // response with a -32000 server error.
             if ($from || $until) {
-                $eventStart = CarbonImmutable::parse($value['dateFrom']);
-                $eventEnd = CarbonImmutable::parse($value['dateTo']);
+                try {
+                    $eventStart = dtHelper()->parseDbDateTime($value['dateFrom'] ?? '');
+                    $eventEnd = dtHelper()->parseDbDateTime($value['dateTo'] ?? '');
+                } catch (\Exception $e) {
+                    // Invalid stored date — skip this event rather than
+                    // killing the feed. SQL audit + cleanup of zero-date
+                    // rows is a separate operations task.
+                    continue;
+                }
 
                 if ($from && $eventEnd < $from) {
                     continue;
@@ -639,23 +641,6 @@ class Calendar
      *
      * @throws \Exception If there is an error loading the URL
      */
-    /**
-     * Whether a date string is the MySQL zero-date sentinel (empty/null/
-     * `0000-00-00`/`0000-00-00 00:00:00`). MySQL accepts these as placeholder
-     * values in lenient mode; Carbon refuses to parse them. We guard the
-     * boundary so one bad row doesn't kill an entire calendar response —
-     * historical data on long-running instances (including projects.leantime.io
-     * as of 2026-05-27) contains rows with these values.
-     */
-    private function isZeroDate(?string $value): bool
-    {
-        if ($value === null || $value === '') {
-            return true;
-        }
-
-        return in_array($value, ['0000-00-00', '0000-00-00 00:00:00'], true);
-    }
-
     private function loadIcalUrl(string $url): string
     {
         if (str_contains($url, 'webcal://')) {
