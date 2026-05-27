@@ -19,8 +19,6 @@
             }
         }
 
-        $tpl->assign('canvasTitle', $canvasTitle);
-
     @endphp
     <style>
         .canvas-row {

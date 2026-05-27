@@ -20,9 +20,9 @@
                         {{ __("text.installed_plugins") }}
                     </h5>
                     <div class="row sortableTicketList">
-                        @each('plugins::partials.plugin', $tpl->get("installedPlugins"), 'plugin')
+                        @each('plugins::partials.plugin', $installedPlugins, 'plugin')
 
-                        @if ($tpl->get("installedPlugins") === false || count($tpl->get("installedPlugins")) == 0)
+                        @if ($installedPlugins === false || count($installedPlugins) == 0)
                             <span class="tw-block tw-px-4 tw-mb-4">{{ __("text.no_plugins_activated") }}</span>
                         @endif
                     </div>
@@ -35,8 +35,8 @@
                         {{ __("text.new_plugins") }}
                     </h5>
                     <ul class="sortableTicketList" >
-                        @if (count($tpl->get("newPlugins")) > 0)
-                            @foreach ($tpl->get("newPlugins") as $newplugin)
+                        @if (count($newPlugins) > 0)
+                            @foreach ($newPlugins as $newplugin)
                                 <li>
                                     <div class="ticketBox fixed">
                                         <div class="row">

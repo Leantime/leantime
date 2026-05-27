@@ -89,10 +89,7 @@
                         <input type="hidden" name="comment" value="1" />
                         <h4 class="widgettitle title-light"><span
                                 class="fa fa-comments"></span>{{ __('subtitles.discussion') }}</h4>
-                        @php
-                            $tpl->assign('formUrl', '/goalcanvas/editCanvasItem/' . $id . '');
-                            $tpl->displaySubmodule('comments-generalComment');
-                        @endphp
+                        @include('comments::submodules.generalComment', ['formUrl' => '/goalcanvas/editCanvasItem/' . $id])
                     @endif
                 </div>
 
@@ -124,7 +121,7 @@
                                     @if ($login::userIsAtLeast($roles::$editor))
                                         <div class="col-md-12">
                                             <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('new');">{{ __("links.create_link_milestone") }}</a>
-                                            @if (count($tpl->get('milestones')) > 0)
+                                            @if (count($milestones) > 0)
                                                 | <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('existing');">{{ __("links.link_existing_milestone") }}</a>
                                             @endif
                                         </div>
@@ -144,7 +141,7 @@
                                     <div class="col-md-12">
                                         <select data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
                                             <option value=""></option>
-                                            @foreach ($tpl->get('milestones') as $milestoneRow)
+                                            @foreach ($milestones as $milestoneRow)
                                                 <option value="{{ $milestoneRow->id }}" {{ isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id) ? 'selected' : '' }}>
                                                     {{ $milestoneRow->headline }}
                                                 </option>

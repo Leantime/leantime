@@ -3,9 +3,9 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-$ticket = $tpl->get('ticket');
-$projectData = $tpl->get('projectData');
-$todoTypeIcons = $tpl->get('ticketTypeIcons');
+$ticket = $ticket ?? null;
+$projectData = $projectData ?? [];
+$todoTypeIcons = $ticketTypeIcons ?? [];
 
 ?>
 <script type="text/javascript">
@@ -28,7 +28,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
     <br />
 
     <?php if ($login::userIsAtLeast($roles::$editor)) {
-        $onTheClock = $tpl->get('onTheClock');
+        $onTheClock = $onTheClock ?? false;
         ?>
         <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px; padding-right:10px;">
 
@@ -84,7 +84,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
 
         <ul>
             <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
-            <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__('tabs.files') ?> (<?php echo $tpl->get('numFiles'); ?>)</a></li>
+            <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__('tabs.files') ?> (<?php echo $numFiles; ?>)</a></li>
             <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
                 <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
             <?php } ?>
@@ -92,22 +92,22 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         </ul>
 
         <div id="ticketdetails">
-            <form class="formModal" action="<?= BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
-                <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
+            <form class="formModal" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" method="post">
+                @include('tickets::submodules.ticketDetails')
             </form>
         </div>
 
         <div id="files">
-            <?php $tpl->displaySubmodule('files-showAll') ?>
+            @include('files::submodules.showAll')
         </div>
 
-        <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
+        @if($login::userIsAtLeast($roles::$editor))
             <div id="timesheet">
-                <?php $tpl->displaySubmodule('tickets-timesheet') ?>
+                @include('tickets::submodules.timesheet')
             </div>
-        <?php } ?>
+        @endif
 
-        <?php $tpl->dispatchTplEvent('ticketTabsContent', ['ticket' => $ticket]); ?>
+        @dispatchEvent('ticketTabsContent', ['ticket' => $ticket])
 
     </div>
 
