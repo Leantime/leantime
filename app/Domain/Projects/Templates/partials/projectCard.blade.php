@@ -31,6 +31,7 @@
                         hx-target="#projectBox-{{ $project['id'] }}"
                         onclick="jQuery(this).addClass('go')"
                         hx-swap="none"
+                        hx-on::after-request="jQuery(this).removeClass('go')"
                         class="favoriteClick favoriteStar pull-right margin-right {{ $project['isFavorite'] ? 'isFavorite' : ''}} tw-mr-[5px]"
                         data-tippy-content="{{ __('label.favorite_tooltip') }}">
                             <i class="{{ $project['isFavorite'] ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
