@@ -13,6 +13,7 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
@@ -922,17 +923,36 @@ class Projects
     /**
      * Gets the projects that a user has access to.
      *
+     * The $userId parameter is preserved for backwards compatibility with
+     * existing positional callers (web controllers like ShowTicket::run,
+     * NewTicket::run, and any plugin/custom code). Default is null so RPC
+     * clients (mobile) can call without it and have the session user
+     * resolved server-side.
+     *
+     * Role-based authorization on $userId, per @marcelfolaron review:
+     *   - Not passed (null/0): use the authenticated session user
+     *   - Passed AND caller is admin/owner: honor the requested user id
+     *     (admin tooling, "show me Alice's projects" workflows)
+     *   - Passed by a non-admin AND differs from session: ignored and
+     *     overridden to the session user (prevents IDOR via the optional
+     *     param)
+     *
+     * @param  int|null  $userId  Optional. If omitted or 0, resolves to
+     *                            the authenticated session user.
      * @return array|false The array of projects if the user has access, false otherwise.
      *
      * @api
      */
-    public function getProjectsUserHasAccessTo(): false|array
+    public function getProjectsUserHasAccessTo(?int $userId = null): false|array
     {
-        // Server-authoritative: resolve the user from the auth session.
-        // Never accept user identity from the client (IDOR risk). The project
-        // role/permission filtering inside getUserProjects() runs identically
-        // regardless of where the user ID comes from.
-        $userId = (int) session('userdata.id');
+        $sessionUser = (int) session('userdata.id');
+
+        if ($userId === null || $userId === 0) {
+            $userId = $sessionUser;
+        } elseif ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+            $userId = $sessionUser;
+        }
+
         if ($userId === 0) {
             return false;
         }

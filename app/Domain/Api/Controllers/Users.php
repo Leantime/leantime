@@ -49,7 +49,10 @@ class Users extends Controller
                 $projectId = $params['projectUsersAccess'];
             }
 
-            $users = $this->userService->getUsersWithProjectAccess($projectId);
+            // Pass projectId by name so we don't depend on positional
+            // order and so the optional $currentUser parameter resolves
+            // to the session user inside the service per its docblock.
+            $users = $this->userService->getUsersWithProjectAccess(projectId: $projectId);
 
             if (isset($params['query'])) {
                 $query = $params['query'];

@@ -362,9 +362,26 @@ class Users
     /**
      * getUsersWithProjectAccess - gets all users who can access a project
      *
+     * The $currentUser parameter is preserved for backwards compatibility
+     * with existing positional callers (e.g. plugins, the original
+     * Api/Controllers/Users.php call site). Default is null so RPC clients
+     * (mobile) can call by name with only $projectId and have the session
+     * user resolved server-side.
+     *
+     * Role-based authorization on $currentUser, per @marcelfolaron review:
+     *   - Not passed (null/0): use the authenticated session user
+     *   - Passed AND caller is admin/owner: honor the requested user id
+     *   - Passed by a non-admin AND differs from session: ignored and
+     *     overridden to the session user (prevents IDOR via the optional
+     *     param)
+     *
+     * Param ORDER preserved from the original signature (currentUser, projectId)
+     * so any positional callers don't have to be touched.
+     *
      * TODO: Should return usermodel
      *
-     * @param  int  $currentUser  user who is trying to access the project
+     * @param  int|null  $currentUser  Optional. If omitted or 0, resolves to
+     *                                 the authenticated session user.
      * @param  int  $projectId  project id
      * @return array returns array of users
      *
@@ -372,11 +389,24 @@ class Users
      *
      * @api
      */
-    public function getUsersWithProjectAccess(int $projectId): array
+    public function getUsersWithProjectAccess(?int $currentUser = null, int $projectId = 0): array
     {
-        // Server-authoritative: never accept user identity from the client (IDOR risk).
-        // Matches the codebase convention used in Tickets.php, ShowCanvas.php, Calendar.php, etc.
-        $currentUser = (int) session('userdata.id');
+        // projectId is logically required — defaulting to 0 only so the
+        // optional $currentUser can sit ahead of it in the signature (PHP
+        // requires defaults at the tail). Reject the missing-projectId
+        // case explicitly here.
+        if ($projectId === 0) {
+            return [];
+        }
+
+        $sessionUser = (int) session('userdata.id');
+
+        if ($currentUser === null || $currentUser === 0) {
+            $currentUser = $sessionUser;
+        } elseif ($currentUser !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+            $currentUser = $sessionUser;
+        }
+
         if ($currentUser === 0) {
             return [];
         }

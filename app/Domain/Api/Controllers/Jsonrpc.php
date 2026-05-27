@@ -366,7 +366,17 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Echos the return response
+     * Echos the return response.
+     *
+     * @param  mixed  $returnValue  The return value from the RPC method. Widened from
+     *                              `?array` because the upstream `settype` coercion that
+     *                              wrapped scalars into single-element arrays was removed
+     *                              (it broke methods returning ints — e.g. addTicket's
+     *                              new ticket id was being delivered as [id]). Per the
+     *                              JSON-RPC 2.0 spec §5, `result` MAY be any JSON value;
+     *                              caller code in `executeRPC` already casts objects to
+     *                              associative arrays before reaching here, so in practice
+     *                              this is array|scalar|null.
      *
      * @see https://jsonrpc.org/specification#response_object
      */
