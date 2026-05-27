@@ -82,7 +82,7 @@ $projects = $tpl->get('relations');
                                 <input type="text" id="inviteURL" value="<?= BASE_URL ?>/auth/userInvite/<?= $values['pwReset'] ?>" />
                                 <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('inviteURL');"><?= $tpl->__('links.copy_url') ?></button>
                             </div>
-                            <a href="<?= BASE_URL?>/users/editUser/<?= $values['id'] ?>?resendInvite" class="btn btn-default" style="margin-left:5px;"><i class="fa fa-envelope"></i> <?= $tpl->__('buttons.resend_invite') ?></a>
+                            <a href="<?= BASE_URL?>/users/editUser/<?= $values['id'] ?>?resendInvite=1" class="btn btn-default" style="margin-left:5px;"><i class="fa fa-envelope"></i> <?= $tpl->__('buttons.resend_invite') ?></a>
                         </div>
                         <?php } ?>
                         <div class="clearfix"></div>
