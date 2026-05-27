@@ -39,8 +39,8 @@
     box-sizing: border-box;
     height:auto;
     padding: 0 6px;
-    flex: 1 1 0;  /* Equal width columns regardless of content */
-    min-width:150px;
+    flex: 1 0 0;  /* Equal width columns, no shrink below min-width (#3394) */
+    min-width:200px;
 }
 
 .column:first-child {
@@ -551,6 +551,7 @@ body .maincontent .priority-text-5 a:link {
     width:100%;
     display:flex;
     padding-bottom: 20px;
+    overflow-x: auto;
 }
 
 /* Note: Swimlane auto-height overrides are at the top of this file */

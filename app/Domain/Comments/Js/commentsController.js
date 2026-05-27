@@ -2,13 +2,17 @@ leantime.commentsController = (function () {
 
     var enableCommenterForms = function () {
 
-        jQuery(".commentBox").show();
+        // Show the "Add new comment" toggler that makeInputReadonly may have hidden
+        jQuery("[class^='mainToggler']").show();
 
-        //Hide reply comment boxes
-        jQuery("#comments .replies .commentBox").hide();
+        // Show reply-level comment boxes (legacy .commentBox class only).
+        // Do NOT show commentBox-{hash} containers — those are the "new comment"
+        // forms that start hidden and open on-demand via toggleCommentBoxes().
+        jQuery(".commentBox").show();
+        jQuery(".replies .commentBox").hide();
         jQuery(".deleteComment, .replyButton").show();
 
-        // Enable Tiptap editors
+        // Enable Tiptap editors in comment areas
         jQuery(".commentReply .tiptap-wrapper").each(function() {
             var editorEl = jQuery(this).find('.tiptap-editor')[0];
             if (editorEl && window.leantime && window.leantime.tiptapController) {
@@ -20,11 +24,12 @@ leantime.commentsController = (function () {
         });
         jQuery(".commentReply .tiptap-toolbar").show();
 
-        jQuery(".commenterFields input").prop("readonly", false);
-        jQuery(".commenterFields input").prop("disabled", false);
-
-        jQuery(".commenterFields textarea").prop("readonly", false);
-        jQuery(".commenterFields textarea").prop("disabled", false);
+        // Re-enable form controls in all comment areas (both legacy .commentBox
+        // and hashed commentBox-{hash} containers) without changing visibility (#3194)
+        jQuery(".commenterFields, .commentBox, [class*='commentBox-']")
+            .find("input, textarea, button, select")
+            .prop("readonly", false)
+            .prop("disabled", false);
 
     };
 

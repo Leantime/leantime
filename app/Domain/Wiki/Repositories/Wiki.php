@@ -52,7 +52,10 @@ class Wiki extends Canvas
             )
             ->leftJoin('zp_canvas', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
             ->leftJoin('zp_user', 'zp_canvas_items.author', '=', 'zp_user.id')
-            ->leftJoin('zp_tickets AS milestone', 'milestone.id', '=', 'zp_canvas_items.milestoneId')
+            ->leftJoin('zp_tickets AS milestone', function ($join) {
+                $join->on('zp_canvas_items.milestoneId', '=',
+                    $this->dbConnection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('milestone.id'), 'text')));
+            })
             ->where('zp_canvas.projectId', $projectId)
             ->where('zp_canvas_items.box', 'article');
 
@@ -166,7 +169,6 @@ class Wiki extends Canvas
     {
         return $this->dbConnection->table('zp_canvas')
             ->where('id', $wikiId)
-            ->limit(1)
             ->update(['title' => $wiki->title]) >= 0;
     }
 
@@ -184,7 +186,7 @@ class Wiki extends Canvas
             'status' => $article->status,
             'created' => date('Y-m-d'),
             'modified' => date('Y-m-d'),
-            'sortIndex' => '10',
+            'sortindex' => '10',
         ]);
 
         return (string) $id;
@@ -194,7 +196,6 @@ class Wiki extends Canvas
     {
         return $this->dbConnection->table('zp_canvas_items')
             ->where('id', $article->id)
-            ->limit(1)
             ->update([
                 'title' => $article->title,
                 'description' => $article->description,
@@ -211,7 +212,6 @@ class Wiki extends Canvas
     {
         $this->dbConnection->table('zp_canvas_items')
             ->where('id', $id)
-            ->limit(1)
             ->delete();
     }
 
@@ -223,7 +223,6 @@ class Wiki extends Canvas
 
         $this->dbConnection->table('zp_canvas')
             ->where('id', $id)
-            ->limit(1)
             ->delete();
     }
 
