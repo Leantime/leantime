@@ -361,10 +361,24 @@ class Calendar
         foreach ($dbUserEvents as $value) {
             $allDay = filter_var($value['allDay'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-            // Filter events by date range if specified
+            // Filter events by date range if specified. Use dtHelper()
+            // rather than CarbonImmutable::parse directly so the
+            // existing isValidDateString() guard catches MySQL zero-date
+            // sentinel (`0000-00-00 00:00:00`), epoch sentinel
+            // (`1969-12-31 00:00:00`), and empty values BEFORE parsing,
+            // and so the parse itself respects Leantime's DB timezone.
+            // Without this, one bad row took down the entire getCalendar
+            // response with a -32000 server error.
             if ($from || $until) {
-                $eventStart = CarbonImmutable::parse($value['dateFrom']);
-                $eventEnd = CarbonImmutable::parse($value['dateTo']);
+                try {
+                    $eventStart = dtHelper()->parseDbDateTime($value['dateFrom'] ?? '');
+                    $eventEnd = dtHelper()->parseDbDateTime($value['dateTo'] ?? '');
+                } catch (\Exception $e) {
+                    // Invalid stored date — skip this event rather than
+                    // killing the feed. SQL audit + cleanup of zero-date
+                    // rows is a separate operations task.
+                    continue;
+                }
 
                 if ($from && $eventEnd < $from) {
                     continue;
