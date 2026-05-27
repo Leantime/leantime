@@ -145,7 +145,7 @@ class IdeaDialog extends Controller
         if (isset($params['changeItem'])) {
             if (isset($params['itemId']) && $params['itemId'] != '') {
                 if (isset($params['description']) === true) {
-                    $currentCanvasId = (int) session('currentIdeaCanvas');
+                    $currentCanvasId = (int) ($params['canvasId'] ?? session('currentIdeaCanvas'));
 
                     $id = $params['itemId'];
                     $canvasItem = [
@@ -222,7 +222,7 @@ class IdeaDialog extends Controller
                 }
             } else {
                 if (isset($_POST['description']) === true) {
-                    $currentCanvasId = (int) session('currentIdeaCanvas');
+                    $currentCanvasId = (int) ($params['canvasId'] ?? session('currentIdeaCanvas'));
 
                     $canvasItem = [
                         'box' => $params['box'],

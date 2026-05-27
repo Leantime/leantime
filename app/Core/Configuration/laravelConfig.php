@@ -575,24 +575,43 @@ return [
                 ],
                 'engine' => 'InnoDB',
                 'sslmode' => env('LEAN_DB_SSLMODE', ''),
-                'options' => extension_loaded('pdo_mysql') ? array_filter([
-                    PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => env('LEAN_DB_MYSQL_ATTR_SSL_VERIFY_SERVER', false),
-                    PDO::MYSQL_ATTR_SSL_KEY => env('LEAN_DB_MYSQL_ATTR_SSL_KEY'),
-                    PDO::MYSQL_ATTR_SSL_CERT => env('LEAN_DB_MYSQL_ATTR_SSL_CERT'),
-                    PDO::MYSQL_ATTR_SSL_CA => env('LEAN_DB_MYSQL_ATTR_SSL_CA'),
-                    PDO::ATTR_EMULATE_PREPARES => true,
-                    // Connection pooling and management options
-                    PDO::ATTR_PERSISTENT => env('LEAN_DB_PERSISTENT_CONNECTIONS', true),
-                    PDO::ATTR_TIMEOUT => env('LEAN_DB_CONNECTION_TIMEOUT', 30),
-                    PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-                    PDO::MYSQL_ATTR_FOUND_ROWS => true,
-                    // Connection limits and timeouts
-                    PDO::MYSQL_ATTR_INIT_COMMAND => sprintf(
-                        'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci, @@session.wait_timeout = %d, @@session.interactive_timeout = %d',
-                        env('LEAN_DB_IDLE_TIMEOUT', 3600),
-                        env('LEAN_DB_IDLE_TIMEOUT', 3600)
-                    ),
-                ]) : [],
+                'options' => (function () {
+                    if (! extension_loaded('pdo_mysql')) {
+                        return [];
+                    }
+
+                    // Start with generic PDO options (always available)
+                    $options = [
+                        PDO::ATTR_EMULATE_PREPARES => true,
+                        PDO::ATTR_PERSISTENT => env('LEAN_DB_PERSISTENT_CONNECTIONS', true),
+                        PDO::ATTR_TIMEOUT => env('LEAN_DB_CONNECTION_TIMEOUT', 30),
+                    ];
+
+                    // MySQL-specific constants may be absent on some PHP builds
+                    // (e.g. cPanel/EasyApache), so guard each with defined() (#3371)
+                    $mysqlOptions = [
+                        'MYSQL_ATTR_SSL_VERIFY_SERVER_CERT' => env('LEAN_DB_MYSQL_ATTR_SSL_VERIFY_SERVER', false),
+                        'MYSQL_ATTR_SSL_KEY' => env('LEAN_DB_MYSQL_ATTR_SSL_KEY'),
+                        'MYSQL_ATTR_SSL_CERT' => env('LEAN_DB_MYSQL_ATTR_SSL_CERT'),
+                        'MYSQL_ATTR_SSL_CA' => env('LEAN_DB_MYSQL_ATTR_SSL_CA'),
+                        'MYSQL_ATTR_USE_BUFFERED_QUERY' => true,
+                        'MYSQL_ATTR_FOUND_ROWS' => true,
+                        'MYSQL_ATTR_INIT_COMMAND' => sprintf(
+                            'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci, @@session.wait_timeout = %d, @@session.interactive_timeout = %d',
+                            env('LEAN_DB_IDLE_TIMEOUT', 3600),
+                            env('LEAN_DB_IDLE_TIMEOUT', 3600)
+                        ),
+                    ];
+
+                    foreach ($mysqlOptions as $constName => $value) {
+                        $fqn = "PDO::{$constName}";
+                        if (defined($fqn) && $value !== null) {
+                            $options[constant($fqn)] = $value;
+                        }
+                    }
+
+                    return array_filter($options, fn ($v) => $v !== null && $v !== '');
+                })(),
             ],
             'pgsql' => [
                 'driver' => 'pgsql',
