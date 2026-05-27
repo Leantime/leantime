@@ -1,3 +1,58 @@
+# Version: 3.8.0
+
+## Highlights
+
+### Complete Blade Template Migration
+All remaining legacy `.tpl.php`, `.sub.php`, and `.inc.php` templates have been converted to Laravel Blade, completing the frontend template unification. 272 legacy files removed, 200 Blade files added (net reduction of 72 files). This covers all 16 canvas domains, shared submodules (Tickets, Comments, Files, Projects), simple domains (Auth, Install, Settings, etc.), and complex domains (Calendar, Clients, Ideas, Timesheets, Users, Wiki). (#3362)
+
+### Mobile API Surface
+Backend API changes to support the Leantime Mobile app (first TestFlight beta). Includes server-authoritative session resolution so mobile clients authenticated via Bearer token can resolve "who am I" without pre-knowing their user id. (#3395)
+
+- `Users::getUser()` defaults to session user when no id passed
+- `Users::getUsersWithProjectAccess` and `Projects::getProjectsUserHasAccessTo` resolve userId server-side
+- `Auth\AccessToken::revokeCurrentToken()` for secure client-side sign-out
+- `Projects::getProjectsByUserActivity` for recency-sorted project lists
+- `Tickets::markTicketDone` / `markTicketReopen` / `getAllDoneUserTickets` for quick-complete flows
+- `Tickets::getAllOpenUserTickets` now ships `statusClass` and `statusType` fields
+- `Tickets::quickAddTicket` respects per-project default status configuration
+- `Milestones::getAllMilestones()` correctly filters to `type='milestone'`
+- `Calendar::mapEventData` tolerates NULL description, colors, and dates
+- `Comments::addComment` is now RPC-friendly with optional entity and default father
+- JSON-RPC no longer wraps scalar return values into single-element arrays
+- JSON-RPC enforces `@api` annotation — only explicitly marked service methods are callable
+
+### Task Collaborators
+Full multi-collaborator support for task assignment. Tasks can now have multiple collaborators in addition to the primary assignee, with updated UI in both list and kanban views showing collaborator avatars. (#3337)
+
+## Bug Fixes
+- **PDO Constant Crash on Shared Hosting** — Guarded all MySQL-specific PDO constants (`MYSQL_ATTR_SSL_VERIFY_SERVER_CERT`, etc.) with `defined()` checks in the database config; some cPanel/EasyApache PHP builds load pdo_mysql without these constants, causing a fatal error on all pages (#3371)
+- **Commenter Role Cannot Comment** — Fixed `enableCommenterForms()` not re-enabling submit buttons inside reply comment boxes after `makeInputReadonly()` disabled all form elements; the commenter role was completely non-functional (#3194, #3186)
+- **Wiki Article Creation Fails on Postgres** — Fixed `createArticle()` using camelCase `sortIndex` column name which Postgres rejects; schema and all other repos use lowercase `sortindex` (#3382)
+- **Wiki 500 on Postgres (Milestone JOIN)** — Added `DatabaseHelper::castAs()` to the milestone `leftJoin` in `getArticle()`, matching the pattern used in Canvas, Ideas, and Goalcanvas repositories; also removed `limit(1)` from UPDATE/DELETE queries that fail on Postgres (#3383)
+- **Ideas Saved to canvasId 0** — POST handler in `IdeaDialog` now reads `canvasId` from the submitted form with session as fallback, preventing ideas from being invisibly saved to canvas 0 (#3181)
+- **Kanban Board Cannot Scroll with 8+ Columns** — Added `overflow-x: auto` to the kanban row container and set columns to `flex-shrink: 0` with `min-width: 200px` so boards with many status columns are horizontally scrollable (#3394)
+- **Calendar Zero-Date Crash** — `getCalendar()` now skips events with MySQL zero-date sentinels (`0000-00-00`) instead of crashing the entire calendar feed (#3396)
+- **Resend Invite Button No-Op** — Fixed `isset(null)` check that silently prevented the resend invite action from executing (#3392)
+- **Three Bugs: isset, limit(1), URL** — Fixed isset on null parameter, removed redundant `limit(1)` on DELETE (Postgres compat), and corrected a malformed URL (#3393)
+- **403 Permission Page Crash** — Added missing `error403.blade.php` template so permission-gated pages render an error page instead of crashing (#3365)
+- **Favorites Star Infinite Spinner** — Fixed the star button on Project Hub spinning indefinitely after click by removing the loading class after the request completes (#3364)
+- **Wiki Sidebar Width & Dark Mode** — Fixed wiki sidebar width, dark-mode editor dropdown rendering, and emoji picker ESC key propagation (#3361)
+- **moveTicket, KPI, Backlog, Tiptap** — Restored moveTicket functionality, KPI milestone linking, backlog filter on Postgres, and tiptap list rendering (#3360)
+- **Postgres Compat & Plugin Install** — Fixed password reset and canvas queries on Postgres, plus plugin install null-safety (#3359)
+- **MarketplacePlugin Nullable Properties** — Made `MarketplacePlugin` model properties nullable for PHP 8.x strict type compatibility (#3356)
+- **Secondary Color Case Sensitivity** — Fixed case sensitivity issue in the secondary color setting (#3348)
+- **Referrer-Policy Header Syntax** — Fixed syntax error in the Referrer-Policy header assignment (#3347)
+
+## Localization
+- Added Arabic (ar-SA) language support (#3370)
+- Updated Korean (ko-KR) translations (#3326)
+
+## Dependency Updates
+- Bumped brace-expansion (#3340)
+- Bumped yauzl from 3.2.0 to 3.2.1 (#3320)
+
+---
+
 # Version: 3.7.2
 
 ## Bug Fixes
