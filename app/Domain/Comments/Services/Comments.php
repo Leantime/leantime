@@ -41,15 +41,18 @@ class Comments
             if ($module === 'ticket') {
                 $ticketService = app()->make(\Leantime\Domain\Tickets\Services\Tickets::class);
                 $ticket = $ticketService->getTicket($entityId);
+
                 return $ticket ?: null;
             }
             if ($module === 'project') {
                 $projectService = app()->make(\Leantime\Domain\Projects\Services\Projects::class);
+
                 return $projectService->getProject($entityId) ?: null;
             }
         } catch (\Throwable $e) {
             return null;
         }
+
         return null;
     }
 

@@ -3659,7 +3659,7 @@ class Tickets
                     //   - timeToFinish is absent
                     // so existing web UI paths that submit dates with companion times
                     // continue to use parseUserDateTime unchanged.
-                    $values['dateToFinish'] = $values['dateToFinish'] . ' 00:00:00';
+                    $values['dateToFinish'] = $values['dateToFinish'].' 00:00:00';
                     unset($values['timeToFinish']);
                 } else {
                     if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {

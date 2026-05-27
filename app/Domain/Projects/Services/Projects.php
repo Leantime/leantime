@@ -1010,8 +1010,13 @@ class Projects
                 // YYYY-MM-DD HH:MM:SS sorts correctly via strcmp; desc.
                 return strcmp($bActivity, $aActivity);
             }
-            if ($aActivity) return -1;
-            if ($bActivity) return 1;
+            if ($aActivity) {
+                return -1;
+            }
+            if ($bActivity) {
+                return 1;
+            }
+
             return strcmp((string) ($a['name'] ?? ''), (string) ($b['name'] ?? ''));
         });
 
