@@ -808,7 +808,6 @@ class Projects
     {
         $this->connection->table('zp_projects')
             ->where('id', $id)
-            ->limit(1)
             ->delete();
 
         $this->connection->table('zp_tickets')
