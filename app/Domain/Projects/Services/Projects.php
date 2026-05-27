@@ -13,6 +13,7 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
@@ -922,13 +923,40 @@ class Projects
     /**
      * Gets the projects that a user has access to.
      *
-     * @param  int  $userId  The ID of the user.
+     * The $userId parameter is preserved for backwards compatibility with
+     * existing positional callers (web controllers like ShowTicket::run,
+     * NewTicket::run, and any plugin/custom code). Default is null so RPC
+     * clients (mobile) can call without it and have the session user
+     * resolved server-side.
+     *
+     * Role-based authorization on $userId, per @marcelfolaron review:
+     *   - Not passed (null/0): use the authenticated session user
+     *   - Passed AND caller is admin/owner: honor the requested user id
+     *     (admin tooling, "show me Alice's projects" workflows)
+     *   - Passed by a non-admin AND differs from session: ignored and
+     *     overridden to the session user (prevents IDOR via the optional
+     *     param)
+     *
+     * @param  int|null  $userId  Optional. If omitted or 0, resolves to
+     *                            the authenticated session user.
      * @return array|false The array of projects if the user has access, false otherwise.
      *
      * @api
      */
-    public function getProjectsUserHasAccessTo($userId): false|array
+    public function getProjectsUserHasAccessTo(?int $userId = null): false|array
     {
+        $sessionUser = (int) session('userdata.id');
+
+        if ($userId === null || $userId === 0) {
+            $userId = $sessionUser;
+        } elseif ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+            $userId = $sessionUser;
+        }
+
+        if ($userId === 0) {
+            return false;
+        }
+
         $projects = $this->projectRepository->getUserProjects(userId: $userId, accessStatus: 'all');
 
         if ($projects) {
@@ -936,6 +964,83 @@ class Projects
         } else {
             return false;
         }
+    }
+
+    /**
+     * @api
+     *
+     * Returns the user's accessible projects ordered by the user's OWN
+     * most-recent activity in each — specifically, the most recent
+     * `zp_tickets.modified` timestamp where the user is the ticket's
+     * editor or creator within that project. Projects with no
+     * user-touched tickets fall to the bottom, sorted alphabetically.
+     *
+     * Distinct from getProjectsUserHasAccessTo (alphabetical) — this
+     * surfaces "projects I'm actively working in" to the top, which is
+     * what mobile's filter sheet wants for its top-N preview. Using
+     * `project.modified` would pick up activity by anyone on the
+     * project (not what the user asked for); this uses ticket-edit
+     * activity scoped to the user.
+     */
+    public function getProjectsByUserActivity(): false|array
+    {
+        $userId = (int) session('userdata.id');
+        if ($userId === 0) {
+            return false;
+        }
+
+        $projects = $this->projectRepository->getUserProjects(userId: $userId, accessStatus: 'all');
+        if (! $projects) {
+            return false;
+        }
+
+        $projectIds = array_filter(array_map(fn ($p) => (int) ($p['id'] ?? 0), $projects));
+        if (empty($projectIds)) {
+            return $projects;
+        }
+
+        // Bulk-fetch per-project max(modified) where the user touched a
+        // ticket — one query, then merge into the projects array. No N+1.
+        $connection = app()->make(\Illuminate\Database\Connection::class);
+        $rows = $connection->table('zp_tickets')
+            ->select('projectId')
+            ->selectRaw('MAX(modified) AS user_last_activity')
+            ->whereIn('projectId', $projectIds)
+            ->where(function ($q) use ($userId) {
+                $q->where('editorId', (string) $userId)
+                    ->orWhere('userId', $userId);
+            })
+            ->groupBy('projectId')
+            ->get();
+
+        $activity = [];
+        foreach ($rows as $row) {
+            $activity[(int) $row->projectId] = $row->user_last_activity;
+        }
+
+        foreach ($projects as &$p) {
+            $p['userLastActivity'] = $activity[(int) ($p['id'] ?? 0)] ?? null;
+        }
+        unset($p);
+
+        usort($projects, function ($a, $b) {
+            $aActivity = $a['userLastActivity'] ?? null;
+            $bActivity = $b['userLastActivity'] ?? null;
+            if ($aActivity && $bActivity) {
+                // YYYY-MM-DD HH:MM:SS sorts correctly via strcmp; desc.
+                return strcmp($bActivity, $aActivity);
+            }
+            if ($aActivity) {
+                return -1;
+            }
+            if ($bActivity) {
+                return 1;
+            }
+
+            return strcmp((string) ($a['name'] ?? ''), (string) ($b['name'] ?? ''));
+        });
+
+        return $projects;
     }
 
     /**

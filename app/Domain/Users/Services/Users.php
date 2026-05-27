@@ -128,15 +128,30 @@ class Users
 
     /**
      * @api
+     *
+     * Default to the session user when no id is provided. Same server-
+     * authoritative pattern as getUsersWithProjectAccess — mobile clients
+     * authenticate via Bearer token and don't always know their own real
+     * user id (the login response returns the access-token row id, not
+     * the underlying user id), so they need a "who am I" endpoint that
+     * doesn't require the answer they're trying to look up.
      */
-    public function getUser($id): array|bool
+    public function getUser($id = null): array|bool
     {
-        if (isset($this->userCache[$id])) {
-            return $this->userCache[$id];
+        $resolvedId = $id;
+        if ($resolvedId === null || (int) $resolvedId === 0) {
+            $resolvedId = (int) session('userdata.id');
+            if ($resolvedId === 0) {
+                return false;
+            }
         }
 
-        $user = $this->userRepo->getUser($id);
-        $this->userCache[$id] = $user;
+        if (isset($this->userCache[$resolvedId])) {
+            return $this->userCache[$resolvedId];
+        }
+
+        $user = $this->userRepo->getUser($resolvedId);
+        $this->userCache[$resolvedId] = $user;
 
         return $user;
     }
@@ -347,9 +362,26 @@ class Users
     /**
      * getUsersWithProjectAccess - gets all users who can access a project
      *
+     * The $currentUser parameter is preserved for backwards compatibility
+     * with existing positional callers (e.g. plugins, the original
+     * Api/Controllers/Users.php call site). Default is null so RPC clients
+     * (mobile) can call by name with only $projectId and have the session
+     * user resolved server-side.
+     *
+     * Role-based authorization on $currentUser, per @marcelfolaron review:
+     *   - Not passed (null/0): use the authenticated session user
+     *   - Passed AND caller is admin/owner: honor the requested user id
+     *   - Passed by a non-admin AND differs from session: ignored and
+     *     overridden to the session user (prevents IDOR via the optional
+     *     param)
+     *
+     * Param ORDER preserved from the original signature (currentUser, projectId)
+     * so any positional callers don't have to be touched.
+     *
      * TODO: Should return usermodel
      *
-     * @param  int  $currentUser  user who is trying to access the project
+     * @param  int|null  $currentUser  Optional. If omitted or 0, resolves to
+     *                                 the authenticated session user.
      * @param  int  $projectId  project id
      * @return array returns array of users
      *
@@ -357,8 +389,28 @@ class Users
      *
      * @api
      */
-    public function getUsersWithProjectAccess(int $currentUser, int $projectId): array
+    public function getUsersWithProjectAccess(?int $currentUser = null, int $projectId = 0): array
     {
+        // projectId is logically required — defaulting to 0 only so the
+        // optional $currentUser can sit ahead of it in the signature (PHP
+        // requires defaults at the tail). Reject the missing-projectId
+        // case explicitly here.
+        if ($projectId === 0) {
+            return [];
+        }
+
+        $sessionUser = (int) session('userdata.id');
+
+        if ($currentUser === null || $currentUser === 0) {
+            $currentUser = $sessionUser;
+        } elseif ($currentUser !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+            $currentUser = $sessionUser;
+        }
+
+        if ($currentUser === 0) {
+            return [];
+        }
+
         $users = [];
 
         if ($this->projectRepository->isUserAssignedToProject($currentUser, $projectId)) {

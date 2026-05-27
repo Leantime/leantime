@@ -1138,6 +1138,13 @@ class Tickets
                     ->orWhere('requestor.role', '>=', 40);
             });
 
+        // Restrict to milestone-type rows. Without this, getAllMilestones
+        // returned ALL ticket rows (tasks, subtasks, etc.) for the project
+        // and the consumer (e.g., the mobile milestone picker, web
+        // timeline view) saw tasks listed as "milestones." The function
+        // name has always implied this filter; making it explicit.
+        $query->where('zp_tickets.type', '=', 'milestone');
+
         // Apply search criteria filters
         if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
             $query->where('zp_tickets.projectId', $searchCriteria['currentProject']);
