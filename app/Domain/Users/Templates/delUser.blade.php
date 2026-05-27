@@ -18,7 +18,7 @@
         <div class="widgetcontent">
 
             <form method="post">
-                @csrf
+                <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
                 <p>{!! __('text.confirm_user_deletion') !!}</p><br />
                 <input type="submit" value="{{ __('buttons.yes_delete') }}" name="del" class="button" />
                 <a class="btn btn-primary" href="{{ BASE_URL }}/users/showAll">{!! __('buttons.back') !!}</a>

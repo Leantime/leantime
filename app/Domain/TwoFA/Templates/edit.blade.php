@@ -43,7 +43,7 @@
                         @else
                             <form action="" method="post" class='stdform'>
                                 <h5>{!! __('text.twoFA_already_enabled') !!}</h5>
-                                @csrf
+                                <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
                                 <p class='stdformbutton'>
                                     <input type="submit" name="disable" id="disable"
                                            value="{{ __('buttons.remove') }}" class="button"/>

@@ -18,7 +18,7 @@
         <h5 class="subtitle">{!! __('subtitles.delete_key') !!}</h5>
 
             <form method="post">
-                @csrf
+                <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
                 <p>{!! __('text.confirm_key_deletion') !!}</p><br />
                 <input type="submit" value="{{ __('buttons.yes_delete') }}" name="del" class="button" />
                 <a class="btn btn-primary" href="{{ BASE_URL }}/setting/editCompanySettings/#apiKeys">{!! __('buttons.back') !!}</a>

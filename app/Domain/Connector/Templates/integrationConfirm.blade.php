@@ -18,7 +18,7 @@
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1>{!! __('headlines.submodules.importProgress') !!} // {{ $provider->name }}</h1>
+                <h1>{!! __('headlines.connector') !!} // {{ $provider->name }}</h1>
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@
             <h3>Integration Success</h3>
             <p>Your data was synced successfully.</p>
             <br />
-            <a class='btn btn-default' href='{{ BASE_URL }}/submodules.importProgress/show'>Go back to integrations</a>
+            <a class='btn btn-default' href='{{ BASE_URL }}/connector/show'>Go back to integrations</a>
         </div>
     </div>
 </div>

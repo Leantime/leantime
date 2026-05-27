@@ -20,7 +20,7 @@
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1>{!! __('headlines.submodules.importProgress') !!} // {{ $provider->name }}</h1>
+                <h1>{!! __('headlines.connector') !!} // {{ $provider->name }}</h1>
             </div>
         </div>
     </div>
@@ -38,7 +38,7 @@
                 <h5 class="subtitle">Match Fields</h5>
                 <p class="mb-2">Match the fields from your source to the corresponding fields in Leantime</p><br />
 
-                <form method="post" action="{{ BASE_URL }}/submodules.importProgress/integration/?provider={{ $provider->id }}&step=parse{{ $urlAppend }}">
+                <form method="post" action="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}&step=parse{{ $urlAppend }}">
                     <table class="table table-bordered">
                         <thead>
                         <tr>
@@ -65,7 +65,7 @@
                         </tbody>
                     </table>
                     <div class="left">
-                        <a href="{{ BASE_URL }}/submodules.importProgress/integration/?provider={{ $provider->id }}" class="btn btn-default pull-left">Back</a>
+                        <a href="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" class="btn btn-default pull-left">Back</a>
                     </div>
                     <div class="right">
                         <button type="submit" class="btn btn-primary">Next</button>

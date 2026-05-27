@@ -9,7 +9,7 @@
 {!! $tpl->displayNotification() !!}
 
 <form action="{{ BASE_URL }}/api/apiKey/{{ (int) $_GET['id'] }}" method="post" class="stdform formModal" >
-        @csrf
+        <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
         <input type="hidden" name="save" value="1" />
 
         <div class="row" >

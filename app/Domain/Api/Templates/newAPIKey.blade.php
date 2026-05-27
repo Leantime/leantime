@@ -2,6 +2,10 @@
 
 @section('content')
 
+@php
+    $apiKeyValues = $apiKeyValues ?? false;
+@endphp
+
 <div style="min-width:700px;">
 
 <h4 class="widgettitle title-light"><i class="fa fa-key"></i> {!! __('headlines.new_api_key') !!}</h4>

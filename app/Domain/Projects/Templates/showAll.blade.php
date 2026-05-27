@@ -58,6 +58,7 @@
 
                     <td style="padding:6px;">
                         <a class="" href="{{ BASE_URL }}/projects/showProject/{{ $row['id'] }}">{{ $row['name'] }}</a>
+                    </td>
                     <td>
                         <a class="" href="{{ BASE_URL }}/clients/showClient/{{ $row['clientId'] }}">{{ $row['clientName'] }}</a>
                     </td>

@@ -9,7 +9,7 @@
     </div>
     <div class="modal-body">
         <label>{!! __('label.title_new') !!}</label><br />
-        <input type="text" name="canvastitle" value="{{ e($canvasTitle) }}" placeholder="{{ __('input.placeholders.enter_title_for_board') }}"
+        <input type="text" name="canvastitle" value="{{ $canvasTitle }}" placeholder="{{ __('input.placeholders.enter_title_for_board') }}"
                style="width: 100%"/>
     </div>
     <div class="modal-footer">
