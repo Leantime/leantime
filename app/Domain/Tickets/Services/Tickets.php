@@ -520,7 +520,17 @@ class Tickets
 
                     if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
                         $projectStatusLabels[$ticket['projectId']][$ticket['status']]['statusType'] !== 'DONE') {
-                        $ticket['statusLabel'] = $projectStatusLabels[$ticket['projectId']][$ticket['status']]['name'];
+                        // Ship the resolved status label, class, and type
+                        // so mobile (which doesn't preload each project's
+                        // status config) can render the correct label
+                        // and colour without an extra round trip per
+                        // project. Web doesn't need these because it
+                        // already has the project config loaded
+                        // server-side at render time.
+                        $statusConfig = $projectStatusLabels[$ticket['projectId']][$ticket['status']];
+                        $ticket['statusLabel'] = $statusConfig['name'];
+                        $ticket['statusClass'] = $statusConfig['class'] ?? '';
+                        $ticket['statusType'] = $statusConfig['statusType'] ?? '';
                         $ticketArray[] = $ticket;
                     }
                 }
@@ -1788,19 +1798,42 @@ class Tickets
      *
      * @api
      */
-    public function quickAddTicket($params): array|bool
+    public function quickAddTicket($params): array|bool|int
     {
+
+        $projectId = $params['projectId'] ?? session('currentProject');
+
+        // Resolve the default status from the PROJECT's status config
+        // rather than hardcoding `3`. The hardcoded `3` was the "New"
+        // status for the default Leantime install, but custom projects
+        // can have status `3` mean "Done", "Blocked", or anything else,
+        // and we don't want to silently create new tasks in those
+        // statuses. Fall back to `3` only if the project has no
+        // NEW-statusType status configured (which would itself be a
+        // misconfiguration but shouldn't break task creation).
+        $defaultStatus = 3;
+        if ($projectId) {
+            $statusLabels = $this->ticketRepository->getStateLabels((int) $projectId);
+            if (is_array($statusLabels)) {
+                foreach ($statusLabels as $statusId => $config) {
+                    if (($config['statusType'] ?? '') === 'NEW') {
+                        $defaultStatus = (int) $statusId;
+                        break;
+                    }
+                }
+            }
+        }
 
         $values = [
             'headline' => $params['headline'],
             'type' => $params['type'] ?? 'task',
             'description' => $params['description'] ?? '',
-            'projectId' => $params['projectId'] ?? session('currentProject'),
+            'projectId' => $projectId,
             'editorId' => $params['editorId'] ?? session('userdata.id'),
             'userId' => session('userdata.id') ?? $params['userId'] ?? null,
             'date' => date('Y-m-d H:i:s'),
             'dateToFinish' => isset($params['dateToFinish']) ? strip_tags($params['dateToFinish']) : '',
-            'status' => isset($params['status']) ? (int) $params['status'] : 3,
+            'status' => isset($params['status']) ? (int) $params['status'] : $defaultStatus,
             'storypoints' => isset($params['storypoints']) ? (int) $params['storypoints'] : '',
             'hourRemaining' => '',
             'planHours' => isset($params['planHours']) ? (int) $params['planHours'] : '',
@@ -2160,6 +2193,118 @@ class Tickets
      *
      * @api
      */
+    /**
+     * @api
+     *
+     * Convenience method for "mark this ticket done" without the client
+     * needing to know the project's status ID for DONE. Looks up the
+     * project's status config, finds the first status with statusType
+     * === 'DONE', and patches the ticket's status to that ID.
+     *
+     * The mobile app calls this from its list-view quick-complete
+     * checkbox; without it, mobile would have to preload every project's
+     * status config just to mark a single task as done.
+     *
+     * Returns true on success, false if the ticket doesn't exist or the
+     * project has no DONE-type status configured.
+     */
+    /**
+     * @api
+     *
+     * Inverse of getAllOpenUserTickets — returns the user's DONE tasks
+     * (statusType === 'DONE' for the project). Used by mobile's
+     * "Done" filter to show completed work.
+     */
+    public function getAllDoneUserTickets(?int $userId = null, ?int $project = null): array
+    {
+        $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
+
+        $ticketArray = [];
+        if (is_array($tickets)) {
+            $projectStatusLabels = [];
+
+            foreach ($tickets as $ticket) {
+                if ($ticket['type'] !== 'milestone') {
+                    if (! isset($projectStatusLabels[$ticket['projectId']])) {
+                        $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
+                    }
+
+                    $statusConfig = $projectStatusLabels[$ticket['projectId']][$ticket['status']] ?? null;
+                    if ($statusConfig && ($statusConfig['statusType'] ?? '') === 'DONE') {
+                        $ticket['statusLabel'] = $statusConfig['name'];
+                        $ticket['statusClass'] = $statusConfig['class'] ?? '';
+                        $ticket['statusType'] = $statusConfig['statusType'] ?? '';
+                        $ticketArray[] = $ticket;
+                    }
+                }
+            }
+        }
+
+        return $ticketArray;
+    }
+
+    /**
+     * @api
+     *
+     * Companion to markTicketDone for un-completing. Resolves the
+     * project's first NEW-statusType status and patches to it. Used by
+     * mobile's "Done" filter — tap the checked checkbox to bring a task
+     * back into the active list.
+     */
+    public function markTicketReopen(int $id): bool
+    {
+        $ticket = $this->ticketRepository->getTicket($id);
+        if (! $ticket || empty($ticket->projectId)) {
+            return false;
+        }
+
+        $statusLabels = $this->ticketRepository->getStateLabels((int) $ticket->projectId);
+        if (! is_array($statusLabels)) {
+            return false;
+        }
+
+        $newStatusId = null;
+        foreach ($statusLabels as $statusId => $config) {
+            if (($config['statusType'] ?? '') === 'NEW') {
+                $newStatusId = (int) $statusId;
+                break;
+            }
+        }
+
+        if ($newStatusId === null) {
+            return false;
+        }
+
+        return $this->patch($id, ['status' => $newStatusId]);
+    }
+
+    public function markTicketDone(int $id): bool
+    {
+        $ticket = $this->ticketRepository->getTicket($id);
+        if (! $ticket || empty($ticket->projectId)) {
+            return false;
+        }
+
+        $statusLabels = $this->ticketRepository->getStateLabels((int) $ticket->projectId);
+        if (! is_array($statusLabels)) {
+            return false;
+        }
+
+        $doneStatusId = null;
+        foreach ($statusLabels as $statusId => $config) {
+            if (($config['statusType'] ?? '') === 'DONE') {
+                $doneStatusId = (int) $statusId;
+                break;
+            }
+        }
+
+        if ($doneStatusId === null) {
+            return false;
+        }
+
+        return $this->patch($id, ['status' => $doneStatusId]);
+    }
+
     public function patch($id, $params): bool
     {
         if (! is_array($params)) {
@@ -3492,6 +3637,30 @@ class Tickets
             try {
                 if ($values['dateToFinish'] instanceof CarbonImmutable) {
                     $values['dateToFinish'] = $values['dateToFinish']->formatDateTimeForDb();
+                } elseif (
+                    is_string($values['dateToFinish'])
+                    && (empty($values['timeToFinish']) || $values['timeToFinish'] === null)
+                    && preg_match('/^\d{4}-\d{2}-\d{2}$/', $values['dateToFinish'])
+                ) {
+                    // Calendar-date input (e.g. "2026-05-21" from mobile) — store as
+                    // midnight without any timezone conversion.
+                    //
+                    // dateToFinish is semantically a calendar-date field: "due on
+                    // this day on the user's calendar", no time, no TZ. Running it
+                    // through parseUserDateTime (which interprets it as user-local
+                    // wall-clock end-of-day and converts to UTC for storage) caused
+                    // the visible "Hi Claude due May 21 stored as May 22" bug, because
+                    // the LA-default end-of-day rolls past UTC midnight. Per the
+                    // mobile audit (date-handling Tier 1), calendar-date fields
+                    // should round-trip as YYYY-MM-DD strings with no TZ math.
+                    //
+                    // This branch only activates when:
+                    //   - dateToFinish looks like "YYYY-MM-DD" with no time, AND
+                    //   - timeToFinish is absent
+                    // so existing web UI paths that submit dates with companion times
+                    // continue to use parseUserDateTime unchanged.
+                    $values['dateToFinish'] = $values['dateToFinish'].' 00:00:00';
+                    unset($values['timeToFinish']);
                 } else {
                     if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
                         $values['dateToFinish'] = dtHelper()->parseUserDateTime(

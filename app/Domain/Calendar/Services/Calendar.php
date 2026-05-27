@@ -677,30 +677,40 @@ class Calendar
      */
     private function mapEventData(
         string $title,
-        string $description,
+        ?string $description,
         bool $allDay,
-        int $id,
-        int $projectId,
+        ?int $id,
+        ?int $projectId,
         string $eventType,
         string $dateContext,
-        string $backgroundColor,
-        string $borderColor,
-        string $dateFrom,
-        string $dateTo
+        ?string $backgroundColor,
+        ?string $borderColor,
+        ?string $dateFrom,
+        ?string $dateTo
     ): array {
+        // Ticket records in MySQL can legitimately have NULL for any of
+        // the user-facing optional fields here (description, dates, colours)
+        // AND for the foreign-key-style id columns (orphaned tickets, soft-
+        // deleted projects, etc.). PHP 8's strict-type declarations rejected
+        // those with a hard 500. Widening the genuinely-nullable params to
+        // accept null and coercing to safe defaults (empty string / 0)
+        // in the output preserves the payload shape for calendar
+        // consumers — both mobile and web expect strings + numeric ids
+        // — without rewriting every call site or pre-filtering at the
+        // query layer.
         return [
             'title' => $title,
             'allDay' => $allDay,
-            'description' => $description,
-            'dateFrom' => $dateFrom,
-            'dateTo' => $dateTo,
-            'id' => $id,
-            'projectId' => $projectId,
+            'description' => $description ?? '',
+            'dateFrom' => $dateFrom ?? '',
+            'dateTo' => $dateTo ?? '',
+            'id' => $id ?? 0,
+            'projectId' => $projectId ?? 0,
             'eventType' => $eventType,
             'dateContext' => $dateContext,
-            'backgroundColor' => $backgroundColor,
-            'borderColor' => $borderColor,
-            'url' => BASE_URL.'/dashboard/home/#/tickets/showTicket/'.$id,
+            'backgroundColor' => $backgroundColor ?? '',
+            'borderColor' => $borderColor ?? '',
+            'url' => BASE_URL.'/dashboard/home/#/tickets/showTicket/'.($id ?? 0),
         ];
     }
 }

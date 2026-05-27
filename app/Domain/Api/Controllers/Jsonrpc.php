@@ -236,10 +236,12 @@ class Jsonrpc extends Controller
             return $this->returnServerError($e, $id);
         }
 
-        if ($method_response !== null) {
-            if (! settype($method_response, 'array')) {
-                $method_response = [$method_response];
-            }
+        // Convert objects to associative arrays for JSON serialization, but pass
+        // scalars and arrays through as-is. The previous `settype($var, 'array')`
+        // coerced scalars to `[$scalar]`, which broke RPC methods returning ints
+        // (e.g., addTicket returning a new ticket ID).
+        if ($method_response !== null && is_object($method_response)) {
+            $method_response = (array) $method_response;
         }
 
         return $this->returnResponse($method_response, $id);
@@ -364,11 +366,21 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Echos the return response
+     * Echos the return response.
+     *
+     * @param  mixed  $returnValue  The return value from the RPC method. Widened from
+     *                              `?array` because the upstream `settype` coercion that
+     *                              wrapped scalars into single-element arrays was removed
+     *                              (it broke methods returning ints — e.g. addTicket's
+     *                              new ticket id was being delivered as [id]). Per the
+     *                              JSON-RPC 2.0 spec §5, `result` MAY be any JSON value;
+     *                              caller code in `executeRPC` already casts objects to
+     *                              associative arrays before reaching here, so in practice
+     *                              this is array|scalar|null.
      *
      * @see https://jsonrpc.org/specification#response_object
      */
-    private function returnResponse(?array $returnValue, int|string|null $id = null): Response
+    private function returnResponse(mixed $returnValue, int|string|null $id = null): Response
     {
         /**
          * No IDs imply notification and MUST not be responded to

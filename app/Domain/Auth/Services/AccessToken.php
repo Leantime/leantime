@@ -143,4 +143,42 @@ class AccessToken implements HasAbilities
             throw new UnauthorizedException('You are not authorized to access this resource.');
         }
     }
+
+    /**
+     * Revoke the bearer token used to authenticate the current request.
+     * Designed for client-side sign-out flows (mobile, third-party
+     * integrations) that need a server-side invalidation rather than
+     * just clearing local credentials.
+     *
+     * Uses the request's Authorization header to identify the token —
+     * caller doesn't need to track its own token id. Defense-in-depth
+     * check confirms the matched token belongs to the session user
+     * (the middleware should already guarantee this since the bearer
+     * is what populated the session, but the explicit check guards
+     * against any odd state).
+     *
+     * @api
+     */
+    public function revokeCurrentToken(): bool
+    {
+        $request = app(\Leantime\Core\Http\ApiRequest::class);
+        $bearer = $request->getBearerToken();
+        if (! $bearer) {
+            return false;
+        }
+
+        $token = $this->tokenRepo->findToken($bearer);
+        if (! $token) {
+            return false;
+        }
+
+        $sessionUserId = (int) session('userdata.id');
+        if ($sessionUserId === 0 || (int) $token['tokenable_id'] !== $sessionUserId) {
+            // Bearer matched a row that isn't this session's user —
+            // refuse rather than risk deleting someone else's token.
+            return false;
+        }
+
+        return $this->tokenRepo->deleteToken((int) $token['id']);
+    }
 }
