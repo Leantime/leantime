@@ -298,7 +298,7 @@ class Jsonrpc extends Controller
      * Checks if a service method is marked with the @api annotation.
      *
      * @param  string  $serviceName  Fully qualified class name
-     * @param  string  $methodName   Method name
+     * @param  string  $methodName  Method name
      * @return bool True if the method has an @api docblock tag
      */
     private function isApiMethod(string $serviceName, string $methodName): bool

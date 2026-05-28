@@ -774,6 +774,7 @@ class Calendar
         }
 
         return true;
+    }
 
     /**
      * Checks whether an IPv4 address falls within a given CIDR range.
