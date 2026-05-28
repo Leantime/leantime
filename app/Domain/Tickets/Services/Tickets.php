@@ -1856,6 +1856,7 @@ class Tickets
             'milestoneid' => isset($params['milestone']) ? (int) $params['milestone'] : '',
             'dependingTicketId' => isset($params['dependingTicketId']) ? (int) $params['dependingTicketId'] : '',
             'sortIndex' => $params['sortIndex'] ?? '',
+            'collaborators' => $params['collaborators'] ?? [],
         ];
 
         if ($values['headline'] == '') {
@@ -2371,11 +2372,21 @@ class Tickets
             return false;
         }
 
+        // Handle collaborators separately since they live in the relationship table, not on zp_tickets
+        $collaboratorsUpdated = false;
+        if (array_key_exists('collaborators', $params)) {
+            $collaborators = is_array($params['collaborators']) ? $params['collaborators'] : [];
+            $this->ticketRepository->removeCollaborators($id);
+            $this->ticketRepository->addCollaborators($id, $collaborators, session('userdata.id'));
+            $collaboratorsUpdated = true;
+            unset($params['collaborators']);
+        }
+
         $params = $this->prepareTicketDates($params);
 
         $return = $this->ticketRepository->patchTicket($id, $params);
 
-        if (! $return) {
+        if (! $return && ! $collaboratorsUpdated) {
             return false;
         }
 
@@ -2404,7 +2415,7 @@ class Tickets
             $this->projectService->notifyProjectUsers($notification);
         }
 
-        return (bool) $return;
+        return true;
     }
 
     /**
@@ -3127,6 +3138,9 @@ class Tickets
         if (! $ticket || ! $this->projectService->isUserAssignedToProject(session('userdata.id'), $ticket->projectId)) {
             return ['msg' => 'notifications.ticket_delete_error', 'type' => 'error'];
         }
+
+        // Remove collaborator relationships before deleting the ticket
+        $this->ticketRepository->removeCollaborators($id);
 
         if ($this->ticketRepository->delticket($id)) {
 
