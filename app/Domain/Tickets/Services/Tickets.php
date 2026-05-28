@@ -3030,7 +3030,9 @@ class Tickets
         $ticketIds = [];
 
         foreach ($groupedTickets as $group) {
-            foreach (($group['items'] ?? []) as $ticket) {
+            // Support both 'items' (list/kanban views) and 'tickets' (ToDoWidget views)
+            $items = $group['items'] ?? $group['tickets'] ?? [];
+            foreach ($items as $ticket) {
                 if (isset($ticket['id'])) {
                     $ticketIds[] = (int) $ticket['id'];
                 }
@@ -3044,11 +3046,16 @@ class Tickets
         $collaboratorsByTicket = $this->ticketRepository->getCollaboratorsByTicketIds($ticketIds);
 
         foreach ($groupedTickets as &$group) {
-            if (! isset($group['items']) || ! is_array($group['items'])) {
+            // Determine which key holds the ticket array
+            if (isset($group['items']) && is_array($group['items'])) {
+                $key = 'items';
+            } elseif (isset($group['tickets']) && is_array($group['tickets'])) {
+                $key = 'tickets';
+            } else {
                 continue;
             }
 
-            foreach ($group['items'] as &$ticket) {
+            foreach ($group[$key] as &$ticket) {
                 $ticketId = (int) ($ticket['id'] ?? 0);
                 $editorId = (int) ($ticket['editorId'] ?? 0);
                 $collaboratorIds = $collaboratorsByTicket[$ticketId] ?? [];
@@ -3145,6 +3152,7 @@ class Tickets
             }
         }
 
+        $tickets = $this->enrichGroupedTicketsWithCollaborators($tickets);
         $tickets = self::dispatch_filter('myTodoWidgetTasks', $tickets);
 
         return [
@@ -3303,6 +3311,7 @@ class Tickets
             }
         }
 
+        $tickets = $this->enrichGroupedTicketsWithCollaborators($tickets);
         $tickets = self::dispatch_filter('myTodoWidgetTasks', $tickets);
 
         return [
