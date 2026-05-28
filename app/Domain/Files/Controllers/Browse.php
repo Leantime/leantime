@@ -29,25 +29,13 @@ class Browse extends Controller
      */
     public function get(array $params): Response
     {
-        if (isset($_GET['delFile'])) {
-            $result = $this->filesService->deleteFile($_GET['delFile']);
-
-            if ($result === true) {
-                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
-
-                return Frontcontroller::redirect(BASE_URL.'/files/showAll'.(($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : ''));
-            } else {
-                $this->tpl->setNotification($result['msg'], 'success');
-            }
-        }
-
         $this->assignTemplateVars();
 
         return $this->tpl->display('files.browse');
     }
 
     /**
-     * Handles file uploads.
+     * Handles file uploads and deletions via POST.
      *
      * @param  array  $params  Request parameters
      *
@@ -55,6 +43,18 @@ class Browse extends Controller
      */
     public function post(array $params): Response
     {
+        if (isset($_POST['delFile'])) {
+            $result = $this->filesService->deleteFile($_POST['delFile']);
+
+            if ($result === true) {
+                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
+
+                return Frontcontroller::redirect(BASE_URL.'/files/showAll'.(($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : ''));
+            } else {
+                $this->tpl->setNotification($this->language->__('notifications.file_delete_error'), 'error');
+            }
+        }
+
         if (isset($_POST['upload']) || isset($_FILES['file'])) {
             if (isset($_FILES['file'])) {
                 $this->filesService->upload($_FILES, 'project', session('currentProject'));
@@ -76,7 +76,7 @@ class Browse extends Controller
     {
         $this->tpl->assign('currentModule', session('currentProject'));
         $this->tpl->assign('modules', $this->filesService->getModules(session('userdata.id')));
-        $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv', 'webpe']);
+        $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv', 'webp']);
         $this->tpl->assign('files', $this->filesService->getFilesByModule('project', session('currentProject')));
     }
 }

@@ -69,12 +69,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # Note: CodeQL does not support PHP as of 2026.
-    # PHP static analysis is handled by the phpstan job above.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
-        languages: javascript
+        languages: javascript, php
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

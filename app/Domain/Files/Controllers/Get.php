@@ -63,7 +63,12 @@ class Get extends Controller
      */
     public function get(): Response
     {
-        $encName = preg_replace('/[^a-zA-Z0-9]+/', '', $_GET['encName']);
+        $rawEncName = $_GET['encName'] ?? '';
+        $encName = preg_replace('/[^a-zA-Z0-9]+/', '', $rawEncName);
+
+        if (empty($encName)) {
+            return new Response('Bad request', 400);
+        }
 
         // Look up the file record to check authorization and get trusted metadata
         $fileRecord = $this->filesRepo->getFileByEncName($encName);

@@ -2,9 +2,6 @@
 
 namespace Leantime\Domain\Calendar\Controllers;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,7 +41,8 @@ class ExternalCal extends Controller
 
             if (isset($cal['url'])) {
                 try {
-                    $content = $this->loadIcalUrl($cal['url']);
+                    // Use the service's loadIcalUrl which includes SSRF protection
+                    $content = $this->calendarService->loadIcalUrl($cal['url']);
                     session(['calendarCache.'.$calId.'.lastUpdate' => time()]);
                     session(['calendarCache.'.$calId.'.content' => $content]);
                 } catch (\Exception $e) {
@@ -56,38 +54,5 @@ class ExternalCal extends Controller
         return new Response($content, 200, [
             'Content-Type' => 'text/calendar; charset=utf-8',
         ]);
-    }
-
-    /**
-     * Loads an iCal URL via HTTP.
-     *
-     * @param  string  $url  The URL of the iCal to load
-     * @return string The contents of the iCal
-     */
-    private function loadIcalUrl(string $url): string
-    {
-        $guzzle = app()->make(Client::class);
-        $appSettings = app()->make(AppSettings::class);
-
-        if (str_contains($url, 'webcal://')) {
-            $url = str_replace('webcal://', 'https://', $url);
-        }
-
-        try {
-            $response = $guzzle->request('GET', $url, [
-                'headers' => [
-                    'Accept' => 'text/calendar',
-                    'User-Agent' => 'Leantime Calendar Integration v'.$appSettings->appVersion,
-                ],
-            ]);
-        } catch (ClientException $e) {
-            throw new \Exception('Guzzle problem: '.$e->getMessage(), $e->getCode(), $e);
-        }
-
-        if ($response->getStatusCode() == '200') {
-            return (string) $response->getBody();
-        }
-
-        throw new \Exception('Guzzle bad response code');
     }
 }
