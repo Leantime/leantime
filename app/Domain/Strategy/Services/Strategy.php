@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Strategy\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
+use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 
 /**
  * @api
@@ -11,10 +11,10 @@ use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
 class Strategy
 {
     /**
-     * @param  CanvasService  $canvasService  Canvas service used to read canvas progress and recently updated boards.
+     * @param  BlueprintsService  $blueprintsService  Blueprints service used to read canvas progress and recently updated boards.
      */
     public function __construct(
-        private CanvasService $canvasService
+        private BlueprintsService $blueprintsService
     ) {}
 
     /**
@@ -28,21 +28,21 @@ class Strategy
     public function getBoardMetadata(): array
     {
         return [
-            'valuecanvas' => ['module' => 'valuecanvas',       'name' => 'label.valuecanvas',  'description' => 'description.valuecanvas', 'icon' => 'fa-solid fa-ranking-star',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'swotcanvas' => ['module' => 'swotcanvas',     'name' => 'label.swotcanvas', 'description' => 'description.swotcanvas', 'icon' => 'fa-solid fa-dumbbell',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'obmcanvas' => ['module' => 'obmcanvas',     'name' => 'label.obmcanvas',       'description' => 'description.obmcanvas', 'icon' => 'fa-solid fa-object-group', 'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'leancanvas' => ['module' => 'leancanvas',     'name' => 'label.leancanvas',       'description' => 'description.leancanvas', 'icon' => 'fa-solid fa-person-circle-question', 'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'minempathycanvas' => ['module' => 'minempathycanvas',       'name' => 'label.minempathycanvas',  'description' => 'description.minempathycanvas', 'icon' => 'fa-solid fa-heart-circle-check',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'sbcanvas' => ['module' => 'sbcanvas',       'name' => 'label.sbcanvas',  'description' => 'description.sbcanvas',           'icon' => 'fa-solid fa-briefcase',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'riskscanvas' => ['module' => 'riskscanvas',    'name' => 'label.riskscanvas',  'description' => 'description.riskscanvas',        'icon' => 'fa-solid fa-triangle-exclamation',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'eacanvas' => ['module' => 'eacanvas',       'name' => 'label.eacanvas', 'description' => 'description.eacanvas', 'icon' => 'fa-solid fa-seedling',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'lbmcanvas' => ['visible' => '0', 'module' => 'lbmcanvas',      'name' => 'label.lbmcanvas', 'description' => 'description.lbmcanvas', 'icon' => 'fa-solid fa-building',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'dbmcanvas' => ['visible' => '0', 'module' => 'dbmcanvas',      'name' => 'label.dbmcanvas', 'description' => 'description.dbmcanvas', 'icon' => 'fa-solid fa-city',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'sqcanvas' => ['visible' => '0', 'module' => 'sqcanvas',       'name' => 'label.sqcanvas', 'description' => 'description.sqcanvas', 'icon' => 'fa fa-chess',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'insightscanvas' => ['module' => 'insightscanvas', 'name' => 'label.insightscanvas', 'description' => 'description.insightscanvas',      'icon' => 'fa-solid fa-arrows-down-to-people',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'cpcanvas' => ['visible' => '0', 'module' => 'cpcanvas',       'name' => 'label.cpcanvas', 'description' => 'description.cpcanvas', 'icon' => 'fa-solid fa-list-check',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'smcanvas' => ['visible' => '0', 'module' => 'smcanvas',       'name' => 'label.smcanvas', 'description' => 'description.smcanvas', 'icon' => 'fa-solid fa-comments-dollar',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
-            'emcanvas' => ['visible' => '0', 'module' => 'emcanvas',       'name' => 'label.emcanvas', 'description' => 'description.emcanvas', 'icon' => 'fa-solid fa-hand-holding-heart',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'valuecanvas' => ['module' => 'blueprints/value',       'name' => 'label.valuecanvas',  'description' => 'description.valuecanvas', 'icon' => 'fa-solid fa-ranking-star',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'swotcanvas' => ['module' => 'blueprints/swot',     'name' => 'label.swotcanvas', 'description' => 'description.swotcanvas', 'icon' => 'fa-solid fa-dumbbell',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'obmcanvas' => ['module' => 'blueprints/obm',     'name' => 'label.obmcanvas',       'description' => 'description.obmcanvas', 'icon' => 'fa-solid fa-object-group', 'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'leancanvas' => ['module' => 'blueprints/lean',     'name' => 'label.leancanvas',       'description' => 'description.leancanvas', 'icon' => 'fa-solid fa-person-circle-question', 'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'minempathycanvas' => ['module' => 'blueprints/minempathy',       'name' => 'label.minempathycanvas',  'description' => 'description.minempathycanvas', 'icon' => 'fa-solid fa-heart-circle-check',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'sbcanvas' => ['module' => 'blueprints/sb',       'name' => 'label.sbcanvas',  'description' => 'description.sbcanvas',           'icon' => 'fa-solid fa-briefcase',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'riskscanvas' => ['module' => 'blueprints/risks',    'name' => 'label.riskscanvas',  'description' => 'description.riskscanvas',        'icon' => 'fa-solid fa-triangle-exclamation',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'eacanvas' => ['module' => 'blueprints/ea',       'name' => 'label.eacanvas', 'description' => 'description.eacanvas', 'icon' => 'fa-solid fa-seedling',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'lbmcanvas' => ['visible' => '0', 'module' => 'blueprints/lbm',      'name' => 'label.lbmcanvas', 'description' => 'description.lbmcanvas', 'icon' => 'fa-solid fa-building',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'dbmcanvas' => ['visible' => '0', 'module' => 'blueprints/dbm',      'name' => 'label.dbmcanvas', 'description' => 'description.dbmcanvas', 'icon' => 'fa-solid fa-city',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'sqcanvas' => ['visible' => '0', 'module' => 'blueprints/sq',       'name' => 'label.sqcanvas', 'description' => 'description.sqcanvas', 'icon' => 'fa fa-chess',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'insightscanvas' => ['module' => 'blueprints/insights', 'name' => 'label.insightscanvas', 'description' => 'description.insightscanvas',      'icon' => 'fa-solid fa-arrows-down-to-people',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'cpcanvas' => ['visible' => '0', 'module' => 'blueprints/cp',       'name' => 'label.cpcanvas', 'description' => 'description.cpcanvas', 'icon' => 'fa-solid fa-list-check',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'smcanvas' => ['visible' => '0', 'module' => 'blueprints/sm',       'name' => 'label.smcanvas', 'description' => 'description.smcanvas', 'icon' => 'fa-solid fa-comments-dollar',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
+            'emcanvas' => ['visible' => '0', 'module' => 'blueprints/em',       'name' => 'label.emcanvas', 'description' => 'description.emcanvas', 'icon' => 'fa-solid fa-hand-holding-heart',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastlastUpdate' => ''],
         ];
     }
 
@@ -109,11 +109,11 @@ class Strategy
         $boardMetadata = $this->getBoardMetadata();
         $boards = $this->getBoardTypes();
 
-        $recentlyUpdatedCanvas = $this->canvasService->getLastUpdatedCanvas($projectId, $boards);
+        $recentlyUpdatedCanvas = $this->blueprintsService->getLastUpdatedCanvas($projectId, $boards);
 
         $recentProgressCanvas = $this->buildRecentProgressCanvas($recentlyUpdatedCanvas, $boardMetadata);
 
-        $canvasProgress = $this->canvasService->getBoardProgress((string) $projectId, $boards);
+        $canvasProgress = $this->blueprintsService->getBoardProgress((string) $projectId, $boards);
 
         return [
             'recentProgressCanvas' => $recentProgressCanvas,

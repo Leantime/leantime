@@ -1,0 +1,89 @@
+slug: "cp"
+icon: "fa-city"
+disclaimer: "text.cp.disclaimer"
+minColumns: 7
+
+boxes:
+  cp_cj_rv:
+    icon: "fa-money-bills"
+    title: "box.cp.cj_rv"
+  cp_cj_rc:
+    icon: "fa-hand-holding-dollar"
+    title: "box.cp.cj_rc"
+  cp_cj_e:
+    icon: "fa-thumbs-up"
+    title: "box.cp.cj_e"
+  cp_ou_rv:
+    icon: "fa-money-bills"
+    title: "box.cp.ou_rv"
+  cp_ou_rc:
+    icon: "fa-hand-holding-dollar"
+    title: "box.cp.ou_rc"
+  cp_ou_e:
+    icon: "fa-thumbs-up"
+    title: "box.cp.ou_e"
+  cp_os_rv:
+    icon: "fa-money-bills"
+    title: "box.cp.os_rv"
+  cp_os_rc:
+    icon: "fa-hand-holding-dollar"
+    title: "box.cp.os_rc"
+  cp_os_e:
+    icon: "fa-thumbs-up"
+    title: "box.cp.os_e"
+  cp_oi_rv:
+    icon: "fa-money-bills"
+    title: "box.cp.oi_rv"
+  cp_oi_rc:
+    icon: "fa-hand-holding-dollar"
+    title: "box.cp.oi_rc"
+  cp_oi_e:
+    icon: "fa-thumbs-up"
+    title: "box.cp.oi_e"
+
+statusLabels: default
+relatesLabels: {}
+
+layout:
+  - type: header
+    columns:
+      - { width: 16, empty: true }
+      - { width: 84, header: { icon: "fa fa-user-doctor", title: "box.header.cp.cj" } }
+  - type: boxes
+    id: firstRow
+    columns:
+      - { width: 16, label: "box.label.cp.need" }
+      - { width: 28, box: "cp_cj_rv" }
+      - { width: 28, box: "cp_cj_rc" }
+      - { width: 28, box: "cp_cj_e" }
+  - type: separator
+    columns:
+      - { width: 16, empty: true }
+      - { width: 28, icon: "fa fa-arrows-up-down" }
+      - { width: 28, icon: "fa fa-arrows-up-down" }
+      - { width: 28, icon: "fa fa-arrows-up-down" }
+  - type: header
+    columns:
+      - { width: 16, empty: true }
+      - { width: 84, header: { icon: "fa fa-barcode", title: "box.header.cp.ovp" } }
+  - type: boxes
+    id: secondRow
+    columns:
+      - { width: 16, label: "box.label.cp.unique" }
+      - { width: 28, box: "cp_ou_rv" }
+      - { width: 28, box: "cp_ou_rc" }
+      - { width: 28, box: "cp_ou_e" }
+  - type: boxes
+    id: thirdRow
+    columns:
+      - { width: 16, label: "box.label.cp.superior" }
+      - { width: 28, box: "cp_os_rv" }
+      - { width: 28, box: "cp_os_rc" }
+      - { width: 28, box: "cp_os_e" }
+  - type: boxes
+    id: fourthRow
+    columns:
+      - { width: 16, label: "box.label.cp.indifferent" }
+      - { width: 28, box: "cp_oi_rv" }
+      - { width: 28, box: "cp_oi_rc" }
+      - { width: 28, box: "cp_oi_e" }

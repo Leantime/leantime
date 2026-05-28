@@ -1,0 +1,37 @@
+slug: "lbm"
+icon: "fa-building"
+disclaimer: "text.lbm.disclaimer"
+minColumns: 3
+
+boxes:
+  lbm_customers:
+    icon: "fa-users"
+    color: "#ccffcc"
+    title: "box.lbm.customers"
+  lbm_offerings:
+    icon: "fa-barcode"
+    color: "#ffcccc"
+    title: "box.lbm.offerings"
+  lbm_capabilities:
+    icon: "fa-pen-ruler"
+    color: "#ccecff"
+    title: "box.lbm.capabilities"
+  lbm_financials:
+    icon: "fa-money-bill"
+    color: "#ffffaa"
+    title: "box.lbm.financials"
+
+statusLabels: default
+relatesLabels: {}
+
+layout:
+  - type: boxes
+    id: firstRow
+    columns:
+      - { width: 33.33, box: "lbm_customers" }
+      - { width: 33.33, box: "lbm_offerings" }
+      - { width: 33.33, box: "lbm_capabilities" }
+  - type: boxes
+    id: secondRow
+    columns:
+      - { width: 100, box: "lbm_financials" }
