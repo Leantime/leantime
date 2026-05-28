@@ -1500,8 +1500,9 @@ class Tickets
 
         if ($ticketId !== false) {
             $ticketId = intval($ticketId);
-            if (! empty($values['collaborators'])) {
-                $this->addCollaborators($ticketId, $values['collaborators'], $values['userId']);
+            $collaborators = $this->normalizeCollaborators($values['collaborators'] ?? [], $values['editorId'] ?? null);
+            if (! empty($collaborators)) {
+                $this->addCollaborators($ticketId, $collaborators, $values['userId']);
             }
 
             return $ticketId;
@@ -1616,9 +1617,13 @@ class Tickets
         $this->removeCollaborators($id);
 
         // Add new collaborators
-        $this->addCollaborators($id, $values['collaborators'] ?? [], session('userdata.id'));
+        $this->addCollaborators(
+            $id,
+            $this->normalizeCollaborators($values['collaborators'] ?? [], $values['editorId'] ?? null),
+            session('userdata.id')
+        );
 
-        return $result;
+        return $result !== false;
     }
 
     public function updateTicketStatus($ticketId, $status, int $ticketSorting = -1, $handler = null): bool
@@ -1757,6 +1762,8 @@ class Tickets
      */
     public function delticket($id): bool
     {
+        $this->removeCollaborators((int) $id);
+
         $this->connection->table('zp_tickets')
             ->where('id', $id)
             ->delete();
@@ -1808,6 +1815,8 @@ class Tickets
      */
     public function addCollaborators(int $ticketId, array $collaborators, int $createdBy): bool
     {
+        $collaborators = $this->normalizeCollaborators($collaborators);
+
         if (empty($collaborators)) {
             return true;
         }
@@ -1841,8 +1850,12 @@ class Tickets
             ->select('entityB AS userId')
             ->where('entityA', $ticketId)
             ->where('entityAType', 'Ticket')
+            ->where('entityBType', 'User')
             ->where('relationship', EntityRelationshipEnum::Collaborator->value)
             ->pluck('userId')
+            ->map(fn ($userId) => (int) $userId)
+            ->unique()
+            ->values()
             ->toArray();
     }
 
@@ -1876,7 +1889,9 @@ class Tickets
             $ticketId = (int) $row->entityA;
             $userId = (int) $row->entityB;
             $collaboratorsByTicket[$ticketId] ??= [];
-            $collaboratorsByTicket[$ticketId][] = $userId;
+            if (! in_array($userId, $collaboratorsByTicket[$ticketId], true)) {
+                $collaboratorsByTicket[$ticketId][] = $userId;
+            }
         }
 
         return $collaboratorsByTicket;
@@ -1893,8 +1908,33 @@ class Tickets
         return $this->connection->table('zp_entity_relationship')
             ->where('entityA', $ticketId)
             ->where('entityAType', 'Ticket')
+            ->where('entityBType', 'User')
             ->where('relationship', EntityRelationshipEnum::Collaborator->value)
             ->delete();
+    }
+
+    /**
+     * Normalize collaborator user IDs before relationship reads/writes.
+     *
+     * @param  array<int, mixed>  $collaborators
+     * @return array<int, int>
+     */
+    private function normalizeCollaborators(array $collaborators, mixed $editorId = null): array
+    {
+        $editorId = (int) $editorId;
+        $normalized = [];
+
+        foreach ($collaborators as $userId) {
+            $userId = (int) $userId;
+
+            if ($userId <= 0 || ($editorId > 0 && $userId === $editorId)) {
+                continue;
+            }
+
+            $normalized[$userId] = $userId;
+        }
+
+        return array_values($normalized);
     }
 
     /**
