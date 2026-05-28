@@ -14,6 +14,8 @@ class Login extends Controller
     private OidcService $oidc;
 
     /**
+     * Initializes dependencies.
+     *
      * @throws GuzzleException
      */
     public function init(OidcService $oidc): void
@@ -21,9 +23,13 @@ class Login extends Controller
         $this->oidc = $oidc;
     }
 
-    public function run(): Response
+    /**
+     * Redirects to the OIDC provider login page.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function get(array $params): Response
     {
-
         try {
             $loginUrl = $this->oidc->buildLoginUrl();
 

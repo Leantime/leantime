@@ -7,57 +7,84 @@ use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Users\Services\Users;
+use Symfony\Component\HttpFoundation\Response;
 
 class DelUser extends Controller
 {
     private Users $userService;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
-    public function init(Users $userService)
+    public function init(Users $userService): void
     {
         $this->userService = $userService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the delete user confirmation page.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run()
+    public function get(array $params): Response
     {
-
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-        // Only Admins
-        if (isset($_GET['id']) === true) {
-            $id = (int) ($_GET['id']);
+        if (! isset($params['id'])) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
 
-            $user = $this->userService->getUser($id);
+        $id = (int) $params['id'];
+        $user = $this->userService->getUser($id);
 
-            // Delete User
-            if (isset($_POST['del']) === true) {
-                if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
-                    $this->userService->deleteUser($id);
+        $this->generateFormTokens();
 
-                    $this->tpl->setNotification($this->language->__('notifications.user_deleted'), 'success', 'user_deleted');
+        $this->tpl->assign('user', $user);
 
-                    return Frontcontroller::redirect(BASE_URL.'/users/showAll');
-                } else {
-                    $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
-                }
+        return $this->tpl->display('users.delUser');
+    }
+
+    /**
+     * Handles user deletion.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
+
+        if (! isset($params['id'])) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
+
+        $id = (int) $params['id'];
+        $user = $this->userService->getUser($id);
+
+        if (isset($_POST['del'])) {
+            if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
+                $this->userService->deleteUser($id);
+                $this->tpl->setNotification($this->language->__('notifications.user_deleted'), 'success', 'user_deleted');
+
+                return Frontcontroller::redirect(BASE_URL.'/users/showAll');
             }
 
-            // Sensitive Form, generate form tokens
-            $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-            session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
-            session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
-
-            // Assign variables
-            $this->tpl->assign('user', $user);
-
-            return $this->tpl->display('users.delUser');
-        } else {
-            return $this->tpl->display('errors.error403');
+            $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
         }
+
+        $this->generateFormTokens();
+
+        $this->tpl->assign('user', $user);
+
+        return $this->tpl->display('users.delUser');
+    }
+
+    /**
+     * Generates CSRF form tokens for the sensitive delete form.
+     */
+    private function generateFormTokens(): void
+    {
+        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+        session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
+        session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
     }
 }

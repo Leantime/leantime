@@ -1,87 +1,99 @@
 <?php
 
-/**
- * newClient Class - Add a new client
- */
-
 namespace Leantime\Domain\Clients\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use Leantime\Domain\Clients\Services\Clients as ClientService;
+use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * NewClient Controller - Add a new client.
+ */
 class NewClient extends Controller
 {
-    private ClientRepository $clientRepo;
-
-    private UserRepository $user;
+    private ClientService $clientService;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
-    public function init(ClientRepository $clientRepo, UserRepository $user)
+    public function init(ClientService $clientService): void
     {
-
-        $this->clientRepo = $clientRepo;
-        $this->user = $user;
+        $this->clientService = $clientService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the new client form.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run()
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-        // Only admins
-        if (Auth::userIsAtLeast(Roles::$admin)) {
-            $values = [
-                'name' => '',
-                'street' => '',
-                'zip' => '',
-                'city' => '',
-                'state' => '',
-                'country' => '',
-                'phone' => '',
-                'internet' => '',
-                'email' => '',
-            ];
-
-            if (isset($_POST['save']) === true) {
-                $values = [
-                    'name' => ($_POST['name']),
-                    'street' => ($_POST['street']),
-                    'zip' => ($_POST['zip']),
-                    'city' => ($_POST['city']),
-                    'state' => ($_POST['state']),
-                    'country' => ($_POST['country']),
-                    'phone' => ($_POST['phone']),
-                    'internet' => ($_POST['internet']),
-                    'email' => ($_POST['email']),
-                ];
-
-                if ($values['name'] !== '') {
-                    if ($this->clientRepo->isClient($values) !== true) {
-                        $id = $this->clientRepo->addClient($values);
-                        $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success', 'new_client');
-
-                        return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id);
-                    } else {
-                        $this->tpl->setNotification($this->language->__('notification.client_exists_already'), 'error');
-                    }
-                } else {
-                    $this->tpl->setNotification($this->language->__('notification.client_name_not_specified'), 'error');
-                }
-            }
-
-            $this->tpl->assign('values', $values);
-
-            return $this->tpl->display('clients.newClient');
-        } else {
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
+
+        $values = [
+            'name' => '',
+            'street' => '',
+            'zip' => '',
+            'city' => '',
+            'state' => '',
+            'country' => '',
+            'phone' => '',
+            'internet' => '',
+            'email' => '',
+        ];
+
+        $this->tpl->assign('values', $values);
+
+        return $this->tpl->display('clients.newClient');
+    }
+
+    /**
+     * Handles new client form submission.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
+
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
+
+        $values = [
+            'name' => $_POST['name'] ?? '',
+            'street' => $_POST['street'] ?? '',
+            'zip' => $_POST['zip'] ?? '',
+            'city' => $_POST['city'] ?? '',
+            'state' => $_POST['state'] ?? '',
+            'country' => $_POST['country'] ?? '',
+            'phone' => $_POST['phone'] ?? '',
+            'internet' => $_POST['internet'] ?? '',
+            'email' => $_POST['email'] ?? '',
+        ];
+
+        if ($values['name'] !== '') {
+            if ($this->clientService->isClient($values) !== true) {
+                $id = $this->clientService->create($values);
+                $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success', 'new_client');
+
+                return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id);
+            } else {
+                $this->tpl->setNotification($this->language->__('notification.client_exists_already'), 'error');
+            }
+        } else {
+            $this->tpl->setNotification($this->language->__('notification.client_name_not_specified'), 'error');
+        }
+
+        $this->tpl->assign('values', $values);
+
+        return $this->tpl->display('clients.newClient');
     }
 }
