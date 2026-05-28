@@ -1555,6 +1555,15 @@ class Tickets
     {
         $this->addTicketChange(session('userdata.id'), $id, $params);
 
+        // Handle collaborators separately since they live in zp_entity_relationship, not zp_tickets.
+        $collaboratorsUpdated = false;
+        if (isset($params['collaborators']) && is_array($params['collaborators'])) {
+            $this->removeCollaborators($id);
+            $this->addCollaborators($id, $params['collaborators'], (int) session('userdata.id'));
+            $collaboratorsUpdated = true;
+            unset($params['collaborators']);
+        }
+
         $updates = [];
         foreach ($params as $key => $value) {
             $sanitizedKey = DbCore::sanitizeToColumnString($key);
@@ -1571,7 +1580,7 @@ class Tickets
         }
 
         if (empty($updates)) {
-            return false;
+            return $collaboratorsUpdated;
         }
 
         $updates['modified'] = dtHelper()->userNow()->formatDateTimeForDb();

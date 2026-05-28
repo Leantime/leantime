@@ -2040,6 +2040,17 @@ class Tickets
 
                 $this->projectService->notifyProjectUsers($notification);
 
+                // Notify collaborators that were added to this new ticket
+                if (! empty($values['collaborators'])) {
+                    $this->notifyNewCollaborators(
+                        $addTicketResponse,
+                        $values['headline'],
+                        $values['collaborators'],
+                        [],
+                        $values['projectId'] ?? null
+                    );
+                }
+
                 return $addTicketResponse;
             }
         }
@@ -2127,6 +2138,9 @@ class Tickets
             return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
         }
 
+        // Capture previous collaborators before the update so we can notify only newly added ones.
+        $previousCollaborators = $this->ticketRepository->getCollaborators((int) $values['id']);
+
         $values = $this->prepareTicketDates($values);
 
         // Update Ticket
@@ -2149,6 +2163,17 @@ class Tickets
             $notification->message = $message;
 
             $this->projectService->notifyProjectUsers($notification);
+
+            // Notify newly added collaborators
+            if (! empty($values['collaborators'])) {
+                $this->notifyNewCollaborators(
+                    (int) $values['id'],
+                    $values['headline'],
+                    $values['collaborators'],
+                    $previousCollaborators,
+                    $values['projectId'] ?? null
+                );
+            }
 
             self::dispatchEvent('ticket_updated');
 
@@ -2326,6 +2351,9 @@ class Tickets
             return false;
         }
 
+        // Capture previous collaborators before the patch so we can notify only newly added ones.
+        $previousCollaborators = isset($params['collaborators']) ? $this->ticketRepository->getCollaborators((int) $id) : [];
+
         $params = $this->prepareTicketDates($params);
 
         $return = $this->ticketRepository->patchTicket($id, $params);
@@ -2335,6 +2363,17 @@ class Tickets
         }
 
         self::dispatchEvent('ticket_updated');
+
+        // Notify newly added collaborators
+        if (isset($params['collaborators']) && is_array($params['collaborators'])) {
+            $this->notifyNewCollaborators(
+                (int) $id,
+                $ticket->headline,
+                $params['collaborators'],
+                $previousCollaborators,
+                $ticket->projectId
+            );
+        }
 
         // Todo: create events and move notification logic to notification module
         if (isset($params['status'])) {
@@ -3017,6 +3056,46 @@ class Tickets
             'sortOptions' => $sortOptions,
             'searchParams' => $searchUrlString,
         ];
+    }
+
+    /**
+     * Sends notifications to newly added collaborators on a ticket.
+     *
+     * Compares the previous collaborator list with the new one and notifies
+     * only the users who were just added (not already collaborating).
+     *
+     * @param  int  $ticketId  The ticket ID.
+     * @param  string  $headline  The ticket headline for the notification message.
+     * @param  array  $newCollaborators  The new full list of collaborator user IDs.
+     * @param  array  $previousCollaborators  The previous list of collaborator user IDs.
+     * @param  int|null  $projectId  The project ID for the notification context.
+     */
+    private function notifyNewCollaborators(int $ticketId, string $headline, array $newCollaborators, array $previousCollaborators, ?int $projectId = null): void
+    {
+        $addedCollaborators = array_diff($newCollaborators, $previousCollaborators);
+
+        if (empty($addedCollaborators)) {
+            return;
+        }
+
+        $actual_link = BASE_URL . '/dashboard/home#/tickets/showTicket/' . $ticketId;
+        $subject = sprintf($this->language->__('email_notifications.collaborator_added_subject'), $ticketId, strip_tags($headline));
+        $message = sprintf($this->language->__('email_notifications.collaborator_added_message'), session('userdata.name'), strip_tags($headline));
+
+        $notification = new NotificationModel;
+        $notification->url = [
+            'url' => $actual_link,
+            'text' => $this->language->__('email_notifications.collaborator_added_cta'),
+        ];
+        $notification->entity = ['id' => $ticketId, 'headline' => $headline];
+        $notification->module = 'tickets';
+        $notification->action = 'collaborator_added';
+        $notification->projectId = $projectId ?? session('currentProject') ?? -1;
+        $notification->subject = $subject;
+        $notification->authorId = session('userdata.id') ?? -1;
+        $notification->message = $message;
+
+        $this->projectService->notifyProjectUsers($notification);
     }
 
     /**
