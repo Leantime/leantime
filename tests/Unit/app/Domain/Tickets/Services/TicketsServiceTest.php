@@ -307,6 +307,31 @@ class TicketsServiceTest extends TestCase
         );
     }
 
+    /**
+     * Builds a TicketsService using the default mocks but with a specific
+     * TicketRepository instance, so collaborator enrichment can be asserted.
+     */
+    private function buildServiceWithTicketRepository(TicketRepository $ticketRepository): TicketsService
+    {
+        return new TicketsService(
+            tpl: $this->make(TemplateCore::class),
+            language: $this->make(LanguageCore::class),
+            config: $this->make(EnvironmentCore::class),
+            projectRepository: $this->make(ProjectRepository::class),
+            ticketRepository: $ticketRepository,
+            timesheetsRepo: $this->make(TimesheetRepository::class),
+            settingsRepo: $this->make(SettingRepository::class),
+            projectService: $this->make(ProjectService::class),
+            timesheetService: $this->make(TimesheetService::class),
+            sprintService: $this->make(SprintService::class),
+            ticketHistoryRepo: $this->make(TicketHistory::class),
+            goalcanvasService: $this->make(Goalcanvas::class),
+            dateTimeHelper: $this->make(DateTimeHelper::class),
+            commentService: $this->make(CommentService::class),
+            clientService: $this->make(ClientService::class)
+        );
+    }
+
     // ---------------------------------------------------------------------
     // JSON-RPC authorization gates (RPC has no controller-level role gate, so
     // the @api entry methods must self-authorize).
@@ -335,5 +360,105 @@ class TicketsServiceTest extends TestCase
         session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
 
         $this->assertFalse($this->ticketsService->updateTicketStatusAndSorting(['3' => 'ticket[]=5'], null));
+    }
+
+    // ---------------------------------------------------------------------
+    // Collaborator enrichment for grouped ticket views (list/kanban + widget)
+    // ---------------------------------------------------------------------
+
+    /**
+     * enrichGroupedTicketsWithCollaborators adds metadata to 'items' groups (list/kanban views).
+     */
+    public function test_enrich_grouped_tickets_with_collaborators_items_key()
+    {
+        $service = $this->buildServiceWithTicketRepository($this->make(TicketRepository::class, [
+            'getCollaboratorsByTicketIds' => fn ($ids) => [
+                10 => [100, 200],
+                11 => [300],
+            ],
+        ]));
+
+        $groupedTickets = [
+            'group1' => [
+                'items' => [
+                    ['id' => 10, 'editorId' => 100, 'headline' => 'Task A'],
+                    ['id' => 11, 'editorId' => 0, 'headline' => 'Task B'],
+                ],
+            ],
+        ];
+
+        $method = new \ReflectionMethod($service, 'enrichGroupedTicketsWithCollaborators');
+        $method->setAccessible(true);
+        $result = $method->invoke($service, $groupedTickets);
+
+        // Ticket 10: editorId=100 is excluded from collaborator list, leaving only [200]
+        $this->assertEquals([200], $result['group1']['items'][0]['collaborators']);
+        $this->assertEquals([200], $result['group1']['items'][0]['collaboratorPreview']);
+        $this->assertEquals(1, $result['group1']['items'][0]['collaboratorCount']);
+        $this->assertEquals(0, $result['group1']['items'][0]['collaboratorOverflow']);
+
+        // Ticket 11: no editorId filter, so [300] stays
+        $this->assertEquals([300], $result['group1']['items'][1]['collaborators']);
+        $this->assertEquals(1, $result['group1']['items'][1]['collaboratorCount']);
+    }
+
+    /**
+     * enrichGroupedTicketsWithCollaborators supports the 'tickets' key (ToDoWidget views).
+     */
+    public function test_enrich_grouped_tickets_with_collaborators_tickets_key()
+    {
+        $service = $this->buildServiceWithTicketRepository($this->make(TicketRepository::class, [
+            'getCollaboratorsByTicketIds' => fn ($ids) => [
+                20 => [400, 500, 600],
+            ],
+        ]));
+
+        $groupedTickets = [
+            'thisWeek' => [
+                'labelName' => 'subtitles.due_this_week',
+                'tickets' => [
+                    ['id' => 20, 'editorId' => 400, 'headline' => 'Widget Task'],
+                ],
+            ],
+        ];
+
+        $method = new \ReflectionMethod($service, 'enrichGroupedTicketsWithCollaborators');
+        $method->setAccessible(true);
+        $result = $method->invoke($service, $groupedTickets);
+
+        // editorId=400 excluded, leaving [500, 600]
+        $this->assertEquals([500, 600], $result['thisWeek']['tickets'][0]['collaborators']);
+        $this->assertEquals([500, 600], $result['thisWeek']['tickets'][0]['collaboratorPreview']);
+        $this->assertEquals(2, $result['thisWeek']['tickets'][0]['collaboratorCount']);
+        $this->assertEquals(0, $result['thisWeek']['tickets'][0]['collaboratorOverflow']);
+    }
+
+    /**
+     * enrichGroupedTicketsWithCollaborators reports overflow when more than 2 collaborators exist.
+     */
+    public function test_enrich_grouped_tickets_collaborator_overflow()
+    {
+        $service = $this->buildServiceWithTicketRepository($this->make(TicketRepository::class, [
+            'getCollaboratorsByTicketIds' => fn ($ids) => [
+                30 => [101, 102, 103, 104, 105],
+            ],
+        ]));
+
+        $groupedTickets = [
+            'group1' => [
+                'items' => [
+                    ['id' => 30, 'editorId' => 0, 'headline' => 'Many collaborators'],
+                ],
+            ],
+        ];
+
+        $method = new \ReflectionMethod($service, 'enrichGroupedTicketsWithCollaborators');
+        $method->setAccessible(true);
+        $result = $method->invoke($service, $groupedTickets);
+
+        $this->assertEquals([101, 102, 103, 104, 105], $result['group1']['items'][0]['collaborators']);
+        $this->assertEquals([101, 102], $result['group1']['items'][0]['collaboratorPreview']);
+        $this->assertEquals(5, $result['group1']['items'][0]['collaboratorCount']);
+        $this->assertEquals(3, $result['group1']['items'][0]['collaboratorOverflow']);
     }
 }
