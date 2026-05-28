@@ -286,6 +286,14 @@ class Projects
             }
         }
 
+        // Extract collaborator IDs and re-add them (collaborators bypass filters)
+        $collaboratorIds = $this->extractCollaboratorIds($notification);
+        foreach ($collaboratorIds as $collaboratorId) {
+            if ($collaboratorId != $notification->authorId && ! in_array($collaboratorId, $users)) {
+                $users[] = $collaboratorId;
+            }
+        }
+
         $emailMessage = $notification->message;
         if ($notification->url !== false) {
             $emailMessage .= " <a href='".$notification->url['url']."'>".$notification->url['text'].'</a>';
@@ -359,6 +367,13 @@ class Projects
         foreach ($mentionedUserIds as $mentionedId) {
             if ($mentionedId != $notification->authorId && ! in_array($mentionedId, $filteredIds)) {
                 $filteredIds[] = $mentionedId;
+            }
+        }
+
+        // Re-add collaborators for in-app notifications too
+        foreach ($collaboratorIds as $collaboratorId) {
+            if ($collaboratorId != $notification->authorId && ! in_array($collaboratorId, $filteredIds)) {
+                $filteredIds[] = $collaboratorId;
             }
         }
 
@@ -624,6 +639,36 @@ class Projects
         }
 
         return array_unique($userIds);
+    }
+
+    /**
+     * Extracts collaborator user IDs from a ticket notification entity.
+     *
+     * Collaborators bypass notification filters so they always receive
+     * updates for tickets they are collaborating on.
+     *
+     * @param  Notification  $notification  The notification to extract collaborators from.
+     * @return array<int> An array of unique user IDs who are collaborators.
+     */
+    private function extractCollaboratorIds(Notification $notification): array
+    {
+        if ($notification->module !== 'tickets') {
+            return [];
+        }
+
+        $collaborators = [];
+
+        if (isset($notification->entity) && is_array($notification->entity)) {
+            $collaborators = $notification->entity['collaborators'] ?? [];
+        } elseif (isset($notification->entity) && is_object($notification->entity)) {
+            $collaborators = $notification->entity->collaborators ?? [];
+        }
+
+        if (empty($collaborators) || ! is_array($collaborators)) {
+            return [];
+        }
+
+        return array_unique(array_map('intval', array_filter($collaborators)));
     }
 
     /**
