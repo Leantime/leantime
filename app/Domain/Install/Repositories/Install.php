@@ -2497,4 +2497,61 @@ class Install
 
         return true;
     }
+
+    /**
+     * zp_device_tokens — stores mobile push notification device tokens
+     * registered by the Leantime Mobile app. Supports the Laravel
+     * Notifications + laravel-notification-channels/expo flow planned
+     * in issue #3398.
+     *
+     * Schema notes:
+     *   - `token` is the Expo push token (format "ExponentPushToken[xxx]")
+     *     — variable length, treated as opaque string by us.
+     *   - `platform` records ios/android for diagnostics + potential
+     *     platform-specific delivery routing.
+     *   - `deviceName` is optional, surfaces in admin/user "your
+     *     devices" view (future).
+     *   - `lastSeenAt` updated each time the token is re-registered
+     *     (mobile re-registers on every login) — informs cleanup.
+     *   - `invalidatedAt` set when Expo reports the token is no longer
+     *     valid (DeviceNotRegistered / InvalidCredentials). Prune
+     *     these periodically.
+     *   - Unique (userId, token) prevents duplicate registrations.
+     */
+    public function update_sql_30502(): bool|array
+    {
+        try {
+            if (! Schema::hasTable('zp_device_tokens')) {
+                Schema::create('zp_device_tokens', function (Blueprint $table) {
+                    $table->increments('id');
+                    $table->integer('userId');
+                    // Expo push tokens are typically ~50-100 chars
+                    // ("ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]"); 255
+                    // gives ample headroom and lets us unique-index the
+                    // column without prefix-key gymnastics.
+                    $table->string('token', 255);
+                    $table->string('platform', 16)->nullable();
+                    $table->string('deviceName', 255)->nullable();
+                    $table->dateTime('lastSeenAt')->nullable();
+                    $table->dateTime('invalidatedAt')->nullable();
+                    $table->dateTime('createdAt')->nullable();
+
+                    $table->index('userId');
+                    // Composite index for "active tokens for user" queries
+                    // — the dominant access pattern when dispatching push.
+                    $table->index(['userId', 'invalidatedAt']);
+                    // Prevent duplicate registrations of the same token
+                    // by the same user (mobile re-registers on every
+                    // login; upsert-by-this-unique is the desired shape).
+                    $table->unique(['userId', 'token']);
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30502: '.$e->getMessage());
+
+            return ['Migration 30502 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
 }
