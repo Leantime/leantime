@@ -93,10 +93,34 @@ class Notifications
             ->update(['read' => 1]) > 0;
     }
 
+    public function markNotificationUnread(int $id): bool
+    {
+        return $this->db->table('zp_notifications')
+            ->where('id', $id)
+            ->update(['read' => 0]) > 0;
+    }
+
     public function markAllNotificationRead(int $userId): bool
     {
         return $this->db->table('zp_notifications')
             ->where('userId', $userId)
             ->update(['read' => 1]) >= 0;
+    }
+
+    /**
+     * Unread notification count for the given user. Excludes the
+     * legacy ainotification type to match the inbox query's scope —
+     * counts and inbox rows should be the same set. Uses the
+     * (userId, read) composite index, so single fast lookup.
+     */
+    public function getUnreadCount(int $userId): int
+    {
+        return (int) $this->db->table('zp_notifications')
+            ->where('userId', $userId)
+            ->where('type', '!=', 'ainotification')
+            ->where(function ($q) {
+                $q->where('read', 0)->orWhereNull('read');
+            })
+            ->count();
     }
 }

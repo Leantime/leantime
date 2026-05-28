@@ -84,6 +84,27 @@ class Notifications
     }
 
     /**
+     * Flip a previously-read notification back to unread. Powers the
+     * swipe-to-mark-unread inbox gesture on mobile — symmetric to
+     * markNotificationRead so users can re-surface something they
+     * tapped open accidentally or want to come back to.
+     *
+     * Per the mobile-owns-explicit-RPC-params convention, userId is
+     * passed by the client. Scoping isn't critical here (the id is
+     * the primary key) but the param keeps audit logs consistent
+     * with the rest of the Notifications RPC surface.
+     *
+     * @api
+     */
+    public function markNotificationUnread(int $id, int $userId): bool
+    {
+        if ($id <= 0) {
+            return false;
+        }
+        return $this->notificationsRepo->markNotificationUnread($id);
+    }
+
+    /**
      * Unread notification count for the authenticated user. Mobile uses
      * this for the app-icon badge and the inbox tab unread dot. Cheap
      * because the (userId, read) composite index on zp_notifications
@@ -98,13 +119,11 @@ class Notifications
             return 0;
         }
 
-        return (int) $this->db->database
-            ->table('zp_notifications')
-            ->where('userId', $userId)
-            ->where(function ($q) {
-                $q->where('read', 0)->orWhereNull('read');
-            })
-            ->count();
+        // Delegated to the Repository — Service stores the raw DbCore
+        // (no query-builder helpers), Repository stores the resolved
+        // Illuminate ConnectionInterface. Following the established
+        // pattern that all SQL lives in the Repository layer.
+        return $this->notificationsRepo->getUnreadCount($userId);
     }
 
     /**
