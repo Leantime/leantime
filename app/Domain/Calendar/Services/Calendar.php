@@ -263,6 +263,31 @@ class Calendar
     }
 
     /**
+     * Retrieves all external calendars for a given user.
+     *
+     * @param  int  $userId  The user ID
+     * @return array|false The external calendars or false if none found
+     *
+     * @api
+     */
+    public function getMyExternalCalendars(int $userId): array|false
+    {
+        return $this->calendarRepo->getMyExternalCalendars($userId);
+    }
+
+    /**
+     * Adds a new external calendar URL.
+     *
+     * @param  array  $values  The calendar values (url, name, colorClass)
+     *
+     * @api
+     */
+    public function addExternalCalendarUrl(array $values): void
+    {
+        $this->calendarRepo->addGUrl($values);
+    }
+
+    /**
      * Retrieves iCal calendar by user hash and calendar hash.
      *
      * @param  string  $userHash  The hash of the user.
@@ -661,20 +686,78 @@ class Calendar
             return false;
         }
 
-        // Resolve hostname to IP address
+        // Resolve hostname and validate ALL returned IP addresses (A and AAAA records).
+        // This prevents bypasses via multi-homed hosts where one IP is public and another is private.
         $host = $parsed['host'];
-        $ip = gethostbyname($host);
 
-        // gethostbyname returns the original hostname on failure
-        if ($ip === $host && ! filter_var($host, FILTER_VALIDATE_IP)) {
-            Log::warning('Calendar SSRF protection: unable to resolve hostname', [
-                'host' => $host,
-            ]);
+        // If the host is already an IP literal, validate it directly
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            if (! $this->isIpAllowed($host)) {
+                Log::warning('Calendar SSRF protection: blocked IP literal', ['ip' => $host]);
+
+                return false;
+            }
+
+            return true;
+        }
+
+        // Resolve all A (IPv4) and AAAA (IPv6) records
+        $ipv4Records = @dns_get_record($host, DNS_A) ?: [];
+        $ipv6Records = @dns_get_record($host, DNS_AAAA) ?: [];
+
+        $allIps = [];
+        foreach ($ipv4Records as $record) {
+            $allIps[] = $record['ip'] ?? null;
+        }
+        foreach ($ipv6Records as $record) {
+            $allIps[] = $record['ipv6'] ?? null;
+        }
+
+        $allIps = array_filter($allIps);
+
+        if (empty($allIps)) {
+            Log::warning('Calendar SSRF protection: unable to resolve hostname', ['host' => $host]);
 
             return false;
         }
 
-        // Deny private and reserved IP ranges
+        // Every resolved IP must be allowed — block if any single record is private/reserved
+        foreach ($allIps as $ip) {
+            if (! $this->isIpAllowed($ip)) {
+                Log::warning('Calendar SSRF protection: blocked private/reserved IP', [
+                    'host' => $host,
+                    'resolved_ip' => $ip,
+                ]);
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether an IP address (IPv4 or IPv6) is allowed for outbound requests.
+     *
+     * Rejects loopback, private, reserved, and link-local addresses.
+     * Uses PHP's built-in FILTER_VALIDATE_IP flags for IPv6 and manual CIDR checks for IPv4.
+     *
+     * @param  string  $ip  The IP address to validate.
+     * @return bool True if the IP is safe for outbound requests.
+     */
+    private function isIpAllowed(string $ip): bool
+    {
+        // IPv6 validation using PHP's built-in filters
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            // Reject any IPv6 address that is loopback, private, or reserved
+            if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        // IPv4 CIDR range checks
         $denyRanges = [
             '127.0.0.0/8',      // Loopback
             '10.0.0.0/8',       // Private (Class A)
@@ -684,29 +767,13 @@ class Calendar
             '0.0.0.0/8',       // Current network
         ];
 
-        // Check IPv6 loopback
-        if ($ip === '::1') {
-            Log::warning('Calendar SSRF protection: blocked IPv6 loopback address', [
-                'host' => $host,
-            ]);
-
-            return false;
-        }
-
         foreach ($denyRanges as $range) {
             if ($this->ipInRange($ip, $range)) {
-                Log::warning('Calendar SSRF protection: blocked private/reserved IP', [
-                    'host' => $host,
-                    'resolved_ip' => $ip,
-                    'matched_range' => $range,
-                ]);
-
                 return false;
             }
         }
 
         return true;
-    }
 
     /**
      * Checks whether an IPv4 address falls within a given CIDR range.

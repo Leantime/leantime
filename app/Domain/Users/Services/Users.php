@@ -360,6 +360,29 @@ class Users
     }
 
     /**
+     * Patch specific fields on a user record.
+     *
+     * @param  int  $id  The user ID
+     * @param  array  $params  The fields to update
+     *
+     * @api
+     */
+    public function patchUser(int $id, array $params): bool
+    {
+        return $this->userRepo->patchUser($id, $params);
+    }
+
+    /**
+     * Returns the list of available user statuses.
+     *
+     * @return array<string, string>
+     */
+    public function getUserStatuses(): array
+    {
+        return $this->userRepo->status;
+    }
+
+    /**
      * getUsersWithProjectAccess - gets all users who can access a project
      *
      * The $currentUser parameter is preserved for backwards compatibility

@@ -12,6 +12,9 @@ class ShowAll extends Controller
 {
     private FileService $filesService;
 
+    /**
+     * Initializes dependencies.
+     */
     public function init(
         FileService $filesService
     ): void {
@@ -19,15 +22,43 @@ class ShowAll extends Controller
     }
 
     /**
+     * Displays all project files.
+     *
+     * @param  array  $params  Request parameters
+     *
      * @throws BindingResolutionException
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
+        $currentModule = $params['id'] ?? $_GET['id'] ?? '';
 
-        $currentModule = '';
-        if (isset($_GET['id'])) {
-            $currentModule = $_GET['id'];
+        if (isset($_GET['delFile'])) {
+            $result = $this->filesService->deleteFile($_GET['delFile']);
+
+            if ($result === true) {
+                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
+
+                return Frontcontroller::redirect(BASE_URL.'/files/showAll'.(($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : ''));
+            } else {
+                $this->tpl->setNotification($result['msg'], 'success');
+            }
         }
+
+        $this->assignTemplateVars($currentModule);
+
+        return $this->tpl->displayPartial('files.showAll');
+    }
+
+    /**
+     * Handles file uploads.
+     *
+     * @param  array  $params  Request parameters
+     *
+     * @throws BindingResolutionException
+     */
+    public function post(array $params): Response
+    {
+        $currentModule = $params['id'] ?? $_GET['id'] ?? '';
 
         if (isset($_POST['upload']) || isset($_FILES['file'])) {
             if (isset($_FILES['file'])) {
@@ -38,23 +69,19 @@ class ShowAll extends Controller
             }
         }
 
-        if (isset($_GET['delFile']) === true) {
-            $result = $this->filesService->deleteFile($_GET['delFile']);
+        $this->assignTemplateVars($currentModule);
 
-            if ($result === true) {
-                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
+        return $this->tpl->displayPartial('files.showAll');
+    }
 
-                return Frontcontroller::redirect(BASE_URL.'/files/showAll'.($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : '');
-            } else {
-                $this->tpl->setNotification($result['msg'], 'success');
-            }
-        }
-
+    /**
+     * Assigns common template variables.
+     */
+    private function assignTemplateVars(string $currentModule): void
+    {
         $this->tpl->assign('currentModule', $currentModule);
         $this->tpl->assign('modules', $this->filesService->getModules(session('userdata.id')));
         $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
         $this->tpl->assign('files', $this->filesService->getFilesByModule('project', session('currentProject'), session('userdata.id')));
-
-        return $this->tpl->displayPartial('files.showAll');
     }
 }

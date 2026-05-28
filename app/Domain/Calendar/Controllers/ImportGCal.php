@@ -5,45 +5,56 @@ namespace Leantime\Domain\Calendar\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
+use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * importGCal Class - Add a new client
- */
 class ImportGCal extends Controller
 {
-    private CalendarRepository $calendarRepo;
+    private CalendarService $calendarService;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
-    public function init(CalendarRepository $calendarRepo): void
+    public function init(CalendarService $calendarService): void
     {
-        $this->calendarRepo = $calendarRepo;
+        $this->calendarService = $calendarService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the import calendar form.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run(): Response
+    public function get(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+
+        $this->tpl->assign('values', [
+            'url' => '',
+            'name' => '',
+            'colorClass' => '',
+        ]);
+
+        return $this->tpl->displayPartial('calendar.importGCal');
+    }
+
+    /**
+     * Handles external calendar URL import.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
         $values = [
-            'url' => '',
-            'name' => '',
-            'colorClass' => '',
+            'url' => $_POST['url'] ?? '',
+            'name' => $_POST['name'] ?? 'My Calendar',
+            'colorClass' => $_POST['colorClass'] ?? '#082236',
         ];
 
-        if (isset($_POST['name']) === true || isset($_POST['url']) === true) {
-            $values = [
-                'url' => ($_POST['url']),
-                'name' => ($_POST['name'] ?? 'My Calendar'),
-                'colorClass' => ($_POST['colorClass'] ?? '#082236'),
-            ];
-
-            $this->calendarRepo->addGUrl($values);
+        if (isset($_POST['name']) || isset($_POST['url'])) {
+            $this->calendarService->addExternalCalendarUrl($values);
             $this->tpl->setNotification('notification.gcal_imported_successfully', 'success', 'externalcalendar_created');
         }
 

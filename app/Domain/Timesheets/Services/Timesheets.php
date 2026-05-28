@@ -250,6 +250,107 @@ class Timesheets
     }
 
     /**
+     * Retrieve a single timesheet entry by ID.
+     *
+     * @param  int  $id  The timesheet entry ID
+     * @return mixed The timesheet entry or false if not found
+     *
+     * @api
+     */
+    public function getTimesheet(int $id): mixed
+    {
+        return $this->timesheetsRepo->getTimesheet($id);
+    }
+
+    /**
+     * Add a new time entry directly from a prepared values array.
+     *
+     * @param  array  $values  The time entry values
+     *
+     * @api
+     */
+    public function addTime(array $values): void
+    {
+        $this->timesheetsRepo->addTime($values);
+    }
+
+    /**
+     * Update an existing time entry.
+     *
+     * @param  array  $values  The updated time entry values
+     *
+     * @api
+     */
+    public function updateTime(array $values): void
+    {
+        $this->timesheetsRepo->updateTime($values);
+    }
+
+    /**
+     * Process and save weekly timesheet entries from the weekly view form.
+     *
+     * Parses pipe-delimited form keys (ticketId|kind|date|timestamp) and upserts
+     * each time entry. Returns an array of notification messages.
+     *
+     * @param  array  $postData  The raw POST data from the weekly timesheet form
+     * @return array{type: string, message: string}[] Notification messages
+     *
+     * @throws BindingResolutionException
+     */
+    public function saveWeeklyTimesheetEntries(array $postData): array
+    {
+        $notifications = [];
+
+        foreach ($postData as $key => $dateEntry) {
+            $tempData = explode('|', $key);
+
+            if (count($tempData) !== 4) {
+                continue;
+            }
+
+            $ticketId = $tempData[0];
+            $kind = $tempData[1];
+            $date = $tempData[2];
+            $timestamp = $tempData[3];
+            $hours = $dateEntry;
+
+            if ($ticketId === 'new' || $ticketId === 0) {
+                $ticketId = (int) $postData['ticketId'];
+                $kind = $postData['kindId'];
+
+                if ($ticketId == 0 && $hours > 0) {
+                    $notifications[] = ['type' => 'error', 'message' => 'Task ID is required for new entries'];
+
+                    return $notifications;
+                }
+            }
+
+            $values = [
+                'userId' => session('userdata.id'),
+                'ticket' => $ticketId,
+                'date' => $date,
+                'timestamp' => $timestamp,
+                'hours' => $hours,
+                'kind' => $kind,
+            ];
+
+            if ($timestamp === 'false' || $timestamp == false) {
+                continue;
+            }
+
+            try {
+                $this->upsertTime($ticketId, $values);
+                $notifications[] = ['type' => 'success', 'message' => 'Timesheet saved successfully'];
+            } catch (\Exception $e) {
+                $notifications[] = ['type' => 'error', 'message' => 'Error logging time: '.$e->getMessage()];
+                report($e);
+            }
+        }
+
+        return $notifications;
+    }
+
+    /**
      * @api
      */
     public function getLoggedHoursForTicketByDate(int $ticketId): array

@@ -7,31 +7,44 @@ use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+use Symfony\Component\HttpFoundation\Response;
 
 class DelCanvas extends Controller
 {
     private IdeaRepository $ideaRepo;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
-    public function init(IdeaRepository $ideaRepo)
+    public function init(IdeaRepository $ideaRepo): void
     {
         $this->ideaRepo = $ideaRepo;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the delete idea board confirmation.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run()
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-        if (isset($_GET['id'])) {
-            $id = (int) ($_GET['id']);
-        }
+        return $this->tpl->display('ideas.delCanvas');
+    }
 
-        if (isset($_POST['del']) && isset($id)) {
+    /**
+     * Handles idea board deletion.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+
+        $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
+
+        if (isset($_POST['del']) && $id > 0) {
             $this->ideaRepo->deleteCanvas($id);
 
             session()->forget('currentIdeaCanvas');

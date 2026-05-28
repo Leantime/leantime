@@ -87,8 +87,12 @@ class Canvas extends Controller
             return $this->tpl->displayJson(['status' => 'unauthorized'], 403);
         }
 
-        if (! $this->canvasRepo->patchCanvasItem($params['id'], $params)) {
-            return $this->tpl->displayJson(['status' => 'failure'], 500);
+        $result = $this->canvasRepo->patchCanvasItem($params['id'], $params);
+
+        if ($result === false) {
+            // patchCanvasItem returns false when no whitelisted columns are present
+            // or no rows were affected — this is a client error, not a server error
+            return $this->tpl->displayJson(['status' => 'no valid fields to update'], 400);
         }
 
         return $this->tpl->displayJson(['status' => 'ok']);

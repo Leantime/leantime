@@ -2021,6 +2021,32 @@ class Projects
     }
 
     /**
+     * Removes all project relations for a given user.
+     *
+     * @param  int  $userId  The user ID
+     *
+     * @api
+     */
+    public function deleteAllUserProjectRelations(int $userId): void
+    {
+        $this->projectRepository->deleteAllProjectRelations($userId);
+    }
+
+    /**
+     * Retrieves the project relations for a given user.
+     *
+     * @param  int  $userId  The user ID
+     * @param  int|null  $projectId  Optional project ID filter
+     * @return array The project relations
+     *
+     * @api
+     */
+    public function getUserProjectRelation(int $userId, ?int $projectId = null): array
+    {
+        return $this->projectRepository->getUserProjectRelation($userId, $projectId);
+    }
+
+    /**
      * Retrieves the ID of a project by its name.
      *
      * @param  array  $allProjects  The array of all projects.
@@ -2120,6 +2146,73 @@ class Projects
         }
 
         $this->projectRepository->editProject($values, $id);
+    }
+
+    /**
+     * Deletes a project and all associated user relations.
+     *
+     * @param  int  $id  The project ID to delete
+     *
+     * @api
+     */
+    public function deleteProject(int $id): void
+    {
+        $this->projectRepository->deleteProject($id);
+        $this->projectRepository->deleteAllUserRelations($id);
+    }
+
+    /**
+     * Checks if a project has any tickets.
+     *
+     * @param  int  $id  The project ID
+     * @return bool True if the project has tickets
+     *
+     * @api
+     */
+    public function hasTickets(int $id): bool
+    {
+        return $this->projectRepository->hasTickets($id);
+    }
+
+    /**
+     * Saves a project integration webhook setting.
+     *
+     * @param  int  $projectId  The project ID
+     * @param  string  $key  The setting key suffix (e.g. 'mattermostWebhookURL')
+     * @param  mixed  $value  The setting value
+     */
+    public function saveProjectSetting(int $projectId, string $key, mixed $value): void
+    {
+        $this->settingsRepo->saveSetting('projectsettings.'.$projectId.'.'.$key, $value);
+    }
+
+    /**
+     * Gets a project integration setting.
+     *
+     * @param  int  $projectId  The project ID
+     * @param  string  $key  The setting key suffix
+     * @return mixed The setting value
+     */
+    public function getProjectSetting(int $projectId, string $key): mixed
+    {
+        return $this->settingsRepo->getSetting('projectsettings.'.$projectId.'.'.$key);
+    }
+
+    /**
+     * Saves project user assignments and roles.
+     *
+     * @param  int  $projectId  The project ID
+     * @param  array  $assignedUsers  Array of user IDs
+     * @param  array  $projectRoles  Array of role data from POST
+     */
+    public function updateProjectUsers(int $projectId, array $assignedUsers, array $projectRoles): void
+    {
+        $values = [
+            'assignedUsers' => $assignedUsers,
+            'projectRoles' => $projectRoles,
+        ];
+
+        $this->projectRepository->editProjectRelations($values, $projectId);
     }
 
     /**

@@ -64,16 +64,17 @@ class Get extends Controller
     public function get(): Response
     {
         $encName = preg_replace('/[^a-zA-Z0-9]+/', '', $_GET['encName']);
-        $realName = $_GET['realName'];
-        $ext = preg_replace('/[^a-zA-Z0-9]+/', '', $_GET['ext']);
-        $module = preg_replace('/[^a-zA-Z0-9]+/', '', $_GET['module'] ?? '');
 
-        // Look up the file record to check authorization
+        // Look up the file record to check authorization and get trusted metadata
         $fileRecord = $this->filesRepo->getFileByEncName($encName);
 
         if ($fileRecord === false) {
             return new Response('File not found', 404);
         }
+
+        // Use DB values instead of user-supplied params to prevent parameter tampering
+        $realName = $fileRecord['realName'];
+        $ext = $fileRecord['extension'];
 
         // Check project-level access unless user is admin or owner
         if (! Auth::userIsAtLeast(Roles::$admin)) {
@@ -90,14 +91,26 @@ class Get extends Controller
 
                     return new Response('', 403);
                 }
+            } elseif ($this->isOwnerRestrictedModule($fileRecord)) {
+                // For private/user files, only the file owner can access
+                $userId = (int) session('userdata.id');
+                if ((int) ($fileRecord['userId'] ?? 0) !== $userId) {
+                    Log::warning('Unauthorized file access attempt on private file', [
+                        'userId' => $userId,
+                        'fileId' => $fileRecord['id'],
+                        'module' => $fileRecord['module'] ?? '',
+                    ]);
+
+                    return new Response('', 403);
+                }
             }
         }
 
-        // Construct the file name
+        // Construct the file name from trusted DB values
         $fileName = $encName.'.'.$ext;
 
         // Use the FileManager to get the file
-        $response = $this->fileManager->getFile($fileName, $realName, false);
+        $response = $this->fileManager->getFile($fileName, $realName);
 
         if ($response === false) {
             return new Response('File not found', 404);
@@ -111,7 +124,8 @@ class Get extends Controller
      *
      * For 'project' module files, the moduleId is the project ID directly.
      * For 'ticket' module files, looks up the ticket to find its project.
-     * For other module types (private, etc.), returns null (no project-level check needed).
+     * For 'client' module files, returns null (handled by owner check).
+     * For other module types, returns null (handled by owner check via isOwnerRestrictedModule).
      *
      * @param  array  $fileRecord  The file record from the database.
      * @return int|null The project ID, or null if project context cannot be determined.
@@ -142,6 +156,22 @@ class Get extends Controller
         }
 
         return null;
+    }
+
+    /**
+     * Determines whether a file's module type requires owner-level access.
+     *
+     * Files in 'private', 'user', 'lead', and 'export' modules are restricted
+     * to the user who uploaded them unless the caller is admin/owner.
+     *
+     * @param  array  $fileRecord  The file record from the database.
+     * @return bool True if the module restricts access to the file owner.
+     */
+    private function isOwnerRestrictedModule(array $fileRecord): bool
+    {
+        $ownerModules = ['private', 'user', 'lead', 'export'];
+
+        return in_array($fileRecord['module'] ?? '', $ownerModules, true);
     }
 
     /**

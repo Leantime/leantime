@@ -44,6 +44,23 @@ jobs:
     - name: Run NPM Audit
       run: npm audit --audit-level=high
 
+  phpstan:
+    name: PHPStan Static Analysis
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+
+    - name: Install Composer Dependencies
+      run: composer install --no-interaction --prefer-dist
+
+    - name: Run PHPStan
+      run: vendor/bin/phpstan analyse --memory-limit=512M
+
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-24.04
@@ -52,6 +69,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # Note: CodeQL does not support PHP as of 2026.
+    # PHP static analysis is handled by the phpstan job above.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:

@@ -17,41 +17,60 @@ class Edit extends Controller
 {
     private UserRepository $userRepo;
 
+    /**
+     * Initializes dependencies.
+     */
     public function init(UserRepository $userRepo): void
     {
         $this->userRepo = $userRepo;
     }
 
     /**
+     * Displays the 2FA setup/edit page.
+     *
+     * @param  array  $params  Request parameters
+     *
      * @throws TwoFactorAuthException
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
         $userId = session('userdata.id');
-
         $user = $this->userRepo->getUser($userId);
+        $tfa = $this->createTwoFactorAuth();
 
-        $tfa = new TwoFactorAuth('Leantime', 6, 30, 'sha1', new class implements IQRCodeProvider
-        {
-            public function getMimeType(): string
-            {
-                return 'image/png';
-            }
+        $secret = $user['twoFASecret'];
 
-            public function getQRCodeImage($qrtext, $size): string
-            {
-                $writer = new PngWriter;
+        if (empty($secret)) {
+            $secret = $tfa->createSecret(160);
+        }
 
-                $qrCode = new QrCode(data: $qrtext, size: $size, backgroundColor: new Color(255, 255, 255, 127));
+        $this->tpl->assign('secret', $secret);
 
-                $label = new Label(
-                    text: 'Label',
-                    textColor: new Color(255, 0, 0)
-                );
+        if ($user['twoFAEnabled']) {
+            $this->tpl->assign('twoFAEnabled', true);
+        } else {
+            $qrData = $tfa->getQRCodeImageAsDataUri($user['username'], $secret);
+            $this->tpl->assign('qrData', $qrData);
+            $this->tpl->assign('twoFAEnabled', false);
+        }
 
-                return $writer->write($qrCode, null, null)->getString();
-            }
-        });
+        $this->generateFormTokens();
+
+        return $this->tpl->display('twofa.edit');
+    }
+
+    /**
+     * Handles 2FA enable/disable actions.
+     *
+     * @param  array  $params  Request parameters
+     *
+     * @throws TwoFactorAuthException
+     */
+    public function post(array $params): Response
+    {
+        $userId = session('userdata.id');
+        $user = $this->userRepo->getUser($userId);
+        $tfa = $this->createTwoFactorAuth();
         $secret = $user['twoFASecret'];
 
         if (isset($_POST['disable'])) {
@@ -112,11 +131,46 @@ class Edit extends Controller
             $this->tpl->assign('twoFAEnabled', false);
         }
 
-        // Sensitive Form, generate form tokens
+        $this->generateFormTokens();
+
+        return $this->tpl->display('twofa.edit');
+    }
+
+    /**
+     * Creates a TwoFactorAuth instance with QR code provider.
+     */
+    private function createTwoFactorAuth(): TwoFactorAuth
+    {
+        return new TwoFactorAuth('Leantime', 6, 30, 'sha1', new class implements IQRCodeProvider
+        {
+            public function getMimeType(): string
+            {
+                return 'image/png';
+            }
+
+            public function getQRCodeImage($qrtext, $size): string
+            {
+                $writer = new PngWriter;
+
+                $qrCode = new QrCode(data: $qrtext, size: $size, backgroundColor: new Color(255, 255, 255, 127));
+
+                $label = new Label(
+                    text: 'Label',
+                    textColor: new Color(255, 0, 0)
+                );
+
+                return $writer->write($qrCode, null, null)->getString();
+            }
+        });
+    }
+
+    /**
+     * Generates CSRF form tokens for sensitive forms.
+     */
+    private function generateFormTokens(): void
+    {
         $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
         session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
         session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
-
-        return $this->tpl->display('twofa.edit');
     }
 }

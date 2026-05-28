@@ -2,53 +2,71 @@
 
 namespace Leantime\Domain\Timesheets\Controllers;
 
-use Illuminate\Http\RedirectResponse;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
+use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Symfony\Component\HttpFoundation\Response;
 
 class DelTime extends Controller
 {
-    private TimesheetRepository $timesheetsRepo;
+    private TimesheetService $timesheetService;
 
     /**
-     * init - initialize private variable
+     * Initializes dependencies.
      */
-    public function init(TimesheetRepository $timesheetsRepo): void
+    public function init(TimesheetService $timesheetService): void
     {
-        $this->timesheetsRepo = $timesheetsRepo;
+        $this->timesheetService = $timesheetService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the delete time confirmation dialog.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run(): Response|RedirectResponse
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
-        if (isset($_GET['id']) === true) {
-            $id = (int) ($_GET['id']);
-
-            if (isset($_POST['del']) === true) {
-                $this->timesheetsRepo->deleteTime($id);
-
-                $this->tpl->setNotification('notifications.time_deleted_successfully', 'success');
-
-                if (session()->exists('lastPage')) {
-                    return Frontcontroller::redirect(session('lastPage'));
-                } else {
-                    return Frontcontroller::redirect(BASE_URL.'/timsheets/showMyList');
-                }
-            }
-
-            $this->tpl->assign('id', $id);
-
-            return $this->tpl->displayPartial('timesheets.delTime');
-        } else {
+        if (! isset($params['id'])) {
             return $this->tpl->displayPartial('errors.error403');
         }
+
+        $this->tpl->assign('id', (int) $params['id']);
+
+        return $this->tpl->displayPartial('timesheets.delTime');
+    }
+
+    /**
+     * Handles time entry deletion.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
+
+        if (! isset($params['id'])) {
+            return $this->tpl->displayPartial('errors.error403');
+        }
+
+        $id = (int) $params['id'];
+
+        if (isset($_POST['del'])) {
+            $this->timesheetService->deleteTime($id);
+            $this->tpl->setNotification('notifications.time_deleted_successfully', 'success');
+
+            if (session()->exists('lastPage')) {
+                return Frontcontroller::redirect(session('lastPage'));
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/timesheets/showMyList');
+        }
+
+        $this->tpl->assign('id', $id);
+
+        return $this->tpl->displayPartial('timesheets.delTime');
     }
 }
