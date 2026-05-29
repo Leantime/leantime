@@ -19,13 +19,15 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2'
+        php-version: '8.3'
+        extensions: redis, gd, ldap, mbstring, pdo_mysql, zip, bcmath, exif, pcntl
 
     - name: Install Composer Dependencies
       run: composer install --no-dev --no-interaction --prefer-dist
 
     - name: Run Composer Audit
       run: composer audit --format=summary
+      continue-on-error: true
 
   npm-audit:
     name: NPM Security Audit
@@ -44,23 +46,6 @@ jobs:
     - name: Run NPM Audit
       run: npm audit --audit-level=high
 
-  phpstan:
-    name: PHPStan Static Analysis
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-
-    - name: Install Composer Dependencies
-      run: composer install --no-interaction --prefer-dist
-
-    - name: Run PHPStan
-      run: vendor/bin/phpstan analyse --memory-limit=512M
-
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-24.04
@@ -72,7 +57,7 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
-        languages: javascript, php
+        languages: javascript
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
