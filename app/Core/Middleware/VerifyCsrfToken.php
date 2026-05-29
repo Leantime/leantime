@@ -28,5 +28,7 @@ class VerifyCsrfToken extends BaseVerifier
         'api/*',
         'cron/*',
         'webhook/*',
+        'install',
+        'install/*',
     ];
 }
