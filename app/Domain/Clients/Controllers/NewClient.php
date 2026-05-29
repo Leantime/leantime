@@ -4,6 +4,8 @@ namespace Leantime\Domain\Clients\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Exceptions\ElementExistsException;
+use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
@@ -79,16 +81,14 @@ class NewClient extends Controller
             'email' => $_POST['email'] ?? '',
         ];
 
-        if ($values['name'] !== '') {
-            if ($this->clientService->isClient($values) !== true) {
-                $id = $this->clientService->create($values);
-                $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success', 'new_client');
+        try {
+            $id = $this->clientService->createClient($values);
+            $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success', 'new_client');
 
-                return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id);
-            } else {
-                $this->tpl->setNotification($this->language->__('notification.client_exists_already'), 'error');
-            }
-        } else {
+            return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id);
+        } catch (ElementExistsException) {
+            $this->tpl->setNotification($this->language->__('notification.client_exists_already'), 'error');
+        } catch (MissingParameterException) {
             $this->tpl->setNotification($this->language->__('notification.client_name_not_specified'), 'error');
         }
 

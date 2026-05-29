@@ -4,6 +4,7 @@ namespace Leantime\Domain\Clients\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
@@ -81,11 +82,9 @@ class ShowClient extends Controller
         }
 
         $this->tpl->assign('client', $client);
-        $this->tpl->assign('userClients', $this->clientService->getClientsUsers($id));
-        $this->tpl->assign('comments', $this->commentService->getComments('client', $id));
-        $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
-        $this->tpl->assign('clientProjects', $this->clientService->getClientProjects($id));
-        $this->tpl->assign('files', $this->fileService->getFilesByModule('client', $id));
+
+        $pageData = $this->clientService->getClientPageData($id);
+        array_map([$this->tpl, 'assign'], array_keys($pageData), array_values($pageData));
 
         return $this->tpl->display('clients.showClient');
     }
@@ -144,10 +143,10 @@ class ShowClient extends Controller
                 'email' => $_POST['email'] ?? '',
             ];
 
-            if ($values['name'] !== '') {
-                $this->clientService->editClient($values);
+            try {
+                $this->clientService->updateClient($values);
                 $this->tpl->setNotification($this->language->__('notification.client_saved_successfully'), 'success');
-            } else {
+            } catch (MissingParameterException) {
                 $this->tpl->setNotification($this->language->__('notification.client_name_not_specified'), 'error');
             }
 
@@ -159,11 +158,9 @@ class ShowClient extends Controller
         }
 
         $this->tpl->assign('client', $client);
-        $this->tpl->assign('userClients', $this->clientService->getClientsUsers($id));
-        $this->tpl->assign('comments', $this->commentService->getComments('client', $id));
-        $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
-        $this->tpl->assign('clientProjects', $this->clientService->getClientProjects($id));
-        $this->tpl->assign('files', $this->fileService->getFilesByModule('client', $id));
+
+        $pageData = $this->clientService->getClientPageData($id);
+        array_map([$this->tpl, 'assign'], array_keys($pageData), array_values($pageData));
 
         return $this->tpl->display('clients.showClient');
     }
