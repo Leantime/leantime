@@ -241,15 +241,13 @@ leantime.calendarController = (function () {
                         }
                     }).catch(function (error) { console.error('Could not update ticket dates', error); });
                 } else if (event.event.extendedProps.enitityType == "event") {
-                    jQuery.ajax({
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/calendar',
-                        data: {
-                            id: event.event.extendedProps.enitityId,
+                    leantime.rpc('Calendar.Calendar.patch', {
+                        id: event.event.extendedProps.enitityId,
+                        params: {
                             dateFrom: event.event.startStr,
                             dateTo: event.event.endStr
                         }
-                    })
+                    }).catch(function (error) { console.error('Could not update event dates', error); })
                 }
             },
             eventResize: function (event) {
@@ -264,15 +262,13 @@ leantime.calendarController = (function () {
                         }
                     }).catch(function (error) { console.error('Could not update ticket dates', error); });
                 } else if (event.event.extendedProps.enitityType == "event") {
-                    jQuery.ajax({
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/calendar',
-                        data: {
-                            id: event.event.extendedProps.enitityId,
+                    leantime.rpc('Calendar.Calendar.patch', {
+                        id: event.event.extendedProps.enitityId,
+                        params: {
                             dateFrom: event.event.startStr,
                             dateTo: event.event.endStr
                         }
-                    })
+                    }).catch(function (error) { console.error('Could not update event dates', error); })
                 }
 
             },
