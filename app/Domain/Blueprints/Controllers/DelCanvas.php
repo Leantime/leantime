@@ -80,7 +80,7 @@ class DelCanvas extends Controller
         $canvasType = $this->template->getDatabaseType();
         $sessionKey = $this->template->getSessionKey();
 
-        if (isset($params['id'])) {
+        if (isset($params['del']) && isset($params['id']) && (int) $params['id'] > 0) {
             $id = (int) $params['id'];
             $this->blueprintsRepo->deleteCanvas($id);
 

@@ -77,7 +77,7 @@ class DelCanvasItem extends Controller
 
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-        if (isset($params['id'])) {
+        if (isset($params['del']) && isset($params['id']) && (int) $params['id'] > 0) {
             $id = (int) $params['id'];
             $this->blueprintsRepo->delCanvasItem($id);
 

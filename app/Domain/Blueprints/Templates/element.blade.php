@@ -1,7 +1,3 @@
-@php
-    use Leantime\Domain\Comments\Repositories\Comments;
-@endphp
-
 <h4 class="widgettitle title-primary">
     @if(isset($canvasTypes[$elementName]['icon']))
         <i class="fas {{ $canvasTypes[$elementName]['icon'] }}"></i>
@@ -19,8 +15,9 @@
 
         @if($row['box'] === $elementName && ($filterStatus == 'all' || $filterStatus == $row['status']) && ($filterRelates == 'all' || $filterRelates == $row['relates']))
             @php
-                $comments = app()->make(Comments::class);
-                $nbcomments = $comments->countComments(moduleId: $row['id']);
+                // Use the module-scoped count already computed by getCanvasItemsById
+                // (avoids an unscoped per-item query that miscounts across modules).
+                $nbcomments = (int) ($row['commentCount'] ?? 0);
             @endphp
 
             <div class="ticketBox" id="item_{{ $row['id'] }}">

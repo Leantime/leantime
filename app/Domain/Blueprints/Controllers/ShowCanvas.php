@@ -254,7 +254,8 @@ class ShowCanvas extends Controller
         $currentCanvasId = -1;
 
         if (session()->exists($sessionKey)) {
-            $currentCanvasId = session($sessionKey);
+            // Cast: DB drivers (MySQL emulated prepares) return ids as strings.
+            $currentCanvasId = (int) session($sessionKey);
 
             $found = false;
             foreach ($allCanvas as $row) {
@@ -273,7 +274,7 @@ class ShowCanvas extends Controller
         }
 
         if (count($allCanvas) > 0 && session($sessionKey) == '') {
-            $currentCanvasId = $allCanvas[0]['id'];
+            $currentCanvasId = (int) $allCanvas[0]['id'];
             session([$sessionKey => $currentCanvasId]);
         }
 

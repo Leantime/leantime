@@ -14,6 +14,18 @@ use Leantime\Domain\Tickets\Repositories\Tickets;
  */
 class Blueprints extends Repository
 {
+    /**
+     * Columns on zp_canvas_items that may be written via patchCanvasItem().
+     * Acts as a mass-assignment allowlist for the inline-update API.
+     */
+    private const PATCHABLE_COLUMNS = [
+        'title', 'description', 'assumptions', 'data', 'conclusion',
+        'box', 'status', 'relates', 'milestoneId', 'kpi', 'data1',
+        'startDate', 'endDate', 'setting', 'metricType', 'startValue',
+        'currentValue', 'endValue', 'impact', 'effort', 'probability',
+        'action', 'assignedTo', 'parent', 'tags', 'sortindex',
+    ];
+
     protected ConnectionInterface $connection;
 
     protected DatabaseHelper $dbHelper;
@@ -186,19 +198,18 @@ class Blueprints extends Repository
      */
     public function patchCanvasItem(int $id, array $params): bool
     {
-        if (isset($params['act'])) {
-            unset($params['act']);
-        }
-
         $updates = [];
         foreach ($params as $key => $value) {
-            $sanitizedKey = DbCore::sanitizeToColumnString($key);
-            $updates[$sanitizedKey] = $value;
+            if (in_array($key, self::PATCHABLE_COLUMNS, true)) {
+                $updates[$key] = $value;
+            }
         }
 
-        $updates['id'] = $id;
+        if (empty($updates)) {
+            return false;
+        }
 
-        return $this->connection->table('zp_canvas_items')
+        return (bool) $this->connection->table('zp_canvas_items')
             ->where('id', $id)
             ->limit(1)
             ->update($updates);

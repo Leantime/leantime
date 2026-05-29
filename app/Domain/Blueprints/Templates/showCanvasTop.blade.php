@@ -96,7 +96,7 @@
                 <div class="pull-right">
                     <div class="btn-group viewDropDown">
                         @if(count($allCanvas) > 0 && ! empty($statusLabels))
-                            @if($filter['status'] == 'all')
+                            @if($filter['status'] == 'all' || ! isset($statusLabels[$filter['status']]))
                                 <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-filter"></i> {!! __('status.all') !!} {!! __('links.view') !!}</button>
                             @else
                                 <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw {!! __($statusLabels[$filter['status']]['icon']) !!}"></i> {{ $statusLabels[$filter['status']]['title'] }} {!! __('links.view') !!}</button>
@@ -112,7 +112,7 @@
 
                     <div class="btn-group viewDropDown">
                         @if(count($allCanvas) > 0 && ! empty($relatesLabels))
-                            @if($filter['relates'] == 'all')
+                            @if($filter['relates'] == 'all' || ! isset($relatesLabels[$filter['relates']]))
                                 <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw fa-globe"></i> {!! __('relates.all') !!} {!! __('links.view') !!}</button>
                             @else
                                 <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw {!! __($relatesLabels[$filter['relates']]['icon']) !!}"></i> {{ $relatesLabels[$filter['relates']]['title'] }} {!! __('links.view') !!}</button>
