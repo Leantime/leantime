@@ -92,7 +92,7 @@
     "selenium-standalone": "^9.3.3",
     "tailwindcss": "^3.4.1",
     "webpack": "^5.105.2",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^7.0.3"
   },
   "scripts": {},
   "repository": {
