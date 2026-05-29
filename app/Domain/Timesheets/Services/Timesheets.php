@@ -7,6 +7,8 @@ use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Exceptions\MissingParameterException;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Users\Repositories\Users;
@@ -212,15 +214,169 @@ class Timesheets
     }
 
     /**
-     * Delete a timesheet entry
+     * Delete a timesheet entry.
+     * The caller must be the entry owner or have at least manager role.
      *
      * @param  int  $id  The ID of the timesheet entry to delete
+     * @return bool True if deleted, false if unauthorized or not found
      *
      * @api
      */
-    public function deleteTime(int $id): void
+    public function deleteTime(int $id): bool
     {
-        $this->timesheetsRepo->deleteTime($id);
+        $timesheet = $this->timesheetsRepo->getTimesheet($id);
+
+        if (! $timesheet) {
+            return false;
+        }
+
+        $currentUserId = session('userdata.id');
+
+        // Entry owner can delete their own time
+        if ((int) $timesheet['userId'] === (int) $currentUserId) {
+            $this->timesheetsRepo->deleteTime($id);
+
+            return true;
+        }
+
+        // Managers and above can delete any entry
+        if (Auth::userIsAtLeast(Roles::$manager)) {
+            $this->timesheetsRepo->deleteTime($id);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Retrieve a single timesheet entry by ID.
+     *
+     * @param  int  $id  The timesheet entry ID
+     * @return mixed The timesheet entry or false if not found
+     *
+     * @api
+     */
+    public function getTimesheet(int $id): mixed
+    {
+        return $this->timesheetsRepo->getTimesheet($id);
+    }
+
+    /**
+     * Add a new time entry directly from a prepared values array.
+     *
+     * When called via API, the userId is forced to the authenticated user
+     * unless the caller is a manager or above.
+     *
+     * @param  array  $values  The time entry values
+     *
+     * @api
+     */
+    public function addTime(array $values): void
+    {
+        $currentUserId = (int) session('userdata.id');
+
+        // Non-managers can only add time entries for themselves
+        if (! Auth::userIsAtLeast(Roles::$manager)) {
+            $values['userId'] = $currentUserId;
+        }
+
+        $this->timesheetsRepo->addTime($values);
+    }
+
+    /**
+     * Update an existing time entry.
+     *
+     * When called via API, only the entry owner or a manager+ can update.
+     * Non-managers cannot reassign entries to other users.
+     *
+     * @param  array  $values  The updated time entry values
+     *
+     * @api
+     */
+    public function updateTime(array $values): void
+    {
+        $currentUserId = (int) session('userdata.id');
+
+        // If updating an existing entry, verify ownership or manager+ role
+        if (isset($values['id'])) {
+            $existing = $this->timesheetsRepo->getTimesheet($values['id']);
+
+            if ($existing && (int) $existing['userId'] !== $currentUserId && ! Auth::userIsAtLeast(Roles::$manager)) {
+                return;
+            }
+        }
+
+        // Non-managers cannot set userId to someone else
+        if (! Auth::userIsAtLeast(Roles::$manager)) {
+            $values['userId'] = $currentUserId;
+        }
+
+        $this->timesheetsRepo->updateTime($values);
+    }
+
+    /**
+     * Process and save weekly timesheet entries from the weekly view form.
+     *
+     * Parses pipe-delimited form keys (ticketId|kind|date|timestamp) and upserts
+     * each time entry. Returns an array of notification messages.
+     *
+     * @param  array  $postData  The raw POST data from the weekly timesheet form
+     * @return array{type: string, message: string}[] Notification messages
+     *
+     * @throws BindingResolutionException
+     */
+    public function saveWeeklyTimesheetEntries(array $postData): array
+    {
+        $notifications = [];
+
+        foreach ($postData as $key => $dateEntry) {
+            $tempData = explode('|', $key);
+
+            if (count($tempData) !== 4) {
+                continue;
+            }
+
+            $ticketId = $tempData[0];
+            $kind = $tempData[1];
+            $date = $tempData[2];
+            $timestamp = $tempData[3];
+            $hours = $dateEntry;
+
+            if ($ticketId === 'new' || $ticketId === 0) {
+                $ticketId = (int) $postData['ticketId'];
+                $kind = $postData['kindId'];
+
+                if ($ticketId == 0 && $hours > 0) {
+                    $notifications[] = ['type' => 'error', 'message' => 'Task ID is required for new entries'];
+
+                    return $notifications;
+                }
+            }
+
+            $values = [
+                'userId' => session('userdata.id'),
+                'ticket' => $ticketId,
+                'date' => $date,
+                'timestamp' => $timestamp,
+                'hours' => $hours,
+                'kind' => $kind,
+            ];
+
+            if ($timestamp === 'false' || $timestamp == false) {
+                continue;
+            }
+
+            try {
+                $this->upsertTime($ticketId, $values);
+                $notifications[] = ['type' => 'success', 'message' => 'Timesheet saved successfully'];
+            } catch (\Exception $e) {
+                $notifications[] = ['type' => 'error', 'message' => 'Error logging time: '.$e->getMessage()];
+                report($e);
+            }
+        }
+
+        return $notifications;
     }
 
     /**

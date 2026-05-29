@@ -1,44 +1,31 @@
 <?php
 
-/**
- * showAll Class - show My Calender
- */
-
 namespace Leantime\Domain\Calendar\Controllers;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Calendar\Services\Calendar;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
 class Ical extends Controller
 {
-    private Calendar $calendarService;
+    private CalendarService $calendarService;
 
     /**
-     * init - initialize private variables
-     *
-     * @param  Calendar  $calendarRepo
+     * Initializes dependencies.
      */
-    public function init(Calendar $calendarService): void
+    public function init(CalendarService $calendarService): void
     {
         $this->calendarService = $calendarService;
     }
 
     /**
-     * run - display template and edit data
+     * Serves the iCal feed for a given calendar hash.
      *
-     *
-     *
-     * @throws BindingResolutionException
+     * @param  array  $params  Request parameters
      */
-    public function run($params): RedirectResponse|Response
+    public function get(array $params): Response
     {
-
-        // calendar id is not a standardized format. We'll have to parse it out
-        // format is calendar.ical.CALENDARID
         $actParts = explode('.', $params['act'] ?? '');
 
         if (is_array($actParts) && count($actParts) === 3) {
@@ -54,17 +41,14 @@ class Ical extends Controller
         }
 
         try {
-
             $calendar = $this->calendarService->getIcalByHash($idParts[1], $idParts[0]);
 
             return new Response($calendar->get(), 200, [
                 'Content-Type' => 'text/calendar; charset=utf-8',
                 'Content-Disposition' => 'attachment; filename="leantime-calendar.ics"',
             ]);
-
         } catch (\Exception $e) {
             return Frontcontroller::redirect(BASE_URL.'/errors/404');
         }
-
     }
 }

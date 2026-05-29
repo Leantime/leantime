@@ -360,6 +360,62 @@ class Users
     }
 
     /**
+     * Patch specific fields on a user record.
+     *
+     * Only admins/owners can patch other users. Regular users may only patch
+     * their own record and only non-privileged fields.
+     *
+     * @param  int  $id  The user ID
+     * @param  array  $params  The fields to update
+     *
+     * @api
+     */
+    public function patchUser(int $id, array $params): bool
+    {
+        $currentUserId = (int) session('userdata.id');
+
+        // Non-privileged fields that any user can update on their own profile
+        $selfPatchableFields = [
+            'firstname', 'lastname', 'phone', 'jobTitle', 'jobLevel',
+            'department', 'password', 'notifications',
+        ];
+
+        // Privileged fields that only admins/owners can set (on any user)
+        $adminPatchableFields = [
+            'firstname', 'lastname', 'phone', 'jobTitle', 'jobLevel',
+            'department', 'password', 'notifications', 'role', 'clientId',
+            'status', 'user',
+        ];
+
+        if (Auth::userIsAtLeast(Roles::$admin)) {
+            // Admins can patch any user, but only whitelisted fields
+            $filteredParams = array_intersect_key($params, array_flip($adminPatchableFields));
+        } elseif ($id === $currentUserId) {
+            // Regular users can only patch their own profile with limited fields
+            $filteredParams = array_intersect_key($params, array_flip($selfPatchableFields));
+        } else {
+            // Non-admin trying to patch another user
+            return false;
+        }
+
+        if (empty($filteredParams)) {
+            return false;
+        }
+
+        return $this->userRepo->patchUser($id, $filteredParams);
+    }
+
+    /**
+     * Returns the list of available user statuses.
+     *
+     * @return array<string, string>
+     */
+    public function getUserStatuses(): array
+    {
+        return $this->userRepo->status;
+    }
+
+    /**
      * getUsersWithProjectAccess - gets all users who can access a project
      *
      * The $currentUser parameter is preserved for backwards compatibility

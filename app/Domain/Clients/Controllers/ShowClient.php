@@ -1,48 +1,36 @@
 <?php
 
-/**
- * showClient Class - Show one client
- */
-
 namespace Leantime\Domain\Clients\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Files\Services\Files as FileService;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * ShowClient Controller - Show one client.
+ */
 class ShowClient extends Controller
 {
-    private ClientRepository $clientRepo;
-
-    private SettingRepository $settingsRepo;
-
-    private ProjectService $projectService;
+    private ClientService $clientService;
 
     private CommentService $commentService;
 
     private FileService $fileService;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
     public function init(
-        ClientRepository $clientRepo,
-        SettingRepository $settingsRepo,
-        ProjectService $projectService,
+        ClientService $clientService,
         CommentService $commentService,
         FileService $fileService
-    ) {
-        $this->clientRepo = $clientRepo;
-        $this->settingsRepo = $settingsRepo;
-        $this->projectService = $projectService;
+    ): void {
+        $this->clientService = $clientService;
         $this->commentService = $commentService;
         $this->fileService = $fileService;
 
@@ -52,112 +40,131 @@ class ShowClient extends Controller
     }
 
     /**
-     * run - display template and edit data
+     * Displays the client detail page.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run()
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
-        $id = '';
-
-        if (isset($_GET['id']) === true) {
-            $id = (int) ($_GET['id']);
+        if (! isset($params['id'])) {
+            return $this->tpl->display('errors.error404', responseCode: 404);
         }
 
-        $row = $this->clientRepo->getClient($id);
+        $id = (int) $params['id'];
+        $client = $this->clientService->get($id);
 
-        if ($row === false) {
-            $this->tpl->display('errors.error404');
-
-            return;
+        if ($client === false) {
+            return $this->tpl->display('errors.error404', responseCode: 404);
         }
 
-        $clientValues = [
-            'id' => $row['id'],
-            'name' => $row['name'],
-            'street' => $row['street'],
-            'zip' => $row['zip'],
-            'city' => $row['city'],
-            'state' => $row['state'],
-            'country' => $row['country'],
-            'phone' => $row['phone'],
-            'internet' => $row['internet'],
-            'email' => $row['email'],
-        ];
-
-        if (empty($row) === false && Auth::userIsAtLeast(Roles::$admin)) {
-
-            $project = app()->make(ProjectRepository::class);
-
-            if (session('userdata.role') == 'admin') {
-                $this->tpl->assign('admin', true);
-            }
-
-            if (isset($_POST['upload'])) {
-                if (isset($_FILES['file']) === true && $_FILES['file']['tmp_name'] != '') {
-                    $return = $this->fileService->upload($_FILES, 'client', $id);
-                    $this->tpl->setNotification($this->language->__('notifications.file_upload_success'), 'success', 'clientfile_uploaded');
-                } else {
-                    $this->tpl->setNotification($this->language->__('notifications.file_upload_error'), 'error');
-                }
-            }
-
-            // Delete File
-            if (isset($_GET['delFile']) === true) {
-                $result = $this->fileService->deleteFile($_GET['delFile']);
-
-                if ($result === true) {
-                    $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'clientfile_deleted');
-
-                    return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id.'#files');
-                } else {
-                    $this->tpl->setNotification($result['msg'], 'error');
-                }
-            }
-
-            // Add comment
-            if (isset($_POST['comment']) === true) {
-                if ($this->commentService->addComment($_POST, 'client', $id, $row)) {
-                    $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
-                } else {
-                    $this->tpl->setNotification($this->language->__('notifications.comment_create_error'), 'error');
-                }
-            }
-
-            if (isset($_POST['save']) === true) {
-                $clientValues = [
-                    'id' => $row['id'],
-                    'name' => $_POST['name'],
-                    'street' => $_POST['street'],
-                    'zip' => $_POST['zip'],
-                    'city' => $_POST['city'],
-                    'state' => $_POST['state'],
-                    'country' => $_POST['country'],
-                    'phone' => $_POST['phone'],
-                    'internet' => $_POST['internet'],
-                    'email' => $_POST['email'],
-                ];
-
-                if ($clientValues['name'] !== '') {
-                    $this->clientRepo->editClient($clientValues, $id);
-
-                    $this->tpl->setNotification($this->language->__('notification.client_saved_successfully'), 'success');
-                } else {
-                    $this->tpl->setNotification($this->language->__('notification.client_name_not_specified'), 'error');
-                }
-            }
-
-            $this->tpl->assign('userClients', $this->clientRepo->getClientsUsers($id));
-            $this->tpl->assign('comments', $this->commentService->getComments('client', $id));
-            $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
-            $this->tpl->assign('client', $clientValues);
-            $this->tpl->assign('users', app()->make(UserRepository::class));
-            $this->tpl->assign('clientProjects', $project->getClientProjects($id));
-            $this->tpl->assign('files', $this->fileService->getFilesByModule('client', $id));
-
-            return $this->tpl->display('clients.showClient');
-        } else {
-            return $this->tpl->display('errors.error403');
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
         }
+
+        // Handle file deletion via GET param
+        if (isset($_GET['delFile'])) {
+            $result = $this->fileService->deleteFile($_GET['delFile']);
+
+            if ($result === true) {
+                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'clientfile_deleted');
+
+                return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id.'#files');
+            } else {
+                $this->tpl->setNotification($result['msg'], 'error');
+            }
+        }
+
+        if (session('userdata.role') == 'admin') {
+            $this->tpl->assign('admin', true);
+        }
+
+        $this->tpl->assign('client', $client);
+        $this->tpl->assign('userClients', $this->clientService->getClientsUsers($id));
+        $this->tpl->assign('comments', $this->commentService->getComments('client', $id));
+        $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
+        $this->tpl->assign('clientProjects', $this->clientService->getClientProjects($id));
+        $this->tpl->assign('files', $this->fileService->getFilesByModule('client', $id));
+
+        return $this->tpl->display('clients.showClient');
+    }
+
+    /**
+     * Handles client detail form submissions (save, upload, comment).
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
+
+        if (! isset($params['id'])) {
+            return $this->tpl->display('errors.error404', responseCode: 404);
+        }
+
+        $id = (int) $params['id'];
+        $client = $this->clientService->get($id);
+
+        if ($client === false || ! Auth::userIsAtLeast(Roles::$admin)) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
+
+        // Handle file upload
+        if (isset($_POST['upload'])) {
+            if (isset($_FILES['file']) && $_FILES['file']['tmp_name'] != '') {
+                $this->fileService->upload($_FILES, 'client', $id);
+                $this->tpl->setNotification($this->language->__('notifications.file_upload_success'), 'success', 'clientfile_uploaded');
+            } else {
+                $this->tpl->setNotification($this->language->__('notifications.file_upload_error'), 'error');
+            }
+        }
+
+        // Handle comment
+        if (isset($_POST['comment'])) {
+            if ($this->commentService->addComment($_POST, 'client', $id, $client)) {
+                $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
+            } else {
+                $this->tpl->setNotification($this->language->__('notifications.comment_create_error'), 'error');
+            }
+        }
+
+        // Handle client save
+        if (isset($_POST['save'])) {
+            $values = [
+                'id' => $id,
+                'name' => $_POST['name'] ?? '',
+                'street' => $_POST['street'] ?? '',
+                'zip' => $_POST['zip'] ?? '',
+                'city' => $_POST['city'] ?? '',
+                'state' => $_POST['state'] ?? '',
+                'country' => $_POST['country'] ?? '',
+                'phone' => $_POST['phone'] ?? '',
+                'internet' => $_POST['internet'] ?? '',
+                'email' => $_POST['email'] ?? '',
+            ];
+
+            if ($values['name'] !== '') {
+                $this->clientService->editClient($values);
+                $this->tpl->setNotification($this->language->__('notification.client_saved_successfully'), 'success');
+            } else {
+                $this->tpl->setNotification($this->language->__('notification.client_name_not_specified'), 'error');
+            }
+
+            $client = $values;
+        }
+
+        if (session('userdata.role') == 'admin') {
+            $this->tpl->assign('admin', true);
+        }
+
+        $this->tpl->assign('client', $client);
+        $this->tpl->assign('userClients', $this->clientService->getClientsUsers($id));
+        $this->tpl->assign('comments', $this->commentService->getComments('client', $id));
+        $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
+        $this->tpl->assign('clientProjects', $this->clientService->getClientProjects($id));
+        $this->tpl->assign('files', $this->fileService->getFilesByModule('client', $id));
+
+        return $this->tpl->display('clients.showClient');
     }
 }

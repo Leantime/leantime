@@ -470,7 +470,7 @@ return [
         |
         */
 
-        'secure' => env('LEAN_SESSION_SECURE', false),
+        'secure' => env('LEAN_SESSION_SECURE', null),
 
         /*
         |--------------------------------------------------------------------------

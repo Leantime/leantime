@@ -50,11 +50,37 @@ class Files
                 'file.date',
                 'file.module',
                 'file.moduleId',
+                'file.userId',
                 'user.firstname',
                 'user.lastname'
             )
             ->join('zp_user as user', 'file.userId', '=', 'user.id')
             ->where('file.id', $id)
+            ->first();
+
+        return $result ? (array) $result : false;
+    }
+
+    /**
+     * Retrieves a file record by its encoded name.
+     *
+     * @param  string  $encName  The encoded (hashed) filename without extension.
+     * @return array|false The file record as an associative array, or false if not found.
+     */
+    public function getFileByEncName(string $encName): array|false
+    {
+        $result = $this->db->table('zp_file as file')
+            ->select(
+                'file.id',
+                'file.extension',
+                'file.realName',
+                'file.encName',
+                'file.date',
+                'file.module',
+                'file.moduleId',
+                'file.userId'
+            )
+            ->where('file.encName', $encName)
             ->first();
 
         return $result ? (array) $result : false;

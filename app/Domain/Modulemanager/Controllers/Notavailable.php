@@ -1,19 +1,20 @@
 <?php
 
-/**
- * Controller / Delete Canvas
- */
-
 namespace Leantime\Domain\ModuleManager\Controllers;
 
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
+use Symfony\Component\HttpFoundation\Response;
 
 class Notavailable
 {
-    public function run($params)
+    /**
+     * Redirects to the error page or a filtered alternative.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function get(array $params): Response
     {
-
         $redirect = BASE_URL.'errors/error404';
         $redirect = DispatchesEvents::dispatch_filter('notAvailableRedirect', $redirect, $params);
 

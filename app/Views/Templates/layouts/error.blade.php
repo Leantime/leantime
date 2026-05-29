@@ -8,7 +8,7 @@
     @stack('styles')
 </head>
 
-<body class="loginpage" style="height:100%;">
+<body class="loginpage" style="height:100%;" hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'>
 
 <div class="header hidden-gt-sm tw-p-[10px]" style="background:var(--header-gradient)">
     <a href="{!! BASE_URL !!}" target="_blank">

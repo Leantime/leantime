@@ -1,5 +1,6 @@
 <title>@dispatchFilter('page_title', $sitename)</title>
 
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="requestId" content="{{ \Illuminate\Support\Str::random(4) }}">
 <meta name="description" content="{{ $sitename }}">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>

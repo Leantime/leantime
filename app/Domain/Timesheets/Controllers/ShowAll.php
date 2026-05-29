@@ -10,7 +10,7 @@ use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowAll extends Controller
@@ -19,69 +19,77 @@ class ShowAll extends Controller
 
     private ClientService $clientService;
 
-    private TimesheetService $timesheetsService;
+    private TimesheetService $timesheetService;
 
     private TicketService $ticketService;
 
+    private UserService $userService;
+
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
     public function init(
         ProjectService $projectService,
-        TimesheetService $timesheetsService,
+        TimesheetService $timesheetService,
         ClientService $clientService,
-        TicketService $ticketService
+        TicketService $ticketService,
+        UserService $userService
     ): void {
-        $this->timesheetsService = $timesheetsService;
+        $this->timesheetService = $timesheetService;
         $this->projectService = $projectService;
         $this->clientService = $clientService;
         $this->ticketService = $ticketService;
+        $this->userService = $userService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the list of all timesheets.
      *
-     *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @param  array  $params  Request parameters
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
-        // Only admins and employees
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
         session(['lastPage' => BASE_URL.'/timesheets/showAll']);
 
-        if (isset($_POST['saveInvoice']) === true) {
-            $invEmpl = [];
-            $invComp = [];
-            $paid = [];
+        $this->assignTemplateVars(
+            dateFrom: dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone(),
+            dateTo: dtHelper()->userNow()->endOfMonth()->setToDbTimezone(),
+            kind: 'all',
+            userId: null,
+            invEmplCheck: '-1',
+            invCompCheck: '0',
+            paidCheck: '0',
+            projectFilter: -1,
+            ticketFilter: -1,
+            clientId: -1,
+        );
 
-            if (isset($_POST['invoicedEmpl']) === true) {
-                $invEmpl = $_POST['invoicedEmpl'];
-            }
+        return $this->tpl->display('timesheets.showAll');
+    }
 
-            if (isset($_POST['invoicedComp']) === true) {
-                $invComp = $_POST['invoicedComp'];
-            }
+    /**
+     * Handles timesheet filter changes and invoice saves.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
-            if (isset($_POST['paid']) === true) {
-                $paid = $_POST['paid'];
-            }
+        session(['lastPage' => BASE_URL.'/timesheets/showAll']);
 
-            $this->timesheetsService->updateInvoices($invEmpl, $invComp, $paid);
+        if (isset($_POST['saveInvoice'])) {
+            $this->timesheetService->updateInvoices(
+                $_POST['invoicedEmpl'] ?? [],
+                $_POST['invoicedComp'] ?? [],
+                $_POST['paid'] ?? []
+            );
         }
 
-        $invCompCheck = '0';
-        $kind = 'all';
-        $userId = null;
-
-        if (! empty($_POST['kind'])) {
-            $kind = strip_tags($_POST['kind']);
-        }
-
-        if (! empty($_POST['userId'])) {
-            $userId = intval(strip_tags($_POST['userId']));
-        }
+        $kind = ! empty($_POST['kind']) ? strip_tags($_POST['kind']) : 'all';
+        $userId = ! empty($_POST['userId']) ? (int) strip_tags($_POST['userId']) : null;
 
         $dateFrom = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
         if (! empty($_POST['dateFrom'])) {
@@ -93,72 +101,69 @@ class ShowAll extends Controller
             $dateTo = dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
         }
 
-        if (isset($_POST['invEmpl'])) {
-            $invEmplCheck = $_POST['invEmpl'];
-            if ($invEmplCheck == 'all') {
-                $invEmplCheck = '-1';
-            }
-        } else {
-            $invEmplCheck = '-1';
-        }
+        $invEmplCheck = isset($_POST['invEmpl'])
+            ? ($_POST['invEmpl'] == 'all' ? '-1' : $_POST['invEmpl'])
+            : '-1';
 
+        $invCompCheck = '0';
         if (isset($_POST['invComp'])) {
-            $invCompCheck = ($_POST['invComp']);
-
-            if ($invCompCheck == 'on') {
-                $invCompCheck = '1';
-            } else {
-                $invCompCheck = '0';
-            }
+            $invCompCheck = $_POST['invComp'] == 'on' ? '1' : '0';
         }
 
+        $paidCheck = '0';
         if (isset($_POST['paid'])) {
-            $paidCheck = $_POST['paid'];
-
-            if ($paidCheck == 'on') {
-                $paidCheck = '1';
-            } else {
-                $paidCheck = '0';
-            }
-        } else {
-            $paidCheck = '0';
+            $paidCheck = $_POST['paid'] == 'on' ? '1' : '0';
         }
 
-        $projectFilter = -1;
-        if (! empty($_POST['project'])) {
-            $projectFilter = strip_tags($_POST['project']);
-        }
+        $projectFilter = ! empty($_POST['project']) ? strip_tags($_POST['project']) : -1;
+        $ticketFilter = ! empty($_POST['ticket']) ? strip_tags($_POST['ticket']) : -1;
+        $clientId = ! empty($_POST['clientId']) ? strip_tags($_POST['clientId']) : -1;
 
-        $ticketFilter = -1;
-        if (! empty($_POST['ticket'])) {
-            $ticketFilter = strip_tags($_POST['ticket']);
-        }
+        $this->assignTemplateVars(
+            dateFrom: $dateFrom,
+            dateTo: $dateTo,
+            kind: $kind,
+            userId: $userId,
+            invEmplCheck: $invEmplCheck,
+            invCompCheck: $invCompCheck,
+            paidCheck: $paidCheck,
+            projectFilter: $projectFilter,
+            ticketFilter: $ticketFilter,
+            clientId: $clientId,
+        );
 
-        $clientId = -1;
-        if (! empty($_POST['clientId'])) {
-            $clientId = strip_tags($_POST['clientId']);
-        }
+        return $this->tpl->display('timesheets.showAll');
+    }
 
-        // Determine if the selected ticket is in the selected project
+    /**
+     * Assigns common template variables for the timesheet list view.
+     */
+    private function assignTemplateVars(
+        CarbonInterface $dateFrom,
+        CarbonInterface $dateTo,
+        string $kind,
+        ?int $userId,
+        string $invEmplCheck,
+        string $invCompCheck,
+        string $paidCheck,
+        int|string $projectFilter,
+        int|string $ticketFilter,
+        int|string $clientId,
+    ): void {
         $projectMismatch = false;
-        if ($ticketFilter != '') {
+        if ($ticketFilter != '' && $ticketFilter != -1) {
             $selectedTicket = $this->ticketService->getTicket($ticketFilter);
-
             if ($selectedTicket && $selectedTicket->projectId != $projectFilter) {
                 $projectMismatch = true;
             }
         }
 
-        $user = app()->make(UserRepository::class);
-        $employees = $user->getAll();
-
         $this->tpl->assign('employeeFilter', $userId);
-        $this->tpl->assign('employees', $employees);
+        $this->tpl->assign('employees', $this->userService->getAll());
         $this->tpl->assign('dateFrom', $dateFrom);
         $this->tpl->assign('dateTo', $dateTo);
-
         $this->tpl->assign('actKind', $kind);
-        $this->tpl->assign('kind', $this->timesheetsService->getBookedHourTypes());
+        $this->tpl->assign('kind', $this->timesheetService->getBookedHourTypes());
         $this->tpl->assign('invComp', $invCompCheck);
         $this->tpl->assign('invEmpl', $invEmplCheck);
         $this->tpl->assign('paid', $paidCheck);
@@ -168,7 +173,7 @@ class ShowAll extends Controller
         $this->tpl->assign('ticketFilter', $ticketFilter);
         $this->tpl->assign('clientFilter', $clientId);
         $this->tpl->assign('allClients', $this->clientService->getAll());
-        $this->tpl->assign('allTimesheets', $this->timesheetsService->getAll(
+        $this->tpl->assign('allTimesheets', $this->timesheetService->getAll(
             $dateFrom,
             $dateTo,
             (int) $projectFilter,
@@ -180,7 +185,5 @@ class ShowAll extends Controller
             $paidCheck,
             $clientId
         ));
-
-        return $this->tpl->display('timesheets.showAll');
     }
 }

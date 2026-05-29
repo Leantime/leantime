@@ -1,61 +1,86 @@
 <?php
 
-/**
- * delClient Class - Deleting clients
- */
-
 namespace Leantime\Domain\Clients\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+use Leantime\Domain\Clients\Services\Clients as ClientService;
+use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * DelClient Controller - Deleting clients.
+ */
 class DelClient extends Controller
 {
-    private ClientRepository $clientRepo;
+    private ClientService $clientService;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
-    public function init()
+    public function init(ClientService $clientService): void
     {
-        $this->clientRepo = app()->make(ClientRepository::class);
+        $this->clientService = $clientService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the delete client confirmation page.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run()
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-        // Only admins
-        if (Auth::userIsAtLeast(Roles::$admin)) {
-            if (isset($_GET['id']) === true) {
-                $id = (int) ($_GET['id']);
-
-                if ($this->clientRepo->hasTickets($id) === true) {
-                    $this->tpl->setNotification($this->language->__('notification.client_has_todos'), 'error');
-                } else {
-                    if (isset($_POST['del']) === true) {
-                        $this->clientRepo->deleteClient($id);
-
-                        $this->tpl->setNotification($this->language->__('notification.client_deleted'), 'success');
-
-                        return Frontcontroller::redirect(BASE_URL.'/clients/showAll');
-                    }
-                }
-
-                $this->tpl->assign('client', $this->clientRepo->getClient($id));
-
-                return $this->tpl->display('clients.delClient');
-            } else {
-                return $this->tpl->display('errors.error403', responseCode: 403);
-            }
-        } else {
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
+
+        if (! isset($params['id'])) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
+
+        $id = (int) $params['id'];
+
+        if ($this->clientService->hasTickets($id)) {
+            $this->tpl->setNotification($this->language->__('notification.client_has_todos'), 'error');
+        }
+
+        $this->tpl->assign('client', $this->clientService->get($id));
+
+        return $this->tpl->display('clients.delClient');
+    }
+
+    /**
+     * Handles client deletion.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
+
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
+
+        if (! isset($params['id'])) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
+
+        $id = (int) $params['id'];
+
+        if ($this->clientService->hasTickets($id)) {
+            $this->tpl->setNotification($this->language->__('notification.client_has_todos'), 'error');
+            $this->tpl->assign('client', $this->clientService->get($id));
+
+            return $this->tpl->display('clients.delClient');
+        }
+
+        $this->clientService->delete($id);
+        $this->tpl->setNotification($this->language->__('notification.client_deleted'), 'success');
+
+        return Frontcontroller::redirect(BASE_URL.'/clients/showAll');
     }
 }

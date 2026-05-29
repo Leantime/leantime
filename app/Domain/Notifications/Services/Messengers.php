@@ -151,7 +151,7 @@ class Messengers
         $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.zulipHook");
 
         if ($zulipWebhookSerialized !== false && $zulipWebhookSerialized !== '') {
-            $zulipWebhook = unserialize($zulipWebhookSerialized);
+            $zulipWebhook = safe_unserialize($zulipWebhookSerialized, []);
 
             $botEmail = $zulipWebhook['zulipEmail'];
             $botKey = $zulipWebhook['zulipBotKey'];

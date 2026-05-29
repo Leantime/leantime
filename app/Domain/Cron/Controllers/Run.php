@@ -15,25 +15,25 @@ class Run extends Controller
     private Environment $config;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
-    public function init(Environment $config)
+    public function init(Environment $config): void
     {
         $this->config = $config;
     }
 
     /**
-     * The Poor Man's Cron Endpoint
+     * The Poor Man's Cron Endpoint.
+     *
+     * @param  array  $params  Request parameters
      *
      * @throws Exception
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
-
         EventDispatcher::add_event_listener('leantime.core.http.httpkernel.terminate.request_terminated', function () {
             ignore_user_abort(true);
 
-            // Removes script execution limit
             set_time_limit(0);
 
             $output = new \Symfony\Component\Console\Output\BufferedOutput;

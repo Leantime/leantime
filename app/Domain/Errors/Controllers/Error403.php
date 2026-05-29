@@ -8,9 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 class Error403 extends Controller
 {
     /**
-     * @throws \Exception
+     * Displays the 403 Forbidden error page.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
         return $this->tpl->display('errors.error403', layout: 'error', responseCode: 403);
     }

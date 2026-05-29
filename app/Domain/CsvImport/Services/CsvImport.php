@@ -103,7 +103,7 @@ class CsvImport extends Provider implements ProviderIntegration
             return false;
         }
 
-        $rows = unserialize($integrationMeta);
+        $rows = safe_unserialize($integrationMeta, []);
 
         // Removing the first row if it contains headers
         // can be returned or dealt with later on for field matching

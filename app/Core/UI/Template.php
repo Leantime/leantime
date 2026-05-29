@@ -741,7 +741,7 @@ class Template
                 'comments' => 0,
                 'cdata' => 0,
                 'deny_attribute' => 'on*',
-                'elements' => '* -applet -canvas -embed -object -script',
+                'elements' => '* -applet -canvas -embed -object -script -svg -math -iframe -form -input -textarea -button -select -base -meta -link -style',
                 'schemes' => 'href: aim, feed, file, ftp, gopher, http, https, irc, mailto, news, nntp, sftp, ssh, tel, telnet; style: !; *:file, http, https',
             ]);
         }

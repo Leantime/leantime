@@ -9,9 +9,7 @@ use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Keeping the session alive when not active
- *
- * @Deprecated With laravels new session management we should not need this anymore
+ * Redirects to the OAuth provider for authentication.
  */
 class Redirect extends Controller
 {
@@ -20,7 +18,7 @@ class Redirect extends Controller
     private AccessToken $personalToken;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
     public function init(
         AuthService $authService,
@@ -31,12 +29,12 @@ class Redirect extends Controller
     }
 
     /**
-     * get - handle get requests
+     * Redirects to the GitHub OAuth login page.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run(array $params): Response
+    public function get(array $params): Response
     {
-
         return Socialite::driver('github')->setScopes(['user:email'])->redirect();
-
     }
 }

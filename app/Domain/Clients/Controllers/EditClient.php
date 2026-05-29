@@ -1,86 +1,98 @@
 <?php
 
-/**
- * editClient Class - Editing clients
- */
-
 namespace Leantime\Domain\Clients\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+use Leantime\Domain\Clients\Services\Clients as ClientService;
+use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * EditClient Controller - Editing clients.
+ */
 class EditClient extends Controller
 {
-    private ClientRepository $clientRepo;
+    private ClientService $clientService;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
-    public function init(ClientRepository $clientRepo)
+    public function init(ClientService $clientService): void
     {
-        $this->clientRepo = $clientRepo;
+        $this->clientService = $clientService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the edit client form.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run()
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-        // Only admins
-        if (Auth::userIsAtLeast(Roles::$admin)) {
-            if (isset($_GET['id']) === true) {
-                $id = (int) ($_GET['id']);
-
-                $row = $this->clientRepo->getClient($id);
-
-                $msgKey = '';
-
-                $values = [
-                    'name' => $row['name'],
-                    'street' => $row['street'],
-                    'zip' => $row['zip'],
-                    'city' => $row['city'],
-                    'state' => $row['state'],
-                    'country' => $row['country'],
-                    'phone' => $row['phone'],
-                    'internet' => $row['internet'],
-                    'email' => $row['email'],
-                ];
-
-                if (isset($_POST['save']) === true) {
-                    $values = [
-                        'name' => $_POST['name'],
-                        'street' => $_POST['street'],
-                        'zip' => $_POST['zip'],
-                        'city' => $_POST['city'],
-                        'state' => $_POST['state'],
-                        'country' => $_POST['country'],
-                        'phone' => $_POST['phone'],
-                        'internet' => $_POST['internet'],
-                        'email' => $_POST['email'],
-                    ];
-
-                    if ($values['name'] !== '') {
-                        $this->clientRepo->editClient($values, $id);
-
-                        $this->tpl->setNotification('EDIT_CLIENT_SUCCESS', 'success', 'client_updated');
-                    } else {
-                        $this->tpl->setNotification('NO_NAME', 'error');
-                    }
-                }
-
-                $this->tpl->assign('values', $values);
-
-                return $this->tpl->display('clients.editClient');
-            } else {
-                return $this->tpl->display('errors.error403');
-            }
-        } else {
-            return $this->tpl->display('errors.error403');
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
         }
+
+        if (! isset($params['id'])) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
+
+        $id = (int) $params['id'];
+        $row = $this->clientService->get($id);
+
+        if ($row === false) {
+            return $this->tpl->display('errors.error404', responseCode: 404);
+        }
+
+        $this->tpl->assign('values', $row);
+
+        return $this->tpl->display('clients.editClient');
+    }
+
+    /**
+     * Handles client edit form submission.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
+
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
+
+        if (! isset($params['id'])) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
+
+        $id = (int) $params['id'];
+
+        $values = [
+            'id' => $id,
+            'name' => $_POST['name'] ?? '',
+            'street' => $_POST['street'] ?? '',
+            'zip' => $_POST['zip'] ?? '',
+            'city' => $_POST['city'] ?? '',
+            'state' => $_POST['state'] ?? '',
+            'country' => $_POST['country'] ?? '',
+            'phone' => $_POST['phone'] ?? '',
+            'internet' => $_POST['internet'] ?? '',
+            'email' => $_POST['email'] ?? '',
+        ];
+
+        if ($values['name'] !== '') {
+            $this->clientService->editClient($values);
+            $this->tpl->setNotification('EDIT_CLIENT_SUCCESS', 'success', 'client_updated');
+        } else {
+            $this->tpl->setNotification('NO_NAME', 'error');
+        }
+
+        $this->tpl->assign('values', $values);
+
+        return $this->tpl->display('clients.editClient');
     }
 }

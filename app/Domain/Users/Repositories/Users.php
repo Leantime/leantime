@@ -486,7 +486,7 @@ class Users
 
         // Try to unserialize the settings
         try {
-            $settings = unserialize($result->settings);
+            $settings = safe_unserialize($result->settings, []);
 
             // Ensure settings is an array (unserialize may return stdClass)
             if (is_object($settings)) {

@@ -5,7 +5,7 @@
     @stack('styles')
 </head>
 
-<body class="" hx-ext="preload">
+<body class="" hx-ext="preload" hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'>
 
     @include('global::sections.appAnnouncement')
 

@@ -53,25 +53,36 @@ class EditBoxLabel extends Controller
             $currentLabel = '';
 
             if (isset($params['module']) && isset($params['label'])) {
+                $module = htmlspecialchars($params['module'], ENT_QUOTES, 'UTF-8');
+                $label = filter_var($params['label'], FILTER_SANITIZE_NUMBER_INT);
+
                 // Move to settings service
-                if ($params['module'] == 'ticketlabels') {
+                if ($module === 'ticketlabels') {
                     $stateLabels = $this->ticketsRepo->getStateLabels();
-                    $currentLabel = $stateLabels[$params['label']]['name'];
+                    if (isset($stateLabels[$label]['name'])) {
+                        $currentLabel = $stateLabels[$label]['name'];
+                    }
                 }
 
-                if ($params['module'] == 'retrolabels') {
+                if ($module === 'retrolabels') {
                     $stateLabels = $this->retroRepo->getCanvasLabels();
-                    $currentLabel = $stateLabels[$params['label']];
+                    if (isset($stateLabels[$label])) {
+                        $currentLabel = $stateLabels[$label];
+                    }
                 }
 
-                if ($params['module'] == 'researchlabels') {
+                if ($module === 'researchlabels') {
                     $stateLabels = $this->canvasRepo->getCanvasLabels();
-                    $currentLabel = $stateLabels[$params['label']];
+                    if (isset($stateLabels[$label])) {
+                        $currentLabel = $stateLabels[$label];
+                    }
                 }
 
-                if ($params['module'] == 'idealabels') {
+                if ($module === 'idealabels') {
                     $stateLabels = $this->ideaRepo->getCanvasLabels();
-                    $currentLabel = $stateLabels[$params['label']]['name'];
+                    if (isset($stateLabels[$label]['name'])) {
+                        $currentLabel = $stateLabels[$label]['name'];
+                    }
                 }
             }
 
@@ -91,16 +102,16 @@ class EditBoxLabel extends Controller
         // If ID is set its an update
         $sanitizedString = '';
         if (isset($_GET['module']) && isset($_GET['label'])) {
-            $sanitizedString = strip_tags($params['newLabel']);
+            $module = htmlspecialchars($_GET['module'], ENT_QUOTES, 'UTF-8');
+            $labelKey = filter_var($_GET['label'], FILTER_SANITIZE_NUMBER_INT);
+            $sanitizedString = htmlspecialchars(strip_tags($params['newLabel'] ?? ''), ENT_QUOTES, 'UTF-8');
 
             // Move to settings service
-            if ($_GET['module'] == 'ticketlabels') {
+            if ($module === 'ticketlabels') {
                 $currentStateLabels = $this->ticketsRepo->getStateLabels();
 
-                $statusKey = filter_var($_GET['label'], FILTER_SANITIZE_NUMBER_INT);
-
-                if (isset($currentStateLabels[$statusKey]) && is_array($currentStateLabels[$statusKey])) {
-                    $currentStateLabels[$statusKey]['name'] = $sanitizedString;
+                if (isset($currentStateLabels[$labelKey]) && is_array($currentStateLabels[$labelKey])) {
+                    $currentStateLabels[$labelKey]['name'] = $sanitizedString;
 
                     $this->settingsRepo->saveSetting(
                         'projectsettings.'.session('currentProject').'.ticketlabels',
@@ -111,9 +122,9 @@ class EditBoxLabel extends Controller
                 }
             }
 
-            if ($_GET['module'] == 'retrolabels') {
+            if ($module === 'retrolabels') {
                 $stateLabels = $this->retroRepo->getCanvasLabels();
-                $stateLabels[$_GET['label']] = $sanitizedString;
+                $stateLabels[$labelKey] = $sanitizedString;
                 session()->forget('projectsettings.retrolabels');
                 $this->settingsRepo->saveSetting(
                     'projectsettings.'.session('currentProject').'.retrolabels',
@@ -121,9 +132,9 @@ class EditBoxLabel extends Controller
                 );
             }
 
-            if ($_GET['module'] == 'researchlabels') {
+            if ($module === 'researchlabels') {
                 $stateLabels = $this->canvasRepo->getCanvasLabels();
-                $stateLabels[$_GET['label']] = $sanitizedString;
+                $stateLabels[$labelKey] = $sanitizedString;
                 session()->forget('projectsettings.researchlabels');
                 $this->settingsRepo->saveSetting(
                     'projectsettings.'.session('currentProject').'.researchlabels',
@@ -131,13 +142,13 @@ class EditBoxLabel extends Controller
                 );
             }
 
-            if ($_GET['module'] == 'idealabels') {
+            if ($module === 'idealabels') {
                 $stateLabels = $this->ideaRepo->getCanvasLabels();
                 $newStateLabels = [];
                 foreach ($stateLabels as $key => $label) {
                     $newStateLabels[$key] = $label['name'];
                 }
-                $newStateLabels[$_GET['label']] = $sanitizedString;
+                $newStateLabels[$labelKey] = $sanitizedString;
 
                 session()->forget('projectsettings.idealabels');
                 $this->settingsRepo->saveSetting(

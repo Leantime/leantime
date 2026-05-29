@@ -11,6 +11,9 @@ class Browse extends Controller
 {
     private FileService $filesService;
 
+    /**
+     * Initializes dependencies.
+     */
     public function init(
         FileService $filesService
     ): void {
@@ -18,11 +21,39 @@ class Browse extends Controller
     }
 
     /**
+     * Displays the file browser.
+     *
+     * @param  array  $params  Request parameters
+     *
      * @throws \Exception
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
-        $currentModule = session('currentProject');
+        $this->assignTemplateVars();
+
+        return $this->tpl->display('files.browse');
+    }
+
+    /**
+     * Handles file uploads and deletions via POST.
+     *
+     * @param  array  $params  Request parameters
+     *
+     * @throws \Exception
+     */
+    public function post(array $params): Response
+    {
+        if (isset($_POST['delFile'])) {
+            $result = $this->filesService->deleteFile($_POST['delFile']);
+
+            if ($result === true) {
+                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
+
+                return Frontcontroller::redirect(BASE_URL.'/files/showAll'.(($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : ''));
+            } else {
+                $this->tpl->setNotification($this->language->__('notifications.file_delete_error'), 'error');
+            }
+        }
 
         if (isset($_POST['upload']) || isset($_FILES['file'])) {
             if (isset($_FILES['file'])) {
@@ -33,23 +64,19 @@ class Browse extends Controller
             }
         }
 
-        if (isset($_GET['delFile']) === true) {
-            $result = $this->filesService->deleteFile($_GET['delFile']);
-
-            if ($result === true) {
-                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
-
-                return Frontcontroller::redirect(BASE_URL.'/files/showAll'.($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : '');
-            } else {
-                $this->tpl->setNotification($result['msg'], 'success');
-            }
-        }
-
-        $this->tpl->assign('currentModule', $currentModule);
-        $this->tpl->assign('modules', $this->filesService->getModules(session('userdata.id')));
-        $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv', 'webpe']);
-        $this->tpl->assign('files', $this->filesService->getFilesByModule('project', session('currentProject')));
+        $this->assignTemplateVars();
 
         return $this->tpl->display('files.browse');
+    }
+
+    /**
+     * Assigns common template variables.
+     */
+    private function assignTemplateVars(): void
+    {
+        $this->tpl->assign('currentModule', session('currentProject'));
+        $this->tpl->assign('modules', $this->filesService->getModules(session('userdata.id')));
+        $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv', 'webp']);
+        $this->tpl->assign('files', $this->filesService->getFilesByModule('project', session('currentProject')));
     }
 }

@@ -263,6 +263,31 @@ class Calendar
     }
 
     /**
+     * Retrieves all external calendars for a given user.
+     *
+     * @param  int  $userId  The user ID
+     * @return array|false The external calendars or false if none found
+     *
+     * @api
+     */
+    public function getMyExternalCalendars(int $userId): array|false
+    {
+        return $this->calendarRepo->getMyExternalCalendars($userId);
+    }
+
+    /**
+     * Adds a new external calendar URL.
+     *
+     * @param  array  $values  The calendar values (url, name, colorClass)
+     *
+     * @api
+     */
+    public function addExternalCalendarUrl(array $values): void
+    {
+        $this->calendarRepo->addGUrl($values);
+    }
+
+    /**
      * Retrieves iCal calendar by user hash and calendar hash.
      *
      * @param  string  $userHash  The hash of the user.
@@ -634,17 +659,165 @@ class Calendar
     }
 
     /**
-     * Load an iCal URL and return its contents
+     * Validates that a URL is safe to fetch, preventing SSRF attacks.
      *
-     * @param  string  $url  The URL of the iCal feed
-     * @return string The iCal content
+     * Checks that the URL uses an allowed scheme (http/https) and that
+     * the resolved IP address is not in a private or reserved range.
      *
-     * @throws \Exception If there is an error loading the URL
+     * @param  string  $url  The URL to validate.
+     * @return bool True if the URL is safe to fetch, false otherwise.
      */
-    private function loadIcalUrl(string $url): string
+    private function isUrlSafe(string $url): bool
+    {
+        $parsed = parse_url($url);
+
+        if ($parsed === false || ! isset($parsed['scheme']) || ! isset($parsed['host'])) {
+            return false;
+        }
+
+        // Only allow http and https schemes
+        $allowedSchemes = ['http', 'https'];
+        if (! in_array(strtolower($parsed['scheme']), $allowedSchemes, true)) {
+            Log::warning('Calendar SSRF protection: blocked disallowed scheme', [
+                'scheme' => $parsed['scheme'],
+                'url' => $url,
+            ]);
+
+            return false;
+        }
+
+        // Resolve hostname and validate ALL returned IP addresses (A and AAAA records).
+        // This prevents bypasses via multi-homed hosts where one IP is public and another is private.
+        $host = $parsed['host'];
+
+        // If the host is already an IP literal, validate it directly
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            if (! $this->isIpAllowed($host)) {
+                Log::warning('Calendar SSRF protection: blocked IP literal', ['ip' => $host]);
+
+                return false;
+            }
+
+            return true;
+        }
+
+        // Resolve all A (IPv4) and AAAA (IPv6) records
+        $ipv4Records = @dns_get_record($host, DNS_A) ?: [];
+        $ipv6Records = @dns_get_record($host, DNS_AAAA) ?: [];
+
+        $allIps = [];
+        foreach ($ipv4Records as $record) {
+            $allIps[] = $record['ip'] ?? null;
+        }
+        foreach ($ipv6Records as $record) {
+            $allIps[] = $record['ipv6'] ?? null;
+        }
+
+        $allIps = array_filter($allIps);
+
+        if (empty($allIps)) {
+            Log::warning('Calendar SSRF protection: unable to resolve hostname', ['host' => $host]);
+
+            return false;
+        }
+
+        // Every resolved IP must be allowed — block if any single record is private/reserved
+        foreach ($allIps as $ip) {
+            if (! $this->isIpAllowed($ip)) {
+                Log::warning('Calendar SSRF protection: blocked private/reserved IP', [
+                    'host' => $host,
+                    'resolved_ip' => $ip,
+                ]);
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether an IP address (IPv4 or IPv6) is allowed for outbound requests.
+     *
+     * Rejects loopback, private, reserved, and link-local addresses.
+     * Uses PHP's built-in FILTER_VALIDATE_IP flags for IPv6 and manual CIDR checks for IPv4.
+     *
+     * @param  string  $ip  The IP address to validate.
+     * @return bool True if the IP is safe for outbound requests.
+     */
+    private function isIpAllowed(string $ip): bool
+    {
+        // IPv6 validation using PHP's built-in filters
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            // Reject any IPv6 address that is loopback, private, or reserved
+            if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        // IPv4 CIDR range checks
+        $denyRanges = [
+            '127.0.0.0/8',      // Loopback
+            '10.0.0.0/8',       // Private (Class A)
+            '172.16.0.0/12',    // Private (Class B)
+            '192.168.0.0/16',   // Private (Class C)
+            '169.254.0.0/16',   // Link-local
+            '0.0.0.0/8',       // Current network
+        ];
+
+        foreach ($denyRanges as $range) {
+            if ($this->ipInRange($ip, $range)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether an IPv4 address falls within a given CIDR range.
+     *
+     * @param  string  $ip  The IPv4 address to check.
+     * @param  string  $range  The CIDR range (e.g. "10.0.0.0/8").
+     * @return bool True if the IP is within the range, false otherwise.
+     */
+    private function ipInRange(string $ip, string $range): bool
+    {
+        [$subnet, $bits] = explode('/', $range);
+
+        $ipLong = ip2long($ip);
+        $subnetLong = ip2long($subnet);
+
+        if ($ipLong === false || $subnetLong === false) {
+            return false;
+        }
+
+        $mask = -1 << (32 - (int) $bits);
+        $subnetLong &= $mask;
+
+        return ($ipLong & $mask) === $subnetLong;
+    }
+
+    /**
+     * Load an iCal URL and return its contents.
+     *
+     * Validates the URL against SSRF attacks before making the request.
+     *
+     * @param  string  $url  The URL of the iCal feed.
+     * @return string The iCal content.
+     *
+     * @throws \Exception If the URL is unsafe or there is an error loading the URL.
+     */
+    public function loadIcalUrl(string $url): string
     {
         if (str_contains($url, 'webcal://')) {
             $url = str_replace('webcal://', 'https://', $url);
+        }
+
+        if (! $this->isUrlSafe($url)) {
+            throw new \Exception('Refused to fetch iCal feed: URL failed SSRF safety check');
         }
 
         $client = new \GuzzleHttp\Client;

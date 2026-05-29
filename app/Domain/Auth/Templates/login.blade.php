@@ -17,6 +17,7 @@
 
     @if ($noLoginForm === false)
         <form id="login" action="{{ BASE_URL }}/auth/login" method="post">
+            @csrf
             @dispatchEvent('afterFormOpen')
         <input type="hidden" name="redirectUrl" value="{{ $redirectUrl }}" />
 

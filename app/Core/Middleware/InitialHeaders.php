@@ -27,7 +27,7 @@ class InitialHeaders
         $cspParts = [
             "default-src 'self' 'unsafe-inline'",
             "base-uri 'self';",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' unpkg.com",
+            "script-src 'self' 'unsafe-inline' unpkg.com",
             "font-src 'self'  data: unpkg.com",
             "img-src * 'self' *.leantime.io *.amazonaws.com data: blob: marketplace.localhost",
             // Allow all embed providers supported by the TipTap embed extension.
@@ -67,6 +67,10 @@ class InitialHeaders
             }
 
             $response->headers->set($key, $value);
+        }
+
+        if ($request->isSecure() || env('LEAN_HSTS_ENABLED', false)) {
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 
         return $response;

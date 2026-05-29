@@ -1,109 +1,58 @@
 <?php
 
-/**
- * showAll Class - show My Calender
- */
-
 namespace Leantime\Domain\Calendar\Controllers;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
+use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
+use Symfony\Component\HttpFoundation\Response;
 
 class ExternalCal extends Controller
 {
-    private CalendarRepository $calendarRepo;
+    private CalendarService $calendarService;
 
     private int $cacheTime = 60 * 30; // 30min
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
-    public function init(CalendarRepository $calendarRepo): void
+    public function init(CalendarService $calendarService): void
     {
-        $this->calendarRepo = $calendarRepo;
+        $this->calendarService = $calendarService;
     }
 
     /**
-     * run - display template and edit data
+     * Serves an external calendar's iCal content, with session-based caching.
      *
-     *
-     *
-     * @throws BindingResolutionException
+     * @param  array  $params  Request parameters
      */
-    public function run($params): void
+    public function get(array $params): Response
     {
-
-        $calId = $params['id'];
+        $calId = $params['id'] ?? '';
 
         if (! session()->exists('calendarCache')) {
             session(['calendarCache' => []]);
         }
 
         $content = '';
-        if (session()->exists('calendarCache.'.$calId) && session()->exits('calendarCache.'.$calId.'.lastUpdate') > time() - $this->cacheTime) {
+        if (session()->exists('calendarCache.'.$calId) && session()->exists('calendarCache.'.$calId.'.lastUpdate') && session('calendarCache.'.$calId.'.lastUpdate') > time() - $this->cacheTime) {
             $content = session('calendarCache.'.$calId.'.content');
         } else {
-            $cal = $this->calendarRepo->getExternalCalendar($calId, session('userdata.id'));
+            $cal = $this->calendarService->getExternalCalendar((int) $calId, session('userdata.id'));
 
             if (isset($cal['url'])) {
-
                 try {
-                    $content = $this->loadIcalUrl($cal['url']);
+                    // Use the service's loadIcalUrl which includes SSRF protection
+                    $content = $this->calendarService->loadIcalUrl($cal['url']);
                     session(['calendarCache.'.$calId.'.lastUpdate' => time()]);
-                    session(['calendarCache.'.$calId.'content' => $content]);
+                    session(['calendarCache.'.$calId.'.content' => $content]);
                 } catch (\Exception $e) {
                     $content = '';
                 }
             }
         }
 
-        header('Content-type: text/calendar; charset=utf-8');
-        // header('Content-disposition: attachment;filename="external.ics"');
-
-        echo $content;
-
-        exit();
-    }
-
-    /**
-     * Load an iCal URL.
-     *
-     * @param  string  $url  The URL of the iCal to load.
-     * @return string The contents of the iCal.
-     *
-     * @throws BindingResolutionException
-     */
-    private function loadIcalUrl(string $url): string
-    {
-        $guzzle = app()->make(Client::class);
-
-        $appSettings = app()->make(AppSettings::class);
-
-        if (str_contains($url, 'webcal://')) {
-            $url = str_replace('webcal://', 'https://', $url);
-        }
-
-        try {
-
-            $response = $guzzle->request('GET', $url, [
-                'headers' => [
-                    'Accept' => 'text/calendar',
-                    // GitHub needs a user agent.
-                    'User-Agent' => 'Leantime Calendar Integration v'.$appSettings->appVersion,
-                ],
-            ]);
-        } catch (ClientException $e) {
-            throw new \Exception('Guzzle problem: '.$e->getMessage(), $e->getCode(), $e);
-        }
-
-        if ($response->getStatusCode() == '200') {
-            return (string) $response->getBody();
-        } else {
-            throw new \Exception('Guzzle bad response code');
-        }
+        return new Response($content, 200, [
+            'Content-Type' => 'text/calendar; charset=utf-8',
+        ]);
     }
 }
