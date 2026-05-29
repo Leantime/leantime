@@ -3,12 +3,10 @@
 namespace Leantime\Domain\Timesheets\Controllers;
 
 use Carbon\CarbonInterface;
-use Illuminate\Support\Facades\Log;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,19 +16,15 @@ class ShowMy extends Controller
 
     private ProjectService $projectService;
 
-    private TicketRepository $ticketRepo;
-
     /**
      * Initializes dependencies.
      */
     public function init(
         TimesheetService $timesheetService,
-        ProjectService $projectService,
-        TicketRepository $ticketRepo
+        ProjectService $projectService
     ): void {
         $this->timesheetService = $timesheetService;
         $this->projectService = $projectService;
-        $this->ticketRepo = $ticketRepo;
     }
 
     /**
@@ -61,12 +55,10 @@ class ShowMy extends Controller
         $fromDate = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
 
         if (isset($_POST['search']) && ! empty($_POST['startDate'])) {
-            try {
-                $fromDate = dtHelper()->parseUserDateTime($_POST['startDate'])->setToDbTimezone();
-            } catch (\Exception $e) {
-                Log::warning($e);
-                Log::warning('User timezone: '.session('usersettings.timezone'));
-                Log::warning('User dateTime format: '.session('usersettings.date_format'));
+            $parsed = $this->timesheetService->parseWeeklyStartDate($_POST['startDate'], $fromDate);
+            $fromDate = $parsed['date'];
+
+            if ($parsed['failed']) {
                 $this->tpl->setNotification('Could not parse date', 'error', 'save_timesheet');
             }
         }
@@ -88,10 +80,9 @@ class ShowMy extends Controller
      */
     private function assignTemplateVars(CarbonInterface $fromDate): void
     {
-        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromDate, session('userdata.id'));
-        $existingTicketIds = array_map(fn ($item) => $item['ticketId'], $myTimesheets);
+        $weekly = $this->timesheetService->getWeeklyTimesheetsWithTicketIds(-1, $fromDate, session('userdata.id'));
 
-        $this->tpl->assign('existingTicketIds', $existingTicketIds);
+        $this->tpl->assign('existingTicketIds', $weekly['existingTicketIds']);
         $this->tpl->assign('dateFrom', $fromDate);
         $this->tpl->assign('actKind', 'all');
         $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
@@ -99,10 +90,10 @@ class ShowMy extends Controller
             userId: session('userdata.id'),
             projectTypes: 'project'
         ));
-        $this->tpl->assign('allTickets', $this->ticketRepo->getUsersTickets(
-            id: session('userdata.id'),
+        $this->tpl->assign('allTickets', $this->timesheetService->getUsersTickets(
+            userId: session('userdata.id'),
             limit: -1
         ));
-        $this->tpl->assign('allTimesheets', $myTimesheets);
+        $this->tpl->assign('allTimesheets', $weekly['timesheets']);
     }
 }

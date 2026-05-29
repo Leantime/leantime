@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Timesheets\Services;
 
+use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -10,6 +11,7 @@ use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Tickets\Models\Tickets;
+use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Users\Repositories\Users;
 
@@ -18,6 +20,13 @@ class Timesheets
     private TimesheetRepository $timesheetsRepo;
 
     private Users $userRepo;
+
+    private TicketRepository $ticketRepo;
+
+    /**
+     * The placeholder date returned from the database when no date has been set.
+     */
+    public const EMPTY_DATE = '0000-00-00 00:00:00';
 
     public array $kind = [
         'GENERAL_BILLABLE' => 'label.general_billable',
@@ -28,10 +37,14 @@ class Timesheets
         'TESTING' => 'label.testing',
     ];
 
-    public function __construct(TimesheetRepository $timesheetsRepo, Users $userRepo)
-    {
+    public function __construct(
+        TimesheetRepository $timesheetsRepo,
+        Users $userRepo,
+        TicketRepository $ticketRepo
+    ) {
         $this->timesheetsRepo = $timesheetsRepo;
         $this->userRepo = $userRepo;
+        $this->ticketRepo = $ticketRepo;
     }
 
     /**
@@ -702,5 +715,448 @@ class Timesheets
 
         return $timesheet;
 
+    }
+
+    /**
+     * Returns the tickets that belong to a user, used to populate the
+     * add/edit/weekly timesheet ticket pickers.
+     *
+     * @param  int  $userId  The user whose tickets to fetch
+     * @param  int  $limit  Maximum number of tickets to return (-1 for no limit)
+     * @return array The user's tickets (empty array when none found)
+     *
+     * @throws BindingResolutionException
+     *
+     * @api
+     */
+    public function getUsersTickets(int $userId, int $limit = -1): array
+    {
+        $tickets = $this->ticketRepo->getUsersTickets($userId, $limit);
+
+        return $tickets === false ? [] : $tickets;
+    }
+
+    /**
+     * Returns the default empty values array for a new time entry form.
+     *
+     * @return array The default form values
+     */
+    public function getDefaultTimeValues(): array
+    {
+        return [
+            'userId' => session('userdata.id'),
+            'ticket' => '',
+            'project' => '',
+            'date' => '',
+            'kind' => '',
+            'hours' => '',
+            'description' => '',
+            'invoicedEmpl' => '',
+            'invoicedComp' => '',
+            'invoicedEmplDate' => '',
+            'invoicedCompDate' => '',
+            'paid' => '',
+            'paidDate' => '',
+        ];
+    }
+
+    /**
+     * Parses raw POST data from the add-time form into a values array.
+     *
+     * Splits the pipe-delimited ticket/project field, converts the user date to
+     * UTC, and applies the manager-gated invoice/paid field assembly.
+     *
+     * @param  array  $post  The raw POST data
+     * @param  array|null  $values  Starting values (defaults applied when null)
+     * @return array The parsed values array
+     */
+    public function parseAddTimePostValues(array $post, ?array $values = null): array
+    {
+        $values ??= $this->getDefaultTimeValues();
+
+        if (isset($post['tickets']) && $post['tickets'] != '') {
+            $tempArr = explode('|', $post['tickets']);
+            $values['project'] = $tempArr[0];
+            $values['ticket'] = $tempArr[1];
+        }
+
+        if (! empty($post['kind'])) {
+            $values['kind'] = $post['kind'];
+        }
+
+        if (! empty($post['date'])) {
+            $values['date'] = (new Carbon($post['date'], session('usersettings.timezone')))->setTimezone('UTC');
+        }
+
+        if (! empty($post['hours'])) {
+            $values['hours'] = $post['hours'];
+        }
+
+        if (! empty($post['invoicedEmpl']) && $post['invoicedEmpl'] == 'on') {
+            $values['invoicedEmpl'] = 1;
+            if (! empty($post['invoicedEmplDate'])) {
+                $values['invoicedEmplDate'] = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC');
+            }
+        }
+
+        if (! empty($post['invoicedComp']) && Auth::userIsAtLeast(Roles::$manager)) {
+            if ($post['invoicedComp'] == 'on') {
+                $values['invoicedComp'] = 1;
+            }
+            if (! empty($post['invoicedCompDate'])) {
+                $values['invoicedCompDate'] = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC');
+            }
+        }
+
+        if (! empty($post['paid']) && Auth::userIsAtLeast(Roles::$manager)) {
+            if ($post['paid'] == 'on') {
+                $values['paid'] = 1;
+            }
+            if (! empty($post['paidDate'])) {
+                $values['paidDate'] = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC');
+            }
+        }
+
+        if (! empty($post['description'])) {
+            $values['description'] = $post['description'];
+        }
+
+        return $values;
+    }
+
+    /**
+     * Validates the add-time values and, when valid, saves the entry.
+     *
+     * Returns a status string mirroring the controller's previous info codes
+     * (NO_TICKET / NO_KIND / NO_DATE / NO_HOURS / TIME_SAVED) so external
+     * behavior (notification keys) stays identical.
+     *
+     * @param  array  $values  The parsed time entry values
+     * @return string The status code describing the outcome
+     */
+    public function validateAndSaveTime(array $values): string
+    {
+        if ($values['ticket'] == '' || $values['project'] == '') {
+            return 'NO_TICKET';
+        }
+
+        if ($values['kind'] == '') {
+            return 'NO_KIND';
+        }
+
+        if ($values['date'] == '') {
+            return 'NO_DATE';
+        }
+
+        if ($values['hours'] == '' || $values['hours'] <= 0) {
+            return 'NO_HOURS';
+        }
+
+        $this->addTime($values);
+
+        return 'TIME_SAVED';
+    }
+
+    /**
+     * Builds a values array from a stored timesheet entry, normalizing the
+     * EMPTY_DATE sentinel to 'now' and hydrating dates into Carbon instances.
+     *
+     * @param  int  $id  The timesheet entry ID
+     * @return array|null The values array, or null if the timesheet is not found
+     */
+    public function getTimesheetForEdit(int $id): ?array
+    {
+        $timesheet = $this->getTimesheet($id);
+
+        if (! $timesheet) {
+            return null;
+        }
+
+        $timesheet['invoicedEmplDate'] = $timesheet['invoicedEmplDate'] == self::EMPTY_DATE ? 'now' : $timesheet['invoicedEmplDate'];
+        $timesheet['invoicedCompDate'] = $timesheet['invoicedCompDate'] == self::EMPTY_DATE ? 'now' : $timesheet['invoicedCompDate'];
+        $timesheet['paidDate'] = $timesheet['paidDate'] == self::EMPTY_DATE ? 'now' : $timesheet['paidDate'];
+
+        return [
+            'id' => $id,
+            'userId' => $timesheet['userId'],
+            'ticket' => $timesheet['ticketId'],
+            'project' => $timesheet['projectId'],
+            'date' => new Carbon($timesheet['workDate'], 'UTC'),
+            'kind' => $timesheet['kind'],
+            'hours' => $timesheet['hours'],
+            'description' => $timesheet['description'],
+            'invoicedEmpl' => $timesheet['invoicedEmpl'],
+            'invoicedComp' => $timesheet['invoicedComp'],
+            'invoicedEmplDate' => new Carbon($timesheet['invoicedEmplDate'], 'UTC'),
+            'invoicedCompDate' => new Carbon($timesheet['invoicedCompDate'], 'UTC'),
+            'paid' => $timesheet['paid'],
+            'paidDate' => new Carbon($timesheet['paidDate'], 'UTC'),
+        ];
+    }
+
+    /**
+     * Applies basic POST field updates from the edit-time form to a values array.
+     *
+     * @param  array  $post  The raw POST data
+     * @param  array  $values  The current values array
+     * @return array The updated values array
+     */
+    public function applyEditTimePostUpdates(array $post, array $values): array
+    {
+        if (! empty($post['tickets'])) {
+            $values['project'] = (int) $post['projects'];
+            $values['ticket'] = (int) $post['tickets'];
+        }
+
+        if (! empty($post['kind'])) {
+            $values['kind'] = $post['kind'];
+        }
+
+        if (! empty($post['date'])) {
+            $values['date'] = dtHelper()->parseUserDateTime($post['date'], 'start')->formatDateTimeForDb();
+        }
+
+        if (! empty($post['hours'])) {
+            $values['hours'] = (float) $post['hours'];
+        }
+
+        if (! empty($post['description'])) {
+            $values['description'] = $post['description'];
+        }
+
+        return $values;
+    }
+
+    /**
+     * Processes the manager-gated invoice and payment fields from the edit-time
+     * form, applying the on/off toggles and default-now date fallbacks.
+     *
+     * @param  array  $post  The raw POST data
+     * @param  array  $values  The current values array
+     * @return array The updated values array
+     */
+    public function processEditTimeInvoiceFields(array $post, array $values): array
+    {
+        if (! Auth::userIsAtLeast(Roles::$manager)) {
+            return $values;
+        }
+
+        if (! empty($post['invoicedEmpl'])) {
+            if ($post['invoicedEmpl'] == 'on') {
+                $values['invoicedEmpl'] = 1;
+            }
+            $values['invoicedEmplDate'] = ! empty($post['invoicedEmplDate'])
+                ? dtHelper()->parseUserDateTime($post['invoicedEmplDate'], 'start')->formatDateTimeForDb()
+                : dtHelper()->userNow()->formatDateTimeForDb();
+        } else {
+            $values['invoicedEmpl'] = 0;
+            $values['invoicedEmplDate'] = '';
+        }
+
+        if (! empty($post['invoicedComp'])) {
+            if ($post['invoicedComp'] == 'on') {
+                $values['invoicedComp'] = 1;
+            }
+            $values['invoicedCompDate'] = ! empty($post['invoicedCompDate'])
+                ? dtHelper()->parseUserDateTime($post['invoicedCompDate'], 'start')->formatDateTimeForDb()
+                : dtHelper()->userNow()->formatDateTimeForDb();
+        } else {
+            $values['invoicedComp'] = 0;
+            $values['invoicedCompDate'] = '';
+        }
+
+        if (! empty($post['paid'])) {
+            if ($post['paid'] == 'on') {
+                $values['paid'] = 1;
+            }
+            if (! empty($post['paidDate'])) {
+                $date = dtHelper()->parseUserDateTime($post['paidDate'], 'start');
+                $date->setTimezone('UTC');
+                $values['paidDate'] = $date->formatDateTimeForDb();
+            } else {
+                $values['paidDate'] = dtHelper()->userNow()->formatDateTimeForDb();
+            }
+        } else {
+            $values['paid'] = 0;
+            $values['paidDate'] = '';
+        }
+
+        return $values;
+    }
+
+    /**
+     * Validates the edit-time values and, when valid, updates the entry.
+     *
+     * Returns a result describing the outcome: a notification message key and
+     * type, plus the refreshed values reloaded from the database on success.
+     * This preserves the controller's previous behavior exactly.
+     *
+     * @param  int  $id  The timesheet entry ID
+     * @param  array  $values  The parsed time entry values
+     * @return array{notification: array{message: string, type: string}|null, values: array}
+     */
+    public function validateAndUpdateTime(int $id, array $values): array
+    {
+        if ($values['ticket'] == '' || $values['project'] == '') {
+            return ['notification' => ['message' => 'notifications.time_logged_error_no_ticket', 'type' => 'error'], 'values' => $values];
+        }
+
+        if ($values['kind'] == '') {
+            return ['notification' => ['message' => 'notifications.time_logged_error_no_kind', 'type' => 'error'], 'values' => $values];
+        }
+
+        if ($values['date'] == '') {
+            return ['notification' => ['message' => 'notifications.time_logged_error_no_date', 'type' => 'error'], 'values' => $values];
+        }
+
+        if ($values['hours'] == '' || $values['hours'] <= 0) {
+            return ['notification' => ['message' => 'notifications.time_logged_error_no_hours', 'type' => 'error'], 'values' => $values];
+        }
+
+        $notification = ['message' => 'notifications.time_logged_success', 'type' => 'success'];
+
+        try {
+            $this->updateTime($values);
+        } catch (\Exception $e) {
+            Log::error($e);
+            $notification = ['message' => 'notifications.could_not_store_time', 'type' => 'error'];
+        }
+
+        $refreshed = $this->getTimesheetForEdit($id);
+        if ($refreshed !== null) {
+            $values = $refreshed;
+        }
+
+        return ['notification' => $notification, 'values' => $values];
+    }
+
+    /**
+     * Normalizes the raw showAll filter POST data into the canonical filter
+     * shape consumed by the timesheet list view, owning the strip_tags / on-off
+     * coercion and -1 defaulting.
+     *
+     * @param  array  $post  The raw POST data
+     * @return array{dateFrom: CarbonInterface, dateTo: CarbonInterface, kind: string, userId: ?int, invEmplCheck: string, invCompCheck: string, paidCheck: string, projectFilter: int|string, ticketFilter: int|string, clientId: int|string}
+     */
+    public function buildShowAllFilters(array $post): array
+    {
+        $kind = ! empty($post['kind']) ? strip_tags($post['kind']) : 'all';
+        $userId = ! empty($post['userId']) ? (int) strip_tags($post['userId']) : null;
+
+        $dateFrom = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
+        if (! empty($post['dateFrom'])) {
+            $dateFrom = dtHelper()->parseUserDateTime($post['dateFrom'])->setToDbTimezone();
+        }
+
+        $dateTo = dtHelper()->userNow()->endOfMonth()->setToDbTimezone();
+        if (! empty($post['dateTo'])) {
+            $dateTo = dtHelper()->parseUserDateTime($post['dateTo'])->setToDbTimezone();
+        }
+
+        $invEmplCheck = isset($post['invEmpl'])
+            ? ($post['invEmpl'] == 'all' ? '-1' : $post['invEmpl'])
+            : '-1';
+
+        $invCompCheck = '0';
+        if (isset($post['invComp'])) {
+            $invCompCheck = $post['invComp'] == 'on' ? '1' : '0';
+        }
+
+        $paidCheck = '0';
+        if (isset($post['paid'])) {
+            $paidCheck = $post['paid'] == 'on' ? '1' : '0';
+        }
+
+        $projectFilter = ! empty($post['project']) ? strip_tags($post['project']) : -1;
+        $ticketFilter = ! empty($post['ticket']) ? strip_tags($post['ticket']) : -1;
+        $clientId = ! empty($post['clientId']) ? strip_tags($post['clientId']) : -1;
+
+        return [
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
+            'kind' => $kind,
+            'userId' => $userId,
+            'invEmplCheck' => $invEmplCheck,
+            'invCompCheck' => $invCompCheck,
+            'paidCheck' => $paidCheck,
+            'projectFilter' => $projectFilter,
+            'ticketFilter' => $ticketFilter,
+            'clientId' => $clientId,
+        ];
+    }
+
+    /**
+     * Resolves the effective ticket filter for the showAll list.
+     *
+     * When a ticket filter is set, the selected ticket's project is compared to
+     * the selected project filter; a mismatch (or no project selected) collapses
+     * the ticket filter to '-1' so getAll() receives an already-resolved value.
+     *
+     * The selected ticket's project ID is passed in (null when no accessible
+     * ticket was found) to keep the permission-checked ticket lookup in the
+     * caller and avoid a circular Tickets/Timesheets service dependency.
+     *
+     * @param  int|string  $projectFilter  The selected project filter
+     * @param  int|string  $ticketFilter  The selected ticket filter
+     * @param  int|string|null  $selectedTicketProjectId  The selected ticket's project ID, or null when none
+     * @return string The resolved ticket filter
+     */
+    public function resolveShowAllTicketFilter(int|string $projectFilter, int|string $ticketFilter, int|string|null $selectedTicketProjectId): string
+    {
+        $projectMismatch = false;
+        if ($ticketFilter != '' && $ticketFilter != -1) {
+            if ($selectedTicketProjectId !== null && $selectedTicketProjectId != $projectFilter) {
+                $projectMismatch = true;
+            }
+        }
+
+        return $projectMismatch ? '-1' : ($projectFilter == -1 ? '-1' : ($ticketFilter ?: '-1'));
+    }
+
+    /**
+     * Returns the weekly timesheets for a user along with the list of ticket IDs
+     * already present in those timesheets (used to pre-select rows in the view).
+     *
+     * @param  int  $projectId  Project filter (-1 for all)
+     * @param  CarbonInterface  $fromDate  The start-of-week date
+     * @param  int  $userId  The user whose timesheets to load
+     * @return array{timesheets: array, existingTicketIds: array}
+     *
+     * @throws BindingResolutionException
+     */
+    public function getWeeklyTimesheetsWithTicketIds(int $projectId, CarbonInterface $fromDate, int $userId = 0): array
+    {
+        $timesheets = $this->getWeeklyTimesheets($projectId, $fromDate, $userId);
+        $existingTicketIds = array_map(fn ($item) => $item['ticketId'], $timesheets);
+
+        return [
+            'timesheets' => $timesheets,
+            'existingTicketIds' => $existingTicketIds,
+        ];
+    }
+
+    /**
+     * Parses a user-supplied weekly-view start date into a DB-timezone date.
+     *
+     * On parse failure the original fallback date is returned and the failure is
+     * logged with the user's timezone/date-format diagnostics, mirroring the
+     * controller's previous behavior. The boolean flag indicates whether parsing
+     * failed so the caller can surface a notification.
+     *
+     * @param  string  $startDate  The raw user-supplied start date
+     * @param  CarbonInterface  $fallback  The date to use when parsing fails
+     * @return array{date: CarbonInterface, failed: bool}
+     */
+    public function parseWeeklyStartDate(string $startDate, CarbonInterface $fallback): array
+    {
+        try {
+            return ['date' => dtHelper()->parseUserDateTime($startDate)->setToDbTimezone(), 'failed' => false];
+        } catch (\Exception $e) {
+            Log::warning($e);
+            Log::warning('User timezone: '.session('usersettings.timezone'));
+            Log::warning('User dateTime format: '.session('usersettings.date_format'));
+
+            return ['date' => $fallback, 'failed' => true];
+        }
     }
 }

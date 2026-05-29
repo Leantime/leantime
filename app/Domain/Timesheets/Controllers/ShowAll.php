@@ -88,48 +88,19 @@ class ShowAll extends Controller
             );
         }
 
-        $kind = ! empty($_POST['kind']) ? strip_tags($_POST['kind']) : 'all';
-        $userId = ! empty($_POST['userId']) ? (int) strip_tags($_POST['userId']) : null;
-
-        $dateFrom = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
-        if (! empty($_POST['dateFrom'])) {
-            $dateFrom = dtHelper()->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();
-        }
-
-        $dateTo = dtHelper()->userNow()->endOfMonth()->setToDbTimezone();
-        if (! empty($_POST['dateTo'])) {
-            $dateTo = dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
-        }
-
-        $invEmplCheck = isset($_POST['invEmpl'])
-            ? ($_POST['invEmpl'] == 'all' ? '-1' : $_POST['invEmpl'])
-            : '-1';
-
-        $invCompCheck = '0';
-        if (isset($_POST['invComp'])) {
-            $invCompCheck = $_POST['invComp'] == 'on' ? '1' : '0';
-        }
-
-        $paidCheck = '0';
-        if (isset($_POST['paid'])) {
-            $paidCheck = $_POST['paid'] == 'on' ? '1' : '0';
-        }
-
-        $projectFilter = ! empty($_POST['project']) ? strip_tags($_POST['project']) : -1;
-        $ticketFilter = ! empty($_POST['ticket']) ? strip_tags($_POST['ticket']) : -1;
-        $clientId = ! empty($_POST['clientId']) ? strip_tags($_POST['clientId']) : -1;
+        $filters = $this->timesheetService->buildShowAllFilters($_POST);
 
         $this->assignTemplateVars(
-            dateFrom: $dateFrom,
-            dateTo: $dateTo,
-            kind: $kind,
-            userId: $userId,
-            invEmplCheck: $invEmplCheck,
-            invCompCheck: $invCompCheck,
-            paidCheck: $paidCheck,
-            projectFilter: $projectFilter,
-            ticketFilter: $ticketFilter,
-            clientId: $clientId,
+            dateFrom: $filters['dateFrom'],
+            dateTo: $filters['dateTo'],
+            kind: $filters['kind'],
+            userId: $filters['userId'],
+            invEmplCheck: $filters['invEmplCheck'],
+            invCompCheck: $filters['invCompCheck'],
+            paidCheck: $filters['paidCheck'],
+            projectFilter: $filters['projectFilter'],
+            ticketFilter: $filters['ticketFilter'],
+            clientId: $filters['clientId'],
         );
 
         return $this->tpl->display('timesheets.showAll');
@@ -150,13 +121,19 @@ class ShowAll extends Controller
         int|string $ticketFilter,
         int|string $clientId,
     ): void {
-        $projectMismatch = false;
+        $selectedTicketProjectId = null;
         if ($ticketFilter != '' && $ticketFilter != -1) {
             $selectedTicket = $this->ticketService->getTicket($ticketFilter);
-            if ($selectedTicket && $selectedTicket->projectId != $projectFilter) {
-                $projectMismatch = true;
+            if ($selectedTicket) {
+                $selectedTicketProjectId = $selectedTicket->projectId;
             }
         }
+
+        $resolvedTicketFilter = $this->timesheetService->resolveShowAllTicketFilter(
+            $projectFilter,
+            $ticketFilter,
+            $selectedTicketProjectId
+        );
 
         $this->tpl->assign('employeeFilter', $userId);
         $this->tpl->assign('employees', $this->userService->getAll());
@@ -181,7 +158,7 @@ class ShowAll extends Controller
             $userId,
             $invEmplCheck,
             $invCompCheck,
-            ($projectMismatch ? '-1' : ($projectFilter == -1 ? '-1' : ($ticketFilter ?: '-1'))),
+            $resolvedTicketFilter,
             $paidCheck,
             $clientId
         ));
