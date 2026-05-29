@@ -2,7 +2,6 @@
 
 namespace Leantime\Domain\Api\Controllers;
 
-use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Events\DispatchesEvents;
@@ -10,8 +9,6 @@ use Leantime\Domain\Api\Contracts\StaticAssetType;
 use Leantime\Domain\Api\Services\Api as ApiService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class StaticAsset extends Controller
 {
@@ -38,44 +35,26 @@ class StaticAsset extends Controller
      */
     public function get(array $params): Response
     {
-        $fullpath = Str::of($this->incomingRequest->getPathInfo())
-            ->replaceFirst('/api/static-asset/', APP_ROOT.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR)
-            ->replace('/', DIRECTORY_SEPARATOR)
-            ->lower();
+        $debug = (bool) $this->config->get('debug', false);
 
-        // Check if it's a static asset
-        if (! defined($constant = StaticAssetType::class.'::'.$fullpath->afterLast('.')->upper())) {
-            if ($this->config->get('debug', false)) {
-                throw new BadRequestHttpException;
-            }
+        $asset = $this->apiService->resolveStaticAsset($this->incomingRequest->getPathInfo(), $debug);
 
+        if ($asset === false) {
             return new Response('', 404);
-        }
-
-        if (Str::contains($fullpath, '.phar') && ! Str::startsWith($fullpath, 'phar://')) {
-            $fullpath = 'phar://'.$fullpath;
         }
 
         /** @var StaticAssetType $type */
-        $type = constant($constant);
-
-        if (! $correctPath = $this->apiService->getCaseCorrectPathFromManifest($fullpath)) {
-            if ($this->config->get('debug', false)) {
-                throw new NotFoundHttpException;
-            }
-
-            return new Response('', 404);
-        }
+        $type = $asset['type'];
 
         return tap(
-            new BinaryFileResponse($correctPath),
-            function (BinaryFileResponse $response) use ($type) {
+            new BinaryFileResponse($asset['path']),
+            function (BinaryFileResponse $response) use ($type, $debug) {
                 $response->headers->set('Content-Type', StaticAssetType::getMimeTypeByExtension($type));
                 $response->headers->set('Content-length', filesize(
                     ($filepath = $response->getFile()) instanceof \SplFileInfo ? $filepath->getPathname() : $filepath
                 ));
 
-                if (in_array(true, [! $this->incomingRequest->query->has('id'), $this->config->get('debug', false)])) {
+                if (in_array(true, [! $this->incomingRequest->query->has('id'), $debug])) {
                     return;
                 }
 

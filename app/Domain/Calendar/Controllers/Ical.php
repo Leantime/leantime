@@ -26,22 +26,11 @@ class Ical extends Controller
      */
     public function get(array $params): Response
     {
-        $actParts = explode('.', $params['act'] ?? '');
-
-        if (is_array($actParts) && count($actParts) === 3) {
-            $calId = $actParts[2];
-            $idParts = explode('_', $calId);
-        } else {
-            $calId = $_GET['id'] ?? '';
-            $idParts = explode('_', $calId);
-        }
-
-        if (count($idParts) != 2) {
-            return Frontcontroller::redirect(BASE_URL.'/errors/404');
-        }
-
         try {
-            $calendar = $this->calendarService->getIcalByHash($idParts[1], $idParts[0]);
+            $calendar = $this->calendarService->getIcalByRequestToken(
+                $_GET['id'] ?? '',
+                $params['act'] ?? ''
+            );
 
             return new Response($calendar->get(), 200, [
                 'Content-Type' => 'text/calendar; charset=utf-8',

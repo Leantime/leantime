@@ -14,10 +14,13 @@ use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
 use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
+use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
@@ -25,6 +28,7 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Wiki\Repositories\Wiki;
 use SVG\SVG;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,7 +45,11 @@ class Projects
         private Messengers $messengerService,
         private NotificationService $notificationService,
         protected Files $fileService,
-        protected Avatarcreator $avatarcreator
+        protected Avatarcreator $avatarcreator,
+        private QueueRepository $queueRepo,
+        private UserRepository $userRepo,
+        private CommentRepository $commentRepo,
+        private ClientRepository $clientRepo
     ) {}
 
     /**
@@ -2373,6 +2381,366 @@ class Projects
         }
 
         return $projects;
+    }
+
+    /**
+     * Returns the list of supported menu types.
+     *
+     * Thin passthrough so controllers do not have to inject the menu repository.
+     *
+     * @return array Map of menu type key => translated label.
+     *
+     * @api
+     */
+    public function getMenuTypes(): array
+    {
+        return app()->make(MenuRepository::class)->getMenuTypes();
+    }
+
+    /**
+     * Returns all users in the system.
+     *
+     * Thin passthrough so controllers do not have to inject the user repository.
+     *
+     * @param  bool  $activeOnly  When true only active users are returned.
+     * @return array List of users.
+     *
+     * @api
+     */
+    public function getAllUsers(bool $activeOnly = false): array
+    {
+        return $this->userRepo->getAll($activeOnly);
+    }
+
+    /**
+     * Returns all users flagged as employees.
+     *
+     * Thin passthrough so controllers do not have to inject the user repository.
+     *
+     * @return array List of employee users.
+     *
+     * @api
+     */
+    public function getEmployees(): array
+    {
+        return $this->userRepo->getEmployees();
+    }
+
+    /**
+     * Builds the default value set used to render the new-project form.
+     *
+     * @param  string  $parent  Optional parent project id pre-fill.
+     * @return array Default project value structure.
+     *
+     * @api
+     */
+    public function getNewProjectDefaults(string $parent = ''): array
+    {
+        return [
+            'id' => '',
+            'name' => '',
+            'details' => '',
+            'clientId' => '',
+            'hourBudget' => '',
+            'assignedUsers' => [session('userdata.id')],
+            'dollarBudget' => '',
+            'state' => '',
+            'menuType' => MenuRepository::DEFAULT_MENU,
+            'type' => 'project',
+            'parent' => $parent,
+            'psettings' => '',
+            'start' => '',
+            'end' => '',
+        ];
+    }
+
+    /**
+     * Notifies assigned project users that a new project was created.
+     *
+     * Loads the project's assigned users, filters them by their notification
+     * preference, builds the localized email body and queues the message.
+     *
+     * @param  int  $projectId  The newly created project id.
+     * @param  string  $projectName  The project name (used in the message body).
+     * @param  string  $authorName  The display name of the user who created the project.
+     *
+     * @api
+     */
+    public function notifyProjectCreated(int $projectId, string $projectName, string $authorName): void
+    {
+        $users = $this->getUsersAssignedToProject($projectId);
+
+        $actualLink = BASE_URL.'/projects/showProject/'.$projectId;
+        $message = sprintf(
+            $this->language->__('email_notifications.project_created_message'),
+            $actualLink,
+            $projectId,
+            strip_tags($projectName),
+            $authorName
+        );
+
+        $to = [];
+        foreach ($users as $user) {
+            if ($user['notifications'] != 0) {
+                $to[] = $user['username'];
+            }
+        }
+
+        $this->queueRepo->queueMessageToUsers(
+            $to,
+            $message,
+            $this->language->__('email_notifications.project_created_subject'),
+            $projectId
+        );
+    }
+
+    /**
+     * Builds the data needed to render the project hub for a user.
+     *
+     * Collects the user's open projects, derives the unique client map across
+     * all of them and filters the displayed projects by the optionally selected
+     * client. Used by both the standard and the HTMX project-hub endpoints.
+     *
+     * @param  int  $userId  The user whose projects should be loaded.
+     * @param  int|null  $clientId  Optional client id to filter the project list.
+     * @return array{allProjects: array, clients: array, currentClientName: string, currentClient: int|string}
+     *
+     * @api
+     */
+    public function getProjectHubData(int $userId, ?int $clientId = null): array
+    {
+        $currentClientName = '';
+        $currentClient = $clientId ?? '';
+
+        if (! empty($clientId)) {
+            $client = $this->clientRepo->getClient($clientId);
+            if (is_array($client) && count($client) > 0) {
+                $currentClientName = $client['name'];
+            }
+        }
+
+        $allProjects = $this->getProjectsAssignedToUser($userId, 'open');
+        $clients = [];
+        $projectResults = [];
+        $i = 0;
+
+        if (is_array($allProjects)) {
+            foreach ($allProjects as $project) {
+                if (! array_key_exists($project['clientId'], $clients)) {
+                    $clients[$project['clientId']] = ['name' => $project['clientName'], 'id' => $project['clientId']];
+                }
+
+                if (empty($clientId) || $project['clientId'] == $clientId) {
+                    $projectResults[$i] = $project;
+                    $i++;
+                }
+            }
+        }
+
+        return [
+            'allProjects' => $projectResults,
+            'clients' => $clients,
+            'currentClientName' => $currentClientName,
+            'currentClient' => $currentClient,
+        ];
+    }
+
+    /**
+     * Builds the progress view-model for a single project card.
+     *
+     * Combines the project's completion progress, assigned team and most recent
+     * project comment (used as the "last update" / status) into one structure
+     * for the project-card progress bar partial.
+     *
+     * @param  int  $projectId  The project id to assemble card data for.
+     * @return array The project card data including id, progress, team, lastUpdate and status.
+     *
+     * @api
+     */
+    public function getProjectCardData(int $projectId): array
+    {
+        $project = ['id' => $projectId];
+
+        $project['progress'] = $this->getProjectProgress($projectId);
+        $project['team'] = $this->getUsersAssignedToProject($projectId);
+
+        $projectComments = $this->commentRepo->getComments('project', $projectId);
+
+        if (is_array($projectComments) && count($projectComments) > 0) {
+            $project['lastUpdate'] = $projectComments[0];
+            $project['status'] = $projectComments[0]['status'];
+        } else {
+            $project['lastUpdate'] = false;
+            $project['status'] = '';
+        }
+
+        return $project;
+    }
+
+    /**
+     * Persists the Mattermost webhook for a project.
+     *
+     * @param  int  $projectId  The project id.
+     * @param  string  $webhookUrl  The raw webhook URL from the request.
+     *
+     * @api
+     */
+    public function saveMattermostWebhook(int $projectId, string $webhookUrl): void
+    {
+        $this->saveProjectSetting($projectId, 'mattermostWebhookURL', strip_tags($webhookUrl));
+    }
+
+    /**
+     * Persists the Slack webhook for a project.
+     *
+     * @param  int  $projectId  The project id.
+     * @param  string  $webhookUrl  The raw webhook URL from the request.
+     *
+     * @api
+     */
+    public function saveSlackWebhook(int $projectId, string $webhookUrl): void
+    {
+        $this->saveProjectSetting($projectId, 'slackWebhookURL', strip_tags($webhookUrl));
+    }
+
+    /**
+     * Validates and persists the Zulip webhook configuration for a project.
+     *
+     * All five fields are required. The sanitized hook is returned so the
+     * caller can re-render the form with the submitted values.
+     *
+     * @param  int  $projectId  The project id.
+     * @param  array  $hookData  Raw hook fields (zulipURL, zulipEmail, zulipBotKey, zulipStream, zulipTopic).
+     * @return array{hook: array, saved: bool} The sanitized hook and whether it was persisted.
+     *
+     * @api
+     */
+    public function saveZulipWebhook(int $projectId, array $hookData): array
+    {
+        $zulipHook = [
+            'zulipURL' => strip_tags($hookData['zulipURL'] ?? ''),
+            'zulipEmail' => strip_tags($hookData['zulipEmail'] ?? ''),
+            'zulipBotKey' => strip_tags($hookData['zulipBotKey'] ?? ''),
+            'zulipStream' => strip_tags($hookData['zulipStream'] ?? ''),
+            'zulipTopic' => strip_tags($hookData['zulipTopic'] ?? ''),
+        ];
+
+        $saved = false;
+
+        if (
+            $zulipHook['zulipURL'] != '' &&
+            $zulipHook['zulipEmail'] != '' &&
+            $zulipHook['zulipBotKey'] != '' &&
+            $zulipHook['zulipStream'] != '' &&
+            $zulipHook['zulipTopic'] != ''
+        ) {
+            $this->saveProjectSetting($projectId, 'zulipHook', serialize($zulipHook));
+            $saved = true;
+        }
+
+        return ['hook' => $zulipHook, 'saved' => $saved];
+    }
+
+    /**
+     * Persists the (up to three) Discord webhooks for a project.
+     *
+     * @param  int  $projectId  The project id.
+     * @param  array  $postData  The raw request data containing discordWebhookURL1..3.
+     *
+     * @api
+     */
+    public function saveDiscordWebhooks(int $projectId, array $postData): void
+    {
+        for ($i = 1; $i <= 3; $i++) {
+            $webhook = trim(strip_tags($postData['discordWebhookURL'.$i] ?? ''));
+            $this->saveProjectSetting($projectId, 'discordWebhookURL'.$i, $webhook);
+        }
+    }
+
+    /**
+     * Loads and de-serializes the integration webhook settings for a project.
+     *
+     * Returns the Mattermost and Slack URLs, the three Discord URLs and the
+     * (safely unserialized) Zulip hook configuration ready for the template.
+     *
+     * @param  int  $projectId  The project id.
+     * @return array The integration settings keyed by template variable name.
+     *
+     * @api
+     */
+    public function getProjectIntegrationSettings(int $projectId): array
+    {
+        $settings = [
+            'mattermostWebhookURL' => $this->getProjectSetting($projectId, 'mattermostWebhookURL'),
+            'slackWebhookURL' => $this->getProjectSetting($projectId, 'slackWebhookURL'),
+        ];
+
+        for ($i = 1; $i <= 3; $i++) {
+            $settings['discordWebhookURL'.$i] = $this->getProjectSetting($projectId, 'discordWebhookURL'.$i);
+        }
+
+        $zulipWebhook = $this->getProjectSetting($projectId, 'zulipHook');
+        if ($zulipWebhook == '') {
+            $settings['zulipHook'] = [
+                'zulipURL' => '',
+                'zulipEmail' => '',
+                'zulipBotKey' => '',
+                'zulipStream' => '',
+                'zulipTopic' => '',
+            ];
+        } else {
+            $settings['zulipHook'] = safe_unserialize($zulipWebhook, []);
+        }
+
+        return $settings;
+    }
+
+    /**
+     * Edits a project and notifies its users about the update.
+     *
+     * Persists the project changes via editProject and then assembles and
+     * dispatches the "project updated" notification to the project's users.
+     *
+     * @param  array  $values  The project values to persist.
+     * @param  int  $projectId  The project id being edited.
+     * @param  array  $project  The current project entity (used in the notification).
+     * @param  string  $currentUrl  The current request URL (used as notification CTA target).
+     * @param  int  $authorId  The id of the user performing the edit.
+     * @param  string  $authorName  The display name of the user performing the edit.
+     *
+     * @api
+     */
+    public function editProjectAndNotify(
+        array $values,
+        int $projectId,
+        array $project,
+        string $currentUrl,
+        int $authorId,
+        string $authorName
+    ): void {
+        $this->editProject($values, $projectId);
+
+        $subject = sprintf($this->language->__('email_notifications.project_update_subject'), $projectId, $values['name']);
+        $message = sprintf(
+            $this->language->__('email_notifications.project_update_message'),
+            $authorName,
+            strip_tags($values['name'])
+        );
+
+        $notification = app()->make(Notification::class);
+        $notification->url = [
+            'url' => $currentUrl,
+            'text' => $this->language->__('email_notifications.project_update_cta'),
+        ];
+        $notification->entity = $project;
+        $notification->module = 'projects';
+        $notification->action = 'updated';
+        $notification->projectId = session('currentProject');
+        $notification->subject = $subject;
+        $notification->authorId = $authorId;
+        $notification->message = $message;
+
+        $this->notifyProjectUsers($notification);
     }
 
     /**

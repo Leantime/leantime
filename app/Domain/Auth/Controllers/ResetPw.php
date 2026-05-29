@@ -6,29 +6,19 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Files\Repositories\Files as FileRepository;
-use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResetPw extends Controller
 {
-    private FileRepository $fileRepo;
-
     private AuthService $authService;
-
-    private UserService $userService;
 
     /**
      * init - initialize private variables
      */
     public function init(
-        FileRepository $fileRepo,
-        AuthService $authService,
-        UserService $userService
+        AuthService $authService
     ): void {
-        $this->fileRepo = $fileRepo;
         $this->authService = $authService;
-        $this->userService = $userService;
     }
 
     /**
@@ -71,25 +61,27 @@ class ResetPw extends Controller
         }
 
         if (isset($_POST['password']) === true && isset($_POST['password2']) === true) {
-            if (strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
+            $result = $this->authService->resetPassword($_POST['password'], $_POST['password2'], $params['id']);
+
+            if ($result === 'success') {
+                $this->tpl->setNotification(
+                    $this->language->__('notifications.passwords_changed_successfully'),
+                    'success',
+                    'password_changed'
+                );
+
+                return FrontcontrollerCore::redirect(BASE_URL.'/auth/login');
+            }
+
+            if ($result === 'mismatch') {
                 $this->tpl->setNotification($this->language->__('notification.passwords_dont_match'), 'error');
 
                 return FrontcontrollerCore::redirect(BASE_URL.'/auth/resetPw/'.$params['id']);
             }
 
-            if ($this->userService->checkPasswordStrength($_POST['password'])) {
-                if ($this->authService->changePW($_POST['password'], $params['id'])) {
-                    $this->tpl->setNotification(
-                        $this->language->__('notifications.passwords_changed_successfully'),
-                        'success',
-                        'password_changed'
-                    );
-
-                    return FrontcontrollerCore::redirect(BASE_URL.'/auth/login');
-                }
-
+            if ($result === 'weak') {
                 $this->tpl->setNotification(
-                    $this->language->__('notifications.problem_resetting_password'),
+                    $this->language->__('notification.password_not_strong_enough'),
                     'error'
                 );
 
@@ -97,7 +89,7 @@ class ResetPw extends Controller
             }
 
             $this->tpl->setNotification(
-                $this->language->__('notification.password_not_strong_enough'),
+                $this->language->__('notifications.problem_resetting_password'),
                 'error'
             );
 

@@ -4,24 +4,22 @@ namespace Leantime\Domain\Ideas\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Mailer as MailerCore;
-use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowBoards extends Controller
 {
-    private IdeaRepository $ideaRepo;
+    private IdeaService $ideaService;
 
     private ProjectService $projectService;
 
     /**
      * Initializes dependencies.
      */
-    public function init(IdeaRepository $ideaRepo, ProjectService $projectService): void
+    public function init(IdeaService $ideaService, ProjectService $projectService): void
     {
-        $this->ideaRepo = $ideaRepo;
+        $this->ideaService = $ideaService;
         $this->projectService = $projectService;
 
         session(['lastPage' => CURRENT_URL]);
@@ -35,7 +33,7 @@ class ShowBoards extends Controller
      */
     public function get(array $params): Response
     {
-        $allCanvas = $this->ideaRepo->getAllCanvas(session('currentProject'));
+        $allCanvas = $this->ideaService->getAllBoards(session('currentProject'));
         $currentCanvasId = $this->resolveCurrentCanvasId($allCanvas, $params);
 
         $this->assignTemplateVars($currentCanvasId, $allCanvas);
@@ -54,7 +52,7 @@ class ShowBoards extends Controller
      */
     public function post(array $params): Response
     {
-        $allCanvas = $this->ideaRepo->getAllCanvas(session('currentProject'));
+        $allCanvas = $this->ideaService->getAllBoards(session('currentProject'));
         $currentCanvasId = $this->resolveCurrentCanvasId($allCanvas, $params);
 
         if (isset($_POST['searchCanvas'])) {
@@ -87,17 +85,18 @@ class ShowBoards extends Controller
 
     /**
      * Resolves the current canvas ID from session or request parameters.
+     *
+     * Auto-creates a default board (via the service) when the project has none.
      */
     private function resolveCurrentCanvasId(array &$allCanvas, array $params): int
     {
         if (! $allCanvas || count($allCanvas) == 0) {
-            $values = [
-                'title' => $this->language->__('label.board'),
-                'author' => session('userdata.id'),
-                'projectId' => session('currentProject'),
-            ];
-            $currentCanvasId = $this->ideaRepo->addCanvas($values);
-            $allCanvas = $this->ideaRepo->getAllCanvas(session('currentProject'));
+            $currentCanvasId = $this->ideaService->ensureBoardExists(
+                (int) session('currentProject'),
+                (int) session('userdata.id'),
+                $allCanvas
+            );
+            $allCanvas = $this->ideaService->getAllBoards(session('currentProject'));
 
             return $currentCanvasId;
         }
@@ -133,15 +132,12 @@ class ShowBoards extends Controller
             return null;
         }
 
-        $values = [
-            'title' => $_POST['canvastitle'],
-            'author' => session('userdata.id'),
-            'projectId' => session('currentProject'),
-        ];
-        $currentCanvasId = $this->ideaRepo->addCanvas($values);
-        $allCanvas = $this->ideaRepo->getAllCanvas(session('currentProject'));
-
-        $this->notifyBoardCreated($values['title']);
+        $currentCanvasId = $this->ideaService->createBoard(
+            $_POST['canvastitle'],
+            (int) session('currentProject'),
+            (int) session('userdata.id')
+        );
+        $allCanvas = $this->ideaService->getAllBoards(session('currentProject'));
 
         $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success', 'idea_board_created');
         session(['currentIdeaCanvas' => $currentCanvasId]);
@@ -160,38 +156,11 @@ class ShowBoards extends Controller
             return null;
         }
 
-        $values = ['title' => $_POST['canvastitle'], 'id' => $currentCanvasId];
-        $currentCanvasId = $this->ideaRepo->updateCanvas($values);
+        $currentCanvasId = $this->ideaService->updateBoard($currentCanvasId, $_POST['canvastitle']);
 
         $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success', 'idea_board_edited');
 
         return $this->tpl->display('canvas.boardDialog');
-    }
-
-    /**
-     * Sends board creation notifications to project users.
-     */
-    private function notifyBoardCreated(string $title): void
-    {
-        $mailer = app()->make(MailerCore::class);
-        $mailer->setContext('idea_board_created');
-        $users = $this->projectService->getUsersToNotify(session('currentProject'));
-
-        $mailer->setSubject($this->language->__('email_notifications.idea_board_created_subject'));
-        $message = sprintf(
-            $this->language->__('email_notifications.idea_board_created_message'),
-            session('userdata.name'),
-            "<a href='".CURRENT_URL."'>".strip_tags($title).'</a>.<br />'
-        );
-        $mailer->setHtml($message);
-
-        $queue = app()->make(QueueRepository::class);
-        $queue->queueMessageToUsers(
-            $users,
-            $message,
-            $this->language->__('email_notifications.idea_board_created_subject'),
-            session('currentProject')
-        );
     }
 
     /**
@@ -200,9 +169,9 @@ class ShowBoards extends Controller
     private function assignTemplateVars(int $currentCanvasId, array $allCanvas): void
     {
         $this->tpl->assign('currentCanvas', $currentCanvasId);
-        $this->tpl->assign('canvasLabels', $this->ideaRepo->getCanvasLabels());
+        $this->tpl->assign('canvasLabels', $this->ideaService->getBoardLabels());
         $this->tpl->assign('allCanvas', $allCanvas);
-        $this->tpl->assign('canvasItems', $this->ideaRepo->getCanvasItemsById($currentCanvasId));
+        $this->tpl->assign('canvasItems', $this->ideaService->getBoardItems($currentCanvasId));
         $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
     }
 }

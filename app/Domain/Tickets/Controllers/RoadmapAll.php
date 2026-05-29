@@ -3,20 +3,11 @@
 namespace Leantime\Domain\Tickets\Controllers;
 
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
 class RoadmapAll extends Controller
 {
-    private ProjectRepository $projectsRepo;
-
-    private ClientRepository $clientRepo;
-
-    private SprintService $sprintService;
-
     private TicketService $ticketService;
 
     private ClientService $clientService;
@@ -25,16 +16,10 @@ class RoadmapAll extends Controller
      * init - initialize private variables
      */
     public function init(
-        ProjectRepository $projectsRepo,
-        ClientRepository $clientRepo,
         ClientService $clientService,
-        SprintService $sprintService,
         TicketService $ticketService
-    ) {
-        $this->projectsRepo = $projectsRepo;
-        $this->clientRepo = $clientRepo;
+    ): void {
         $this->clientService = $clientService;
-        $this->sprintService = $sprintService;
         $this->ticketService = $ticketService;
     }
 
@@ -47,10 +32,7 @@ class RoadmapAll extends Controller
         $currentClientName = '';
         if (isset($_GET['client']) === true && $_GET['client'] != '') {
             $clientId = (int) $_GET['client'];
-            $currentClient = $this->clientRepo->getClient($clientId);
-            if (is_array($currentClient) && count($currentClient) > 0) {
-                $currentClientName = $currentClient['name'];
-            }
+            $currentClientName = $this->ticketService->getClientNameById($clientId);
         }
 
         $allProjectMilestones = $this->ticketService->getAllMilestonesOverview(false, 'date', false, $clientId);
@@ -77,14 +59,4 @@ class RoadmapAll extends Controller
 
         return $this->tpl->display('tickets.roadmapAll');
     }
-
-    /**
-     * put - handle put requests
-     */
-    public function put($params) {}
-
-    /**
-     * delete - handle delete requests
-     */
-    public function delete($params) {}
 }

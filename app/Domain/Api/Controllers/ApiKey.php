@@ -4,11 +4,10 @@ namespace Leantime\Domain\Api\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
+use Leantime\Domain\Api\Services\Api as ApiService;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -16,24 +15,21 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ApiKey extends Controller
 {
-    private ProjectRepository $projectsRepo;
+    private ApiService $apiService;
 
-    private UserRepository $userRepo;
-
-    private ClientRepository $clientsRepo;
+    private ClientService $clientService;
 
     /**
      * Initializes dependencies.
      *
      * @throws BindingResolutionException
      */
-    public function init(ProjectRepository $projectsRepo, UserRepository $userRepo, ClientRepository $clientsRepo): void
+    public function init(ApiService $apiService, ClientService $clientService): void
     {
         self::dispatch_event('api_key_init', $this);
 
-        $this->projectsRepo = $projectsRepo;
-        $this->userRepo = $userRepo;
-        $this->clientsRepo = $clientsRepo;
+        $this->apiService = $apiService;
+        $this->clientService = $clientService;
     }
 
     /**
@@ -52,21 +48,7 @@ class ApiKey extends Controller
             return $this->tpl->display('errors.error403');
         }
 
-        $row = $this->userRepo->getUser($id);
-
-        $values = [
-            'firstname' => $row['firstname'],
-            'lastname' => $row['lastname'],
-            'user' => $row['username'],
-            'phone' => $row['phone'],
-            'status' => $row['status'],
-            'role' => $row['role'],
-            'hours' => $row['hours'],
-            'wage' => $row['wage'],
-            'clientId' => $row['clientId'],
-            'source' => $row['source'],
-            'pwReset' => $row['pwReset'],
-        ];
+        $values = $this->apiService->getApiKeyFormValues($id);
 
         $this->assignTemplateVars($id, $values);
 
@@ -89,50 +71,11 @@ class ApiKey extends Controller
             return $this->tpl->display('errors.error403');
         }
 
-        $row = $this->userRepo->getUser($id);
-
-        $values = [
-            'firstname' => $row['firstname'],
-            'lastname' => $row['lastname'],
-            'user' => $row['username'],
-            'phone' => $row['phone'],
-            'status' => $row['status'],
-            'role' => $row['role'],
-            'hours' => $row['hours'],
-            'wage' => $row['wage'],
-            'clientId' => $row['clientId'],
-            'source' => $row['source'],
-            'pwReset' => $row['pwReset'],
-        ];
+        $values = $this->apiService->getApiKeyFormValues($id);
 
         if (isset($_POST['save'])) {
             if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
-                $values = [
-                    'firstname' => ($_POST['firstname'] ?? $row['firstname']),
-                    'lastname' => '',
-                    'user' => $row['username'],
-                    'phone' => '',
-                    'status' => ($_POST['status'] ?? $row['status']),
-                    'role' => ($_POST['role'] ?? $row['role']),
-                    'hours' => '',
-                    'wage' => '',
-                    'clientId' => '',
-                    'password' => '',
-                    'source' => 'api',
-                    'pwReset' => '',
-                ];
-
-                $this->userRepo->editUser($values, $id);
-
-                if (isset($_POST['projects'])) {
-                    if ($_POST['projects'][0] !== '0') {
-                        $this->projectsRepo->editUserProjectRelations($id, $_POST['projects']);
-                    } else {
-                        $this->projectsRepo->deleteAllProjectRelations($id);
-                    }
-                } else {
-                    $this->projectsRepo->deleteAllProjectRelations($id);
-                }
+                $this->apiService->updateApiKey($id, $_POST, $_POST['projects'] ?? null);
 
                 $this->tpl->setNotification($this->language->__('notifications.key_updated'), 'success', 'apikey_updated');
             } else {
@@ -147,27 +90,19 @@ class ApiKey extends Controller
 
     /**
      * Assigns common template variables.
+     *
+     * @throws \Exception
      */
     private function assignTemplateVars(int $id, array $values): void
     {
-        $projects = $this->projectsRepo->getUserProjectRelation($id);
+        $this->apiService->generateFormToken();
 
-        $projectrelation = [];
-        foreach ($projects as $projectId) {
-            $projectrelation[] = $projectId['projectId'];
-        }
-
-        $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
+        $this->tpl->assign('allProjects', $this->apiService->getAllProjects());
         $this->tpl->assign('roles', Roles::getRoles());
-        $this->tpl->assign('clients', $this->clientsRepo->getAll());
-
-        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-        session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
-        session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
-
+        $this->tpl->assign('clients', $this->clientService->getAll());
         $this->tpl->assign('values', $values);
-        $this->tpl->assign('relations', $projectrelation);
-        $this->tpl->assign('status', $this->userRepo->status);
+        $this->tpl->assign('relations', $this->apiService->getProjectRelationIds($id));
+        $this->tpl->assign('status', $this->apiService->getUserStatusOptions());
         $this->tpl->assign('id', $id);
     }
 }

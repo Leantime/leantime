@@ -2,36 +2,20 @@
 
 namespace Leantime\Domain\Tickets\Controllers;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowKanban extends Controller
 {
-    private ProjectService $projectService;
-
     private TicketService $ticketService;
 
-    private SprintService $sprintService;
-
-    private TimesheetService $timesheetService;
-
     public function init(
-        ProjectService $projectService,
-        TicketService $ticketService,
-        SprintService $sprintService,
-        TimesheetService $timesheetService
+        TicketService $ticketService
     ): void {
-        $this->projectService = $projectService;
         $this->ticketService = $ticketService;
-        $this->sprintService = $sprintService;
-        $this->timesheetService = $timesheetService;
 
         session(['lastPage' => CURRENT_URL]);
         session(['lastTicketView' => 'kanban']);
@@ -81,68 +65,19 @@ class ShowKanban extends Controller
                 'editorId' => session('userdata.id'),
             ];
 
-            // Swimlane context inheritance - map swimlane value to correct field based on groupBy
             $swimlaneValue = $_POST['swimlane'] ?? null;
             $groupBy = $_POST['groupBy'] ?? null;
+            $stayOpen = isset($_POST['stay_open']) && $_POST['stay_open'] === '1';
 
-            if ($swimlaneValue !== null && $swimlaneValue !== '' && ! empty($groupBy)) {
-                // Map groupBy field to the parameter name expected by quickAddTicket()
-                $fieldMapping = [
-                    'priority' => 'priority',
-                    'storypoints' => 'storypoints',
-                    'effort' => 'storypoints',
-                    'milestoneid' => 'milestone',
-                    'editorId' => 'editorId',
-                    'sprint' => 'sprint',
-                    'type' => 'type',
-                ];
+            $result = $this->ticketService->quickAddTicketFromKanban($formParams, $swimlaneValue, $groupBy, $stayOpen);
 
-                if (isset($fieldMapping[$groupBy])) {
-                    $paramName = $fieldMapping[$groupBy];
-                    $formParams[$paramName] = $swimlaneValue;
-                } elseif ($groupBy === 'dueDate') {
-                    // Map due date bucket names to actual dates
-                    $now = dtHelper()->userNow();
-                    $dueDateMapping = [
-                        'overdue' => $now->formatDateForUser(),
-                        'due-this-week' => $now->endOfWeek(CarbonImmutable::FRIDAY)->formatDateForUser(),
-                        'due-next-week' => $now->addWeek()->endOfWeek(CarbonImmutable::FRIDAY)->formatDateForUser(),
-                        'due-later' => $now->addWeeks(2)->formatDateForUser(),
-                    ];
-
-                    if (isset($dueDateMapping[$swimlaneValue])) {
-                        $formParams['dateToFinish'] = $dueDateMapping[$swimlaneValue];
-                    }
-                }
-            }
-
-            $result = $this->ticketService->quickAddTicket($formParams);
-
-            if (is_array($result) && isset($result['status']) && $result['status'] === 'error') {
-                // Error: reopen form with error
-                session()->flash('quickadd_reopen', [
-                    'status' => $formParams['status'],
-                    'swimlane' => $_POST['swimlane'] ?? null,
-                    'headline' => $formParams['headline'],
-                    'error' => $result['message'],
-                ]);
+            if ($result['success'] === false) {
                 $this->tpl->setNotification($result['message'], 'error');
             } else {
-                // Success
-                $stayOpen = isset($_POST['stay_open']) && $_POST['stay_open'] === '1';
-
-                $this->tpl->setNotification('Task created: '.htmlspecialchars($formParams['headline']), 'success');
-
-                if ($stayOpen) {
-                    session()->flash('quickadd_reopen', [
-                        'status' => $formParams['status'],
-                        'swimlane' => $_POST['swimlane'] ?? null,
-                        'headline' => '',
-                    ]);
-                }
+                $this->tpl->setNotification('Task created: '.htmlspecialchars($result['headline']), 'success');
             }
 
-            return Frontcontroller::redirect(CURRENT_URL.'#status-'.$formParams['status']);
+            return Frontcontroller::redirect(CURRENT_URL.'#status-'.$result['status']);
         }
 
         return Frontcontroller::redirect(CURRENT_URL);

@@ -5,7 +5,7 @@ namespace Leantime\Domain\Calendar\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
+use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -28,14 +28,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CalendarSettings extends Controller
 {
-    private CalendarRepository $calendarRepo;
+    private CalendarService $calendarService;
 
     /**
      * Initialize the controller with dependencies.
      */
-    public function init(CalendarRepository $calendarRepo): void
+    public function init(CalendarService $calendarService): void
     {
-        $this->calendarRepo = $calendarRepo;
+        $this->calendarService = $calendarService;
     }
 
     /**
@@ -46,7 +46,7 @@ class CalendarSettings extends Controller
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
         // Get external calendars for the current user
-        $externalCalendars = $this->calendarRepo->getMyExternalCalendars(session('userdata.id'));
+        $externalCalendars = $this->calendarService->getMyExternalCalendars((int) session('userdata.id'));
 
         // Plugins can augment calendar data (e.g., add 'managedByPlugin' => true to hide edit/delete)
         $externalCalendars = self::dispatchFilter('calendarSettings.externalCalendars', $externalCalendars);

@@ -7,19 +7,19 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
+use Leantime\Domain\Api\Services\Api as ApiService;
 use Symfony\Component\HttpFoundation\Response;
 
 class Submenu extends Controller
 {
-    private MenuRepository $menuRepos;
+    private ApiService $apiService;
 
     /**
      * constructor - initialize private variables
      */
-    public function init(MenuRepository $menu): void
+    public function init(ApiService $apiService): void
     {
-        $this->menuRepos = $menu;
+        $this->apiService = $apiService;
     }
 
     /**
@@ -56,7 +56,7 @@ class Submenu extends Controller
             return $this->tpl->displayJson(['status' => false], 500);
         }
 
-        $this->menuRepos->setSubmenuState($params['submenu'], $params['state']);
+        $this->apiService->setSubmenuState($params['submenu'], $params['state']);
 
         return $this->tpl->displayJson(['status' => 'ok']);
     }

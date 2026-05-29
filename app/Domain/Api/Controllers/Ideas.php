@@ -3,8 +3,7 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Domain\Api\Services\Ideas as IdeasService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -14,18 +13,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Ideas extends Controller
 {
-    private ProjectRepository $projects;
-
-    private IdeaRepository $ideaAPIRepo;
+    private IdeasService $ideasService;
 
     /**
      * init - initialize private variables
      */
-    public function init(ProjectRepository $projects, IdeaRepository $ideaAPIRepo): void
+    public function init(IdeasService $ideasService): void
     {
-        // @TODO: projects is never used in this class?
-        $this->projects = $projects;
-        $this->ideaAPIRepo = $ideaAPIRepo;
+        $this->ideasService = $ideasService;
     }
 
     /**
@@ -42,7 +37,7 @@ class Ideas extends Controller
     public function post(array $params): Response
     {
         if (isset($params['action']) && $params['action'] == 'ideaSort' && isset($params['payload']) === true) {
-            if (! $this->ideaAPIRepo->updateIdeaSorting($params['payload'])) {
+            if (! $this->ideasService->updateIdeaSorting($params['payload'])) {
                 return $this->tpl->displayJson(['status' => 'failure'], 500);
             }
 
@@ -50,7 +45,7 @@ class Ideas extends Controller
         }
 
         if (isset($params['action']) && $params['action'] == 'statusUpdate' && isset($params['payload']) === true) {
-            if (! $this->ideaAPIRepo->bulkUpdateIdeaStatus($params['payload'])) {
+            if (! $this->ideasService->bulkUpdateIdeaStatus($params['payload'])) {
                 return $this->tpl->displayJson(['status' => 'failure'], 500);
             }
 
@@ -65,7 +60,7 @@ class Ideas extends Controller
      */
     public function patch(array $params): Response
     {
-        if (! isset($params['id']) || ! $this->ideaAPIRepo->patchCanvasItem($params['id'], $params)) {
+        if (! isset($params['id']) || ! $this->ideasService->patchCanvasItem((int) $params['id'], $params)) {
             return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
 

@@ -7,19 +7,10 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Api\Services\Api as ApiService;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
 class NewApiKey extends Controller
 {
-    private UserRepository $userRepo;
-
-    private ProjectRepository $projectsRepo;
-
-    private UserService $userService;
-
     private ApiService $APIService;
 
     /**
@@ -27,17 +18,10 @@ class NewApiKey extends Controller
      *
      * @throws BindingResolutionException
      */
-    public function init(
-        UserRepository $userRepo,
-        ProjectRepository $projectsRepo,
-        UserService $userService,
-        ApiService $APIService
-    ): void {
+    public function init(ApiService $APIService): void
+    {
         self::dispatch_event('api_key_init', $this);
 
-        $this->userRepo = $userRepo;
-        $this->projectsRepo = $projectsRepo;
-        $this->userService = $userService;
         $this->APIService = $APIService;
     }
 
@@ -67,7 +51,7 @@ class NewApiKey extends Controller
         ];
 
         $this->tpl->assign('values', $values);
-        $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
+        $this->tpl->assign('allProjects', $this->APIService->getAllProjects());
         $this->tpl->assign('roles', Roles::getRoles());
         $this->tpl->assign('relations', []);
 
@@ -112,28 +96,16 @@ class NewApiKey extends Controller
                 'source' => 'api',
             ];
 
-            if (isset($_POST['projects']) && is_array($_POST['projects'])) {
-                foreach ($_POST['projects'] as $project) {
-                    $projectRelation[] = $project;
-                }
-            }
+            $projectRelation = (isset($_POST['projects']) && is_array($_POST['projects'])) ? $_POST['projects'] : [];
 
-            $apiKeyValues = $this->APIService->createAPIKey($values);
-
-            if (isset($_POST['projects']) && count($_POST['projects']) > 0) {
-                if ($_POST['projects'][0] !== '0') {
-                    $this->projectsRepo->editUserProjectRelations($apiKeyValues['id'], $_POST['projects']);
-                } else {
-                    $this->projectsRepo->deleteAllProjectRelations($apiKeyValues['id']);
-                }
-            }
+            $apiKeyValues = $this->APIService->createApiKeyWithProjects($values, $_POST['projects'] ?? null);
 
             $this->tpl->setNotification('notifications.key_created', 'success', 'apikey_created');
             $this->tpl->assign('apiKeyValues', $apiKeyValues);
         }
 
         $this->tpl->assign('values', $values);
-        $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
+        $this->tpl->assign('allProjects', $this->APIService->getAllProjects());
         $this->tpl->assign('roles', Roles::getRoles());
         $this->tpl->assign('relations', $projectRelation);
 

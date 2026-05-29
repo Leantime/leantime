@@ -255,6 +255,57 @@ class Calendar
     }
 
     /**
+     * Returns the raw iCal content for an external calendar, using a
+     * session-based cache with a 30 minute time to live.
+     *
+     * Looks up the cached content for the given calendar in the session and
+     * returns it when still fresh. Otherwise it resolves the external
+     * calendar's URL, fetches its content (with SSRF protection via
+     * {@see loadIcalUrl()}), stores it in the session cache and returns it.
+     * Any fetch failure resolves to an empty string, matching the previous
+     * controller behaviour.
+     *
+     * @param  int  $calId  The external calendar id.
+     * @param  int  $userId  The id of the user owning the calendar.
+     * @return string The iCal content, or an empty string when unavailable.
+     *
+     * @api
+     */
+    public function getCachedExternalCalendarContent(int $calId, int $userId): string
+    {
+        $cacheTime = 60 * 30; // 30min
+
+        if (! session()->exists('calendarCache')) {
+            session(['calendarCache' => []]);
+        }
+
+        $isCacheFresh = session()->exists('calendarCache.'.$calId)
+            && session()->exists('calendarCache.'.$calId.'.lastUpdate')
+            && session('calendarCache.'.$calId.'.lastUpdate') > time() - $cacheTime;
+
+        if ($isCacheFresh) {
+            return (string) session('calendarCache.'.$calId.'.content');
+        }
+
+        $cal = $this->getExternalCalendar($calId, $userId);
+
+        if (! isset($cal['url'])) {
+            return '';
+        }
+
+        try {
+            // loadIcalUrl includes SSRF protection.
+            $content = $this->loadIcalUrl($cal['url']);
+            session(['calendarCache.'.$calId.'.lastUpdate' => time()]);
+            session(['calendarCache.'.$calId.'.content' => $content]);
+
+            return $content;
+        } catch (\Exception $e) {
+            return '';
+        }
+    }
+
+    /**
      * @api
      */
     public function editExternalCalendar(array $values, int $id): void
@@ -543,6 +594,44 @@ class Calendar
         }
 
         return BASE_URL.'/calendar/ical/'.$icalHash.'_'.$userHash;
+    }
+
+    /**
+     * Resolves an iCal request token into the iCal calendar.
+     *
+     * The token follows the same `{icalHash}_{userHash}` format produced by
+     * {@see getICalUrl()}. It may arrive either as the request id (the raw
+     * `{icalHash}_{userHash}` string) or embedded as the third dot-separated
+     * segment of the frontcontroller `act` value
+     * (`calendar.ical.{icalHash}_{userHash}`).
+     *
+     * @param  string  $token  The raw id token, may be empty.
+     * @param  string  $act  The frontcontroller act string, may be empty.
+     * @return IcalCalendar The iCal calendar for the resolved hashes.
+     *
+     * @throws MissingParameterException If the token does not contain both hashes.
+     * @throws \Exception If the calendar could not be retrieved.
+     *
+     * @api
+     */
+    public function getIcalByRequestToken(string $token, string $act = ''): IcalCalendar
+    {
+        $actParts = explode('.', $act);
+
+        if (count($actParts) === 3) {
+            $rawToken = $actParts[2];
+        } else {
+            $rawToken = $token;
+        }
+
+        $idParts = explode('_', $rawToken);
+
+        if (count($idParts) !== 2) {
+            throw new MissingParameterException('iCal token must contain both an iCal hash and a user hash');
+        }
+
+        // idParts[0] = iCal hash (calHash), idParts[1] = user hash.
+        return $this->getIcalByHash($idParts[1], $idParts[0]);
     }
 
     /**

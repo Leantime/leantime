@@ -2,28 +2,29 @@
 
 namespace Leantime\Domain\Cron\Controllers;
 
-use Illuminate\Support\Facades\Log;
-use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Console\ConsoleKernel;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Events\EventDispatcher;
+use Leantime\Domain\Cron\Services\Cron as CronService;
 use PHPMailer\PHPMailer\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 class Run extends Controller
 {
-    private Environment $config;
+    private CronService $cronService;
 
     /**
      * Initializes dependencies.
      */
-    public function init(Environment $config): void
+    public function init(CronService $cronService): void
     {
-        $this->config = $config;
+        $this->cronService = $cronService;
     }
 
     /**
      * The Poor Man's Cron Endpoint.
+     *
+     * Registers a terminate listener that runs the scheduled tasks after the response is sent,
+     * then immediately returns an empty response so the client connection can close.
      *
      * @param  array  $params  Request parameters
      *
@@ -31,23 +32,10 @@ class Run extends Controller
      */
     public function get(array $params): Response
     {
-        EventDispatcher::add_event_listener('leantime.core.http.httpkernel.terminate.request_terminated', function () {
-            ignore_user_abort(true);
-
-            set_time_limit(0);
-
-            $output = new \Symfony\Component\Console\Output\BufferedOutput;
-            $consoleKernel = app()->make(ConsoleKernel::class);
-            $result = $consoleKernel->call('schedule:run', [], $output);
-
-            register_shutdown_function(function () use ($output) {
-                if ($this->config->debug) {
-                    Log::info('Cron Schedule Output: '.$output->fetch());
-                }
-            });
-
-            return $result;
-        });
+        EventDispatcher::add_event_listener(
+            'leantime.core.http.httpkernel.terminate.request_terminated',
+            fn () => $this->cronService->runScheduledTasks()
+        );
 
         return tap(new Response, function ($response) {
             $response->headers->set('Content-Length', '0');

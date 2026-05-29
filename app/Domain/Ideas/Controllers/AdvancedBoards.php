@@ -4,26 +4,24 @@ namespace Leantime\Domain\Ideas\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Mailer as MailerCore;
-use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdvancedBoards extends Controller
 {
     private ProjectService $projectService;
 
-    private IdeaRepository $ideaRepo;
+    private IdeaService $ideaService;
 
     /**
      * Initializes dependencies.
      */
     public function init(
-        IdeaRepository $ideaRepo,
+        IdeaService $ideaService,
         ProjectService $projectService
     ): void {
-        $this->ideaRepo = $ideaRepo;
+        $this->ideaService = $ideaService;
         $this->projectService = $projectService;
 
         session(['lastPage' => CURRENT_URL]);
@@ -37,7 +35,7 @@ class AdvancedBoards extends Controller
      */
     public function get(array $params): Response
     {
-        $allCanvas = $this->ideaRepo->getAllCanvas(session('currentProject'));
+        $allCanvas = $this->ideaService->getAllBoards(session('currentProject'));
         $currentCanvasId = $this->resolveCurrentCanvasId($allCanvas, $params);
 
         $this->assignTemplateVars($currentCanvasId, $allCanvas);
@@ -56,7 +54,7 @@ class AdvancedBoards extends Controller
      */
     public function post(array $params): Response
     {
-        $allCanvas = $this->ideaRepo->getAllCanvas(session('currentProject'));
+        $allCanvas = $this->ideaService->getAllBoards(session('currentProject'));
         $currentCanvasId = $this->resolveCurrentCanvasId($allCanvas, $params);
 
         if (isset($_POST['searchCanvas'])) {
@@ -123,15 +121,12 @@ class AdvancedBoards extends Controller
             return null;
         }
 
-        $values = [
-            'title' => $_POST['canvastitle'],
-            'author' => session('userdata.id'),
-            'projectId' => session('currentProject'),
-        ];
-        $currentCanvasId = $this->ideaRepo->addCanvas($values);
-        $allCanvas = $this->ideaRepo->getAllCanvas(session('currentProject'));
-
-        $this->notifyBoardCreated($values['title']);
+        $currentCanvasId = $this->ideaService->createBoard(
+            $_POST['canvastitle'],
+            (int) session('currentProject'),
+            (int) session('userdata.id')
+        );
+        $allCanvas = $this->ideaService->getAllBoards(session('currentProject'));
 
         $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success', 'ideaboard_created');
         session(['currentIdeaCanvas' => $currentCanvasId]);
@@ -150,38 +145,11 @@ class AdvancedBoards extends Controller
             return null;
         }
 
-        $values = ['title' => $_POST['canvastitle'], 'id' => $currentCanvasId];
-        $currentCanvasId = $this->ideaRepo->updateCanvas($values);
+        $currentCanvasId = $this->ideaService->updateBoard($currentCanvasId, $_POST['canvastitle']);
 
         $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success', 'ideaboard_edited');
 
         return Frontcontroller::redirect(BASE_URL.'/ideas/advancedBoards/');
-    }
-
-    /**
-     * Sends board creation notifications to project users.
-     */
-    private function notifyBoardCreated(string $title): void
-    {
-        $mailer = app()->make(MailerCore::class);
-        $mailer->setContext('idea_board_created');
-        $users = $this->projectService->getUsersToNotify(session('currentProject'));
-
-        $mailer->setSubject($this->language->__('email_notifications.idea_board_created_subject'));
-        $message = sprintf(
-            $this->language->__('email_notifications.idea_board_created_message'),
-            session('userdata.name'),
-            "<a href='".CURRENT_URL."'>".strip_tags($title).'</a>.<br />'
-        );
-        $mailer->setHtml($message);
-
-        $queue = app()->make(QueueRepository::class);
-        $queue->queueMessageToUsers(
-            $users,
-            $message,
-            $this->language->__('email_notifications.idea_board_created_subject'),
-            session('currentProject')
-        );
     }
 
     /**
@@ -192,7 +160,7 @@ class AdvancedBoards extends Controller
         $this->tpl->assign('currentCanvas', $currentCanvasId);
         $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
         $this->tpl->assign('allCanvas', $allCanvas);
-        $this->tpl->assign('canvasItems', $this->ideaRepo->getCanvasItemsById($currentCanvasId));
-        $this->tpl->assign('canvasLabels', $this->ideaRepo->getCanvasLabels());
+        $this->tpl->assign('canvasItems', $this->ideaService->getBoardItems($currentCanvasId));
+        $this->tpl->assign('canvasLabels', $this->ideaService->getBoardLabels());
     }
 }

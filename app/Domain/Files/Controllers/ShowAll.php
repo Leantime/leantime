@@ -48,21 +48,20 @@ class ShowAll extends Controller
     {
         $currentModule = $params['id'] ?? $_GET['id'] ?? '';
 
-        if (isset($_POST['delFile'])) {
-            $result = $this->filesService->deleteFile($_POST['delFile']);
+        $result = $this->filesService->handleFileAction($_POST, $_FILES, 'project', session('currentProject'));
 
-            if ($result === true) {
+        if ($result['action'] === 'delete') {
+            if ($result['success'] === true) {
                 $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
 
                 return Frontcontroller::redirect(BASE_URL.'/files/showAll'.(($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : ''));
-            } else {
-                $this->tpl->setNotification($this->language->__('notifications.file_delete_error'), 'error');
             }
+
+            $this->tpl->setNotification($this->language->__('notifications.file_delete_error'), 'error');
         }
 
-        if (isset($_POST['upload']) || isset($_FILES['file'])) {
-            if (isset($_FILES['file'])) {
-                $this->filesService->upload($_FILES, 'project', session('currentProject'));
+        if ($result['action'] === 'upload') {
+            if ($result['success'] === true) {
                 $this->tpl->setNotification('notifications.file_upload_success', 'success', 'file_uploaded');
             } else {
                 $this->tpl->setNotification('notifications.file_upload_error', 'error');
@@ -81,7 +80,7 @@ class ShowAll extends Controller
     {
         $this->tpl->assign('currentModule', $currentModule);
         $this->tpl->assign('modules', $this->filesService->getModules(session('userdata.id')));
-        $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
+        $this->tpl->assign('imgExtensions', $this->filesService->getImageExtensions());
         $this->tpl->assign('files', $this->filesService->getFilesByModule('project', session('currentProject'), session('userdata.id')));
     }
 }

@@ -3,32 +3,21 @@
 namespace Leantime\Domain\Install\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Configuration\AppSettings as AppSettingCore;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
-use Leantime\Domain\Install\Repositories\Install as InstallRepository;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use Leantime\Domain\Install\Services\Install as InstallService;
 use Symfony\Component\HttpFoundation\Response;
 
 class Update extends Controller
 {
-    private InstallRepository $installRepo;
-
-    private SettingRepository $settingsRepo;
-
-    private AppSettingCore $appSettings;
+    private InstallService $installService;
 
     /**
      * init - initialize private variables
      */
-    public function init(
-        InstallRepository $installRepo,
-        SettingRepository $settingsRepo,
-        AppSettingCore $appSettings
-    ) {
-        $this->installRepo = $installRepo;
-        $this->settingsRepo = $settingsRepo;
-        $this->appSettings = $appSettings;
+    public function init(InstallService $installService)
+    {
+        $this->installService = $installService;
     }
 
     /**
@@ -38,8 +27,7 @@ class Update extends Controller
      */
     public function get($params)
     {
-        $dbVersion = $this->settingsRepo->getSetting('db-version');
-        if ($this->appSettings->dbVersion == $dbVersion) {
+        if (! $this->installService->needsUpdate()) {
             return FrontcontrollerCore::redirect(BASE_URL.'/auth/login');
         }
 
@@ -54,8 +42,7 @@ class Update extends Controller
     public function post($params): Response
     {
         if (isset($_POST['updateDB'])) {
-            session()->forget('db-version');
-            $success = $this->installRepo->updateDB();
+            $success = $this->installService->runUpdate();
 
             if (is_array($success) === true) {
                 foreach ($success as $errorMessage) {

@@ -2,7 +2,6 @@
 
 namespace Leantime\Domain\Timesheets\Controllers;
 
-use Carbon\Carbon;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
@@ -21,11 +20,6 @@ class EditTime extends Controller
     private TicketService $ticketService;
 
     private ClientService $clientService;
-
-    /**
-     * The placeholder date returned from the database when no date has been set.
-     */
-    private const EMPTY_DATE = '0000-00-00 00:00:00';
 
     /**
      * Initializes dependencies.
@@ -56,7 +50,7 @@ class EditTime extends Controller
         }
 
         $id = (int) $params['id'];
-        $values = $this->buildValuesFromTimesheet($id);
+        $values = $this->timesheetService->getTimesheetForEdit($id);
 
         if ($values === null) {
             return $this->tpl->displayPartial('errors.error403');
@@ -87,7 +81,7 @@ class EditTime extends Controller
         }
 
         $id = (int) $params['id'];
-        $values = $this->buildValuesFromTimesheet($id);
+        $values = $this->timesheetService->getTimesheetForEdit($id);
 
         if ($values === null) {
             return $this->tpl->displayPartial('errors.error403');
@@ -98,9 +92,15 @@ class EditTime extends Controller
         }
 
         if (isset($_POST['saveForm'])) {
-            $values = $this->applyPostUpdates($values);
-            $values = $this->processInvoiceFields($values);
-            $this->validateAndUpdate($id, $values);
+            $values = $this->timesheetService->applyEditTimePostUpdates($_POST, $values);
+            $values = $this->timesheetService->processEditTimeInvoiceFields($_POST, $values);
+
+            $result = $this->timesheetService->validateAndUpdateTime($id, $values);
+            $values = $result['values'];
+
+            if ($result['notification'] !== null) {
+                $this->tpl->setNotification($result['notification']['message'], $result['notification']['type']);
+            }
         }
 
         $this->tpl->assign('values', $values);
@@ -108,165 +108,6 @@ class EditTime extends Controller
         $this->assignTemplateVars();
 
         return $this->tpl->displayPartial('timesheets.editTime');
-    }
-
-    /**
-     * Builds a values array from a timesheet entry, normalizing empty dates.
-     *
-     * @return array|null Null if the timesheet is not found
-     */
-    private function buildValuesFromTimesheet(int $id): ?array
-    {
-        $timesheet = $this->timesheetService->getTimesheet($id);
-
-        if (! $timesheet) {
-            return null;
-        }
-
-        $timesheet['invoicedEmplDate'] = $timesheet['invoicedEmplDate'] == self::EMPTY_DATE ? 'now' : $timesheet['invoicedEmplDate'];
-        $timesheet['invoicedCompDate'] = $timesheet['invoicedCompDate'] == self::EMPTY_DATE ? 'now' : $timesheet['invoicedCompDate'];
-        $timesheet['paidDate'] = $timesheet['paidDate'] == self::EMPTY_DATE ? 'now' : $timesheet['paidDate'];
-
-        return [
-            'id' => $id,
-            'userId' => $timesheet['userId'],
-            'ticket' => $timesheet['ticketId'],
-            'project' => $timesheet['projectId'],
-            'date' => new Carbon($timesheet['workDate'], 'UTC'),
-            'kind' => $timesheet['kind'],
-            'hours' => $timesheet['hours'],
-            'description' => $timesheet['description'],
-            'invoicedEmpl' => $timesheet['invoicedEmpl'],
-            'invoicedComp' => $timesheet['invoicedComp'],
-            'invoicedEmplDate' => new Carbon($timesheet['invoicedEmplDate'], 'UTC'),
-            'invoicedCompDate' => new Carbon($timesheet['invoicedCompDate'], 'UTC'),
-            'paid' => $timesheet['paid'],
-            'paidDate' => new Carbon($timesheet['paidDate'], 'UTC'),
-        ];
-    }
-
-    /**
-     * Applies basic POST field updates to values.
-     */
-    private function applyPostUpdates(array $values): array
-    {
-        if (! empty($_POST['tickets'])) {
-            $values['project'] = (int) $_POST['projects'];
-            $values['ticket'] = (int) $_POST['tickets'];
-        }
-
-        if (! empty($_POST['kind'])) {
-            $values['kind'] = $_POST['kind'];
-        }
-
-        if (! empty($_POST['date'])) {
-            $values['date'] = dtHelper()->parseUserDateTime($_POST['date'], 'start')->formatDateTimeForDb();
-        }
-
-        if (! empty($_POST['hours'])) {
-            $values['hours'] = (float) $_POST['hours'];
-        }
-
-        if (! empty($_POST['description'])) {
-            $values['description'] = $_POST['description'];
-        }
-
-        return $values;
-    }
-
-    /**
-     * Processes invoice and payment fields (manager-only).
-     */
-    private function processInvoiceFields(array $values): array
-    {
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
-            return $values;
-        }
-
-        if (! empty($_POST['invoicedEmpl'])) {
-            if ($_POST['invoicedEmpl'] == 'on') {
-                $values['invoicedEmpl'] = 1;
-            }
-            $values['invoicedEmplDate'] = ! empty($_POST['invoicedEmplDate'])
-                ? dtHelper()->parseUserDateTime($_POST['invoicedEmplDate'], 'start')->formatDateTimeForDb()
-                : dtHelper()->userNow()->formatDateTimeForDb();
-        } else {
-            $values['invoicedEmpl'] = 0;
-            $values['invoicedEmplDate'] = '';
-        }
-
-        if (! empty($_POST['invoicedComp'])) {
-            if ($_POST['invoicedComp'] == 'on') {
-                $values['invoicedComp'] = 1;
-            }
-            $values['invoicedCompDate'] = ! empty($_POST['invoicedCompDate'])
-                ? dtHelper()->parseUserDateTime($_POST['invoicedCompDate'], 'start')->formatDateTimeForDb()
-                : dtHelper()->userNow()->formatDateTimeForDb();
-        } else {
-            $values['invoicedComp'] = 0;
-            $values['invoicedCompDate'] = '';
-        }
-
-        if (! empty($_POST['paid'])) {
-            if ($_POST['paid'] == 'on') {
-                $values['paid'] = 1;
-            }
-            if (! empty($_POST['paidDate'])) {
-                $date = dtHelper()->parseUserDateTime($_POST['paidDate'], 'start');
-                $date->setTimezone('UTC');
-                $values['paidDate'] = $date->formatDateTimeForDb();
-            } else {
-                $values['paidDate'] = dtHelper()->userNow()->formatDateTimeForDb();
-            }
-        } else {
-            $values['paid'] = 0;
-            $values['paidDate'] = '';
-        }
-
-        return $values;
-    }
-
-    /**
-     * Validates the values and updates the time entry.
-     * On success, reloads values from the database.
-     */
-    private function validateAndUpdate(int $id, array &$values): void
-    {
-        if ($values['ticket'] == '' || $values['project'] == '') {
-            $this->tpl->setNotification('notifications.time_logged_error_no_ticket', 'error');
-
-            return;
-        }
-
-        if ($values['kind'] == '') {
-            $this->tpl->setNotification('notifications.time_logged_error_no_kind', 'error');
-
-            return;
-        }
-
-        if ($values['date'] == '') {
-            $this->tpl->setNotification('notifications.time_logged_error_no_date', 'error');
-
-            return;
-        }
-
-        if ($values['hours'] == '' || $values['hours'] <= 0) {
-            $this->tpl->setNotification('notifications.time_logged_error_no_hours', 'error');
-
-            return;
-        }
-
-        try {
-            $this->timesheetService->updateTime($values);
-            $this->tpl->setNotification('notifications.time_logged_success', 'success');
-        } catch (\Exception $e) {
-            $this->tpl->setNotification('notifications.could_not_store_time', 'error');
-        }
-
-        $refreshed = $this->buildValuesFromTimesheet($id);
-        if ($refreshed !== null) {
-            $values = $refreshed;
-        }
     }
 
     /**

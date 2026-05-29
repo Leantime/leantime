@@ -3,47 +3,27 @@
 namespace Leantime\Domain\Tickets\Controllers;
 
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Clients\Repositories\Clients;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowAllMilestonesOverview extends Controller
 {
-    private ProjectService $projectService;
-
     private TicketService $ticketService;
-
-    private SprintService $sprintService;
-
-    private TimesheetService $timesheetService;
 
     private UserService $userService;
 
     private ClientService $clientService;
 
-    private Clients $clientRepo;
-
     public function init(
-        ProjectService $projectService,
         TicketService $ticketService,
-        SprintService $sprintService,
-        TimesheetService $timesheetService,
         UserService $userService,
-        ClientService $clientService,
-        Clients $clientRepo
+        ClientService $clientService
     ): void {
-        $this->projectService = $projectService;
         $this->ticketService = $ticketService;
-        $this->sprintService = $sprintService;
-        $this->timesheetService = $timesheetService;
         $this->userService = $userService;
         $this->clientService = $clientService;
-        $this->clientRepo = $clientRepo;
 
         session(['lastPage' => CURRENT_URL]);
     }
@@ -57,20 +37,10 @@ class ShowAllMilestonesOverview extends Controller
         $currentClientName = '';
         if (isset($_GET['client']) === true && $_GET['client'] != '') {
             $clientId = (int) $_GET['client'];
-            $currentClient = $this->clientRepo->getClient($clientId);
-            if (is_array($currentClient) && count($currentClient) > 0) {
-                $currentClientName = $currentClient['name'];
-            }
+            $currentClientName = $this->ticketService->getClientNameById($clientId);
         }
 
-        $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
-
-        // Default to not_done tickets to reduce load and make the table easier to read.
-        // User can recover by choosing status in the filter box
-        // We only want this on the table view
-        if ($searchCriteria['status'] == '') {
-            $searchCriteria['status'] = 'not_done';
-        }
+        $searchCriteria = $this->ticketService->getMilestonesOverviewSearchCriteria($params);
 
         $this->tpl->assign('allTickets', $this->ticketService->getAllMilestonesOverview(false, 'duedate', false, $clientId, $searchCriteria));
         $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());

@@ -9,7 +9,6 @@ use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Users\Services\Users;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 
 class EditUser extends Controller
@@ -58,7 +57,7 @@ class EditUser extends Controller
         }
 
         $values = $this->buildValuesFromUser($row);
-        $projectrelation = $this->getUserProjectIds($id);
+        $projectrelation = $this->userService->getUserProjectIds($id);
 
         $this->generateFormTokens();
 
@@ -98,17 +97,16 @@ class EditUser extends Controller
                 $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
             } else {
                 $values = $this->buildValuesFromPost($row);
-                $edit = $this->validateUserUpdate($values, $row, $id);
+                $edit = $this->handleValidation($values, $row, $id);
             }
         }
 
         if ($edit) {
-            $this->userService->editUser($values, $id);
-            $this->updateProjectRelations($id);
+            $this->userService->updateUser($values, $id, $_POST['projects'] ?? null);
             $this->tpl->setNotification($this->language->__('notifications.user_edited'), 'success');
         }
 
-        $projectrelation = $this->getUserProjectIds($id);
+        $projectrelation = $this->userService->getUserProjectIds($id);
 
         $this->generateFormTokens();
 
@@ -125,30 +123,40 @@ class EditUser extends Controller
      */
     private function handleResendInvite(int $id, array $row): Response
     {
-        $values = $this->buildValuesFromUser($row);
+        $result = $this->userService->resendUserInvite($id, $row);
 
-        if (session()->exists('lastInvite.'.$id) && session('lastInvite.'.$id) >= time() - 240) {
+        if ($result === 'too_soon') {
             $this->tpl->setNotification($this->language->__('notification.invite_too_soon'), 'error');
-
-            return Frontcontroller::redirect(BASE_URL.'/users/editUser/'.$id);
+        } else {
+            $this->tpl->setNotification($this->language->__('notification.invitation_sent'), 'success', 'userinvitation_sent');
         }
-
-        session(['lastInvite.'.$id => time()]);
-
-        if (empty($values['pwReset'])) {
-            $inviteCode = Uuid::uuid4()->toString();
-            $this->userService->patchUser($id, ['pwReset' => $inviteCode]);
-            $values['pwReset'] = $inviteCode;
-        }
-
-        $this->userService->sendUserInvite(
-            inviteCode: $values['pwReset'],
-            user: $values['user']
-        );
-
-        $this->tpl->setNotification($this->language->__('notification.invitation_sent'), 'success', 'userinvitation_sent');
 
         return Frontcontroller::redirect(BASE_URL.'/users/editUser/'.$id);
+    }
+
+    /**
+     * Validates a user update and sets the matching notification on failure.
+     *
+     * @return bool True if the update should proceed.
+     */
+    private function handleValidation(array $values, array $row, int $id): bool
+    {
+        $result = $this->userService->validateUserUpdate($values, $row, $id, $_POST);
+
+        if ($result === 'valid') {
+            return true;
+        }
+
+        $messages = [
+            'passwords_dont_match' => 'notification.passwords_dont_match',
+            'enter_email' => 'notification.enter_email',
+            'no_valid_email' => 'notification.no_valid_email',
+            'user_exists' => 'notification.user_exists',
+        ];
+
+        $this->tpl->setNotification($this->language->__($messages[$result]), 'error');
+
+        return false;
     }
 
     /**
@@ -197,71 +205,6 @@ class EditUser extends Controller
             'jobLevel' => $_POST['jobLevel'] ?? $row['jobLevel'],
             'department' => $_POST['department'] ?? $row['department'],
         ];
-    }
-
-    /**
-     * Validates user update data. Returns true if the update should proceed.
-     */
-    private function validateUserUpdate(array $values, array $row, int $id): bool
-    {
-        if ($values['user'] === '') {
-            $this->tpl->setNotification($this->language->__('notification.passwords_dont_match'), 'error');
-
-            return false;
-        }
-
-        if (isset($_POST['password']) && $_POST['password'] != $_POST['password2']) {
-            $this->tpl->setNotification($this->language->__('notification.enter_email'), 'error');
-
-            return false;
-        }
-
-        if (! filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
-            $this->tpl->setNotification($this->language->__('notification.no_valid_email'), 'error');
-
-            return false;
-        }
-
-        if ($row['username'] != $values['user'] && $this->userService->usernameExist($row['username'], $id)) {
-            $this->tpl->setNotification($this->language->__('notification.user_exists'), 'error');
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Updates project relations for a user based on POST data.
-     */
-    private function updateProjectRelations(int $userId): void
-    {
-        if (isset($_POST['projects'])) {
-            if ($_POST['projects'][0] !== '0') {
-                $this->projectService->editUserProjectRelations($userId, $_POST['projects']);
-            } else {
-                $this->projectService->deleteAllUserProjectRelations($userId);
-            }
-        } else {
-            $this->projectService->deleteAllUserProjectRelations($userId);
-        }
-    }
-
-    /**
-     * Gets project IDs assigned to a user.
-     *
-     * @return int[]
-     */
-    private function getUserProjectIds(int $userId): array
-    {
-        $projects = $this->projectService->getUserProjectRelation($userId);
-        $projectrelation = [];
-
-        foreach ($projects as $projectId) {
-            $projectrelation[] = $projectId['projectId'];
-        }
-
-        return $projectrelation;
     }
 
     /**

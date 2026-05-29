@@ -4,10 +4,8 @@ namespace Leantime\Domain\Ideas\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Mailer as MailerCore;
-use Leantime\Domain\Ideas\Repositories\Ideas;
+use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class BoardDialog extends Controller
@@ -19,15 +17,15 @@ class BoardDialog extends Controller
 
     private ProjectService $projectService;
 
-    private object $canvasRepo;
+    private IdeaService $ideaService;
 
     /**
      * Initializes dependencies.
      */
-    public function init(ProjectService $projectService): void
+    public function init(ProjectService $projectService, IdeaService $ideaService): void
     {
         $this->projectService = $projectService;
-        $this->canvasRepo = app()->make(Ideas::class);
+        $this->ideaService = $ideaService;
     }
 
     /**
@@ -42,8 +40,7 @@ class BoardDialog extends Controller
 
         if (isset($params['id'])) {
             $currentCanvasId = (int) $params['id'];
-            $singleCanvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
-            $canvasTitle = $singleCanvas[0]['title'] ?? '';
+            $canvasTitle = $this->ideaService->getBoardTitle($currentCanvasId);
             session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $currentCanvasId]);
         }
 
@@ -71,8 +68,7 @@ class BoardDialog extends Controller
 
         if (isset($params['id'])) {
             $currentCanvasId = (int) $params['id'];
-            $singleCanvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
-            $canvasTitle = $singleCanvas[0]['title'] ?? '';
+            $canvasTitle = $this->ideaService->getBoardTitle($currentCanvasId);
             session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $currentCanvasId]);
         }
 
@@ -113,14 +109,11 @@ class BoardDialog extends Controller
             return null;
         }
 
-        $values = [
-            'title' => $_POST['canvastitle'],
-            'author' => session('userdata.id'),
-            'projectId' => session('currentProject'),
-        ];
-        $currentCanvasId = $this->canvasRepo->addCanvas($values);
-
-        $this->notifyBoardCreated($values['title']);
+        $currentCanvasId = $this->ideaService->createBoardFromDialog(
+            $_POST['canvastitle'],
+            (int) session('currentProject'),
+            (int) session('userdata.id')
+        );
 
         $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME.'board_created');
         session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $currentCanvasId]);
@@ -139,36 +132,10 @@ class BoardDialog extends Controller
             return null;
         }
 
-        $values = ['title' => $_POST['canvastitle'], 'id' => $currentCanvasId];
-        $this->canvasRepo->updateCanvas($values);
+        $this->ideaService->updateBoard($currentCanvasId, $_POST['canvastitle']);
 
         $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
 
-        return Frontcontroller::redirect(BASE_URL.'/ideas/boardDialog/'.$values['id']);
-    }
-
-    /**
-     * Sends board creation notifications to project users.
-     */
-    private function notifyBoardCreated(string $title): void
-    {
-        $mailer = app()->make(MailerCore::class);
-        $users = $this->projectService->getUsersToNotify(session('currentProject'));
-
-        $mailer->setSubject($this->language->__('notification.board_created'));
-        $message = sprintf(
-            $this->language->__('email_notifications.canvas_created_message'),
-            session('userdata.name'),
-            "<a href='".CURRENT_URL."'>".strip_tags($title).'</a>'
-        );
-        $mailer->setHtml($message);
-
-        $queue = app()->make(QueueRepository::class);
-        $queue->queueMessageToUsers(
-            $users,
-            $message,
-            $this->language->__('notification.board_created'),
-            session('currentProject')
-        );
+        return Frontcontroller::redirect(BASE_URL.'/ideas/boardDialog/'.$currentCanvasId);
     }
 }

@@ -6,19 +6,19 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
+use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Symfony\Component\HttpFoundation\Response;
 
 class DelSprint extends Controller
 {
-    private SprintRepository $sprintRepo;
+    private SprintService $sprintService;
 
     /**
      * Initializes dependencies.
      */
-    public function init(SprintRepository $sprintRepo): void
+    public function init(SprintService $sprintService): void
     {
-        $this->sprintRepo = $sprintRepo;
+        $this->sprintService = $sprintService;
     }
 
     /**
@@ -56,11 +56,9 @@ class DelSprint extends Controller
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
 
         if (isset($_POST['del']) && $id > 0) {
-            $this->sprintRepo->delSprint($id);
+            $this->sprintService->deleteSprint($id);
 
             $this->tpl->setNotification($this->language->__('notifications.sprint_deleted_successfully'), 'success');
-
-            session(['currentSprint' => '']);
 
             if (session()->exists('lastPage')) {
                 return Frontcontroller::redirect(session('lastPage'));

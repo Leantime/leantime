@@ -5,7 +5,6 @@ namespace Leantime\Domain\Widgets\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Widgets\Services\Widgets;
 use Symfony\Component\HttpFoundation;
 
@@ -17,11 +16,6 @@ use Symfony\Component\HttpFoundation;
 class WidgetManager extends Controller
 {
     /**
-     * @var SettingRepository
-     */
-    private Setting $settingRepo;
-
-    /**
      * @var WidgetService
      */
     private Widgets $widgetService;
@@ -29,13 +23,11 @@ class WidgetManager extends Controller
     /**
      * Initializes the object.
      *
-     * @param  Setting  $settingRepo  The setting repository object.
      * @param  Widgets  $widgetService  The widget service object.
      * @return void
      */
-    public function init(Setting $settingRepo, Widgets $widgetService)
+    public function init(Widgets $widgetService)
     {
-        $this->settingRepo = $settingRepo;
         $this->widgetService = $widgetService;
 
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
@@ -64,7 +56,7 @@ class WidgetManager extends Controller
      * Posts data and returns an HTTP response.
      *
      * @param  array  $params  An array of parameters.
-     * @return HttpFoundation\Response|null The HTTP response, or null if the parameters are invalid.
+     * @return HttpFoundation\Response The HTTP response.
      */
     public function post(array $params): HttpFoundation\Response
     {
@@ -72,17 +64,11 @@ class WidgetManager extends Controller
             switch ($params['action']) {
                 case 'saveGrid':
                     if (isset($params['data']) && $params['data'] != '') {
-
-                        $this->widgetService->saveGrid($params['data'], session('userdata.id'));
-
-                        if (isset($params['visibilityData']) && $params['visibilityData'] !== null) {
-                            if ($params['visibilityData']['visible']) {
-                                $this->widgetService->markWidgetAsSeen(
-                                    session('userdata.id'),
-                                    $params['visibilityData']['widgetId']
-                                );
-                            }
-                        }
+                        $this->widgetService->saveGridForUser(
+                            $params['data'],
+                            session('userdata.id'),
+                            $params['visibilityData'] ?? null
+                        );
                     }
                     break;
             }

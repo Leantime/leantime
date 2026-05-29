@@ -6,7 +6,7 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -14,14 +14,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RemoveUser extends Controller
 {
-    private UserRepository $userRepo;
+    private ClientService $clientService;
 
     /**
      * Initializes dependencies.
      */
-    public function init(UserRepository $userRepo): void
+    public function init(ClientService $clientService): void
     {
-        $this->userRepo = $userRepo;
+        $this->clientService = $clientService;
     }
 
     /**
@@ -62,7 +62,7 @@ class RemoveUser extends Controller
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
 
-        if ($this->userRepo->removeFromClient($userId)) {
+        if ($this->clientService->removeUser($clientId, $userId)) {
             $this->tpl->setNotification(
                 $this->language->__('notification.user_removed_from_client'),
                 'success'

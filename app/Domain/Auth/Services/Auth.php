@@ -428,7 +428,7 @@ class Auth implements Authenticatable
     public function generateLinkAndSendEmail(string $username): bool
     {
 
-        $userFromDB = $this->userRepo->getUserByEmail($_POST['username']);
+        $userFromDB = $this->userRepo->getUserByEmail($username);
 
         if ($userFromDB !== false && count($userFromDB) > 0) {
             if ($userFromDB['pwResetCount'] < $this->pwResetLimit) {
@@ -461,6 +461,124 @@ class Auth implements Authenticatable
     public function changePw(string $password, string $hash): bool
     {
         return $this->authRepo->changePW($password, $hash);
+    }
+
+    /**
+     * checkPasswordStrength - validates that a password meets the minimum strength requirements.
+     *
+     * Password must be at least 8 characters and include an upper case letter,
+     * a lower case letter, a number and a special character.
+     *
+     * @param  string  $password  the password to validate
+     * @return bool returns true if the password is strong enough, false otherwise
+     */
+    public function checkPasswordStrength(string $password): bool
+    {
+        $uppercase = preg_match('@[A-Z]@', $password);
+        $lowercase = preg_match('@[a-z]@', $password);
+        $number = preg_match('@[0-9]@', $password);
+        $specialChars = preg_match('@[^\w]@', $password);
+
+        if (! $uppercase || ! $lowercase || ! $number || ! $specialChars || strlen($password) < 8) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * resetPassword - validates and applies a password reset for a given reset link.
+     *
+     * Performs the password match check, strength check and persists the new
+     * password. Returns a status string the caller can map to a notification:
+     * 'success', 'mismatch', 'weak' or 'error'.
+     *
+     * @param  string  $password  the new password
+     * @param  string  $passwordConfirm  the password confirmation
+     * @param  string  $hash  the password reset link hash
+     * @return string one of 'success', 'mismatch', 'weak', 'error'
+     *
+     * @api
+     */
+    public function resetPassword(string $password, string $passwordConfirm, string $hash): string
+    {
+        if (strlen($password) === 0 || $password !== $passwordConfirm) {
+            return 'mismatch';
+        }
+
+        if (! $this->checkPasswordStrength($password)) {
+            return 'weak';
+        }
+
+        if ($this->changePw($password, $hash)) {
+            return 'success';
+        }
+
+        return 'error';
+    }
+
+    /**
+     * resolveSafeRedirect - resolves a user supplied redirect target into a safe,
+     * application-internal absolute URL, guarding against open redirects.
+     *
+     * @param  string|null  $redirect  the raw redirect target (typically from the request)
+     * @return string an absolute URL that is safe to redirect to
+     *
+     * @api
+     */
+    public function resolveSafeRedirect(?string $redirect): string
+    {
+        $redirectUrl = BASE_URL.'/dashboard/home';
+
+        if ($redirect !== null && trim($redirect) !== '' && trim($redirect) !== '/') {
+            $url = urldecode($redirect);
+
+            // Check for open redirects, don't allow redirects to external sites.
+            if (
+                filter_var($url, FILTER_VALIDATE_URL) === false &&
+                ! in_array($url, ['/auth/logout'])
+            ) {
+                $redirectUrl = BASE_URL.'/'.$url;
+            }
+        }
+
+        return $redirectUrl;
+    }
+
+    /**
+     * shouldHideLoginForm - determines whether the default login form should be hidden,
+     * combining the admin setting with the configured disableLoginForm flag.
+     *
+     * @return bool returns true if the default login form should be hidden
+     *
+     * @api
+     */
+    public function shouldHideLoginForm(): bool
+    {
+        $hideLogin = $this->settingsRepo->getSetting('auth.hideDefaultLogin');
+
+        if (! empty($hideLogin) && $hideLogin == 'on') {
+            return true;
+        }
+
+        return (bool) $this->config->disableLoginForm;
+    }
+
+    /**
+     * getLoginInputPlaceholder - returns the translation key for the login input placeholder
+     * depending on whether LDAP authentication is enabled.
+     *
+     * @return string the placeholder translation key
+     *
+     * @api
+     */
+    public function getLoginInputPlaceholder(): string
+    {
+        if ($this->config->useLdap) {
+            return 'input.placeholders.enter_email_or_username';
+        }
+
+        return 'input.placeholders.enter_email';
     }
 
     /**

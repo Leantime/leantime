@@ -10,8 +10,6 @@ class ExternalCal extends Controller
 {
     private CalendarService $calendarService;
 
-    private int $cacheTime = 60 * 30; // 30min
-
     /**
      * Initializes dependencies.
      */
@@ -27,29 +25,10 @@ class ExternalCal extends Controller
      */
     public function get(array $params): Response
     {
-        $calId = $params['id'] ?? '';
-
-        if (! session()->exists('calendarCache')) {
-            session(['calendarCache' => []]);
-        }
-
-        $content = '';
-        if (session()->exists('calendarCache.'.$calId) && session()->exists('calendarCache.'.$calId.'.lastUpdate') && session('calendarCache.'.$calId.'.lastUpdate') > time() - $this->cacheTime) {
-            $content = session('calendarCache.'.$calId.'.content');
-        } else {
-            $cal = $this->calendarService->getExternalCalendar((int) $calId, session('userdata.id'));
-
-            if (isset($cal['url'])) {
-                try {
-                    // Use the service's loadIcalUrl which includes SSRF protection
-                    $content = $this->calendarService->loadIcalUrl($cal['url']);
-                    session(['calendarCache.'.$calId.'.lastUpdate' => time()]);
-                    session(['calendarCache.'.$calId.'.content' => $content]);
-                } catch (\Exception $e) {
-                    $content = '';
-                }
-            }
-        }
+        $content = $this->calendarService->getCachedExternalCalendarContent(
+            (int) ($params['id'] ?? 0),
+            (int) session('userdata.id')
+        );
 
         return new Response($content, 200, [
             'Content-Type' => 'text/calendar; charset=utf-8',

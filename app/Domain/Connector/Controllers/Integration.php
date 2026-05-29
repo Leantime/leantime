@@ -7,7 +7,6 @@ use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
-use Leantime\Domain\Connector\Repositories\LeantimeEntities;
 use Leantime\Domain\Connector\Services\Connector;
 use Leantime\Domain\Connector\Services\Integrations as IntegrationService;
 use Leantime\Domain\Connector\Services\Providers;
@@ -19,12 +18,6 @@ class Integration extends Controller
 
     private IntegrationService $integrationService;
 
-    private LeantimeEntities $leantimeEntities;
-
-    private array $values = [];
-
-    private array $fields = [];
-
     private Connector $connectorService;
 
     /**
@@ -33,13 +26,11 @@ class Integration extends Controller
     public function init(
         Providers $providerService,
         IntegrationService $integrationService,
-        LeantimeEntities $leantimeEntities,
         Connector $connectorService
     ): void {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
         $this->providerService = $providerService;
-        $this->leantimeEntities = $leantimeEntities;
         $this->integrationService = $integrationService;
         $this->connectorService = $connectorService;
     }
@@ -51,7 +42,7 @@ class Integration extends Controller
      */
     public function get(array $params): Response
     {
-        return $this->handleIntegration();
+        return $this->handleIntegration($params);
     }
 
     /**
@@ -61,16 +52,16 @@ class Integration extends Controller
      */
     public function post(array $params): Response
     {
-        return $this->handleIntegration();
+        return $this->handleIntegration($params);
     }
 
     /**
-     * Handles the multi-step integration wizard.
+     * Routes the request to the correct integration wizard step.
+     *
+     * @param  array  $params  Request parameters
      */
-    private function handleIntegration(): Response
+    private function handleIntegration(array $params): Response
     {
-        $params = $_REQUEST;
-
         if (! session()->exists('currentImportEntity')) {
             session(['currentImportEntity' => '']);
         }
@@ -96,20 +87,20 @@ class Integration extends Controller
         if ($params['step'] == 'connect') {
             $connection = $provider->connect();
 
-            if ($connection instanceof \Symfony\Component\HttpFoundation\Response) {
+            if ($connection instanceof Response) {
                 return $connection;
             }
         }
 
         if ($params['step'] == 'entity') {
             $this->tpl->assign('providerEntities', $provider->getEntities());
-            $this->tpl->assign('leantimeEntities', $this->leantimeEntities->availableLeantimeEntities);
+            $this->tpl->assign('leantimeEntities', $this->integrationService->getAvailableEntities());
 
             return $this->tpl->display('connector.integrationEntity');
         }
 
         if ($params['step'] == 'fields') {
-            return $this->handleFieldsStep($params, $provider, $currentIntegration);
+            return $this->handleFieldsStep($this->incomingRequest->request->all(), $provider, $currentIntegration);
         }
 
         if ($params['step'] == 'sync') {
@@ -117,7 +108,7 @@ class Integration extends Controller
         }
 
         if ($params['step'] == 'parse') {
-            return $this->handleParseStep($provider);
+            return $this->handleParseStep($this->incomingRequest->request->all(), $provider);
         }
 
         if ($params['step'] == 'import') {
@@ -129,52 +120,42 @@ class Integration extends Controller
 
     /**
      * Handles the fields mapping step.
+     *
+     * @param  array  $params  POST request parameters
+     * @param  object  $provider  Provider instance
+     * @param  IntegrationModel  $currentIntegration  Integration being configured
      */
     private function handleFieldsStep(array $params, object $provider, IntegrationModel $currentIntegration): Response
     {
-        if (isset($_POST['leantimeEntities'])) {
-            $entity = $_POST['leantimeEntities'];
-            session(['currentImportEntity' => $entity]);
-        } elseif (session()->exists('currentImportEntity') && session('currentImportEntity') != '') {
-            $entity = session('currentImportEntity');
-        } else {
+        $entity = $this->integrationService->resolveImportEntity($params, $currentIntegration);
+
+        if ($entity === null) {
             $this->tpl->setNotification('Entity not set', 'error');
 
             return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id.'');
         }
 
-        $currentIntegration->entity = $entity;
-
-        $flags = $this->connectorService->getEntityFlags($entity);
-
-        $this->integrationService->patch($currentIntegration->id, ['entity' => $entity]);
-
-        if (isset($currentIntegration->fields) && $currentIntegration->fields != '') {
-            $this->tpl->assign('providerFields', explode(',', $currentIntegration->fields));
-        } else {
-            $this->tpl->assign('providerFields', $provider->getFields());
-        }
-        $this->tpl->assign('flags', $flags);
-        $this->tpl->assign('leantimeFields', $this->leantimeEntities->availableLeantimeEntities[$entity]['fields']);
+        $this->tpl->assign('providerFields', $this->integrationService->resolveProviderFields($currentIntegration, $provider));
+        $this->tpl->assign('flags', $this->connectorService->getEntityFlags($entity));
+        $this->tpl->assign('leantimeFields', $this->integrationService->getEntityFields($entity));
 
         return $this->tpl->display('connector.integrationFields');
     }
 
     /**
      * Handles the import review/parse step.
+     *
+     * @param  array  $params  POST request parameters
+     * @param  object  $provider  Provider instance
      */
-    private function handleParseStep(object $provider): Response
+    private function handleParseStep(array $params, object $provider): Response
     {
-        $this->values = $provider->geValues();
+        $values = $provider->geValues();
+        $fields = $this->connectorService->getFieldMappings($params);
+        $flags = $this->connectorService->parseValues($fields, $values, session('currentImportEntity'));
 
-        $this->fields = [];
-        $this->fields = $this->connectorService->getFieldMappings($_POST);
-
-        $flags = [];
-        $flags = $this->connectorService->parseValues($this->fields, $this->values, session('currentImportEntity'));
-
-        $this->tpl->assign('values', $this->values);
-        $this->tpl->assign('fields', $this->fields);
+        $this->tpl->assign('values', $values);
+        $this->tpl->assign('fields', $fields);
         $this->tpl->assign('flags', $flags);
 
         return $this->tpl->display('connector.integrationImport');
@@ -185,10 +166,9 @@ class Integration extends Controller
      */
     private function handleImportStep(): Response
     {
-        $values = safe_unserialize(session('serValues'), []);
-        $fields = safe_unserialize(session('serFields'), []);
+        $payload = $this->integrationService->getCachedImportPayload();
 
-        $result = $this->connectorService->importValues($fields, $values, session('currentImportEntity'));
+        $result = $this->connectorService->importValues($payload['fields'], $payload['values'], session('currentImportEntity'));
 
         if ($result !== true) {
             $this->tpl->setNotification('There was a problem with the import '.$result, 'error');

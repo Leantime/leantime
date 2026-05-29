@@ -5,23 +5,23 @@ namespace Leantime\Domain\Install\Controllers;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
-use Leantime\Domain\Install\Repositories\Install as InstallRepository;
+use Leantime\Domain\Install\Services\Install as InstallService;
 use Symfony\Component\HttpFoundation\Response;
 
 class Index extends Controller
 {
-    private InstallRepository $installRepo;
+    private InstallService $installService;
 
     /**
      * init - initialize private variables
      *
      * @throws HttpResponseException
      */
-    public function init(InstallRepository $installRepo)
+    public function init(InstallService $installService)
     {
-        $this->installRepo = $installRepo;
+        $this->installService = $installService;
 
-        if ($this->installRepo->checkIfInstalled()) {
+        if ($this->installService->isInstalled()) {
             return FrontcontrollerCore::redirect(BASE_URL.'/');
         }
     }
@@ -36,15 +36,13 @@ class Index extends Controller
         return $this->tpl->display('install.new', 'entry');
     }
 
+    /**
+     * post - process the installation form submission
+     *
+     * @param  array  $params  parameters or body of the request
+     */
     public function post($params): Response
     {
-        $values = [
-            'email' => '',
-            'password' => '',
-            'firstname' => '',
-            'lastname' => '',
-        ];
-
         if (isset($_POST['install'])) {
             $values = [
                 'email' => ($params['email']),
@@ -53,41 +51,22 @@ class Index extends Controller
                 'company' => ($params['company']),
             ];
 
-            $notificationSet = false; // Track whether a notification has been set
+            try {
+                $this->installService->validateInstallInput($values);
+            } catch (\InvalidArgumentException $e) {
+                $this->tpl->setNotification($e->getMessage(), 'error');
 
-            if (empty($params['email'])) {
-                $this->tpl->setNotification('notification.enter_email', 'error');
-                $notificationSet = true;
+                return FrontcontrollerCore::redirect(BASE_URL.'/install');
             }
 
-            if (empty($params['firstname']) && ! $notificationSet) {
-                $this->tpl->setNotification('notification.enter_firstname', 'error');
-                $notificationSet = true;
-            }
+            if ($this->installService->runInstall($values)) {
+                $this->tpl->setNotification(sprintf($this->language->__('notifications.installation_success_setup_account'), BASE_URL), 'success');
 
-            if (empty($params['lastname']) && ! $notificationSet) {
-                $this->tpl->setNotification('notification.enter_lastname', 'error');
-                $notificationSet = true;
-            }
-
-            if (empty($params['company']) && ! $notificationSet) {
-                $this->tpl->setNotification('notification.enter_company', 'error');
-                $notificationSet = true;
-            }
-
-            if (! $notificationSet) {
-                // No notifications were set, all fields are valid
-                if ($this->installRepo->setupDB($values)) {
-
-                    $this->tpl->setNotification(sprintf($this->language->__('notifications.installation_success_setup_account'), BASE_URL), 'success');
-
-                    if (session()->has('pwReset')) {
-                        return FrontcontrollerCore::redirect(BASE_URL.'/auth/userInvite/'.session('pwReset'));
-                    }
-
-                } else {
-                    $this->tpl->setNotification($this->language->__('notification.error_installing'), 'error');
+                if (session()->has('pwReset')) {
+                    return FrontcontrollerCore::redirect(BASE_URL.'/auth/userInvite/'.session('pwReset'));
                 }
+            } else {
+                $this->tpl->setNotification($this->language->__('notification.error_installing'), 'error');
             }
         }
 

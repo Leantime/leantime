@@ -531,6 +531,74 @@ class Plugins
     }
 
     /**
+     * Builds a MarketplacePlugin from raw request properties.
+     *
+     * Request data arrives with every field encoded as a string. Any field whose
+     * value is a valid JSON string (arrays/objects) is decoded back into its native
+     * structure before being assigned to the model. The 'version' field is treated
+     * separately by the caller and is therefore expected to already be removed.
+     *
+     * @param  array<string, mixed>  $pluginProps  Raw plugin properties from the request (without 'version').
+     * @return MarketplacePlugin The hydrated plugin model.
+     *
+     * @api
+     */
+    public function buildMarketplacePluginFromRequest(array $pluginProps): MarketplacePlugin
+    {
+        $builder = build(new MarketplacePlugin);
+
+        foreach ($pluginProps as $key => $value) {
+            if (is_string($value)) {
+                $newValue = json_decode(json: $value, flags: JSON_OBJECT_AS_ARRAY);
+
+                if (json_last_error() === JSON_ERROR_NONE && $newValue !== null) {
+                    $value = $newValue;
+                }
+            }
+
+            $builder->set($key, $value);
+        }
+
+        return $builder->get();
+    }
+
+    /**
+     * Determines whether a marketplace plugin belongs to the "bundles" category.
+     *
+     * @param  MarketplacePlugin  $plugin  The plugin to inspect.
+     * @return bool True if the plugin is part of the bundles category.
+     *
+     * @api
+     */
+    public function isBundle(MarketplacePlugin $plugin): bool
+    {
+        return collect($plugin->categories)->where('slug', '=', 'bundles')->count() > 0;
+    }
+
+    /**
+     * Parses a marketplace download/install RequestException into a clean,
+     * user-facing error message.
+     *
+     * The marketplace responds with status-code prefixes (e.g.
+     * "HTTP request returned status code 500:") wrapped around a JSON body. This
+     * strips those prefixes, decodes the JSON and returns the most specific
+     * message available, falling back to a generic installation error.
+     *
+     * @param  RequestException  $exception  The exception thrown while installing.
+     * @return string A clean error message safe to show to the user.
+     *
+     * @api
+     */
+    public function parseMarketplaceError(RequestException $exception): string
+    {
+        $errorJson = str_replace('HTTP request returned status code 500:', '', $exception->getMessage());
+        $errorJson = str_replace('HTTP request returned status code 200:', '', $errorJson);
+        $errors = json_decode(trim($errorJson));
+
+        return $errors->error ?? $errors->message ?? 'There was an error installing the plugin';
+    }
+
+    /**
      * Retrieves a marketplace plugin's details by its identifier.
      *
      * @param  string  $identifier  The unique identifier of the marketplace plugin.
@@ -803,6 +871,61 @@ class Plugins
         }
 
         return true;
+    }
+
+    /**
+     * Runs a single plugin lifecycle action (install, enable, disable, remove) and
+     * returns the notification descriptor describing the outcome.
+     *
+     * The returned array is a [messageKey, type] pair where messageKey is a language
+     * key and type is the notification severity ('success' or 'error'). This keeps the
+     * dynamic dispatch and notification-key assembly out of the controller.
+     *
+     * @param  string  $action  One of: install, enable, disable, remove.
+     * @param  mixed  $id  The plugin identifier (folder name for install, numeric id otherwise).
+     * @return array{0: string, 1: string} A [messageKey, type] notification descriptor.
+     *
+     * @throws \InvalidArgumentException If the action is not a supported lifecycle action.
+     * @throws BindingResolutionException
+     *
+     * @api
+     */
+    public function performPluginAction(string $action, mixed $id): array
+    {
+        $allowedActions = ['install', 'enable', 'disable', 'remove'];
+
+        if (! in_array($action, $allowedActions, true)) {
+            throw new \InvalidArgumentException("Unsupported plugin action: {$action}");
+        }
+
+        $succeeded = $this->{"{$action}Plugin"}($id);
+
+        return $succeeded
+            ? ["notification.plugin_{$action}_success", 'success']
+            : ["notification.plugin_{$action}_error", 'error'];
+    }
+
+    /**
+     * Aggregates the CSS contributed by enabled plugins into a single payload.
+     *
+     * Runs the 'pluginCss' filter to collect the list of plugin CSS files, keeps only
+     * the files that actually exist under APP_ROOT/plugins, reads their contents and
+     * concatenates them into one string.
+     *
+     * @return string The combined CSS contents of all registered, existing plugin files.
+     *
+     * @api
+     */
+    public function getAggregatedPluginCss(): string
+    {
+        $cssFiles = self::dispatch_filter('pluginCss', []);
+
+        $cssStrs = collect($cssFiles)
+            ->filter(fn ($file) => file_exists(APP_ROOT."/plugins/$file"))
+            ->map(fn ($file) => file_get_contents(APP_ROOT."/plugins/$file"))
+            ->all();
+
+        return implode('', $cssStrs);
     }
 
     /**

@@ -25,31 +25,24 @@ class Myapps extends Controller
      */
     public function get(): Response
     {
-        foreach (['install', 'enable', 'disable', 'remove'] as $varName) {
-            if (empty($_GET[$varName])) {
+        foreach (['install', 'enable', 'disable', 'remove'] as $action) {
+            $id = $this->incomingRequest->query->get($action);
+
+            if (empty($id)) {
                 continue;
             }
 
             try {
-                $notification = $this->pluginService->{"{$varName}Plugin"}($_GET[$varName])
-                    ? ["notification.plugin_{$varName}_success", 'success']
-                    : ["notification.plugin_{$varName}_error", 'error'];
-
-                $this->tpl->setNotification(...$notification);
-
-                return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
+                $this->tpl->setNotification(...$this->pluginService->performPluginAction($action, $id));
             } catch (\Exception $e) {
                 $this->tpl->setNotification($e->getMessage(), 'error');
-
-                return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
             }
+
+            return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
         }
 
-        $newPlugins = $this->pluginService->discoverNewPlugins();
-        $installedPlugins = $this->pluginService->getAllPlugins();
-
-        $this->tpl->assign('newPlugins', $newPlugins);
-        $this->tpl->assign('installedPlugins', $installedPlugins);
+        $this->tpl->assign('newPlugins', $this->pluginService->discoverNewPlugins());
+        $this->tpl->assign('installedPlugins', $this->pluginService->getAllPlugins());
 
         return $this->tpl->display('plugins.myapps');
     }
