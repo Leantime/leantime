@@ -59,7 +59,9 @@ class HttpKernel extends Kernel
         \Leantime\Core\Middleware\InitialHeaders::class,
         // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
 
-        \Leantime\Core\Middleware\VerifyCsrfToken::class,
+        // CSRF verification is NOT yet global — ~82 legacy .tpl.php forms lack @csrf tokens.
+        // Enable globally only after all forms are tokenized. Until then, apply per-route.
+        // \Leantime\Core\Middleware\VerifyCsrfToken::class,
 
         \Leantime\Core\Middleware\AuthCheck::class,
         \Leantime\Core\Middleware\AuthenticateSession::class,
