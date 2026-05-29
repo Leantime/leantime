@@ -8,21 +8,12 @@ use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
-use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class NewProject extends Controller
 {
-    private MenuRepository $menuRepo;
-
-    private UserRepository $userRepo;
-
     private ClientService $clientService;
-
-    private QueueRepository $queueRepo;
 
     private ProjectService $projectService;
 
@@ -30,16 +21,10 @@ class NewProject extends Controller
      * Initializes dependencies.
      */
     public function init(
-        MenuRepository $menuRepo,
-        UserRepository $userRepo,
         ClientService $clientService,
-        QueueRepository $queueRepo,
         ProjectService $projectService
     ): void {
-        $this->menuRepo = $menuRepo;
-        $this->userRepo = $userRepo;
         $this->clientService = $clientService;
-        $this->queueRepo = $queueRepo;
         $this->projectService = $projectService;
     }
 
@@ -56,26 +41,11 @@ class NewProject extends Controller
             session(['lastPage' => BASE_URL.'/projects/showAll']);
         }
 
-        $values = [
-            'id' => '',
-            'name' => '',
-            'details' => '',
-            'clientId' => '',
-            'hourBudget' => '',
-            'assignedUsers' => [session('userdata.id')],
-            'dollarBudget' => '',
-            'state' => '',
-            'menuType' => MenuRepository::DEFAULT_MENU,
-            'type' => 'project',
-            'parent' => $_GET['parent'] ?? '',
-            'psettings' => '',
-            'start' => '',
-            'end' => '',
-        ];
+        $values = $this->projectService->getNewProjectDefaults($_GET['parent'] ?? '');
 
-        $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
+        $this->tpl->assign('menuTypes', $this->projectService->getMenuTypes());
         $this->tpl->assign('project', $values);
-        $this->tpl->assign('availableUsers', $this->userRepo->getAll());
+        $this->tpl->assign('availableUsers', $this->projectService->getAllUsers());
         $this->tpl->assign('clients', $this->clientService->getAll());
         $this->tpl->assign('projectTypes', $this->projectService->getProjectTypes());
         $this->tpl->assign('info', '');
@@ -128,30 +98,7 @@ class NewProject extends Controller
             $id = $this->projectService->addProject($values);
             $this->projectService->changeCurrentSessionProject($id);
 
-            $users = $this->projectService->getUsersAssignedToProject($id);
-
-            $actual_link = BASE_URL.'/projects/showProject/'.$id;
-            $message = sprintf(
-                $this->language->__('email_notifications.project_created_message'),
-                $actual_link,
-                $id,
-                strip_tags($values['name']),
-                session('userdata.name')
-            );
-
-            $to = [];
-            foreach ($users as $user) {
-                if ($user['notifications'] != 0) {
-                    $to[] = $user['username'];
-                }
-            }
-
-            $this->queueRepo->queueMessageToUsers(
-                $to,
-                $message,
-                $this->language->__('email_notifications.project_created_subject'),
-                $id
-            );
+            $this->projectService->notifyProjectCreated($id, $values['name'], session('userdata.name'));
 
             $this->tpl->sendConfetti();
             $this->tpl->setNotification(
@@ -163,9 +110,9 @@ class NewProject extends Controller
             return Frontcontroller::redirect(BASE_URL.'/projects/showProject/'.$id);
         }
 
-        $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
+        $this->tpl->assign('menuTypes', $this->projectService->getMenuTypes());
         $this->tpl->assign('project', $values);
-        $this->tpl->assign('availableUsers', $this->userRepo->getAll());
+        $this->tpl->assign('availableUsers', $this->projectService->getAllUsers());
         $this->tpl->assign('clients', $this->clientService->getAll());
         $this->tpl->assign('projectTypes', $this->projectService->getProjectTypes());
         $this->tpl->assign('info', '');

@@ -7,11 +7,8 @@ use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
-use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
-use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowProject extends Controller
@@ -22,27 +19,19 @@ class ShowProject extends Controller
 
     private ClientService $clientService;
 
-    private UserRepository $userRepo;
-
-    private MenuRepository $menuRepo;
-
     /**
      * Initializes dependencies.
      */
     public function init(
         ProjectService $projectService,
         TicketService $ticketService,
-        ClientService $clientService,
-        UserRepository $userRepo,
-        MenuRepository $menuRepo
+        ClientService $clientService
     ): void {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager]);
 
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
         $this->clientService = $clientService;
-        $this->userRepo = $userRepo;
-        $this->menuRepo = $menuRepo;
 
         if (! session()->exists('lastPage')) {
             session(['lastPage' => CURRENT_URL]);
@@ -119,50 +108,32 @@ class ShowProject extends Controller
 
         // Handle Mattermost integration
         if (isset($_POST['mattermostSave'])) {
-            $webhook = strip_tags($_POST['mattermostWebhookURL']);
-            $this->projectService->saveProjectSetting($id, 'mattermostWebhookURL', $webhook);
+            $this->projectService->saveMattermostWebhook($id, $_POST['mattermostWebhookURL']);
             $this->tpl->setNotification($this->language->__('notification.saved_mattermost_webhook'), 'success');
         }
 
         // Handle Slack integration
         if (isset($_POST['slackSave'])) {
-            $webhook = strip_tags($_POST['slackWebhookURL']);
-            $this->projectService->saveProjectSetting($id, 'slackWebhookURL', $webhook);
+            $this->projectService->saveSlackWebhook($id, $_POST['slackWebhookURL']);
             $this->tpl->setNotification($this->language->__('notification.saved_slack_webhook'), 'success');
         }
 
         // Handle Zulip integration
         if (isset($_POST['zulipSave'])) {
-            $zulipHook = [
-                'zulipURL' => strip_tags($_POST['zulipURL']),
-                'zulipEmail' => strip_tags($_POST['zulipEmail']),
-                'zulipBotKey' => strip_tags($_POST['zulipBotKey']),
-                'zulipStream' => strip_tags($_POST['zulipStream']),
-                'zulipTopic' => strip_tags($_POST['zulipTopic']),
-            ];
+            $zulipResult = $this->projectService->saveZulipWebhook($id, $_POST);
 
-            if (
-                $zulipHook['zulipURL'] == '' ||
-                $zulipHook['zulipEmail'] == '' ||
-                $zulipHook['zulipBotKey'] == '' ||
-                $zulipHook['zulipStream'] == '' ||
-                $zulipHook['zulipTopic'] == ''
-            ) {
-                $this->tpl->setNotification($this->language->__('notification.error_zulip_webhook_fill_out_fields'), 'error');
-            } else {
-                $this->projectService->saveProjectSetting($id, 'zulipHook', serialize($zulipHook));
+            if ($zulipResult['saved']) {
                 $this->tpl->setNotification($this->language->__('notification.saved_zulip_webhook'), 'success');
+            } else {
+                $this->tpl->setNotification($this->language->__('notification.error_zulip_webhook_fill_out_fields'), 'error');
             }
 
-            $this->tpl->assign('zulipHook', $zulipHook);
+            $this->tpl->assign('zulipHook', $zulipResult['hook']);
         }
 
         // Handle Discord integration
         if (isset($_POST['discordSave'])) {
-            for ($i = 1; $i <= 3; $i++) {
-                $webhook = trim(strip_tags($_POST['discordWebhookURL'.$i]));
-                $this->projectService->saveProjectSetting($id, 'discordWebhookURL'.$i, $webhook);
-            }
+            $this->projectService->saveDiscordWebhooks($id, $_POST);
             $this->tpl->setNotification($this->language->__('notification.saved_discord_webhook'), 'success');
         }
 
@@ -210,30 +181,15 @@ class ShowProject extends Controller
                 if ($this->projectService->hasTickets($id) && $values['state'] == 1) {
                     $this->tpl->setNotification($this->language->__('notification.project_has_tickets'), 'error');
                 } else {
-                    $this->projectService->editProject($values, $id);
-                    $this->tpl->setNotification($this->language->__('notification.project_saved'), 'success');
-
-                    $subject = sprintf($this->language->__('email_notifications.project_update_subject'), $id, $values['name']);
-                    $message = sprintf(
-                        $this->language->__('email_notifications.project_update_message'),
-                        session('userdata.name'),
-                        strip_tags($values['name'])
+                    $this->projectService->editProjectAndNotify(
+                        $values,
+                        $id,
+                        $project,
+                        CURRENT_URL,
+                        session('userdata.id'),
+                        session('userdata.name')
                     );
-
-                    $notification = app()->make(Notification::class);
-                    $notification->url = [
-                        'url' => CURRENT_URL,
-                        'text' => $this->language->__('email_notifications.project_update_cta'),
-                    ];
-                    $notification->entity = $project;
-                    $notification->module = 'projects';
-                    $notification->action = 'updated';
-                    $notification->projectId = session('currentProject');
-                    $notification->subject = $subject;
-                    $notification->authorId = session('userdata.id');
-                    $notification->message = $message;
-
-                    $this->projectService->notifyProjectUsers($notification);
+                    $this->tpl->setNotification($this->language->__('notification.project_saved'), 'success');
 
                     return Frontcontroller::redirect(BASE_URL.'/projects/showProject/'.$id);
                 }
@@ -257,25 +213,9 @@ class ShowProject extends Controller
      */
     private function assignIntegrationSettings(int $projectId): void
     {
-        $this->tpl->assign('mattermostWebhookURL', $this->projectService->getProjectSetting($projectId, 'mattermostWebhookURL'));
-        $this->tpl->assign('slackWebhookURL', $this->projectService->getProjectSetting($projectId, 'slackWebhookURL'));
+        $settings = $this->projectService->getProjectIntegrationSettings($projectId);
 
-        for ($i = 1; $i <= 3; $i++) {
-            $this->tpl->assign('discordWebhookURL'.$i, $this->projectService->getProjectSetting($projectId, 'discordWebhookURL'.$i));
-        }
-
-        $zulipWebhook = $this->projectService->getProjectSetting($projectId, 'zulipHook');
-        if ($zulipWebhook == '') {
-            $this->tpl->assign('zulipHook', [
-                'zulipURL' => '',
-                'zulipEmail' => '',
-                'zulipBotKey' => '',
-                'zulipStream' => '',
-                'zulipTopic' => '',
-            ]);
-        } else {
-            $this->tpl->assign('zulipHook', safe_unserialize($zulipWebhook, []));
-        }
+        array_map([$this->tpl, 'assign'], array_keys($settings), array_values($settings));
     }
 
     /**
@@ -283,12 +223,12 @@ class ShowProject extends Controller
      */
     private function assignTemplateVars(int $projectId, array $project): void
     {
-        $this->tpl->assign('availableUsers', $this->userRepo->getAll());
+        $this->tpl->assign('availableUsers', $this->projectService->getAllUsers());
         $this->tpl->assign('clients', $this->clientService->getAll());
         $this->tpl->assign('todoStatus', $this->ticketService->getStatusLabels());
-        $this->tpl->assign('employees', $this->userRepo->getEmployees());
+        $this->tpl->assign('employees', $this->projectService->getEmployees());
         $this->tpl->assign('project', $project);
-        $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
+        $this->tpl->assign('menuTypes', $this->projectService->getMenuTypes());
         $this->tpl->assign('projectTypes', $this->projectService->getProjectTypes());
         $this->tpl->assign('state', ['open', 'closed']);
         $this->tpl->assign('role', session('userdata.role'));
