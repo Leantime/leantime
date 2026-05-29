@@ -3,23 +3,19 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
-use Leantime\Domain\Users\Services\Users as UserService;
+use Leantime\Domain\Api\Services\Api as ApiService;
 use Symfony\Component\HttpFoundation\Response;
 
 class Sessions extends Controller
 {
-    private UserService $userService;
-
-    private MenuRepository $menu;
+    private ApiService $apiService;
 
     /**
      * init - initialize private variables
      */
-    public function init(UserService $userService, MenuRepository $menu): void
+    public function init(ApiService $apiService): void
     {
-        $this->userService = $userService;
-        $this->menu = $menu;
+        $this->apiService = $apiService;
     }
 
     /**
@@ -50,14 +46,13 @@ class Sessions extends Controller
     public function patch(array $params): Response
     {
         if (isset($params['tourActive'])) {
-            session(['tourActive' => filter_var($params['tourActive'], FILTER_SANITIZE_NUMBER_INT)]);
+            $this->apiService->setTourActive($params['tourActive']);
 
             return $this->tpl->displayJson(['status' => 'ok']);
         }
 
         if (isset($params['menuState'])) {
-            session(['menuState' => htmlentities($params['menuState'])]);
-            $this->menu->setSubmenuState('mainMenu', $params['menuState']);
+            $this->apiService->setMainMenuState($params['menuState']);
 
             return $this->tpl->displayJson(['status' => 'ok']);
         }

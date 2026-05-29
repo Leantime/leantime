@@ -3,8 +3,7 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Ideas\Repositories\Ideas as IdeationRepository;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Domain\Api\Services\Ideas as IdeasService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -12,18 +11,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Ideation extends Controller
 {
-    private ProjectRepository $projects;
-
-    private IdeationRepository $ideationAPIRepo;
+    private IdeasService $ideasService;
 
     /**
      * constructor - initialize private variables
      */
-    public function init(ProjectRepository $projects, IdeationRepository $ideationAPIRepo): void
+    public function init(IdeasService $ideasService): void
     {
-        // @TODO: projects is never used in this class?
-        $this->projects = $projects;
-        $this->ideationAPIRepo = $ideationAPIRepo;
+        $this->ideasService = $ideasService;
     }
 
     /**
@@ -46,22 +41,13 @@ class Ideation extends Controller
             return $this->tpl->displayJson(['status' => 'failure'], 400);
         }
 
-        // @TODO: The two update functions do not seam to exists in ideas repository class?
-        foreach (
-            [
-                'ideationSort' => fn () => $this->ideationAPIRepo->updateIdeationSorting($params['payload']),
-                'statusUpdate' => fn () => $this->ideationAPIRepo->bulkUpdateIdeationStatus($params['payload']),
-            ] as $param => $callback
-        ) {
-            if ($param !== $params['action']) {
-                continue;
-            }
+        $success = match ($params['action']) {
+            'ideationSort' => $this->ideasService->updateIdeationSorting($params['payload']),
+            'statusUpdate' => $this->ideasService->bulkUpdateIdeationStatus($params['payload']),
+        };
 
-            if (! $callback()) {
-                return $this->tpl->displayJson(['status' => 'failure'], 500);
-            }
-
-            break;
+        if (! $success) {
+            return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
 
         return $this->tpl->displayJson(['status' => 'ok']);
@@ -72,7 +58,7 @@ class Ideation extends Controller
      */
     public function patch(array $params): Response
     {
-        if (! $this->ideationAPIRepo->patchCanvasItem($params['id'], $params)) {
+        if (! $this->ideasService->patchCanvasItem((int) $params['id'], $params)) {
             return $this->tpl->displayJson(['status', 'failure'], 500);
         }
 
