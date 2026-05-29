@@ -77,6 +77,8 @@ class NewUser extends Controller
         $projectrelation = [];
 
         if (isset($_POST['save'])) {
+            $isManager = Auth::userHasRole(Roles::$manager);
+
             $values = [
                 'firstname' => $_POST['firstname'],
                 'lastname' => $_POST['lastname'],
@@ -89,7 +91,7 @@ class NewUser extends Controller
                 'jobTitle' => $_POST['jobTitle'],
                 'jobLevel' => $_POST['jobLevel'],
                 'department' => $_POST['department'],
-                'clientId' => Auth::userHasRole(Roles::$manager) ? session('userdata.clientId') : $_POST['client'],
+                'clientId' => $isManager ? session('userdata.clientId') : $_POST['client'],
             ];
 
             if (isset($_POST['projects']) && is_array($_POST['projects'])) {
@@ -98,23 +100,15 @@ class NewUser extends Controller
                 }
             }
 
-            if ($values['user'] === '') {
+            $result = $this->userService->inviteNewUser($_POST, session('userdata.clientId'), $isManager);
+
+            if ($result === 'enter_email') {
                 $this->tpl->setNotification($this->language->__('notification.enter_email'), 'error');
-            } elseif (! filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
+            } elseif ($result === 'no_valid_email') {
                 $this->tpl->setNotification($this->language->__('notification.no_valid_email'), 'error');
-            } elseif ($this->userService->usernameExist($values['user'])) {
+            } elseif ($result === 'user_exists') {
                 $this->tpl->setNotification($this->language->__('notification.user_exists'), 'error');
             } else {
-                $userId = $this->userService->createUserInvite($values);
-
-                if (isset($_POST['projects']) && count($_POST['projects']) > 0) {
-                    if ($_POST['projects'][0] !== '0') {
-                        $this->projectService->editUserProjectRelations($userId, $_POST['projects']);
-                    } else {
-                        $this->projectService->deleteAllUserProjectRelations($userId);
-                    }
-                }
-
                 $this->tpl->setNotification('notification.user_invited_successfully', 'success', 'user_invited');
             }
         }

@@ -5,20 +5,16 @@ namespace Leantime\Domain\Users\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Ldap\Services\Ldap as LdapService;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowAll extends Controller
 {
-    private UserRepository $userRepo;
+    private UserService $userService;
 
-    private LdapService $ldapService;
-
-    public function init(UserRepository $userRepo, LdapService $ldapService): void
+    public function init(UserService $userService): void
     {
-        $this->userRepo = $userRepo;
-        $this->ldapService = $ldapService;
+        $this->userService = $userService;
     }
 
     /**
@@ -29,20 +25,15 @@ class ShowAll extends Controller
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
         // Only Admins
-        if (Auth::userIsAtLeast(Roles::$admin)) {
-            if (Auth::userIsAtLeast(Roles::$admin)) {
-                $this->tpl->assign('allUsers', $this->userRepo->getAll());
-            } else {
-                $this->tpl->assign('allUsers', $this->userRepo->getAllClientUsers(Auth::getUserClientId()));
-            }
-
-            $this->tpl->assign('admin', true);
-            $this->tpl->assign('roles', Roles::getRoles());
-
-            return $this->tpl->display('users.showAll');
-        } else {
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
             return $this->tpl->display('errors.error403');
         }
+
+        $this->tpl->assign('allUsers', $this->userService->getAllVisibleToUser());
+        $this->tpl->assign('admin', true);
+        $this->tpl->assign('roles', Roles::getRoles());
+
+        return $this->tpl->display('users.showAll');
     }
 
     public function post($params): Response
