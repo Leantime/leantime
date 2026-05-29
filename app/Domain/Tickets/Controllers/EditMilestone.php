@@ -2,16 +2,10 @@
 
 namespace Leantime\Domain\Tickets\Controllers;
 
-use DateInterval;
-use DateTime;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
-use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
-use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
 class EditMilestone extends Controller
@@ -22,25 +16,17 @@ class EditMilestone extends Controller
 
     private ProjectService $projectService;
 
-    private TicketRepository $ticketRepo;
-
-    private ProjectRepository $projectRepo;
-
     /**
      * init - initialize private variables
      */
     public function init(
         TicketService $ticketService,
         CommentService $commentsService,
-        ProjectService $projectService,
-        TicketRepository $ticketRepo,
-        ProjectRepository $projectRepo
-    ) {
+        ProjectService $projectService
+    ): void {
         $this->ticketService = $ticketService;
         $this->commentsService = $commentsService;
         $this->projectService = $projectService;
-        $this->ticketRepo = $ticketRepo;
-        $this->projectRepo = $projectRepo;
     }
 
     /**
@@ -57,10 +43,9 @@ class EditMilestone extends Controller
                 $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
             }
 
-            $milestone = $this->ticketRepo->getTicket($params['id']);
-            $milestone = (object) $milestone;
+            $milestone = $this->ticketService->getMilestone((int) $params['id']);
 
-            if (! isset($milestone->id)) {
+            if ($milestone === false || ! isset($milestone->id)) {
                 $this->tpl->setNotification($this->language->__('notifications.could_not_find_milestone'), 'error');
 
                 return Frontcontroller::redirect(BASE_URL.'/tickets/roadmap/');
@@ -75,18 +60,7 @@ class EditMilestone extends Controller
 
             $comments = $this->commentsService->getComments('ticket', $params['id']);
         } else {
-            $milestone = app()->make(TicketModel::class);
-            $milestone->status = 3;
-
-            $today = new DateTime;
-            $milestone->editFrom = $today->format('Y-m-d');
-
-            // Add 1 week
-            $interval = new DateInterval('P1W');
-            $next_week = $today->add($interval);
-
-            $milestone->editTo = $next_week->format('Y-m-d');
-
+            $milestone = $this->ticketService->getNewMilestone();
             $comments = [];
         }
 
@@ -98,7 +72,7 @@ class EditMilestone extends Controller
 
         $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
         $this->tpl->assign('milestones', $allProjectMilestones);
-        $this->tpl->assign('users', $this->projectRepo->getUsersAssignedToProject(session('currentProject')));
+        $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
         $this->tpl->assign('milestone', $milestone);
 
         return $this->tpl->displayPartial('tickets.milestoneDialog');
@@ -112,40 +86,12 @@ class EditMilestone extends Controller
         // If ID is set its an update
         if (isset($_GET['id']) && (int) $_GET['id'] > 0) {
             $params['id'] = (int) $_GET['id'];
-            $milestone = $this->ticketRepo->getTicket($params['id']);
 
             if (isset($params['comment']) === true) {
-                $values = [
-                    'text' => $params['text'],
-                    'date' => date('Y-m-d H:i:s'),
-                    'userId' => (session('userdata.id')),
-                    'moduleId' => $params['id'],
-                    'father' => ($params['father']),
-                ];
+                $milestone = $this->ticketService->getMilestone($params['id']);
 
-                $messageId = $this->commentsService->addComment($values, 'ticket', $params['id'], $milestone);
-                $values['id'] = $messageId;
-                if ($messageId) {
+                if ($this->ticketService->addMilestoneComment($params, $milestone)) {
                     $this->tpl->setNotification($this->language->__('notifications.comment_added_successfully'), 'success');
-
-                    $subject = $this->language->__('email_notifications.new_comment_milestone_subject');
-                    $actual_link = BASE_URL.'#/tickets/editMilestone/'.(int) $_GET['id'];
-                    $message = sprintf($this->language->__('email_notifications.new_comment_milestone_message'), session('userdata.name'));
-
-                    $notification = app()->make(NotificationModel::class);
-                    $notification->url = [
-                        'url' => $actual_link,
-                        'text' => $this->language->__('email_notifications.new_comment_milestone_cta'),
-                    ];
-                    $notification->entity = $values;
-                    $notification->module = 'comments';
-                    $notification->action = 'commented';
-                    $notification->projectId = session('currentProject');
-                    $notification->subject = $subject;
-                    $notification->authorId = session('userdata.id');
-                    $notification->message = $message;
-
-                    $this->projectService->notifyProjectUsers($notification);
                 } else {
                     $this->tpl->setNotification($this->language->__('notifications.problem_saving_your_comment'), 'error');
                 }
@@ -154,27 +100,8 @@ class EditMilestone extends Controller
             }
 
             if (isset($params['headline']) === true) {
-                if ($this->ticketService->quickUpdateMilestone($params)) {
+                if ($this->ticketService->updateMilestoneFromDialog($params)) {
                     $this->tpl->setNotification($this->language->__('notification.milestone_edited_successfully'), 'success');
-
-                    $subject = $this->language->__('email_notifications.milestone_update_subject');
-                    $actual_link = BASE_URL.'#/tickets/editMilestone/'.(int) $_GET['id'];
-                    $message = sprintf($this->language->__('email_notifications.milestone_update_message'), session('userdata.name'));
-
-                    $notification = app()->make(NotificationModel::class);
-                    $notification->url = [
-                        'url' => $actual_link,
-                        'text' => $this->language->__('email_notifications.milestone_update_cta'),
-                    ];
-                    $notification->entity = $params;
-                    $notification->module = 'tickets';
-                    $notification->action = 'updated';
-                    $notification->projectId = session('currentProject');
-                    $notification->subject = $subject;
-                    $notification->authorId = session('userdata.id');
-                    $notification->message = $message;
-
-                    $this->projectService->notifyProjectUsers($notification);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.saving_milestone_error'), 'error');
                 }
@@ -183,48 +110,19 @@ class EditMilestone extends Controller
             }
 
             return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
-        } else {
-            $result = $this->ticketService->quickAddMilestone($params);
-
-            if (is_numeric($result)) {
-                $params['id'] = $result;
-
-                $this->tpl->setNotification($this->language->__('notification.milestone_created_successfully'), 'success');
-
-                $subject = $this->language->__('email_notifications.milestone_created_subject');
-                $actual_link = BASE_URL.'#/tickets/editMilestone/'.$result;
-                $message = sprintf($this->language->__('email_notifications.milestone_created_message'), session('userdata.name'));
-
-                $notification = app()->make(NotificationModel::class);
-                $notification->url = [
-                    'url' => $actual_link,
-                    'text' => $this->language->__('email_notifications.milestone_created_cta'),
-                ];
-                $notification->entity = $params;
-                $notification->module = 'tickets';
-                $notification->action = 'created';
-                $notification->projectId = session('currentProject');
-                $notification->subject = $subject;
-                $notification->authorId = session('userdata.id');
-                $notification->message = $message;
-
-                $this->projectService->notifyProjectUsers($notification);
-
-                return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$result);
-            } else {
-                $this->tpl->setNotification($this->language->__('notification.saving_milestone_error'), 'error');
-
-                return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/');
-            }
         }
 
-        $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session('userdata.id'), 'open');
-        $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
+        $result = $this->ticketService->createMilestoneFromDialog($params);
 
-        $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
-        $this->tpl->assign('milestone', (object) $params);
+        if (is_numeric($result)) {
+            $this->tpl->setNotification($this->language->__('notification.milestone_created_successfully'), 'success');
 
-        return $this->tpl->displayPartial('tickets.milestoneDialog');
+            return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$result);
+        }
+
+        $this->tpl->setNotification($this->language->__('notification.saving_milestone_error'), 'error');
+
+        return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/');
     }
 
     /**

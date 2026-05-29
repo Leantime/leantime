@@ -8,6 +8,8 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\CarbonMacros;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\UI\Template as TemplateCore;
+use Leantime\Domain\Clients\Services\Clients as ClientService;
+use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -72,6 +74,8 @@ class TicketsServiceTest extends TestCase
         $ticketHistoryRepo = $this->make(TicketHistory::class);
         $goalcanvasService = $this->make(Goalcanvas::class);
         $dateTimeHelper = $this->make(DateTimeHelper::class);
+        $commentService = $this->make(CommentService::class);
+        $clientService = $this->make(ClientService::class);
 
         // Instantiate the service with mocked dependencies
         $this->ticketsService = new TicketsService(
@@ -87,7 +91,9 @@ class TicketsServiceTest extends TestCase
             sprintService: $sprintService,
             ticketHistoryRepo: $ticketHistoryRepo,
             goalcanvasService: $goalcanvasService,
-            dateTimeHelper: $dateTimeHelper
+            dateTimeHelper: $dateTimeHelper,
+            commentService: $commentService,
+            clientService: $clientService
         );
     }
 
@@ -169,5 +175,134 @@ class TicketsServiceTest extends TestCase
         // Time fields should be removed after successful parsing
         $this->assertArrayNotHasKey('timeFrom', $result);
         $this->assertArrayNotHasKey('timeTo', $result);
+    }
+
+    /**
+     * normalizeRoadmapParams defaults the type to milestone when not provided.
+     */
+    public function test_normalize_roadmap_params_defaults_type_to_milestone()
+    {
+        $result = $this->ticketsService->normalizeRoadmapParams([]);
+
+        $this->assertEquals('milestone', $result['type']);
+        $this->assertArrayNotHasKey('excludeType', $result);
+    }
+
+    /**
+     * normalizeRoadmapParams keeps an explicitly provided type.
+     */
+    public function test_normalize_roadmap_params_keeps_provided_type()
+    {
+        $result = $this->ticketsService->normalizeRoadmapParams(['type' => 'task']);
+
+        $this->assertEquals('task', $result['type']);
+    }
+
+    /**
+     * normalizeRoadmapParams clears type and excludeType when showing tasks.
+     */
+    public function test_normalize_roadmap_params_clears_filters_when_showing_tasks()
+    {
+        $result = $this->ticketsService->normalizeRoadmapParams(['showTasks' => 'true']);
+
+        $this->assertEquals('', $result['type']);
+        $this->assertEquals('', $result['excludeType']);
+    }
+
+    /**
+     * getMilestonesOverviewSearchCriteria defaults the status to not_done when none provided.
+     */
+    public function test_overview_search_criteria_defaults_status_to_not_done()
+    {
+        $result = $this->ticketsService->getMilestonesOverviewSearchCriteria([]);
+
+        $this->assertEquals('not_done', $result['status']);
+    }
+
+    /**
+     * getMilestonesOverviewSearchCriteria respects an explicitly selected status.
+     */
+    public function test_overview_search_criteria_respects_selected_status()
+    {
+        $result = $this->ticketsService->getMilestonesOverviewSearchCriteria(['status' => '3']);
+
+        $this->assertEquals('3', $result['status']);
+    }
+
+    /**
+     * getNewMilestone returns a default milestone with status 3 and a one-week edit window.
+     */
+    public function test_get_new_milestone_has_default_status_and_one_week_window()
+    {
+        $milestone = $this->ticketsService->getNewMilestone();
+
+        $this->assertEquals(3, $milestone->status);
+
+        $expectedFrom = CarbonImmutable::now()->format('Y-m-d');
+        $expectedTo = CarbonImmutable::now()->addWeek()->format('Y-m-d');
+
+        $this->assertEquals($expectedFrom, $milestone->editFrom);
+        $this->assertEquals($expectedTo, $milestone->editTo);
+    }
+
+    /**
+     * getClientNameById returns an empty string when no client id is given.
+     */
+    public function test_get_client_name_by_id_returns_empty_for_zero_id()
+    {
+        $this->assertEquals('', $this->ticketsService->getClientNameById(0));
+    }
+
+    /**
+     * getClientNameById resolves the name from the clients service.
+     */
+    public function test_get_client_name_by_id_resolves_name()
+    {
+        $service = $this->buildServiceWithClientService(
+            $this->make(ClientService::class, [
+                'get' => fn () => ['id' => 5, 'name' => 'Acme Inc'],
+            ])
+        );
+
+        $this->assertEquals('Acme Inc', $service->getClientNameById(5));
+    }
+
+    /**
+     * getClientNameById returns an empty string when the client is not found.
+     */
+    public function test_get_client_name_by_id_returns_empty_when_not_found()
+    {
+        $service = $this->buildServiceWithClientService(
+            $this->make(ClientService::class, [
+                'get' => fn () => false,
+            ])
+        );
+
+        $this->assertEquals('', $service->getClientNameById(99));
+    }
+
+    /**
+     * Builds a TicketsService using the default mocks but with a specific
+     * ClientService instance, so client-name resolution can be asserted.
+     */
+    private function buildServiceWithClientService(ClientService $clientService): TicketsService
+    {
+        return new TicketsService(
+            tpl: $this->make(TemplateCore::class),
+            language: $this->make(LanguageCore::class),
+            config: $this->make(EnvironmentCore::class),
+            projectRepository: $this->make(ProjectRepository::class),
+            ticketRepository: $this->make(TicketRepository::class),
+            timesheetsRepo: $this->make(TimesheetRepository::class),
+            settingsRepo: $this->make(SettingRepository::class),
+            projectService: $this->make(ProjectService::class),
+            timesheetService: $this->make(TimesheetService::class),
+            sprintService: $this->make(SprintService::class),
+            ticketHistoryRepo: $this->make(TicketHistory::class),
+            goalcanvasService: $this->make(Goalcanvas::class),
+            dateTimeHelper: $this->make(DateTimeHelper::class),
+            commentService: $this->make(CommentService::class),
+            clientService: $clientService
+        );
     }
 }
