@@ -86,6 +86,43 @@ class Files
         return $result ? (array) $result : false;
     }
 
+    /**
+     * Resolves the owning project id for a file record based on its module type.
+     *
+     * For 'project' module files the moduleId is the project id directly.
+     * For 'ticket' module files the owning ticket is looked up to find its project.
+     * All other module types have no project context and return null.
+     *
+     * @param  array  $fileRecord  The file record as returned by getFileByEncName().
+     * @return int|null The owning project id, or null when no project context applies.
+     */
+    public function getProjectIdForFile(array $fileRecord): ?int
+    {
+        $module = $fileRecord['module'] ?? '';
+        $moduleId = (int) ($fileRecord['moduleId'] ?? 0);
+
+        if ($moduleId <= 0) {
+            return null;
+        }
+
+        if ($module === 'project') {
+            return $moduleId;
+        }
+
+        if ($module === 'ticket') {
+            $ticket = $this->db->table('zp_tickets')
+                ->select('projectId')
+                ->where('id', $moduleId)
+                ->first();
+
+            if ($ticket) {
+                return (int) $ticket->projectId;
+            }
+        }
+
+        return null;
+    }
+
     public function getFiles(int $userId = 0): false|array
     {
         $query = $this->db->table('zp_file as file')
