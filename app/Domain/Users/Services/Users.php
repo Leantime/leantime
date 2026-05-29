@@ -222,6 +222,37 @@ class Users
     }
 
     /**
+     * Records that the current user dismissed a modal.
+     *
+     * The dismissal is always stored in the session. When $permanent is true it is
+     * additionally persisted to the user's stored settings so the modal stays
+     * dismissed across sessions.
+     *
+     * @param  string  $modalKey  The modal identifier being dismissed
+     * @param  bool  $permanent  Whether to persist the dismissal beyond the current session
+     * @return bool True on success
+     *
+     * @api
+     */
+    public function saveModalDismissal(string $modalKey, bool $permanent): bool
+    {
+        if ($permanent) {
+            // updateUserSettings sanitizes the key, records it in the session, and persists it.
+            return $this->updateUserSettings('modals', $modalKey, 1);
+        }
+
+        $key = htmlspecialchars($modalKey);
+
+        if (! session()->exists('usersettings.modals')) {
+            session(['usersettings.modals' => []]);
+        }
+
+        session(['usersettings.modals.'.$key => 1]);
+
+        return true;
+    }
+
+    /**
      * checkPasswordStrength - Checks password strength for minimum requirements
      * Current requirements are:
      * Password must be at least 8 characters in length.

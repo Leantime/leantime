@@ -4,10 +4,9 @@ namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Api\Services\Api;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -15,17 +14,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class DelAPIKey extends Controller
 {
-    private Api $APIService;
-
-    private UserRepository $userRepo;
+    private UserService $userService;
 
     /**
      * Initializes dependencies.
      */
-    public function init(Api $APIService, UserRepository $userRepo): void
+    public function init(UserService $userService): void
     {
-        $this->APIService = $APIService;
-        $this->userRepo = $userRepo;
+        $this->userService = $userService;
     }
 
     /**
@@ -44,13 +40,8 @@ class DelAPIKey extends Controller
             return $this->tpl->display('errors.error403');
         }
 
-        $user = $this->userRepo->getUser($id);
-
-        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-        session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
-        session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
-
-        $this->tpl->assign('user', $user);
+        $this->tpl->assign('user', $this->userService->getUser($id));
+        $this->generateFormTokens();
 
         return $this->tpl->display('api.delKey');
     }
@@ -71,25 +62,30 @@ class DelAPIKey extends Controller
             return $this->tpl->display('errors.error403');
         }
 
-        $user = $this->userRepo->getUser($id);
-
         if (isset($_POST['del'])) {
             if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
-                $this->userRepo->deleteUser($id);
+                $this->userService->deleteUser($id);
                 $this->tpl->setNotification($this->language->__('notifications.key_deleted'), 'success', 'apikey_deleted');
 
                 return Frontcontroller::redirect(BASE_URL.'/setting/editCompanySettings/#apiKeys');
-            } else {
-                $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
             }
+
+            $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
         }
 
-        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-        session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
-        session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
-
-        $this->tpl->assign('user', $user);
+        $this->tpl->assign('user', $this->userService->getUser($id));
+        $this->generateFormTokens();
 
         return $this->tpl->display('api.delKey');
+    }
+
+    /**
+     * Generates CSRF form tokens for the delete confirmation form.
+     */
+    private function generateFormTokens(): void
+    {
+        $permittedChars = '0123456789abcdefghijklmnopqrstuvwxyz';
+        session(['formTokenName' => substr(str_shuffle($permittedChars), 0, 32)]);
+        session(['formTokenValue' => substr(str_shuffle($permittedChars), 0, 32)]);
     }
 }

@@ -6,7 +6,7 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
+use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -27,14 +27,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ConnectCalendar extends Controller
 {
-    private CalendarRepository $calendarRepo;
+    private CalendarService $calendarService;
 
     /**
      * Initialize the controller with dependencies.
      */
-    public function init(CalendarRepository $calendarRepo): void
+    public function init(CalendarService $calendarService): void
     {
-        $this->calendarRepo = $calendarRepo;
+        $this->calendarService = $calendarService;
     }
 
     /**
@@ -65,7 +65,7 @@ class ConnectCalendar extends Controller
                 'colorClass' => $params['colorClass'] ?? '#082236',
             ];
 
-            $this->calendarRepo->addGUrl($values);
+            $this->calendarService->addExternalCalendarUrl($values);
             $this->tpl->setNotification('notification.gcal_imported_successfully', 'success', 'externalcalendar_created');
         }
 
