@@ -48,17 +48,23 @@ class Ideas
     /**
      * Persists a new ideation sort order.
      *
+     * The Ideation API endpoint operates on the same canvas-item data as the
+     * Ideas endpoint, so this delegates to the same repository operation.
+     *
      * @param  mixed  $payload  Sorting payload from the request
      *
      * @api
      */
     public function updateIdeationSorting($payload): bool
     {
-        return $this->ideasRepository->updateIdeationSorting($payload);
+        return $this->ideasRepository->updateIdeaSorting($payload);
     }
 
     /**
-     * Bulk updates the status of ideations.
+     * Bulk updates the status of ideation items.
+     *
+     * The Ideation API endpoint operates on the same canvas-item data as the
+     * Ideas endpoint, so this delegates to the same repository operation.
      *
      * @param  mixed  $payload  Status payload from the request
      *
@@ -66,7 +72,7 @@ class Ideas
      */
     public function bulkUpdateIdeationStatus($payload): bool
     {
-        return $this->ideasRepository->bulkUpdateIdeationStatus($payload);
+        return $this->ideasRepository->bulkUpdateIdeaStatus($payload);
     }
 
     /**

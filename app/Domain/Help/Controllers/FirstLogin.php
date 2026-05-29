@@ -2,10 +2,10 @@
 
 namespace Leantime\Domain\Help\Controllers;
 
-use Illuminate\Http\Response;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Help\Services\Helper;
+use Symfony\Component\HttpFoundation\Response;
 
 class FirstLogin extends Controller
 {
