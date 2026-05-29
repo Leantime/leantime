@@ -32,6 +32,7 @@ use Leantime\Domain\Sbcanvas\Repositories\Sbcanvas as SbcanvaRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
 use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
+use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Leantime\Domain\Swotcanvas\Repositories\Swotcanvas as SwotcanvaRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
@@ -62,6 +63,8 @@ class Reports
 
     private TicketRepository $ticketRepository;
 
+    private SprintService $sprintService;
+
     /**
      * @param  SettingRepository  $settings
      */
@@ -73,7 +76,8 @@ class Reports
         SprintRepository $sprintRepository,
         ReportRepository $reportRepository,
         SettingsService $settings,
-        TicketRepository $ticketRepository
+        TicketRepository $ticketRepository,
+        SprintService $sprintService
     ) {
         $this->tpl = $tpl;
         $this->appSettings = $appSettings;
@@ -83,6 +87,64 @@ class Reports
         $this->reportRepository = $reportRepository;
         $this->settings = $settings;
         $this->ticketRepository = $ticketRepository;
+        $this->sprintService = $sprintService;
+    }
+
+    /**
+     * Resolves which sprint burndown to display on the reports page.
+     *
+     * Mirrors the legacy controller selection order exactly:
+     * 1. An explicitly requested sprint id (from the query string).
+     * 2. Otherwise the project's current sprint.
+     * 3. Otherwise the first available sprint.
+     *
+     * The returned 'currentSprintId' preserves the original behaviour:
+     * when a sprint id is explicitly requested it is echoed back as-is
+     * (even if the sprint cannot be loaded); when falling back to the
+     * current/first sprint the resolved sprint object's id is used.
+     * When the project has no sprints at all, both values are false.
+     *
+     * @param  int  $projectId  Project to resolve the burndown for.
+     * @param  int|null  $requestedSprintId  Sprint id explicitly requested by the user, or null.
+     * @return array{chart: false|array, currentSprintId: int|false} Burndown chart data and the resolved sprint id.
+     *
+     * @api
+     */
+    public function getSprintBurndownForReport(int $projectId, ?int $requestedSprintId): array
+    {
+        $allSprints = $this->sprintService->getAllSprints($projectId);
+
+        if ($allSprints === false || count($allSprints) === 0) {
+            return ['chart' => false, 'currentSprintId' => false];
+        }
+
+        $sprintChart = false;
+
+        if ($requestedSprintId !== null) {
+            $sprintObject = $this->sprintService->getSprint($requestedSprintId);
+            if ($sprintObject) {
+                $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
+            }
+
+            return ['chart' => $sprintChart, 'currentSprintId' => $requestedSprintId];
+        }
+
+        $currentSprint = $this->sprintService->getCurrentSprintId($projectId);
+
+        if ($currentSprint !== false && $currentSprint !== 'all') {
+            $sprintObject = $this->sprintService->getSprint((int) $currentSprint);
+            if ($sprintObject) {
+                $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
+
+                return ['chart' => $sprintChart, 'currentSprintId' => $sprintObject->id];
+            }
+
+            return ['chart' => $sprintChart, 'currentSprintId' => false];
+        }
+
+        $sprintChart = $this->sprintService->getSprintBurndown($allSprints[0]);
+
+        return ['chart' => $sprintChart, 'currentSprintId' => $allSprints[0]->id];
     }
 
     /**
