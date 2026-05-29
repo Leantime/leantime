@@ -23,8 +23,12 @@ class DelCanvas extends Controller
 
     /**
      * Initializes dependencies.
+     *
+     * Note: no `void` return type so plugin subclasses that override init()
+     * without a return type (this class is the deprecated plugin shim) stay
+     * signature-compatible.
      */
-    public function init(): void
+    public function init()
     {
         $canvasName = Str::studly(static::CANVAS_NAME).'canvas';
         $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";

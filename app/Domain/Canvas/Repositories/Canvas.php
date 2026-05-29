@@ -236,9 +236,9 @@ class Canvas extends BlueprintsRepository
     /**
      * @deprecated delegate to Blueprints repository
      */
-    public function getSingleCanvas($canvasId): false|array
+    public function getSingleCanvas($canvasId, $canvasType = null): false|array
     {
-        return parent::getSingleCanvas((int) $canvasId, static::CANVAS_NAME.'canvas');
+        return parent::getSingleCanvas((int) $canvasId, $canvasType ?: static::CANVAS_NAME.'canvas');
     }
 
     /**
@@ -254,25 +254,25 @@ class Canvas extends BlueprintsRepository
     /**
      * @deprecated delegate to Blueprints repository
      */
-    public function getCanvasItemsById($id): false|array
+    public function getCanvasItemsById($id, $commentModule = null): false|array
     {
-        return parent::getCanvasItemsById((int) $id, static::CANVAS_NAME.'canvasitem');
+        return parent::getCanvasItemsById((int) $id, $commentModule ?: static::CANVAS_NAME.'canvasitem');
     }
 
     /**
      * @deprecated delegate to Blueprints repository
      */
-    public function getNumberOfCanvasItems($projectId = null): mixed
+    public function getNumberOfCanvasItems($projectId = null, $canvasType = null): mixed
     {
-        return parent::getNumberOfCanvasItems($projectId !== null ? (int) $projectId : null, static::CANVAS_NAME.'canvas');
+        return parent::getNumberOfCanvasItems($projectId !== null ? (int) $projectId : null, $canvasType ?: static::CANVAS_NAME.'canvas');
     }
 
     /**
      * @deprecated delegate to Blueprints repository
      */
-    public function getNumberOfBoards($projectId = null): mixed
+    public function getNumberOfBoards($projectId = null, $canvasType = null): mixed
     {
-        return parent::getNumberOfBoards($projectId !== null ? (int) $projectId : null, static::CANVAS_NAME.'canvas');
+        return parent::getNumberOfBoards($projectId !== null ? (int) $projectId : null, $canvasType ?: static::CANVAS_NAME.'canvas');
     }
 
     /**
@@ -284,9 +284,9 @@ class Canvas extends BlueprintsRepository
      *
      * @deprecated delegate to Blueprints repository
      */
-    public function existCanvas(int $projectId, string $canvasTitle): bool
+    public function existCanvas(int $projectId, string $canvasTitle, $canvasType = null): bool
     {
-        return parent::existCanvas($projectId, $canvasTitle, static::CANVAS_NAME.'canvas');
+        return parent::existCanvas($projectId, $canvasTitle, $canvasType ?: static::CANVAS_NAME.'canvas');
     }
 
     /***
@@ -294,9 +294,9 @@ class Canvas extends BlueprintsRepository
      *
      * @deprecated delegate to Blueprints repository
      */
-    public function copyCanvas(int $projectId, int $canvasId, int $authorId, string $canvasTitle): int
+    public function copyCanvas(int $projectId, int $canvasId, int $authorId, string $canvasTitle, $canvasType = null): int
     {
-        return parent::copyCanvas($projectId, $canvasId, $authorId, $canvasTitle, static::CANVAS_NAME.'canvas');
+        return parent::copyCanvas($projectId, $canvasId, $authorId, $canvasTitle, $canvasType ?: static::CANVAS_NAME.'canvas');
     }
 
     /**
