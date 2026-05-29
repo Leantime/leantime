@@ -72,7 +72,7 @@
     "mermaid": "^11.12.3",
     "moment": "^2.29.4",
     "packery": "^2.1.2",
-    "shepherd.js": "^11.2.0",
+    "shepherd.js": "^15.2.2",
     "tippy.js": "^6.3.7",
     "tiptap-extension-font-size": "^1.2.0",
     "uppy": "^3.25.3"
