@@ -32,25 +32,13 @@ class ShowAll extends Controller
     {
         $currentModule = $params['id'] ?? $_GET['id'] ?? '';
 
-        if (isset($_GET['delFile'])) {
-            $result = $this->filesService->deleteFile($_GET['delFile']);
-
-            if ($result === true) {
-                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
-
-                return Frontcontroller::redirect(BASE_URL.'/files/showAll'.(($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : ''));
-            } else {
-                $this->tpl->setNotification($result['msg'], 'success');
-            }
-        }
-
         $this->assignTemplateVars($currentModule);
 
         return $this->tpl->displayPartial('files.showAll');
     }
 
     /**
-     * Handles file uploads.
+     * Handles file uploads and deletions via POST.
      *
      * @param  array  $params  Request parameters
      *
@@ -59,6 +47,18 @@ class ShowAll extends Controller
     public function post(array $params): Response
     {
         $currentModule = $params['id'] ?? $_GET['id'] ?? '';
+
+        if (isset($_POST['delFile'])) {
+            $result = $this->filesService->deleteFile($_POST['delFile']);
+
+            if ($result === true) {
+                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
+
+                return Frontcontroller::redirect(BASE_URL.'/files/showAll'.(($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : ''));
+            } else {
+                $this->tpl->setNotification($this->language->__('notifications.file_delete_error'), 'error');
+            }
+        }
 
         if (isset($_POST['upload']) || isset($_FILES['file'])) {
             if (isset($_FILES['file'])) {

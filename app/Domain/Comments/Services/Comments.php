@@ -4,6 +4,8 @@ namespace Leantime\Domain\Comments\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -157,20 +159,61 @@ class Comments
     }
 
     /**
+     * Checks whether the current user is authorized to modify a comment.
+     * The caller must be the comment author or have at least manager role.
+     *
+     * @param  int  $commentId  The comment ID to check
+     * @return bool True if authorized, false otherwise
+     */
+    private function canModifyComment(int $commentId): bool
+    {
+        $comment = $this->commentRepository->getComment($commentId);
+
+        if (! $comment) {
+            return false;
+        }
+
+        $currentUserId = session('userdata.id');
+
+        // Comment author can always modify their own comment
+        if ((int) $comment['userId'] === (int) $currentUserId) {
+            return true;
+        }
+
+        // Managers and above can modify any comment
+        if (Auth::userIsAtLeast(Roles::$manager)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Edit a comment. The caller must be the comment author or a manager+.
+     *
      * @throws BindingResolutionException
      *
      * @api
      */
     public function editComment($values, $id): bool
     {
+        if (! $this->canModifyComment((int) $id)) {
+            return false;
+        }
+
         return $this->commentRepository->editComment($values['text'], $id);
     }
 
     /**
+     * Delete a comment. The caller must be the comment author or a manager+.
+     *
      * @api
      */
     public function deleteComment($commentId): bool
     {
+        if (! $this->canModifyComment((int) $commentId)) {
+            return false;
+        }
 
         return $this->commentRepository->deleteComment($commentId);
     }

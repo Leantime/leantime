@@ -68,7 +68,13 @@
                                     <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{!! __('links.download') !!}</a></li>
 
                                     @if ($login::userIsAtLeast($roles::$editor))
-                                        <li><a href="{{ BASE_URL }}/files/browse?delFile={{ $file['id'] }}" class="delete deleteFile"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a></li>
+                                        <li>
+                                            <form method="post" action="{{ BASE_URL }}/files/browse" class="deleteFile" onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
+                                                @csrf
+                                                <input type="hidden" name="delFile" value="{{ $file['id'] }}" />
+                                                <button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</button>
+                                            </form>
+                                        </li>
                                     @endif
 
                                 </ul>
@@ -232,7 +238,7 @@
                                     '<li class="nav-header">{!! __("subtitles.file") !!}</li>' +
                                     '<li><a target="_blank" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">{!! str_replace("'", '"', __("links.download")) !!}</a></li>'+
                                     @if ($login::userIsAtLeast($roles::$editor))
-                                        '<li><a href="{{ BASE_URL }}/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><i class="fa fa-trash"></i> {!! str_replace("'", '"', __("links.delete")) !!}</a></li>'+
+                                        '<li><form method="post" action="{{ BASE_URL }}/files/browse" class="deleteFile" onsubmit="return confirm(\'{{ __("text.confirm_delete") }}\')"><input type="hidden" name="_token" value="'+ jQuery('meta[name=csrf-token]').attr('content') +'" /><input type="hidden" name="delFile" value="'+ response.fileId +'" /><button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! str_replace("'", '"', __("links.delete")) !!}</button></form></li>'+
                                     @endif
                                 '</ul>'+
                             '</div>'+

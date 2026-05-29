@@ -2605,6 +2605,45 @@ class Tickets
      */
     public function updateTicketStatusAndSorting($params, $handler = null): bool
     {
+        // Collect all ticket IDs from the request to validate project access for each one.
+        // This prevents smuggling cross-project ticket IDs in a mixed batch.
+        $allTicketIds = [];
+
+        if ($handler) {
+            $allTicketIds[] = substr($handler, 7);
+        }
+
+        foreach ($params as $status => $ticketList) {
+            if (is_numeric($status) && ! empty($ticketList)) {
+                $tickets = explode('&', $ticketList);
+                foreach ($tickets as $ticketString) {
+                    $id = substr($ticketString, 9);
+                    if (! empty($id)) {
+                        $allTicketIds[] = $id;
+                    }
+                }
+            }
+        }
+
+        // Verify project access for every ticket in the batch
+        $userId = session('userdata.id');
+        $checkedProjects = [];
+        foreach ($allTicketIds as $ticketId) {
+            $ticket = $this->getTicket($ticketId);
+            if (! $ticket) {
+                return false;
+            }
+
+            $projectId = $ticket->projectId;
+            // Cache project access checks to avoid redundant DB lookups
+            if (! isset($checkedProjects[$projectId])) {
+                $checkedProjects[$projectId] = $this->projectService->isUserAssignedToProject($userId, $projectId);
+            }
+
+            if (! $checkedProjects[$projectId]) {
+                return false;
+            }
+        }
 
         // Jquery sortable serializes the array for kanban in format
         // statusKey: ticket[]=X&ticket[]=X2...,

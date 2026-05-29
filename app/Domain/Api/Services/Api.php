@@ -87,7 +87,7 @@ class Api
             'mail' => filter_var($user['username'], FILTER_SANITIZE_EMAIL),
             'clientId' => $user['clientId'],
             'role' => Roles::getRoleString($user['role']),
-            'settings' => $user['settings'] ? unserialize($user['settings']) : [],
+            'settings' => $user['settings'] ? safe_unserialize($user['settings'], []) : [],
             'twoFAEnabled' => $user['twoFAEnabled'] ?? false,
             'twoFAVerified' => false,
             'twoFASecret' => $user['twoFASecret'] ?? '',

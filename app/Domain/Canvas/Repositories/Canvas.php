@@ -346,21 +346,37 @@ class Canvas
             ]);
     }
 
+    /**
+     * Allowed columns for patch operations.
+     * Prevents SQL injection via user-controlled column names.
+     */
+    private const PATCHABLE_COLUMNS = [
+        'title', 'description', 'assumptions', 'data', 'conclusion',
+        'box', 'status', 'relates', 'milestoneId', 'kpi', 'data1',
+        'startDate', 'endDate', 'setting', 'metricType', 'startValue',
+        'currentValue', 'endValue', 'impact', 'effort', 'probability',
+        'action', 'assignedTo', 'parent', 'tags', 'sortindex',
+    ];
+
+    /**
+     * @param  int|string  $id  Canvas item ID
+     * @param  array  $params  Key-value pairs to update
+     * @return bool Whether the update succeeded
+     */
     public function patchCanvasItem($id, $params): bool
     {
-        if (isset($params['act'])) {
-            unset($params['act']);
-        }
-
         $updates = [];
         foreach ($params as $key => $value) {
-            $sanitizedKey = DbCore::sanitizeToColumnString($key);
-            $updates[$sanitizedKey] = $value;
+            if (in_array($key, self::PATCHABLE_COLUMNS, true)) {
+                $updates[$key] = $value;
+            }
         }
 
-        $updates['id'] = $id;
+        if (empty($updates)) {
+            return false;
+        }
 
-        return $this->connection->table('zp_canvas_items')
+        return (bool) $this->connection->table('zp_canvas_items')
             ->where('id', $id)
             ->limit(1)
             ->update($updates);

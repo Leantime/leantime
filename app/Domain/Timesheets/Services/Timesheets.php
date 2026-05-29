@@ -265,17 +265,30 @@ class Timesheets
     /**
      * Add a new time entry directly from a prepared values array.
      *
+     * When called via API, the userId is forced to the authenticated user
+     * unless the caller is a manager or above.
+     *
      * @param  array  $values  The time entry values
      *
      * @api
      */
     public function addTime(array $values): void
     {
+        $currentUserId = (int) session('userdata.id');
+
+        // Non-managers can only add time entries for themselves
+        if (! Auth::userIsAtLeast(Roles::$manager)) {
+            $values['userId'] = $currentUserId;
+        }
+
         $this->timesheetsRepo->addTime($values);
     }
 
     /**
      * Update an existing time entry.
+     *
+     * When called via API, only the entry owner or a manager+ can update.
+     * Non-managers cannot reassign entries to other users.
      *
      * @param  array  $values  The updated time entry values
      *
@@ -283,6 +296,22 @@ class Timesheets
      */
     public function updateTime(array $values): void
     {
+        $currentUserId = (int) session('userdata.id');
+
+        // If updating an existing entry, verify ownership or manager+ role
+        if (isset($values['id'])) {
+            $existing = $this->timesheetsRepo->getTimesheet($values['id']);
+
+            if ($existing && (int) $existing['userId'] !== $currentUserId && ! Auth::userIsAtLeast(Roles::$manager)) {
+                return;
+            }
+        }
+
+        // Non-managers cannot set userId to someone else
+        if (! Auth::userIsAtLeast(Roles::$manager)) {
+            $values['userId'] = $currentUserId;
+        }
+
         $this->timesheetsRepo->updateTime($values);
     }
 

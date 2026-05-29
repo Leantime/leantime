@@ -2151,14 +2151,23 @@ class Projects
     /**
      * Deletes a project and all associated user relations.
      *
+     * Only admins and owners can delete projects.
+     *
      * @param  int  $id  The project ID to delete
+     * @return bool True if deleted, false if unauthorized
      *
      * @api
      */
-    public function deleteProject(int $id): void
+    public function deleteProject(int $id): bool
     {
+        if (! Auth::userIsAtLeast(Roles::$manager)) {
+            return false;
+        }
+
         $this->projectRepository->deleteProject($id);
         $this->projectRepository->deleteAllUserRelations($id);
+
+        return true;
     }
 
     /**

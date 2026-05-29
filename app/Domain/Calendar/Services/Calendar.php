@@ -810,7 +810,7 @@ class Calendar
      *
      * @throws \Exception If the URL is unsafe or there is an error loading the URL.
      */
-    private function loadIcalUrl(string $url): string
+    public function loadIcalUrl(string $url): string
     {
         if (str_contains($url, 'webcal://')) {
             $url = str_replace('webcal://', 'https://', $url);

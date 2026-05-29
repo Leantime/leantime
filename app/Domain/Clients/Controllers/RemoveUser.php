@@ -25,7 +25,7 @@ class RemoveUser extends Controller
     }
 
     /**
-     * Handles user removal from client via GET (action link).
+     * Displays the remove user confirmation (no state change on GET).
      *
      * @param  array  $params  Request parameters
      */
@@ -37,12 +37,30 @@ class RemoveUser extends Controller
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
 
-        if (! isset($_GET['id']) || ! isset($_GET['userId'])) {
+        $clientId = (int) ($params['id'] ?? $_GET['id'] ?? 0);
+
+        return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$clientId);
+    }
+
+    /**
+     * Handles user removal from client via POST (CSRF-protected).
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
+
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
 
-        $clientId = (int) $_GET['id'];
-        $userId = (int) $_GET['userId'];
+        $clientId = (int) ($params['id'] ?? $_POST['id'] ?? 0);
+        $userId = (int) ($params['userId'] ?? $_POST['userId'] ?? 0);
+
+        if ($clientId === 0 || $userId === 0) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
 
         if ($this->userRepo->removeFromClient($userId)) {
             $this->tpl->setNotification(
@@ -57,15 +75,5 @@ class RemoveUser extends Controller
         }
 
         return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$clientId);
-    }
-
-    /**
-     * Handles user removal from client via POST.
-     *
-     * @param  array  $params  Request parameters
-     */
-    public function post(array $params): Response
-    {
-        return $this->get($params);
     }
 }

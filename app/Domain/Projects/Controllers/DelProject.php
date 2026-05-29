@@ -73,7 +73,14 @@ class DelProject extends Controller
 
         $id = (int) $params['id'];
 
-        $this->projectService->deleteProject($id);
+        $result = $this->projectService->deleteProject($id);
+
+        if ($result === false) {
+            $this->tpl->setNotification($this->language->__('notification.no_permission'), 'error');
+
+            return Frontcontroller::redirect(BASE_URL.'/projects/showAll');
+        }
+
         $this->projectService->resetCurrentProject();
         $this->projectService->setCurrentProject();
 

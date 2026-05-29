@@ -55,14 +55,19 @@ class DelTime extends Controller
         $id = (int) $params['id'];
 
         if (isset($_POST['del'])) {
-            $this->timesheetService->deleteTime($id);
-            $this->tpl->setNotification('notifications.time_deleted_successfully', 'success');
+            $result = $this->timesheetService->deleteTime($id);
 
-            if (session()->exists('lastPage')) {
-                return Frontcontroller::redirect(session('lastPage'));
+            if ($result === true) {
+                $this->tpl->setNotification('notifications.time_deleted_successfully', 'success');
+
+                if (session()->exists('lastPage')) {
+                    return Frontcontroller::redirect(session('lastPage'));
+                }
+
+                return Frontcontroller::redirect(BASE_URL.'/timesheets/showMyList');
             }
 
-            return Frontcontroller::redirect(BASE_URL.'/timesheets/showMyList');
+            $this->tpl->setNotification('notifications.no_permission_delete', 'error');
         }
 
         $this->tpl->assign('id', $id);
