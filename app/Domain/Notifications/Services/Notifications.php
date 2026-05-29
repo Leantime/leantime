@@ -63,6 +63,36 @@ class Notifications
     }
 
     /**
+     * consumeFlashNotification - reads the pending growl/flash notification from the
+     * session, clears the relevant session keys (read-once semantics) and returns the
+     * assembled payload.
+     *
+     * Returns null when there is no pending notification.
+     *
+     * @return array{notification: string, type: string, eventId: string}|null
+     *
+     * @api
+     */
+    public function consumeFlashNotification(): ?array
+    {
+        if (session('notification') == '') {
+            return null;
+        }
+
+        $notificationArray = [
+            'notification' => session('notification') ?? '',
+            'type' => session('notificationType') ?? '',
+            'eventId' => session('eventId') ?? '',
+        ];
+
+        session(['notification' => '']);
+        session(['notificationType' => '']);
+        session(['eventId' => '']);
+
+        return $notificationArray;
+    }
+
+    /**
      * @api
      */
     /**

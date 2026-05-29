@@ -1,40 +1,35 @@
 <?php
 
 /**
- * Controller / Delete Canvas
+ * GetLatestGrowl Controller - returns the latest pending growl notification.
  */
 
 namespace Leantime\Domain\Notifications\Controllers;
 
 use Leantime\Core\Controller\Controller;
+use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class GetLatestGrowl extends Controller
 {
-    public function init(
+    private NotificationService $notificationService;
 
-    ): void {}
-
-    public function get()
+    /**
+     * init - inject dependencies
+     */
+    public function init(NotificationService $notificationService): void
     {
+        $this->notificationService = $notificationService;
+    }
 
-        $jsonEncoded = false;
+    /**
+     * get - returns the latest pending growl notification as JSON, or false when none.
+     */
+    public function get(array $params = []): Response
+    {
+        $payload = $this->notificationService->consumeFlashNotification();
 
-        if (session('notification') != '') {
-            $notificationArray = [
-                'notification' => session('notification') ?? '',
-                'type' => session('notificationType') ?? '',
-                'eventId' => session('eventId') ?? '',
-            ];
-
-            session(['notification' => '']);
-            session(['notificationType' => '']);
-            session(['eventId' => '']);
-
-            $jsonEncoded = json_encode($notificationArray);
-        }
-
-        return new JsonResponse($jsonEncoded);
-
+        return new JsonResponse($payload !== null ? json_encode($payload) : false);
     }
 }
