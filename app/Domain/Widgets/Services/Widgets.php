@@ -5,6 +5,8 @@ namespace Leantime\Domain\Widgets\Services;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Users\Services\Users;
 use Leantime\Domain\Widgets\Models\Widget;
@@ -40,8 +42,11 @@ class Widgets
      * @param  Setting  $settingRepo  The Setting repository object
      * @return void
      */
-    public function __construct(Setting $settingRepo)
-    {
+    public function __construct(
+        Setting $settingRepo,
+        protected ProjectService $projectService,
+        protected ReportService $reportService
+    ) {
 
         $this->settingRepo = $settingRepo;
 
@@ -290,5 +295,46 @@ class Widgets
             serialize($data)
         );
 
+    }
+
+    /**
+     * Builds the data for the "My Projects" dashboard widget: the open projects
+     * assigned to the user, each enriched with its progress and realtime report,
+     * plus a deduplicated client map.
+     *
+     * @param  int  $userId  The user whose assigned projects to load
+     * @param  string  $clientFilter  Optional client id to filter projects by ('' = all clients)
+     * @return array{projects: array<int, array<string, mixed>>, clients: array<int|string, string>}
+     *
+     * @api
+     */
+    public function getMyProjectsWidgetData(int $userId, string $clientFilter = ''): array
+    {
+        $assignedProjects = $this->projectService->getProjectsAssignedToUser($userId, 'open');
+
+        $clients = [];
+        $projects = [];
+
+        if (! is_array($assignedProjects)) {
+            return ['projects' => $projects, 'clients' => $clients];
+        }
+
+        foreach ($assignedProjects as $project) {
+            // Build the client map from every assigned project, regardless of filter.
+            if (! array_key_exists($project['clientId'], $clients)) {
+                $clients[$project['clientId']] = $project['clientName'];
+            }
+
+            if ($clientFilter !== '' && $project['clientId'] != $clientFilter) {
+                continue;
+            }
+
+            $project['progress'] = $this->projectService->getProjectProgress($project['id']);
+            $project['report'] = $this->reportService->getRealtimeReport($project['id'], '');
+
+            $projects[] = $project;
+        }
+
+        return ['projects' => $projects, 'clients' => $clients];
     }
 }
