@@ -6,15 +6,16 @@ use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Canvas\Repositories\Canvas;
+use Leantime\Domain\Blueprints\Repositories\Blueprints;
 use Leantime\Domain\Tickets\Repositories\Tickets;
 use Leantime\Domain\Wiki\Models\Article;
 use Leantime\Domain\Wiki\Models\Wiki as WikiModel;
 
-class Wiki extends Canvas
+class Wiki extends Blueprints
 {
     /**
-     * Constant that must be redefined
+     * Canvas type slug used to derive the Blueprints canvas type ("wikicanvas")
+     * and comment module ("wikicanvasitem").
      */
     protected const CANVAS_NAME = 'wiki';
 
@@ -24,6 +25,41 @@ class Wiki extends Canvas
     {
         parent::__construct($db, $language, $ticketRepo, $dbHelper);
         $this->dbConnection = $db->getConnection();
+    }
+
+    /**
+     * Get all canvas boards for a project, defaulting to the wiki canvas type.
+     *
+     * @param  int  $projectId  Project ID
+     * @param  string|null  $type  Canvas type override (defaults to "wikicanvas")
+     * @return false|array<int, array<string, mixed>>
+     */
+    public function getAllCanvas($projectId, $type = null): false|array
+    {
+        return parent::getAllCanvas((int) $projectId, $type ?: 'wikicanvas');
+    }
+
+    /**
+     * Create a canvas board, defaulting to the wiki canvas type.
+     *
+     * @param  array<string, mixed>  $values  Canvas values
+     * @param  string|null  $type  Canvas type override (defaults to "wikicanvas")
+     */
+    public function addCanvas($values, $type = null): false|string
+    {
+        return parent::addCanvas($values, $type ?: 'wikicanvas');
+    }
+
+    /**
+     * Get the items for a canvas board, using the wiki comment module.
+     *
+     * @param  int  $id  Canvas board ID
+     * @param  string  $commentModule  Comment module override (defaults to "wikicanvasitem")
+     * @return false|array<int, array<string, mixed>>
+     */
+    public function getCanvasItemsById($id, $commentModule = 'wikicanvasitem'): false|array
+    {
+        return parent::getCanvasItemsById((int) $id, $commentModule ?: 'wikicanvasitem');
     }
 
     public function getArticle(int $id, int $projectId): mixed
@@ -227,12 +263,16 @@ class Wiki extends Canvas
     }
 
     /**
+     * Count wiki boards, optionally scoped to a project.
+     *
+     * @param  int|null  $projectId  Project ID (null counts across all projects)
+     * @param  string  $canvasType  Canvas type override (defaults to the "wiki" board type)
      * @return int|mixed
      */
-    public function getNumberOfBoards($projectId = null): mixed
+    public function getNumberOfBoards($projectId = null, $canvasType = 'wiki'): mixed
     {
         $query = $this->dbConnection->table('zp_canvas')
-            ->where('type', 'wiki');
+            ->where('type', $canvasType ?: 'wiki');
 
         if ($projectId !== null) {
             $query->where('projectId', $projectId);
@@ -242,13 +282,17 @@ class Wiki extends Canvas
     }
 
     /**
+     * Count wiki canvas items, optionally scoped to a project.
+     *
+     * @param  int|null  $projectId  Project ID (null counts across all projects)
+     * @param  string  $canvasType  Canvas type override (defaults to the "wiki" board type)
      * @return int|mixed
      */
-    public function getNumberOfCanvasItems($projectId = null): mixed
+    public function getNumberOfCanvasItems($projectId = null, $canvasType = 'wiki'): mixed
     {
         $query = $this->dbConnection->table('zp_canvas_items')
             ->leftJoin('zp_canvas AS canvasBoard', 'zp_canvas_items.canvasId', '=', 'canvasBoard.id')
-            ->where('canvasBoard.type', 'wiki');
+            ->where('canvasBoard.type', $canvasType ?: 'wiki');
 
         if ($projectId !== null) {
             $query->where('canvasBoard.projectId', $projectId);
