@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Sprints\Controllers;
 
 use Leantime\Core\Controller\Controller;
+use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Projects\Services\Projects;
-use Leantime\Domain\Sprints\Models\Sprints as SprintModel;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 
 class EditSprint extends Controller
@@ -36,13 +36,7 @@ class EditSprint extends Controller
         if (isset($params['id'])) {
             $sprint = $this->sprintService->getSprint((int) $params['id']);
         } else {
-            $sprint = app()->make(SprintModel::class);
-
-            $startDate = dtHelper()->userNow();
-            $endDate = dtHelper()->userNow()->addDays(13);
-
-            $sprint->startDate = $startDate;
-            $sprint->endDate = $endDate;
+            $sprint = $this->sprintService->getNewSprint();
         }
 
         $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(userId: session('userdata.id'), projectStatus: 'open', projectTypes: 'project');
@@ -63,28 +57,29 @@ class EditSprint extends Controller
         $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session('userdata.id'), 'open');
         $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
-        if ($params['startDate'] == '' || $params['endDate'] == '') {
+        $submittedValues = $params;
 
-            $this->tpl->setNotification('First day and last day are required', 'error');
-            $this->tpl->assign('sprint', (object) $params);
+        try {
+            if (isset($_GET['id']) && $_GET['id'] > 0) {
+                $params['id'] = (int) $_GET['id'];
+                $sprintId = $params['id'];
+                if ($this->sprintService->editSprint($params)) {
+                    $this->tpl->setNotification('Sprint edited successfully', 'success');
+                } else {
+                    $this->tpl->setNotification('There was a problem saving the sprint', 'error');
+                }
+            } else {
+                if ($sprintId = $this->sprintService->addSprint($params)) {
+                    $this->tpl->setNotification('Sprint created successfully.', 'success');
+                } else {
+                    $this->tpl->setNotification('There was a problem saving the sprint', 'error');
+                }
+            }
+        } catch (MissingParameterException $e) {
+            $this->tpl->setNotification($e->getMessage(), 'error');
+            $this->tpl->assign('sprint', (object) $submittedValues);
 
             return $this->tpl->displayPartial('sprints.sprintdialog');
-        }
-
-        if (isset($_GET['id']) && $_GET['id'] > 0) {
-            $params['id'] = (int) $_GET['id'];
-            $sprintId = $params['id'];
-            if ($this->sprintService->editSprint($params)) {
-                $this->tpl->setNotification('Sprint edited successfully', 'success');
-            } else {
-                $this->tpl->setNotification('There was a problem saving the sprint', 'error');
-            }
-        } else {
-            if ($sprintId = $this->sprintService->addSprint($params)) {
-                $this->tpl->setNotification('Sprint created successfully.', 'success');
-            } else {
-                $this->tpl->setNotification('There was a problem saving the sprint', 'error');
-            }
         }
 
         $sprint = $this->sprintService->getSprint($sprintId);
@@ -92,14 +87,4 @@ class EditSprint extends Controller
 
         return $this->tpl->displayPartial('sprints.sprintdialog');
     }
-
-    /**
-     * put - handle put requests
-     */
-    public function put($params) {}
-
-    /**
-     * delete - handle delete requests
-     */
-    public function delete($params) {}
 }
