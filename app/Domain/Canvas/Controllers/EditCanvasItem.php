@@ -120,6 +120,7 @@ class EditCanvasItem extends Controller
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
         $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
+        $this->tpl->assign('currentCanvas', (int) session('current'.strtoupper(static::CANVAS_NAME).'Canvas'));
 
         return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas'.'.canvasDialog');
     }
@@ -337,6 +338,7 @@ class EditCanvasItem extends Controller
             $this->tpl->assign('canvasItem', $value);
         }
         $this->tpl->assign('comments', $comments);
+        $this->tpl->assign('currentCanvas', (int) session('current'.strtoupper(static::CANVAS_NAME).'Canvas'));
 
         return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas'.'.canvasDialog');
     }
