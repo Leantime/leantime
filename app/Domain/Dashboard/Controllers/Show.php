@@ -8,11 +8,8 @@ use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-use Leantime\Domain\Comments\Services\Comments as CommentService;
+use Leantime\Domain\Dashboard\Services\Dashboard as DashboardService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Reactions\Models\Reactions;
-use Leantime\Domain\Reactions\Services\Reactions as ReactionService;
 use Leantime\Domain\Setting\Services\Setting;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
@@ -30,14 +27,11 @@ class Show extends Controller
 
     private TimesheetService $timesheetService;
 
-    private CommentService $commentService;
-
-    private ReactionService $reactionsService;
+    private DashboardService $dashboardService;
 
     private Setting $settingsSvc;
 
     /**
-     * @throws BindingResolutionException
      * @throws BindingResolutionException
      */
     public function init(
@@ -45,16 +39,14 @@ class Show extends Controller
         TicketService $ticketService,
         UserService $userService,
         TimesheetService $timesheetService,
-        CommentService $commentService,
-        ReactionService $reactionsService,
+        DashboardService $dashboardService,
         Setting $settingsSvc
     ): void {
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
         $this->userService = $userService;
         $this->timesheetService = $timesheetService;
-        $this->commentService = $commentService;
-        $this->reactionsService = $reactionsService;
+        $this->dashboardService = $dashboardService;
         $this->settingsSvc = $settingsSvc;
 
         session(['lastPage' => BASE_URL.'/dashboard/show']);
@@ -87,12 +79,7 @@ class Show extends Controller
         $project['assignedUsers'] = $this->projectService->getUsersAssignedToProject($currentProjectId);
         $this->tpl->assign('project', $project);
 
-        $userReaction = $this->reactionsService->getUserReactions(session('userdata.id'), 'project', $currentProjectId, Reactions::$favorite);
-        if ($userReaction && is_array($userReaction) && count($userReaction) > 0) {
-            $this->tpl->assign('isFavorite', true);
-        } else {
-            $this->tpl->assign('isFavorite', false);
-        }
+        $this->tpl->assign('isFavorite', $this->dashboardService->userHasFavoritedProject(session('userdata.id'), $currentProjectId));
 
         $this->tpl->assign('allUsers', $this->userService->getAll());
 
@@ -106,29 +93,16 @@ class Show extends Controller
         $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
         $this->tpl->assign('milestones', $allProjectMilestones);
 
-        $comments = app()->make(CommentRepository::class);
-
-        // Delete comment
+        // Delete comment (only confirm success when the auth-checked delete actually ran)
         if (isset($_GET['delComment']) === true) {
-            $commentId = (int) ($_GET['delComment']);
-
-            $comments->deleteComment($commentId);
-
-            $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'projectcomment_deleted');
+            if ($this->dashboardService->deleteProjectComment((int) $_GET['delComment'])) {
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'projectcomment_deleted');
+            }
         }
 
-        // add replies to comments
-        $comment = array_map(function ($comment) use ($comments) {
-            $comment['replies'] = $comments->getReplies($comment['id']);
-
-            return $comment;
-        }, $comments->getComments('project', $currentProjectId, 0));
-
-        $url = parse_url(CURRENT_URL);
-        $this->tpl->assign('delUrlBase', $url['scheme'].'://'.$url['host'].$url['path'].'?delComment='); // for delete comment
-
-        $this->tpl->assign('comments', $comment);
-        $this->tpl->assign('numComments', $comments->countComments('project', $currentProjectId));
+        $this->tpl->assign('delUrlBase', $this->dashboardService->buildDeleteCommentUrlBase());
+        $this->tpl->assign('comments', $this->dashboardService->getProjectCommentsWithReplies($currentProjectId));
+        $this->tpl->assign('numComments', $this->dashboardService->countProjectComments($currentProjectId));
 
         $completedOnboarding = $this->settingsSvc->onboardingHandler();
         if ($completedOnboarding instanceof RedirectResponse) {
@@ -169,12 +143,11 @@ class Show extends Controller
         }
 
         // Manage Post comment
-        $comments = app()->make(CommentRepository::class);
         if (isset($_POST['comment']) === true) {
             $currentProjectId = $this->projectService->getCurrentProjectId();
             $project = $this->projectService->getProject($currentProjectId);
 
-            if ($project && $this->commentService->addComment($_POST, 'project', $currentProjectId, $project)) {
+            if ($project && $this->dashboardService->addProjectComment($_POST, $currentProjectId, $project)) {
                 $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success', 'dashboardcomment_created');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.comment_create_error'), 'error');
