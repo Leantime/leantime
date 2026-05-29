@@ -25,7 +25,7 @@
     "@tiptap/extension-image": "^2.11.5",
     "@tiptap/extension-link": "^2.11.5",
     "@tiptap/extension-mention": "^2.11.5",
-    "@tiptap/extension-placeholder": "^2.11.5",
+    "@tiptap/extension-placeholder": "^3.23.6",
     "@tiptap/extension-subscript": "^2.27.2",
     "@tiptap/extension-superscript": "^2.27.2",
     "@tiptap/extension-table": "^2.11.5",
