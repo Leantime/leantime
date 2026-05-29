@@ -12,6 +12,8 @@ class CanvasTemplate
 
     public int $minColumns;
 
+    public int $minWidthOffset;
+
     public array $boxes;
 
     public array $statusLabels;
@@ -56,6 +58,7 @@ class CanvasTemplate
         $this->icon = $data['icon'] ?? 'fa-x';
         $this->disclaimer = $data['disclaimer'] ?? '';
         $this->minColumns = $data['minColumns'] ?? 2;
+        $this->minWidthOffset = $data['minWidthOffset'] ?? 0;
         $this->boxes = $data['boxes'] ?? [];
         $this->layout = $data['layout'] ?? [];
 

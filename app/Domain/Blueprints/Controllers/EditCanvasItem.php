@@ -230,7 +230,7 @@ class EditCanvasItem extends Controller
                         'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
                     ];
                     $notification->entity = $canvasItem;
-                    $notification->module = 'blueprints';
+                    $notification->module = $this->canvasSlug.'canvas';
                     $notification->action = 'updated';
                     $notification->projectId = session('currentProject');
                     $notification->subject = $subject;
@@ -287,7 +287,7 @@ class EditCanvasItem extends Controller
                         'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
                     ];
                     $notification->entity = $canvasItem;
-                    $notification->module = 'blueprints';
+                    $notification->module = $this->canvasSlug.'canvas';
                     $notification->action = 'created';
                     $notification->projectId = session('currentProject');
                     $notification->subject = $subject;
@@ -337,7 +337,7 @@ class EditCanvasItem extends Controller
                 'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
             ];
             $notification->entity = $values;
-            $notification->module = 'blueprints';
+            $notification->module = $this->canvasSlug.'canvas';
             $notification->action = 'commented';
             $notification->projectId = session('currentProject');
             $notification->subject = $subject;

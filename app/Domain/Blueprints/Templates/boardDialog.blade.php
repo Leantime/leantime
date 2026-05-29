@@ -14,8 +14,8 @@
     </div>
     <div class="modal-footer">
         @if(isset($_GET['id']))
-            <input type="submit" class="btn btn-primary" value="{{ __('buttons.save_board') }}" name="newCanvas" />
             <input type="hidden" name="editCanvas" value="{{ (int) $_GET['id'] }}">
+            <input type="submit" class="btn btn-primary" value="{{ __('buttons.save_board') }}" name="editCanvas" />
         @else
             <input type="hidden" name="newCanvas" value="true">
             <input type="submit" class="btn btn-primary" value="{{ __('buttons.create_board') }}" name="newCanvas" />

@@ -6,7 +6,7 @@
 @if(count($allCanvas) > 0)
     <div id="sortableCanvasKanban" class="sortableTicketList disabled">
         <div class="row-fluid">
-            <div class="column" style="width: 100%; min-width: calc({{ $template->minColumns }} * 250px);">
+            <div class="column" style="width: 100%; min-width: calc({{ $template->minColumns }} * 250px{{ $template->minWidthOffset ? ' + ' . $template->minWidthOffset . 'px' : '' }});">
                 @foreach($template->layout as $row)
                     @if($row['type'] === 'header')
                         @include('blueprints::partials.sectionHeader', ['row' => $row])
@@ -17,6 +17,10 @@
                     @elseif($row['type'] === 'boxes')
                         <div class="row canvas-row" @if(isset($row['id'])) id="{{ $row['id'] }}" @endif>
                             @foreach($row['columns'] as $col)
+                                @if(isset($col['empty']) && $col['empty'] === true)
+                                    {{-- Spacer cell: plain div without .column so it does not pick up column padding/min-width --}}
+                                    <div style="width: {{ $col['width'] }}%">&nbsp;</div>
+                                @else
                                 <div class="column" style="width: {{ $col['width'] }}%">
                                     @if(isset($col['box']))
                                         @php
@@ -60,6 +64,7 @@
                                         @endforeach
                                     @endif
                                 </div>
+                                @endif
                             @endforeach
                         </div>
                     @endif

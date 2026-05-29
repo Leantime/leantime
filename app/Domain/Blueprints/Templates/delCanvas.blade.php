@@ -1,5 +1,5 @@
 @php
-    $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
+    $id = isset($_GET['id']) ? filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT) : '';
 @endphp
 
 <h4 class="widgettitle title-light">{!! __('subtitles.delete') !!}</h4>
