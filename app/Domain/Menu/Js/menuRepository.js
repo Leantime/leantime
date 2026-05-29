@@ -6,21 +6,8 @@ leantime.menuRepository = (function () {
 
     var updateUserMenuSettings = function (menuStateValue) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/sessions',
-                data:
-                    {
-                        menuState : menuStateValue
-                }
-            }
-        ).done(
-            function () {
-
-
-            }
-        );
+        leantime.rpc('Api.Api.setMainMenuState', { state: menuStateValue })
+            .catch(function (e) { console.error('Could not update menu state', e); });
 
     };
 

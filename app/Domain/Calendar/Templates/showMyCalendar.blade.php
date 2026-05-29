@@ -316,14 +316,10 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 
             calendar.changeView(jQuery("#my-select option:selected").val());
 
-            jQuery.ajax({
-                type : 'PATCH',
-                url  : leantime.appUrl + '/api/submenu',
-                data : {
-                    submenu : "myCalendarView",
-                    state   : jQuery("#my-select option:selected").val()
-                }
-            });
+            leantime.rpc('Api.Api.setSubmenuState', {
+                submenu: "myCalendarView",
+                state: jQuery("#my-select option:selected").val()
+            }).catch(function (e) { console.error('Could not update submenu state', e); });
 
         });
     });

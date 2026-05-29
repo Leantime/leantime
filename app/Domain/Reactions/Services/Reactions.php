@@ -20,6 +20,42 @@ class Reactions
     }
 
     /**
+     * Adds a reaction on behalf of the CURRENT (session) user.
+     *
+     * JSON-RPC entry point: derives the user from the session rather than
+     * accepting a userId, so a caller cannot react as another user.
+     *
+     * @param  string  $module  The entity module (e.g. 'tickets')
+     * @param  int  $moduleId  The entity id
+     * @param  string  $reaction  The reaction key
+     * @return bool True if the reaction was added
+     *
+     * @api
+     */
+    public function react(string $module, int $moduleId, string $reaction): bool
+    {
+        return $this->addReaction((int) session('userdata.id'), $module, $moduleId, $reaction);
+    }
+
+    /**
+     * Removes a reaction on behalf of the CURRENT (session) user.
+     *
+     * JSON-RPC entry point: derives the user from the session rather than
+     * accepting a userId, so a caller cannot remove another user's reaction.
+     *
+     * @param  string  $module  The entity module (e.g. 'tickets')
+     * @param  int  $moduleId  The entity id
+     * @param  string  $reaction  The reaction key
+     * @return bool True if the reaction was removed
+     *
+     * @api
+     */
+    public function unreact(string $module, int $moduleId, string $reaction): bool
+    {
+        return $this->removeReaction((int) session('userdata.id'), $module, $moduleId, $reaction);
+    }
+
+    /**
      * addReaction - adds a reaction to an entity, checks if a user has already reacted the same way
      *
      *

@@ -96,6 +96,22 @@ class Notifications
      * @api
      */
     /**
+     * Marks a notification (or 'all') read for the CURRENT (session) user.
+     *
+     * JSON-RPC entry point: derives the user from the session so a caller
+     * cannot mark another user's notifications read.
+     *
+     * @param  int|string  $id  A notification id, or 'all'
+     * @return bool True on success
+     *
+     * @api
+     */
+    public function markRead($id): bool
+    {
+        return $this->markNotificationRead($id, session('userdata.id'));
+    }
+
+    /**
      * @api
      */
     public function markNotificationRead($id, $userId): bool

@@ -268,19 +268,12 @@
 
             jQuery(document).ready(function () {
                 jQuery('.notificationHandler').on('click', function () {
-                    jQuery.ajax(
-                        {
-                            type: 'PATCH',
-                            url: leantime.appUrl + '/api/notifications',
-                            data: {
-                                id: 'all',
-                                action: 'read'
-                            }
-                        }
-                    ).done(function () {
-                        jQuery(".notifcationViewLists li.new").removeClass("new");
-                        jQuery(".notificationCounter").fadeOut();
-                    })
+                    leantime.rpc('Notifications.Notifications.markRead', { id: 'all' })
+                        .then(function () {
+                            jQuery(".notifcationViewLists li.new").removeClass("new");
+                            jQuery(".notificationCounter").fadeOut();
+                        })
+                        .catch(function (e) { console.error('Could not mark notifications read', e); });
                 });
 
                 jQuery('.notificationDropdown .dropdown-menu').on('click', function (e) {
