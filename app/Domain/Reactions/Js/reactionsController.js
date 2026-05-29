@@ -5,36 +5,32 @@ leantime.reactionsController = (function () {
 
     let addReactions = function (module, moduleId, reaction, clb) {
 
-        jQuery.ajax({
-            type: 'POST',
-            url: leantime.appUrl + '/api/reactions',
-            data: {
-                'action': 'add',
-                'module': module,
-                'moduleId': moduleId,
-                'reaction': reaction
+        leantime.rpc('Reactions.Reactions.react', {
+            module: module,
+            moduleId: moduleId,
+            reaction: reaction
+        }).then(function (success) {
+            // The service returns false when the reaction was not applied
+            // (e.g. the user already reacted) — only update the UI on success.
+            if (success) {
+                clb();
             }
-
-        }).done(function () {
-            clb();
-        });
+        }).catch(function (e) { console.error('Could not add reaction', e); });
 
     };
 
     let removeReaction = function (module, moduleId, reaction, clb) {
 
-        jQuery.ajax({
-            type: 'POST',
-            url: leantime.appUrl + '/api/reactions',
-            data: {
-                'action': 'remove',
-                'module': module,
-                'moduleId': moduleId,
-                'reaction': reaction
+        leantime.rpc('Reactions.Reactions.unreact', {
+            module: module,
+            moduleId: moduleId,
+            reaction: reaction
+        }).then(function (success) {
+            // Only update the UI when the reaction was actually removed.
+            if (success) {
+                clb();
             }
-        }).done(function () {
-            clb();
-        });
+        }).catch(function (e) { console.error('Could not remove reaction', e); });
 
     };
 

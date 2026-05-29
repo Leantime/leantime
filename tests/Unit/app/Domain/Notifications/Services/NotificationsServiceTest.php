@@ -79,4 +79,56 @@ class NotificationsServiceTest extends TestCase
             'eventId' => '',
         ], $payload);
     }
+
+    // ---------------------------------------------------------------------
+    // markRead() — session-based JSON-RPC wrapper (must target the session user)
+    // ---------------------------------------------------------------------
+
+    public function test_mark_read_all_targets_the_session_user(): void
+    {
+        session(['userdata' => ['id' => 42]]);
+
+        $capturedUserId = null;
+        $repo = $this->make(NotificationRepository::class, [
+            'markAllNotificationRead' => function ($userId, ...$rest) use (&$capturedUserId) {
+                $capturedUserId = $userId;
+
+                return true;
+            },
+        ]);
+
+        $service = new Notifications(
+            $this->make(DbCore::class),
+            $repo,
+            $this->make(UserRepository::class),
+            $this->make(LanguageCore::class),
+        );
+
+        $this->assertTrue($service->markRead('all'));
+        $this->assertSame(42, $capturedUserId, "markRead('all') must use the session user");
+    }
+
+    public function test_mark_read_specific_id_delegates_to_repo(): void
+    {
+        session(['userdata' => ['id' => 7]]);
+
+        $calledWith = null;
+        $repo = $this->make(NotificationRepository::class, [
+            'markNotificationRead' => function ($id, ...$rest) use (&$calledWith) {
+                $calledWith = $id;
+
+                return true;
+            },
+        ]);
+
+        $service = new Notifications(
+            $this->make(DbCore::class),
+            $repo,
+            $this->make(UserRepository::class),
+            $this->make(LanguageCore::class),
+        );
+
+        $this->assertTrue($service->markRead(5));
+        $this->assertSame(5, $calledWith);
+    }
 }

@@ -24,14 +24,10 @@ leantime.menuController = (function () {
             submenuState = 'closed';
         }
 
-        jQuery.ajax({
-            type : 'PATCH',
-            url  : leantime.appUrl + '/api/submenu',
-            data : {
-                submenu : submenuName,
-                state   : submenuState
-            }
-        });
+        leantime.rpc('Api.Api.setSubmenuState', {
+            submenu: submenuName,
+            state: submenuState
+        }).catch(function (e) { console.error('Could not update submenu state', e); });
     }
 
     var initProjectSelector = function () {
@@ -152,14 +148,10 @@ leantime.menuController = (function () {
 
     let updateGroupDropdownSetting = function (ID, state, prefix) {
 
-        jQuery.ajax({
-            type : 'PATCH',
-            url  : leantime.appUrl + '/api/submenu',
-            data : {
-                submenu : prefix + "-projectSelectorlist-group-" + ID,
-                state   : state
-            }
-        });
+        leantime.rpc('Api.Api.setSubmenuState', {
+            submenu: prefix + "-projectSelectorlist-group-" + ID,
+            state: state
+        }).catch(function (e) { console.error('Could not update submenu state', e); });
 
     };
 

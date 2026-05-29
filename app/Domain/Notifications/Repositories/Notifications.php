@@ -86,10 +86,11 @@ class Notifications
         return $this->db->table('zp_notifications')->insert($insertData);
     }
 
-    public function markNotificationRead(int $id): bool
+    public function markNotificationRead(int $id, int $userId): bool
     {
         return $this->db->table('zp_notifications')
             ->where('id', $id)
+            ->where('userId', $userId)
             ->update(['read' => 1]) > 0;
     }
 

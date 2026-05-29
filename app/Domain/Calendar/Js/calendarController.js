@@ -418,14 +418,10 @@ leantime.calendarController = (function () {
                     jQuery('.day-selector').hide();
                 }
 
-                jQuery.ajax({
-                    type: 'PATCH',
-                    url: leantime.appUrl + '/api/submenu',
-                    data: {
-                        submenu: "dashboardCalendarView",
-                        state: newView
-                    }
-                });
+                leantime.rpc('Api.Api.setSubmenuState', {
+                    submenu: "dashboardCalendarView",
+                    state: newView
+                }).catch(function (e) { console.error('Could not update submenu state', e); });
 
             });
 

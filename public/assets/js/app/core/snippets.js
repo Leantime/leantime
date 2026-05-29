@@ -53,14 +53,10 @@ leantime.snippets = (function () {
             submenuState = "closed";
         }
 
-        jQuery.ajax({
-            type : 'PATCH',
-            url  : leantime.appUrl + '/api/submenu',
-            data : {
-                submenu : submenuName,
-                state   : submenuState
-            }
-        });
+        leantime.rpc('Api.Api.setSubmenuState', {
+            submenu : submenuName,
+            state   : submenuState
+        }).catch(function (e) { console.error('Could not persist accordion state', e); });
 
     };
 
