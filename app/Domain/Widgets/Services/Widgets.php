@@ -298,6 +298,25 @@ class Widgets
     }
 
     /**
+     * Persists the dashboard grid for a user and, when visibility data marks the
+     * widget as visible, records it in the user's widget history.
+     *
+     * @param  mixed  $data  The grid layout data to persist.
+     * @param  int  $userId  The user whose grid is being saved.
+     * @param  array|null  $visibilityData  Optional ['visible' => bool, 'widgetId' => string] payload.
+     *
+     * @api
+     */
+    public function saveGridForUser($data, int $userId, ?array $visibilityData = null): void
+    {
+        $this->saveGrid($data, $userId);
+
+        if ($visibilityData !== null && ! empty($visibilityData['visible'])) {
+            $this->markWidgetAsSeen($userId, $visibilityData['widgetId']);
+        }
+    }
+
+    /**
      * Builds the data for the "My Projects" dashboard widget: the open projects
      * assigned to the user, each enriched with its progress and realtime report,
      * plus a deduplicated client map.
