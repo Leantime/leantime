@@ -234,11 +234,8 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                             }
                         }
 
-                        jQuery.ajax({
-                            type : 'PATCH',
-                            url  : leantime.appUrl + '/api/tickets',
-                            data : dataVal
-                        });
+                        leantime.rpc('Tickets.Tickets.patchTicket', { id: dataVal.id, values: dataVal })
+                            .catch(function (error) { console.error('Could not update ticket dates', error); });
 
                     }else if(event.event.extendedProps.enitityType == "event") {
 
@@ -274,11 +271,8 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                             }
                         }
 
-                        jQuery.ajax({
-                            type : 'PATCH',
-                            url  : leantime.appUrl + '/api/tickets',
-                            data : dataVal
-                        });
+                        leantime.rpc('Tickets.Tickets.patchTicket', { id: dataVal.id, values: dataVal })
+                            .catch(function (error) { console.error('Could not update ticket dates', error); });
 
 
                     }else if(event.event.extendedProps.enitityType == "event") {

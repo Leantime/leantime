@@ -231,17 +231,15 @@ leantime.calendarController = (function () {
             },
             eventDrop: function (event) {
                 if (event.event.extendedProps.enitityType == "ticket") {
-                    jQuery.ajax({
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data: {
-                            id: event.event.extendedProps.enitityId,
+                    leantime.rpc('Tickets.Tickets.patchTicket', {
+                        id: event.event.extendedProps.enitityId,
+                        values: {
                             editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                             timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
                             editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                             timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                         }
-                    });
+                    }).catch(function (error) { console.error('Could not update ticket dates', error); });
                 } else if (event.event.extendedProps.enitityType == "event") {
                     jQuery.ajax({
                         type: 'PATCH',
@@ -256,17 +254,15 @@ leantime.calendarController = (function () {
             },
             eventResize: function (event) {
                 if (event.event.extendedProps.enitityType == "ticket") {
-                    jQuery.ajax({
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data: {
-                            id: event.event.extendedProps.enitityId,
+                    leantime.rpc('Tickets.Tickets.patchTicket', {
+                        id: event.event.extendedProps.enitityId,
+                        values: {
                             editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                             timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
                             editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                             timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                         }
-                    })
+                    }).catch(function (error) { console.error('Could not update ticket dates', error); });
                 } else if (event.event.extendedProps.enitityType == "event") {
                     jQuery.ajax({
                         type: 'PATCH',
@@ -282,18 +278,15 @@ leantime.calendarController = (function () {
             },
             eventReceive: function (event) {
 
-                jQuery.ajax({
-                    type: 'PATCH',
-                    url: leantime.appUrl + '/api/tickets',
-                    data: {
-                        id: event.event.id,
+                leantime.rpc('Tickets.Tickets.patchTicket', {
+                    id: event.event.id,
+                    values: {
                         editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                         timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
                         editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                         timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
-
                     }
-                })
+                }).catch(function (error) { console.error('Could not update ticket dates', error); });
 
             },
             eventDragStart: function (event) {

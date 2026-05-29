@@ -181,27 +181,23 @@
                 },
                 eventDrop: function (event) {
 
-                    jQuery.ajax({
-                        type : 'PATCH',
-                        url  : leantime.appUrl + '/api/tickets',
-                        data : {
-                            id: event.event.extendedProps.enitityId,
+                    leantime.rpc('Tickets.Tickets.patchTicket', {
+                        id: event.event.extendedProps.enitityId,
+                        values: {
                             editFrom: event.event.startStr,
                             editTo: event.event.endStr
                         }
-                    });
+                    }).catch(function (error) { console.error('Could not update ticket dates', error); });
                 },
                 eventResize: function (event) {
 
-                    jQuery.ajax({
-                        type : 'PATCH',
-                        url  : leantime.appUrl + '/api/tickets',
-                        data : {
-                            id: event.event.extendedProps.enitityId,
+                    leantime.rpc('Tickets.Tickets.patchTicket', {
+                        id: event.event.extendedProps.enitityId,
+                        values: {
                             editFrom: event.event.startStr,
                             editTo: event.event.endStr
                         }
-                    })
+                    }).catch(function (error) { console.error('Could not update ticket dates', error); })
 
                 },
                 eventMouseEnter: function() {
