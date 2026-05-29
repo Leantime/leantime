@@ -2,10 +2,16 @@
 
 namespace Leantime\Domain\CsvImport\Services;
 
+use League\Csv\Exception as CsvException;
+use League\Csv\Reader;
+use League\Csv\Statement;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Connector\Models\Entity;
+use Leantime\Domain\Connector\Models\Integration;
 use Leantime\Domain\Connector\Models\Provider;
+use Leantime\Domain\Connector\Services\Integrations;
 use Leantime\Domain\Connector\Services\ProviderIntegration;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
 class CsvImport extends Provider implements ProviderIntegration
@@ -32,7 +38,12 @@ class CsvImport extends Provider implements ProviderIntegration
         'text' => 'Import CSV',
     ];
 
-    public function __construct()
+    /**
+     * Constructor - initializes provider metadata and dependencies.
+     *
+     * @param  Integrations  $integrationService  Connector integrations service used to persist the integration.
+     */
+    public function __construct(private Integrations $integrationService)
     {
 
         $this->id = 'csv_importer';
@@ -118,5 +129,45 @@ class CsvImport extends Provider implements ProviderIntegration
     {
 
         return session('csv_records') ?? [];
+    }
+
+    /**
+     * Parse an uploaded CSV file, store its records in the session and create a
+     * Connector integration record built from the CSV header.
+     *
+     * Reads the uploaded CSV (with the first row as header), materializes all
+     * records into the session under the `csv_records` key, builds an
+     * Integration model whose `fields` are the comma separated header columns
+     * and persists it via the Connector integrations service.
+     *
+     * @api
+     *
+     * @param  UploadedFile  $file  The uploaded CSV file.
+     * @return int The id of the created integration record.
+     *
+     * @throws CsvException When the CSV cannot be parsed.
+     */
+    public function processUpload(UploadedFile $file): int
+    {
+        $csv = Reader::createFromPath($file->getRealPath(), 'r');
+        $csv->setHeaderOffset(0);
+
+        // Will throw a League\Csv\Exception if the CSV is malformed.
+        $records = Statement::create()->process($csv);
+
+        $header = $records->getHeader();
+
+        $rows = [];
+        foreach ($records as $record) {
+            $rows[] = $record;
+        }
+
+        // Temporarily store the parsed records in the session for later steps.
+        session(['csv_records' => $rows]);
+
+        $integration = new Integration;
+        $integration->fields = implode(',', $header);
+
+        return (int) $this->integrationService->create($integration);
     }
 }
