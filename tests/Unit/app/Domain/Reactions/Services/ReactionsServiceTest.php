@@ -21,8 +21,8 @@ class ReactionsServiceTest extends TestCase
 
         $capturedUserId = null;
         $repo = $this->make(ReactionsRepository::class, [
-            'getUserReactions' => fn () => [],
-            'addReaction' => function ($userId) use (&$capturedUserId) {
+            'getUserReactions' => fn (...$args) => [],
+            'addReaction' => function ($userId, ...$rest) use (&$capturedUserId) {
                 $capturedUserId = $userId;
 
                 return true;
@@ -41,7 +41,7 @@ class ReactionsServiceTest extends TestCase
 
         $capturedUserId = null;
         $repo = $this->make(ReactionsRepository::class, [
-            'removeUserReaction' => function ($userId) use (&$capturedUserId) {
+            'removeUserReaction' => function ($userId, ...$rest) use (&$capturedUserId) {
                 $capturedUserId = $userId;
 
                 return true;

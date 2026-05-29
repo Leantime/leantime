@@ -58,9 +58,8 @@ class Reactions
     /**
      * addReaction - adds a reaction to an entity, checks if a user has already reacted the same way
      *
-     *
-     *
-     * @api
+     * Not exposed via JSON-RPC: it accepts an arbitrary $userId. Use the
+     * session-scoped react() wrapper for JSON-RPC callers.
      */
     public function addReaction(int $userId, string $module, int $moduleId, string $reaction): bool
     {
@@ -132,7 +131,8 @@ class Reactions
     /**
      * removeReaction - removes a user's reaction from an entity
      *
-     * @api
+     * Not exposed via JSON-RPC (accepts an arbitrary $userId). Use the
+     * session-scoped unreact() wrapper for JSON-RPC callers.
      */
     public function removeReaction(int $userId, string $module, int $moduleId, string $reaction): bool
     {

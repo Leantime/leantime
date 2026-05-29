@@ -90,7 +90,7 @@ class NotificationsServiceTest extends TestCase
 
         $capturedUserId = null;
         $repo = $this->make(NotificationRepository::class, [
-            'markAllNotificationRead' => function ($userId) use (&$capturedUserId) {
+            'markAllNotificationRead' => function ($userId, ...$rest) use (&$capturedUserId) {
                 $capturedUserId = $userId;
 
                 return true;
@@ -114,7 +114,7 @@ class NotificationsServiceTest extends TestCase
 
         $calledWith = null;
         $repo = $this->make(NotificationRepository::class, [
-            'markNotificationRead' => function ($id) use (&$calledWith) {
+            'markNotificationRead' => function ($id, ...$rest) use (&$calledWith) {
                 $calledWith = $id;
 
                 return true;

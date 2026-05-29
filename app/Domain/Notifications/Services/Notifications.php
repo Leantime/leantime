@@ -42,10 +42,7 @@ class Notifications
     }
 
     /**
-     * @api
-     */
-    /**
-     * @api
+     * Not exposed via JSON-RPC: it accepts an arbitrary $userId.
      */
     public function getAllNotifications($userId, int $showNewOnly = 0, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = []): false|array
     {
@@ -93,9 +90,6 @@ class Notifications
     }
 
     /**
-     * @api
-     */
-    /**
      * Marks a notification (or 'all') read for the CURRENT (session) user.
      *
      * JSON-RPC entry point: derives the user from the session so a caller
@@ -112,16 +106,16 @@ class Notifications
     }
 
     /**
-     * @api
+     * Not exposed via JSON-RPC (accepts an arbitrary $userId). Use markRead().
      */
     public function markNotificationRead($id, $userId): bool
     {
-
         if ($id == 'all') {
             return $this->notificationsRepo->markAllNotificationRead($userId);
-        } else {
-            return $this->notificationsRepo->markNotificationRead($id);
         }
+
+        // Scope the update by user so a caller cannot mark another user's notification read.
+        return $this->notificationsRepo->markNotificationRead($id, $userId);
     }
 
     /**
