@@ -47,11 +47,11 @@ class DelCanvasItem extends Controller
     }
 
     /**
-     * run - display delete confirmation or process the item deletion.
+     * get - display the item delete confirmation dialog.
      *
-     * @return Response|void
+     * @param  array<string, mixed>  $params  Request parameters
      */
-    public function run()
+    public function get(array $params): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
@@ -59,8 +59,26 @@ class DelCanvasItem extends Controller
 
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-        if (isset($_POST['del']) && isset($_GET['id'])) {
-            $id = (int) ($_GET['id']);
+        $this->tpl->assign('canvasSlug', $this->canvasSlug);
+
+        return $this->tpl->displayPartial('blueprints.delCanvasItem');
+    }
+
+    /**
+     * post - process the canvas item deletion.
+     *
+     * @param  array<string, mixed>  $params  Request parameters (expects 'id')
+     */
+    public function post(array $params): Response
+    {
+        if ($this->template === null) {
+            return $this->tpl->displayPartial('errors.error404');
+        }
+
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+
+        if (isset($params['id'])) {
+            $id = (int) $params['id'];
             $this->blueprintsRepo->delCanvasItem($id);
 
             $this->tpl->setNotification(

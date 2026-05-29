@@ -53,11 +53,35 @@ class BoardDialog extends Controller
     }
 
     /**
-     * run - display the board dialog and handle create/edit actions.
+     * get - display the create/edit board dialog.
      *
-     * @return Response|void
+     * @param  array<string, mixed>  $params  Request parameters
      */
-    public function run()
+    public function get(array $params): Response
+    {
+        if ($this->template === null) {
+            return $this->tpl->displayPartial('errors.error404');
+        }
+
+        $currentCanvasId = '';
+        $canvasTitle = '';
+
+        if (isset($params['id'])) {
+            $currentCanvasId = (int) $params['id'];
+            $singleCanvas = $this->blueprintsRepo->getSingleCanvas($currentCanvasId, $this->template->getDatabaseType());
+            $canvasTitle = $singleCanvas[0]['title'] ?? '';
+            session([$this->template->getSessionKey() => $currentCanvasId]);
+        }
+
+        return $this->renderDialog($currentCanvasId, $canvasTitle);
+    }
+
+    /**
+     * post - handle create/edit board submissions.
+     *
+     * @param  array<string, mixed>  $params  Request parameters
+     */
+    public function post(array $params): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
@@ -67,40 +91,34 @@ class BoardDialog extends Controller
         $sessionKey = $this->template->getSessionKey();
         $basePath = '/blueprints/'.$this->canvasSlug;
 
-        $allCanvas = $this->blueprintsRepo->getAllCanvas(session('currentProject'), $canvasType);
-        $currentCanvasId = '';
+        $currentCanvasId = isset($params['id']) ? (int) $params['id'] : '';
         $canvasTitle = '';
-
-        if (isset($_GET['id']) === true) {
-            $currentCanvasId = (int) $_GET['id'];
+        if (is_int($currentCanvasId) && $currentCanvasId > 0) {
             $singleCanvas = $this->blueprintsRepo->getSingleCanvas($currentCanvasId, $canvasType);
             $canvasTitle = $singleCanvas[0]['title'] ?? '';
             session([$sessionKey => $currentCanvasId]);
         }
 
         // Add Canvas
-        if (isset($_POST['newCanvas'])) {
-            if (isset($_POST['canvastitle']) && ! empty($_POST['canvastitle'])) {
-                if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $_POST['canvastitle'], $canvasType)) {
+        if (isset($params['newCanvas'])) {
+            if (isset($params['canvastitle']) && ! empty($params['canvastitle'])) {
+                if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $params['canvastitle'], $canvasType)) {
                     $values = [
-                        'title' => $_POST['canvastitle'],
+                        'title' => $params['canvastitle'],
                         'author' => session('userdata.id'),
                         'projectId' => session('currentProject'),
                     ];
                     $currentCanvasId = $this->blueprintsRepo->addCanvas($values, $canvasType);
-                    $allCanvas = $this->blueprintsRepo->getAllCanvas(session('currentProject'), $canvasType);
 
                     $mailer = app()->make(MailerCore::class);
-                    $this->projectService = app()->make(ProjectService::class);
                     $users = $this->projectService->getUsersToNotify(session('currentProject'));
 
                     $mailer->setSubject($this->language->__('notification.board_created'));
 
-                    $actualLink = CURRENT_URL;
                     $message = sprintf(
                         $this->language->__('email_notifications.canvas_created_message'),
                         session('userdata.name'),
-                        "<a href='".$actualLink."'>".strip_tags($values['title']).'</a>'
+                        "<a href='".CURRENT_URL."'>".strip_tags($values['title']).'</a>'
                     );
                     $mailer->setHtml($message);
 
@@ -121,40 +139,48 @@ class BoardDialog extends Controller
                     session([$sessionKey => $currentCanvasId]);
 
                     return Frontcontroller::redirect(BASE_URL.$basePath.'/boardDialog/'.$currentCanvasId);
-                } else {
-                    $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
                 }
+
+                $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
             } else {
                 $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
             }
         }
 
         // Edit Canvas
-        if (isset($_POST['editCanvas']) && $currentCanvasId > 0) {
-            if (isset($_POST['canvastitle']) && ! empty($_POST['canvastitle'])) {
-                if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $_POST['canvastitle'], $canvasType)) {
-                    $values = ['title' => $_POST['canvastitle'], 'id' => $currentCanvasId];
-                    $currentCanvasId = $this->blueprintsRepo->updateCanvas($values);
+        if (isset($params['editCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
+            if (isset($params['canvastitle']) && ! empty($params['canvastitle'])) {
+                if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $params['canvastitle'], $canvasType)) {
+                    $this->blueprintsRepo->updateCanvas(['title' => $params['canvastitle'], 'id' => $currentCanvasId]);
 
                     $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
 
-                    return Frontcontroller::redirect(BASE_URL.$basePath.'/boardDialog/'.$values['id']);
-                } else {
-                    $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
+                    return Frontcontroller::redirect(BASE_URL.$basePath.'/boardDialog/'.$currentCanvasId);
                 }
+
+                $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
             } else {
                 $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
             }
         }
 
+        return $this->renderDialog($currentCanvasId, $canvasTitle);
+    }
+
+    /**
+     * renderDialog - assign shared template variables and render the board dialog.
+     *
+     * @param  int|string  $currentCanvasId  Current board id (empty string when creating)
+     * @param  string  $canvasTitle  Current board title
+     */
+    private function renderDialog(int|string $currentCanvasId, string $canvasTitle): Response
+    {
         $this->tpl->assign('currentCanvas', $currentCanvasId);
         $this->tpl->assign('canvasName', $this->canvasSlug);
         $this->tpl->assign('canvasSlug', $this->canvasSlug);
         $this->tpl->assign('canvasTitle', $canvasTitle);
         $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
 
-        if (! isset($_GET['raw'])) {
-            return $this->tpl->displayPartial('blueprints.boardDialog');
-        }
+        return $this->tpl->displayPartial('blueprints.boardDialog');
     }
 }

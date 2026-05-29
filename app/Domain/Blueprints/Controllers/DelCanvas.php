@@ -47,11 +47,29 @@ class DelCanvas extends Controller
     }
 
     /**
-     * run - display delete confirmation or process the deletion.
+     * get - display the delete confirmation dialog.
      *
-     * @return Response|void
+     * @param  array<string, mixed>  $params  Request parameters
      */
-    public function run()
+    public function get(array $params): Response
+    {
+        if ($this->template === null) {
+            return $this->tpl->displayPartial('errors.error404');
+        }
+
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+
+        $this->tpl->assign('canvasSlug', $this->canvasSlug);
+
+        return $this->tpl->displayPartial('blueprints.delCanvas');
+    }
+
+    /**
+     * post - process the board deletion.
+     *
+     * @param  array<string, mixed>  $params  Request parameters (expects 'id')
+     */
+    public function post(array $params): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
@@ -62,8 +80,8 @@ class DelCanvas extends Controller
         $canvasType = $this->template->getDatabaseType();
         $sessionKey = $this->template->getSessionKey();
 
-        if (isset($_POST['del']) && isset($_GET['id'])) {
-            $id = (int) ($_GET['id']);
+        if (isset($params['id'])) {
+            $id = (int) $params['id'];
             $this->blueprintsRepo->deleteCanvas($id);
 
             $allCanvas = $this->blueprintsRepo->getAllCanvas(session('currentProject'), $canvasType);
@@ -75,13 +93,11 @@ class DelCanvas extends Controller
                 strtoupper($this->canvasSlug).'canvas_deleted'
             );
 
-            $allCanvas = $this->blueprintsRepo->getAllCanvas(session('currentProject'), $canvasType);
-
             if (! $allCanvas || count($allCanvas) == 0) {
                 return Frontcontroller::redirect(BASE_URL.'/strategy/showBoards');
-            } else {
-                return Frontcontroller::redirect(BASE_URL.'/blueprints/'.$this->canvasSlug.'/showCanvas');
             }
+
+            return Frontcontroller::redirect(BASE_URL.'/blueprints/'.$this->canvasSlug.'/showCanvas');
         }
 
         $this->tpl->assign('canvasSlug', $this->canvasSlug);

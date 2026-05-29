@@ -45,18 +45,18 @@ if (! function_exists('blueprintsDispatch')) {
 
         $controller = app()->make($controllerClass);
 
-        // Resolve the action method the way Frontcontroller does: prefer the HTTP
-        // verb (get/post/patch/delete), fall back to run() for single-method controllers.
+        // Dispatch by HTTP verb (get/post/patch/delete), the same convention the
+        // rest of the app's controllers use; fall back to get() for read requests.
         $verb = strtolower($request->getMethod());
         if ($verb === 'head') {
             $verb = 'get';
         }
-        $method = method_exists($controller, $verb) ? $verb : 'run';
+        $method = method_exists($controller, $verb) ? $verb : 'get';
 
         $params = $request->getRequestParams();
         $response = $controller->callAction($method, $params);
 
-        // get()/post()/run() may return a Response directly or a rendered string;
+        // get()/post() may return a Response directly or a rendered string;
         // wrap the latter via the controller's stored response.
         return $response instanceof Response ? $response : $controller->getResponse();
     }
