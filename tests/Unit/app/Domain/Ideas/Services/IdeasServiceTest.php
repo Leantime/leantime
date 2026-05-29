@@ -147,4 +147,75 @@ class IdeasServiceTest extends TestCase
 
         $this->assertSame('My Board', $this->makeService(ideasRepo: $repo)->getBoardTitle(1));
     }
+
+    // ---------------------------------------------------------------------
+    // JSON-RPC authorization gates (editor + per-item project access).
+    // ---------------------------------------------------------------------
+
+    /**
+     * Repo stub whose canvas item resolves to project 9.
+     */
+    private function repoForProject9(array $extra = []): IdeasRepository
+    {
+        return $this->make(IdeasRepository::class, array_merge([
+            'getSingleCanvasItem' => fn () => ['canvasId' => 7],
+            'getSingleCanvas' => fn () => ['projectId' => 9],
+            'patchCanvasItem' => fn () => true,
+            'updateIdeaSorting' => fn () => true,
+            'bulkUpdateIdeaStatus' => fn () => true,
+        ], $extra));
+    }
+
+    public function test_patch_idea_item_denied_for_non_editor(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
+
+        $service = $this->makeService(ideasRepo: $this->repoForProject9());
+
+        $this->assertFalse($service->patchIdeaItem(5, ['box' => 'done']));
+    }
+
+    public function test_patch_idea_item_denied_when_not_assigned_to_project(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $projectService = $this->make(ProjectService::class, [
+            'isUserAssignedToProject' => fn () => false,
+        ]);
+
+        $service = $this->makeService(ideasRepo: $this->repoForProject9(), projectService: $projectService);
+
+        $this->assertFalse($service->patchIdeaItem(5, ['box' => 'done']));
+    }
+
+    public function test_patch_idea_item_allowed_for_editor_with_project_access(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $projectService = $this->make(ProjectService::class, [
+            'isUserAssignedToProject' => fn () => true,
+        ]);
+
+        $service = $this->makeService(ideasRepo: $this->repoForProject9(), projectService: $projectService);
+
+        $this->assertTrue($service->patchIdeaItem(5, ['box' => 'done']));
+    }
+
+    public function test_reorder_ideas_denied_for_non_editor(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
+
+        $service = $this->makeService(ideasRepo: $this->repoForProject9());
+
+        $this->assertFalse($service->reorderIdeas([['id' => 5, 'sortIndex' => 1]]));
+    }
+
+    public function test_bulk_update_status_denied_for_non_editor(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
+
+        $service = $this->makeService(ideasRepo: $this->repoForProject9());
+
+        $this->assertFalse($service->bulkUpdateStatus(['done' => 'item[]=5']));
+    }
 }
