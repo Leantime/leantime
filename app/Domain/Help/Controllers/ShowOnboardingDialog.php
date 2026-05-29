@@ -9,44 +9,34 @@ class ShowOnboardingDialog extends Controller
 {
     protected Helper $helpService;
 
-    public function init(Helper $helpService)
+    /**
+     * Injects the Helper service.
+     */
+    public function init(Helper $helpService): void
     {
         $this->helpService = $helpService;
-
     }
 
     /**
      * get - handle get requests
+     *
+     * Renders the onboarding modal partial for the requested module or route.
+     * The "show once per session" bookkeeping and sanitization live in the service.
+     *
+     * @param  array  $params  Request parameters.
      */
     public function get($params)
     {
-
-        // show modals only once per session
-        if (! session()->exists('usersettings.modals')) {
-            session(['usersettings.modals' => []]);
-        }
-
         if (isset($params['module']) && $params['module'] != '') {
-            $filteredInput = htmlspecialchars($params['module']);
+            $template = $this->helpService->markModalSeenForModule($params['module']);
 
-            if (! session()->exists('usersettings.modals.'.$filteredInput)) {
-                session(['usersettings.modals.'.$filteredInput => 1]);
-            }
-
-            return $this->tpl->displayPartial('help.'.$filteredInput);
+            return $this->tpl->displayPartial('help.'.$template);
         }
 
         if (isset($params['route']) && $params['route'] != '') {
-            $filteredInput = htmlspecialchars($params['route']);
+            $template = $this->helpService->markModalSeenForRoute($params['route']);
 
-            $modal = $this->helpService->getHelperModalByRoute($filteredInput);
-
-            if (! session()->exists('usersettings.modals.'.$modal['template'])) {
-                session(['usersettings.modals.'.$modal['template'] => 1]);
-            }
-
-            return $this->tpl->displayPartial('help.'.$modal['template']);
+            return $this->tpl->displayPartial('help.'.$template);
         }
-
     }
 }

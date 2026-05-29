@@ -165,6 +165,155 @@ class Helper
     }
 
     /**
+     * Resolves which first-login onboarding step should be displayed.
+     *
+     * Given an optional requested step key (from the request), this returns
+     * the resolved step including its template and whether the onboarding flow
+     * has reached the final "end" step. When no valid step key is provided the
+     * first available step is used.
+     *
+     * @param  string|null  $requestedStep  The requested step key (e.g. a numeric index or "end").
+     * @return array{key: int|string, next: string|int|null, template: string|null, isEnd: bool} The resolved step information.
+     *
+     * @api
+     */
+    public function resolveFirstLoginStep(?string $requestedStep): array
+    {
+        if ($requestedStep === 'end') {
+            return [
+                'key' => 'end',
+                'next' => null,
+                'template' => 'help.firstLoginEnd',
+                'isEnd' => true,
+            ];
+        }
+
+        $allSteps = $this->getFirstLoginSteps();
+
+        $currentStepKey = collect($allSteps)->keys()->first();
+
+        if ($requestedStep !== null && isset($allSteps[$requestedStep])) {
+            $currentStepKey = (int) $requestedStep;
+        }
+
+        $currentStep = $allSteps[$currentStepKey];
+
+        /** @var \Leantime\Domain\Help\Contracts\OnboardingSteps $stepObject */
+        $stepObject = app()->make($currentStep['class']);
+
+        return [
+            'key' => $currentStepKey,
+            'next' => $currentStep['next'],
+            'template' => $stepObject->getTemplate(),
+            'isEnd' => false,
+        ];
+    }
+
+    /**
+     * Handles the submission of a first-login onboarding step.
+     *
+     * Resolves the current step from the submitted parameters, delegates handling
+     * to the step's class, and returns whether the step was valid along with the
+     * key of the step the user should be redirected to next.
+     *
+     * @param  array  $params  The submitted request parameters. Must contain a numeric "currentStep".
+     * @return array{valid: bool, next: string|int} Result of the step handling: "valid" indicates whether the
+     *                                              submitted step was recognized, "next" is the step key to navigate to.
+     *
+     * @api
+     */
+    public function handleFirstLoginStep(array $params): array
+    {
+        $allSteps = $this->getFirstLoginSteps();
+
+        if (
+            ! isset($params['currentStep'])
+            || ! is_numeric($params['currentStep'])
+            || ! isset($allSteps[$params['currentStep']])
+        ) {
+            return ['valid' => false, 'next' => ''];
+        }
+
+        $currentStep = $allSteps[$params['currentStep']];
+
+        /** @var \Leantime\Domain\Help\Contracts\OnboardingSteps $stepObject */
+        $stepObject = app()->make($currentStep['class']);
+
+        $result = $stepObject->handle($params);
+
+        if ($result) {
+            return ['valid' => true, 'next' => $currentStep['next']];
+        }
+
+        return ['valid' => true, 'next' => $params['currentStep']];
+    }
+
+    /**
+     * Marks an onboarding modal as seen for a given module and returns its template name.
+     *
+     * Ensures the per-session modal tracking store exists, sanitizes the module
+     * identifier, records that the modal has been shown once for this session, and
+     * returns the (sanitized) template name to render.
+     *
+     * @param  string  $module  The module identifier whose modal should be marked as seen.
+     * @return string The sanitized template name to render (without the "help." prefix).
+     *
+     * @api
+     */
+    public function markModalSeenForModule(string $module): string
+    {
+        $this->ensureModalSessionStore();
+
+        $template = htmlspecialchars($module);
+
+        if (! session()->exists('usersettings.modals.'.$template)) {
+            session(['usersettings.modals.'.$template => 1]);
+        }
+
+        return $template;
+    }
+
+    /**
+     * Marks an onboarding modal as seen for a given route and returns its template name.
+     *
+     * Sanitizes the route, resolves the matching helper modal, ensures the per-session
+     * modal tracking store exists, records that the modal has been shown once for this
+     * session, and returns the template name to render.
+     *
+     * @param  string  $route  The route identifier whose helper modal should be marked as seen.
+     * @return string The template name to render (without the "help." prefix).
+     *
+     * @api
+     */
+    public function markModalSeenForRoute(string $route): string
+    {
+        $this->ensureModalSessionStore();
+
+        $filteredRoute = htmlspecialchars($route);
+
+        $modal = $this->getHelperModalByRoute($filteredRoute);
+
+        if (! session()->exists('usersettings.modals.'.$modal['template'])) {
+            session(['usersettings.modals.'.$modal['template'] => 1]);
+        }
+
+        return $modal['template'];
+    }
+
+    /**
+     * Ensures the per-session modal tracking store exists.
+     *
+     * Initializes "usersettings.modals" to an empty array when it has not yet
+     * been set so that modals are only shown once per session.
+     */
+    private function ensureModalSessionStore(): void
+    {
+        if (! session()->exists('usersettings.modals')) {
+            session(['usersettings.modals' => []]);
+        }
+    }
+
+    /**
      * Checks if this is the user's first login.
      *
      * NOTE: This is now a pure check with no side effects.
