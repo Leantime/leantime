@@ -305,4 +305,30 @@ class TicketsServiceTest extends TestCase
             clientService: $clientService
         );
     }
+
+    // ---------------------------------------------------------------------
+    // JSON-RPC authorization gates (RPC has no controller-level role gate, so
+    // the @api entry methods must self-authorize).
+    // ---------------------------------------------------------------------
+
+    public function test_patch_ticket_is_denied_for_non_editor(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
+
+        $this->assertFalse($this->ticketsService->patchTicket(5, ['status' => 3]));
+    }
+
+    public function test_sort_tickets_is_denied_for_non_editor(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
+
+        $this->assertFalse($this->ticketsService->sortTickets(['5' => 1]));
+    }
+
+    public function test_status_and_sorting_is_denied_for_non_editor(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
+
+        $this->assertFalse($this->ticketsService->updateTicketStatusAndSorting(['3' => 'ticket[]=5'], null));
+    }
 }

@@ -217,14 +217,12 @@ leantime.kanbanController = (function () {
             equalizeColumnHeights(content);
         }
 
-        // Persist state to session via AJAX
-        jQuery.ajax({
-            url: leantime.appUrl + '/api/submenu',
-            type: 'POST',
-            data: {
-                submenu: 'swimlane_' + swimlaneId,
-                state: newExpanded ? 'open' : 'closed'
-            }
+        // Persist state to session via JSON-RPC
+        leantime.rpc('Api.Api.setSubmenuState', {
+            submenu: 'swimlane_' + swimlaneId,
+            state: newExpanded ? 'open' : 'closed'
+        }).catch(function (error) {
+            console.error('Could not persist swimlane state', error);
         });
     };
 

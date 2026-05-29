@@ -4,6 +4,23 @@ leantime.ticketsRepository = (function () {
 
     //Functions
 
+    /**
+     * Patch a single ticket via JSON-RPC. Returns the underlying promise so
+     * callers can chain success/error handling.
+     */
+    function patchTicket(id, values) {
+        return leantime.rpc('Tickets.Tickets.patchTicket', { id: id, values: values });
+    }
+
+    /**
+     * Shared failure handler for inline ticket updates (auth denied, validation, server error).
+     */
+    function handlePatchError(id) {
+        return function (error) {
+            console.error('Could not update ticket ' + id, error);
+        };
+    }
+
     var updateMilestoneDates = function (id, start, end, sortIndex) {
 
         let userDateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "luxon");
@@ -14,131 +31,54 @@ leantime.ticketsRepository = (function () {
         let editTo = luxon.DateTime.fromSQL(end).toFormat(userDateFormat);
         let timeTo = luxon.DateTime.fromSQL(end).toFormat(userTimeFormat);
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                {
-                    id : id,
-                    editFrom:editFrom,
-                    editTo:editTo,
-                    timeFrom: timeFrom,
-                    timeTo: timeTo,
-                    sortIndex: sortIndex
-                }
-            }
-        ).done(
-            function () {
-                    //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
-
-            }
-        );
+        //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
+        patchTicket(id, {
+            editFrom: editFrom,
+            editTo: editTo,
+            timeFrom: timeFrom,
+            timeTo: timeTo,
+            sortIndex: sortIndex
+        }).catch(handlePatchError(id));
 
     };
 
     var updateRemainingHours = function (id, remaining, callbackSuccess) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                {
-                    id : id,
-                    hourRemaining:remaining
-                }
-            }
-        ).done(
-            function () {
-
-                    callbackSuccess();
-            }
-        );
+        patchTicket(id, { hourRemaining: remaining })
+            .then(function () { callbackSuccess(); })
+            .catch(handlePatchError(id));
 
     };
 
     var updatePlannedHours = function (id, planhours, callbackSuccess) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                    {
-                        id : id,
-                        planHours:planhours
-                }
-            }
-        ).done(
-            function () {
-
-                callbackSuccess();
-            }
-        );
+        patchTicket(id, { planHours: planhours })
+            .then(function () { callbackSuccess(); })
+            .catch(handlePatchError(id));
 
     };
 
     var updateDueDates = function (id, date, callbackSuccess) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                    {
-                        id : id,
-                        dateToFinish:date
-                }
-            }
-        ).done(
-            function () {
-
-                callbackSuccess();
-            }
-        );
+        patchTicket(id, { dateToFinish: date })
+            .then(function () { callbackSuccess(); })
+            .catch(handlePatchError(id));
 
     };
 
     var updateEditFromDates = function (id, date, callbackSuccess) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                    {
-                        id : id,
-                        editFrom:date
-                }
-            }
-        ).done(
-            function () {
-
-                callbackSuccess();
-            }
-        );
+        patchTicket(id, { editFrom: date })
+            .then(function () { callbackSuccess(); })
+            .catch(handlePatchError(id));
 
     };
 
     var updateEditToDates = function (id, date, callbackSuccess) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                    {
-                        id : id,
-                        editTo:date
-                }
-            }
-        ).done(
-            function () {
-
-                callbackSuccess();
-            }
-        );
+        patchTicket(id, { editTo: date })
+            .then(function () { callbackSuccess(); })
+            .catch(handlePatchError(id));
 
     };
 

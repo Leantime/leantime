@@ -16,6 +16,8 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Core\UI\Template as TemplateCore;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
@@ -2311,6 +2313,38 @@ class Tickets
         return $this->patch($id, ['status' => $doneStatusId]);
     }
 
+    /**
+     * Authorized JSON-RPC entry point for patching a single ticket field.
+     *
+     * Unlike the internal patch(), this enforces authorization because the
+     * JSON-RPC endpoint has no controller-level role gate: the caller must be an
+     * editor or above AND be assigned to the ticket's project (prevents
+     * cross-project IDOR via a smuggled ticket id).
+     *
+     * @param  int  $id  The ticket id to update
+     * @param  array  $values  The fields to update
+     * @return bool True on success, false if unauthorized or the update failed
+     *
+     * @api
+     */
+    public function patchTicket(int $id, array $values): bool
+    {
+        if (! Auth::userIsAtLeast(Roles::$editor)) {
+            return false;
+        }
+
+        $ticket = $this->getTicket($id);
+        if (! $ticket) {
+            return false;
+        }
+
+        if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $ticket->projectId)) {
+            return false;
+        }
+
+        return $this->patch($id, $values);
+    }
+
     public function patch($id, $params): bool
     {
         if (! is_array($params)) {
@@ -2835,6 +2869,37 @@ class Tickets
     }
 
     /**
+     * Authorized JSON-RPC entry point for Gantt re-sorting of tickets/milestones.
+     *
+     * Enforces editor+ and per-ticket project access (the RPC endpoint has no
+     * controller-level gate), then delegates to the internal updateTicketSorting().
+     *
+     * @param  array  $params  Array of ticketId => sortPosition from Gantt drag-drop
+     * @return bool True on success, false if unauthorized or the update failed
+     *
+     * @api
+     */
+    public function sortTickets(array $params): bool
+    {
+        if (! Auth::userIsAtLeast(Roles::$editor)) {
+            return false;
+        }
+
+        $userId = session('userdata.id');
+        foreach (array_keys($params) as $ticketId) {
+            $ticket = $this->getTicket((int) $ticketId);
+            if (! $ticket) {
+                return false;
+            }
+            if (! $this->projectService->isUserAssignedToProject($userId, $ticket->projectId)) {
+                return false;
+            }
+        }
+
+        return $this->updateTicketSorting($params);
+    }
+
+    /**
      * Update ticket sorting with hierarchical cascade for milestone children
      *
      * When milestones are reordered, this method ensures all child tasks
@@ -2846,7 +2911,7 @@ class Tickets
      * @param  array  $params  Array of ticketId => sortPosition from Gantt drag-drop
      * @return bool True on success, false on failure
      *
-     * @api
+     * @internal Authorize via sortTickets() for JSON-RPC callers; safe for internal service use.
      */
     public function updateTicketSorting($params): bool
     {
@@ -2941,6 +3006,10 @@ class Tickets
      */
     public function updateTicketStatusAndSorting($params, $handler = null): bool
     {
+        if (! Auth::userIsAtLeast(Roles::$editor)) {
+            return false;
+        }
+
         // Collect all ticket IDs from the request to validate project access for each one.
         // This prevents smuggling cross-project ticket IDs in a mixed batch.
         $allTicketIds = [];
