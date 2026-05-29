@@ -2,7 +2,7 @@
 
 namespace Unit\app\Domain\Strategy\Services;
 
-use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
+use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Strategy\Services\Strategy as StrategyService;
 use Unit\TestCase;
 
@@ -15,13 +15,13 @@ class StrategyServiceTest extends TestCase
     use \Codeception\Test\Feature\Stub;
 
     /**
-     * Builds a real Strategy service, allowing the Canvas service dependency
+     * Builds a real Strategy service, allowing the Blueprints service dependency
      * to be overridden with a stub.
      */
-    private function makeService(?CanvasService $canvasService = null): StrategyService
+    private function makeService(?BlueprintsService $blueprintsService = null): StrategyService
     {
         return new StrategyService(
-            $canvasService ?? $this->make(CanvasService::class),
+            $blueprintsService ?? $this->make(BlueprintsService::class),
         );
     }
 
@@ -42,7 +42,8 @@ class StrategyServiceTest extends TestCase
         $this->assertSame('My Value Board', $result['valuecanvas']['lastTitle']);
         $this->assertSame('2026-05-20 10:00:00', $result['valuecanvas']['lastUpdate']);
         $this->assertSame(11, $result['valuecanvas']['lastCanvasId']);
-        $this->assertSame('valuecanvas', $result['valuecanvas']['module']);
+        // Board links now point at the consolidated Blueprints routes.
+        $this->assertSame('blueprints/value', $result['valuecanvas']['module']);
 
         // The consumed type must be removed from the remaining "other" boards map.
         $this->assertArrayNotHasKey('valuecanvas', $metadata);
@@ -90,12 +91,12 @@ class StrategyServiceTest extends TestCase
         ];
         $progress = ['leancanvas' => 0.5];
 
-        $canvasService = $this->make(CanvasService::class, [
+        $blueprintsService = $this->make(BlueprintsService::class, [
             'getLastUpdatedCanvas' => fn () => $recentlyUpdated,
             'getBoardProgress' => fn () => $progress,
         ]);
 
-        $overview = $this->makeService($canvasService)->getStrategyBoardsOverview(7);
+        $overview = $this->makeService($blueprintsService)->getStrategyBoardsOverview(7);
 
         $this->assertArrayHasKey('recentProgressCanvas', $overview);
         $this->assertArrayHasKey('otherBoards', $overview);
@@ -117,7 +118,7 @@ class StrategyServiceTest extends TestCase
         $capturedLastUpdatedId = null;
         $capturedProgressId = null;
 
-        $canvasService = $this->make(CanvasService::class, [
+        $blueprintsService = $this->make(BlueprintsService::class, [
             'getLastUpdatedCanvas' => function ($projectId) use (&$capturedLastUpdatedId) {
                 $capturedLastUpdatedId = $projectId;
 
@@ -130,7 +131,7 @@ class StrategyServiceTest extends TestCase
             },
         ]);
 
-        $this->makeService($canvasService)->getStrategyBoardsOverview(7);
+        $this->makeService($blueprintsService)->getStrategyBoardsOverview(7);
 
         $this->assertSame(7, $capturedLastUpdatedId);
         $this->assertSame('7', $capturedProgressId);

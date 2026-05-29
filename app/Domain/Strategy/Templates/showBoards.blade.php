@@ -18,7 +18,7 @@
             <div class="maincontentinner">
                 <h5 class="subtitle">Jump right back in</h5>
                 <div class="row">
-                @foreach ($recentProgressCanvas as $board)
+                @foreach ($recentProgressCanvas as $canvasType => $board)
                     <div class="col-md-3">
                         <div class="profileBox">
                             <div class="commentImage icon">
@@ -36,8 +36,8 @@
                                <div class="clearall"></div>
                             @php
                                 $percentDone = 0;
-                                if (isset($canvasProgress[$board['module']])) {
-                                    $percentDone = round($canvasProgress[$board['module']] * 100);
+                                if (isset($canvasProgress[$canvasType])) {
+                                    $percentDone = round($canvasProgress[$canvasType] * 100);
                                 }
                             @endphp
                             <br />
@@ -60,7 +60,7 @@
                         </div>
                         <h3>{!! __('headline.no_blueprints_yet') !!}</h3>
                         <br />{!! __('text.no_blueprints_yet') !!}
-                        <br /><a href="{{ BASE_URL }}/valuecanvas/showCanvas" class="btn btn-primary">{!! __('button.start_here_project_value') !!}</a>
+                        <br /><a href="{{ BASE_URL }}/blueprints/value/showCanvas" class="btn btn-primary">{!! __('button.start_here_project_value') !!}</a>
                     </div></div>
                 @endif
                 </div>

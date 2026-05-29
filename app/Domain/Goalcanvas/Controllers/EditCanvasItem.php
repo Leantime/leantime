@@ -7,6 +7,7 @@
 namespace Leantime\Domain\Goalcanvas\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
@@ -17,7 +18,10 @@ use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Symfony\Component\HttpFoundation\Response;
 
-class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
+/**
+ * Goal canvas item editor. Standalone (own get()/post()), independent of the canvas domain.
+ */
+class EditCanvasItem extends Controller
 {
     protected const CANVAS_NAME = 'goal';
 

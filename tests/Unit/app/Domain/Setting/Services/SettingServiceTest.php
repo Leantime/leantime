@@ -4,8 +4,6 @@ namespace Unit\app\Domain\Setting\Services;
 
 use Leantime\Core\Files\Contracts\FileManagerInterface;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
-use Leantime\Domain\Retroscanvas\Repositories\Retroscanvas as RetroscanvaRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
@@ -26,16 +24,12 @@ class SettingServiceTest extends TestCase
     private function makeService(
         ?SettingRepository $settingsRepo = null,
         ?TicketRepository $ticketsRepo = null,
-        ?LeancanvaRepository $canvasRepo = null,
-        ?RetroscanvaRepository $retroRepo = null,
         ?IdeaRepository $ideaRepo = null,
     ): SettingService {
         return new SettingService(
             $settingsRepo ?? $this->make(SettingRepository::class),
             $this->makeEmpty(FileManagerInterface::class),
             $ticketsRepo ?? $this->make(TicketRepository::class),
-            $canvasRepo ?? $this->make(LeancanvaRepository::class),
-            $retroRepo ?? $this->make(RetroscanvaRepository::class),
             $ideaRepo ?? $this->make(IdeaRepository::class),
         );
     }

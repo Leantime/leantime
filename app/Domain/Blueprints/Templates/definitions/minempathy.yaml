@@ -1,0 +1,47 @@
+slug: "minempathy"
+icon: "fa-solid fa-heart-circle-check"
+disclaimer: ""
+minColumns: 2
+
+boxes:
+  minempathy_who:
+    icon: ""
+    title: "box.minempathy.who"
+  minempathy_struggles:
+    icon: ""
+    title: "box.minempathy.struggles"
+  minempathy_where:
+    icon: ""
+    title: "box.minempathy.where"
+  minempathy_why:
+    icon: ""
+    title: "box.minempathy.why"
+  minempathy_how:
+    icon: ""
+    title: "box.minempathy.how"
+
+statusLabels: default
+relatesLabels: {}
+
+dataLabels:
+  1: { title: "label.description", field: "conclusion", active: true }
+  2: { title: "label.data", field: "data", active: true }
+  3: { title: "label.assumptions", field: "assumptions", active: true }
+
+layout:
+  - type: boxes
+    id: firstRow
+    columns:
+      - { width: 50, box: "minempathy_who" }
+      - { width: 50, box: "minempathy_struggles" }
+  - type: boxes
+    id: secondRow
+    columns:
+      - { width: 25, empty: true }
+      - { width: 50, box: "minempathy_where" }
+      - { width: 25, empty: true }
+  - type: boxes
+    id: thirdRow
+    columns:
+      - { width: 50, box: "minempathy_why" }
+      - { width: 50, box: "minempathy_how" }

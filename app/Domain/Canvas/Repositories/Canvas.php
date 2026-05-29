@@ -1,7 +1,7 @@
 <?php
 
 /**
- * canvas class - Generic / Tempalate of canvas repository class
+ * canvas class - DEPRECATED backwards-compatibility adapter.
  */
 
 namespace Leantime\Domain\Canvas\Repositories;
@@ -10,9 +10,21 @@ use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets;
 
-class Canvas
+/**
+ * Thin backwards-compatibility shim over the Blueprints repository.
+ *
+ * The canvas system was consolidated into Leantime\Domain\Blueprints. This class
+ * is kept ONLY so plugins (and any code) that still extend or instantiate the old
+ * canvas repository keep working: its data methods now delegate to the Blueprints
+ * repository, deriving the canvas type from the subclass CANVAS_NAME constant.
+ *
+ * @deprecated Use Leantime\Domain\Blueprints\Repositories\Blueprints instead.
+ *             Do not build new features on this class.
+ */
+class Canvas extends BlueprintsRepository
 {
     /**
      * Constant that must be redefined
@@ -99,9 +111,7 @@ class Canvas
     private Tickets $ticketRepo;
 
     /**
-     * __construct - get db connection
-     *
-     * @return void
+     * __construct - get db connection and initialise the underlying Blueprints repository
      */
     public function __construct(
         DbCore $db,
@@ -109,6 +119,10 @@ class Canvas
         Tickets $ticketRepo,
         DatabaseHelper $dbHelper
     ) {
+        // Initialise the Blueprints parent so the delegated methods have a connection.
+        parent::__construct($db, $language, $ticketRepo, $dbHelper);
+
+        // Keep local copies for the config accessors and goal-specific queries below.
         $this->db = $db;
         $this->connection = $db->getConnection();
         $this->language = $language;
@@ -123,7 +137,6 @@ class Canvas
      */
     public function getIcon(): string
     {
-
         return $this->icon;
     }
 
@@ -134,7 +147,6 @@ class Canvas
      */
     public function getDisclaimer(): string
     {
-
         if (empty($this->disclaimer)) {
             return '';
         }
@@ -149,7 +161,6 @@ class Canvas
      */
     public function getCanvasTypes(): array
     {
-
         $canvasTypes = $this->canvasTypes;
         foreach ($canvasTypes as $key => $data) {
             if (isset($data['title'])) {
@@ -167,7 +178,6 @@ class Canvas
      */
     public function getStatusLabels(): array
     {
-
         $statusLabels = $this->statusLabels;
 
         foreach ($statusLabels as $key => $data) {
@@ -186,7 +196,6 @@ class Canvas
      */
     public function getRelatesLabels(): array
     {
-
         $relatesLabels = $this->relatesLabels;
         foreach ($relatesLabels as $key => $data) {
             if (isset($data['title'])) {
@@ -204,7 +213,6 @@ class Canvas
      */
     public function getDataLabels(): array
     {
-
         $dataLabels = $this->dataLabels;
         foreach ($dataLabels as $key => $data) {
             if (isset($data['title'])) {
@@ -215,239 +223,85 @@ class Canvas
         return $dataLabels;
     }
 
+    /**
+     * @deprecated delegate to Blueprints repository
+     */
     public function getAllCanvas($projectId, $type = null): false|array
     {
-        if ($type == null || $type == '') {
-            $canvasType = static::CANVAS_NAME.'canvas';
-        } else {
-            $canvasType = $type;
-        }
+        $canvasType = ($type === null || $type === '') ? static::CANVAS_NAME.'canvas' : $type;
 
-        $results = $this->connection->table('zp_canvas')
-            ->select([
-                'zp_canvas.id',
-                'zp_canvas.title',
-                'zp_canvas.author',
-                'zp_canvas.created',
-                'zp_canvas.description',
-                't1.firstname as authorFirstname',
-                't1.lastname as authorLastname',
-            ])
-            ->selectRaw('COUNT(zp_canvas_items.id) AS '.$this->dbHelper->wrapColumn('boxItems'))
-            ->leftJoin('zp_user as t1', 'zp_canvas.author', '=', 't1.id')
-            ->leftJoin('zp_canvas_items', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
-            ->where('type', $canvasType)
-            ->where('projectId', $projectId)
-            ->groupBy(['zp_canvas.id', 'zp_canvas.title', 'zp_canvas.created', 'zp_canvas.author', 'zp_canvas.description', 't1.firstname', 't1.lastname'])
-            ->orderBy('zp_canvas.title')
-            ->orderBy('zp_canvas.created')
-            ->get();
-
-        return array_map(fn ($item) => (array) $item, $results->toArray());
+        return parent::getAllCanvas((int) $projectId, $canvasType);
     }
 
-    public function getSingleCanvas($canvasId): false|array
+    /**
+     * @deprecated delegate to Blueprints repository
+     */
+    public function getSingleCanvas($canvasId, $canvasType = null): false|array
     {
-        $results = $this->connection->table('zp_canvas')
-            ->select([
-                'zp_canvas.id',
-                'zp_canvas.title',
-                'zp_canvas.author',
-                'zp_canvas.created',
-                'zp_canvas.projectId',
-                't1.firstname as authorFirstname',
-                't1.lastname as authorLastname',
-            ])
-            ->leftJoin('zp_user as t1', 'zp_canvas.author', '=', 't1.id')
-            ->where('type', static::CANVAS_NAME.'canvas')
-            ->where('zp_canvas.id', $canvasId)
-            ->orderBy('zp_canvas.title')
-            ->orderBy('zp_canvas.created')
-            ->get();
-
-        return array_map(fn ($item) => (array) $item, $results->toArray());
+        return parent::getSingleCanvas((int) $canvasId, $canvasType ?: static::CANVAS_NAME.'canvas');
     }
 
-    public function deleteCanvas($id): void
-    {
-        // Delete canvas items first
-        $this->connection->table('zp_canvas_items')
-            ->where('canvasId', $id)
-            ->delete();
-
-        // Then delete the canvas
-        $this->connection->table('zp_canvas')
-            ->where('id', $id)
-            ->limit(1)
-            ->delete();
-    }
-
+    /**
+     * @deprecated delegate to Blueprints repository
+     */
     public function addCanvas($values, $type = null): false|string
     {
-        if ($type == null || $type == '') {
-            $canvasType = static::CANVAS_NAME.'canvas';
-        } else {
-            $canvasType = $type;
-        }
+        $canvasType = ($type === null || $type === '') ? static::CANVAS_NAME.'canvas' : $type;
 
-        $insertId = $this->connection->table('zp_canvas')->insertGetId([
-            'title' => $values['title'],
-            'description' => $values['description'] ?? '',
-            'author' => $values['author'],
-            'created' => now(),
-            'type' => $canvasType,
-            'projectId' => $values['projectId'],
-        ]);
-
-        return $insertId !== false ? (string) $insertId : false;
-    }
-
-    public function updateCanvas($values): mixed
-    {
-        return $this->connection->table('zp_canvas')
-            ->where('id', $values['id'])
-            ->update([
-                'title' => $values['title'],
-                'description' => $values['description'] ?? '',
-            ]);
-    }
-
-    public function editCanvasItem($values): void
-    {
-        $this->connection->table('zp_canvas_items')
-            ->where('id', $values['itemId'] ?? $values['id'])
-            ->limit(1)
-            ->update([
-                'title' => $values['title'] ?? '',
-                'description' => $values['description'],
-                'assumptions' => $values['assumptions'] ?? '',
-                'data' => $values['data'] ?? '',
-                'conclusion' => $values['conclusion'] ?? '',
-                'modified' => now(),
-                'status' => $values['status'] ?? '',
-                'relates' => $values['relates'] ?? '',
-                'milestoneId' => $values['milestoneId'] ?? '',
-                'kpi' => $values['kpi'] ?? '',
-                'data1' => $values['data1'] ?? '',
-                'startDate' => $values['startDate'] ?? '',
-                'endDate' => $values['endDate'] ?? '',
-                'setting' => $values['setting'] ?? '',
-                'metricType' => $values['metricType'] ?? '',
-                'startValue' => $values['startValue'] ?? '',
-                'currentValue' => $values['currentValue'] ?? '',
-                'endValue' => $values['endValue'] ?? '',
-                'impact' => $values['impact'] ?? '',
-                'effort' => $values['effort'] ?? '',
-                'probability' => $values['probability'] ?? '',
-                'action' => $values['action'] ?? '',
-                'assignedTo' => $values['assignedTo'] ?? '',
-                'parent' => $values['parent'] ?? '',
-                'tags' => $values['tags'] ?? '',
-            ]);
+        return parent::addCanvas($values, $canvasType);
     }
 
     /**
-     * Allowed columns for patch operations.
-     * Prevents SQL injection via user-controlled column names.
+     * @deprecated delegate to Blueprints repository
      */
-    private const PATCHABLE_COLUMNS = [
-        'title', 'description', 'assumptions', 'data', 'conclusion',
-        'box', 'status', 'relates', 'milestoneId', 'kpi', 'data1',
-        'startDate', 'endDate', 'setting', 'metricType', 'startValue',
-        'currentValue', 'endValue', 'impact', 'effort', 'probability',
-        'action', 'assignedTo', 'parent', 'tags', 'sortindex',
-    ];
+    public function getCanvasItemsById($id, $commentModule = null): false|array
+    {
+        return parent::getCanvasItemsById((int) $id, $commentModule ?: static::CANVAS_NAME.'canvasitem');
+    }
 
     /**
-     * @param  int|string  $id  Canvas item ID
-     * @param  array  $params  Key-value pairs to update
-     * @return bool Whether the update succeeded
+     * @deprecated delegate to Blueprints repository
      */
-    public function patchCanvasItem($id, $params): bool
+    public function getNumberOfCanvasItems($projectId = null, $canvasType = null): mixed
     {
-        $updates = [];
-        foreach ($params as $key => $value) {
-            if (in_array($key, self::PATCHABLE_COLUMNS, true)) {
-                $updates[$key] = $value;
-            }
-        }
-
-        if (empty($updates)) {
-            return false;
-        }
-
-        return (bool) $this->connection->table('zp_canvas_items')
-            ->where('id', $id)
-            ->limit(1)
-            ->update($updates);
+        return parent::getNumberOfCanvasItems($projectId !== null ? (int) $projectId : null, $canvasType ?: static::CANVAS_NAME.'canvas');
     }
 
-    public function getCanvasItemsById($id): false|array
+    /**
+     * @deprecated delegate to Blueprints repository
+     */
+    public function getNumberOfBoards($projectId = null, $canvasType = null): mixed
     {
-        $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session('currentProject'));
-
-        $results = $this->connection->table('zp_canvas_items')
-            ->select([
-                'zp_canvas_items.id',
-                'zp_canvas_items.description',
-                'zp_canvas_items.assumptions',
-                'zp_canvas_items.data',
-                'zp_canvas_items.conclusion',
-                'zp_canvas_items.box',
-                'zp_canvas_items.author',
-                'zp_canvas_items.created',
-                'zp_canvas_items.modified',
-                'zp_canvas_items.canvasId',
-                'zp_canvas_items.sortindex',
-                'zp_canvas_items.status',
-                'zp_canvas_items.relates',
-                'zp_canvas_items.milestoneId',
-                'zp_canvas_items.parent',
-                'zp_canvas_items.title',
-                'zp_canvas_items.tags',
-                'zp_canvas_items.kpi',
-                'zp_canvas_items.data1',
-                'zp_canvas_items.data2',
-                'zp_canvas_items.data3',
-                'zp_canvas_items.data4',
-                'zp_canvas_items.data5',
-                'zp_canvas_items.startDate',
-                'zp_canvas_items.endDate',
-                'zp_canvas_items.setting',
-                'zp_canvas_items.metricType',
-                'zp_canvas_items.startValue',
-                'zp_canvas_items.currentValue',
-                'zp_canvas_items.endValue',
-                'zp_canvas_items.impact',
-                'zp_canvas_items.effort',
-                'zp_canvas_items.probability',
-                'zp_canvas_items.action',
-                'zp_canvas_items.assignedTo',
-                't1.firstname as authorFirstname',
-                't1.lastname as authorLastname',
-                't1.profileId as authorProfileId',
-                'milestone.headline as milestoneHeadline',
-                'milestone.editTo as milestoneEditTo',
-            ])
-            ->selectRaw('COUNT(DISTINCT zp_comment.id) AS '.$this->dbHelper->wrapColumn('commentCount'))
-            ->selectRaw('0 AS '.$this->dbHelper->wrapColumn('percentDone'))
-            ->leftJoin('zp_user as t1', 'zp_canvas_items.author', '=', 't1.id')
-            ->leftJoin('zp_tickets as milestone', function ($join) {
-                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('milestone.id'), 'text')));
-            })
-            ->leftJoin('zp_comment', function ($join) {
-                $join->on('zp_canvas_items.id', '=', 'zp_comment.moduleId')
-                    ->where('zp_comment.module', '=', static::CANVAS_NAME.'canvasitem');
-            })
-            ->where('zp_canvas_items.canvasId', $id)
-            ->groupBy(['zp_canvas_items.id', 'zp_canvas_items.box', 'zp_canvas_items.sortindex', 't1.firstname', 't1.lastname', 't1.profileId', 'milestone.headline', 'milestone.editTo'])
-            ->orderBy('zp_canvas_items.box')
-            ->orderBy('zp_canvas_items.sortindex')
-            ->get();
-
-        return array_map(fn ($item) => (array) $item, $results->toArray());
+        return parent::getNumberOfBoards($projectId !== null ? (int) $projectId : null, $canvasType ?: static::CANVAS_NAME.'canvas');
     }
 
+    /**
+     * existCanvas - return if a canvas exists with a given title in the specified project
+     *
+     * @param  int  $projectId  Project identifier
+     * @param  string  $canvasTitle  Canvas title
+     * @return bool True if canvas exists
+     *
+     * @deprecated delegate to Blueprints repository
+     */
+    public function existCanvas(int $projectId, string $canvasTitle, $canvasType = null): bool
+    {
+        return parent::existCanvas($projectId, $canvasTitle, $canvasType ?: static::CANVAS_NAME.'canvas');
+    }
+
+    /***
+     * copyCanvas - create a copy of an existing canvas
+     *
+     * @deprecated delegate to Blueprints repository
+     */
+    public function copyCanvas(int $projectId, int $canvasId, int $authorId, string $canvasTitle, $canvasType = null): int
+    {
+        return parent::copyCanvas($projectId, $canvasId, $authorId, $canvasTitle, $canvasType ?: static::CANVAS_NAME.'canvas');
+    }
+
+    /**
+     * getCanvasItemsByKPI - goal-specific KPI hierarchy query (not part of Blueprints).
+     */
     public function getCanvasItemsByKPI($id): false|array
     {
         $results = $this->connection->table('zp_canvas_items')
@@ -492,6 +346,9 @@ class Canvas
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
+    /**
+     * getAllAvailableParents - goal-specific parent lookup (not part of Blueprints).
+     */
     public function getAllAvailableParents($projectId): false|array
     {
         $results = $this->connection->table('zp_canvas_items')
@@ -554,6 +411,9 @@ class Canvas
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
+    /**
+     * getAllAvailableKPIs - goal-specific KPI lookup across parent projects (not part of Blueprints).
+     */
     public function getAllAvailableKPIs($projectId): false|array
     {
         // First, get parent project IDs (cross-database compatible approach)
@@ -599,396 +459,6 @@ class Canvas
                     ->orWhere('zp_canvas_items.setting', 'linkonly');
             })
             ->orderBy('zp_canvas.id')
-            ->get();
-
-        return array_map(fn ($item) => (array) $item, $results->toArray());
-    }
-
-    /**
-     * @return false|mixed
-     */
-    public function getSingleCanvasItem($id): mixed
-    {
-        $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session('currentProject'));
-
-        $result = $this->connection->table('zp_canvas_items')
-            ->select([
-                'zp_canvas_items.id',
-                'zp_canvas_items.title',
-                'zp_canvas_items.description',
-                'zp_canvas_items.assumptions',
-                'zp_canvas_items.data',
-                'zp_canvas_items.conclusion',
-                'zp_canvas_items.box',
-                'zp_canvas_items.author',
-                'zp_canvas_items.created',
-                'zp_canvas_items.modified',
-                'zp_canvas_items.canvasId',
-                'zp_canvas_items.sortindex',
-                'zp_canvas_items.status',
-                'zp_canvas_items.relates',
-                'zp_canvas_items.milestoneId',
-                'zp_canvas_items.kpi',
-                'zp_canvas_items.data1',
-                'zp_canvas_items.data2',
-                'zp_canvas_items.data3',
-                'zp_canvas_items.data4',
-                'zp_canvas_items.data5',
-                'zp_canvas_items.startDate',
-                'zp_canvas_items.endDate',
-                'zp_canvas_items.setting',
-                'zp_canvas_items.metricType',
-                'zp_canvas_items.startValue',
-                'zp_canvas_items.currentValue',
-                'zp_canvas_items.endValue',
-                'zp_canvas_items.impact',
-                'zp_canvas_items.effort',
-                'zp_canvas_items.probability',
-                'zp_canvas_items.action',
-                'zp_canvas_items.assignedTo',
-                'zp_canvas_items.parent',
-                'zp_canvas_items.tags',
-                'board.title as boardTitle',
-                'parentKPI.description as parentKPIDescription',
-                'parentGoal.title as parentGoalDescription',
-                't1.firstname as authorFirstname',
-                't1.lastname as authorLastname',
-                'milestone.headline as milestoneHeadline',
-                'milestone.editTo as milestoneEditTo',
-            ])
-            ->selectRaw('COUNT('.$this->dbHelper->wrapColumn('progressTickets.id').') AS '.$this->dbHelper->wrapColumn('allTickets'))
-            ->selectSub(function ($query) use ($statusGroups) {
-                $progressSubId = $this->dbHelper->wrapColumn('progressSub.id');
-                $progressSubStatus = $this->dbHelper->wrapColumn('progressSub.status');
-                $progressSubStorypoints = $this->dbHelper->wrapColumn('progressSub.storypoints');
-                $query->from('zp_tickets as progressSub')
-                    ->selectRaw('(
-                        CASE WHEN
-                          COUNT(DISTINCT '.$progressSubId.') > 0
-                        THEN
-                          ROUND(
-                            (
-                              SUM(CASE WHEN '.$progressSubStatus.' '.$statusGroups['DONE'].' THEN CASE WHEN '.$progressSubStorypoints.' = 0 THEN 3 ELSE '.$progressSubStorypoints.' END ELSE 0 END) /
-                              SUM(CASE WHEN '.$progressSubStorypoints.' = 0 THEN 3 ELSE '.$progressSubStorypoints.' END)
-                            ) *100)
-                        ELSE
-                          0
-                        END)
-                    ')
-                    ->whereColumn(
-                        $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('progressSub.milestoneid'), 'text')),
-                        '=',
-                        'zp_canvas_items.milestoneId'
-                    )
-                    ->where('progressSub.type', '<>', 'milestone');
-            }, 'percentDone')
-            ->leftJoin('zp_canvas_items as parentKPI', 'zp_canvas_items.kpi', '=', 'parentKPI.id')
-            ->leftJoin('zp_canvas as board', 'board.id', '=', 'zp_canvas_items.canvasId')
-            ->leftJoin('zp_canvas_items as parentGoal', 'zp_canvas_items.parent', '=', 'parentGoal.id')
-            ->leftJoin('zp_tickets as progressTickets', function ($join) {
-                $join->on(
-                    $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('progressTickets.milestoneid'), 'text')),
-                    '=',
-                    'zp_canvas_items.milestoneId'
-                )
-                    ->where('progressTickets.type', '<>', 'milestone')
-                    ->where('progressTickets.type', '<>', 'subtask');
-            })
-            ->leftJoin('zp_tickets as milestone', function ($join) {
-                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('milestone.id'), 'text')));
-            })
-            ->leftJoin('zp_user as t1', 'zp_canvas_items.author', '=', 't1.id')
-            ->where('zp_canvas_items.id', $id)
-            ->groupBy([
-                'zp_canvas_items.id',
-                'board.title',
-                'parentKPI.description',
-                'parentGoal.title',
-                't1.firstname',
-                't1.lastname',
-                'milestone.headline',
-                'milestone.editTo',
-            ])
-            ->first();
-
-        if ($result !== null && $result->id != null) {
-            return (array) $result;
-        } else {
-            return false;
-        }
-    }
-
-    public function addCanvasItem($values): false|string
-    {
-        $id = $this->connection->table('zp_canvas_items')->insertGetId([
-            'description' => $values['description'] ?? '',
-            'title' => $values['title'] ?? '',
-            'assumptions' => $values['assumptions'] ?? '',
-            'data' => $values['data'] ?? '',
-            'conclusion' => $values['conclusion'] ?? '',
-            'box' => $values['box'],
-            'author' => $values['author'],
-            'created' => now(),
-            'modified' => now(),
-            'canvasId' => $values['canvasId'],
-            'status' => $values['status'] ?? '',
-            'relates' => $values['relates'] ?? '',
-            'milestoneId' => $values['milestoneId'] ?? '',
-            'kpi' => $values['kpi'] ?? '',
-            'data1' => $values['data1'] ?? '',
-            'startDate' => $values['startDate'] ?? '',
-            'endDate' => $values['endDate'] ?? '',
-            'setting' => $values['setting'] ?? '',
-            'metricType' => $values['metricType'] ?? '',
-            'impact' => $values['impact'] ?? '',
-            'effort' => $values['effort'] ?? '',
-            'probability' => $values['probability'] ?? '',
-            'action' => $values['action'] ?? '',
-            'assignedTo' => $values['assignedTo'] ?? '',
-            'startValue' => $values['startValue'] ?? '',
-            'currentValue' => $values['currentValue'] ?? '',
-            'endValue' => $values['endValue'] ?? '',
-            'parent' => $values['parent'] ?? '',
-            'tags' => $values['tags'] ?? '',
-        ]);
-
-        return $id !== false ? (string) $id : false;
-    }
-
-    public function delCanvasItem($id): void
-    {
-        $this->connection->table('zp_canvas_items')
-            ->where('id', $id)
-            ->limit(1)
-            ->delete();
-    }
-
-    /**
-     * @return int|mixed
-     */
-    /**
-     * @return int|mixed
-     */
-    public function getNumberOfCanvasItems($projectId = null): mixed
-    {
-        $query = $this->connection->table('zp_canvas_items')
-            ->selectRaw('COUNT(zp_canvas_items.id) AS '.$this->dbHelper->wrapColumn('canvasCount'))
-            ->leftJoin('zp_canvas as canvasBoard', 'zp_canvas_items.canvasId', '=', 'canvasBoard.id')
-            ->where('canvasBoard.type', static::CANVAS_NAME.'canvas');
-
-        if (! is_null($projectId)) {
-            $query->where('canvasBoard.projectId', $projectId);
-        }
-
-        $result = $query->first();
-
-        return $result->canvasCount ?? 0;
-    }
-
-    /**
-     * @return int|mixed
-     */
-    /**
-     * @return int|mixed
-     */
-    public function getNumberOfBoards($projectId = null): mixed
-    {
-        $query = $this->connection->table('zp_canvas')
-            ->selectRaw('COUNT(zp_canvas.id) AS '.$this->dbHelper->wrapColumn('boardCount'))
-            ->where('zp_canvas.type', static::CANVAS_NAME.'canvas');
-
-        if (! is_null($projectId)) {
-            $query->where('zp_canvas.projectId', $projectId);
-        }
-
-        $result = $query->first();
-
-        return $result->boardCount ?? 0;
-    }
-
-    /**
-     * existCanvas - return if a canvas exists with a given title in the specified project
-     *
-     * @param  int  $projectId  Project identifier
-     * @param  string  $canvasTitle  Canvas title
-     * @return bool True if canvas exists
-     */
-    public function existCanvas(int $projectId, string $canvasTitle): bool
-    {
-        $result = $this->connection->table('zp_canvas')
-            ->selectRaw('COUNT(id) as '.$this->dbHelper->wrapColumn('nbCanvas'))
-            ->where('projectId', $projectId)
-            ->where('title', $canvasTitle)
-            ->where('type', static::CANVAS_NAME.'canvas')
-            ->first();
-
-        return isset($result->nbCanvas) && $result->nbCanvas > 0;
-    }
-
-    /***
-     * copyCanvas - create a copy of an existing canvas
-     *
-     * @access public
-     * @param int    $projectId   Project identifier
-     * @param int    $canvasId    Original canvas identifier
-     * @param int    $authorId    Author identifier
-     * @param  string $canvasTitle New canvas title
-     * @return int    Identifier of new Canvas
-     */
-    public function copyCanvas(int $projectId, int $canvasId, int $authorId, string $canvasTitle): int
-    {
-        // Create new Canvas
-        $values = ['title' => $canvasTitle, 'author' => $authorId, 'projectId' => $projectId, 'type' => static::CANVAS_NAME.'canvas'];
-        $newCanvasId = $this->addCanvas($values);
-
-        // Copy elements from existing canvas to new Canvas
-        $columns = [
-            'title', 'description', 'assumptions', 'data', 'conclusion', 'box', 'author',
-            'created', 'modified', 'canvasId', 'status', 'relates', 'milestoneId', 'kpi',
-            'data1', 'startDate', 'endDate', 'setting', 'metricType', 'impact', 'effort',
-            'probability', 'action', 'assignedTo', 'startValue', 'currentValue', 'endValue',
-        ];
-
-        $selectQuery = $this->connection->table('zp_canvas_items')
-            ->select([
-                'title', 'description', 'assumptions', 'data', 'conclusion', 'box', 'author',
-            ])
-            ->selectRaw($this->dbHelper->currentTimestamp().' as created')
-            ->selectRaw($this->dbHelper->currentTimestamp().' as modified')
-            ->selectRaw('? as '.$this->dbHelper->wrapColumn('canvasId'), [$newCanvasId])
-            ->select(['status', 'relates'])
-            ->selectRaw("'' as ".$this->dbHelper->wrapColumn('milestoneId'))
-            ->select([
-                'kpi', 'data1', 'startDate', 'endDate', 'setting', 'metricType', 'impact',
-                'effort', 'probability', 'action', 'assignedTo', 'startValue', 'currentValue', 'endValue',
-            ])
-            ->where('canvasId', $canvasId);
-
-        $this->connection->table('zp_canvas_items')->insertUsing($columns, $selectQuery);
-
-        return $newCanvasId;
-    }
-
-    /***
-     * mergeCanvas - merge canvas into existing canvas
-     *
-     * @access public
-     * @param int    $canvasId Original canvas identifier
-     * @param string $mergeId  Canvas to perge into existing one
-     * @return bool Status of merge
-     */
-    public function mergeCanvas(int $canvasId, string $mergeId): bool
-    {
-        // Copy elements from merge canvas into current canvas
-        $columns = [
-            'title', 'description', 'assumptions', 'data', 'conclusion', 'box', 'author',
-            'created', 'modified', 'canvasId', 'status', 'relates', 'milestoneId', 'kpi',
-            'data1', 'startDate', 'endDate', 'setting', 'metricType', 'impact', 'effort',
-            'probability', 'action', 'assignedTo', 'startValue', 'currentValue', 'endValue',
-        ];
-
-        $selectQuery = $this->connection->table('zp_canvas_items')
-            ->select([
-                'title', 'description', 'assumptions', 'data', 'conclusion', 'box', 'author',
-            ])
-            ->selectRaw($this->dbHelper->currentTimestamp().' as created')
-            ->selectRaw($this->dbHelper->currentTimestamp().' as modified')
-            ->selectRaw('? as '.$this->dbHelper->wrapColumn('canvasId'), [$canvasId])
-            ->select(['status', 'relates'])
-            ->selectRaw("'' as ".$this->dbHelper->wrapColumn('milestoneId'))
-            ->select([
-                'kpi', 'data1', 'startDate', 'endDate', 'setting', 'metricType', 'impact',
-                'effort', 'probability', 'action', 'assignedTo', 'startValue', 'currentValue', 'endValue',
-            ])
-            ->where('canvasId', $mergeId);
-
-        $this->connection->table('zp_canvas_items')->insertUsing($columns, $selectQuery);
-
-        return true;
-    }
-
-    /***
-     * getCanvasProgressCount - gets canvases by type and counts number of items per box
-     *
-     * @access public
-     * @param int   $projectId Project od
-     * @param  array $boards    List of board types to pull
-     * @return array|bool list of boards or false
-     */
-    public function getCanvasProgressCount(int $projectId, array $boards): array|bool
-    {
-        $query = $this->connection->table('zp_canvas')
-            ->select([
-                'zp_canvas.id as canvasId',
-                'zp_canvas.type as canvasType',
-                'zp_canvas_items.box',
-            ])
-            ->selectRaw('COUNT(zp_canvas_items.id) AS '.$this->dbHelper->wrapColumn('boxItems'))
-            ->leftJoin('zp_canvas_items', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId');
-
-        if ($projectId != '') {
-            $query->where('projectId', $projectId);
-        }
-
-        if (count($boards) > 0) {
-            $query->whereIn('type', $boards);
-        }
-
-        $results = $query->groupBy(['zp_canvas.id', 'zp_canvas.type', 'zp_canvas_items.box'])
-            ->orderBy('zp_canvas.title')
-            ->orderBy('zp_canvas.created')
-            ->get();
-
-        return array_map(fn ($item) => (array) $item, $results->toArray());
-    }
-
-    /***
-     * getLastUpdateCanvas - gets the list of canvas that have been updated recently
-     *
-     * @access public
-     * @param int   $projectId Project od
-     * @param  array $boards    List of board types to pull
-     * @return array    array of canvas boards sorted by last update date
-     */
-    public function getLastUpdatedCanvas(int $projectId, array $boards): array
-    {
-        $query = $this->connection->table('zp_canvas')
-            ->select([
-                'zp_canvas.id as id',
-                'zp_canvas.type as type',
-                'zp_canvas.title as title',
-            ])
-            ->selectRaw('COALESCE(MAX(zp_canvas_items.modified), zp_canvas.created) AS modified')
-            ->leftJoin('zp_canvas_items', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId');
-
-        if ($projectId > 0) {
-            $query->where('projectId', $projectId);
-        }
-
-        if (count($boards) > 0) {
-            $query->whereIn('type', $boards);
-        }
-
-        $results = $query->groupBy(['zp_canvas.id', 'zp_canvas.type', 'zp_canvas.title', 'zp_canvas.created'])
-            ->orderByDesc('modified')
-            ->get();
-
-        return array_map(fn ($item) => (array) $item, $results->toArray());
-    }
-
-    /***
-     * getTags - gets the list of tags across all canvas items in a given project
-     *
-     * @access public
-     * @param int $projectId Project od
-     * @return array    array of canvas boards sorted by last update date
-     */
-    public function getTags(int $projectId): array
-    {
-        $results = $this->connection->table('zp_canvas_items')
-            ->select('zp_canvas_items.tags')
-            ->leftJoin('zp_canvas', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
-            ->where('zp_canvas.projectId', $projectId)
             ->get();
 
         return array_map(fn ($item) => (array) $item, $results->toArray());

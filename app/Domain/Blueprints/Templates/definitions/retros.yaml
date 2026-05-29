@@ -1,0 +1,31 @@
+slug: "retros"
+icon: "fa-hand-spock"
+disclaimer: ""
+minColumns: 3
+
+boxes:
+  well:
+    icon: "fa-circle-check"
+    title: "box.retros.continue"
+  notwell:
+    icon: "fa-circle-xmark"
+    title: "box.retros.stop_doing"
+  startdoing:
+    icon: "fa-circle-plus"
+    title: "box.retros.start_doing"
+
+statusLabels: {}
+relatesLabels: {}
+
+dataLabels:
+  1: { title: "label.description", field: "conclusion", active: true }
+  2: { title: "label.data", field: "data", active: false }
+  3: { title: "label.assumptions", field: "assumptions", active: false }
+
+layout:
+  - type: boxes
+    id: firstRow
+    columns:
+      - { width: 33, box: "well" }
+      - { width: 33, box: "notwell" }
+      - { width: 33, box: "startdoing" }

@@ -8,10 +8,8 @@ use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Files\Contracts\FileManagerInterface;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
-use Leantime\Domain\Retroscanvas\Repositories\Retroscanvas as RetroscanvaRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Ramsey\Uuid\Uuid;
@@ -28,24 +26,16 @@ class Setting
 
     private TicketRepository $ticketsRepo;
 
-    private LeancanvaRepository $canvasRepo;
-
-    private RetroscanvaRepository $retroRepo;
-
     private IdeaRepository $ideaRepo;
 
     public function __construct(
         public SettingRepository $settingsRepo,
         FileManagerInterface $fileManager,
         TicketRepository $ticketsRepo,
-        LeancanvaRepository $canvasRepo,
-        RetroscanvaRepository $retroRepo,
         IdeaRepository $ideaRepo
     ) {
         $this->fileManager = $fileManager;
         $this->ticketsRepo = $ticketsRepo;
-        $this->canvasRepo = $canvasRepo;
-        $this->retroRepo = $retroRepo;
         $this->ideaRepo = $ideaRepo;
     }
 
@@ -177,10 +167,10 @@ class Setting
      * Resolve the current label value for a given module/label key.
      *
      * Reads the current label name from the appropriate source label set
-     * (ticket state labels, retro/research canvas labels, or idea labels)
+     * (ticket state labels or idea labels)
      * for the given project.
      *
-     * @param  string  $module  The label module (ticketlabels|retrolabels|researchlabels|idealabels).
+     * @param  string  $module  The label module (ticketlabels|idealabels).
      * @param  int  $labelKey  The label key within the module's label set.
      * @param  int  $projectId  The project the labels belong to.
      * @return string The current label name, or an empty string when not found.
@@ -193,24 +183,6 @@ class Setting
             $stateLabels = $this->ticketsRepo->getStateLabels();
             if (isset($stateLabels[$labelKey]['name'])) {
                 return $stateLabels[$labelKey]['name'];
-            }
-
-            return '';
-        }
-
-        if ($module === 'retrolabels') {
-            $stateLabels = $this->retroRepo->getCanvasLabels();
-            if (isset($stateLabels[$labelKey])) {
-                return $stateLabels[$labelKey];
-            }
-
-            return '';
-        }
-
-        if ($module === 'researchlabels') {
-            $stateLabels = $this->canvasRepo->getCanvasLabels();
-            if (isset($stateLabels[$labelKey])) {
-                return $stateLabels[$labelKey];
             }
 
             return '';
@@ -236,7 +208,7 @@ class Setting
      * the per-module cache/session invalidation and (for idea labels) the
      * normalization of the label array shape.
      *
-     * @param  string  $module  The label module (ticketlabels|retrolabels|researchlabels|idealabels).
+     * @param  string  $module  The label module (ticketlabels|idealabels).
      * @param  int  $labelKey  The label key within the module's label set.
      * @param  string  $newLabel  The new (already sanitized) label value.
      * @param  int  $projectId  The project the labels belong to.
@@ -258,30 +230,6 @@ class Setting
 
                 Cache::forget('projectsettings.'.$projectId.'.ticketlabels');
             }
-
-            return;
-        }
-
-        if ($module === 'retrolabels') {
-            $stateLabels = $this->retroRepo->getCanvasLabels();
-            $stateLabels[$labelKey] = $newLabel;
-            session()->forget('projectsettings.retrolabels');
-            $this->settingsRepo->saveSetting(
-                'projectsettings.'.$projectId.'.retrolabels',
-                serialize($stateLabels)
-            );
-
-            return;
-        }
-
-        if ($module === 'researchlabels') {
-            $stateLabels = $this->canvasRepo->getCanvasLabels();
-            $stateLabels[$labelKey] = $newLabel;
-            session()->forget('projectsettings.researchlabels');
-            $this->settingsRepo->saveSetting(
-                'projectsettings.'.$projectId.'.researchlabels',
-                serialize($stateLabels)
-            );
 
             return;
         }

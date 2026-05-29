@@ -5,7 +5,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Mailer;
-use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
+use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepo;
@@ -366,10 +366,11 @@ class Dashboard extends Controller
             return null;
         }
 
-        $services = app()->make(CanvasService::class);
+        $services = app()->make(BlueprintsService::class);
+        // Blueprints service expects the canvas slug (e.g. "goal"), not the full type ("goalcanvas").
         $importCanvasId = $services->import(
             $uploadfile,
-            static::CANVAS_NAME.'canvas',
+            static::CANVAS_NAME,
             projectId: session('currentProject'),
             authorId: session('userdata.id')
         );

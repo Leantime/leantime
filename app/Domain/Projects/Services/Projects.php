@@ -14,12 +14,12 @@ use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Messengers;
@@ -1556,9 +1556,10 @@ class Projects
         );
 
         $this->duplicateCanvas(
-            repository: LeancanvaRepository::class,
+            repository: BlueprintsRepository::class,
             originalProjectId: $projectId,
-            newProjectId: $newProjectId
+            newProjectId: $newProjectId,
+            canvasTypeName: 'leancanvas'
         );
 
         self::dispatchEvent('projectDuplicated', ['projectId' => $projectId, 'newProjectId' => $newProjectId, 'startDate' => $projectStart, 'interval' => $interval]);
@@ -1584,6 +1585,15 @@ class Projects
         $canvasRepo = app()->make($repository);
         $canvasBoards = $canvasRepo->getAllCanvas($originalProjectId, $canvasTypeName);
 
+        // The consolidated Blueprints repository derives its comment module from
+        // the canvas type and requires it to be passed explicitly to
+        // getCanvasItemsById(). Legacy domain repositories (Ideas, Goalcanvas,
+        // Wiki) take a single id argument and derive the module themselves, so
+        // only build/pass the module for "<slug>canvas" types.
+        $commentModule = str_ends_with($canvasTypeName, 'canvas')
+            ? $canvasTypeName.'item'
+            : null;
+
         foreach ($canvasBoards as $canvas) {
             $canvasValues = [
                 'title' => $canvas['title'],
@@ -1595,7 +1605,9 @@ class Projects
             $newCanvasId = $canvasRepo->addCanvas($canvasValues, $canvasTypeName);
             $canvasIdList[$canvas['id']] = $newCanvasId;
 
-            $canvasItems = $canvasRepo->getCanvasItemsById($canvas['id']);
+            $canvasItems = $commentModule === null
+                ? $canvasRepo->getCanvasItemsById($canvas['id'])
+                : $canvasRepo->getCanvasItemsById($canvas['id'], $commentModule);
 
             if ($canvasItems && count($canvasItems) > 0) {
                 // Build parent Array
@@ -1651,7 +1663,9 @@ class Projects
                 }
 
                 // Now fix relates to and parent relationships
-                $newCanvasItems = $canvasRepo->getCanvasItemsById($newCanvasId);
+                $newCanvasItems = $commentModule === null
+                    ? $canvasRepo->getCanvasItemsById($newCanvasId)
+                    : $canvasRepo->getCanvasItemsById($newCanvasId, $commentModule);
                 foreach ($canvasItems as $newItem) {
                     $newCanvasItemValues = [
                         'relates' => ($newItem['relates'] ?? false) ? ($idMap[$newItem['relates']] ?? '') : '',

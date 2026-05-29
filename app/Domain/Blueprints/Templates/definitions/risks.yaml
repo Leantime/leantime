@@ -1,0 +1,38 @@
+slug: "risks"
+icon: "fa-person-falling"
+disclaimer: ""
+minColumns: 2
+
+boxes:
+  risks_imp_low_pro_low:
+    icon: ""
+    title: "box.risks.imp_low_pro_low"
+  risks_imp_low_pro_high:
+    icon: ""
+    title: "box.risks.imp_low_pro_high"
+  risks_imp_high_pro_low:
+    icon: ""
+    title: "box.risks.imp_high_pro_low"
+  risks_imp_high_pro_high:
+    icon: ""
+    title: "box.risks.imp_high_pro_high"
+
+statusLabels: default
+relatesLabels: default
+
+dataLabels:
+  1: { title: "label.risks.description", field: "conclusion", active: true }
+  2: { title: "label.data", field: "data", active: true }
+  3: { title: "label.risks.mitigation", field: "assumptions", active: true }
+
+layout:
+  - type: boxes
+    id: firstRow
+    columns:
+      - { width: 50, box: "risks_imp_low_pro_high" }
+      - { width: 50, box: "risks_imp_high_pro_high" }
+  - type: boxes
+    id: secondRow
+    columns:
+      - { width: 50, box: "risks_imp_low_pro_low" }
+      - { width: 50, box: "risks_imp_high_pro_low" }
