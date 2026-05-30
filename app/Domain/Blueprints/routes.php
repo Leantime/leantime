@@ -51,7 +51,12 @@ Route::prefix('blueprints/{canvasSlug}')->group(function () {
 Route::patch('/api/blueprints/{canvasSlug}', [Controllers\ApiCanvas::class, 'patch'])->name('blueprints.api.patch');
 
 // Legacy redirect: the former /strategy/showBoards overview now lives in Blueprints.
-Route::any('/strategy/showBoards/{id?}', fn () => redirect('/blueprints/showBoards', 301));
+// Preserve any query string, matching the other legacy redirects below.
+Route::any('/strategy/showBoards/{id?}', function () {
+    $queryString = request()->getQueryString();
+
+    return redirect('/blueprints/showBoards'.($queryString ? '?'.$queryString : ''), 301);
+});
 
 // Legacy redirects: forward old /xxxcanvas/ URLs to /blueprints/xxx/
 $legacySlugs = ['swot', 'lean', 'cp', 'dbm', 'ea', 'em', 'insights', 'lbm', 'minempathy', 'obm', 'retros', 'risks', 'sb', 'sm', 'sq', 'value'];
