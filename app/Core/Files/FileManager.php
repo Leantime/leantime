@@ -175,6 +175,7 @@ class FileManager implements FileManagerInterface
 
             $storage = $this->filesystemManager->disk($disk);
 
+            $newName = pathinfo($fileName, PATHINFO_FILENAME);
             if (config('filesystems.disks.'.$disk.'.renameFiles')) {
                 $newName = md5(session('userdata.id').time());
                 $fileName = $newName.'.'.$extension;

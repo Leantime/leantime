@@ -296,7 +296,7 @@ class Menu
 
                     // Update menu toggle
                     if ($element['visual'] == 'always') {
-                        $menuStructure[$key]['visual'] = 'open';
+                        $submenuState = 'open';
                     } else {
                         $submenuState = session('usersettings.submenuToggle.'.$element['id']) ?? $element['visual'];
                         session(['usersettings.submenuToggle.'.$element['id'] => $submenuState]);

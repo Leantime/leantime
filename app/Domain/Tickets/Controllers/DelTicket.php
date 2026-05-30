@@ -61,31 +61,33 @@ class DelTicket extends Controller
      */
     public function post($params): Response
     {
-        if (isset($_GET['id'])) {
-            $id = (int) ($_GET['id']);
-        }
-
         // Only admins
-        if (Auth::userIsAtLeast(Roles::$editor)) {
-            if (isset($params['del'])) {
-                $result = $this->ticketService->delete($id);
-
-                if ($result === true) {
-                    $this->tpl->setNotification($this->language->__('notification.todo_deleted'), 'success');
-                    $redirect = session('lastPage') ?? BASE_URL.'/';
-
-                    return Frontcontroller::redirect($redirect);
-                } else {
-                    $this->tpl->setNotification($this->language->__($result['msg']), 'error');
-                    $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-
-                    return $this->tpl->displayPartial('tickets.delTicket');
-                }
-            } else {
-                return $this->tpl->display('errors.error403', responseCode: 403);
-            }
-        } else {
+        if (! Auth::userIsAtLeast(Roles::$editor)) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
+
+        if (! isset($params['del'])) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
+
+        if (! isset($_GET['id'])) {
+            return $this->tpl->display('errors.error404', responseCode: 404);
+        }
+
+        $id = (int) $_GET['id'];
+
+        $result = $this->ticketService->delete($id);
+
+        if ($result === true) {
+            $this->tpl->setNotification($this->language->__('notification.todo_deleted'), 'success');
+            $redirect = session('lastPage') ?? BASE_URL.'/';
+
+            return Frontcontroller::redirect($redirect);
+        }
+
+        $this->tpl->setNotification($this->language->__($result['msg']), 'error');
+        $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+
+        return $this->tpl->displayPartial('tickets.delTicket');
     }
 }

@@ -3604,6 +3604,8 @@ class Tickets
             $groupBy = 'time';
         }
 
+        $tickets = [];
+
         if ($groupBy === 'time') {
             $tickets = $this->getOpenUserTicketsThisWeekAndLater(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
         } elseif ($groupBy === 'project') {

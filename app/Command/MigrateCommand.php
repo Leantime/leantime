@@ -100,7 +100,7 @@ class MigrateCommand extends Command
                 $getAdminUser = $usersRepo->getUserByEmail($adminEmail, '');
                 if ($getAdminUser !== false && is_array($getAdminUser)) {
                     $userId = $getAdminUser['id'];
-                    $usersRepo->patchUser($userId, ['password' => $adminPassword, 'status' => 'a']);
+                    $usersRepo->patchUser($userId, ['password' => $setupConfig['password'], 'status' => 'a']);
 
                     $helperService = app()->make(Helper::class);
                     $helperService->createDefaultProject($userId, 'owner');

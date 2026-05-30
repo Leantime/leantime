@@ -422,7 +422,7 @@ class Helper
             'name' => 'My Project',
             'details' => 'Welcome to your first project in Leantime!<br />This is your space to organize tasks, track goals, and plan your work. Feel free to modify anything here or create additional projects as you grow. This project is just for you to get started',
             'clientId' => 0,
-            'hourBudget' => $values['hourBudget'] ?? 0,
+            'hourBudget' => 0,
             'assignedUsers' => [['id' => $userId, 'projectRole' => '']],
             'dollarBudget' => 0,
             'psettings' => 'restricted',

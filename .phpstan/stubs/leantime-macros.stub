@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * PHPStan stub: declares Leantime's custom runtime-registered methods that vanilla
+ * PHPStan (no Larastan) cannot see. These are NOT real source definitions — they
+ * only teach the analyzer that the methods exist with these signatures.
+ *
+ * - Str macros are registered via Str::mixin(...) in
+ *   app/Core/Support/LoadMacrosServiceProvider.php. Each mixin method returns a
+ *   closure; the closure's parameters are the real call signature (registration-time
+ *   params are baked in and declared here as optional so existing call sites pass).
+ * - Collection::countNested is registered via Collection::macro(...) in the same provider.
+ * - Event::discoverListeners() lives on Leantime\Core\Events\EventDispatcher, which is
+ *   bound to the 'events' container singleton (app/Core/Events/EventsServiceProvider.php).
+ *
+ * The @method tags merge onto the real classes; native methods are unaffected.
+ */
+
+namespace Illuminate\Support;
+
+/**
+ * @method static string alphaNumeric(string $value, bool $removeSpaces = false)
+ * @method static string beautifyFilename(string $filename)
+ * @method static string sanitizeFilename(string $filename, bool $beautify = true)
+ * @method static string sanitizeForLLM(string $value, bool $removeNewlines = false)
+ * @method static string toMarkdown(mixed $data, int $headerLevel = 2)
+ */
+class Str {}
+
+/**
+ * @method int countNested(string $childrenKey = 'children')
+ */
+class Collection {}
+
+namespace Illuminate\Support\Facades;
+
+/**
+ * @method static void discoverListeners()
+ */
+class Event {}
