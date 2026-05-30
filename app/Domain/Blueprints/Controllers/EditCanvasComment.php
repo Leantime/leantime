@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Controllers;
 
-use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
+use Leantime\Core\UI\Template;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
@@ -22,33 +24,20 @@ use Symfony\Component\HttpFoundation\Response;
  * EditCanvasComment controller - handles the comment-focused editing view for canvas items.
  *
  * Replaces the old per-variant Canvas\Controllers\EditCanvasComment subclasses.
- * The canvas type slug comes from a GET parameter instead of a class constant.
+ * The canvas type slug comes from the route instead of a class constant.
  */
-class EditCanvasComment extends Controller
+class EditCanvasComment
 {
-    private TicketRepository $ticketRepo;
+    private string $canvasSlug;
 
-    private CommentRepository $commentsRepo;
-
-    private SprintService $sprintService;
-
-    private TicketService $ticketService;
-
-    private ProjectService $projectService;
-
-    private BlueprintsRepository $blueprintsRepo;
-
-    private BlueprintsService $blueprintsService;
-
-    private TemplateRegistry $templateRegistry;
-
-    private string $canvasSlug = '';
-
-    private ?CanvasTemplate $template = null;
+    private ?CanvasTemplate $template;
 
     /**
-     * init - resolve dependencies and determine the canvas slug from request.
+     * __construct - resolve dependencies and determine the canvas slug from request.
      *
+     * @param  IncomingRequest  $request  Incoming request
+     * @param  Template  $tpl  Template engine
+     * @param  Language  $language  Language service
      * @param  TicketRepository  $ticketRepo  Ticket repository
      * @param  CommentRepository  $commentsRepo  Comment repository
      * @param  SprintService  $sprintService  Sprint service
@@ -58,37 +47,35 @@ class EditCanvasComment extends Controller
      * @param  BlueprintsService  $blueprintsService  Blueprints service
      * @param  TemplateRegistry  $templateRegistry  Template registry
      */
-    public function init(
-        TicketRepository $ticketRepo,
-        CommentRepository $commentsRepo,
-        SprintService $sprintService,
-        TicketService $ticketService,
-        ProjectService $projectService,
-        BlueprintsRepository $blueprintsRepo,
-        BlueprintsService $blueprintsService,
-        TemplateRegistry $templateRegistry
-    ): void {
-        $this->ticketRepo = $ticketRepo;
-        $this->commentsRepo = $commentsRepo;
-        $this->sprintService = $sprintService;
-        $this->ticketService = $ticketService;
-        $this->projectService = $projectService;
-        $this->blueprintsRepo = $blueprintsRepo;
-        $this->blueprintsService = $blueprintsService;
-        $this->templateRegistry = $templateRegistry;
-
-        $this->canvasSlug = strip_tags(request()->route('canvasSlug') ?? ($_GET['canvasSlug'] ?? ''));
-        $this->template = $this->templateRegistry->get($this->canvasSlug);
+    public function __construct(
+        private IncomingRequest $request,
+        private Template $tpl,
+        private Language $language,
+        private TicketRepository $ticketRepo,
+        private CommentRepository $commentsRepo,
+        private SprintService $sprintService,
+        private TicketService $ticketService,
+        private ProjectService $projectService,
+        private BlueprintsRepository $blueprintsRepo,
+        private BlueprintsService $blueprintsService,
+        TemplateRegistry $templateRegistry,
+    ) {
+        $this->canvasSlug = strip_tags((string) ($request->route('canvasSlug') ?? ''));
+        $this->template = $templateRegistry->get($this->canvasSlug);
     }
 
     /**
      * get - handle GET requests for the comment editing view.
      *
-     * @param  array<string, mixed>  $params  Request parameters
-     * @return Response|void
+     * @param  string|null  $id  Canvas item id from the route
      */
-    public function get(array $params)
+    public function get(?string $id = null): Response
     {
+        $data = $this->request->getRequestParams();
+        if ($id !== null) {
+            $data['id'] = $id;
+        }
+
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
         }
@@ -98,10 +85,10 @@ class EditCanvasComment extends Controller
         $statusLabels = $this->blueprintsService->getTranslatedStatusLabels($this->template);
         $relatesLabels = $this->blueprintsService->getTranslatedRelatesLabels($this->template);
 
-        if (isset($params['id'])) {
+        if (isset($data['id'])) {
             // Delete comment
-            if (isset($params['delComment']) === true) {
-                $commentId = (int) ($params['delComment']);
+            if (isset($data['delComment']) === true) {
+                $commentId = (int) ($data['delComment']);
                 $this->commentsRepo->deleteComment($commentId);
                 $this->tpl->setNotification(
                     $this->language->__('notifications.comment_deleted'),
@@ -110,7 +97,7 @@ class EditCanvasComment extends Controller
                 );
             }
 
-            $canvasItem = $this->blueprintsRepo->getSingleCanvasItem((int) $params['id']);
+            $canvasItem = $this->blueprintsRepo->getSingleCanvasItem((int) $data['id']);
 
             if ($canvasItem) {
                 $comments = $this->commentsRepo->getComments($commentModule, $canvasItem['id']);
@@ -122,8 +109,8 @@ class EditCanvasComment extends Controller
                 return $this->tpl->displayPartial('errors.error404');
             }
         } else {
-            if (isset($params['type'])) {
-                $type = strip_tags($params['type']);
+            if (isset($data['type'])) {
+                $type = strip_tags($data['type']);
             } else {
                 $type = array_key_first($canvasTypes);
             }
@@ -155,11 +142,15 @@ class EditCanvasComment extends Controller
     /**
      * post - handle POST requests for updating canvas items and adding comments.
      *
-     * @param  array<string, mixed>  $params  Request parameters
-     * @return Response|void
+     * @param  string|null  $id  Canvas item id from the route
      */
-    public function post(array $params)
+    public function post(?string $id = null): Response
     {
+        $data = $this->request->getRequestParams();
+        if ($id !== null) {
+            $data['id'] = $id;
+        }
+
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
         }
@@ -168,33 +159,33 @@ class EditCanvasComment extends Controller
         $sessionKey = $this->template->getSessionKey();
         $basePath = '/blueprints/'.$this->canvasSlug;
 
-        if (isset($params['changeItem'])) {
-            if (isset($params['itemId']) && $params['itemId'] != '') {
-                if (isset($params['description']) && ! empty($params['description'])) {
+        if (isset($data['changeItem'])) {
+            if (isset($data['itemId']) && $data['itemId'] != '') {
+                if (isset($data['description']) && ! empty($data['description'])) {
                     $currentCanvasId = (int) session($sessionKey);
 
                     $canvasItem = [
-                        'box' => $params['box'],
+                        'box' => $data['box'],
                         'author' => session('userdata.id'),
-                        'description' => $params['description'],
-                        'status' => $params['status'],
-                        'relates' => $params['relates'],
-                        'assumptions' => $params['assumptions'],
-                        'data' => $params['data'],
-                        'conclusion' => $params['conclusion'],
-                        'itemId' => $params['itemId'],
-                        'id' => $params['itemId'],
+                        'description' => $data['description'],
+                        'status' => $data['status'],
+                        'relates' => $data['relates'],
+                        'assumptions' => $data['assumptions'],
+                        'data' => $data['data'],
+                        'conclusion' => $data['conclusion'],
+                        'itemId' => $data['itemId'],
+                        'id' => $data['itemId'],
                         'canvasId' => $currentCanvasId,
-                        'milestoneId' => $params['milestoneId'],
+                        'milestoneId' => $data['milestoneId'],
                         'dependentMilstone' => '',
                     ];
 
                     $this->blueprintsRepo->editCanvasItem($canvasItem);
 
-                    $comments = $this->commentsRepo->getComments($commentModule, $params['itemId']);
+                    $comments = $this->commentsRepo->getComments($commentModule, $data['itemId']);
                     $this->tpl->assign('numComments', $this->commentsRepo->countComments(
                         $commentModule,
-                        $params['itemId']
+                        $data['itemId']
                     ));
                     $this->tpl->assign('comments', $comments);
 
@@ -206,7 +197,7 @@ class EditCanvasComment extends Controller
 
                     $notification = app()->make(NotificationModel::class);
                     $notification->url = [
-                        'url' => BASE_URL.$basePath.'/editCanvasComment/'.(int) $params['itemId'],
+                        'url' => BASE_URL.$basePath.'/editCanvasComment/'.(int) $data['itemId'],
                         'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
                     ];
                     $notification->entity = $canvasItem;
@@ -223,23 +214,23 @@ class EditCanvasComment extends Controller
 
                     $this->projectService->notifyProjectUsers($notification);
 
-                    return Frontcontroller::redirect(BASE_URL.$basePath.'/editCanvasComment/'.$params['itemId']);
+                    return Frontcontroller::redirect(BASE_URL.$basePath.'/editCanvasComment/'.$data['itemId']);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
                 }
             } else {
-                if (isset($_POST['description']) && ! empty($_POST['description'])) {
+                if (isset($data['description']) && ! empty($data['description'])) {
                     $currentCanvasId = (int) session($sessionKey);
 
                     $canvasItem = [
-                        'box' => $params['box'],
+                        'box' => $data['box'],
                         'author' => session('userdata.id'),
-                        'description' => $params['description'],
-                        'status' => $params['status'],
-                        'relates' => $params['relates'],
-                        'assumptions' => $params['assumptions'],
-                        'data' => $params['data'],
-                        'conclusion' => $params['conclusion'],
+                        'description' => $data['description'],
+                        'status' => $data['status'],
+                        'relates' => $data['relates'],
+                        'assumptions' => $data['assumptions'],
+                        'data' => $data['data'],
+                        'conclusion' => $data['conclusion'],
                         'canvasId' => $currentCanvasId,
                     ];
 
@@ -250,14 +241,14 @@ class EditCanvasComment extends Controller
                     $canvasTypes = $this->blueprintsService->getTranslatedBoxes($this->template);
 
                     $this->tpl->setNotification(
-                        ($canvasTypes[$params['box']]['title'] ?? $params['box']).' successfully created',
+                        ($canvasTypes[$data['box']]['title'] ?? $data['box']).' successfully created',
                         'success',
                         strtoupper($this->canvasSlug).'canvasitem_created'
                     );
 
                     $notification = app()->make(NotificationModel::class);
                     $notification->url = [
-                        'url' => BASE_URL.$basePath.'/editCanvasComment/'.(int) ($params['itemId'] ?? $id),
+                        'url' => BASE_URL.$basePath.'/editCanvasComment/'.(int) ($data['itemId'] ?? $id),
                         'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
                     ];
                     $notification->entity = $canvasItem;
@@ -287,14 +278,14 @@ class EditCanvasComment extends Controller
             }
         }
 
-        if (isset($params['comment']) === true) {
-            $itemId = (int) ($_GET['id'] ?? 0);
+        if (isset($data['comment']) === true) {
+            $itemId = (int) ($data['id'] ?? 0);
             $values = [
-                'text' => $params['text'],
+                'text' => $data['text'],
                 'date' => date('Y-m-d H:i:s'),
                 'userId' => (session('userdata.id')),
                 'moduleId' => $itemId,
-                'commentParent' => ($params['father']),
+                'commentParent' => ($data['father']),
             ];
 
             $this->commentsRepo->addComment($values, $commentModule);
@@ -325,7 +316,7 @@ class EditCanvasComment extends Controller
             return Frontcontroller::redirect(BASE_URL.$basePath.'/editCanvasComment/'.$itemId);
         }
 
-        $itemId = (int) ($_GET['id'] ?? 0);
+        $itemId = (int) ($data['id'] ?? 0);
         $this->tpl->assign('id', $itemId);
         $this->tpl->assign('canvasTypes', $this->blueprintsService->getTranslatedBoxes($this->template));
         $this->tpl->assign('canvasItem', $this->blueprintsRepo->getSingleCanvasItem($itemId));
@@ -333,18 +324,4 @@ class EditCanvasComment extends Controller
 
         return $this->tpl->displayPartial('blueprints.canvasComment');
     }
-
-    /**
-     * put - handle PUT requests.
-     *
-     * @param  array<string, mixed>  $params  Request parameters
-     */
-    public function put(array $params): void {}
-
-    /**
-     * delete - handle DELETE requests.
-     *
-     * @param  array<string, mixed>  $params  Request parameters
-     */
-    public function delete(array $params): void {}
 }

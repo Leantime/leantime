@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Controllers;
 
-use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
+use Leantime\Core\UI\Template;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
@@ -16,42 +18,29 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * DelCanvasItem controller - handles canvas item deletion.
  *
- * Replaces the old per-variant Canvas\Controllers\DelCanvasItem subclasses.
- * The canvas type slug comes from a GET parameter instead of a class constant.
+ * Native Laravel controller: route-bound actions, the {canvasSlug}/{id} path segments
+ * arrive via the route (canvasSlug resolved in the constructor, id as a typed action arg),
+ * and request input is read from the injected IncomingRequest instead of the legacy
+ * merged-$params argument and superglobals.
  */
-class DelCanvasItem extends Controller
+class DelCanvasItem
 {
-    private BlueprintsRepository $blueprintsRepo;
+    private string $canvasSlug;
 
-    private TemplateRegistry $templateRegistry;
+    private ?CanvasTemplate $template;
 
-    private string $canvasSlug = '';
-
-    private ?CanvasTemplate $template = null;
-
-    /**
-     * init - resolve dependencies and determine the canvas slug from request.
-     *
-     * @param  BlueprintsRepository  $blueprintsRepo  Blueprints repository
-     * @param  TemplateRegistry  $templateRegistry  Template registry
-     */
-    public function init(
-        BlueprintsRepository $blueprintsRepo,
-        TemplateRegistry $templateRegistry
-    ): void {
-        $this->blueprintsRepo = $blueprintsRepo;
-        $this->templateRegistry = $templateRegistry;
-
-        $this->canvasSlug = strip_tags(request()->route('canvasSlug') ?? ($_GET['canvasSlug'] ?? ''));
-        $this->template = $this->templateRegistry->get($this->canvasSlug);
+    public function __construct(
+        private IncomingRequest $request,
+        private Template $tpl,
+        private Language $language,
+        private BlueprintsRepository $blueprintsRepo,
+        TemplateRegistry $templateRegistry,
+    ) {
+        $this->canvasSlug = strip_tags((string) ($request->route('canvasSlug') ?? ''));
+        $this->template = $templateRegistry->get($this->canvasSlug);
     }
 
-    /**
-     * get - display the item delete confirmation dialog.
-     *
-     * @param  array<string, mixed>  $params  Request parameters
-     */
-    public function get(array $params): Response
+    public function get(?string $id = null): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
@@ -64,12 +53,7 @@ class DelCanvasItem extends Controller
         return $this->tpl->displayPartial('blueprints.delCanvasItem');
     }
 
-    /**
-     * post - process the canvas item deletion.
-     *
-     * @param  array<string, mixed>  $params  Request parameters (expects 'id')
-     */
-    public function post(array $params): Response
+    public function post(?string $id = null): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
@@ -77,8 +61,8 @@ class DelCanvasItem extends Controller
 
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-        if (isset($params['del']) && isset($params['id']) && (int) $params['id'] > 0) {
-            $id = (int) $params['id'];
+        if ($this->request->has('del') && (int) $id > 0) {
+            $id = (int) $id;
             $this->blueprintsRepo->delCanvasItem($id);
 
             $this->tpl->setNotification(

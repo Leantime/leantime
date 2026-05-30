@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Controllers;
 
-use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
 use Leantime\Core\Mailer as MailerCore;
+use Leantime\Core\UI\Template;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
@@ -20,51 +22,54 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * Replaces the old per-variant Canvas\Controllers\ShowCanvas subclasses.
  * The canvas type slug comes from the route instead of a class constant.
+ *
+ * Native Laravel controller: route-bound actions, the {canvasSlug}/{id} path segments
+ * arrive via the route (canvasSlug resolved in the constructor, id as a typed action arg),
+ * and request input is read from the injected IncomingRequest instead of the legacy
+ * merged-$params argument and superglobals.
  */
-class ShowCanvas extends Controller
+class ShowCanvas
 {
-    private ProjectService $projectService;
+    private string $canvasSlug;
 
-    private BlueprintsRepository $blueprintsRepo;
-
-    private BlueprintsService $blueprintsService;
-
-    private TemplateRegistry $templateRegistry;
-
-    private string $canvasSlug = '';
-
-    private ?CanvasTemplate $template = null;
+    private ?CanvasTemplate $template;
 
     /**
-     * init - resolve dependencies and determine the canvas slug from request.
+     * __construct - resolve dependencies and determine the canvas slug from request.
      *
+     * @param  IncomingRequest  $request  Incoming request
+     * @param  Template  $tpl  Template engine
+     * @param  Language  $language  Language service
      * @param  ProjectService  $projectService  Project service
      * @param  BlueprintsRepository  $blueprintsRepo  Blueprints repository
      * @param  BlueprintsService  $blueprintsService  Blueprints service
      * @param  TemplateRegistry  $templateRegistry  Template registry
      */
-    public function init(
-        ProjectService $projectService,
-        BlueprintsRepository $blueprintsRepo,
-        BlueprintsService $blueprintsService,
-        TemplateRegistry $templateRegistry
-    ): void {
-        $this->projectService = $projectService;
-        $this->blueprintsRepo = $blueprintsRepo;
-        $this->blueprintsService = $blueprintsService;
-        $this->templateRegistry = $templateRegistry;
-
-        $this->canvasSlug = strip_tags(request()->route('canvasSlug') ?? ($_GET['canvasSlug'] ?? ''));
-        $this->template = $this->templateRegistry->get($this->canvasSlug);
+    public function __construct(
+        private IncomingRequest $request,
+        private Template $tpl,
+        private Language $language,
+        private ProjectService $projectService,
+        private BlueprintsRepository $blueprintsRepo,
+        private BlueprintsService $blueprintsService,
+        TemplateRegistry $templateRegistry,
+    ) {
+        $this->canvasSlug = strip_tags((string) ($request->route('canvasSlug') ?? ''));
+        $this->template = $templateRegistry->get($this->canvasSlug);
     }
 
     /**
      * get - display the canvas board (and handle the board switcher).
      *
-     * @param  array<string, mixed>  $params  Request parameters
+     * @param  string|null  $id  Active board id from the route
      */
-    public function get(array $params): Response
+    public function get(?string $id = null): Response
     {
+        $data = $this->request->getRequestParams();
+        if ($id !== null) {
+            $data['id'] = $id;
+        }
+
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
         }
@@ -72,25 +77,30 @@ class ShowCanvas extends Controller
         $canvasType = $this->template->getDatabaseType();
         $sessionKey = $this->template->getSessionKey();
 
-        [$allCanvas, $currentCanvasId] = $this->resolveCurrentBoard($params, $canvasType, $sessionKey);
+        [$allCanvas, $currentCanvasId] = $this->resolveCurrentBoard($data, $canvasType, $sessionKey);
 
         // Board switcher
-        if (isset($params['searchCanvas'])) {
-            session([$sessionKey => (int) $params['searchCanvas']]);
+        if (isset($data['searchCanvas'])) {
+            session([$sessionKey => (int) $data['searchCanvas']]);
 
             return Frontcontroller::redirect(BASE_URL.'/blueprints/'.$this->canvasSlug.'/showCanvas/');
         }
 
-        return $this->renderCanvas($params, $allCanvas, $currentCanvasId);
+        return $this->renderCanvas($data, $allCanvas, $currentCanvasId);
     }
 
     /**
      * post - handle create / edit / clone / merge / import board actions.
      *
-     * @param  array<string, mixed>  $params  Request parameters
+     * @param  string|null  $id  Active board id from the route
      */
-    public function post(array $params): Response
+    public function post(?string $id = null): Response
     {
+        $data = $this->request->getRequestParams();
+        if ($id !== null) {
+            $data['id'] = $id;
+        }
+
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
         }
@@ -98,14 +108,14 @@ class ShowCanvas extends Controller
         $canvasType = $this->template->getDatabaseType();
         $sessionKey = $this->template->getSessionKey();
 
-        [$allCanvas, $currentCanvasId] = $this->resolveCurrentBoard($params, $canvasType, $sessionKey);
+        [$allCanvas, $currentCanvasId] = $this->resolveCurrentBoard($data, $canvasType, $sessionKey);
 
         // Add board
-        if (isset($params['newCanvas'])) {
-            if (isset($params['canvastitle']) && ! empty($params['canvastitle'])) {
-                if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $params['canvastitle'], $canvasType)) {
+        if (isset($data['newCanvas'])) {
+            if (isset($data['canvastitle']) && ! empty($data['canvastitle'])) {
+                if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $data['canvastitle'], $canvasType)) {
                     $values = [
-                        'title' => $params['canvastitle'],
+                        'title' => $data['canvastitle'],
                         'author' => session('userdata.id'),
                         'projectId' => session('currentProject'),
                     ];
@@ -135,10 +145,10 @@ class ShowCanvas extends Controller
         }
 
         // Edit board
-        if (isset($params['editCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
-            if (isset($params['canvastitle']) && ! empty($params['canvastitle'])) {
-                if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $params['canvastitle'], $canvasType)) {
-                    $this->blueprintsRepo->updateCanvas(['title' => $params['canvastitle'], 'id' => $currentCanvasId]);
+        if (isset($data['editCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
+            if (isset($data['canvastitle']) && ! empty($data['canvastitle'])) {
+                if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $data['canvastitle'], $canvasType)) {
+                    $this->blueprintsRepo->updateCanvas(['title' => $data['canvastitle'], 'id' => $currentCanvasId]);
 
                     $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
 
@@ -152,14 +162,14 @@ class ShowCanvas extends Controller
         }
 
         // Clone board
-        if (isset($params['cloneCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
-            if (isset($params['canvastitle']) && ! empty($params['canvastitle'])) {
-                if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $params['canvastitle'], $canvasType)) {
+        if (isset($data['cloneCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
+            if (isset($data['canvastitle']) && ! empty($data['canvastitle'])) {
+                if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $data['canvastitle'], $canvasType)) {
                     $currentCanvasId = $this->blueprintsRepo->copyCanvas(
                         session('currentProject'),
                         $currentCanvasId,
                         session('userdata.id'),
-                        $params['canvastitle'],
+                        $data['canvastitle'],
                         $canvasType
                     );
 
@@ -177,9 +187,9 @@ class ShowCanvas extends Controller
         }
 
         // Merge board
-        if (isset($params['mergeCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
-            if (isset($params['canvasid']) && $params['canvasid'] > 0) {
-                if ($this->blueprintsRepo->mergeCanvas($currentCanvasId, $params['canvasid'])) {
+        if (isset($data['mergeCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
+            if (isset($data['canvasid']) && $data['canvasid'] > 0) {
+                if ($this->blueprintsRepo->mergeCanvas($currentCanvasId, $data['canvasid'])) {
                     $this->tpl->setNotification($this->language->__('notification.board_merged'), 'success');
 
                     return Frontcontroller::redirect(BASE_URL.'/blueprints/'.$this->canvasSlug.'/showCanvas/');
@@ -192,7 +202,7 @@ class ShowCanvas extends Controller
         }
 
         // Import board
-        if (isset($params['importCanvas']) && isset($_FILES['canvasfile']) && $_FILES['canvasfile']['error'] === 0) {
+        if (isset($data['importCanvas']) && isset($_FILES['canvasfile']) && $_FILES['canvasfile']['error'] === 0) {
             $uploadfile = tempnam(sys_get_temp_dir(), 'leantime.').'.xml';
 
             if (move_uploaded_file($_FILES['canvasfile']['tmp_name'], $uploadfile)) {
@@ -223,7 +233,7 @@ class ShowCanvas extends Controller
             $this->tpl->setNotification($this->language->__('notification.board_import_failed'), 'error');
         }
 
-        return $this->renderCanvas($params, $allCanvas, $currentCanvasId);
+        return $this->renderCanvas($data, $allCanvas, $currentCanvasId);
     }
 
     /**
