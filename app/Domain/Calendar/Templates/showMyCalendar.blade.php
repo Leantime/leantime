@@ -239,14 +239,18 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 
                     }else if(event.event.extendedProps.enitityType == "event") {
 
-                        jQuery.ajax({
-                            type : 'PATCH',
-                            url  : leantime.appUrl + '/api/calendar',
-                            data : {
-                                id: event.event.extendedProps.enitityId,
+                        leantime.rpc('Calendar.Calendar.patch', {
+                            id: event.event.extendedProps.enitityId,
+                            params: {
                                 dateFrom: event.event.startStr,
                                 dateTo: event.event.endStr
                             }
+                        }).then(function (success) {
+                            // Denied/failed update resolves to false — undo the visual move.
+                            if (! success) { event.revert(); }
+                        }).catch(function (error) {
+                            console.error('Could not update event dates', error);
+                            event.revert();
                         })
                     }
                 },
@@ -277,14 +281,18 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 
                     }else if(event.event.extendedProps.enitityType == "event") {
 
-                        jQuery.ajax({
-                            type : 'PATCH',
-                            url  : leantime.appUrl + '/api/calendar',
-                            data : {
-                                id: event.event.extendedProps.enitityId,
+                        leantime.rpc('Calendar.Calendar.patch', {
+                            id: event.event.extendedProps.enitityId,
+                            params: {
                                 dateFrom: event.event.startStr,
                                 dateTo: event.event.endStr
                             }
+                        }).then(function (success) {
+                            // Denied/failed update resolves to false — undo the visual move.
+                            if (! success) { event.revert(); }
+                        }).catch(function (error) {
+                            console.error('Could not update event dates', error);
+                            event.revert();
                         })
                     }
 
