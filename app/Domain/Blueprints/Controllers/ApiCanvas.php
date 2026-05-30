@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Controllers;
 
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
+use Leantime\Core\UI\Template;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Blueprints\Services\TemplateRegistry;
@@ -17,56 +19,32 @@ use Symfony\Component\HttpFoundation\Response;
  * Provides the API endpoint used by the blueprintsController.js for inline
  * status, relates, and user dropdown updates on the canvas board.
  */
-class ApiCanvas extends Controller
+class ApiCanvas
 {
-    private BlueprintsRepository $blueprintsRepo;
+    private string $canvasSlug;
 
-    private TemplateRegistry $templateRegistry;
-
-    private ProjectRepository $projects;
-
-    private string $canvasSlug = '';
-
-    private ?CanvasTemplate $template = null;
+    private ?CanvasTemplate $template;
 
     /**
-     * init - resolve dependencies and determine the canvas slug from request.
+     * __construct - resolve dependencies and determine the canvas slug from request.
      *
+     * @param  IncomingRequest  $request  Incoming request
+     * @param  Template  $tpl  Template handler
+     * @param  Language  $language  Language handler
      * @param  BlueprintsRepository  $blueprintsRepo  Blueprints repository
-     * @param  TemplateRegistry  $templateRegistry  Template registry
      * @param  ProjectRepository  $projects  Project repository (for access checks)
+     * @param  TemplateRegistry  $templateRegistry  Template registry
      */
-    public function init(
-        BlueprintsRepository $blueprintsRepo,
+    public function __construct(
+        private IncomingRequest $request,
+        private Template $tpl,
+        private Language $language,
+        private BlueprintsRepository $blueprintsRepo,
+        private ProjectRepository $projects,
         TemplateRegistry $templateRegistry,
-        ProjectRepository $projects
-    ): void {
-        $this->blueprintsRepo = $blueprintsRepo;
-        $this->templateRegistry = $templateRegistry;
-        $this->projects = $projects;
-
-        $this->canvasSlug = strip_tags(request()->route('canvasSlug') ?? ($_GET['canvasSlug'] ?? ''));
-        $this->template = $this->templateRegistry->get($this->canvasSlug);
-    }
-
-    /**
-     * get - handle GET requests (not implemented).
-     *
-     * @param  array<string, mixed>  $params  Request parameters
-     */
-    public function get(array $params): Response
-    {
-        return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
-    }
-
-    /**
-     * post - handle POST requests (not implemented).
-     *
-     * @param  array<string, mixed>  $params  Request parameters
-     */
-    public function post(array $params): Response
-    {
-        return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
+    ) {
+        $this->canvasSlug = strip_tags((string) ($request->route('canvasSlug') ?? ''));
+        $this->template = $templateRegistry->get($this->canvasSlug);
     }
 
     /**
@@ -74,21 +52,21 @@ class ApiCanvas extends Controller
      *
      * Supports updating status, relates, and author fields on individual
      * canvas items via AJAX calls from the board view dropdowns.
-     *
-     * @param  array<string, mixed>  $params  Request parameters (must include 'id')
      */
-    public function patch(array $params): Response
+    public function patch(): Response
     {
+        $data = $this->request->getRequestParams();
+
         if ($this->template === null) {
             return $this->tpl->displayJson(['status' => 'Unknown canvas type'], 404);
         }
 
-        if (! isset($params['id'])) {
+        if (! isset($data['id'])) {
             return $this->tpl->displayJson(['status' => 'failure'], 400);
         }
 
         // Verify the item exists and the user has access to its project before patching.
-        $canvasItem = $this->blueprintsRepo->getSingleCanvasItem((int) $params['id']);
+        $canvasItem = $this->blueprintsRepo->getSingleCanvasItem((int) $data['id']);
         if ($canvasItem === false) {
             return $this->tpl->displayJson(['status' => 'not found'], 404);
         }
@@ -104,20 +82,10 @@ class ApiCanvas extends Controller
         }
 
         // patchCanvasItem returns false when no allowlisted columns are present — a client error.
-        if (! $this->blueprintsRepo->patchCanvasItem((int) $params['id'], $params)) {
+        if (! $this->blueprintsRepo->patchCanvasItem((int) $data['id'], $data)) {
             return $this->tpl->displayJson(['status' => 'no valid fields to update'], 400);
         }
 
         return $this->tpl->displayJson(['status' => 'ok']);
-    }
-
-    /**
-     * delete - handle DELETE requests (not implemented).
-     *
-     * @param  array<string, mixed>  $params  Request parameters
-     */
-    public function delete(array $params): Response
-    {
-        return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
     }
 }

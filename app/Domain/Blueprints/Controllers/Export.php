@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Controllers;
 
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
+use Leantime\Core\UI\Template;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Services\BlueprintsExport;
 use Leantime\Domain\Blueprints\Services\TemplateRegistry;
@@ -16,39 +18,38 @@ use Symfony\Component\HttpFoundation\Response;
  * Thin controller: resolves the board id and delegates XML generation to the
  * BlueprintsExport service. The canvas type slug comes from the route.
  */
-class Export extends Controller
+class Export
 {
-    private BlueprintsExport $exportService;
+    private string $canvasSlug;
 
-    private TemplateRegistry $templateRegistry;
-
-    private string $canvasSlug = '';
-
-    private ?CanvasTemplate $template = null;
+    private ?CanvasTemplate $template;
 
     /**
-     * init - resolve dependencies and determine the canvas slug from the request.
+     * __construct - resolve dependencies and determine the canvas slug from the request.
      *
+     * @param  IncomingRequest  $request  Incoming request
+     * @param  Template  $tpl  Template engine
+     * @param  Language  $language  Language service
      * @param  BlueprintsExport  $exportService  Blueprints export service
      * @param  TemplateRegistry  $templateRegistry  Template registry
      */
-    public function init(
-        BlueprintsExport $exportService,
-        TemplateRegistry $templateRegistry
-    ): void {
-        $this->exportService = $exportService;
-        $this->templateRegistry = $templateRegistry;
-
-        $this->canvasSlug = strip_tags(request()->route('canvasSlug') ?? ($_GET['canvasSlug'] ?? ''));
-        $this->template = $this->templateRegistry->get($this->canvasSlug);
+    public function __construct(
+        private IncomingRequest $request,
+        private Template $tpl,
+        private Language $language,
+        private BlueprintsExport $exportService,
+        TemplateRegistry $templateRegistry,
+    ) {
+        $this->canvasSlug = strip_tags((string) ($request->route('canvasSlug') ?? ''));
+        $this->template = $templateRegistry->get($this->canvasSlug);
     }
 
     /**
      * get - generate and return the XML export file.
      *
-     * @param  array<string, mixed>  $params  Request parameters
+     * @param  string|null  $id  Board id from the route
      */
-    public function get(array $params): Response
+    public function get(?string $id = null): Response
     {
         if ($this->template === null) {
             return new Response('Unknown canvas type', 404);
@@ -56,8 +57,8 @@ class Export extends Controller
 
         // Resolve the board id from the route/query, falling back to the session.
         $sessionKey = $this->template->getSessionKey();
-        if (isset($params['id']) && $params['id'] !== '') {
-            $canvasId = (int) $params['id'];
+        if ($id !== null && $id !== '') {
+            $canvasId = (int) $id;
         } elseif (session()->exists($sessionKey)) {
             $canvasId = (int) session($sessionKey);
         } else {

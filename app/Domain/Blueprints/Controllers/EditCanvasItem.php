@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Controllers;
 
-use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
@@ -22,60 +21,57 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * EditCanvasItem controller - handles viewing and editing a single canvas item.
  *
- * Replaces the old per-variant Canvas\Controllers\EditCanvasItem subclasses.
- * The canvas type slug comes from a GET parameter instead of a class constant.
+ * Native Laravel controller: route-bound actions, the {canvasSlug}/{id} path segments
+ * arrive via the route (canvasSlug resolved in the constructor, id as a typed action arg),
+ * and request input is read from the injected IncomingRequest instead of the legacy
+ * merged-$params argument and superglobals.
  */
-class EditCanvasItem extends Controller
+class EditCanvasItem
 {
-    private TicketService $ticketService;
+    private string $canvasSlug;
 
-    private ProjectService $projectService;
-
-    private CommentRepository $commentsRepo;
-
-    private BlueprintsRepository $blueprintsRepo;
-
-    private BlueprintsService $blueprintsService;
-
-    private TemplateRegistry $templateRegistry;
-
-    private string $canvasSlug = '';
-
-    private ?CanvasTemplate $template = null;
+    private ?CanvasTemplate $template;
 
     /**
-     * __construct - resolve dependencies that need to be available before init().
+     * __construct - resolve dependencies and the canvas template for the requested slug.
      *
-     * @param  IncomingRequest  $incomingRequest  Incoming HTTP request
+     * @param  IncomingRequest  $request  Incoming HTTP request
      * @param  Template  $tpl  Template engine
      * @param  Language  $language  Language service
+     * @param  TicketService  $ticketService  Ticket service
+     * @param  ProjectService  $projectService  Project service
+     * @param  CommentRepository  $commentsRepo  Comments repository
+     * @param  BlueprintsRepository  $blueprintsRepo  Blueprints repository
+     * @param  BlueprintsService  $blueprintsService  Blueprints service
+     * @param  TemplateRegistry  $templateRegistry  Canvas template registry
      */
     public function __construct(
-        IncomingRequest $incomingRequest,
-        Template $tpl,
-        Language $language
+        private IncomingRequest $request,
+        private Template $tpl,
+        private Language $language,
+        private TicketService $ticketService,
+        private ProjectService $projectService,
+        private CommentRepository $commentsRepo,
+        private BlueprintsRepository $blueprintsRepo,
+        private BlueprintsService $blueprintsService,
+        TemplateRegistry $templateRegistry,
     ) {
-        $this->ticketService = app()->make(TicketService::class);
-        $this->projectService = app()->make(ProjectService::class);
-        $this->commentsRepo = app()->make(CommentRepository::class);
-        $this->blueprintsRepo = app()->make(BlueprintsRepository::class);
-        $this->blueprintsService = app()->make(BlueprintsService::class);
-        $this->templateRegistry = app()->make(TemplateRegistry::class);
-
-        $this->canvasSlug = strip_tags(request()->route('canvasSlug') ?? ($_GET['canvasSlug'] ?? ''));
-        $this->template = $this->templateRegistry->get($this->canvasSlug);
-
-        parent::__construct($incomingRequest, $tpl, $language);
+        $this->canvasSlug = strip_tags((string) ($request->route('canvasSlug') ?? ''));
+        $this->template = $templateRegistry->get($this->canvasSlug);
     }
 
     /**
      * get - handle GET requests for viewing/editing a canvas item.
      *
-     * @param  array<string, mixed>  $params  Request parameters
-     * @return Response|void
+     * @param  string|null  $id  Canvas item id
      */
-    public function get(array $params)
+    public function get(?string $id = null): Response
     {
+        $data = $this->request->getRequestParams();
+        if ($id !== null) {
+            $data['id'] = $id;
+        }
+
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
         }
@@ -85,21 +81,21 @@ class EditCanvasItem extends Controller
         $statusLabels = $this->blueprintsService->getTranslatedStatusLabels($this->template);
         $relatesLabels = $this->blueprintsService->getTranslatedRelatesLabels($this->template);
 
-        if (isset($params['id'])) {
+        if (isset($data['id'])) {
             // Delete comment
-            if (isset($params['delComment'])) {
-                $commentId = (int) ($params['delComment']);
+            if (isset($data['delComment'])) {
+                $commentId = (int) ($data['delComment']);
                 $this->commentsRepo->deleteComment($commentId);
                 $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
             }
 
             // Delete milestone relationship
-            if (isset($params['removeMilestone'])) {
-                $this->blueprintsRepo->patchCanvasItem((int) $params['id'], ['milestoneId' => '']);
+            if (isset($data['removeMilestone'])) {
+                $this->blueprintsRepo->patchCanvasItem((int) $data['id'], ['milestoneId' => '']);
                 $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
             }
 
-            $canvasItem = $this->blueprintsRepo->getSingleCanvasItem((int) $params['id']);
+            $canvasItem = $this->blueprintsRepo->getSingleCanvasItem((int) $data['id']);
 
             if ($canvasItem) {
                 $comments = $this->commentsRepo->getComments($commentModule, $canvasItem['id']);
@@ -111,8 +107,8 @@ class EditCanvasItem extends Controller
                 return $this->tpl->displayPartial('errors.error404');
             }
         } else {
-            if (isset($params['type'])) {
-                $type = strip_tags($params['type']);
+            if (isset($data['type'])) {
+                $type = strip_tags($data['type']);
             } else {
                 $type = array_key_first($canvasTypes);
             }
@@ -155,11 +151,15 @@ class EditCanvasItem extends Controller
     /**
      * post - handle POST requests for creating/updating canvas items and comments.
      *
-     * @param  array<string, mixed>  $params  Request parameters
-     * @return Response|void
+     * @param  string|null  $id  Canvas item id
      */
-    public function post(array $params)
+    public function post(?string $id = null): Response
     {
+        $data = $this->request->getRequestParams();
+        if ($id !== null) {
+            $data['id'] = $id;
+        }
+
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
         }
@@ -168,56 +168,56 @@ class EditCanvasItem extends Controller
         $sessionKey = $this->template->getSessionKey();
         $basePath = '/blueprints/'.$this->canvasSlug;
 
-        if (isset($params['changeItem'])) {
-            if (isset($params['itemId']) && ! empty($params['itemId'])) {
-                if (isset($params['description']) && ! empty($params['description'])) {
+        if (isset($data['changeItem'])) {
+            if (isset($data['itemId']) && ! empty($data['itemId'])) {
+                if (isset($data['description']) && ! empty($data['description'])) {
                     $currentCanvasId = (int) session($sessionKey);
 
                     $canvasItem = [
-                        'box' => $params['box'],
+                        'box' => $data['box'],
                         'author' => session('userdata.id'),
-                        'description' => $params['description'],
-                        'status' => $params['status'],
-                        'relates' => $params['relates'],
-                        'assumptions' => $params['assumptions'],
-                        'data' => $params['data'],
-                        'conclusion' => $params['conclusion'],
-                        'itemId' => $params['itemId'],
+                        'description' => $data['description'],
+                        'status' => $data['status'],
+                        'relates' => $data['relates'],
+                        'assumptions' => $data['assumptions'],
+                        'data' => $data['data'],
+                        'conclusion' => $data['conclusion'],
+                        'itemId' => $data['itemId'],
                         'canvasId' => $currentCanvasId,
-                        'milestoneId' => $params['milestoneId'],
+                        'milestoneId' => $data['milestoneId'],
                         'dependentMilstone' => '',
-                        'id' => $params['itemId'],
+                        'id' => $data['itemId'],
                     ];
 
-                    if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
-                        $params['headline'] = $params['newMilestone'];
-                        $params['tags'] = '#ccc';
-                        $params['editFrom'] = dtHelper()->userNow()->formatDateForUser();
-                        $params['editTo'] = dtHelper()->userNow()->addDays(7)->formatDateForUser();
-                        $params['dependentMilestone'] = '';
-                        $id = $this->ticketService->quickAddMilestone($params);
+                    if (isset($data['newMilestone']) && $data['newMilestone'] != '') {
+                        $data['headline'] = $data['newMilestone'];
+                        $data['tags'] = '#ccc';
+                        $data['editFrom'] = dtHelper()->userNow()->formatDateForUser();
+                        $data['editTo'] = dtHelper()->userNow()->addDays(7)->formatDateForUser();
+                        $data['dependentMilestone'] = '';
+                        $id = $this->ticketService->quickAddMilestone($data);
 
                         if ($id !== false) {
                             $canvasItem['milestoneId'] = $id;
                         }
                     }
-                    if (isset($params['existingMilestone']) && $params['existingMilestone'] != '') {
-                        $canvasItem['milestoneId'] = $params['existingMilestone'];
+                    if (isset($data['existingMilestone']) && $data['existingMilestone'] != '') {
+                        $canvasItem['milestoneId'] = $data['existingMilestone'];
                     }
 
                     $this->blueprintsRepo->editCanvasItem($canvasItem);
 
-                    $comments = $this->commentsRepo->getComments($commentModule, $params['itemId']);
+                    $comments = $this->commentsRepo->getComments($commentModule, $data['itemId']);
                     $this->tpl->assign('numComments', $this->commentsRepo->countComments(
                         $commentModule,
-                        $params['itemId']
+                        $data['itemId']
                     ));
                     $this->tpl->assign('comments', $comments);
 
                     $this->tpl->setNotification($this->language->__('notifications.canvas_item_updates'), 'success');
 
                     $subject = $this->language->__('email_notifications.canvas_board_edited');
-                    $actualLink = BASE_URL.$basePath.'#/editCanvasItem/'.(int) $params['itemId'];
+                    $actualLink = BASE_URL.$basePath.'#/editCanvasItem/'.(int) $data['itemId'];
                     $message = sprintf(
                         $this->language->__('email_notifications.canvas_item_update_message'),
                         session('userdata.name'),
@@ -240,27 +240,27 @@ class EditCanvasItem extends Controller
                     $this->projectService->notifyProjectUsers($notification);
 
                     $closeModal = '';
-                    if (isset($_POST['submitAction']) && $_POST['submitAction'] == 'closeModal') {
+                    if (isset($data['submitAction']) && $data['submitAction'] == 'closeModal') {
                         $closeModal = '?closeModal=true';
                     }
 
-                    return Frontcontroller::redirect(BASE_URL.$basePath.'/editCanvasItem/'.$params['itemId'].$closeModal);
+                    return Frontcontroller::redirect(BASE_URL.$basePath.'/editCanvasItem/'.$data['itemId'].$closeModal);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
             } else {
-                if (isset($_POST['description']) && ! empty($_POST['description'])) {
+                if (isset($data['description']) && ! empty($data['description'])) {
                     $currentCanvasId = (int) session($sessionKey);
 
                     $canvasItem = [
-                        'box' => $params['box'],
+                        'box' => $data['box'],
                         'author' => session('userdata.id'),
-                        'description' => $params['description'],
-                        'status' => $params['status'],
-                        'relates' => $params['relates'],
-                        'assumptions' => $params['assumptions'],
-                        'data' => $params['data'],
-                        'conclusion' => $params['conclusion'],
+                        'description' => $data['description'],
+                        'status' => $data['status'],
+                        'relates' => $data['relates'],
+                        'assumptions' => $data['assumptions'],
+                        'data' => $data['data'],
+                        'conclusion' => $data['conclusion'],
                         'canvasId' => $currentCanvasId,
                     ];
 
@@ -268,13 +268,13 @@ class EditCanvasItem extends Controller
                     $canvasTypes = $this->blueprintsService->getTranslatedBoxes($this->template);
 
                     $this->tpl->setNotification(
-                        $canvasTypes[$params['box']]['title'].' successfully created',
+                        $canvasTypes[$data['box']]['title'].' successfully created',
                         'success',
-                        ''.$params['box'].'_item_created'
+                        ''.$data['box'].'_item_created'
                     );
 
                     $subject = $this->language->__('email_notifications.canvas_board_item_created');
-                    $actualLink = BASE_URL.$basePath.'#/editCanvasItem/'.(int) ($params['itemId'] ?? $id);
+                    $actualLink = BASE_URL.$basePath.'#/editCanvasItem/'.(int) ($data['itemId'] ?? $id);
                     $message = sprintf(
                         $this->language->__('email_notifications.canvas_item_created_message'),
                         session('userdata.name'),
@@ -299,7 +299,7 @@ class EditCanvasItem extends Controller
                     $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
 
                     $closeModal = '';
-                    if (isset($_POST['submitAction']) && $_POST['submitAction'] == 'closeModal') {
+                    if (isset($data['submitAction']) && $data['submitAction'] == 'closeModal') {
                         $closeModal = '?closeModal=true';
                     }
 
@@ -310,14 +310,14 @@ class EditCanvasItem extends Controller
             }
         }
 
-        if (isset($params['comment']) && isset($params['id'])) {
-            $itemId = (int) $params['id'];
+        if (isset($data['comment']) && isset($data['id'])) {
+            $itemId = (int) $data['id'];
             $values = [
-                'text' => $params['text'],
+                'text' => $data['text'],
                 'date' => date('Y-m-d H:i:s'),
                 'userId' => (session('userdata.id')),
                 'moduleId' => $itemId,
-                'commentParent' => ($params['father']),
+                'commentParent' => ($data['father']),
             ];
 
             $commentId = $this->commentsRepo->addComment($values, $commentModule);
@@ -362,14 +362,14 @@ class EditCanvasItem extends Controller
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('relatesLabels', $relatesLabels);
         $this->tpl->assign('dataLabels', $this->blueprintsService->getTranslatedDataLabels($this->template));
-        if (isset($params['id'])) {
-            $canvasItemId = (int) $params['id'];
+        if (isset($data['id'])) {
+            $canvasItemId = (int) $data['id'];
             $comments = $this->commentsRepo->getComments($commentModule, $canvasItemId);
             $this->tpl->assign('canvasItem', $this->blueprintsRepo->getSingleCanvasItem($canvasItemId));
         } else {
             $value = [
                 'id' => '',
-                'box' => $params['box'],
+                'box' => $data['box'],
                 'author' => session('userdata.id'),
                 'description' => '',
                 'status' => array_key_first($statusLabels),
@@ -388,18 +388,4 @@ class EditCanvasItem extends Controller
 
         return $this->tpl->displayPartial('blueprints.canvasDialog');
     }
-
-    /**
-     * put - handle PUT requests.
-     *
-     * @param  array<string, mixed>  $params  Request parameters
-     */
-    public function put(array $params): void {}
-
-    /**
-     * delete - handle DELETE requests.
-     *
-     * @param  array<string, mixed>  $params  Request parameters
-     */
-    public function delete(array $params): void {}
 }
