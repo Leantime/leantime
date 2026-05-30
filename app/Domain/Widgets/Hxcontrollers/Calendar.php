@@ -17,8 +17,6 @@ class Calendar extends HtmxController
     public function init(CalendarService $calendarService): void
     {
         $this->calendarService = $calendarService;
-
-        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
     public function get(): void

@@ -33,8 +33,6 @@ class ProjectCard extends HtmxController
         $this->projectsService = $projectsService;
         $this->menuService = $menuService;
         $this->reactionService = $reactionService;
-
-        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
     public function get() {}

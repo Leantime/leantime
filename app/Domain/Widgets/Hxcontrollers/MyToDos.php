@@ -35,7 +35,6 @@ class MyToDos extends HtmxController
     ): void {
         $this->ticketsService = $ticketsService;
         $this->dashboardService = $dashboardService;
-        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
     /**

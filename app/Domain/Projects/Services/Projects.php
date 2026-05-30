@@ -39,6 +39,14 @@ class Projects
 {
     use DispatchesEvents;
 
+    /**
+     * Request-scoped memo for getProjectsAssignedToUser(), keyed by
+     * "userId|status|clientId|projectTypes".
+     *
+     * @var array<string, array>
+     */
+    private array $assignedProjectsMemo = [];
+
     public function __construct(
         private ProjectRepository $projectRepository,
         private TicketRepository $ticketRepository,
@@ -123,9 +131,11 @@ class Projects
 
         // Calculate percent
 
-        $numberOfClosedTickets = $this->ticketRepository->getNumberOfClosedTickets($projectId);
+        // One query for all four counts/efforts instead of four separate table scans.
+        $aggregates = $this->ticketRepository->getProjectProgressAggregates($projectId, $averageStorySize);
 
-        $numberOfTotalTickets = $this->ticketRepository->getNumberOfAllTickets($projectId);
+        $numberOfClosedTickets = $aggregates['closedCount'];
+        $numberOfTotalTickets = $aggregates['allCount'];
 
         if ($numberOfTotalTickets == 0) {
             $percentNum = 0;
@@ -133,8 +143,8 @@ class Projects
             $percentNum = ($numberOfClosedTickets / $numberOfTotalTickets) * 100;
         }
 
-        $effortOfClosedTickets = $this->ticketRepository->getEffortOfClosedTickets($projectId, $averageStorySize);
-        $effortOfTotalTickets = $this->ticketRepository->getEffortOfAllTickets($projectId, $averageStorySize);
+        $effortOfClosedTickets = $aggregates['closedEffort'];
+        $effortOfTotalTickets = $aggregates['allEffort'];
 
         if ($effortOfTotalTickets == 0) {
             $percentEffort = $percentNum; // This needs to be set to percentNum in case users choose to not use efforts
@@ -767,13 +777,17 @@ class Projects
      */
     public function getProjectsAssignedToUser($userId, string $projectStatus = 'open', $clientId = null, string $projectTypes = 'all'): array
     {
+        // Request-scoped memo: this 11-join query is hit several times per page
+        // load (status labels, multiple dashboard widgets). A user's project
+        // assignments don't change within a request, so memoizing is safe.
+        $memoKey = $userId.'|'.$projectStatus.'|'.($clientId ?? '').'|'.$projectTypes;
+        if (isset($this->assignedProjectsMemo[$memoKey])) {
+            return $this->assignedProjectsMemo[$memoKey];
+        }
+
         $projects = $this->projectRepository->getUserProjects(userId: $userId, projectStatus: $projectStatus, clientId: $clientId, projectTypes: $projectTypes);
 
-        if ($projects) {
-            return $projects;
-        } else {
-            return [];
-        }
+        return $this->assignedProjectsMemo[$memoKey] = $projects ?: [];
     }
 
     /**

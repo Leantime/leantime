@@ -1468,6 +1468,55 @@ class Tickets
     }
 
     /**
+     * Single-query equivalent of getNumberOfAllTickets + getNumberOfClosedTickets +
+     * getEffortOfAllTickets + getEffortOfClosedTickets for one project. Used by the
+     * project-progress widget to avoid four separate table scans per project.
+     *
+     * The effort expression mirrors the standalone effort methods exactly: a ticket's
+     * storypoints, or the project's average story size as a fallback when unset/zero.
+     *
+     * @param  int|string  $projectId
+     * @param  mixed  $averageStorySize  Fallback effort for tickets without storypoints.
+     * @return array{allCount:int, closedCount:int, allEffort:float, closedEffort:float}
+     */
+    public function getProjectProgressAggregates($projectId, $averageStorySize): array
+    {
+        $statusGroupsSQL = $this->getStatusListGroupedByType($projectId);
+        $statusGroups = $this->dbHelper->parseStatusGroups($statusGroupsSQL);
+        $doneStatuses = $statusGroups['DONE'] ?? [];
+
+        $effortExpr = 'CASE WHEN zp_tickets.storypoints IS NOT NULL AND zp_tickets.storypoints <> 0 THEN zp_tickets.storypoints ELSE ? END';
+
+        $select = 'COUNT(*) AS '.$this->dbHelper->wrapColumn('allCount')
+            .', SUM('.$effortExpr.') AS '.$this->dbHelper->wrapColumn('allEffort');
+        $bindings = [$averageStorySize];
+
+        if (! empty($doneStatuses)) {
+            $placeholders = implode(',', array_fill(0, count($doneStatuses), '?'));
+
+            $select .= ', SUM(CASE WHEN zp_tickets.status IN ('.$placeholders.') THEN 1 ELSE 0 END) AS '.$this->dbHelper->wrapColumn('closedCount')
+                .', SUM(CASE WHEN zp_tickets.status IN ('.$placeholders.') THEN ('.$effortExpr.') ELSE 0 END) AS '.$this->dbHelper->wrapColumn('closedEffort');
+
+            // Binding order must match the placeholders left-to-right:
+            // allEffort fallback, closedCount IN-list, closedEffort IN-list, closedEffort fallback.
+            $bindings = array_merge([$averageStorySize], $doneStatuses, $doneStatuses, [$averageStorySize]);
+        }
+
+        $result = $this->connection->table('zp_tickets')
+            ->selectRaw($select, $bindings)
+            ->where('zp_tickets.type', '<>', 'milestone')
+            ->where('zp_tickets.projectId', $projectId)
+            ->first();
+
+        return [
+            'allCount' => (int) ($result->allCount ?? 0),
+            'closedCount' => (int) ($result->closedCount ?? 0),
+            'allEffort' => (float) ($result->allEffort ?? 0),
+            'closedEffort' => (float) ($result->closedEffort ?? 0),
+        ];
+    }
+
+    /**
      * addTicket - add a Ticket with postback test
      */
     public function addTicket(array $values): bool|int

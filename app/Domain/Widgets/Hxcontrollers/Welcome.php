@@ -19,7 +19,6 @@ class Welcome extends HtmxController
     public function init(DashboardService $dashboardService): void
     {
         $this->dashboardService = $dashboardService;
-        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
     /**
