@@ -22,7 +22,7 @@ namespace Illuminate\Support;
  * @method static string alphaNumeric(string $value, bool $removeSpaces = false)
  * @method static string beautifyFilename(string $filename)
  * @method static string sanitizeFilename(string $filename, bool $beautify = true)
- * @method static string sanitizeForLLM(mixed $value, bool $removeNewlines = false)
+ * @method static string sanitizeForLLM(string $value, bool $removeNewlines = false)
  * @method static string toMarkdown(mixed $data, int $headerLevel = 2)
  */
 class Str {}
