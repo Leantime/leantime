@@ -42,6 +42,13 @@ class Tickets
     use DispatchesEvents;
 
     /**
+     * Request-scoped memo for getAllStatusLabelsByUserId(), keyed by "userId|currentProject".
+     *
+     * @var array<string, array>
+     */
+    private array $statusLabelsByUserMemo = [];
+
+    /**
      * Constructor method for the class.
      *
      * @param  TemplateCore  $tpl  The template core instance.
@@ -60,13 +67,6 @@ class Tickets
      * @param  CommentService  $commentService  The comments service instance.
      * @param  ClientService  $clientService  The clients service instance.
      */
-    /**
-     * Request-scoped memo for getAllStatusLabelsByUserId(), keyed by "userId|currentProject".
-     *
-     * @var array<string, array>
-     */
-    private array $statusLabelsByUserMemo = [];
-
     public function __construct(
         private TemplateCore $tpl,
         private LanguageCore $language,
