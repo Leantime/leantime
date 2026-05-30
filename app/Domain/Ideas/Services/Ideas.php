@@ -62,12 +62,14 @@ class Ideas
             return false;
         }
 
-        $canvas = (array) $this->ideasRepository->getSingleCanvas((int) $item['canvasId']);
-        if (empty($canvas['projectId'])) {
+        // getSingleCanvas() returns a list of row arrays (not a flat row),
+        // matching the existing getBoardTitle() consumer.
+        $canvas = $this->ideasRepository->getSingleCanvas((int) $item['canvasId']);
+        if (empty($canvas[0]['projectId'])) {
             return false;
         }
 
-        return $this->projectService->isUserAssignedToProject((int) session('userdata.id'), (int) $canvas['projectId']);
+        return $this->projectService->isUserAssignedToProject((int) session('userdata.id'), (int) $canvas[0]['projectId']);
     }
 
     /**

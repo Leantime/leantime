@@ -159,7 +159,8 @@ class IdeasServiceTest extends TestCase
     {
         return $this->make(IdeasRepository::class, array_merge([
             'getSingleCanvasItem' => fn () => ['canvasId' => 7],
-            'getSingleCanvas' => fn () => ['projectId' => 9],
+            // getSingleCanvas returns a LIST of row arrays (matches the real repo shape).
+            'getSingleCanvas' => fn () => [['projectId' => 9]],
             'patchCanvasItem' => fn () => true,
             'updateIdeaSorting' => fn () => true,
             'bulkUpdateIdeaStatus' => fn () => true,
