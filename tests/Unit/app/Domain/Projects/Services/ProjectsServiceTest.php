@@ -279,4 +279,181 @@ class ProjectsServiceTest extends TestCase
         $this->assertFalse($card['lastUpdate']);
         $this->assertSame('', $card['status']);
     }
+
+    // ---------------------------------------------------------------------
+    // Authorized JSON-RPC entry points for project sort/status/patch.
+    // The /api/projects controller (which had a route-level gate) was retired,
+    // so these wrappers must self-authorize: manager+ AND access to each project.
+    // ---------------------------------------------------------------------
+
+    public function test_user_can_manage_project_allows_admin_without_explicit_assignment(): void
+    {
+        session(['userdata.role' => 'admin']);
+
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => false,
+        ]);
+
+        // Admins/owners manage every project regardless of assignment.
+        $this->assertTrue($this->makeService(projectRepo: $projectRepo)->userCanManageProject(99));
+    }
+
+    public function test_user_can_manage_project_requires_assignment_for_managers(): void
+    {
+        session(['userdata.role' => 'manager']);
+
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => false,
+        ]);
+
+        $this->assertFalse($this->makeService(projectRepo: $projectRepo)->userCanManageProject(99));
+    }
+
+    public function test_patch_project_status_and_sorting_rejects_non_manager(): void
+    {
+        session(['userdata.role' => 'editor']);
+
+        $patchCalls = 0;
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => true,
+            'patch' => function () use (&$patchCalls) {
+                $patchCalls++;
+
+                return true;
+            },
+        ]);
+
+        $result = $this->makeService(projectRepo: $projectRepo)
+            ->patchProjectStatusAndSorting(['3' => 'item[]=5']);
+
+        $this->assertFalse($result, 'Editors must not be able to re-status projects');
+        $this->assertSame(0, $patchCalls, 'Unauthorized request must not persist any sorting');
+    }
+
+    public function test_patch_project_status_and_sorting_rejects_manager_without_project_access(): void
+    {
+        session(['userdata.role' => 'manager']);
+
+        $patchCalls = 0;
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => false,
+            'patch' => function () use (&$patchCalls) {
+                $patchCalls++;
+
+                return true;
+            },
+        ]);
+
+        $result = $this->makeService(projectRepo: $projectRepo)
+            ->patchProjectStatusAndSorting(['3' => 'item[]=5']);
+
+        $this->assertFalse($result, 'A manager smuggling a project they cannot access must be blocked');
+        $this->assertSame(0, $patchCalls);
+    }
+
+    public function test_patch_project_status_and_sorting_allows_manager_with_access(): void
+    {
+        session(['userdata.role' => 'manager']);
+
+        $patched = [];
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => true,
+            'patch' => function ($id, $values) use (&$patched) {
+                $patched[] = ['id' => $id, 'values' => $values];
+
+                return true;
+            },
+        ]);
+
+        $result = $this->makeService(projectRepo: $projectRepo)
+            ->patchProjectStatusAndSorting(['3' => 'item[]=5&item[]=6']);
+
+        $this->assertTrue($result);
+        $this->assertCount(2, $patched, 'Both serialized projects must be re-sorted');
+        $this->assertSame('5', $patched[0]['id']);
+        $this->assertSame(3, (int) $patched[0]['values']['state']);
+    }
+
+    public function test_sort_projects_rejects_when_user_cannot_manage_target_project(): void
+    {
+        session(['userdata.role' => 'manager']);
+
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => false,
+        ]);
+
+        $result = $this->makeService(projectRepo: $projectRepo)
+            ->sortProjects(['pgm-5' => 1]);
+
+        $this->assertFalse($result);
+    }
+
+    public function test_sort_projects_resolves_ticket_to_its_project_for_authorization(): void
+    {
+        session(['userdata.role' => 'manager']);
+
+        $checkedProjectId = null;
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => function ($userId, $projectId) use (&$checkedProjectId) {
+                $checkedProjectId = $projectId;
+
+                return false; // deny so we stop before delegating to the Tickets service
+            },
+        ]);
+        $ticket = new \Leantime\Domain\Tickets\Models\Tickets;
+        $ticket->projectId = 9;
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => $ticket,
+        ]);
+
+        $result = $this->makeService(projectRepo: $projectRepo, ticketRepo: $ticketRepo)
+            ->sortProjects(['ticket-7' => 1]);
+
+        $this->assertFalse($result);
+        $this->assertSame(9, $checkedProjectId, 'Authorization must check the ticket\'s project, not the ticket id');
+    }
+
+    public function test_patch_project_rejects_non_manager(): void
+    {
+        session(['userdata.role' => 'editor']);
+
+        $patchCalls = 0;
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => true,
+            'patch' => function () use (&$patchCalls) {
+                $patchCalls++;
+
+                return true;
+            },
+        ]);
+
+        $result = $this->makeService(projectRepo: $projectRepo)
+            ->patchProject(5, ['sortIndex' => 2]);
+
+        $this->assertFalse($result);
+        $this->assertSame(0, $patchCalls);
+    }
+
+    public function test_patch_project_allows_manager_and_strips_control_fields(): void
+    {
+        session(['userdata.role' => 'manager']);
+
+        $patchedValues = null;
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => true,
+            'patch' => function ($id, $values) use (&$patchedValues) {
+                $patchedValues = $values;
+
+                return true;
+            },
+        ]);
+
+        $result = $this->makeService(projectRepo: $projectRepo)
+            ->patchProject(5, ['act' => 'projects.x', 'id' => 5, 'sortIndex' => 2, 'start' => '2026-01-01']);
+
+        $this->assertTrue($result);
+        $this->assertArrayNotHasKey('act', $patchedValues, 'Control fields must be stripped before persisting');
+        $this->assertArrayNotHasKey('id', $patchedValues);
+        $this->assertSame(2, $patchedValues['sortIndex']);
+    }
 }

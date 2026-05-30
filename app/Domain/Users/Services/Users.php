@@ -185,7 +185,9 @@ class Users
     /**
      * @throws BindingResolutionException
      *
-     * @api
+     * @internal Not @api: invoked only by Users\Controllers\ProfileImage, which always
+     *           passes the session user's id. The method trusts the $id it is given, so
+     *           exposing it over JSON-RPC would let a user overwrite another user's photo.
      */
     public function setProfilePicture($photo, $id): void
     {

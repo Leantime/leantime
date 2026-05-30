@@ -42,7 +42,9 @@ class Setting
     /**
      * @throws BindingResolutionException
      *
-     * @api
+     * @internal Not @api: invoked only by Setting\Controllers\Logo, which authorizes
+     *           the upload (admin+). The company logo is a global setting, so this
+     *           must not be callable over JSON-RPC by any authenticated user.
      */
     public function setLogo($file): bool
     {

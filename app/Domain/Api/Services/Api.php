@@ -14,8 +14,6 @@ use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RangeException;
-use SVG\SVG;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -327,57 +325,6 @@ class Api
         $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
         session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
         session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
-    }
-
-    /**
-     * Filters a list of users by a free-text query, matching the query against
-     * any of the values of each user record (case-insensitive substring match).
-     *
-     * @param  array  $users  List of user records
-     * @param  string  $query  Search query
-     * @return array Re-indexed list of matching users
-     *
-     * @api
-     */
-    public function filterUsersByQuery(array $users, string $query): array
-    {
-        return array_values(
-            array_filter($users, static fn (array $user) => stripos(implode(' ', $user), $query) !== false)
-        );
-    }
-
-    /**
-     * Builds an HTTP response for an avatar/profile image.
-     *
-     * The image source is either an SVG object, an already-built Response (an
-     * uploaded file) or a filesystem path. Cache headers mirror the legacy
-     * controller behaviour (public, max-age 86400).
-     *
-     * @param  SVG|Response|string  $image  The image source
-     *
-     * @api
-     */
-    public function buildImageResponse(SVG|Response|string $image): Response
-    {
-        if ($image instanceof SVG) {
-            $response = new Response($image->toXMLString());
-            $response->headers->set('Content-type', 'image/svg+xml');
-            $response->headers->set('Pragma', 'public');
-            $response->headers->set('Cache-Control', 'max-age=86400');
-
-            return $response;
-        }
-
-        if ($image instanceof Response) {
-            return $image;
-        }
-
-        $response = new Response(file_get_contents($image));
-        $response->headers->set('Content-type', 'application/octet-stream');
-        $response->headers->set('Pragma', 'public');
-        $response->headers->set('Cache-Control', 'max-age=86400');
-
-        return $response;
     }
 
     /**
