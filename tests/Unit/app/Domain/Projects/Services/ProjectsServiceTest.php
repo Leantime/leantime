@@ -4,6 +4,7 @@ namespace Unit\app\Domain\Projects\Services;
 
 use Carbon\CarbonImmutable;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\CarbonMacros;
@@ -323,10 +324,15 @@ class ProjectsServiceTest extends TestCase
             },
         ]);
 
-        $result = $this->makeService(projectRepo: $projectRepo)
-            ->patchProjectStatusAndSorting(['3' => 'item[]=5']);
+        $thrown = null;
+        try {
+            $this->makeService(projectRepo: $projectRepo)
+                ->patchProjectStatusAndSorting(['3' => 'item[]=5']);
+        } catch (AuthorizationException $e) {
+            $thrown = $e;
+        }
 
-        $this->assertFalse($result, 'Editors must not be able to re-status projects');
+        $this->assertInstanceOf(AuthorizationException::class, $thrown, 'Editors must not be able to re-status projects');
         $this->assertSame(0, $patchCalls, 'Unauthorized request must not persist any sorting');
     }
 
@@ -344,10 +350,15 @@ class ProjectsServiceTest extends TestCase
             },
         ]);
 
-        $result = $this->makeService(projectRepo: $projectRepo)
-            ->patchProjectStatusAndSorting(['3' => 'item[]=5']);
+        $thrown = null;
+        try {
+            $this->makeService(projectRepo: $projectRepo)
+                ->patchProjectStatusAndSorting(['3' => 'item[]=5']);
+        } catch (AuthorizationException $e) {
+            $thrown = $e;
+        }
 
-        $this->assertFalse($result, 'A manager smuggling a project they cannot access must be blocked');
+        $this->assertInstanceOf(AuthorizationException::class, $thrown, 'A manager smuggling a project they cannot access must be blocked');
         $this->assertSame(0, $patchCalls);
     }
 
@@ -382,10 +393,14 @@ class ProjectsServiceTest extends TestCase
             'isUserAssignedToProject' => fn () => false,
         ]);
 
-        $result = $this->makeService(projectRepo: $projectRepo)
-            ->sortProjects(['pgm-5' => 1]);
+        $thrown = null;
+        try {
+            $this->makeService(projectRepo: $projectRepo)->sortProjects(['pgm-5' => 1]);
+        } catch (AuthorizationException $e) {
+            $thrown = $e;
+        }
 
-        $this->assertFalse($result);
+        $this->assertInstanceOf(AuthorizationException::class, $thrown);
     }
 
     public function test_sort_projects_resolves_ticket_to_its_project_for_authorization(): void
@@ -406,10 +421,15 @@ class ProjectsServiceTest extends TestCase
             'getTicket' => fn () => $ticket,
         ]);
 
-        $result = $this->makeService(projectRepo: $projectRepo, ticketRepo: $ticketRepo)
-            ->sortProjects(['ticket-7' => 1]);
+        $thrown = null;
+        try {
+            $this->makeService(projectRepo: $projectRepo, ticketRepo: $ticketRepo)
+                ->sortProjects(['ticket-7' => 1]);
+        } catch (AuthorizationException $e) {
+            $thrown = $e;
+        }
 
-        $this->assertFalse($result);
+        $this->assertInstanceOf(AuthorizationException::class, $thrown);
         $this->assertSame(9, $checkedProjectId, 'Authorization must check the ticket\'s project, not the ticket id');
     }
 
@@ -427,10 +447,14 @@ class ProjectsServiceTest extends TestCase
             },
         ]);
 
-        $result = $this->makeService(projectRepo: $projectRepo)
-            ->patchProject(5, ['sortIndex' => 2]);
+        $thrown = null;
+        try {
+            $this->makeService(projectRepo: $projectRepo)->patchProject(5, ['sortIndex' => 2]);
+        } catch (AuthorizationException $e) {
+            $thrown = $e;
+        }
 
-        $this->assertFalse($result);
+        $this->assertInstanceOf(AuthorizationException::class, $thrown);
         $this->assertSame(0, $patchCalls);
     }
 

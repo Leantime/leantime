@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Tags\Services;
 
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as CanvaRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
@@ -39,14 +40,16 @@ class Tags
      *
      * @param  int  $projectId  The project to read tags from
      * @param  string  $term  Substring to filter tag suggestions by
-     * @return array Matching tag strings (empty if the user cannot access the project)
+     * @return array Matching tag strings (an empty array means no matches, NOT no access)
+     *
+     * @throws AuthorizationException If the user cannot access the project (distinct from a no-match empty result)
      *
      * @api
      */
     public function getTags(int $projectId, string $term): array
     {
         if (! $this->projectRepository->isUserAssignedToProject((int) session('userdata.id'), $projectId)) {
-            return [];
+            throw new AuthorizationException('You do not have access to this project\'s tags.');
         }
 
         $tags = [];

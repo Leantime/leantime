@@ -360,7 +360,10 @@ leantime.projectsController = (function () {
                                             end: end,
                                             sortIndex: project._index + 1,
                                         }
-                                    }).catch(function (e) { console.error('Could not update project dates', e); });
+                                    }).catch(function (e) {
+                                        jQuery.growl({ message: (e && e.message) ? e.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                                        console.error('Could not update project dates', e);
+                                    });
                                 }
 
                                 //leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index);
@@ -376,7 +379,10 @@ leantime.projectsController = (function () {
                                 }
 
                                 leantime.rpc('Projects.Projects.sortProjects', { params: sortPayload })
-                                    .catch(function (e) { console.error('Could not sort projects', e); });
+                                    .catch(function (e) {
+                                        jQuery.growl({ message: (e && e.message) ? e.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                                        console.error('Could not sort projects', e);
+                                    });
 
                             },
                             on_progress_change: function (project, progress) {
@@ -522,7 +528,10 @@ leantime.projectsController = (function () {
                 }
 
                 leantime.rpc('Projects.Projects.patchProjectStatusAndSorting', { params: sortPayload, handler: handler })
-                    .catch(function (e) { console.error('Could not update project sorting', e); });
+                    .catch(function (e) {
+                        jQuery.growl({ message: (e && e.message) ? e.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        console.error('Could not update project sorting', e);
+                    });
 
             }
         });

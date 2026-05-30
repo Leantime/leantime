@@ -4,6 +4,7 @@ namespace Unit\app\Domain\Tickets\Services;
 
 use Carbon\CarbonImmutable;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\CarbonMacros;
 use Leantime\Core\Support\DateTimeHelper;
@@ -315,14 +316,18 @@ class TicketsServiceTest extends TestCase
     {
         session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
 
-        $this->assertFalse($this->ticketsService->patchTicket(5, ['status' => 3]));
+        $this->expectException(AuthorizationException::class);
+
+        $this->ticketsService->patchTicket(5, ['status' => 3]);
     }
 
     public function test_sort_tickets_is_denied_for_non_editor(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
 
-        $this->assertFalse($this->ticketsService->sortTickets(['5' => 1]));
+        $this->expectException(AuthorizationException::class);
+
+        $this->ticketsService->sortTickets(['5' => 1]);
     }
 
     public function test_status_and_sorting_is_denied_for_non_editor(): void

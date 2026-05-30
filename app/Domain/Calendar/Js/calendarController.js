@@ -239,7 +239,11 @@ leantime.calendarController = (function () {
                             editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                             timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                         }
-                    }).catch(function (error) { console.error('Could not update ticket dates', error); });
+                    }).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        console.error('Could not update ticket dates', error);
+                    });
                 } else if (event.event.extendedProps.enitityType == "event") {
                     leantime.rpc('Calendar.Calendar.patch', {
                         id: event.event.extendedProps.enitityId,
@@ -266,7 +270,11 @@ leantime.calendarController = (function () {
                             editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                             timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                         }
-                    }).catch(function (error) { console.error('Could not update ticket dates', error); });
+                    }).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        console.error('Could not update ticket dates', error);
+                    });
                 } else if (event.event.extendedProps.enitityType == "event") {
                     leantime.rpc('Calendar.Calendar.patch', {
                         id: event.event.extendedProps.enitityId,
@@ -294,7 +302,11 @@ leantime.calendarController = (function () {
                         editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                         timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                     }
-                }).catch(function (error) { console.error('Could not update ticket dates', error); });
+                }).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        console.error('Could not update ticket dates', error);
+                    });
 
             },
             eventDragStart: function (event) {
