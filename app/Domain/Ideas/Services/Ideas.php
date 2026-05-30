@@ -4,6 +4,8 @@ namespace Leantime\Domain\Ideas\Services;
 
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeasRepository;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
@@ -41,6 +43,109 @@ class Ideas
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
         $this->language = $language;
+    }
+
+    /**
+     * Authorization helper: is the current user allowed to modify a canvas item?
+     *
+     * Resolves the item -> its canvas -> the canvas's project, then checks the
+     * session user's project access. Used to gate the JSON-RPC idea mutators
+     * (the underlying repository operates by item id with no project scoping).
+     *
+     * @param  int  $itemId  The canvas item id
+     * @return bool True when the session user may modify the item
+     */
+    private function userCanAccessCanvasItem(int $itemId): bool
+    {
+        $item = (array) $this->ideasRepository->getSingleCanvasItem($itemId);
+        if (empty($item['canvasId'])) {
+            return false;
+        }
+
+        // getSingleCanvas() returns a list of row arrays (not a flat row),
+        // matching the existing getBoardTitle() consumer.
+        $canvas = $this->ideasRepository->getSingleCanvas((int) $item['canvasId']);
+        if (empty($canvas[0]['projectId'])) {
+            return false;
+        }
+
+        return $this->projectService->isUserAssignedToProject((int) session('userdata.id'), (int) $canvas[0]['projectId']);
+    }
+
+    /**
+     * Authorized JSON-RPC entry point: persist a new idea sort order.
+     *
+     * Requires editor+ and per-item project access (JSON-RPC has no controller
+     * gate, and the repository sorts by item id with no project scoping).
+     *
+     * @param  array  $payload  List of { id, sortIndex } entries
+     * @return bool True on success, false if unauthorized or the update failed
+     *
+     * @api
+     */
+    public function reorderIdeas(array $payload): bool
+    {
+        if (! Auth::userIsAtLeast(Roles::$editor)) {
+            return false;
+        }
+
+        foreach ($payload as $idea) {
+            if (! isset($idea['id']) || ! $this->userCanAccessCanvasItem((int) $idea['id'])) {
+                return false;
+            }
+        }
+
+        return $this->ideasRepository->updateIdeaSorting($payload);
+    }
+
+    /**
+     * Authorized JSON-RPC entry point: bulk status/sort update from the idea kanban.
+     *
+     * Requires editor+ and project access for every item in the (jQuery-sortable
+     * serialized) payload.
+     *
+     * @param  array  $payload  Map of statusKey => "item[]=ID&item[]=ID2..."
+     * @return bool True on success, false if unauthorized or the update failed
+     *
+     * @api
+     */
+    public function bulkUpdateStatus(array $payload): bool
+    {
+        if (! Auth::userIsAtLeast(Roles::$editor)) {
+            return false;
+        }
+
+        foreach ($payload as $itemList) {
+            foreach (explode('&', (string) $itemList) as $itemString) {
+                // jQuery sortable serializes as "item[]=ID"; strip the prefix.
+                $id = (int) substr($itemString, 7);
+                if ($id > 0 && ! $this->userCanAccessCanvasItem($id)) {
+                    return false;
+                }
+            }
+        }
+
+        return $this->ideasRepository->bulkUpdateIdeaStatus($payload);
+    }
+
+    /**
+     * Authorized JSON-RPC entry point: patch a single idea/canvas item.
+     *
+     * Requires editor+ and access to the item's project.
+     *
+     * @param  int  $id  The canvas item id
+     * @param  array  $params  Fields to update
+     * @return bool True on success, false if unauthorized or the update failed
+     *
+     * @api
+     */
+    public function patchIdeaItem(int $id, array $params): bool
+    {
+        if (! Auth::userIsAtLeast(Roles::$editor) || ! $this->userCanAccessCanvasItem($id)) {
+            return false;
+        }
+
+        return $this->ideasRepository->patchCanvasItem($id, $params);
     }
 
     /**
