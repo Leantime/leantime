@@ -15,4 +15,4 @@ use Illuminate\Contracts\Support\Responsable;
  *
  * @see \Illuminate\Contracts\Support\Responsable
  */
-interface LeantimeResponse extends Responsable {}
+interface LeantimeResponseInterface extends Responsable {}

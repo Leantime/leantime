@@ -2,7 +2,7 @@
 
 namespace Leantime\Core\Http\Responses;
 
-use Leantime\Core\Http\Responses\Contracts\LeantimeResponse;
+use Leantime\Core\Http\Responses\Contracts\LeantimeResponseInterface;
 use SVG\SVG;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  * uploaded image streamed by the file service), or a filesystem path. Controllers
  * return `new ImageResponse($source)` and Laravel renders it via toResponse().
  */
-class ImageResponse implements LeantimeResponse
+class ImageResponse implements LeantimeResponseInterface
 {
     /**
      * @param  SVG|Response|string  $image  Generated SVG, a pre-built file Response, or a filesystem path

@@ -2,7 +2,7 @@
 
 namespace Unit\app\Core\Http\Responses;
 
-use Leantime\Core\Http\Responses\Contracts\LeantimeResponse;
+use Leantime\Core\Http\Responses\Contracts\LeantimeResponseInterface;
 use Leantime\Core\Http\Responses\ImageResponse;
 use SVG\SVG;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +19,7 @@ class ImageResponseTest extends TestCase
 
     public function test_it_is_a_leantime_response(): void
     {
-        $this->assertInstanceOf(LeantimeResponse::class, new ImageResponse('/tmp/x'));
+        $this->assertInstanceOf(LeantimeResponseInterface::class, new ImageResponse('/tmp/x'));
     }
 
     public function test_to_response_renders_svg_with_cache_headers(): void
