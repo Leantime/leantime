@@ -51,8 +51,9 @@ class ControllerDispatch
         $params = $request->getRequestParams();
         $response = $controller->callAction($method, $params);
 
-        // get()/post() may return a Response directly or a rendered string;
-        // wrap the latter via the controller's stored response.
-        return $response instanceof Response ? $response : $controller->getResponse();
+        // get()/post() may return a Response directly or a rendered string fragment.
+        // Mirror Frontcontroller::executeAction exactly: pass the fragment to
+        // getResponse() (HtmxController::getResponse($fragment) requires the argument).
+        return $response instanceof Response ? $response : $controller->getResponse($response);
     }
 }

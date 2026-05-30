@@ -35,12 +35,21 @@ class Upload extends Controller
      */
     public function post(array $params): Response
     {
+        // Missing required parts is a client error, not a server fault.
         if (! isset($_FILES['file'], $_GET['module'], $_GET['moduleId'])) {
-            return $this->tpl->displayJson(['status' => 'Something unexpected'], 500);
+            return $this->tpl->displayJson(['status' => 'error', 'message' => 'Missing file, module or moduleId'], 400);
         }
 
         $module = htmlentities($_GET['module']);
         $id = (int) $_GET['moduleId'];
+
+        // The legacy endpoint had no project gate: a logged-in user could attach files
+        // to any module/moduleId by tampering with the query string. Authorize against
+        // the target's project (admins/owners bypass; modules with no project mapping
+        // fall back to the read-path behaviour in Files::getFileForUser()).
+        if (! $this->fileService->userCanUploadToModule($module, $id)) {
+            return $this->tpl->displayJson(['status' => 'unauthorized'], 403);
+        }
 
         $result = $this->fileService->upload($_FILES, $module, $id);
 
