@@ -278,21 +278,11 @@ class Projects
         // Layer 2: Remove users who disabled this event type category
         $users = $this->filterUsersByEventType($users, $notification->module, $preloadedSettings);
 
-        // Extract mentioned user IDs and re-add them (mentions bypass filters)
+        // Mentions and collaborators both bypass the two filter layers above.
         $mentionedUserIds = $this->extractMentionedUserIds($notification);
-        foreach ($mentionedUserIds as $mentionedId) {
-            if ($mentionedId != $notification->authorId && ! in_array($mentionedId, $users)) {
-                $users[] = $mentionedId;
-            }
-        }
-
-        // Extract collaborator IDs and re-add them (collaborators bypass filters)
         $collaboratorIds = $this->extractCollaboratorIds($notification);
-        foreach ($collaboratorIds as $collaboratorId) {
-            if ($collaboratorId != $notification->authorId && ! in_array($collaboratorId, $users)) {
-                $users[] = $collaboratorId;
-            }
-        }
+        $users = $this->addBypassRecipients($users, $mentionedUserIds, $notification->authorId);
+        $users = $this->addBypassRecipients($users, $collaboratorIds, $notification->authorId);
 
         $emailMessage = $notification->message;
         if ($notification->url !== false) {
@@ -363,19 +353,9 @@ class Projects
         $filteredIds = $this->filterUsersByProjectRelevance($allUserIds, $notification, $preloadedSettings);
         $filteredIds = $this->filterUsersByEventType($filteredIds, $notification->module, $preloadedSettings);
 
-        // Re-add mentioned users for in-app notifications too
-        foreach ($mentionedUserIds as $mentionedId) {
-            if ($mentionedId != $notification->authorId && ! in_array($mentionedId, $filteredIds)) {
-                $filteredIds[] = $mentionedId;
-            }
-        }
-
-        // Re-add collaborators for in-app notifications too
-        foreach ($collaboratorIds as $collaboratorId) {
-            if ($collaboratorId != $notification->authorId && ! in_array($collaboratorId, $filteredIds)) {
-                $filteredIds[] = $collaboratorId;
-            }
-        }
+        // Re-add mentions and collaborators for in-app notifications too
+        $filteredIds = $this->addBypassRecipients($filteredIds, $mentionedUserIds, $notification->authorId);
+        $filteredIds = $this->addBypassRecipients($filteredIds, $collaboratorIds, $notification->authorId);
 
         $filteredUsersToNotify = array_filter($allUsersToNotify, fn ($u) => in_array($u['id'], $filteredIds));
 
@@ -668,7 +648,34 @@ class Projects
             return [];
         }
 
-        return array_unique(array_map('intval', array_filter($collaborators)));
+        // Only keep scalar, numeric values so non-scalars can't become bogus IDs (e.g. intval([]) === 0).
+        $scalarNumeric = array_filter($collaborators, fn ($c) => is_scalar($c) && is_numeric($c));
+        $ids = array_filter(array_map('intval', $scalarNumeric), fn ($id) => $id > 0);
+
+        return array_values(array_unique($ids));
+    }
+
+    /**
+     * Adds bypass recipients (e.g. mentions, collaborators) to a recipient list.
+     *
+     * Bypass recipients skip the two notification filter layers, so they are
+     * appended after filtering. The notification author is never added, and
+     * existing recipients are not duplicated.
+     *
+     * @param  array<int, mixed>  $recipients  The current recipient user IDs.
+     * @param  array<int, int>  $bypassUserIds  User IDs that should always receive the notification.
+     * @param  mixed  $authorId  The notification author, excluded from the result.
+     * @return array<int, mixed> The recipient list with bypass users merged in.
+     */
+    private function addBypassRecipients(array $recipients, array $bypassUserIds, mixed $authorId): array
+    {
+        foreach ($bypassUserIds as $bypassId) {
+            if ($bypassId != $authorId && ! in_array($bypassId, $recipients)) {
+                $recipients[] = $bypassId;
+            }
+        }
+
+        return $recipients;
     }
 
     /**

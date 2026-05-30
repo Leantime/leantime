@@ -3139,9 +3139,7 @@ class Tickets
             return ['msg' => 'notifications.ticket_delete_error', 'type' => 'error'];
         }
 
-        // Remove collaborator relationships before deleting the ticket
-        $this->ticketRepository->removeCollaborators($id);
-
+        // Collaborator relationship rows are cleaned up inside the repository's delticket().
         if ($this->ticketRepository->delticket($id)) {
 
             self::dispatchEvent('ticket_deleted');
