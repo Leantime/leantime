@@ -29,6 +29,15 @@ class EventDispatcher implements Dispatcher
     private static array $patternMatchCache = [];
 
     /**
+     * Cache of compiled regex patterns, keyed by registry key. A registry key
+     * always compiles to the same regex, so this is computed once per key for the
+     * whole request instead of recompiling the entire registry on every distinct
+     * event name (the previous per-call local cache meant hundreds of cache misses
+     * each recompiled every pattern).
+     */
+    private static array $compiledPatternCache = [];
+
+    /**
      * Version counters for registry change tracking.
      * Incremented when listeners are added, used for cache key generation
      * instead of expensive md5(serialize(array_keys($registry))) on every dispatch.
@@ -72,19 +81,16 @@ class EventDispatcher implements Dispatcher
         }
 
         $matches = [];
-        $patterns = [];
 
         foreach ($registry as $key => $value) {
-            // Skip if we've already compiled this pattern
-            if (! isset($patterns[$key])) {
+            // Compile each registry key's regex once for the whole request. The
+            // compiled pattern depends only on the key, not the event name.
+            if (! isset(self::$compiledPatternCache[$key])) {
                 preg_match_all('/\{RGX:(.*?):RGX\}/', $key, $regexMatches);
-                $pattern = self::compilePattern($key, $regexMatches);
-                $patterns[$key] = $pattern;
-            } else {
-                $pattern = $patterns[$key];
+                self::$compiledPatternCache[$key] = self::compilePattern($key, $regexMatches);
             }
 
-            if (preg_match("/^$pattern$/", $eventName)) {
+            if (preg_match('/^'.self::$compiledPatternCache[$key].'$/', $eventName)) {
                 $matches = array_merge($matches, $value);
             }
         }

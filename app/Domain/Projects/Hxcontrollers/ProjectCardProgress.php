@@ -27,8 +27,6 @@ class ProjectCardProgress extends HtmxController
     ): void {
         $this->projectsService = $projectsService;
         $this->menuService = $menuService;
-
-        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
     /**

@@ -60,6 +60,13 @@ class Tickets
      * @param  CommentService  $commentService  The comments service instance.
      * @param  ClientService  $clientService  The clients service instance.
      */
+    /**
+     * Request-scoped memo for getAllStatusLabelsByUserId(), keyed by "userId|currentProject".
+     *
+     * @var array<string, array>
+     */
+    private array $statusLabelsByUserMemo = [];
+
     public function __construct(
         private TemplateCore $tpl,
         private LanguageCore $language,
@@ -101,6 +108,13 @@ class Tickets
      */
     public function getAllStatusLabelsByUserId($userId): array
     {
+        // Request-scoped memo: this is called repeatedly within a single dashboard
+        // load (e.g. twice inside getToDoWidgetHierarchicalAssignments, plus the
+        // weekly/sprint queries) and the result is stable for the request.
+        $memoKey = $userId.'|'.(session()->exists('currentProject') ? session('currentProject') : '');
+        if (isset($this->statusLabelsByUserMemo[$memoKey])) {
+            return $this->statusLabelsByUserMemo[$memoKey];
+        }
 
         $statusLabelsByProject = [];
 
@@ -117,8 +131,9 @@ class Tickets
         }
 
         // There is a non zero chance that a user has tickets assigned to them without a project assignment.
-        // Checking user assigned tickets to see if there are missing projects.
-        $allTickets = $this->ticketRepository->getAllBySearchCriteria(['currentProject' => '', 'users' => $userId, 'status' => 'not_done', 'sprint' => ''], 'duedate');
+        // Checking user assigned tickets to see if there are missing projects. We only need the
+        // distinct project ids here, so skip the (expensive) comment/file/subtask count subqueries.
+        $allTickets = $this->ticketRepository->getAllBySearchCriteria(['currentProject' => '', 'users' => $userId, 'status' => 'not_done', 'sprint' => ''], 'duedate', null, false);
 
         foreach ($allTickets as $row) {
             if (! isset($statusLabelsByProject[$row['projectId']])) {
@@ -126,7 +141,7 @@ class Tickets
             }
         }
 
-        return $statusLabelsByProject;
+        return $this->statusLabelsByUserMemo[$memoKey] = $statusLabelsByProject;
     }
 
     /**

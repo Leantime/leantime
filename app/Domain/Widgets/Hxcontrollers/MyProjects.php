@@ -23,8 +23,6 @@ class MyProjects extends HtmxController
     ): void {
         $this->widgetService = $widgetService;
         $this->menuService = $menuService;
-
-        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
     public function get(): void
