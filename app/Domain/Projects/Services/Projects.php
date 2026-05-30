@@ -1842,7 +1842,7 @@ class Projects
                     'createBlueprint' => [
                         'title' => 'label.createBlueprint',
                         'status' => '',
-                        'link' => BASE_URL.'/strategy/showBoards/',
+                        'link' => BASE_URL.'/blueprints/showBoards/',
                         'description' => 'checklist.define.tasks.createBlueprint',
                     ],
                 ],
