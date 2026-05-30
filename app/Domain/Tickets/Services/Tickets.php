@@ -1856,6 +1856,7 @@ class Tickets
             'milestoneid' => isset($params['milestone']) ? (int) $params['milestone'] : '',
             'dependingTicketId' => isset($params['dependingTicketId']) ? (int) $params['dependingTicketId'] : '',
             'sortIndex' => $params['sortIndex'] ?? '',
+            'collaborators' => $params['collaborators'] ?? [],
         ];
 
         if ($values['headline'] == '') {
@@ -2371,11 +2372,21 @@ class Tickets
             return false;
         }
 
+        // Handle collaborators separately since they live in the relationship table, not on zp_tickets
+        $collaboratorsUpdated = false;
+        if (array_key_exists('collaborators', $params)) {
+            $collaborators = is_array($params['collaborators']) ? $params['collaborators'] : [];
+            $this->ticketRepository->removeCollaborators($id);
+            $this->ticketRepository->addCollaborators($id, $collaborators, session('userdata.id'));
+            $collaboratorsUpdated = true;
+            unset($params['collaborators']);
+        }
+
         $params = $this->prepareTicketDates($params);
 
         $return = $this->ticketRepository->patchTicket($id, $params);
 
-        if (! $return) {
+        if (! $return && ! $collaboratorsUpdated) {
             return false;
         }
 
@@ -2404,7 +2415,7 @@ class Tickets
             $this->projectService->notifyProjectUsers($notification);
         }
 
-        return (bool) $return;
+        return true;
     }
 
     /**
@@ -3128,6 +3139,7 @@ class Tickets
             return ['msg' => 'notifications.ticket_delete_error', 'type' => 'error'];
         }
 
+        // Collaborator relationship rows are cleaned up inside the repository's delticket().
         if ($this->ticketRepository->delticket($id)) {
 
             self::dispatchEvent('ticket_deleted');
@@ -3482,7 +3494,9 @@ class Tickets
         $ticketIds = [];
 
         foreach ($groupedTickets as $group) {
-            foreach (($group['items'] ?? []) as $ticket) {
+            // Support both 'items' (list/kanban views) and 'tickets' (ToDoWidget views)
+            $items = $group['items'] ?? $group['tickets'] ?? [];
+            foreach ($items as $ticket) {
                 if (isset($ticket['id'])) {
                     $ticketIds[] = (int) $ticket['id'];
                 }
@@ -3496,11 +3510,16 @@ class Tickets
         $collaboratorsByTicket = $this->ticketRepository->getCollaboratorsByTicketIds($ticketIds);
 
         foreach ($groupedTickets as &$group) {
-            if (! isset($group['items']) || ! is_array($group['items'])) {
+            // Determine which key holds the ticket array
+            if (isset($group['items']) && is_array($group['items'])) {
+                $key = 'items';
+            } elseif (isset($group['tickets']) && is_array($group['tickets'])) {
+                $key = 'tickets';
+            } else {
                 continue;
             }
 
-            foreach ($group['items'] as &$ticket) {
+            foreach ($group[$key] as &$ticket) {
                 $ticketId = (int) ($ticket['id'] ?? 0);
                 $editorId = (int) ($ticket['editorId'] ?? 0);
                 $collaboratorIds = $collaboratorsByTicket[$ticketId] ?? [];
@@ -3597,6 +3616,7 @@ class Tickets
             }
         }
 
+        $tickets = $this->enrichGroupedTicketsWithCollaborators($tickets);
         $tickets = self::dispatch_filter('myTodoWidgetTasks', $tickets);
 
         return [
@@ -3731,12 +3751,17 @@ class Tickets
         //                }
         //            }
 
+        // Enrich while tickets are still flat — buildTicketHierarchy() nests subtasks into
+        // 'children', so enriching afterwards would only reach the root rows.
+        $tickets = $this->enrichGroupedTicketsWithCollaborators($tickets);
+
         // Process tickets to build hierarchical structure
         foreach ($tickets as $groupKey => &$ticketGroup) {
             if (isset($ticketGroup['tickets']) && is_array($ticketGroup['tickets'])) {
                 $ticketGroup['tickets'] = $this->buildTicketHierarchy($ticketGroup['tickets'], $sortingArray);
             }
         }
+        unset($ticketGroup);
 
         $onTheClock = $this->timesheetService->isClocked(session('userdata.id'));
         $effortLabels = $this->getEffortLabels();
@@ -3754,7 +3779,9 @@ class Tickets
                 }
             }
         }
+        unset($ticketGroup);
 
+        // Collaborators were enriched above, before the hierarchy was built.
         $tickets = self::dispatch_filter('myTodoWidgetTasks', $tickets);
 
         return [
