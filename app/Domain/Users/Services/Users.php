@@ -194,6 +194,7 @@ class Users
         $user = $this->getUser($id);
 
         // Save the path to the old picture
+        $oldPicture = null;
         if (isset($user['profileId']) && $user['profileId'] > 0) {
             $oldPicture = $user['profileId'];
         }

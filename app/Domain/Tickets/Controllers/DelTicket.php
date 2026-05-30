@@ -61,9 +61,7 @@ class DelTicket extends Controller
      */
     public function post($params): Response
     {
-        if (isset($_GET['id'])) {
-            $id = (int) ($_GET['id']);
-        }
+        $id = (int) ($_GET['id'] ?? 0);
 
         // Only admins
         if (Auth::userIsAtLeast(Roles::$editor)) {

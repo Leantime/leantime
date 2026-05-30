@@ -29,9 +29,7 @@ class DelMilestone extends Controller
 
         // Only admins
         if (Auth::userIsAtLeast(Roles::$editor)) {
-            if (isset($_GET['id'])) {
-                $id = (int) ($_GET['id']);
-            }
+            $id = (int) ($_GET['id'] ?? 0);
 
             $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
 

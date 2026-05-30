@@ -272,6 +272,7 @@ class EventDispatcher implements Dispatcher
 
         $isEvent = ($registryType === 'events');
         $filteredPayload = null;
+        $index = 0;
 
         try {
             // sort matches by priority

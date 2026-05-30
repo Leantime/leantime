@@ -617,7 +617,7 @@ class Plugins
         $data = $response->json();
 
         return build(new MarketplacePlugin)
-            ->set('identifier', (string) ($identifier ?? ''))
+            ->set('identifier', $identifier)
             ->set('name', (string) ($data['name'] ?? ''))
             ->set('icon', (string) ($data['icon'] ?? ''))
             ->set('excerpt', (string) ($data['excerpt'] ?? ''))
@@ -750,6 +750,8 @@ class Plugins
 
         $signature = $phar->getSignature();
 
+        $response = null;
+
         try {
             $response = $this->httpClient()->withHeaders([
                 'X-License-Key' => $plugin->license,
@@ -761,6 +763,11 @@ class Plugins
 
         } catch (\Exception $e) {
             Log::error($e);
+        }
+
+        // Could not reach the marketplace (transient error); keep the plugin enabled.
+        if ($response === null) {
+            return true;
         }
 
         $jsonResult = [];
@@ -842,6 +849,8 @@ class Plugins
 
         $signature = $phar->getSignature();
 
+        $response = null;
+
         try {
             $response = $this->httpClient()->withHeaders([
                 'X-License-Key' => $plugin->license,
@@ -853,6 +862,11 @@ class Plugins
 
         } catch (\Exception $e) {
             Log::error($e);
+        }
+
+        // Could not reach the marketplace (transient error); treat as a no-op success.
+        if ($response === null) {
+            return true;
         }
 
         $jsonResult = [];

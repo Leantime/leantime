@@ -1515,11 +1515,7 @@ class Projects
             }
         }
 
-        try {
-            $projectStart = $startDate;
-        } catch (\Exception $e) {
-            $projectStart = dtHelper()->now()->startOfDay();
-        }
+        $projectStart = $startDate ?? dtHelper()->now()->startOfDay();
 
         // Get interval from oldest ticket to project start date
         $interval = $oldestTicket->diff($projectStart);
@@ -1824,6 +1820,7 @@ class Projects
         $project = $this->projectRepository->getProject($projectId);
 
         // Save the path to the old picture
+        $oldPicture = null;
         if (isset($project['avatar']) && $project['avatar'] > 0) {
             $oldPicture = $project['avatar'];
         }

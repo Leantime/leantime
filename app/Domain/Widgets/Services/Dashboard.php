@@ -533,7 +533,7 @@ class Dashboard
             // Attempt to get the ticket - this will return false if user doesn't have access
             $ticket = $this->ticketsService->getTicket($taskId);
 
-            if (! $ticket || empty($ticket)) {
+            if (! $ticket) {
                 return false;
             }
 

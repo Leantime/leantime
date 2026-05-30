@@ -108,12 +108,12 @@ class HeadMenu extends Composer
             'totalNewMentions' => $totalNewMentions,
             'totalNewNotifications' => $totalNewNotifications,
             'menuType' => $menuType,
-            'notifications' => $notifications ?? [],
+            'notifications' => $notifications,
             'onTheClock' => session()->exists('userdata') ? $this->timesheets->isClocked(session('userdata.id')) : false,
             'activePath' => FrontcontrollerCore::getCurrentRoute(),
             'action' => FrontcontrollerCore::getActionName(),
             'module' => FrontcontrollerCore::getModuleName(),
-            'user' => $user ?? [],
+            'user' => $user,
             'modal' => $modal,
         ];
     }
