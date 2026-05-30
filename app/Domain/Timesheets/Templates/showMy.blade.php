@@ -3,7 +3,6 @@
 
 @php
 /** @var \Carbon\Carbon $currentDate */
-$dateFrom = $dateFrom;
 @endphp
 
 @once

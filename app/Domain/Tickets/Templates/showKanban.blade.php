@@ -4,12 +4,7 @@
 
 @php
     $tickets = $tickets ?? [];
-    $sprints = $sprints;
-    $searchCriteria = $searchCriteria;
-    $currentSprint = $currentSprint;
     $todoTypeIcons = $ticketTypeIcons;
-    $efforts = $efforts;
-    $priorities = $priorities;
     $allTicketGroups = $allTickets;
     $reopenState = session()->get('quickadd_reopen', null);
     $currentGroupBy = $searchCriteria['groupBy'] ?? 'all';
@@ -89,7 +84,6 @@
                 @php
                 $swimlaneExpanded = ! in_array($group['id'], session('collapsedSwimlanes', []));
                 $groupBy = $searchCriteria['groupBy'] ?? 'status';
-                $statusBreakdown = $statusBreakdown;
                 $groupIdKey = (string) $group['id'];
                 $swimlaneBreakdown = $statusBreakdown[$groupIdKey] ?? $statusBreakdown[$group['id']] ?? [];
                 $statusCounts = $swimlaneBreakdown['statusCounts'] ?? [];
