@@ -303,4 +303,42 @@ class UsersServiceTest extends TestCase
         $this->assertSame('user_exists', $result);
         $this->assertSame(0, $editCalls, 'A duplicate email must not be persisted');
     }
+
+    // ---------------------------------------------------------------------
+    // searchProjectUsers() — JSON-RPC entry for the @mention autocomplete.
+    // ---------------------------------------------------------------------
+
+    public function test_search_project_users_filters_by_query(): void
+    {
+        session(['userdata' => ['id' => 1], 'currentProject' => 5]);
+
+        $projectRepository = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => true,
+            'getProject' => fn () => ['psettings' => 'restricted', 'clientId' => 0],
+            'getUsersAssignedToProject' => fn () => [
+                ['id' => 1, 'firstname' => 'Alice'],
+                ['id' => 2, 'firstname' => 'Bob'],
+            ],
+        ]);
+
+        $users = $this->makeService($this->make(UserRepository::class), ['projectRepository' => $projectRepository])
+            ->searchProjectUsers(5, 'alice');
+
+        $this->assertCount(1, $users);
+        $this->assertSame('Alice', $users[0]['firstname']);
+    }
+
+    public function test_search_project_users_returns_empty_without_project_access(): void
+    {
+        session(['userdata' => ['id' => 1], 'currentProject' => 5]);
+
+        $projectRepository = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => false,
+        ]);
+
+        $users = $this->makeService($this->make(UserRepository::class), ['projectRepository' => $projectRepository])
+            ->searchProjectUsers(5);
+
+        $this->assertSame([], $users);
+    }
 }
