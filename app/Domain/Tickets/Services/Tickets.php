@@ -3751,12 +3751,17 @@ class Tickets
         //                }
         //            }
 
+        // Enrich while tickets are still flat — buildTicketHierarchy() nests subtasks into
+        // 'children', so enriching afterwards would only reach the root rows.
+        $tickets = $this->enrichGroupedTicketsWithCollaborators($tickets);
+
         // Process tickets to build hierarchical structure
         foreach ($tickets as $groupKey => &$ticketGroup) {
             if (isset($ticketGroup['tickets']) && is_array($ticketGroup['tickets'])) {
                 $ticketGroup['tickets'] = $this->buildTicketHierarchy($ticketGroup['tickets'], $sortingArray);
             }
         }
+        unset($ticketGroup);
 
         $onTheClock = $this->timesheetService->isClocked(session('userdata.id'));
         $effortLabels = $this->getEffortLabels();
@@ -3774,8 +3779,9 @@ class Tickets
                 }
             }
         }
+        unset($ticketGroup);
 
-        $tickets = $this->enrichGroupedTicketsWithCollaborators($tickets);
+        // Collaborators were enriched above, before the hierarchy was built.
         $tickets = self::dispatch_filter('myTodoWidgetTasks', $tickets);
 
         return [
