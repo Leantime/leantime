@@ -245,7 +245,13 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                                 dateFrom: event.event.startStr,
                                 dateTo: event.event.endStr
                             }
-                        }).catch(function (error) { console.error('Could not update event dates', error); })
+                        }).then(function (success) {
+                            // Denied/failed update resolves to false — undo the visual move.
+                            if (! success) { event.revert(); }
+                        }).catch(function (error) {
+                            console.error('Could not update event dates', error);
+                            event.revert();
+                        })
                     }
                 },
                 eventResize: function (event) {
@@ -281,7 +287,13 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                                 dateFrom: event.event.startStr,
                                 dateTo: event.event.endStr
                             }
-                        }).catch(function (error) { console.error('Could not update event dates', error); })
+                        }).then(function (success) {
+                            // Denied/failed update resolves to false — undo the visual move.
+                            if (! success) { event.revert(); }
+                        }).catch(function (error) {
+                            console.error('Could not update event dates', error);
+                            event.revert();
+                        })
                     }
 
                 },
