@@ -1745,7 +1745,10 @@ class Projects
      *
      * @throws BindingResolutionException
      *
-     * @api
+     * @internal Not @api: invoked only by Projects\Controllers\ProjectImage, which
+     *           authorizes the upload (manager+ on the target project). Exposing a
+     *           setter that trusts a caller-supplied $projectId over JSON-RPC would
+     *           let any user overwrite another project's avatar.
      */
     public function setProjectAvatar($file, $projectId): bool
     {
@@ -2276,6 +2279,131 @@ class Projects
         }
 
         return true;
+    }
+
+    /**
+     * Authorization gate for managing (sorting/restatusing/patching) a project.
+     *
+     * The project kanban/timeline management UI (Projects\Controllers\ShowAll) is
+     * gated on manager+, so the JSON-RPC entry points below must enforce the same.
+     * Admins and owners can manage every project; managers must be assigned to it.
+     * Not @api: this is an internal authorization helper, reachable by the relocated
+     * image controllers, never callable over JSON-RPC.
+     *
+     * @param  int  $projectId  The project to authorize against
+     * @return bool True if the current user may manage the project
+     */
+    public function userCanManageProject(int $projectId): bool
+    {
+        if (! Auth::userIsAtLeast(Roles::$manager)) {
+            return false;
+        }
+
+        if (Auth::userIsAtLeast(Roles::$admin)) {
+            return true;
+        }
+
+        if ($projectId <= 0) {
+            return false;
+        }
+
+        return $this->isUserAssignedToProject((int) session('userdata.id'), $projectId);
+    }
+
+    /**
+     * Authorized JSON-RPC entry point for kanban status + sort of projects.
+     *
+     * The JSON-RPC endpoint has no controller-level role gate, so this wrapper
+     * enforces manager+ and per-project access for every project in the batch
+     * (prevents re-statusing/re-sorting projects the caller cannot manage), then
+     * delegates to the internal updateProjectStatusAndSorting().
+     *
+     * @param  array  $params  Associative status => jQuery-sortable-serialized project list
+     * @param  string|null  $handler  Optional drag handler id (unused by the update)
+     * @return bool True on success, false if unauthorized or the update failed
+     *
+     * @api
+     */
+    public function patchProjectStatusAndSorting(array $params, ?string $handler = null): bool
+    {
+        foreach ($params as $status => $projectList) {
+            if (! is_numeric($status) || empty($projectList)) {
+                continue;
+            }
+
+            foreach (explode('&', $projectList) as $projectString) {
+                // jQuery sortable serializes ids as "item[]=ID" (strip the 7-char prefix).
+                $projectId = (int) substr($projectString, 7);
+                if ($projectId <= 0) {
+                    continue;
+                }
+                if (! $this->userCanManageProject($projectId)) {
+                    return false;
+                }
+            }
+        }
+
+        return $this->updateProjectStatusAndSorting($params, $handler);
+    }
+
+    /**
+     * Authorized JSON-RPC entry point for Program Timeline (Gantt) re-sorting.
+     *
+     * Validates manager+ access for every entity in the mixed payload (pgm-/ticket-
+     * prefixed and legacy numeric ids) before delegating to updateProjectSorting().
+     * Ticket ids are resolved to their project so the same manage-access rule applies.
+     *
+     * @param  array  $params  Map of (pgm-{id}|ticket-{id}|{id}) => sort position
+     * @return bool True on success, false if unauthorized or the update failed
+     *
+     * @api
+     */
+    public function sortProjects(array $params): bool
+    {
+        foreach (array_keys($params) as $id) {
+            if (str_starts_with((string) $id, 'ticket-')) {
+                $ticket = $this->ticketRepository->getTicket((int) substr((string) $id, 7));
+                if (! $ticket) {
+                    return false;
+                }
+                $projectId = (int) $ticket->projectId;
+            } elseif (str_starts_with((string) $id, 'pgm-')) {
+                $projectId = (int) substr((string) $id, 4);
+            } else {
+                $projectId = (int) $id;
+            }
+
+            if (! $this->userCanManageProject($projectId)) {
+                return false;
+            }
+        }
+
+        return $this->updateProjectSorting($params);
+    }
+
+    /**
+     * Authorized JSON-RPC entry point for patching a single project (e.g. Gantt
+     * date/sort changes from the Program Timeline).
+     *
+     * Enforces manager+ access on the target project, strips framework/control
+     * fields, then delegates to the internal patch().
+     *
+     * @param  int  $id  The project id to patch
+     * @param  array  $values  Fields to update (e.g. start, end, sortIndex)
+     * @return bool True on success, false if unauthorized or the update failed
+     *
+     * @api
+     */
+    public function patchProject(int $id, array $values): bool
+    {
+        if (! $this->userCanManageProject($id)) {
+            return false;
+        }
+
+        // Drop control fields that may leak in from the request envelope.
+        unset($values['id'], $values['act'], $values['request_parts']);
+
+        return $this->patch($id, $values);
     }
 
     /**

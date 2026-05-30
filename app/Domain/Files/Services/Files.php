@@ -237,6 +237,37 @@ class Files
     }
 
     /**
+     * Authorizes the current user to upload a file against a target module/moduleId.
+     *
+     * The /api/files (now /files/upload) endpoint takes module + moduleId straight from
+     * the request, and Files::upload() does no access control — so without this gate a
+     * logged-in user could attach files to another project/ticket by tampering with the
+     * query string. Mirrors the read-path model in getFileForUser(): admins/owners bypass,
+     * project-scoped targets (project/ticket) require access to the owning project, and
+     * targets with no project mapping fall back to that path's (unrestricted) behaviour.
+     *
+     * Not @api: internal authorization helper for the upload controller, not a JSON-RPC method.
+     *
+     * @param  string  $module  The target module (e.g. project, ticket, wiki)
+     * @param  int  $moduleId  The target entity id within that module
+     * @return bool True if the current user may upload to the target
+     */
+    public function userCanUploadToModule(string $module, int $moduleId): bool
+    {
+        if (Auth::userIsAtLeast(Roles::$admin)) {
+            return true;
+        }
+
+        $projectId = $this->resolveProjectId(['module' => $module, 'moduleId' => $moduleId]);
+
+        if ($projectId !== null) {
+            return $this->projectRepository->isUserAssignedToProject((int) session('userdata.id'), $projectId);
+        }
+
+        return true;
+    }
+
+    /**
      * Resolves a file by its encoded name, authorizes the given user, and returns
      * the file response.
      *

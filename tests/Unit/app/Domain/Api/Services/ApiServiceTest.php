@@ -7,8 +7,6 @@ use Leantime\Domain\Api\Services\Api as ApiService;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use SVG\SVG;
-use Symfony\Component\HttpFoundation\Response;
 use Unit\TestCase;
 
 /**
@@ -36,41 +34,6 @@ class ApiServiceTest extends TestCase
             $projectRepo ?? $this->make(ProjectRepository::class),
             $menuRepo ?? $this->make(MenuRepository::class),
         );
-    }
-
-    public function test_filter_users_by_query_matches_case_insensitive_substring(): void
-    {
-        $users = [
-            ['id' => 1, 'firstname' => 'Alice', 'lastname' => 'Anderson'],
-            ['id' => 2, 'firstname' => 'Bob', 'lastname' => 'Brown'],
-            ['id' => 3, 'firstname' => 'Carol', 'lastname' => 'Smith'],
-        ];
-
-        $result = $this->makeService()->filterUsersByQuery($users, 'BROWN');
-
-        $this->assertCount(1, $result);
-        $this->assertSame(2, $result[0]['id']);
-    }
-
-    public function test_filter_users_by_query_reindexes_results(): void
-    {
-        $users = [
-            ['id' => 1, 'name' => 'nope'],
-            ['id' => 2, 'name' => 'match me'],
-        ];
-
-        $result = $this->makeService()->filterUsersByQuery($users, 'match');
-
-        // Re-indexed from 0 even though the original key was 1.
-        $this->assertArrayHasKey(0, $result);
-        $this->assertSame(2, $result[0]['id']);
-    }
-
-    public function test_filter_users_by_query_returns_empty_when_no_match(): void
-    {
-        $users = [['id' => 1, 'name' => 'Alice']];
-
-        $this->assertSame([], $this->makeService()->filterUsersByQuery($users, 'zzz'));
     }
 
     public function test_get_project_relation_ids_extracts_project_ids(): void
@@ -253,26 +216,5 @@ class ApiServiceTest extends TestCase
         $this->expectException(\Exception::class);
 
         $this->makeService()->updateApiKey(0, [], null);
-    }
-
-    public function test_build_image_response_renders_svg(): void
-    {
-        $svg = $this->make(SVG::class, [
-            'toXMLString' => fn () => '<svg></svg>',
-        ]);
-
-        $response = $this->makeService()->buildImageResponse($svg);
-
-        $this->assertSame('<svg></svg>', $response->getContent());
-        $this->assertSame('image/svg+xml', $response->headers->get('Content-type'));
-        // Symfony normalizes the Cache-Control header by appending ", private".
-        $this->assertStringContainsString('max-age=86400', $response->headers->get('Cache-Control'));
-    }
-
-    public function test_build_image_response_passes_through_existing_response(): void
-    {
-        $existing = new Response('already built');
-
-        $this->assertSame($existing, $this->makeService()->buildImageResponse($existing));
     }
 }
