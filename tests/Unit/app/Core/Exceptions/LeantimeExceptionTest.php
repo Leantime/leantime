@@ -2,6 +2,7 @@
 
 namespace Unit\app\Core\Exceptions;
 
+use Leantime\Core\Exceptions\AuthException;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Core\Exceptions\EntityExistsException;
@@ -89,5 +90,20 @@ class LeantimeExceptionTest extends TestCase
     {
         // BC: the HTTP status historically lived in getCode(); keep it readable there too.
         $this->assertSame(409, (new EntityExistsException('dupe'))->getCode());
+    }
+
+    public function test_auth_exception_is_a_deprecated_authorization_alias(): void
+    {
+        $e = new AuthException('Invalid domain user');
+
+        // It IS an AuthorizationException (a deprecated alias, not a second auth exception),
+        // so it keeps the 403 status + -32001 rpc code while the AdvancedAuth plugin and
+        // external installs that still throw the old class name keep working.
+        $this->assertInstanceOf(AuthorizationException::class, $e);
+        $this->assertSame(403, $e->getStatusCode());
+        $this->assertSame(-32001, $e->getRpcCode());
+        // Legacy ($message, $code) signature preserved, including getCode().
+        $this->assertSame('Invalid domain user', $e->getMessage());
+        $this->assertSame(403, $e->getCode());
     }
 }

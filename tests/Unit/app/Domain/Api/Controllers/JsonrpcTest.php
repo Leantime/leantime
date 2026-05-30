@@ -180,4 +180,34 @@ class JsonrpcTest extends \Unit\TestCase
         $this->assertSame(-32001, $body['error']['code']);
         $this->assertSame(7, $body['id']);
     }
+
+    /**
+     * A notification (no id) whose service call fails must NOT be responded to — the controller
+     * returns an empty 200 instead of a JSON-RPC error envelope (JSON-RPC 2.0).
+     */
+    public function test_notification_service_failure_returns_empty_200()
+    {
+        $this->app->bind(
+            \Leantime\Domain\Comments\Services\Comments::class,
+            fn () => new class
+            {
+                public function pollComments(?int $projectId = null, ?int $moduleId = null): array
+                {
+                    throw new \RuntimeException('boom');
+                }
+            }
+        );
+
+        // No 'id' => JSON-RPC notification.
+        $params = [
+            'method' => 'leantime.rpc.Comments.pollComments',
+            'params' => ['projectId' => 1],
+            'jsonrpc' => '2.0',
+        ];
+
+        $response = $this->controller->post($params);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('', $response->getContent());
+    }
 }

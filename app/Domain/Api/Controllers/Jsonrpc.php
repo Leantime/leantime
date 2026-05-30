@@ -247,6 +247,12 @@ class Jsonrpc extends Controller
                 Log::error($e);
             }
 
+            // A notification (no id) must not be responded to, even on failure, per the
+            // JSON-RPC 2.0 spec — mirror the success path's empty 200.
+            if ($id === null) {
+                return new Response('', Response::HTTP_OK);
+            }
+
             return JsonRpcErrorResponse::fromException($e, $id)->toResponse($this->incomingRequest);
         }
 
