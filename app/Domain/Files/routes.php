@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Leantime\Core\Routing\ControllerDispatch;
 use Leantime\Domain\Files\Controllers\Upload;
 
 /*
@@ -30,8 +29,6 @@ Route::get('/download.php', function () {
 | upload() metadata array off the JSON response, which Files\Controllers\Upload preserves.
 */
 
-Route::post('/files/upload', fn () => ControllerDispatch::dispatch(Upload::class))
-    ->name('files.upload');
+Route::post('/files/upload', [Upload::class, 'post'])->name('files.upload');
 
-Route::post('/api/files', fn () => ControllerDispatch::dispatch(Upload::class))
-    ->name('files.upload.legacy');
+Route::post('/api/files', [Upload::class, 'post'])->name('files.upload.legacy');

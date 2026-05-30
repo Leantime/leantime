@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Leantime\Core\Routing\ControllerDispatch;
 use Leantime\Domain\Users\Controllers\ProfileImage;
 
 /*
@@ -18,10 +17,10 @@ use Leantime\Domain\Users\Controllers\ProfileImage;
 |
 */
 
-// Canonical: /users/profileImage/{id} (GET image, POST own-photo upload).
-Route::match(['get', 'post'], '/users/profileImage/{id?}', fn () => ControllerDispatch::dispatch(ProfileImage::class))
-    ->name('users.profileImage');
+// Canonical
+Route::get('/users/profileImage/{id?}', [ProfileImage::class, 'show'])->name('users.profileImage');
+Route::post('/users/profileImage', [ProfileImage::class, 'upload']);
 
-// Backward-compat alias for the retired /api/users endpoint.
-Route::match(['get', 'post'], '/api/users', fn () => ControllerDispatch::dispatch(ProfileImage::class))
-    ->name('users.profileImage.legacy');
+// Backward-compat alias for the retired /api/users endpoint
+Route::get('/api/users', [ProfileImage::class, 'show'])->name('users.profileImage.legacy');
+Route::post('/api/users', [ProfileImage::class, 'upload']);
