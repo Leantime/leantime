@@ -482,7 +482,9 @@ class Users
      *
      * @throws BindingResolutionException
      *
-     * @api
+     * @internal Not exposed via JSON-RPC (projectId is unscoped). The JSON-RPC
+     *           entry point is searchProjectUsers(), which scopes the result to
+     *           a project the caller can actually access.
      */
     public function getUsersWithProjectAccess(?int $currentUser = null, int $projectId = 0): array
     {
@@ -539,6 +541,36 @@ class Users
         }
 
         return [];
+    }
+
+    /**
+     * Authorized JSON-RPC entry point: list users with access to a project,
+     * optionally filtered by a search query (used by the @mention autocomplete).
+     *
+     * Resolves to the current project when no id is given. Project access is
+     * enforced by getUsersWithProjectAccess() (which returns [] when the session
+     * user is not assigned to the project), so a caller cannot enumerate the
+     * users of a project they aren't part of.
+     *
+     * @param  int|null  $projectId  Project id, or null for the current project
+     * @param  string  $query  Optional case-insensitive substring filter
+     * @return array<int, array<string, mixed>> Matching users (empty when no access)
+     *
+     * @api
+     */
+    public function searchProjectUsers(?int $projectId = null, string $query = ''): array
+    {
+        $projectId = $projectId ?? (int) session('currentProject');
+
+        $users = $this->getUsersWithProjectAccess(projectId: $projectId);
+
+        if ($query === '') {
+            return $users;
+        }
+
+        return array_values(
+            array_filter($users, static fn (array $user) => stripos(implode(' ', $user), $query) !== false)
+        );
     }
 
     /**

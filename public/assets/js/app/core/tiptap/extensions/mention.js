@@ -67,25 +67,10 @@ const LeantimeMention = Mention.extend({
  */
 function fetchUsers(query) {
     return new Promise(function(resolve, reject) {
-        var url = leantime.appUrl + '/api/users?' +
-            'projectUsersAccess=current' +
-            (query ? '&query=' + encodeURIComponent(query) : '');
-
-        fetch(url, {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
-            }
-        })
-        .then(function(response) {
-            if (!response.ok) throw new Error('Failed to fetch users');
-            return response.json();
-        })
+        leantime.rpc('Users.Users.searchProjectUsers', { query: query || '' })
         .then(function(data) {
             // Transform API response to mention format
-            var users = data.map(function(user) {
+            var users = (data || []).map(function(user) {
                 return {
                     id: user.id,
                     label: (user.firstname + ' ' + user.lastname).trim(),
