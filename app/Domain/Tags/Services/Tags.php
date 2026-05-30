@@ -28,10 +28,27 @@ class Tags
     }
 
     /**
+     * Returns the tag autocomplete suggestions for a project, filtered by $term.
+     *
+     * The JSON-RPC endpoint has no controller-level project gate (the retired
+     * Api\Controllers\Tags forced session('currentProject'), but a JSON-RPC caller
+     * can pass any projectId). isUserAssignedToProject() is the full access check —
+     * it allows admins/owners, org-wide ("all") and client-level projects, and
+     * directly assigned users — so this both preserves legitimate access and prevents
+     * cross-project tag enumeration.
+     *
+     * @param  int  $projectId  The project to read tags from
+     * @param  string  $term  Substring to filter tag suggestions by
+     * @return array Matching tag strings (empty if the user cannot access the project)
+     *
      * @api
      */
     public function getTags(int $projectId, string $term): array
     {
+        if (! $this->projectRepository->isUserAssignedToProject((int) session('userdata.id'), $projectId)) {
+            return [];
+        }
+
         $tags = [];
 
         $ticketTags = $this->ticketRepository->getTags($projectId);
@@ -52,7 +69,10 @@ class Tags
     }
 
     /**
-     * @api
+     * Splits comma-separated tag strings from DB rows and merges them into a flat list.
+     *
+     * @param  iterable  $dbTagValues  Rows each containing a 'tags' CSV string
+     * @param  array  $mergeInto  Accumulator to merge the split tags into
      */
     private function explodeAndMergeTags($dbTagValues, array $mergeInto): array
     {
