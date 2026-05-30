@@ -235,7 +235,11 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                         }
 
                         leantime.rpc('Tickets.Tickets.patchTicket', { id: dataVal.id, values: dataVal })
-                            .catch(function (error) { console.error('Could not update ticket dates', error); });
+                            .catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        console.error('Could not update ticket dates', error);
+                    });
 
                     }else if(event.event.extendedProps.enitityType == "event") {
 
@@ -276,7 +280,11 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                         }
 
                         leantime.rpc('Tickets.Tickets.patchTicket', { id: dataVal.id, values: dataVal })
-                            .catch(function (error) { console.error('Could not update ticket dates', error); });
+                            .catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        console.error('Could not update ticket dates', error);
+                    });
 
 
                     }else if(event.event.extendedProps.enitityType == "event") {

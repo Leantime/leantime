@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher as EventCore;
+use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
@@ -2320,7 +2322,9 @@ class Projects
      *
      * @param  array  $params  Associative status => jQuery-sortable-serialized project list
      * @param  string|null  $handler  Optional drag handler id (unused by the update)
-     * @return bool True on success, false if unauthorized or the update failed
+     * @return bool True on success (false only if the underlying write fails)
+     *
+     * @throws AuthorizationException If the caller cannot manage any project in the batch
      *
      * @api
      */
@@ -2338,7 +2342,7 @@ class Projects
                     continue;
                 }
                 if (! $this->userCanManageProject($projectId)) {
-                    return false;
+                    throw new AuthorizationException('You are not allowed to re-sort one or more of these projects.');
                 }
             }
         }
@@ -2354,7 +2358,10 @@ class Projects
      * Ticket ids are resolved to their project so the same manage-access rule applies.
      *
      * @param  array  $params  Map of (pgm-{id}|ticket-{id}|{id}) => sort position
-     * @return bool True on success, false if unauthorized or the update failed
+     * @return bool True on success (false only if the underlying write fails)
+     *
+     * @throws NotFoundException If a ticket-{id} key references a ticket that does not exist
+     * @throws AuthorizationException If the caller cannot manage any item in the payload
      *
      * @api
      */
@@ -2364,7 +2371,7 @@ class Projects
             if (str_starts_with((string) $id, 'ticket-')) {
                 $ticket = $this->ticketRepository->getTicket((int) substr((string) $id, 7));
                 if (! $ticket) {
-                    return false;
+                    throw new NotFoundException('A task referenced in the sort order could not be found.');
                 }
                 $projectId = (int) $ticket->projectId;
             } elseif (str_starts_with((string) $id, 'pgm-')) {
@@ -2374,7 +2381,7 @@ class Projects
             }
 
             if (! $this->userCanManageProject($projectId)) {
-                return false;
+                throw new AuthorizationException('You are not allowed to re-sort one or more of these items.');
             }
         }
 
@@ -2390,14 +2397,16 @@ class Projects
      *
      * @param  int  $id  The project id to patch
      * @param  array  $values  Fields to update (e.g. start, end, sortIndex)
-     * @return bool True on success, false if unauthorized or the update failed
+     * @return bool True on success (false only if the underlying write fails)
+     *
+     * @throws AuthorizationException If the caller cannot manage the target project
      *
      * @api
      */
     public function patchProject(int $id, array $values): bool
     {
         if (! $this->userCanManageProject($id)) {
-            return false;
+            throw new AuthorizationException('You are not allowed to edit this project.');
         }
 
         // Drop control fields that may leak in from the request envelope.

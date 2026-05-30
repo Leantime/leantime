@@ -308,6 +308,7 @@ leantime.ticketsController = (function () {
 
                                 leantime.rpc('Tickets.Tickets.sortTickets', { params: sortPayload })
                                     .catch(function (error) {
+                                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                                         console.error('Could not sort tickets', error);
                                     });
                             },
@@ -688,6 +689,7 @@ leantime.ticketsController = (function () {
 
                     }
                 ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         console.error('Could not update ticket ' + ticketId, error);
                 });
             } else {
@@ -735,6 +737,7 @@ leantime.ticketsController = (function () {
 
                     }
                 ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         console.error('Could not update ticket ' + ticketId, error);
                 });
             } else {
@@ -771,6 +774,7 @@ leantime.ticketsController = (function () {
                         }
                     }
                 ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         console.error('Could not update ticket ' + ticketId, error);
                 });
             }
@@ -798,6 +802,7 @@ leantime.ticketsController = (function () {
 
                     }
                 ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         console.error('Could not update ticket ' + ticketId, error);
                 });
             }
@@ -830,6 +835,7 @@ leantime.ticketsController = (function () {
                         }
                     }
                 ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         console.error('Could not update ticket ' + ticketId, error);
                 });
             }
@@ -852,6 +858,7 @@ leantime.ticketsController = (function () {
                         jQuery.growl({message: leantime.i18n.__("notifications.subtask_saved"), style: "success"});
                     }
                 ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         console.error('Could not update ticket ' + entityId, error);
                 });
             }
@@ -882,6 +889,7 @@ leantime.ticketsController = (function () {
                         }
                     }
                 ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         console.error('Could not update ticket ' + ticketId, error);
                 });
             }

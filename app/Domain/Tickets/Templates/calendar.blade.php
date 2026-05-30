@@ -187,7 +187,11 @@
                             editFrom: event.event.startStr,
                             editTo: event.event.endStr
                         }
-                    }).catch(function (error) { console.error('Could not update ticket dates', error); });
+                    }).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        console.error('Could not update ticket dates', error);
+                    });
                 },
                 eventResize: function (event) {
 
@@ -197,7 +201,11 @@
                             editFrom: event.event.startStr,
                             editTo: event.event.endStr
                         }
-                    }).catch(function (error) { console.error('Could not update ticket dates', error); })
+                    }).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        console.error('Could not update ticket dates', error);
+                    })
 
                 },
                 eventMouseEnter: function() {

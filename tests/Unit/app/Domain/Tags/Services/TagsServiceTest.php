@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Tags\Services;
 
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as CanvaRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Tags\Services\Tags as TagService;
@@ -36,7 +37,7 @@ class TagsServiceTest extends TestCase
         );
     }
 
-    public function test_get_tags_returns_empty_and_does_not_query_when_user_cannot_access_project(): void
+    public function test_get_tags_throws_and_does_not_query_when_user_cannot_access_project(): void
     {
         $queryCalls = 0;
         $projectRepo = $this->make(ProjectRepository::class, [
@@ -50,9 +51,15 @@ class TagsServiceTest extends TestCase
             },
         ]);
 
-        $result = $this->makeService($projectRepo, $ticketRepo)->getTags(99, '');
+        $thrown = null;
+        try {
+            $this->makeService($projectRepo, $ticketRepo)->getTags(99, '');
+        } catch (AuthorizationException $e) {
+            $thrown = $e;
+        }
 
-        $this->assertSame([], $result, 'A user must not read tags for a project they cannot access');
+        // No access must be a distinct, thrown signal -- NOT an empty array (which means "no matching tags").
+        $this->assertInstanceOf(AuthorizationException::class, $thrown, 'A user must not read tags for a project they cannot access');
         $this->assertSame(0, $queryCalls, 'Unauthorized request must not even query the tag tables');
     }
 

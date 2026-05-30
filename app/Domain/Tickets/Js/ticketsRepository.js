@@ -14,9 +14,15 @@ leantime.ticketsRepository = (function () {
 
     /**
      * Shared failure handler for inline ticket updates (auth denied, validation, server error).
+     * The JSON-RPC layer now rejects with the server's error message on denial/not-found, so
+     * surface it to the user instead of failing silently.
      */
     function handlePatchError(id) {
         return function (error) {
+            jQuery.growl({
+                message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"),
+                style: "error"
+            });
             console.error('Could not update ticket ' + id, error);
         };
     }

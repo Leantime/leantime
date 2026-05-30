@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\FromFormat;
@@ -2323,23 +2325,26 @@ class Tickets
      *
      * @param  int  $id  The ticket id to update
      * @param  array  $values  The fields to update
-     * @return bool True on success, false if unauthorized or the update failed
+     * @return bool True on success (false only if the underlying write fails)
+     *
+     * @throws AuthorizationException If the caller is not an editor, or is not assigned to the ticket's project
+     * @throws NotFoundException If the ticket does not exist
      *
      * @api
      */
     public function patchTicket(int $id, array $values): bool
     {
         if (! Auth::userIsAtLeast(Roles::$editor)) {
-            return false;
+            throw new AuthorizationException('You are not allowed to edit tasks.');
         }
 
         $ticket = $this->getTicket($id);
         if (! $ticket) {
-            return false;
+            throw new NotFoundException('The task you tried to edit could not be found.');
         }
 
         if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $ticket->projectId)) {
-            return false;
+            throw new AuthorizationException('You are not allowed to edit this task.');
         }
 
         return $this->patch($id, $values);
@@ -2875,24 +2880,27 @@ class Tickets
      * controller-level gate), then delegates to the internal updateTicketSorting().
      *
      * @param  array  $params  Array of ticketId => sortPosition from Gantt drag-drop
-     * @return bool True on success, false if unauthorized or the update failed
+     * @return bool True on success (false only if the underlying write fails)
+     *
+     * @throws AuthorizationException If the caller is not an editor, or is not assigned to a referenced task's project
+     * @throws NotFoundException If a referenced task does not exist
      *
      * @api
      */
     public function sortTickets(array $params): bool
     {
         if (! Auth::userIsAtLeast(Roles::$editor)) {
-            return false;
+            throw new AuthorizationException('You are not allowed to re-sort tasks.');
         }
 
         $userId = session('userdata.id');
         foreach (array_keys($params) as $ticketId) {
             $ticket = $this->getTicket((int) $ticketId);
             if (! $ticket) {
-                return false;
+                throw new NotFoundException('A task referenced in the sort order could not be found.');
             }
             if (! $this->projectService->isUserAssignedToProject($userId, $ticket->projectId)) {
-                return false;
+                throw new AuthorizationException('You are not allowed to re-sort this task.');
             }
         }
 
