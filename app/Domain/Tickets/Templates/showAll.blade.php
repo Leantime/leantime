@@ -12,7 +12,7 @@
     $efforts = $efforts;
     $priorities = $priorities;
     $statusLabels = $allTicketStates;
-    $newField = $newField;
+    $newField = $newField ?? [];
     $numberofColumns = count($allTicketStates) - 1;
     $size = floor(100 / $numberofColumns);
 @endphp
