@@ -21,6 +21,10 @@ use Leantime\Domain\Blueprints\Controllers;
 |
 */
 
+// Boards overview (absorbed from the former Strategy domain). Declared before the
+// {canvasSlug} group so the literal "showBoards" path is never treated as a slug.
+Route::get('/blueprints/showBoards', [Controllers\ShowBoards::class, 'get'])->name('blueprints.showBoards');
+
 Route::prefix('blueprints/{canvasSlug}')->group(function () {
     Route::get('/showCanvas/{id?}', [Controllers\ShowCanvas::class, 'get'])->name('blueprints.show');
     Route::post('/showCanvas/{id?}', [Controllers\ShowCanvas::class, 'post'])->name('blueprints.show.post');
@@ -45,6 +49,14 @@ Route::prefix('blueprints/{canvasSlug}')->group(function () {
 
 // Inline item updates (status / relates / assignee) from the board view.
 Route::patch('/api/blueprints/{canvasSlug}', [Controllers\ApiCanvas::class, 'patch'])->name('blueprints.api.patch');
+
+// Legacy redirect: the former /strategy/showBoards overview now lives in Blueprints.
+// Preserve any query string, matching the other legacy redirects below.
+Route::any('/strategy/showBoards/{id?}', function () {
+    $queryString = request()->getQueryString();
+
+    return redirect('/blueprints/showBoards'.($queryString ? '?'.$queryString : ''), 301);
+});
 
 // Legacy redirects: forward old /xxxcanvas/ URLs to /blueprints/xxx/
 $legacySlugs = ['swot', 'lean', 'cp', 'dbm', 'ea', 'em', 'insights', 'lbm', 'minempathy', 'obm', 'retros', 'risks', 'sb', 'sm', 'sq', 'value'];

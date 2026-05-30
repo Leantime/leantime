@@ -88,7 +88,7 @@ class DelCanvas
             );
 
             if (! $allCanvas || count($allCanvas) == 0) {
-                return Frontcontroller::redirect(BASE_URL.'/strategy/showBoards');
+                return Frontcontroller::redirect(BASE_URL.'/blueprints/showBoards');
             }
 
             return Frontcontroller::redirect(BASE_URL.'/blueprints/'.$this->canvasSlug.'/showCanvas');

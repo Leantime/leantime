@@ -94,8 +94,8 @@ class Helper
             'tour' => '',
             'autoLoad' => false,
         ],
-        'strategy.showBoards' => [
-            'id' => 'strategy.showBoards',
+        'blueprints.showBoards' => [
+            'id' => 'blueprints.showBoards',
             'template' => 'blueprints',
             'tour' => '',
             'autoLoad' => false,

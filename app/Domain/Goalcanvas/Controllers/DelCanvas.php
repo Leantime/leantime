@@ -66,7 +66,7 @@ class DelCanvas extends Controller
             $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
 
             if (! $allCanvas || count($allCanvas) == 0) {
-                return Frontcontroller::redirect(BASE_URL.'/strategy/showBoards');
+                return Frontcontroller::redirect(BASE_URL.'/blueprints/showBoards');
             }
 
             return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/showCanvas');
