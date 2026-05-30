@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Clients\Services;
 
-use Leantime\Core\Exceptions\ElementExistsException;
+use Leantime\Core\Exceptions\EntityExistsException;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
@@ -204,7 +204,7 @@ class Clients
      * @return int Id of the newly created client
      *
      * @throws MissingParameterException When the client name is empty
-     * @throws ElementExistsException When a client with the same name/street already exists
+     * @throws EntityExistsException When a client with the same name/street already exists
      *
      * @api
      */
@@ -215,7 +215,7 @@ class Clients
         }
 
         if ($this->isClient($values) === true) {
-            throw new ElementExistsException('Client exists already');
+            throw new EntityExistsException('Client exists already');
         }
 
         return (int) $this->clientRepository->addClient($values);

@@ -2,24 +2,26 @@
 
 namespace Leantime\Core\Exceptions;
 
-use Exception;
 use Throwable;
 
-class InvalidArgumentException extends Exception
+/**
+ * Invalid argument supplied to an operation (HTTP 422 / JSON-RPC -32602 invalid params).
+ *
+ * Now a {@see LeantimeException}; for user-facing input validation prefer
+ * {@see ValidationException}, which additionally carries a per-field error map.
+ */
+class InvalidArgumentException extends LeantimeException
 {
+    protected int $rpcCode = -32602;
+
     /**
-     * Construct the exception. Note: The message is NOT binary safe.
-     *
-     * @link https://php.net/manual/en/exception.construct.php
-     *
-     * @param  string  $message  [optional] The Exception message to throw.
-     * @param  Throwable|null  $previous  [optional] The previous throwable used for the exception chaining.
-     * @param  int  $code  [optional] The Exception code.
+     * @param  string  $message  The exception message.
+     * @param  int  $code  HTTP status, also exposed via getStatusCode() and getCode().
+     * @param  Throwable|null  $previous  Previous throwable for chaining.
      */
-    public function __construct(string $message = '', int $code = 422)
+    public function __construct(string $message = '', int $code = 422, ?Throwable $previous = null)
     {
-        parent::__construct($message, $code);
-        $this->message = "$message";
-        $this->code = $code;
+        $this->statusCode = $code;
+        parent::__construct($message, $code, $previous);
     }
 }

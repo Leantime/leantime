@@ -9,6 +9,11 @@ use Leantime\Core\Language;
 use Leantime\Core\UI\Template;
 use Leantime\Domain\Api\Controllers\Jsonrpc;
 
+/**
+ * The controller now builds its envelopes through the JsonRpcResponse / JsonRpcErrorResponse
+ * response types, so these tests assert on the actual JSON body of the returned Response
+ * (behavior) rather than on the Template::displayJson() call that used to construct it.
+ */
 class JsonrpcTest extends \Unit\TestCase
 {
     private Jsonrpc $controller;
@@ -28,10 +33,14 @@ class JsonrpcTest extends \Unit\TestCase
         $this->app->bootstrapWith([LoadConfig::class, SetRequestForConsole::class]);
 
         $this->template = $this->createMock(Template::class);
-        $this->template->method('displayJson')->willReturn(response()->json([]));
         $language = $this->createMock(Language::class);
         $this->controller = new Jsonrpc($this->app['request'], $this->template, $language);
         $_SERVER['REQUEST_METHOD'] = 'post';
+    }
+
+    private function bodyOf($response): array
+    {
+        return json_decode($response->getContent(), true);
     }
 
     public function test_method_string_parsing()
@@ -43,16 +52,11 @@ class JsonrpcTest extends \Unit\TestCase
             'jsonrpc' => '2.0',
         ];
 
-        $this->template->expects($this->once())
-            ->method('displayJson')
-            ->willReturnCallback(function ($response) {
-                $this->assertArrayHasKey('jsonrpc', $response);
-                $this->assertEquals('2.0', $response['jsonrpc']);
+        $body = $this->bodyOf($this->controller->post($params));
 
-                return response()->json($response);
-            });
-
-        $this->controller->post($params);
+        $this->assertIsArray($body);
+        $this->assertArrayHasKey('jsonrpc', $body);
+        $this->assertEquals('2.0', $body['jsonrpc']);
     }
 
     public function test_invalid_method_string()
@@ -64,16 +68,10 @@ class JsonrpcTest extends \Unit\TestCase
             'jsonrpc' => '2.0',
         ];
 
-        $this->template->expects($this->once())
-            ->method('displayJson')
-            ->willReturnCallback(function ($response) {
-                $this->assertArrayHasKey('error', $response);
-                $this->assertEquals(-32602, $response['error']['code']);
+        $body = $this->bodyOf($this->controller->post($params));
 
-                return response()->json($response);
-            });
-
-        $this->controller->post($params);
+        $this->assertArrayHasKey('error', $body);
+        $this->assertEquals(-32602, $body['error']['code']);
     }
 
     public function test_missing_json_rpc_version()
@@ -84,16 +82,10 @@ class JsonrpcTest extends \Unit\TestCase
             'id' => 1,
         ];
 
-        $this->template->expects($this->once())
-            ->method('displayJson')
-            ->willReturnCallback(function ($response) {
-                $this->assertArrayHasKey('error', $response);
-                $this->assertEquals(-32600, $response['error']['code']);
+        $body = $this->bodyOf($this->controller->post($params));
 
-                return response()->json($response);
-            });
-
-        $this->controller->post($params);
+        $this->assertArrayHasKey('error', $body);
+        $this->assertEquals(-32600, $body['error']['code']);
     }
 
     public function test_batch_request()
@@ -113,28 +105,79 @@ class JsonrpcTest extends \Unit\TestCase
             ],
         ];
 
-        // Each batched call will call displayJson once and then the final invokation will combine the results of the
-        // first 2 invocations to an array of 2 results
-        $countInvocations = 0;
-        $this->template->method('displayJson')
-            ->willReturnCallback(function ($response) use (&$countInvocations) {
-                $countInvocations++;
-                $this->assertIsArray($response);
+        $body = $this->bodyOf($this->controller->post($params));
 
-                if ($countInvocations < 3) {
-                    // Each individual invocation will have the regular jsonrpc response which gets mapped to the main
-                    // response
-                    $this->assertCount(3, $response);
+        // The batch response is an array with one envelope per sub-request.
+        $this->assertIsArray($body);
+        $this->assertCount(2, $body);
+    }
+
+    /**
+     * The riskiest behavioral change: the service-call catch is now catch(\Throwable) and an
+     * UNEXPECTED throwable must be collapsed to a generic -32000 with its message NOT leaked.
+     * Driven end-to-end through the controller by rebinding the (@api) Comments service to a
+     * stub that throws.
+     */
+    public function test_service_throwing_unknown_error_is_generic_and_not_leaked()
+    {
+        $secret = 'super-secret-internal-detail';
+
+        $this->app->bind(
+            \Leantime\Domain\Comments\Services\Comments::class,
+            fn () => new class($secret)
+            {
+                public function __construct(private string $secret) {}
+
+                public function pollComments(?int $projectId = null, ?int $moduleId = null): array
+                {
+                    throw new \RuntimeException($this->secret);
                 }
+            }
+        );
 
-                if ($countInvocations == 3) {
-                    // The last invocation has 2 array items each being the result set of the jsonrpc call
-                    $this->assertCount(2, $response);
+        $params = [
+            'method' => 'leantime.rpc.Comments.pollComments',
+            'params' => ['projectId' => 1],
+            'id' => 42,
+            'jsonrpc' => '2.0',
+        ];
+
+        $response = $this->controller->post($params);
+        $body = $this->bodyOf($response);
+
+        $this->assertSame(-32000, $body['error']['code']);
+        $this->assertSame('Server error', $body['error']['message']);
+        $this->assertSame(42, $body['id']);
+        $this->assertStringNotContainsString($secret, $response->getContent());
+    }
+
+    /**
+     * A typed Leantime exception thrown by a service maps to ITS JSON-RPC code (here -32001 for
+     * AuthorizationException), not the generic -32000, with the request id preserved.
+     */
+    public function test_service_throwing_typed_exception_maps_to_its_rpc_code()
+    {
+        $this->app->bind(
+            \Leantime\Domain\Comments\Services\Comments::class,
+            fn () => new class
+            {
+                public function pollComments(?int $projectId = null, ?int $moduleId = null): array
+                {
+                    throw new \Leantime\Core\Exceptions\AuthorizationException;
                 }
+            }
+        );
 
-                return response()->json($response);
-            });
+        $params = [
+            'method' => 'leantime.rpc.Comments.pollComments',
+            'params' => ['projectId' => 1],
+            'id' => 7,
+            'jsonrpc' => '2.0',
+        ];
 
-        $this->controller->post($params);
+        $body = $this->bodyOf($this->controller->post($params));
+
+        $this->assertSame(-32001, $body['error']['code']);
+        $this->assertSame(7, $body['id']);
     }
 }
