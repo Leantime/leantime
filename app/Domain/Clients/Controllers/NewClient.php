@@ -4,7 +4,7 @@ namespace Leantime\Domain\Clients\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Exceptions\ElementExistsException;
+use Leantime\Core\Exceptions\EntityExistsException;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
@@ -86,7 +86,7 @@ class NewClient extends Controller
             $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success', 'new_client');
 
             return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id);
-        } catch (ElementExistsException) {
+        } catch (EntityExistsException) {
             $this->tpl->setNotification($this->language->__('notification.client_exists_already'), 'error');
         } catch (MissingParameterException) {
             $this->tpl->setNotification($this->language->__('notification.client_name_not_specified'), 'error');

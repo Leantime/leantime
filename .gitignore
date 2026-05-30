@@ -136,3 +136,4 @@ config/.env
 tests/Httprequests/http-client.private.env.json
 .claude/docs/personal-companion-requirements.md
 .claude/docs/git-workflow.md
+cleanup-architecture.md

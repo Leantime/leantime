@@ -2,24 +2,28 @@
 
 namespace Leantime\Core\Exceptions;
 
-use Exception;
 use Throwable;
 
-class AuthException extends Exception
+/**
+ * @deprecated Use {@see AuthorizationException} instead.
+ *
+ * Thin, deprecated alias of {@see AuthorizationException} (HTTP 403 / JSON-RPC -32001), kept
+ * only because the AdvancedAuth plugin — and potentially external installs — still throw this
+ * class name (e.g. AdvancedAuth\Listeners\CheckDomain). It carries no behaviour of its own
+ * beyond preserving the legacy ($message, $code) constructor signature, so it is NOT a second
+ * authorization exception — it IS an AuthorizationException.
+ */
+class AuthException extends AuthorizationException
 {
     /**
-     * Construct the exception. Note: The message is NOT binary safe.
-     *
-     * @link https://php.net/manual/en/exception.construct.php
-     *
-     * @param  string  $message  [optional] The Exception message to throw.
-     * @param  Throwable|null  $previous  [optional] The previous throwable used for the exception chaining.
-     * @param  int  $code  [optional] The Exception code.
+     * @param  string  $message  The exception message.
+     * @param  int  $code  HTTP status, also exposed via getStatusCode() and getCode() (default 403).
+     * @param  Throwable|null  $previous  Previous throwable for chaining.
      */
-    public function __construct(string $message = '', int $code = 403)
+    public function __construct(string $message = '', int $code = 403, ?Throwable $previous = null)
     {
-        parent::__construct($message, $code);
-        $this->message = "$message";
+        parent::__construct($message, $previous);
+        $this->statusCode = $code;
         $this->code = $code;
     }
 }

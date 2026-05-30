@@ -2,24 +2,27 @@
 
 namespace Leantime\Core\Exceptions;
 
-use Exception;
 use Throwable;
 
-class MissingParameterException extends Exception
+/**
+ * A required parameter was missing (HTTP 422 / JSON-RPC -32602 invalid params).
+ *
+ * A degenerate validation failure. Now a {@see LeantimeException}, so a service throwing
+ * this during a JSON-RPC call surfaces as a proper -32602 "Invalid params" instead of a
+ * generic server error.
+ */
+class MissingParameterException extends LeantimeException
 {
+    protected int $rpcCode = -32602;
+
     /**
-     * Construct the exception. Note: The message is NOT binary safe.
-     *
-     * @link https://php.net/manual/en/exception.construct.php
-     *
-     * @param  string  $message  [optional] The Exception message to throw.
-     * @param  Throwable|null  $previous  [optional] The previous throwable used for the exception chaining.
-     * @param  int  $code  [optional] The Exception code.
+     * @param  string  $message  The exception message.
+     * @param  int  $code  HTTP status, also exposed via getStatusCode() and getCode().
+     * @param  Throwable|null  $previous  Previous throwable for chaining.
      */
-    public function __construct(string $message = '', int $code = 422)
+    public function __construct(string $message = '', int $code = 422, ?Throwable $previous = null)
     {
-        parent::__construct($message, $code);
-        $this->message = "$message";
-        $this->code = $code;
+        $this->statusCode = $code;
+        parent::__construct($message, $code, $previous);
     }
 }

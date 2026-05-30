@@ -2,7 +2,7 @@
 
 namespace Unit\app\Domain\Clients\Services;
 
-use Leantime\Core\Exceptions\ElementExistsException;
+use Leantime\Core\Exceptions\EntityExistsException;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
@@ -86,7 +86,7 @@ class ClientsServiceTest extends TestCase
             },
         ]);
 
-        $this->expectException(ElementExistsException::class);
+        $this->expectException(EntityExistsException::class);
 
         try {
             $this->makeService(clientRepo: $repo)->createClient(['name' => 'Acme']);
