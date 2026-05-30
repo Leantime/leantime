@@ -3,12 +3,7 @@
 @section('content')
 
 @php
-    $sprints = $sprints;
-    $searchCriteria = $searchCriteria;
-    $currentSprint = $currentSprint;
     $allTicketGroups = $allTickets;
-    $efforts = $efforts;
-    $priorities = $priorities;
     $statusLabels = $allTicketStates;
     $groupBy = $groupBy ?? [];
     $newField = $newField ?? [];

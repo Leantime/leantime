@@ -1,7 +1,5 @@
 @php
 $values = $timesheetValues;
-$userInfo = $userInfo;
-$remainingHours = $remainingHours;
 if ($remainingHours < 0) {
     $remainingHours = 0;
 }

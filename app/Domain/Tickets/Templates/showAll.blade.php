@@ -3,14 +3,8 @@
 @section('content')
 
 @php
-    $sprints = $sprints;
-    $searchCriteria = $searchCriteria;
-    $currentSprint = $currentSprint;
-    $allTickets = $allTickets;
     $allTicketGroups = $allTickets;
     $todoTypeIcons = $ticketTypeIcons;
-    $efforts = $efforts;
-    $priorities = $priorities;
     $statusLabels = $allTicketStates;
     $newField = $newField ?? [];
     $numberofColumns = count($allTicketStates) - 1;

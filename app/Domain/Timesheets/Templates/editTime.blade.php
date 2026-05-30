@@ -1,6 +1,5 @@
 @php
 use Leantime\Core\Support\FromFormat;
-$values = $values;
 @endphp
 
 <script type="text/javascript">

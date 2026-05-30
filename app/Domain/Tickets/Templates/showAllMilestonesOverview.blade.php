@@ -3,13 +3,8 @@
 @section('content')
 
 @php
-    $sprints = $sprints;
-    $searchCriteria = $searchCriteria;
-    $currentSprint = $currentSprint;
     $todoTypeIcons = $ticketTypeIcons;
-    $efforts = $efforts;
     $statusLabels = $allTicketStates;
-    $allTickets = $allTickets;
     $numberofColumns = count($allTicketStates) - 1;
     $size = floor(100 / $numberofColumns);
 @endphp
