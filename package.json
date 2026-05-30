@@ -8,7 +8,7 @@
     "@fullcalendar/google-calendar": "^6.1.13",
     "@fullcalendar/icalendar": "^6.1.13",
     "@fullcalendar/luxon3": "^6.1.20",
-    "@lottiefiles/dotlottie-wc": "^0.4.6",
+    "@lottiefiles/dotlottie-wc": "^0.9.16",
     "@lottiefiles/dotlottie-web": "^0.41.0",
     "@lottiefiles/lottie-player": "^2.0.4",
     "@popperjs/core": "^2.11.8",
