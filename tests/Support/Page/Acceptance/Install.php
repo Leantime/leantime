@@ -34,9 +34,11 @@ class Install
         $this->I->fillField(['name' => 'company'], $company);
         $this->I->click('Install');
 
-        $this->I->waitForElementVisible('.alert');
-
-        $this->I->waitForText('The installation was successful', 90);
+        // A successful install redirects straight into the onboarding wizard
+        // (auth/userInvite), starting on the "Setting Account Details" step —
+        // there is no longer a standalone success .alert page. Wait for that
+        // step's first field to render before filling it in.
+        $this->I->waitForElementVisible(['name' => 'jobTitle'], 90);
 
         $this->I->fillField(['name' => 'jobTitle'], 'CEO');
 
