@@ -67,7 +67,6 @@ class Entityrelations
     {
         $this->db->table('zp_settings')
             ->where('key', $type)
-            ->limit(1)
             ->delete();
     }
 

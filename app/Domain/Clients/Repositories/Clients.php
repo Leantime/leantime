@@ -170,7 +170,6 @@ class Clients extends Repository
     {
         return $this->db->table('zp_clients')
             ->where('id', $id)
-            ->limit(1)
             ->update([
                 'name' => $values['name'],
                 'street' => $values['street'],

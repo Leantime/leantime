@@ -107,7 +107,6 @@ class Auth
     {
         return $this->db->table('zp_user')
             ->where('session', $sessionId)
-            ->limit(1)
             ->update(['session' => '']) >= 0;
     }
 
@@ -149,7 +148,6 @@ class Auth
     {
         return $this->db->table('zp_user')
             ->where('id', $userId)
-            ->limit(1)
             ->update([
                 'lastlogin' => now(),
                 'session' => $sessionid,
@@ -188,7 +186,6 @@ class Auth
     {
         return $this->db->table('zp_user')
             ->where('username', $username)
-            ->limit(1)
             ->update([
                 'pwReset' => $resetLink,
                 'pwResetExpiration' => now(),
@@ -198,9 +195,26 @@ class Auth
 
     public function changePW(string $password, string $hash): bool
     {
-        return $this->db->table('zp_user')
+        // Never match on an empty reset token: many accounts carry an empty
+        // pwReset (it's cleared after every successful change), so an empty hash
+        // would match a pile of users. Resolve to a single user id first, then
+        // update by primary key. This also avoids the MySQL-only DELETE/UPDATE
+        // ... LIMIT 1 that breaks on Postgres (#3384) — we can't drop limit(1)
+        // here because pwReset isn't unique.
+        if ($hash === '') {
+            return false;
+        }
+
+        $userId = $this->db->table('zp_user')
             ->where('pwReset', $hash)
-            ->limit(1)
+            ->value('id');
+
+        if (empty($userId)) {
+            return false;
+        }
+
+        return $this->db->table('zp_user')
+            ->where('id', $userId)
             ->update([
                 'password' => password_hash($password, PASSWORD_DEFAULT),
                 'pwReset' => '',
