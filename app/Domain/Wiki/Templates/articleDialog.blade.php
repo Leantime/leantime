@@ -3,7 +3,7 @@
 @section('content')
 
 @php
-    $currentArticle = $currentArticle ?? null;
+    $currentArticle = $article ?? null;
 
     $wikiHL = $wikiHeadlines ?? [];
     $wikiHeadlines = [];
