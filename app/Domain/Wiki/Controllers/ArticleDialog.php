@@ -118,6 +118,16 @@ class ArticleDialog extends Controller
                     $canvasId = $projectWikis[0]->id;
                 }
             }
+
+            // If we still can't resolve a notebook, don't create an orphaned note
+            // with an empty canvasId (the original #3216 failure mode) — surface an
+            // error and send the user back to pick/create a notebook.
+            if (empty($canvasId)) {
+                $this->tpl->setNotification('notification.article_save_error_no_notebook', 'error');
+
+                return Frontcontroller::redirect(BASE_URL.'/wiki/articleDialog/');
+            }
+
             $article->canvasId = $canvasId;
             $article->data = $params['articleIcon'];
             $article->tags = $params['tags'];
