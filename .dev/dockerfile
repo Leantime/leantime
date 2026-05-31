@@ -19,6 +19,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
+    libpq-dev \
     apt-utils \
     vim \
     curl \
@@ -35,6 +36,7 @@ RUN docker-php-ext-install \
     gd \
     mysqli \
     pdo_mysql \
+    pdo_pgsql \
     mbstring \
     exif \
     pcntl \

@@ -97,6 +97,20 @@
                             </span>
                         </div>
 
+                        {{-- Reply/edit box for the parent comment. Kept ABOVE the replies thread so
+                             editing a comment that has replies opens the editor in place rather than
+                             jumping below its replies. (#3319) --}}
+                        <div style="display:none;" id="comment-{{ $formHash }}-{{ $row['id'] }}" class="commentBox">
+                            <div class="commentImage">
+                                <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}"/>
+                            </div>
+                            <div class="commentReply">
+                                <input type="submit" value="{{ __('links.reply') }}" name="comment" id="submit-reply-button" class="btn btn-primary"/>
+                                <input type="button" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')" value="{{ __('links.cancel') }}" class="btn btn-primary"/>
+                            </div>
+                            <div class="clearall"></div>
+                        </div>
+
                         <div class="replies">
                             @if ($comments->getReplies($row['id']))
                                 @foreach ($comments->getReplies($row['id']) as $comment)
@@ -140,16 +154,6 @@
                                     </div>
                                 @endforeach
                             @endif
-                            <div style="display:none;" id="comment-{{ $formHash }}-{{ $row['id'] }}" class="commentBox">
-                                <div class="commentImage">
-                                    <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}"/>
-                                </div>
-                                <div class="commentReply">
-                                    <input type="submit" value="{{ __('links.reply') }}" name="comment" id="submit-reply-button" class="btn btn-primary"/>
-                                    <input type="button" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')" value="{{ __('links.cancel') }}" class="btn btn-primary"/>
-                                </div>
-                                <div class="clearall"></div>
-                            </div>
                         </div>
                     </div>
                 </div>

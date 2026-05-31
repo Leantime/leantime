@@ -73,6 +73,7 @@
                     <div class="form-group">
                         <select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" multiple="multiple" title="{{ __('input.placeholders.filter_by_milestone') }}" name="milestone" id="milestoneSelect">
                             <option value="" data-placeholder="true">{!! __('label.all_milestones') !!}</option>
+                            <option value="0" @if (isset($searchCriteria['milestone']) && in_array('0', explode(',', (string) $searchCriteria['milestone']), true)) selected='selected' @endif>{!! __('label.not_assigned_to_milestone') !!}</option>
                             @if (is_array($milestones))
                                 @foreach ($milestones as $milestoneRow)
                                     <option value="{{ $milestoneRow->id }}"

@@ -307,7 +307,6 @@ class Users
 
         return $this->connection->table('zp_user')
             ->where('id', $id)
-            ->limit(1)
             ->update($updateData);
     }
 
@@ -339,7 +338,6 @@ class Users
     {
         return $this->connection->table('zp_user')
             ->where('id', $userId)
-            ->limit(1)
             ->update([
                 'clientId' => null,
                 'modified' => now(),
@@ -366,7 +364,6 @@ class Users
 
         $this->connection->table('zp_user')
             ->where('id', $id)
-            ->limit(1)
             ->update($updateData);
     }
 
@@ -462,7 +459,6 @@ class Users
 
         return $this->connection->table('zp_user')
             ->where('id', $id)
-            ->limit(1)
             ->update($updates);
     }
 

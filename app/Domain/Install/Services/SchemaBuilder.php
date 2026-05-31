@@ -114,6 +114,33 @@ class SchemaBuilder
             ['key' => 'db-version', 'value' => $this->appSettings->dbVersion],
             ['key' => 'companysettings.telemetry.active', 'value' => 'true'],
         ]);
+
+        // zp_clients and zp_user are seeded with explicit id = 1 above. MySQL
+        // auto-advances AUTO_INCREMENT after an explicit-id insert; Postgres
+        // leaves the BIGSERIAL sequence at 1, so the next auto-id INSERT (e.g.
+        // OIDC JIT user creation) collides on the primary key. Re-sync the
+        // sequences to MAX(id) on Postgres. No-op on MySQL. (#3380)
+        $this->resyncSequences(['zp_clients', 'zp_user']);
+    }
+
+    /**
+     * Re-sync BIGSERIAL sequences to MAX(id) for tables seeded with explicit
+     * ids. Postgres-only; a no-op on every other driver.
+     *
+     * @param  string[]  $tables  Tables whose `id` sequence should be advanced.
+     */
+    private function resyncSequences(array $tables): void
+    {
+        if (DB::connection()->getDriverName() !== 'pgsql') {
+            return;
+        }
+
+        foreach ($tables as $table) {
+            DB::statement(
+                "SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM {$table}), 1))",
+                [$table]
+            );
+        }
     }
 
     /**
@@ -887,6 +914,10 @@ class SchemaBuilder
             $table->json('meta')->nullable();
 
             $table->index(['source_structure_id', 'target_structure_id'], 'idx_wsm_source_target');
+            // Enforce the same idempotency key StructureRegistry::registerMappings()
+            // checks in application code, so a race can't insert a duplicate mapping
+            // for the same source element → target structure.
+            $table->unique(['source_structure_id', 'source_element_id', 'target_structure_id'], 'idx_wsm_unique_mapping');
         });
     }
 }

@@ -3,6 +3,7 @@
 namespace Leantime\Core\WorkStructure\Services;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\WorkStructure\Events\ElementTypeRegistered;
 use Leantime\Core\WorkStructure\Events\MappingCreated;
@@ -44,10 +45,23 @@ class StructureRegistry
      */
     public function register(string $title, string $type, array $elements, array $relationships = []): int
     {
+        // Plugins call this from boot-time register.php. During a fresh install or
+        // a pending update the WorkStructure tables may not exist yet — skip rather
+        // than crash boot; the plugin re-registers idempotently on the next request.
+        if (! $this->schemaReady()) {
+            return 0;
+        }
+
         if ($this->has($title)) {
             $structure = $this->get($title);
 
-            return $structure->id;
+            // Cache said it exists but the row is gone (deleted/cache drift):
+            // fall through and recreate instead of dereferencing null.
+            if ($structure !== null) {
+                return $structure->id;
+            }
+
+            $this->clearCache($title);
         }
 
         $structureId = $this->repo->createStructure([
@@ -105,6 +119,10 @@ class StructureRegistry
      */
     public function registerMappings(int $sourceStructureId, int $targetStructureId, array $mappings): void
     {
+        if (! $this->schemaReady()) {
+            return;
+        }
+
         foreach ($mappings as $mapping) {
             $sourceElement = $this->repo->getElementByTypeKey($sourceStructureId, $mapping['sourceTypeKey']);
             $targetElement = $this->repo->getElementByTypeKey($targetStructureId, $mapping['targetTypeKey']);
@@ -138,6 +156,10 @@ class StructureRegistry
      */
     public function has(string $title): bool
     {
+        if (! $this->schemaReady()) {
+            return false;
+        }
+
         return Cache::rememberForever(self::CACHE_PREFIX.'exists.'.$title, function () use ($title) {
             return $this->repo->structureExists($title);
         });
@@ -152,6 +174,10 @@ class StructureRegistry
      */
     public function get(string $title): ?WorkStructure
     {
+        if (! $this->schemaReady()) {
+            return null;
+        }
+
         return Cache::rememberForever(self::CACHE_PREFIX.'structure.'.$title, function () use ($title) {
             $structure = $this->repo->getStructureByTitle($title);
 
@@ -173,5 +199,23 @@ class StructureRegistry
     {
         Cache::forget(self::CACHE_PREFIX.'exists.'.$title);
         Cache::forget(self::CACHE_PREFIX.'structure.'.$title);
+    }
+
+    /**
+     * Whether the WorkStructure schema has been created yet.
+     *
+     * Guards the boot-time plugin registration path against a fresh install or a
+     * pending update where migration 30502 hasn't run. Cached per request so the
+     * hasTable lookup doesn't repeat for every register()/has()/get() call.
+     */
+    private function schemaReady(): bool
+    {
+        static $ready = null;
+
+        if ($ready === null) {
+            $ready = Schema::hasTable('zp_work_structures');
+        }
+
+        return $ready;
     }
 }

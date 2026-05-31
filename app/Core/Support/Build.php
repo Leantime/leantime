@@ -128,22 +128,69 @@ class Build
         } elseif (method_exists($this->object, 'set'.$key)) {
             $property->{'set'.$key}($value);
         } else {
-            if ($value === null && property_exists($property, $key)) {
+            // Coerce external/API data to the declared property type before
+            // assigning. Models built from the marketplace API (e.g.
+            // MarketplacePlugin) declare non-nullable typed properties, but the
+            // API can return null or a mismatched type (e.g. a string for an
+            // `array $categories`), which PHP 8 rejects with a TypeError and 500s
+            // the whole request. Coercing here protects every Build-hydrated
+            // model, not just one. (#3207, #3342)
+            if (property_exists($property, $key)) {
                 $reflection = new \ReflectionProperty($property, $key);
                 $type = $reflection->getType();
-                if ($type !== null && ! $type->allowsNull()) {
-                    $value = match ($type->getName()) {
-                        'string' => '',
-                        'int' => 0,
-                        'float' => 0.0,
-                        'bool' => false,
-                        'array' => [],
-                        default => null,
-                    };
+                if ($type instanceof \ReflectionNamedType && $type->isBuiltin()) {
+                    $value = $this->coerceToBuiltinType($value, $type);
                 }
             }
             $property->$key = $value;
         }
+    }
+
+    /**
+     * Coerces a value to a builtin (scalar/array) property type so external/API
+     * data can't trip a TypeError on a typed property. Casts compatible scalars;
+     * when a value can't be safely coerced (e.g. a non-numeric string for an int,
+     * or a scalar for an array) it falls back to null for nullable types or the
+     * type's zero-value otherwise — never the raw, mismatched value.
+     */
+    private function coerceToBuiltinType(mixed $value, \ReflectionNamedType $type): mixed
+    {
+        $typeName = $type->getName();
+        $allowsNull = $type->allowsNull();
+
+        if ($value === null) {
+            return $allowsNull ? null : $this->builtinTypeDefault($typeName);
+        }
+
+        // Fallback for a value that can't be coerced to the declared type.
+        $fallback = fn () => $allowsNull ? null : $this->builtinTypeDefault($typeName);
+
+        return match ($typeName) {
+            'string' => is_string($value) ? $value : (is_scalar($value) ? (string) $value : $fallback()),
+            'int' => is_int($value) ? $value : (is_numeric($value) ? (int) $value : $fallback()),
+            'float' => is_float($value) ? $value : (is_numeric($value) ? (float) $value : $fallback()),
+            'bool' => is_bool($value) ? $value : (bool) $value,
+            // Don't wrap scalars into a single-element array — array-typed model
+            // properties are consumed as lists of associative rows downstream, so
+            // a wrapped scalar would only defer the crash to the template.
+            'array' => is_array($value) ? $value : $fallback(),
+            default => $value,
+        };
+    }
+
+    /**
+     * The zero-value for a non-nullable builtin type.
+     */
+    private function builtinTypeDefault(string $typeName): mixed
+    {
+        return match ($typeName) {
+            'string' => '',
+            'int' => 0,
+            'float' => 0.0,
+            'bool' => false,
+            'array' => [],
+            default => null,
+        };
     }
 
     public function get(string $key = ''): mixed

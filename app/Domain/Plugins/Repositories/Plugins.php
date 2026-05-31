@@ -151,7 +151,6 @@ class Plugins
     {
         return $this->db->table('zp_plugins')
             ->where('id', $id)
-            ->limit(1)
             ->delete() > 0;
     }
 }
