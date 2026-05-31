@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Session\SessionManager;
+use Illuminate\Session\Store;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
@@ -70,23 +71,175 @@ class StartSession
 
         self::dispatchEvent('session_initialized');
 
-        if ($this->shouldLockSession($request)) {
-            return $this->handleRequestWhileBlocking($request, $session, $next);
+        // API and cron requests are stateful but non-persisting and never lock
+        // (unchanged behavior: their writes were never saved to begin with).
+        if (! $this->shouldPersistSession($request)) {
+            return $this->handleStatelessRequest($request, $session, $next);
         }
 
-        return $this->handleStatefulRequest($request, $session, $next);
+        // Web requests use optimistic concurrency: run lock-free, then persist only
+        // the keys that actually changed, merging them under a brief lock so parallel
+        // requests (e.g. dashboard widgets) can't clobber each other's writes.
+        return $this->handleOptimisticRequest($request, $session, $next);
 
     }
 
     /**
-     * Handle the given request within session state.
+     * Handle a stateful but non-persisting request (API / cron). The session is
+     * started so it can be read, but it is never locked and never written back —
+     * this preserves the pre-existing behavior for these request types.
      *
      * @param  \Illuminate\Contracts\Session\Session  $session
      * @return mixed
      */
-    protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next)
+    protected function handleStatelessRequest(IncomingRequest $request, $session, Closure $next)
     {
+        $request->setLaravelSession($this->startSession($request, $session));
 
+        self::dispatchEvent('session_started');
+
+        $this->collectGarbage($session);
+
+        $response = $next($request);
+
+        $this->addCookieToResponse($response, $session);
+
+        return $response;
+    }
+
+    /**
+     * Handle a web request with optimistic session concurrency. The request runs
+     * without holding the session lock so concurrent requests (e.g. parallel
+     * dashboard widgets) are not serialized. Only when the session actually
+     * changed do we briefly lock, re-read the freshest persisted state, and merge
+     * just this request's changed keys — preventing the lost-update race that
+     * previously forced blanket locking.
+     *
+     * @param  \Illuminate\Contracts\Session\Session  $session
+     * @return mixed
+     */
+    protected function handleOptimisticRequest(IncomingRequest $request, $session, Closure $next)
+    {
+        $startTime = microtime(true);
+
+        $request->setLaravelSession($this->startSession($request, $session));
+
+        self::dispatchEvent('session_started');
+
+        $this->collectGarbage($session);
+
+        $initialId = $session->getId();
+        $initialData = $session->all();
+
+        $response = $next($request);
+
+        $this->storeCurrentUrl($request, $session);
+
+        $this->persistSessionChanges($request, $session, $initialId, $initialData);
+
+        $duration = microtime(true) - $startTime;
+        if ($duration > 3.0) {
+            Log::warning("Long session operation detected: {$duration}s for session {$session->getId()}");
+        }
+
+        $this->addCookieToResponse($response, $session);
+
+        return $response;
+    }
+
+    /**
+     * Persist session changes using a lock-on-write strategy.
+     *
+     * @param  \Illuminate\Contracts\Session\Session  $session
+     */
+    protected function persistSessionChanges(IncomingRequest $request, $session, string $initialId, array $initialData): void
+    {
+        // The session identity changed (login/logout regenerate or invalidate).
+        // Keys can't be safely merged onto a different id, so fall back to a full,
+        // locked save of the live session.
+        if ($session->getId() !== $initialId) {
+            $this->withSessionLock($request, $session, fn () => $session->save());
+
+            return;
+        }
+
+        [$changed, $removed] = $this->diffSession($initialData, $session->all());
+
+        // Pure read: nothing changed, so we never touch the lock or storage.
+        if ($changed === [] && $removed === []) {
+            return;
+        }
+
+        $this->withSessionLock($request, $session, fn () => $this->mergeSessionChanges($session, $changed, $removed));
+    }
+
+    /**
+     * Re-read the freshest persisted session state and apply ONLY the keys this
+     * request changed/removed onto it, then write it back. Merging by changed-key
+     * (rather than overwriting the whole blob) is what lets a concurrent writer's
+     * keys survive. Must be called while holding the per-session lock.
+     *
+     * @param  \Illuminate\Contracts\Session\Session  $session
+     * @param  array<string, mixed>  $changed
+     * @param  array<int, string>  $removed
+     */
+    protected function mergeSessionChanges($session, array $changed, array $removed): void
+    {
+        $merged = new Store(
+            $session->getName(),
+            $session->getHandler(),
+            $session->getId(),
+            $this->manager->getSessionConfig()['serialization'] ?? 'php'
+        );
+
+        $merged->start();
+
+        // Keep the CSRF token consistent with what the live session (and the
+        // already-rendered response) used; a fresh Store would otherwise
+        // regenerate a different token and break the next POST.
+        $merged->put('_token', $session->token());
+
+        foreach ($changed as $key => $value) {
+            $merged->put($key, $value);
+        }
+
+        foreach ($removed as $key) {
+            $merged->forget($key);
+        }
+
+        $merged->save();
+    }
+
+    /**
+     * Compute the keys this request added/changed and the keys it removed,
+     * comparing the session state captured before the request against the
+     * state after it.
+     *
+     * @return array{0: array<string, mixed>, 1: array<int, string>}
+     */
+    protected function diffSession(array $initial, array $current): array
+    {
+        $changed = [];
+
+        foreach ($current as $key => $value) {
+            if (! array_key_exists($key, $initial) || $initial[$key] !== $value) {
+                $changed[$key] = $value;
+            }
+        }
+
+        $removed = array_keys(array_diff_key($initial, $current));
+
+        return [$changed, $removed];
+    }
+
+    /**
+     * Acquire the per-session lock, run the persistence callback, and release.
+     * Falls back to an exponential-backoff retry if the lock can't be acquired.
+     *
+     * @param  \Illuminate\Contracts\Session\Session  $session
+     */
+    protected function withSessionLock(IncomingRequest $request, $session, Closure $callback): void
+    {
         // Dynamic lock period for different request types
         $holdLockFor = $this->calculateLockDuration($request); // Hold lock for x seconds after acquiring
 
@@ -98,18 +251,14 @@ class StartSession
             ->betweenBlockedAttemptsSleepFor(50);
 
         try {
-
             $lock->block($maxWaitForLock);
 
-            return $this->handleStatefulRequest($request, $session, $next);
-
+            $callback();
         } catch (LockTimeoutException $e) {
-
             Log::warning("Session lock timeout for session {$session->getId()}: {$e->getMessage()}");
 
             // Implement exponential backoff retry
-            return $this->retryWithBackoff($request, $session, $next);
-
+            $this->retryWithBackoff($callback, $session);
         } finally {
             $lock?->release();
         }
@@ -132,9 +281,11 @@ class StartSession
     }
 
     /**
-     * Implement exponential backoff retry strategy
+     * Implement exponential backoff retry strategy for the persistence callback.
+     *
+     * @param  \Illuminate\Contracts\Session\Session  $session
      */
-    protected function retryWithBackoff(IncomingRequest $request, $session, Closure $next, $attempts = 3)
+    protected function retryWithBackoff(Closure $callback, $session, int $attempts = 3): void
     {
         for ($i = 0; $i < $attempts; $i++) {
             try {
@@ -142,7 +293,9 @@ class StartSession
                 $jitter = random_int(-100, 100); // Add jitter to prevent thundering herd
                 usleep(($waitTime + $jitter) * 1000); // Convert to microseconds
 
-                return $this->handleStatefulRequest($request, $session, $next);
+                $callback();
+
+                return;
             } catch (\Exception $e) {
                 Log::warning("Retry attempt {$i} failed for session {$session->getId()}: {$e->getMessage()}");
 
@@ -150,48 +303,10 @@ class StartSession
             }
         }
 
-        // If all retries fail, proceed without lock
-        Log::error("All retry attempts failed for session {$session->getId()}, proceeding without lock");
+        // If all retries fail, persist without the lock as a last resort.
+        Log::error("All retry attempts failed for session {$session->getId()}, persisting without lock");
 
-        return $this->handleStatefulRequest($request, $session, $next);
-    }
-
-    /**
-     * Handle the given request within session state.
-     *
-     * @param  \Illuminate\Contracts\Session\Session  $session
-     * @return mixed
-     */
-    protected function handleStatefulRequest(IncomingRequest $request, $session, Closure $next)
-    {
-        $startTime = microtime(true);
-        $request->setLaravelSession(
-            $this->startSession($request, $session)
-        );
-
-        self::dispatchEvent('session_started');
-
-        $this->collectGarbage($session);
-
-        // Going deeper down the rabbit hole and executing the rest of the middleware and stack.
-        $response = $next($request);
-
-        // Done processing the request, closing out the session
-        $this->storeCurrentUrl($request, $session);
-
-        $duration = microtime(true) - $startTime;
-        if ($duration > 3.0) {
-            Log::warning("Long session operation detected: {$duration}s for session {$session->getId()}");
-        }
-
-        $this->addCookieToResponse($response, $session);
-
-        // Again, if the session has been configured we will need to close out the session
-        // so that the attributes may be persisted to some storage medium. We will also
-        // add the session identifier cookie to the application response headers now.
-        $this->saveSession($request);
-
-        return $response;
+        $callback();
     }
 
     /**
@@ -256,11 +371,14 @@ class StartSession
      */
     protected function storeCurrentUrl(IncomingRequest $request, $session)
     {
+        // Only full-page navigations set the "previous URL" used for back-redirects.
+        // HTMX partials must not, otherwise every background widget load would dirty
+        // the session and force a needless lock-merge-save.
         if (
             $request->isMethod('GET')
-            && $this->shouldLockSession($request)
+            && ! $request->isHtmxRequest()
+            && $this->shouldPersistSession($request)
         ) {
-            $fullUrl = $request->fullUrl();
             $session->setPreviousUrl($request->fullUrl());
         }
     }
@@ -289,29 +407,14 @@ class StartSession
     }
 
     /**
-     * Save the session data to storage.
+     * Determine whether this request should persist its session to storage.
+     * API and cron requests are stateful-but-throwaway and are never persisted.
      *
-     * @return void
+     * @return bool
      */
-    protected function saveSession(IncomingRequest $request)
+    protected function shouldPersistSession(IncomingRequest $request)
     {
-        if ($this->shouldLockSession($request)) {
-
-            $this->manager->driver()->save();
-        }
-    }
-
-    protected function shouldLockSession(IncomingRequest $request)
-    {
-
-        if (
-            $request->isApiOrCronRequest() === false &&
-            $this->sessionConfigured()
-        ) {
-            return true;
-        }
-
-        return false;
+        return $request->isApiOrCronRequest() === false && $this->sessionConfigured();
     }
 
     /**

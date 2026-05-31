@@ -1,62 +1,72 @@
 <?php
 
-/**
- * showAll Class - show My Calender
- */
-
 namespace Leantime\Domain\Calendar\Controllers;
 
-use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Calendar\Services\Calendar;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
+use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Symfony\Component\HttpFoundation\Response;
 
 class Export extends Controller
 {
-    private Environment $config;
+    private SettingService $settingService;
 
-    private SettingRepository $settingsRepo;
-
-    private Calendar $calendarService;
+    private CalendarService $calendarService;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
     public function init(
-        Environment $config,
-        SettingRepository $settingsRepo,
-        Calendar $calendarService
+        SettingService $settingService,
+        CalendarService $calendarService
     ): void {
-        $this->config = $config;
-        $this->settingsRepo = $settingsRepo;
+        $this->settingService = $settingService;
         $this->calendarService = $calendarService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the calendar export page.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
         if (isset($_GET['remove'])) {
-
-            $this->settingsRepo->deleteSetting('usersettings.'.session('userdata.id').'.icalSecret');
+            $this->settingService->deleteSetting('usersettings.'.session('userdata.id').'.icalSecret');
             $this->tpl->setNotification('notifications.ical_removed_success', 'success');
-
         }
 
-        // Add Post handling
-        if (isset($_POST['generateUrl'])) {
+        $this->assignUrl();
 
+        return $this->tpl->displayPartial('calendar.export');
+    }
+
+    /**
+     * Handles iCal URL generation.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
+    {
+        if (isset($_POST['generateUrl'])) {
             try {
                 $this->calendarService->generateIcalHash();
                 $this->tpl->setNotification('notifications.ical_success', 'success');
             } catch (\Exception $e) {
                 $this->tpl->setNotification('There was a problem generating the ical hash', 'error');
             }
-
         }
 
+        $this->assignUrl();
+
+        return $this->tpl->displayPartial('calendar.export');
+    }
+
+    /**
+     * Assigns the iCal URL to the template.
+     */
+    private function assignUrl(): void
+    {
         $icalUrl = '';
         try {
             $icalUrl = $this->calendarService->getICalUrl();
@@ -64,9 +74,6 @@ class Export extends Controller
             $this->tpl->setNotification('Could not find ical URL', 'error');
         }
 
-        // Add delete handling
         $this->tpl->assign('url', $icalUrl);
-
-        return $this->tpl->displayPartial('calendar.export');
     }
 }

@@ -40,7 +40,9 @@ leantime.modals = (function () {
                 afterShowCont: function () {
                     window.htmx.process('.nyroModalCont');
                     jQuery(".formModal, .modal").nyroModal(modalOptions);
-                    tippy('[data-tippy-content]');
+                    // Idempotent + scoped to the modal so it doesn't re-instance
+                    // page tooltips (see app.js initTooltips).
+                    window.leantime?.initTooltips?.(document.querySelector('.nyroModalCont'));
 
                     // Initialize Tiptap editors in modal (after small delay for DOM settlement)
                     setTimeout(function() {
@@ -75,8 +77,19 @@ leantime.modals = (function () {
         if(url.includes("showTicket")
             || url.includes("ideaDialog")
             || url.includes("articleDialog")) {
-            modalOptions.sizes.minW = 1800;
-            modalOptions.sizes.minH = 1800;
+            // These detail modals are intentionally large on desktop. On
+            // mobile/tablet (<1200px) the 1800px minimum makes them unusable,
+            // so only apply it on desktop. CSS caps the container to ~95vw. #3088
+            if (window.innerWidth >= 1200) {
+                modalOptions.sizes.minW = 1800;
+                modalOptions.sizes.minH = 1800;
+            }
+        }
+
+        // Never let any modal's minimum width exceed the viewport on small
+        // screens, otherwise it forces horizontal overflow. #3088
+        if (window.innerWidth < 1200) {
+            modalOptions.sizes.minW = Math.min(modalOptions.sizes.minW, window.innerWidth - 20);
         }
 
         //Ensure we have no trailing slash at the end.
@@ -125,7 +138,15 @@ window.addEventListener("hashchange", function () {
     leantime.modals.openModal();
 });
 
-window.addEventListener("closeModal", function(evt) {
+// 'lt:ui:modal.close' is the canonical client event. The legacy names ('closeModal',
+// 'HTMX.closemodal', 'Htmx.CloseModal') are kept for the migration window and also close a
+// pre-existing gap: emitters used three different casings but only 'closeModal' had a listener.
+var onCloseModalEvent = function (evt) {
     leantime.modals.closeModal();
-});
+};
+
+window.addEventListener("lt:ui:modal.close", onCloseModalEvent);
+window.addEventListener("closeModal", onCloseModalEvent);
+window.addEventListener("HTMX.closemodal", onCloseModalEvent);
+window.addEventListener("Htmx.CloseModal", onCloseModalEvent);
 

@@ -1,0 +1,35 @@
+slug: "value"
+icon: "fa-ranking-star"
+disclaimer: ""
+minColumns: 5
+
+boxes:
+  customersegment:
+    icon: "fa-user"
+    title: "box.lean.customersegment"
+  problem:
+    icon: "fa-lock"
+    title: "box.lean.problem"
+  solution:
+    icon: "fa-key"
+    title: "box.lean.solution"
+  uniquevalue:
+    icon: "fa-gift"
+    title: "box.value.benefit"
+
+statusLabels: default
+relatesLabels: {}
+
+dataLabels:
+  1: { title: "label.valueCanvas.assumptions", field: "assumptions", active: true }
+  2: { title: "label.valueCanvas.data", field: "data", active: true }
+  3: { title: "label.valueCanvas.conclusion", field: "conclusion", active: true }
+
+layout:
+  - type: boxes
+    id: firstRow
+    columns:
+      - { width: 25, box: "customersegment" }
+      - { width: 25, box: "problem" }
+      - { width: 25, box: "solution" }
+      - { width: 25, box: "uniquevalue" }

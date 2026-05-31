@@ -1,5 +1,5 @@
 @php
-    $currentMilestone = $currentMilestone ?? null;
+    $currentMilestone = $milestone ?? null;
     $milestones = $milestones ?? [];
     $statusLabels = $statusLabels ?? [];
 @endphp

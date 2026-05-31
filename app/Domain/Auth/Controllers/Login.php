@@ -7,7 +7,6 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Setting\Services\Setting;
 use Symfony\Component\HttpFoundation\Response;
 
 class Login extends Controller
@@ -16,19 +15,15 @@ class Login extends Controller
 
     private Environment $config;
 
-    private Setting $settingService;
-
     /**
      * init - initialize private variables
      */
     public function init(
         AuthService $authService,
-        Environment $config,
-        Setting $settingService
+        Environment $config
     ): void {
         $this->authService = $authService;
         $this->config = $config;
-        $this->settingService = $settingService;
     }
 
     /**
@@ -48,36 +43,12 @@ class Login extends Controller
             return $return;
         }
 
-        $redirectUrl = BASE_URL.'/dashboard/home';
+        $redirectUrl = $this->authService->resolveSafeRedirect($_GET['redirect'] ?? null);
 
-        if (isset($_GET['redirect']) && trim($_GET['redirect']) !== '' && trim($_GET['redirect']) !== '/') {
-            $url = urldecode($_GET['redirect']);
-
-            // Check for open redirects, don't allow redirects to external sites.
-            if (
-                filter_var($url, FILTER_VALIDATE_URL) === false &&
-                ! in_array($url, ['/auth/logout'])
-            ) {
-                $redirectUrl = BASE_URL.'/'.$url;
-            }
-        }
-
-        if ($this->config->useLdap) {
-            $this->tpl->assign('inputPlaceholder', 'input.placeholders.enter_email_or_username');
-        } else {
-            $this->tpl->assign('inputPlaceholder', 'input.placeholders.enter_email');
-        }
+        $this->tpl->assign('inputPlaceholder', $this->authService->getLoginInputPlaceholder());
         $this->tpl->assign('redirectUrl', urlencode($redirectUrl));
-
         $this->tpl->assign('oidcEnabled', $this->config->oidcEnable);
-
-        $hideLogin = $this->settingService->getSetting('auth.hideDefaultLogin');
-
-        if (! empty($hideLogin) && $hideLogin == 'on') {
-            $this->tpl->assign('noLoginForm', true);
-        } else {
-            $this->tpl->assign('noLoginForm', $this->config->disableLoginForm);
-        }
+        $this->tpl->assign('noLoginForm', $this->authService->shouldHideLoginForm());
 
         return $this->tpl->display('auth.login', 'entry');
     }

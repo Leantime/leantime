@@ -4,9 +4,12 @@ namespace Leantime\Domain\Comments\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Reactions\Services\Reactions as ReactionsService;
 
 /**
  * @api
@@ -19,14 +22,18 @@ class Comments
 
     private LanguageCore $language;
 
+    private ReactionsService $reactionsService;
+
     public function __construct(
         CommentRepository $commentRepository,
         ProjectService $projectService,
-        LanguageCore $language
+        LanguageCore $language,
+        ReactionsService $reactionsService
     ) {
         $this->commentRepository = $commentRepository;
         $this->projectService = $projectService;
         $this->language = $language;
+        $this->reactionsService = $reactionsService;
     }
 
     /**
@@ -157,20 +164,61 @@ class Comments
     }
 
     /**
+     * Checks whether the current user is authorized to modify a comment.
+     * The caller must be the comment author or have at least manager role.
+     *
+     * @param  int  $commentId  The comment ID to check
+     * @return bool True if authorized, false otherwise
+     */
+    private function canModifyComment(int $commentId): bool
+    {
+        $comment = $this->commentRepository->getComment($commentId);
+
+        if (! $comment) {
+            return false;
+        }
+
+        $currentUserId = session('userdata.id');
+
+        // Comment author can always modify their own comment
+        if ((int) $comment['userId'] === (int) $currentUserId) {
+            return true;
+        }
+
+        // Managers and above can modify any comment
+        if (Auth::userIsAtLeast(Roles::$manager)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Edit a comment. The caller must be the comment author or a manager+.
+     *
      * @throws BindingResolutionException
      *
      * @api
      */
     public function editComment($values, $id): bool
     {
+        if (! $this->canModifyComment((int) $id)) {
+            return false;
+        }
+
         return $this->commentRepository->editComment($values['text'], $id);
     }
 
     /**
+     * Delete a comment. The caller must be the comment author or a manager+.
+     *
      * @api
      */
     public function deleteComment($commentId): bool
     {
+        if (! $this->canModifyComment((int) $commentId)) {
+            return false;
+        }
 
         return $this->commentRepository->deleteComment($commentId);
     }
@@ -196,5 +244,89 @@ class Comments
         }
 
         return $comments;
+    }
+
+    /**
+     * Toggle a sentiment reaction on a comment for a given user.
+     *
+     * Enforces the domain rule that a user may only have one sentiment
+     * reaction per comment: clicking the reaction the user already has
+     * removes it (toggle off); clicking a different reaction removes any
+     * existing reactions first, then adds the new one. Unknown reaction
+     * types are rejected.
+     *
+     * @param  int  $userId  The reacting user's id
+     * @param  int  $commentId  The comment being reacted to
+     * @param  string  $reaction  The reaction code (e.g. an emoji key)
+     * @return bool True when the toggle was applied, false when the reaction
+     *              type is unknown and nothing was changed
+     *
+     * @api
+     */
+    public function toggleCommentReaction(int $userId, int $commentId, string $reaction): bool
+    {
+        // Validate reaction against known types
+        if ($this->reactionsService->getReactionType($reaction) === false) {
+            return false;
+        }
+
+        // Check if user already has this exact reaction
+        $existingSameReaction = $this->reactionsService->getUserReactions($userId, 'comment', $commentId, $reaction);
+
+        if (! empty($existingSameReaction)) {
+            // User clicked the same reaction - remove it (toggle off)
+            $this->reactionsService->removeReaction($userId, 'comment', $commentId, $reaction);
+
+            return true;
+        }
+
+        // User wants to add a reaction - first remove any existing reactions
+        // (only one sentiment reaction allowed per user per comment)
+        $allUserReactions = $this->reactionsService->getUserReactions($userId, 'comment', $commentId);
+        if (is_array($allUserReactions)) {
+            foreach ($allUserReactions as $existingReaction) {
+                $this->reactionsService->removeReaction($userId, 'comment', $commentId, $existingReaction['reaction']);
+            }
+        }
+
+        // Now add the new reaction
+        $this->reactionsService->addReaction($userId, 'comment', $commentId, $reaction);
+
+        return true;
+    }
+
+    /**
+     * Build the reaction view data for a comment.
+     *
+     * Returns the grouped reactions (with user names for tooltips) plus a
+     * flat list of the given user's reaction codes for the comment, ready
+     * to be assigned to the template.
+     *
+     * @param  int  $commentId  The comment to load reactions for
+     * @param  int  $userId  The current user id (0 when anonymous)
+     * @return array{reactions: array, userReactions: list<string>} View data
+     *
+     * @api
+     */
+    public function getCommentReactions(int $commentId, int $userId): array
+    {
+        // Get reactions with user names for tooltips
+        $reactionsWithUsers = $this->reactionsService->getEntityReactionsWithUsers('comment', $commentId);
+
+        // Flatten the user's reactions for this comment into a list of codes
+        $userReactionsList = [];
+        if ($userId) {
+            $userReactionsData = $this->reactionsService->getUserReactions($userId, 'comment', $commentId);
+            if (is_array($userReactionsData)) {
+                foreach ($userReactionsData as $r) {
+                    $userReactionsList[] = $r['reaction'];
+                }
+            }
+        }
+
+        return [
+            'reactions' => $reactionsWithUsers ?: [],
+            'userReactions' => $userReactionsList,
+        ];
     }
 }

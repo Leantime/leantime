@@ -5,7 +5,6 @@ namespace Leantime\Domain\Plugins\Hxcontrollers;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Client\RequestException;
 use Leantime\Core\Controller\HtmxController;
-use Leantime\Domain\Plugins\Models\MarketplacePlugin;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
 
 class Details extends HtmxController
@@ -28,46 +27,18 @@ class Details extends HtmxController
         $pluginProps = $this->incomingRequest->request->all()['plugin'];
         $version = $pluginProps['version'];
         unset($pluginProps['version']);
-        $builder = build(new MarketplacePlugin);
 
-        foreach ($pluginProps as $key => $value) {
-
-            if (is_string($value)) {
-                $newValue = json_decode(json: $value, flags: JSON_OBJECT_AS_ARRAY);
-
-                if (json_last_error() === JSON_ERROR_NONE && $newValue !== null) {
-                    $value = $newValue;
-                }
-            }
-
-            $builder->set($key, $value);
-        }
-
-        $pluginModel = $builder->get();
+        $pluginModel = $this->pluginService->buildMarketplacePluginFromRequest($pluginProps);
 
         $this->tpl->assign('plugin', $pluginModel);
-
-        /**
-         * @var \Leantime\Domain\Plugins\Models\MarketplacePlugin|false $plugin
-         */
-        $isBundle = false;
-        if (collect($pluginModel->categories)->where('slug', '=', 'bundles')->count() > 0) {
-            $isBundle = true;
-        }
-
-        $this->tpl->assign('isBundle', $isBundle);
+        $this->tpl->assign('isBundle', $this->pluginService->isBundle($pluginModel));
 
         try {
             $this->pluginService->installMarketplacePlugin($pluginModel, $version);
         } catch (RequestException $e) {
-
-            // Parse and clean up error message
-            $errorJson = str_replace('HTTP request returned status code 500:', '', $e->getMessage());
-            $errorJson = str_replace('HTTP request returned status code 200:', '', $errorJson);
-            $errors = json_decode(trim($errorJson));
             report($e);
 
-            $this->tpl->assign('formError', $errors->error ?? $errors->message ?? 'There was an error installing the plugin');
+            $this->tpl->assign('formError', $this->pluginService->parseMarketplaceError($e));
 
             return 'plugin-installation';
         }

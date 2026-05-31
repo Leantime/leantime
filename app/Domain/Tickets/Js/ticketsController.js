@@ -299,23 +299,18 @@ leantime.ticketsController = (function () {
                             },
                             on_sort_change: function (tasks) {
 
-                                var statusPostData = {
-                                    action: "ganttSort",
-                                    payload: {}
-                                };
+                                var sortPayload = {};
 
                                 for (var i = 0; i < tasks.length; i++) {
                                         //start sorting counter at 1 instead of 0 since 0 will cause date comparison
-                                        statusPostData.payload[tasks[i].id] = tasks[i]._index+1;
+                                        sortPayload[tasks[i].id] = tasks[i]._index+1;
                                 }
 
-                                // POST to server using $.post or $.ajax
-                                jQuery.ajax({
-                                    type: 'POST',
-                                    url: leantime.appUrl + '/api/tickets',
-                                    data: statusPostData
-
-                                });
+                                leantime.rpc('Tickets.Tickets.sortTickets', { params: sortPayload })
+                                    .catch(function (error) {
+                                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                                        console.error('Could not sort tickets', error);
+                                    });
                             },
                             on_progress_change: function (task, progress) {
 
@@ -681,17 +676,8 @@ leantime.ticketsController = (function () {
                 var ticketId = dataValue[0];
                 var effortId = dataValue[1];
 
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data:
-                            {
-                                id: ticketId,
-                                storypoints: effortId
-                        }
-                    }
-                ).done(
+                leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: { storypoints: effortId } })
+                    .then(
                     function () {
                         jQuery("#effortDropdownMenuLink" + ticketId + " span.text").text(storyPointLabels[effortId]);
                         jQuery.growl({message: leantime.i18n.__("short_notifications.effort_updated"), style: "success"});
@@ -702,7 +688,10 @@ leantime.ticketsController = (function () {
                         }
 
                     }
-                );
+                ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        console.error('Could not update ticket ' + ticketId, error);
+                });
             } else {
                 console.log("Ticket Controller: Effort data value not set correctly");
             }
@@ -728,17 +717,8 @@ leantime.ticketsController = (function () {
                 var ticketId = dataValue[0];
                 var priorityId = dataValue[1];
 
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data:
-                            {
-                                id: ticketId,
-                                priority: priorityId
-                        }
-                    }
-                ).done(
+                leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: { priority: priorityId } })
+                    .then(
                     function () {
                         jQuery("#priorityDropdownMenuLink" + ticketId + " span.text").text(priorityLabels[priorityId]);
                         jQuery("#priorityDropdownMenuLink" + ticketId + "").removeClass("priority-bg-1 priority-bg-2 priority-bg-3 priority-bg-4 priority-bg-5");
@@ -756,7 +736,10 @@ leantime.ticketsController = (function () {
                         }
 
                     }
-                );
+                ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        console.error('Could not update ticket ' + ticketId, error);
+                });
             } else {
                 console.log("Ticket Controller: Priority data value not set correctly");
             }
@@ -778,17 +761,8 @@ leantime.ticketsController = (function () {
 
                 jQuery("#milestoneDropdownMenuLink" + ticketId + " span.text").append(" ...");
 
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data:
-                            {
-                                id : ticketId,
-                                milestoneid:milestoneId
-                        }
-                        }
-                ).done(
+                leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: { milestoneid: milestoneId } })
+                    .then(
                     function () {
                         jQuery("#milestoneDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
                         jQuery("#milestoneDropdownMenuLink" + ticketId).css("backgroundColor", color);
@@ -799,7 +773,10 @@ leantime.ticketsController = (function () {
                             moveCardToSwimlane(ticketId, milestoneId);
                         }
                     }
-                );
+                ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        console.error('Could not update ticket ' + ticketId, error);
+                });
             }
         });
     };
@@ -816,26 +793,18 @@ leantime.ticketsController = (function () {
                 var statusId = dataValue[1];
                 var className = dataValue[2];
 
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data:
-                            {
-                                id : ticketId,
-                                status:statusId
-                        }
-                        }
-                ).done(
-                    function (response) {
+                leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: { status: statusId } })
+                    .then(
+                    function () {
                         jQuery("#statusDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
                         jQuery("#statusDropdownMenuLink" + ticketId).removeClass().addClass(className + " dropdown-toggle f-left status ");
                         jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated"), style: "success"});
 
-                        leantime.handleAsyncResponse(response);
-
                     }
-                );
+                ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        console.error('Could not update ticket ' + ticketId, error);
+                });
             }
         });
 
@@ -853,17 +822,8 @@ leantime.ticketsController = (function () {
                 var userId = dataValue[1];
                 var profileImageId = dataValue[2];
 
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data:
-                            {
-                                id : ticketId,
-                                editorId:userId
-                        }
-                        }
-                ).done(
+                leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: { editorId: userId } })
+                    .then(
                     function () {
                         jQuery("#userDropdownMenuLink" + ticketId + " span.text span#userImage" + ticketId + " img").attr("src", leantime.appUrl + "/api/users?profileImage=" + userId);
                         jQuery("#userDropdownMenuLink" + ticketId + " span.text span#user" + ticketId).text(dataLabel);
@@ -874,7 +834,10 @@ leantime.ticketsController = (function () {
                             moveCardToSwimlane(ticketId, userId);
                         }
                     }
-                );
+                ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        console.error('Could not update ticket ' + ticketId, error);
+                });
             }
         });
     };
@@ -889,22 +852,15 @@ leantime.ticketsController = (function () {
                 var entityId = dataLabel[1];
                 var value = jQuery(this).val();
 
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data:
-                            {
-                                id : entityId,
-                                [fieldName]:value,
-
-                        }
-                    }
-                ).done(
+                leantime.rpc('Tickets.Tickets.patchTicket', { id: entityId, values: { [fieldName]: value } })
+                    .then(
                     function () {
                         jQuery.growl({message: leantime.i18n.__("notifications.subtask_saved"), style: "success"});
                     }
-                );
+                ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        console.error('Could not update ticket ' + entityId, error);
+                });
             }
 
         });
@@ -921,17 +877,8 @@ leantime.ticketsController = (function () {
                 var ticketId = dataValue[0];
                 var sprintId = dataValue[1];
 
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data:
-                            {
-                                id : ticketId,
-                                sprint:sprintId
-                        }
-                        }
-                ).done(
+                leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: { sprint: sprintId } })
+                    .then(
                     function () {
                         jQuery("#sprintDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
                         jQuery.growl({message: leantime.i18n.__("short_notifications.sprint_updated"), style: "success"});
@@ -941,7 +888,10 @@ leantime.ticketsController = (function () {
                             moveCardToSwimlane(ticketId, sprintId);
                         }
                     }
-                );
+                ).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        console.error('Could not update ticket ' + ticketId, error);
+                });
             }
         });
     };
@@ -1496,21 +1446,16 @@ leantime.ticketsController = (function () {
                             // Show success notification immediately for better perceived speed
                             jQuery.growl({message: "To-Do Updated", style: "success"});
 
-                            var patchData = {
-                                id: ticketId
-                            };
-                            patchData[fieldName] = newGroupValue;
+                            var swimlaneValues = {};
+                            swimlaneValues[fieldName] = newGroupValue;
 
                             // PATCH the ticket with the new swimlane value (confirmation happens in background)
-                            jQuery.ajax({
-                                type: 'PATCH',
-                                url: leantime.appUrl + '/api/tickets',
-                                data: patchData
-                            }).fail(function() {
-                                jQuery.growl({message: leantime.i18n.__("short_notifications.not_saved") || "Error updating ticket", style: "error"});
-                                // Reload on failure to restore correct state
-                                location.reload();
-                            });
+                            leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: swimlaneValues })
+                                .catch(function() {
+                                    jQuery.growl({message: leantime.i18n.__("short_notifications.not_saved") || "Error updating ticket", style: "error"});
+                                    // Reload on failure to restore correct state
+                                    location.reload();
+                                });
                         }
                     }
 
@@ -1520,28 +1465,20 @@ leantime.ticketsController = (function () {
                     // Get the new parent swimlane for status update
                     var $targetSwimlane = ui.item.closest('.sortableTicketList');
 
-                    var statusPostData = {
-                        action: "kanbanSort",
-                        payload: {},
-                        handler: ui.item[0].id
-                    };
+                    var sortPayload = {};
+                    var sortHandler = ui.item[0].id;
 
 
                     for (var i = 0; i < ticketStatusList.length; i++) {
                         if ($targetSwimlane.find(".contentInner.status_" + ticketStatusList[i]).length) {
-                            statusPostData.payload[ticketStatusList[i]] = $targetSwimlane.find(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
+                            sortPayload[ticketStatusList[i]] = $targetSwimlane.find(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
                         }
                     }
 
-                    // POST to server using $.post or $.ajax
-                    jQuery.ajax({
-                        type: 'POST',
-                        url: leantime.appUrl + '/api/tickets',
-                        data: statusPostData
-
-                    }).done(function (response) {
-                        leantime.handleAsyncResponse(response);
-                    });
+                    leantime.rpc('Tickets.Tickets.updateTicketStatusAndSorting', { params: sortPayload, handler: sortHandler })
+                        .catch(function (error) {
+                            console.error('Could not update ticket status and sorting', error);
+                        });
 
                 }
             });
@@ -1998,7 +1935,21 @@ leantime.ticketsController = (function () {
 
     var initTagsInput = function ( ) {
         jQuery("#tags").tagsInput({
-            'autocomplete_url': leantime.appUrl + '/api/tags',
+            // autocomplete_url must be defined to enable the autocomplete branch in the tagsInput plugin.
+            // The actual data source is overridden below via the jQuery UI autocomplete `source` function.
+            'autocomplete_url': true,
+            'autocomplete': {
+                source: function (request, response) {
+                    leantime.rpc('Tags.Tags.getTags', { projectId: leantime.currentProject, term: request.term })
+                        .then(function (tags) {
+                            response(tags || []);
+                        })
+                        .catch(function (error) {
+                            console.error('Could not load tags', error);
+                            response([]);
+                        });
+                }
+            }
         });
 
         jQuery("#tags_tag").on("focusout", function () {

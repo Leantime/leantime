@@ -8,11 +8,16 @@ namespace Leantime\Domain\Api\Controllers;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Controller\Controller;
+use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Core\Exceptions\MissingParameterException;
+use Leantime\Core\Http\Responses\JsonRpcErrorResponse;
+use Leantime\Core\Http\Responses\JsonRpcResponse;
 use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Component\HttpFoundation\Response;
 
 class Jsonrpc extends Controller
@@ -166,7 +171,7 @@ class Jsonrpc extends Controller
          */
         if (array_keys($params) == range(0, count($params) - 1)) {
 
-            return $this->tpl->displayJson(array_map(
+            return new JsonResponse(array_map(
                 function ($requestParams) {
                     return json_decode($this->executeApiRequest($requestParams)->getContent());
                 },
@@ -206,8 +211,10 @@ class Jsonrpc extends Controller
             return $this->returnMethodNotFound("Method doesn't exist: $methodName", $id);
         }
 
-        // Check method attributes
-        // TODO: Check if method is available for api
+        // Only allow methods explicitly marked with @api annotation
+        if (! $this->isApiMethod($serviceName, $methodName)) {
+            return $this->returnMethodNotFound("Method is not available via API: $methodName", $id);
+        }
 
         if ($jsonRpcVer == null) {
             return $this->returnInvalidRequest('You must include a "jsonrpc" parameter with a value of "2.0"', $id);
@@ -232,8 +239,21 @@ class Jsonrpc extends Controller
         // can be null
         try {
             $method_response = app()->make($serviceName)->$methodName(...$preparedParams);
-        } catch (Exception $e) {
-            return $this->returnServerError($e, $id);
+        } catch (\Throwable $e) {
+            // Leantime exceptions carry a client-safe code/message/data and map to a precise
+            // JSON-RPC error. Anything else is an unexpected failure that must be logged and
+            // collapsed to a generic server error so internal detail never reaches the caller.
+            if (! $e instanceof LeantimeExceptionInterface) {
+                Log::error($e);
+            }
+
+            // A notification (no id) must not be responded to, even on failure, per the
+            // JSON-RPC 2.0 spec — mirror the success path's empty 200.
+            if ($id === null) {
+                return new Response('', Response::HTTP_OK);
+            }
+
+            return JsonRpcErrorResponse::fromException($e, $id)->toResponse($this->incomingRequest);
         }
 
         // Convert objects to associative arrays for JSON serialization, but pass
@@ -289,6 +309,29 @@ class Jsonrpc extends Controller
             ];
         }
 
+    }
+
+    /**
+     * Checks if a service method is marked with the @api annotation.
+     *
+     * @param  string  $serviceName  Fully qualified class name
+     * @param  string  $methodName  Method name
+     * @return bool True if the method has an @api docblock tag
+     */
+    private function isApiMethod(string $serviceName, string $methodName): bool
+    {
+        try {
+            $reflection = new ReflectionMethod($serviceName, $methodName);
+            $docComment = $reflection->getDocComment();
+
+            if ($docComment === false) {
+                return false;
+            }
+
+            return (bool) preg_match('/@api\b/', $docComment);
+        } catch (\ReflectionException $e) {
+            return false;
+        }
     }
 
     /**
@@ -382,20 +425,7 @@ class Jsonrpc extends Controller
      */
     private function returnResponse(mixed $returnValue, int|string|null $id = null): Response
     {
-        /**
-         * No IDs imply notification and MUST not be responded to
-         *
-         * @see https://jsonrpc.org/specification#notification
-         */
-        if ($id === null) {
-            return new Response;
-        }
-
-        return $this->tpl->displayJson([
-            'jsonrpc' => '2.0',
-            'result' => $returnValue,
-            'id' => $id,
-        ]);
+        return (new JsonRpcResponse($returnValue, $id))->toResponse($this->incomingRequest);
     }
 
     /**
@@ -405,17 +435,12 @@ class Jsonrpc extends Controller
      */
     private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null, int|string|null $id = 0): Response
     {
+        // Protocol-level callers (parse / invalid-request / method-not-found / invalid-params)
+        // may pass their own thrown exception for context; surface only its message. Service-
+        // level exceptions never reach here — they go through JsonRpcErrorResponse::fromException().
+        $data = $additional_info instanceof \Throwable ? $additional_info->getMessage() : $additional_info;
 
-        // TODO: And FYI. json_encode cannot encode throwable. https://github.com/pmjones/throwable-properties
-        return $this->tpl->displayJson([
-            'jsonrpc' => '2.0',
-            'error' => [
-                'code' => $errorcode,
-                'message' => $errorMessage,
-                'data' => $additional_info instanceof \Throwable ? $additional_info->getMessage() : $additional_info,
-            ],
-            'id' => $id,
-        ]);
+        return (new JsonRpcErrorResponse($errorcode, $errorMessage, $data, $id))->toResponse($this->incomingRequest);
     }
 
     /**

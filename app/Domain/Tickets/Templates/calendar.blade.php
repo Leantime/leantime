@@ -181,26 +181,30 @@
                 },
                 eventDrop: function (event) {
 
-                    jQuery.ajax({
-                        type : 'PATCH',
-                        url  : leantime.appUrl + '/api/tickets',
-                        data : {
-                            id: event.event.extendedProps.enitityId,
+                    leantime.rpc('Tickets.Tickets.patchTicket', {
+                        id: event.event.extendedProps.enitityId,
+                        values: {
                             editFrom: event.event.startStr,
                             editTo: event.event.endStr
                         }
+                    }).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        console.error('Could not update ticket dates', error);
                     });
                 },
                 eventResize: function (event) {
 
-                    jQuery.ajax({
-                        type : 'PATCH',
-                        url  : leantime.appUrl + '/api/tickets',
-                        data : {
-                            id: event.event.extendedProps.enitityId,
+                    leantime.rpc('Tickets.Tickets.patchTicket', {
+                        id: event.event.extendedProps.enitityId,
+                        values: {
                             editFrom: event.event.startStr,
                             editTo: event.event.endStr
                         }
+                    }).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        console.error('Could not update ticket dates', error);
                     })
 
                 },
@@ -230,14 +234,10 @@
 
             calendar.changeView(jQuery("#my-select option:selected").val());
 
-            jQuery.ajax({
-                type : 'PATCH',
-                url  : leantime.appUrl + '/api/submenu',
-                data : {
-                    submenu : "myProjectCalendarView",
-                    state   : jQuery("#my-select option:selected").val()
-                }
-            });
+            leantime.rpc('Api.Api.setSubmenuState', {
+                submenu: "myProjectCalendarView",
+                state: jQuery("#my-select option:selected").val()
+            }).catch(function (e) { console.error('Could not update submenu state', e); });
 
         });
     });

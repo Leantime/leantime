@@ -47,10 +47,7 @@ class Notifications
     }
 
     /**
-     * @api
-     */
-    /**
-     * @api
+     * Not exposed via JSON-RPC: it accepts an arbitrary $userId.
      */
     public function getAllNotifications($userId, int $showNewOnly = 0, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = []): false|array
     {
@@ -68,19 +65,62 @@ class Notifications
     }
 
     /**
+     * consumeFlashNotification - reads the pending growl/flash notification from the
+     * session, clears the relevant session keys (read-once semantics) and returns the
+     * assembled payload.
+     *
+     * Returns null when there is no pending notification.
+     *
+     * @return array{notification: string, type: string, eventId: string}|null
+     *
      * @api
      */
+    public function consumeFlashNotification(): ?array
+    {
+        if (session('notification') == '') {
+            return null;
+        }
+
+        $notificationArray = [
+            'notification' => session('notification') ?? '',
+            'type' => session('notificationType') ?? '',
+            'eventId' => session('eventId') ?? '',
+        ];
+
+        session(['notification' => '']);
+        session(['notificationType' => '']);
+        session(['eventId' => '']);
+
+        return $notificationArray;
+    }
+
     /**
+     * Marks a notification (or 'all') read for the CURRENT (session) user.
+     *
+     * JSON-RPC entry point: derives the user from the session so a caller
+     * cannot mark another user's notifications read.
+     *
+     * @param  int|string  $id  A notification id, or 'all'
+     * @return bool True on success
+     *
      * @api
+     */
+    public function markRead($id): bool
+    {
+        return $this->markNotificationRead($id, session('userdata.id'));
+    }
+
+    /**
+     * Not exposed via JSON-RPC (accepts an arbitrary $userId). Use markRead().
      */
     public function markNotificationRead($id, $userId): bool
     {
-
         if ($id == 'all') {
             return $this->notificationsRepo->markAllNotificationRead($userId);
-        } else {
-            return $this->notificationsRepo->markNotificationRead($id);
         }
+
+        // Scope the update by user so a caller cannot mark another user's notification read.
+        return $this->notificationsRepo->markNotificationRead($id, $userId);
     }
 
     /**

@@ -14,6 +14,9 @@ use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Events\Htmx\HtmxEvent;
+use Leantime\Core\Events\Htmx\HtmxEvents;
+use Leantime\Core\Events\Htmx\HtmxUiEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\DateTimeInfoEnum;
@@ -224,10 +227,38 @@ class Template
      * Sets the response header to trigger an htmx event
      *
      **/
-    public function setHTMXEvent(string $eventName): void
+    public function setHTMXEvent(HtmxEvent|string $eventName): void
     {
         $this->headers['HX-Trigger'] ??= [];
-        $this->headers['HX-Trigger'][] = $eventName;
+        $this->headers['HX-Trigger'][] = $eventName instanceof HtmxEvent ? $eventName->event() : $eventName;
+    }
+
+    /**
+     * Queue one or more client (HTMX) events on the HX-Trigger response header.
+     * Accepts HtmxEvent enum cases (preferred) or raw strings.
+     */
+    public function emit(HtmxEvent|string ...$events): void
+    {
+        foreach ($events as $event) {
+            $this->setHTMXEvent($event);
+        }
+    }
+
+    /**
+     * Finalize queued headers for a response: expand legacy event aliases on HX-Trigger and
+     * collapse the queued event list to the comma-separated string htmx expects.
+     *
+     * @return array<string, mixed>
+     */
+    private function responseHeaders(): array
+    {
+        $headers = $this->headers;
+
+        if (! empty($headers['HX-Trigger'])) {
+            $headers['HX-Trigger'] = HtmxEvents::triggerHeader((array) $headers['HX-Trigger']);
+        }
+
+        return $headers;
     }
 
     /**
@@ -251,7 +282,7 @@ class Template
      **/
     public function closeModal(): void
     {
-        $this->setHTMXEvent('HTMX.closemodal');
+        $this->setHTMXEvent(HtmxUiEvents::ModalClose);
     }
 
     public function getHeaders()
@@ -306,7 +337,7 @@ class Template
 
         $content = $view->render();
 
-        return new Response($content, $responseCode, array_merge($headers, $this->headers));
+        return new Response($content, $responseCode, array_merge($headers, $this->responseHeaders()));
     }
 
     /**
@@ -339,7 +370,7 @@ class Template
 
     public function emptyResponse($responseCode = 200)
     {
-        return new Response('', $responseCode, $this->headers);
+        return new Response('', $responseCode, $this->responseHeaders());
     }
 
     /**
@@ -657,7 +688,7 @@ class Template
         session(['notificationType' => $type]);
         session(['event_id' => $event_id]);
 
-        $this->setHTMXEvent('HTMX.ShowNotification');
+        $this->setHTMXEvent(HtmxUiEvents::Notify);
     }
 
     /**
@@ -741,7 +772,7 @@ class Template
                 'comments' => 0,
                 'cdata' => 0,
                 'deny_attribute' => 'on*',
-                'elements' => '* -applet -canvas -embed -object -script',
+                'elements' => '* -applet -canvas -embed -object -script -svg -math -iframe -form -input -textarea -button -select -base -meta -link -style',
                 'schemes' => 'href: aim, feed, file, ftp, gopher, http, https, irc, mailto, news, nntp, sftp, ssh, tel, telnet; style: !; *:file, http, https',
             ]);
         }

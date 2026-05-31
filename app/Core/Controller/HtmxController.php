@@ -5,6 +5,8 @@ namespace Leantime\Core\Controller;
 use http\Exception\BadMethodCallException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Events\Htmx\HtmxEvent;
+use Leantime\Core\Events\Htmx\HtmxEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\UI\Template;
@@ -67,10 +69,21 @@ abstract class HtmxController
      * Sets the response header to trigger an htmx event
      *
      **/
-    public function setHTMXEvent(string $eventName): void
+    public function setHTMXEvent(HtmxEvent|string $eventName): void
     {
         $this->headers['HX-Trigger'] ??= [];
-        $this->headers['HX-Trigger'][] = $eventName;
+        $this->headers['HX-Trigger'][] = $eventName instanceof HtmxEvent ? $eventName->event() : $eventName;
+    }
+
+    /**
+     * Queue one or more client (HTMX) events on the HX-Trigger response header.
+     * Accepts HtmxEvent enum cases (preferred) or raw strings.
+     */
+    public function emit(HtmxEvent|string ...$events): void
+    {
+        foreach ($events as $event) {
+            $this->setHTMXEvent($event);
+        }
     }
 
     /**
@@ -82,11 +95,25 @@ abstract class HtmxController
         $this->response = tap(
             $this->tpl->displayFragment($this::$view, $fragment ?? ''),
             function (Response $response): void {
-                foreach ($this->headers as $key => $value) {
-                    $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
+                // Merge queued HX-Trigger events from BOTH the controller and the template
+                // (set()ing each bag separately would let the second silently overwrite the
+                // first), expand legacy aliases, and emit the comma-separated list once.
+                $triggerEvents = array_merge(
+                    $this->headers['HX-Trigger'] ?? [],
+                    (array) ($this->tpl->getHeaders()['HX-Trigger'] ?? [])
+                );
+
+                foreach ([$this->headers, $this->tpl->getHeaders()] as $headerBag) {
+                    foreach ($headerBag as $key => $value) {
+                        if ($key === 'HX-Trigger') {
+                            continue;
+                        }
+                        $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
+                    }
                 }
-                foreach ($this->tpl->getHeaders() as $key => $value) {
-                    $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
+
+                if (! empty($triggerEvents)) {
+                    $response->headers->set('HX-Trigger', HtmxEvents::triggerHeader($triggerEvents));
                 }
             },
         );

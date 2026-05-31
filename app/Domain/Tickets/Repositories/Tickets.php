@@ -145,7 +145,7 @@ class Tickets
             // Adding the original version back in case folks removed it
             $statusList[-1] = $this->statusListSeed[-1];
 
-            foreach (unserialize($result->value) as $key => $status) {
+            foreach (safe_unserialize($result->value, []) as $key => $status) {
                 if (is_int($key)) {
                     // Backwards Compatibility with existing labels in db
                     // Prior to 2.1.9 labels were stored as <<statuskey>>:<<labelString>>
@@ -1468,6 +1468,55 @@ class Tickets
     }
 
     /**
+     * Single-query equivalent of getNumberOfAllTickets + getNumberOfClosedTickets +
+     * getEffortOfAllTickets + getEffortOfClosedTickets for one project. Used by the
+     * project-progress widget to avoid four separate table scans per project.
+     *
+     * The effort expression mirrors the standalone effort methods exactly: a ticket's
+     * storypoints, or the project's average story size as a fallback when unset/zero.
+     *
+     * @param  int|string  $projectId
+     * @param  mixed  $averageStorySize  Fallback effort for tickets without storypoints.
+     * @return array{allCount:int, closedCount:int, allEffort:float, closedEffort:float}
+     */
+    public function getProjectProgressAggregates($projectId, $averageStorySize): array
+    {
+        $statusGroupsSQL = $this->getStatusListGroupedByType($projectId);
+        $statusGroups = $this->dbHelper->parseStatusGroups($statusGroupsSQL);
+        $doneStatuses = $statusGroups['DONE'] ?? [];
+
+        $effortExpr = 'CASE WHEN zp_tickets.storypoints IS NOT NULL AND zp_tickets.storypoints <> 0 THEN zp_tickets.storypoints ELSE ? END';
+
+        $select = 'COUNT(*) AS '.$this->dbHelper->wrapColumn('allCount')
+            .', SUM('.$effortExpr.') AS '.$this->dbHelper->wrapColumn('allEffort');
+        $bindings = [$averageStorySize];
+
+        if (! empty($doneStatuses)) {
+            $placeholders = implode(',', array_fill(0, count($doneStatuses), '?'));
+
+            $select .= ', SUM(CASE WHEN zp_tickets.status IN ('.$placeholders.') THEN 1 ELSE 0 END) AS '.$this->dbHelper->wrapColumn('closedCount')
+                .', SUM(CASE WHEN zp_tickets.status IN ('.$placeholders.') THEN ('.$effortExpr.') ELSE 0 END) AS '.$this->dbHelper->wrapColumn('closedEffort');
+
+            // Binding order must match the placeholders left-to-right:
+            // allEffort fallback, closedCount IN-list, closedEffort IN-list, closedEffort fallback.
+            $bindings = array_merge([$averageStorySize], $doneStatuses, $doneStatuses, [$averageStorySize]);
+        }
+
+        $result = $this->connection->table('zp_tickets')
+            ->selectRaw($select, $bindings)
+            ->where('zp_tickets.type', '<>', 'milestone')
+            ->where('zp_tickets.projectId', $projectId)
+            ->first();
+
+        return [
+            'allCount' => (int) ($result->allCount ?? 0),
+            'closedCount' => (int) ($result->closedCount ?? 0),
+            'allEffort' => (float) ($result->allEffort ?? 0),
+            'closedEffort' => (float) ($result->closedEffort ?? 0),
+        ];
+    }
+
+    /**
      * addTicket - add a Ticket with postback test
      */
     public function addTicket(array $values): bool|int
@@ -1500,8 +1549,9 @@ class Tickets
 
         if ($ticketId !== false) {
             $ticketId = intval($ticketId);
-            if (! empty($values['collaborators'])) {
-                $this->addCollaborators($ticketId, $values['collaborators'], $values['userId']);
+            $collaborators = $this->normalizeCollaborators($values['collaborators'] ?? [], $values['editorId'] ?? null);
+            if (! empty($collaborators)) {
+                $this->addCollaborators($ticketId, $collaborators, $values['userId']);
             }
 
             return $ticketId;
@@ -1616,9 +1666,13 @@ class Tickets
         $this->removeCollaborators($id);
 
         // Add new collaborators
-        $this->addCollaborators($id, $values['collaborators'] ?? [], session('userdata.id'));
+        $this->addCollaborators(
+            $id,
+            $this->normalizeCollaborators($values['collaborators'] ?? [], $values['editorId'] ?? null),
+            session('userdata.id')
+        );
 
-        return $result;
+        return $result !== false;
     }
 
     public function updateTicketStatus($ticketId, $status, int $ticketSorting = -1, $handler = null): bool
@@ -1757,6 +1811,8 @@ class Tickets
      */
     public function delticket($id): bool
     {
+        $this->removeCollaborators((int) $id);
+
         $this->connection->table('zp_tickets')
             ->where('id', $id)
             ->delete();
@@ -1808,6 +1864,8 @@ class Tickets
      */
     public function addCollaborators(int $ticketId, array $collaborators, int $createdBy): bool
     {
+        $collaborators = $this->normalizeCollaborators($collaborators);
+
         if (empty($collaborators)) {
             return true;
         }
@@ -1841,8 +1899,12 @@ class Tickets
             ->select('entityB AS userId')
             ->where('entityA', $ticketId)
             ->where('entityAType', 'Ticket')
+            ->where('entityBType', 'User')
             ->where('relationship', EntityRelationshipEnum::Collaborator->value)
             ->pluck('userId')
+            ->map(fn ($userId) => (int) $userId)
+            ->unique()
+            ->values()
             ->toArray();
     }
 
@@ -1876,7 +1938,9 @@ class Tickets
             $ticketId = (int) $row->entityA;
             $userId = (int) $row->entityB;
             $collaboratorsByTicket[$ticketId] ??= [];
-            $collaboratorsByTicket[$ticketId][] = $userId;
+            if (! in_array($userId, $collaboratorsByTicket[$ticketId], true)) {
+                $collaboratorsByTicket[$ticketId][] = $userId;
+            }
         }
 
         return $collaboratorsByTicket;
@@ -1893,8 +1957,33 @@ class Tickets
         return $this->connection->table('zp_entity_relationship')
             ->where('entityA', $ticketId)
             ->where('entityAType', 'Ticket')
+            ->where('entityBType', 'User')
             ->where('relationship', EntityRelationshipEnum::Collaborator->value)
             ->delete();
+    }
+
+    /**
+     * Normalize collaborator user IDs before relationship reads/writes.
+     *
+     * @param  array<int, mixed>  $collaborators
+     * @return array<int, int>
+     */
+    private function normalizeCollaborators(array $collaborators, mixed $editorId = null): array
+    {
+        $editorId = (int) $editorId;
+        $normalized = [];
+
+        foreach ($collaborators as $userId) {
+            $userId = (int) $userId;
+
+            if ($userId <= 0 || ($editorId > 0 && $userId === $editorId)) {
+                continue;
+            }
+
+            $normalized[$userId] = $userId;
+        }
+
+        return array_values($normalized);
     }
 
     /**

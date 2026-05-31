@@ -13,6 +13,9 @@ class ShowMyList extends Controller
 {
     private TimesheetService $timesheetService;
 
+    /**
+     * Initializes dependencies.
+     */
     public function init(TimesheetService $timesheetService): void
     {
         $this->timesheetService = $timesheetService;
@@ -20,24 +23,34 @@ class ShowMyList extends Controller
     }
 
     /**
-     * run - display template and edit data
+     * Displays the user's timesheet list.
      *
-     *
-     * @throws \Exception
+     * @param  array  $params  Request parameters
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
         $kind = 'all';
-        if (! empty($_POST['kind'])) {
-            $kind = ($_POST['kind']);
-        }
+        $dateFrom = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
+        $dateTo = dtHelper()->userNow()->endOfWeek()->setToDbTimezone();
 
-        // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
-        // The front end javascript is hardcode to start the week on mondays, so we use that here too.
+        $this->assignTemplateVars($dateFrom, $dateTo, $kind);
 
-        // Get start of the week in current users timezone and then switch to UTC
+        return $this->tpl->display('timesheets.showMyList');
+    }
+
+    /**
+     * Handles timesheet list filter changes.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
+
+        $kind = ! empty($_POST['kind']) ? $_POST['kind'] : 'all';
+
         $dateFrom = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
         $dateTo = dtHelper()->userNow()->endOfWeek()->setToDbTimezone();
 
@@ -49,6 +62,16 @@ class ShowMyList extends Controller
             $dateTo = dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
         }
 
+        $this->assignTemplateVars($dateFrom, $dateTo, $kind);
+
+        return $this->tpl->display('timesheets.showMyList');
+    }
+
+    /**
+     * Assigns common template variables.
+     */
+    private function assignTemplateVars(CarbonInterface $dateFrom, CarbonInterface $dateTo, string $kind): void
+    {
         $this->tpl->assign('dateFrom', $dateFrom);
         $this->tpl->assign('dateTo', $dateTo);
         $this->tpl->assign('actKind', $kind);
@@ -59,11 +82,9 @@ class ShowMyList extends Controller
             projectId: -1,
             kind: $kind,
             userId: session('userdata.id'),
-            invEmpl: -1,
-            invComp: -1,
-            paid: -1
+            invEmpl: '-1',
+            invComp: '-1',
+            paid: '-1'
         ));
-
-        return $this->tpl->display('timesheets.showMyList');
     }
 }

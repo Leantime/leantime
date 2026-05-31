@@ -13,7 +13,7 @@
     </style>
 </head>
 
-<body class="loginpage" style="height:100%; ">
+<body class="loginpage" style="height:100%; " hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'>
 <div class="" style="background:url({{BASE_URL}}/assets/images/spotlightBg.png); background-size: cover; height:100%; background-attachment: fixed;">
     <div style="    width: 100%;
     height: 100%;

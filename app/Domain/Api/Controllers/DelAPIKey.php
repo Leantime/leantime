@@ -4,73 +4,88 @@ namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Api\Services\Api;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class DelAPIKey
- *
- * This class is responsible for deleting an API key.
+ * Handles API key deletion.
  */
 class DelAPIKey extends Controller
 {
-    private Api $APIService;
-
-    private UserRepository $userRepo;
+    private UserService $userService;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
-    public function init(Api $APIService, UserRepository $userRepo): void
+    public function init(UserService $userService): void
     {
-        // @TODO: APIService is never used in this class?
-        $this->APIService = $APIService;
-        $this->userRepo = $userRepo;
+        $this->userService = $userService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the delete API key confirmation.
      *
-     *
+     * @param  array  $params  Request parameters
      *
      * @throws \Exception
      */
-    public function run($params): RedirectResponse|Response
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-        // Only Admins
-        if (isset($params['id']) === true) {
-            $id = (int) ($params['id']);
-            $user = $this->userRepo->getUser($id);
-
-            // Delete User
-            if (isset($_POST['del']) === true) {
-                if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
-                    $this->userRepo->deleteUser($id);
-                    $this->tpl->setNotification($this->language->__('notifications.key_deleted'), 'success', 'apikey_deleted');
-
-                    return Frontcontroller::redirect(BASE_URL.'/setting/editCompanySettings/#apiKeys');
-                } else {
-                    $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
-                }
-            }
-
-            // Sensitive Form, generate form tokens
-            $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-            session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
-            session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
-
-            // Assign variables
-            $this->tpl->assign('user', $user);
-
-            return $this->tpl->display('api.delKey');
-        } else {
+        $id = (int) ($params['id'] ?? 0);
+        if ($id <= 0) {
             return $this->tpl->display('errors.error403');
         }
+
+        $this->tpl->assign('user', $this->userService->getUser($id));
+        $this->generateFormTokens();
+
+        return $this->tpl->display('api.delKey');
+    }
+
+    /**
+     * Handles API key deletion.
+     *
+     * @param  array  $params  Request parameters
+     *
+     * @throws \Exception
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
+
+        $id = (int) ($params['id'] ?? 0);
+        if ($id <= 0) {
+            return $this->tpl->display('errors.error403');
+        }
+
+        if (isset($_POST['del'])) {
+            if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
+                $this->userService->deleteUser($id);
+                $this->tpl->setNotification($this->language->__('notifications.key_deleted'), 'success', 'apikey_deleted');
+
+                return Frontcontroller::redirect(BASE_URL.'/setting/editCompanySettings/#apiKeys');
+            }
+
+            $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
+        }
+
+        $this->tpl->assign('user', $this->userService->getUser($id));
+        $this->generateFormTokens();
+
+        return $this->tpl->display('api.delKey');
+    }
+
+    /**
+     * Generates CSRF form tokens for the delete confirmation form.
+     */
+    private function generateFormTokens(): void
+    {
+        $permittedChars = '0123456789abcdefghijklmnopqrstuvwxyz';
+        session(['formTokenName' => substr(str_shuffle($permittedChars), 0, 32)]);
+        session(['formTokenValue' => substr(str_shuffle($permittedChars), 0, 32)]);
     }
 }

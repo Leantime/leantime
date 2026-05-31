@@ -2,6 +2,11 @@ leantime.calendarController = (function () {
 
     var closeModal = false;
 
+    // Latest todo-draggable initializer, refreshed on each initWidgetCalendar() call. The single
+    // global htmx.onLoad handler (registered once) calls THIS, so reloading the calendar widget
+    // rewires drag/drop to the current calendar instance instead of a stale closure.
+    var latestTodoDraggableInit = null;
+
     //Functions
     var initCalendar = function (userEvents) {
 
@@ -231,69 +236,82 @@ leantime.calendarController = (function () {
             },
             eventDrop: function (event) {
                 if (event.event.extendedProps.enitityType == "ticket") {
-                    jQuery.ajax({
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data: {
-                            id: event.event.extendedProps.enitityId,
+                    leantime.rpc('Tickets.Tickets.patchTicket', {
+                        id: event.event.extendedProps.enitityId,
+                        values: {
                             editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                             timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
                             editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                             timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                         }
+                    }).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        console.error('Could not update ticket dates', error);
                     });
                 } else if (event.event.extendedProps.enitityType == "event") {
-                    jQuery.ajax({
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/calendar',
-                        data: {
-                            id: event.event.extendedProps.enitityId,
+                    leantime.rpc('Calendar.Calendar.patch', {
+                        id: event.event.extendedProps.enitityId,
+                        params: {
                             dateFrom: event.event.startStr,
                             dateTo: event.event.endStr
                         }
+                    }).then(function (success) {
+                        // Denied/failed update resolves to false — undo the visual move.
+                        if (! success) { event.revert(); }
+                    }).catch(function (error) {
+                        console.error('Could not update event dates', error);
+                        event.revert();
                     })
                 }
             },
             eventResize: function (event) {
                 if (event.event.extendedProps.enitityType == "ticket") {
-                    jQuery.ajax({
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data: {
-                            id: event.event.extendedProps.enitityId,
+                    leantime.rpc('Tickets.Tickets.patchTicket', {
+                        id: event.event.extendedProps.enitityId,
+                        values: {
                             editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                             timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
                             editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                             timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                         }
-                    })
+                    }).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        console.error('Could not update ticket dates', error);
+                    });
                 } else if (event.event.extendedProps.enitityType == "event") {
-                    jQuery.ajax({
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/calendar',
-                        data: {
-                            id: event.event.extendedProps.enitityId,
+                    leantime.rpc('Calendar.Calendar.patch', {
+                        id: event.event.extendedProps.enitityId,
+                        params: {
                             dateFrom: event.event.startStr,
                             dateTo: event.event.endStr
                         }
+                    }).then(function (success) {
+                        // Denied/failed update resolves to false — undo the visual move.
+                        if (! success) { event.revert(); }
+                    }).catch(function (error) {
+                        console.error('Could not update event dates', error);
+                        event.revert();
                     })
                 }
 
             },
             eventReceive: function (event) {
 
-                jQuery.ajax({
-                    type: 'PATCH',
-                    url: leantime.appUrl + '/api/tickets',
-                    data: {
-                        id: event.event.id,
+                leantime.rpc('Tickets.Tickets.patchTicket', {
+                    id: event.event.id,
+                    values: {
                         editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                         timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
                         editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                         timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
-
                     }
-                })
+                }).catch(function (error) {
+                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        console.error('Could not update ticket dates', error);
+                    });
 
             },
             eventDragStart: function (event) {
@@ -396,6 +414,9 @@ leantime.calendarController = (function () {
             calendar.scrollToTime(Date.now());
         };
 
+        // Point the shared reference at THIS init's closure (bound to the current calendar instance).
+        latestTodoDraggableInit = initializeThirdPartyDraggable;
+
         function initButtons() {
 
             calendar.setOption('locale', leantime.i18n.__("language.code"));
@@ -425,14 +446,10 @@ leantime.calendarController = (function () {
                     jQuery('.day-selector').hide();
                 }
 
-                jQuery.ajax({
-                    type: 'PATCH',
-                    url: leantime.appUrl + '/api/submenu',
-                    data: {
-                        submenu: "dashboardCalendarView",
-                        state: newView
-                    }
-                });
+                leantime.rpc('Api.Api.setSubmenuState', {
+                    submenu: "dashboardCalendarView",
+                    state: newView
+                }).catch(function (e) { console.error('Could not update submenu state', e); });
 
             });
 
@@ -447,17 +464,19 @@ leantime.calendarController = (function () {
             });
         }
 
-        htmx.onLoad(function (content) {
-
-
-
-            // Find any todo containers that were loaded via HTMX
-            if(content.id == "yourToDoContainer") {
-                initializeThirdPartyDraggable(content);
-            }
-
-            return calendarEl;
-        });
+        // Register once. This runs inside an init function that HTMX re-invokes on every
+        // swap, so without the guard each load stacked another global onLoad handler
+        // (handler leak → compounding churn on the dashboard).
+        if (!window.leantime._calendarTodoOnLoadRegistered) {
+            window.leantime._calendarTodoOnLoadRegistered = true;
+            htmx.onLoad(function (content) {
+                // Find any todo containers that were loaded via HTMX. Call the LATEST initializer so
+                // drag/drop binds to the current calendar instance, not the one from first init.
+                if (content.id == "yourToDoContainer" && latestTodoDraggableInit) {
+                    latestTodoDraggableInit(content);
+                }
+            });
+        }
     };
 
     // Make public what you want to have public, everything else is private

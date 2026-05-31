@@ -3,6 +3,7 @@
 namespace Leantime\Core\Controller;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
@@ -183,8 +184,15 @@ class Frontcontroller
 
         $response = $controllerClass->callAction($method, $parameters);
 
-        // Expecting a response object but can accept a string to a fragment.
-        return $response instanceof Response ? $response : $controllerClass->getResponse($response);
+        // A controller may return a Symfony Response directly, a Responsable (e.g. an
+        // ImageResponse / JsonRpcResponse — now honored on this legacy dispatch path the same
+        // way Laravel's router and the ExceptionHandler already do), or a string fragment key
+        // handled by the controller's own getResponse().
+        return match (true) {
+            $response instanceof Response => $response,
+            $response instanceof Responsable => $response->toResponse($this->incomingRequest),
+            default => $controllerClass->getResponse($response),
+        };
     }
 
     /**

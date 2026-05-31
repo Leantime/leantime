@@ -2,7 +2,7 @@
 
 @section('content')
 
-    @include("auth::partials.onboardingProgress", ['percentComplete' => 37, 'current' => 'theme', 'completed' => ['account']])
+    <x-auth::onboardingProgress :percentComplete="37" current="theme" :completed="['account']" />
 
 <h2>{{ __('titles.determine_visual_experience') }}</h2>
 <p>{{ __('text.choose_a_theme_and_font_easy_to_read') }}</p>

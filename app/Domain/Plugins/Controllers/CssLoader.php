@@ -20,13 +20,7 @@ class CssLoader extends Controller
 
     public function get(): Response
     {
-        $cssFiles = self::dispatch_filter('pluginCss', []);
-        $cssStrs = collect($cssFiles)
-            ->filter(fn ($file) => file_exists(APP_ROOT."/plugins/$file"))
-            ->map(fn ($file) => file_get_contents(APP_ROOT."/plugins/$file"))
-            ->all();
-
-        $response = new Response(implode('', $cssStrs));
+        $response = new Response($this->pluginService->getAggregatedPluginCss());
         $response->headers->set('Content-Type', 'text/css');
 
         return $response;

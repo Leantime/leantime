@@ -42,7 +42,10 @@
         </div>
 
         <script>
-            tippy('[data-tippy-content]');
+            // Idempotent init — a bare tippy('[data-tippy-content]') here re-instanced
+            // every tooltip on the page each time a milestone card rendered (flashing
+            // + duplicate header tooltips). initTooltips skips already-instanced els.
+            window.leantime?.initTooltips?.();
         </script>
     @endfragment
 </div>

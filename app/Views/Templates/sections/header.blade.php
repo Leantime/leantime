@@ -1,5 +1,6 @@
 <title>@dispatchFilter('page_title', $sitename)</title>
 
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="requestId" content="{{ \Illuminate\Support\Str::random(4) }}">
 <meta name="description" content="{{ $sitename }}">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -35,21 +36,26 @@
 <script src="{!! BASE_URL !!}/dist/js/compiled-frameworks.{!! $version !!}.min.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/compiled-framework-plugins.{!! $version !!}.min.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/compiled-global-component.{!! $version !!}.min.js"></script>
+{{-- Feature-component libraries are leaf bundles used only inside controller
+     functions that run on/after DOMContentLoaded (e.g. initCalendar()), never at
+     module-load. Deferring them keeps these heavy bundles (the tiptap editor alone
+     is ~6.8MB) from blocking first render; deferred scripts still execute before
+     DOMContentLoaded, so the init handlers find them ready. --}}
 @if($tpl->needsComponent('calendar'))
-<script src="{!! BASE_URL !!}/dist/js/compiled-calendar-component.{!! $version !!}.min.js"></script>
+<script defer src="{!! BASE_URL !!}/dist/js/compiled-calendar-component.{!! $version !!}.min.js"></script>
 @endif
 @if($tpl->needsComponent('table'))
-<script src="{!! BASE_URL !!}/dist/js/compiled-table-component.{!! $version !!}.min.js"></script>
+<script defer src="{!! BASE_URL !!}/dist/js/compiled-table-component.{!! $version !!}.min.js"></script>
 @endif
 @if($tpl->needsComponent('tiptap'))
-<script src="{!! BASE_URL !!}/dist/js/compiled-tiptap-toolbar.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-tiptap-editor.{!! $version !!}.min.js"></script>
+<script defer src="{!! BASE_URL !!}/dist/js/compiled-tiptap-toolbar.{!! $version !!}.min.js"></script>
+<script defer src="{!! BASE_URL !!}/dist/js/compiled-tiptap-editor.{!! $version !!}.min.js"></script>
 @endif
 @if($tpl->needsComponent('gantt'))
-<script src="{!! BASE_URL !!}/dist/js/compiled-gantt-component.{!! $version !!}.min.js"></script>
+<script defer src="{!! BASE_URL !!}/dist/js/compiled-gantt-component.{!! $version !!}.min.js"></script>
 @endif
 @if($tpl->needsComponent('chart'))
-<script src="{!! BASE_URL !!}/dist/js/compiled-chart-component.{!! $version !!}.min.js"></script>
+<script defer src="{!! BASE_URL !!}/dist/js/compiled-chart-component.{!! $version !!}.min.js"></script>
 @endif
 
 @dispatchEvent('afterScriptLibTags')

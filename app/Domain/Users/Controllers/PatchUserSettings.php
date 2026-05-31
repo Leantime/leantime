@@ -4,54 +4,46 @@ namespace Leantime\Domain\Users\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Users\Repositories\Users;
+use Leantime\Domain\Users\Services\Users as UserService;
+use Symfony\Component\HttpFoundation\Response;
 
 class PatchUserSettings extends Controller
 {
     private Auth $authService;
 
-    private Users $userRepository;
+    private UserService $userService;
 
+    /**
+     * Initializes dependencies.
+     */
     public function init(
         Auth $authService,
-        Users $userRepository
-    ) {
+        UserService $userService
+    ): void {
         $this->authService = $authService;
-        $this->userRepository = $userRepository;
+        $this->userService = $userService;
     }
 
     /**
-     * Handle PATCH requests
+     * Handles PATCH requests for user UI settings (e.g. dismissing modals).
+     *
+     * @param  array  $params  Request parameters
      */
-    public function patch($params)
+    public function patch(array $params): Response
     {
-        // Check if user is logged in
         if (! $this->authService->isLoggedIn()) {
             return $this->tpl->displayJson(['status' => 'error', 'message' => 'Not authorized'], 401);
         }
 
-        $userId = $this->authService->getUserId();
+        // Handle modal dismissal updates
+        if (
+            isset($params['patchModalSettings'], $params['settings'])
+            && $params['patchModalSettings'] == 1
+        ) {
+            $permanent = isset($params['permanent']) && $params['permanent'] == 1;
+            $this->userService->saveModalDismissal($params['settings'], $permanent);
 
-        // Handle modal settings updates
-        if (isset($params['patchModalSettings']) && $params['patchModalSettings'] == 1) {
-            if (isset($params['settings'])) {
-                $modalKey = htmlspecialchars($params['settings']);
-                $permanent = isset($params['permanent']) && $params['permanent'] == 1;
-
-                // Store in session
-                if (! session()->exists('usersettings.modals')) {
-                    session(['usersettings.modals' => []]);
-                }
-
-                session(['usersettings.modals.'.$modalKey => 1]);
-
-                // If permanent, also store in user settings
-                if ($permanent) {
-                    $this->userRepository->updateUserSettings($userId, ['modals.'.$modalKey => 1]);
-                }
-
-                return $this->tpl->displayJson(['status' => 'success']);
-            }
+            return $this->tpl->displayJson(['status' => 'success']);
         }
 
         return $this->tpl->displayJson(['status' => 'error', 'message' => 'Invalid request'], 400);

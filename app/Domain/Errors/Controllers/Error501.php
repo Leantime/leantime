@@ -3,17 +3,21 @@
 namespace Leantime\Domain\Errors\Controllers;
 
 use Leantime\Core\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 class Error501 extends Controller
 {
     /**
-     * @throws \Exception
+     * Displays the 501 Not Implemented error page.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run(): void
+    public function get(array $params): Response
     {
-        $this->tpl->display(
+        return $this->tpl->display(
             template: 'errors.error501',
             layout: 'error',
-            responseCode: 501);
+            responseCode: 501
+        );
     }
 }

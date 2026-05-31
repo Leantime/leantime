@@ -7,6 +7,7 @@
 namespace Leantime\Domain\Goalcanvas\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
@@ -15,10 +16,11 @@ use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Symfony\Component\HttpFoundation\Response;
 
-class BigRock extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
+/**
+ * Goal board (big rock) create/edit dialog. Standalone, independent of the canvas domain.
+ */
+class BigRock extends Controller
 {
-    protected const CANVAS_NAME = 'goal';
-
     private GoalcanvaRepository $canvasRepo;
 
     private CommentRepository $commentsRepo;

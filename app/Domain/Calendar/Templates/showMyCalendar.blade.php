@@ -234,22 +234,27 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                             }
                         }
 
-                        jQuery.ajax({
-                            type : 'PATCH',
-                            url  : leantime.appUrl + '/api/tickets',
-                            data : dataVal
-                        });
+                        leantime.rpc('Tickets.Tickets.patchTicket', { id: dataVal.id, values: dataVal })
+                            .catch(function (error) {
+                                jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                                event.revert();
+                                console.error('Could not update ticket dates', error);
+                            });
 
                     }else if(event.event.extendedProps.enitityType == "event") {
 
-                        jQuery.ajax({
-                            type : 'PATCH',
-                            url  : leantime.appUrl + '/api/calendar',
-                            data : {
-                                id: event.event.extendedProps.enitityId,
+                        leantime.rpc('Calendar.Calendar.patch', {
+                            id: event.event.extendedProps.enitityId,
+                            params: {
                                 dateFrom: event.event.startStr,
                                 dateTo: event.event.endStr
                             }
+                        }).then(function (success) {
+                            // Denied/failed update resolves to false — undo the visual move.
+                            if (! success) { event.revert(); }
+                        }).catch(function (error) {
+                            console.error('Could not update event dates', error);
+                            event.revert();
                         })
                     }
                 },
@@ -274,23 +279,28 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                             }
                         }
 
-                        jQuery.ajax({
-                            type : 'PATCH',
-                            url  : leantime.appUrl + '/api/tickets',
-                            data : dataVal
-                        });
+                        leantime.rpc('Tickets.Tickets.patchTicket', { id: dataVal.id, values: dataVal })
+                            .catch(function (error) {
+                                jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                                event.revert();
+                                console.error('Could not update ticket dates', error);
+                            });
 
 
                     }else if(event.event.extendedProps.enitityType == "event") {
 
-                        jQuery.ajax({
-                            type : 'PATCH',
-                            url  : leantime.appUrl + '/api/calendar',
-                            data : {
-                                id: event.event.extendedProps.enitityId,
+                        leantime.rpc('Calendar.Calendar.patch', {
+                            id: event.event.extendedProps.enitityId,
+                            params: {
                                 dateFrom: event.event.startStr,
                                 dateTo: event.event.endStr
                             }
+                        }).then(function (success) {
+                            // Denied/failed update resolves to false — undo the visual move.
+                            if (! success) { event.revert(); }
+                        }).catch(function (error) {
+                            console.error('Could not update event dates', error);
+                            event.revert();
                         })
                     }
 
@@ -322,14 +332,10 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 
             calendar.changeView(jQuery("#my-select option:selected").val());
 
-            jQuery.ajax({
-                type : 'PATCH',
-                url  : leantime.appUrl + '/api/submenu',
-                data : {
-                    submenu : "myCalendarView",
-                    state   : jQuery("#my-select option:selected").val()
-                }
-            });
+            leantime.rpc('Api.Api.setSubmenuState', {
+                submenu: "myCalendarView",
+                state: jQuery("#my-select option:selected").val()
+            }).catch(function (e) { console.error('Could not update submenu state', e); });
 
         });
     });

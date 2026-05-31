@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Leantime\Domain\Comments\Hxcontrollers;
 
 use Leantime\Core\Controller\HtmxController;
-use Leantime\Domain\Reactions\Services\Reactions as ReactionsService;
+use Leantime\Domain\Comments\Services\Comments as CommentService;
 
 /**
  * HTMX Controller for managing comment reactions (toggle, get).
@@ -14,11 +14,11 @@ class Reactions extends HtmxController
 {
     protected static string $view = 'comments::partials.reactions';
 
-    private ReactionsService $reactionsService;
+    private CommentService $commentService;
 
-    public function init(ReactionsService $reactionsService): void
+    public function init(CommentService $commentService): void
     {
-        $this->reactionsService = $reactionsService;
+        $this->commentService = $commentService;
     }
 
     /**
@@ -31,37 +31,15 @@ class Reactions extends HtmxController
         $userId = (int) session('userdata.id');
 
         if (! $commentId || ! $reaction || ! $userId) {
-            $this->tpl->assign('reactions', []);
-            $this->tpl->assign('commentId', 0);
-            $this->tpl->assign('userReactions', []);
+            $this->assignEmptyReactions();
 
             return;
         }
 
-        // Validate reaction against known types
-        if ($this->reactionsService->getReactionType($reaction) === false) {
-            $this->tpl->assign('reactions', []);
-            $this->tpl->assign('commentId', 0);
-            $this->tpl->assign('userReactions', []);
+        if (! $this->commentService->toggleCommentReaction($userId, $commentId, $reaction)) {
+            $this->assignEmptyReactions();
 
             return;
-        }
-
-        // Check if user already has this exact reaction
-        $userReactions = $this->reactionsService->getUserReactions($userId, 'comment', $commentId, $reaction);
-
-        if (! empty($userReactions)) {
-            // User clicked the same reaction - remove it (toggle off)
-            $this->reactionsService->removeReaction($userId, 'comment', $commentId, $reaction);
-        } else {
-            // User wants to add a reaction - first remove any existing reactions
-            // (only one sentiment reaction allowed per user per comment)
-            $allUserReactions = $this->reactionsService->getUserReactions($userId, 'comment', $commentId);
-            foreach ($allUserReactions as $existingReaction) {
-                $this->reactionsService->removeReaction($userId, 'comment', $commentId, $existingReaction['reaction']);
-            }
-            // Now add the new reaction
-            $this->reactionsService->addReaction($userId, 'comment', $commentId, $reaction);
         }
 
         $this->loadReactions($commentId, $userId);
@@ -76,9 +54,7 @@ class Reactions extends HtmxController
         $userId = (int) session('userdata.id');
 
         if (! $commentId) {
-            $this->tpl->assign('reactions', []);
-            $this->tpl->assign('commentId', 0);
-            $this->tpl->assign('userReactions', []);
+            $this->assignEmptyReactions();
 
             return;
         }
@@ -87,24 +63,24 @@ class Reactions extends HtmxController
     }
 
     /**
-     * Load reactions data for template.
+     * Assign reaction data for a comment to the template.
      */
     private function loadReactions(int $commentId, int $userId): void
     {
-        // Get reactions with user names for tooltips
-        $reactionsWithUsers = $this->reactionsService->getEntityReactionsWithUsers('comment', $commentId);
+        $reactionData = $this->commentService->getCommentReactions($commentId, $userId);
 
-        // Get user's reactions for this comment
-        $userReactionsList = [];
-        if ($userId) {
-            $userReactionsData = $this->reactionsService->getUserReactions($userId, 'comment', $commentId);
-            foreach ($userReactionsData as $r) {
-                $userReactionsList[] = $r['reaction'];
-            }
-        }
-
-        $this->tpl->assign('reactions', $reactionsWithUsers ?: []);
+        $this->tpl->assign('reactions', $reactionData['reactions']);
         $this->tpl->assign('commentId', $commentId);
-        $this->tpl->assign('userReactions', $userReactionsList);
+        $this->tpl->assign('userReactions', $reactionData['userReactions']);
+    }
+
+    /**
+     * Assign the empty reaction state to the template.
+     */
+    private function assignEmptyReactions(): void
+    {
+        $this->tpl->assign('reactions', []);
+        $this->tpl->assign('commentId', 0);
+        $this->tpl->assign('userReactions', []);
     }
 }

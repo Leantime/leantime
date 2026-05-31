@@ -18,6 +18,8 @@ use Illuminate\Support\Reflector;
 use Illuminate\Support\Traits\ReflectsClosures;
 use InvalidArgumentException;
 use Leantime\Core\Application;
+use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
+use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\UI\Template;
 use Psr\Log\LoggerInterface;
 use Sentry\Laravel\Integration;
@@ -358,7 +360,9 @@ class ExceptionHandler implements ExceptionHandlerContract
      */
     protected function shouldReturnJson($request, Throwable $e)
     {
-        return $request->expectsJson();
+        // API requests (x-api-key / bearer) are JSON by contract even when the client omits an
+        // Accept header, so they get a JSON error body instead of an HTML error page.
+        return $request instanceof ApiRequest || $request->expectsJson();
     }
 
     /**
@@ -487,7 +491,15 @@ class ExceptionHandler implements ExceptionHandlerContract
      */
     protected function getHttpExceptionView(HttpExceptionInterface $e)
     {
-        return "errors.error{$e->getStatusCode()}";
+        $status = $e->getStatusCode();
+
+        // Dedicated error pages exist only for these statuses. Anything else (e.g. a 422 from a
+        // ValidationException or a 409 from EntityExistsException — now that typed exceptions
+        // carry real HTTP statuses) falls back to the generic 500 page instead of throwing a
+        // view-not-found that degrades to a raw Symfony error page.
+        return in_array($status, [403, 404, 500, 501], true)
+            ? "errors.error{$status}"
+            : 'errors.error500';
     }
 
     /**
@@ -547,7 +559,12 @@ class ExceptionHandler implements ExceptionHandlerContract
                 return Arr::except($trace, ['args']);
             })->all(),
         ] : [
-            'message' => $this->isHttpException($e) ? $e->getMessage() : 'Server Error',
+            // Leantime exceptions expose a curated, client-safe message; fall back to the raw
+            // HttpException message (or a generic string) for everything else. Mirrors the
+            // JSON-RPC surface (JsonRpcErrorResponse::fromException), which also uses getClientMessage().
+            'message' => $e instanceof LeantimeExceptionInterface
+                ? $e->getClientMessage()
+                : ($this->isHttpException($e) ? $e->getMessage() : 'Server Error'),
         ];
     }
 

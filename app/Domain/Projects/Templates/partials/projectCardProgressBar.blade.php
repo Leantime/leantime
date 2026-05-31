@@ -46,5 +46,7 @@
     </div>
 
 <script>
-    tippy('[data-tippy-content]');
+    // Idempotent init (see milestoneCard) — avoids re-instancing all tooltips
+    // every time a project progress bar renders.
+    window.leantime?.initTooltips?.();
 </script>

@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller\Controller;
+use Leantime\Domain\Api\Services\I18n as I18nService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -12,6 +13,16 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class I18n extends Controller
 {
+    private I18nService $i18nService;
+
+    /**
+     * init - initialize private variables
+     */
+    public function init(I18nService $i18nService): void
+    {
+        $this->i18nService = $i18nService;
+    }
+
     /**
      * Attach the language file to javascript
      *
@@ -23,34 +34,8 @@ class I18n extends Controller
      */
     public function get(array $params): Response
     {
-
-        $languageIni = $this->language->ini_array;
-
-        $dateTimeIniSettings = [
-            'language.dateformat',
-            'language.timeformat',
-        ];
-
-        foreach ($dateTimeIniSettings as $index) {
-            $languageIni[$index] = $this->language->__($index, true);
-        }
-
-        // Fullcalendar and other scripts can handle local to use the browser timezone
-        $languageIni['usersettings.timezone'] = session('usersettings.timezone') ?? 'local';
-
-        $decodedString = json_encode($languageIni);
-
-        $result = $decodedString ? $decodedString : '{}';
         $response = new Response(
-            <<<JS
-            var leantime = leantime || {};
-            var leantime = {
-                i18n: {
-                    dictionary: $result,
-                    __: function(index){ return leantime.i18n.dictionary[index];  }
-                }
-            };
-            JS,
+            $this->i18nService->buildJsDictionary(),
             200
         );
 

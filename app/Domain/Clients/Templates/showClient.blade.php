@@ -25,7 +25,7 @@
 
             <ul>
                 <li><a href="#clientDetails">{!! __('label.client_details') !!}</a></li>
-                <li><a href="#comment">{!! sprintf(__('tabs.discussion_with_count'), count($submodules.generalComment)) !!}</a></li>
+                <li><a href="#comment">{!! sprintf(__('tabs.discussion_with_count'), count($comments)) !!}</a></li>
                 <li><a href="#files">{!! sprintf(__('tabs.files_with_count'), count($files)) !!}</a></li>
             </ul>
 
@@ -149,12 +149,15 @@
                                             <a href="{{ BASE_URL }}/users/editUser/{{ $user['id'] }}" title="{{ __('buttons.edit') }}">
                                                 <i class="fa fa-edit"></i>
                                             </a>
-                                            <a href="{{ BASE_URL }}/clients/removeUser/{{ $values['id'] }}/{{ $user['id'] }}"
-                                               class="delete"
-                                               title="{{ __('buttons.remove') }}"
-                                               onclick="return confirm('{{ __('text.confirm_remove_user_from_client') }}')">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
+                                            <form method="post" action="{{ BASE_URL }}/clients/removeUser" style="display:inline;"
+                                                  onsubmit="return confirm('{{ __('text.confirm_remove_user_from_client') }}')">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{ $values['id'] }}" />
+                                                <input type="hidden" name="userId" value="{{ $user['id'] }}" />
+                                                <button type="submit" class="delete btn btn-link" title="{{ __('buttons.remove') }}" style="padding:0; border:none; background:none;">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach

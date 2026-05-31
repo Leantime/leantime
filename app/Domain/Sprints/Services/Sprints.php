@@ -5,6 +5,7 @@ namespace Leantime\Domain\Sprints\Services;
 use DateInterval;
 use DatePeriod;
 use DateTime;
+use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
 use Leantime\Domain\Sprints\Models;
 use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
@@ -32,6 +33,22 @@ class Sprints
         }
 
         return false;
+    }
+
+    /**
+     * getNewSprint - builds a blank sprint pre-populated with the default
+     * 13-day window (today through 13 days from now in the user's timezone).
+     *
+     * @api
+     */
+    public function getNewSprint(): Models\Sprints
+    {
+        $sprint = new Models\Sprints;
+
+        $sprint->startDate = dtHelper()->userNow();
+        $sprint->endDate = dtHelper()->userNow()->addDays(13);
+
+        return $sprint;
     }
 
     /**
@@ -98,10 +115,13 @@ class Sprints
     }
 
     /**
+     * @throws MissingParameterException When the start or end date is missing.
+     *
      * @api
      */
     public function addSprint($params): int|false
     {
+        $this->assertSprintDates($params);
 
         $sprint = new Models\Sprints;
 
@@ -129,10 +149,13 @@ class Sprints
     }
 
     /**
+     * @throws MissingParameterException When the start or end date is missing.
+     *
      * @api
      */
     public function editSprint($params): Models\Sprints|false
     {
+        $this->assertSprintDates($params);
 
         $sprint = new Models\Sprints;
 
@@ -157,6 +180,34 @@ class Sprints
         }
 
         return false;
+    }
+
+    /**
+     * deleteSprint - deletes a sprint and clears the current-sprint session value.
+     *
+     * @param  int  $id  Sprint id to delete.
+     *
+     * @api
+     */
+    public function deleteSprint(int $id): void
+    {
+        $this->sprintRepository->delSprint($id);
+
+        session(['currentSprint' => '']);
+    }
+
+    /**
+     * assertSprintDates - ensures the start and end date are both provided.
+     *
+     * @param  array  $params  Incoming sprint params.
+     *
+     * @throws MissingParameterException When the start or end date is missing.
+     */
+    private function assertSprintDates(array $params): void
+    {
+        if (($params['startDate'] ?? '') == '' || ($params['endDate'] ?? '') == '') {
+            throw new MissingParameterException('First day and last day are required');
+        }
     }
 
     /**

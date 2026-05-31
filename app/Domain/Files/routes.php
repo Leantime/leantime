@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Leantime\Domain\Files\Controllers\Upload;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,14 @@ Route::get('/download.php', function () {
 
     return redirect()->to('/files/get'.($qs ? '?'.$qs : ''), 301);
 });
+
+/*
+| File uploads were relocated here from the retired Api\Controllers\Files.
+| The canonical route is /files/upload. The /api/files alias is kept so the Tiptap
+| editor and Uppy file manager keep working without a JS change; both read the raw
+| upload() metadata array off the JSON response, which Files\Controllers\Upload preserves.
+*/
+
+Route::post('/files/upload', [Upload::class, 'post'])->name('files.upload');
+
+Route::post('/api/files', [Upload::class, 'post'])->name('files.upload.legacy');

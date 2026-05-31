@@ -353,24 +353,17 @@ leantime.projectsController = (function () {
                                 if (entityType == "ticket") {
                                     leantime.ticketsRepository.updateMilestoneDates(entityId, start, end, project._index+1);
                                 } else {
-                                    jQuery.ajax(
-                                        {
-                                            type: 'PATCH',
-                                            url: leantime.appUrl + '/api/projects',
-                                            data:
-                                                {
-                                                    id : entityId,
-                                                    start:start,
-                                                    end:end,
-                                                    sortIndex: project._index+1,
-                                            }
+                                    leantime.rpc('Projects.Projects.patchProject', {
+                                        id: entityId,
+                                        values: {
+                                            start: start,
+                                            end: end,
+                                            sortIndex: project._index + 1,
                                         }
-                                    ).done(
-                                        function () {
-                                            //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
-
-                                        }
-                                    );
+                                    }).catch(function (e) {
+                                        jQuery.growl({ message: (e && e.message) ? e.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                                        console.error('Could not update project dates', e);
+                                    });
                                 }
 
                                 //leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index);
@@ -379,22 +372,17 @@ leantime.projectsController = (function () {
                             },
                             on_sort_change: function (projects) {
 
-                                var statusPostData = {
-                                    action: "ganttSort",
-                                    payload: {}
-                                };
+                                var sortPayload = {};
 
                                 for (var i = 0; i < projects.length; i++) {
-                                    statusPostData.payload[projects[i].id] = projects[i]._index+1;
+                                    sortPayload[projects[i].id] = projects[i]._index+1;
                                 }
 
-                                // POST to server using $.post or $.ajax
-                                jQuery.ajax({
-                                    type: 'POST',
-                                    url: leantime.appUrl + '/api/projects',
-                                    data: statusPostData
-
-                                });
+                                leantime.rpc('Projects.Projects.sortProjects', { params: sortPayload })
+                                    .catch(function (e) {
+                                        jQuery.growl({ message: (e && e.message) ? e.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                                        console.error('Could not sort projects', e);
+                                    });
 
                             },
                             on_progress_change: function (project, progress) {
@@ -530,25 +518,20 @@ leantime.projectsController = (function () {
 
                 countTickets();
 
-                var statusPostData = {
-                    action: "sortIndex",
-                    payload: {},
-                    handler: ui.item[0].id
-                };
+                var sortPayload = {};
+                var handler = ui.item[0].id;
 
                 for (var i = 0; i < statusList.length; i++) {
                     if (jQuery(".contentInner.status_" + statusList[i]).length) {
-                        statusPostData.payload[statusList[i]] = jQuery(".contentInner.status_" + statusList[i]).sortable('serialize');
+                        sortPayload[statusList[i]] = jQuery(".contentInner.status_" + statusList[i]).sortable('serialize');
                     }
                 }
 
-                // POST to server using $.post or $.ajax
-                jQuery.ajax({
-                    type: 'POST',
-                    url: leantime.appUrl + '/api/projects',
-                    data: statusPostData
-
-                });
+                leantime.rpc('Projects.Projects.patchProjectStatusAndSorting', { params: sortPayload, handler: handler })
+                    .catch(function (e) {
+                        jQuery.growl({ message: (e && e.message) ? e.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        console.error('Could not update project sorting', e);
+                    });
 
             }
         });

@@ -2,183 +2,98 @@
 
 namespace Leantime\Domain\Timesheets\Controllers;
 
-use Carbon\Carbon;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
+use Leantime\Domain\Clients\Services\Clients as ClientService;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Symfony\Component\HttpFoundation\Response;
 
 class AddTime extends Controller
 {
-    private TimesheetRepository $timesheetsRepo;
+    private TimesheetService $timesheetService;
 
-    private ProjectRepository $projects;
+    private ProjectService $projectService;
 
-    private TicketRepository $tickets;
-
-    private ClientRepository $clients;
+    private ClientService $clientService;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
     public function init(
-        TimesheetRepository $timesheetsRepo,
-        ProjectRepository $projects,
-        TicketRepository $tickets,
-        ClientRepository $clients
+        TimesheetService $timesheetService,
+        ProjectService $projectService,
+        ClientService $clientService
     ): void {
-        $this->timesheetsRepo = $timesheetsRepo;
-        $this->projects = $projects;
-        $this->tickets = $tickets;
-        $this->clients = $clients;
+        $this->timesheetService = $timesheetService;
+        $this->projectService = $projectService;
+        $this->clientService = $clientService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the add time form.
      *
-     *
-     *
-     * @throws BindingResolutionException
+     * @param  array  $params  Request parameters
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
-        $info = '';
-        // Only admins and employees
-        if (Auth::userIsAtLeast(Roles::$editor)) {
-            $values = [
-                'userId' => session('userdata.id'),
-                'ticket' => '',
-                'project' => '',
-                'date' => '',
-                'kind' => '',
-                'hours' => '',
-                'description' => '',
-                'invoicedEmpl' => '',
-                'invoicedComp' => '',
-                'invoicedEmplDate' => '',
-                'invoicedCompDate' => '',
-                'paid' => '',
-                'paidDate' => '',
-            ];
-
-            if (isset($_POST['save']) === true || isset($_POST['saveNew']) === true) {
-                if (isset($_POST['tickets']) && $_POST['tickets'] != '') {
-                    $temp = ($_POST['tickets']);
-
-                    $tempArr = explode('|', $temp);
-
-                    $values['project'] = $tempArr[0];
-                    $values['ticket'] = $tempArr[1];
-                }
-
-                if (! empty($_POST['kind'])) {
-                    $values['kind'] = ($_POST['kind']);
-                }
-
-                if (! empty($_POST['date'])) {
-                    $values['date'] = (new Carbon($_POST['date'], session('usersettings.timezone')))->setTimezone('UTC');
-                }
-
-                if (! empty($_POST['hours'])) {
-                    $values['hours'] = ($_POST['hours']);
-                }
-
-                if (! empty($_POST['invoicedEmpl'])) {
-                    if ($_POST['invoicedEmpl'] == 'on') {
-                        $values['invoicedEmpl'] = 1;
-                    }
-
-                    if (! empty($_POST['invoicedEmplDate'])) {
-                        $values['invoicedEmplDate'] = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC');
-                    }
-                }
-
-                if (! empty($_POST['invoicedComp'])) {
-                    if (Auth::userIsAtLeast(Roles::$manager)) {
-                        if ($_POST['invoicedComp'] == 'on') {
-                            $values['invoicedComp'] = 1;
-                        }
-
-                        if (! empty($_POST['invoicedCompDate'])) {
-                            $values['invoicedCompDate'] = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC');
-                        }
-                    }
-                }
-
-                if (! empty($_POST['paid'])) {
-                    if (Auth::userIsAtLeast(Roles::$manager)) {
-                        if ($_POST['paid'] == 'on') {
-                            $values['paid'] = 1;
-                        }
-
-                        if (! empty($_POST['paidDate'])) {
-                            $values['paidDate'] = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC');
-                        }
-                    }
-                }
-
-                if (! empty($_POST['description'])) {
-                    $values['description'] = ($_POST['description']);
-                }
-
-                if ($values['ticket'] != '' && $values['project'] != '') {
-                    if ($values['kind'] != '') {
-                        if ($values['date'] != '') {
-                            if ($values['hours'] != '' && $values['hours'] > 0) {
-                                $this->timesheetsRepo->addTime($values);
-                                $info = 'TIME_SAVED';
-                            } else {
-                                $info = 'NO_HOURS';
-                            }
-                        } else {
-                            $info = 'NO_DATE';
-                        }
-                    } else {
-                        $info = 'NO_KIND';
-                    }
-                } else {
-                    $info = 'NO_TICKET';
-                }
-
-                if (isset($_POST['save']) === true) {
-                    $this->tpl->assign('values', $values);
-                } elseif (isset($_POST['saveNew']) === true) {
-                    $values = [
-                        'userId' => session('userdata.id'),
-                        'ticket' => '',
-                        'project' => '',
-                        'date' => '',
-                        'kind' => '',
-                        'hours' => '',
-                        'description' => '',
-                        'invoicedEmpl' => '',
-                        'invoicedComp' => '',
-                        'invoicedEmplDate' => '',
-                        'invoicedCompDate' => '',
-                        'paid' => '',
-                        'paidDate' => '',
-                    ];
-
-                    $this->tpl->assign('values', $values);
-                }
-            }
-
-            $this->tpl->assign('info', $info);
-            $this->tpl->assign('allClients', $this->clients->getAll());
-            $this->tpl->assign('allProjects', $this->projects->getAll(showClosedProjects: false));
-            $this->tpl->assign('allTickets', $this->timesheetsRepo->getAll());
-            $this->tpl->assign('kind', $this->timesheetsRepo->kind);
-
-            return $this->tpl->display('timesheets.addTime');
-        } else {
+        if (! Auth::userIsAtLeast(Roles::$editor)) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
+
+        $this->tpl->assign('values', $this->timesheetService->getDefaultTimeValues());
+        $this->tpl->assign('info', '');
+        $this->assignTemplateVars();
+
+        return $this->tpl->display('timesheets.addTime');
+    }
+
+    /**
+     * Handles time entry creation.
+     *
+     * @param  array  $params  Request parameters
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
+
+        if (! Auth::userIsAtLeast(Roles::$editor)) {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
+
+        $info = '';
+        $values = $this->timesheetService->getDefaultTimeValues();
+
+        if (isset($_POST['save']) || isset($_POST['saveNew'])) {
+            $values = $this->timesheetService->parseAddTimePostValues($_POST, $values);
+            $info = $this->timesheetService->validateAndSaveTime($values);
+
+            if (isset($_POST['saveNew'])) {
+                $values = $this->timesheetService->getDefaultTimeValues();
+            }
+        }
+
+        $this->tpl->assign('values', $values);
+        $this->tpl->assign('info', $info);
+        $this->assignTemplateVars();
+
+        return $this->tpl->display('timesheets.addTime');
+    }
+
+    /**
+     * Assigns common template variables.
+     */
+    private function assignTemplateVars(): void
+    {
+        $this->tpl->assign('allClients', $this->clientService->getAll());
+        $this->tpl->assign('allProjects', $this->projectService->getAll(showClosedProjects: false));
+        $this->tpl->assign('allTickets', $this->timesheetService->getAll(
+            dateFrom: dtHelper()->userNow()->subYears(10)->setToDbTimezone(),
+            dateTo: dtHelper()->userNow()->addYears(10)->setToDbTimezone(),
+        ));
+        $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
     }
 }

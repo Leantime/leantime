@@ -25,19 +25,22 @@
     }
 @endphp
 
-<div class="htmx-indicator full-width-loader">
-    <div class="indeterminate"></div>
-</div>
-
 <div id="yourToDoContainer"
      hx-get="{{BASE_URL}}/widgets/myToDos/get"
      hx-trigger="{{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::UPDATE }} from:body, {{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::SUBTASK_UPDATE }} from:body"
      class="clear"
      hx-swap="outerHTML"
      hx-ext="json-enc"
-     hx-indicator=".htmx-indicator"
+     hx-indicator="#todoWidgetLoader"
      data-group-by="{{ $groupBy }}"
 >
+
+    {{-- The loader lives INSIDE the swapped container: #yourToDoContainer swaps with outerHTML and
+         the response re-includes this partial, so a sibling loader would accumulate a duplicate
+         #todoWidgetLoader on every refresh. Inside the target, the swap replaces it cleanly. --}}
+    <div id="todoWidgetLoader" class="htmx-indicator full-width-loader">
+        <div class="indeterminate"></div>
+    </div>
 
     <div class="clear" style="position:absolute; top:10px; right:35px;">
 
@@ -57,7 +60,7 @@
                                hx-trigger="click"
                                hx-target="#yourToDoContainer"
                                hx-swap="outerHTML"
-                               hx-indicator="#todos .htmx-indicator"
+                               hx-indicator="#todoWidgetLoader"
                                style="margin-top:4px;"
                                hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "time" }'
                         />
@@ -74,7 +77,7 @@
                                hx-trigger="click"
                                hx-target="#yourToDoContainer"
                                hx-swap="outerHTML"
-                               hx-indicator="#todos .htmx-indicator"
+                               hx-indicator="#todoWidgetLoader"
                                style="margin-top:4px;"
                                hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "project" }'
                         />
@@ -91,7 +94,7 @@
                                hx-trigger="click"
                                hx-target="#yourToDoContainer"
                                hx-swap="outerHTML"
-                               hx-indicator="#todos .htmx-indicator"
+                               hx-indicator="#todoWidgetLoader"
                                style="margin-top:4px;"
                                hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "priority" }'
                         />
@@ -118,7 +121,7 @@
                     hx-trigger="click"
                     hx-target="#yourToDoContainer"
                     hx-swap="outerHTML"
-                    hx-indicator="#todos .htmx-indicator"
+                    hx-indicator="#todoWidgetLoader"
                     hx-vals='{"projectFilter": "all", "groupBy": "{{ $groupBy }}" }'
 
                     >{{ __('labels.all_projects') }}
@@ -136,7 +139,7 @@
                             hx-trigger="click"
                             hx-target="#yourToDoContainer"
                             hx-swap="outerHTML"
-                            hx-indicator="#todos .htmx-indicator"
+                            hx-indicator="#todoWidgetLoader"
                             hx-vals='{"projectFilter": "{{ $project['id'] }}", "groupBy": "{{ $groupBy }}" }'
                             >{{ $project['name'] }}</a></li>
                     @endforeach
@@ -168,7 +171,7 @@
                               hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
                               hx-target="#yourToDoContainer"
                               hx-swap="outerHTML"
-                              hx-indicator=".htmx-indicator">
+                              hx-indicator="#todoWidgetLoader">
                             <div class="tw-flex tw-flex-row tw-gap-2">
                                 <div class="tw-flex-grow">
                                     <input type="text" name="headline" class="main-title-input"
@@ -244,7 +247,7 @@
                                   hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
                                   hx-target="#yourToDoContainer"
                                   hx-swap="outerHTML"
-                                  hx-indicator=".htmx-indicator">
+                                  hx-indicator="#todoWidgetLoader">
                                 <div class="tw-flex tw-flex-row tw-gap-2">
                                     <div class="tw-flex-grow">
                                         <input type="text" name="headline" class="main-title-input"
@@ -364,9 +367,14 @@
             @endif
         });
 
-        htmx.onLoad(function () {
-            jQuery('.sortable-list').nestedSortable();
-        });
+        // Register once: this script lives inside #yourToDoContainer, which re-swaps on
+        // every ticket event, so an unguarded htmx.onLoad stacked a new handler per refresh.
+        if (!window.leantime._todoSortableOnLoadRegistered) {
+            window.leantime._todoSortableOnLoadRegistered = true;
+            htmx.onLoad(function () {
+                jQuery('.sortable-list').nestedSortable();
+            });
+        }
 
 
     </script>
@@ -378,9 +386,13 @@
             initAddTaskBtns();
         });
 
-        htmx.onLoad(function () {
-            initAddTaskBtns();
-        });
+        // Register once (see note above — same re-swap handler-leak applies here).
+        if (!window.leantime._todoAddBtnsOnLoadRegistered) {
+            window.leantime._todoAddBtnsOnLoadRegistered = true;
+            htmx.onLoad(function () {
+                initAddTaskBtns();
+            });
+        }
 
         function initAddTaskBtns() {
             // Show the quick add form when the + button is clicked

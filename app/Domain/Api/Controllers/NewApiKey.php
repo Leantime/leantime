@@ -7,51 +7,38 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Api\Services\Api as ApiService;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
 class NewApiKey extends Controller
 {
-    private UserRepository $userRepo;
-
-    private ProjectRepository $projectsRepo;
-
-    private UserService $userService;
-
     private ApiService $APIService;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      *
      * @throws BindingResolutionException
      */
-    public function init(
-        UserRepository $userRepo,
-        ProjectRepository $projectsRepo,
-        UserService $userService,
-        ApiService $APIService
-    ): void {
-
+    public function init(ApiService $APIService): void
+    {
         self::dispatch_event('api_key_init', $this);
 
-        $this->userRepo = $userRepo;
-        $this->projectsRepo = $projectsRepo;
-        $this->userService = $userService;
         $this->APIService = $APIService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the new API key form.
      *
-     *
+     * @param  array  $params  Request parameters
      *
      * @throws \Exception
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
+
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
+            return $this->tpl->displayPartial('errors.error403');
+        }
 
         $values = [
             'firstname' => '',
@@ -63,53 +50,65 @@ class NewApiKey extends Controller
             'source' => 'api',
         ];
 
-        // only Admins
-        if (Auth::userIsAtLeast(Roles::$admin)) {
-            $projectRelation = [];
+        $this->tpl->assign('values', $values);
+        $this->tpl->assign('allProjects', $this->APIService->getAllProjects());
+        $this->tpl->assign('roles', Roles::getRoles());
+        $this->tpl->assign('relations', []);
 
-            if (isset($_POST['save'])) {
-                $values = [
-                    'firstname' => ($_POST['firstname']),
-                    'user' => '',
-                    'role' => ($_POST['role']),
-                    'password' => '',
-                    'pwReset' => '',
-                    'status' => '',
-                    'source' => 'api',
-                ];
+        return $this->tpl->displayPartial('api.newAPIKey');
+    }
 
-                if (isset($_POST['projects']) && is_array($_POST['projects'])) {
-                    foreach ($_POST['projects'] as $project) {
-                        $projectRelation[] = $project;
-                    }
-                }
+    /**
+     * Handles API key creation.
+     *
+     * @param  array  $params  Request parameters
+     *
+     * @throws \Exception
+     */
+    public function post(array $params): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-                $apiKeyValues = $this->APIService->createAPIKey($values);
-
-                // Update Project Relationships
-                if (isset($_POST['projects']) && count($_POST['projects']) > 0) {
-                    if ($_POST['projects'][0] !== '0') {
-                        $this->projectsRepo->editUserProjectRelations($apiKeyValues['id'], $_POST['projects']);
-                    } else {
-                        $this->projectsRepo->deleteAllProjectRelations($apiKeyValues['id']);
-                    }
-                }
-
-                $this->tpl->setNotification('notifications.key_created', 'success', 'apikey_created');
-
-                $this->tpl->assign('apiKeyValues', $apiKeyValues);
-            }
-
-            $this->tpl->assign('values', $values);
-
-            $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
-            $this->tpl->assign('roles', Roles::getRoles());
-
-            $this->tpl->assign('relations', $projectRelation);
-
-            return $this->tpl->displayPartial('api.newAPIKey');
-        } else {
+        if (! Auth::userIsAtLeast(Roles::$admin)) {
             return $this->tpl->displayPartial('errors.error403');
         }
+
+        $values = [
+            'firstname' => '',
+            'lastname' => '',
+            'user' => '',
+            'role' => '',
+            'password' => '',
+            'status' => 'a',
+            'source' => 'api',
+        ];
+
+        $projectRelation = [];
+
+        if (isset($_POST['save'])) {
+            $values = [
+                'firstname' => ($_POST['firstname']),
+                'user' => '',
+                'role' => ($_POST['role']),
+                'password' => '',
+                'pwReset' => '',
+                'status' => '',
+                'source' => 'api',
+            ];
+
+            $projectRelation = (isset($_POST['projects']) && is_array($_POST['projects'])) ? $_POST['projects'] : [];
+
+            $apiKeyValues = $this->APIService->createApiKeyWithProjects($values, $_POST['projects'] ?? null);
+
+            $this->tpl->setNotification('notifications.key_created', 'success', 'apikey_created');
+            $this->tpl->assign('apiKeyValues', $apiKeyValues);
+        }
+
+        $this->tpl->assign('values', $values);
+        $this->tpl->assign('allProjects', $this->APIService->getAllProjects());
+        $this->tpl->assign('roles', Roles::getRoles());
+        $this->tpl->assign('relations', $projectRelation);
+
+        return $this->tpl->displayPartial('api.newAPIKey');
     }
 }

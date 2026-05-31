@@ -1,9 +1,5 @@
 <?php
 
-/**
- * export class - Template - Export canvas as XML file
- */
-
 namespace Leantime\Domain\Canvas\Controllers;
 
 use Exception;
@@ -12,22 +8,21 @@ use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Template class For exporting class as XML file
+ * Exports a canvas board as an XML file.
  */
 class Export extends Controller
 {
     /**
-     * Constant that must be redefined
+     * Constant that must be redefined by subclasses.
      */
     protected const CANVAS_NAME = '??';
 
     protected const CANVAS_TYPE = 'canvas';
 
-    // Internal variables
     protected EnvironmentCore $config;
 
     protected LanguageCore $language;
@@ -42,16 +37,16 @@ class Export extends Controller
 
     protected array $dataLabels;
 
-    /***
-     * Constructor
+    /**
+     * Initializes dependencies.
      */
     public function init(
         EnvironmentCore $config,
         LanguageCore $language,
-    ) {
-
+    ): void {
         $this->config = $config;
         $this->language = $language;
+
         $canvasName = Str::studly(static::CANVAS_NAME).static::CANVAS_TYPE;
         $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
         $this->canvasRepo = app()->make($repoName);
@@ -63,24 +58,26 @@ class Export extends Controller
     }
 
     /**
-     * run - Generate XML file
+     * Generates and serves an XML export of the canvas.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
-        // Retrieve id of canvas to print
-        if (isset($_GET['id']) === true) {
-            $canvasId = (int) $_GET['id'];
-        } elseif (session()->exists('current'.strtoupper(static::CANVAS_NAME).'Canvas')) {
-            $canvasId = session('current'.strtoupper(static::CANVAS_NAME).'Canvas');
-        } else {
+        $canvasId = (int) ($params['id'] ?? $_GET['id'] ?? 0);
+
+        if ($canvasId <= 0 && session()->exists('current'.strtoupper(static::CANVAS_NAME).'Canvas')) {
+            $canvasId = (int) session('current'.strtoupper(static::CANVAS_NAME).'Canvas');
+        }
+
+        if ($canvasId <= 0) {
             return new Response;
         }
 
-        // Generate XML code
         $exportData = $this->export($canvasId);
 
-        // Service report
         clearstatcache();
+
         $response = new Response($exportData);
         $response->headers->set('Content-type', 'application/xml');
         $response->headers->set('Content-Disposition', 'attachment; filename="'.static::CANVAS_NAME.static::CANVAS_TYPE.'-'.$canvasId.'.xml"');
@@ -89,27 +86,27 @@ class Export extends Controller
         return $response;
     }
 
-    /***
-     * export - Generate XML file
+    /**
+     * Generates XML data for the given canvas.
      *
-     * @access protected
-     * @param int $id Canvas identifier
+     * @param  int  $id  Canvas identifier
      * @return string XML data
+     *
      * @throws BindingResolutionException
+     * @throws Exception
      */
     protected function export(int $id): string
     {
-
-        // Retrieve canvas data
         $canvasAry = $this->canvasRepo->getSingleCanvas($id);
         ! empty($canvasAry) || throw new Exception("Cannot find canvas with id '$id'");
+
         $projectId = $canvasAry[0]['projectId'];
         $recordsAry = $this->canvasRepo->getCanvasItemsById($id);
-        $projectsRepo = app()->make(ProjectRepository::class);
-        $projectAry = $projectsRepo->getProject($projectId);
+
+        $projectService = app()->make(ProjectService::class);
+        $projectAry = $projectService->getProject($projectId);
         ! empty($projectAry) || throw new Exception("Cannot retrieve project id '$projectId'");
 
-        // Generate XML data
         $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'.PHP_EOL.PHP_EOL;
         $xml .= $this->xmlExport(static::CANVAS_NAME.static::CANVAS_TYPE, $canvasAry[0]['title'], $recordsAry);
 
@@ -117,11 +114,12 @@ class Export extends Controller
     }
 
     /**
-     * xmlExport - Generate XML for specific data
+     * Generates XML markup for canvas data.
      *
      * @param  string  $canvasKey  Encoded canvas name
+     * @param  string  $canvasTitle  Canvas title
      * @param  array  $recordsAry  Array of canvas entry records
-     * @param  int  $indent  Indent level to use;
+     * @param  int  $indent  Indent level to use
      * @return string XML data
      */
     protected function xmlExport(string $canvasKey, string $canvasTitle, array $recordsAry, int $indent = 0): string

@@ -1,7 +1,7 @@
 parameters:
     bootstrapFiles:
         - bootstrap.php
-    level: 0
+    level: 1
     inferPrivatePropertyTypeFromConstructor: true
     paths:
         - ../public
@@ -13,23 +13,23 @@ parameters:
     scanDirectories:
         - ../vendor
         - ../config
+    stubFiles:
+        # Declares Leantime's runtime-registered methods (Str macros, Collection::countNested,
+        # Event::discoverListeners) so vanilla PHPStan stops reporting them as undefined.
+        - stubs/leantime-macros.stub
     ignoreErrors:
-            #- '#Call to an undefined static method Illuminate\\Http\\Request::[a-zA-Z0-9\\_]()#'
-            #- '#Access to undefined constant Illuminate\\Http\\Request::[a-zA-Z0-9\\_]()#'
-            #- '#Call to an undefined static method Carbon\\CarbonImmutable::[a-zA-Z0-9\\_]()#'
-            # Rules for level 1. Templates use variables through include which are not detected by phpstan
-            #-
-            #    messages:
-            #        - '#Attribute class Leantime\\Domain\\Connector\\Models\\DbColumn does not exist\.#'
-            #        - '#Variable \$__data might not be defined\.#'
-            #        - '#Constant BASE_URL not found\.#'
-            #        - '#Constant CURRENT_URL not found\.#'
-            #        - '#Variable \$login might not be defined\.#'
-            #        - '#Variable \$roles might not be defined\.#'
-            #    paths:
-            #        - app/Domain/*/Templates/*.tpl.php
-            #        - app/Domain/*/Templates/*.inc.php
-            #        - app/Domain/*/Templates/submodules/*.sub.php
+            # Legacy templates receive their variables from the view layer ($tpl->assign / extract)
+            # and blade files via compiled-in view data. PHPStan analyses them as plain PHP and so
+            # cannot see those variables. This is a known limitation of the template pattern, not a
+            # code defect. reportUnmatched is off because templates are mid-migration (paths come and
+            # go) and app/Plugins is a private submodule absent in CI.
+            -
+                identifier: variable.undefined
+                reportUnmatched: false
+                paths:
+                    - ../app/Domain/*/Templates/*
+                    - ../app/Views/*
+                    - ../app/Plugins/*/Templates/*
     universalObjectCratesClasses:
         - Leantime\Core\Configuration\Environment
     earlyTerminatingMethodCalls:

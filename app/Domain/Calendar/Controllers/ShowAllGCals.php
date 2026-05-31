@@ -5,34 +5,31 @@ namespace Leantime\Domain\Calendar\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
+use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowAllGCals extends Controller
 {
-    private CalendarRepository $calendarRepo;
+    private CalendarService $calendarService;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
-    public function init(CalendarRepository $calendarRepo): void
+    public function init(CalendarService $calendarService): void
     {
-        $this->calendarRepo = $calendarRepo;
+        $this->calendarService = $calendarService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays all external calendars.
      *
-     *
-     *
-     * @throws \Exception
+     * @param  array  $params  Request parameters
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-        // Assign vars
-        $this->tpl->assign('allCalendars', $this->calendarRepo->getMyGoogleCalendars());
+        $this->tpl->assign('allCalendars', $this->calendarService->getMyExternalCalendars(session('userdata.id')));
 
         return $this->tpl->display('calendar.showAllGCals');
     }

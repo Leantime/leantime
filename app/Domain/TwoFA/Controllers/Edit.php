@@ -2,121 +2,110 @@
 
 namespace Leantime\Domain\TwoFA\Controllers;
 
-use Endroid\QrCode\Color\Color;
-use Endroid\QrCode\Label\Label;
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use RobThree\Auth\Providers\Qr\IQRCodeProvider;
-use RobThree\Auth\TwoFactorAuth;
+use Leantime\Domain\TwoFA\Services\TwoFA as TwoFAService;
 use RobThree\Auth\TwoFactorAuthException;
 use Symfony\Component\HttpFoundation\Response;
 
 class Edit extends Controller
 {
-    private UserRepository $userRepo;
+    private TwoFAService $twoFAService;
 
-    public function init(UserRepository $userRepo): void
+    /**
+     * Initializes dependencies.
+     */
+    public function init(TwoFAService $twoFAService): void
     {
-        $this->userRepo = $userRepo;
+        $this->twoFAService = $twoFAService;
     }
 
     /**
+     * Displays the 2FA setup/edit page.
+     *
+     * @param  array  $params  Request parameters
+     *
      * @throws TwoFactorAuthException
      */
-    public function run(): Response
+    public function get(array $params): Response
     {
-        $userId = session('userdata.id');
+        $this->assignSetupData();
+        $this->generateFormTokens();
 
-        $user = $this->userRepo->getUser($userId);
+        return $this->tpl->display('twofa.edit');
+    }
 
-        $tfa = new TwoFactorAuth('Leantime', 6, 30, 'sha1', new class implements IQRCodeProvider
-        {
-            public function getMimeType(): string
-            {
-                return 'image/png';
-            }
-
-            public function getQRCodeImage($qrtext, $size): string
-            {
-                $writer = new PngWriter;
-
-                $qrCode = new QrCode(data: $qrtext, size: $size, backgroundColor: new Color(255, 255, 255, 127));
-
-                $label = new Label(
-                    text: 'Label',
-                    textColor: new Color(255, 0, 0)
-                );
-
-                return $writer->write($qrCode, null, null)->getString();
-            }
-        });
-        $secret = $user['twoFASecret'];
+    /**
+     * Handles 2FA enable/disable actions.
+     *
+     * @param  array  $params  Request parameters
+     *
+     * @throws TwoFactorAuthException
+     */
+    public function post(array $params): Response
+    {
+        $userId = (int) session('userdata.id');
 
         if (isset($_POST['disable'])) {
-            if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
-                $this->userRepo->patchUser($userId, [
-                    'twoFAEnabled' => 0,
-                    'twoFASecret' => null,
-                ]);
-
-                $user['twoFASecret'] = null;
-                $user['twoFAEnabled'] = 0;
-                $secret = null;
-
-                $this->tpl->assign('twoFAEnabled', false);
+            if ($this->isValidFormToken()) {
+                $this->twoFAService->disable2FA($userId);
             } else {
                 $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
             }
         }
 
-        if (empty($secret)) {
-            $secret = $tfa->createSecret(160);
-        }
-
-        $this->tpl->assign('secret', $secret);
-
         if (isset($_POST['save'])) {
             if (isset($_POST['secret'])) {
-                $secret = $_POST['secret'];
-                $this->userRepo->patchUser($userId, [
-                    'twoFASecret' => $secret,
-                ]);
-
-                $user['twoFASecret'] = $secret;
-                $this->tpl->assign('secret', $secret);
+                $this->twoFAService->saveSecret($userId, $_POST['secret']);
             }
 
-            if (isset($_POST['twoFACode']) && isset($secret)) {
-                $verified = $tfa->verifyCode($secret, $_POST['twoFACode']);
-                if ($verified) {
-                    $this->userRepo->patchUser($userId, [
-                        'twoFAEnabled' => 1,
-                        'twoFASecret' => $secret,
-                    ]);
-                    $user['twoFAEnabled'] = 1;
+            if (isset($_POST['secret'], $_POST['twoFACode'])) {
+                if ($this->twoFAService->verifyAndEnable($userId, $_POST['secret'], $_POST['twoFACode'])) {
                     $this->tpl->setNotification($this->language->__('notification.twoFA_enabled_success'), 'success', 'twoFAenabled');
-                    $this->tpl->assign('twoFAEnabled', true);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.incorrect_twoFA_code'), 'error');
                 }
             }
         }
 
-        if ($user['twoFAEnabled']) {
-            $this->tpl->assign('twoFAEnabled', true);
-        } else {
-            $qrData = $tfa->getQRCodeImageAsDataUri($user['username'], $secret);
-            $this->tpl->assign('qrData', $qrData);
-            $this->tpl->assign('twoFAEnabled', false);
-        }
-
-        // Sensitive Form, generate form tokens
-        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-        session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
-        session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
+        $this->assignSetupData();
+        $this->generateFormTokens();
 
         return $this->tpl->display('twofa.edit');
+    }
+
+    /**
+     * Assigns the current 2FA setup state (secret, QR data, enabled flag) to the template.
+     *
+     * @throws TwoFactorAuthException
+     */
+    private function assignSetupData(): void
+    {
+        $setup = $this->twoFAService->getSetupData((int) session('userdata.id'));
+
+        $this->tpl->assign('secret', $setup['secret']);
+        $this->tpl->assign('twoFAEnabled', $setup['twoFAEnabled']);
+
+        if (! $setup['twoFAEnabled']) {
+            $this->tpl->assign('qrData', $setup['qrData']);
+        }
+    }
+
+    /**
+     * Validates the submitted CSRF form token against the session.
+     */
+    private function isValidFormToken(): bool
+    {
+        return isset($_POST[session('formTokenName')])
+            && $_POST[session('formTokenName')] == session('formTokenValue');
+    }
+
+    /**
+     * Generates CSRF form tokens for sensitive forms.
+     */
+    private function generateFormTokens(): void
+    {
+        $permittedChars = '0123456789abcdefghijklmnopqrstuvwxyz';
+        session(['formTokenName' => substr(str_shuffle($permittedChars), 0, 32)]);
+        session(['formTokenValue' => substr(str_shuffle($permittedChars), 0, 32)]);
     }
 }

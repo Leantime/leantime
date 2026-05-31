@@ -55,7 +55,7 @@ leantime.widgetController = (function () {
             lazyLoad: false,
             columnOpts: {
                 breakpointForWindow: true,  // test window vs grid size
-                breakpoints: [{w:700, c:1},{w:950, c:6}]
+                breakpoints: [{w:1199, c:1}]
             },
         });
 
@@ -65,6 +65,39 @@ leantime.widgetController = (function () {
 
         grid.on('resizestop', function(Event, item) {
             saveGrid();
+        });
+
+        // Mobile/tablet (<1200px): force a static single-column grid so that
+        // scrolling or tapping a widget doesn't drag/reshuffle it (#3350). The
+        // 1-column layout comes from columnOpts.breakpoints above; setStatic
+        // disables drag/resize (so saveGrid never fires here and the desktop
+        // layout is never overwritten). Restore the draggable grid on resize up.
+        var welcomeRemoved = false;
+        var applyResponsiveGridMode = function () {
+            if (!grid) return;
+            var isMobile = window.innerWidth < 1200;
+            grid.setStatic(isMobile);
+            grid.margin(isMobile ? '0px 5px 5px 0px' : '0px 15px 15px 0px');
+
+            // Hide the low-value welcome/stats widget on mobile. Removing it from
+            // the grid engine (keeping the DOM, which CSS hides) and compacting
+            // closes the gap its grid rows would otherwise leave behind.
+            if (isMobile && !welcomeRemoved) {
+                var welcome = document.getElementById('widget_wrapper_welcome');
+                if (welcome) {
+                    try {
+                        grid.removeWidget(welcome, false);
+                        grid.compact();
+                    } catch (e) { /* grid not ready; CSS still hides it */ }
+                    welcomeRemoved = true;
+                }
+            }
+        };
+        applyResponsiveGridMode();
+        var gridResizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(gridResizeTimer);
+            gridResizeTimer = setTimeout(applyResponsiveGridMode, 200);
         });
 
         jQuery(".grid-stack-item").each(function(){

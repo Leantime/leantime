@@ -26,19 +26,20 @@ class DelMilestone extends Controller
      */
     public function get(): Response
     {
-
         // Only admins
-        if (Auth::userIsAtLeast(Roles::$editor)) {
-            if (isset($_GET['id'])) {
-                $id = (int) ($_GET['id']);
-            }
-
-            $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-
-            return $this->tpl->displayPartial('tickets.delMilestone');
-        } else {
+        if (! Auth::userIsAtLeast(Roles::$editor)) {
             return $this->tpl->displayPartial('errors.error403');
         }
+
+        if (! isset($_GET['id'])) {
+            return $this->tpl->displayPartial('errors.error404', responseCode: 404);
+        }
+
+        $id = (int) $_GET['id'];
+
+        $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+
+        return $this->tpl->displayPartial('tickets.delMilestone');
     }
 
     /**
@@ -47,7 +48,7 @@ class DelMilestone extends Controller
     public function post($params): Response
     {
         if (! isset($_GET['id'], $params['del'])) {
-            return $this->tpl->displayPartial('errors.error400', responseCode: 400);
+            return $this->tpl->displayPartial('errors.error404', responseCode: 404);
         }
 
         if (! Auth::userIsAtLeast(Roles::$editor)) {

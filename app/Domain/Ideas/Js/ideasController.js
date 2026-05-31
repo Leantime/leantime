@@ -93,16 +93,8 @@ leantime.ideasController = (function () {
                 ideaSort.push({"id":ideaId, "sortIndex":sortIndex});
             });
 
-            // POST to server using $.post or $.ajax
-            jQuery.ajax({
-                type: 'POST',
-                url: leantime.appUrl + '/api/ideas',
-                data: {
-                    action:"ideaSort",
-                    payload: ideaSort
-                }
-
-            });
+            leantime.rpc('Ideas.Ideas.reorderIdeas', { payload: ideaSort })
+                .catch(function (e) { console.error('Could not reorder ideas', e); });
         }
 
 
@@ -162,23 +154,14 @@ leantime.ideasController = (function () {
                     var userId = dataValue[1];
                     var profileImageId = dataValue[2];
 
-                    jQuery.ajax(
-                        {
-                            type: 'PATCH',
-                            url: leantime.appUrl + '/api/ideas',
-                            data:
-                                {
-                                    id : canvasId,
-                                    author:userId
-                            }
-                        }
-                    ).done(
-                        function () {
+                    leantime.rpc('Ideas.Ideas.patchIdeaItem', { id: canvasId, params: { author: userId } })
+                        .then(function (success) {
+                            if (! success) { return; }
                             jQuery("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img").attr("src", leantime.appUrl + "/api/users?profileImage=" + userId);
 
                             jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated")});
-                        }
-                    );
+                        })
+                        .catch(function (e) { console.error('Could not update idea author', e); });
                 }
             }
         );
@@ -200,24 +183,14 @@ leantime.ideasController = (function () {
                     var statusClass = dataValue[2];
 
 
-                    jQuery.ajax(
-                        {
-                            type: 'PATCH',
-                            url: leantime.appUrl + '/api/ideas',
-                            data:
-                                {
-                                    id : canvasItemId,
-                                    box:status
-                            }
-                        }
-                    ).done(
-                        function () {
+                    leantime.rpc('Ideas.Ideas.patchIdeaItem', { id: canvasItemId, params: { box: status } })
+                        .then(function (success) {
+                            if (! success) { return; }
                             jQuery("#statusDropdownMenuLink" + canvasItemId + " span.text").text(dataLabel);
                             jQuery("#statusDropdownMenuLink" + canvasItemId).removeClass().addClass("" + statusClass + " dropdown-toggle f-left status ");
                             jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated")});
-
-                        }
-                    );
+                        })
+                        .catch(function (e) { console.error('Could not update idea status', e); });
                 }
             }
         );
@@ -274,12 +247,8 @@ leantime.ideasController = (function () {
                     }
                 }
 
-                // POST to server using $.post or $.ajax
-                jQuery.ajax({
-                    type: 'POST',
-                    url: leantime.appUrl + '/api/ideas',
-                    data:statusPostData
-                });
+                leantime.rpc('Ideas.Ideas.bulkUpdateStatus', { payload: statusPostData.payload })
+                    .catch(function (e) { console.error('Could not update idea statuses', e); });
 
             }
         });

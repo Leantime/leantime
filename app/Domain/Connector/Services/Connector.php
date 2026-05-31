@@ -4,7 +4,6 @@ namespace Leantime\Domain\Connector\Services;
 
 use Illuminate\Support\Facades\Log;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Canvas\Repositories\Canvas;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas;
 use Leantime\Domain\Ideas\Repositories\Ideas;
 use Leantime\Domain\Projects\Services\Projects;
@@ -16,7 +15,6 @@ class Connector
 {
     public function __construct(
         private Users $userService,
-        private Canvas $canvasRepository,
         private Projects $projectService,
         private Tickets $ticketService,
         private \Leantime\Domain\Tickets\Repositories\Tickets $ticketRepository,

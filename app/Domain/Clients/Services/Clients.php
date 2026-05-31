@@ -2,12 +2,16 @@
 
 namespace Leantime\Domain\Clients\Services;
 
-use Leantime\Core\UI\Template as TemplateCore;
+use Leantime\Core\Exceptions\EntityExistsException;
+use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+use Leantime\Domain\Comments\Services\Comments as CommentService;
+use Leantime\Domain\Files\Services\Files as FileService;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 /**
- * Class Clients
+ * Client service - Business logic for client management.
  */
 class Clients
 {
@@ -15,18 +19,32 @@ class Clients
 
     private ClientRepository $clientRepository;
 
-    /**
-     * @param  TemplateCore  $tpl
-     */
+    private CommentService $commentService;
+
+    private FileService $fileService;
+
+    private UserRepository $userRepository;
+
     public function __construct(
         ProjectRepository $projectRepository,
         ClientRepository $clientRepository,
+        CommentService $commentService,
+        FileService $fileService,
+        UserRepository $userRepository,
     ) {
         $this->projectRepository = $projectRepository;
         $this->clientRepository = $clientRepository;
+        $this->commentService = $commentService;
+        $this->fileService = $fileService;
+        $this->userRepository = $userRepository;
     }
 
     /**
+     * Gets clients accessible by a specific user based on their project assignments.
+     *
+     * @param  int  $userId  The user ID
+     * @return array List of clients the user has access to
+     *
      * @api
      */
     public function getUserClients(int $userId): array
@@ -35,7 +53,6 @@ class Clients
         $clients = [];
 
         if (is_array($userProjects)) {
-            $userClients = [];
             foreach ($userProjects as $project) {
                 if (! array_key_exists($project['clientId'], $clients)) {
                     $clients[$project['clientId']] = ['id' => $project['clientId'], 'name' => $project['clientName']];
@@ -47,6 +64,11 @@ class Clients
     }
 
     /**
+     * Gets all clients.
+     *
+     * @param  array|null  $searchparams  Optional search parameters
+     * @return array List of all clients
+     *
      * @api
      */
     public function getAll(?array $searchparams = null): array
@@ -55,11 +77,11 @@ class Clients
     }
 
     /**
-     * patches the client by key.
+     * Patches the client by key.
      *
      * @param  int  $id  Id of the object to be patched
-     * @param  array  $params  Key=>value array where key represents the object field name and value the value.
-     * @return bool returns true on success, false on failure
+     * @param  array  $params  Key=>value array where key represents the object field name and value the value
+     * @return bool Returns true on success, false on failure
      *
      * @api
      */
@@ -69,9 +91,9 @@ class Clients
     }
 
     /**
-     * updates the client by key.
+     * Updates an existing client.
      *
-     * @param  object|array  $values  expects the entire object to be updated as object or array
+     * @param  array  $values  Client data including 'id' key
      * @return bool Returns true on success, false on failure
      *
      * @api
@@ -82,9 +104,9 @@ class Clients
     }
 
     /**
-     * Creates a new client
+     * Creates a new client.
      *
-     * @param  object|array  $values  Object or array to be created
+     * @param  array  $values  Client data to create
      * @return int|false Returns id of new element or false
      *
      * @api
@@ -95,10 +117,10 @@ class Clients
     }
 
     /**
-     * Deletes a client
+     * Deletes a client and its associated projects.
      *
-     * @param  int  $id  Id of the object to be deleted
-     * @return bool Returns id of new element or false
+     * @param  int  $id  Id of the client to be deleted
+     * @return bool Returns true on success, false on failure
      *
      * @api
      */
@@ -108,15 +130,156 @@ class Clients
     }
 
     /**
-     * Gets 1 specific client by id
+     * Gets 1 specific client by id.
      *
-     * @param  int  $id  Id of the object to be retrieved
-     * @return object|array|false Returns object or array. False on failure or if item cannot be found
+     * @param  int  $id  Id of the client to be retrieved
+     * @return array|false Returns client data or false if not found
      *
      * @api
      */
-    public function get(int $id): object|array|false
+    public function get(int $id): array|false
     {
         return $this->clientRepository->getClient($id);
+    }
+
+    /**
+     * Checks if a client with the same name and street already exists.
+     *
+     * @param  array  $values  Client data with 'name' and 'street' keys
+     * @return bool Returns true if client exists
+     *
+     * @api
+     */
+    public function isClient(array $values): bool
+    {
+        return $this->clientRepository->isClient($values);
+    }
+
+    /**
+     * Checks if a client has any tickets via its projects.
+     *
+     * @param  int  $id  Client id
+     * @return bool Returns true if client has tickets
+     *
+     * @api
+     */
+    public function hasTickets(int $id): bool
+    {
+        return $this->clientRepository->hasTickets($id);
+    }
+
+    /**
+     * Gets all users assigned to a client.
+     *
+     * @param  int  $clientId  Client id
+     * @return array|false Returns list of users or false
+     *
+     * @api
+     */
+    public function getClientsUsers(int $clientId): array|false
+    {
+        return $this->clientRepository->getClientsUsers($clientId);
+    }
+
+    /**
+     * Gets projects belonging to a client.
+     *
+     * @param  int  $clientId  Client id
+     * @return array List of projects for this client
+     *
+     * @api
+     */
+    public function getClientProjects(int $clientId): array
+    {
+        return $this->projectRepository->getClientProjects($clientId);
+    }
+
+    /**
+     * Creates a new client after validating it and checking for duplicates.
+     *
+     * Encapsulates the name-required validation and the duplicate-name check
+     * that previously lived in the controller.
+     *
+     * @param  array  $values  Client data to create (requires a non-empty 'name')
+     * @return int Id of the newly created client
+     *
+     * @throws MissingParameterException When the client name is empty
+     * @throws EntityExistsException When a client with the same name/street already exists
+     *
+     * @api
+     */
+    public function createClient(array $values): int
+    {
+        if (($values['name'] ?? '') === '') {
+            throw new MissingParameterException('Client name not specified');
+        }
+
+        if ($this->isClient($values) === true) {
+            throw new EntityExistsException('Client exists already');
+        }
+
+        return (int) $this->clientRepository->addClient($values);
+    }
+
+    /**
+     * Updates an existing client after validating the name is present.
+     *
+     * @param  array  $values  Client data including 'id' key (requires a non-empty 'name')
+     * @return bool Returns true on success, false on failure
+     *
+     * @throws MissingParameterException When the client name is empty
+     *
+     * @api
+     */
+    public function updateClient(array $values): bool
+    {
+        if (($values['name'] ?? '') === '') {
+            throw new MissingParameterException('Client name not specified');
+        }
+
+        return $this->editClient($values);
+    }
+
+    /**
+     * Removes a user from a client by clearing the user's client assignment.
+     *
+     * Keeps the Clients controllers within the Clients service surface while the
+     * underlying mutation lives on the Users repository.
+     *
+     * @param  int  $clientId  Client the user should be removed from
+     * @param  int  $userId  User to remove from the client
+     * @return bool Returns true on success, false on failure
+     *
+     * @api
+     */
+    public function removeUser(int $clientId, int $userId): bool
+    {
+        if ($clientId === 0 || $userId === 0) {
+            return false;
+        }
+
+        return $this->userRepository->removeFromClient($userId);
+    }
+
+    /**
+     * Assembles the template data needed to render the client detail page.
+     *
+     * Centralizes the shared assignment block previously duplicated across the
+     * GET and POST handlers of the ShowClient controller.
+     *
+     * @param  int  $id  Client id
+     * @return array{userClients: array|false, comments: array|false, imgExtensions: array<int, string>, clientProjects: array, files: array|false}
+     *
+     * @api
+     */
+    public function getClientPageData(int $id): array
+    {
+        return [
+            'userClients' => $this->getClientsUsers($id),
+            'comments' => $this->commentService->getComments('client', $id),
+            'imgExtensions' => ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'],
+            'clientProjects' => $this->getClientProjects($id),
+            'files' => $this->fileService->getFilesByModule('client', $id),
+        ];
     }
 }

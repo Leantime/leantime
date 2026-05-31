@@ -22,6 +22,7 @@ class EmailWorker
     {
 
         $allMessagesToSend = [];
+        $allMessagesToDelete = [];
         $n = 0;
         foreach ($messages as $message) {
             $n++;

@@ -27,22 +27,8 @@ leantime.usersRepository = (function () {
 
     var updateUserViewSettings = function (module, value) {
 
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/users',
-                data:
-                {
-                    patchViewSettings : module,
-                    value: value
-                }
-            }
-        ).done(
-            function () {
-                    //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
-
-            }
-        );
+        leantime.rpc('Users.Users.updateUserSettings', { category: 'views', setting: module, value: value })
+            .catch(function (e) { console.error('Could not save view setting', e); });
 
     };
 

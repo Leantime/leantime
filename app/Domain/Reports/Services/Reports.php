@@ -14,30 +14,20 @@ use Leantime\Core\Configuration\AppSettings as AppSettingCore;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\UI\Template as TemplateCore;
+use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-use Leantime\Domain\Eacanvas\Repositories\Eacanvas as EacanvaRepository;
-use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-use Leantime\Domain\Insightscanvas\Repositories\Insightscanvas as InsightscanvaRepository;
-use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
-use Leantime\Domain\Minempathycanvas\Repositories\Minempathycanvas as MinempathycanvaRepository;
-use Leantime\Domain\Obmcanvas\Repositories\Obmcanvas as ObmcanvaRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Reactions\Repositories\Reactions;
 use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
-use Leantime\Domain\Retroscanvas\Repositories\Retroscanvas as RetroscanvaRepository;
-use Leantime\Domain\Riskscanvas\Repositories\Riskscanvas as RiskscanvaRepository;
-use Leantime\Domain\Sbcanvas\Repositories\Sbcanvas as SbcanvaRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
 use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
-use Leantime\Domain\Swotcanvas\Repositories\Swotcanvas as SwotcanvaRepository;
+use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Domain\Valuecanvas\Repositories\Valuecanvas as ValuecanvaRepository;
-use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
 
 /**
  * @api
@@ -62,6 +52,8 @@ class Reports
 
     private TicketRepository $ticketRepository;
 
+    private SprintService $sprintService;
+
     /**
      * @param  SettingRepository  $settings
      */
@@ -73,7 +65,8 @@ class Reports
         SprintRepository $sprintRepository,
         ReportRepository $reportRepository,
         SettingsService $settings,
-        TicketRepository $ticketRepository
+        TicketRepository $ticketRepository,
+        SprintService $sprintService
     ) {
         $this->tpl = $tpl;
         $this->appSettings = $appSettings;
@@ -83,6 +76,64 @@ class Reports
         $this->reportRepository = $reportRepository;
         $this->settings = $settings;
         $this->ticketRepository = $ticketRepository;
+        $this->sprintService = $sprintService;
+    }
+
+    /**
+     * Resolves which sprint burndown to display on the reports page.
+     *
+     * Mirrors the legacy controller selection order exactly:
+     * 1. An explicitly requested sprint id (from the query string).
+     * 2. Otherwise the project's current sprint.
+     * 3. Otherwise the first available sprint.
+     *
+     * The returned 'currentSprintId' preserves the original behaviour:
+     * when a sprint id is explicitly requested it is echoed back as-is
+     * (even if the sprint cannot be loaded); when falling back to the
+     * current/first sprint the resolved sprint object's id is used.
+     * When the project has no sprints at all, both values are false.
+     *
+     * @param  int  $projectId  Project to resolve the burndown for.
+     * @param  int|null  $requestedSprintId  Sprint id explicitly requested by the user, or null.
+     * @return array{chart: false|array, currentSprintId: int|false} Burndown chart data and the resolved sprint id.
+     *
+     * @api
+     */
+    public function getSprintBurndownForReport(int $projectId, ?int $requestedSprintId): array
+    {
+        $allSprints = $this->sprintService->getAllSprints($projectId);
+
+        if ($allSprints === false || count($allSprints) === 0) {
+            return ['chart' => false, 'currentSprintId' => false];
+        }
+
+        $sprintChart = false;
+
+        if ($requestedSprintId !== null) {
+            $sprintObject = $this->sprintService->getSprint($requestedSprintId);
+            if ($sprintObject) {
+                $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
+            }
+
+            return ['chart' => $sprintChart, 'currentSprintId' => $requestedSprintId];
+        }
+
+        $currentSprint = $this->sprintService->getCurrentSprintId($projectId);
+
+        if ($currentSprint !== false && $currentSprint !== 'all') {
+            $sprintObject = $this->sprintService->getSprint((int) $currentSprint);
+            if ($sprintObject) {
+                $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
+
+                return ['chart' => $sprintChart, 'currentSprintId' => $sprintObject->id];
+            }
+
+            return ['chart' => $sprintChart, 'currentSprintId' => false];
+        }
+
+        $sprintChart = $this->sprintService->getSprintBurndown($allSprints[0]);
+
+        return ['chart' => $sprintChart, 'currentSprintId' => $allSprints[0]->id];
     }
 
     /**
@@ -167,18 +218,7 @@ class Reports
         ClientRepository $clientRepository,
         CommentRepository $commentsRepository,
         TimesheetRepository $timesheetRepo,
-        EacanvaRepository $eaCanvasRepo,
-        InsightscanvaRepository $insightsCanvasRepo,
-        LeancanvaRepository $leanCanvasRepo,
-        ObmcanvaRepository $obmCanvasRepo,
-        RetroscanvaRepository $retrosCanvasRepo,
-        GoalcanvaRepository $goalCanvasRepo,
-        ValuecanvaRepository $valueCanvasRepo,
-        MinempathycanvaRepository $minEmpathyCanvasRepo,
-        RiskscanvaRepository $risksCanvasRepo,
-        SbcanvaRepository $sbCanvasRepo,
-        SwotcanvaRepository $swotCanvasRepo,
-        WikiRepository $wikiRepo
+        BlueprintsRepository $blueprintsRepo
     ): array {
 
         // Get anonymous company guid
@@ -224,41 +264,41 @@ class Reports
             'numIdeaItems' => $ideaRepository->getNumberOfIdeas(),
             'numHoursBooked' => $timesheetRepo->getHoursBooked(),
 
-            'numResearchBoards' => $leanCanvasRepo->getNumberOfBoards(),
-            'numResearchItems' => $leanCanvasRepo->getNumberOfCanvasItems(),
+            'numResearchBoards' => $blueprintsRepo->getNumberOfBoards(null, 'leancanvas'),
+            'numResearchItems' => $blueprintsRepo->getNumberOfCanvasItems(null, 'leancanvas'),
 
-            'numRetroBoards' => $retrosCanvasRepo->getNumberOfBoards(),
-            'numRetroItems' => $retrosCanvasRepo->getNumberOfCanvasItems(),
+            'numRetroBoards' => $blueprintsRepo->getNumberOfBoards(null, 'retroscanvas'),
+            'numRetroItems' => $blueprintsRepo->getNumberOfCanvasItems(null, 'retroscanvas'),
 
-            'numGoalBoards' => $goalCanvasRepo->getNumberOfBoards(),
-            'numGoalItems' => $goalCanvasRepo->getNumberOfCanvasItems(),
+            'numGoalBoards' => $blueprintsRepo->getNumberOfBoards(null, 'goalcanvas'),
+            'numGoalItems' => $blueprintsRepo->getNumberOfCanvasItems(null, 'goalcanvas'),
 
-            'numValueCanvasBoards' => $valueCanvasRepo->getNumberOfBoards(),
-            'numValueCanvasItems' => $valueCanvasRepo->getNumberOfCanvasItems(),
+            'numValueCanvasBoards' => $blueprintsRepo->getNumberOfBoards(null, 'valuecanvas'),
+            'numValueCanvasItems' => $blueprintsRepo->getNumberOfCanvasItems(null, 'valuecanvas'),
 
-            'numMinEmpathyBoards' => $minEmpathyCanvasRepo->getNumberOfBoards(),
-            'numMinEmpathyItems' => $minEmpathyCanvasRepo->getNumberOfCanvasItems(),
+            'numMinEmpathyBoards' => $blueprintsRepo->getNumberOfBoards(null, 'minempathycanvas'),
+            'numMinEmpathyItems' => $blueprintsRepo->getNumberOfCanvasItems(null, 'minempathycanvas'),
 
-            'numOBMBoards' => $obmCanvasRepo->getNumberOfBoards(),
-            'numOBMItems' => $obmCanvasRepo->getNumberOfCanvasItems(),
+            'numOBMBoards' => $blueprintsRepo->getNumberOfBoards(null, 'obmcanvas'),
+            'numOBMItems' => $blueprintsRepo->getNumberOfCanvasItems(null, 'obmcanvas'),
 
-            'numSWOTBoards' => $swotCanvasRepo->getNumberOfBoards(),
-            'numSWOTItems' => $swotCanvasRepo->getNumberOfCanvasItems(),
+            'numSWOTBoards' => $blueprintsRepo->getNumberOfBoards(null, 'swotcanvas'),
+            'numSWOTItems' => $blueprintsRepo->getNumberOfCanvasItems(null, 'swotcanvas'),
 
-            'numSBBoards' => $sbCanvasRepo->getNumberOfBoards(),
-            'numSBItems' => $sbCanvasRepo->getNumberOfCanvasItems(),
+            'numSBBoards' => $blueprintsRepo->getNumberOfBoards(null, 'sbcanvas'),
+            'numSBItems' => $blueprintsRepo->getNumberOfCanvasItems(null, 'sbcanvas'),
 
-            'numRISKSBoards' => $risksCanvasRepo->getNumberOfBoards(),
-            'numRISKSItems' => $risksCanvasRepo->getNumberOfCanvasItems(),
+            'numRISKSBoards' => $blueprintsRepo->getNumberOfBoards(null, 'riskscanvas'),
+            'numRISKSItems' => $blueprintsRepo->getNumberOfCanvasItems(null, 'riskscanvas'),
 
-            'numEABoards' => $eaCanvasRepo->getNumberOfBoards(),
-            'numEAItems' => $eaCanvasRepo->getNumberOfCanvasItems(),
+            'numEABoards' => $blueprintsRepo->getNumberOfBoards(null, 'eacanvas'),
+            'numEAItems' => $blueprintsRepo->getNumberOfCanvasItems(null, 'eacanvas'),
 
-            'numINSIGHTSBoards' => $insightsCanvasRepo->getNumberOfBoards(),
-            'numINSIGHTSItems' => $insightsCanvasRepo->getNumberOfCanvasItems(),
+            'numINSIGHTSBoards' => $blueprintsRepo->getNumberOfBoards(null, 'insightscanvas'),
+            'numINSIGHTSItems' => $blueprintsRepo->getNumberOfCanvasItems(null, 'insightscanvas'),
 
-            'numWikiBoards' => $wikiRepo->getNumberOfBoards(),
-            'numWikiItems' => $wikiRepo->getNumberOfCanvasItems(),
+            'numWikiBoards' => $blueprintsRepo->getNumberOfBoards(null, 'wiki'),
+            'numWikiItems' => $blueprintsRepo->getNumberOfCanvasItems(null, 'wiki'),
 
             'numTaskSentimentAngry' => $taskSentiment['🤬'] ?? 0,
             'numTaskSentimentDisgust' => $taskSentiment['🤢'] ?? 0,
@@ -313,7 +353,13 @@ class Reports
                         'form_params' => [
                             'telemetry' => $data_string,
                         ],
-                        'timeout' => 480,
+                        // Short connect timeout so an offline/air-gapped server (or a
+                        // CI runner with no egress) fails fast instead of blocking the
+                        // dashboard's Welcome widget — and saturating PHP-FPM workers —
+                        // for minutes. The previous 480s total timeout hung the page
+                        // when telemetry was unreachable. (#3372/#3373)
+                        'connect_timeout' => 2,
+                        'timeout' => 5,
                     ])->then(function ($response) use ($today) {
                         $this->settings->saveSetting('companysettings.telemetry.lastUpdate', $today);
                     });

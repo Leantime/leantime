@@ -41,14 +41,7 @@ class ShowAllMilestones extends Controller
     public function get($params): Response
     {
 
-        if (isset($params['type']) === false) {
-            $params['type'] = 'milestone';
-        }
-
-        if (isset($params['showTasks']) === true) {
-            $params['type'] = '';
-            $params['excludeType'] = '';
-        }
+        $params = $this->ticketService->normalizeRoadmapParams($params);
 
         // Sets the filter module to show a quick toggle for task types
         $this->tpl->assign('enableTaskTypeToggle', true);

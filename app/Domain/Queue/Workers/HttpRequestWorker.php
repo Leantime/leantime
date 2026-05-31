@@ -26,8 +26,8 @@ class HttpRequestWorker
 
             try {
 
-                $subjectArray = unserialize($request['subject']);
-                $messageArray = unserialize($request['message']);
+                $subjectArray = safe_unserialize($request['subject'], []);
+                $messageArray = safe_unserialize($request['message'], []);
 
                 $response = $this->client->request(
                     $subjectArray['method'],

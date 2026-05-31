@@ -30,10 +30,10 @@ class Home extends Controller
     /**
      * @throws BindingResolutionException
      */
-    public function get(): Response
+    public function get(array $params): Response
     {
-        // Debug uncomment to reset dashboard
-        if (isset($_GET['resetDashboard']) === true) {
+        // Debug param to reset dashboard
+        if (isset($params['resetDashboard']) === true) {
             $this->widgetService->resetDashboard(session('userdata.id'));
         }
 
@@ -58,7 +58,7 @@ class Home extends Controller
         // Handle saving dashboard grid layout
         if (isset($params['action']) && $params['action'] === 'saveGrid' &&
             isset($params['data']) && $params['data'] !== '') {
-            $this->settingsSvc->saveSetting('usersettings.'.session('userdata.id').'.dashboardGrid', serialize($params['data']));
+            $this->widgetService->saveGrid($params['data'], session('userdata.id'));
 
             return new Response;
         }

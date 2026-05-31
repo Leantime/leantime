@@ -7,6 +7,7 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Modulemanager\Services\Modulemanager;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Symfony\Component\HttpFoundation\Response;
 
 class Createnew extends Controller
 {
@@ -15,21 +16,22 @@ class Createnew extends Controller
     private Modulemanager $modulemanager;
 
     /**
-     * init - initialize private variables
+     * Initializes dependencies.
      */
     public function init(
         Modulemanager $modulemanager,
         ProjectService $projectService
-    ) {
-
+    ): void {
         $this->modulemanager = $modulemanager;
         $this->projectService = $projectService;
     }
 
     /**
-     * run - display template and edit data
+     * Displays the create new project type selection.
+     *
+     * @param  array  $params  Request parameters
      */
-    public function run()
+    public function get(array $params): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
