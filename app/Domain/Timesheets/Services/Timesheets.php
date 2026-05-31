@@ -348,7 +348,10 @@ class Timesheets
             $timestamp = $tempData[3];
             $hours = $dateEntry;
 
-            $isNewEntryRow = ($ticketId === 'new' || $ticketId === 0);
+            // $ticketId comes from explode('|', ...) so it's always a string; compare
+            // as strings. The placeholder row is keyed "new|...", but treat a "0"/empty
+            // id as a placeholder too rather than a real ticket. (#3210 review)
+            $isNewEntryRow = in_array($ticketId, ['new', '0', ''], true);
 
             // The weekly grid includes an "add new task" placeholder row whose
             // day cells are submitted empty. There's nothing to log for that row
