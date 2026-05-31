@@ -65,16 +65,26 @@ leantime.menuController = (function () {
 
     };
 
+    // Below this width the sidebar is an off-canvas drawer (matches the
+    // mobile-like CSS breakpoint in mobile.css). See #3185, #2878.
+    var isMobileMenu = function () {
+        return window.innerWidth < 1200;
+    };
+
     var initLeftMenuHamburgerButton = function () {
 
-
-        var newWidth = 68;
-        if (window.innerWidth < 576) {
+        // On mobile/tablet always start with the drawer closed, regardless of
+        // the saved desktop preference. Don't persist this — it's view-only.
+        if (isMobileMenu()) {
             jQuery(".mainwrapper").removeClass("menuopen");
             jQuery(".mainwrapper").addClass("menuclosed");
         }
 
-        jQuery('.barmenu').click(function () {
+        jQuery('.barmenu').click(function (e) {
+
+            // Don't let this click bubble to the close-on-outside handler below,
+            // otherwise opening the drawer immediately closes it again.
+            e.stopPropagation();
 
             if (jQuery(".mainwrapper").hasClass('menuopen')) {
                 jQuery(".mainwrapper").removeClass("menuopen");
@@ -90,6 +100,24 @@ leantime.menuController = (function () {
                 leantime.menuRepository.updateUserMenuSettings("open");
             }
 
+        });
+
+        // Mobile drawer: tapping the dimmed backdrop closes it. The backdrop is
+        // a real element covering the content, so this is reliable even when
+        // content widgets stopPropagation on their own clicks. View-only.
+        jQuery(".menu-backdrop").on('click', function () {
+            jQuery(".mainwrapper").removeClass("menuopen").addClass("menuclosed");
+        });
+
+        // When the viewport crosses from desktop into mobile width, collapse
+        // the drawer so it doesn't sit open over the content.
+        var wasMobile = isMobileMenu();
+        jQuery(window).on('resize', function () {
+            var nowMobile = isMobileMenu();
+            if (nowMobile && !wasMobile) {
+                jQuery(".mainwrapper").removeClass("menuopen").addClass("menuclosed");
+            }
+            wasMobile = nowMobile;
         });
 
     };
