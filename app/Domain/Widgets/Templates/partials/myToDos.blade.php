@@ -25,10 +25,6 @@
     }
 @endphp
 
-<div id="todoWidgetLoader" class="htmx-indicator full-width-loader">
-    <div class="indeterminate"></div>
-</div>
-
 <div id="yourToDoContainer"
      hx-get="{{BASE_URL}}/widgets/myToDos/get"
      hx-trigger="{{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::UPDATE }} from:body, {{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::SUBTASK_UPDATE }} from:body"
@@ -38,6 +34,13 @@
      hx-indicator="#todoWidgetLoader"
      data-group-by="{{ $groupBy }}"
 >
+
+    {{-- The loader lives INSIDE the swapped container: #yourToDoContainer swaps with outerHTML and
+         the response re-includes this partial, so a sibling loader would accumulate a duplicate
+         #todoWidgetLoader on every refresh. Inside the target, the swap replaces it cleanly. --}}
+    <div id="todoWidgetLoader" class="htmx-indicator full-width-loader">
+        <div class="indeterminate"></div>
+    </div>
 
     <div class="clear" style="position:absolute; top:10px; right:35px;">
 
