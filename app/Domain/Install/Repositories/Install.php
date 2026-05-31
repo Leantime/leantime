@@ -2567,6 +2567,10 @@ class Install
                     $table->json('meta')->nullable();
 
                     $table->index(['source_structure_id', 'target_structure_id'], 'idx_wsm_source_target');
+                    // Enforce the same idempotency key StructureRegistry::registerMappings()
+                    // checks in application code, so a race can't insert a duplicate mapping
+                    // for the same source element → target structure.
+                    $table->unique(['source_structure_id', 'source_element_id', 'target_structure_id'], 'idx_wsm_unique_mapping');
                 });
             }
         } catch (\Exception $e) {

@@ -59,15 +59,16 @@ class MappingService
 
         $mappings = $this->repo->getMappings($sourceStructureId, $targetStructureId);
 
+        // Resolve target element IDs → typeKeys with a single fetch instead of
+        // re-querying all target elements inside the mappings loop.
+        $targetIdToKey = [];
+        foreach ($this->repo->getElements($targetStructureId) as $el) {
+            $targetIdToKey[$el->id] = $el->typeKey;
+        }
+
         foreach ($mappings as $mapping) {
             if ($mapping->sourceElementId === $sourceElement->id) {
-                $targetElement = $this->repo->getElements($targetStructureId);
-
-                foreach ($targetElement as $el) {
-                    if ($el->id === $mapping->targetElementId) {
-                        return $el->typeKey;
-                    }
-                }
+                return $targetIdToKey[$mapping->targetElementId] ?? null;
             }
         }
 
@@ -151,15 +152,16 @@ class MappingService
 
         $mappings = $this->repo->getMappings($sourceStructureId, $targetStructureId);
 
+        // Resolve source element IDs → typeKeys with a single fetch instead of
+        // re-querying all source elements inside the mappings loop.
+        $sourceIdToKey = [];
+        foreach ($this->repo->getElements($sourceStructureId) as $el) {
+            $sourceIdToKey[$el->id] = $el->typeKey;
+        }
+
         foreach ($mappings as $mapping) {
             if ($mapping->targetElementId === $targetElement->id) {
-                $sourceElements = $this->repo->getElements($sourceStructureId);
-
-                foreach ($sourceElements as $el) {
-                    if ($el->id === $mapping->sourceElementId) {
-                        return $el->typeKey;
-                    }
-                }
+                return $sourceIdToKey[$mapping->sourceElementId] ?? null;
             }
         }
 
