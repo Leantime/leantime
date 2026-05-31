@@ -73,7 +73,8 @@
     hx-trigger="{{ $triggerAttr }}"
     @if($target) hx-target="{{ $target }}" @endif
     hx-swap="{{ $resolvedSwap }}"
-    @if($vals !== null) hx-vals='{!! json_encode($vals) !!}' @endif
+    {{-- JSON_HEX_* escapes ' " < & so a value can't break out of the single-quoted attribute. --}}
+    @if($vals !== null) hx-vals='{!! json_encode($vals, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP) !!}' @endif
     hx-indicator="{{ $indicator }}"
     {{ $attributes }}
 >

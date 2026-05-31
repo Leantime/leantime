@@ -63,8 +63,10 @@ class Subtasks extends HxComponent
             $this->tpl->setNotification($this->language->__('notifications.subtask_save_error'), 'error');
         }
 
-        // Announce the change so any component listening for subtask updates refreshes too.
-        $this->tpl->emit(HtmxTicketEvents::SUBTASK_UPDATE);
+        // Announce the change. Emit the broad event (for widgets listening to all tickets, e.g. the
+        // dashboard to-do widget) AND the entity-scoped event (for the ticket modal's mount, which
+        // listens via <x-global::hx :id> for "<event>#<ticketId>").
+        $this->tpl->emit(HtmxTicketEvents::SUBTASK_UPDATE, HtmxTicketEvents::SUBTASK_UPDATE->scoped($ticket->id));
 
         $ticketSubtasks = $this->ticketService->getAllSubtasks($ticket->id);
         $statusLabels = $this->ticketService->getStatusLabels(session('currentProject'));
@@ -110,8 +112,9 @@ class Subtasks extends HxComponent
             $this->tpl->setNotification($this->language->__('notifications.subtask_delete_error'), 'error');
         }
 
-        // Announce the change so any component listening for subtask updates refreshes too.
-        $this->tpl->emit(HtmxTicketEvents::SUBTASK_UPDATE);
+        // Announce the change — broad event for all-ticket listeners + the parent-scoped event for
+        // the ticket modal's mount (which listens for "<event>#<parentTicketId>").
+        $this->tpl->emit(HtmxTicketEvents::SUBTASK_UPDATE, HtmxTicketEvents::SUBTASK_UPDATE->scoped($parentId));
 
         $ticket = $this->ticketService->getTicket($parentId);
         $ticketSubtasks = $this->ticketService->getAllSubtasks($parentId);

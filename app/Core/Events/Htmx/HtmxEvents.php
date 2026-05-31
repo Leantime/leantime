@@ -5,12 +5,17 @@ namespace Leantime\Core\Events\Htmx;
 /**
  * Helpers for building the `HX-Trigger` response header from client event names.
  *
- * MIGRATION WINDOW: while emitters and listeners move to the lt:{domain}:{entity}.{verb} /
- * lt:ui:{command} convention we dual-emit legacy names alongside their canonical replacement so
- * existing JS listeners and (phar) plugins keep working without coordinated releases. Each group is
- * bidirectional — emitting ANY member puts the whole group on the wire, so old and new listeners
- * both fire regardless of which name the emitter used. Delete LEGACY_ALIASES once every emitter and
- * listener has been migrated.
+ * MIGRATION WINDOW: while emitters and listeners move to the lt:{domain}:{entity}.{verb} convention
+ * we dual-emit legacy names alongside their canonical replacement so existing declarative listeners
+ * (hx-trigger="<name> from:body") and (phar) plugins keep working without coordinated releases. Each
+ * group is bidirectional — emitting ANY member puts the whole group on the wire, so old and new
+ * listeners both fire regardless of which name the emitter used. Delete LEGACY_ALIASES once every
+ * emitter and listener has been migrated.
+ *
+ * Only DOMAIN data events are aliased here. UI command events (lt:ui:*) are intentionally NOT
+ * aliased: they're consumed by JS addEventListener handlers that listen for each name directly, so
+ * dual-emitting them would fire the same handler once per alias (double growl, multiple modal-close
+ * callbacks) for a single response.
  */
 final class HtmxEvents
 {
@@ -20,8 +25,6 @@ final class HtmxEvents
      * @var array<int, array<int, string>>
      */
     private const LEGACY_ALIASES = [
-        ['lt:ui:notify', 'HTMX.ShowNotification'],
-        ['lt:ui:modal.close', 'closeModal', 'HTMX.closemodal', 'Htmx.CloseModal'],
         ['lt:tickets:ticket.updated', 'ticket_update'],
         ['lt:tickets:subtask.updated', 'subtasks_update', 'subtasksUpdated'],
         ['lt:projects:project.updated', 'HTMX.updateProjectList'],

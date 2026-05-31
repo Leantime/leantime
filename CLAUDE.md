@@ -485,7 +485,7 @@ class MyController extends HtmxController
 
 Enums implement `HtmxEvent` via the `InteractsWithHtmxEvents` trait (gives `event()`→wire value, `scoped($id)` for per-entity events, `trigger()` for `hx-trigger` strings). PHP enums can't implement `__toString`, so use `event()`/`->value` in PHP; Blade `{{ Events::Case }}` renders the value via Laravel's `e()`. Emit with `$this->tpl->emit(...)` / `$this->setHTMXEvent(...)` (both accept `HtmxEvent|string`).
 
-> Migration window: legacy strings (`HTMX.ShowNotification`, `ticket_update`, etc.) are bidirectionally dual-emitted with their `lt:` replacement via `HtmxEvents::LEGACY_ALIASES`, so old and new listeners both fire. Remove that map once every emitter + listener is migrated.
+> Migration window: legacy DOMAIN-event strings (`ticket_update`, `subtasks_update`, etc.) are bidirectionally dual-emitted with their `lt:` replacement via `HtmxEvents::LEGACY_ALIASES`, so old and new declarative `hx-trigger` listeners both fire. Remove that map once every emitter + listener is migrated. UI command events (`lt:ui:*`) are NOT dual-emitted — they're consumed by JS `addEventListener` handlers that listen for each legacy name directly, so aliasing them would invoke the handler once per alias (double growl / multiple modal-close).
 
 ```php
 // Per-domain data-event enum
