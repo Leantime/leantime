@@ -1,5 +1,3 @@
-import '../../Canvas/Js/canvasController.js';
-
 /**
  * Logic Model board controller — stage-flow focus behaviour.
  *
