@@ -128,22 +128,57 @@ class Build
         } elseif (method_exists($this->object, 'set'.$key)) {
             $property->{'set'.$key}($value);
         } else {
-            if ($value === null && property_exists($property, $key)) {
+            // Coerce external/API data to the declared property type before
+            // assigning. Models built from the marketplace API (e.g.
+            // MarketplacePlugin) declare non-nullable typed properties, but the
+            // API can return null or a mismatched type (e.g. a string for an
+            // `array $categories`), which PHP 8 rejects with a TypeError and 500s
+            // the whole request. Coercing here protects every Build-hydrated
+            // model, not just one. (#3207, #3342)
+            if (property_exists($property, $key)) {
                 $reflection = new \ReflectionProperty($property, $key);
                 $type = $reflection->getType();
-                if ($type !== null && ! $type->allowsNull()) {
-                    $value = match ($type->getName()) {
-                        'string' => '',
-                        'int' => 0,
-                        'float' => 0.0,
-                        'bool' => false,
-                        'array' => [],
-                        default => null,
-                    };
+                if ($type instanceof \ReflectionNamedType && $type->isBuiltin()) {
+                    $value = $this->coerceToBuiltinType($value, $type);
                 }
             }
             $property->$key = $value;
         }
+    }
+
+    /**
+     * Coerces a value to a builtin (scalar/array) property type. Returns a typed
+     * default for nulls on non-nullable types, casts compatible scalars, and
+     * wraps non-array values for array properties. Leaves values untouched when
+     * no safe coercion exists (preserving today's behavior for that edge).
+     */
+    private function coerceToBuiltinType(mixed $value, \ReflectionNamedType $type): mixed
+    {
+        $typeName = $type->getName();
+
+        if ($value === null) {
+            if ($type->allowsNull()) {
+                return null;
+            }
+
+            return match ($typeName) {
+                'string' => '',
+                'int' => 0,
+                'float' => 0.0,
+                'bool' => false,
+                'array' => [],
+                default => null,
+            };
+        }
+
+        return match ($typeName) {
+            'string' => is_string($value) ? $value : (is_scalar($value) ? (string) $value : $value),
+            'int' => is_int($value) ? $value : (is_numeric($value) ? (int) $value : $value),
+            'float' => is_float($value) ? $value : (is_numeric($value) ? (float) $value : $value),
+            'bool' => is_bool($value) ? $value : (bool) $value,
+            'array' => is_array($value) ? $value : (array) $value,
+            default => $value,
+        };
     }
 
     public function get(string $key = ''): mixed
