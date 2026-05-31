@@ -2,24 +2,52 @@
 
 namespace Leantime\Domain\Tickets\Hxcontrollers;
 
-use Leantime\Core\Controller\HtmxController;
+use Leantime\Core\Controller\HxComponent;
+use Leantime\Core\Events\Htmx\HtmxEvent;
+use Leantime\Domain\Tickets\Htmx\HtmxTicketEvents;
 use Leantime\Domain\Tickets\Services\Tickets;
-use Leantime\Domain\Timesheets\Services\Timesheets;
 
-class Subtasks extends HtmxController
+/**
+ * Subtasks list component for a ticket.
+ *
+ * Mounted with <x-global::hx :for="self::class" :id="$ticketId" />. It both emits and listens for
+ * {@see HtmxTicketEvents::SUBTASK_UPDATE} so that a subtask change made here also refreshes other
+ * components showing the same data (e.g. the dashboard to-do widget) and vice-versa — the emit and
+ * listen sides reference the same enum case, so they cannot drift apart.
+ */
+class Subtasks extends HxComponent
 {
     protected static string $view = 'tickets::partials.subtasks';
 
+    /** Refresh swaps the inner content so the mount wrapper keeps its id + event triggers. */
+    public static string $swap = 'innerHTML';
+
     private Tickets $ticketService;
 
-    /**
-     * Controller constructor
-     *
-     * @param  Timesheets  $timesheetService
-     */
     public function init(Tickets $ticketService): void
     {
         $this->ticketService = $ticketService;
+    }
+
+    public static function route(): string
+    {
+        return 'tickets/subtasks';
+    }
+
+    /**
+     * @return array<int, HtmxEvent>
+     */
+    public static function listensTo(): array
+    {
+        return [HtmxTicketEvents::SUBTASK_UPDATE];
+    }
+
+    /**
+     * @return array<int, HtmxEvent>
+     */
+    public static function emits(): array
+    {
+        return [HtmxTicketEvents::SUBTASK_UPDATE];
     }
 
     public function save(): void
@@ -35,6 +63,9 @@ class Subtasks extends HtmxController
             $this->tpl->setNotification($this->language->__('notifications.subtask_save_error'), 'error');
         }
 
+        // Announce the change so any component listening for subtask updates refreshes too.
+        $this->tpl->emit(HtmxTicketEvents::SUBTASK_UPDATE);
+
         $ticketSubtasks = $this->ticketService->getAllSubtasks($ticket->id);
         $statusLabels = $this->ticketService->getStatusLabels(session('currentProject'));
         $efforts = $this->ticketService->getEffortLabels();
@@ -47,13 +78,14 @@ class Subtasks extends HtmxController
 
     public function get(): void
     {
-
         if (! $this->incomingRequest->getMethod() == 'GET') {
             throw new \Exception('This endpoint only supports GET requests');
         }
 
         $getVars = $_GET;
-        $id = $getVars['ticketId'];
+        // Accept the ticket id from the path (contract-driven mount → query['id']) or the legacy
+        // ?ticketId= query used by the in-partial forms.
+        $id = $getVars['ticketId'] ?? $getVars['id'] ?? null;
 
         $ticket = $this->ticketService->getTicket($id);
         $ticketSubtasks = $this->ticketService->getAllSubtasks((int) $id);
@@ -64,12 +96,10 @@ class Subtasks extends HtmxController
         $this->tpl->assign('ticketSubtasks', $ticketSubtasks);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('efforts', $efforts);
-
     }
 
     public function delete()
     {
-
         $getVars = $_GET;
         $id = $getVars['ticketId'];
         $parentId = $getVars['parentTicket'];
@@ -79,6 +109,9 @@ class Subtasks extends HtmxController
         } else {
             $this->tpl->setNotification($this->language->__('notifications.subtask_delete_error'), 'error');
         }
+
+        // Announce the change so any component listening for subtask updates refreshes too.
+        $this->tpl->emit(HtmxTicketEvents::SUBTASK_UPDATE);
 
         $ticket = $this->ticketService->getTicket($parentId);
         $ticketSubtasks = $this->ticketService->getAllSubtasks($parentId);

@@ -3,7 +3,7 @@
 @section('content')
 
 
-    @include("auth::partials.onboardingProgress", ['percentComplete' => 88, 'current' => 'time', 'completed' => ['account', 'theme', 'personalization']])
+    <x-auth::onboardingProgress :percentComplete="88" current="time" :completed="['account', 'theme', 'personalization']" />
 
 
     <h2>🗓️ Shaping A Daily Flow</h2>

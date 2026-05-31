@@ -1,3 +1,9 @@
+@props([
+    'percentComplete' => 0,
+    'current' => '',
+    'completed' => [],
+])
+
 <div class="projectSteps">
     <div class="progressWrapper">
         <div class="progress">

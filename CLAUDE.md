@@ -420,7 +420,14 @@ Leantime uses a dual template system actively migrating from PHP to Blade:
 - `Templates/sections/` - header, footer, pageBottom, appAnnouncement
 - `Composers/` - App, Header, Footer, Entry, PageBottom
 
-**Component syntax**: `<x-global::componentName>` for shared, `<x-widgets::moveableWidget>` for domain-specific.
+**Component syntax**: `<x-global::componentName>` for shared, `<x-widgets::moveableWidget>` for domain-specific. Anonymous components resolve automatically — `<x-{domain}::{name}>` → `app/Domain/{Domain}/Templates/components/{name}.blade.php`, `<x-global::{name}>` → `app/Views/Templates/components/{name}.blade.php` (registered in `ViewsServiceProvider::registerBladeCompiler()`).
+
+**Three component types** (prefer components over `@include`'d partials for anything reusable):
+1. **Presentational (anonymous)** — pure markup driven by `@props`, no controller. Lives in `Templates/components/`, called `<x-{domain}::{name}>`. The default for cards/badges/submenus/etc.
+2. **HTMX-backed** — a self-fetching/refreshing widget backed by an `HxController` (`init()` DI, `$view`, action methods). Mounted with the standard `<x-global::hx>` component instead of hand-written `hx-get`/`hx-trigger` boilerplate. Declare the event contract on an `HxComponent` (see below).
+3. **Class-backed** — a Blade component with a PHP class for constructor DI / computed props. Class at `app/Domain/{Domain}/View/Components/{Name}.php` (or `app/Views/Components/` for global), resolves before the anonymous file. Use sparingly, only when logic is too heavy for an anonymous component and it is not a server fetch.
+
+`partials/` is reserved for non-reusable, page-specific fragments and for `HxController` `$view` targets.
 
 **Template rendering methods** (on `Template` class):
 - `display($template, $layout, $code)` - Full page render with layout
@@ -466,34 +473,58 @@ class MyController extends HtmxController
     public function save(): void
     {
         // Process $_POST
-        $this->tpl->setNotification('Saved!', 'success');
-        $this->setHTMXEvent('HTMX.ShowNotification');
+        $this->tpl->setNotification('Saved!', 'success');   // already emits HtmxUiEvents::Notify
+        $this->tpl->emit(HtmxTicketEvents::UPDATE);          // tell listeners the entity changed
     }
 }
 ```
 
-HTMX event coordination between components:
+**Client (HTMX) event naming convention** — events travel server→browser on the `HX-Trigger` header. Two planes, kept separate from the backend `leantime.*` events:
+- **Data events** (`lt:{domain}:{entity}.{verb}`, past tense): "entity X changed → refresh". Consumed declaratively via `hx-trigger="lt:tickets:ticket.updated from:body"`. Backed by per-domain enums `app/Domain/{D}/Htmx/Htmx{D}Events.php`.
+- **UI command events** (`lt:ui:{command}`): "do a UI thing" (toast, close modal). Backed by the single core enum `Leantime\Core\Events\Htmx\HtmxUiEvents` (Notify, ModalClose, …) — consumed by JS listeners in `app.js`/`modals.js`. Plugins reuse these, never mint their own `lt:ui:*`.
+
+Enums implement `HtmxEvent` via the `InteractsWithHtmxEvents` trait (gives `event()`→wire value, `scoped($id)` for per-entity events, `trigger()` for `hx-trigger` strings). PHP enums can't implement `__toString`, so use `event()`/`->value` in PHP; Blade `{{ Events::Case }}` renders the value via Laravel's `e()`. Emit with `$this->tpl->emit(...)` / `$this->setHTMXEvent(...)` (both accept `HtmxEvent|string`).
+
+> Migration window: legacy strings (`HTMX.ShowNotification`, `ticket_update`, etc.) are bidirectionally dual-emitted with their `lt:` replacement via `HtmxEvents::LEGACY_ALIASES`, so old and new listeners both fire. Remove that map once every emitter + listener is migrated.
+
 ```php
-// PHP: Define events as an enum for type-safety
-enum HtmxTicketEvents: string {
-    case UPDATE = 'ticket_update';
-    case SUBTASK_UPDATE = 'subtasks_update';
+// Per-domain data-event enum
+use Leantime\Core\Events\Htmx\{HtmxEvent, InteractsWithHtmxEvents};
+
+enum HtmxTicketEvents: string implements HtmxEvent {
+    use InteractsWithHtmxEvents;
+    case UPDATE = 'lt:tickets:ticket.updated';
+    case SUBTASK_UPDATE = 'lt:tickets:subtask.updated';
 }
 
-// PHP: Trigger event in HxController
-$this->setHTMXEvent(HtmxTicketEvents::UPDATE->value);
+// Emit from an HxController action
+$this->tpl->emit(HtmxTicketEvents::UPDATE);
 ```
-```html
-<!-- Blade: Listen for events from other components -->
-<div hx-get="/hx/tickets/ticketCard/get" hx-trigger="ticket_update from:body" hx-target="#card-123">
+
+**HTMX-backed components** — declare the event contract on an `HxComponent` and mount with `<x-global::hx>` (no hand-written boilerplate). The mount reads `listensTo()` so the emit side and the listen side reference the SAME enum and cannot drift apart:
+```php
+class Subtasks extends \Leantime\Core\Controller\HxComponent {
+    protected static string $view = 'tickets::partials.subtasks';
+    public static string $swap = 'innerHTML';
+    public static function route(): string { return 'tickets/subtasks'; }
+    public static function listensTo(): array { return [HtmxTicketEvents::SUBTASK_UPDATE]; }
+    public static function emits(): array { return [HtmxTicketEvents::SUBTASK_UPDATE]; }
+}
+```
+```blade
+{{-- contract-driven: route + refresh triggers derived from the class --}}
+<x-global::hx :for="\Leantime\Domain\Tickets\Hxcontrollers\Subtasks::class" :id="$ticket->id" trigger="load" />
+
+{{-- attribute-driven escape hatch (one-offs / plugins) --}}
+<x-global::hx endpoint="comments/reactions/get" :listen="[HtmxTicketEvents::UPDATE]" />
 ```
 
 Common HTMX patterns used:
-- Lazy loading: `hx-trigger="revealed"` (widgets load when scrolled into view)
-- Cross-component updates: `hx-trigger="ticket_update from:body"`
+- Lazy loading: `hx-trigger="revealed"` (widgets load when scrolled into view) — `<x-global::hx>` defaults to this
+- Cross-component updates: `hx-trigger="lt:tickets:ticket.updated from:body"`
 - Loading indicators: `hx-indicator=".htmx-indicator"` with `<x-global::loadingText>`
 - Preloading: `preload="mouseover"` (hover-preload for dropdowns)
-- Notifications: `HTMX.ShowNotification` event triggers jQuery growl via global listener in `app.js`
+- Notifications: `$tpl->setNotification(...)` emits `HtmxUiEvents::Notify` (`lt:ui:notify`) → jQuery growl via the global listener in `app.js`
 
 **Batch template variable assignment** (common pattern in HxControllers):
 ```php

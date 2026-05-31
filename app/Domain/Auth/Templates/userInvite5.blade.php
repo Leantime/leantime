@@ -2,7 +2,7 @@
 
 @section('content')
 
-    @include("auth::partials.onboardingProgress", ['percentComplete' => 100, 'current' => '', 'completed' => ['account', 'theme', 'personalization', 'time']])
+    <x-auth::onboardingProgress :percentComplete="100" current="" :completed="['account', 'theme', 'personalization', 'time']" />
 
 <h2>🎉 Your Leantime journey is about to begin</h2>
 

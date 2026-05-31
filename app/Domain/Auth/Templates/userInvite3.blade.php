@@ -2,7 +2,7 @@
 
 @section('content')
 
-@include("auth::partials.onboardingProgress", ['percentComplete' => 64, 'current' => 'personalization', 'completed' => ['account', 'theme']])
+<x-auth::onboardingProgress :percentComplete="64" current="personalization" :completed="['account', 'theme']" />
 
 <h2>🎨 Creating A Comfortable View</h2>
 <p>Your favorite color mode and scheme.<br /></p>
