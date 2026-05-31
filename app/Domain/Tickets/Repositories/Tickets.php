@@ -497,7 +497,24 @@ class Tickets
 
         if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] != '') {
             $milestoneIds = explode(',', $searchCriteria['milestone']);
-            $query->whereIn('zp_tickets.milestoneid', $milestoneIds);
+
+            // A milestone id of "0" is the "Not assigned to a milestone" filter
+            // option (#3252). Unassigned tickets store milestoneid as NULL or 0,
+            // so match both, while still honoring any real milestone ids selected
+            // alongside it.
+            $includeUnassigned = in_array('0', $milestoneIds, true);
+            $realMilestoneIds = array_values(array_filter($milestoneIds, fn ($id) => $id !== '0' && $id !== ''));
+
+            $query->where(function ($q) use ($realMilestoneIds, $includeUnassigned) {
+                if (! empty($realMilestoneIds)) {
+                    $q->whereIn('zp_tickets.milestoneid', $realMilestoneIds);
+                }
+
+                if ($includeUnassigned) {
+                    $q->orWhereNull('zp_tickets.milestoneid')
+                        ->orWhere('zp_tickets.milestoneid', 0);
+                }
+            });
         }
 
         if (isset($searchCriteria['status']) && $searchCriteria['status'] == 'all') {
@@ -1173,7 +1190,24 @@ class Tickets
 
         if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] != '') {
             $milestoneIds = explode(',', $searchCriteria['milestone']);
-            $query->whereIn('zp_tickets.milestoneid', $milestoneIds);
+
+            // A milestone id of "0" is the "Not assigned to a milestone" filter
+            // option (#3252). Unassigned tickets store milestoneid as NULL or 0,
+            // so match both, while still honoring any real milestone ids selected
+            // alongside it.
+            $includeUnassigned = in_array('0', $milestoneIds, true);
+            $realMilestoneIds = array_values(array_filter($milestoneIds, fn ($id) => $id !== '0' && $id !== ''));
+
+            $query->where(function ($q) use ($realMilestoneIds, $includeUnassigned) {
+                if (! empty($realMilestoneIds)) {
+                    $q->whereIn('zp_tickets.milestoneid', $realMilestoneIds);
+                }
+
+                if ($includeUnassigned) {
+                    $q->orWhereNull('zp_tickets.milestoneid')
+                        ->orWhere('zp_tickets.milestoneid', 0);
+                }
+            });
         }
 
         if (isset($searchCriteria['status']) && $searchCriteria['status'] == 'all') {
