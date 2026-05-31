@@ -171,7 +171,7 @@ leantime.htmxProgress = (function () {
 document.addEventListener('htmx:beforeRequest', function () { leantime.htmxProgress.start(); });
 document.addEventListener('htmx:afterRequest', function () { leantime.htmxProgress.done(); });
 
-window.addEventListener("HTMX.ShowNotification", function(evt) {
+leantime.showNotification = function (evt) {
     jQuery.get(leantime.appUrl+"/notifications/getLatestGrowl", function(data){
         let notification = JSON.parse(data);
 
