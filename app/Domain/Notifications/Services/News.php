@@ -114,6 +114,9 @@ class News
         $client = new \GuzzleHttp\Client;
         $response = $client->request('GET', 'https://leantime.io/category/leantime-updates/feature-updates/feed/', [
             'headers' => ['Accept' => 'application/xml'],
+            // Fail fast when the server has no internet so the news badge/widget
+            // degrades quickly instead of stalling the dashboard. (#3372/#3373)
+            'connect_timeout' => 2,
             'timeout' => 5,
         ])->getBody()->getContents();
 

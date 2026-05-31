@@ -353,7 +353,12 @@ class Reports
                         'form_params' => [
                             'telemetry' => $data_string,
                         ],
-                        'timeout' => 480,
+                        // Short connect timeout so an offline/air-gapped server
+                        // fails fast instead of blocking the dashboard's Welcome
+                        // widget for minutes. The previous 480s total timeout
+                        // hung the page when there was no internet. (#3372/#3373)
+                        'connect_timeout' => 2,
+                        'timeout' => 5,
                     ])->then(function ($response) use ($today) {
                         $this->settings->saveSetting('companysettings.telemetry.lastUpdate', $today);
                     });

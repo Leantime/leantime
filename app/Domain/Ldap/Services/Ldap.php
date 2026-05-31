@@ -141,10 +141,14 @@ class Ldap
             if ($this->directoryType === 'AD') {
                 $usernameDN = $username;
 
+                // Suppress the PHP warning ldap_bind() emits on invalid
+                // credentials. Without @, Laravel's error handler promotes it to
+                // an ErrorException and a 500, instead of the normal
+                // wrong-username/password message. We act on the bool return. (#3374)
                 if (str_contains($usernameDN, '@')) {
-                    $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+                    $bind = @ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
                 } else {
-                    $bind = ldap_bind($this->ldapConnection, $usernameDN.'@'.$this->ldapDomain, $passwordBind);
+                    $bind = @ldap_bind($this->ldapConnection, $usernameDN.'@'.$this->ldapDomain, $passwordBind);
                 }
 
                 if ($bind) {
@@ -154,7 +158,7 @@ class Ldap
                 // OL requires distinguished name login
                 $usernameDN = $this->ldapKeys->username.'='.$username.','.$this->ldapDn;
 
-                $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+                $bind = @ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
             }
             if ($bind) {
                 return true;
