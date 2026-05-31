@@ -1124,6 +1124,43 @@ class Tickets
     }
 
     /**
+     * Whether the current user holds at least the given role IN a specific project.
+     *
+     * Leantime roles are project-scoped: Auth::userIsAtLeast() evaluates the role
+     * for the current *session* project, so it can't be trusted to authorize an
+     * action on an entity that lives in a different project. This resolves the
+     * user's effective role for $projectId — managers/admins/owners keep their
+     * global role across every project; otherwise the project role applies,
+     * falling back to the global role when no explicit project role is set — and
+     * compares it against the required role using the same ordering as Roles.
+     *
+     * @param  string  $role  Minimum role (a Roles::$* string).
+     * @param  int  $projectId  The project that owns the entity being changed.
+     */
+    private function userIsAtLeastForProject(string $role, int $projectId): bool
+    {
+        $roles = Roles::getRoles();
+        $globalRole = session('userdata.role');
+
+        $globalKey = array_search($globalRole, $roles, true);
+        $managerKey = array_search(Roles::$manager, $roles, true);
+
+        // Manager+ (manager, admin, owner) keep their global role everywhere.
+        if ($globalKey !== false && $managerKey !== false && $globalKey >= $managerKey) {
+            $effectiveRole = $globalRole;
+        } else {
+            $projectRole = $this->projectService->getProjectRole(session('userdata.id'), $projectId);
+            // No explicit project role -> inherit the global role.
+            $effectiveRole = $projectRole === '' ? $globalRole : Roles::getRoleString((int) $projectRole);
+        }
+
+        $requiredKey = array_search($role, $roles, true);
+        $effectiveKey = array_search($effectiveRole, $roles, true);
+
+        return $requiredKey !== false && $effectiveKey !== false && $effectiveKey >= $requiredKey;
+    }
+
+    /**
      * @api
      */
     public function getLastTickets($projectId, int $limit = 5): bool|array
@@ -2111,18 +2148,20 @@ class Tickets
         // Server-side authorization. Editing is gated to editor+ in the UI, but the
         // Kanban/Table modal path posted straight to updateTicket without enforcing it,
         // letting commenter/reader roles edit tickets via a direct request (#3376).
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
-        }
-
-        // Authorize against the ticket's CURRENT project: getTicket() returns false
-        // unless the user is assigned to that project. This stops an editor in one
-        // project from submitting another project's ticket id (alongside their own
-        // projectId) to edit or move it — the later check only validates the
-        // caller-supplied projectId. (#3376 review)
+        //
+        // Authorize against the ticket's CURRENT project, not the session project.
+        // getTicket() returns false unless the user is assigned to the ticket's
+        // project, and the editor check is then evaluated against THAT project's
+        // role. Leantime roles are project-scoped, so an editor in project A who is
+        // only a commenter in project B must not be able to edit B's ticket by
+        // keeping the session on A and posting B's ticket id. (#3376 + review)
         $currentTicket = $this->getTicket($values['id']);
 
         if (! $currentTicket) {
+            return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
+        }
+
+        if (! $this->userIsAtLeastForProject(Roles::$editor, (int) $currentTicket->projectId)) {
             return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
         }
 
@@ -2494,8 +2533,23 @@ class Tickets
         }
 
         $milestoneId = (int) $params['id'];
-        $existingMilestone = $this->ticketRepository->getTicket($milestoneId);
-        $currentProjectId = $existingMilestone ? (int) $existingMilestone->projectId : (int) session('currentProject');
+
+        // Load via the service so the project-assignment gate applies; a milestone
+        // in a project the user can't access returns false. (review)
+        $existingMilestone = $this->getTicket($milestoneId);
+
+        if (! $existingMilestone) {
+            return ['status' => 'error', 'message' => 'You are not allowed to edit this milestone.'];
+        }
+
+        $currentProjectId = (int) $existingMilestone->projectId;
+
+        // Editing a milestone is an edit op: require editor+ in the milestone's
+        // OWN project, evaluated project-scoped rather than against the session
+        // project's role. (review)
+        if (! $this->userIsAtLeastForProject(Roles::$editor, $currentProjectId)) {
+            return ['status' => 'error', 'message' => 'You are not allowed to edit this milestone.'];
+        }
 
         // Honor the project chosen in the milestone dialog (#3294); the dialog
         // posts projectId via a <select>. Fall back to the milestone's current
@@ -2503,9 +2557,10 @@ class Tickets
         $targetProjectId = (int) ($params['projectId'] ?? $currentProjectId);
 
         if ($targetProjectId !== $currentProjectId) {
-            // The projectId is caller-supplied: don't let a milestone be assigned
-            // to a project the user can't access. (#3294 review / IDOR)
-            if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $targetProjectId)) {
+            // The projectId is caller-supplied: require editor+ in the target
+            // project too, so a milestone can't be moved into a project where the
+            // user lacks edit rights. (#3294 review / IDOR)
+            if (! $this->userIsAtLeastForProject(Roles::$editor, $targetProjectId)) {
                 return ['status' => 'error', 'message' => 'You are not allowed to move this milestone to that project.'];
             }
 
@@ -2655,11 +2710,13 @@ class Tickets
     {
         $result = $this->quickUpdateMilestone($params);
 
-        // Preserve legacy behavior: the controller treated any truthy result
-        // (including the headline-missing error array) as success and fired
-        // the notification, so we mirror that exactly.
-        if (! $result) {
-            return $result;
+        // Only a genuine success (true) should notify and report success.
+        // quickUpdateMilestone returns a truthy error array on its failure paths
+        // (headline missing, denied/failed project move); those must not be read
+        // as a successful edit. Return false so the caller surfaces the
+        // save-error notification instead of a false success. (review)
+        if ($result !== true) {
+            return false;
         }
 
         $subject = $this->language->__('email_notifications.milestone_update_subject');
