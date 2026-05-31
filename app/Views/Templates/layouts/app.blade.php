@@ -55,6 +55,8 @@
 
         </div><!-- rightpanel -->
 
+        <div class="menu-backdrop" aria-hidden="true"></div>
+
     </div><!-- mainwrapper -->
 
     @include('global::sections.pageBottom')

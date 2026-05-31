@@ -2,6 +2,11 @@ leantime.calendarController = (function () {
 
     var closeModal = false;
 
+    // Latest todo-draggable initializer, refreshed on each initWidgetCalendar() call. The single
+    // global htmx.onLoad handler (registered once) calls THIS, so reloading the calendar widget
+    // rewires drag/drop to the current calendar instance instead of a stale closure.
+    var latestTodoDraggableInit = null;
+
     //Functions
     var initCalendar = function (userEvents) {
 
@@ -409,6 +414,9 @@ leantime.calendarController = (function () {
             calendar.scrollToTime(Date.now());
         };
 
+        // Point the shared reference at THIS init's closure (bound to the current calendar instance).
+        latestTodoDraggableInit = initializeThirdPartyDraggable;
+
         function initButtons() {
 
             calendar.setOption('locale', leantime.i18n.__("language.code"));
@@ -456,17 +464,19 @@ leantime.calendarController = (function () {
             });
         }
 
-        htmx.onLoad(function (content) {
-
-
-
-            // Find any todo containers that were loaded via HTMX
-            if(content.id == "yourToDoContainer") {
-                initializeThirdPartyDraggable(content);
-            }
-
-            return calendarEl;
-        });
+        // Register once. This runs inside an init function that HTMX re-invokes on every
+        // swap, so without the guard each load stacked another global onLoad handler
+        // (handler leak → compounding churn on the dashboard).
+        if (!window.leantime._calendarTodoOnLoadRegistered) {
+            window.leantime._calendarTodoOnLoadRegistered = true;
+            htmx.onLoad(function (content) {
+                // Find any todo containers that were loaded via HTMX. Call the LATEST initializer so
+                // drag/drop binds to the current calendar instance, not the one from first init.
+                if (content.id == "yourToDoContainer" && latestTodoDraggableInit) {
+                    latestTodoDraggableInit(content);
+                }
+            });
+        }
     };
 
     // Make public what you want to have public, everything else is private

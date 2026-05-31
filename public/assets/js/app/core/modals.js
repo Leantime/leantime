@@ -40,7 +40,9 @@ leantime.modals = (function () {
                 afterShowCont: function () {
                     window.htmx.process('.nyroModalCont');
                     jQuery(".formModal, .modal").nyroModal(modalOptions);
-                    tippy('[data-tippy-content]');
+                    // Idempotent + scoped to the modal so it doesn't re-instance
+                    // page tooltips (see app.js initTooltips).
+                    window.leantime?.initTooltips?.(document.querySelector('.nyroModalCont'));
 
                     // Initialize Tiptap editors in modal (after small delay for DOM settlement)
                     setTimeout(function() {

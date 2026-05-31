@@ -50,8 +50,6 @@ jQuery.noConflict();
 // instead of scrolling. Set on the widget prototypes so it applies to every
 // sortable/draggable (dashboard to-dos, kanban cards, ideas cards) without
 // touching each init. Touch-only, so mouse drag on desktop is unaffected.
-// Runs in document.ready so jQuery UI is loaded, and before the page
-// controllers initialise their sortables.
 // Fixes #1357 (can't tap cards), #3350 (scrolling moves tasks), #1465 (tablet drag).
 leantime.applyTouchDragGuards = function () {
     if (!(('ontouchstart' in window || navigator.maxTouchPoints > 0) && jQuery.ui)) {
@@ -65,6 +63,36 @@ leantime.applyTouchDragGuards = function () {
     }
 };
 
+// Initialise Tippy tooltips idempotently. Calling tippy('[data-tippy-content]')
+// on every document.ready AND every htmx.onLoad re-instanced ALL tooltips on
+// each HTMX swap, piling up dozens of duplicate "Notifications" tooltips (one of
+// which stayed visible). Skip elements that already have an instance, and scope
+// to the swapped subtree when given one.
+leantime.initTooltips = function (root) {
+    // Hover tooltips are a desktop affordance — useless on touch, and on narrow
+    // screens the header-icon tooltips flashed/stuck during HTMX page loads
+    // (a transient pointerover shows them, then the element re-renders so no
+    // mouseleave ever fires to hide them). So on mobile/touch we don't run them
+    // at all, and tear down any that already exist.
+    var isMobile = window.innerWidth < 1200 || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    if (isMobile) {
+        document.querySelectorAll('[data-tippy-content]').forEach(function (el) {
+            if (el._tippy) { el._tippy.destroy(); }
+        });
+        return;
+    }
+    // Desktop: a short show-delay debounces transient hovers from layout reflow.
+    if (window.tippy && tippy.setDefaultProps) {
+        tippy.setDefaultProps({ delay: [300, 0] });
+    }
+    var scope = (root && root.querySelectorAll) ? root : document;
+    scope.querySelectorAll('[data-tippy-content]').forEach(function (el) {
+        if (!el._tippy) {
+            tippy(el, { delay: [300, 0] });
+        }
+    });
+};
+
 jQuery(document).ready(function () {
 
     leantime.applyTouchDragGuards();
@@ -75,7 +103,7 @@ jQuery(document).ready(function () {
         confetti.start();
     });
 
-    tippy('[data-tippy-content]');
+    leantime.initTooltips();
 
     if (jQuery('.login-alert .alert').text() !== '') {
         jQuery('.login-alert').fadeIn();
@@ -88,7 +116,7 @@ jQuery(document).ready(function () {
 });
 
 htmx.onLoad(function(element){
-    tippy('[data-tippy-content]');
+    leantime.initTooltips(element);
     // Re-assert touch drag guards before HTMX-loaded sortables (e.g. the
     // dashboard to-do list) initialise.
     if (leantime.applyTouchDragGuards) {
@@ -96,10 +124,54 @@ htmx.onLoad(function(element){
     }
 });
 
-// Show the latest growl notification. 'lt:ui:notify' is the canonical client event; the legacy
-// 'HTMX.ShowNotification' name is kept for the migration window (see HtmxEvents::LEGACY_ALIASES on
-// the PHP side) and can be removed once all emitters are migrated.
-leantime.showNotification = function (evt) {
+// --- Singleton HTMX progress bar -------------------------------------------------
+// A single fixed top-of-page bar driven by an in-flight request COUNTER. Concurrent
+// requests (e.g. the dashboard's parallel widget loads) keep it visible until ALL of
+// them settle — it does not serialize requests. It is position:fixed, so it has zero
+// layout impact, and replaces page-wide `.htmx-indicator` toggling as the general
+// "something is loading" affordance.
+leantime.htmxProgress = (function () {
+    var inFlight = 0;
+    var bar = null;
+    var hideTimer = null;
+
+    function ensureBar() {
+        if (bar) { return bar; }
+        bar = document.getElementById('lt-htmx-progress');
+        if (!bar) {
+            bar = document.createElement('div');
+            bar.id = 'lt-htmx-progress';
+            bar.setAttribute('aria-hidden', 'true');
+            bar.innerHTML = '<div class="bar"></div>';
+            (document.body || document.documentElement).appendChild(bar);
+        }
+        return bar;
+    }
+
+    return {
+        start: function () {
+            inFlight++;
+            if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+            ensureBar().classList.add('active');
+        },
+        done: function () {
+            inFlight = Math.max(0, inFlight - 1);
+            if (inFlight === 0) {
+                // Small delay smooths over back-to-back requests so the bar doesn't strobe.
+                hideTimer = setTimeout(function () {
+                    if (inFlight === 0 && bar) { bar.classList.remove('active'); }
+                }, 150);
+            }
+        }
+    };
+})();
+
+// htmx request events bubble to document, so a single document-level listener covers
+// every request regardless of which element triggered it.
+document.addEventListener('htmx:beforeRequest', function () { leantime.htmxProgress.start(); });
+document.addEventListener('htmx:afterRequest', function () { leantime.htmxProgress.done(); });
+
+window.addEventListener("HTMX.ShowNotification", function(evt) {
     jQuery.get(leantime.appUrl+"/notifications/getLatestGrowl", function(data){
         let notification = JSON.parse(data);
 
