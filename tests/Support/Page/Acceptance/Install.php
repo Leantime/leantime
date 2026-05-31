@@ -36,8 +36,9 @@ class Install
 
         // A successful install redirects straight into the onboarding wizard
         // (auth/userInvite), starting on the "Setting Account Details" step —
-        // there is no longer a standalone success .alert page. Wait for that
-        // step's first field to render before filling it in.
+        // there is no longer a standalone success .alert page. Wait for the
+        // jobTitle field (the first field this method fills) to confirm the
+        // step has rendered before continuing.
         $this->I->waitForElementVisible(['name' => 'jobTitle'], 90);
 
         $this->I->fillField(['name' => 'jobTitle'], 'CEO');
