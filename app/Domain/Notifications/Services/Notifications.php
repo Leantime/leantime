@@ -101,6 +101,7 @@ class Notifications
         if ($id <= 0) {
             return false;
         }
+
         return $this->notificationsRepo->markNotificationUnread($id);
     }
 
