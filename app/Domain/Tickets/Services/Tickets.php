@@ -2115,13 +2115,18 @@ class Tickets
             return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
         }
 
+        // Authorize against the ticket's CURRENT project: getTicket() returns false
+        // unless the user is assigned to that project. This stops an editor in one
+        // project from submitting another project's ticket id (alongside their own
+        // projectId) to edit or move it — the later check only validates the
+        // caller-supplied projectId. (#3376 review)
+        $currentTicket = $this->getTicket($values['id']);
+
+        if (! $currentTicket) {
+            return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
+        }
+
         if (! isset($values['headline'])) {
-            $currentTicket = $this->getTicket($values['id']);
-
-            if (! $currentTicket) {
-                return ['msg' => 'This ticket id does not exist within your leantime account.', 'type' => 'error'];
-            }
-
             $values['headline'] = $currentTicket->headline;
         }
 
@@ -2484,15 +2489,39 @@ class Tickets
      */
     public function quickUpdateMilestone($params): array|bool
     {
+        if ($params['headline'] == '') {
+            return ['status' => 'error', 'message' => 'Headline Missing'];
+        }
+
+        $milestoneId = (int) $params['id'];
+        $existingMilestone = $this->ticketRepository->getTicket($milestoneId);
+        $currentProjectId = $existingMilestone ? (int) $existingMilestone->projectId : (int) session('currentProject');
+
+        // Honor the project chosen in the milestone dialog (#3294); the dialog
+        // posts projectId via a <select>. Fall back to the milestone's current
+        // project when callers (e.g. inline kanban edits) don't supply one.
+        $targetProjectId = (int) ($params['projectId'] ?? $currentProjectId);
+
+        if ($targetProjectId !== $currentProjectId) {
+            // The projectId is caller-supplied: don't let a milestone be assigned
+            // to a project the user can't access. (#3294 review / IDOR)
+            if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $targetProjectId)) {
+                return ['status' => 'error', 'message' => 'You are not allowed to move this milestone to that project.'];
+            }
+
+            // Moving a milestone must take its tasks with it, otherwise they're
+            // left orphaned referencing a milestone in another project. moveTicket()
+            // already moves the milestone's children and the milestone row. (#3294 review)
+            if ($this->moveTicket($milestoneId, $targetProjectId) === false) {
+                return ['status' => 'error', 'message' => 'Could not move milestone to the new project.'];
+            }
+        }
 
         $values = [
             'headline' => $params['headline'],
             'type' => 'milestone',
             'description' => '',
-            // Honor the project chosen in the milestone dialog (#3294); the dialog
-            // posts projectId via a <select>. Fall back to the active project when
-            // callers (e.g. inline kanban edits) don't supply one.
-            'projectId' => $params['projectId'] ?? session('currentProject'),
+            'projectId' => $targetProjectId,
             'editorId' => $params['editorId'],
             'userId' => session('userdata.id'),
             'date' => dtHelper()->userNow()->formatDateTimeForDb(),
@@ -2511,18 +2540,12 @@ class Tickets
             'editTo' => $params['editTo'] ?? '',
         ];
 
-        if ($values['headline'] == '') {
-            $error = ['status' => 'error', 'message' => 'Headline Missing'];
-
-            return $error;
-        }
-
         $values = $this->prepareTicketDates($values);
 
         self::dispatchEvent('milestone_updated');
 
         // $params is an array of field names. Exclude id
-        return $this->ticketRepository->updateTicket($values, $params['id']);
+        return $this->ticketRepository->updateTicket($values, $milestoneId);
     }
 
     /**
