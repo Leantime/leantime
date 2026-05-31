@@ -2108,6 +2108,13 @@ class Tickets
      */
     public function updateTicket($values): array|bool
     {
+        // Server-side authorization. Editing is gated to editor+ in the UI, but the
+        // Kanban/Table modal path posted straight to updateTicket without enforcing it,
+        // letting commenter/reader roles edit tickets via a direct request (#3376).
+        if (! Auth::userIsAtLeast(Roles::$editor)) {
+            return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
+        }
+
         if (! isset($values['headline'])) {
             $currentTicket = $this->getTicket($values['id']);
 
@@ -2482,7 +2489,10 @@ class Tickets
             'headline' => $params['headline'],
             'type' => 'milestone',
             'description' => '',
-            'projectId' => session('currentProject'),
+            // Honor the project chosen in the milestone dialog (#3294); the dialog
+            // posts projectId via a <select>. Fall back to the active project when
+            // callers (e.g. inline kanban edits) don't supply one.
+            'projectId' => $params['projectId'] ?? session('currentProject'),
             'editorId' => $params['editorId'],
             'userId' => session('userdata.id'),
             'date' => dtHelper()->userNow()->formatDateTimeForDb(),
