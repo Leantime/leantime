@@ -348,16 +348,19 @@ class Timesheets
             $timestamp = $tempData[3];
             $hours = $dateEntry;
 
-            // Skip untouched/blank cells. The weekly grid renders an input for
-            // every day of every row — including the "add new task" placeholder
-            // row — so adding a new task submits a batch of empty cells. Passing
-            // those to upsertTime surfaced a "Hours is a required field" error
-            // for each blank day. Explicit "0" is numeric and still processed. (#3210)
-            if (! is_numeric($hours)) {
+            $isNewEntryRow = ($ticketId === 'new' || $ticketId === 0);
+
+            // The weekly grid includes an "add new task" placeholder row whose
+            // day cells are submitted empty. There's nothing to log for that row
+            // when no hours were entered, so skip it instead of pushing empty
+            // values through upsertTime. Existing-ticket cells are intentionally
+            // left alone here so clearing a previously logged value still works
+            // (an emptied cell falls through and is cleaned up downstream). (#3210)
+            if ($isNewEntryRow && ! is_numeric($hours)) {
                 continue;
             }
 
-            if ($ticketId === 'new' || $ticketId === 0) {
+            if ($isNewEntryRow) {
                 $ticketId = (int) $postData['ticketId'];
                 $kind = $postData['kindId'];
 
