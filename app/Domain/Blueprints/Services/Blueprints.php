@@ -404,6 +404,7 @@ class Blueprints
     public function getBoardMetadata(): array
     {
         return [
+            'logicmodelcanvas' => ['module' => 'logicmodelcanvas',  'name' => 'label.logicmodelcanvas', 'description' => 'description.logicmodelcanvas', 'icon' => 'fa-solid fa-diagram-project', 'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastUpdate' => ''],
             'valuecanvas' => ['module' => 'blueprints/value',       'name' => 'label.valuecanvas',  'description' => 'description.valuecanvas', 'icon' => 'fa-solid fa-ranking-star',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastUpdate' => ''],
             'swotcanvas' => ['module' => 'blueprints/swot',     'name' => 'label.swotcanvas', 'description' => 'description.swotcanvas', 'icon' => 'fa-solid fa-dumbbell',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastUpdate' => ''],
             'obmcanvas' => ['module' => 'blueprints/obm',     'name' => 'label.obmcanvas',       'description' => 'description.obmcanvas', 'icon' => 'fa-solid fa-object-group', 'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastUpdate' => ''],
@@ -433,6 +434,7 @@ class Blueprints
             'emcanvas', 'smcanvas', 'cpcanvas', 'insightscanvas',
             'sqcanvas', 'dbmcanvas', 'lbmcanvas', 'eacanvas', 'riskscanvas', 'sbcanvas',
             'swotcanvas', 'obmcanvas', 'valuecanvas', 'leancanvas', 'minempathycanvas',
+            'logicmodelcanvas',
         ];
     }
 
