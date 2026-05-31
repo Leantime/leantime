@@ -40,6 +40,7 @@ return [
             \Leantime\Core\Auth\AuthenticationServiceProvider::class,
             \Leantime\Core\Middleware\RateLimiter::class,
             \Leantime\Core\Database\DatabaseServiceProvider::class,
+            \Leantime\Core\WorkStructure\WorkStructureServiceProvider::class,
             \Leantime\Core\i18n\LanguageServiceProvider::class,
             // \Leantime\Core\Providers\RouteServiceProvider::class,
 

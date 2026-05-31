@@ -81,6 +81,7 @@ class Install
         30413,
         30500,
         30501,
+        30502,
     ];
 
     /**
@@ -2493,6 +2494,85 @@ class Install
             Log::error('Migration 30501: '.$e->getMessage());
 
             return ['Migration 30501 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30502: Create the WorkStructure tables (structures, elements,
+     * relationships, mappings) for the meta-model that orchestrates entities
+     * across domains. Mirrors SchemaBuilder::createWorkStructureTables().
+     *
+     * @return bool|array Returns true on success, array of errors on failure
+     */
+    public function update_sql_30502(): bool|array
+    {
+        try {
+            if (! Schema::hasTable('zp_work_structures')) {
+                Schema::create('zp_work_structures', function (Blueprint $table) {
+                    $table->id();
+                    $table->string('title', 255);
+                    $table->text('description')->nullable();
+                    $table->string('type', 50)->default('custom');
+                    $table->integer('created_by')->nullable();
+                    $table->json('meta')->nullable();
+                    $table->dateTime('created_at')->nullable();
+                    $table->dateTime('modified_at')->nullable();
+
+                    $table->unique(['title'], 'idx_work_structures_title');
+                    $table->index(['type'], 'idx_work_structures_type');
+                });
+            }
+
+            if (! Schema::hasTable('zp_work_structure_elements')) {
+                Schema::create('zp_work_structure_elements', function (Blueprint $table) {
+                    $table->id();
+                    $table->unsignedBigInteger('structure_id');
+                    $table->string('type_key', 50);
+                    $table->string('label', 100);
+                    $table->text('description')->nullable();
+                    $table->string('domain_reference', 255)->nullable();
+                    $table->integer('sort_order')->default(0);
+                    $table->json('meta')->nullable();
+                    $table->dateTime('created_at')->nullable();
+
+                    $table->index(['structure_id'], 'idx_wse_structure_id');
+                    $table->unique(['structure_id', 'type_key'], 'idx_wse_structure_type_key');
+                });
+            }
+
+            if (! Schema::hasTable('zp_work_structure_relationships')) {
+                Schema::create('zp_work_structure_relationships', function (Blueprint $table) {
+                    $table->id();
+                    $table->unsignedBigInteger('structure_id');
+                    $table->unsignedBigInteger('from_element_id');
+                    $table->unsignedBigInteger('to_element_id');
+                    $table->string('relationship_type', 50);
+                    $table->text('description')->nullable();
+                    $table->json('meta')->nullable();
+
+                    $table->index(['structure_id'], 'idx_wsr_structure_id');
+                });
+            }
+
+            if (! Schema::hasTable('zp_work_structure_mappings')) {
+                Schema::create('zp_work_structure_mappings', function (Blueprint $table) {
+                    $table->id();
+                    $table->unsignedBigInteger('source_structure_id');
+                    $table->unsignedBigInteger('source_element_id');
+                    $table->unsignedBigInteger('target_structure_id');
+                    $table->unsignedBigInteger('target_element_id');
+                    $table->string('mapping_type', 50)->default('generates');
+                    $table->json('meta')->nullable();
+
+                    $table->index(['source_structure_id', 'target_structure_id'], 'idx_wsm_source_target');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30502: '.$e->getMessage());
+
+            return ['Migration 30502 failed: '.$e->getMessage()];
         }
 
         return true;
