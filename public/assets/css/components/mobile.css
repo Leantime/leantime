@@ -2508,4 +2508,371 @@ min-width: 1200px
 }
 
 
+/* ============================================================================
+   MOBILE-LIKE SHELL  —  phones + tablets  (< 1200px)
+   ----------------------------------------------------------------------------
+   The desktop sidebar layout is reserved for >= 1200px. Below that we use a
+   single mobile-like behaviour: fixed header, content full-width, and the left
+   menu becomes an off-canvas drawer toggled by the hamburger.
+
+   This block is appended LAST in mobile.css (which itself loads after nav.css /
+   structure.css), so for selectors it redefines it wins on source order at
+   equal specificity — no !important needed except where it must beat an
+   earlier same-file rule (e.g. the 576-1200 bucket hiding .barmenu).
+   Stabilization sweep — see GitHub #3185, #2878.
+   ============================================================================ */
+@media (max-width: 1199px) {
+
+    /* --- Hamburger must be visible (the 576-1200 bucket hid it) --- */
+    .barmenu {
+        display: inline-block !important;
+        line-height: 50px;
+    }
+
+    /* --- Header above content so its dropdowns aren't out-painted --- */
+    /* The fixed header + backdrop-filter trap dropdowns in a z-index:15 stacking
+       context, and content uses zlayer tokens up to 20+. Lift the header above
+       all content (zlayer max 40) but keep it below the nyroModal (z 100). #1938 */
+    .header {
+        z-index: 90;
+    }
+    .header,
+    .headerinner,
+    .headmenu {
+        overflow: visible;
+    }
+
+    /* Header dropdowns (notifications #1938, news, profile, project selector):
+       contain within the viewport as a panel below the header instead of
+       overflowing off the right-anchored icon. */
+    .header .dropdown-menu,
+    .headerinner .dropdown-menu {
+        position: fixed;
+        top: 50px;
+        left: 5px;
+        right: 5px;
+        width: auto;
+        min-width: 0;
+        max-width: calc(100vw - 10px);
+        max-height: calc(100vh - 60px);
+        overflow-y: auto;
+    }
+
+    /* --- Kanban: unify the horizontal scroll (#1364) ---
+       The sticky column-header bar and the ticket columns were in SEPARATE
+       horizontal scrollers, so they desynced when swiping. Make the board
+       wrapper the single horizontal scroller, drop the per-row overflow and
+       the header's sticky positioning, and match header/ticket column widths
+       so titles stay above their columns. */
+    .kanban-board-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .kanban-board-wrapper .sortableTicketList .row-fluid {
+        overflow-x: visible;
+    }
+    .kanban-column-headers {
+        position: static !important;
+        top: auto !important;
+    }
+    .kanban-column-headers .column,
+    .sortableTicketList .row-fluid > .column {
+        flex: 0 0 280px;
+        width: 280px;
+        min-width: 280px;
+    }
+
+    /* --- Task / idea / article detail modal (#3088, #1357) ---
+       Cap the modal to the viewport (the JS no longer forces 1800px on mobile),
+       collapse the two-column main+sidebar layout to one column, make the tab
+       nav usable, and stop fixed-pixel fields from overflowing. */
+    .nyroModalCont {
+        width: 95vw !important;
+        left: 2.5vw !important;
+        max-width: 95vw !important;
+        max-height: calc(100vh - 24px) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box;
+        padding: 20px 12px !important;
+    }
+    .nyroModalCont .col-md-9,
+    .nyroModalCont .col-md-3 {
+        width: 100% !important;
+        display: block !important;
+        float: none !important;
+    }
+    /* The modal's jQuery-UI tab nav collapses on mobile — force it to show/wrap */
+    .nyroModalCont .tab-primary.ui-tabs .ui-tabs-nav,
+    .nyroModalCont .tabbable .ui-tabs-nav,
+    .tab-primary.ui-tabs .ui-tabs-nav {
+        display: flex !important;
+        flex-wrap: wrap;
+        height: auto;
+    }
+    /* Fields fill the column instead of fixed pixel/min widths overflowing */
+    .nyroModalCont input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+    .nyroModalCont select,
+    .nyroModalCont textarea,
+    .nyroModalCont .chosen-container {
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box;
+    }
+
+    /* Stack form rows: label on its own full-width line, field below it (the
+       side-by-side label/field layout wraps awkwardly — "Assigned\nto" etc). */
+    .nyroModalCont .form-group {
+        display: block !important;
+        width: 100% !important;
+    }
+    .nyroModalCont .form-group .control-label {
+        display: block !important;
+        width: 100% !important;
+        text-align: left !important;
+        margin: 0 0 4px 0 !important;
+        padding: 0 !important;
+    }
+    .nyroModalCont .form-group select,
+    .nyroModalCont .form-group .chosen-container,
+    .nyroModalCont .form-group .date-picker-form-control,
+    .nyroModalCont .form-group input[type="text"] {
+        width: 100% !important;
+    }
+    /* Save/footer bar must not float over content on small screens */
+    .nyroModalCont .sticky-modal-footer {
+        position: relative !important;
+        bottom: auto !important;
+    }
+
+    /* --- Dashboard widget cards (#3350) ---
+       Tighten widget padding, keep task-card content inside the card (the
+       "New"/status badges were overflowing), and let card rows wrap. */
+    .widgetContent {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+    .grid-stack-item-content {
+        overflow-x: hidden;
+    }
+    /* Hide the welcome/stats widget on mobile — low value and the stat strip
+       scrolls awkwardly. height:0 + min-height:0 so GridStack doesn't leave a
+       gap where it was. */
+    #widget_wrapper_welcome {
+        display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+    }
+    .ticketBox {
+        overflow: hidden;
+    }
+    /* Show essentials only on mobile (title + status + actions menu). The
+       timer, due date, recurring and scheduler icons cram the ~240px card, and
+       the floated status pill ends up overlapping the title/date. All of this
+       is available in the task detail. Per product guidance for mobile cards. */
+    /* NB: ':not(.col-md-12)' — on the project-dashboard card variant the title
+       link lives inside a .col-md-12.timerContainer; only hide the small
+       play/timer button (the .tw-relative timerContainer), never the title. */
+    .ticketBox .timerContainer:not(.col-md-12),
+    .ticketBox .due-date-container,
+    .ticketBox .placeholder-container,
+    .ticketBox .date-picker-form-control,
+    .ticketBox .scheduler {
+        display: none !important;
+    }
+    /* Let the remaining row wrap and stop the status pill floating over text. */
+    .ticketBox .tw-flex.tw-flex-row {
+        flex-wrap: wrap;
+        align-items: center;
+        row-gap: 6px;
+    }
+    .ticketBox .ticket-title,
+    .ticketBox .title-text,
+    .ticketBox .tw-flex-1 {
+        min-width: 0;
+    }
+    .ticketBox .ticket-title {
+        flex: 1 1 100%;
+    }
+    .ticketBox .title-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .ticketBox .dropdown-toggle.status {
+        float: none !important;
+        max-width: 100%;
+    }
+
+    /* Project-dashboard "Latest To-Dos" card variant uses a .col-md-4 / .col-md-8
+       grid with floated effort/milestone/status dropdowns that squeeze the title
+       to zero width. Stack the columns, hide effort/milestone/due-date (in the
+       detail), un-float the dropdowns, and give the title room. */
+    .ticketBox .col-md-4,
+    .ticketBox .col-md-8 {
+        width: 100% !important;
+        display: block !important;
+        float: none !important;
+    }
+    .ticketBox .effortDropdown,
+    .ticketBox .milestoneDropdown,
+    .ticketBox .due-date-container,
+    .ticketBox .business-time,
+    .ticketBox .infoIcon,
+    .ticketBox .duedates {
+        display: none !important;
+    }
+    .ticketBox .dropdown.ticketDropdown,
+    .ticketBox .dropdown-toggle.status,
+    .ticketBox .statusDropdown {
+        float: none !important;
+    }
+    .ticketBox .right {
+        text-align: left;
+    }
+    /* Title link must stay visible (was collapsed to 0 width) */
+    .ticketBox a[class*="ticket-headline"],
+    .ticketBox .ticket-title a {
+        display: inline-block;
+        min-width: 0;
+    }
+
+    /* --- Content takes the full width; the drawer leaves the flow --- */
+    .rightpanel {
+        width: 100%;
+        margin-left: 0;
+        padding-top: 50px;
+    }
+
+    .mainwrapper .primaryContent,
+    .mainwrapper.menuclosed .primaryContent,
+    .mainwrapper.menuopen .primaryContent {
+        padding-left: 0;
+    }
+
+    .maincontent {
+        margin-top: 0;
+        padding: 10px;
+        width: 100%;
+    }
+
+    /* Header menu must not reserve collapsed-rail space */
+    .mainwrapper .headmenu,
+    .mainwrapper.menuclosed .headmenu,
+    .mainwrapper.menuopen .headmenu {
+        margin-left: 10px;
+    }
+
+    /* --- Left menu as an off-canvas drawer --- */
+    .mainwrapper .leftpanel,
+    .mainwrapper.menuclosed .leftpanel,
+    .mainwrapper.menuopen .leftpanel {
+        position: fixed;
+        top: 50px;
+        left: 0;
+        margin: 0;
+        width: min(85vw, 300px);
+        max-width: 300px;
+        height: calc(100vh - 50px);
+        border-radius: 0;
+        z-index: 1001;
+        display: flex;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .mainwrapper.menuopen .leftpanel {
+        transform: translateX(0);
+        box-shadow: var(--large-shadow);
+    }
+
+    /* Drawer always shows full labels (undo the desktop collapsed-rail tweaks).
+       NOTE: scoped strictly to .leftpanel — must NOT touch .headmenu, whose
+       work-mode labels stay icon-only in the header (see rule below). */
+    .mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a {
+        font-size: var(--base-font-size);
+        width: auto;
+        text-align: left;
+        padding: 12px 15px 8px;
+    }
+    .mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a span,
+    .mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a span.feature-label {
+        font-size: var(--base-font-size);
+        display: inline;
+    }
+
+    /* Header work-mode switcher (Projects / My Work / Company) is icons-only on
+       mobile — its text labels overflow the cramped header and overlap the
+       project avatar. Keep labels hidden in BOTH menu states. */
+    .headmenu .headmenu-label {
+        display: none !important;
+    }
+
+    /* Project avatar in the header: render it as a 30px square avatar, centred
+       in the 50px bar and in line with the other icons. The active-project
+       highlight (rgba white 0.2) must NOT become a full-height grey box, and the
+       avatar image must not be pushed down inside its span. */
+    .headmenu.work-modes > li > a {
+        display: inline-flex;
+        align-items: center;
+        height: 50px;
+        padding: 0 4px;
+    }
+    .headmenu.work-modes > li > a.bigProjectSelector,
+    .headmenu.work-modes > li > a.bigProjectSelector.active,
+    .headmenu.work-modes > li > a.bigProjectSelector:hover {
+        background: none !important;
+        box-shadow: none !important;
+    }
+    /* Header shows ONLY the avatar on mobile — hide the project name text and
+       caret in BOTH menu states. (menuclosed sets font-size:0, but opening the
+       drawer switches to menuopen which un-hides the name — so scope it here.) */
+    .headmenu.work-modes .bigProjectSelector {
+        font-size: 0 !important;
+    }
+    .headmenu.work-modes .bigProjectSelector .fa-caret-down {
+        display: none !important;
+    }
+    .mainwrapper.menuclosed .bigProjectSelector > .projectAvatar,
+    .headmenu.work-modes .bigProjectSelector .projectAvatar {
+        width: 30px !important;
+        height: 30px !important;
+        margin: 0 !important;
+        border-radius: var(--box-radius-small, 5px);
+        overflow: hidden;
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .headmenu.work-modes .bigProjectSelector .projectAvatar img {
+        width: 30px !important;
+        height: 30px !important;
+        margin: 0 !important;
+        object-fit: cover;
+        display: block;
+        vertical-align: middle;
+    }
+
+    /* --- Dimmed backdrop behind the open drawer (real element, tap to close) --- */
+    .mainwrapper.menuopen .menu-backdrop {
+        display: block;
+        position: fixed;
+        top: 50px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 1000;
+    }
+}
+
+/* Backdrop element is hidden everywhere except the open mobile drawer (above) */
+.menu-backdrop {
+    display: none;
+}
+
+
 
