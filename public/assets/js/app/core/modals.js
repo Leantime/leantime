@@ -138,7 +138,15 @@ window.addEventListener("hashchange", function () {
     leantime.modals.openModal();
 });
 
-window.addEventListener("closeModal", function(evt) {
+// 'lt:ui:modal.close' is the canonical client event. The legacy names ('closeModal',
+// 'HTMX.closemodal', 'Htmx.CloseModal') are kept for the migration window and also close a
+// pre-existing gap: emitters used three different casings but only 'closeModal' had a listener.
+var onCloseModalEvent = function (evt) {
     leantime.modals.closeModal();
-});
+};
+
+window.addEventListener("lt:ui:modal.close", onCloseModalEvent);
+window.addEventListener("closeModal", onCloseModalEvent);
+window.addEventListener("HTMX.closemodal", onCloseModalEvent);
+window.addEventListener("Htmx.CloseModal", onCloseModalEvent);
 

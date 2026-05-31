@@ -152,12 +152,13 @@
             @dispatchEvent('beforeSubtasks', ['ticketId' => $ticket->id])
             <h4 class="widgettitle title-light"><i class="fa-solid fa-sitemap"></i> {!! __('subtitles.subtasks') !!}</h4>
 
-            <div
-                id="ticketSubtasks"
-                hx-get="{{ BASE_URL }}/tickets/subtasks/get?ticketId={{ $ticket->id }}"
-                hx-trigger="load, subtasksUpdated from:body"
-                hx-indicator=".subtaskIndicator"
-            ></div>
+            <x-global::hx
+                wrapperId="ticketSubtasks"
+                :for="\Leantime\Domain\Tickets\Hxcontrollers\Subtasks::class"
+                :id="$ticket->id"
+                trigger="load"
+                indicator=".subtaskIndicator"
+            />
             <div class="htmx-indicator subtaskIndicator">
                 Loading Subtasks ...<br /><br />
             </div>

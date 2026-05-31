@@ -181,4 +181,7 @@ window.addEventListener("HTMX.ShowNotification", function(evt) {
             });
         }
     })
-});
+};
+
+window.addEventListener("lt:ui:notify", leantime.showNotification);
+window.addEventListener("HTMX.ShowNotification", leantime.showNotification);

@@ -156,10 +156,46 @@ class ViewsServiceProvider extends LaravelViewServiceProvider
                 $namespaces
             );
 
+            // Class-based components (Type 3): map <x-{ns}::name> to a PHP component class when one
+            // exists, transparently falling back to the anonymous blade file otherwise. Registration
+            // is lazy, so a namespace whose class root does not exist (or whose plugin folder casing
+            // differs) is harmless — the anonymous component is still used.
+            foreach ($namespaces as $namespace) {
+                if ($classNamespace = $this->componentClassNamespace($namespace)) {
+                    $compiler->componentNamespace($classNamespace, $namespace);
+                }
+            }
+
             return tap($compiler, function ($blade) {
                 $blade->component('dynamic-component', DynamicComponent::class);
             });
         });
+    }
+
+    /**
+     * Resolve the PHP class namespace that backs class-based (Type 3) Blade components for a given
+     * view namespace, or null when the namespace has no class root.
+     *
+     * Maps: global/globals → Leantime\Views\Components; a domain → Leantime\Domain\{Studly}\View\Components;
+     * a plugin → Leantime\Plugins\{Studly}\View\Components.
+     */
+    private function componentClassNamespace(string $namespace): ?string
+    {
+        if (in_array($namespace, ['global', 'globals', '__components'], true)) {
+            return 'Leantime\\Views\\Components';
+        }
+
+        $studly = Str::studly($namespace);
+
+        if (is_dir(APP_ROOT.'/app/Domain/'.$studly)) {
+            return 'Leantime\\Domain\\'.$studly.'\\View\\Components';
+        }
+
+        if (is_dir(APP_ROOT.'/app/Plugins/'.$studly)) {
+            return 'Leantime\\Plugins\\'.$studly.'\\View\\Components';
+        }
+
+        return null;
     }
 
     /**
