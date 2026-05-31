@@ -456,17 +456,18 @@ leantime.calendarController = (function () {
             });
         }
 
-        htmx.onLoad(function (content) {
-
-
-
-            // Find any todo containers that were loaded via HTMX
-            if(content.id == "yourToDoContainer") {
-                initializeThirdPartyDraggable(content);
-            }
-
-            return calendarEl;
-        });
+        // Register once. This runs inside an init function that HTMX re-invokes on every
+        // swap, so without the guard each load stacked another global onLoad handler
+        // (handler leak → compounding churn on the dashboard).
+        if (!window.leantime._calendarTodoOnLoadRegistered) {
+            window.leantime._calendarTodoOnLoadRegistered = true;
+            htmx.onLoad(function (content) {
+                // Find any todo containers that were loaded via HTMX
+                if (content.id == "yourToDoContainer") {
+                    initializeThirdPartyDraggable(content);
+                }
+            });
+        }
     };
 
     // Make public what you want to have public, everything else is private

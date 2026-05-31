@@ -68,6 +68,53 @@ htmx.onLoad(function(element){
     tippy('[data-tippy-content]');
 });
 
+// --- Singleton HTMX progress bar -------------------------------------------------
+// A single fixed top-of-page bar driven by an in-flight request COUNTER. Concurrent
+// requests (e.g. the dashboard's parallel widget loads) keep it visible until ALL of
+// them settle — it does not serialize requests. It is position:fixed, so it has zero
+// layout impact, and replaces page-wide `.htmx-indicator` toggling as the general
+// "something is loading" affordance.
+leantime.htmxProgress = (function () {
+    var inFlight = 0;
+    var bar = null;
+    var hideTimer = null;
+
+    function ensureBar() {
+        if (bar) { return bar; }
+        bar = document.getElementById('lt-htmx-progress');
+        if (!bar) {
+            bar = document.createElement('div');
+            bar.id = 'lt-htmx-progress';
+            bar.setAttribute('aria-hidden', 'true');
+            bar.innerHTML = '<div class="bar"></div>';
+            (document.body || document.documentElement).appendChild(bar);
+        }
+        return bar;
+    }
+
+    return {
+        start: function () {
+            inFlight++;
+            if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+            ensureBar().classList.add('active');
+        },
+        done: function () {
+            inFlight = Math.max(0, inFlight - 1);
+            if (inFlight === 0) {
+                // Small delay smooths over back-to-back requests so the bar doesn't strobe.
+                hideTimer = setTimeout(function () {
+                    if (inFlight === 0 && bar) { bar.classList.remove('active'); }
+                }, 150);
+            }
+        }
+    };
+})();
+
+// htmx request events bubble to document, so a single document-level listener covers
+// every request regardless of which element triggered it.
+document.addEventListener('htmx:beforeRequest', function () { leantime.htmxProgress.start(); });
+document.addEventListener('htmx:afterRequest', function () { leantime.htmxProgress.done(); });
+
 window.addEventListener("HTMX.ShowNotification", function(evt) {
     jQuery.get(leantime.appUrl+"/notifications/getLatestGrowl", function(data){
         let notification = JSON.parse(data);

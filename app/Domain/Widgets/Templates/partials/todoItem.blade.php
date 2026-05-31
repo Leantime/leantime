@@ -63,7 +63,7 @@
                 </div>
                 <div class="tw-flex-grow">
                     <div hx-trigger="load"
-                         hx-indicator=".htmx-indicator"
+                         hx-indicator=".htmx-indicator-ticket-{{ $ticket['id'] }}"
                          hx-get="<?=BASE_URL ?>/hx/tickets/milestones/progress?milestoneId=<?=$ticket['id'] ?>&progressColor={{ trim($ticket['tags'], "#") }}">
                         <div class="htmx-indicator">
                                 <?= $tpl->__("label.loading_milestone") ?>
@@ -138,13 +138,13 @@
                                    hx-post="{{ BASE_URL }}/widgets/myToDos/updateDueDate"
                                    hx-trigger="change"
                                    hx-vals='{"id": "{{ $ticket['id'] }}"}'
-                                   hx-indicator=".htmx-indicator"/>
+                                   hx-indicator=".htmx-indicator-ticket-{{ $ticket['id'] }}"/>
                             <button class="reset-button"
                                     data-id="{{ $ticket['id'] }}"
                                     id="reset-date-{{ $ticket['id'] }}"
                                     hx-post="{{ BASE_URL }}/widgets/myToDos/updateDueDate"
                                     hx-vals='{"id": "{{ $ticket['id'] }}", "date": ""}'
-                                    hx-indicator=".htmx-indicator">
+                                    hx-indicator=".htmx-indicator-ticket-{{ $ticket['id'] }}">
                                 <span class="sr-only">{{ __("language.resetDate") }}</span>
                                 <i class="fa fa-close"></i>
                             </button>
@@ -224,7 +224,7 @@
               hx-post="{{ BASE_URL }}/widgets/myToDos/addSubtask?ticketId={{$ticket['id']}}"
               hx-target="#yourToDoContainer"
               hx-swap="outerHTML"
-              hx-indicator=".htmx-indicator">
+              hx-indicator=".htmx-indicator-ticket-{{ $ticket['id'] }}">
             <input type="hidden" value="new" name="subtaskId"/>
             <input type="hidden" value="1" name="subtaskSave"/>
             <input type="hidden" value="{{ format($ticket['dateToFinish'])->date() }}" name="dateToFinish"/>
@@ -265,7 +265,7 @@
                       hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
                       hx-target="#yourToDoContainer"
                       hx-swap="outerHTML"
-                      hx-indicator=".htmx-indicator"
+                      hx-indicator=".htmx-indicator-ticket-{{ $ticket['id'] }}"
                       onsubmit="jQuery(this).find('.main-title-input').attr('readonly', true);"
                 >
                     <input type="hidden" name="milestone"
