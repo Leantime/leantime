@@ -86,18 +86,27 @@ leantime.menuController = (function () {
             // otherwise opening the drawer immediately closes it again.
             e.stopPropagation();
 
+            // On mobile/tablet the drawer is view-only: toggle it but do NOT
+            // persist, otherwise opening the drawer on a phone would overwrite
+            // the user's saved desktop sidebar preference.
+            var persistState = !isMobileMenu();
+
             if (jQuery(".mainwrapper").hasClass('menuopen')) {
                 jQuery(".mainwrapper").removeClass("menuopen");
                 jQuery(".mainwrapper").addClass("menuclosed");
 
                 //If it doesn't have the class open, the user wants it to be open.
-                leantime.menuRepository.updateUserMenuSettings("closed");
+                if (persistState) {
+                    leantime.menuRepository.updateUserMenuSettings("closed");
+                }
             } else {
                 jQuery(".mainwrapper").removeClass("menuclosed");
                 jQuery(".mainwrapper").addClass("menuopen");
 
                 //If it doesn't have the class open, the user wants it to be open.
-                leantime.menuRepository.updateUserMenuSettings("open");
+                if (persistState) {
+                    leantime.menuRepository.updateUserMenuSettings("open");
+                }
             }
 
         });
