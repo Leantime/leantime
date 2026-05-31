@@ -147,37 +147,49 @@ class Build
     }
 
     /**
-     * Coerces a value to a builtin (scalar/array) property type. Returns a typed
-     * default for nulls on non-nullable types, casts compatible scalars, and
-     * wraps non-array values for array properties. Leaves values untouched when
-     * no safe coercion exists (preserving today's behavior for that edge).
+     * Coerces a value to a builtin (scalar/array) property type so external/API
+     * data can't trip a TypeError on a typed property. Casts compatible scalars;
+     * when a value can't be safely coerced (e.g. a non-numeric string for an int,
+     * or a scalar for an array) it falls back to null for nullable types or the
+     * type's zero-value otherwise — never the raw, mismatched value.
      */
     private function coerceToBuiltinType(mixed $value, \ReflectionNamedType $type): mixed
     {
         $typeName = $type->getName();
+        $allowsNull = $type->allowsNull();
 
         if ($value === null) {
-            if ($type->allowsNull()) {
-                return null;
-            }
-
-            return match ($typeName) {
-                'string' => '',
-                'int' => 0,
-                'float' => 0.0,
-                'bool' => false,
-                'array' => [],
-                default => null,
-            };
+            return $allowsNull ? null : $this->builtinTypeDefault($typeName);
         }
 
+        // Fallback for a value that can't be coerced to the declared type.
+        $fallback = fn () => $allowsNull ? null : $this->builtinTypeDefault($typeName);
+
         return match ($typeName) {
-            'string' => is_string($value) ? $value : (is_scalar($value) ? (string) $value : $value),
-            'int' => is_int($value) ? $value : (is_numeric($value) ? (int) $value : $value),
-            'float' => is_float($value) ? $value : (is_numeric($value) ? (float) $value : $value),
+            'string' => is_string($value) ? $value : (is_scalar($value) ? (string) $value : $fallback()),
+            'int' => is_int($value) ? $value : (is_numeric($value) ? (int) $value : $fallback()),
+            'float' => is_float($value) ? $value : (is_numeric($value) ? (float) $value : $fallback()),
             'bool' => is_bool($value) ? $value : (bool) $value,
-            'array' => is_array($value) ? $value : (array) $value,
+            // Don't wrap scalars into a single-element array — array-typed model
+            // properties are consumed as lists of associative rows downstream, so
+            // a wrapped scalar would only defer the crash to the template.
+            'array' => is_array($value) ? $value : $fallback(),
             default => $value,
+        };
+    }
+
+    /**
+     * The zero-value for a non-nullable builtin type.
+     */
+    private function builtinTypeDefault(string $typeName): mixed
+    {
+        return match ($typeName) {
+            'string' => '',
+            'int' => 0,
+            'float' => 0.0,
+            'bool' => false,
+            'array' => [],
+            default => null,
         };
     }
 
