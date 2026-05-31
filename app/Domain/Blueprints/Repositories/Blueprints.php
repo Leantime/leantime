@@ -120,7 +120,6 @@ class Blueprints extends Repository
 
         $this->connection->table('zp_canvas')
             ->where('id', $id)
-            ->limit(1)
             ->delete();
     }
 
@@ -162,7 +161,6 @@ class Blueprints extends Repository
     {
         $this->connection->table('zp_canvas_items')
             ->where('id', $values['itemId'] ?? $values['id'])
-            ->limit(1)
             ->update([
                 'title' => $values['title'] ?? '',
                 'description' => $values['description'],
@@ -211,7 +209,6 @@ class Blueprints extends Repository
 
         return (bool) $this->connection->table('zp_canvas_items')
             ->where('id', $id)
-            ->limit(1)
             ->update($updates);
     }
 
@@ -447,7 +444,6 @@ class Blueprints extends Repository
     {
         $this->connection->table('zp_canvas_items')
             ->where('id', $id)
-            ->limit(1)
             ->delete();
     }
 

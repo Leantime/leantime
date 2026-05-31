@@ -136,7 +136,6 @@ class Ideas
 
         $this->db->table('zp_canvas')
             ->where('id', $id)
-            ->limit(1)
             ->delete();
     }
 
@@ -164,7 +163,6 @@ class Ideas
     {
         $this->db->table('zp_canvas_items')
             ->where('id', $values['itemId'])
-            ->limit(1)
             ->update([
                 'description' => $values['description'],
                 'assumptions' => $values['assumptions'],
@@ -191,7 +189,6 @@ class Ideas
 
         return $this->db->table('zp_canvas_items')
             ->where('id', $id)
-            ->limit(1)
             ->update($updateData) >= 0;
     }
 
@@ -312,7 +309,6 @@ class Ideas
     {
         $this->db->table('zp_canvas_items')
             ->where('id', $id)
-            ->limit(1)
             ->delete();
     }
 
@@ -320,7 +316,6 @@ class Ideas
     {
         return $this->db->table('zp_canvas_items')
             ->where('id', $ideaId)
-            ->limit(1)
             ->update(['box' => $status]) >= 0;
     }
 
