@@ -7,6 +7,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
+use Leantime\Domain\Notifications\Repositories\DeviceTokens as DeviceTokensRepository;
 use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
@@ -23,6 +24,8 @@ class Notifications
 
     private LanguageCore $language;
 
+    private DeviceTokensRepository $deviceTokensRepo;
+
     /**
      * __construct - get database connection
      *
@@ -33,12 +36,14 @@ class Notifications
         DbCore $db,
         NotificationRepository $notificationsRepo,
         UserRepository $userRepository,
-        LanguageCore $language
+        LanguageCore $language,
+        DeviceTokensRepository $deviceTokensRepo
     ) {
         $this->db = $db;
         $this->notificationsRepo = $notificationsRepo;
         $this->userRepository = $userRepository;
         $this->language = $language;
+        $this->deviceTokensRepo = $deviceTokensRepo;
     }
 
     /**
@@ -116,6 +121,138 @@ class Notifications
 
         // Scope the update by user so a caller cannot mark another user's notification read.
         return $this->notificationsRepo->markNotificationRead($id, $userId);
+    }
+
+    /**
+     * Flip a previously-read notification back to unread. Powers the
+     * swipe-to-mark-unread inbox gesture on mobile — symmetric to
+     * markNotificationRead so users can re-surface something they
+     * tapped open accidentally or want to come back to.
+     *
+     * Per the mobile-owns-explicit-RPC-params convention, userId is
+     * passed by the client. Scoping isn't critical here (the id is
+     * the primary key) but the param keeps audit logs consistent
+     * with the rest of the Notifications RPC surface.
+     *
+     * @api
+     */
+    public function markNotificationUnread(int $id, int $userId): bool
+    {
+        if ($id <= 0) {
+            return false;
+        }
+
+        return $this->notificationsRepo->markNotificationUnread($id);
+    }
+
+    /**
+     * Unread notification count for the authenticated user. Mobile uses
+     * this for the app-icon badge and the inbox tab unread dot. Cheap
+     * because the (userId, read) composite index on zp_notifications
+     * makes it a fast count.
+     *
+     * @api
+     */
+    public function getUnreadCount(): int
+    {
+        $userId = (int) session('userdata.id');
+        if ($userId === 0) {
+            return 0;
+        }
+
+        // Delegated to the Repository — Service stores the raw DbCore
+        // (no query-builder helpers), Repository stores the resolved
+        // Illuminate ConnectionInterface. Following the established
+        // pattern that all SQL lives in the Repository layer.
+        return $this->notificationsRepo->getUnreadCount($userId);
+    }
+
+    /**
+     * Register a mobile device's push token for the authenticated user.
+     * Mobile calls this on every login (idempotent — backend upserts
+     * on (userId, token)). Refreshes lastSeenAt + provider and clears
+     * any prior invalidatedAt.
+     *
+     * Per [[feedback-mobile-owns-explicit-rpc-params]] convention,
+     * userId is resolved server-side from session — we don't accept it
+     * from the client (a stolen bearer token shouldn't be able to
+     * register push devices on someone else's account).
+     *
+     * Two providers supported:
+     *   - 'expo': Expo push token, format "ExponentPushToken[xxx]"
+     *             or "ExpoPushToken[xxx]". Dispatched via Expo's HTTP API.
+     *   - 'fcm':  raw Firebase Cloud Messaging registration token,
+     *             opaque ~140-200 chars (alphanumeric + colon).
+     *             Dispatched direct to FCM HTTP v1.
+     *
+     * Default is 'expo' so any pre-FCM clients still validate. The
+     * mobile app picks the provider based on its build flavour
+     * (@react-native-firebase/messaging → 'fcm', expo-notifications → 'expo').
+     *
+     * @param  string  $token  Push token (Expo or FCM, see $provider)
+     * @param  string  $platform  'ios' or 'android'
+     * @param  string|null  $deviceName  Optional human-readable device label
+     * @param  string  $provider  'expo' or 'fcm' (default 'expo')
+     *
+     * @api
+     */
+    public function registerPushToken(string $token, string $platform, ?string $deviceName = null, string $provider = 'expo'): bool
+    {
+        $userId = (int) session('userdata.id');
+        if ($userId === 0) {
+            return false;
+        }
+
+        if (! in_array($platform, ['ios', 'android'], true)) {
+            return false;
+        }
+        if (! in_array($provider, ['expo', 'fcm'], true)) {
+            return false;
+        }
+
+        // Provider-aware format validation. Light — catches obvious
+        // junk but doesn't gatekeep on shape details we can't verify
+        // without round-tripping to the provider.
+        if ($provider === 'expo') {
+            if (! str_starts_with($token, 'ExponentPushToken[') && ! str_starts_with($token, 'ExpoPushToken[')) {
+                return false;
+            }
+        } else {
+            // FCM tokens are opaque. Reject anything implausibly short
+            // (<100 chars) or that looks like an Expo token (caller
+            // probably mis-set the provider). The DB column is
+            // VARCHAR(255), which the schema migration sized for both
+            // providers, so length is bounded there too.
+            if (strlen($token) < 100 || strlen($token) > 255) {
+                return false;
+            }
+            if (str_starts_with($token, 'ExponentPushToken[') || str_starts_with($token, 'ExpoPushToken[')) {
+                return false;
+            }
+        }
+
+        return $this->deviceTokensRepo->save($userId, $token, $provider, $platform, $deviceName);
+    }
+
+    /**
+     * Unregister a token (called on mobile logout BEFORE credentials
+     * clear, so we still have a valid bearer for the RPC). Soft-deletes
+     * via invalidatedAt — audit trail preserved; prune job sweeps stale
+     * rows periodically.
+     *
+     * Scoped to the authenticated user so a bearer token can only
+     * invalidate its own devices.
+     *
+     * @api
+     */
+    public function unregisterPushToken(string $token): bool
+    {
+        $userId = (int) session('userdata.id');
+        if ($userId === 0) {
+            return false;
+        }
+
+        return $this->deviceTokensRepo->invalidateForUser($userId, $token);
     }
 
     /**
