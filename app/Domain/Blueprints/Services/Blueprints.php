@@ -434,8 +434,11 @@ class Blueprints
             'emcanvas', 'smcanvas', 'cpcanvas', 'insightscanvas',
             'sqcanvas', 'dbmcanvas', 'lbmcanvas', 'eacanvas', 'riskscanvas', 'sbcanvas',
             'swotcanvas', 'obmcanvas', 'valuecanvas', 'leancanvas', 'minempathycanvas',
-            'logicmodelcanvas',
         ];
+        // Note: logicmodelcanvas is intentionally absent. It is its own domain (no
+        // Blueprints YAML template), so it can't go through the template-based
+        // progress/recent computation here — it would hit undefined box keys
+        // (e.g. "lm_inputs"). It still appears in the hub via getBoardMetadata().
     }
 
     /**

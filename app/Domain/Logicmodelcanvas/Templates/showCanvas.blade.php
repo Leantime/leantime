@@ -108,20 +108,9 @@
                     </div>
                 @endif
 
-                {{-- Spacer pushes export to the right --}}
-                <div style="flex:1;"></div>
-
-                {{-- Right: Export (Print is native; plugins inject PDF/PNG via the hook) --}}
-                <div class="btn-group">
-                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-download"></i> {{ $tpl->__('logicmodel.export.header') }} <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        @dispatchEvent('logicmodel.exportActions', ['canvasId' => $currentCanvas])
-                        <li><a href="javascript:window.print()"><i class="fa fa-fw fa-print"></i> {{ $tpl->__('logicmodel.export.print') }}</a></li>
-                    </ul>
-                </div>
             </div>
+            {{-- Export & print live in the header 3-dot menu (and the plugin extends it
+                 via the logicmodel.headerActions hook), so no duplicate toolbar control here. --}}
 
             @dispatchEvent('logicmodel.beforeStageFlow', ['canvasId' => $currentCanvas, 'canvasItems' => $canvasItems])
 

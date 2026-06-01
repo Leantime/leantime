@@ -317,7 +317,7 @@
     padding: 6px;
     color: var(--primary-font-color);
     opacity: 0.5;
-    font-size: var(--font-size-xs);
+    font-size: var(--base-font-size);
     font-weight: 500;
     cursor: pointer;
     background: transparent;
