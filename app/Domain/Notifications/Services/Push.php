@@ -69,13 +69,13 @@ class Push
      *                               pair — a user with N devices gets
      *                               N pushes.
      * @param  string  $title  Banner title.
-     * @param  string  $body   Banner body.
-     * @param  array  $data   Custom payload routed to the mobile deeplink
+     * @param  string  $body  Banner body.
+     * @param  array  $data  Custom payload routed to the mobile deeplink
      *                       router. Common shape:
-     *                         module          => 'tickets'|'comments'|...
-     *                         moduleId        => entity id (string|int)
-     *                         parentTicketId  => for comments: their ticket id
-     *                         url             => web fallback URL
+     *                       module          => 'tickets'|'comments'|...
+     *                       moduleId        => entity id (string|int)
+     *                       parentTicketId  => for comments: their ticket id
+     *                       url             => web fallback URL
      *                       Values get string-cast for FCM compatibility
      *                       (FCM data fields must be strings).
      */

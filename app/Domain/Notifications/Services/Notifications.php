@@ -191,10 +191,10 @@ class Notifications
      * @param  string  $token  FCM registration token
      * @param  string  $platform  'ios' or 'android'
      * @param  string|null  $deviceName  Ignored — kept for backwards-
-     *                                  compat with mobile clients that
-     *                                  still send it; the device name
-     *                                  lives on zp_access_tokens.name
-     *                                  already (set at login time)
+     *                                   compat with mobile clients that
+     *                                   still send it; the device name
+     *                                   lives on zp_access_tokens.name
+     *                                   already (set at login time)
      * @param  string  $provider  Must be 'fcm' (default 'fcm')
      *
      * @api
