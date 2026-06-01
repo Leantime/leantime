@@ -7,7 +7,6 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
-use Leantime\Domain\Notifications\Repositories\DeviceTokens as DeviceTokensRepository;
 use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
@@ -24,8 +23,6 @@ class Notifications
 
     private LanguageCore $language;
 
-    private DeviceTokensRepository $deviceTokensRepo;
-
     /**
      * __construct - get database connection
      *
@@ -36,14 +33,12 @@ class Notifications
         DbCore $db,
         NotificationRepository $notificationsRepo,
         UserRepository $userRepository,
-        LanguageCore $language,
-        DeviceTokensRepository $deviceTokensRepo
+        LanguageCore $language
     ) {
         $this->db = $db;
         $this->notificationsRepo = $notificationsRepo;
         $this->userRepository = $userRepository;
         $this->language = $language;
-        $this->deviceTokensRepo = $deviceTokensRepo;
     }
 
     /**
@@ -169,29 +164,35 @@ class Notifications
 
     /**
      * Register a mobile device's push token for the authenticated user.
-     * Mobile calls this on every login (idempotent — backend upserts
-     * on (userId, token)). Refreshes lastSeenAt + provider and clears
-     * any prior invalidatedAt.
+     * Mobile calls this on every login (idempotent). The push fields
+     * live directly on the bearer's zp_access_tokens row, so:
+     *   - logout / token revoke deletes the push registration too
+     *     (no orphan rows, no prune cron needed)
+     *   - re-login auto-creates a fresh row that will be updated on the
+     *     next registerPushToken call
      *
      * Per [[feedback-mobile-owns-explicit-rpc-params]] convention,
      * userId is resolved server-side from session — we don't accept it
-     * from the client (a stolen bearer token shouldn't be able to
-     * register push devices on someone else's account).
+     * from the client (a stolen bearer shouldn't be able to register
+     * push tokens on someone else's account).
      *
-     * Two providers supported:
-     *   - 'expo': Expo push token, format "ExponentPushToken[xxx]"
-     *             or "ExpoPushToken[xxx]". Dispatched via Expo's HTTP API.
-     *   - 'fcm':  raw Firebase Cloud Messaging registration token,
-     *             opaque ~140-200 chars (alphanumeric + colon).
+     * Providers:
+     *   - 'expo': Expo push token. Dispatched via Expo's HTTP API.
+     *   - 'fcm':  raw Firebase Cloud Messaging registration token.
      *             Dispatched direct to FCM HTTP v1.
      *
-     * Default is 'expo' so any pre-FCM clients still validate. The
-     * mobile app picks the provider based on its build flavour
-     * (@react-native-firebase/messaging → 'fcm', expo-notifications → 'expo').
+     * No token-format validation. Bad tokens are caught at send-time
+     * by the provider (DeviceNotRegistered / UNREGISTERED) and we
+     * mark push_invalidated_at then. Pre-validating here would just
+     * shift a small class of failures earlier without saving any work.
      *
      * @param  string  $token  Push token (Expo or FCM, see $provider)
      * @param  string  $platform  'ios' or 'android'
-     * @param  string|null  $deviceName  Optional human-readable device label
+     * @param  string|null  $deviceName  Ignored — kept for backwards-
+     *                                  compat with mobile clients that
+     *                                  still send it; the device name
+     *                                  lives on zp_access_tokens.name
+     *                                  already (set at login time)
      * @param  string  $provider  'expo' or 'fcm' (default 'expo')
      *
      * @api
@@ -209,39 +210,39 @@ class Notifications
         if (! in_array($provider, ['expo', 'fcm'], true)) {
             return false;
         }
-
-        // Provider-aware format validation. Light — catches obvious
-        // junk but doesn't gatekeep on shape details we can't verify
-        // without round-tripping to the provider.
-        if ($provider === 'expo') {
-            if (! str_starts_with($token, 'ExponentPushToken[') && ! str_starts_with($token, 'ExpoPushToken[')) {
-                return false;
-            }
-        } else {
-            // FCM tokens are opaque. Reject anything implausibly short
-            // (<100 chars) or that looks like an Expo token (caller
-            // probably mis-set the provider). The DB column is
-            // VARCHAR(255), which the schema migration sized for both
-            // providers, so length is bounded there too.
-            if (strlen($token) < 100 || strlen($token) > 255) {
-                return false;
-            }
-            if (str_starts_with($token, 'ExponentPushToken[') || str_starts_with($token, 'ExpoPushToken[')) {
-                return false;
-            }
+        if ($token === '') {
+            return false;
         }
 
-        return $this->deviceTokensRepo->save($userId, $token, $provider, $platform, $deviceName);
+        $accessTokenId = $this->resolveCurrentAccessTokenId($userId);
+        if ($accessTokenId === null) {
+            return false;
+        }
+
+        return \Illuminate\Support\Facades\DB::table('zp_access_tokens')
+            ->where('id', $accessTokenId)
+            ->update([
+                'push_token' => $token,
+                'push_platform' => $platform,
+                'push_provider' => $provider,
+                'push_token_updated_at' => now(),
+                'push_invalidated_at' => null,
+            ]) > 0;
     }
 
     /**
-     * Unregister a token (called on mobile logout BEFORE credentials
-     * clear, so we still have a valid bearer for the RPC). Soft-deletes
-     * via invalidatedAt — audit trail preserved; prune job sweeps stale
-     * rows periodically.
+     * Unregister this device's push token (called on mobile logout
+     * BEFORE the bearer is cleared, so the access token row is still
+     * resolvable). Soft-delete via push_invalidated_at — preserves the
+     * access-token row itself for the rest of the logout sequence.
      *
-     * Scoped to the authenticated user so a bearer token can only
-     * invalidate its own devices.
+     * @param  string  $token  The push token being unregistered. Kept
+     *                         for backwards-compat with mobile clients
+     *                         that pass it; we only need the bearer to
+     *                         identify the row, but a mismatch between
+     *                         passed-in token and stored token signals
+     *                         a race we should ignore (return true
+     *                         either way so logout doesn't fail).
      *
      * @api
      */
@@ -252,7 +253,49 @@ class Notifications
             return false;
         }
 
-        return $this->deviceTokensRepo->invalidateForUser($userId, $token);
+        $accessTokenId = $this->resolveCurrentAccessTokenId($userId);
+        if ($accessTokenId === null) {
+            return false;
+        }
+
+        \Illuminate\Support\Facades\DB::table('zp_access_tokens')
+            ->where('id', $accessTokenId)
+            ->update(['push_invalidated_at' => now()]);
+
+        return true;
+    }
+
+    /**
+     * Resolve the zp_access_tokens.id for the bearer that authenticated
+     * the current request. Tries Sanctum's currentAccessToken() first;
+     * falls back to the most-recently-used row for the user when the
+     * Sanctum guard isn't bound (legacy session-only auth path).
+     *
+     * Returns null only when no rows exist for the user — at that point
+     * the caller can't register push without a row to attach it to.
+     */
+    private function resolveCurrentAccessTokenId(int $userId): ?int
+    {
+        try {
+            $user = auth()->user();
+            if ($user !== null && method_exists($user, 'currentAccessToken')) {
+                $current = $user->currentAccessToken();
+                if ($current !== null && isset($current->id)) {
+                    return (int) $current->id;
+                }
+            }
+        } catch (\Throwable $e) {
+            // Sanctum guard not bound or user model doesn't support
+            // currentAccessToken — fall through to the lookup below.
+        }
+
+        $row = \Illuminate\Support\Facades\DB::table('zp_access_tokens')
+            ->where('tokenable_id', $userId)
+            ->orderByDesc('last_used_at')
+            ->orderByDesc('id')
+            ->first();
+
+        return $row !== null ? (int) $row->id : null;
     }
 
     /**
