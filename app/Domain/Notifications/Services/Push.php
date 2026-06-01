@@ -125,10 +125,36 @@ class Push
         $title = $notification->subject !== '' ? $notification->subject : 'Leantime';
         $body = $notification->message !== '' ? $notification->message : '';
 
+        // Module is a literal string ('tickets'/'comments'/'goalcanvas'/…)
+        // on the NotificationModel — see Models/Notification.php:81.
+        $module = $notification->module ?? '';
+
+        // Entity id is nested inside the entity payload, which can be
+        // either an array or an object (legacy: pre-model entities are
+        // arrays, newer ones are objects). Projects::notifyProjectUsers
+        // handles both shapes the same way at lines 334-357; we mirror
+        // that so the mobile deeplink can route by module + id.
+        $moduleId = '';
+        if (isset($notification->entity)) {
+            if (is_array($notification->entity) && isset($notification->entity['id'])) {
+                $moduleId = (string) $notification->entity['id'];
+            } elseif (is_object($notification->entity) && isset($notification->entity->id)) {
+                $moduleId = (string) $notification->entity->id;
+            }
+        }
+
+        // url is bool|array on the model: false when there's no web
+        // link, ['url' => …, 'text' => …] when there is. Extract the
+        // bare URL string so mobile receives a usable href.
+        $url = '';
+        if (is_array($notification->url) && isset($notification->url['url'])) {
+            $url = (string) $notification->url['url'];
+        }
+
         $data = [
-            'module' => $notification->entity ?? '',
-            'moduleId' => isset($notification->moduleId) ? (string) $notification->moduleId : '',
-            'url' => $notification->url ?? '',
+            'module' => $module,
+            'moduleId' => $moduleId,
+            'url' => $url,
         ];
 
         $this->send($userIds, $title, $body, $data);
