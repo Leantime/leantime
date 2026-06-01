@@ -5,11 +5,13 @@ leantime.commentsController = (function () {
         // Show the "Add new comment" toggler that makeInputReadonly may have hidden
         jQuery("[class^='mainToggler']").show();
 
-        // Show reply-level comment boxes (legacy .commentBox class only).
-        // Do NOT show commentBox-{hash} containers — those are the "new comment"
-        // forms that start hidden and open on-demand via toggleCommentBoxes().
-        jQuery(".commentBox").show();
-        jQuery(".replies .commentBox").hide();
+        // Keep per-comment reply/edit boxes (legacy .commentBox class) hidden;
+        // they open on-demand via toggleCommentBoxes(). These boxes now live
+        // outside .replies (so editing a comment with replies no longer jumps it
+        // below them), so hide by the class itself rather than by .replies
+        // containment. The "new comment" form uses commentBox-{hash} and is
+        // unaffected.
+        jQuery(".commentBox").hide();
         jQuery(".deleteComment, .replyButton").show();
 
         // Enable Tiptap editors in comment areas

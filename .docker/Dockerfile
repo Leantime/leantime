@@ -18,7 +18,8 @@ RUN apk add --no-cache --virtual .build-deps \
     libzip-dev \
     freetype-dev \
     libpng-dev \
-    libjpeg-turbo-dev
+    libjpeg-turbo-dev \
+    postgresql-dev
 
 # Set cross-compilation flags if needed
 ARG TARGETPLATFORM
@@ -33,6 +34,7 @@ RUN set -ex; \
     # Install extensions one by one to prevent memory issues
     docker-php-ext-install mysqli && \
     docker-php-ext-install pdo_mysql && \
+    docker-php-ext-install pdo_pgsql && \
     docker-php-ext-install bcmath && \
     docker-php-ext-install mbstring && \
     docker-php-ext-install exif && \
@@ -62,6 +64,7 @@ RUN apk add --no-cache \
     libjpeg-turbo \
     libzip \
     openldap \
+    libpq \
     icu-libs && \
     rm -rf /var/cache/apk/* /tmp/*
 

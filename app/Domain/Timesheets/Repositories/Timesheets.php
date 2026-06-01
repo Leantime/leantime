@@ -710,7 +710,6 @@ class Timesheets extends Repository
             $this->db->table('zp_punch_clock')
                 ->where('userId', session('userdata.id'))
                 ->where('id', $ticketId)
-                ->limit(1)
                 ->delete();
 
             // At least 1 minute
@@ -918,7 +917,6 @@ class Timesheets extends Repository
     {
         $this->db->table('zp_timesheets')
             ->where('id', $id)
-            ->limit(1)
             ->delete();
     }
 

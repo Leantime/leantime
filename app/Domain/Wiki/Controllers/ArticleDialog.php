@@ -106,7 +106,29 @@ class ArticleDialog extends Controller
             // New
             $article->title = $params['title'];
             $article->author = session('userdata.id');
-            $article->canvasId = session('currentWiki');
+
+            // Notes created from the "All Notes" grid have no active notebook, so
+            // canvasId was empty and the note saved into nothing — it appeared not
+            // to save. Fall back to the project's default notebook (auto-created by
+            // getAllProjectWikis when none exist yet). (#3216)
+            $canvasId = session('currentWiki');
+            if (empty($canvasId)) {
+                $projectWikis = $this->wikiService->getAllProjectWikis(session('currentProject'));
+                if (! empty($projectWikis)) {
+                    $canvasId = $projectWikis[0]->id;
+                }
+            }
+
+            // If we still can't resolve a notebook, don't create an orphaned note
+            // with an empty canvasId (the original #3216 failure mode) — surface an
+            // error and send the user back to pick/create a notebook.
+            if (empty($canvasId)) {
+                $this->tpl->setNotification('notification.article_save_error_no_notebook', 'error');
+
+                return Frontcontroller::redirect(BASE_URL.'/wiki/articleDialog/');
+            }
+
+            $article->canvasId = $canvasId;
             $article->data = $params['articleIcon'];
             $article->tags = $params['tags'];
             $article->status = $params['status'];

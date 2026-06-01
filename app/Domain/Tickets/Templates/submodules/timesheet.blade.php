@@ -64,13 +64,19 @@ $currentPay = $userHours * $userInfo['wage'];
         var d3 = [];
         var labels = [];
         @php
+        // Emit every value through json_encode so the generated JS is always
+        // valid. Raw concatenation broke when a value was null or non-numeric
+        // (e.g. Postgres SUM()/plan hours formatting), producing a JS syntax
+        // error that killed the whole time-tracking modal. (#3353)
         $sum = 0;
+        $planHours = is_numeric($ticket->planHours) ? (float) $ticket->planHours : 0;
         foreach ($ticketHours as $hours) {
-            $sum = $sum + $hours['summe'];
+            $sum = $sum + (float) ($hours['summe'] ?? 0);
             try {
-                echo "labels.push('" . dtHelper()->parseDbDateTime($hours['utc'])->setToUserTimezone()->format('Y-m-d') . "');\n";
-                echo "d2.push(" . $sum . ");\n";
-                echo "d3.push(" . $ticket->planHours . ");\n";
+                $label = dtHelper()->parseDbDateTime($hours['utc'])->setToUserTimezone()->format('Y-m-d');
+                echo 'labels.push(' . json_encode($label) . ");\n";
+                echo 'd2.push(' . json_encode($sum) . ");\n";
+                echo 'd3.push(' . json_encode($planHours) . ");\n";
             } catch (\Exception $e) {
                 // not much we can do at this point. Ignore the datapoint
             }

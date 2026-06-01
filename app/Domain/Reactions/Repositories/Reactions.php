@@ -83,7 +83,6 @@ class Reactions
     {
         return $this->db->table('zp_reactions')
             ->where('id', $id)
-            ->limit(1)
             ->delete() > 0;
     }
 
@@ -97,7 +96,6 @@ class Reactions
             ->where('moduleId', $moduleId)
             ->where('userId', $userId)
             ->where('reaction', $reaction)
-            ->limit(1)
             ->delete() > 0;
     }
 

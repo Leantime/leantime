@@ -760,7 +760,6 @@ class Projects
 
         $this->connection->table('zp_projects')
             ->where('id', $id)
-            ->limit(1)
             ->update([
                 'name' => $values['name'],
                 'details' => $values['details'] ?? '',
@@ -1019,7 +1018,6 @@ class Projects
 
         return $this->connection->table('zp_projects')
             ->where('id', $id)
-            ->limit(1)
             ->update($updateData) >= 0;
     }
 

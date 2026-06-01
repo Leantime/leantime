@@ -377,7 +377,6 @@ class Calendar extends RepositoryCore
         $this->db->table('zp_calendar')
             ->where('id', $id)
             ->where('userId', session('userdata.id'))
-            ->limit(1)
             ->update([
                 'dateFrom' => $values['dateFrom'],
                 'dateTo' => $values['dateTo'],
@@ -391,7 +390,6 @@ class Calendar extends RepositoryCore
         return $this->db->table('zp_calendar')
             ->where('id', $id)
             ->where('userId', session('userdata.id'))
-            ->limit(1)
             ->delete();
     }
 
@@ -434,7 +432,6 @@ class Calendar extends RepositoryCore
         $this->db->table('zp_gcallinks')
             ->where('userId', session('userdata.id'))
             ->where('id', $id)
-            ->limit(1)
             ->update([
                 'url' => $values['url'],
                 'name' => $values['name'],
@@ -447,7 +444,6 @@ class Calendar extends RepositoryCore
         return $this->db->table('zp_gcallinks')
             ->where('id', $id)
             ->where('userId', session('userdata.id'))
-            ->limit(1)
             ->delete() > 0;
     }
 
