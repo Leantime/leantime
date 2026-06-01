@@ -306,6 +306,19 @@ class Projects
         // Send to messengers
         $this->messengerService->sendNotificationToMessengers($notification, $projectName);
 
+        // Send mobile push notifications to recipients with a registered
+        // device token. No-op for users with no mobile token; no-op for
+        // FCM-provider rows when LEAN_PUSH_FCM_CREDENTIALS_PATH /
+        // LEAN_PUSH_FCM_PROJECT_ID aren't configured. Wrapped in try
+        // so a push outage never breaks the rest of the notification
+        // dispatch path (queued emails + messengers still fire).
+        try {
+            $pushService = app()->make(\Leantime\Domain\Notifications\Services\Push::class);
+            $pushService->sendFromNotification($notification, $users);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Push dispatch failed: '.$e->getMessage());
+        }
+
         // Notify users about mentions
         // Fields that should be parsed for mentions
         $mentionFields = [

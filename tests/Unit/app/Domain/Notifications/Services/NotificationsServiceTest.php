@@ -4,7 +4,6 @@ namespace Unit\app\Domain\Notifications\Services;
 
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Notifications\Repositories\DeviceTokens as DeviceTokensRepository;
 use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;
 use Leantime\Domain\Notifications\Services\Notifications;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -30,7 +29,6 @@ class NotificationsServiceTest extends TestCase
             $this->make(NotificationRepository::class),
             $this->make(UserRepository::class),
             $this->make(LanguageCore::class),
-            $this->make(DeviceTokensRepository::class),
         );
     }
 
@@ -104,7 +102,6 @@ class NotificationsServiceTest extends TestCase
             $repo,
             $this->make(UserRepository::class),
             $this->make(LanguageCore::class),
-            $this->make(DeviceTokensRepository::class),
         );
 
         $this->assertTrue($service->markRead('all'));
@@ -129,7 +126,6 @@ class NotificationsServiceTest extends TestCase
             $repo,
             $this->make(UserRepository::class),
             $this->make(LanguageCore::class),
-            $this->make(DeviceTokensRepository::class),
         );
 
         $this->assertTrue($service->markRead(5));

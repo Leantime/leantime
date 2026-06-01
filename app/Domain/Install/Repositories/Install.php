@@ -82,6 +82,9 @@ class Install
         30500,
         30501,
         30502,
+        // 30503 (zp_device_tokens) intentionally skipped — superseded by
+        // 30504 which puts push columns on zp_access_tokens instead.
+        30504,
     ];
 
     /**
@@ -2583,76 +2586,69 @@ class Install
     }
 
     /**
-     * zp_device_tokens — stores mobile push notification device tokens
-     * registered by the Leantime Mobile app. Supports two delivery
-     * providers (issue #3398):
+     * Push notification fields on zp_access_tokens — refactor of the
+     * original (never-fired-in-production) zp_device_tokens table from
+     * the earlier #3401 design. Per discussion: lifecycle is naturally
+     * tied to the user's login session, so we piggyback the bearer-
+     * token row instead of maintaining a parallel table + prune cron.
+     * Logout invalidates the row → push registration dies with it.
      *
-     *   - 'expo': token routed through Expo's push service
-     *     (https://exp.host/--/api/v2/push/send). Token format is
-     *     "ExponentPushToken[xxx]". Used when the mobile build uses
-     *     expo-notifications.
-     *   - 'fcm': raw Firebase Cloud Messaging registration token routed
-     *     through FCM's HTTP v1 API. Token format is opaque
-     *     (alphanumeric with a colon separator, ~140-200 chars).
-     *     Used when the mobile build uses @react-native-firebase/messaging.
+     * Columns added to zp_access_tokens:
+     *   - push_token            VARCHAR(255) NULL — opaque token (Expo
+     *                                              or FCM, see provider)
+     *   - push_platform         VARCHAR(16)  NULL — 'ios' or 'android'
+     *   - push_provider         VARCHAR(8)   NULL — 'expo' or 'fcm'
+     *   - push_token_updated_at TIMESTAMP    NULL — refreshed each
+     *                                              registerPushToken call
+     *   - push_invalidated_at   TIMESTAMP    NULL — set by mobile
+     *                                              unregister OR provider
+     *                                              DeviceNotRegistered
      *
-     * Schema notes:
-     *   - `token` is the push token — variable length, treated as
-     *     opaque string by us. 255 chars accommodates both providers
-     *     comfortably (FCM tokens are typically 140-200).
-     *   - `provider` is 'expo' or 'fcm'; drives which send path the
-     *     backend dispatcher uses for this row.
-     *   - `platform` records ios/android for diagnostics + potential
-     *     platform-specific delivery routing.
-     *   - `deviceName` is optional, surfaces in admin/user "your
-     *     devices" view (future).
-     *   - `lastSeenAt` updated each time the token is re-registered
-     *     (mobile re-registers on every login) — informs cleanup.
-     *   - `invalidatedAt` set when the provider reports the token is
-     *     no longer valid (Expo's DeviceNotRegistered, FCM's
-     *     UNREGISTERED / INVALID_ARGUMENT). Prune these periodically.
-     *   - Unique (userId, token) prevents duplicate registrations.
+     * The zp_device_tokens table from #3401's update_sql_30503 is no
+     * longer used. Installs that ran 30503 will have an empty
+     * zp_device_tokens table sitting unused — safe to drop in a
+     * future cleanup PR; not dropped here to keep this migration
+     * additive-only.
      */
-    public function update_sql_30503(): bool|array
+    public function update_sql_30504(): bool|array
     {
         try {
-            if (! Schema::hasTable('zp_device_tokens')) {
-                Schema::create('zp_device_tokens', function (Blueprint $table) {
-                    $table->increments('id');
-                    $table->integer('userId');
-                    // Push tokens vary by provider:
-                    //   Expo:  ~50-100 chars, "ExponentPushToken[...]"
-                    //   FCM:   ~140-200 chars, opaque alphanumeric+colon
-                    // 255 covers both with headroom and lets us
-                    // unique-index without prefix-key gymnastics.
-                    $table->string('token', 255);
-                    // 'expo' or 'fcm'. Drives the send path.
-                    // Defaults to 'expo' for any rows registered before
-                    // the mobile FCM pivot (none expected in production
-                    // since this column ships with the table, but the
-                    // default keeps the column NOT NULL even if a
-                    // future caller forgets to set it).
-                    $table->string('provider', 8)->default('expo');
-                    $table->string('platform', 16)->nullable();
-                    $table->string('deviceName', 255)->nullable();
-                    $table->dateTime('lastSeenAt')->nullable();
-                    $table->dateTime('invalidatedAt')->nullable();
-                    $table->dateTime('createdAt')->nullable();
+            Schema::table('zp_access_tokens', function (Blueprint $table) {
+                if (! Schema::hasColumn('zp_access_tokens', 'push_token')) {
+                    $table->string('push_token', 255)->nullable()->after('expires_at');
+                }
+                if (! Schema::hasColumn('zp_access_tokens', 'push_platform')) {
+                    $table->string('push_platform', 16)->nullable()->after('push_token');
+                }
+                if (! Schema::hasColumn('zp_access_tokens', 'push_provider')) {
+                    $table->string('push_provider', 8)->nullable()->after('push_platform');
+                }
+                if (! Schema::hasColumn('zp_access_tokens', 'push_token_updated_at')) {
+                    $table->timestamp('push_token_updated_at')->nullable()->after('push_provider');
+                }
+                if (! Schema::hasColumn('zp_access_tokens', 'push_invalidated_at')) {
+                    $table->timestamp('push_invalidated_at')->nullable()->after('push_token_updated_at');
+                }
+            });
 
-                    $table->index('userId');
-                    // Composite index for "active tokens for user" queries
-                    // — the dominant access pattern when dispatching push.
-                    $table->index(['userId', 'invalidatedAt']);
-                    // Prevent duplicate registrations of the same token
-                    // by the same user (mobile re-registers on every
-                    // login; upsert-by-this-unique is the desired shape).
-                    $table->unique(['userId', 'token']);
+            // Index for "active push tokens for user" — the dominant
+            // access pattern when dispatching push. Skipped if it
+            // already exists from a re-run.
+            $existingIndexes = collect(\Illuminate\Support\Facades\DB::select('SHOW INDEX FROM zp_access_tokens'))
+                ->pluck('Key_name')
+                ->toArray();
+            if (! in_array('idx_access_tokens_tokenable_push', $existingIndexes, true)) {
+                Schema::table('zp_access_tokens', function (Blueprint $table) {
+                    $table->index(
+                        ['tokenable_id', 'push_invalidated_at'],
+                        'idx_access_tokens_tokenable_push'
+                    );
                 });
             }
         } catch (\Exception $e) {
-            Log::error('Migration 30503: '.$e->getMessage());
+            Log::error('Migration 30504: '.$e->getMessage());
 
-            return ['Migration 30503 failed: '.$e->getMessage()];
+            return ['Migration 30504 failed: '.$e->getMessage()];
         }
 
         return true;
