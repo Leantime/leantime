@@ -71,6 +71,8 @@
     box-shadow: var(--regular-shadow);
 }
 .sf-stage.active .sf-flag { opacity: 1; }
+/* No focus label (e.g. all stages expanded) → don't render an empty pill. */
+.sf-flag:empty { display: none; }
 
 /* ── Stage header ── */
 .sf-hd {

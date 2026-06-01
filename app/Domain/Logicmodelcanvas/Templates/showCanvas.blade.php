@@ -84,13 +84,7 @@
         @if (count($allCanvas) > 0)
             {{-- Toolbar --}}
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                {{-- Left: + New Board --}}
-                @if ($login::userIsAtLeast($roles::$editor))
-                    <a href="#/{{ $canvasName }}canvas/boardDialog" class="addCanvasLink btn btn-primary">
-                        {!! $tpl->__('links.icon.create_new_board') !!}
-                    </a>
-                @endif
-
+                {{-- Board creation lives in the header title dropdown; no duplicate button here. --}}
                 @if (!empty($statusLabels))
                     @php
                         $statusColorMap = ['blue' => '#1B75BB', 'orange' => '#fdab3d', 'green' => '#75BB1B', 'red' => '#BB1B25', 'grey' => '#c3ccd4'];
@@ -143,7 +137,6 @@
                             return true;
                         });
                         $itemCount = count($stageItems);
-                        $isFirst = ($num === array_key_first($stages));
                     @endphp
 
                     <x-global::stageflow.card
@@ -154,9 +147,9 @@
                         :icon="$stage['icon']"
                         :title="$tpl->__($stage['title'])"
                         :subtitle="$tpl->__($stage['subtitle'])"
-                        :active="$isFirst"
+                        :active="true"
                         :itemCount="$itemCount"
-                        :focusLabel="$tpl->__('logicmodel.current_focus')"
+                        :focusLabel="''"
                     >
                         <x-slot:headerExtra>
                             @dispatchEvent('logicmodel.afterStageHeader', ['stageNum' => $num, 'stage' => $stage, 'canvasId' => $currentCanvas, 'stageItems' => $stageItems])
