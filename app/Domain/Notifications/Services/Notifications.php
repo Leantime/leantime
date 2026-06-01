@@ -176,28 +176,30 @@ class Notifications
      * from the client (a stolen bearer shouldn't be able to register
      * push tokens on someone else's account).
      *
-     * Providers:
-     *   - 'expo': Expo push token. Dispatched via Expo's HTTP API.
-     *   - 'fcm':  raw Firebase Cloud Messaging registration token.
-     *             Dispatched direct to FCM HTTP v1.
+     * Provider:
+     *   - 'fcm': raw Firebase Cloud Messaging registration token.
+     *            Dispatched direct to FCM HTTP v1.
      *
      * No token-format validation. Bad tokens are caught at send-time
-     * by the provider (DeviceNotRegistered / UNREGISTERED) and we
-     * mark push_invalidated_at then. Pre-validating here would just
-     * shift a small class of failures earlier without saving any work.
+     * by FCM (UNREGISTERED / INVALID_ARGUMENT) and we mark
+     * push_invalidated_at then. Pre-validating here would just shift a
+     * small class of failures earlier without saving any work.
      *
-     * @param  string  $token  Push token (Expo or FCM, see $provider)
+     * The push_provider column on zp_access_tokens is retained for
+     * forward compatibility, but only 'fcm' is accepted today.
+     *
+     * @param  string  $token  FCM registration token
      * @param  string  $platform  'ios' or 'android'
      * @param  string|null  $deviceName  Ignored — kept for backwards-
      *                                  compat with mobile clients that
      *                                  still send it; the device name
      *                                  lives on zp_access_tokens.name
      *                                  already (set at login time)
-     * @param  string  $provider  'expo' or 'fcm' (default 'expo')
+     * @param  string  $provider  Must be 'fcm' (default 'fcm')
      *
      * @api
      */
-    public function registerPushToken(string $token, string $platform, ?string $deviceName = null, string $provider = 'expo'): bool
+    public function registerPushToken(string $token, string $platform, ?string $deviceName = null, string $provider = 'fcm'): bool
     {
         $userId = (int) session('userdata.id');
         if ($userId === 0) {
@@ -207,7 +209,7 @@ class Notifications
         if (! in_array($platform, ['ios', 'android'], true)) {
             return false;
         }
-        if (! in_array($provider, ['expo', 'fcm'], true)) {
+        if ($provider !== 'fcm') {
             return false;
         }
         if ($token === '') {

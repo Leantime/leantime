@@ -9,22 +9,21 @@ use Illuminate\Support\Facades\Log;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 
 /**
- * Push — sends mobile push notifications via FCM HTTP v1 and Expo Push.
+ * Push — sends mobile push notifications via FCM HTTP v1.
  *
  * Sibling to Messengers (Slack/Discord/Mattermost/Zulip webhook
  * dispatcher). Lives in the same Notifications service folder and is
  * meant to be wired into the same notification trigger paths.
  *
  * Token source: zp_access_tokens rows where push_token is set and
- * push_invalidated_at is null. Each row's push_provider drives which
- * delivery API we hit ('fcm' → Firebase HTTP v1, 'expo' → Expo Push).
+ * push_invalidated_at is null. The push_provider column is retained
+ * for forward compatibility but only 'fcm' is dispatched today.
  *
  * Token lifecycle:
  *   - Mobile registers on login → push_token populated on the bearer's
  *     zp_access_tokens row.
- *   - Provider rejects token with UNREGISTERED / DeviceNotRegistered /
- *     INVALID_ARGUMENT → we set push_invalidated_at on that row.
- *     Subsequent sends skip it.
+ *   - FCM rejects token with UNREGISTERED / INVALID_ARGUMENT → we set
+ *     push_invalidated_at on that row. Subsequent sends skip it.
  *   - Mobile logout → Sanctum revokes the access_tokens row entirely;
  *     push registration dies with it. No prune cron needed.
  *
@@ -36,8 +35,7 @@ use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
  *     'project_id' field inside the same JSON works; this lets
  *     operators override it cleanly).
  *
- * Without these set, FCM sends silently no-op. Expo sends always work
- * since Expo Push doesn't require server-side auth.
+ * Without these set, sends silently no-op.
  */
 class Push
 {
@@ -46,8 +44,6 @@ class Push
     private const FCM_OAUTH_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
     private const FCM_SEND_URL_TEMPLATE = 'https://fcm.googleapis.com/v1/projects/%s/messages:send';
-
-    private const EXPO_SEND_URL = 'https://exp.host/--/api/v2/push/send';
 
     /**
      * Cache key for the FCM OAuth access token. Tokens are valid for
@@ -100,17 +96,21 @@ class Push
         }
 
         foreach ($rows as $row) {
+            // push_provider is retained on the row for forward compat
+            // but only 'fcm' is dispatched. Unknown providers no-op
+            // silently rather than throw — keeps the table flexible
+            // without breaking the broadcast.
+            if ($row->push_provider !== 'fcm') {
+                continue;
+            }
+
             try {
-                if ($row->push_provider === 'fcm') {
-                    $this->sendFcm($row, $title, $body, $data);
-                } elseif ($row->push_provider === 'expo') {
-                    $this->sendExpo($row, $title, $body, $data);
-                }
+                $this->sendFcm($row, $title, $body, $data);
             } catch (\Throwable $e) {
-                // One bad row doesn't kill the broadcast. The provider-
-                // specific code marks push_invalidated_at on known-dead
-                // tokens (UNREGISTERED / DeviceNotRegistered); anything
-                // else gets logged for ops to look at later.
+                // One bad row doesn't kill the broadcast. sendFcm marks
+                // push_invalidated_at on known-dead tokens (UNREGISTERED
+                // / INVALID_ARGUMENT); anything else gets logged for ops
+                // to look at later.
                 Log::warning('Push send failed for access_token #'.$row->id.': '.$e->getMessage());
             }
         }
@@ -195,50 +195,6 @@ class Push
                 || str_contains($bodyText, 'INVALID_ARGUMENT')
                 || ($response !== null && $response->getStatusCode() === 404)
             ) {
-                $this->invalidateToken((int) $row->id);
-
-                return;
-            }
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Expo Push send. No server-side auth — Expo's HTTP API is open
-     * (the push tokens themselves are the capability). Just POST.
-     */
-    private function sendExpo($row, string $title, string $body, array $data): void
-    {
-        $payload = [
-            'to' => $row->push_token,
-            'sound' => 'default',
-            'title' => $title,
-            'body' => $body,
-            'data' => $data,
-        ];
-
-        try {
-            $response = $this->httpClient->post(self::EXPO_SEND_URL, [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Accept-Encoding' => 'gzip, deflate',
-                    'Content-Type' => 'application/json',
-                ],
-                'json' => $payload,
-                'timeout' => 10,
-            ]);
-
-            // Expo returns 200 even for invalid tokens — the per-ticket
-            // status lives in the response body. Parse it to detect
-            // DeviceNotRegistered.
-            $bodyText = (string) $response->getBody();
-            if (str_contains($bodyText, 'DeviceNotRegistered')) {
-                $this->invalidateToken((int) $row->id);
-            }
-        } catch (ClientException $e) {
-            $response = $e->getResponse();
-            if ($response !== null && $response->getStatusCode() === 400) {
                 $this->invalidateToken((int) $row->id);
 
                 return;
