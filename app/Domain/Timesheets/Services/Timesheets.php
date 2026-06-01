@@ -348,7 +348,22 @@ class Timesheets
             $timestamp = $tempData[3];
             $hours = $dateEntry;
 
-            if ($ticketId === 'new' || $ticketId === 0) {
+            // $ticketId comes from explode('|', ...) so it's always a string; compare
+            // as strings. The placeholder row is keyed "new|...", but treat a "0"/empty
+            // id as a placeholder too rather than a real ticket. (#3210 review)
+            $isNewEntryRow = in_array($ticketId, ['new', '0', ''], true);
+
+            // The weekly grid includes an "add new task" placeholder row whose
+            // day cells are submitted empty. There's nothing to log for that row
+            // when no hours were entered, so skip it instead of pushing empty
+            // values through upsertTime. Existing-ticket cells are intentionally
+            // left alone here so clearing a previously logged value still works
+            // (an emptied cell falls through and is cleaned up downstream). (#3210)
+            if ($isNewEntryRow && ! is_numeric($hours)) {
+                continue;
+            }
+
+            if ($isNewEntryRow) {
                 $ticketId = (int) $postData['ticketId'];
                 $kind = $postData['kindId'];
 
