@@ -168,39 +168,70 @@ class Notifications
     }
 
     /**
-     * Register a mobile device's Expo push token for the authenticated
-     * user. Mobile calls this on every login (idempotent — backend
-     * upserts on (userId, token)). Refreshes lastSeenAt + clears any
-     * prior invalidatedAt.
+     * Register a mobile device's push token for the authenticated user.
+     * Mobile calls this on every login (idempotent — backend upserts
+     * on (userId, token)). Refreshes lastSeenAt + provider and clears
+     * any prior invalidatedAt.
      *
      * Per [[feedback-mobile-owns-explicit-rpc-params]] convention,
      * userId is resolved server-side from session — we don't accept it
      * from the client (a stolen bearer token shouldn't be able to
      * register push devices on someone else's account).
      *
-     * @param  string  $token  Expo push token, format "ExponentPushToken[xxx]"
+     * Two providers supported:
+     *   - 'expo': Expo push token, format "ExponentPushToken[xxx]"
+     *             or "ExpoPushToken[xxx]". Dispatched via Expo's HTTP API.
+     *   - 'fcm':  raw Firebase Cloud Messaging registration token,
+     *             opaque ~140-200 chars (alphanumeric + colon).
+     *             Dispatched direct to FCM HTTP v1.
+     *
+     * Default is 'expo' so any pre-FCM clients still validate. The
+     * mobile app picks the provider based on its build flavour
+     * (@react-native-firebase/messaging → 'fcm', expo-notifications → 'expo').
+     *
+     * @param  string  $token  Push token (Expo or FCM, see $provider)
      * @param  string  $platform  'ios' or 'android'
      * @param  string|null  $deviceName  Optional human-readable device label
+     * @param  string  $provider  'expo' or 'fcm' (default 'expo')
      *
      * @api
      */
-    public function registerPushToken(string $token, string $platform, ?string $deviceName = null): bool
+    public function registerPushToken(string $token, string $platform, ?string $deviceName = null, string $provider = 'expo'): bool
     {
         $userId = (int) session('userdata.id');
         if ($userId === 0) {
             return false;
         }
 
-        // Light validation — Expo token format is documented; reject
-        // obvious junk before storing.
-        if (! str_starts_with($token, 'ExponentPushToken[') && ! str_starts_with($token, 'ExpoPushToken[')) {
-            return false;
-        }
         if (! in_array($platform, ['ios', 'android'], true)) {
             return false;
         }
+        if (! in_array($provider, ['expo', 'fcm'], true)) {
+            return false;
+        }
 
-        return $this->deviceTokensRepo->save($userId, $token, $platform, $deviceName);
+        // Provider-aware format validation. Light — catches obvious
+        // junk but doesn't gatekeep on shape details we can't verify
+        // without round-tripping to the provider.
+        if ($provider === 'expo') {
+            if (! str_starts_with($token, 'ExponentPushToken[') && ! str_starts_with($token, 'ExpoPushToken[')) {
+                return false;
+            }
+        } else {
+            // FCM tokens are opaque. Reject anything implausibly short
+            // (<100 chars) or that looks like an Expo token (caller
+            // probably mis-set the provider). The DB column is
+            // VARCHAR(255), which the schema migration sized for both
+            // providers, so length is bounded there too.
+            if (strlen($token) < 100 || strlen($token) > 255) {
+                return false;
+            }
+            if (str_starts_with($token, 'ExponentPushToken[') || str_starts_with($token, 'ExpoPushToken[')) {
+                return false;
+            }
+        }
+
+        return $this->deviceTokensRepo->save($userId, $token, $provider, $platform, $deviceName);
     }
 
     /**

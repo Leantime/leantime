@@ -8,17 +8,20 @@ use Illuminate\Support\Facades\DB;
 /**
  * DeviceTokens — persistence for mobile push notification device tokens.
  *
- * Used by the Laravel Notifications + laravel-notification-channels/expo
- * delivery pipeline (issue #3398). Mobile registers a token on each
- * login; backend stores per (userId, token) and uses it when dispatching
- * push notifications via ExpoChannel.
+ * Used by the Laravel Notifications delivery pipeline (issue #3398).
+ * Supports two providers per row (the `provider` column):
+ *   - 'expo': dispatch via Expo's push service (ExpoChannel)
+ *   - 'fcm':  dispatch direct to Firebase Cloud Messaging
+ *
+ * Mobile registers a token on each login; backend stores per
+ * (userId, token) and uses it + the provider when dispatching push.
  *
  * Lifecycle:
  *   - Register (upsert): mobile calls on login. lastSeenAt updated each time.
  *   - Unregister: mobile calls on logout — soft delete via invalidatedAt
  *     so we still have an audit trail.
- *   - Invalidate: backend marks tokens invalid when Expo reports
- *     DeviceNotRegistered / InvalidCredentials during a send.
+ *   - Invalidate: backend marks tokens invalid when the provider reports
+ *     the token is dead (Expo's DeviceNotRegistered, FCM's UNREGISTERED).
  *   - Prune: periodic cleanup deletes rows invalidated > 30 days ago.
  */
 class DeviceTokens
@@ -32,16 +35,20 @@ class DeviceTokens
 
     /**
      * Upsert a device token registration. If the (userId, token) pair
-     * already exists, refresh lastSeenAt and clear any prior invalidation
-     * (mobile is telling us the token is alive again).
+     * already exists, refresh lastSeenAt + provider and clear any prior
+     * invalidation (mobile is telling us the token is alive again).
+     *
+     * @param  string  $provider  'expo' or 'fcm' — drives the send path
+     *                            the dispatcher uses for this row.
      */
-    public function save(int $userId, string $token, ?string $platform = null, ?string $deviceName = null): bool
+    public function save(int $userId, string $token, string $provider = 'expo', ?string $platform = null, ?string $deviceName = null): bool
     {
         $now = date('Y-m-d H:i:s');
 
         $this->db->table('zp_device_tokens')->updateOrInsert(
             ['userId' => $userId, 'token' => $token],
             [
+                'provider' => $provider,
                 'platform' => $platform,
                 'deviceName' => $deviceName,
                 'lastSeenAt' => $now,
@@ -59,8 +66,9 @@ class DeviceTokens
     }
 
     /**
-     * Return all valid (not-invalidated) Expo push tokens for a user.
-     * Used by Notifications dispatch to know where to push.
+     * Return all valid (not-invalidated) push tokens for a user. Rows
+     * include the `provider` column so the dispatch layer can route to
+     * Expo or FCM as appropriate. Used by Notifications dispatch.
      */
     public function findActiveByUser(int $userId): array
     {

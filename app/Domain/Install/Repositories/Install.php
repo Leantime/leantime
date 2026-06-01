@@ -2500,22 +2500,33 @@ class Install
 
     /**
      * zp_device_tokens — stores mobile push notification device tokens
-     * registered by the Leantime Mobile app. Supports the Laravel
-     * Notifications + laravel-notification-channels/expo flow planned
-     * in issue #3398.
+     * registered by the Leantime Mobile app. Supports two delivery
+     * providers (issue #3398):
+     *
+     *   - 'expo': token routed through Expo's push service
+     *     (https://exp.host/--/api/v2/push/send). Token format is
+     *     "ExponentPushToken[xxx]". Used when the mobile build uses
+     *     expo-notifications.
+     *   - 'fcm': raw Firebase Cloud Messaging registration token routed
+     *     through FCM's HTTP v1 API. Token format is opaque
+     *     (alphanumeric with a colon separator, ~140-200 chars).
+     *     Used when the mobile build uses @react-native-firebase/messaging.
      *
      * Schema notes:
-     *   - `token` is the Expo push token (format "ExponentPushToken[xxx]")
-     *     — variable length, treated as opaque string by us.
+     *   - `token` is the push token — variable length, treated as
+     *     opaque string by us. 255 chars accommodates both providers
+     *     comfortably (FCM tokens are typically 140-200).
+     *   - `provider` is 'expo' or 'fcm'; drives which send path the
+     *     backend dispatcher uses for this row.
      *   - `platform` records ios/android for diagnostics + potential
      *     platform-specific delivery routing.
      *   - `deviceName` is optional, surfaces in admin/user "your
      *     devices" view (future).
      *   - `lastSeenAt` updated each time the token is re-registered
      *     (mobile re-registers on every login) — informs cleanup.
-     *   - `invalidatedAt` set when Expo reports the token is no longer
-     *     valid (DeviceNotRegistered / InvalidCredentials). Prune
-     *     these periodically.
+     *   - `invalidatedAt` set when the provider reports the token is
+     *     no longer valid (Expo's DeviceNotRegistered, FCM's
+     *     UNREGISTERED / INVALID_ARGUMENT). Prune these periodically.
      *   - Unique (userId, token) prevents duplicate registrations.
      */
     public function update_sql_30502(): bool|array
@@ -2525,11 +2536,19 @@ class Install
                 Schema::create('zp_device_tokens', function (Blueprint $table) {
                     $table->increments('id');
                     $table->integer('userId');
-                    // Expo push tokens are typically ~50-100 chars
-                    // ("ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]"); 255
-                    // gives ample headroom and lets us unique-index the
-                    // column without prefix-key gymnastics.
+                    // Push tokens vary by provider:
+                    //   Expo:  ~50-100 chars, "ExponentPushToken[...]"
+                    //   FCM:   ~140-200 chars, opaque alphanumeric+colon
+                    // 255 covers both with headroom and lets us
+                    // unique-index without prefix-key gymnastics.
                     $table->string('token', 255);
+                    // 'expo' or 'fcm'. Drives the send path.
+                    // Defaults to 'expo' for any rows registered before
+                    // the mobile FCM pivot (none expected in production
+                    // since this column ships with the table, but the
+                    // default keeps the column NOT NULL even if a
+                    // future caller forgets to set it).
+                    $table->string('provider', 8)->default('expo');
                     $table->string('platform', 16)->nullable();
                     $table->string('deviceName', 255)->nullable();
                     $table->dateTime('lastSeenAt')->nullable();
