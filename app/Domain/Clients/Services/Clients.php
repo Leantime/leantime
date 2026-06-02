@@ -2,8 +2,10 @@
 
 namespace Leantime\Domain\Clients\Services;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Exceptions\EntityExistsException;
 use Leantime\Core\Exceptions\MissingParameterException;
+use Leantime\Domain\Clients\Permissions\ClientsPermissions;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Files\Services\Files as FileService;
@@ -45,7 +47,10 @@ class Clients
      * @param  int  $userId  The user ID
      * @return array List of clients the user has access to
      *
-     * @api
+     * @internal Not @api: only ever called internally with the session user's id (e.g. the
+     *           roadmap/milestone client-filter dropdown). The $userId is caller-supplied, so
+     *           exposing it over JSON-RPC would let any user enumerate another user's client
+     *           list (IDOR). Mirrors the setProfilePicture/editOwn de-@api treatment.
      */
     public function getUserClients(int $userId): array
     {
@@ -71,6 +76,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::VIEW, global: true)]
     public function getAll(?array $searchparams = null): array
     {
         return $this->clientRepository->getAll();
@@ -85,6 +91,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::EDIT, global: true)]
     public function patch(int $id, array $params): bool
     {
         return $this->clientRepository->patch($id, $params);
@@ -98,6 +105,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::EDIT, global: true)]
     public function editClient(array $values): bool
     {
         return $this->clientRepository->editClient($values, $values['id']);
@@ -111,6 +119,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::CREATE, global: true)]
     public function create(array $values): int|false
     {
         return $this->clientRepository->addClient($values);
@@ -124,6 +133,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::DELETE, global: true)]
     public function delete(int $id): bool
     {
         return $this->clientRepository->deleteClient($id);
@@ -137,6 +147,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::VIEW, global: true)]
     public function get(int $id): array|false
     {
         return $this->clientRepository->getClient($id);
@@ -150,6 +161,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::VIEW, global: true)]
     public function isClient(array $values): bool
     {
         return $this->clientRepository->isClient($values);
@@ -163,6 +175,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::VIEW, global: true)]
     public function hasTickets(int $id): bool
     {
         return $this->clientRepository->hasTickets($id);
@@ -176,6 +189,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::VIEW, global: true)]
     public function getClientsUsers(int $clientId): array|false
     {
         return $this->clientRepository->getClientsUsers($clientId);
@@ -189,6 +203,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::VIEW, global: true)]
     public function getClientProjects(int $clientId): array
     {
         return $this->projectRepository->getClientProjects($clientId);
@@ -208,6 +223,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::CREATE, global: true)]
     public function createClient(array $values): int
     {
         if (($values['name'] ?? '') === '') {
@@ -231,6 +247,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::EDIT, global: true)]
     public function updateClient(array $values): bool
     {
         if (($values['name'] ?? '') === '') {
@@ -252,6 +269,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::EDIT, global: true)]
     public function removeUser(int $clientId, int $userId): bool
     {
         if ($clientId === 0 || $userId === 0) {
@@ -272,6 +290,7 @@ class Clients
      *
      * @api
      */
+    #[RequiresPermission(ClientsPermissions::VIEW, global: true)]
     public function getClientPageData(int $id): array
     {
         return [

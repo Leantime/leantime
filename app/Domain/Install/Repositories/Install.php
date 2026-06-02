@@ -87,6 +87,7 @@ class Install
         30504,
         30505,
         30506,
+        30507,
     ];
 
     /**
@@ -2761,6 +2762,31 @@ class Install
             Log::error('Migration 30506: '.$e->getMessage());
 
             return ['Migration 30506 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30507: the Clients domain joined the native permission engine. Re-sync the
+     * discovered permission catalog (adds clients.view/create/edit/delete, all company-wide)
+     * and re-seed the built-in role grants (admin/owner auto-grant clients.* via the company
+     * wildcard). Table-creation-free; idempotent + additive. Flush the discovered-provider
+     * cache first — an install that already ran 30505/30506 cached the provider list WITHOUT
+     * ClientsPermissions, so seeding against that stale list would never create clients.*.
+     */
+    public function update_sql_30507(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30507: '.$e->getMessage());
+
+            return ['Migration 30507 failed: '.$e->getMessage()];
         }
 
         return true;

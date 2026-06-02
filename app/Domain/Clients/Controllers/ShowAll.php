@@ -2,9 +2,9 @@
 
 namespace Leantime\Domain\Clients\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Clients\Permissions\ClientsPermissions;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,10 +28,9 @@ class ShowAll extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ClientsPermissions::VIEW, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
         if (session('userdata.role') == 'admin') {
             $this->tpl->assign('admin', true);
         }

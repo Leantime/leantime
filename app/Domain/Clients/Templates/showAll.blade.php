@@ -18,9 +18,9 @@
 
         {!! $tpl->displayNotification() !!}
 
-        @if ($login::userIsAtLeast('manager'))
+        @can('clients.create')
              <a class="btn btn-primary" href="{{ BASE_URL }}/clients/newClient"><i class='fa fa-plus'></i> {!! __('link.new_client') !!}</a>
-        @endif
+        @endcan
 
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allClientsTable">
             <colgroup>

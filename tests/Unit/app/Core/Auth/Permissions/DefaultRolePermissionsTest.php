@@ -33,6 +33,10 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
             new Permission('users.edit', 'Edit users', false),
             new Permission('users.delete', 'Delete users', false),
             new Permission('users.import', 'Import users', false),
+            new Permission('clients.view', 'View clients', false),
+            new Permission('clients.create', 'Create clients', false),
+            new Permission('clients.edit', 'Edit clients', false),
+            new Permission('clients.delete', 'Delete clients', false),
             new Permission('company.settings.edit', 'Edit company settings', false),
         ];
     }
@@ -71,6 +75,7 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertNotContains('comments.moderate', $grants); // manager+ only
         $this->assertNotContains('users.view', $grants);        // company-wide, admin+
         $this->assertNotContains('users.create', $grants);      // company-wide, manager+
+        $this->assertNotContains('clients.view', $grants);      // company-wide, admin+
         $this->assertNotContains('company.settings.edit', $grants);
     }
 
@@ -87,6 +92,13 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertNotContains('users.edit', $grants);
         $this->assertNotContains('users.delete', $grants);
         $this->assertNotContains('users.import', $grants);
+        // Client management stays admin+ (managers have no real client access today — ShowAll
+        // redirects them and ShowClient 403s them), so a manager gets NO clients.* —
+        // grant-equivalent with the current behavior, not the aspirational target matrix.
+        $this->assertNotContains('clients.view', $grants);
+        $this->assertNotContains('clients.create', $grants);
+        $this->assertNotContains('clients.edit', $grants);
+        $this->assertNotContains('clients.delete', $grants);
         $this->assertNotContains('company.settings.edit', $grants);
     }
 
@@ -99,6 +111,10 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('users.edit', $grants);
         $this->assertContains('users.delete', $grants);
         $this->assertContains('users.import', $grants);   // full user management
+        $this->assertContains('clients.view', $grants);
+        $this->assertContains('clients.create', $grants);
+        $this->assertContains('clients.edit', $grants);
+        $this->assertContains('clients.delete', $grants);   // full client management
         $this->assertContains('comments.moderate', $grants);
         $this->assertContains('tickets.delete', $grants);
         $this->assertNotContains('company.settings.edit', $grants); // owner-only
@@ -109,6 +125,7 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $grants = $this->grantsFor('owner');
 
         $this->assertContains('company.settings.edit', $grants);
+        $this->assertContains('clients.delete', $grants);
         $this->assertContains('users.view', $grants);
         $this->assertContains('comments.moderate', $grants);
         $this->assertContains('tickets.delete', $grants);
