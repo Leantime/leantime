@@ -196,6 +196,11 @@ class Jsonrpc extends Controller
 
         $domainServiceNamespace = app()->getNamespace()."Domain\\$moduleName\\Services\\$serviceName";
         $pluginServiceNamespace = app()->getNamespace()."Plugins\\$moduleName\\Services\\$serviceName";
+        // Plugins may expose JSON-RPC methods from a Tools/ directory too — the same
+        // directory McpToolDiscovery scans for #[UnifiedTool]-tagged classes. This
+        // lets one class serve both MCP discovery and JSON-RPC dispatch without
+        // moving the file or duplicating it under Services/.
+        $pluginToolNamespace = app()->getNamespace()."Plugins\\$moduleName\\Tools\\$serviceName";
 
         $methodName = Str::camel($methodparts['method']);
 
@@ -205,6 +210,8 @@ class Jsonrpc extends Controller
             $serviceName = $domainServiceNamespace;
         } elseif (class_exists($pluginServiceNamespace)) {
             $serviceName = $pluginServiceNamespace;
+        } elseif (class_exists($pluginToolNamespace)) {
+            $serviceName = $pluginToolNamespace;
         } else {
             return $this->returnMethodNotFound("Service doesn't exist: $serviceName", $id);
         }
