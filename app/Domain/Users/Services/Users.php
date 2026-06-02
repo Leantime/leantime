@@ -199,9 +199,10 @@ class Users extends BaseService
     /**
      * @throws BindingResolutionException
      *
-     * @internal Not @api: invoked only by Users\Controllers\ProfileImage, which always
-     *           passes the session user's id. The method trusts the $id it is given, so
-     *           exposing it over JSON-RPC would let a user overwrite another user's photo.
+     * @internal Internal-only; deliberately excluded from the JSON-RPC surface. Invoked only by
+     *           Users\Controllers\ProfileImage, which always passes the session user's id. The
+     *           method trusts the $id it is given, so exposing it would let a user overwrite
+     *           another user's photo.
      */
     public function setProfilePicture($photo, $id): void
     {
@@ -593,10 +594,10 @@ class Users extends BaseService
     }
 
     /**
-     * @internal Self-service only — invoked by saveOwnProfile() with the session user's id.
-     *           Intentionally NOT @api: it writes name/email/notifications to $id, so exposing
-     *           it over JSON-RPC would be an IDOR account takeover. The id is pinned to the
-     *           session user below as defense-in-depth.
+     * @internal Self-service only — invoked by saveOwnProfile() with the session user's id and
+     *           deliberately excluded from the JSON-RPC surface: it writes name/email/
+     *           notifications to $id, so exposing it would be an IDOR account takeover. The id
+     *           is pinned to the session user below as defense-in-depth.
      */
     public function editOwn($values, $id): void
     {

@@ -217,4 +217,48 @@ class JsonrpcTest extends \Unit\TestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('', $response->getContent());
     }
+
+    /**
+     * @api detection must only recognize the tag at the START of a docblock line (" * @api").
+     * A method whose docblock merely MENTIONS @api in prose (e.g. a de-@api'd internal helper
+     * documented as "not exposed, unlike @api methods") must NOT become JSON-RPC reachable —
+     * regression guard for the IDOR fix where "Not @api:" still matched the old /@api\b/ regex.
+     */
+    public function test_api_detection_requires_the_tag_at_a_docblock_line_start(): void
+    {
+        $isApiMethod = new \ReflectionMethod(Jsonrpc::class, 'isApiMethod');
+        $isApiMethod->setAccessible(true);
+        $invoke = fn (string $class, string $method): bool => $isApiMethod->invoke($this->controller, $class, $method);
+
+        // A genuine ` * @api` docblock line IS recognized.
+        $this->assertTrue($invoke(IsApiFixture::class, 'realApiMethod'));
+        // A prose mention of @api (and a method with no docblock) must NOT be recognized.
+        $this->assertFalse($invoke(IsApiFixture::class, 'proseMentionMethod'));
+        $this->assertFalse($invoke(IsApiFixture::class, 'noDocblockMethod'));
+
+        // The real de-@api'd internal helpers must NOT be JSON-RPC reachable (IDOR fixes):
+        $this->assertFalse($invoke(\Leantime\Domain\Clients\Services\Clients::class, 'getUserClients'));
+        $this->assertFalse($invoke(\Leantime\Domain\Users\Services\Users::class, 'setProfilePicture'));
+        $this->assertFalse($invoke(\Leantime\Domain\Users\Services\Users::class, 'editOwn'));
+        // ...while a genuine @api service method stays reachable.
+        $this->assertTrue($invoke(\Leantime\Domain\Clients\Services\Clients::class, 'getAll'));
+    }
+}
+
+/**
+ * Fixture for isApiMethod() docblock-detection tests.
+ */
+class IsApiFixture
+{
+    /**
+     * @api
+     */
+    public function realApiMethod(): void {}
+
+    /**
+     * @internal Not exposed over JSON-RPC, unlike @api methods — a prose mention only.
+     */
+    public function proseMentionMethod(): void {}
+
+    public function noDocblockMethod(): void {}
 }

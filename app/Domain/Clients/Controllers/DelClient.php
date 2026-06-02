@@ -2,10 +2,10 @@
 
 namespace Leantime\Domain\Clients\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Clients\Permissions\ClientsPermissions;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,14 +29,9 @@ class DelClient extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ClientsPermissions::DELETE, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
-        if (! Auth::userIsAtLeast(Roles::$admin)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
-        }
-
         if (! isset($params['id'])) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
@@ -57,14 +52,9 @@ class DelClient extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ClientsPermissions::DELETE, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
-        if (! Auth::userIsAtLeast(Roles::$admin)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
-        }
-
         if (! isset($params['id'])) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }

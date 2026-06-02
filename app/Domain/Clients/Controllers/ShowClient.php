@@ -2,11 +2,11 @@
 
 namespace Leantime\Domain\Clients\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Exceptions\MissingParameterException;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Clients\Permissions\ClientsPermissions;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Files\Services\Files as FileService;
@@ -45,10 +45,9 @@ class ShowClient extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ClientsPermissions::VIEW, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
         if (! isset($params['id'])) {
             return $this->tpl->display('errors.error404', responseCode: 404);
         }
@@ -58,10 +57,6 @@ class ShowClient extends Controller
 
         if ($client === false) {
             return $this->tpl->display('errors.error404', responseCode: 404);
-        }
-
-        if (! Auth::userIsAtLeast(Roles::$admin)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
         }
 
         // Handle file deletion via GET param
@@ -94,10 +89,9 @@ class ShowClient extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ClientsPermissions::EDIT, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
         if (! isset($params['id'])) {
             return $this->tpl->display('errors.error404', responseCode: 404);
         }
@@ -105,8 +99,8 @@ class ShowClient extends Controller
         $id = (int) $params['id'];
         $client = $this->clientService->get($id);
 
-        if ($client === false || ! Auth::userIsAtLeast(Roles::$admin)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
+        if ($client === false) {
+            return $this->tpl->display('errors.error404', responseCode: 404);
         }
 
         // Handle file upload

@@ -237,9 +237,9 @@
                                                     <li class="nav-header">{!! __('subtitles.file') !!}</li>
                                                     <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{!! __('links.download') !!}</a></li>
 
-                                                    @if ($login::userIsAtLeast($roles::$admin))
+                                                    @can('clients.edit')
                                                         <li><a href="{{ BASE_URL }}/clients/showClient/{{ $_GET['id'] }}?delFile={{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a></li>
-                                                    @endif
+                                                    @endcan
 
                                                 </ul>
                                             </div>

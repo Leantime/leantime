@@ -2,10 +2,10 @@
 
 namespace Leantime\Domain\Clients\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Clients\Permissions\ClientsPermissions;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,14 +29,9 @@ class RemoveUser extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ClientsPermissions::EDIT, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
-        if (! Auth::userIsAtLeast(Roles::$admin)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
-        }
-
         $clientId = (int) ($params['id'] ?? $_GET['id'] ?? 0);
 
         return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$clientId);
@@ -47,14 +42,9 @@ class RemoveUser extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ClientsPermissions::EDIT, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
-        if (! Auth::userIsAtLeast(Roles::$admin)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
-        }
-
         $clientId = (int) ($params['id'] ?? $_POST['id'] ?? 0);
         $userId = (int) ($params['userId'] ?? $_POST['userId'] ?? 0);
 
