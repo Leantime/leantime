@@ -11,6 +11,12 @@ namespace Leantime\Core\Plugins\Attributes;
  *
  * Class-level usage gates every method on the class; method-level usage overrides per-method.
  *
+ * Single-plugin gating only — the attribute is NOT `IS_REPEATABLE`, so PHP rejects
+ * multiple `#[RequiresPlugin(...)]` on the same target at the language level. If a
+ * future tool legitimately needs to require several plugins together, mark this
+ * attribute repeatable and update the Jsonrpc dispatcher to iterate all instances
+ * (AND-semantics — every named plugin must be enabled).
+ *
  * Client surfaces (mobile, MCP) should query the core JSON-RPC `config.getSystemInfo` method
  * to gate UI client-side so the user never reaches a denied call. The attribute is the
  * server-side defense; the capabilities response is the client-side prevention.
