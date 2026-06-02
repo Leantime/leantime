@@ -3,11 +3,11 @@
 namespace Leantime\Domain\Tickets\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,8 +21,6 @@ class MoveTicket extends Controller
         TicketService $ticketService,
         ProjectService $projectService
     ): void {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $this->ticketService = $ticketService;
         $this->projectService = $projectService;
     }
@@ -30,6 +28,7 @@ class MoveTicket extends Controller
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(TicketsPermissions::EDIT)]
     public function get($params): Response
     {
         $ticketId = $params['id'] ?? '';
@@ -51,6 +50,7 @@ class MoveTicket extends Controller
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(TicketsPermissions::EDIT)]
     public function post($params): Response
     {
         if (! empty($ticketId = (int) $_GET['id'] ?? null) && ! empty($projectId = (int) $params['projectId'] ?? null)) {

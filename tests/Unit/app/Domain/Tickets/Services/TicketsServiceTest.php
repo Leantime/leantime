@@ -3,6 +3,7 @@
 namespace Unit\app\Domain\Tickets\Services;
 
 use Carbon\CarbonImmutable;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
@@ -16,6 +17,7 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Repositories\TicketHistory;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Tickets\Services\Tickets as TicketsService;
@@ -341,9 +343,39 @@ class TicketsServiceTest extends TestCase
     {
         session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
 
+        // patchTicket loads the ticket, then authorizes tickets.edit against its project via
+        // the permission engine. Stub getTicket so it resolves, and inject a denying engine.
+        $service = $this->construct(
+            TicketsService::class,
+            [
+                $this->make(TemplateCore::class),
+                $this->make(LanguageCore::class),
+                $this->make(EnvironmentCore::class),
+                $this->make(ProjectRepository::class),
+                $this->make(TicketRepository::class),
+                $this->make(TimesheetRepository::class),
+                $this->make(SettingRepository::class),
+                $this->make(ProjectService::class),
+                $this->make(TimesheetService::class),
+                $this->make(SprintService::class),
+                $this->make(TicketHistory::class),
+                $this->make(Goalcanvas::class),
+                $this->make(DateTimeHelper::class),
+                $this->make(CommentService::class),
+                $this->make(ClientService::class),
+            ],
+            ['getTicket' => fn () => $this->make(TicketModel::class, ['id' => 5, 'projectId' => 9])],
+        );
+
+        $service->setPermissionService($this->make(PermissionService::class, [
+            'authorize' => function (): void {
+                throw new AuthorizationException;
+            },
+        ]));
+
         $this->expectException(AuthorizationException::class);
 
-        $this->ticketsService->patchTicket(5, ['status' => 3]);
+        $service->patchTicket(5, ['status' => 3]);
     }
 
     public function test_sort_tickets_is_denied_for_non_editor(): void
@@ -360,6 +392,24 @@ class TicketsServiceTest extends TestCase
         session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
 
         $this->assertFalse($this->ticketsService->updateTicketStatusAndSorting(['3' => 'ticket[]=5'], null));
+    }
+
+    public function test_quick_add_ticket_is_denied_without_create_permission(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
+
+        // quickAddTicket resolves the project from its params, then authorizes tickets.create
+        // through the engine before doing any work. This was one of the RPC holes: any
+        // authenticated caller could create tickets. A denying engine must make it throw.
+        $this->ticketsService->setPermissionService($this->make(PermissionService::class, [
+            'authorize' => function (): void {
+                throw new AuthorizationException;
+            },
+        ]));
+
+        $this->expectException(AuthorizationException::class);
+
+        $this->ticketsService->quickAddTicket(['headline' => 'New task', 'projectId' => 9]);
     }
 
     // ---------------------------------------------------------------------

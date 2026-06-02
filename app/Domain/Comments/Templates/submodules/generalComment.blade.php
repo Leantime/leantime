@@ -66,12 +66,12 @@
                                             </a>
 
                                             <ul class="dropdown-menu">
-                                                @if (($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
+                                                @if (($row['userId'] == session('userdata.id')) || can('comments.moderate'))
                                                     <li><a href="{{ $deleteUrlBase . $row['id'] }}" class="deleteComment formModal">
                                                         <span class="fa fa-trash"></span> {!! __('links.delete') !!}
                                                     </a></li>
                                                 @endif
-                                                @if (($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager))
+                                                @if (($row['userId'] == session('userdata.id')) || can('comments.moderate'))
                                                     <li>
                                                         <a href="javascript:void(0);" onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}', true)">
                                                             <span class="fa fa-edit"></span> {!! __('label.edit') !!}

@@ -351,7 +351,7 @@
 
     jQuery(document).ready(function(){
 
-    @if ($login::userIsAtLeast($roles::$editor))
+    @if (can('tickets.edit'))
         leantime.ticketsController.initUserDropdown();
         leantime.ticketsController.initMilestoneDropdown();
         leantime.ticketsController.initDueDateTimePickers();

@@ -3,9 +3,10 @@
 namespace Leantime\Domain\Comments\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Comments\Permissions\CommentsPermissions;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -14,7 +15,7 @@ use Leantime\Domain\Reactions\Services\Reactions as ReactionsService;
 /**
  * @api
  */
-class Comments
+class Comments extends BaseService
 {
     private CommentRepository $commentRepository;
 
@@ -66,6 +67,7 @@ class Comments
     /**
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::VIEW)]
     public function getComments($module, $entityId, int $commentOrder = 0, int $parent = 0): false|array
     {
         return $this->commentRepository->getComments($module, $entityId, $parent, $commentOrder);
@@ -76,6 +78,7 @@ class Comments
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::CREATE, entityScoped: true)]
     public function addComment($values, $module, $entityId, $entity = null): bool
     {
         // RPC callers (mobile) typically don't pre-load the entity — they
@@ -84,6 +87,14 @@ class Comments
         if ($entity === null && $module && $entityId) {
             $entity = $this->loadEntityForComment($module, (int) $entityId);
         }
+
+        // Commenting is a commenter+ capability. Resolve the host entity's project so the
+        // check is scoped to it (ticket -> projectId; project -> its own id), then authorize.
+        $projectId = is_object($entity) && isset($entity->projectId)
+            ? (int) $entity->projectId
+            : ($module === 'project' ? (int) $entityId : null);
+
+        $this->authorize(CommentsPermissions::CREATE, $projectId);
 
         // Default father (parent comment id) to 0 if not provided. The
         // original code REQUIRED it via isset(), which forced every caller
@@ -180,17 +191,14 @@ class Comments
 
         $currentUserId = session('userdata.id');
 
-        // Comment author can always modify their own comment
+        // Comment author can always modify their own comment.
         if ((int) $comment['userId'] === (int) $currentUserId) {
             return true;
         }
 
-        // Managers and above can modify any comment
-        if (Auth::userIsAtLeast(Roles::$manager)) {
-            return true;
-        }
-
-        return false;
+        // Otherwise moderation (editing/deleting someone else's comment) is a manager+
+        // capability, expressed as the comments.moderate permission.
+        return $this->can(CommentsPermissions::MODERATE);
     }
 
     /**
@@ -200,6 +208,7 @@ class Comments
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::CREATE, entityScoped: true)]
     public function editComment($values, $id): bool
     {
         if (! $this->canModifyComment((int) $id)) {
@@ -214,6 +223,7 @@ class Comments
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::CREATE, entityScoped: true)]
     public function deleteComment($commentId): bool
     {
         if (! $this->canModifyComment((int) $commentId)) {
@@ -230,6 +240,7 @@ class Comments
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollComments(?int $projectId = null, ?int $moduleId = null): array|false
     {
 
@@ -263,6 +274,7 @@ class Comments
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::CREATE)]
     public function toggleCommentReaction(int $userId, int $commentId, string $reaction): bool
     {
         // Validate reaction against known types
@@ -308,6 +320,7 @@ class Comments
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::VIEW)]
     public function getCommentReactions(int $commentId, int $userId): array
     {
         // Get reactions with user names for tooltips

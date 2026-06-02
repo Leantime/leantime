@@ -82,6 +82,16 @@ class DefaultConfig
     public int|bool $debug = 0;
 
     /**
+     * @var bool When true, a denied #[RequiresPermission] attribute blocks the request
+     *           (403 web / JSON-RPC -32001). When false the central enforcer only LOGS the
+     *           would-be denial (audit mode), so permission coverage can be rolled out and
+     *           observed before being enforced. In-method $this->authorize() calls always
+     *           enforce regardless of this flag.
+     */
+    #[LaravelConfig('permissions.enforce')]
+    public bool $permissionsEnforce = true;
+
+    /**
      * @var string editor used for code editing
      */
     public string $editor = 'phpstorm';

@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Tickets\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,21 +16,15 @@ class DelMilestone extends Controller
 
     public function init(TicketService $ticketService): void
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $this->ticketService = $ticketService;
     }
 
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(TicketsPermissions::DELETE)]
     public function get(): Response
     {
-        // Only admins
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            return $this->tpl->displayPartial('errors.error403');
-        }
-
         if (! isset($_GET['id'])) {
             return $this->tpl->displayPartial('errors.error404', responseCode: 404);
         }
@@ -45,14 +39,11 @@ class DelMilestone extends Controller
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(TicketsPermissions::DELETE)]
     public function post($params): Response
     {
         if (! isset($_GET['id'], $params['del'])) {
             return $this->tpl->displayPartial('errors.error404', responseCode: 404);
-        }
-
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            return $this->tpl->displayPartial('errors.error403', responseCode: 403);
         }
 
         if ($result = $this->ticketService->deleteMilestone($id = (int) ($_GET['id']))) {

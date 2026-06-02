@@ -257,6 +257,13 @@ class Install
             $schemaBuilder->createAllTables();
             $schemaBuilder->insertInitialData($values, $pwReset);
 
+            // Seed the permission engine for fresh installs: sync the domain-declared
+            // vocabulary into zp_permissions and grant the built-in roles their defaults.
+            // (update_sql_* seeds existing installs; this covers the fresh-install path.)
+            $permissionSeeder = app()->make(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $permissionSeeder->syncDiscoveredPermissions();
+            $permissionSeeder->seedBuiltInRoles();
+
             return true;
         } catch (\Exception $e) {
             Log::error($e);

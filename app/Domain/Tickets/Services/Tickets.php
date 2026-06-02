@@ -10,7 +10,9 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
@@ -29,6 +31,7 @@ use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Repositories\TicketHistory;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
@@ -37,7 +40,7 @@ use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 /**
  * @api
  */
-class Tickets
+class Tickets extends BaseService
 {
     use DispatchesEvents;
 
@@ -93,6 +96,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getStatusLabels($projectId = null): array
     {
         return $this->ticketRepository->getStateLabels($projectId);
@@ -106,6 +110,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllStatusLabelsByUserId($userId): array
     {
         // Request-scoped memo: this is called repeatedly within a single dashboard
@@ -150,8 +155,8 @@ class Tickets
      * @params array $params label information
      *
      * @api
-     * @api
      */
+    #[RequiresPermission(TicketsPermissions::EDIT)]
     public function saveStatusLabels($params): bool
     {
         if (isset($params['labelKeys']) && is_array($params['labelKeys']) && count($params['labelKeys']) > 0) {
@@ -182,6 +187,7 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getKanbanColumns(): array
     {
 
@@ -203,6 +209,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getTypeIcons(): array
     {
 
@@ -214,6 +221,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getEffortLabels(): array
     {
 
@@ -225,6 +233,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getTicketTypes(): array
     {
 
@@ -236,6 +245,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getPriorityLabels(): array
     {
 
@@ -353,6 +363,7 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function countSetFilters(array $searchCriteria): int
     {
         $count = 0;
@@ -380,6 +391,7 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getSetFilters(array $searchCriteria, bool $includeGroup = false): array
     {
         $setFilters = [];
@@ -415,6 +427,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAll(?array $searchCriteria = null, ?int $limit = null): array|false
     {
 
@@ -525,6 +538,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllOpenUserTickets(?int $userId = null, ?int $project = null): array
     {
 
@@ -577,6 +591,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getScheduledTasks(CarbonImmutable|string $dateFrom, CarbonImmutable|string $dateTo, ?int $userId)
     {
 
@@ -616,6 +631,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllGrouped($searchCriteria): array
     {
         $ticketGroups = [];
@@ -1012,6 +1028,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getStatusBreakdownBySwimlane(array $groupedTickets, array $statusColumns): array
     {
         $breakdown = [];
@@ -1086,6 +1103,7 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllPossibleParents(TicketModel $ticket, string $projectId = 'currentProject'): array
     {
 
@@ -1110,6 +1128,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getTicket($id): TicketModel|bool
     {
 
@@ -1163,6 +1182,7 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getLastTickets($projectId, int $limit = 5): bool|array
     {
 
@@ -1200,6 +1220,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, bool $includeDoneTickets = false, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
@@ -1301,6 +1322,7 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getOpenUserTicketsByProject($userId, $projectId, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
@@ -1344,6 +1366,7 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getOpenUserTicketsByPriority($userId, $projectId, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
@@ -1402,6 +1425,7 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getOpenUserTicketsBySprint($userId, $projectId, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
@@ -1454,6 +1478,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllMilestones($searchCriteria, string $sortBy = 'standard'): array|false
     {
         if (is_array($searchCriteria) && $searchCriteria['currentProject'] > 0) {
@@ -1582,6 +1607,7 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllMilestonesOverview(bool $includeArchived = false, string $sortBy = 'duedate', bool $includeTasks = false, int $clientId = 0, array $searchCriteria = []): false|array
     {
 
@@ -1618,6 +1644,7 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllMilestonesByUserProjects($userId): array
     {
 
@@ -1661,6 +1688,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMilestoneProgress(int|string $milestoneId): float
     {
 
@@ -1833,6 +1861,7 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllSubtasks(int $ticketId): false|array
     {
 
@@ -1860,10 +1889,13 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::CREATE, entityScoped: true)]
     public function quickAddTicket($params): array|bool|int
     {
 
         $projectId = $params['projectId'] ?? session('currentProject');
+
+        $this->authorize(TicketsPermissions::CREATE, $projectId !== null ? (int) $projectId : null);
 
         // Resolve the default status from the PROJECT's status config
         // rather than hardcoding `3`. The hardcoded `3` was the "New"
@@ -1964,14 +1996,18 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::CREATE, entityScoped: true)]
     public function quickAddMilestone(array $params): array|bool|int
     {
+        $projectId = $params['projectId'] ?? session('currentProject');
+
+        $this->authorize(TicketsPermissions::CREATE, $projectId !== null ? (int) $projectId : null);
 
         $values = [
             'headline' => $params['headline'],
             'type' => 'milestone',
             'description' => '',
-            'projectId' => $params['projectId'] ?? session('currentProject'),
+            'projectId' => $projectId,
             'editorId' => $params['editorId'] ?? session('userdata.id'),
             'userId' => session('userdata.id') ?? $params['userId'] ?? null,
             'date' => dtHelper()->userNow()->formatDateTimeForDb(),
@@ -2038,6 +2074,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::CREATE, entityScoped: true)]
     public function addTicket($values): array|int|bool
     {
         $values = [
@@ -2068,9 +2105,10 @@ class Tickets
             'collaborators' => $values['collaborators'] ?? [],
         ];
 
-        if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $values['projectId'])) {
-            return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
-        }
+        // Editor+ role in the target project AND access to it (engine combines capability +
+        // project membership). Replaces the previous access-only check, which let any
+        // assigned role create via RPC.
+        $this->authorize(TicketsPermissions::CREATE, (int) $values['projectId']);
 
         if ($values['headline'] === '') {
             return ['msg' => 'notifications.ticket_save_error_no_headline', 'type' => 'error'];
@@ -2143,6 +2181,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
     public function updateTicket($values): array|bool
     {
         // Server-side authorization. Editing is gated to editor+ in the UI, but the
@@ -2292,6 +2331,7 @@ class Tickets
      * (statusType === 'DONE' for the project). Used by mobile's
      * "Done" filter to show completed work.
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllDoneUserTickets(?int $userId = null, ?int $project = null): array
     {
         $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
@@ -2328,12 +2368,15 @@ class Tickets
      * mobile's "Done" filter — tap the checked checkbox to bring a task
      * back into the active list.
      */
+    #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
     public function markTicketReopen(int $id): bool
     {
         $ticket = $this->ticketRepository->getTicket($id);
         if (! $ticket || empty($ticket->projectId)) {
             return false;
         }
+
+        $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
         $statusLabels = $this->ticketRepository->getStateLabels((int) $ticket->projectId);
         if (! is_array($statusLabels)) {
@@ -2399,20 +2442,18 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
     public function patchTicket(int $id, array $values): bool
     {
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            throw new AuthorizationException('You are not allowed to edit tasks.');
-        }
-
+        // getTicket() returns false when the user can't access the ticket's project.
         $ticket = $this->getTicket($id);
         if (! $ticket) {
             throw new NotFoundException('The task you tried to edit could not be found.');
         }
 
-        if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $ticket->projectId)) {
-            throw new AuthorizationException('You are not allowed to edit this task.');
-        }
+        // Editor+ in the ticket's project (project-scoped role, not the session role) AND
+        // access to it. Replaces the prior session-scoped userIsAtLeast + assignment checks.
+        $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
         return $this->patch($id, $values);
     }
@@ -2491,6 +2532,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
     public function moveTicket(int $id, int $projectId): bool
     {
         $ticket = $this->getTicket($id);
@@ -2498,6 +2540,8 @@ class Tickets
         if (! $ticket) {
             return false;
         }
+
+        $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
         if ($ticket->type == 'milestone') {
             $milestoneTickets = $this->getAll(['milestone' => $ticket->id]);
@@ -2526,6 +2570,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
     public function quickUpdateMilestone($params): array|bool
     {
         if ($params['headline'] == '') {
@@ -2615,6 +2660,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMilestone(int $id): TicketModel|bool
     {
         return $this->ticketRepository->getTicket($id);
@@ -2626,8 +2672,6 @@ class Tickets
      * one week from today.
      *
      * @return TicketModel The pre-populated milestone model.
-     *
-     * @api
      */
     public function getNewMilestone(): TicketModel
     {
@@ -2653,6 +2697,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission('comments.create', entityScoped: true)]
     public function addMilestoneComment(array $params, mixed $milestone): bool
     {
         $milestoneId = (int) $params['id'];
@@ -2706,6 +2751,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
     public function updateMilestoneFromDialog(array $params): array|bool
     {
         $result = $this->quickUpdateMilestone($params);
@@ -2752,6 +2798,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::CREATE, entityScoped: true)]
     public function createMilestoneFromDialog(array $params): array|bool|int
     {
         $result = $this->quickAddMilestone($params);
@@ -2793,6 +2840,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getClientNameById(int $clientId): string
     {
         if ($clientId <= 0) {
@@ -2815,8 +2863,6 @@ class Tickets
      *
      * @param  array  $params  The incoming request params.
      * @return array The normalized params.
-     *
-     * @api
      */
     public function normalizeRoadmapParams(array $params): array
     {
@@ -2840,8 +2886,6 @@ class Tickets
      *
      * @param  array  $params  The incoming request params.
      * @return array The search criteria with the overview status default applied.
-     *
-     * @api
      */
     public function getMilestonesOverviewSearchCriteria(array $params): array
     {
@@ -2869,6 +2913,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::CREATE, entityScoped: true)]
     public function quickAddTicketFromKanban(array $formParams, ?string $swimlane, ?string $groupBy, bool $stayOpen = false): array
     {
         if ($swimlane !== null && $swimlane !== '' && ! empty($groupBy)) {
@@ -2938,8 +2983,10 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::CREATE, entityScoped: true)]
     public function upsertSubtask($values, $parentTicket): bool
     {
+        $this->authorize(TicketsPermissions::CREATE, (int) $parentTicket->projectId);
 
         $subtaskId = $values['subtaskId'] ?? 'new';
 
@@ -3003,6 +3050,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
     public function sortTickets(array $params): bool
     {
         if (! Auth::userIsAtLeast(Roles::$editor)) {
@@ -3128,6 +3176,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
     public function updateTicketStatusAndSorting($params, $handler = null): bool
     {
         if (! Auth::userIsAtLeast(Roles::$editor)) {
@@ -3235,14 +3284,18 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::DELETE, entityScoped: true)]
     public function delete($id): array|bool
     {
 
         $ticket = $this->getTicket($id);
 
-        if (! $ticket || ! $this->projectService->isUserAssignedToProject(session('userdata.id'), $ticket->projectId)) {
+        if (! $ticket) {
             return ['msg' => 'notifications.ticket_delete_error', 'type' => 'error'];
         }
+
+        // Editor+ in the ticket's project AND access to it (was access-only, no role gate).
+        $this->authorize(TicketsPermissions::DELETE, (int) $ticket->projectId);
 
         // Collaborator relationship rows are cleaned up inside the repository's delticket().
         if ($this->ticketRepository->delticket($id)) {
@@ -3281,14 +3334,18 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::DELETE, entityScoped: true)]
     public function deleteMilestone($id): array|bool
     {
 
         $ticket = $this->getTicket($id);
 
-        if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $ticket->projectId)) {
+        if (! $ticket) {
             return ['msg' => 'notifications.milestone_delete_error', 'type' => 'error'];
         }
+
+        // Editor+ in the milestone's project AND access to it (was access-only, no role gate).
+        $this->authorize(TicketsPermissions::DELETE, (int) $ticket->projectId);
 
         if ($this->ticketRepository->delMilestone($id)) {
             self::dispatchEvent('milestone_deleted');
@@ -3304,6 +3361,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getLastTicketViewUrl(): mixed
     {
 
@@ -3355,6 +3413,7 @@ class Tickets
     /**
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getGroupByFieldOptions(): array
     {
         // Alphabetically ordered (except "No Grouping" stays first as default)
@@ -3433,6 +3492,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getSortByFieldOptions(): array
     {
         return [
@@ -3496,6 +3556,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getNewFieldOptions(): array
     {
         if (! defined('BASE_URL')) {
@@ -4212,8 +4273,6 @@ class Tickets
      *
      * @param  array  $values  The values of the ticket fields.
      * @return array The values of the ticket fields after preparing the dates.
-     *
-     * @api
      */
     public function prepareTicketDates(&$values)
     {
@@ -4333,6 +4392,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function findMilestone(string $term, int $projectId)
     {
 
@@ -4359,6 +4419,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function findTicket(string $term, int $projectId, ?int $userId)
     {
 
@@ -4384,6 +4445,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForNewAccountMilestones(?int $projectId = null, ?int $userId = null): array|false
     {
         $todos = $this->ticketRepository->getAllBySearchCriteria(
@@ -4413,6 +4475,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForUpdatedAccountMilestones(?int $projectId = null, ?int $userId = null): array|false
     {
         $milestones = $this->ticketRepository->getAllBySearchCriteria(
@@ -4446,6 +4509,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForNewAccountTodos(?int $projectId = null, ?int $userId = null): array|false
     {
         $todos = $this->ticketRepository->getAllBySearchCriteria(
@@ -4473,6 +4537,7 @@ class Tickets
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForUpdatedAccountTodos(?int $projectId = null, ?int $userId = null): array|false
     {
         $todos = $this->ticketRepository->getAllBySearchCriteria(
