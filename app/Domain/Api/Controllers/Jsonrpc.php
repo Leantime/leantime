@@ -339,7 +339,10 @@ class Jsonrpc extends Controller
                 return false;
             }
 
-            return (bool) preg_match('/@api\b/', $docComment);
+            // Match the @api tag only at the START of a docblock line (" * @api"), so an
+            // explanatory prose mention (e.g. "@internal not exposed via JSON-RPC, unlike @api
+            // methods") can never accidentally re-expose a deliberately-internal method.
+            return (bool) preg_match('/^\s*\*\s*@api\b/m', $docComment);
         } catch (\ReflectionException $e) {
             return false;
         }

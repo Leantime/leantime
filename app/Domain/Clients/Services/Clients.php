@@ -47,10 +47,10 @@ class Clients
      * @param  int  $userId  The user ID
      * @return array List of clients the user has access to
      *
-     * @internal Not @api: only ever called internally with the session user's id (e.g. the
-     *           roadmap/milestone client-filter dropdown). The $userId is caller-supplied, so
-     *           exposing it over JSON-RPC would let any user enumerate another user's client
-     *           list (IDOR). Mirrors the setProfilePicture/editOwn de-@api treatment.
+     * @internal Internal-only; deliberately excluded from the JSON-RPC surface. The $userId is
+     *           caller-supplied, so exposing it would let any user enumerate another user's
+     *           client list (IDOR). Only ever called internally with the session user's id
+     *           (e.g. the roadmap/milestone client-filter dropdown).
      */
     public function getUserClients(int $userId): array
     {
