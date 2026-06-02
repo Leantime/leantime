@@ -37,7 +37,10 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
             new Permission('clients.create', 'Create clients', false),
             new Permission('clients.edit', 'Edit clients', false),
             new Permission('clients.delete', 'Delete clients', false),
+            new Permission('company.settings.view', 'View company settings', false),
             new Permission('company.settings.edit', 'Edit company settings', false),
+            // Project-scoped (rename a project's ticket/idea state labels — manager+ in project):
+            new Permission('projectsettings.labels.manage', 'Rename project labels', true),
         ];
     }
 
@@ -76,6 +79,10 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertNotContains('users.view', $grants);        // company-wide, admin+
         $this->assertNotContains('users.create', $grants);      // company-wide, manager+
         $this->assertNotContains('clients.view', $grants);      // company-wide, admin+
+        $this->assertNotContains('company.settings.view', $grants);
+        // Label renaming uses the 'manage' verb (not 'edit'), so it stays manager+ and does NOT
+        // leak to editor via the project create/edit/delete grant.
+        $this->assertNotContains('projectsettings.labels.manage', $grants);
         $this->assertNotContains('company.settings.edit', $grants);
     }
 
@@ -99,10 +106,13 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertNotContains('clients.create', $grants);
         $this->assertNotContains('clients.edit', $grants);
         $this->assertNotContains('clients.delete', $grants);
+        // Renaming a project's labels is a manager-in-project capability (project '*' grant).
+        $this->assertContains('projectsettings.labels.manage', $grants);
+        $this->assertNotContains('company.settings.view', $grants);
         $this->assertNotContains('company.settings.edit', $grants);
     }
 
-    public function test_admin_gets_company_wide_except_company_settings(): void
+    public function test_admin_gets_company_wide_including_company_settings(): void
     {
         $grants = $this->grantsFor('admin');
 
@@ -115,16 +125,22 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('clients.create', $grants);
         $this->assertContains('clients.edit', $grants);
         $this->assertContains('clients.delete', $grants);   // full client management
+        $this->assertContains('projectsettings.labels.manage', $grants);
         $this->assertContains('comments.moderate', $grants);
         $this->assertContains('tickets.delete', $grants);
-        $this->assertNotContains('company.settings.edit', $grants); // owner-only
+        // Per policy (admin views + edits company settings), admins hold both company.settings
+        // keys via an explicit grant alongside the wildcard-with-exclude rule.
+        $this->assertContains('company.settings.view', $grants);
+        $this->assertContains('company.settings.edit', $grants);
     }
 
     public function test_owner_gets_everything_including_company_settings(): void
     {
         $grants = $this->grantsFor('owner');
 
+        $this->assertContains('company.settings.view', $grants);
         $this->assertContains('company.settings.edit', $grants);
+        $this->assertContains('projectsettings.labels.manage', $grants);
         $this->assertContains('clients.delete', $grants);
         $this->assertContains('users.view', $grants);
         $this->assertContains('comments.moderate', $grants);

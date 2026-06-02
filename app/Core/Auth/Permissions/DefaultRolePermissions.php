@@ -71,7 +71,13 @@ final class DefaultRolePermissions
             // scope and is fine, but the explicit key documents that ONLY create is intended).
             ['scope' => 'global', 'keys' => ['users.create']],
         ],
-        'admin' => [['scope' => 'any', 'verbs' => ['*'], 'exclude' => ['company.settings.*']]],
+        'admin' => [
+            ['scope' => 'any', 'verbs' => ['*'], 'exclude' => ['company.settings.*']],
+            // Admins may view AND edit the company-settings screen (incl. logo) per policy. The
+            // exclude above keeps any OTHER future company.settings.* owner-only by default;
+            // these two keys are granted to admins explicitly.
+            ['scope' => 'global', 'keys' => ['company.settings.view', 'company.settings.edit']],
+        ],
         'owner' => [['scope' => 'any', 'verbs' => ['*']]],
     ];
 
