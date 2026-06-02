@@ -593,10 +593,16 @@ class Users extends BaseService
     }
 
     /**
-     * @api
+     * @internal Self-service only — invoked by saveOwnProfile() with the session user's id.
+     *           Intentionally NOT @api: it writes name/email/notifications to $id, so exposing
+     *           it over JSON-RPC would be an IDOR account takeover. The id is pinned to the
+     *           session user below as defense-in-depth.
      */
     public function editOwn($values, $id): void
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id).
+        $id = (int) session('userdata.id');
+
         $this->userRepo->editOwn($values, $id);
 
         $user = $this->getUser($id);
@@ -665,6 +671,10 @@ class Users extends BaseService
      */
     public function getOwnProfileSettings(int $userId): array
     {
+        // Self-service read: pin to the authenticated user (ignore any caller-supplied id —
+        // otherwise the RPC entry point leaks another account's profile/role/2FA status).
+        $userId = (int) session('userdata.id');
+
         $row = $this->getUser($userId);
 
         if ($row === false) {
@@ -759,6 +769,9 @@ class Users extends BaseService
      */
     public function getNotificationPreferences(int $userId): array
     {
+        // Self-service read: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
+
         $enabledEventTypes = $this->settingsService->getSetting('usersettings.'.$userId.'.notificationEventTypes');
         if (! $enabledEventTypes) {
             $enabledEventTypes = $this->settingsService->getSetting('companysettings.defaultNotificationEventTypes');
@@ -812,6 +825,10 @@ class Users extends BaseService
      */
     public function saveOwnProfile(int $userId, array $post): string
     {
+        // Self-service: pin to the authenticated user; ignore any caller-supplied id so the RPC
+        // entry point cannot edit another account (IDOR). EditOwn already passes the session id.
+        $userId = (int) session('userdata.id');
+
         $row = $this->getUser($userId);
 
         $values = [
@@ -862,6 +879,10 @@ class Users extends BaseService
      */
     public function changeOwnPassword(int $userId, string $currentPassword, string $newPassword, string $confirmPassword): string
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — otherwise
+        // the RPC entry point is a current-password oracle / takeover vector against any account).
+        $userId = (int) session('userdata.id');
+
         $row = $this->getUser($userId);
 
         if (! password_verify($currentPassword, $row['password'])) {
@@ -902,6 +923,9 @@ class Users extends BaseService
      */
     public function saveOwnAppearanceSettings(int $userId, array $post): void
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
+
         $postTheme = htmlentities($post['theme'] ?? 'default');
         $postColorMode = htmlentities($post['colormode'] ?? 'light');
         $postColorScheme = htmlentities($post['colorscheme'] ?? 'themeDefault');
@@ -931,6 +955,9 @@ class Users extends BaseService
      */
     public function saveOwnLocaleSettings(int $userId, array $post): void
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
+
         $postLang = htmlentities($post['language'] ?? '');
         $dateFormat = htmlentities($post['date_format'] ?? '');
         $timeFormat = htmlentities($post['time_format'] ?? '');
@@ -967,6 +994,9 @@ class Users extends BaseService
      */
     public function saveOwnNotificationPreferences(int $userId, array $post): void
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
+
         $row = $this->getUser($userId);
 
         $values = [

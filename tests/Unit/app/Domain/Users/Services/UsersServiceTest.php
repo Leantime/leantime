@@ -437,4 +437,32 @@ class UsersServiceTest extends TestCase
         // A users.edit holder may set privileged fields on another account.
         $this->assertArrayHasKey('role', $patched['fields']);
     }
+
+    public function test_self_service_methods_ignore_caller_supplied_id_and_pin_to_session(): void
+    {
+        // Self-service methods (editOwn/saveOwn*/getOwn*/changeOwnPassword) must operate on the
+        // authenticated user only — over JSON-RPC a caller controls the $userId argument, so a
+        // foreign id must NOT be honored (otherwise it is a cross-account IDOR). Representative
+        // check via changeOwnPassword: the credential lookup must hit the SESSION user (7), not
+        // the attacker-supplied id (99).
+        session(['userdata' => ['id' => 7]]);
+
+        $seenId = null;
+        $repo = $this->make(UserRepository::class, [
+            'getUser' => function ($id) use (&$seenId) {
+                $seenId = $id;
+
+                return [
+                    'id' => $id,
+                    'password' => password_hash('correct-horse', PASSWORD_DEFAULT),
+                    'firstname' => 'A', 'lastname' => 'B', 'username' => 'a@b.com',
+                    'phone' => '', 'notifications' => 1, 'twoFAEnabled' => 0,
+                ];
+            },
+        ]);
+
+        $this->makeService($repo)->changeOwnPassword(99, 'wrong', 'NewPass1!', 'NewPass1!');
+
+        $this->assertSame(7, $seenId, 'self-service must pin to the session user, not the caller-supplied id');
+    }
 }

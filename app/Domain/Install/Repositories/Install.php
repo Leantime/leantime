@@ -2747,6 +2747,13 @@ class Install
     public function update_sql_30506(): bool|array
     {
         try {
+            // The discovered-provider list is cached cross-request (installation store) outside
+            // debug mode. An install that already ran 30505 cached it WITHOUT UsersPermissions
+            // (which didn't exist then) — seeding against that stale list would never create the
+            // users.* permissions, leaving admin/owner/manager with no user-management grants
+            // (and, with enforcement on, 403'd out of user management). Flush it first.
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
             $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
             $seeder->syncDiscoveredPermissions();
             $seeder->seedBuiltInRoles();

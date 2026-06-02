@@ -3,6 +3,7 @@
 namespace Leantime\Command;
 
 use Illuminate\Console\Command;
+use Leantime\Core\Auth\Permissions\PermissionRegistry;
 use Leantime\Core\Auth\Permissions\PermissionRepository;
 use Leantime\Core\Auth\Permissions\PermissionSeeder;
 use Leantime\Core\Auth\Permissions\PermissionService;
@@ -31,6 +32,7 @@ class SyncPermissionsCommand extends Command
         private readonly PermissionSeeder $seeder,
         private readonly PermissionRepository $repo,
         private readonly PermissionService $permissions,
+        private readonly PermissionRegistry $registry,
     ) {
         parent::__construct();
     }
@@ -46,6 +48,12 @@ class SyncPermissionsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+
+        // Re-glob providers from disk first — the discovered-provider list is cached
+        // cross-request outside debug mode, so a stale cache (e.g. predating a newly-shipped
+        // domain's permission class) would otherwise hide its permissions from the sync. This
+        // also makes the command a reliable recovery step after such a cache goes stale.
+        $this->registry->flush();
 
         $keys = $this->seeder->syncDiscoveredPermissions();
         $io->success(count($keys).' permissions synced.');
