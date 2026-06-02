@@ -58,6 +58,9 @@ class SchemaBuilder
         $this->createJobsTable();
         $this->createRecurringPatternsTable();
         $this->createWorkStructureTables();
+        $this->createRolesTable();
+        $this->createPermissionsTable();
+        $this->createRolePermissionsTable();
     }
 
     /**
@@ -647,6 +650,68 @@ class SchemaBuilder
         Schema::create('zp_settings', function (Blueprint $table) {
             $table->string('key', 175)->primary();
             $table->text('value')->nullable();
+        });
+    }
+
+    /**
+     * Create zp_roles table — the DB-backed role definitions for the native
+     * permission engine. Ships the six built-in roles (seeded separately) and is
+     * extensible with custom roles. `level` preserves the legacy "at least"
+     * hierarchy (5..50); `isSystem` flags the built-ins as protected.
+     */
+    private function createRolesTable(): void
+    {
+        Schema::create('zp_roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 50);
+            $table->string('displayName', 100)->nullable();
+            $table->integer('level');
+            $table->tinyInteger('isSystem')->default(0);
+            $table->text('description')->nullable();
+            $table->dateTime('createdOn')->nullable();
+            $table->dateTime('modified')->nullable();
+
+            $table->unique(['name'], 'idx_roles_name');
+            $table->index(['level'], 'idx_roles_level');
+        });
+    }
+
+    /**
+     * Create zp_permissions table — the `domain.action` vocabulary, synced from each
+     * domain's ProvidesPermissions declarations by `permissions:sync`. `isProjectScoped`
+     * marks capabilities evaluated against a project's role vs company-wide.
+     */
+    private function createPermissionsTable(): void
+    {
+        Schema::create('zp_permissions', function (Blueprint $table) {
+            $table->id();
+            $table->string('permissionKey', 150);
+            $table->string('domain', 60);
+            $table->string('action', 100);
+            $table->string('label', 191)->nullable();
+            $table->tinyInteger('isProjectScoped')->default(1);
+            $table->dateTime('createdOn')->nullable();
+            $table->dateTime('modified')->nullable();
+
+            $table->unique(['permissionKey'], 'idx_permissions_key');
+            $table->index(['domain'], 'idx_permissions_domain');
+        });
+    }
+
+    /**
+     * Create zp_role_permissions table — the many-to-many grant map linking roles to
+     * the permissions they hold. Edited by an administrator (future role-management UI).
+     */
+    private function createRolePermissionsTable(): void
+    {
+        Schema::create('zp_role_permissions', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('roleId');
+            $table->unsignedBigInteger('permissionId');
+
+            $table->unique(['roleId', 'permissionId'], 'idx_role_permissions_unique');
+            $table->index(['roleId'], 'idx_role_permissions_roleId');
+            $table->index(['permissionId'], 'idx_role_permissions_permissionId');
         });
     }
 

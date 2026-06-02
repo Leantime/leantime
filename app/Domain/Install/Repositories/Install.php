@@ -85,6 +85,7 @@ class Install
         // 30503 (zp_device_tokens) intentionally skipped — superseded by
         // 30504 which puts push columns on zp_access_tokens instead.
         30504,
+        30505,
     ];
 
     /**
@@ -2649,6 +2650,80 @@ class Install
             Log::error('Migration 30504: '.$e->getMessage());
 
             return ['Migration 30504 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30505: Create the native permission engine tables (zp_roles,
+     * zp_permissions, zp_role_permissions — mirrors SchemaBuilder), then sync the
+     * discovered `domain.action` vocabulary and seed the six built-in roles with their
+     * default grants. Idempotent.
+     *
+     * @return bool|array Returns true on success, array of errors on failure
+     */
+    public function update_sql_30505(): bool|array
+    {
+        try {
+            // The legacy zp_roles rights table was dropped at update_sql_30002. If a stale
+            // copy survives on a very old install it lacks the 'level' column — replace it.
+            if (Schema::hasTable('zp_roles') && ! Schema::hasColumn('zp_roles', 'level')) {
+                Schema::drop('zp_roles');
+            }
+
+            if (! Schema::hasTable('zp_roles')) {
+                Schema::create('zp_roles', function (Blueprint $table) {
+                    $table->id();
+                    $table->string('name', 50);
+                    $table->string('displayName', 100)->nullable();
+                    $table->integer('level');
+                    $table->tinyInteger('isSystem')->default(0);
+                    $table->text('description')->nullable();
+                    $table->dateTime('createdOn')->nullable();
+                    $table->dateTime('modified')->nullable();
+
+                    $table->unique(['name'], 'idx_roles_name');
+                    $table->index(['level'], 'idx_roles_level');
+                });
+            }
+
+            if (! Schema::hasTable('zp_permissions')) {
+                Schema::create('zp_permissions', function (Blueprint $table) {
+                    $table->id();
+                    $table->string('permissionKey', 150);
+                    $table->string('domain', 60);
+                    $table->string('action', 100);
+                    $table->string('label', 191)->nullable();
+                    $table->tinyInteger('isProjectScoped')->default(1);
+                    $table->dateTime('createdOn')->nullable();
+                    $table->dateTime('modified')->nullable();
+
+                    $table->unique(['permissionKey'], 'idx_permissions_key');
+                    $table->index(['domain'], 'idx_permissions_domain');
+                });
+            }
+
+            if (! Schema::hasTable('zp_role_permissions')) {
+                Schema::create('zp_role_permissions', function (Blueprint $table) {
+                    $table->id();
+                    $table->unsignedBigInteger('roleId');
+                    $table->unsignedBigInteger('permissionId');
+
+                    $table->unique(['roleId', 'permissionId'], 'idx_role_permissions_unique');
+                    $table->index(['roleId'], 'idx_role_permissions_roleId');
+                    $table->index(['permissionId'], 'idx_role_permissions_permissionId');
+                });
+            }
+
+            // Populate the vocabulary, then grant the built-in roles their defaults.
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30505: '.$e->getMessage());
+
+            return ['Migration 30505 failed: '.$e->getMessage()];
         }
 
         return true;

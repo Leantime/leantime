@@ -7,6 +7,7 @@ use DateTime;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\Contracts\ChecksProjectAccess;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher as EventCore;
 use Leantime\Core\Exceptions\AuthorizationException;
@@ -35,7 +36,7 @@ use Leantime\Domain\Wiki\Repositories\Wiki;
 use SVG\SVG;
 use Symfony\Component\HttpFoundation\Response;
 
-class Projects
+class Projects implements ChecksProjectAccess
 {
     use DispatchesEvents;
 
@@ -987,20 +988,21 @@ class Projects
     /**
      * Gets the role of a user in a specific project.
      *
-     * @param  mixed  $userId  The user ID.
-     * @param  mixed  $projectId  The project ID.
-     * @return mixed The role of the user in the project (string) or an empty string if the user is not assigned to the project or if the project role is not defined.
+     * @param  int  $userId  The user ID.
+     * @param  int  $projectId  The project ID.
+     * @return string The stored project-role key, or an empty string when the user has no
+     *                explicit role in the project (or is not assigned to it).
      *
      * @api
      */
-    public function getProjectRole($userId, $projectId): mixed
+    public function getProjectRole($userId, $projectId): string
     {
 
         $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
 
         if (is_array($project)) {
             if (isset($project[0]['projectRole']) && $project[0]['projectRole'] != '') {
-                return $project[0]['projectRole'];
+                return (string) $project[0]['projectRole'];
             } else {
                 return '';
             }

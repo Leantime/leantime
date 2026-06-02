@@ -11,6 +11,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\Permissions\PermissionEnforcer;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Core\Exceptions\MissingParameterException;
@@ -27,10 +28,15 @@ class Jsonrpc extends Controller
      */
     private array $json_data = [];
 
+    private PermissionEnforcer $permissionEnforcer;
+
     /**
      * init - initialize private variables or events to happen before route execution
      */
-    public function init(): void {}
+    public function init(PermissionEnforcer $permissionEnforcer): void
+    {
+        $this->permissionEnforcer = $permissionEnforcer;
+    }
 
     /**
      * Handles post requests
@@ -238,6 +244,11 @@ class Jsonrpc extends Controller
 
         // can be null
         try {
+            // RPC bypasses the controller gate, so per-method authorization is enforced here:
+            // a #[RequiresPermission] on the resolved service method is checked before the call.
+            // A denial throws AuthorizationException, mapped below to JSON-RPC -32001.
+            $this->permissionEnforcer->enforce($serviceName, $methodName, is_array($paramsFromRequest) ? $paramsFromRequest : []);
+
             $method_response = app()->make($serviceName)->$methodName(...$preparedParams);
         } catch (\Throwable $e) {
             // Leantime exceptions carry a client-safe code/message/data and map to a precise

@@ -340,3 +340,21 @@ if (! function_exists('get_release_version')) {
     }
 
 }
+
+if (! function_exists('can')) {
+
+    /**
+     * Whether the current user holds a `domain.action` permission, optionally scoped to a
+     * project. The permission-era replacement for `$login::userIsAtLeast(...)` in templates.
+     *
+     * In Blade prefer the @can directive (it routes through the same Gate bridge); use this
+     * helper in legacy .tpl.php templates and anywhere a plain boolean is handy:
+     *   <?php if (can('tickets.edit', $projectId)): ?> ... <?php endif; ?>
+     */
+    function can(string $permission, ?int $projectId = null): bool
+    {
+        return app()->make(\Leantime\Core\Auth\Permissions\PermissionService::class)
+            ->currentUserCan($permission, $projectId);
+    }
+
+}

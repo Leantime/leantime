@@ -3,6 +3,8 @@
 namespace Leantime\Core\Routing;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Route;
+use Leantime\Core\Auth\Permissions\CheckPermissions;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
 
@@ -47,11 +49,15 @@ class RouteLoader
             $domainPaths = self::getDomainPaths();
         }
 
-        foreach ($domainPaths as $domainPath) {
-            if (file_exists($routesPath = "$domainPath/routes.php")) {
-                require_once $routesPath;
+        // Routes inherit the permission-enforcement middleware so #[RequiresPermission] on a
+        // native controller action is honored without per-route `can:` declarations.
+        Route::middleware([CheckPermissions::class])->group(function () use ($domainPaths) {
+            foreach ($domainPaths as $domainPath) {
+                if (file_exists($routesPath = "$domainPath/routes.php")) {
+                    require_once $routesPath;
+                }
             }
-        }
+        });
     }
 
     /**
@@ -63,11 +69,13 @@ class RouteLoader
             isset(app(Environment::class)->plugins)
             && $configPlugins = explode(',', app(Environment::class)->plugins)
         ) {
-            foreach ($configPlugins as $plugin) {
-                if (file_exists($pluginRoutesPath = APP_ROOT.'/app/Plugins/'.$plugin.'/routes.php')) {
-                    require_once $pluginRoutesPath;
+            Route::middleware([CheckPermissions::class])->group(function () use ($configPlugins) {
+                foreach ($configPlugins as $plugin) {
+                    if (file_exists($pluginRoutesPath = APP_ROOT.'/app/Plugins/'.$plugin.'/routes.php')) {
+                        require_once $pluginRoutesPath;
+                    }
                 }
-            }
+            });
         }
     }
 
@@ -84,13 +92,15 @@ class RouteLoader
             $pluginService = app()->make(\Leantime\Core\Plugins\Plugins::class);
             $enabledPluginPaths = $pluginService->getEnabledPluginPaths();
 
-            foreach ($enabledPluginPaths as $pluginInfo) {
-                $routesPath = $pluginInfo['path'].'/routes.php';
+            Route::middleware([CheckPermissions::class])->group(function () use ($enabledPluginPaths) {
+                foreach ($enabledPluginPaths as $pluginInfo) {
+                    $routesPath = $pluginInfo['path'].'/routes.php';
 
-                if (file_exists($routesPath)) {
-                    require_once $routesPath;
+                    if (file_exists($routesPath)) {
+                        require_once $routesPath;
+                    }
                 }
-            }
+            });
         } catch (\Exception $e) {
             // Silently continue if plugin service is unavailable
         }
