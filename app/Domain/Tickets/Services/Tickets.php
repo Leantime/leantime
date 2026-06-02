@@ -4442,7 +4442,10 @@ class Tickets extends BaseService
      * @param  int|null  $projectId  The ID of the project (optional)
      * @param  int|null  $userId  The ID of the user (optional)
      * @return array|false An array of milestones or false if an error occurred
+     *
+     * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForNewAccountMilestones(?int $projectId = null, ?int $userId = null): array|false
     {
         $todos = $this->ticketRepository->getAllBySearchCriteria(
@@ -4469,7 +4472,10 @@ class Tickets extends BaseService
      * @param  int|null  $projectId  (optional) The ID of the project to filter milestones by.
      * @param  int|null  $userId  (optional) The ID of the user to filter milestones by.
      * @return array|false An array of milestones with prepared dates for API response, or false if an error occurs.
+     *
+     * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForUpdatedAccountMilestones(?int $projectId = null, ?int $userId = null): array|false
     {
         $milestones = $this->ticketRepository->getAllBySearchCriteria(
@@ -4500,7 +4506,10 @@ class Tickets extends BaseService
      * @param  int|null  $userId  The ID of the user to filter the todos (optional).
      * @return array|false The retrieved todos as an array of associative arrays.
      *                     Returns false if an error occurs during retrieval.
+     *
+     * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForNewAccountTodos(?int $projectId = null, ?int $userId = null): array|false
     {
         $todos = $this->ticketRepository->getAllBySearchCriteria(
@@ -4525,7 +4534,10 @@ class Tickets extends BaseService
      * @param  int|null  $projectId  The ID of the project (optional)
      * @param  int|null  $userId  The ID of the user (optional)
      * @return array|false An array of updated account todos or false if there was an error
+     *
+     * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForUpdatedAccountTodos(?int $projectId = null, ?int $userId = null): array|false
     {
         $todos = $this->ticketRepository->getAllBySearchCriteria(

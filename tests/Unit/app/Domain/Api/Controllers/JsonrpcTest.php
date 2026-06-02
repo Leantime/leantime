@@ -14,10 +14,6 @@ use Leantime\Domain\Api\Controllers\Jsonrpc;
  * The controller now builds its envelopes through the JsonRpcResponse / JsonRpcErrorResponse
  * response types, so these tests assert on the actual JSON body of the returned Response
  * (behavior) rather than on the Template::displayJson() call that used to construct it.
- *
- * The RPC pipeline is exercised through Comments::getComments — a stable @api read that takes
- * a module + entityId. (The previous fixture, pollComments, was de-@api'd as a cron/poll
- * helper, so it is no longer reachable via JSON-RPC.)
  */
 class JsonrpcTest extends \Unit\TestCase
 {
@@ -57,8 +53,8 @@ class JsonrpcTest extends \Unit\TestCase
     public function test_method_string_parsing()
     {
         $params = [
-            'method' => 'leantime.rpc.Comments.getComments',
-            'params' => ['module' => 'ticket', 'entityId' => 1],
+            'method' => 'leantime.rpc.Comments.pollComments',
+            'params' => ['projectId' => 1],
             'id' => 1,
             'jsonrpc' => '2.0',
         ];
@@ -88,8 +84,8 @@ class JsonrpcTest extends \Unit\TestCase
     public function test_missing_json_rpc_version()
     {
         $params = [
-            'method' => 'leantime.rpc.Comments.getComments',
-            'params' => ['module' => 'ticket', 'entityId' => 1],
+            'method' => 'leantime.rpc.Comments.pollComments',
+            'params' => ['projectId' => 1],
             'id' => 1,
         ];
 
@@ -103,14 +99,14 @@ class JsonrpcTest extends \Unit\TestCase
     {
         $params = [
             [
-                'method' => 'leantime.rpc.Comments.getComments',
-                'params' => ['module' => 'ticket', 'entityId' => 1],
+                'method' => 'leantime.rpc.Comments.pollComments',
+                'params' => ['projectId' => 1],
                 'id' => 1,
                 'jsonrpc' => '2.0',
             ],
             [
-                'method' => 'leantime.rpc.Comments.getComments',
-                'params' => ['module' => 'ticket', 'entityId' => 2],
+                'method' => 'leantime.rpc.Comments.pollComments',
+                'params' => ['projectId' => 2],
                 'id' => 2,
                 'jsonrpc' => '2.0',
             ],
@@ -139,7 +135,7 @@ class JsonrpcTest extends \Unit\TestCase
             {
                 public function __construct(private string $secret) {}
 
-                public function getComments($module, $entityId, int $commentOrder = 0, int $parent = 0): false|array
+                public function pollComments(?int $projectId = null, ?int $moduleId = null): array
                 {
                     throw new \RuntimeException($this->secret);
                 }
@@ -147,8 +143,8 @@ class JsonrpcTest extends \Unit\TestCase
         );
 
         $params = [
-            'method' => 'leantime.rpc.Comments.getComments',
-            'params' => ['module' => 'ticket', 'entityId' => 1],
+            'method' => 'leantime.rpc.Comments.pollComments',
+            'params' => ['projectId' => 1],
             'id' => 42,
             'jsonrpc' => '2.0',
         ];
@@ -172,7 +168,7 @@ class JsonrpcTest extends \Unit\TestCase
             \Leantime\Domain\Comments\Services\Comments::class,
             fn () => new class
             {
-                public function getComments($module, $entityId, int $commentOrder = 0, int $parent = 0): false|array
+                public function pollComments(?int $projectId = null, ?int $moduleId = null): array
                 {
                     throw new \Leantime\Core\Exceptions\AuthorizationException;
                 }
@@ -180,8 +176,8 @@ class JsonrpcTest extends \Unit\TestCase
         );
 
         $params = [
-            'method' => 'leantime.rpc.Comments.getComments',
-            'params' => ['module' => 'ticket', 'entityId' => 1],
+            'method' => 'leantime.rpc.Comments.pollComments',
+            'params' => ['projectId' => 1],
             'id' => 7,
             'jsonrpc' => '2.0',
         ];
@@ -202,7 +198,7 @@ class JsonrpcTest extends \Unit\TestCase
             \Leantime\Domain\Comments\Services\Comments::class,
             fn () => new class
             {
-                public function getComments($module, $entityId, int $commentOrder = 0, int $parent = 0): false|array
+                public function pollComments(?int $projectId = null, ?int $moduleId = null): array
                 {
                     throw new \RuntimeException('boom');
                 }
@@ -211,8 +207,8 @@ class JsonrpcTest extends \Unit\TestCase
 
         // No 'id' => JSON-RPC notification.
         $params = [
-            'method' => 'leantime.rpc.Comments.getComments',
-            'params' => ['module' => 'ticket', 'entityId' => 1],
+            'method' => 'leantime.rpc.Comments.pollComments',
+            'params' => ['projectId' => 1],
             'jsonrpc' => '2.0',
         ];
 

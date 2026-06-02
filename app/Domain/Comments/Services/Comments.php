@@ -237,7 +237,10 @@ class Comments extends BaseService
      * @param  ?int  $projectId  Project ID
      * @param  ?int  $moduleId  Id of the entity to pull comments from
      * @return array
+     *
+     * @api
      */
+    #[RequiresPermission(CommentsPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollComments(?int $projectId = null, ?int $moduleId = null): array|false
     {
 
