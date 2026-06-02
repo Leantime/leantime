@@ -88,6 +88,7 @@ class Install
         30505,
         30506,
         30507,
+        30508,
     ];
 
     /**
@@ -2787,6 +2788,31 @@ class Install
             Log::error('Migration 30507: '.$e->getMessage());
 
             return ['Migration 30507 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30508: the Setting domain joined the native permission engine. Re-sync the
+     * discovered permission catalog (adds company.settings.view/edit + projectsettings.labels.manage)
+     * and re-seed the built-in role grants. Table-creation-free; idempotent + additive. Flush the
+     * discovered-provider cache first — an install that already ran 30505-30507 cached the provider
+     * list WITHOUT SettingPermissions, so seeding against that stale list would never create the
+     * new keys (admins would lose the company-settings screen, managers the label dialog).
+     */
+    public function update_sql_30508(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30508: '.$e->getMessage());
+
+            return ['Migration 30508 failed: '.$e->getMessage()];
         }
 
         return true;

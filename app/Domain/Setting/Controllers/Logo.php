@@ -2,8 +2,6 @@
 
 namespace Leantime\Domain\Setting\Controllers;
 
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,8 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
  * /setting/logo plus the backward-compatible /api/setting alias used by the company-settings
  * logo cropper. The 501 GET/PATCH/DELETE stubs from the old controller are not carried over.
  *
- * The company logo is a global setting, so the upload now requires admin+ — the legacy
- * endpoint had no role check, letting any authenticated user overwrite it.
+ * The company logo is a global setting, so the upload requires company.settings.edit (admin+)
+ * — the legacy endpoint had no role check, letting any authenticated user overwrite it.
  */
 class Logo
 {
@@ -27,7 +25,7 @@ class Logo
      */
     public function post(): Response
     {
-        if (! Auth::userIsAtLeast(Roles::$admin)) {
+        if (! can('company.settings.edit')) {
             return response()->json(['status' => 'unauthorized'], 403);
         }
 

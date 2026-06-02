@@ -2,13 +2,13 @@
 
 namespace Leantime\Domain\Setting\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\UI\Theme;
 use Leantime\Domain\Api\Services\Api as ApiService;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Notifications\Models\Notification;
+use Leantime\Domain\Setting\Permissions\SettingPermissions;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 
 class EditCompanySettings extends Controller
@@ -27,8 +27,6 @@ class EditCompanySettings extends Controller
         SettingService $settingsSvc,
         Theme $theme,
     ): void {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
         $this->APIService = $APIService;
         $this->settingsSvc = $settingsSvc;
         $this->theme = $theme;
@@ -37,12 +35,9 @@ class EditCompanySettings extends Controller
     /**
      * get - handle get requests
      */
+    #[RequiresPermission(SettingPermissions::COMPANY_VIEW, global: true)]
     public function get($params)
     {
-        if (! Auth::userIsAtLeast(Roles::$owner)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
-        }
-
         if (isset($_GET['resetLogo'])) {
             $this->settingsSvc->resetLogo();
 
@@ -70,6 +65,7 @@ class EditCompanySettings extends Controller
     /**
      * post - handle post requests
      */
+    #[RequiresPermission(SettingPermissions::COMPANY_EDIT, global: true)]
     public function post($params)
     {
         // The telemetry opt-out path keys off the raw POST flag; mirror it into params.

@@ -5,11 +5,13 @@ namespace Leantime\Domain\Setting\Services;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Files\Contracts\FileManagerInterface;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
+use Leantime\Domain\Setting\Permissions\SettingPermissions;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Ramsey\Uuid\Uuid;
@@ -83,7 +85,8 @@ class Setting
     }
 
     /**
-     * @api
+     * @internal Internal-only; resets the company logo. Reached only via the company-settings
+     *           page (gated company.settings.view/edit) — not on the JSON-RPC surface.
      */
     public function resetLogo(): void
     {
@@ -94,7 +97,10 @@ class Setting
     }
 
     /**
-     * @api
+     * @internal Foundational key/value primitive — writes ANY setting (company.*, usersettings.*,
+     *           projectsettings.*, licenses, …). Internal-only; deliberately excluded from the
+     *           JSON-RPC surface (RPC write-any-setting would be a privilege-escalation hole).
+     *           Callers that touch sensitive keys gate at their own boundary.
      */
     public function saveSetting($key, $value): bool
     {
@@ -104,7 +110,9 @@ class Setting
     /**
      * @return false|mixed
      *
-     * @api
+     * @internal Foundational key/value primitive — reads ANY setting. Internal-only;
+     *           deliberately excluded from the JSON-RPC surface (RPC read-any-setting could
+     *           leak license keys / OIDC/LDAP config secrets stored as settings).
      */
     public function getSetting($key, $default = false): mixed
     {
@@ -112,7 +120,8 @@ class Setting
     }
 
     /**
-     * @api
+     * @internal Foundational key/value primitive — deletes ANY setting. Internal-only;
+     *           deliberately excluded from the JSON-RPC surface.
      */
     public function deleteSetting($key): void
     {
@@ -120,7 +129,7 @@ class Setting
     }
 
     /**
-     * @api
+     * @internal Infrastructure accessor (returns the repository instance) — not an API surface.
      */
     public function getSettingsRepo(): SettingRepository
     {
@@ -128,7 +137,7 @@ class Setting
     }
 
     /**
-     * @api
+     * @internal Infrastructure mutator (swaps the repository dependency) — not an API surface.
      */
     public function setSettingsRepo(SettingRepository $settingsRepo): void
     {
@@ -179,6 +188,7 @@ class Setting
      *
      * @api
      */
+    #[RequiresPermission(SettingPermissions::PROJECT_LABELS, projectIdParam: 'projectId')]
     public function getProjectLabel(string $module, int $labelKey, int $projectId): string
     {
         if ($module === 'ticketlabels') {
@@ -217,6 +227,7 @@ class Setting
      *
      * @api
      */
+    #[RequiresPermission(SettingPermissions::PROJECT_LABELS, projectIdParam: 'projectId')]
     public function saveProjectLabel(string $module, int $labelKey, string $newLabel, int $projectId): void
     {
         if ($module === 'ticketlabels') {
@@ -269,6 +280,7 @@ class Setting
      *
      * @api
      */
+    #[RequiresPermission(SettingPermissions::COMPANY_VIEW, global: true)]
     public function getCompanySettings(string $logoUrl): array
     {
         $companySettings = [
@@ -350,6 +362,7 @@ class Setting
      *
      * @api
      */
+    #[RequiresPermission(SettingPermissions::COMPANY_EDIT, global: true)]
     public function saveCompanySettings(array $params): bool
     {
         $saved = false;

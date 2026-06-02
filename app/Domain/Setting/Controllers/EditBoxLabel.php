@@ -2,9 +2,9 @@
 
 namespace Leantime\Domain\Setting\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Setting\Permissions\SettingPermissions;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 
 class EditBoxLabel extends Controller
@@ -16,20 +16,15 @@ class EditBoxLabel extends Controller
      */
     public function init(SettingService $settingsSvc): void
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager]);
-
         $this->settingsSvc = $settingsSvc;
     }
 
     /**
      * get - handle get requests
      */
+    #[RequiresPermission(SettingPermissions::PROJECT_LABELS)]
     public function get($params)
     {
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
-            return $this->tpl->display('errors.error403');
-        }
-
         $currentLabel = '';
 
         if (isset($params['module']) && isset($params['label'])) {
@@ -47,6 +42,7 @@ class EditBoxLabel extends Controller
     /**
      * post - handle post requests
      */
+    #[RequiresPermission(SettingPermissions::PROJECT_LABELS)]
     public function post($params)
     {
         // If module and label are set its an update
