@@ -17,7 +17,7 @@ use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Http\Responses\JsonRpcErrorResponse;
 use Leantime\Core\Http\Responses\JsonRpcResponse;
 use Leantime\Core\Plugins\Attributes\RequiresPlugin;
-use Leantime\Core\Plugins\Plugins as CorePlugins;
+use Leantime\Domain\Plugins\Services\Plugins as PluginsService;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\HttpFoundation\Response;
@@ -228,8 +228,13 @@ class Jsonrpc extends Controller
         // Enforce plugin-gated methods. Methods or classes carrying #[RequiresPlugin('Name')]
         // refuse to dispatch when the named plugin is disabled — return a JSON-RPC error
         // with HTTP 200 body, mirroring the returnMethodNotFound pattern above.
+        //
+        // Uses the Domain Plugins service (DB-backed user plugins) rather than
+        // Core\Plugins\Plugins (env-driven system plugins only). This matches what
+        // config.getSystemInfo reports, so the gate and the client-visible capability
+        // list share one source of truth.
         $requiredPlugin = $this->getRequiredPlugin($serviceName, $methodName);
-        if ($requiredPlugin !== null && ! app()->make(CorePlugins::class)->isPluginEnabled($requiredPlugin)) {
+        if ($requiredPlugin !== null && ! app()->make(PluginsService::class)->isEnabled($requiredPlugin)) {
             return $this->returnError(
                 "Plugin '$requiredPlugin' is required but not enabled.",
                 -32004,
