@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Comments\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Comments\Permissions\CommentsPermissions;
@@ -66,6 +67,7 @@ class Comments extends BaseService
     /**
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::VIEW)]
     public function getComments($module, $entityId, int $commentOrder = 0, int $parent = 0): false|array
     {
         return $this->commentRepository->getComments($module, $entityId, $parent, $commentOrder);
@@ -76,6 +78,7 @@ class Comments extends BaseService
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::CREATE, entityScoped: true)]
     public function addComment($values, $module, $entityId, $entity = null): bool
     {
         // RPC callers (mobile) typically don't pre-load the entity — they
@@ -205,6 +208,7 @@ class Comments extends BaseService
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::CREATE, entityScoped: true)]
     public function editComment($values, $id): bool
     {
         if (! $this->canModifyComment((int) $id)) {
@@ -219,6 +223,7 @@ class Comments extends BaseService
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::CREATE, entityScoped: true)]
     public function deleteComment($commentId): bool
     {
         if (! $this->canModifyComment((int) $commentId)) {
@@ -232,8 +237,6 @@ class Comments extends BaseService
      * @param  ?int  $projectId  Project ID
      * @param  ?int  $moduleId  Id of the entity to pull comments from
      * @return array
-     *
-     * @api
      */
     public function pollComments(?int $projectId = null, ?int $moduleId = null): array|false
     {
@@ -268,6 +271,7 @@ class Comments extends BaseService
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::CREATE)]
     public function toggleCommentReaction(int $userId, int $commentId, string $reaction): bool
     {
         // Validate reaction against known types
@@ -313,6 +317,7 @@ class Comments extends BaseService
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::VIEW)]
     public function getCommentReactions(int $commentId, int $userId): array
     {
         // Get reactions with user names for tooltips

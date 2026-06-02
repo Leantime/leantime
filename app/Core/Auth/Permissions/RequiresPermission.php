@@ -19,13 +19,17 @@ use Attribute;
  * global handler renders as 403 on the web and `JsonRpcErrorResponse::fromException`
  * maps to RPC error -32001.
  *
- * For project-scoped permissions, set {@see $projectIdParam} to the name of the
- * request/method parameter carrying the project id so the check resolves the role
- * against the entity's project rather than the session project. When omitted, the
- * enforcer falls back to the current session project (`session('currentProject')`).
- *
- * Contextual checks that depend on runtime data (ownership, cross-project ids resolved
- * from a loaded entity) belong in the method body via `$this->authorize(...)`, not here.
+ * How the project scope is resolved (mutually informative):
+ *  - `projectIdParam: 'projectId'` — the enforcer reads that request param and runs the
+ *    full project-scoped check. Use when the project id is a clean top-level argument.
+ *  - `global: true` — a company-wide capability (users/clients/settings); the enforcer
+ *    checks against the global role, not a project.
+ *  - `entityScoped: true` — the project comes from an entity the method loads itself
+ *    (e.g. `$ticket->projectId`), which the enforcer can't see beforehand. The attribute is
+ *    then a declared-coverage marker and the method body MUST call
+ *    `$this->authorize($perm, $entity->projectId)` to do the precise check.
+ *  - none of the above — falls back to the current session project (`session('currentProject')`),
+ *    appropriate for session-scoped views.
  */
 #[Attribute(Attribute::TARGET_METHOD)]
 final class RequiresPermission
@@ -33,11 +37,15 @@ final class RequiresPermission
     /**
      * @param  string  $permission  The required `domain.action` key (use a domain
      *                              permission constant, e.g. `TicketsPermissions::CREATE`).
-     * @param  string|null  $projectIdParam  Name of the parameter holding the project id
-     *                                       for project-scoped checks; null = session project.
+     * @param  string|null  $projectIdParam  Name of the request param holding the project id.
+     * @param  bool  $global  Company-wide capability — check the global role, not a project.
+     * @param  bool  $entityScoped  Project is derived from an entity the method loads; the
+     *                              enforcer defers and the method self-authorizes in its body.
      */
     public function __construct(
         public readonly string $permission,
         public readonly ?string $projectIdParam = null,
+        public readonly bool $global = false,
+        public readonly bool $entityScoped = false,
     ) {}
 }

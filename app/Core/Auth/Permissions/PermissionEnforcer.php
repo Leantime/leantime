@@ -45,7 +45,18 @@ class PermissionEnforcer
             return;
         }
 
-        if ($this->permissions->currentUserCan($attribute->permission, $this->resolveProjectId($attribute, $params))) {
+        // Entity-scoped: the method loads the entity and authorizes its project in its own
+        // body (the enforcer can't see the entity's project here). The attribute is just the
+        // declared-coverage marker; defer to the in-method $this->authorize() call.
+        if ($attribute->entityScoped) {
+            return;
+        }
+
+        $allowed = $attribute->global
+            ? $this->permissions->currentUserCan($attribute->permission, null, true)
+            : $this->permissions->currentUserCan($attribute->permission, $this->resolveProjectId($attribute, $params));
+
+        if ($allowed) {
             return;
         }
 

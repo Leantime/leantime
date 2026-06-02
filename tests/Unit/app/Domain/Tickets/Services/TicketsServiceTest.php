@@ -394,6 +394,24 @@ class TicketsServiceTest extends TestCase
         $this->assertFalse($this->ticketsService->updateTicketStatusAndSorting(['3' => 'ticket[]=5'], null));
     }
 
+    public function test_quick_add_ticket_is_denied_without_create_permission(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
+
+        // quickAddTicket resolves the project from its params, then authorizes tickets.create
+        // through the engine before doing any work. This was one of the RPC holes: any
+        // authenticated caller could create tickets. A denying engine must make it throw.
+        $this->ticketsService->setPermissionService($this->make(PermissionService::class, [
+            'authorize' => function (): void {
+                throw new AuthorizationException;
+            },
+        ]));
+
+        $this->expectException(AuthorizationException::class);
+
+        $this->ticketsService->quickAddTicket(['headline' => 'New task', 'projectId' => 9]);
+    }
+
     // ---------------------------------------------------------------------
     // Collaborator enrichment for grouped ticket views (list/kanban + widget)
     // ---------------------------------------------------------------------
