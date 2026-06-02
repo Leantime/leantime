@@ -2,9 +2,10 @@
 
 namespace Leantime\Domain\Users\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Users\Permissions\UsersPermissions;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,15 +21,9 @@ class ShowAll extends Controller
     /**
      * @throws \Exception
      */
+    #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function get(): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
-        // Only Admins
-        if (! Auth::userIsAtLeast(Roles::$admin)) {
-            return $this->tpl->display('errors.error403');
-        }
-
         $this->tpl->assign('allUsers', $this->userService->getAllVisibleToUser());
         $this->tpl->assign('admin', true);
         $this->tpl->assign('roles', Roles::getRoles());
