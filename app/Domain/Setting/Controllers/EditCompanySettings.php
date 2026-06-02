@@ -39,6 +39,13 @@ class EditCompanySettings extends Controller
     public function get($params)
     {
         if (isset($_GET['resetLogo'])) {
+            // Resetting the logo is a WRITE, so it must require edit — not the view that gates
+            // this GET handler. Matters once view/edit are split to different roles in the admin
+            // UI (the seeded matrix grants both to admin+owner, so this is defense-in-depth).
+            if (! can('company.settings.edit')) {
+                return $this->tpl->display('errors.error403', responseCode: 403);
+            }
+
             $this->settingsSvc->resetLogo();
 
             return Frontcontroller::redirect(BASE_URL.'/setting/editCompanySettings#look');
