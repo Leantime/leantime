@@ -17,7 +17,9 @@
 
         <div class="row">
             <div class="col-md-6">
+                @can('users.create')
                 <a href="{{ BASE_URL }}/users/newUser" class="btn btn-primary userEditModal"><i class='fa fa-plus'></i> {!! __('buttons.add_user') !!} </a>
+                @endcan
             </div>
             <div class="col-md-6 align-right">
 
@@ -66,7 +68,7 @@
                         @else
                             {!! __('label.no') !!}
                         @endif</td>
-                        <td><a href="{{ BASE_URL }}/users/delUser/{{ $row['id'] }}" class="delete"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a></td>
+                        <td>@can('users.delete')<a href="{{ BASE_URL }}/users/delUser/{{ $row['id'] }}" class="delete"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a>@endcan</td>
                     </tr>
             @endforeach
             </tbody>

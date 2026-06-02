@@ -956,6 +956,13 @@ class Plugins
         Cache::store('installation')->forget('domainEvents');
         Cache::store('installation')->forget('commands');
         Cache::store('installation')->forget('plugins.enabledPlugins');
+        // Permission engine caches (provider discovery + the role->permission map/meta), all
+        // cross-request on the installation store — a documented cache clear must bust them too,
+        // or a newly-shipped domain/plugin permission class stays invisible (and acts as a
+        // recovery path if the provider cache ever goes stale).
+        Cache::store('installation')->forget('permissionProviders');
+        Cache::store('installation')->forget('leantime.permissionMap');
+        Cache::store('installation')->forget('leantime.permissionMeta');
 
         session()->forget('template_paths');
         session()->forget('composers');

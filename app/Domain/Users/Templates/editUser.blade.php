@@ -37,6 +37,14 @@
                     <select name="role" id="role">
 
                         @foreach ($roles as $key => $role)
+                            {{-- Privilege ceiling (parity with newUser): a manager may never
+                                 assign the admin(40)/owner(50) roles. Editing users is admin+
+                                 today, so this is defense-in-depth against any future widening
+                                 of who can reach this screen — a lower role must never be able
+                                 to escalate an account above its own authority. --}}
+                            @if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30)
+                                @continue
+                            @endif
                             <option value="{{ $key }}"
                                 @if ($key == $values['role']) selected="selected" @endif>
                                 {!! __('label.roles.' . $role) !!}

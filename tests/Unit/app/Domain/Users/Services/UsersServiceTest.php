@@ -2,6 +2,8 @@
 
 namespace Unit\app\Domain\Users\Services;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\UI\Theme as ThemeCore;
@@ -340,5 +342,127 @@ class UsersServiceTest extends TestCase
             ->searchProjectUsers(5);
 
         $this->assertSame([], $users);
+    }
+
+    // ---------------------------------------------------------------------
+    // Authorization. The company-wide manage-others methods
+    // (editUser/updateUser/addUser/getAll/…) gate via the dispatch-time
+    // #[RequiresPermission(global: true)] attribute (covered by PermissionEnforcerTest).
+    // These two methods authorize in their own body, so they gate on direct calls too.
+    // ---------------------------------------------------------------------
+
+    private function denyingPermissions(): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'currentUserCan' => fn () => false,
+            'authorize' => function (): void {
+                throw new AuthorizationException;
+            },
+        ]);
+    }
+
+    private function allowingPermissions(): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'currentUserCan' => fn () => true,
+            'authorize' => fn () => null,
+        ]);
+    }
+
+    public function test_delete_user_throws_without_delete_permission(): void
+    {
+        $service = $this->makeService($this->make(UserRepository::class));
+        $service->setPermissionService($this->denyingPermissions());
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->deleteUser(5);
+    }
+
+    public function test_patch_user_allows_self_with_limited_fields_without_edit_permission(): void
+    {
+        session(['userdata' => ['id' => 7]]);
+
+        $patched = [];
+        $service = $this->makeService($this->make(UserRepository::class, [
+            'patchUser' => function ($id, $fields) use (&$patched) {
+                $patched = ['id' => $id, 'fields' => $fields];
+
+                return true;
+            },
+        ]));
+        $service->setPermissionService($this->denyingPermissions()); // no users.edit
+
+        // Editing OWN account (id === session user) is allowed even without users.edit...
+        $result = $service->patchUser(7, ['firstname' => 'Bob', 'role' => '50']);
+
+        $this->assertTrue($result);
+        $this->assertSame(7, $patched['id']);
+        $this->assertArrayHasKey('firstname', $patched['fields']);
+        // ...but the privileged 'role' field is stripped — no self privilege-escalation.
+        $this->assertArrayNotHasKey('role', $patched['fields']);
+    }
+
+    public function test_patch_user_denies_other_account_without_edit_permission(): void
+    {
+        session(['userdata' => ['id' => 7]]);
+
+        $service = $this->makeService($this->make(UserRepository::class, [
+            'patchUser' => fn () => true,
+        ]));
+        $service->setPermissionService($this->denyingPermissions());
+
+        // Patching ANOTHER account without users.edit must fail (closes the RPC escalation hole).
+        $this->assertFalse($service->patchUser(99, ['role' => '50']));
+    }
+
+    public function test_patch_user_allows_other_account_with_edit_permission(): void
+    {
+        session(['userdata' => ['id' => 7]]);
+
+        $patched = [];
+        $service = $this->makeService($this->make(UserRepository::class, [
+            'patchUser' => function ($id, $fields) use (&$patched) {
+                $patched = ['id' => $id, 'fields' => $fields];
+
+                return true;
+            },
+        ]));
+        $service->setPermissionService($this->allowingPermissions()); // has users.edit
+
+        $result = $service->patchUser(99, ['role' => '20']);
+
+        $this->assertTrue($result);
+        $this->assertSame(99, $patched['id']);
+        // A users.edit holder may set privileged fields on another account.
+        $this->assertArrayHasKey('role', $patched['fields']);
+    }
+
+    public function test_self_service_methods_ignore_caller_supplied_id_and_pin_to_session(): void
+    {
+        // Self-service methods (editOwn/saveOwn*/getOwn*/changeOwnPassword) must operate on the
+        // authenticated user only — over JSON-RPC a caller controls the $userId argument, so a
+        // foreign id must NOT be honored (otherwise it is a cross-account IDOR). Representative
+        // check via changeOwnPassword: the credential lookup must hit the SESSION user (7), not
+        // the attacker-supplied id (99).
+        session(['userdata' => ['id' => 7]]);
+
+        $seenId = null;
+        $repo = $this->make(UserRepository::class, [
+            'getUser' => function ($id) use (&$seenId) {
+                $seenId = $id;
+
+                return [
+                    'id' => $id,
+                    'password' => password_hash('correct-horse', PASSWORD_DEFAULT),
+                    'firstname' => 'A', 'lastname' => 'B', 'username' => 'a@b.com',
+                    'phone' => '', 'notifications' => 1, 'twoFAEnabled' => 0,
+                ];
+            },
+        ]);
+
+        $this->makeService($repo)->changeOwnPassword(99, 'wrong', 'NewPass1!', 'NewPass1!');
+
+        $this->assertSame(7, $seenId, 'self-service must pin to the session user, not the caller-supplied id');
     }
 }

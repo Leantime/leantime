@@ -61,7 +61,16 @@ final class DefaultRolePermissions
             ['scope' => 'project', 'keys' => ['comments.create']],
         ],
         'editor' => [['scope' => 'project', 'verbs' => ['create', 'edit', 'delete']]],
-        'manager' => [['scope' => 'project', 'verbs' => ['*']]],
+        'manager' => [
+            ['scope' => 'project', 'verbs' => ['*']],
+            // Managers may INVITE users (the NewUser screen is manager+). The client-scoping
+            // — a manager can only invite into their own client — stays in the controller/
+            // service, not here. They CANNOT view the roster, edit, delete, or import users;
+            // those remain admin+. users.* are company-wide, so this is an explicit global
+            // key grant rather than a 'create' verb rule (a verb rule would also need a global
+            // scope and is fine, but the explicit key documents that ONLY create is intended).
+            ['scope' => 'global', 'keys' => ['users.create']],
+        ],
         'admin' => [['scope' => 'any', 'verbs' => ['*'], 'exclude' => ['company.settings.*']]],
         'owner' => [['scope' => 'any', 'verbs' => ['*']]],
     ];

@@ -2,11 +2,13 @@
 
 namespace Leantime\Domain\Users\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Users\Permissions\UsersPermissions;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -36,14 +38,9 @@ class NewUser extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(UsersPermissions::CREATE, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
-            return $this->tpl->displayPartial('errors.error403');
-        }
-
         $projectrelation = [];
         if (isset($params['preSelectProjectId'])) {
             $preSelected = explode(',', $params['preSelectProjectId']);
@@ -65,14 +62,9 @@ class NewUser extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(UsersPermissions::CREATE, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
-            return $this->tpl->displayPartial('errors.error403');
-        }
-
         $values = $this->getDefaultValues();
         $projectrelation = [];
 

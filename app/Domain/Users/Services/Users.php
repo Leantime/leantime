@@ -4,7 +4,8 @@ namespace Leantime\Domain\Users\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
-use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Support\Avatarcreator;
@@ -19,6 +20,7 @@ use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
+use Leantime\Domain\Users\Permissions\UsersPermissions;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Ramsey\Uuid\Uuid;
 use SVG\SVG;
@@ -27,10 +29,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @api
  */
-class Users
+class Users extends BaseService
 {
-    use DispatchesEvents;
-
     public function __construct(
         protected UserRepository $userRepo,
         protected LanguageCore $language,
@@ -52,6 +52,10 @@ class Users
      * @throws BindingResolutionException
      *
      * @api
+     *
+     * Intentionally NOT gated by a users.* permission: avatars are non-sensitive and rendered
+     * for every user across the app (the avatar route resolves through here). The sensitive
+     * account/roster surface is getAll()/getAllVisibleToUser(), which ARE users.view-gated.
      */
     public function getProfilePicture($id): SVG|Response|string
     {
@@ -84,6 +88,7 @@ class Users
     /**
      * @api
      */
+    #[RequiresPermission(UsersPermissions::EDIT, global: true)]
     public function editUser($values, $id): bool
     {
 
@@ -96,6 +101,7 @@ class Users
     /**
      * @api
      */
+    #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getNumberOfUsers(bool $activeOnly = false, bool $includeApi = true): int
     {
         $filters = [];
@@ -116,6 +122,7 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getAll(bool $activeOnly = false): mixed
     {
         $users = $this->userRepo->getAll($activeOnly);
@@ -143,6 +150,11 @@ class Users
      * user id (the login response returns the access-token row id, not
      * the underlying user id), so they need a "who am I" endpoint that
      * doesn't require the answer they're trying to look up.
+     *
+     * Intentionally NOT gated by users.view: this is the foundational user read used by dozens
+     * of internal view composers (comment authors, assignees, avatars) and the self "who am I"
+     * lookup — gating it would break those for non-admins. The sensitive roster/management
+     * surface is getAll()/getAllVisibleToUser(), which ARE users.view-gated.
      */
     public function getUser($id = null): array|bool
     {
@@ -167,6 +179,7 @@ class Users
     /**
      * @api
      */
+    #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getUserByEmail($email, $status = 'a'): false|array
     {
         return $this->userRepo->getUserByEmail($email, $status);
@@ -175,6 +188,7 @@ class Users
     /**
      * @api
      */
+    #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getAllBySource($source): false|array
     {
         return $this->userRepo->getAllBySource($source);
@@ -273,8 +287,6 @@ class Users
      *
      * @param  string  $password  The string to be checked
      * @return bool returns true if password meets requirements
-     *
-     * @api
      */
     public function checkPasswordStrength(string $password): bool
     {
@@ -307,6 +319,7 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::CREATE, global: true)]
     public function createUserInvite(array $values): bool|int
     {
 
@@ -362,6 +375,7 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::CREATE, global: true)]
     public function addUser(array $values): bool|int
     {
         $values = [
@@ -396,6 +410,7 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function usernameExist(string $username, int|string $notUserId = ''): bool
     {
         return $this->userRepo->usernameExist($username, $notUserId);
@@ -412,6 +427,7 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::EDIT, entityScoped: true)]
     public function patchUser(int $id, array $params): bool
     {
         $currentUserId = (int) session('userdata.id');
@@ -429,8 +445,8 @@ class Users
             'status', 'user',
         ];
 
-        if (Auth::userIsAtLeast(Roles::$admin)) {
-            // Admins can patch any user, but only whitelisted fields
+        if ($this->can(UsersPermissions::EDIT, forceGlobal: true)) {
+            // users.edit holders (admin+) can patch any user, but only whitelisted fields
             $filteredParams = array_intersect_key($params, array_flip($adminPatchableFields));
         } elseif ($id === $currentUserId) {
             // Regular users can only patch their own profile with limited fields
@@ -577,10 +593,16 @@ class Users
     }
 
     /**
-     * @api
+     * @internal Self-service only — invoked by saveOwnProfile() with the session user's id.
+     *           Intentionally NOT @api: it writes name/email/notifications to $id, so exposing
+     *           it over JSON-RPC would be an IDOR account takeover. The id is pinned to the
+     *           session user below as defense-in-depth.
      */
     public function editOwn($values, $id): void
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id).
+        $id = (int) session('userdata.id');
+
         $this->userRepo->editOwn($values, $id);
 
         $user = $this->getUser($id);
@@ -600,17 +622,18 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::DELETE, entityScoped: true)]
     public function deleteUser(int $id): bool
     {
+        // Defense-in-depth: authorize on every call (RPC + the DelUser controller). The
+        // attribute defers (entityScoped), so this in-method check is the single source of
+        // truth and throws AuthorizationException (RPC -32001 / 403) when denied.
+        $this->authorize(UsersPermissions::DELETE, forceGlobal: true);
 
-        if (Auth::userIsAtLeast(Roles::$admin, true)) {
-            $this->userRepo->deleteUser($id);
-            $this->projectRepository->deleteAllProjectRelations($id);
+        $this->userRepo->deleteUser($id);
+        $this->projectRepository->deleteAllProjectRelations($id);
 
-            return true;
-        }
-
-        throw new \Exception('Not authorized');
+        return true;
     }
 
     /**
@@ -624,6 +647,7 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getAllVisibleToUser(): array
     {
         if (Auth::userIsAtLeast(Roles::$admin)) {
@@ -647,6 +671,10 @@ class Users
      */
     public function getOwnProfileSettings(int $userId): array
     {
+        // Self-service read: pin to the authenticated user (ignore any caller-supplied id —
+        // otherwise the RPC entry point leaks another account's profile/role/2FA status).
+        $userId = (int) session('userdata.id');
+
         $row = $this->getUser($userId);
 
         if ($row === false) {
@@ -741,6 +769,9 @@ class Users
      */
     public function getNotificationPreferences(int $userId): array
     {
+        // Self-service read: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
+
         $enabledEventTypes = $this->settingsService->getSetting('usersettings.'.$userId.'.notificationEventTypes');
         if (! $enabledEventTypes) {
             $enabledEventTypes = $this->settingsService->getSetting('companysettings.defaultNotificationEventTypes');
@@ -794,6 +825,10 @@ class Users
      */
     public function saveOwnProfile(int $userId, array $post): string
     {
+        // Self-service: pin to the authenticated user; ignore any caller-supplied id so the RPC
+        // entry point cannot edit another account (IDOR). EditOwn already passes the session id.
+        $userId = (int) session('userdata.id');
+
         $row = $this->getUser($userId);
 
         $values = [
@@ -844,6 +879,10 @@ class Users
      */
     public function changeOwnPassword(int $userId, string $currentPassword, string $newPassword, string $confirmPassword): string
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — otherwise
+        // the RPC entry point is a current-password oracle / takeover vector against any account).
+        $userId = (int) session('userdata.id');
+
         $row = $this->getUser($userId);
 
         if (! password_verify($currentPassword, $row['password'])) {
@@ -884,6 +923,9 @@ class Users
      */
     public function saveOwnAppearanceSettings(int $userId, array $post): void
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
+
         $postTheme = htmlentities($post['theme'] ?? 'default');
         $postColorMode = htmlentities($post['colormode'] ?? 'light');
         $postColorScheme = htmlentities($post['colorscheme'] ?? 'themeDefault');
@@ -913,6 +955,9 @@ class Users
      */
     public function saveOwnLocaleSettings(int $userId, array $post): void
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
+
         $postLang = htmlentities($post['language'] ?? '');
         $dateFormat = htmlentities($post['date_format'] ?? '');
         $timeFormat = htmlentities($post['time_format'] ?? '');
@@ -949,6 +994,9 @@ class Users
      */
     public function saveOwnNotificationPreferences(int $userId, array $post): void
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
+
         $row = $this->getUser($userId);
 
         $values = [
@@ -1010,8 +1058,6 @@ class Users
      * @link https://www.php.net/manual/en/class.datetimeinterface.php#datetimeinterface.constants.types
      *
      * @return array<string, array<int, string>> Format groups keyed by 'dates'/'times'.
-     *
-     * @api
      */
     public function getSupportedDateTimeFormats(): array
     {
@@ -1106,8 +1152,6 @@ class Users
      * @param  int  $id  The id of the user being edited.
      * @param  array<string, mixed>  $post  Raw request input (for password comparison).
      * @return string Status code described above.
-     *
-     * @api
      */
     public function validateUserUpdate(array $values, array $row, int $id, array $post): string
     {
@@ -1140,6 +1184,7 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::EDIT, global: true)]
     public function updateUser(array $values, int $id, ?array $projects): void
     {
         $this->editUser($values, $id);
@@ -1174,6 +1219,7 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getUserProjectIds(int $userId): array
     {
         $projects = $this->projectService->getUserProjectRelation($userId);
@@ -1205,6 +1251,7 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::EDIT, global: true)]
     public function resendUserInvite(int $id, array $row): string
     {
         if (session()->exists('lastInvite.'.$id) && session('lastInvite.'.$id) >= time() - 240) {
@@ -1249,6 +1296,7 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::CREATE, global: true)]
     public function inviteNewUser(array $post, int|string|null $sessionClientId, bool $isManager): string
     {
         $values = [
@@ -1298,6 +1346,7 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::IMPORT, global: true)]
     public function fetchLdapMembers(string $bindUsername, string $password): array|false
     {
         $ldapService = app()->make(LdapService::class);
@@ -1318,6 +1367,7 @@ class Users
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::IMPORT, global: true)]
     public function importSelectedLdapUsers(array $stagedUsers, array $selectedUsernames): void
     {
         $users = [];

@@ -29,6 +29,10 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
             new Permission('comments.moderate', 'Moderate', true),
             // Company-wide (not project-scoped):
             new Permission('users.view', 'View users', false),
+            new Permission('users.create', 'Invite/create users', false),
+            new Permission('users.edit', 'Edit users', false),
+            new Permission('users.delete', 'Delete users', false),
+            new Permission('users.import', 'Import users', false),
             new Permission('company.settings.edit', 'Edit company settings', false),
         ];
     }
@@ -66,6 +70,7 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('comments.create', $grants);    // inherited
         $this->assertNotContains('comments.moderate', $grants); // manager+ only
         $this->assertNotContains('users.view', $grants);        // company-wide, admin+
+        $this->assertNotContains('users.create', $grants);      // company-wide, manager+
         $this->assertNotContains('company.settings.edit', $grants);
     }
 
@@ -75,7 +80,13 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
 
         $this->assertContains('comments.moderate', $grants);
         $this->assertContains('tickets.delete', $grants);
-        $this->assertNotContains('users.view', $grants);          // company-wide, admin+
+        // Managers may INVITE users (within their own client — scoped in the controller), but
+        // cannot view the roster, edit, delete, or import accounts (those stay admin+).
+        $this->assertContains('users.create', $grants);
+        $this->assertNotContains('users.view', $grants);
+        $this->assertNotContains('users.edit', $grants);
+        $this->assertNotContains('users.delete', $grants);
+        $this->assertNotContains('users.import', $grants);
         $this->assertNotContains('company.settings.edit', $grants);
     }
 
@@ -84,6 +95,10 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $grants = $this->grantsFor('admin');
 
         $this->assertContains('users.view', $grants);
+        $this->assertContains('users.create', $grants);
+        $this->assertContains('users.edit', $grants);
+        $this->assertContains('users.delete', $grants);
+        $this->assertContains('users.import', $grants);   // full user management
         $this->assertContains('comments.moderate', $grants);
         $this->assertContains('tickets.delete', $grants);
         $this->assertNotContains('company.settings.edit', $grants); // owner-only
