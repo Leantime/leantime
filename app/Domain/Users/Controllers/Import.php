@@ -5,10 +5,11 @@
 namespace Leantime\Domain\Users\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Ldap\Services\Ldap as LdapService;
+use Leantime\Domain\Users\Permissions\UsersPermissions;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,13 +32,9 @@ class Import extends Controller
     /**
      * @throws \Exception
      */
+    #[RequiresPermission(UsersPermissions::IMPORT, global: true)]
     public function get(): Response
     {
-        // Only Admins
-        if (! Auth::userIsAtLeast(Roles::$admin)) {
-            return $this->tpl->display('errors.error403');
-        }
-
         $this->tpl->assign('allUsers', $this->userService->getAll());
         $this->tpl->assign('admin', true);
         $this->tpl->assign('roles', Roles::getRoles());
@@ -53,6 +50,7 @@ class Import extends Controller
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(UsersPermissions::IMPORT, global: true)]
     public function post($params): Response
     {
         // Password Submit to connect to ldap and retrieve users. Sets tmp session var

@@ -86,6 +86,7 @@ class Install
         // 30504 which puts push columns on zp_access_tokens instead.
         30504,
         30505,
+        30506,
     ];
 
     /**
@@ -2731,6 +2732,28 @@ class Install
             Log::error('Migration 30505: '.$e->getMessage());
 
             return ['Migration 30505 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30506: the Users domain joined the native permission engine. Re-sync the
+     * discovered permission catalog (adds users.view/create/edit/delete/import, all
+     * company-wide) and re-seed the built-in role grants. The engine tables already exist
+     * (created in 30505), so this is table-creation-free. Both seeder calls are idempotent and
+     * additive — re-running never removes an admin's customized zp_role_permissions rows.
+     */
+    public function update_sql_30506(): bool|array
+    {
+        try {
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30506: '.$e->getMessage());
+
+            return ['Migration 30506 failed: '.$e->getMessage()];
         }
 
         return true;
