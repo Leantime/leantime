@@ -2,11 +2,13 @@
 
 namespace Leantime\Core\Console;
 
+use Illuminate\Console\Command as IlluminateCommand;
 use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\ProcessUtils;
 use Leantime\Core\Events\DispatchesEvents;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -32,6 +34,25 @@ class Application extends \Illuminate\Console\Application
         $this->events->dispatch(new ArtisanStarting($this));
 
         $this->bootstrap();
+    }
+
+    /**
+     * Inject the Laravel container into commands as they are registered.
+     *
+     * symfony/console 7.4 renamed add() to addCommand() and routes the lazy command-loader
+     * path (Application::has() -> commandLoader->get()) through addCommand(), but
+     * Illuminate\Console\Application only overrides the deprecated add() — the single place
+     * setLaravel() is called. The result is that lazily-resolved #[AsCommand] commands run
+     * with a null $laravel and fatal in Command::run(). Mirroring Illuminate's add() here on
+     * addCommand() closes that gap for every registration path (add() delegates here too).
+     */
+    public function addCommand(callable|SymfonyCommand $command): ?SymfonyCommand
+    {
+        if ($command instanceof IlluminateCommand) {
+            $command->setLaravel($this->laravel);
+        }
+
+        return parent::addCommand($command);
     }
 
     /**

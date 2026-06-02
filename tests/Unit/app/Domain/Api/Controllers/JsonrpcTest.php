@@ -3,6 +3,7 @@
 namespace Tests\Unit\app\Domain\Api\Controllers;
 
 use Leantime\Core\Application;
+use Leantime\Core\Auth\Permissions\PermissionEnforcer;
 use Leantime\Core\Bootstrap\LoadConfig;
 use Leantime\Core\Bootstrap\SetRequestForConsole;
 use Leantime\Core\Language;
@@ -31,6 +32,12 @@ class JsonrpcTest extends \Unit\TestCase
         $this->app['view'] = $this->createMock(\Illuminate\View\Factory::class);
         $this->app['session'] = $this->createMock(\Illuminate\Session\SessionManager::class);
         $this->app->bootstrapWith([LoadConfig::class, SetRequestForConsole::class]);
+
+        // Jsonrpc::init() now type-hints PermissionEnforcer (resolved via app()->call in the
+        // base Controller constructor). Bind a no-op mock so the controller builds without
+        // pulling in the full permission engine (PermissionService -> Repository -> Db), which
+        // this minimal test container can't resolve. These tests don't exercise authorization.
+        $this->app->instance(PermissionEnforcer::class, $this->createMock(PermissionEnforcer::class));
 
         $this->template = $this->createMock(Template::class);
         $language = $this->createMock(Language::class);

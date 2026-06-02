@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\Permissions\PermissionEnforcer;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\HtmxRequest;
@@ -49,7 +50,7 @@ class Frontcontroller
      * @param  IncomingRequest  $incomingRequest
      * @return void
      */
-    public function __construct(IncomingRequest $request)
+    public function __construct(IncomingRequest $request, private PermissionEnforcer $permissionEnforcer)
     {
         $this->incomingRequest = $request;
         $this->config = config();
@@ -87,7 +88,9 @@ class Frontcontroller
 
     public static function dispatch_request(IncomingRequest $request): Response
     {
-        $frontcontroller = new self($request);
+        // Resolve through the container so constructor dependencies (e.g. PermissionEnforcer)
+        // are injected; dispatch() sets the active request explicitly.
+        $frontcontroller = app()->make(self::class);
 
         return $frontcontroller->dispatch($request);
     }
@@ -179,6 +182,11 @@ class Frontcontroller
     {
 
         $parameters = $this->incomingRequest->getRequestParams();
+
+        // Enforce #[RequiresPermission] on the resolved action before instantiating the
+        // controller. This is the single chokepoint for every convention-routed controller,
+        // regardless of which base class (if any) it extends.
+        $this->permissionEnforcer->enforce($controller, $method, is_array($parameters) ? $parameters : []);
 
         $controllerClass = app()->make($controller);
 

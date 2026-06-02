@@ -33,7 +33,6 @@ class AuthenticationServiceProvider extends ServiceProvider
         $this->registerRequirePassword();
         $this->registerRequestRebindHandler();
         $this->registerEventRebindHandler();
-
     }
 
     protected function registerAuthenticator()
