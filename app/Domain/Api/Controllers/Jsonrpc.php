@@ -16,6 +16,8 @@ use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Http\Responses\JsonRpcErrorResponse;
 use Leantime\Core\Http\Responses\JsonRpcResponse;
+use Leantime\Core\Plugins\Attributes\RequiresPlugin;
+use Leantime\Core\Plugins\Plugins as CorePlugins;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\HttpFoundation\Response;
@@ -216,6 +218,19 @@ class Jsonrpc extends Controller
             return $this->returnMethodNotFound("Method is not available via API: $methodName", $id);
         }
 
+        // Enforce plugin-gated methods. Methods or classes carrying #[RequiresPlugin('Name')]
+        // refuse to dispatch when the named plugin is disabled — return a JSON-RPC error
+        // with HTTP 200 body, mirroring the returnMethodNotFound pattern above.
+        $requiredPlugin = $this->getRequiredPlugin($serviceName, $methodName);
+        if ($requiredPlugin !== null && ! app()->make(CorePlugins::class)->isPluginEnabled($requiredPlugin)) {
+            return $this->returnError(
+                "Plugin '$requiredPlugin' is required but not enabled.",
+                -32004,
+                null,
+                $id
+            );
+        }
+
         if ($jsonRpcVer == null) {
             return $this->returnInvalidRequest('You must include a "jsonrpc" parameter with a value of "2.0"', $id);
         }
@@ -332,6 +347,35 @@ class Jsonrpc extends Controller
         } catch (\ReflectionException $e) {
             return false;
         }
+    }
+
+    /**
+     * Resolve the plugin name a method (or its declaring class) requires, if any.
+     *
+     * Looks for the RequiresPlugin attribute on the method first, then the class.
+     * Method-level wins over class-level.
+     *
+     * @return string|null The required plugin folder name, or null if not gated
+     */
+    private function getRequiredPlugin(string $serviceName, string $methodName): ?string
+    {
+        try {
+            $method = new ReflectionMethod($serviceName, $methodName);
+            $attrs = $method->getAttributes(RequiresPlugin::class);
+            if (! empty($attrs)) {
+                return $attrs[0]->newInstance()->pluginName;
+            }
+
+            $class = new ReflectionClass($serviceName);
+            $classAttrs = $class->getAttributes(RequiresPlugin::class);
+            if (! empty($classAttrs)) {
+                return $classAttrs[0]->newInstance()->pluginName;
+            }
+        } catch (\ReflectionException $e) {
+            return null;
+        }
+
+        return null;
     }
 
     /**
