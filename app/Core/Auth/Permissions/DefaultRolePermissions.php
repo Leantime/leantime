@@ -47,11 +47,19 @@ final class DefaultRolePermissions
      * Each rule: scope = project|global|any; verbs = list of last-segment verbs or ['*'];
      * exclude = exact keys or 'prefix.*' globs removed from the match.
      *
-     * @var array<string, array<int, array{scope: string, verbs: array<int, string>, exclude?: array<int, string>}>>
+     * A rule grants by `verbs` (the convention) OR by explicit `keys` (for permissions that
+     * don't follow the verb convention).
+     *
+     * @var array<string, array<int, array{scope: string, verbs?: array<int, string>, keys?: array<int, string>, exclude?: array<int, string>}>>
      */
     private const GRANTS = [
         'readonly' => [['scope' => 'project', 'verbs' => ['view']]],
-        'commenter' => [['scope' => 'project', 'verbs' => ['comment', 'upload']]],
+        'commenter' => [
+            ['scope' => 'project', 'verbs' => ['comment', 'upload']],
+            // Commenting via the Comments domain: the 'create' verb otherwise seeds at
+            // editor+, but a commenter is allowed to add comments — grant the key explicitly.
+            ['scope' => 'project', 'keys' => ['comments.create']],
+        ],
         'editor' => [['scope' => 'project', 'verbs' => ['create', 'edit', 'delete']]],
         'manager' => [['scope' => 'project', 'verbs' => ['*']]],
         'admin' => [['scope' => 'any', 'verbs' => ['*'], 'exclude' => ['company.settings.*']]],
@@ -109,7 +117,7 @@ final class DefaultRolePermissions
     }
 
     /**
-     * @param  array{scope: string, verbs: array<int, string>, exclude?: array<int, string>}  $rule
+     * @param  array{scope: string, verbs?: array<int, string>, keys?: array<int, string>, exclude?: array<int, string>}  $rule
      */
     private static function matches(Permission $permission, array $rule): bool
     {
@@ -120,8 +128,13 @@ final class DefaultRolePermissions
             return false;
         }
 
+        // Explicit key allow-list (for permissions that don't follow the verb convention).
+        if (isset($rule['keys'])) {
+            return in_array($permission->key, $rule['keys'], true);
+        }
+
         $verb = Str::afterLast($permission->key, '.');
-        if ($rule['verbs'] !== ['*'] && ! in_array($verb, $rule['verbs'], true)) {
+        if (($rule['verbs'] ?? []) !== ['*'] && ! in_array($verb, $rule['verbs'] ?? [], true)) {
             return false;
         }
 

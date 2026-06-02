@@ -3,16 +3,16 @@
 namespace Leantime\Domain\Tickets\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Support\FromFormat;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Files\Services\Files as FileService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
@@ -43,8 +43,6 @@ class NewTicket extends Controller
         TimesheetService $timesheetService,
         UserService $userService
     ): void {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
         $this->sprintService = $sprintService;
@@ -61,6 +59,7 @@ class NewTicket extends Controller
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(TicketsPermissions::CREATE)]
     public function get(): Response
     {
         $ticket = app()->make(TicketModel::class, [
@@ -105,6 +104,7 @@ class NewTicket extends Controller
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(TicketsPermissions::CREATE)]
     public function post($params): Response
     {
         if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {

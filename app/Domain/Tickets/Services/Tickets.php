@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
@@ -29,6 +30,7 @@ use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Repositories\TicketHistory;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
@@ -37,7 +39,7 @@ use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 /**
  * @api
  */
-class Tickets
+class Tickets extends BaseService
 {
     use DispatchesEvents;
 
@@ -2068,9 +2070,10 @@ class Tickets
             'collaborators' => $values['collaborators'] ?? [],
         ];
 
-        if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $values['projectId'])) {
-            return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
-        }
+        // Editor+ role in the target project AND access to it (engine combines capability +
+        // project membership). Replaces the previous access-only check, which let any
+        // assigned role create via RPC.
+        $this->authorize(TicketsPermissions::CREATE, (int) $values['projectId']);
 
         if ($values['headline'] === '') {
             return ['msg' => 'notifications.ticket_save_error_no_headline', 'type' => 'error'];
@@ -2401,18 +2404,15 @@ class Tickets
      */
     public function patchTicket(int $id, array $values): bool
     {
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            throw new AuthorizationException('You are not allowed to edit tasks.');
-        }
-
+        // getTicket() returns false when the user can't access the ticket's project.
         $ticket = $this->getTicket($id);
         if (! $ticket) {
             throw new NotFoundException('The task you tried to edit could not be found.');
         }
 
-        if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $ticket->projectId)) {
-            throw new AuthorizationException('You are not allowed to edit this task.');
-        }
+        // Editor+ in the ticket's project (project-scoped role, not the session role) AND
+        // access to it. Replaces the prior session-scoped userIsAtLeast + assignment checks.
+        $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
         return $this->patch($id, $values);
     }
@@ -3240,9 +3240,12 @@ class Tickets
 
         $ticket = $this->getTicket($id);
 
-        if (! $ticket || ! $this->projectService->isUserAssignedToProject(session('userdata.id'), $ticket->projectId)) {
+        if (! $ticket) {
             return ['msg' => 'notifications.ticket_delete_error', 'type' => 'error'];
         }
+
+        // Editor+ in the ticket's project AND access to it (was access-only, no role gate).
+        $this->authorize(TicketsPermissions::DELETE, (int) $ticket->projectId);
 
         // Collaborator relationship rows are cleaned up inside the repository's delticket().
         if ($this->ticketRepository->delticket($id)) {
@@ -3286,9 +3289,12 @@ class Tickets
 
         $ticket = $this->getTicket($id);
 
-        if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $ticket->projectId)) {
+        if (! $ticket) {
             return ['msg' => 'notifications.milestone_delete_error', 'type' => 'error'];
         }
+
+        // Editor+ in the milestone's project AND access to it (was access-only, no role gate).
+        $this->authorize(TicketsPermissions::DELETE, (int) $ticket->projectId);
 
         if ($this->ticketRepository->delMilestone($id)) {
             self::dispatchEvent('milestone_deleted');

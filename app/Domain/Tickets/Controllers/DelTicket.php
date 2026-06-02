@@ -2,10 +2,10 @@
 
 namespace Leantime\Domain\Tickets\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,57 +15,41 @@ class DelTicket extends Controller
 
     public function init(TicketService $ticketService): void
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $this->ticketService = $ticketService;
     }
 
     /**
      * @throws \Exception
      */
+    #[RequiresPermission(TicketsPermissions::DELETE)]
     public function get(): Response
     {
-
-        // Only admins
-        if (Auth::userIsAtLeast(Roles::$editor)) {
-
-            if (isset($_GET['id'])) {
-                $id = (int) ($_GET['id']);
-
-                try {
-
-                    $this->ticketService->canDelete($id);
-
-                } catch (\Exception $e) {
-
-                    $this->tpl->assign('error', $e->getMessage());
-
-                    return $this->tpl->displayPartial('tickets.delTicket');
-                }
-
-                $this->tpl->assign('error', '');
-                $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-
-                return $this->tpl->displayPartial('tickets.delTicket');
-
-            } else {
-                return $this->tpl->display('errors.error404', responseCode: 404);
-            }
-        } else {
-            return $this->tpl->display('errors.error403', responseCode: 403);
+        if (! isset($_GET['id'])) {
+            return $this->tpl->display('errors.error404', responseCode: 404);
         }
+
+        $id = (int) $_GET['id'];
+
+        try {
+            $this->ticketService->canDelete($id);
+        } catch (\Exception $e) {
+            $this->tpl->assign('error', $e->getMessage());
+
+            return $this->tpl->displayPartial('tickets.delTicket');
+        }
+
+        $this->tpl->assign('error', '');
+        $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+
+        return $this->tpl->displayPartial('tickets.delTicket');
     }
 
     /**
      * @throws \Exception
      */
+    #[RequiresPermission(TicketsPermissions::DELETE)]
     public function post($params): Response
     {
-        // Only admins
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
-        }
-
         if (! isset($params['del'])) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
