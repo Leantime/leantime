@@ -80,7 +80,7 @@ class Tickets
 
     public array $type = ['task', 'subtask', 'story', 'bug'];
 
-    public array $typeIcons = ['story' => 'fa-book', 'task' => 'fa-check-square', 'subtask' => 'fa-diagram-successor', 'bug' => 'fa-bug'];
+    public array $typeIcons = ['story' => 'fa-book', 'task' => 'fa-check-square', 'subtask' => 'fa-diagram-successor', 'bug' => 'fa-bug', 'milestone' => 'fa-flag'];
 
     /**
      * @var bool
