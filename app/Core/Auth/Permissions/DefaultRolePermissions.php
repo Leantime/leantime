@@ -143,16 +143,21 @@ final class DefaultRolePermissions
             return false;
         }
 
-        // Explicit key allow-list (for permissions that don't follow the verb convention).
+        // A rule matches by EITHER an explicit key allow-list (for permissions that don't follow
+        // the verb convention) OR by verb. Compute the base match first...
         if (isset($rule['keys'])) {
-            return in_array($permission->key, $rule['keys'], true);
+            $matched = in_array($permission->key, $rule['keys'], true);
+        } else {
+            $verb = Str::afterLast($permission->key, '.');
+            $matched = ($rule['verbs'] ?? []) === ['*'] || in_array($verb, $rule['verbs'] ?? [], true);
         }
 
-        $verb = Str::afterLast($permission->key, '.');
-        if (($rule['verbs'] ?? []) !== ['*'] && ! in_array($verb, $rule['verbs'] ?? [], true)) {
+        if (! $matched) {
             return false;
         }
 
+        // ...then ALWAYS apply the exclude list, so an `exclude` alongside `keys` is honored (a
+        // `keys` rule previously returned early and bypassed the exclude, risking an over-grant).
         foreach ($rule['exclude'] ?? [] as $excluded) {
             if ($excluded === $permission->key) {
                 return false;

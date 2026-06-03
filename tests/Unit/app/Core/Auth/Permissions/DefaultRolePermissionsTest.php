@@ -146,4 +146,27 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('comments.moderate', $grants);
         $this->assertContains('tickets.delete', $grants);
     }
+
+    /**
+     * Regression: a rule that combines an explicit `keys` allow-list with an `exclude` list must
+     * still honor the exclude. matches() previously returned early for `keys` rules and bypassed
+     * the exclude entirely, which could over-grant an excluded permission.
+     */
+    public function test_keys_rule_still_honors_exclude(): void
+    {
+        $matches = new \ReflectionMethod(DefaultRolePermissions::class, 'matches');
+        $matches->setAccessible(true);
+
+        $rule = [
+            'scope' => 'global',
+            'keys' => ['company.settings.view', 'company.settings.edit'],
+            'exclude' => ['company.settings.edit'],
+        ];
+
+        $included = new Permission('company.settings.view', 'View', false);
+        $excluded = new Permission('company.settings.edit', 'Edit', false);
+
+        $this->assertTrue($matches->invoke(null, $included, $rule), 'A keys-listed, non-excluded permission still matches');
+        $this->assertFalse($matches->invoke(null, $excluded, $rule), 'A keys-listed permission that is also excluded must NOT match');
+    }
 }
