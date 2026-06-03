@@ -92,6 +92,7 @@ class Install
         30509,
         30510,
         30511,
+        30512,
     ];
 
     /**
@@ -2894,6 +2895,34 @@ class Install
             Log::error('Migration 30511: '.$e->getMessage());
 
             return ['Migration 30511 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Sync the permission catalog + re-seed built-in role grants for the Blueprints (canvas)
+     * domain. Adds blueprints.view/create/edit/delete (all project-scoped); the standard verbs
+     * auto-grant via the existing project rules (readonly view; editor create/edit/delete;
+     * manager+ all). Table-creation-free; idempotent + additive.
+     *
+     * Flush the discovered-provider cache FIRST — an install that already ran the earlier
+     * permission migrations cached the provider list WITHOUT BlueprintsPermissions, so seeding
+     * against that stale list would never create the blueprints.* keys (and every role would
+     * then be denied canvas access, since currentUserCan requires the role to hold the key).
+     */
+    public function update_sql_30512(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30512: '.$e->getMessage());
+
+            return ['Migration 30512 failed: '.$e->getMessage()];
         }
 
         return true;

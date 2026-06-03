@@ -110,6 +110,56 @@ class Blueprints extends Repository
     }
 
     /**
+     * Resolve the project id a canvas ITEM ultimately belongs to (item → board → project),
+     * optionally constrained to a canvas $canvasType. Returns null when the item does not exist
+     * OR its board is of a different type.
+     *
+     * This is a fail-CLOSED primitive: the service layer uses it to authorize by-id item
+     * operations against the item's REAL project, never the caller's session project. A
+     * `null` return must be treated as "deny" — never as "fall back to currentProject".
+     *
+     * @param  int  $itemId  Canvas item id
+     * @param  string|null  $canvasType  Constrain to this board type (e.g. "swotcanvas"); null = any type
+     */
+    public function getCanvasItemProjectId(int $itemId, ?string $canvasType = null): ?int
+    {
+        $query = $this->connection->table('zp_canvas_items')
+            ->leftJoin('zp_canvas', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
+            ->where('zp_canvas_items.id', $itemId);
+
+        if ($canvasType !== null) {
+            $query->where('zp_canvas.type', $canvasType);
+        }
+
+        $projectId = $query->value('zp_canvas.projectId');
+
+        return $projectId !== null ? (int) $projectId : null;
+    }
+
+    /**
+     * Resolve the project id a canvas BOARD belongs to, optionally constrained to a canvas
+     * $canvasType. Returns null when the board does not exist OR is of a different type.
+     *
+     * Fail-CLOSED companion to {@see getCanvasItemProjectId()} for by-id board operations.
+     *
+     * @param  int  $canvasId  Canvas board id
+     * @param  string|null  $canvasType  Constrain to this board type; null = any type
+     */
+    public function getCanvasProjectId(int $canvasId, ?string $canvasType = null): ?int
+    {
+        $query = $this->connection->table('zp_canvas')
+            ->where('id', $canvasId);
+
+        if ($canvasType !== null) {
+            $query->where('type', $canvasType);
+        }
+
+        $projectId = $query->value('projectId');
+
+        return $projectId !== null ? (int) $projectId : null;
+    }
+
+    /**
      * @param  int  $id  Canvas board ID
      */
     public function deleteCanvas(int $id): void

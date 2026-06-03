@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\UI\Template;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -32,6 +34,7 @@ class ShowBoards
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
+    #[RequiresPermission(BlueprintsPermissions::VIEW)]
     public function get(): Response
     {
         $overview = $this->blueprintsService->getBoardsOverview((int) session('currentProject'));

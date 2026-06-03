@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\UI\Template;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
-use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Blueprints\Services\TemplateRegistry;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
@@ -25,6 +26,9 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * Replaces the old per-variant Canvas\Controllers\EditCanvasComment subclasses.
  * The canvas type slug comes from the route instead of a class constant.
+ *
+ * All by-id item access goes through the Blueprints service, which authorizes against the
+ * item's real project — the controller never reads/writes canvas items via the repository.
  */
 class EditCanvasComment
 {
@@ -43,8 +47,7 @@ class EditCanvasComment
      * @param  SprintService  $sprintService  Sprint service
      * @param  TicketService  $ticketService  Ticket service
      * @param  ProjectService  $projectService  Project service
-     * @param  BlueprintsRepository  $blueprintsRepo  Blueprints repository
-     * @param  BlueprintsService  $blueprintsService  Blueprints service
+     * @param  BlueprintsService  $blueprintsService  Blueprints service (project-authorized item CRUD)
      * @param  TemplateRegistry  $templateRegistry  Template registry
      */
     public function __construct(
@@ -56,7 +59,6 @@ class EditCanvasComment
         private SprintService $sprintService,
         private TicketService $ticketService,
         private ProjectService $projectService,
-        private BlueprintsRepository $blueprintsRepo,
         private BlueprintsService $blueprintsService,
         TemplateRegistry $templateRegistry,
     ) {
@@ -69,6 +71,7 @@ class EditCanvasComment
      *
      * @param  string|null  $id  Canvas item id from the route
      */
+    #[RequiresPermission(BlueprintsPermissions::VIEW, entityScoped: true)]
     public function get(?string $id = null): Response
     {
         $data = $this->request->getRequestParams();
@@ -80,34 +83,42 @@ class EditCanvasComment
             return $this->tpl->displayPartial('errors.error404');
         }
 
+        $canvasType = $this->template->getDatabaseType();
         $commentModule = $this->template->getCommentModule();
         $canvasTypes = $this->blueprintsService->getTranslatedBoxes($this->template);
         $statusLabels = $this->blueprintsService->getTranslatedStatusLabels($this->template);
         $relatesLabels = $this->blueprintsService->getTranslatedRelatesLabels($this->template);
 
         if (isset($data['id'])) {
-            // Delete comment
-            if (isset($data['delComment']) === true) {
-                $commentId = (int) ($data['delComment']);
-                $this->commentsRepo->deleteComment($commentId);
-                $this->tpl->setNotification(
-                    $this->language->__('notifications.comment_deleted'),
-                    'success',
-                    strtoupper($this->canvasSlug).'canvascomment_deleted'
-                );
-            }
-
-            $canvasItem = $this->blueprintsRepo->getSingleCanvasItem((int) $data['id']);
-
-            if ($canvasItem) {
-                $comments = $this->commentsRepo->getComments($commentModule, $canvasItem['id']);
-                $this->tpl->assign(
-                    'numComments',
-                    $this->commentsRepo->countComments($commentModule, $canvasItem['id'])
-                );
-            } else {
+            // Resolve + VIEW-authorize the item against its real project before anything else.
+            $canvasItem = $this->blueprintsService->getCanvasItem((int) $data['id'], $canvasType);
+            if (! $canvasItem) {
                 return $this->tpl->displayPartial('errors.error404');
             }
+
+            // Delete comment — ONLY when it belongs to THIS gated item (module + moduleId).
+            // deleteComment() filters on the comment id alone, so without this bind a viewable
+            // item would let any global comment id be deleted (cross-item / cross-project).
+            if (isset($data['delComment']) === true) {
+                $commentId = (int) ($data['delComment']);
+                $comment = $this->commentsRepo->getComment($commentId);
+                if ($comment !== false
+                    && (string) $comment['module'] === $commentModule
+                    && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
+                    $this->commentsRepo->deleteComment($commentId);
+                    $this->tpl->setNotification(
+                        $this->language->__('notifications.comment_deleted'),
+                        'success',
+                        strtoupper($this->canvasSlug).'canvascomment_deleted'
+                    );
+                }
+            }
+
+            $comments = $this->commentsRepo->getComments($commentModule, $canvasItem['id']);
+            $this->tpl->assign(
+                'numComments',
+                $this->commentsRepo->countComments($commentModule, $canvasItem['id'])
+            );
         } else {
             if (isset($data['type'])) {
                 $type = strip_tags($data['type']);
@@ -144,6 +155,7 @@ class EditCanvasComment
      *
      * @param  string|null  $id  Canvas item id from the route
      */
+    #[RequiresPermission(BlueprintsPermissions::EDIT, entityScoped: true)]
     public function post(?string $id = null): Response
     {
         $data = $this->request->getRequestParams();
@@ -155,6 +167,7 @@ class EditCanvasComment
             return $this->tpl->displayPartial('errors.error404');
         }
 
+        $canvasType = $this->template->getDatabaseType();
         $commentModule = $this->template->getCommentModule();
         $sessionKey = $this->template->getSessionKey();
         $basePath = '/blueprints/'.$this->canvasSlug;
@@ -180,7 +193,8 @@ class EditCanvasComment
                         'dependentMilstone' => '',
                     ];
 
-                    $this->blueprintsRepo->editCanvasItem($canvasItem);
+                    // Resolves the item's real project from itemId and authorizes EDIT there.
+                    $this->blueprintsService->updateCanvasItem($canvasItem, $canvasType);
 
                     $comments = $this->commentsRepo->getComments($commentModule, $data['itemId']);
                     $this->tpl->assign('numComments', $this->commentsRepo->countComments(
@@ -234,7 +248,8 @@ class EditCanvasComment
                         'canvasId' => $currentCanvasId,
                     ];
 
-                    $id = $this->blueprintsRepo->addCanvasItem($canvasItem);
+                    // Resolves the target board's real project from canvasId and authorizes CREATE.
+                    $id = $this->blueprintsService->createCanvasItem($canvasItem, $canvasType);
 
                     $canvasItem['id'] = $id;
 
@@ -280,6 +295,12 @@ class EditCanvasComment
 
         if (isset($data['comment']) === true) {
             $itemId = (int) ($data['id'] ?? 0);
+
+            // Only allow commenting on an item the user can view in their project.
+            if (! $this->blueprintsService->getCanvasItem($itemId, $canvasType)) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
             $values = [
                 'text' => $data['text'],
                 'date' => date('Y-m-d H:i:s'),
@@ -319,7 +340,7 @@ class EditCanvasComment
         $itemId = (int) ($data['id'] ?? 0);
         $this->tpl->assign('id', $itemId);
         $this->tpl->assign('canvasTypes', $this->blueprintsService->getTranslatedBoxes($this->template));
-        $this->tpl->assign('canvasItem', $this->blueprintsRepo->getSingleCanvasItem($itemId));
+        $this->tpl->assign('canvasItem', $this->blueprintsService->getCanvasItem($itemId, $canvasType));
         $this->tpl->assign('canvasSlug', $this->canvasSlug);
 
         return $this->tpl->displayPartial('blueprints.canvasComment');

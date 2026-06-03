@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\UI\Template;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Blueprints\Services\TemplateRegistry;
@@ -63,6 +65,7 @@ class ShowCanvas
      *
      * @param  string|null  $id  Active board id from the route
      */
+    #[RequiresPermission(BlueprintsPermissions::VIEW, entityScoped: true)]
     public function get(?string $id = null): Response
     {
         $data = $this->request->getRequestParams();
@@ -94,6 +97,7 @@ class ShowCanvas
      *
      * @param  string|null  $id  Active board id from the route
      */
+    #[RequiresPermission(BlueprintsPermissions::EDIT, entityScoped: true)]
     public function post(?string $id = null): Response
     {
         $data = $this->request->getRequestParams();
@@ -119,7 +123,8 @@ class ShowCanvas
                         'author' => session('userdata.id'),
                         'projectId' => session('currentProject'),
                     ];
-                    $currentCanvasId = $this->blueprintsRepo->addCanvas($values, $canvasType);
+                    // createBoard authorizes CREATE against the target (current) project.
+                    $currentCanvasId = $this->blueprintsService->createBoard($values, $canvasType);
 
                     $this->notifyBoardChange(
                         'email_notifications.canvas_created_message',
@@ -148,7 +153,8 @@ class ShowCanvas
         if (isset($data['editCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
             if (isset($data['canvastitle']) && ! empty($data['canvastitle'])) {
                 if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $data['canvastitle'], $canvasType)) {
-                    $this->blueprintsRepo->updateCanvas(['title' => $data['canvastitle'], 'id' => $currentCanvasId]);
+                    // renameBoard authorizes EDIT against the board's real project.
+                    $this->blueprintsService->renameBoard($currentCanvasId, $data['canvastitle'], $canvasType);
 
                     $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
 
@@ -165,10 +171,12 @@ class ShowCanvas
         if (isset($data['cloneCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
             if (isset($data['canvastitle']) && ! empty($data['canvastitle'])) {
                 if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $data['canvastitle'], $canvasType)) {
-                    $currentCanvasId = $this->blueprintsRepo->copyCanvas(
-                        session('currentProject'),
+                    // copyBoard authorizes VIEW on the source board's real project and CREATE
+                    // on the target (current) project.
+                    $currentCanvasId = $this->blueprintsService->copyBoard(
                         $currentCanvasId,
-                        session('userdata.id'),
+                        (int) session('currentProject'),
+                        (int) session('userdata.id'),
                         $data['canvastitle'],
                         $canvasType
                     );
@@ -189,7 +197,9 @@ class ShowCanvas
         // Merge board
         if (isset($data['mergeCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
             if (isset($data['canvasid']) && $data['canvasid'] > 0) {
-                if ($this->blueprintsRepo->mergeCanvas($currentCanvasId, $data['canvasid'])) {
+                // mergeBoard authorizes EDIT on the target board's project and VIEW on the
+                // source board's project — both resolved by id, so neither can cross projects.
+                if ($this->blueprintsService->mergeBoard($currentCanvasId, (int) $data['canvasid'], $canvasType)) {
                     $this->tpl->setNotification($this->language->__('notification.board_merged'), 'success');
 
                     return Frontcontroller::redirect(BASE_URL.'/blueprints/'.$this->canvasSlug.'/showCanvas/');
@@ -216,12 +226,12 @@ class ShowCanvas
 
                 if ($importCanvasId !== false) {
                     session([$sessionKey => $importCanvasId]);
-                    $canvas = $this->blueprintsRepo->getSingleCanvas((int) $importCanvasId, $canvasType);
+                    $canvas = $this->blueprintsService->getBoard((int) $importCanvasId, $canvasType);
 
                     $this->notifyBoardChange(
                         'email_notifications.canvas_imported_message',
                         'notification.board_imported',
-                        $canvas[0]['title'] ?? ''
+                        $canvas !== false ? ($canvas[0]['title'] ?? '') : ''
                     );
 
                     $this->tpl->setNotification($this->language->__('notification.board_imported'), 'success');
@@ -289,8 +299,15 @@ class ShowCanvas
         }
 
         if (isset($params['id'])) {
-            $currentCanvasId = (int) $params['id'];
-            session([$sessionKey => $currentCanvasId]);
+            // Only honor an explicit board id that belongs to the CURRENT project's boards
+            // ($allCanvas is project-scoped). A foreign/unknown id must not become the active
+            // board — otherwise renderCanvas would read another project's items (IDOR).
+            $requestedId = (int) $params['id'];
+            $projectBoardIds = array_map(static fn ($row) => (int) $row['id'], $allCanvas);
+            if (in_array($requestedId, $projectBoardIds, true)) {
+                $currentCanvasId = $requestedId;
+                session([$sessionKey => $currentCanvasId]);
+            }
         }
 
         return [$allCanvas, $currentCanvasId];
@@ -321,7 +338,9 @@ class ShowCanvas
         $this->tpl->assign('dataLabels', $this->blueprintsService->getTranslatedDataLabels($this->template));
         $this->tpl->assign('disclaimer', $this->blueprintsService->getTranslatedDisclaimer($this->template));
         $this->tpl->assign('allCanvas', $allCanvas);
-        $this->tpl->assign('canvasItems', $this->blueprintsRepo->getCanvasItemsById($currentCanvasId, $this->template->getCommentModule()));
+        // getBoardItems authorizes VIEW against the board's real project and returns [] for a
+        // foreign/unknown board, so a board id from another project can't leak its items here.
+        $this->tpl->assign('canvasItems', $this->blueprintsService->getBoardItems($currentCanvasId, $this->template->getDatabaseType(), $this->template->getCommentModule()));
         $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
 
         return $this->tpl->display('blueprints.showCanvas');

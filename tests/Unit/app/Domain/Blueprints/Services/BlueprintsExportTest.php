@@ -2,7 +2,6 @@
 
 namespace Unit\app\Domain\Blueprints\Services;
 
-use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Blueprints\Services\BlueprintsExport;
 use Leantime\Domain\Blueprints\Services\TemplateRegistry;
@@ -10,6 +9,10 @@ use Unit\TestCase;
 
 /**
  * Unit tests for the BlueprintsExport service (XML generation).
+ *
+ * exportToXml reads the board + items through the Blueprints SERVICE (getBoard / getBoardItems),
+ * which authorizes VIEW against the board's real project and returns false / [] for a
+ * missing/foreign/unauthorized board — so these stub the service, not the repository.
  */
 class BlueprintsExportTest extends TestCase
 {
@@ -17,9 +20,9 @@ class BlueprintsExportTest extends TestCase
 
     public function test_exports_a_canvas_board_to_xml(): void
     {
-        $repo = $this->make(BlueprintsRepository::class, [
-            'getSingleCanvas' => fn () => [['title' => 'My SWOT', 'projectId' => 1]],
-            'getCanvasItemsById' => fn () => [
+        $service = $this->make(BlueprintsService::class, [
+            'getBoard' => fn () => [['title' => 'My SWOT', 'projectId' => 1]],
+            'getBoardItems' => fn () => [
                 [
                     'box' => 'swot_strengths', 'description' => 'Strong brand', 'author' => 5,
                     'status' => '', 'relates' => '', 'assumptions' => '', 'data' => '', 'conclusion' => '',
@@ -27,15 +30,13 @@ class BlueprintsExportTest extends TestCase
                     'authorFirstname' => 'Jo', 'authorLastname' => 'Doe',
                 ],
             ],
-        ]);
-        $service = $this->make(BlueprintsService::class, [
             'getTranslatedBoxes' => fn () => [
                 'swot_strengths' => ['title' => 'Strengths'],
                 'swot_weaknesses' => ['title' => 'Weaknesses'],
             ],
         ]);
 
-        $xml = (new BlueprintsExport($repo, $service, new TemplateRegistry))->exportToXml(7, 'swot');
+        $xml = (new BlueprintsExport($service, new TemplateRegistry))->exportToXml(7, 'swot');
 
         $this->assertNotNull($xml);
         $this->assertStringContainsString('<canvas key="swotcanvas">', $xml);
@@ -49,7 +50,6 @@ class BlueprintsExportTest extends TestCase
     public function test_returns_null_for_unknown_canvas_type(): void
     {
         $export = new BlueprintsExport(
-            $this->make(BlueprintsRepository::class),
             $this->make(BlueprintsService::class),
             new TemplateRegistry,
         );
@@ -59,9 +59,10 @@ class BlueprintsExportTest extends TestCase
 
     public function test_returns_null_when_board_does_not_exist(): void
     {
-        $repo = $this->make(BlueprintsRepository::class, ['getSingleCanvas' => fn () => []]);
+        // getBoard returns false for a missing/foreign/unauthorized board.
+        $service = $this->make(BlueprintsService::class, ['getBoard' => fn () => false]);
 
-        $export = new BlueprintsExport($repo, $this->make(BlueprintsService::class), new TemplateRegistry);
+        $export = new BlueprintsExport($service, new TemplateRegistry);
 
         $this->assertNull($export->exportToXml(7, 'swot'));
     }

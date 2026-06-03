@@ -2,6 +2,8 @@
 
 namespace Unit\app\Domain\Blueprints\Services;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
@@ -216,5 +218,292 @@ class BlueprintsServiceTest extends TestCase
 
         $this->assertSame(7, $capturedLastUpdatedId);
         $this->assertSame('7', $capturedProgressId, 'getBoardProgress receives the project id cast to string');
+    }
+
+    // ---------------------------------------------------------------------
+    // Secured by-id board/item CRUD chokepoint.
+    //
+    // Canvas boards/items live in the shared zp_canvas / zp_canvas_items tables (one id
+    // sequence across every variant). Every by-id operation must authorize against the
+    // entity's REAL project (resolved by id + canvas type), never the session project. Reads
+    // soft-deny (return the neutral "missing" value) so they are not a cross-project existence
+    // oracle; writes fail CLOSED with an AuthorizationException and never touch the repo.
+    // ---------------------------------------------------------------------
+
+    private function allowingPermissions(): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'authorize' => fn () => null,
+            'currentUserCan' => fn () => true,
+        ]);
+    }
+
+    private function denyingPermissions(): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'authorize' => function (): void {
+                throw new AuthorizationException;
+            },
+            'currentUserCan' => fn () => false,
+        ]);
+    }
+
+    private function securedService(BlueprintsRepository $repo, PermissionService $perms): BlueprintsService
+    {
+        $service = $this->service($repo);
+        $service->setPermissionService($perms);
+
+        return $service;
+    }
+
+    public function test_get_canvas_item_returns_false_for_missing_or_foreign_item_without_loading_it(): void
+    {
+        // Resolver null = missing id OR an id whose board is a different canvas type. Must
+        // return false WITHOUT loading the item — no cross-project existence oracle.
+        $loaded = 0;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasItemProjectId' => fn () => null,
+            'getSingleCanvasItem' => function () use (&$loaded) {
+                $loaded++;
+
+                return ['id' => 1];
+            },
+        ]);
+        $service = $this->securedService($repo, $this->allowingPermissions());
+
+        $this->assertFalse($service->getCanvasItem(123, 'swotcanvas'));
+        $this->assertSame(0, $loaded, 'A missing/foreign item must not be loaded');
+    }
+
+    public function test_get_canvas_item_soft_denies_when_view_not_permitted(): void
+    {
+        $loaded = 0;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'getSingleCanvasItem' => function () use (&$loaded) {
+                $loaded++;
+
+                return ['id' => 1];
+            },
+        ]);
+        $service = $this->securedService($repo, $this->make(PermissionService::class, ['currentUserCan' => fn () => false]));
+
+        $this->assertFalse($service->getCanvasItem(1, 'swotcanvas'));
+        $this->assertSame(0, $loaded, 'An unauthorized item returns the same neutral result as a missing one');
+    }
+
+    public function test_get_canvas_item_is_type_scoped_and_returns_item_when_authorized(): void
+    {
+        $resolvedType = null;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasItemProjectId' => function ($id, $type) use (&$resolvedType) {
+                $resolvedType = $type;
+
+                return 9;
+            },
+            'getSingleCanvasItem' => fn () => ['id' => 7, 'canvasId' => 3],
+        ]);
+        $service = $this->securedService($repo, $this->make(PermissionService::class, ['currentUserCan' => fn () => true]));
+
+        $item = $service->getCanvasItem(7, 'swotcanvas');
+
+        $this->assertSame(7, $item['id']);
+        $this->assertSame('swotcanvas', $resolvedType, 'The resolver must be type-scoped so a foreign canvas type cannot match');
+    }
+
+    public function test_get_board_items_returns_empty_for_foreign_board(): void
+    {
+        $loaded = 0;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasProjectId' => fn () => null,
+            'getCanvasItemsById' => function () use (&$loaded) {
+                $loaded++;
+
+                return [['id' => 1]];
+            },
+        ]);
+        $service = $this->securedService($repo, $this->allowingPermissions());
+
+        $this->assertSame([], $service->getBoardItems(999, 'swotcanvas', 'swotcanvasitem'));
+        $this->assertSame(0, $loaded, 'A foreign/unknown board must not have its items read');
+    }
+
+    public function test_patch_canvas_item_throws_and_never_writes_for_unresolved_item(): void
+    {
+        $patched = 0;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasItemProjectId' => fn () => null,
+            'patchCanvasItem' => function () use (&$patched) {
+                $patched++;
+
+                return true;
+            },
+        ]);
+        // allow-all permissions: the deny must come from the null resolution, not the role.
+        $service = $this->securedService($repo, $this->allowingPermissions());
+
+        try {
+            $service->patchCanvasItem(5, ['status' => 'x'], 'swotcanvas');
+            $this->fail('Expected AuthorizationException for an unresolved item');
+        } catch (AuthorizationException) {
+            // expected
+        }
+        $this->assertSame(0, $patched, 'A missing/foreign item must never be patched');
+    }
+
+    public function test_patch_canvas_item_throws_when_edit_denied(): void
+    {
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'patchCanvasItem' => fn () => true,
+        ]);
+        $service = $this->securedService($repo, $this->denyingPermissions());
+
+        $this->expectException(AuthorizationException::class);
+        $service->patchCanvasItem(5, ['status' => 'x'], 'swotcanvas');
+    }
+
+    public function test_update_canvas_item_resolves_project_from_item_id_not_payload_canvas_id(): void
+    {
+        // Relocation fence: the project is resolved from the EXISTING item's id, not from the
+        // attacker-supplied canvasId in the payload.
+        $resolvedItemId = null;
+        $wrote = 0;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasItemProjectId' => function ($id) use (&$resolvedItemId) {
+                $resolvedItemId = $id;
+
+                return 9;
+            },
+            'editCanvasItem' => function () use (&$wrote) {
+                $wrote++;
+            },
+        ]);
+        $service = $this->securedService($repo, $this->allowingPermissions());
+
+        $service->updateCanvasItem(['itemId' => 42, 'canvasId' => 9999, 'description' => 'x'], 'swotcanvas');
+
+        $this->assertSame(42, $resolvedItemId, 'Project must be resolved from itemId, not the payload canvasId');
+        $this->assertSame(1, $wrote);
+    }
+
+    public function test_create_canvas_item_throws_and_never_inserts_for_unknown_board(): void
+    {
+        $inserted = 0;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasProjectId' => fn () => null,
+            'addCanvasItem' => function () use (&$inserted) {
+                $inserted++;
+
+                return '1';
+            },
+        ]);
+        $service = $this->securedService($repo, $this->allowingPermissions());
+
+        try {
+            $service->createCanvasItem(['canvasId' => 9999, 'box' => 'x'], 'swotcanvas');
+            $this->fail('Expected AuthorizationException for an unknown target board');
+        } catch (AuthorizationException) {
+        }
+        $this->assertSame(0, $inserted, 'An item must never be created into an unknown/foreign board');
+    }
+
+    public function test_delete_canvas_item_throws_and_never_deletes_for_unresolved_item(): void
+    {
+        $deleted = 0;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasItemProjectId' => fn () => null,
+            'delCanvasItem' => function () use (&$deleted) {
+                $deleted++;
+            },
+        ]);
+        $service = $this->securedService($repo, $this->allowingPermissions());
+
+        try {
+            $service->deleteCanvasItem(5, 'swotcanvas');
+            $this->fail('Expected AuthorizationException for an unresolved item');
+        } catch (AuthorizationException) {
+        }
+        $this->assertSame(0, $deleted, 'A missing/foreign item must never be deleted');
+    }
+
+    public function test_delete_board_throws_and_never_deletes_for_unresolved_board(): void
+    {
+        $deleted = 0;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasProjectId' => fn () => null,
+            'deleteCanvas' => function () use (&$deleted) {
+                $deleted++;
+            },
+        ]);
+        $service = $this->securedService($repo, $this->allowingPermissions());
+
+        try {
+            $service->deleteBoard(5, 'swotcanvas');
+            $this->fail('Expected AuthorizationException for an unresolved board');
+        } catch (AuthorizationException) {
+        }
+        $this->assertSame(0, $deleted, 'A missing/foreign board must never be deleted');
+    }
+
+    public function test_copy_board_throws_when_source_unresolved_and_never_copies(): void
+    {
+        $copied = 0;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasProjectId' => fn () => null,
+            'copyCanvas' => function () use (&$copied) {
+                $copied++;
+
+                return 1;
+            },
+        ]);
+        $service = $this->securedService($repo, $this->allowingPermissions());
+
+        try {
+            $service->copyBoard(5, 7, 1, 'Copy', 'swotcanvas');
+            $this->fail('Expected AuthorizationException for an unresolved source board');
+        } catch (AuthorizationException) {
+        }
+        $this->assertSame(0, $copied, 'A board must never be copied from an unknown/foreign source');
+    }
+
+    public function test_merge_board_requires_both_boards_to_resolve(): void
+    {
+        // Source (1) resolves but target (2) does not -> deny, never merge.
+        $merged = 0;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasProjectId' => fn ($id) => $id === 1 ? 9 : null,
+            'mergeCanvas' => function () use (&$merged) {
+                $merged++;
+
+                return true;
+            },
+        ]);
+        $service = $this->securedService($repo, $this->allowingPermissions());
+
+        try {
+            $service->mergeBoard(2, 1, 'swotcanvas');
+            $this->fail('Expected AuthorizationException when a board does not resolve');
+        } catch (AuthorizationException) {
+        }
+        $this->assertSame(0, $merged, 'Merge must not run unless BOTH boards resolve');
+    }
+
+    public function test_import_authorizes_create_on_target_project_before_doing_anything(): void
+    {
+        // import() authorizes CREATE against the passed projectId first — a denial throws
+        // before the file/template/repo are ever touched (it is reachable via JSON-RPC with an
+        // arbitrary projectId).
+        $repo = $this->make(BlueprintsRepository::class, [
+            'existCanvas' => function (): bool {
+                $this->fail('import must deny before touching the repository');
+
+                return false;
+            },
+        ]);
+        $service = $this->securedService($repo, $this->denyingPermissions());
+
+        $this->expectException(AuthorizationException::class);
+        $service->import('/tmp/does-not-matter.xml', 'swot', 55, 1);
     }
 }
