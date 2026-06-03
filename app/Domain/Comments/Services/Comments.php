@@ -286,7 +286,8 @@ class Comments extends BaseService
      * existing reactions first, then adds the new one. Unknown reaction
      * types are rejected.
      *
-     * @param  int  $userId  The reacting user's id
+     * @param  int  $userId  Ignored — reactions always act as the session user (kept for RPC
+     *                       signature compatibility). See the in-body session pin.
      * @param  int  $commentId  The comment being reacted to
      * @param  string  $reaction  The reaction code (e.g. an emoji key)
      * @return bool True when the toggle was applied, false when the reaction
@@ -359,9 +360,25 @@ class Comments extends BaseService
      *
      * @api
      */
-    #[RequiresPermission(CommentsPermissions::VIEW)]
+    #[RequiresPermission(CommentsPermissions::VIEW, entityScoped: true)]
     public function getCommentReactions(int $commentId, int $userId): array
     {
+        // IDOR fence: authorize VIEW against the comment's OWN project before exposing reactor
+        // identities/sentiment (a null project — client/company-scoped or unknown module — falls
+        // back to a session-scoped role check). Closes the cross-project reaction-read leak by
+        // comment id on both the RPC and the Hx surfaces (which route through this method).
+        $comment = $this->commentRepository->getComment($commentId);
+        if (! $comment) {
+            return ['reactions' => [], 'userReactions' => []];
+        }
+        $this->authorize(
+            CommentsPermissions::VIEW,
+            $this->commentRepository->resolveModuleProjectId(
+                (string) ($comment['module'] ?? ''),
+                (int) ($comment['moduleId'] ?? 0)
+            )
+        );
+
         // Get reactions with user names for tooltips
         $reactionsWithUsers = $this->reactionsService->getEntityReactionsWithUsers('comment', $commentId);
 

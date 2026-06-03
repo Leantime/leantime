@@ -305,4 +305,26 @@ class CommentsServiceTest extends TestCase
         $this->assertTrue($service->deleteComment(99));
         $this->assertSame(99, $deleted);
     }
+
+    public function test_get_comment_reactions_is_denied_for_a_foreign_project(): void
+    {
+        // Reaction reads expose reactor identities/sentiment, so they fence to the comment's project.
+        $service = $this->makeService($this->noopReactions(), $this->defaultRepo(), $this->denyingPermissions());
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->getCommentReactions(99, self::SESSION_USER);
+    }
+
+    public function test_get_comment_reactions_returns_empty_for_missing_comment(): void
+    {
+        // A missing comment yields empty view data BEFORE authorize — no enumeration oracle.
+        $repo = $this->make(CommentRepository::class, [
+            'getComment' => fn () => false,
+            'resolveModuleProjectId' => fn () => 9,
+        ]);
+        $service = $this->makeService($this->noopReactions(), $repo, $this->denyingPermissions());
+
+        $this->assertSame(['reactions' => [], 'userReactions' => []], $service->getCommentReactions(404, self::SESSION_USER));
+    }
 }
