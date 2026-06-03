@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Goalcanvas\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
+use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
+use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -15,20 +18,22 @@ class Export extends Controller
 {
     private const CANVAS_TYPE = 'goalcanvas';
 
-    private const COMMENT_MODULE = 'goalcanvasitem';
-
     private const SESSION_KEY = 'currentGOALCanvas';
 
     private GoalcanvaRepository $canvasRepo;
 
+    private GoalcanvaService $goalService;
+
     /**
      * init - resolve dependencies.
      *
-     * @param  GoalcanvaRepository  $canvasRepo  Goal canvas repository
+     * @param  GoalcanvaRepository  $canvasRepo  Goal canvas repository (label definitions)
+     * @param  GoalcanvaService  $goalService  Goal canvas service (VIEW-authorized board reads)
      */
-    public function init(GoalcanvaRepository $canvasRepo): void
+    public function init(GoalcanvaRepository $canvasRepo, GoalcanvaService $goalService): void
     {
         $this->canvasRepo = $canvasRepo;
+        $this->goalService = $goalService;
     }
 
     /**
@@ -36,6 +41,7 @@ class Export extends Controller
      *
      * @param  array<string, mixed>  $params  Request parameters
      */
+    #[RequiresPermission(GoalcanvasPermissions::VIEW, entityScoped: true)]
     public function get(array $params): Response
     {
         if (isset($params['id']) && $params['id'] !== '') {
@@ -46,14 +52,17 @@ class Export extends Controller
             return new Response('', 204);
         }
 
-        $canvas = $this->canvasRepo->getSingleCanvas($canvasId);
+        // getSingleCanvas authorizes VIEW against the board's real project and returns false for
+        // a missing/foreign/unauthorized board (export is reachable by arbitrary board id).
+        $canvas = $this->goalService->getSingleCanvas($canvasId);
         if (! $canvas) {
             return new Response('Canvas not found', 404);
         }
 
-        $records = $this->canvasRepo->getCanvasItemsById($canvasId, self::COMMENT_MODULE);
+        $records = $this->goalService->getCanvasItemsById($canvasId);
         $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
+        // The Goalcanvas repo's getSingleCanvas returns a single row (not array-of-rows).
         $exportData = $this->buildXml($canvas['title'] ?? '', $records, $canvasTypes);
 
         clearstatcache();

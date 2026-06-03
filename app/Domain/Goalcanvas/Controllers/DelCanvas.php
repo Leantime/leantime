@@ -2,10 +2,12 @@
 
 namespace Leantime\Domain\Goalcanvas\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
+use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
+use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -18,15 +20,17 @@ class DelCanvas extends Controller
      */
     protected const CANVAS_NAME = 'goal';
 
-    private mixed $canvasRepo;
+    private GoalcanvaRepository $canvasRepo;
+
+    private GoalcanvaService $goalService;
 
     /**
      * Initializes dependencies.
      */
-    public function init(): void
+    public function init(GoalcanvaRepository $canvasRepo, GoalcanvaService $goalService): void
     {
-        $repoName = app()->getNamespace().'Domain\\Goalcanvas\\Repositories\\Goalcanvas';
-        $this->canvasRepo = app()->make($repoName);
+        $this->canvasRepo = $canvasRepo;
+        $this->goalService = $goalService;
     }
 
     /**
@@ -34,10 +38,9 @@ class DelCanvas extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(GoalcanvasPermissions::DELETE)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
         $this->tpl->assign('id', $id);
 
@@ -49,21 +52,21 @@ class DelCanvas extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(GoalcanvasPermissions::DELETE, entityScoped: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
 
         if (isset($_POST['del']) && $id > 0) {
-            $this->canvasRepo->deleteCanvas($id);
+            // The service resolves the board's REAL project and authorizes DELETE against it
+            // (throwing for a missing/foreign board) — closing the by-id board-delete IDOR the
+            // previous role-only Auth::authOrRedirect left open.
+            $this->goalService->deleteGoalBoard($id);
 
             $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
             session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $allCanvas[0]['id'] ?? -1]);
 
             $this->tpl->setNotification($this->language->__('notification.board_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvas_deleted');
-
-            $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
 
             if (! $allCanvas || count($allCanvas) == 0) {
                 return Frontcontroller::redirect(BASE_URL.'/blueprints/showBoards');

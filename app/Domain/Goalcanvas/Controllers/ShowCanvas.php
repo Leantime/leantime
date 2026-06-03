@@ -2,10 +2,12 @@
 
 namespace Leantime\Domain\Goalcanvas\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Mailer;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
+use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepo;
@@ -40,6 +42,7 @@ class ShowCanvas extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(GoalcanvasPermissions::VIEW)]
     public function get(array $params): Response
     {
         $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
@@ -66,6 +69,7 @@ class ShowCanvas extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(GoalcanvasPermissions::EDIT)]
     public function post(array $params): Response
     {
         $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
@@ -129,6 +133,11 @@ class ShowCanvas extends Controller
                 'author' => session('userdata.id'),
                 'projectId' => session('currentProject'),
             ];
+            // View-time convenience: lazily create a default board (in the CURRENT project) when
+            // none exist. Kept repo-direct/UNGATED on purpose — gating it through createGoalboard's
+            // CREATE check would 403 a VIEW-only user just for opening an empty goals page. It is
+            // not an IDOR (always the session project). Same landmine pattern as the Blueprints/
+            // Wiki/Ideas default-board/notebook bootstrap.
             $currentCanvasId = $this->canvasRepo->addCanvas($values);
             $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
 
@@ -162,8 +171,15 @@ class ShowCanvas extends Controller
         }
 
         if (isset($params['id'])) {
-            $currentCanvasId = (int) $params['id'];
-            session([$sessionKey => $currentCanvasId]);
+            // Only honor an explicit board id that belongs to the CURRENT project's boards
+            // ($allCanvas is project-scoped). A foreign/unknown id must not become the active
+            // board — otherwise assignTemplateVars would read another project's items.
+            $requestedId = (int) $params['id'];
+            $projectBoardIds = array_map(static fn ($row) => (int) $row['id'], $allCanvas);
+            if (in_array($requestedId, $projectBoardIds, true)) {
+                $currentCanvasId = $requestedId;
+                session([$sessionKey => $currentCanvasId]);
+            }
         }
 
         return $currentCanvasId;
@@ -191,7 +207,8 @@ class ShowCanvas extends Controller
             'author' => session('userdata.id'),
             'projectId' => session('currentProject'),
         ];
-        $currentCanvasId = $this->canvasRepo->addCanvas($values);
+        // createGoalboard authorizes CREATE against the target (current) project.
+        $currentCanvasId = $this->goalService->createGoalboard($values);
         $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
 
         $this->notifyBoardCreated($values['title'], 'notification.board_created', 'email_notifications.canvas_created_message');
@@ -219,8 +236,9 @@ class ShowCanvas extends Controller
             return null;
         }
 
+        // updateGoalboard authorizes EDIT against the board's real project.
         $values = ['title' => $_POST['canvastitle'], 'id' => $currentCanvasId];
-        $currentCanvasId = $this->canvasRepo->updateCanvas($values);
+        $currentCanvasId = $this->goalService->updateGoalboard($values);
 
         $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
 
@@ -244,10 +262,11 @@ class ShowCanvas extends Controller
             return null;
         }
 
-        $currentCanvasId = $this->canvasRepo->copyCanvas(
-            session('currentProject'),
+        // copyGoalBoard authorizes VIEW on the source board's project and CREATE on the target.
+        $currentCanvasId = $this->goalService->copyGoalBoard(
             $currentCanvasId,
-            session('userdata.id'),
+            (int) session('currentProject'),
+            (int) session('userdata.id'),
             $_POST['canvastitle']
         );
         $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
@@ -269,7 +288,8 @@ class ShowCanvas extends Controller
             return null;
         }
 
-        $status = $this->canvasRepo->mergeCanvas($currentCanvasId, $_POST['canvasid']);
+        // mergeGoalBoard authorizes EDIT on the target board's project and VIEW on the source's.
+        $status = $this->goalService->mergeGoalBoard($currentCanvasId, (int) $_POST['canvasid']);
 
         if ($status) {
             $this->tpl->setNotification($this->language->__('notification.board_merged'), 'success');
@@ -319,9 +339,11 @@ class ShowCanvas extends Controller
         $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
         session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $currentCanvasId]);
 
-        $canvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
+        // The just-imported board is in the current project; getSingleCanvas returns a single
+        // row (Goalcanvas repo override) or false.
+        $canvas = $this->goalService->getSingleCanvas($currentCanvasId);
         $this->notifyBoardCreated(
-            strip_tags($canvas[0]['title']),
+            strip_tags($canvas !== false ? ($canvas['title'] ?? '') : ''),
             'notification.board_imported',
             'email_notifications.canvas_imported_message'
         );

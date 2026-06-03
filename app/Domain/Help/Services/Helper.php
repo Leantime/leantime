@@ -502,14 +502,18 @@ class Helper
         $values['status'] = 0;
         $ticketService->quickAddTicket($values);
 
-        // Create Goal
-        $goalService = app()->make(\Leantime\Domain\Goalcanvas\Services\Goalcanvas::class);
+        // Create Goal. This is a SYSTEM-orchestrated onboarding write (running in the
+        // userSignUpSuccess listener while the user's project membership is still being set
+        // up), so it goes through the REPOSITORY directly — bypassing the CREATE-authorized
+        // Goalcanvas service methods, which would otherwise 403 the brand-new user. (Same
+        // landmine pattern as Wiki's default-notebook / Ideas' default-board bootstrap.)
+        $goalRepo = app()->make(\Leantime\Domain\Goalcanvas\Repositories\Goalcanvas::class);
         $values = [
             'title' => 'My Goals',
             'author' => $userId,
             'projectId' => $projectId,
         ];
-        $currentCanvasId = $goalService->createGoalboard($values);
+        $currentCanvasId = $goalRepo->addCanvas($values);
 
         $values = [
             'description' => 'Tasks completed on time', // Metric
@@ -527,7 +531,7 @@ class Helper
             'endValue' => '80',
         ];
 
-        $goalService->createGoal($values);
+        $goalRepo->createGoal($values);
 
         $projectService->changeCurrentSessionProject($projectId);
 

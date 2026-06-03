@@ -6,9 +6,12 @@
 
 namespace Leantime\Domain\Goalcanvas\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
+use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
@@ -32,6 +35,8 @@ class EditCanvasComment extends Controller
 
     private ProjectService $projectService;
 
+    private GoalcanvaService $goalService;
+
     private object $canvasRepo;
 
     /**
@@ -42,13 +47,15 @@ class EditCanvasComment extends Controller
         CommentRepository $commentsRepo,
         SprintService $sprintService,
         TicketService $ticketService,
-        ProjectService $projectService
+        ProjectService $projectService,
+        GoalcanvaService $goalService
     ) {
         $this->ticketRepo = $ticketRepo;
         $this->commentsRepo = $commentsRepo;
         $this->sprintService = $sprintService;
         $this->ticketService = $ticketService;
         $this->projectService = $projectService;
+        $this->goalService = $goalService;
 
         $repoName = app()->getNamespace().'Domain\\goalcanvas\\Repositories\\goalcanvas';
         $this->canvasRepo = app()->make($repoName);
@@ -57,19 +64,29 @@ class EditCanvasComment extends Controller
     /**
      * get - handle get requests
      */
+    #[RequiresPermission(GoalcanvasPermissions::VIEW, entityScoped: true)]
     public function get($params)
     {
 
         $canvasTypes = $this->canvasRepo->getCanvasTypes();
         if (isset($params['id'])) {
-            // Delete comment
-            if (isset($params['delComment']) === true) {
-                $commentId = (int) ($params['delComment']);
-                $this->commentsRepo->deleteComment($commentId);
-                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvascomment_deleted');
+            // Resolve + VIEW-authorize the item against its real project first.
+            $canvasItem = $this->goalService->getGoalItem((int) $params['id']);
+            if (! $canvasItem) {
+                return $this->tpl->displayPartial('errors.error404');
             }
 
-            $canvasItem = $this->canvasRepo->getSingleCanvasItem($params['id']);
+            // Delete comment — only when it belongs to THIS gated item (module + moduleId).
+            if (isset($params['delComment']) === true) {
+                $commentId = (int) ($params['delComment']);
+                $comment = $this->commentsRepo->getComment($commentId);
+                if ($comment !== false
+                    && (string) $comment['module'] === static::CANVAS_NAME.'canvasitem'
+                    && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
+                    $this->commentsRepo->deleteComment($commentId);
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvascomment_deleted');
+                }
+            }
 
             $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvasitem', $canvasItem['id']);
             $this->tpl->assign('numComments', $this->commentsRepo->countComments(static::CANVAS_NAME.'canvasitem', $canvasItem['id']));
@@ -84,8 +101,8 @@ class EditCanvasComment extends Controller
                 'id' => '',
                 'box' => $type,
                 'description' => '',
-                'status' => array_key_first($this->canvasRepo->getStatusList()),
-                'relates' => array_key_first($this->canvasRepo->GetRelatesList()),
+                'status' => array_key_first($this->canvasRepo->getStatusLabels()),
+                'relates' => array_key_first($this->canvasRepo->getRelatesLabels()),
                 'assumptions' => '',
                 'data' => '',
                 'conclusion' => '',
@@ -107,6 +124,7 @@ class EditCanvasComment extends Controller
     /**
      * post - handle post requests
      */
+    #[RequiresPermission(GoalcanvasPermissions::EDIT, entityScoped: true)]
     public function post($params)
     {
 
@@ -131,7 +149,8 @@ class EditCanvasComment extends Controller
                         'dependentMilstone' => '',
                     ];
 
-                    $this->canvasRepo->editCanvasComment($canvasItem);
+                    // Resolves the item's real project from itemId and authorizes EDIT there.
+                    $this->goalService->updateGoalItem($canvasItem);
 
                     $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvasitem', $params['itemId']);
                     $this->tpl->assign('numComments', $this->commentsRepo->countComments(
@@ -181,7 +200,8 @@ class EditCanvasComment extends Controller
                         'canvasId' => $currentCanvasId,
                     ];
 
-                    $id = $this->canvasRepo->addCanvasItem($canvasItem);
+                    // Resolves the target board's real project from canvasId and authorizes CREATE.
+                    $id = $this->goalService->createGoalItem($canvasItem);
 
                     $canvasItem['id'] = $id;
 
@@ -218,6 +238,11 @@ class EditCanvasComment extends Controller
         }
 
         if (isset($params['comment']) === true) {
+            // Only allow commenting on a goal item the user can view in their project.
+            if (! $this->goalService->getGoalItem((int) ($_GET['id'] ?? 0))) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
             $values = [
                 'text' => $params['text'],
                 'date' => date('Y-m-d H:i:s'),
@@ -251,7 +276,7 @@ class EditCanvasComment extends Controller
         }
 
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
-        $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem($_GET['id']));
+        $this->tpl->assign('canvasItem', $this->goalService->getGoalItem((int) ($_GET['id'] ?? 0)));
 
         return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.canvasComment');
     }

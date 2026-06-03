@@ -2,13 +2,31 @@
 
 namespace Leantime\Domain\Goalcanvas\Services;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 
 /**
+ * Goalcanvas (Goals / OKRs) service.
+ *
+ * Goal boards/items live in the shared zp_canvas (type "goalcanvas") / zp_canvas_items (box
+ * "goal") tables. Every by-id board/item operation routes through this service, which resolves
+ * the entity's REAL project via the repository's fail-closed resolvers (inherited from the
+ * Blueprints repo, scoped to the "goalcanvas" type) and authorizes the matching
+ * {@see GoalcanvasPermissions} verb against it. A resolver returning null (missing id, or an id
+ * whose board is a different canvas type) is treated as DENY — reads soft-deny (neutral value)
+ * so they are not a cross-project existence oracle; writes throw an AuthorizationException
+ * without writing. Never falls back to the session project for a by-id entity.
+ *
  * @api
  */
-class Goalcanvas
+class Goalcanvas extends BaseService
 {
+    /** Database canvas type for goal boards (CANVAS_NAME "goal" + "canvas"). */
+    private const CANVAS_TYPE = 'goalcanvas';
+
     private GoalcanvaRepository $goalRepository;
 
     public array $reportingSettings = [
@@ -23,10 +41,18 @@ class Goalcanvas
     }
 
     /**
+     * List the goals on a board (by board id), authorized for VIEW against the board's project.
+     * Returns [] for a missing/foreign/unauthorized board (neutral — no oracle).
+     *
      * @api
      */
+    #[RequiresPermission(GoalcanvasPermissions::VIEW, entityScoped: true)]
     public function getCanvasItemsById(int $id): array
     {
+        $projectId = $this->goalRepository->getCanvasProjectId($id, self::CANVAS_TYPE);
+        if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
+            return [];
+        }
 
         $goals = $this->goalRepository->getCanvasItemsById($id);
 
@@ -58,17 +84,22 @@ class Goalcanvas
     }
 
     /**
+     * Sum the linked children's current values for a parent goal, authorized for VIEW against
+     * the PARENT goal's project. The cross-project roll-up of linked children is the feature;
+     * the gate is on the parent the caller asked about. Returns 0 for a missing/foreign/
+     * unauthorized parent.
+     *
      * @return int|mixed
      *
      * @api
      */
-    /**
-     * @return int|mixed
-     *
-     * @api
-     */
+    #[RequiresPermission(GoalcanvasPermissions::VIEW, entityScoped: true)]
     public function getChildGoalsForReporting($parentId): mixed
     {
+        $projectId = $this->goalRepository->getCanvasItemProjectId((int) $parentId, self::CANVAS_TYPE);
+        if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
+            return 0;
+        }
 
         // Goals come back as rows for levl1 and lvl2 being columns, so
         // goal A | goalChildA
@@ -89,10 +120,18 @@ class Goalcanvas
     }
 
     /**
+     * The child-goal hierarchy for a parent goal, authorized for VIEW against the PARENT goal's
+     * project. Returns [] for a missing/foreign/unauthorized parent.
+     *
      * @api
      */
+    #[RequiresPermission(GoalcanvasPermissions::VIEW, entityScoped: true)]
     public function getChildrenbyKPI($parentId): array
     {
+        $projectId = $this->goalRepository->getCanvasItemProjectId((int) $parentId, self::CANVAS_TYPE);
+        if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
+            return [];
+        }
 
         $goals = [];
         // Goals come back as rows for levl1 and lvl2 being columns, so
@@ -139,11 +178,13 @@ class Goalcanvas
     }
 
     /**
+     * Available parent KPIs for linking, authorized for VIEW against $projectId (dispatch gate).
+     *
      * @api
      */
+    #[RequiresPermission(GoalcanvasPermissions::VIEW, projectIdParam: 'projectId')]
     public function getParentKPIs($projectId): array
     {
-
         $kpis = $this->goalRepository->getAllAvailableKPIs($projectId);
 
         $goals = [];
@@ -161,45 +202,243 @@ class Goalcanvas
         return $goals;
     }
 
+    /**
+     * Goals linked to a milestone. Internal read used by the milestone UI; the data-access is
+     * the milestone the caller is already viewing.
+     */
     public function getGoalsByMilestone($milestoneId): array
     {
-
         $goals = $this->goalRepository->getGoalsByMilestone($milestoneId);
 
         return $goals;
     }
 
-    public function updateGoalboard($values)
-    {
-        return $this->goalRepository->updateCanvas($values);
-    }
+    // ---------------------------------------------------------------------------------------
+    // Secured by-id board/item CRUD chokepoint (controllers call these instead of the repo).
+    // ---------------------------------------------------------------------------------------
 
-    public function createGoalboard($values)
+    /**
+     * Fetch a single goal item by id, authorized for VIEW against the item's real project.
+     *
+     * @return array<string, mixed>|false False when missing/foreign/unauthorized.
+     */
+    public function getGoalItem(int $id): array|false
     {
-        return $this->goalRepository->addCanvas($values);
-    }
+        $projectId = $this->goalRepository->getCanvasItemProjectId($id, self::CANVAS_TYPE);
+        if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
+            return false;
+        }
 
-    public function getSingleCanvas($id)
-    {
-        return $this->goalRepository->getSingleCanvas($id);
+        return $this->goalRepository->getSingleCanvasItem($id);
     }
 
     /**
-     * @param  array  $values
-     * @return int
+     * Fetch a single goal board by id, authorized for VIEW against the board's real project.
+     *
+     * @return array<string, mixed>|false False when missing/foreign/unauthorized.
+     */
+    public function getSingleCanvas($id)
+    {
+        $projectId = $this->goalRepository->getCanvasProjectId((int) $id, self::CANVAS_TYPE);
+        if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
+            return false;
+        }
+
+        return $this->goalRepository->getSingleCanvas((int) $id);
+    }
+
+    /**
+     * Create a goal board, authorized for CREATE against the target project.
+     *
+     * @throws AuthorizationException When projectId is missing or CREATE is denied.
+     */
+    public function createGoalboard($values)
+    {
+        $projectId = (int) ($values['projectId'] ?? 0);
+        if ($projectId === 0) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::CREATE, $projectId);
+
+        return $this->goalRepository->addCanvas($values);
+    }
+
+    /**
+     * Rename a goal board, authorized for EDIT against the board's real project.
+     *
+     * @throws AuthorizationException When the board is unknown/foreign or EDIT is denied.
+     */
+    public function updateGoalboard($values)
+    {
+        $projectId = $this->goalRepository->getCanvasProjectId((int) ($values['id'] ?? 0), self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
+
+        return $this->goalRepository->updateCanvas($values);
+    }
+
+    /**
+     * Copy a goal board into a target project. Requires VIEW on the source board's project and
+     * CREATE in the target project.
+     *
+     * @throws AuthorizationException When the source is unknown/foreign, or VIEW/CREATE is denied.
+     */
+    public function copyGoalBoard(int $sourceCanvasId, int $targetProjectId, int $authorId, string $title): int
+    {
+        $sourceProjectId = $this->goalRepository->getCanvasProjectId($sourceCanvasId, self::CANVAS_TYPE);
+        if ($sourceProjectId === null || $targetProjectId <= 0) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::VIEW, $sourceProjectId);
+        $this->authorize(GoalcanvasPermissions::CREATE, $targetProjectId);
+
+        return $this->goalRepository->copyCanvas($targetProjectId, $sourceCanvasId, $authorId, $title);
+    }
+
+    /**
+     * Merge a source goal board's items into a target board. Requires EDIT on the target board's
+     * project and VIEW on the source board's project — both resolved by id.
+     *
+     * @throws AuthorizationException When either board is unknown/foreign, or EDIT/VIEW is denied.
+     */
+    public function mergeGoalBoard(int $targetCanvasId, int $sourceCanvasId): bool
+    {
+        $targetProjectId = $this->goalRepository->getCanvasProjectId($targetCanvasId, self::CANVAS_TYPE);
+        $sourceProjectId = $this->goalRepository->getCanvasProjectId($sourceCanvasId, self::CANVAS_TYPE);
+        if ($targetProjectId === null || $sourceProjectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::EDIT, $targetProjectId);
+        $this->authorize(GoalcanvasPermissions::VIEW, $sourceProjectId);
+
+        return $this->goalRepository->mergeCanvas($targetCanvasId, $sourceCanvasId);
+    }
+
+    /**
+     * Delete a goal board (and its items), authorized for DELETE against the board's real project.
+     *
+     * @throws AuthorizationException When the board is unknown/foreign or DELETE is denied.
+     */
+    public function deleteGoalBoard(int $canvasId): void
+    {
+        $projectId = $this->goalRepository->getCanvasProjectId($canvasId, self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::DELETE, $projectId);
+
+        $this->goalRepository->deleteCanvas($canvasId);
+    }
+
+    /**
+     * Create a goal item, authorized for CREATE against the target board's real project.
+     *
+     * @param  array<string, mixed>  $values  Item values (must include `canvasId`)
+     * @return false|string New item id, or false on insert failure
+     *
+     * @throws AuthorizationException When the target board is unknown/foreign or CREATE is denied.
      *
      * @api
      */
+    #[RequiresPermission(GoalcanvasPermissions::CREATE, entityScoped: true)]
     public function createGoal($values)
     {
+        $projectId = $this->goalRepository->getCanvasProjectId((int) ($values['canvasId'] ?? 0), self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::CREATE, $projectId);
+
         return $this->goalRepository->createGoal($values);
     }
 
     /**
+     * Create a goal item (controller add-item path), authorized for CREATE against the target
+     * board's real project.
+     *
+     * @param  array<string, mixed>  $values  Item values (must include `canvasId`)
+     * @return false|string New item id, or false on insert failure
+     *
+     * @throws AuthorizationException When the target board is unknown/foreign or CREATE is denied.
+     */
+    public function createGoalItem(array $values): false|string
+    {
+        $projectId = $this->goalRepository->getCanvasProjectId((int) ($values['canvasId'] ?? 0), self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::CREATE, $projectId);
+
+        return $this->goalRepository->addCanvasItem($values);
+    }
+
+    /**
+     * Update a goal item, authorized for EDIT against the item's real project. The project is
+     * resolved from the existing item's id, so the payload's canvasId cannot relocate it.
+     *
+     * @param  array<string, mixed>  $values  Item values (must include `itemId` or `id`)
+     *
+     * @throws AuthorizationException When the item is unknown/foreign or EDIT is denied.
+     */
+    public function updateGoalItem(array $values): void
+    {
+        $itemId = (int) ($values['itemId'] ?? $values['id'] ?? 0);
+        $projectId = $this->goalRepository->getCanvasItemProjectId($itemId, self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
+
+        $this->goalRepository->editCanvasItem($values);
+    }
+
+    /**
+     * Patch allowlisted columns of a goal item, authorized for EDIT against the item's real
+     * project.
+     *
+     * @param  array<string, mixed>  $params  Fields to patch (allowlisted in the repository)
+     *
+     * @throws AuthorizationException When the item is unknown/foreign or EDIT is denied.
+     */
+    public function patchGoalItem(int $id, array $params): bool
+    {
+        $projectId = $this->goalRepository->getCanvasItemProjectId($id, self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
+
+        return $this->goalRepository->patchCanvasItem($id, $params);
+    }
+
+    /**
+     * Delete a goal item, authorized for DELETE against the item's real project.
+     *
+     * @throws AuthorizationException When the item is unknown/foreign or DELETE is denied.
+     */
+    public function deleteGoalItem(int $id): void
+    {
+        $projectId = $this->goalRepository->getCanvasItemProjectId($id, self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::DELETE, $projectId);
+
+        $this->goalRepository->delCanvasItem($id);
+    }
+
+    /**
+     * Poll all goals the user can access (optionally scoped to a project/board). The repository
+     * query already filters to the user's accessible projects; the dispatch gate adds the
+     * capability check.
+     *
      * @return array
      *
      * @api
      */
+    #[RequiresPermission(GoalcanvasPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollGoals(?int $projectId = null, ?int $board = null)
     {
         $goals = $this->goalRepository->getAllAccountGoals($projectId, $board);
@@ -216,9 +455,9 @@ class Goalcanvas
      *
      * @api
      */
+    #[RequiresPermission(GoalcanvasPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForUpdatedGoals(?int $projectId = null, ?int $board = null): array|false
     {
-
         $goals = $this->goalRepository->getAllAccountGoals($projectId, $board);
 
         foreach ($goals as $key => $goal) {
@@ -231,7 +470,6 @@ class Goalcanvas
 
     private function prepareDatesForApiResponse($goal)
     {
-
         if (dtHelper()->isValidDateString($goal['created'])) {
             $goal['created'] = dtHelper()->parseDbDateTime($goal['created'])->toIso8601ZuluString();
         } else {
@@ -257,6 +495,5 @@ class Goalcanvas
         }
 
         return $goal;
-
     }
 }
