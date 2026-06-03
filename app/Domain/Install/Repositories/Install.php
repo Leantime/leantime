@@ -89,6 +89,7 @@ class Install
         30506,
         30507,
         30508,
+        30509,
     ];
 
     /**
@@ -2813,6 +2814,32 @@ class Install
             Log::error('Migration 30508: '.$e->getMessage());
 
             return ['Migration 30508 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30509: the Sprints domain joined the native permission engine. Re-sync the
+     * discovered permission catalog (adds sprints.view/create/edit/delete, all project-scoped)
+     * and re-seed the built-in role grants — the standard verbs auto-grant via the existing
+     * project rules (readonly view; editor create/edit/delete; manager+ all). Table-creation-free;
+     * idempotent + additive. Flush the discovered-provider cache first — an install that already
+     * ran 30505-30508 cached the provider list WITHOUT SprintsPermissions, so seeding against that
+     * stale list would never create the sprints.* keys (and lower roles would lose sprint access).
+     */
+    public function update_sql_30509(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30509: '.$e->getMessage());
+
+            return ['Migration 30509 failed: '.$e->getMessage()];
         }
 
         return true;
