@@ -2,23 +2,23 @@
 
 namespace Leantime\Domain\Ideas\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+use Leantime\Domain\Ideas\Permissions\IdeasPermissions;
+use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
 use Symfony\Component\HttpFoundation\Response;
 
 class DelCanvasItem extends Controller
 {
-    private IdeaRepository $ideasRepo;
+    private IdeaService $ideaService;
 
     /**
      * Initializes dependencies.
      */
-    public function init(IdeaRepository $ideasRepo): void
+    public function init(IdeaService $ideaService): void
     {
-        $this->ideasRepo = $ideasRepo;
+        $this->ideaService = $ideaService;
     }
 
     /**
@@ -26,26 +26,25 @@ class DelCanvasItem extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(IdeasPermissions::DELETE)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         return $this->tpl->displayPartial('ideas.delCanvasItem');
     }
 
     /**
-     * Handles idea item deletion.
+     * Handles idea item deletion. The controller gate defers (entityScoped) to the service's
+     * deleteCanvasItem(), which authorizes DELETE against the item's REAL project.
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(IdeasPermissions::DELETE, entityScoped: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
 
         if (isset($_POST['del']) && $id > 0) {
-            $this->ideasRepo->delCanvasItem($id);
+            $this->ideaService->deleteCanvasItem($id);
 
             $this->tpl->setNotification($this->language->__('notification.idea_board_item_deleted'), 'success', 'ideaitem_deleted');
 

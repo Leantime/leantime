@@ -2,23 +2,23 @@
 
 namespace Leantime\Domain\Ideas\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+use Leantime\Domain\Ideas\Permissions\IdeasPermissions;
+use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
 use Symfony\Component\HttpFoundation\Response;
 
 class DelCanvas extends Controller
 {
-    private IdeaRepository $ideaRepo;
+    private IdeaService $ideaService;
 
     /**
      * Initializes dependencies.
      */
-    public function init(IdeaRepository $ideaRepo): void
+    public function init(IdeaService $ideaService): void
     {
-        $this->ideaRepo = $ideaRepo;
+        $this->ideaService = $ideaService;
     }
 
     /**
@@ -26,28 +26,26 @@ class DelCanvas extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(IdeasPermissions::DELETE)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         return $this->tpl->display('ideas.delCanvas');
     }
 
     /**
-     * Handles idea board deletion.
+     * Handles idea board deletion. The controller gate defers (entityScoped) to the service's
+     * deleteCanvas(), which authorizes DELETE against the board's REAL project.
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(IdeasPermissions::DELETE, entityScoped: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
 
         if (isset($_POST['del']) && $id > 0) {
-            $this->ideaRepo->deleteCanvas($id);
+            $this->ideaService->deleteCanvas($id);
 
-            session()->forget('currentIdeaCanvas');
             $this->tpl->setNotification($this->language->__('notification.idea_board_deleted'), 'success', 'ideaboard_deleted');
 
             return Frontcontroller::redirect(BASE_URL.'/ideas/showBoards');

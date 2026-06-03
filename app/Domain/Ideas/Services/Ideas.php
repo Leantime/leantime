@@ -2,11 +2,13 @@
 
 namespace Leantime\Domain\Ideas\Services;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Comments\Permissions\CommentsPermissions;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Ideas\Permissions\IdeasPermissions;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeasRepository;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -16,7 +18,7 @@ use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 /**
  * Ideas service - business logic for idea boards and idea items.
  */
-class Ideas
+class Ideas extends BaseService
 {
     private IdeasRepository $ideasRepository;
 
@@ -46,30 +48,36 @@ class Ideas
     }
 
     /**
-     * Authorization helper: is the current user allowed to modify a canvas item?
+     * Resolve an idea board's owning project. Boards are zp_canvas rows (type 'idea').
      *
-     * Resolves the item -> its canvas -> the canvas's project, then checks the
-     * session user's project access. Used to gate the JSON-RPC idea mutators
-     * (the underlying repository operates by item id with no project scoping).
+     * @param  int  $boardId  The board (canvas) id
+     * @return int|null The board's project id, or null when the board does not exist
+     */
+    private function boardProjectId(int $boardId): ?int
+    {
+        // getSingleCanvas() returns a list of row arrays (not a flat row).
+        $rows = $this->ideasRepository->getSingleCanvas($boardId);
+
+        return isset($rows[0]['projectId']) ? (int) $rows[0]['projectId'] : null;
+    }
+
+    /**
+     * Resolve an idea item's owning project (item -> its board/canvas -> project).
+     *
+     * The repository operates by item id with NO project scoping, and zp_canvas_items is shared
+     * across all canvas types, so callers MUST fail closed on a null result before any read/write.
      *
      * @param  int  $itemId  The canvas item id
-     * @return bool True when the session user may modify the item
+     * @return int|null The item's project id, or null when it does not resolve to an idea board
      */
-    private function userCanAccessCanvasItem(int $itemId): bool
+    private function canvasItemProjectId(int $itemId): ?int
     {
-        $item = (array) $this->ideasRepository->getSingleCanvasItem($itemId);
-        if (empty($item['canvasId'])) {
-            return false;
+        $item = $this->ideasRepository->getSingleCanvasItem($itemId);
+        if (! is_array($item) || empty($item['canvasId'])) {
+            return null;
         }
 
-        // getSingleCanvas() returns a list of row arrays (not a flat row),
-        // matching the existing getBoardTitle() consumer.
-        $canvas = $this->ideasRepository->getSingleCanvas((int) $item['canvasId']);
-        if (empty($canvas[0]['projectId'])) {
-            return false;
-        }
-
-        return $this->projectService->isUserAssignedToProject((int) session('userdata.id'), (int) $canvas[0]['projectId']);
+        return $this->boardProjectId((int) $item['canvasId']);
     }
 
     /**
@@ -83,14 +91,18 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::EDIT, entityScoped: true)]
     public function reorderIdeas(array $payload): bool
     {
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            return false;
-        }
-
+        // Per-item project fence: reject the whole batch unless the user may edit EVERY item's
+        // project (non-throwing can(), since a batch should fail gracefully). null project = the id
+        // is not an idea item (shared zp_canvas_items) -> reject.
         foreach ($payload as $idea) {
-            if (! isset($idea['id']) || ! $this->userCanAccessCanvasItem((int) $idea['id'])) {
+            if (! isset($idea['id'])) {
+                return false;
+            }
+            $projectId = $this->canvasItemProjectId((int) $idea['id']);
+            if ($projectId === null || ! $this->can(IdeasPermissions::EDIT, $projectId)) {
                 return false;
             }
         }
@@ -109,17 +121,19 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::EDIT, entityScoped: true)]
     public function bulkUpdateStatus(array $payload): bool
     {
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            return false;
-        }
-
+        // Per-item project fence over the jQuery-sortable serialized payload.
         foreach ($payload as $itemList) {
             foreach (explode('&', (string) $itemList) as $itemString) {
                 // jQuery sortable serializes as "item[]=ID"; strip the prefix.
                 $id = (int) substr($itemString, 7);
-                if ($id > 0 && ! $this->userCanAccessCanvasItem($id)) {
+                if ($id <= 0) {
+                    continue;
+                }
+                $projectId = $this->canvasItemProjectId($id);
+                if ($projectId === null || ! $this->can(IdeasPermissions::EDIT, $projectId)) {
                     return false;
                 }
             }
@@ -139,11 +153,16 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::EDIT, entityScoped: true)]
     public function patchIdeaItem(int $id, array $params): bool
     {
-        if (! Auth::userIsAtLeast(Roles::$editor) || ! $this->userCanAccessCanvasItem($id)) {
+        // Fail closed: resolve the item's REAL project (shared zp_canvas_items) and require edit
+        // there before patching — null means the id is not an idea item, so refuse.
+        $projectId = $this->canvasItemProjectId($id);
+        if ($projectId === null) {
             return false;
         }
+        $this->authorize(IdeasPermissions::EDIT, $projectId);
 
         return $this->ideasRepository->patchCanvasItem($id, $params);
     }
@@ -157,6 +176,7 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForNewIdeas(?int $projectId = null, ?int $board = null): array
     {
         $ideas = $this->ideasRepository->getAllIdeas($projectId, $board);
@@ -177,6 +197,7 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForUpdatedIdeas(?int $projectId = null, ?int $board = null): array
     {
         $ideas = $this->ideasRepository->getAllIdeas($projectId, $board);
@@ -220,6 +241,7 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW, projectIdParam: 'projectId')]
     public function getAllBoards(int $projectId): array
     {
         $allCanvas = $this->ideasRepository->getAllCanvas($projectId);
@@ -235,11 +257,18 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW, entityScoped: true)]
     public function getBoard(int $id): array
     {
         $singleCanvas = $this->ideasRepository->getSingleCanvas($id);
+        if (empty($singleCanvas)) {
+            return [];
+        }
 
-        return $singleCanvas === false ? [] : $singleCanvas;
+        // IDOR fence: authorize VIEW against the board's real project (single-entity-by-id read).
+        $this->authorize(IdeasPermissions::VIEW, isset($singleCanvas[0]['projectId']) ? (int) $singleCanvas[0]['projectId'] : null);
+
+        return $singleCanvas;
     }
 
     /**
@@ -250,8 +279,10 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW, entityScoped: true)]
     public function getBoardTitle(int $id): string
     {
+        // Delegates to getBoard(), which performs the in-body VIEW authorize against the board's project.
         $singleCanvas = $this->getBoard($id);
 
         return $singleCanvas[0]['title'] ?? '';
@@ -265,8 +296,16 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW, entityScoped: true)]
     public function getBoardItems(int $boardId): array
     {
+        // IDOR fence: authorize VIEW against the board's real project before listing its items.
+        $projectId = $this->boardProjectId($boardId);
+        if ($projectId === null) {
+            return [];
+        }
+        $this->authorize(IdeasPermissions::VIEW, $projectId);
+
         $items = $this->ideasRepository->getCanvasItemsById($boardId);
 
         return $items === false ? [] : $items;
@@ -279,6 +318,7 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW)]
     public function getBoardLabels(): mixed
     {
         return $this->ideasRepository->getCanvasLabels();
@@ -294,8 +334,12 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::CREATE, entityScoped: true)]
     public function createBoard(string $title, int $projectId, int $authorId): int
     {
+        // A board belongs directly to $projectId; authorize CREATE there before writing.
+        $this->authorize(IdeasPermissions::CREATE, $projectId);
+
         $values = [
             'title' => $title,
             'author' => $authorId,
@@ -323,8 +367,12 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::CREATE, entityScoped: true)]
     public function createBoardFromDialog(string $title, int $projectId, int $authorId): int
     {
+        // A board belongs directly to $projectId; authorize CREATE there before writing.
+        $this->authorize(IdeasPermissions::CREATE, $projectId);
+
         $values = [
             'title' => $title,
             'author' => $authorId,
@@ -347,8 +395,16 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::EDIT, entityScoped: true)]
     public function updateBoard(int $id, string $title): mixed
     {
+        // Fail closed: resolve the board's real project and require edit there before renaming.
+        $projectId = $this->boardProjectId($id);
+        if ($projectId === null) {
+            return false;
+        }
+        $this->authorize(IdeasPermissions::EDIT, $projectId);
+
         return $this->ideasRepository->updateCanvas(['title' => $title, 'id' => $id]);
     }
 
@@ -365,12 +421,16 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW, projectIdParam: 'projectId')]
     public function ensureBoardExists(int $projectId, int $authorId, array $allBoards): int
     {
         if (count($allBoards) > 0) {
             return 0;
         }
 
+        // Bootstrap only: the default board is created as a SIDE EFFECT of viewing a board-less
+        // project, so it is VIEW-gated and writes straight to the repository — gating it CREATE
+        // would 403 a readonly viewer (mirrors Wiki's getAllProjectWikis default-notebook bootstrap).
         $values = [
             'title' => $this->language->__('label.board'),
             'author' => $authorId,
@@ -447,6 +507,7 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW, entityScoped: true)]
     public function getIdeaItem(?int $id, string $type = 'idea'): array
     {
         if ($id === null) {
@@ -463,6 +524,13 @@ class Ideas
                 'milestoneId' => '',
             ];
         }
+
+        // IDOR fence: authorize VIEW against the item's real project (single-entity-by-id read).
+        $projectId = $this->canvasItemProjectId($id);
+        if ($projectId === null) {
+            return [];
+        }
+        $this->authorize(IdeasPermissions::VIEW, $projectId);
 
         $canvasItem = $this->ideasRepository->getSingleCanvasItem($id);
 
@@ -483,8 +551,16 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW, entityScoped: true)]
     public function getRawIdeaItem(?int $id): mixed
     {
+        // IDOR fence: authorize VIEW against the item's real project (single-entity-by-id read).
+        $projectId = $this->canvasItemProjectId((int) $id);
+        if ($projectId === null) {
+            return false;
+        }
+        $this->authorize(IdeasPermissions::VIEW, $projectId);
+
         return $this->ideasRepository->getSingleCanvasItem((int) $id);
     }
 
@@ -495,6 +571,7 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW)]
     public function getCanvasTypes(): array
     {
         return $this->ideasRepository->canvasTypes;
@@ -510,8 +587,14 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::CREATE, entityScoped: true)]
     public function createIdeaItem(array $input, int $projectId, int $authorId): int
     {
+        // Authorize CREATE against the TARGET board's real project (resolve from canvasId; the
+        // passed projectId is untrusted), falling back to it only if the board can't be resolved.
+        $boardProjectId = $this->boardProjectId((int) ($input['canvasId'] ?? 0)) ?? $projectId;
+        $this->authorize(IdeasPermissions::CREATE, $boardProjectId);
+
         $canvasItem = [
             'box' => $input['box'],
             'author' => $authorId,
@@ -563,9 +646,19 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::EDIT, entityScoped: true)]
     public function updateIdeaItem(array $input, int $projectId, int $authorId): int
     {
         $itemId = (int) $input['itemId'];
+
+        // Fail closed: resolve the EXISTING item's real project (shared zp_canvas_items) and require
+        // edit there before writing — the passed projectId/canvasId are untrusted, so an editor in
+        // project A cannot edit or relocate an item in project B.
+        $existingProjectId = $this->canvasItemProjectId($itemId);
+        if ($existingProjectId === null) {
+            return 0;
+        }
+        $this->authorize(IdeasPermissions::EDIT, $existingProjectId);
 
         $canvasItem = [
             'box' => $input['box'],
@@ -633,8 +726,16 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::EDIT, entityScoped: true)]
     public function removeMilestone(int $ideaItemId): void
     {
+        // Fail closed: resolve the item's real project and require edit there before detaching.
+        $projectId = $this->canvasItemProjectId($ideaItemId);
+        if ($projectId === null) {
+            return;
+        }
+        $this->authorize(IdeasPermissions::EDIT, $projectId);
+
         $this->ideasRepository->patchCanvasItem($ideaItemId, ['milestoneId' => '']);
     }
 
@@ -646,6 +747,7 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW, projectIdParam: 'projectId')]
     public function getProjectMilestones(int $projectId): array|false
     {
         return $this->ticketService->getAllMilestones([
@@ -667,8 +769,14 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::CREATE, entityScoped: true)]
     public function addIdeaComment(string $text, int $ideaItemId, int|string $parentCommentId, int $projectId, int $authorId): false|string
     {
+        // Commenting on an idea is a commenter+ capability in the idea's project (resolved from the
+        // item; the passed projectId is untrusted). Uses the Comments vocabulary.
+        $itemProjectId = $this->canvasItemProjectId($ideaItemId) ?? $projectId;
+        $this->authorize(CommentsPermissions::CREATE, $itemProjectId);
+
         $values = [
             'text' => $text,
             'date' => date('Y-m-d H:i:s'),
@@ -712,8 +820,24 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(CommentsPermissions::MODERATE, entityScoped: true)]
     public function removeIdeaComment(int $commentId): void
     {
+        // Was an UNGATED delete-by-id (reachable via the ?delComment GET param) — any user could
+        // delete any comment by id. Fence: the comment author may delete their own; otherwise
+        // require moderate in the idea's project (resolved from the comment's idea item).
+        $comment = $this->commentsRepository->getComment($commentId);
+        if (! $comment) {
+            return;
+        }
+
+        if ((int) ($comment['userId'] ?? 0) !== (int) session('userdata.id')) {
+            $this->authorize(
+                CommentsPermissions::MODERATE,
+                $this->canvasItemProjectId((int) ($comment['moduleId'] ?? 0))
+            );
+        }
+
         $this->commentsRepository->deleteComment($commentId);
     }
 
@@ -726,8 +850,13 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW, entityScoped: true)]
     public function getIdeaComments(string $module, int $entityId): array|false
     {
+        // entityId is the idea item id; authorize VIEW against its project before returning comments
+        // (a null project falls back to a session-scoped role check for any non-resolving target).
+        $this->authorize(IdeasPermissions::VIEW, $this->canvasItemProjectId($entityId));
+
         return $this->commentsRepository->getComments($module, $entityId);
     }
 
@@ -740,8 +869,61 @@ class Ideas
      *
      * @api
      */
+    #[RequiresPermission(IdeasPermissions::VIEW, entityScoped: true)]
     public function countIdeaComments(string $module, int $entityId): mixed
     {
+        $this->authorize(IdeasPermissions::VIEW, $this->canvasItemProjectId($entityId));
+
         return $this->commentsRepository->countComments($module, $entityId);
+    }
+
+    /**
+     * Delete an idea board, fencing the operation against the board's project.
+     *
+     * Replaces the previous controller->repository direct delete (which only had a global-role
+     * gate and no project scoping, so an editor in any project could delete another's board).
+     *
+     * @param  int  $id  Board (canvas) id.
+     * @return bool True when deleted, false when the board does not resolve to a project.
+     *
+     * @api
+     */
+    #[RequiresPermission(IdeasPermissions::DELETE, entityScoped: true)]
+    public function deleteCanvas(int $id): bool
+    {
+        $projectId = $this->boardProjectId($id);
+        if ($projectId === null) {
+            return false;
+        }
+        $this->authorize(IdeasPermissions::DELETE, $projectId);
+
+        $this->ideasRepository->deleteCanvas($id);
+        session()->forget('currentIdeaCanvas');
+
+        return true;
+    }
+
+    /**
+     * Delete an idea item, fencing the operation against the item's project.
+     *
+     * Replaces the previous controller->repository direct delete (id-only, no project scoping).
+     *
+     * @param  int  $id  Canvas item id.
+     * @return bool True when deleted, false when the item does not resolve to a project.
+     *
+     * @api
+     */
+    #[RequiresPermission(IdeasPermissions::DELETE, entityScoped: true)]
+    public function deleteCanvasItem(int $id): bool
+    {
+        $projectId = $this->canvasItemProjectId($id);
+        if ($projectId === null) {
+            return false;
+        }
+        $this->authorize(IdeasPermissions::DELETE, $projectId);
+
+        $this->ideasRepository->delCanvasItem($id);
+
+        return true;
     }
 }

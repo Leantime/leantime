@@ -134,8 +134,10 @@ class Ideas
             ->where('canvasId', $id)
             ->delete();
 
+        // type guard (shared zp_canvas across all canvas families): only ever delete an idea board.
         $this->db->table('zp_canvas')
             ->where('id', $id)
+            ->where('type', 'idea')
             ->delete();
     }
 
@@ -154,8 +156,10 @@ class Ideas
 
     public function updateCanvas(array $values): mixed
     {
+        // type guard (shared zp_canvas across all canvas families): only ever rename an idea board.
         return $this->db->table('zp_canvas')
             ->where('id', $values['id'])
+            ->where('type', 'idea')
             ->update(['title' => $values['title']]);
     }
 
