@@ -32,8 +32,6 @@
     $stages = Logicmodelcanvas::STAGES;
 @endphp
 
-@include('global::components.stageflow.styles')
-
 {{-- ── Page Header ───────────────────────────────────────────── --}}
 <div class="pageheader">
     <div class="pageicon"><span class="fas {{ $canvasIcon }}"></span></div>
@@ -115,7 +113,7 @@
             @dispatchEvent('logicmodel.beforeStageFlow', ['canvasId' => $currentCanvas, 'canvasItems' => $canvasItems])
 
             {{-- ── Five-Stage Flow ──────────────────────────────────── --}}
-            <div class="sf-flow" id="logicModelBoard">
+            <div class="lt-board sf-flow" id="logicModelBoard">
                 @foreach ($stages as $num => $stage)
                     @php
                         $boxKey = 'lm_' . $stage['key'];
@@ -128,16 +126,16 @@
                         $itemCount = count($stageItems);
                     @endphp
 
-                    <x-global::stageflow.card
-                        :stageKey="$boxKey"
-                        :stageNum="$num"
+                    <x-global::column
+                        :slug="$boxKey"
+                        :index="$num"
                         :color="$stage['color']"
                         :bgColor="$stage['bg']"
                         :icon="$stage['icon']"
                         :title="$tpl->__($stage['title'])"
                         :subtitle="$tpl->__($stage['subtitle'])"
                         :active="true"
-                        :itemCount="$itemCount"
+                        :count="$itemCount"
                         :focusLabel="''"
                     >
                         <x-slot:headerExtra>
@@ -155,7 +153,7 @@
                                 $statusColor = isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]['color'] : 'grey';
                             @endphp
 
-                            <x-global::stageflow.item
+                            <x-global::card
                                 :itemId="$row['id']"
                                 :title="$row['description']"
                                 :description="$row['conclusion'] != '' ? $tpl->convertRelativePaths($row['conclusion']) : ''"
@@ -169,22 +167,22 @@
                                 :canEdit="$login::userIsAtLeast($roles::$editor)"
                             >
                                 @dispatchEvent('logicmodel.itemCardFooter', ['item' => $row, 'canvasId' => $currentCanvas])
-                            </x-global::stageflow.item>
+                            </x-global::card>
                         @endforeach
 
                         @if ($itemCount === 0)
-                            <div class="sf-empty">
-                                <i class="fa {{ $stage['icon'] }} sf-empty-icon" style="color: {{ $stage['color'] }};"></i>
+                            <div class="lt-column-empty">
+                                <i class="fa {{ $stage['icon'] }} lt-column-empty-icon" style="color: {{ $stage['color'] }};"></i>
                                 {{ $tpl->__('text.no_items_yet') }}
                             </div>
                         @endif
 
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <a class="sf-add" href="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $boxKey }}">
+                            <a class="lt-column-add sf-add" href="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $boxKey }}">
                                 <i class="fa fa-plus"></i> {{ $tpl->__('logicmodel.add_' . $stage['key']) }}
                             </a>
                         @endif
-                    </x-global::stageflow.card>
+                    </x-global::column>
                 @endforeach
             </div>
 

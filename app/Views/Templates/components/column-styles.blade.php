@@ -1,28 +1,29 @@
 {{--
-    Stageflow component styles.
-    Include once per page: @include('global::components.stageflow.styles')
+    Column styles (lt-column). Token-driven, themeable light/dark.
+    Self-included via @once from column.blade.php — never include it by hand.
 
-    These styles power the stage-flow layout used by Logic Model and
-    other blueprint boards. Stage cards use inline CSS custom properties
-    (--stage-color, --stage-bg) set via the <x-global::stageflow.card>
-    component.
+    Includes the column-context overrides for cards (how a <x-global::card>
+    compacts inside an inactive column / picks up the accent inside an active
+    one), plus a few sf-* rules the StrategyPro plugin emits or relies on
+    (.sf-status-pill, .sf-project-link-icon, and print rules hiding the
+    plugin-injected .sf-item-actions / .sf-health-badge) for the migration window.
 --}}
 @once
 <style>
 /* ═══════════════════════════════════════════════════════
-   Stageflow — Reusable stage-flow layout
+   Board flow — row of columns
    ═══════════════════════════════════════════════════════ */
-
-/* ── Flow container ── */
-.sf-flow {
+.lt-board {
     display: flex;
     align-items: stretch;
     gap: 8px;
     padding: 8px 0;
 }
 
-/* ── Stage card ── */
-.sf-stage {
+/* ═══════════════════════════════════════════════════════
+   Column — board lane
+   ═══════════════════════════════════════════════════════ */
+.lt-column {
     flex: 1 1 0;
     min-width: 0;
     display: flex;
@@ -38,21 +39,21 @@
     overflow: visible;
     z-index: 1;
 }
-.sf-stage:not(.active) {
+.lt-column:not(.lt-column--active) {
     cursor: pointer;
 }
-.sf-stage:not(.active):hover {
+.lt-column:not(.lt-column--active):hover {
     box-shadow: var(--regular-shadow);
 }
-.sf-stage.active {
+.lt-column--active {
     z-index: 10;
     box-shadow: var(--large-shadow);
     border-color: transparent;
     background: linear-gradient(180deg, var(--stage-bg) 0%, var(--secondary-background) 100px);
 }
 
-/* ── Current Focus flag ── */
-.sf-flag {
+/* ── Focus flag ── */
+.lt-column-flag {
     position: absolute;
     top: -10px;
     left: 50%;
@@ -70,12 +71,12 @@
     transition: opacity 250ms;
     box-shadow: var(--regular-shadow);
 }
-.sf-stage.active .sf-flag { opacity: 1; }
-/* No focus label (e.g. all stages expanded) → don't render an empty pill. */
-.sf-flag:empty { display: none; }
+.lt-column--active .lt-column-flag { opacity: 1; }
+/* No focus label → don't render an empty pill. */
+.lt-column-flag:empty { display: none; }
 
-/* ── Stage header ── */
-.sf-hd {
+/* ── Header ── */
+.lt-column-header {
     padding: 14px 10px 10px;
     display: flex;
     flex-direction: column;
@@ -84,14 +85,14 @@
     transition: border-color 300ms, padding 300ms;
     position: relative;
 }
-.sf-stage.active .sf-hd {
+.lt-column--active .lt-column-header {
     padding-top: 18px;
     border-bottom-width: 3px;
     border-bottom-color: var(--stage-color);
 }
 
 /* Icon box */
-.sf-icon {
+.lt-column-icon {
     width: 32px;
     height: 32px;
     border-radius: var(--element-radius);
@@ -104,64 +105,64 @@
     background: var(--stage-bg);
     color: var(--stage-color);
 }
-.sf-stage:not(.active) .sf-icon {
+.lt-column:not(.lt-column--active) .lt-column-icon {
     width: 30px;
     height: 30px;
     font-size: var(--font-size-m);
     margin-bottom: 5px;
 }
-.sf-stage.active .sf-icon {
+.lt-column--active .lt-column-icon {
     background: var(--stage-color);
     color: white;
 }
 
-/* Title row with count badge */
-.sf-title-row {
+/* Title row + count */
+.lt-column-title-row {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 5px;
     margin-bottom: 2px;
 }
-.sf-name {
+.lt-column-title {
     font-size: var(--font-size-l);
     font-weight: 700;
     transition: font-size 300ms;
     line-height: 1.2;
     color: var(--primary-font-color);
 }
-.sf-stage:not(.active) .sf-name {
+.lt-column:not(.lt-column--active) .lt-column-title {
     font-size: var(--font-size-m);
     font-weight: 600;
     opacity: 0.5;
 }
 
 /* Count — inline with title, kanban style */
-.sf-count {
+.lt-column-count {
     font-size: var(--font-size-l);
     font-weight: 700;
     line-height: 1.2;
 }
-.sf-stage:not(.active) .sf-count {
+.lt-column:not(.lt-column--active) .lt-column-count {
     font-size: var(--font-size-m);
     opacity: 0.4;
 }
 
 /* Subtitle */
-.sf-sub {
+.lt-column-sub {
     font-size: var(--font-size-xs);
     color: var(--primary-font-color);
     opacity: 0.6;
     transition: font-size 300ms;
     text-align: center;
 }
-.sf-stage:not(.active) .sf-sub {
+.lt-column:not(.lt-column--active) .lt-column-sub {
     font-size: var(--font-size-xs);
     opacity: 0.5;
 }
 
-/* ── Stage body ── */
-.sf-body {
+/* ── Body ── */
+.lt-column-body {
     padding: 8px 8px 8px;
     display: flex;
     flex-direction: column;
@@ -169,106 +170,16 @@
     flex: 1;
 }
 
-/* ── Items ── */
-.sf-item {
-    padding: 7px 10px;
-    border-radius: var(--box-radius-small);
-    cursor: pointer;
-    transition: background 150ms, border-color 150ms;
-    border-left: 3px solid transparent;
-    position: relative;
-}
-.sf-item:hover { background: rgba(0,0,0,0.02); }
-.sf-stage.active .sf-item { border-left-color: var(--stage-color); }
+/* ═══════════════════════════════════════════════════════
+   Card behaviour inside a column (column-state driven)
+   ═══════════════════════════════════════════════════════ */
+.lt-column--active .lt-card { border-left-color: var(--stage-color); }
 
-/* Item title */
-.sf-item-title {
-    font-size: var(--font-size-s);
-    font-weight: 600;
-    line-height: 1.3;
-    color: var(--primary-font-color);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    overflow: hidden;
-}
-.sf-item-title a,
-.sf-item-title span:not(.sf-dot) {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.sf-item-title a {
-    color: var(--primary-font-color);
-    text-decoration: none;
-}
-.sf-item-title a:hover { color: var(--accent1); }
-
-/* Status dot */
-.sf-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 6px;
-    position: relative;
-    top: -1px;
-}
-.sf-dot--blue { background: #1B75BB; }
-.sf-dot--orange { background: #fdab3d; }
-.sf-dot--green { background: #75BB1B; }
-.sf-dot--red { background: #BB1B25; }
-.sf-dot--grey { background: #c3ccd4; }
-
-/* Item description */
-.sf-item-desc {
-    font-size: var(--font-size-xs);
-    color: var(--primary-font-color);
-    opacity: 0.6;
-    line-height: 1.4;
-    margin-top: 2px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    word-break: break-word;
-}
-
-/* Item footer */
-.sf-item-foot {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 5px;
-    flex-wrap: wrap;
-}
-.sf-meta {
-    font-size: var(--font-size-xs);
-    color: var(--primary-font-color);
-    opacity: 0.5;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-}
-.sf-meta i { font-size: var(--font-size-xs); }
-.sf-meta a { color: inherit; text-decoration: none; }
-.sf-meta a:hover { color: var(--accent1); opacity: 1; }
-
-.sf-avatar {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    vertical-align: middle;
-}
-
-/* ── Inactive stage: compact view ── */
-.sf-stage:not(.active) .sf-item {
+.lt-column:not(.lt-column--active) .lt-card {
     padding: 4px 8px;
     border-left-color: transparent;
 }
-.sf-stage:not(.active) .sf-item-title {
+.lt-column:not(.lt-column--active) .lt-card-title {
     font-size: var(--font-size-s);
     font-weight: 500;
     color: var(--primary-font-color);
@@ -276,40 +187,40 @@
     display: flex;
     align-items: center;
 }
-.sf-stage:not(.active) .sf-item-title .sf-dot {
+.lt-column:not(.lt-column--active) .lt-card-title .lt-card-dot {
     width: 6px;
     height: 6px;
     margin-right: 4px;
 }
-.sf-stage:not(.active) .sf-item-desc { display: none; }
-.sf-stage:not(.active) .sf-item-foot { display: none; }
-.sf-stage:not(.active) .sf-item .inlineDropDownContainer { display: none; }
+.lt-column:not(.lt-column--active) .lt-card-desc { display: none; }
+.lt-column:not(.lt-column--active) .lt-card-foot { display: none; }
+.lt-column:not(.lt-column--active) .lt-card .inlineDropDownContainer { display: none; }
 
-/* Disable interactive elements in inactive stages */
-.sf-stage:not(.active) a,
-.sf-stage:not(.active) button,
-.sf-stage:not(.active) .dropdown-toggle {
+/* Disable interactive elements in inactive columns */
+.lt-column:not(.lt-column--active) a,
+.lt-column:not(.lt-column--active) button,
+.lt-column:not(.lt-column--active) .dropdown-toggle {
     pointer-events: none;
 }
 
 /* ── Empty state ── */
-.sf-empty {
+.lt-column-empty {
     text-align: center;
     padding: 16px 8px;
     font-size: var(--font-size-xs);
     color: var(--primary-font-color);
     opacity: 0.5;
 }
-.sf-empty-icon {
+.lt-column-empty-icon {
     font-size: var(--font-size-xl);
     opacity: 0.3;
     margin-bottom: 6px;
     display: block;
 }
-.sf-stage:not(.active) .sf-empty { display: none; }
+.lt-column:not(.lt-column--active) .lt-column-empty { display: none; }
 
 /* ── Add item button ── */
-.sf-add {
+.lt-column-add {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -327,20 +238,22 @@
     border: none;
     border-radius: var(--box-radius-small);
 }
-.sf-add:hover {
+.lt-column-add:hover {
     opacity: 1;
     color: var(--accent1);
     background: rgba(0,69,110,0.04);
 }
-.sf-stage:not(.active) .sf-add { display: none; }
+.lt-column:not(.lt-column--active) .lt-column-add { display: none; }
 
 /* ── Responsive ── */
 @media (max-width: 1100px) {
-    .sf-flow { flex-wrap: wrap; gap: 8px; }
-    .sf-stage { flex: 1 1 calc(50% - 4px); min-width: 160px; }
+    .lt-board { flex-wrap: wrap; gap: 8px; }
+    .lt-column { flex: 1 1 calc(50% - 4px); min-width: 160px; }
 }
 
-/* ── Status pill (plugin enhancement) ── */
+/* ═══════════════════════════════════════════════════════
+   StrategyPro plugin enhancements (sf-* names emitted by the plugin)
+   ═══════════════════════════════════════════════════════ */
 .sf-status-pill {
     display: inline-block;
     padding: 0 6px;
@@ -351,8 +264,6 @@
     white-space: nowrap;
     letter-spacing: 0.2px;
 }
-
-/* ── Project link icon (plugin enhancement) ── */
 .sf-project-link-icon i {
     color: var(--accent1);
     opacity: 0.7;
@@ -362,31 +273,31 @@
 @media print {
     @page { size: landscape; margin: 0.5in; }
 
-    .sf-stage .sf-item-desc { display: block !important; }
-    .sf-stage .sf-item-foot { display: flex !important; }
-    .sf-stage .sf-add { display: none !important; }
-    .sf-flag { display: none !important; }
+    .lt-column .lt-card-desc { display: block !important; }
+    .lt-column .lt-card-foot { display: flex !important; }
+    .lt-column .lt-column-add { display: none !important; }
+    .lt-column-flag { display: none !important; }
     .sf-item-actions { display: none !important; }
     .sf-health-badge { display: none !important; }
 
-    .sf-flow {
+    .lt-board {
         display: flex !important;
         flex-wrap: wrap !important;
         gap: 12px !important;
     }
-    .sf-stage {
+    .lt-column {
         min-width: unset !important;
         max-width: unset !important;
         flex: 0 0 calc(33.33% - 8px) !important;
         break-inside: avoid;
         page-break-inside: avoid;
     }
-    /* Force page break after the 3rd stage */
-    .sf-stage:nth-child(3) {
+    /* Force page break after the 3rd column */
+    .lt-column:nth-child(3) {
         break-after: page;
         page-break-after: always;
     }
-    .sf-stage:nth-child(n+4) {
+    .lt-column:nth-child(n+4) {
         flex: 0 0 calc(50% - 6px) !important;
     }
 }
