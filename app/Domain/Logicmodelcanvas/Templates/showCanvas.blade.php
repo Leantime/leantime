@@ -96,9 +96,13 @@
                             $statusFilterLabel = '<i class="fas fa-fw ' . $statusLabels[$filter['status']]['icon'] . '" style="color:' . $sc . '"></i> ' . $statusLabels[$filter['status']]['title'];
                         }
                     @endphp
+                    {{-- viewDropDown right-aligns the menu (left:auto; right:0). On
+                         this board the button sits at the left edge of the toolbar, so
+                         a 240px menu extends back under the sidebar and gets clipped
+                         by .primaryContent's overflow-x:hidden. Left-align it locally. --}}
                     <div class="btn-group viewDropDown">
                         <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">{!! $statusFilterLabel !!}</button>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" style="left:0; right:auto;">
                             <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
                             @foreach ($statusLabels as $key => $data)
                                 @php $iconColor = $statusColorMap[$data['color']] ?? '#666'; @endphp
