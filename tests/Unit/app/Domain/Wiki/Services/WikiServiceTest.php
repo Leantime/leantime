@@ -113,6 +113,28 @@ class WikiServiceTest extends TestCase
         $service->createArticle($article);
     }
 
+    public function test_create_article_fails_closed_when_canvas_is_not_a_wiki(): void
+    {
+        // canvasId does not resolve to a wiki -> refuse before authorize, never write (no falling
+        // back to the session project, which would let a foreign/non-wiki canvasId be created).
+        $created = false;
+        $service = $this->makeService(wikiRepo: $this->make(WikiRepository::class, [
+            'getWiki' => fn () => false,
+            'createArticle' => function () use (&$created) {
+                $created = true;
+
+                return '1';
+            },
+        ]));
+        $service->setPermissionService($this->allowingPermissions());
+
+        $article = new Article;
+        $article->canvasId = 999;
+
+        $this->assertFalse($service->createArticle($article));
+        $this->assertFalse($created, 'A non-wiki canvasId must never create an article');
+    }
+
     public function test_update_article_is_denied_without_edit_permission(): void
     {
         $service = $this->makeService(wikiRepo: $this->make(WikiRepository::class, [

@@ -65,12 +65,14 @@ class ArticleDialog extends Controller
     }
 
     /**
-     * Creates or updates an article. The controller gate defers (entityScoped) to the service's
-     * createArticle/updateArticle, which authorize CREATE/EDIT against the article's real project.
+     * Creates or updates an article. A real dispatch-time VIEW gate guards the handler (entityScoped
+     * is a no-op at dispatch, which would leave this action — and its internal getArticle/
+     * getAllProjectWikis reads — ungated); the precise CREATE/EDIT enforcement is done in the
+     * service's createArticle/updateArticle against the article's real project.
      *
      * @throws BindingResolutionException
      */
-    #[RequiresPermission(WikiPermissions::EDIT, entityScoped: true)]
+    #[RequiresPermission(WikiPermissions::VIEW)]
     public function post($params): Response
     {
 

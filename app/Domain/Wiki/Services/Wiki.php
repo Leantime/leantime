@@ -183,10 +183,14 @@ class Wiki extends BaseService
     #[RequiresPermission(WikiPermissions::CREATE, entityScoped: true)]
     public function createArticle(Article $article): false|string
     {
-        // An article inherits its wiki's project (canvasId -> zp_canvas.projectId). Authorize CREATE
-        // against that project before writing, so a foreign/spoofed canvasId is denied.
+        // An article inherits its wiki's project (canvasId -> zp_canvas.projectId). FAIL CLOSED if
+        // the canvasId is not a wiki — never fall back to the session project, or a foreign/non-wiki
+        // canvasId could be created against the caller's own project.
         $wiki = $this->wikiRepository->getWiki((int) $article->canvasId);
-        $projectId = $wiki ? (int) $wiki->projectId : (int) session('currentProject');
+        if (! $wiki) {
+            return false;
+        }
+        $projectId = (int) $wiki->projectId;
         $this->authorize(WikiPermissions::CREATE, $projectId);
 
         $id = $this->wikiRepository->createArticle($article);
@@ -198,7 +202,7 @@ class Wiki extends BaseService
                 entity: 'article',
                 entityId: (int) $id,
                 userId: (int) session('userdata.id'),
-                projectId: (int) session('currentProject')
+                projectId: $projectId
             );
         }
 
