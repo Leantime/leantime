@@ -130,12 +130,25 @@ class Ideas
 
     public function deleteCanvas(int $id): void
     {
+        // Shared zp_canvas/zp_canvas_items: early-return unless this id is an idea board, so the
+        // items-delete (by canvasId) can't drop another canvas family's items before the
+        // type-guarded board delete runs.
+        $isIdea = $this->db->table('zp_canvas')
+            ->where('id', $id)
+            ->where('type', 'idea')
+            ->exists();
+
+        if (! $isIdea) {
+            return;
+        }
+
         $this->db->table('zp_canvas_items')
             ->where('canvasId', $id)
             ->delete();
 
         $this->db->table('zp_canvas')
             ->where('id', $id)
+            ->where('type', 'idea')
             ->delete();
     }
 
@@ -154,8 +167,10 @@ class Ideas
 
     public function updateCanvas(array $values): mixed
     {
+        // type guard (shared zp_canvas across all canvas families): only ever rename an idea board.
         return $this->db->table('zp_canvas')
             ->where('id', $values['id'])
+            ->where('type', 'idea')
             ->update(['title' => $values['title']]);
     }
 

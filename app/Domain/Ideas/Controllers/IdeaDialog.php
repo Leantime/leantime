@@ -2,8 +2,10 @@
 
 namespace Leantime\Domain\Ideas\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Ideas\Permissions\IdeasPermissions;
 use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
 
 class IdeaDialog extends Controller
@@ -19,8 +21,10 @@ class IdeaDialog extends Controller
     }
 
     /**
-     * get - handle get requests
+     * get - handle get requests. The embedded ?delComment / ?removeMilestone mutations are fenced
+     * by the service (removeIdeaComment = author-or-moderate; removeMilestone = edit) in-body.
      */
+    #[RequiresPermission(IdeasPermissions::VIEW)]
     public function get($params)
     {
         if (isset($params['id'])) {
@@ -61,8 +65,11 @@ class IdeaDialog extends Controller
     }
 
     /**
-     * post - handle post requests
+     * post - handle post requests. Create/update/comment all defer to the service methods, which
+     * authorize the correct verb (ideas.create / ideas.edit / comments.create) against the entity's
+     * real project.
      */
+    #[RequiresPermission(IdeasPermissions::VIEW)]
     public function post($params)
     {
 
