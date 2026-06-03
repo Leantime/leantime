@@ -59,12 +59,17 @@
    presenting the board — useful when walking stakeholders through one
    stage at a time without losing the surrounding context. No state change,
    no persistence; the moment the mouse leaves the row, everything
-   rebalances back to the default everything-prominent state. */
-.sf-flow:hover .sf-stage:not(:hover) {
+   rebalances back to the default everything-prominent state.
+
+   Scoped to `.sf-stage.active` to avoid compounding with the inactive-stage
+   opacity rules below (`:not(.active) .sf-name { opacity: 0.5 }` etc.) — a
+   plain `.sf-stage` selector here would multiply 0.4 × 0.5 = 0.2 and make
+   text on inactive stages unreadable during a row hover. */
+.sf-flow:hover .sf-stage.active:not(:hover) {
     opacity: 0.4;
 }
 .sf-flow:hover .sf-stage:hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--large-shadow);
     z-index: 11;
 }
 
