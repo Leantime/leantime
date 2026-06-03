@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Canvas\Services;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 
 /**
@@ -31,6 +33,7 @@ class Canvas
      *
      * @api
      */
+    #[RequiresPermission(BlueprintsPermissions::CREATE, projectIdParam: 'projectId')]
     public function import(string $filename, string $canvasName, int $projectId, int $authorId): bool|int
     {
         // Old callers pass the full type ("swotcanvas"); Blueprints works on the slug ("swot").
@@ -52,6 +55,7 @@ class Canvas
      *
      * @api
      */
+    #[RequiresPermission(BlueprintsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getBoardProgress(string $projectId = '', array $boards = []): array
     {
         return app(BlueprintsService::class)->getBoardProgress($projectId, $boards);
@@ -68,6 +72,7 @@ class Canvas
      *
      * @api
      */
+    #[RequiresPermission(BlueprintsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getLastUpdatedCanvas(?int $projectId = null, array $boards = []): array
     {
         return app(BlueprintsService::class)->getLastUpdatedCanvas($projectId, $boards);

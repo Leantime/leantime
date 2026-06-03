@@ -7,8 +7,12 @@ namespace Leantime\Domain\Blueprints\Services;
 use DOMDocument;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
@@ -18,9 +22,18 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
  * Replaces the old Canvas\Services\Canvas by using the Blueprints repo
  * and TemplateRegistry directly instead of dynamically resolving variant repos.
  *
+ * Authorization: canvas boards and items are PROJECT-scoped (each board belongs to one
+ * project; items belong to a board). Every by-id board/item operation routes through this
+ * service, which resolves the entity's REAL project via the repository's fail-closed
+ * resolvers and authorizes the matching {@see BlueprintsPermissions} verb against it. A
+ * resolver returning null (missing id, or an id whose board is a different canvas type — the
+ * shared `zp_canvas`/`zp_canvas_items` tables hold every variant under one id sequence) is
+ * treated as DENY, never as "fall back to the session project". Controllers therefore call
+ * these methods instead of the repository directly.
+ *
  * @api
  */
-class Blueprints
+class Blueprints extends BaseService
 {
     private BlueprintsRepository $blueprintsRepo;
 
@@ -43,6 +56,262 @@ class Blueprints
         $this->language = $language;
     }
 
+    // ---------------------------------------------------------------------------------------
+    // Secured by-id board/item CRUD chokepoint.
+    //
+    // Controllers call these instead of the repository so authorization happens against the
+    // entity's REAL project. Reads soft-deny (return the same neutral value as "missing") so
+    // they never become a cross-project existence oracle; writes fail closed with an
+    // AuthorizationException. These are intentionally NOT @api — they are the canvas
+    // controllers' write surface, not part of the JSON-RPC API.
+    // ---------------------------------------------------------------------------------------
+
+    /**
+     * Fetch a single canvas item by id, authorized for VIEW against the item's real project.
+     *
+     * @param  int  $id  Canvas item id
+     * @param  string  $canvasType  Board type the item must belong to (e.g. "swotcanvas")
+     * @return array<string, mixed>|false The item, or false when missing/foreign/unauthorized
+     */
+    public function getCanvasItem(int $id, string $canvasType): array|false
+    {
+        $projectId = $this->blueprintsRepo->getCanvasItemProjectId($id, $canvasType);
+        if ($projectId === null || ! $this->can(BlueprintsPermissions::VIEW, $projectId)) {
+            return false;
+        }
+
+        return $this->blueprintsRepo->getSingleCanvasItem($id);
+    }
+
+    /**
+     * Fetch a single canvas board by id, authorized for VIEW against the board's real project.
+     *
+     * @param  int  $canvasId  Canvas board id
+     * @param  string  $canvasType  Board type the board must be of
+     * @return array<int, array<string, mixed>>|false Board rows, or false when missing/foreign/unauthorized
+     */
+    public function getBoard(int $canvasId, string $canvasType): array|false
+    {
+        $projectId = $this->blueprintsRepo->getCanvasProjectId($canvasId, $canvasType);
+        if ($projectId === null || ! $this->can(BlueprintsPermissions::VIEW, $projectId)) {
+            return false;
+        }
+
+        return $this->blueprintsRepo->getSingleCanvas($canvasId, $canvasType);
+    }
+
+    /**
+     * List the items of a canvas board, authorized for VIEW against the board's real project.
+     * Returns an empty array (the neutral "no items" value) for a missing/foreign/unauthorized
+     * board, so a foreign board id is indistinguishable from an empty one.
+     *
+     * @param  int  $canvasId  Canvas board id
+     * @param  string  $canvasType  Board type the board must be of
+     * @param  string  $commentModule  Comment module key for the item comment count join
+     * @return array<int, array<string, mixed>>
+     */
+    public function getBoardItems(int $canvasId, string $canvasType, string $commentModule): array
+    {
+        $projectId = $this->blueprintsRepo->getCanvasProjectId($canvasId, $canvasType);
+        if ($projectId === null || ! $this->can(BlueprintsPermissions::VIEW, $projectId)) {
+            return [];
+        }
+
+        return $this->blueprintsRepo->getCanvasItemsById($canvasId, $commentModule);
+    }
+
+    /**
+     * Create a canvas item, authorized for CREATE against the target board's real project.
+     *
+     * @param  array<string, mixed>  $values  Item values (must include `canvasId`)
+     * @param  string  $canvasType  Board type the target board must be of
+     * @return false|string New item id, or false on insert failure
+     *
+     * @throws AuthorizationException When the target board is unknown/foreign or CREATE is denied.
+     */
+    public function createCanvasItem(array $values, string $canvasType): false|string
+    {
+        $projectId = $this->blueprintsRepo->getCanvasProjectId((int) ($values['canvasId'] ?? 0), $canvasType);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(BlueprintsPermissions::CREATE, $projectId);
+
+        return $this->blueprintsRepo->addCanvasItem($values);
+    }
+
+    /**
+     * Update a canvas item, authorized for EDIT against the item's real project. The board id
+     * is resolved from the existing item — `canvasId` in the payload is ignored for scope, so
+     * an item cannot be relocated into another project.
+     *
+     * @param  array<string, mixed>  $values  Item values (must include `itemId` or `id`)
+     * @param  string  $canvasType  Board type the item must belong to
+     *
+     * @throws AuthorizationException When the item is unknown/foreign or EDIT is denied.
+     */
+    public function updateCanvasItem(array $values, string $canvasType): void
+    {
+        $itemId = (int) ($values['itemId'] ?? $values['id'] ?? 0);
+        $projectId = $this->blueprintsRepo->getCanvasItemProjectId($itemId, $canvasType);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(BlueprintsPermissions::EDIT, $projectId);
+
+        $this->blueprintsRepo->editCanvasItem($values);
+    }
+
+    /**
+     * Patch allowlisted columns of a canvas item, authorized for EDIT against the item's real
+     * project. Used by the inline board-update API.
+     *
+     * @param  int  $id  Canvas item id
+     * @param  array<string, mixed>  $params  Fields to patch (allowlisted in the repository)
+     * @param  string  $canvasType  Board type the item must belong to
+     * @return bool False when no allowlisted columns were present (a client error, not a denial)
+     *
+     * @throws AuthorizationException When the item is unknown/foreign or EDIT is denied.
+     */
+    public function patchCanvasItem(int $id, array $params, string $canvasType): bool
+    {
+        $projectId = $this->blueprintsRepo->getCanvasItemProjectId($id, $canvasType);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(BlueprintsPermissions::EDIT, $projectId);
+
+        return $this->blueprintsRepo->patchCanvasItem($id, $params);
+    }
+
+    /**
+     * Delete a canvas item, authorized for DELETE against the item's real project.
+     *
+     * @param  int  $id  Canvas item id
+     * @param  string  $canvasType  Board type the item must belong to
+     *
+     * @throws AuthorizationException When the item is unknown/foreign or DELETE is denied.
+     */
+    public function deleteCanvasItem(int $id, string $canvasType): void
+    {
+        $projectId = $this->blueprintsRepo->getCanvasItemProjectId($id, $canvasType);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(BlueprintsPermissions::DELETE, $projectId);
+
+        $this->blueprintsRepo->delCanvasItem($id);
+    }
+
+    /**
+     * Create a canvas board, authorized for CREATE against the target project.
+     *
+     * @param  array<string, mixed>  $values  Board values (must include `projectId`)
+     * @param  string  $canvasType  Board type to create
+     * @return false|string New board id, or false on insert failure
+     *
+     * @throws AuthorizationException When projectId is missing or CREATE is denied.
+     */
+    public function createBoard(array $values, string $canvasType): false|string
+    {
+        $projectId = (int) ($values['projectId'] ?? 0);
+        if ($projectId === 0) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(BlueprintsPermissions::CREATE, $projectId);
+
+        return $this->blueprintsRepo->addCanvas($values, $canvasType);
+    }
+
+    /**
+     * Rename a canvas board, authorized for EDIT against the board's real project.
+     *
+     * @param  int  $canvasId  Canvas board id
+     * @param  string  $title  New title
+     * @param  string  $canvasType  Board type the board must be of
+     *
+     * @throws AuthorizationException When the board is unknown/foreign or EDIT is denied.
+     */
+    public function renameBoard(int $canvasId, string $title, string $canvasType): mixed
+    {
+        $projectId = $this->blueprintsRepo->getCanvasProjectId($canvasId, $canvasType);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(BlueprintsPermissions::EDIT, $projectId);
+
+        return $this->blueprintsRepo->updateCanvas(['id' => $canvasId, 'title' => $title]);
+    }
+
+    /**
+     * Copy a canvas board into a target project. Requires VIEW on the SOURCE board's real
+     * project (you must be able to read what you copy) AND CREATE in the target project.
+     *
+     * @param  int  $sourceCanvasId  Source board id
+     * @param  int  $targetProjectId  Destination project id
+     * @param  int  $authorId  Author of the new board
+     * @param  string  $title  New board title
+     * @param  string  $canvasType  Board type the source must be of (and the copy will be)
+     * @return int New board id
+     *
+     * @throws AuthorizationException When the source is unknown/foreign, or VIEW/CREATE is denied.
+     */
+    public function copyBoard(int $sourceCanvasId, int $targetProjectId, int $authorId, string $title, string $canvasType): int
+    {
+        $sourceProjectId = $this->blueprintsRepo->getCanvasProjectId($sourceCanvasId, $canvasType);
+        if ($sourceProjectId === null || $targetProjectId <= 0) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(BlueprintsPermissions::VIEW, $sourceProjectId);
+        $this->authorize(BlueprintsPermissions::CREATE, $targetProjectId);
+
+        return $this->blueprintsRepo->copyCanvas($targetProjectId, $sourceCanvasId, $authorId, $title, $canvasType);
+    }
+
+    /**
+     * Merge a source board's items into a target board. Requires EDIT on the TARGET board's
+     * real project and VIEW on the SOURCE board's real project — both resolved by id, so
+     * neither can cross a project boundary.
+     *
+     * @param  int  $targetCanvasId  Board receiving the items
+     * @param  int  $sourceCanvasId  Board whose items are copied
+     * @param  string  $canvasType  Board type both boards must be of
+     *
+     * @throws AuthorizationException When either board is unknown/foreign, or EDIT/VIEW is denied.
+     */
+    public function mergeBoard(int $targetCanvasId, int $sourceCanvasId, string $canvasType): bool
+    {
+        $targetProjectId = $this->blueprintsRepo->getCanvasProjectId($targetCanvasId, $canvasType);
+        $sourceProjectId = $this->blueprintsRepo->getCanvasProjectId($sourceCanvasId, $canvasType);
+        if ($targetProjectId === null || $sourceProjectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(BlueprintsPermissions::EDIT, $targetProjectId);
+        $this->authorize(BlueprintsPermissions::VIEW, $sourceProjectId);
+
+        return $this->blueprintsRepo->mergeCanvas($targetCanvasId, $sourceCanvasId);
+    }
+
+    /**
+     * Delete a canvas board (and its items), authorized for DELETE against the board's real
+     * project.
+     *
+     * @param  int  $canvasId  Canvas board id
+     * @param  string  $canvasType  Board type the board must be of
+     *
+     * @throws AuthorizationException When the board is unknown/foreign or DELETE is denied.
+     */
+    public function deleteBoard(int $canvasId, string $canvasType): void
+    {
+        $projectId = $this->blueprintsRepo->getCanvasProjectId($canvasId, $canvasType);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(BlueprintsPermissions::DELETE, $projectId);
+
+        $this->blueprintsRepo->deleteCanvas($canvasId);
+    }
+
     /**
      * Import a canvas board from an XML file.
      *
@@ -56,11 +325,17 @@ class Blueprints
      * @return bool|int False on failure, or the new canvas board ID on success
      *
      * @throws BindingResolutionException
+     * @throws AuthorizationException When the user cannot create canvases in $projectId.
      *
      * @api
      */
+    #[RequiresPermission(BlueprintsPermissions::CREATE, entityScoped: true)]
     public function import(string $filename, string $canvasSlug, int $projectId, int $authorId): bool|int
     {
+        // Authorize CREATE against the TARGET project (the destination of the import), not the
+        // session project — import is reachable via RPC with an arbitrary projectId.
+        $this->authorize(BlueprintsPermissions::CREATE, $projectId);
+
         $template = $this->templateRegistry->get($canvasSlug);
         if ($template === null) {
             Log::error("Blueprints import failed: unknown canvas slug '{$canvasSlug}'");
@@ -229,6 +504,7 @@ class Blueprints
      *
      * @api
      */
+    #[RequiresPermission(BlueprintsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getBoardProgress(string $projectId = '', array $boards = []): array
     {
         $values = $this->blueprintsRepo->getCanvasProgressCount((int) $projectId, $boards);
@@ -299,6 +575,7 @@ class Blueprints
      *
      * @api
      */
+    #[RequiresPermission(BlueprintsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getLastUpdatedCanvas(?int $projectId = null, array $boards = []): array
     {
         return $this->blueprintsRepo->getLastUpdatedCanvas((int) $projectId, $boards);

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\UI\Template;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Services\BlueprintsExport;
 use Leantime\Domain\Blueprints\Services\TemplateRegistry;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,6 +51,7 @@ class Export
      *
      * @param  string|null  $id  Board id from the route
      */
+    #[RequiresPermission(BlueprintsPermissions::VIEW, entityScoped: true)]
     public function get(?string $id = null): Response
     {
         if ($this->template === null) {

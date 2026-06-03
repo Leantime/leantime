@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Services;
 
-use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
-
 /**
  * BlueprintsExport service - builds the XML export for a blueprint canvas board.
  *
@@ -17,12 +15,10 @@ use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 class BlueprintsExport
 {
     /**
-     * @param  BlueprintsRepository  $blueprintsRepo  Blueprints repository
-     * @param  Blueprints  $blueprintsService  Blueprints service (label translation)
+     * @param  Blueprints  $blueprintsService  Blueprints service (VIEW-authorized board reads + label translation)
      * @param  TemplateRegistry  $templateRegistry  Canvas template registry
      */
     public function __construct(
-        private BlueprintsRepository $blueprintsRepo,
         private Blueprints $blueprintsService,
         private TemplateRegistry $templateRegistry,
     ) {}
@@ -32,7 +28,9 @@ class BlueprintsExport
      *
      * @param  int  $canvasId  Canvas board identifier
      * @param  string  $canvasSlug  Canvas type slug (e.g. "swot")
-     * @return string|null XML document, or null if the canvas type or board does not exist
+     * @return string|null XML document, or null if the canvas type or board does not exist,
+     *                     or the user cannot view it (export is reachable via JSON-RPC with
+     *                     an arbitrary board id, so the VIEW authorization happens here).
      *
      * @api
      */
@@ -44,12 +42,15 @@ class BlueprintsExport
         }
 
         $canvasType = $template->getDatabaseType();
-        $canvasAry = $this->blueprintsRepo->getSingleCanvas($canvasId, $canvasType);
-        if (empty($canvasAry)) {
+        // getBoard authorizes VIEW against the board's real project and returns false for a
+        // missing/foreign/unauthorized board — so a foreign id is indistinguishable from a
+        // non-existent one (no cross-project existence oracle).
+        $canvasAry = $this->blueprintsService->getBoard($canvasId, $canvasType);
+        if ($canvasAry === false || empty($canvasAry)) {
             return null;
         }
 
-        $records = $this->blueprintsRepo->getCanvasItemsById($canvasId, $template->getCommentModule());
+        $records = $this->blueprintsService->getBoardItems($canvasId, $canvasType, $template->getCommentModule());
         $canvasTypes = $this->blueprintsService->getTranslatedBoxes($template);
 
         $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'.PHP_EOL.PHP_EOL;

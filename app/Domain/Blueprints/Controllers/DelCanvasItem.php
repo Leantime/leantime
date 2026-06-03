@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\UI\Template;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
-use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
+use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Blueprints\Services\TemplateRegistry;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,37 +33,37 @@ class DelCanvasItem
         private IncomingRequest $request,
         private Template $tpl,
         private Language $language,
-        private BlueprintsRepository $blueprintsRepo,
+        private BlueprintsService $blueprintsService,
         TemplateRegistry $templateRegistry,
     ) {
         $this->canvasSlug = strip_tags((string) ($request->route('canvasSlug') ?? ''));
         $this->template = $templateRegistry->get($this->canvasSlug);
     }
 
+    #[RequiresPermission(BlueprintsPermissions::DELETE)]
     public function get(?string $id = null): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
         }
 
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $this->tpl->assign('canvasSlug', $this->canvasSlug);
 
         return $this->tpl->displayPartial('blueprints.delCanvasItem');
     }
 
+    #[RequiresPermission(BlueprintsPermissions::DELETE, entityScoped: true)]
     public function post(?string $id = null): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
         }
 
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         if ($this->request->has('del') && (int) $id > 0) {
-            $id = (int) $id;
-            $this->blueprintsRepo->delCanvasItem($id);
+            // The service resolves the item's REAL project and authorizes DELETE against it
+            // (throwing 403 for a missing/foreign item) — closing the by-id delete IDOR that
+            // the previous role-only Auth::authOrRedirect left open.
+            $this->blueprintsService->deleteCanvasItem((int) $id, $this->template->getDatabaseType());
 
             $this->tpl->setNotification(
                 $this->language->__('notification.element_deleted'),

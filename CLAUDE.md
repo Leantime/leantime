@@ -12,7 +12,7 @@ These are ongoing architectural efforts. None need to be fixed proactively -- th
 
 ### 1. HTMX Migration (In Progress)
 **Goal**: Replace jQuery AJAX and full-page reloads with HTMX partial updates.
-**Status**: 8 of 56 domains have dedicated `Hxcontrollers/` with 19 total HxControllers. ~57 Blade templates and ~14 tpl.php files use HTMX attributes.
+**Status**: 8 of 42 domains have dedicated `Hxcontrollers/` with 19 total HxControllers. ~57 Blade templates and ~14 tpl.php files use HTMX attributes.
 **Domains with HxControllers**: Tickets, Projects, Timesheets, Widgets, Menu, Notifications, Plugins, Help.
 **Pattern**: Main page controllers load minimal data + skeleton; content loads via HTMX partials. New async work should use HTMX, not jQuery AJAX.
 
@@ -21,7 +21,7 @@ These are ongoing architectural efforts. None need to be fixed proactively -- th
 **Status**: ~198 `.tpl.php` files (legacy) vs ~91 `.blade.php` files in domains + ~33 in shared Views. About 30% migrated.
 - **Fully modernized (Blade-only)**: Dashboard, Gamecenter, Goalcanvas, Menu, Notifications, Plugins, Widgets
 - **Partially modernized (mix)**: Auth, Calendar, Comments, Help, Projects, Tickets, Timesheets, Users
-- **Fully legacy (TPL-only)**: All other canvas variants, Clients, Files, Ideas, Wiki, Sprints, Setting, etc.
+- **Fully legacy (TPL-only)**: Blueprints/Canvas, Clients, Files, Ideas, Wiki, Sprints, Setting, etc.
 **Pattern**: Main page views tend to stay `.tpl.php` while new partials and HTMX fragments use `.blade.php`. When touching templates, prefer Blade for new work.
 
 ### 3. Service Layer / JSON-RPC
@@ -137,7 +137,7 @@ Common commands:
     - `Routing/` - Route loading
     - `Support/` - Helper utilities (CarbonMacros, DateTimeHelper, Format, Cast)
     - `UI/` - Template handling (Template, Theme, ViewsServiceProvider)
-  - `Domain/` - Application domains (56 modules), organized by feature
+  - `Domain/` - Application domains (~42 modules, after the canvas-variant consolidation into Blueprints), organized by feature
     - Each domain typically contains:
       - `Controllers/` - HTTP endpoints
       - `Hxcontrollers/` - HTMX-specific controllers
@@ -180,7 +180,7 @@ Core manages all shared functionality and base features.
 
 **Domain**
 
-56 domain modules in `app/Domain/`. Each module has several layers representing one domain:
+~42 domain modules in `app/Domain/`. Each module has several layers representing one domain:
 
 1. **Controllers** handle HTTP requests and delegate to services
 2. **Services** contain business logic and orchestrate operations
@@ -199,20 +199,17 @@ Plugins can be managed as folders or pre-packaged phar files.
 
 **Core Feature Domains**: Tickets, Projects, Users, Sprints, Timesheets, Calendar, Comments, Files, Wiki, Ideas, Reports, Notifications, Dashboard, Widgets, Menu, Tags, Reactions, Entityrelations, Audit, Read
 
-**Canvas Domains** (14 variants extending `Canvas` base): Canvas (base), Cpcanvas, Dbmcanvas, Eacanvas, Emcanvas, Goalcanvas, Insightscanvas, Lbmcanvas, Leancanvas, Minempathycanvas, Obmcanvas, Retroscanvas, Riskscanvas, Sbcanvas, Smcanvas, Sqcanvas, Swotcanvas, Valuecanvas
+**Canvas Domains**: The ~14 individual canvas-variant domains (Cpcanvas, Dbmcanvas, Leancanvas, Swotcanvas, etc.) were **consolidated into a single `Blueprints` domain**. The variants no longer exist as separate domains — they are YAML-defined and selected by slug at runtime. Remaining canvas-family domains:
+- **Blueprints** — the consolidated canvas framework and current base. Native routes `/blueprints/{canvasSlug}/...` ({canvasSlug} = swot/lean/goal/etc.); legacy `/{x}canvas/...` paths 301-redirect here. All canvas data lives in the shared `zp_canvas` (boards, `type` column) + `zp_canvas_items` (items, `box` column) tables, keyed by `canvasId`. `Wiki` and `Goalcanvas` both `extend Blueprints`; the old `Canvas` repo `extends BlueprintsRepository`.
+- **Goalcanvas** — extends Blueprints; fully Blade with its own service.
+- **Logicmodelcanvas** — newer canvas type; still routed through the legacy `Canvas` controllers (Frontcontroller).
+- **Canvas** — the *old* base, now semi-legacy/dead. Only `Logicmodelcanvas` still rides on its controllers; otherwise a deprecated shim layer over Blueprints. New canvas work should target Blueprints, never the old `Canvas` domain.
 
-**System Domains**: Api, Auth, Cron, CsvImport, Connector, Environment, Errors, Install, Ldap, Modulemanager, Oidc, Plugins, Queue, Setting, Strategy, TwoFA
+**System Domains**: Api, Auth, Cron, CsvImport, Connector, Environment, Errors, Install, Ldap, Modulemanager, Oidc, Plugins, Queue, Setting, TwoFA
 
 **Backend-only Domains** (no UI): Audit, Entityrelations, Ldap, Reactions, Read, Tags, Queue
 
-**Canvas Inheritance Pattern**: The `Canvas` base domain provides generic controllers, services, and repositories. Each variant extends the base with minimal code -- typically just overriding a `CANVAS_NAME` constant:
-```php
-class ShowCanvas extends \Leantime\Domain\Canvas\Controllers\ShowCanvas
-{
-    protected const CANVAS_NAME = 'cp';
-}
-```
-Goalcanvas is the exception, having been fully modernized to Blade with its own service.
+**Shared canvas tables (IDOR caution)**: `zp_canvas` and `zp_canvas_items` are shared across **every** canvas type with one id sequence. A bare-id repository read/write can therefore land on a *foreign* canvas type or project. Canvas-family service/repo methods must fail **closed** — resolve the entity's real project (returning false/null/0 when the id doesn't match the expected `type`/`box`) and authorize against that, never falling back to `session('currentProject')`. (See Wiki/Ideas for the established pattern.)
 
 ### Architecture Details
 
