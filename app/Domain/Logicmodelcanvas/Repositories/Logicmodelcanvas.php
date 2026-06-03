@@ -186,4 +186,51 @@ class Logicmodelcanvas extends Canvas
 
         return $grouped;
     }
+
+    /**
+     * Derive which stage is the "current focus" for the board.
+     *
+     * Returns the box key (e.g. `lm_outputs`) of the stage containing the
+     * most-recently-modified item, or null if the canvas is empty.
+     *
+     * Rationale: the original design had a single active stage at a time with
+     * the others rendered compactly (pricing-card pattern — see stageflow CSS).
+     * Rather than persist an explicit `current_focus` column on `zp_canvas`,
+     * derive the focus from real activity: whichever stage the user touched
+     * last is the one they're working on. The result naturally follows the
+     * user around the board as they edit.
+     *
+     * Falls back to null when no items exist; the view should treat null as
+     * "no focus" and render every stage in the compact / inactive state.
+     *
+     * @param  int  $canvasId  Canvas board ID.
+     * @return string|null Box key (matching the keys in BOX_TO_STAGE), or null.
+     *
+     * @api
+     */
+    public function getCurrentFocus(int $canvasId): ?string
+    {
+        $sql = 'SELECT box
+                FROM zp_canvas_items
+                WHERE canvasId = :canvasId AND box IS NOT NULL
+                ORDER BY modified DESC, id DESC
+                LIMIT 1';
+
+        try {
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':canvasId', $canvasId, \PDO::PARAM_INT);
+            $stmn->execute();
+            $row = $stmn->fetch(\PDO::FETCH_ASSOC);
+            $stmn->closeCursor();
+        } catch (\PDOException $e) {
+            return null;
+        }
+
+        $box = $row['box'] ?? null;
+
+        // Only honour boxes that belong to the Logic Model canvas's known
+        // stages — anything else is data from another canvas type sharing the
+        // same items table.
+        return isset(self::BOX_TO_STAGE[$box]) ? $box : null;
+    }
 }

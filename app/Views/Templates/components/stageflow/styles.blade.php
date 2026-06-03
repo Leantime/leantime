@@ -38,13 +38,15 @@
     overflow: visible;
     z-index: 1;
 }
-.sf-stage:not(.active) {
+.sf-stage:not(.active):not(:hover) {
     cursor: pointer;
 }
-.sf-stage:not(.active):hover {
-    box-shadow: var(--regular-shadow);
-}
-.sf-stage.active {
+/* Both the persistent "current focus" stage AND any stage being hovered get
+   the prominent visual treatment — so users can peek at any column with the
+   mouse without losing the long-running focus indicator. The .sf-flag below
+   is the one exception: it only appears on the persisted focus, never on
+   hover, so hover never falsely advertises itself as the active stage. */
+.sf-stage:is(.active, :hover) {
     z-index: 10;
     box-shadow: var(--large-shadow);
     border-color: transparent;
@@ -84,7 +86,7 @@
     transition: border-color 300ms, padding 300ms;
     position: relative;
 }
-.sf-stage.active .sf-hd {
+.sf-stage:is(.active, :hover) .sf-hd {
     padding-top: 18px;
     border-bottom-width: 3px;
     border-bottom-color: var(--stage-color);
@@ -104,13 +106,13 @@
     background: var(--stage-bg);
     color: var(--stage-color);
 }
-.sf-stage:not(.active) .sf-icon {
+.sf-stage:not(.active):not(:hover) .sf-icon {
     width: 30px;
     height: 30px;
     font-size: var(--font-size-m);
     margin-bottom: 5px;
 }
-.sf-stage.active .sf-icon {
+.sf-stage:is(.active, :hover) .sf-icon {
     background: var(--stage-color);
     color: white;
 }
@@ -130,7 +132,7 @@
     line-height: 1.2;
     color: var(--primary-font-color);
 }
-.sf-stage:not(.active) .sf-name {
+.sf-stage:not(.active):not(:hover) .sf-name {
     font-size: var(--font-size-m);
     font-weight: 600;
     opacity: 0.5;
@@ -142,7 +144,7 @@
     font-weight: 700;
     line-height: 1.2;
 }
-.sf-stage:not(.active) .sf-count {
+.sf-stage:not(.active):not(:hover) .sf-count {
     font-size: var(--font-size-m);
     opacity: 0.4;
 }
@@ -155,7 +157,7 @@
     transition: font-size 300ms;
     text-align: center;
 }
-.sf-stage:not(.active) .sf-sub {
+.sf-stage:not(.active):not(:hover) .sf-sub {
     font-size: var(--font-size-xs);
     opacity: 0.5;
 }
@@ -179,7 +181,7 @@
     position: relative;
 }
 .sf-item:hover { background: rgba(0,0,0,0.02); }
-.sf-stage.active .sf-item { border-left-color: var(--stage-color); }
+.sf-stage:is(.active, :hover) .sf-item { border-left-color: var(--stage-color); }
 
 /* Item title */
 .sf-item-title {
@@ -263,12 +265,15 @@
     vertical-align: middle;
 }
 
-/* ── Inactive stage: compact view ── */
-.sf-stage:not(.active) .sf-item {
+/* ── Inactive stage: compact view ──
+   "Inactive" here means: not the persisted focus AND not currently hovered.
+   Hovering a non-focus stage lifts it out of the compact state so the user
+   can peek at its full content, without changing what's persisted. */
+.sf-stage:not(.active):not(:hover) .sf-item {
     padding: 4px 8px;
     border-left-color: transparent;
 }
-.sf-stage:not(.active) .sf-item-title {
+.sf-stage:not(.active):not(:hover) .sf-item-title {
     font-size: var(--font-size-s);
     font-weight: 500;
     color: var(--primary-font-color);
@@ -276,19 +281,21 @@
     display: flex;
     align-items: center;
 }
-.sf-stage:not(.active) .sf-item-title .sf-dot {
+.sf-stage:not(.active):not(:hover) .sf-item-title .sf-dot {
     width: 6px;
     height: 6px;
     margin-right: 4px;
 }
-.sf-stage:not(.active) .sf-item-desc { display: none; }
-.sf-stage:not(.active) .sf-item-foot { display: none; }
-.sf-stage:not(.active) .sf-item .inlineDropDownContainer { display: none; }
+.sf-stage:not(.active):not(:hover) .sf-item-desc { display: none; }
+.sf-stage:not(.active):not(:hover) .sf-item-foot { display: none; }
+.sf-stage:not(.active):not(:hover) .sf-item .inlineDropDownContainer { display: none; }
 
-/* Disable interactive elements in inactive stages */
-.sf-stage:not(.active) a,
-.sf-stage:not(.active) button,
-.sf-stage:not(.active) .dropdown-toggle {
+/* Disable interactive elements only in the truly-compact state. Hovered
+   stages get full interactivity so the user can click items and open
+   dropdowns during peek. */
+.sf-stage:not(.active):not(:hover) a,
+.sf-stage:not(.active):not(:hover) button,
+.sf-stage:not(.active):not(:hover) .dropdown-toggle {
     pointer-events: none;
 }
 
@@ -306,7 +313,7 @@
     margin-bottom: 6px;
     display: block;
 }
-.sf-stage:not(.active) .sf-empty { display: none; }
+.sf-stage:not(.active):not(:hover) .sf-empty { display: none; }
 
 /* ── Add item button ── */
 .sf-add {
@@ -332,7 +339,7 @@
     color: var(--accent1);
     background: rgba(0,69,110,0.04);
 }
-.sf-stage:not(.active) .sf-add { display: none; }
+.sf-stage:not(.active):not(:hover) .sf-add { display: none; }
 
 /* ── Responsive ── */
 @media (max-width: 1100px) {

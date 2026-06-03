@@ -21,6 +21,15 @@
     // Logic model board does not use relates filter — force to 'all'
     $filter['relates'] = 'all';
 
+    // Current-focus stage: derived from the most-recently-edited item so the
+    // pricing-card "active" stage follows the user's last action. Null when
+    // the canvas is empty — in that case every stage renders in the compact
+    // inactive state.
+    $currentFocusBox = null;
+    if (! empty($currentCanvas)) {
+        $currentFocusBox = app()->make(Logicmodelcanvas::class)->getCurrentFocus((int) $currentCanvas);
+    }
+
     $canvasTitle = '';
     foreach ($allCanvas as $canvasRow) {
         if ($canvasRow['id'] == $currentCanvas) {
@@ -128,6 +137,9 @@
                         $itemCount = count($stageItems);
                     @endphp
 
+                    @php
+                        $isFocus = $currentFocusBox === $boxKey;
+                    @endphp
                     <x-global::stageflow.card
                         :stageKey="$boxKey"
                         :stageNum="$num"
@@ -136,9 +148,9 @@
                         :icon="$stage['icon']"
                         :title="$tpl->__($stage['title'])"
                         :subtitle="$tpl->__($stage['subtitle'])"
-                        :active="true"
+                        :active="$isFocus"
                         :itemCount="$itemCount"
-                        :focusLabel="''"
+                        :focusLabel="$isFocus ? $tpl->__('logicmodel.current_focus') : ''"
                     >
                         <x-slot:headerExtra>
                             @dispatchEvent('logicmodel.afterStageHeader', ['stageNum' => $num, 'stage' => $stage, 'canvasId' => $currentCanvas, 'stageItems' => $stageItems])
