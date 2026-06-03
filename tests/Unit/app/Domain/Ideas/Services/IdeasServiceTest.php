@@ -466,4 +466,73 @@ class IdeasServiceTest extends TestCase
 
         $this->assertFalse($deleted, 'A non-author comment on a non-idea item must not be deleted');
     }
+
+    // ---------------------------------------------------------------------
+    // Relocation / mass-assignment fences (Copilot review): the incoming canvasId/params can move
+    // an item to another board, so the target board's project must also be authorized.
+    // ---------------------------------------------------------------------
+
+    public function test_patch_idea_item_strips_relocation_and_identity_fields(): void
+    {
+        // patchCanvasItem updates any column it receives; canvasId/id/author must be stripped so a
+        // caller can't relocate the item to another board/project or rewrite its identity.
+        $patched = null;
+        $repo = $this->ideaRepoInProject9([
+            'patchCanvasItem' => function ($id, $params) use (&$patched): bool {
+                $patched = $params;
+
+                return true;
+            },
+        ]);
+        $service = $this->makeService(ideasRepo: $repo);
+
+        $service->patchIdeaItem(5, ['status' => 'done', 'canvasId' => 999, 'id' => 1, 'author' => 7]);
+
+        $this->assertArrayNotHasKey('canvasId', $patched);
+        $this->assertArrayNotHasKey('id', $patched);
+        $this->assertArrayNotHasKey('author', $patched);
+        $this->assertSame('done', $patched['status'], 'Legitimate fields still pass through');
+    }
+
+    public function test_update_idea_item_denies_relocation_to_a_foreign_board(): void
+    {
+        // Item lives in project 9 (board 3); the edit's canvasId points at board 99 in project 7.
+        // The user may edit project 9 but NOT project 7 -> the relocation is denied before the write.
+        $repo = $this->make(IdeasRepository::class, [
+            'getSingleCanvasItem' => fn () => ['id' => 5, 'canvasId' => 3, 'box' => 'idea'],
+            'getSingleCanvas' => fn ($id) => $id === 99 ? [['projectId' => 7]] : [['projectId' => 9]],
+            'editCanvasItem' => function (): void {
+                throw new \RuntimeException('relocation must be blocked before the write');
+            },
+        ]);
+        $perms = $this->make(PermissionService::class, [
+            'authorize' => function (string $p, ?int $projectId = null): void {
+                if ($projectId === 7) {
+                    throw new AuthorizationException;
+                }
+            },
+            'currentUserCan' => fn () => true,
+        ]);
+        $service = $this->makeService(ideasRepo: $repo, perms: $perms);
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->updateIdeaItem(['itemId' => 5, 'box' => 'idea', 'description' => 'x', 'status' => 'idea', 'data' => '', 'tags' => '', 'canvasId' => 99, 'milestoneId' => ''], 9, self::SESSION_USER);
+    }
+
+    public function test_update_idea_item_fails_closed_when_target_board_is_not_an_idea_board(): void
+    {
+        $edited = false;
+        $repo = $this->make(IdeasRepository::class, [
+            'getSingleCanvasItem' => fn () => ['id' => 5, 'canvasId' => 3, 'box' => 'idea'],
+            'getSingleCanvas' => fn ($id) => $id === 3 ? [['projectId' => 9]] : [], // target 99 -> not an idea board
+            'editCanvasItem' => function () use (&$edited): void {
+                $edited = true;
+            },
+        ]);
+        $service = $this->makeService(ideasRepo: $repo);
+
+        $this->assertSame(0, $service->updateIdeaItem(['itemId' => 5, 'box' => 'idea', 'description' => 'x', 'status' => 'idea', 'data' => '', 'tags' => '', 'canvasId' => 99, 'milestoneId' => ''], 9, self::SESSION_USER));
+        $this->assertFalse($edited, 'A non-idea target board must never receive the relocated item');
+    }
 }

@@ -164,6 +164,11 @@ class Ideas extends BaseService
         }
         $this->authorize(IdeasPermissions::EDIT, $projectId);
 
+        // Strip relocation/identity fields: patchCanvasItem updates any column it receives, so a
+        // JSON-RPC caller could otherwise patch canvasId to move the item to another board/project
+        // (bypassing the project scoping just authorized) or rewrite its id/author.
+        unset($params['canvasId'], $params['id'], $params['author']);
+
         return $this->ideasRepository->patchCanvasItem($id, $params);
     }
 
@@ -604,6 +609,10 @@ class Ideas extends BaseService
         }
         $this->authorize(IdeasPermissions::CREATE, $boardProjectId);
 
+        // Normalize to the resolved board project so the notification below targets the correct
+        // project's users even if a mismatched/forged projectId was supplied.
+        $projectId = $boardProjectId;
+
         $canvasItem = [
             'box' => $input['box'],
             'author' => $authorId,
@@ -668,6 +677,20 @@ class Ideas extends BaseService
             return 0;
         }
         $this->authorize(IdeasPermissions::EDIT, $existingProjectId);
+
+        // The write persists $input['canvasId'], which can RELOCATE the item to another board. The
+        // target must be an idea board the user can also edit, or the relocation is a cross-project
+        // move. Fail closed if it's not an idea board; require edit on the target if it differs.
+        $targetProjectId = $this->boardProjectId((int) ($input['canvasId'] ?? 0));
+        if ($targetProjectId === null) {
+            return 0;
+        }
+        if ($targetProjectId !== $existingProjectId) {
+            $this->authorize(IdeasPermissions::EDIT, $targetProjectId);
+        }
+
+        // Normalize to the resolved board project for the notification below.
+        $projectId = $targetProjectId;
 
         $canvasItem = [
             'box' => $input['box'],
