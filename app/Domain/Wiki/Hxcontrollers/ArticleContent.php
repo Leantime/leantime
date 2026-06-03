@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Wiki\Hxcontrollers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\HtmxController;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Wiki\Models\Article;
+use Leantime\Domain\Wiki\Permissions\WikiPermissions;
 use Leantime\Domain\Wiki\Services\Wiki;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,15 +26,14 @@ class ArticleContent extends HtmxController
     }
 
     /**
-     * Save article content via HTMX (called on auto-save or blur)
+     * Save article content via HTMX (called on auto-save or blur).
+     *
+     * Gate defers (entityScoped) to the service's updateArticle(), which authorizes EDIT against
+     * the article's real project.
      */
+    #[RequiresPermission(WikiPermissions::EDIT, entityScoped: true)]
     public function save(): Response
     {
-        // Check permissions
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            return new Response('Unauthorized', 403);
-        }
-
         $articleId = (int) $this->incomingRequest->query->get('articleId', 0);
         $content = $this->incomingRequest->request->get('description');
         $title = $this->incomingRequest->request->get('title');
@@ -86,15 +85,14 @@ class ArticleContent extends HtmxController
     }
 
     /**
-     * Create a new article and redirect to it
+     * Create a new article and redirect to it.
+     *
+     * Gate defers (entityScoped) to the service's createArticle(), which authorizes CREATE against
+     * the target wiki's project.
      */
+    #[RequiresPermission(WikiPermissions::CREATE, entityScoped: true)]
     public function create(): Response
     {
-        // Check permissions
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            return new Response('Unauthorized', 403);
-        }
-
         $currentWiki = session('currentWiki');
         if (! $currentWiki) {
             return new Response('No wiki selected', 400);

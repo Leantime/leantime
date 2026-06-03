@@ -90,6 +90,8 @@ class Install
         30507,
         30508,
         30509,
+        30510,
+        30511,
     ];
 
     /**
@@ -2840,6 +2842,58 @@ class Install
             Log::error('Migration 30509: '.$e->getMessage());
 
             return ['Migration 30509 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30510: the Wiki domain joined the native permission engine. Re-sync the discovered
+     * permission catalog (adds wiki.view/create/edit/delete, all project-scoped) and re-seed the
+     * built-in role grants — the standard verbs auto-grant via the existing project rules (readonly
+     * view; editor create/edit/delete; manager+ all). Table-creation-free; idempotent + additive.
+     * Flush the discovered-provider cache first — an install that already ran 30505-30509 cached the
+     * provider list WITHOUT WikiPermissions, so seeding against that stale list would never create
+     * the wiki.* keys (and lower roles would lose wiki access).
+     */
+    public function update_sql_30510(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30510: '.$e->getMessage());
+
+            return ['Migration 30510 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30511: the Ideas domain joined the native permission engine. Re-sync the discovered
+     * permission catalog (adds ideas.view/create/edit/delete, all project-scoped) and re-seed the
+     * built-in role grants — the standard verbs auto-grant via the existing project rules (readonly
+     * view; editor create/edit/delete; manager+ all). Table-creation-free; idempotent + additive.
+     * Flush the discovered-provider cache first — an install that already ran 30505-30510 cached the
+     * provider list WITHOUT IdeasPermissions, so seeding against that stale list would never create
+     * the ideas.* keys (and lower roles would lose idea access).
+     */
+    public function update_sql_30511(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30511: '.$e->getMessage());
+
+            return ['Migration 30511 failed: '.$e->getMessage()];
         }
 
         return true;

@@ -2,15 +2,18 @@
 
 namespace Leantime\Domain\Wiki\Services;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Language;
 use Leantime\Domain\Audit\Repositories\Audit as AuditRepository;
 use Leantime\Domain\Wiki\Models\Article;
+use Leantime\Domain\Wiki\Permissions\WikiPermissions;
 use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
 
 /**
  * @api
  */
-class Wiki
+class Wiki extends BaseService
 {
     private WikiRepository $wikiRepository;
 
@@ -31,8 +34,13 @@ class Wiki
     /**
      * Get an article by ID and project.
      *
+     * The repository already filters by project, so this read is project-scoped: when a projectId
+     * is passed it is authorized against (closing the explicit-foreign-project RPC read); when it is
+     * omitted the call resolves to the caller's session project and can only read articles there.
+     *
      * @api
      */
+    #[RequiresPermission(WikiPermissions::VIEW, projectIdParam: 'projectId')]
     public function getArticle(?int $id, ?int $projectId = null): mixed
     {
 
@@ -59,6 +67,7 @@ class Wiki
      *
      * @api
      */
+    #[RequiresPermission(WikiPermissions::VIEW, projectIdParam: 'projectId')]
     public function getAllProjectWikis($projectId): array|false
     {
 
@@ -71,7 +80,10 @@ class Wiki
             $wiki->projectId = $projectId;
             $wiki->author = session('userdata.id');
 
-            $id = $this->createWiki($wiki);
+            // Bootstrap only: the default notebook is created as a SIDE EFFECT of viewing a
+            // wiki-less project, so it must NOT go through the create-authorized createWiki() —
+            // that would 403 a readonly viewer. Write straight to the repository (system action).
+            $this->wikiRepository->createWiki($wiki);
             $wikis = $this->wikiRepository->getAllProjectWikis($projectId);
         }
 
@@ -79,30 +91,61 @@ class Wiki
     }
 
     /**
+     * List the article headlines in a wiki.
+     *
      * @api
      */
+    #[RequiresPermission(WikiPermissions::VIEW, entityScoped: true)]
     public function getAllWikiHeadlines($wikiId, $userId): false|array
     {
+        // IDOR fence: a foreign wikiId would otherwise leak another project's article titles.
+        // Resolve the wiki's project and authorize VIEW there before listing.
+        $wiki = $this->wikiRepository->getWiki((int) $wikiId);
+        if (! $wiki) {
+            return false;
+        }
+
+        $this->authorize(WikiPermissions::VIEW, (int) $wiki->projectId);
+
         return $this->wikiRepository->getAllWikiHeadlines($wikiId, $userId);
     }
 
     /**
+     * Get a single wiki (notebook) by id.
+     *
      * @api
      */
+    #[RequiresPermission(WikiPermissions::VIEW, entityScoped: true)]
     public function getWiki($id): mixed
     {
         if ($id === null) {
             return false;
         }
 
-        return $this->wikiRepository->getWiki((int) $id);
+        $wiki = $this->wikiRepository->getWiki((int) $id);
+
+        if (! $wiki) {
+            return false;
+        }
+
+        // IDOR fence: the id alone names any project's wiki. Authorize VIEW against the wiki's
+        // ACTUAL project, not the session project — closes the cross-project read (and the
+        // ?setWiki= session-switch footgun, which routes through here) on every call surface.
+        $this->authorize(WikiPermissions::VIEW, (int) $wiki->projectId);
+
+        return $wiki;
     }
 
     /**
      * @api
      */
+    #[RequiresPermission(WikiPermissions::CREATE, entityScoped: true)]
     public function createWiki(\Leantime\Domain\Wiki\Models\Wiki $wiki): false|string
     {
+        // Authorize CREATE against the target project before writing. An RPC caller could set any
+        // projectId on the model, so the check is against that value (denied for non-members).
+        $projectId = (int) ($wiki->projectId ?? session('currentProject'));
+        $this->authorize(WikiPermissions::CREATE, $projectId);
 
         $wikiId = $this->wikiRepository->createWiki($wiki);
 
@@ -114,8 +157,21 @@ class Wiki
     /**
      * @api
      */
+    #[RequiresPermission(WikiPermissions::EDIT, entityScoped: true)]
     public function updateWiki(\Leantime\Domain\Wiki\Models\Wiki $wiki, $wikiId): bool
     {
+        // IDOR fence: authorize EDIT against the EXISTING wiki's real project (the incoming model's
+        // projectId is untrusted) before writing. FAIL CLOSED when the id is not a wiki — zp_canvas
+        // is shared across canvas types (one id sequence), and getWiki filters type='wiki', so a
+        // non-wiki id resolves to false; refuse rather than fall through to an unguarded title write
+        // that would rename another project's canvas board.
+        $existing = $this->wikiRepository->getWiki((int) $wikiId);
+        if (! $existing) {
+            return false;
+        }
+
+        $this->authorize(WikiPermissions::EDIT, (int) $existing->projectId);
+
         return $this->wikiRepository->updateWiki($wiki, $wikiId);
     }
 
@@ -124,8 +180,19 @@ class Wiki
      *
      * @api
      */
+    #[RequiresPermission(WikiPermissions::CREATE, entityScoped: true)]
     public function createArticle(Article $article): false|string
     {
+        // An article inherits its wiki's project (canvasId -> zp_canvas.projectId). FAIL CLOSED if
+        // the canvasId is not a wiki — never fall back to the session project, or a foreign/non-wiki
+        // canvasId could be created against the caller's own project.
+        $wiki = $this->wikiRepository->getWiki((int) $article->canvasId);
+        if (! $wiki) {
+            return false;
+        }
+        $projectId = (int) $wiki->projectId;
+        $this->authorize(WikiPermissions::CREATE, $projectId);
+
         $id = $this->wikiRepository->createArticle($article);
 
         if ($id !== false) {
@@ -135,7 +202,7 @@ class Wiki
                 entity: 'article',
                 entityId: (int) $id,
                 userId: (int) session('userdata.id'),
-                projectId: (int) session('currentProject')
+                projectId: $projectId
             );
         }
 
@@ -147,8 +214,22 @@ class Wiki
      *
      * @api
      */
+    #[RequiresPermission(WikiPermissions::EDIT, entityScoped: true)]
     public function updateArticle(Article $article, ?Article $existingArticle = null): bool
     {
+        // IDOR fence: resolve the EXISTING article's real project (by id) and authorize EDIT there
+        // before writing. The incoming model's project/canvas are untrusted, so an editor in
+        // project A cannot edit or relocate an article that lives in project B. FAIL CLOSED on an
+        // unresolved project: zp_canvas_items is a shared table (one id sequence across ALL canvas
+        // types), so a null here means the id is not an article — refuse rather than write a row we
+        // could not authorize (a non-article id would otherwise overwrite a goal/SWOT/risk item).
+        $projectId = $this->wikiRepository->getArticleProjectId((int) $article->id);
+        if ($projectId === null) {
+            return false;
+        }
+
+        $this->authorize(WikiPermissions::EDIT, $projectId);
+
         $result = $this->wikiRepository->updateArticle($article);
 
         if ($result && $existingArticle !== null) {
@@ -156,6 +237,66 @@ class Wiki
         }
 
         return $result;
+    }
+
+    /**
+     * Delete an article, fencing the operation against the article's project.
+     *
+     * @api
+     */
+    #[RequiresPermission(WikiPermissions::DELETE, entityScoped: true)]
+    public function deleteArticle(int $id): bool
+    {
+        // IDOR fence: the id alone identified the row before (the controller called the repository
+        // directly), so any editor could delete another project's article. Authorize DELETE against
+        // the article's real project first.
+        $projectId = $this->wikiRepository->getArticleProjectId($id);
+
+        if ($projectId === null) {
+            return false;
+        }
+
+        $this->authorize(WikiPermissions::DELETE, $projectId);
+
+        $this->wikiRepository->delArticle($id);
+
+        $this->auditRepo->storeEvent(
+            action: 'article.delete',
+            values: '',
+            entity: 'article',
+            entityId: $id,
+            userId: (int) session('userdata.id'),
+            projectId: $projectId
+        );
+
+        session()->forget('lastArticle');
+
+        return true;
+    }
+
+    /**
+     * Delete a wiki (notebook), fencing the operation against the wiki's project.
+     *
+     * @api
+     */
+    #[RequiresPermission(WikiPermissions::DELETE, entityScoped: true)]
+    public function deleteWiki(int $id): bool
+    {
+        // IDOR fence: authorize DELETE against the wiki's real project before removing it.
+        $wiki = $this->wikiRepository->getWiki($id);
+
+        if (! $wiki) {
+            return false;
+        }
+
+        $this->authorize(WikiPermissions::DELETE, (int) $wiki->projectId);
+
+        $this->wikiRepository->delWiki($id);
+
+        session()->forget('currentWiki');
+        session()->forget('lastArticle');
+
+        return true;
     }
 
     public function setCurrentWiki($id)
@@ -219,8 +360,19 @@ class Wiki
      *
      * @return array<int, array<string, mixed>>
      */
+    #[RequiresPermission(WikiPermissions::VIEW, entityScoped: true)]
     public function getArticleActivity(int $articleId, int $limit = 20): array
     {
+        // IDOR fence: a foreign articleId would otherwise leak another project's edit history
+        // (audit values include old/new titles). Authorize VIEW against the article's real project.
+        $projectId = $this->wikiRepository->getArticleProjectId($articleId);
+
+        if ($projectId === null) {
+            return [];
+        }
+
+        $this->authorize(WikiPermissions::VIEW, $projectId);
+
         $activity = [];
 
         // Get audit events for this article

@@ -3,10 +3,12 @@
 namespace Leantime\Domain\Wiki\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Wiki\Models\Article;
+use Leantime\Domain\Wiki\Permissions\WikiPermissions;
 use Leantime\Domain\Wiki\Services\Wiki as WikiService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,6 +27,7 @@ class ArticleDialog extends Controller
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(WikiPermissions::VIEW)]
     public function get($params): Response
     {
 
@@ -62,8 +65,14 @@ class ArticleDialog extends Controller
     }
 
     /**
+     * Creates or updates an article. A real dispatch-time VIEW gate guards the handler (entityScoped
+     * is a no-op at dispatch, which would leave this action — and its internal getArticle/
+     * getAllProjectWikis reads — ungated); the precise CREATE/EDIT enforcement is done in the
+     * service's createArticle/updateArticle against the article's real project.
+     *
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(WikiPermissions::VIEW)]
     public function post($params): Response
     {
 

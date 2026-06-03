@@ -3,11 +3,12 @@
 namespace Leantime\Domain\Wiki\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Wiki\Models\Wiki;
+use Leantime\Domain\Wiki\Permissions\WikiPermissions;
 use Leantime\Domain\Wiki\Services\Wiki as WikiService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,6 +30,7 @@ class Show extends Controller
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(WikiPermissions::VIEW)]
     public function get(array $params): Response
     {
 
@@ -146,6 +148,7 @@ class Show extends Controller
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(WikiPermissions::VIEW)]
     public function post(array $params): Response
     {
 

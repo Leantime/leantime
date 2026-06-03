@@ -2,8 +2,10 @@
 
 namespace Leantime\Domain\Ideas\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Ideas\Permissions\IdeasPermissions;
 use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,6 +33,7 @@ class ShowBoards extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(IdeasPermissions::VIEW)]
     public function get(array $params): Response
     {
         $allCanvas = $this->ideaService->getAllBoards(session('currentProject'));
@@ -50,6 +53,7 @@ class ShowBoards extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(IdeasPermissions::VIEW)]
     public function post(array $params): Response
     {
         $allCanvas = $this->ideaService->getAllBoards(session('currentProject'));

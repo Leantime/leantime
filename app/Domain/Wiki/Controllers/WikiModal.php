@@ -3,9 +3,11 @@
 namespace Leantime\Domain\Wiki\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Wiki\Models\Wiki;
+use Leantime\Domain\Wiki\Permissions\WikiPermissions;
 use Leantime\Domain\Wiki\Services\Wiki as WikiService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,6 +23,7 @@ class WikiModal extends Controller
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(WikiPermissions::VIEW)]
     public function get($params): Response
     {
         $wiki = app()->make(Wiki::class);
@@ -35,8 +38,12 @@ class WikiModal extends Controller
     }
 
     /**
+     * Creates or updates a wiki (notebook). The controller gate defers (entityScoped) to the
+     * service's createWiki/updateWiki, which authorize CREATE/EDIT against the wiki's real project.
+     *
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(WikiPermissions::EDIT, entityScoped: true)]
     public function post($params): Response
     {
         $wiki = app()->make(Wiki::class);

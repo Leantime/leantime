@@ -2,23 +2,23 @@
 
 namespace Leantime\Domain\Wiki\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
+use Leantime\Domain\Wiki\Permissions\WikiPermissions;
+use Leantime\Domain\Wiki\Services\Wiki as WikiService;
 use Symfony\Component\HttpFoundation\Response;
 
 class DelArticle extends Controller
 {
-    private WikiRepository $wikiRepo;
+    private WikiService $wikiService;
 
     /**
      * Initializes dependencies.
      */
-    public function init(WikiRepository $wikiRepo): void
+    public function init(WikiService $wikiService): void
     {
-        $this->wikiRepo = $wikiRepo;
+        $this->wikiService = $wikiService;
     }
 
     /**
@@ -26,31 +26,27 @@ class DelArticle extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(WikiPermissions::DELETE)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         return $this->tpl->displayPartial('wiki.delArticle');
     }
 
     /**
-     * Handles article deletion.
+     * Handles article deletion. The controller gate defers (entityScoped) to the service's
+     * deleteArticle(), which authorizes DELETE against the article's REAL project.
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(WikiPermissions::DELETE, entityScoped: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
 
         if (isset($_POST['del']) && $id > 0) {
-            $this->wikiRepo->delArticle($id);
+            $this->wikiService->deleteArticle($id);
 
             $this->tpl->setNotification($this->language->__('notification.article_deleted'), 'success', 'article_deleted');
-
-            session()->forget('lastArticle');
-            session()->forget('currentWiki');
 
             return Frontcontroller::redirect(BASE_URL.'/wiki/show');
         }

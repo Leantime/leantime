@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Wiki\Hxcontrollers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\HtmxController;
+use Leantime\Domain\Wiki\Permissions\WikiPermissions;
 use Leantime\Domain\Wiki\Services\Wiki;
 
 /**
@@ -22,8 +24,10 @@ class ArticleActivity extends HtmxController
     }
 
     /**
-     * Get the activity feed for an article.
+     * Get the activity feed for an article. The service's getArticleActivity() is the precise
+     * per-article-project IDOR fence; this VIEW gate stops non-viewers at dispatch.
      */
+    #[RequiresPermission(WikiPermissions::VIEW, entityScoped: true)]
     public function get(): void
     {
         $articleId = (int) $this->incomingRequest->query->get('articleId', 0);
