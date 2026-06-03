@@ -80,10 +80,15 @@ class SprintsServiceTest extends TestCase
             },
         ]);
 
+        // Authorization now runs before date validation (authorize-first), so allow it and assert
+        // the validation still rejects the missing dates before any write reaches the repository.
+        $service = $this->makeService(sprintRepo: $repo);
+        $service->setPermissionService($this->make(PermissionService::class, ['authorize' => fn () => null]));
+
         $this->expectException(MissingParameterException::class);
 
         try {
-            $this->makeService(sprintRepo: $repo)->addSprint(['startDate' => '', 'endDate' => '']);
+            $service->addSprint(['startDate' => '', 'endDate' => '']);
         } finally {
             $this->assertSame(0, $addCalls, 'An invalid sprint must never reach the repository');
         }
@@ -93,6 +98,9 @@ class SprintsServiceTest extends TestCase
     {
         $editCalls = 0;
         $repo = $this->make(SprintRepository::class, [
+            // editSprint loads the existing sprint to authorize against its project before it
+            // validates the dates, so the load must be stubbed even on the validation-failure path.
+            'getSprint' => fn () => $this->make(SprintModel::class, ['id' => 5, 'projectId' => 9]),
             'editSprint' => function () use (&$editCalls) {
                 $editCalls++;
 
@@ -100,10 +108,13 @@ class SprintsServiceTest extends TestCase
             },
         ]);
 
+        $service = $this->makeService(sprintRepo: $repo);
+        $service->setPermissionService($this->make(PermissionService::class, ['authorize' => fn () => null]));
+
         $this->expectException(MissingParameterException::class);
 
         try {
-            $this->makeService(sprintRepo: $repo)->editSprint(['id' => 5, 'startDate' => '2026-01-01', 'endDate' => '']);
+            $service->editSprint(['id' => 5, 'startDate' => '2026-01-01', 'endDate' => '']);
         } finally {
             $this->assertSame(0, $editCalls, 'An invalid update must never reach the repository');
         }
@@ -154,5 +165,48 @@ class SprintsServiceTest extends TestCase
         $this->expectException(AuthorizationException::class);
 
         $service->addSprint(['startDate' => '2026-01-01', 'endDate' => '2026-01-14', 'projectId' => 9]);
+    }
+
+    public function test_get_sprint_is_denied_when_user_cannot_view_its_project(): void
+    {
+        // Read-side IDOR fence: getSprint loads the sprint, then authorizes VIEW against ITS project
+        // (not the session project). A denying engine must throw before any cross-project sprint
+        // metadata (name/dates/projectId) is returned.
+        $service = $this->makeService(sprintRepo: $this->make(SprintRepository::class, [
+            'getSprint' => fn () => $this->make(SprintModel::class, ['id' => 7, 'projectId' => 9]),
+        ]));
+        $service->setPermissionService($this->denyingPermissions());
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->getSprint(7);
+    }
+
+    public function test_get_sprint_returns_the_sprint_when_view_is_allowed(): void
+    {
+        $service = $this->makeService(sprintRepo: $this->make(SprintRepository::class, [
+            'getSprint' => fn () => $this->make(SprintModel::class, ['id' => 7, 'projectId' => 9]),
+        ]));
+        $service->setPermissionService($this->make(PermissionService::class, ['authorize' => fn () => null]));
+
+        $this->assertSame(7, $service->getSprint(7)->id);
+    }
+
+    public function test_get_sprint_returns_false_for_unknown_id_without_authorizing(): void
+    {
+        // A missing sprint short-circuits to false BEFORE authorize, so there is no enumeration
+        // oracle (allowed vs denied looks identical for a non-existent id) and no false lockout.
+        $authorizeCalls = 0;
+        $service = $this->makeService(sprintRepo: $this->make(SprintRepository::class, [
+            'getSprint' => fn () => false, // repo returns false (not null) for a missing row
+        ]));
+        $service->setPermissionService($this->make(PermissionService::class, [
+            'authorize' => function () use (&$authorizeCalls): void {
+                $authorizeCalls++;
+            },
+        ]));
+
+        $this->assertFalse($service->getSprint(999));
+        $this->assertSame(0, $authorizeCalls, 'A non-existent sprint must short-circuit before authorize');
     }
 }

@@ -48,8 +48,12 @@ class EditSprint extends Controller
 
     /**
      * post - handle post requests
+     *
+     * Handles both create (no id) and edit (id present), so the controller gate defers
+     * (entityScoped): the service's addSprint/editSprint each authorize the correct verb
+     * (CREATE vs EDIT) against the correct per-entity project, which is the authoritative gate.
      */
-    #[RequiresPermission(SprintsPermissions::CREATE)]
+    #[RequiresPermission(SprintsPermissions::EDIT, entityScoped: true)]
     public function post($params)
     {
         // If ID is set its an update

@@ -26,17 +26,24 @@ class Sprints extends BaseService
     /**
      * @api
      */
-    #[RequiresPermission(SprintsPermissions::VIEW)]
+    #[RequiresPermission(SprintsPermissions::VIEW, entityScoped: true)]
     public function getSprint(int $id): false|Models\Sprints
     {
-
         $sprint = $this->sprintRepository->getSprint($id);
 
-        if ($sprint) {
-            return $sprint;
+        if (! $sprint) {
+            return false;
         }
 
-        return false;
+        // IDOR fence: the id alone names any project's sprint. Authorize VIEW against the sprint's
+        // ACTUAL project — not the session project — mirroring the editSprint/deleteSprint write
+        // fences and the Tickets::getTicket read precedent. entityScoped makes this fire on every
+        // call (RPC, the EditSprint controller, and internal callers); the internal callers
+        // (Reports burndown, EditSprint's own session) only ever pass sprints from an
+        // already-accessible project, so they keep working — only the cross-project read is denied.
+        $this->authorize(SprintsPermissions::VIEW, (int) $sprint->projectId);
+
+        return $sprint;
     }
 
     /**
@@ -60,7 +67,7 @@ class Sprints extends BaseService
      *
      * @api
      */
-    #[RequiresPermission(SprintsPermissions::VIEW)]
+    #[RequiresPermission(SprintsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getCurrentSprintId(int $projectId): bool|int
     {
 
@@ -130,10 +137,12 @@ class Sprints extends BaseService
     #[RequiresPermission(SprintsPermissions::CREATE, entityScoped: true)]
     public function addSprint($params): int|false
     {
-        $this->assertSprintDates($params);
-
+        // Authorize before validating, so an unauthorized caller is denied first and never learns
+        // about parameter requirements (matches the Tickets::addTicket authorize-then-validate order).
         $projectId = (int) ($params['projectId'] ?? session('currentProject'));
         $this->authorize(SprintsPermissions::CREATE, $projectId);
+
+        $this->assertSprintDates($params);
 
         $sprint = new Models\Sprints;
 
@@ -168,14 +177,15 @@ class Sprints extends BaseService
     #[RequiresPermission(SprintsPermissions::EDIT, entityScoped: true)]
     public function editSprint($params): Models\Sprints|false
     {
-        $this->assertSprintDates($params);
-
         // IDOR fence: $params['id'] could name any project's sprint. Authorize edit against the
-        // EXISTING sprint's project, then (below) against the target project if it's relocated.
+        // EXISTING sprint's project (and, below, the target project if it's relocated) BEFORE
+        // validating params, so an unauthorized caller is denied first (Tickets authorize-first order).
         $existing = $this->sprintRepository->getSprint((int) ($params['id'] ?? 0));
         if ($existing) {
             $this->authorize(SprintsPermissions::EDIT, (int) $existing->projectId);
         }
+
+        $this->assertSprintDates($params);
 
         $sprint = new Models\Sprints;
 
