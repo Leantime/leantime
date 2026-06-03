@@ -117,6 +117,22 @@ class Wiki extends Blueprints
         return $article;
     }
 
+    /**
+     * Resolve an article's owning project by its id alone (articles inherit their wiki's project
+     * via canvasId -> zp_canvas.projectId). Used by the service to authorize edit/delete/activity
+     * against the article's REAL project without trusting a caller-supplied projectId.
+     */
+    public function getArticleProjectId(int $id): ?int
+    {
+        $projectId = $this->dbConnection->table('zp_canvas_items')
+            ->leftJoin('zp_canvas', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
+            ->where('zp_canvas_items.id', $id)
+            ->where('zp_canvas_items.box', 'article')
+            ->value('zp_canvas.projectId');
+
+        return $projectId !== null ? (int) $projectId : null;
+    }
+
     public function getAllProjectWikis(int $projectId): array|false
     {
         $results = $this->dbConnection->table('zp_canvas')

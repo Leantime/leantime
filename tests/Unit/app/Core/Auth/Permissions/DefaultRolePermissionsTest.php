@@ -28,6 +28,10 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
             new Permission('sprints.create', 'Create', true),
             new Permission('sprints.edit', 'Edit', true),
             new Permission('sprints.delete', 'Delete', true),
+            new Permission('wiki.view', 'View', true),
+            new Permission('wiki.create', 'Create', true),
+            new Permission('wiki.edit', 'Edit', true),
+            new Permission('wiki.delete', 'Delete', true),
             new Permission('comments.view', 'View', true),
             new Permission('comments.create', 'Create', true),
             new Permission('comments.moderate', 'Moderate', true),
@@ -55,7 +59,7 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
 
     public function test_readonly_can_only_view_project_content(): void
     {
-        $this->assertEqualsCanonicalizing(['tickets.view', 'comments.view', 'sprints.view'], $this->grantsFor('readonly'));
+        $this->assertEqualsCanonicalizing(['tickets.view', 'comments.view', 'sprints.view', 'wiki.view'], $this->grantsFor('readonly'));
     }
 
     public function test_commenter_adds_comment_upload_and_can_create_comments(): void
@@ -70,6 +74,8 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertNotContains('tickets.delete', $grants);
         $this->assertNotContains('sprints.create', $grants); // commenter views but cannot create
         $this->assertContains('sprints.view', $grants);       // inherited from readonly
+        $this->assertNotContains('wiki.create', $grants);     // commenter views but cannot create
+        $this->assertContains('wiki.view', $grants);          // inherited from readonly
         $this->assertNotContains('comments.moderate', $grants);
     }
 
@@ -84,6 +90,10 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('sprints.create', $grants);
         $this->assertContains('sprints.edit', $grants);
         $this->assertContains('sprints.delete', $grants);
+        // Wiki uses the same standard project verbs, so editor auto-gets create/edit/delete.
+        $this->assertContains('wiki.create', $grants);
+        $this->assertContains('wiki.edit', $grants);
+        $this->assertContains('wiki.delete', $grants);
         $this->assertContains('comments.create', $grants);    // inherited
         $this->assertNotContains('comments.moderate', $grants); // manager+ only
         $this->assertNotContains('users.view', $grants);        // company-wide, admin+
