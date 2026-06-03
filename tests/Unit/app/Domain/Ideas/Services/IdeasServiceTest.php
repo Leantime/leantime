@@ -389,4 +389,81 @@ class IdeasServiceTest extends TestCase
 
         $service->removeIdeaComment(1);
     }
+
+    // ---------------------------------------------------------------------
+    // Fail-closed on a non-resolving (non-idea) id: never authorize against a null project, never
+    // fall back to the caller-supplied project. (A null project here means "not an idea entity".)
+    // ---------------------------------------------------------------------
+
+    public function test_get_idea_comments_fails_closed_for_non_idea_entity(): void
+    {
+        $fetched = false;
+        $repo = $this->make(IdeasRepository::class, ['getSingleCanvasItem' => fn () => false]);
+        $commentsRepo = $this->make(CommentRepository::class, [
+            'getComments' => function () use (&$fetched) {
+                $fetched = true;
+
+                return [];
+            },
+        ]);
+        // Denying engine: if it reached authorize(VIEW, null) it would throw; fail-closed returns [] first.
+        $service = $this->makeService(ideasRepo: $repo, commentsRepo: $commentsRepo, perms: $this->denyingPermissions());
+
+        $this->assertSame([], $service->getIdeaComments('ticket', 123));
+        $this->assertFalse($fetched, 'A non-idea entity must short-circuit before the comment read');
+    }
+
+    public function test_create_idea_item_fails_closed_for_non_idea_board(): void
+    {
+        $created = false;
+        $repo = $this->make(IdeasRepository::class, [
+            'getSingleCanvas' => fn () => [], // canvasId is not an idea board
+            'addCanvasItem' => function () use (&$created) {
+                $created = true;
+
+                return '1';
+            },
+        ]);
+        $service = $this->makeService(ideasRepo: $repo);
+
+        $this->assertSame(0, $service->createIdeaItem(['box' => 'idea', 'description' => 'x', 'status' => 'idea', 'data' => '', 'canvasId' => 999], 9, self::SESSION_USER));
+        $this->assertFalse($created, 'A non-idea board canvasId must never create an item against the caller project');
+    }
+
+    public function test_add_idea_comment_fails_closed_for_non_idea_item(): void
+    {
+        $added = false;
+        $repo = $this->make(IdeasRepository::class, ['getSingleCanvasItem' => fn () => false]);
+        $commentsRepo = $this->make(CommentRepository::class, [
+            'addComment' => function () use (&$added) {
+                $added = true;
+
+                return '1';
+            },
+        ]);
+        $service = $this->makeService(ideasRepo: $repo, commentsRepo: $commentsRepo);
+
+        $this->assertFalse($service->addIdeaComment('hi', 999, 0, 9, self::SESSION_USER));
+        $this->assertFalse($added, 'A non-idea item must never receive a comment against the caller project');
+    }
+
+    public function test_remove_idea_comment_fails_closed_for_non_author_non_idea_comment(): void
+    {
+        $deleted = false;
+        $repo = $this->make(IdeasRepository::class, ['getSingleCanvasItem' => fn () => false]);
+        $commentsRepo = $this->make(CommentRepository::class, [
+            'getComment' => fn () => ['id' => 1, 'userId' => 7, 'moduleId' => 999],
+            'deleteComment' => function () use (&$deleted): bool {
+                $deleted = true;
+
+                return true;
+            },
+        ]);
+        // Allowing engine: proves the refusal is the fail-closed null guard, not a denied authorize.
+        $service = $this->makeService(ideasRepo: $repo, commentsRepo: $commentsRepo, perms: $this->allowingPermissions());
+
+        $service->removeIdeaComment(1);
+
+        $this->assertFalse($deleted, 'A non-author comment on a non-idea item must not be deleted');
+    }
 }

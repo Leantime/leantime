@@ -534,7 +534,11 @@ class Ideas extends BaseService
 
         $canvasItem = $this->ideasRepository->getSingleCanvasItem($id);
 
-        if (is_array($canvasItem) && isset($canvasItem['box']) && $canvasItem['box'] == '0') {
+        if (! is_array($canvasItem)) {
+            return [];
+        }
+
+        if (isset($canvasItem['box']) && $canvasItem['box'] == '0') {
             $canvasItem['box'] = 'idea';
         }
 
@@ -590,9 +594,14 @@ class Ideas extends BaseService
     #[RequiresPermission(IdeasPermissions::CREATE, entityScoped: true)]
     public function createIdeaItem(array $input, int $projectId, int $authorId): int
     {
-        // Authorize CREATE against the TARGET board's real project (resolve from canvasId; the
-        // passed projectId is untrusted), falling back to it only if the board can't be resolved.
-        $boardProjectId = $this->boardProjectId((int) ($input['canvasId'] ?? 0)) ?? $projectId;
+        // Authorize CREATE against the TARGET board's real project (resolved from canvasId; the
+        // passed projectId is untrusted). FAIL CLOSED if the canvasId is not an idea board — never
+        // fall back to the caller-supplied projectId, or a foreign/non-idea canvasId could be
+        // created against the caller's own project.
+        $boardProjectId = $this->boardProjectId((int) ($input['canvasId'] ?? 0));
+        if ($boardProjectId === null) {
+            return 0;
+        }
         $this->authorize(IdeasPermissions::CREATE, $boardProjectId);
 
         $canvasItem = [
@@ -773,8 +782,12 @@ class Ideas extends BaseService
     public function addIdeaComment(string $text, int $ideaItemId, int|string $parentCommentId, int $projectId, int $authorId): false|string
     {
         // Commenting on an idea is a commenter+ capability in the idea's project (resolved from the
-        // item; the passed projectId is untrusted). Uses the Comments vocabulary.
-        $itemProjectId = $this->canvasItemProjectId($ideaItemId) ?? $projectId;
+        // item; the passed projectId is untrusted). FAIL CLOSED if the id is not an idea item —
+        // never fall back to the caller-supplied projectId.
+        $itemProjectId = $this->canvasItemProjectId($ideaItemId);
+        if ($itemProjectId === null) {
+            return false;
+        }
         $this->authorize(CommentsPermissions::CREATE, $itemProjectId);
 
         $values = [
@@ -832,10 +845,13 @@ class Ideas extends BaseService
         }
 
         if ((int) ($comment['userId'] ?? 0) !== (int) session('userdata.id')) {
-            $this->authorize(
-                CommentsPermissions::MODERATE,
-                $this->canvasItemProjectId((int) ($comment['moduleId'] ?? 0))
-            );
+            // Non-author: require moderate in the idea's project. FAIL CLOSED if the comment's item
+            // does not resolve to an idea board — never downgrade to a role-only moderate check.
+            $projectId = $this->canvasItemProjectId((int) ($comment['moduleId'] ?? 0));
+            if ($projectId === null) {
+                return;
+            }
+            $this->authorize(CommentsPermissions::MODERATE, $projectId);
         }
 
         $this->commentsRepository->deleteComment($commentId);
@@ -853,9 +869,13 @@ class Ideas extends BaseService
     #[RequiresPermission(IdeasPermissions::VIEW, entityScoped: true)]
     public function getIdeaComments(string $module, int $entityId): array|false
     {
-        // entityId is the idea item id; authorize VIEW against its project before returning comments
-        // (a null project falls back to a session-scoped role check for any non-resolving target).
-        $this->authorize(IdeasPermissions::VIEW, $this->canvasItemProjectId($entityId));
+        // Fail closed: a null project means $entityId is not an idea item, so refuse rather than
+        // authorize against null (role-only pass) and leak another project's comment thread by id.
+        $projectId = $this->canvasItemProjectId($entityId);
+        if ($projectId === null) {
+            return [];
+        }
+        $this->authorize(IdeasPermissions::VIEW, $projectId);
 
         return $this->commentsRepository->getComments($module, $entityId);
     }
@@ -872,7 +892,12 @@ class Ideas extends BaseService
     #[RequiresPermission(IdeasPermissions::VIEW, entityScoped: true)]
     public function countIdeaComments(string $module, int $entityId): mixed
     {
-        $this->authorize(IdeasPermissions::VIEW, $this->canvasItemProjectId($entityId));
+        // Fail closed: a null project means $entityId is not an idea item.
+        $projectId = $this->canvasItemProjectId($entityId);
+        if ($projectId === null) {
+            return 0;
+        }
+        $this->authorize(IdeasPermissions::VIEW, $projectId);
 
         return $this->commentsRepository->countComments($module, $entityId);
     }
