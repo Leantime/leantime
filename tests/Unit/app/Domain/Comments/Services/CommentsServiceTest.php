@@ -2,6 +2,8 @@
 
 namespace Unit\app\Domain\Comments\Services;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Comments\Services\Comments;
@@ -10,22 +12,76 @@ use Leantime\Domain\Reactions\Services\Reactions as ReactionsService;
 use Unit\TestCase;
 
 /**
- * Unit tests for the comment-reaction orchestration extracted from the
- * Comments/Reactions HxController into the Comments service.
+ * Unit tests for the Comments service: reaction orchestration plus the project-scoped
+ * authorization fences (comments are read/moderated against the host entity's REAL project).
  */
 class CommentsServiceTest extends TestCase
 {
     use \Codeception\Test\Feature\Stub;
 
-    private function makeService(ReactionsService $reactionsService): Comments
+    /** The session user used across the reaction tests. */
+    private const SESSION_USER = 5;
+
+    protected function setUp(): void
     {
-        return new Comments(
-            $this->make(CommentRepository::class),
+        parent::setUp();
+        session(['userdata.id' => self::SESSION_USER]);
+    }
+
+    /**
+     * Build the service. By default the comment repository resolves a real (ticket) comment in
+     * project 9 and the permission engine allows everything; pass overrides to exercise denials.
+     */
+    private function makeService(
+        ReactionsService $reactionsService,
+        ?CommentRepository $repo = null,
+        ?PermissionService $permissions = null,
+    ): Comments {
+        $service = new Comments(
+            $repo ?? $this->defaultRepo(),
             $this->make(ProjectService::class),
             $this->make(LanguageCore::class),
             $reactionsService,
         );
+        $service->setPermissionService($permissions ?? $this->allowingPermissions());
+
+        return $service;
     }
+
+    private function defaultRepo(): CommentRepository
+    {
+        return $this->make(CommentRepository::class, [
+            'getComment' => fn () => ['id' => 99, 'userId' => self::SESSION_USER, 'module' => 'ticket', 'moduleId' => 1],
+            'resolveModuleProjectId' => fn () => 9,
+        ]);
+    }
+
+    private function allowingPermissions(): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'authorize' => fn () => null,
+            'currentUserCan' => fn () => true,
+        ]);
+    }
+
+    private function denyingPermissions(): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'authorize' => function (): void {
+                throw new AuthorizationException;
+            },
+            'currentUserCan' => fn () => false,
+        ]);
+    }
+
+    private function noopReactions(): ReactionsService
+    {
+        return $this->make(ReactionsService::class, []);
+    }
+
+    // ---------------------------------------------------------------------
+    // Reaction orchestration (existing behaviour, now session-pinned).
+    // ---------------------------------------------------------------------
 
     public function test_toggle_rejects_unknown_reaction_type(): void
     {
@@ -46,7 +102,7 @@ class CommentsServiceTest extends TestCase
             },
         ]);
 
-        $result = $this->makeService($reactionsService)->toggleCommentReaction(5, 99, 'bogus');
+        $result = $this->makeService($reactionsService)->toggleCommentReaction(self::SESSION_USER, 99, 'bogus');
 
         $this->assertFalse($result);
         $this->assertFalse($added, 'No reaction should be added for an unknown type');
@@ -60,8 +116,6 @@ class CommentsServiceTest extends TestCase
 
         $reactionsService = $this->make(ReactionsService::class, [
             'getReactionType' => fn () => 'positive',
-            // The targeted lookup for the clicked reaction returns the
-            // existing same reaction, so the toggle removes it.
             'getUserReactions' => fn () => [['reaction' => 'thumbsup']],
             'removeReaction' => function ($userId, $module, $moduleId, $reaction) use (&$removeCalls) {
                 $removeCalls[] = [$userId, $module, $moduleId, $reaction];
@@ -75,11 +129,11 @@ class CommentsServiceTest extends TestCase
             },
         ]);
 
-        $result = $this->makeService($reactionsService)->toggleCommentReaction(5, 99, 'thumbsup');
+        $result = $this->makeService($reactionsService)->toggleCommentReaction(self::SESSION_USER, 99, 'thumbsup');
 
         $this->assertTrue($result);
         $this->assertFalse($added, 'Toggling off should not add a reaction');
-        $this->assertSame([[5, 'comment', 99, 'thumbsup']], $removeCalls);
+        $this->assertSame([[self::SESSION_USER, 'comment', 99, 'thumbsup']], $removeCalls);
     }
 
     public function test_toggle_on_replaces_existing_sentiment(): void
@@ -90,12 +144,10 @@ class CommentsServiceTest extends TestCase
         $reactionsService = $this->make(ReactionsService::class, [
             'getReactionType' => fn () => 'positive',
             'getUserReactions' => function ($userId, $module, $moduleId, $reaction = '') {
-                // Targeted lookup for the clicked reaction: none yet.
                 if ($reaction !== '') {
                     return [];
                 }
 
-                // Broad lookup: user currently has a different reaction.
                 return [['reaction' => 'thumbsdown']];
             },
             'removeReaction' => function ($userId, $module, $moduleId, $reaction) use (&$removeCalls) {
@@ -110,12 +162,11 @@ class CommentsServiceTest extends TestCase
             },
         ]);
 
-        $result = $this->makeService($reactionsService)->toggleCommentReaction(5, 99, 'thumbsup');
+        $result = $this->makeService($reactionsService)->toggleCommentReaction(self::SESSION_USER, 99, 'thumbsup');
 
         $this->assertTrue($result);
-        // Existing different reaction removed first, new one added.
-        $this->assertSame([[5, 'comment', 99, 'thumbsdown']], $removeCalls);
-        $this->assertSame([[5, 'comment', 99, 'thumbsup']], $addCalls);
+        $this->assertSame([[self::SESSION_USER, 'comment', 99, 'thumbsdown']], $removeCalls);
+        $this->assertSame([[self::SESSION_USER, 'comment', 99, 'thumbsup']], $addCalls);
     }
 
     public function test_toggle_on_with_no_existing_reactions_just_adds(): void
@@ -125,7 +176,6 @@ class CommentsServiceTest extends TestCase
 
         $reactionsService = $this->make(ReactionsService::class, [
             'getReactionType' => fn () => 'positive',
-            // No existing reactions at all (false is a valid repo return).
             'getUserReactions' => fn () => false,
             'removeReaction' => function (...$args) use (&$removeCalls) {
                 $removeCalls[] = $args;
@@ -139,11 +189,11 @@ class CommentsServiceTest extends TestCase
             },
         ]);
 
-        $result = $this->makeService($reactionsService)->toggleCommentReaction(5, 99, 'thumbsup');
+        $result = $this->makeService($reactionsService)->toggleCommentReaction(self::SESSION_USER, 99, 'thumbsup');
 
         $this->assertTrue($result);
         $this->assertSame([], $removeCalls, 'Nothing to remove when there are no existing reactions');
-        $this->assertSame([[5, 'comment', 99, 'thumbsup']], $addCalls);
+        $this->assertSame([[self::SESSION_USER, 'comment', 99, 'thumbsup']], $addCalls);
     }
 
     public function test_get_comment_reactions_flattens_user_reaction_codes(): void
@@ -171,8 +221,110 @@ class CommentsServiceTest extends TestCase
 
         $result = $this->makeService($reactionsService)->getCommentReactions(99, 0);
 
-        // No user id => no user reaction lookup, empty list, and empty reactions normalised to [].
         $this->assertSame([], $result['reactions']);
         $this->assertSame([], $result['userReactions']);
+    }
+
+    // ---------------------------------------------------------------------
+    // Project-scoped authorization fences (the IDOR hardening).
+    // ---------------------------------------------------------------------
+
+    public function test_toggle_reaction_uses_session_user_not_caller_supplied_id(): void
+    {
+        // A caller passes someone else's id; the service must react as the SESSION user only.
+        $addCalls = [];
+        $reactionsService = $this->make(ReactionsService::class, [
+            'getReactionType' => fn () => 'positive',
+            'getUserReactions' => fn () => false,
+            'addReaction' => function ($userId, $module, $moduleId, $reaction) use (&$addCalls) {
+                $addCalls[] = [$userId, $module, $moduleId, $reaction];
+
+                return true;
+            },
+        ]);
+
+        $this->makeService($reactionsService)->toggleCommentReaction(999, 99, 'thumbsup');
+
+        $this->assertSame([[self::SESSION_USER, 'comment', 99, 'thumbsup']], $addCalls, 'Reaction must use the session user, not the caller-supplied id');
+    }
+
+    public function test_toggle_reaction_is_denied_for_a_foreign_project(): void
+    {
+        // Valid reaction type so the method reaches the project fence (not the type guard). A denied
+        // cross-project comment returns false — same as a missing comment, so no existence oracle.
+        $reactions = $this->make(ReactionsService::class, ['getReactionType' => fn () => 'positive']);
+        $service = $this->makeService($reactions, $this->defaultRepo(), $this->denyingPermissions());
+
+        $this->assertFalse($service->toggleCommentReaction(self::SESSION_USER, 99, 'thumbsup'));
+    }
+
+    public function test_get_comments_is_denied_for_a_foreign_project(): void
+    {
+        // getComments resolves the host entity's project and authorizes VIEW there; a denying
+        // engine must throw before any comment data is returned.
+        $service = $this->makeService($this->noopReactions(), $this->defaultRepo(), $this->denyingPermissions());
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->getComments('ticket', 123);
+    }
+
+    public function test_delete_comment_denies_non_author_moderation_cross_project(): void
+    {
+        // Comment belongs to another user; the session user is NOT a moderator in the comment's
+        // project (denying engine) -> deleteComment must refuse and never reach the repo delete.
+        $repo = $this->make(CommentRepository::class, [
+            'getComment' => fn () => ['id' => 99, 'userId' => 7, 'module' => 'ticket', 'moduleId' => 1],
+            'resolveModuleProjectId' => fn () => 9,
+            'deleteComment' => function (): bool {
+                throw new \RuntimeException('delete must not run when moderation is denied');
+            },
+        ]);
+        $service = $this->makeService($this->noopReactions(), $repo, $this->denyingPermissions());
+
+        $this->assertFalse($service->deleteComment(99));
+    }
+
+    public function test_delete_comment_allows_the_author_without_moderation(): void
+    {
+        $deleted = null;
+        $repo = $this->make(CommentRepository::class, [
+            // Authored by the session user -> author branch, no moderation check needed.
+            'getComment' => fn () => ['id' => 99, 'userId' => self::SESSION_USER, 'module' => 'ticket', 'moduleId' => 1],
+            'resolveModuleProjectId' => fn () => 9,
+            'deleteComment' => function ($id) use (&$deleted): bool {
+                $deleted = $id;
+
+                return true;
+            },
+        ]);
+        // Denying engine proves the author path does NOT depend on comments.moderate.
+        $service = $this->makeService($this->noopReactions(), $repo, $this->denyingPermissions());
+
+        $this->assertTrue($service->deleteComment(99));
+        $this->assertSame(99, $deleted);
+    }
+
+    public function test_get_comment_reactions_is_denied_for_a_foreign_project(): void
+    {
+        // A denied cross-project comment returns the SAME empty payload as a missing comment
+        // (soft-deny), so reactor identities/sentiment never leak AND missing vs unauthorized are
+        // indistinguishable — no commentId existence oracle.
+        $service = $this->makeService($this->noopReactions(), $this->defaultRepo(), $this->denyingPermissions());
+
+        $this->assertSame(['reactions' => [], 'userReactions' => []], $service->getCommentReactions(99, self::SESSION_USER));
+    }
+
+    public function test_get_comment_reactions_returns_empty_for_missing_comment(): void
+    {
+        // A missing comment yields the same empty payload a DENIED comment does (see above), so the
+        // two are indistinguishable — no commentId existence oracle.
+        $repo = $this->make(CommentRepository::class, [
+            'getComment' => fn () => false,
+            'resolveModuleProjectId' => fn () => 9,
+        ]);
+        $service = $this->makeService($this->noopReactions(), $repo, $this->denyingPermissions());
+
+        $this->assertSame(['reactions' => [], 'userReactions' => []], $service->getCommentReactions(404, self::SESSION_USER));
     }
 }

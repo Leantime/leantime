@@ -93,6 +93,7 @@ class Comments
                 'comment.id',
                 'comment.text',
                 'comment.date',
+                'comment.module',
                 'comment.moduleId',
                 'comment.userId',
                 'comment.commentParent',
@@ -105,6 +106,53 @@ class Comments
             ->first();
 
         return $result ? (array) $result : false;
+    }
+
+    /**
+     * Resolve the owning project of a comment target (module + entity id) for authorization.
+     *
+     * Comments are cross-module; each module maps to a project differently:
+     *  - project        -> the moduleId IS the project id
+     *  - ticket         -> zp_tickets.projectId
+     *  - canvas family  -> the moduleId is a zp_canvas_items row; project via its canvas. Only the
+     *    KNOWN canvas comment modules are resolved this way: 'article', 'idea', and every
+     *    "<type>canvasitem" (goalcanvasitem, leancanvasitem, wikicanvasitem, ...).
+     *  - client / anything else -> null (company-scoped or unknown; the caller falls back to a
+     *    session-scoped capability check so behavior is unchanged for those targets). An unknown
+     *    module is NOT run through the canvas lookup, so it can never accidentally resolve a project
+     *    from a colliding zp_canvas_items id.
+     *
+     * Direct table reads are used deliberately (no cross-domain service calls) to keep this a
+     * decoupled, side-effect-free authorization lookup that cannot recurse into other gates.
+     */
+    public function resolveModuleProjectId(string $module, int $moduleId): ?int
+    {
+        if ($moduleId <= 0) {
+            return null;
+        }
+
+        if ($module === 'project') {
+            return $moduleId;
+        }
+
+        if ($module === 'ticket') {
+            $projectId = $this->db->table('zp_tickets')->where('id', $moduleId)->value('projectId');
+
+            return $projectId !== null ? (int) $projectId : null;
+        }
+
+        // Canvas-backed comment targets store the canvas-item id as the moduleId. Restrict to the
+        // known canvas comment modules so an unknown module falls through to null (session-scoped).
+        if ($module === 'article' || $module === 'idea' || str_ends_with($module, 'canvasitem')) {
+            $projectId = $this->db->table('zp_canvas_items')
+                ->leftJoin('zp_canvas', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
+                ->where('zp_canvas_items.id', $moduleId)
+                ->value('zp_canvas.projectId');
+
+            return $projectId !== null ? (int) $projectId : null;
+        }
+
+        return null;
     }
 
     public function addComment(array $values, string $module): false|string

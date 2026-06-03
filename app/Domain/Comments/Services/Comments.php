@@ -67,9 +67,16 @@ class Comments extends BaseService
     /**
      * @api
      */
-    #[RequiresPermission(CommentsPermissions::VIEW)]
+    #[RequiresPermission(CommentsPermissions::VIEW, entityScoped: true)]
     public function getComments($module, $entityId, int $commentOrder = 0, int $parent = 0): false|array
     {
+        // IDOR fence: comments are read by (module, entityId) with no project scoping in the repo,
+        // so authorize VIEW against the host entity's REAL project — a foreign id can no longer leak
+        // another project's comment thread over RPC. A null project (client/company-scoped target or
+        // an unknown module) falls back to a session-scoped capability check (unchanged behavior).
+        $projectId = $this->commentRepository->resolveModuleProjectId((string) $module, (int) $entityId);
+        $this->authorize(CommentsPermissions::VIEW, $projectId);
+
         return $this->commentRepository->getComments($module, $entityId, $parent, $commentOrder);
     }
 
@@ -93,6 +100,12 @@ class Comments extends BaseService
         $projectId = is_object($entity) && isset($entity->projectId)
             ? (int) $entity->projectId
             : ($module === 'project' ? (int) $entityId : null);
+
+        // Fall back to resolving the host entity's project by (module, id) so canvas-family and
+        // other targets (whose $entity may be an array or unloaded) are also project-fenced.
+        if ($projectId === null) {
+            $projectId = $this->commentRepository->resolveModuleProjectId((string) $module, (int) $entityId);
+        }
 
         $this->authorize(CommentsPermissions::CREATE, $projectId);
 
@@ -196,9 +209,16 @@ class Comments extends BaseService
             return true;
         }
 
-        // Otherwise moderation (editing/deleting someone else's comment) is a manager+
-        // capability, expressed as the comments.moderate permission.
-        return $this->can(CommentsPermissions::MODERATE);
+        // Otherwise moderation (editing/deleting someone else's comment) is a manager+ capability,
+        // scoped to the comment's OWN project so a manager in project A cannot moderate a comment on
+        // an entity in project B by id. A null project (client/company-scoped or unknown module)
+        // falls back to a session-scoped moderate check (unchanged behavior for those targets).
+        $projectId = $this->commentRepository->resolveModuleProjectId(
+            (string) ($comment['module'] ?? ''),
+            (int) ($comment['moduleId'] ?? 0)
+        );
+
+        return $this->can(CommentsPermissions::MODERATE, $projectId);
     }
 
     /**
@@ -266,7 +286,8 @@ class Comments extends BaseService
      * existing reactions first, then adds the new one. Unknown reaction
      * types are rejected.
      *
-     * @param  int  $userId  The reacting user's id
+     * @param  int  $userId  Ignored — reactions always act as the session user (kept for RPC
+     *                       signature compatibility). See the in-body session pin.
      * @param  int  $commentId  The comment being reacted to
      * @param  string  $reaction  The reaction code (e.g. an emoji key)
      * @return bool True when the toggle was applied, false when the reaction
@@ -274,11 +295,34 @@ class Comments extends BaseService
      *
      * @api
      */
-    #[RequiresPermission(CommentsPermissions::CREATE)]
+    #[RequiresPermission(CommentsPermissions::CREATE, entityScoped: true)]
     public function toggleCommentReaction(int $userId, int $commentId, string $reaction): bool
     {
+        // Reactions act on behalf of the SESSION user only. Ignore any caller-supplied id so a
+        // client cannot toggle reactions as another user (the $userId param is kept for RPC
+        // signature compatibility but is not trusted).
+        $userId = (int) session('userdata.id');
+
         // Validate reaction against known types
         if ($this->reactionsService->getReactionType($reaction) === false) {
+            return false;
+        }
+
+        // IDOR fence: gate against the comment's OWN project (null -> session-scoped fallback), so
+        // reactions can't be toggled on another project's comment by id. SOFT-deny (same false
+        // return as a missing comment) rather than throw, so a denied cross-project comment is
+        // indistinguishable from a non-existent one — no commentId existence oracle.
+        $comment = $this->commentRepository->getComment($commentId);
+        if (! $comment) {
+            return false;
+        }
+        if (! $this->can(
+            CommentsPermissions::CREATE,
+            $this->commentRepository->resolveModuleProjectId(
+                (string) ($comment['module'] ?? ''),
+                (int) ($comment['moduleId'] ?? 0)
+            )
+        )) {
             return false;
         }
 
@@ -320,9 +364,27 @@ class Comments extends BaseService
      *
      * @api
      */
-    #[RequiresPermission(CommentsPermissions::VIEW)]
+    #[RequiresPermission(CommentsPermissions::VIEW, entityScoped: true)]
     public function getCommentReactions(int $commentId, int $userId): array
     {
+        // IDOR fence: gate VIEW against the comment's OWN project before exposing reactor
+        // identities/sentiment, closing the cross-project reaction-read leak by comment id (RPC +
+        // Hx). SOFT-deny (same empty payload as a missing comment) rather than throw, so a denied
+        // cross-project comment is indistinguishable from a non-existent one — no existence oracle.
+        $comment = $this->commentRepository->getComment($commentId);
+        if (! $comment) {
+            return ['reactions' => [], 'userReactions' => []];
+        }
+        if (! $this->can(
+            CommentsPermissions::VIEW,
+            $this->commentRepository->resolveModuleProjectId(
+                (string) ($comment['module'] ?? ''),
+                (int) ($comment['moduleId'] ?? 0)
+            )
+        )) {
+            return ['reactions' => [], 'userReactions' => []];
+        }
+
         // Get reactions with user names for tooltips
         $reactionsWithUsers = $this->reactionsService->getEntityReactionsWithUsers('comment', $commentId);
 
