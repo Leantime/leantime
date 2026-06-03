@@ -250,13 +250,12 @@ class CommentsServiceTest extends TestCase
 
     public function test_toggle_reaction_is_denied_for_a_foreign_project(): void
     {
-        // Valid reaction type so the method reaches the project fence (not the type guard).
+        // Valid reaction type so the method reaches the project fence (not the type guard). A denied
+        // cross-project comment returns false — same as a missing comment, so no existence oracle.
         $reactions = $this->make(ReactionsService::class, ['getReactionType' => fn () => 'positive']);
         $service = $this->makeService($reactions, $this->defaultRepo(), $this->denyingPermissions());
 
-        $this->expectException(AuthorizationException::class);
-
-        $service->toggleCommentReaction(self::SESSION_USER, 99, 'thumbsup');
+        $this->assertFalse($service->toggleCommentReaction(self::SESSION_USER, 99, 'thumbsup'));
     }
 
     public function test_get_comments_is_denied_for_a_foreign_project(): void
@@ -308,17 +307,18 @@ class CommentsServiceTest extends TestCase
 
     public function test_get_comment_reactions_is_denied_for_a_foreign_project(): void
     {
-        // Reaction reads expose reactor identities/sentiment, so they fence to the comment's project.
+        // A denied cross-project comment returns the SAME empty payload as a missing comment
+        // (soft-deny), so reactor identities/sentiment never leak AND missing vs unauthorized are
+        // indistinguishable — no commentId existence oracle.
         $service = $this->makeService($this->noopReactions(), $this->defaultRepo(), $this->denyingPermissions());
 
-        $this->expectException(AuthorizationException::class);
-
-        $service->getCommentReactions(99, self::SESSION_USER);
+        $this->assertSame(['reactions' => [], 'userReactions' => []], $service->getCommentReactions(99, self::SESSION_USER));
     }
 
     public function test_get_comment_reactions_returns_empty_for_missing_comment(): void
     {
-        // A missing comment yields empty view data BEFORE authorize — no enumeration oracle.
+        // A missing comment yields the same empty payload a DENIED comment does (see above), so the
+        // two are indistinguishable — no commentId existence oracle.
         $repo = $this->make(CommentRepository::class, [
             'getComment' => fn () => false,
             'resolveModuleProjectId' => fn () => 9,

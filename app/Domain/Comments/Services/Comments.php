@@ -308,19 +308,23 @@ class Comments extends BaseService
             return false;
         }
 
-        // IDOR fence: authorize against the comment's OWN project (null -> session-scoped fallback),
-        // so reactions can't be toggled on another project's comment by id.
+        // IDOR fence: gate against the comment's OWN project (null -> session-scoped fallback), so
+        // reactions can't be toggled on another project's comment by id. SOFT-deny (same false
+        // return as a missing comment) rather than throw, so a denied cross-project comment is
+        // indistinguishable from a non-existent one — no commentId existence oracle.
         $comment = $this->commentRepository->getComment($commentId);
         if (! $comment) {
             return false;
         }
-        $this->authorize(
+        if (! $this->can(
             CommentsPermissions::CREATE,
             $this->commentRepository->resolveModuleProjectId(
                 (string) ($comment['module'] ?? ''),
                 (int) ($comment['moduleId'] ?? 0)
             )
-        );
+        )) {
+            return false;
+        }
 
         // Check if user already has this exact reaction
         $existingSameReaction = $this->reactionsService->getUserReactions($userId, 'comment', $commentId, $reaction);
@@ -363,21 +367,23 @@ class Comments extends BaseService
     #[RequiresPermission(CommentsPermissions::VIEW, entityScoped: true)]
     public function getCommentReactions(int $commentId, int $userId): array
     {
-        // IDOR fence: authorize VIEW against the comment's OWN project before exposing reactor
-        // identities/sentiment (a null project — client/company-scoped or unknown module — falls
-        // back to a session-scoped role check). Closes the cross-project reaction-read leak by
-        // comment id on both the RPC and the Hx surfaces (which route through this method).
+        // IDOR fence: gate VIEW against the comment's OWN project before exposing reactor
+        // identities/sentiment, closing the cross-project reaction-read leak by comment id (RPC +
+        // Hx). SOFT-deny (same empty payload as a missing comment) rather than throw, so a denied
+        // cross-project comment is indistinguishable from a non-existent one — no existence oracle.
         $comment = $this->commentRepository->getComment($commentId);
         if (! $comment) {
             return ['reactions' => [], 'userReactions' => []];
         }
-        $this->authorize(
+        if (! $this->can(
             CommentsPermissions::VIEW,
             $this->commentRepository->resolveModuleProjectId(
                 (string) ($comment['module'] ?? ''),
                 (int) ($comment['moduleId'] ?? 0)
             )
-        );
+        )) {
+            return ['reactions' => [], 'userReactions' => []];
+        }
 
         // Get reactions with user names for tooltips
         $reactionsWithUsers = $this->reactionsService->getEntityReactionsWithUsers('comment', $commentId);
