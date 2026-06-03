@@ -27,7 +27,7 @@ class ArticleActivity extends HtmxController
      * Get the activity feed for an article. The service's getArticleActivity() is the precise
      * per-article-project IDOR fence; this VIEW gate stops non-viewers at dispatch.
      */
-    #[RequiresPermission(WikiPermissions::VIEW)]
+    #[RequiresPermission(WikiPermissions::VIEW, entityScoped: true)]
     public function get(): void
     {
         $articleId = (int) $this->incomingRequest->query->get('articleId', 0);
