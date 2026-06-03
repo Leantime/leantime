@@ -277,11 +277,22 @@ class Wiki extends Blueprints
 
     public function delWiki(int $id): void
     {
+        // zp_canvas/zp_canvas_items are shared across all canvas families. Early-return unless this
+        // id is an actual wiki board, so the items-delete (by canvasId) can never drop another
+        // canvas type's items before the type-guarded board delete runs.
+        $isWiki = $this->dbConnection->table('zp_canvas')
+            ->where('id', $id)
+            ->where('type', 'wiki')
+            ->exists();
+
+        if (! $isWiki) {
+            return;
+        }
+
         $this->dbConnection->table('zp_canvas_items')
             ->where('canvasId', $id)
             ->delete();
 
-        // type guard (shared zp_canvas): only ever delete a wiki board by this id.
         $this->dbConnection->table('zp_canvas')
             ->where('id', $id)
             ->where('type', 'wiki')
