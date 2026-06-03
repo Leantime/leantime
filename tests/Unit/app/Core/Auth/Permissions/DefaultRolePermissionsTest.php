@@ -40,6 +40,10 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
             new Permission('blueprints.create', 'Create', true),
             new Permission('blueprints.edit', 'Edit', true),
             new Permission('blueprints.delete', 'Delete', true),
+            new Permission('goals.view', 'View', true),
+            new Permission('goals.create', 'Create', true),
+            new Permission('goals.edit', 'Edit', true),
+            new Permission('goals.delete', 'Delete', true),
             new Permission('comments.view', 'View', true),
             new Permission('comments.create', 'Create', true),
             new Permission('comments.moderate', 'Moderate', true),
@@ -67,7 +71,7 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
 
     public function test_readonly_can_only_view_project_content(): void
     {
-        $this->assertEqualsCanonicalizing(['tickets.view', 'comments.view', 'sprints.view', 'wiki.view', 'ideas.view', 'blueprints.view'], $this->grantsFor('readonly'));
+        $this->assertEqualsCanonicalizing(['tickets.view', 'comments.view', 'sprints.view', 'wiki.view', 'ideas.view', 'blueprints.view', 'goals.view'], $this->grantsFor('readonly'));
     }
 
     public function test_commenter_adds_comment_upload_and_can_create_comments(): void
@@ -88,6 +92,8 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('ideas.view', $grants);         // inherited from readonly
         $this->assertNotContains('blueprints.create', $grants); // commenter views but cannot create
         $this->assertContains('blueprints.view', $grants);      // inherited from readonly
+        $this->assertNotContains('goals.create', $grants);      // commenter views but cannot create
+        $this->assertContains('goals.view', $grants);           // inherited from readonly
         $this->assertNotContains('comments.moderate', $grants);
     }
 
@@ -114,6 +120,9 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('blueprints.create', $grants);
         $this->assertContains('blueprints.edit', $grants);
         $this->assertContains('blueprints.delete', $grants);
+        $this->assertContains('goals.create', $grants);
+        $this->assertContains('goals.edit', $grants);
+        $this->assertContains('goals.delete', $grants);
         $this->assertContains('comments.create', $grants);    // inherited
         $this->assertNotContains('comments.moderate', $grants); // manager+ only
         $this->assertNotContains('users.view', $grants);        // company-wide, admin+

@@ -7,10 +7,12 @@
 namespace Leantime\Domain\Goalcanvas\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
@@ -52,39 +54,44 @@ class EditCanvasItem extends Controller
     /**
      * @throws \Exception
      */
+    #[RequiresPermission(GoalcanvasPermissions::VIEW, entityScoped: true)]
     public function get($params): Response
     {
         if (isset($params['id'])) {
-            // Delete comment
-            if (isset($params['delComment'])) {
-                $commentId = (int) ($params['delComment']);
-                $this->commentsRepo->deleteComment($commentId);
-                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+            // Resolve + VIEW-authorize the item against its real project BEFORE any mutation.
+            // false = missing / foreign project / unauthorized (indistinguishable -> no oracle).
+            $canvasItem = $this->goalService->getGoalItem((int) $params['id']);
+            if (! $canvasItem) {
+                return $this->tpl->displayPartial('errors.error404');
             }
 
-            // Delete milestone relationship
+            // Delete comment — only when it belongs to THIS gated item (module + moduleId);
+            // deleteComment() filters on the comment id alone, so the bind prevents deleting a
+            // foreign item's / project's comment.
+            if (isset($params['delComment'])) {
+                $commentId = (int) ($params['delComment']);
+                $comment = $this->commentsRepo->getComment($commentId);
+                if ($comment !== false
+                    && (string) $comment['module'] === 'goalcanvasitem'
+                    && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
+                    $this->commentsRepo->deleteComment($commentId);
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+                }
+            }
+
+            // Delete milestone relationship — an EDIT, authorized by the service against the
+            // item's project (a view-only user is denied here).
             if (isset($params['removeMilestone'])) {
-                $this->canvasRepo->patchCanvasItem($params['id'], ['milestoneId' => '']);
+                $this->goalService->patchGoalItem((int) $params['id'], ['milestoneId' => '']);
+                $canvasItem = $this->goalService->getGoalItem((int) $params['id']);
                 $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
             }
 
-            $canvasItem = $this->canvasRepo->getSingleCanvasItem($params['id']);
-
-            if ($canvasItem) {
-                $comments = $this->commentsRepo->getComments(
-                    'goalcanvasitem',
-                    $canvasItem['id']
-                );
-                $this->tpl->assign(
-                    'numComments',
-                    $this->commentsRepo->countComments(
-                        'goalcanvascanvasitem',
-                        $canvasItem['id']
-                    )
-                );
-            } else {
-                return $this->tpl->displayPartial('errors.error404');
-            }
+            $comments = $this->commentsRepo->getComments('goalcanvasitem', $canvasItem['id']);
+            $this->tpl->assign(
+                'numComments',
+                $this->commentsRepo->countComments('goalcanvasitem', $canvasItem['id'])
+            );
         } else {
             $canvasItem = [
                 'id' => '',
@@ -129,11 +136,18 @@ class EditCanvasItem extends Controller
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(GoalcanvasPermissions::EDIT, entityScoped: true)]
     public function post($params): Response
     {
 
         if (isset($params['comment']) && isset($params['id'])) {
             $itemId = (int) $params['id'];
+
+            // Only allow commenting on a goal item the user can view in their project.
+            if (! $this->goalService->getGoalItem($itemId)) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
             $values = [
                 'text' => $params['text'],
                 'date' => date('Y-m-d H:i:s'),
@@ -217,7 +231,8 @@ class EditCanvasItem extends Controller
                         $canvasItem['milestoneId'] = $params['existingMilestone'];
                     }
 
-                    $this->canvasRepo->editCanvasItem($canvasItem);
+                    // Resolves the item's real project from itemId and authorizes EDIT there.
+                    $this->goalService->updateGoalItem($canvasItem);
 
                     $comments = $this->commentsRepo->getComments('goalcanvasitem', $params['itemId']);
                     $this->tpl->assign('numComments', $this->commentsRepo->countComments(
@@ -277,7 +292,8 @@ class EditCanvasItem extends Controller
                         'metricType' => $params['metricType'],
                         'assignedTo' => $params['assignedTo'] ?? '',
                     ];
-                    $id = $this->canvasRepo->addCanvasItem($canvasItem);
+                    // Resolves the target board's real project from canvasId and authorizes CREATE.
+                    $id = $this->goalService->createGoalItem($canvasItem);
                     $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
                     $this->tpl->setNotification($canvasTypes[$params['box']]['title'].' successfully created', 'success', 'goal_item_created');
@@ -324,7 +340,7 @@ class EditCanvasItem extends Controller
         if (isset($params['id'])) {
             $canvasItemId = (int) $params['id'];
             $comments = $this->commentsRepo->getComments('goalcanvasitem', $canvasItemId);
-            $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem($canvasItemId));
+            $this->tpl->assign('canvasItem', $this->goalService->getGoalItem($canvasItemId));
         } else {
             $value = [
                 'id' => '',

@@ -2,10 +2,11 @@
 
 namespace Leantime\Domain\Goalcanvas\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
+use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -18,15 +19,14 @@ class DelCanvasItem extends Controller
      */
     protected const CANVAS_NAME = 'goal';
 
-    private mixed $canvasRepo;
+    private GoalcanvaService $goalService;
 
     /**
      * Initializes dependencies.
      */
-    public function init(): void
+    public function init(GoalcanvaService $goalService): void
     {
-        $repoName = app()->getNamespace().'Domain\\Goalcanvas\\Repositories\\Goalcanvas';
-        $this->canvasRepo = app()->make($repoName);
+        $this->goalService = $goalService;
     }
 
     /**
@@ -34,10 +34,9 @@ class DelCanvasItem extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(GoalcanvasPermissions::DELETE)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
         $this->tpl->assign('id', $id);
 
@@ -49,14 +48,15 @@ class DelCanvasItem extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(GoalcanvasPermissions::DELETE, entityScoped: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
 
         if (isset($_POST['del']) && $id > 0) {
-            $this->canvasRepo->delCanvasItem($id);
+            // The service resolves the item's REAL project and authorizes DELETE against it
+            // (throwing for a missing/foreign item) — closing the by-id item-delete IDOR.
+            $this->goalService->deleteGoalItem($id);
 
             $this->tpl->setNotification($this->language->__('notification.element_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvasitem_deleted');
 

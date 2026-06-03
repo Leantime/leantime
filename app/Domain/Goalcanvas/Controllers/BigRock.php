@@ -7,9 +7,11 @@
 namespace Leantime\Domain\Goalcanvas\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -48,15 +50,21 @@ class BigRock extends Controller
     /**
      * @throws \Exception
      */
+    #[RequiresPermission(GoalcanvasPermissions::VIEW, entityScoped: true)]
     public function get($params): Response
     {
         if (isset($params['id'])) {
 
+            // getSingleCanvas authorizes VIEW against the board's real project and returns
+            // false for a missing/foreign/unauthorized board.
             $bigrock = $this->goalService->getSingleCanvas($params['id']);
+            if ($bigrock === false) {
+                $bigrock = ['id' => '', 'title' => '', 'projectId' => '', 'author' => ''];
+            }
 
         } else {
 
-            $bigrock = ['id' => '', 'title' => '', 'prpojectId' => '', 'author' => ''];
+            $bigrock = ['id' => '', 'title' => '', 'projectId' => '', 'author' => ''];
         }
 
         $this->tpl->assign('bigRock', $bigrock);
@@ -67,6 +75,7 @@ class BigRock extends Controller
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(GoalcanvasPermissions::EDIT, entityScoped: true)]
     public function post($params): Response
     {
         $bigrock = ['id' => '', 'title' => '', 'projectId' => '', 'author' => ''];
