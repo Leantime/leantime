@@ -2,11 +2,11 @@
 
 namespace Leantime\Domain\Sprints\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Exceptions\MissingParameterException;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Projects\Services\Projects;
+use Leantime\Domain\Sprints\Permissions\SprintsPermissions;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 
 class EditSprint extends Controller
@@ -22,8 +22,6 @@ class EditSprint extends Controller
         SprintService $sprintService,
         Projects $projectService,
     ) {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $this->sprintService = $sprintService;
         $this->projectService = $projectService;
     }
@@ -31,6 +29,7 @@ class EditSprint extends Controller
     /**
      * get - handle get requests
      */
+    #[RequiresPermission(SprintsPermissions::VIEW)]
     public function get($params)
     {
         if (isset($params['id'])) {
@@ -50,6 +49,7 @@ class EditSprint extends Controller
     /**
      * post - handle post requests
      */
+    #[RequiresPermission(SprintsPermissions::CREATE)]
     public function post($params)
     {
         // If ID is set its an update

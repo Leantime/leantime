@@ -2,6 +2,8 @@
 
 namespace Unit\app\Domain\Sprints\Services;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
 use Leantime\Domain\Sprints\Models\Sprints as SprintModel;
@@ -49,12 +51,19 @@ class SprintsServiceTest extends TestCase
 
         $deletedId = null;
         $repo = $this->make(SprintRepository::class, [
+            // deleteSprint now loads the sprint to authorize delete against its project.
+            'getSprint' => fn () => $this->make(SprintModel::class, ['id' => 42, 'projectId' => 9]),
             'delSprint' => function ($id) use (&$deletedId) {
                 $deletedId = $id;
             },
         ]);
 
-        $this->makeService(sprintRepo: $repo)->deleteSprint(42);
+        $service = $this->makeService(sprintRepo: $repo);
+        $service->setPermissionService($this->make(PermissionService::class, [
+            'authorize' => fn () => null,
+        ]));
+
+        $service->deleteSprint(42);
 
         $this->assertSame(42, $deletedId);
         $this->assertSame('', session('currentSprint'));
@@ -98,5 +107,52 @@ class SprintsServiceTest extends TestCase
         } finally {
             $this->assertSame(0, $editCalls, 'An invalid update must never reach the repository');
         }
+    }
+
+    // ---------------------------------------------------------------------
+    // Authorization: sprints are project-scoped; mutators authorize against the SPRINT'S
+    // project (entityScoped), closing the IDOR where the id alone identified the row.
+    // ---------------------------------------------------------------------
+
+    private function denyingPermissions(): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'authorize' => function (): void {
+                throw new AuthorizationException;
+            },
+        ]);
+    }
+
+    public function test_delete_sprint_is_denied_and_does_not_delete_without_permission(): void
+    {
+        // deleteSprint loads the sprint and authorizes sprints.delete against ITS project before
+        // deleting — a denying engine must throw BEFORE the repository delete runs.
+        $service = $this->makeService(sprintRepo: $this->make(SprintRepository::class, [
+            'getSprint' => fn () => $this->make(SprintModel::class, ['id' => 5, 'projectId' => 9]),
+            'delSprint' => function (): void {
+                throw new \RuntimeException('delete must not be reached when denied');
+            },
+        ]));
+        $service->setPermissionService($this->denyingPermissions());
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->deleteSprint(5);
+    }
+
+    public function test_add_sprint_is_denied_without_create_permission(): void
+    {
+        session(['currentProject' => 9]);
+
+        $service = $this->makeService(sprintRepo: $this->make(SprintRepository::class, [
+            'addSprint' => function () {
+                throw new \RuntimeException('add must not be reached when denied');
+            },
+        ]));
+        $service->setPermissionService($this->denyingPermissions());
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->addSprint(['startDate' => '2026-01-01', 'endDate' => '2026-01-14', 'projectId' => 9]);
     }
 }

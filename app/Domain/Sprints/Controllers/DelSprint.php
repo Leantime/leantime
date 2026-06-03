@@ -2,10 +2,10 @@
 
 namespace Leantime\Domain\Sprints\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Sprints\Permissions\SprintsPermissions;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,14 +26,9 @@ class DelSprint extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(SprintsPermissions::VIEW)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            return $this->tpl->displayPartial('errors.error403', responseCode: 403);
-        }
-
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
         $this->tpl->assign('id', $id);
 
@@ -45,14 +40,9 @@ class DelSprint extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(SprintsPermissions::DELETE)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            return $this->tpl->displayPartial('errors.error403', responseCode: 403);
-        }
-
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
 
         if (isset($_POST['del']) && $id > 0) {

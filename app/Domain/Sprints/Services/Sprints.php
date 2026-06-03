@@ -5,15 +5,18 @@ namespace Leantime\Domain\Sprints\Services;
 use DateInterval;
 use DatePeriod;
 use DateTime;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
 use Leantime\Domain\Sprints\Models;
+use Leantime\Domain\Sprints\Permissions\SprintsPermissions;
 use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
 
 /**
  * @api
  */
-class Sprints
+class Sprints extends BaseService
 {
     public function __construct(
         private SprintRepository $sprintRepository,
@@ -23,6 +26,7 @@ class Sprints
     /**
      * @api
      */
+    #[RequiresPermission(SprintsPermissions::VIEW)]
     public function getSprint(int $id): false|Models\Sprints
     {
 
@@ -39,7 +43,7 @@ class Sprints
      * getNewSprint - builds a blank sprint pre-populated with the default
      * 13-day window (today through 13 days from now in the user's timezone).
      *
-     * @api
+     * @internal Pure in-memory builder (no project, no repo) — not an RPC surface.
      */
     public function getNewSprint(): Models\Sprints
     {
@@ -56,6 +60,7 @@ class Sprints
      *
      * @api
      */
+    #[RequiresPermission(SprintsPermissions::VIEW)]
     public function getCurrentSprintId(int $projectId): bool|int
     {
 
@@ -71,6 +76,7 @@ class Sprints
     /**
      * @api
      */
+    #[RequiresPermission(SprintsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getUpcomingSprint(int $projectId): false|array
     {
 
@@ -86,6 +92,7 @@ class Sprints
     /**
      * @api
      */
+    #[RequiresPermission(SprintsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getAllSprints($projectId = null): array
     {
 
@@ -102,6 +109,7 @@ class Sprints
     /**
      * @api
      */
+    #[RequiresPermission(SprintsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getAllFutureSprints(int $projectId): false|array
     {
 
@@ -119,9 +127,13 @@ class Sprints
      *
      * @api
      */
+    #[RequiresPermission(SprintsPermissions::CREATE, entityScoped: true)]
     public function addSprint($params): int|false
     {
         $this->assertSprintDates($params);
+
+        $projectId = (int) ($params['projectId'] ?? session('currentProject'));
+        $this->authorize(SprintsPermissions::CREATE, $projectId);
 
         $sprint = new Models\Sprints;
 
@@ -137,7 +149,7 @@ class Sprints
             $sprint->endDate = dtHelper()->parseUserDateTime($sprint->endDate)->endOfDay()->formatDateTimeForDb();
         }
 
-        $sprint->projectId = $params['projectId'] ?? session('currentProject');
+        $sprint->projectId = $projectId;
 
         $result = $this->sprintRepository->addSprint($sprint);
 
@@ -153,9 +165,17 @@ class Sprints
      *
      * @api
      */
+    #[RequiresPermission(SprintsPermissions::EDIT, entityScoped: true)]
     public function editSprint($params): Models\Sprints|false
     {
         $this->assertSprintDates($params);
+
+        // IDOR fence: $params['id'] could name any project's sprint. Authorize edit against the
+        // EXISTING sprint's project, then (below) against the target project if it's relocated.
+        $existing = $this->sprintRepository->getSprint((int) ($params['id'] ?? 0));
+        if ($existing) {
+            $this->authorize(SprintsPermissions::EDIT, (int) $existing->projectId);
+        }
 
         $sprint = new Models\Sprints;
 
@@ -172,6 +192,11 @@ class Sprints
         }
 
         $sprint->projectId = $params['projectId'] ?? session('currentProject');
+
+        // Relocating to another project also requires edit rights there.
+        if ((int) $sprint->projectId !== (int) ($existing->projectId ?? 0)) {
+            $this->authorize(SprintsPermissions::EDIT, (int) $sprint->projectId);
+        }
 
         $result = $this->sprintRepository->editSprint($sprint);
 
@@ -189,8 +214,16 @@ class Sprints
      *
      * @api
      */
+    #[RequiresPermission(SprintsPermissions::DELETE, entityScoped: true)]
     public function deleteSprint(int $id): void
     {
+        // IDOR fence: the id alone identified the row before, so any editor could delete another
+        // project's sprint (and detach its tickets). Authorize delete against the sprint's project.
+        $sprint = $this->sprintRepository->getSprint($id);
+        if ($sprint) {
+            $this->authorize(SprintsPermissions::DELETE, (int) $sprint->projectId);
+        }
+
         $this->sprintRepository->delSprint($id);
 
         session(['currentSprint' => '']);
@@ -215,6 +248,7 @@ class Sprints
      *
      * @api
      */
+    #[RequiresPermission(SprintsPermissions::VIEW)]
     public function getSprintBurndown(Models\Sprints $sprint): false|array
     {
 
@@ -317,6 +351,7 @@ class Sprints
      *
      * @api
      */
+    #[RequiresPermission(SprintsPermissions::VIEW, projectIdParam: 'project')]
     public function getCummulativeReport($project): false|array
     {
 
