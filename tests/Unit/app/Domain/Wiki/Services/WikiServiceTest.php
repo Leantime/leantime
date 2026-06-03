@@ -248,7 +248,9 @@ class WikiServiceTest extends TestCase
                 },
             ]),
             auditRepo: $this->make(AuditRepository::class, [
-                'storeEvent' => function (string $action) use (&$auditedAction) {
+                // Accept the full storeEvent signature (variadic) — deleteArticle calls it with
+                // several named args; only the action is asserted.
+                'storeEvent' => function (string $action, ...$rest) use (&$auditedAction) {
                     $auditedAction = $action;
                 },
             ]),

@@ -530,18 +530,18 @@ class Ideas extends BaseService
             ];
         }
 
-        // IDOR fence: authorize VIEW against the item's real project (single-entity-by-id read).
-        $projectId = $this->canvasItemProjectId($id);
+        // IDOR fence (single-entity-by-id read): fetch the item ONCE, derive its project from the
+        // owning board, authorize VIEW, then return the already-fetched row — no duplicate query.
+        $canvasItem = $this->ideasRepository->getSingleCanvasItem($id);
+        if (! is_array($canvasItem) || empty($canvasItem['canvasId'])) {
+            return [];
+        }
+
+        $projectId = $this->boardProjectId((int) $canvasItem['canvasId']);
         if ($projectId === null) {
             return [];
         }
         $this->authorize(IdeasPermissions::VIEW, $projectId);
-
-        $canvasItem = $this->ideasRepository->getSingleCanvasItem($id);
-
-        if (! is_array($canvasItem)) {
-            return [];
-        }
 
         if (isset($canvasItem['box']) && $canvasItem['box'] == '0') {
             $canvasItem['box'] = 'idea';
@@ -563,14 +563,20 @@ class Ideas extends BaseService
     #[RequiresPermission(IdeasPermissions::VIEW, entityScoped: true)]
     public function getRawIdeaItem(?int $id): mixed
     {
-        // IDOR fence: authorize VIEW against the item's real project (single-entity-by-id read).
-        $projectId = $this->canvasItemProjectId((int) $id);
+        // IDOR fence (single-entity-by-id read): fetch the item ONCE, derive its project from the
+        // owning board, authorize VIEW, then return the already-fetched row — no duplicate query.
+        $canvasItem = $this->ideasRepository->getSingleCanvasItem((int) $id);
+        if (! is_array($canvasItem) || empty($canvasItem['canvasId'])) {
+            return false;
+        }
+
+        $projectId = $this->boardProjectId((int) $canvasItem['canvasId']);
         if ($projectId === null) {
             return false;
         }
         $this->authorize(IdeasPermissions::VIEW, $projectId);
 
-        return $this->ideasRepository->getSingleCanvasItem((int) $id);
+        return $canvasItem;
     }
 
     /**
