@@ -161,11 +161,16 @@ class Wiki extends BaseService
     public function updateWiki(\Leantime\Domain\Wiki\Models\Wiki $wiki, $wikiId): bool
     {
         // IDOR fence: authorize EDIT against the EXISTING wiki's real project (the incoming model's
-        // projectId is untrusted) before writing.
+        // projectId is untrusted) before writing. FAIL CLOSED when the id is not a wiki — zp_canvas
+        // is shared across canvas types (one id sequence), and getWiki filters type='wiki', so a
+        // non-wiki id resolves to false; refuse rather than fall through to an unguarded title write
+        // that would rename another project's canvas board.
         $existing = $this->wikiRepository->getWiki((int) $wikiId);
-        if ($existing) {
-            $this->authorize(WikiPermissions::EDIT, (int) $existing->projectId);
+        if (! $existing) {
+            return false;
         }
+
+        $this->authorize(WikiPermissions::EDIT, (int) $existing->projectId);
 
         return $this->wikiRepository->updateWiki($wiki, $wikiId);
     }
@@ -210,11 +215,16 @@ class Wiki extends BaseService
     {
         // IDOR fence: resolve the EXISTING article's real project (by id) and authorize EDIT there
         // before writing. The incoming model's project/canvas are untrusted, so an editor in
-        // project A cannot edit or relocate an article that lives in project B.
+        // project A cannot edit or relocate an article that lives in project B. FAIL CLOSED on an
+        // unresolved project: zp_canvas_items is a shared table (one id sequence across ALL canvas
+        // types), so a null here means the id is not an article — refuse rather than write a row we
+        // could not authorize (a non-article id would otherwise overwrite a goal/SWOT/risk item).
         $projectId = $this->wikiRepository->getArticleProjectId((int) $article->id);
-        if ($projectId !== null) {
-            $this->authorize(WikiPermissions::EDIT, $projectId);
+        if ($projectId === null) {
+            return false;
         }
+
+        $this->authorize(WikiPermissions::EDIT, $projectId);
 
         $result = $this->wikiRepository->updateArticle($article);
 

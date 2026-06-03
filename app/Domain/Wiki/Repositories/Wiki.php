@@ -219,8 +219,11 @@ class Wiki extends Blueprints
 
     public function updateWiki(WikiModel $wiki, int $wikiId): bool
     {
+        // type guard: zp_canvas is shared across all canvas types (one id sequence), so scope the
+        // write to wiki rows — a non-wiki id can never rename another project's canvas board.
         return $this->dbConnection->table('zp_canvas')
             ->where('id', $wikiId)
+            ->where('type', 'wiki')
             ->update(['title' => $wiki->title]) >= 0;
     }
 
@@ -246,8 +249,11 @@ class Wiki extends Blueprints
 
     public function updateArticle(Article $article): bool
     {
+        // box guard: zp_canvas_items is shared across all canvas types (one id sequence), so scope
+        // the write to article rows — a non-article id can never touch a goal/SWOT/risk item.
         return $this->dbConnection->table('zp_canvas_items')
             ->where('id', $article->id)
+            ->where('box', 'article')
             ->update([
                 'title' => $article->title,
                 'description' => $article->description,
@@ -262,8 +268,10 @@ class Wiki extends Blueprints
 
     public function delArticle(int $id): void
     {
+        // box guard (shared zp_canvas_items): only ever delete an article row by this id.
         $this->dbConnection->table('zp_canvas_items')
             ->where('id', $id)
+            ->where('box', 'article')
             ->delete();
     }
 
@@ -273,8 +281,10 @@ class Wiki extends Blueprints
             ->where('canvasId', $id)
             ->delete();
 
+        // type guard (shared zp_canvas): only ever delete a wiki board by this id.
         $this->dbConnection->table('zp_canvas')
             ->where('id', $id)
+            ->where('type', 'wiki')
             ->delete();
     }
 

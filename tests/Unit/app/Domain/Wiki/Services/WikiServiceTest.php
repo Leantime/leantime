@@ -146,6 +146,54 @@ class WikiServiceTest extends TestCase
         $service->createWiki($wiki);
     }
 
+    public function test_update_article_returns_false_for_unknown_id_without_authorizing(): void
+    {
+        // FAIL CLOSED: zp_canvas_items is a shared table (one id sequence across all canvas types),
+        // so an unresolved project (non-article / unknown id) must refuse BEFORE authorize and never
+        // reach the repo write — otherwise a non-article id would overwrite a goal/SWOT/risk row.
+        $authorizeCalls = 0;
+        $service = $this->makeService(wikiRepo: $this->make(WikiRepository::class, [
+            'getArticleProjectId' => fn () => null,
+            'updateArticle' => function (): bool {
+                throw new \RuntimeException('update must not run for an unresolved/non-article id');
+            },
+        ]));
+        $service->setPermissionService($this->make(PermissionService::class, [
+            'authorize' => function () use (&$authorizeCalls): void {
+                $authorizeCalls++;
+            },
+        ]));
+
+        $article = new Article;
+        $article->id = 999;
+
+        $this->assertFalse($service->updateArticle($article));
+        $this->assertSame(0, $authorizeCalls, 'A non-article id must short-circuit before authorize');
+    }
+
+    public function test_update_wiki_returns_false_for_unknown_wiki_without_authorizing(): void
+    {
+        // FAIL CLOSED: zp_canvas is shared across canvas types, so a non-wiki / unknown id must
+        // refuse BEFORE authorize and never reach the repo title write.
+        $authorizeCalls = 0;
+        $service = $this->makeService(wikiRepo: $this->make(WikiRepository::class, [
+            'getWiki' => fn () => false,
+            'updateWiki' => function (): bool {
+                throw new \RuntimeException('update must not run for a non-wiki id');
+            },
+        ]));
+        $service->setPermissionService($this->make(PermissionService::class, [
+            'authorize' => function () use (&$authorizeCalls): void {
+                $authorizeCalls++;
+            },
+        ]));
+
+        $wiki = new WikiModel;
+
+        $this->assertFalse($service->updateWiki($wiki, 999));
+        $this->assertSame(0, $authorizeCalls, 'A non-wiki id must short-circuit before authorize');
+    }
+
     // ---------------------------------------------------------------------
     // Delete: new service methods that fence the previously controller->repo IDOR.
     // ---------------------------------------------------------------------
