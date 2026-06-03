@@ -17,6 +17,8 @@ use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Http\Responses\JsonRpcErrorResponse;
 use Leantime\Core\Http\Responses\JsonRpcResponse;
+use Leantime\Core\Plugins\Attributes\RequiresPlugin;
+use Leantime\Domain\Plugins\Services\Plugins as PluginsService;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\HttpFoundation\Response;
@@ -200,6 +202,11 @@ class Jsonrpc extends Controller
 
         $domainServiceNamespace = app()->getNamespace()."Domain\\$moduleName\\Services\\$serviceName";
         $pluginServiceNamespace = app()->getNamespace()."Plugins\\$moduleName\\Services\\$serviceName";
+        // Plugins may expose JSON-RPC methods from a Tools/ directory too — the same
+        // directory McpToolDiscovery scans for #[UnifiedTool]-tagged classes. This
+        // lets one class serve both MCP discovery and JSON-RPC dispatch without
+        // moving the file or duplicating it under Services/.
+        $pluginToolNamespace = app()->getNamespace()."Plugins\\$moduleName\\Tools\\$serviceName";
 
         $methodName = Str::camel($methodparts['method']);
 
@@ -209,6 +216,8 @@ class Jsonrpc extends Controller
             $serviceName = $domainServiceNamespace;
         } elseif (class_exists($pluginServiceNamespace)) {
             $serviceName = $pluginServiceNamespace;
+        } elseif (class_exists($pluginToolNamespace)) {
+            $serviceName = $pluginToolNamespace;
         } else {
             return $this->returnMethodNotFound("Service doesn't exist: $serviceName", $id);
         }
@@ -220,6 +229,24 @@ class Jsonrpc extends Controller
         // Only allow methods explicitly marked with @api annotation
         if (! $this->isApiMethod($serviceName, $methodName)) {
             return $this->returnMethodNotFound("Method is not available via API: $methodName", $id);
+        }
+
+        // Enforce plugin-gated methods. Methods or classes carrying #[RequiresPlugin('Name')]
+        // refuse to dispatch when the named plugin is disabled — return a JSON-RPC error
+        // with HTTP 200 body, mirroring the returnMethodNotFound pattern above.
+        //
+        // Uses the Domain Plugins service (DB-backed user plugins) rather than
+        // Core\Plugins\Plugins (env-driven system plugins only). This matches what
+        // config.getSystemInfo reports, so the gate and the client-visible capability
+        // list share one source of truth.
+        $requiredPlugin = $this->getRequiredPlugin($serviceName, $methodName);
+        if ($requiredPlugin !== null && ! app()->make(PluginsService::class)->isEnabled($requiredPlugin)) {
+            return $this->returnError(
+                "Plugin '$requiredPlugin' is required but not enabled.",
+                -32004,
+                null,
+                $id
+            );
         }
 
         if ($jsonRpcVer == null) {
@@ -346,6 +373,35 @@ class Jsonrpc extends Controller
         } catch (\ReflectionException $e) {
             return false;
         }
+    }
+
+    /**
+     * Resolve the plugin name a method (or its declaring class) requires, if any.
+     *
+     * Looks for the RequiresPlugin attribute on the method first, then the class.
+     * Method-level wins over class-level.
+     *
+     * @return string|null The required plugin folder name, or null if not gated
+     */
+    private function getRequiredPlugin(string $serviceName, string $methodName): ?string
+    {
+        try {
+            $method = new ReflectionMethod($serviceName, $methodName);
+            $attrs = $method->getAttributes(RequiresPlugin::class);
+            if (! empty($attrs)) {
+                return $attrs[0]->newInstance()->pluginName;
+            }
+
+            $class = new ReflectionClass($serviceName);
+            $classAttrs = $class->getAttributes(RequiresPlugin::class);
+            if (! empty($classAttrs)) {
+                return $classAttrs[0]->newInstance()->pluginName;
+            }
+        } catch (\ReflectionException $e) {
+            return null;
+        }
+
+        return null;
     }
 
     /**
