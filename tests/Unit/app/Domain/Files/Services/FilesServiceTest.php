@@ -363,6 +363,26 @@ class FilesServiceTest extends TestCase
         $service->upload(['file' => []], 'project', 5);
     }
 
+    public function test_upload_throws_for_project_scoped_module_with_unresolvable_project(): void
+    {
+        // A project-scoped module (ticket) whose project can't be resolved (invalid/deleted id)
+        // fails closed even with allow-all permissions — no orphan-file upload bypass.
+        $repo = $this->make(FileRepository::class, ['getProjectIdForFile' => fn () => null]);
+        $service = $this->makeService($repo, null, $this->allowingPermissions());
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->upload(['file' => []], 'ticket', 999);
+    }
+
+    public function test_user_can_upload_to_module_denies_project_scoped_with_unresolvable_project(): void
+    {
+        $repo = $this->make(FileRepository::class, ['getProjectIdForFile' => fn () => null]);
+        $service = $this->makeService($repo, null, $this->allowingPermissions());
+
+        $this->assertFalse($service->userCanUploadToModule('ticket', 999));
+    }
+
     public function test_user_can_upload_to_module_reflects_project_permission(): void
     {
         $this->assertTrue(
@@ -450,5 +470,55 @@ class FilesServiceTest extends TestCase
         $service = $this->makeService($repo, null, $this->allowingPermissions());
 
         $this->assertSame(404, $service->getFileForUser('missing', 1)->getStatusCode());
+    }
+
+    public function test_get_file_for_user_denies_orphaned_project_file(): void
+    {
+        // A ticket file whose ticket was deleted resolves to no project; rather than fall through
+        // to the non-project serve path it must be denied (fail closed), even with allow-all perms.
+        $repo = $this->make(FileRepository::class, [
+            'getFileByEncName' => fn () => [
+                'id' => 14, 'realName' => 'a.pdf', 'extension' => 'pdf',
+                'module' => 'ticket', 'moduleId' => 999, 'userId' => 2,
+            ],
+            'getProjectIdForFile' => fn () => null,
+        ]);
+        $fileManager = $this->make(FileManager::class, [
+            'getFile' => fn () => $this->fail('an orphaned ticket file must not be served'),
+        ]);
+
+        $service = $this->makeService($repo, $fileManager, $this->allowingPermissions());
+
+        $this->assertSame(403, $service->getFileForUser('enc', 1)->getStatusCode());
+    }
+
+    // ---- handleFileAction result reflects upload() outcome ----------------
+
+    public function test_handle_file_action_reports_failure_when_upload_is_denied(): void
+    {
+        /** @var Files $service */
+        $service = $this->make(Files::class, [
+            'upload' => function () {
+                throw new AuthorizationException;
+            },
+        ]);
+
+        $result = $service->handleFileAction(['upload' => '1'], ['file' => ['name' => 'a.png']], 'ticket', 5);
+
+        $this->assertSame('upload', $result['action']);
+        $this->assertFalse($result['success']);
+    }
+
+    public function test_handle_file_action_reports_failure_when_upload_returns_error_string(): void
+    {
+        /** @var Files $service */
+        $service = $this->make(Files::class, [
+            'upload' => fn () => 'Error uploading file',
+        ]);
+
+        $result = $service->handleFileAction(['upload' => '1'], ['file' => ['name' => 'a.png']], 'project', 5);
+
+        $this->assertSame('upload', $result['action']);
+        $this->assertFalse($result['success']);
     }
 }

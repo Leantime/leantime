@@ -5,6 +5,7 @@ namespace Leantime\Domain\Files\Services;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Files\Exceptions\FileValidationException;
 use Leantime\Core\Files\FileManager;
 use Leantime\Core\Language as LanguageCore;
@@ -34,6 +35,15 @@ class Files extends BaseService
      * @var array<int, string>
      */
     private const OWNER_RESTRICTED_MODULES = ['private', 'user', 'lead', 'export'];
+
+    /**
+     * Module types whose files belong to a project (resolved by getProjectIdForFile). For these,
+     * an unresolvable project id — an invalid or deleted entity — must FAIL CLOSED rather than
+     * fall through to the non-project "allow upload" / "serve file" path.
+     *
+     * @var array<int, string>
+     */
+    private const PROJECT_SCOPED_MODULES = ['project', 'ticket'];
 
     public function __construct(
         protected FileRepository $fileRepository,
@@ -117,13 +127,19 @@ class Files extends BaseService
 
         // Authorize against the target's owning project before writing anything (commenter+;
         // admin/owner bypass). This guards the JSON-RPC path, which reaches the @api upload()
-        // directly, without the Upload controller's userCanUploadToModule pre-check. Non-project
-        // modules (user avatar, private, ...) have no project context and preserve prior behavior;
-        // their flows pin moduleId server-side (e.g. ProfileImage forces the session user's id).
+        // directly, without the Upload controller's userCanUploadToModule pre-check.
         $targetProjectId = $this->resolveProjectId(['module' => $module, 'moduleId' => $moduleId]);
-        if ($targetProjectId !== null) {
+        if (in_array($module, self::PROJECT_SCOPED_MODULES, true)) {
+            // Project-scoped target: an unresolvable project (invalid/deleted entity) fails closed,
+            // so a bogus id can't create an orphan file that bypasses files.upload.
+            if ($targetProjectId === null) {
+                throw new AuthorizationException;
+            }
+
             $this->authorize(FilesPermissions::UPLOAD, $targetProjectId);
         }
+        // Non-project modules (user avatar, private, ...) have no project context and preserve prior
+        // behavior; their flows pin moduleId server-side (e.g. ProfileImage forces the session user's id).
 
         try {
             // Validate file type with the enhanced validator
@@ -309,9 +325,10 @@ class Files extends BaseService
     {
         $projectId = $this->resolveProjectId(['module' => $module, 'moduleId' => $moduleId]);
 
-        if ($projectId !== null) {
-            // files.upload is commenter+; admin/owner bypass project membership.
-            return $this->can(FilesPermissions::UPLOAD, $projectId);
+        if (in_array($module, self::PROJECT_SCOPED_MODULES, true)) {
+            // Project-scoped: needs files.upload (commenter+) in the owning project; admin/owner
+            // bypass membership. An unresolvable id (invalid/deleted entity) fails closed.
+            return $projectId !== null && $this->can(FilesPermissions::UPLOAD, $projectId);
         }
 
         // Non-project modules (user avatar, private, ...) keep prior behavior; their flows pin
@@ -362,6 +379,16 @@ class Files extends BaseService
 
                 return new Response('', 403);
             }
+        } elseif (in_array($fileRecord['module'] ?? '', self::PROJECT_SCOPED_MODULES, true)) {
+            // Project-scoped file whose project can't be resolved (e.g. a deleted ticket) → deny,
+            // rather than fall through to the non-project serve path (fail closed).
+            Log::warning('Unauthorized file access attempt on orphaned project file', [
+                'userId' => $currentUserId,
+                'fileId' => $fileRecord['id'],
+                'module' => $fileRecord['module'] ?? '',
+            ]);
+
+            return new Response('', 403);
         } elseif ($this->isOwnerRestrictedModule($fileRecord)) {
             // For private/user files, only the file owner can access.
             if ((int) ($fileRecord['userId'] ?? 0) !== $currentUserId) {
@@ -417,9 +444,15 @@ class Files extends BaseService
 
         if (isset($post['upload']) || isset($files['file'])) {
             if (isset($files['file'])) {
-                $this->upload($files, $module, $moduleId);
+                try {
+                    $result = $this->upload($files, $module, $moduleId);
+                } catch (AuthorizationException) {
+                    // A denied upload becomes a clean "upload failed" notification, not a 403 page.
+                    return ['action' => 'upload', 'success' => false];
+                }
 
-                return ['action' => 'upload', 'success' => true];
+                // upload() returns the file metadata array on success, or a string/false on failure.
+                return ['action' => 'upload', 'success' => is_array($result)];
             }
 
             return ['action' => 'upload', 'success' => false];
