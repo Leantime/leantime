@@ -3,8 +3,10 @@
 namespace Leantime\Domain\Files\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Files\Permissions\FilesPermissions;
 use Leantime\Domain\Files\Services\Files as FileService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,6 +30,7 @@ class ShowAll extends Controller
      *
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(FilesPermissions::VIEW)]
     public function get(array $params): Response
     {
         $currentModule = $params['id'] ?? $_GET['id'] ?? '';
@@ -44,6 +47,7 @@ class ShowAll extends Controller
      *
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(FilesPermissions::VIEW)]
     public function post(array $params): Response
     {
         $currentModule = $params['id'] ?? $_GET['id'] ?? '';

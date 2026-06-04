@@ -13,21 +13,54 @@ use Leantime\Core\Exceptions\ValidationException;
  * unchanged).
  *
  * Dependency wiring is handled by {@see \Leantime\Core\Auth\Permissions\PermissionServiceProvider}:
- * an `afterResolving(BaseService::class, ...)` hook calls {@see setPermissionService()} on
+ * an `afterResolving(BaseService::class, ...)` hook wires a LAZY resolver (not the instance) on
  * every container-resolved subclass. That keeps the engine injected with zero constructor
- * boilerplate in subclasses (which all have their own repo-injecting constructors) and
- * without reaching for the `app()` helper inside service methods.
+ * boilerplate in subclasses (which all have their own repo-injecting constructors) and without
+ * reaching for the `app()` helper inside service methods. The resolver — rather than eager
+ * injection — is essential: a service can sit inside PermissionService's own dependency graph
+ * (the Files service is reached via PermissionService → ChecksProjectAccess → Projects → Files),
+ * so eagerly making PermissionService inside that service's afterResolving hook would re-enter
+ * PermissionService's half-built construction and recurse forever. Resolving lazily on first
+ * authorize()/can() defers it until the singleton exists.
  */
 abstract class BaseService implements DomainService
 {
     use DispatchesEvents;
 
-    protected PermissionService $permissions;
+    protected ?PermissionService $permissions = null;
 
-    /** Wired by PermissionServiceProvider when the service is resolved from the container. */
+    /** @var (\Closure(): PermissionService)|null Lazy resolver wired by PermissionServiceProvider. */
+    protected ?\Closure $permissionServiceResolver = null;
+
+    /**
+     * Set the engine instance directly. Used by unit tests; production uses the lazy resolver below.
+     */
     public function setPermissionService(PermissionService $permissions): void
     {
         $this->permissions = $permissions;
+    }
+
+    /**
+     * Wire a LAZY resolver instead of the instance (see the class docblock for why eager injection
+     * recurses). The engine is resolved on first authorize()/can().
+     */
+    public function setPermissionServiceResolver(\Closure $resolver): void
+    {
+        $this->permissionServiceResolver = $resolver;
+    }
+
+    /** Resolve the engine, preferring a directly-set instance (tests) then the lazy resolver. */
+    private function permissionService(): PermissionService
+    {
+        if ($this->permissions === null) {
+            if ($this->permissionServiceResolver === null) {
+                throw new \LogicException(static::class.' has no PermissionService: it was neither resolved through the container nor wired in a test.');
+            }
+
+            $this->permissions = ($this->permissionServiceResolver)();
+        }
+
+        return $this->permissions;
     }
 
     /**
@@ -39,13 +72,13 @@ abstract class BaseService implements DomainService
      */
     protected function authorize(string $permission, ?int $projectId = null, ?bool $forceGlobal = null): void
     {
-        $this->permissions->authorize($permission, $projectId, $forceGlobal);
+        $this->permissionService()->authorize($permission, $projectId, $forceGlobal);
     }
 
     /** Non-throwing capability check, for branching. */
     protected function can(string $permission, ?int $projectId = null, ?bool $forceGlobal = null): bool
     {
-        return $this->permissions->currentUserCan($permission, $projectId, $forceGlobal);
+        return $this->permissionService()->currentUserCan($permission, $projectId, $forceGlobal);
     }
 
     /** The authenticated user's id, or null when there is no session user. */

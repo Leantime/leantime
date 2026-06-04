@@ -74,14 +74,20 @@ class PermissionServiceProvider extends ServiceProvider
     }
 
     /**
-     * Inject PermissionService into every service that extends {@see BaseService}, without
-     * forcing subclass constructors to wire it. The afterResolving callback registered for
-     * the base type fires for any resolved instance that is `instanceof BaseService`.
+     * Wire PermissionService into every service that extends {@see BaseService}, without forcing
+     * subclass constructors to wire it. The afterResolving callback fires for any resolved instance
+     * that is `instanceof BaseService`.
+     *
+     * We wire a LAZY resolver, not the instance: a BaseService can sit inside PermissionService's
+     * own dependency graph (Files is reached via PermissionService → ChecksProjectAccess → Projects
+     * → Files), so eagerly calling `make(PermissionService)` here would re-enter PermissionService's
+     * half-built construction and recurse infinitely (stack overflow at boot). Resolving lazily on
+     * first authorize()/can() defers it until the singleton has been built.
      */
     protected function injectBaseServiceDependencies(): void
     {
         $this->app->afterResolving(BaseService::class, function (BaseService $service, $app) {
-            $service->setPermissionService($app->make(PermissionService::class));
+            $service->setPermissionServiceResolver(fn () => $app->make(PermissionService::class));
         });
     }
 }
