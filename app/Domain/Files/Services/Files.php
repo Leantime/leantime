@@ -49,7 +49,9 @@ class Files extends BaseService
      * files.view in it (readonly+); owner-restricted listings (private/user/lead/export) are
      * limited to the owner; an empty/unknown module returns [] rather than dumping the whole
      * table. The 'client' module has no project mapping and stays a Clients-domain concern
-     * (ShowClient is admin/manager-gated) — tracked as a follow-up with the Clients rollout.
+     * (ShowClient is admin-gated) — tracked as a follow-up with the Clients rollout; it requires
+     * a specific client id here so the @api method can't be called with no id to dump every
+     * client's files.
      *
      * @api
      */
@@ -66,9 +68,13 @@ class Files extends BaseService
             if ((int) $entityId !== $this->currentUserId()) {
                 return [];
             }
-        } elseif ($module !== 'client') {
-            // No project context and not an owner-restricted or client listing (e.g. an empty
-            // module): refuse rather than dump every file in the system.
+        } elseif ($module === 'client' && (int) $entityId > 0) {
+            // Client files have no project mapping; their authz is a Clients-domain concern
+            // (ShowClient is admin-gated) tracked as a follow-up. Require a SPECIFIC client id so
+            // this @api method can't be called with no id to dump every client's files at once.
+        } else {
+            // No project context (empty/unknown module, or 'client' with no id): refuse rather
+            // than dump rows.
             return [];
         }
 

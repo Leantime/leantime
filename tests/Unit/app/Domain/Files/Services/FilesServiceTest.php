@@ -246,6 +246,32 @@ class FilesServiceTest extends TestCase
         $this->assertCount(1, $service->getFilesByModule('user', 1));
     }
 
+    public function test_get_files_by_module_client_without_id_returns_empty(): void
+    {
+        $repo = $this->make(FileRepository::class, [
+            'getFilesByModule' => fn () => $this->fail('client listing with no id must not dump every client\'s files'),
+        ]);
+
+        // module=client has no project mapping; with no specific client id it must refuse rather
+        // than enumerate all client files (the legitimate ShowClient path always passes an id).
+        $service = $this->makeService($repo, null, $this->allowingPermissions());
+
+        $this->assertSame([], $service->getFilesByModule('client'));
+    }
+
+    public function test_get_files_by_module_client_with_id_passes_through(): void
+    {
+        $repo = $this->make(FileRepository::class, [
+            'getFilesByModule' => fn () => [['id' => 8, 'module' => 'client', 'moduleId' => 3]],
+        ]);
+
+        // A specific client id is the legitimate ShowClient call; authz remains a Clients-domain
+        // follow-up, so it passes through.
+        $service = $this->makeService($repo, null, $this->allowingPermissions());
+
+        $this->assertCount(1, $service->getFilesByModule('client', 3));
+    }
+
     // ---- deleteFile -------------------------------------------------------
 
     public function test_delete_file_allows_owner_even_without_permission(): void
