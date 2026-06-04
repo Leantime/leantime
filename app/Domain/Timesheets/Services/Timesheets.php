@@ -24,8 +24,13 @@ use Leantime\Domain\Users\Repositories\Users;
  * GLOBAL role via {@see TimesheetsPermissions}. The standard verbs (view/create/edit/delete) are
  * editor+ and operate on the user's OWN time — ownership is enforced in-body by comparing the
  * entry's userId to the current user; acting on ANOTHER user's time, invoicing, and the
- * cross-user reports require timesheets.manage (manager+). Reads soft-deny (return the neutral
- * empty value) for the unauthorized/cross-user case; writes throw AuthorizationException.
+ * cross-user reports require timesheets.manage (manager+).
+ *
+ * Two-tier denial: the base capability is checked with {@see authorize()}, which throws
+ * AuthorizationException when the role lacks create/edit/manage; the ownership check that follows
+ * soft-denies (deleteTime() returns false, updateTime() returns early) rather than throwing, so a
+ * manager-less user editing a peer's entry is a silent no-op, not a 403. Reads soft-deny (return
+ * the neutral empty value) for the unauthorized/cross-user case.
  *
  * NOTE: the ticket-hours aggregate reads (getLoggedHoursForTicketByDate / getSumLoggedHoursForTicket
  * / getRemainingHours) are intentionally UNGATED — they render on the ticket view (ShowTicket,

@@ -34,9 +34,13 @@ class AddTime extends Controller
     /**
      * Displays the add time form.
      *
+     * This is the creation entry point, so it gates on CREATE (matching post()) rather than VIEW —
+     * a view-only role should not be able to load the time-logging form. Grant-equivalent for every
+     * built-in role (the set holding timesheets.create is exactly editor+, the prior authOrRedirect).
+     *
      * @param  array  $params  Request parameters
      */
-    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true)]
+    #[RequiresPermission(TimesheetsPermissions::CREATE, global: true)]
     public function get(array $params): Response
     {
         $this->tpl->assign('values', $this->timesheetService->getDefaultTimeValues());
@@ -80,8 +84,8 @@ class AddTime extends Controller
     {
         $this->tpl->assign('allClients', $this->clientService->getAll());
         $this->tpl->assign('allProjects', $this->projectService->getAll(showClosedProjects: false));
-        // Scope the picker to the current user's own timesheets (editor → timesheets.view);
-        // an unscoped call would require timesheets.manage and over-fetch every user's entries.
+        // Scope the picker to the current user's own timesheets; an unscoped call would require
+        // timesheets.manage and over-fetch every user's entries.
         $this->tpl->assign('allTickets', $this->timesheetService->getAll(
             dateFrom: dtHelper()->userNow()->subYears(10)->setToDbTimezone(),
             dateTo: dtHelper()->userNow()->addYears(10)->setToDbTimezone(),
