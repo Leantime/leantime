@@ -60,7 +60,14 @@ final class DefaultRolePermissions
             // editor+, but a commenter is allowed to add comments — grant the key explicitly.
             ['scope' => 'project', 'keys' => ['comments.create']],
         ],
-        'editor' => [['scope' => 'project', 'verbs' => ['create', 'edit', 'delete']]],
+        'editor' => [
+            ['scope' => 'project', 'verbs' => ['create', 'edit', 'delete']],
+            // Timesheets are GLOBAL-scoped (company-wide time logging), so the project verb rule
+            // above does NOT match them — an editor's own-time capability is granted by explicit
+            // global keys. Ownership (own vs others) is enforced in the service; the cross-user
+            // `timesheets.manage` stays manager+ (below).
+            ['scope' => 'global', 'keys' => ['timesheets.view', 'timesheets.create', 'timesheets.edit', 'timesheets.delete']],
+        ],
         'manager' => [
             ['scope' => 'project', 'verbs' => ['*']],
             // Managers may INVITE users (the NewUser screen is manager+). The client-scoping
@@ -69,7 +76,9 @@ final class DefaultRolePermissions
             // those remain admin+. users.* are company-wide, so this is an explicit global
             // key grant rather than a 'create' verb rule (a verb rule would also need a global
             // scope and is fine, but the explicit key documents that ONLY create is intended).
-            ['scope' => 'global', 'keys' => ['users.create']],
+            // timesheets.manage (company-wide invoicing/reports/others' time) is manager+; the
+            // editor keys above are inherited up the hierarchy.
+            ['scope' => 'global', 'keys' => ['users.create', 'timesheets.manage']],
         ],
         'admin' => [
             ['scope' => 'any', 'verbs' => ['*'], 'exclude' => ['company.settings.*']],

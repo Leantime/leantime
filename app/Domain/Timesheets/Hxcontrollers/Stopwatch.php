@@ -3,7 +3,9 @@
 namespace Leantime\Domain\Timesheets\Hxcontrollers;
 
 use Error;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\HtmxController;
+use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 class Stopwatch extends HtmxController
@@ -23,6 +25,7 @@ class Stopwatch extends HtmxController
     /**
      * show stop watch
      */
+    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true)]
     public function getStatus(): void
     {
 
@@ -33,6 +36,7 @@ class Stopwatch extends HtmxController
     /**
      * show stop watch
      */
+    #[RequiresPermission(TimesheetsPermissions::CREATE, global: true)]
     public function stopTimer(): void
     {
         if ($this->incomingRequest->getMethod() !== 'PATCH') {
@@ -52,6 +56,7 @@ class Stopwatch extends HtmxController
         $this->tpl->assign('onTheClock', $onTheClock);
     }
 
+    #[RequiresPermission(TimesheetsPermissions::CREATE, global: true)]
     public function startTimer(): void
     {
         if ($this->incomingRequest->getMethod() !== 'PATCH') {

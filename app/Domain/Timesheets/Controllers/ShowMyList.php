@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Timesheets\Controllers;
 
 use Carbon\CarbonInterface;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,10 +27,9 @@ class ShowMyList extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
-
         $kind = 'all';
         $dateFrom = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
         $dateTo = dtHelper()->userNow()->endOfWeek()->setToDbTimezone();
@@ -45,10 +44,9 @@ class ShowMyList extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
-
         $kind = ! empty($_POST['kind']) ? $_POST['kind'] : 'all';
 
         $dateFrom = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();

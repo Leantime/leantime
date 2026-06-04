@@ -3,12 +3,12 @@
 namespace Leantime\Domain\Timesheets\Controllers;
 
 use Carbon\CarbonInterface;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,10 +47,9 @@ class ShowAll extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(TimesheetsPermissions::MANAGE, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
         session(['lastPage' => BASE_URL.'/timesheets/showAll']);
 
         $this->assignTemplateVars(
@@ -74,10 +73,9 @@ class ShowAll extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(TimesheetsPermissions::MANAGE, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
         session(['lastPage' => BASE_URL.'/timesheets/showAll']);
 
         if (isset($_POST['saveInvoice'])) {

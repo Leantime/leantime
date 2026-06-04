@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Timesheets\Controllers;
 
 use Carbon\CarbonInterface;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -32,10 +32,9 @@ class ShowMy extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
-
         $fromDate = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
 
         $this->assignTemplateVars($fromDate);
@@ -48,10 +47,9 @@ class ShowMy extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(TimesheetsPermissions::CREATE, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
-
         $fromDate = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
 
         if (isset($_POST['search']) && ! empty($_POST['startDate'])) {
