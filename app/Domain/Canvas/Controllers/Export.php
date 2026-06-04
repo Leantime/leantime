@@ -5,9 +5,12 @@ namespace Leantime\Domain\Canvas\Controllers;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
+use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,6 +32,8 @@ class Export extends Controller
 
     protected mixed $canvasRepo;
 
+    protected BlueprintsService $blueprintsService;
+
     protected array $canvasTypes;
 
     protected array $statusLabels;
@@ -46,6 +51,7 @@ class Export extends Controller
     ): void {
         $this->config = $config;
         $this->language = $language;
+        $this->blueprintsService = app()->make(BlueprintsService::class);
 
         $canvasName = Str::studly(static::CANVAS_NAME).static::CANVAS_TYPE;
         $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
@@ -62,6 +68,7 @@ class Export extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(BlueprintsPermissions::VIEW, entityScoped: true)]
     public function get(array $params): Response
     {
         $canvasId = (int) ($params['id'] ?? $_GET['id'] ?? 0);
@@ -97,11 +104,13 @@ class Export extends Controller
      */
     protected function export(int $id): string
     {
-        $canvasAry = $this->canvasRepo->getSingleCanvas($id);
+        // getBoard authorizes VIEW against the board's real project and returns false for a
+        // missing/foreign/unauthorized board (export is reachable by arbitrary board id).
+        $canvasAry = $this->blueprintsService->getBoard($id, static::CANVAS_NAME.static::CANVAS_TYPE);
         ! empty($canvasAry) || throw new Exception("Cannot find canvas with id '$id'");
 
         $projectId = $canvasAry[0]['projectId'];
-        $recordsAry = $this->canvasRepo->getCanvasItemsById($id);
+        $recordsAry = $this->blueprintsService->getBoardItems($id, static::CANVAS_NAME.static::CANVAS_TYPE, static::CANVAS_NAME.'canvasitem');
 
         $projectService = app()->make(ProjectService::class);
         $projectAry = $projectService->getProject($projectId);

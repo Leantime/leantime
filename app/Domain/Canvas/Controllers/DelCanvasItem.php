@@ -3,10 +3,11 @@
 namespace Leantime\Domain\Canvas\Controllers;
 
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
+use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -21,11 +22,14 @@ class DelCanvasItem extends Controller
 
     private mixed $canvasRepo;
 
+    private BlueprintsService $blueprintsService;
+
     /**
      * Initializes dependencies.
      */
     public function init(): void
     {
+        $this->blueprintsService = app()->make(BlueprintsService::class);
         $canvasName = Str::studly(static::CANVAS_NAME).'canvas';
         $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
         $this->canvasRepo = app()->make($repoName);
@@ -36,10 +40,9 @@ class DelCanvasItem extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(BlueprintsPermissions::DELETE)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.delCanvasItem');
     }
 
@@ -48,14 +51,15 @@ class DelCanvasItem extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(BlueprintsPermissions::DELETE, entityScoped: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
 
         if (isset($_POST['del']) && $id > 0) {
-            $this->canvasRepo->delCanvasItem($id);
+            // The service resolves the item's REAL project and authorizes DELETE against it
+            // (throwing for a missing/foreign item) — closing the by-id item-delete IDOR.
+            $this->blueprintsService->deleteCanvasItem($id, static::CANVAS_NAME.'canvas');
 
             $this->tpl->setNotification($this->language->__('notification.element_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvasitem_deleted');
 

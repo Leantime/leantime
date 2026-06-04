@@ -6,11 +6,10 @@
 
 namespace Leantime\Domain\Api\Controllers;
 
-use Closure;
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Str;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
+use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -23,27 +22,14 @@ class Canvas extends Controller
      */
     protected const CANVAS_NAME = '??';
 
-    private ProjectRepository $projects;
+    private BlueprintsService $blueprintsService;
 
     /**
-     * @var Closure|mixed|object|null
+     * init - initialize private variables
      */
-    private mixed $canvasRepo;
-
-    /**
-     * constructor - initialize private variables
-     *
-     *
-     *
-     * @throws BindingResolutionException
-     */
-    public function init(ProjectRepository $projects): void
+    public function init(): void
     {
-        // @TODO: project are never used in this class?
-        $this->projects = $projects;
-        $canvasName = Str::studly(static::CANVAS_NAME).'canvas';
-        $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
-        $this->canvasRepo = app()->make($repoName);
+        $this->blueprintsService = app()->make(BlueprintsService::class);
     }
 
     /**
@@ -65,33 +51,18 @@ class Canvas extends Controller
     /**
      * patch - handle patch requests with authorization check
      */
+    #[RequiresPermission(BlueprintsPermissions::EDIT, entityScoped: true)]
     public function patch(array $params): Response
     {
         if (! isset($params['id'])) {
             return $this->tpl->displayJson(['status' => 'failure'], 400);
         }
 
-        // Verify the canvas item exists and user has access to its project
-        $canvasItem = $this->canvasRepo->getSingleCanvasItem($params['id']);
-        if ($canvasItem === false) {
-            return $this->tpl->displayJson(['status' => 'not found'], 404);
-        }
-
-        $canvas = $this->canvasRepo->getSingleCanvas($canvasItem['canvasId']);
-        if ($canvas === false || empty($canvas)) {
-            return $this->tpl->displayJson(['status' => 'not found'], 404);
-        }
-
-        $projectId = $canvas[0]['projectId'] ?? null;
-        if ($projectId === null || ! $this->projects->isUserAssignedToProject(session('userdata.id'), $projectId)) {
-            return $this->tpl->displayJson(['status' => 'unauthorized'], 403);
-        }
-
-        $result = $this->canvasRepo->patchCanvasItem($params['id'], $params);
-
-        if ($result === false) {
-            // patchCanvasItem returns false when no whitelisted columns are present
-            // or no rows were affected — this is a client error, not a server error
+        // The service resolves the item's REAL project and authorizes EDIT against it (throwing
+        // 403 for a missing/foreign item or an insufficient role) before patching — replacing
+        // the previous membership-only check with the permission framework. A false return means
+        // no allowlisted columns were present (a client error, not a denial).
+        if ($this->blueprintsService->patchCanvasItem((int) $params['id'], $params, static::CANVAS_NAME.'canvas') === false) {
             return $this->tpl->displayJson(['status' => 'no valid fields to update'], 400);
         }
 
