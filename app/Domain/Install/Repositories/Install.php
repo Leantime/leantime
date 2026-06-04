@@ -95,6 +95,7 @@ class Install
         30512,
         30513,
         30514,
+        30515,
     ];
 
     /**
@@ -2981,6 +2982,34 @@ class Install
             Log::error('Migration 30514: '.$e->getMessage());
 
             return ['Migration 30514 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Sync the permission catalog + re-seed built-in role grants for the Files domain. Adds
+     * files.view/upload/delete (all project-scoped).
+     *
+     * No DefaultRolePermissions matrix edit was needed — these are standard project verbs that
+     * auto-grant through the existing rules (view→readonly+, upload→commenter+, delete→editor+,
+     * manager+ via the project wildcard, admin/owner via scope:any). The re-seed is still required
+     * so the new keys land in zp_role_permissions for the built-in roles.
+     *
+     * Flush the discovered-provider cache FIRST so FilesPermissions is rediscovered.
+     */
+    public function update_sql_30515(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30515: '.$e->getMessage());
+
+            return ['Migration 30515 failed: '.$e->getMessage()];
         }
 
         return true;

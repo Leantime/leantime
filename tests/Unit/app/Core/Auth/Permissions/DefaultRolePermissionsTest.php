@@ -44,6 +44,9 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
             new Permission('goals.create', 'Create', true),
             new Permission('goals.edit', 'Edit', true),
             new Permission('goals.delete', 'Delete', true),
+            new Permission('files.view', 'View', true),
+            new Permission('files.upload', 'Upload', true),
+            new Permission('files.delete', 'Delete', true),
             new Permission('comments.view', 'View', true),
             new Permission('comments.create', 'Create', true),
             new Permission('comments.moderate', 'Moderate', true),
@@ -78,7 +81,7 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
 
     public function test_readonly_can_only_view_project_content(): void
     {
-        $this->assertEqualsCanonicalizing(['tickets.view', 'comments.view', 'sprints.view', 'wiki.view', 'ideas.view', 'blueprints.view', 'goals.view'], $this->grantsFor('readonly'));
+        $this->assertEqualsCanonicalizing(['tickets.view', 'comments.view', 'sprints.view', 'wiki.view', 'ideas.view', 'blueprints.view', 'goals.view', 'files.view'], $this->grantsFor('readonly'));
     }
 
     public function test_commenter_adds_comment_upload_and_can_create_comments(): void
@@ -101,6 +104,11 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('blueprints.view', $grants);      // inherited from readonly
         $this->assertNotContains('goals.create', $grants);      // commenter views but cannot create
         $this->assertContains('goals.view', $grants);           // inherited from readonly
+        // Files: a commenter inherits view and gains the standard upload verb (attachments), but
+        // cannot delete (editor+).
+        $this->assertContains('files.view', $grants);           // inherited from readonly
+        $this->assertContains('files.upload', $grants);         // commenter upload verb
+        $this->assertNotContains('files.delete', $grants);      // editor+
         // Timesheets are editor+ (global); a commenter logs no time.
         $this->assertNotContains('timesheets.view', $grants);
         $this->assertNotContains('timesheets.create', $grants);
@@ -133,6 +141,10 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('goals.create', $grants);
         $this->assertContains('goals.edit', $grants);
         $this->assertContains('goals.delete', $grants);
+        // Files uses standard project verbs, so editor auto-gets upload + delete (and view).
+        $this->assertContains('files.view', $grants);
+        $this->assertContains('files.upload', $grants);
+        $this->assertContains('files.delete', $grants);
         // Timesheets are GLOBAL-scoped, so the project verb rule does NOT match them — editor gets
         // its own-time keys explicitly (view/create/edit/delete) but NOT the manager-only `manage`.
         $this->assertContains('timesheets.view', $grants);

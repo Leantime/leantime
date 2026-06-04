@@ -2,8 +2,10 @@
 
 namespace Leantime\Domain\Files\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Files\Permissions\FilesPermissions;
 use Leantime\Domain\Files\Services\Files as FileService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,6 +29,7 @@ class Browse extends Controller
      *
      * @throws \Exception
      */
+    #[RequiresPermission(FilesPermissions::VIEW)]
     public function get(array $params): Response
     {
         $this->assignTemplateVars();
@@ -41,6 +44,7 @@ class Browse extends Controller
      *
      * @throws \Exception
      */
+    #[RequiresPermission(FilesPermissions::VIEW)]
     public function post(array $params): Response
     {
         $result = $this->filesService->handleFileAction($_POST, $_FILES, 'project', session('currentProject'));
