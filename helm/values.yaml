@@ -59,8 +59,12 @@ app:
   session:
     # -- Salting sessions. Replace with a strong password
     password: "changeme"
-    # -- Session expiration
-    expiration: 28800
+    # -- Session expiration in MINUTES (must match the LEAN_SESSION_EXPIRATION
+    # -- semantics used elsewhere in Leantime: Laravel's `session.lifetime` is
+    # -- expressed in minutes, NOT seconds). 480 = 8 hours of idle timeout.
+    # -- See: app/Core/Configuration/laravelConfig.php (`session.lifetime`) and
+    # -- config/sample.env (LEAN_SESSION_EXPIRATION).
+    expiration: 480
   email:
     # -- Set to true if you want to use SMTP. If set to false, the default php mail() function will be used
     enabled: false

@@ -351,7 +351,7 @@ return [
         |
         */
 
-        'lifetime' => env('LEAN_SESSION_EXPIRATION', 480), // 8 hours
+        'lifetime' => env('LEAN_SESSION_EXPIRATION', 480), // Session lifetime in MINUTES (passed straight to Laravel's `session.lifetime`). 480 = 8 hours. The Helm chart (`app.session.expiration` in helm/values.yaml) must use the same unit.
 
         'expire_on_close' => false,
 

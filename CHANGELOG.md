@@ -42,6 +42,7 @@ Full multi-collaborator support for task assignment. Tasks can now have multiple
 - **MarketplacePlugin Nullable Properties** — Made `MarketplacePlugin` model properties nullable for PHP 8.x strict type compatibility (#3356)
 - **Secondary Color Case Sensitivity** — Fixed case sensitivity issue in the secondary color setting (#3348)
 - **Referrer-Policy Header Syntax** — Fixed syntax error in the Referrer-Policy header assignment (#3347)
+- **Helm Chart Session Expiration Units** — Fixed `app.session.expiration` in `helm/values.yaml` defaulting to `28800` (seconds) while the application expects minutes (matching `LEAN_SESSION_EXPIRATION` and Laravel's `session.lifetime`); the default is now `480` minutes (8 hours) and the value is explicitly documented as minutes. Also clarified the unit in `config/sample.env` and `app/Core/Configuration/laravelConfig.php` so future contributors can't re-introduce the same mismatch (#3378)
 
 ## Localization
 - Added Arabic (ar-SA) language support (#3370)
