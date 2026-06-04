@@ -84,6 +84,8 @@
     "eslint-plugin-vue": "^9.17.0",
     "eslint-webpack-plugin": "^4.0.1",
     "glob": "^10.5.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "laravel-mix": "^6.0.49",
     "laravel-mix-eslint": "^0.2.0",
     "less": "^4.2.0",

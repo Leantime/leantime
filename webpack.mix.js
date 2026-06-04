@@ -53,6 +53,13 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
     .combine('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
     .js('./public/assets/js/app/htmx.js', `public/dist/js/compiled-htmx.${version}.min.js`)
     .js('./public/assets/js/app/htmx-extensions.js', `public/dist/js/compiled-htmx-extensions.${version}.min.js`)
+    // Client-side export libs (html2canvas + jsPDF). Copied unversioned so
+    // consumers (e.g. StrategyPro's Logic Model PNG/PDF export) can fetch
+    // them on demand via a stable URL without needing the Mix manifest.
+    // They're lazy-loaded by JS only when an export is triggered, so they
+    // never hit the wire for users who don't use the feature.
+    .copy('./node_modules/html2canvas/dist/html2canvas.min.js', 'public/dist/js/html2canvas.min.js')
+    .copy('./node_modules/jspdf/dist/jspdf.umd.min.js', 'public/dist/js/jspdf.umd.min.js')
         .js("./node_modules/@lottiefiles/lottie-player/dist/lottie-player.js", `public/dist/js/compiled-lottieplayer.${version}.min.js`)
         .combine([
         "./public/assets/js/app/app.js",
