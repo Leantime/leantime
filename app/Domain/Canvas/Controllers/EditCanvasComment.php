@@ -7,8 +7,11 @@
 namespace Leantime\Domain\Canvas\Controllers;
 
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
+use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -33,6 +36,8 @@ class EditCanvasComment extends Controller
 
     private ProjectService $projectService;
 
+    private BlueprintsService $blueprintsService;
+
     private object $canvasRepo;
 
     /**
@@ -50,6 +55,7 @@ class EditCanvasComment extends Controller
         $this->sprintService = $sprintService;
         $this->ticketService = $ticketService;
         $this->projectService = $projectService;
+        $this->blueprintsService = app()->make(BlueprintsService::class);
 
         $canvasName = Str::studly(static::CANVAS_NAME).'canvas';
         $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
@@ -59,19 +65,30 @@ class EditCanvasComment extends Controller
     /**
      * get - handle get requests
      */
+    #[RequiresPermission(BlueprintsPermissions::VIEW, entityScoped: true)]
     public function get($params)
     {
+        $canvasType = static::CANVAS_NAME.'canvas';
 
         $canvasTypes = $this->canvasRepo->getCanvasTypes();
         if (isset($params['id'])) {
-            // Delete comment
-            if (isset($params['delComment']) === true) {
-                $commentId = (int) ($params['delComment']);
-                $this->commentsRepo->deleteComment($commentId);
-                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvascomment_deleted');
+            // Resolve + VIEW-authorize the item against its real project first.
+            $canvasItem = $this->blueprintsService->getCanvasItem((int) $params['id'], $canvasType);
+            if (! $canvasItem) {
+                return $this->tpl->displayPartial('errors.error404');
             }
 
-            $canvasItem = $this->canvasRepo->getSingleCanvasItem($params['id']);
+            // Delete comment — only when it belongs to THIS gated item (module + moduleId).
+            if (isset($params['delComment']) === true) {
+                $commentId = (int) ($params['delComment']);
+                $comment = $this->commentsRepo->getComment($commentId);
+                if ($comment !== false
+                    && (string) $comment['module'] === static::CANVAS_NAME.'canvasitem'
+                    && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
+                    $this->commentsRepo->deleteComment($commentId);
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvascomment_deleted');
+                }
+            }
 
             $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvasitem', $canvasItem['id']);
             $this->tpl->assign('numComments', $this->commentsRepo->countComments(static::CANVAS_NAME.'canvasitem', $canvasItem['id']));
@@ -86,8 +103,8 @@ class EditCanvasComment extends Controller
                 'id' => '',
                 'box' => $type,
                 'description' => '',
-                'status' => array_key_first($this->canvasRepo->getStatusList()),
-                'relates' => array_key_first($this->canvasRepo->GetRelatesList()),
+                'status' => array_key_first($this->canvasRepo->getStatusLabels()),
+                'relates' => array_key_first($this->canvasRepo->getRelatesLabels()),
                 'assumptions' => '',
                 'data' => '',
                 'conclusion' => '',
@@ -109,8 +126,10 @@ class EditCanvasComment extends Controller
     /**
      * post - handle post requests
      */
+    #[RequiresPermission(BlueprintsPermissions::EDIT, entityScoped: true)]
     public function post($params)
     {
+        $canvasType = static::CANVAS_NAME.'canvas';
 
         if (isset($params['changeItem'])) {
             if (isset($params['itemId']) && $params['itemId'] != '') {
@@ -133,7 +152,8 @@ class EditCanvasComment extends Controller
                         'dependentMilstone' => '',
                     ];
 
-                    $this->canvasRepo->editCanvasComment($canvasItem);
+                    // Resolves the item's real project from itemId and authorizes EDIT there.
+                    $this->blueprintsService->updateCanvasItem($canvasItem, $canvasType);
 
                     $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvasitem', $params['itemId']);
                     $this->tpl->assign('numComments', $this->commentsRepo->countComments(
@@ -183,7 +203,8 @@ class EditCanvasComment extends Controller
                         'canvasId' => $currentCanvasId,
                     ];
 
-                    $id = $this->canvasRepo->addCanvasItem($canvasItem);
+                    // Resolves the target board's real project from canvasId and authorizes CREATE.
+                    $id = $this->blueprintsService->createCanvasItem($canvasItem, $canvasType);
 
                     $canvasItem['id'] = $id;
 
@@ -193,7 +214,7 @@ class EditCanvasComment extends Controller
 
                     $notification = app()->make(NotificationModel::class);
                     $notification->url = [
-                        'url' => BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int) $params['itemId'],
+                        'url' => BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int) ($params['itemId'] ?? $id),
                         'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
                     ];
                     $notification->entity = $canvasItem;
@@ -220,11 +241,18 @@ class EditCanvasComment extends Controller
         }
 
         if (isset($params['comment']) === true) {
+            $itemId = (int) ($_GET['id'] ?? 0);
+
+            // Only allow commenting on an item the user can view in their project.
+            if (! $this->blueprintsService->getCanvasItem($itemId, $canvasType)) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
             $values = [
                 'text' => $params['text'],
                 'date' => date('Y-m-d H:i:s'),
                 'userId' => (session('userdata.id')),
-                'moduleId' => $_GET['id'],
+                'moduleId' => $itemId,
                 'commentParent' => ($params['father']),
             ];
 
@@ -233,7 +261,7 @@ class EditCanvasComment extends Controller
 
             $notification = app()->make(NotificationModel::class);
             $notification->url = [
-                'url' => BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int) $_GET['id'],
+                'url' => BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.$itemId,
                 'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
             ];
             $notification->entity = $values;
@@ -249,12 +277,19 @@ class EditCanvasComment extends Controller
 
             $this->projectService->notifyProjectUsers($notification);
 
-            return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.$_GET['id']);
+            return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.$itemId);
         }
 
-        $this->tpl->assign('id', $_GET['id']);
+        // Fallback re-display: VIEW-authorize the item; false = missing/foreign/unauthorized -> 404.
+        $itemId = (int) ($_GET['id'] ?? 0);
+        $canvasItem = $this->blueprintsService->getCanvasItem($itemId, $canvasType);
+        if ($itemId > 0 && ! $canvasItem) {
+            return $this->tpl->displayPartial('errors.error404');
+        }
+
+        $this->tpl->assign('id', $itemId);
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
-        $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem($_GET['id']));
+        $this->tpl->assign('canvasItem', $canvasItem ?: []);
 
         return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.canvasComment');
     }

@@ -3,9 +3,12 @@
 namespace Leantime\Domain\Canvas\Controllers;
 
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Mailer as MailerCore;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
+use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +25,8 @@ class BoardDialog extends Controller
 
     private ProjectService $projectService;
 
+    private BlueprintsService $blueprintsService;
+
     private object $canvasRepo;
 
     /**
@@ -30,6 +35,7 @@ class BoardDialog extends Controller
     public function init(ProjectService $projectService): void
     {
         $this->projectService = $projectService;
+        $this->blueprintsService = app()->make(BlueprintsService::class);
         $canvasName = Str::studly(static::CANVAS_NAME).'canvas';
         $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
         $this->canvasRepo = app()->make($repoName);
@@ -40,16 +46,21 @@ class BoardDialog extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(BlueprintsPermissions::VIEW, entityScoped: true)]
     public function get(array $params): Response
     {
         $currentCanvasId = '';
         $canvasTitle = '';
 
         if (isset($params['id'])) {
-            $currentCanvasId = (int) $params['id'];
-            $singleCanvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
-            $canvasTitle = $singleCanvas[0]['title'] ?? '';
-            session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $currentCanvasId]);
+            // getBoard authorizes VIEW against the board's real project; false = missing/foreign/
+            // unauthorized — don't expose the title or switch the active board (no session poison).
+            $singleCanvas = $this->blueprintsService->getBoard((int) $params['id'], static::CANVAS_NAME.'canvas');
+            if ($singleCanvas !== false) {
+                $currentCanvasId = (int) $params['id'];
+                $canvasTitle = $singleCanvas[0]['title'] ?? '';
+                session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $currentCanvasId]);
+            }
         }
 
         $this->assignTemplateVars($currentCanvasId, $canvasTitle);
@@ -66,16 +77,19 @@ class BoardDialog extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(BlueprintsPermissions::EDIT, entityScoped: true)]
     public function post(array $params): Response
     {
         $currentCanvasId = '';
         $canvasTitle = '';
 
         if (isset($params['id'])) {
-            $currentCanvasId = (int) $params['id'];
-            $singleCanvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
-            $canvasTitle = $singleCanvas[0]['title'] ?? '';
-            session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $currentCanvasId]);
+            $singleCanvas = $this->blueprintsService->getBoard((int) $params['id'], static::CANVAS_NAME.'canvas');
+            if ($singleCanvas !== false) {
+                $currentCanvasId = (int) $params['id'];
+                $canvasTitle = $singleCanvas[0]['title'] ?? '';
+                session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $currentCanvasId]);
+            }
         }
 
         if (isset($_POST['newCanvas'])) {
@@ -123,7 +137,8 @@ class BoardDialog extends Controller
             'author' => session('userdata.id'),
             'projectId' => session('currentProject'),
         ];
-        $currentCanvasId = $this->canvasRepo->addCanvas($values);
+        // createBoard authorizes CREATE against the target (current) project.
+        $currentCanvasId = $this->blueprintsService->createBoard($values, static::CANVAS_NAME.'canvas');
 
         $this->notifyBoardCreated($values['title']);
 
@@ -150,12 +165,12 @@ class BoardDialog extends Controller
             return null;
         }
 
-        $values = ['title' => $_POST['canvastitle'], 'id' => $currentCanvasId];
-        $this->canvasRepo->updateCanvas($values);
+        // renameBoard authorizes EDIT against the board's real project.
+        $this->blueprintsService->renameBoard($currentCanvasId, $_POST['canvastitle'], static::CANVAS_NAME.'canvas');
 
         $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
 
-        return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/boardDialog/'.$values['id']);
+        return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/boardDialog/'.$currentCanvasId);
     }
 
     /**
