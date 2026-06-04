@@ -2,12 +2,12 @@
 
 namespace Leantime\Domain\Timesheets\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,22 +41,20 @@ class EditTime extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(TimesheetsPermissions::EDIT, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
-
-        if (! Auth::userIsAtLeast(Roles::$editor) || ! isset($params['id'])) {
+        if (! isset($params['id'])) {
             return $this->tpl->displayPartial('errors.error403');
         }
 
         $id = (int) $params['id'];
+        // getTimesheetForEdit routes through the gated getTimesheet (own → view, another user's →
+        // manage), returning null for an entry the user may not access — this fences ownership,
+        // replacing the former manual role/owner check.
         $values = $this->timesheetService->getTimesheetForEdit($id);
 
         if ($values === null) {
-            return $this->tpl->displayPartial('errors.error403');
-        }
-
-        if (! Auth::userIsAtLeast(Roles::$manager) && session('userdata.id') != $values['userId']) {
             return $this->tpl->displayPartial('errors.error403');
         }
 
@@ -72,22 +70,19 @@ class EditTime extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(TimesheetsPermissions::EDIT, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
-
-        if (! Auth::userIsAtLeast(Roles::$editor) || ! isset($params['id'])) {
+        if (! isset($params['id'])) {
             return $this->tpl->displayPartial('errors.error403');
         }
 
         $id = (int) $params['id'];
+        // Fences ownership via the gated read; the save itself goes through the gated
+        // validateAndUpdateTime → updateTime (own → edit, another user's → manage).
         $values = $this->timesheetService->getTimesheetForEdit($id);
 
         if ($values === null) {
-            return $this->tpl->displayPartial('errors.error403');
-        }
-
-        if (! Auth::userIsAtLeast(Roles::$manager) && session('userdata.id') != $values['userId']) {
             return $this->tpl->displayPartial('errors.error403');
         }
 

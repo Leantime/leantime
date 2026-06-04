@@ -7,15 +7,31 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\MissingParameterException;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Users\Repositories\Users;
 
-class Timesheets
+/**
+ * Timesheets service.
+ *
+ * Timesheets are GLOBAL-scoped (company-wide time logging): every gate resolves the user's
+ * GLOBAL role via {@see TimesheetsPermissions}. The standard verbs (view/create/edit/delete) are
+ * editor+ and operate on the user's OWN time — ownership is enforced in-body by comparing the
+ * entry's userId to the current user; acting on ANOTHER user's time, invoicing, and the
+ * cross-user reports require timesheets.manage (manager+). Reads soft-deny (return the neutral
+ * empty value) for the unauthorized/cross-user case; writes throw AuthorizationException.
+ *
+ * NOTE: the ticket-hours aggregate reads (getLoggedHoursForTicketByDate / getSumLoggedHoursForTicket
+ * / getRemainingHours) are intentionally UNGATED — they render on the ticket view (ShowTicket,
+ * reachable by readonly users) and expose only a ticket's total logged hours, not per-user data.
+ */
+class Timesheets extends BaseService
 {
     private TimesheetRepository $timesheetsRepo;
 
@@ -48,12 +64,24 @@ class Timesheets
     }
 
     /**
+     * Non-throwing READ check for a timesheet belonging to $ownerUserId: own → timesheets.view,
+     * else → timesheets.manage. For soft-deny reads (no cross-user existence oracle).
+     */
+    private function canViewTimeForUser(int $ownerUserId): bool
+    {
+        return $ownerUserId === $this->currentUserId()
+            ? $this->can(TimesheetsPermissions::VIEW)
+            : $this->can(TimesheetsPermissions::MANAGE);
+    }
+
+    /**
      * isClocked - Checks to see whether a user is clocked in
      *
      *
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true)]
     public function isClocked(int $sessionId): false|array
     {
         return $this->timesheetsRepo->isClocked($sessionId);
@@ -62,6 +90,7 @@ class Timesheets
     /**
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::CREATE, global: true)]
     public function punchIn(int $ticketId): mixed
     {
         return $this->timesheetsRepo->punchIn($ticketId);
@@ -70,6 +99,7 @@ class Timesheets
     /**
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::CREATE, global: true)]
     public function punchOut(int $ticketId): float|false|int
     {
         return $this->timesheetsRepo->punchOut($ticketId);
@@ -80,6 +110,7 @@ class Timesheets
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::CREATE, global: true)]
     public function stopActiveTimer(): float|false|int
     {
         $userId = session('userdata.id');
@@ -105,8 +136,16 @@ class Timesheets
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::CREATE, global: true, entityScoped: true)]
     public function logTime(int $ticketId, array $params): array|bool
     {
+        // Editor+ to log any time; non-managers are pinned to their own account (cannot log for
+        // another user — that needs timesheets.manage).
+        $this->authorize(TimesheetsPermissions::CREATE);
+        if (! $this->can(TimesheetsPermissions::MANAGE)) {
+            $params['userId'] = $this->currentUserId();
+        }
+
         // @TODO: Change to use value objects for more type safeness.
         $values = [
             'userId' => $params['userId'] ?? session('userdata.id'),
@@ -170,8 +209,15 @@ class Timesheets
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::CREATE, global: true, entityScoped: true)]
     public function upsertTime(int $ticketId, array $params): array|bool
     {
+        // Editor+ to log any time; non-managers are pinned to their own account.
+        $this->authorize(TimesheetsPermissions::CREATE);
+        if (! $this->can(TimesheetsPermissions::MANAGE)) {
+            $params['userId'] = $this->currentUserId();
+        }
+
         // @TODO: Change to use value objects for more type safeness.
         $values = [
             'userId' => $params['userId'] ?? session('userdata.id'),
@@ -227,6 +273,7 @@ class Timesheets
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::DELETE, global: true, entityScoped: true)]
     public function deleteTime(int $id): bool
     {
         $timesheet = $this->timesheetsRepo->getTimesheet($id);
@@ -235,23 +282,20 @@ class Timesheets
             return false;
         }
 
-        $currentUserId = session('userdata.id');
+        $ownerId = (int) ($timesheet['userId'] ?? 0);
 
-        // Entry owner can delete their own time
-        if ((int) $timesheet['userId'] === (int) $currentUserId) {
-            $this->timesheetsRepo->deleteTime($id);
+        // Own entry → timesheets.delete (editor+); another user's entry → timesheets.manage.
+        $allowed = $ownerId === $this->currentUserId()
+            ? $this->can(TimesheetsPermissions::DELETE)
+            : $this->can(TimesheetsPermissions::MANAGE);
 
-            return true;
+        if (! $allowed) {
+            return false;
         }
 
-        // Managers and above can delete any entry
-        if (Auth::userIsAtLeast(Roles::$manager)) {
-            $this->timesheetsRepo->deleteTime($id);
+        $this->timesheetsRepo->deleteTime($id);
 
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**
@@ -262,9 +306,22 @@ class Timesheets
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true, entityScoped: true)]
     public function getTimesheet(int $id): mixed
     {
-        return $this->timesheetsRepo->getTimesheet($id);
+        $timesheet = $this->timesheetsRepo->getTimesheet($id);
+
+        if (! $timesheet) {
+            return false;
+        }
+
+        // Soft-deny: own → timesheets.view, another user's → timesheets.manage. An unauthorized
+        // entry returns the same false as a missing one (no cross-user existence oracle).
+        if (! $this->canViewTimeForUser((int) ($timesheet['userId'] ?? 0))) {
+            return false;
+        }
+
+        return $timesheet;
     }
 
     /**
@@ -277,13 +334,14 @@ class Timesheets
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::CREATE, global: true, entityScoped: true)]
     public function addTime(array $values): void
     {
-        $currentUserId = (int) session('userdata.id');
+        $this->authorize(TimesheetsPermissions::CREATE);
 
-        // Non-managers can only add time entries for themselves
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
-            $values['userId'] = $currentUserId;
+        // Non-managers can only add time entries for themselves.
+        if (! $this->can(TimesheetsPermissions::MANAGE)) {
+            $values['userId'] = $this->currentUserId();
         }
 
         $this->timesheetsRepo->addTime($values);
@@ -299,21 +357,24 @@ class Timesheets
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::EDIT, global: true, entityScoped: true)]
     public function updateTime(array $values): void
     {
-        $currentUserId = (int) session('userdata.id');
+        $this->authorize(TimesheetsPermissions::EDIT);
 
-        // If updating an existing entry, verify ownership or manager+ role
+        $currentUserId = $this->currentUserId();
+
+        // Editing an existing entry that belongs to ANOTHER user requires timesheets.manage.
         if (isset($values['id'])) {
             $existing = $this->timesheetsRepo->getTimesheet($values['id']);
 
-            if ($existing && (int) $existing['userId'] !== $currentUserId && ! Auth::userIsAtLeast(Roles::$manager)) {
+            if ($existing && (int) $existing['userId'] !== $currentUserId && ! $this->can(TimesheetsPermissions::MANAGE)) {
                 return;
             }
         }
 
-        // Non-managers cannot set userId to someone else
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
+        // Non-managers cannot reassign an entry to someone else.
+        if (! $this->can(TimesheetsPermissions::MANAGE)) {
             $values['userId'] = $currentUserId;
         }
 
@@ -462,8 +523,15 @@ class Timesheets
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true, entityScoped: true)]
     public function getUsersTicketHours(int $ticketId, int $userId): mixed
     {
+        // Own hours render on the ticket page for any role with ticket access; ANOTHER user's
+        // hours require timesheets.manage (soft-deny to 0, no cross-user leak).
+        if ($userId !== $this->currentUserId() && ! $this->can(TimesheetsPermissions::MANAGE)) {
+            return 0;
+        }
+
         return $this->timesheetsRepo->getUsersTicketHours($ticketId, $userId);
     }
 
@@ -480,8 +548,18 @@ class Timesheets
     /**
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true, entityScoped: true)]
     public function getAll(CarbonInterface $dateFrom, CarbonInterface $dateTo, int $projectId = -1, string $kind = 'all', ?int $userId = null, string $invEmpl = '-1', string $invComp = '-1', string $ticketFilter = '-1', string $paid = '-1', string $clientId = '-1'): array|false
     {
+        // Scoped to your OWN entries (an explicit current-user filter) → timesheets.view (editor+).
+        // Anything broader — another user, or the all-users company report (userId null) — needs
+        // timesheets.manage (manager+). Callers wanting their own data must pass their own userId.
+        if ($userId !== null && $userId === $this->currentUserId()) {
+            $this->authorize(TimesheetsPermissions::VIEW);
+        } else {
+            $this->authorize(TimesheetsPermissions::MANAGE);
+        }
+
         return $this->timesheetsRepo->getAll(
             id: $projectId,
             kind: $kind,
@@ -501,8 +579,17 @@ class Timesheets
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true, entityScoped: true)]
     public function getWeeklyTimesheets(int $projectId, CarbonInterface $fromDate, int $userId = 0): array
     {
+        // Own week (default 0, or an explicit current-user filter) → timesheets.view; another
+        // user's week → timesheets.manage.
+        if ($userId === 0 || $userId === $this->currentUserId()) {
+            $this->authorize(TimesheetsPermissions::VIEW);
+        } else {
+            $this->authorize(TimesheetsPermissions::MANAGE);
+        }
+
         // Get timesheet entries and group by day
         $allTimesheets = $this->timesheetsRepo->getWeeklyTimesheets(
             projectId: $projectId,
@@ -638,8 +725,14 @@ class Timesheets
     /**
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::MANAGE, global: true)]
     public function updateInvoices(array $invEmpl, array $invComp = [], array $paid = []): bool
     {
+        // Marking entries invoiced/paid is a company-wide management action (manager+). This
+        // closes a critical IDOR: previously any caller could flip invoice/paid flags on
+        // arbitrary timesheet ids.
+        $this->authorize(TimesheetsPermissions::MANAGE);
+
         return $this->timesheetsRepo->updateInvoices($invEmpl, $invComp, $paid);
     }
 
@@ -658,6 +751,7 @@ class Timesheets
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true)]
     public function pollForNewTimesheets(?int $projectId = null): array|false
     {
         $timesheets = $this->timesheetsRepo->getAllAccountTimesheets($projectId);
@@ -675,6 +769,7 @@ class Timesheets
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true)]
     public function pollForUpdatedTimesheets(?int $projectId = null): array|false
     {
         $timesheets = $this->timesheetsRepo->getAllAccountTimesheets($projectId);
@@ -736,8 +831,14 @@ class Timesheets
      *
      * @api
      */
+    #[RequiresPermission(TimesheetsPermissions::VIEW, global: true, entityScoped: true)]
     public function getUsersTickets(int $userId, int $limit = -1): array
     {
+        // Your own ticket picker → timesheets.view; another user's tickets → timesheets.manage.
+        if (! $this->canViewTimeForUser($userId)) {
+            return [];
+        }
+
         $tickets = $this->ticketRepo->getUsersTickets($userId, $limit);
 
         return $tickets === false ? [] : $tickets;
@@ -806,7 +907,7 @@ class Timesheets
             }
         }
 
-        if (! empty($post['invoicedComp']) && Auth::userIsAtLeast(Roles::$manager)) {
+        if (! empty($post['invoicedComp']) && $this->can(TimesheetsPermissions::MANAGE)) {
             if ($post['invoicedComp'] == 'on') {
                 $values['invoicedComp'] = 1;
             }
@@ -815,7 +916,7 @@ class Timesheets
             }
         }
 
-        if (! empty($post['paid']) && Auth::userIsAtLeast(Roles::$manager)) {
+        if (! empty($post['paid']) && $this->can(TimesheetsPermissions::MANAGE)) {
             if ($post['paid'] == 'on') {
                 $values['paid'] = 1;
             }
@@ -944,7 +1045,7 @@ class Timesheets
      */
     public function processEditTimeInvoiceFields(array $post, array $values): array
     {
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
+        if (! $this->can(TimesheetsPermissions::MANAGE)) {
             return $values;
         }
 

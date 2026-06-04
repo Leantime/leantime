@@ -59,6 +59,13 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
             new Permission('clients.delete', 'Delete clients', false),
             new Permission('company.settings.view', 'View company settings', false),
             new Permission('company.settings.edit', 'Edit company settings', false),
+            // Timesheets are company-wide (global): editor gets own-time view/create/edit/delete,
+            // manager+ gets manage (cross-user invoicing/reports).
+            new Permission('timesheets.view', 'View timesheets', false),
+            new Permission('timesheets.create', 'Log time', false),
+            new Permission('timesheets.edit', 'Edit timesheets', false),
+            new Permission('timesheets.delete', 'Delete timesheets', false),
+            new Permission('timesheets.manage', 'Manage timesheets', false),
             // Project-scoped (rename a project's ticket/idea state labels — manager+ in project):
             new Permission('projectsettings.labels.manage', 'Rename project labels', true),
         ];
@@ -94,6 +101,9 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('blueprints.view', $grants);      // inherited from readonly
         $this->assertNotContains('goals.create', $grants);      // commenter views but cannot create
         $this->assertContains('goals.view', $grants);           // inherited from readonly
+        // Timesheets are editor+ (global); a commenter logs no time.
+        $this->assertNotContains('timesheets.view', $grants);
+        $this->assertNotContains('timesheets.create', $grants);
         $this->assertNotContains('comments.moderate', $grants);
     }
 
@@ -123,6 +133,13 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('goals.create', $grants);
         $this->assertContains('goals.edit', $grants);
         $this->assertContains('goals.delete', $grants);
+        // Timesheets are GLOBAL-scoped, so the project verb rule does NOT match them — editor gets
+        // its own-time keys explicitly (view/create/edit/delete) but NOT the manager-only `manage`.
+        $this->assertContains('timesheets.view', $grants);
+        $this->assertContains('timesheets.create', $grants);
+        $this->assertContains('timesheets.edit', $grants);
+        $this->assertContains('timesheets.delete', $grants);
+        $this->assertNotContains('timesheets.manage', $grants);
         $this->assertContains('comments.create', $grants);    // inherited
         $this->assertNotContains('comments.moderate', $grants); // manager+ only
         $this->assertNotContains('users.view', $grants);        // company-wide, admin+
@@ -141,6 +158,10 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
 
         $this->assertContains('comments.moderate', $grants);
         $this->assertContains('tickets.delete', $grants);
+        // Timesheets: manager gets the company-wide manage verb AND inherits editor's own-time keys.
+        $this->assertContains('timesheets.manage', $grants);
+        $this->assertContains('timesheets.view', $grants);
+        $this->assertContains('timesheets.edit', $grants);
         // Managers may INVITE users (within their own client — scoped in the controller), but
         // cannot view the roster, edit, delete, or import accounts (those stay admin+).
         $this->assertContains('users.create', $grants);

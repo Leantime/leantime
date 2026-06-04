@@ -3,10 +3,13 @@
 namespace Unit\app\Domain\Timesheets\Services;
 
 use Carbon\CarbonImmutable;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\CarbonMacros;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -52,20 +55,60 @@ class TimesheetsServiceTest extends TestCase
         CarbonImmutable::mixin(new CarbonMacros('UTC', 'en-US', 'Y-m-d', 'H:i'));
     }
 
+    /** Permission stub that grants everything (default for the non-authz helper tests). */
+    private function allowingPermissions(): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'authorize' => fn () => null,
+            'currentUserCan' => fn () => true,
+        ]);
+    }
+
     /**
-     * Builds a real Timesheets service with each dependency stubbable.
+     * Permission stub that grants a specific allow-list of keys (others denied). Used to model a
+     * non-manager (editor): timesheets.view/create/edit/delete granted, timesheets.manage denied.
+     *
+     * @param  array<int, string>  $granted
+     */
+    private function permissionsGranting(array $granted): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'authorize' => function (string $key) use ($granted): void {
+                if (! in_array($key, $granted, true)) {
+                    throw new AuthorizationException;
+                }
+            },
+            'currentUserCan' => fn (string $key) => in_array($key, $granted, true),
+        ]);
+    }
+
+    /**
+     * Builds a real Timesheets service with each dependency stubbable and a permission service
+     * (defaults to allow-all).
      */
     private function makeService(
         ?TimesheetRepository $timesheetsRepo = null,
         ?UserRepository $userRepo = null,
         ?TicketRepository $ticketRepo = null,
+        ?PermissionService $perms = null,
     ): TimesheetService {
-        return new TimesheetService(
+        $service = new TimesheetService(
             $timesheetsRepo ?? $this->make(TimesheetRepository::class),
             $userRepo ?? $this->make(UserRepository::class),
             $ticketRepo ?? $this->make(TicketRepository::class),
         );
+        $service->setPermissionService($perms ?? $this->allowingPermissions());
+
+        return $service;
     }
+
+    // Non-manager (editor) verb set: own-time keys, but NOT timesheets.manage.
+    private const EDITOR_KEYS = [
+        TimesheetsPermissions::VIEW,
+        TimesheetsPermissions::CREATE,
+        TimesheetsPermissions::EDIT,
+        TimesheetsPermissions::DELETE,
+    ];
 
     public function test_get_users_tickets_normalizes_false_to_empty_array(): void
     {
@@ -207,5 +250,163 @@ class TimesheetsServiceTest extends TestCase
         $this->assertArrayHasKey('timesheets', $result);
         $this->assertArrayHasKey('existingTicketIds', $result);
         $this->assertSame([11, 22], array_values($result['existingTicketIds']));
+    }
+
+    // ---------------------------------------------------------------------
+    // Ownership / fail-closed authorization (session user id = 1).
+    // ---------------------------------------------------------------------
+
+    public function test_get_timesheet_returns_own_entry_for_editor(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, [
+            'getTimesheet' => fn () => ['id' => 5, 'userId' => 1, 'projectId' => 9],
+        ]);
+
+        $result = $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))->getTimesheet(5);
+
+        $this->assertSame(5, $result['id']);
+    }
+
+    public function test_get_timesheet_soft_denies_another_users_entry_for_editor(): void
+    {
+        // Editor (no timesheets.manage) reading another user's entry → false, same as not-found.
+        $repo = $this->make(TimesheetRepository::class, [
+            'getTimesheet' => fn () => ['id' => 5, 'userId' => 2, 'projectId' => 9],
+        ]);
+
+        $result = $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))->getTimesheet(5);
+
+        $this->assertFalse($result);
+    }
+
+    public function test_get_timesheet_returns_false_for_missing(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, ['getTimesheet' => fn () => false]);
+
+        $this->assertFalse($this->makeService(timesheetsRepo: $repo)->getTimesheet(999));
+    }
+
+    public function test_update_invoices_requires_manage(): void
+    {
+        $updated = 0;
+        $repo = $this->make(TimesheetRepository::class, [
+            'updateInvoices' => function () use (&$updated) {
+                $updated++;
+
+                return true;
+            },
+        ]);
+
+        $this->expectException(AuthorizationException::class);
+        try {
+            $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))->updateInvoices([1], [], []);
+        } finally {
+            $this->assertSame(0, $updated, 'Invoices must not be touched without timesheets.manage');
+        }
+    }
+
+    public function test_get_all_for_own_user_needs_only_view(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, ['getAll' => fn () => [['id' => 1]]]);
+
+        $result = $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))
+            ->getAll(dtHelper()->userNow(), dtHelper()->userNow(), userId: 1);
+
+        $this->assertSame([['id' => 1]], $result);
+    }
+
+    public function test_get_all_for_another_user_requires_manage(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, ['getAll' => fn () => [['id' => 1]]]);
+
+        $this->expectException(AuthorizationException::class);
+        $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))
+            ->getAll(dtHelper()->userNow(), dtHelper()->userNow(), userId: 2);
+    }
+
+    public function test_get_all_for_all_users_requires_manage(): void
+    {
+        // userId null = the company-wide report → manager only.
+        $repo = $this->make(TimesheetRepository::class, ['getAll' => fn () => [['id' => 1]]]);
+
+        $this->expectException(AuthorizationException::class);
+        $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))
+            ->getAll(dtHelper()->userNow(), dtHelper()->userNow(), userId: null);
+    }
+
+    public function test_delete_time_denies_another_users_entry_for_editor(): void
+    {
+        $deleted = 0;
+        $repo = $this->make(TimesheetRepository::class, [
+            'getTimesheet' => fn () => ['id' => 5, 'userId' => 2],
+            'deleteTime' => function () use (&$deleted) {
+                $deleted++;
+            },
+        ]);
+
+        $result = $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))->deleteTime(5);
+
+        $this->assertFalse($result);
+        $this->assertSame(0, $deleted, "An editor must not delete another user's time");
+    }
+
+    public function test_delete_time_allows_own_entry_for_editor(): void
+    {
+        $deleted = 0;
+        $repo = $this->make(TimesheetRepository::class, [
+            'getTimesheet' => fn () => ['id' => 5, 'userId' => 1],
+            'deleteTime' => function () use (&$deleted) {
+                $deleted++;
+            },
+        ]);
+
+        $result = $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))->deleteTime(5);
+
+        $this->assertTrue($result);
+        $this->assertSame(1, $deleted);
+    }
+
+    public function test_users_ticket_hours_soft_denies_another_user_for_editor(): void
+    {
+        $loaded = 0;
+        $repo = $this->make(TimesheetRepository::class, [
+            'getUsersTicketHours' => function () use (&$loaded) {
+                $loaded++;
+
+                return 7;
+            },
+        ]);
+
+        $result = $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))->getUsersTicketHours(3, 2);
+
+        $this->assertSame(0, $result);
+        $this->assertSame(0, $loaded, "An editor must not read another user's ticket hours");
+    }
+
+    public function test_users_tickets_soft_denies_another_user_for_editor(): void
+    {
+        $repo = $this->make(TimesheetRepository::class);
+        $ticketRepo = $this->make(TicketRepository::class, ['getUsersTickets' => fn () => [['id' => 1]]]);
+
+        $result = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $this->permissionsGranting(self::EDITOR_KEYS))
+            ->getUsersTickets(2, -1);
+
+        $this->assertSame([], $result);
+    }
+
+    public function test_add_time_pins_non_manager_to_own_user(): void
+    {
+        $captured = null;
+        $repo = $this->make(TimesheetRepository::class, [
+            'addTime' => function ($values) use (&$captured) {
+                $captured = $values;
+            },
+        ]);
+
+        // Editor (no manage) tries to log for user 2 → pinned to self (user 1).
+        $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))
+            ->addTime(['userId' => 2, 'hours' => 1]);
+
+        $this->assertSame(1, $captured['userId'], 'A non-manager must be pinned to their own userId');
     }
 }

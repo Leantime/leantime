@@ -94,6 +94,7 @@ class Install
         30511,
         30512,
         30513,
+        30514,
     ];
 
     /**
@@ -2952,6 +2953,34 @@ class Install
             Log::error('Migration 30513: '.$e->getMessage());
 
             return ['Migration 30513 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Sync the permission catalog + re-seed built-in role grants for the Timesheets domain. Adds
+     * timesheets.view/create/edit/delete/manage (all GLOBAL-scoped — company-wide time logging).
+     *
+     * This migration MUST re-seed because the DefaultRolePermissions matrix changed: editor now
+     * gains the four global timesheets keys (own-time) and manager gains timesheets.manage
+     * (company-wide invoicing/reports/others' time). Without re-seeding, those roles would not
+     * hold the new keys and the timesheet pages/API would deny everyone below admin.
+     *
+     * Flush the discovered-provider cache FIRST so TimesheetsPermissions is rediscovered.
+     */
+    public function update_sql_30514(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30514: '.$e->getMessage());
+
+            return ['Migration 30514 failed: '.$e->getMessage()];
         }
 
         return true;
