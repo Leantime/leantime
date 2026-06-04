@@ -223,7 +223,6 @@
 
         {{-- Plugin panel containers (filled by HTMX when plugin is active) --}}
         <div id="templateSelectorContainer"></div>
-        <div id="snapshotListContainer"></div>
 
     </div>
 </div>
