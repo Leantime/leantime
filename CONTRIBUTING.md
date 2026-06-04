@@ -21,9 +21,9 @@ We use GitHub to host code, track issues and feature requests, and accept pull r
 2. Add/update tests for any new features
 3. Update documentation as needed
 4. Ensure all tests pass locally
-5. Run code style checks:
+5. Run code style checks (the project's `make` targets are `test-code-style` and `phpstan`, not `codesniffer`):
    ```bash
-   make codesniffer
+   make test-code-style
    make phpstan
    ```
 6. Include screenshots for user interface changes
@@ -62,7 +62,7 @@ People *love* thorough bug reports. I'm not even kidding.
    make install-deps-dev
    ```
 3. Set up your environment:
-   - Copy `.env.example` to `.env`
+   - Copy `config/sample.env` to `config/.env` (there is no `.env.example` in this repository — the sample configuration lives at `config/sample.env`)
    - Configure your database
    - Set up local development server
 
