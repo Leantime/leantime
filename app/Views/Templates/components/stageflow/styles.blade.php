@@ -31,7 +31,8 @@
     background: var(--secondary-background);
     transition: box-shadow 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
                 background 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                border-color 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                border-color 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 200ms ease;
     position: relative;
     box-shadow: var(--min-shadow);
     border: 1px solid var(--main-border-color);
@@ -49,6 +50,27 @@
     box-shadow: var(--large-shadow);
     border-color: transparent;
     background: linear-gradient(180deg, var(--stage-bg) 0%, var(--secondary-background) 100px);
+}
+
+/* ── Spotlight on hover ──
+   When the user mouses over any stage in the flow, fade the others to ~40%
+   opacity (still readable, just secondary) and lift the hovered card with
+   extra shadow. Pure visual aid for guiding attention while reviewing or
+   presenting the board — useful when walking stakeholders through one
+   stage at a time without losing the surrounding context. No state change,
+   no persistence; the moment the mouse leaves the row, everything
+   rebalances back to the default everything-prominent state.
+
+   Scoped to `.sf-stage.active` to avoid compounding with the inactive-stage
+   opacity rules below (`:not(.active) .sf-name { opacity: 0.5 }` etc.) — a
+   plain `.sf-stage` selector here would multiply 0.4 × 0.5 = 0.2 and make
+   text on inactive stages unreadable during a row hover. */
+.sf-flow:hover .sf-stage.active:not(:hover) {
+    opacity: 0.4;
+}
+.sf-flow:hover .sf-stage:hover {
+    box-shadow: var(--large-shadow);
+    z-index: 11;
 }
 
 /* ── Current Focus flag ── */
