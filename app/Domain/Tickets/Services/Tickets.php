@@ -3642,6 +3642,7 @@ class Tickets extends BaseService
             'futureSprints' => $futureSprints,
             'users' => $users,
             'milestones' => $milestones,
+            'groupBy' => $searchCriteria['groupBy'] ?? '',
             'groupByOptions' => $groupByOptions,
             'newField' => $newField,
             'sortOptions' => $sortOptions,
