@@ -6,6 +6,7 @@ use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\ContentTemplates\Models\ContentTemplate;
 use Leantime\Domain\ContentTemplates\Services\Appliers\CanvasItemsApplier;
 use Leantime\Domain\ContentTemplates\Services\Appliers\WikiApplier;
+use Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry;
 use Unit\TestCase;
 
 /**
@@ -98,6 +99,33 @@ class AppliersTest extends TestCase
         ]);
 
         $this->assertSame(0, $applier->apply(42, $emptyArticles));
+    }
+
+    public function test_registry_applier_for_falls_back_to_supports_when_no_explicit_binding(): void
+    {
+        $registry = new ContentTemplateRegistry;
+        $canvas = new CanvasItemsApplier($this->makeDbCore());
+        $wiki = new WikiApplier($this->makeDbCore());
+
+        // Bind WikiApplier on 'wiki' and CanvasItemsApplier on 'logicmodel'.
+        // Ask the registry for 'cp' (a canvas type that nobody explicitly
+        // bound). The fallback should find CanvasItemsApplier via supports().
+        $registry->registerApplier('wiki', $wiki);
+        $registry->registerApplier('logicmodel', $canvas);
+
+        $this->assertSame($canvas, $registry->applierFor('cp'));
+        $this->assertSame($canvas, $registry->applierFor('swot'));
+        $this->assertSame($wiki, $registry->applierFor('wiki'));
+        $this->assertSame($canvas, $registry->applierFor('logicmodel'));
+    }
+
+    public function test_registry_applier_for_returns_null_when_no_applier_supports_type(): void
+    {
+        $registry = new ContentTemplateRegistry;
+        $registry->registerApplier('wiki', new WikiApplier($this->makeDbCore()));
+
+        // 'logicmodel' isn't bound and WikiApplier doesn't support it.
+        $this->assertNull($registry->applierFor('logicmodel'));
     }
 
     private function makeDbCore(): DbCore

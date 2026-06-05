@@ -14,6 +14,7 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
+use Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 /**
@@ -41,19 +42,24 @@ class Blueprints extends BaseService
 
     private LanguageCore $language;
 
+    private ContentTemplateRegistry $contentTemplates;
+
     /**
      * @param  BlueprintsRepository  $blueprintsRepo  Blueprints repository
      * @param  TemplateRegistry  $templateRegistry  Canvas template registry
      * @param  LanguageCore  $language  Language service for translations
+     * @param  ContentTemplateRegistry  $contentTemplates  Content templates registry — used to auto-apply a blueprint's optional startContent on board creation
      */
     public function __construct(
         BlueprintsRepository $blueprintsRepo,
         TemplateRegistry $templateRegistry,
-        LanguageCore $language
+        LanguageCore $language,
+        ContentTemplateRegistry $contentTemplates,
     ) {
         $this->blueprintsRepo = $blueprintsRepo;
         $this->templateRegistry = $templateRegistry;
         $this->language = $language;
+        $this->contentTemplates = $contentTemplates;
     }
 
     // ---------------------------------------------------------------------------------------
@@ -220,7 +226,59 @@ class Blueprints extends BaseService
         }
         $this->authorize(BlueprintsPermissions::CREATE, $projectId);
 
-        return $this->blueprintsRepo->addCanvas($values, $canvasType);
+        $newId = $this->blueprintsRepo->addCanvas($values, $canvasType);
+
+        if ($newId !== false) {
+            $this->applyStartContent((int) $newId, $canvasType);
+        }
+
+        return $newId;
+    }
+
+    /**
+     * If the blueprint for this canvas type declares a startContent
+     * reference, look up the matching ContentTemplate and apply it to the
+     * freshly-created board. Silent no-op when the blueprint has no
+     * starter content or the referenced template can't be found — board
+     * creation never fails because of a missing/broken starter.
+     */
+    private function applyStartContent(int $canvasId, string $canvasType): void
+    {
+        $blueprint = $this->templateRegistry->get($canvasType);
+        if ($blueprint === null || $blueprint->startContent === null) {
+            return;
+        }
+
+        $contentTpl = $this->contentTemplates->get($canvasType, $blueprint->startContent);
+        if ($contentTpl === null) {
+            Log::debug(sprintf(
+                'Blueprints::createBoard: blueprint "%s" references startContent "%s" but the template was not found.',
+                $canvasType,
+                $blueprint->startContent
+            ));
+
+            return;
+        }
+
+        $applier = $this->contentTemplates->applierFor($canvasType);
+        if ($applier === null) {
+            return;
+        }
+
+        try {
+            $applier->apply($canvasId, $contentTpl, [
+                'userId' => (int) session('userdata.id'),
+                'mode' => 'add',
+            ]);
+        } catch (\Throwable $e) {
+            // Don't let a bad starter break board creation. Log + move on.
+            Log::warning(sprintf(
+                'Blueprints::createBoard: startContent "%s" failed to apply to canvas %d: %s',
+                $blueprint->startContent,
+                $canvasId,
+                $e->getMessage()
+            ));
+        }
     }
 
     /**

@@ -65,11 +65,25 @@ class ContentTemplateRegistry
     }
 
     /**
-     * @return Applier|null The registered applier for this appliesTo, or null.
+     * Resolve an applier for an appliesTo value.
+     *
+     * First tries an explicit binding. If none, falls back to scanning the
+     * registered appliers for one whose supports() returns true for the
+     * given appliesTo — letting the catch-all CanvasItemsApplier handle
+     * any non-wiki canvas type that hasn't been explicitly bound.
      */
     public function applierFor(string $appliesTo): ?Applier
     {
-        return $this->appliers[$appliesTo] ?? null;
+        if (isset($this->appliers[$appliesTo])) {
+            return $this->appliers[$appliesTo];
+        }
+        foreach ($this->appliers as $candidate) {
+            if ($candidate->supports($appliesTo)) {
+                return $candidate;
+            }
+        }
+
+        return null;
     }
 
     /**

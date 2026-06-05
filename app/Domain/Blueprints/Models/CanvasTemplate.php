@@ -24,6 +24,18 @@ class CanvasTemplate
 
     public array $layout;
 
+    /**
+     * Optional ContentTemplates key (see app/Domain/ContentTemplates).
+     *
+     * When set, freshly-created boards of this canvas type auto-apply the
+     * referenced content template's items, giving the user a non-empty
+     * starting point. Looked up against the registry as
+     * forAppliesTo($this->slug)[$startContent].
+     *
+     * Null when the blueprint ships no starter content (the default).
+     */
+    public ?string $startContent;
+
     private const DEFAULT_STATUS_LABELS = [
         'status_draft' => ['icon' => 'fa-circle-question', 'color' => 'blue', 'title' => 'status.draft', 'dropdown' => 'info', 'active' => true],
         'status_review' => ['icon' => 'fa-circle-exclamation', 'color' => 'orange', 'title' => 'status.review', 'dropdown' => 'warning', 'active' => true],
@@ -61,6 +73,9 @@ class CanvasTemplate
         $this->minWidthOffset = $data['minWidthOffset'] ?? 0;
         $this->boxes = $data['boxes'] ?? [];
         $this->layout = $data['layout'] ?? [];
+        $this->startContent = isset($data['startContent']) && $data['startContent'] !== ''
+            ? (string) $data['startContent']
+            : null;
 
         $this->statusLabels = $this->resolveLabels($data, 'statusLabels', self::DEFAULT_STATUS_LABELS);
         $this->relatesLabels = $this->resolveLabels($data, 'relatesLabels', self::DEFAULT_RELATES_LABELS);
