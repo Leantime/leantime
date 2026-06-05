@@ -1,0 +1,39 @@
+key: "user-story"
+title: "User Story"
+description: "A template for an agile user story"
+appliesTo: "wiki"
+icon: "fa-user"
+author: "Leantime"
+version: "1.0.0"
+license: "CC0"
+sector: "t:templates.todos"
+
+wiki:
+  articles:
+    - title: "User Story"
+      content: |
+        <table style="border-collapse: collapse; width: 100.049%;" border="1">
+        <thead>
+        <tr>
+        <td style="width: 33.3333%;">Title:</td>
+        <td style="width: 33.3333%;">Priority:</td>
+        <td style="width: 33.3333%;">Estimate:</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td style="width: 100%;" colspan="3">
+        <h4><strong>User Story</strong></h4>
+        <p><strong>As a</strong> &lt;insert type of user&gt;</p>
+        <p><strong>I want to&nbsp;</strong>&lt;perform some task&gt;<br /><br /><strong>so that I can</strong> &lt;achieve some goal&gt;</p>
+        </td>
+        </tr>
+        <tr>
+        <td colspan="3">
+        <p><strong>Acceptance Criteria:</strong></p>
+        <p><strong>Given&nbsp;</strong>&lt;some context&gt;<br /><br /><strong>When&nbsp;</strong>&lt;some action is carried out&gt;</p>
+        <p><strong>Then&nbsp;</strong>&lt;a set of observable outcomes should occur&gt;&nbsp;</p>
+        </td>
+        </tr>
+        </tbody>
+        </table>

@@ -1,0 +1,51 @@
+key: "bug-report"
+title: "Bug"
+description: "A template for a bug report"
+appliesTo: "wiki"
+icon: "fa-bug"
+author: "Leantime"
+version: "1.0.0"
+license: "CC0"
+sector: "t:templates.todos"
+
+wiki:
+  articles:
+    - title: "Bug"
+      content: |
+        <table style="border-collapse: collapse; width: 100.051%;" border="1">
+         <tbody>
+         <tr>
+         <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Summary</strong></span></td>
+         <td style="width: 82.7562%;">summarize the issue your are experiencing</td>
+         </tr>
+         <tr>
+         <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Environment</strong></span></td>
+         <td style="width: 82.7562%;">describe the environment under which the problem occured (hosted, production, staging etc)</td>
+         </tr>
+         <tr>
+         <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Reproduction Steps</strong></span></td>
+         <td style="width: 82.7562%;">Describe the steps to reproduce the problem<br />
+         <ol>
+         <li>Step 1</li>
+         <li>Step 2</li>
+         </ol>
+         </td>
+         </tr>
+         <tr>
+         <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Expected Outcome</strong></span></td>
+         <td style="width: 82.7562%;">describe what you expected would happen</td>
+         </tr>
+         <tr>
+         <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Actual Outcome</strong></span></td>
+         <td style="width: 82.7562%;">describe what actually happened</td>
+         </tr>
+         <tr>
+         <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Impact</strong></span></td>
+         <td style="width: 82.7562%;">describe how impactful this issue is to your workflow (eg can not work at all; delays my work; large inconvenience etc)</td>
+         </tr>
+         <tr>
+         <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Additional Details</strong></span></td>
+         <td style="width: 82.7562%;">Anything else you would like to mention</td>
+         </tr>
+         </tbody>
+         </table>
