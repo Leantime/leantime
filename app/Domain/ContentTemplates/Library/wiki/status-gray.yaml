@@ -1,0 +1,14 @@
+key: "status-gray"
+title: "t:templates.titles.gray_status"
+description: "t:templates.titles.gray_status_description"
+appliesTo: "wiki"
+icon: "fa-circle"
+author: "Leantime"
+version: "1.0.0"
+license: "CC0"
+sector: "t:templates.elements"
+
+wiki:
+  articles:
+    - title: "Gray Status"
+      content: '<span class="label label-default">Gray</span>'

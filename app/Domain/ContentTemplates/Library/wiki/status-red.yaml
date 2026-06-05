@@ -1,0 +1,14 @@
+key: "status-red"
+title: "t:templates.titles.red_status"
+description: "t:templates.titles.red_status_description"
+appliesTo: "wiki"
+icon: "fa-circle-xmark"
+author: "Leantime"
+version: "1.0.0"
+license: "CC0"
+sector: "t:templates.elements"
+
+wiki:
+  articles:
+    - title: "Red Status"
+      content: '<span class="label label-danger">Red</span>'

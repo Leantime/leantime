@@ -1,0 +1,14 @@
+key: "status-green"
+title: "t:templates.titles.green_status"
+description: "t:templates.titles.green_status_description"
+appliesTo: "wiki"
+icon: "fa-circle-check"
+author: "Leantime"
+version: "1.0.0"
+license: "CC0"
+sector: "t:templates.elements"
+
+wiki:
+  articles:
+    - title: "Green Status"
+      content: '<span class="label label-success">Green</span>'
