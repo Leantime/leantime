@@ -63,12 +63,13 @@ YAML);
         $lm = $registry->forAppliesTo('logicmodel');
         $wiki = $registry->forAppliesTo('wiki');
 
-        $this->assertCount(1, $lm);
+        // The registry constructor auto-registers the core library root, so
+        // built-in templates show up alongside the tmp ones. Pin contract on
+        // "tmp fixtures are present and well-shaped" rather than exact count.
         $this->assertArrayHasKey('sample', $lm);
         $this->assertInstanceOf(ContentTemplate::class, $lm['sample']);
         $this->assertSame('logicmodel', $lm['sample']->appliesTo);
 
-        $this->assertCount(1, $wiki);
         $this->assertArrayHasKey('notes', $wiki);
         $this->assertSame('wiki', $wiki['notes']->appliesTo);
     }

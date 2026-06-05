@@ -418,6 +418,36 @@ $labelGray->description = __('templates.titles.gray_status_description');
 $labelGray->content = '<span class="label label-default">Gray</span>';
 $templates[] = $labelGray;
 
+// ── ContentTemplates registry — appliesTo:"wiki" ──
+// Phase 3 of the content-templates rollout: plugins (and core) can
+// drop YAML files into ContentTemplates/wiki/ and they show up here
+// alongside the hardcoded set. The hardcoded ones above are
+// preserved for now and will migrate to YAML in follow-up PRs (the
+// i18n-in-content patterns in PRD/labels need a small resolver pass
+// before they can move).
+try {
+    $registry = app(\Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry::class);
+    foreach ($registry->forAppliesTo('wiki') as $contentTpl) {
+        $tplObj = app()->make(Template::class);
+        $tplObj->title = $contentTpl->title;
+        $tplObj->description = $contentTpl->description;
+        $tplObj->category = __('templates.documents');
+        $articles = (array) ($contentTpl->payload['articles'] ?? []);
+        // For single-article templates we mirror the legacy "one HTML blob"
+        // shape the editor expects. Multi-article wiki templates are out of
+        // scope for the editor's "insert template" flow (they'd map to wiki
+        // page creation, not editor insertion).
+        $tplObj->content = is_array($articles[0] ?? null)
+            ? (string) ($articles[0]['content'] ?? '')
+            : '';
+        if ($tplObj->content !== '') {
+            $templates[] = $tplObj;
+        }
+    }
+} catch (\Throwable $e) {
+    // Registry not available (boot ordering, install) — silently skip.
+}
+
 $templates = $tpl->dispatch_filter('documentTemplates', $templates);
 
 echo json_encode($templates);
