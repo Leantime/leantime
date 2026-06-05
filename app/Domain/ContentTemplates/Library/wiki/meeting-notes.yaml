@@ -1,0 +1,36 @@
+key: "meeting-notes"
+title: "Meeting Notes"
+description: ""
+appliesTo: "wiki"
+icon: "fa-clipboard"
+author: "Leantime"
+version: "1.0.0"
+license: "CC0"
+# Sector doubles as "category" for wiki templates. Resolved via the
+# TranslationResolver at consume time so it reads in the user's locale.
+sector: "t:templates.documents"
+
+wiki:
+  articles:
+    - title: "Meeting Notes"
+      content: |
+        <h1>Meeting Notes</h1>
+        <p><strong>Attendees</strong><br>
+        <span>Name1, Name2</span></p>
+        <p><span><br></span></p>
+        <p><span><strong>Agenda</strong><br></span></p>
+        <ul>
+        <li><span>Item 1</span></li>
+        <li><span>Item 2</span></li>
+        </ul>
+        <p><span><br></span></p>
+        <p><span><strong>Notes</strong><br></span></p>
+        <ul>
+        <li><span>Notes here</span></li></ul>
+        <p><span><br></span></p>
+        <p><span><strong>Action Items</strong><br></span></p>
+        <ul data-type="taskList">
+        <li data-type="taskItem" data-checked="false"><span>Action Item 1</span></li>
+        <li data-type="taskItem" data-checked="false"><span>Action Item 1</span><span><br></span>
+        </li>
+        </ul>

@@ -13,34 +13,8 @@ $author = session('userdata.name') . ' (' . session('userdata.mail') . ')';
 
 $templates = [];
 
-$pmeetingNotes = app()->make(Template::class);
-$pmeetingNotes->title = 'Meeting Notes';
-$pmeetingNotes->category = __('templates.documents');
-$pmeetingNotes->description = '';
-$pmeetingNotes->content = '
-<h1>Meeting Notes</h1>
-<p><strong>Attendees</strong><br>
-<span >Name1, Name2</span></p>
-<p><span><br></span></p>
-<p><span><strong>Agenda</strong><br></span></p>
-<ul>
-<li><span>Item 1</span></li>
-<li><span>Item 2</span></li>
-</ul>
-<p><span><br></span></p>
-<p><span><strong>Notes</strong><br></span></p>
-<ul>
-<li><span>Notes here</span></li></ul>
-<p><span><br></span></p>
-<p><span><strong>Action Items</strong><br></span></p>
-<ul data-type="taskList">
-<li data-type="taskItem" data-checked="false"><span >Action Item 1</span></li>
-<li data-type="taskItem" data-checked="false"><span >Action Item 1</span><span ><br ></span>
-</li>
-</ul>
-';
-
-$templates[] = $pmeetingNotes;
+// Meeting Notes migrated to YAML — see app/Domain/ContentTemplates/Library/wiki/meeting-notes.yaml
+// (loaded via the registry below).
 
 $prdTpl = app()->make(Template::class);
 
@@ -185,106 +159,7 @@ $prdTpl->content = '
 ';
 $templates[] = $prdTpl;
 
-// Project Outline
-$projectOutline = app()->make(Template::class);
-$projectOutline->title = 'Project Outline';
-$projectOutline->category = __('templates.documents');
-$projectOutline->description = '';
-$projectOutline->content = '
-<h1><strong>Project Outline<br /></strong></h1>
-<p>Author: ' . $author . '<br />
-Date: ' . $today . '<br />
-Status: <span class="label label-default">Draft</span><br />
-<table style="border-collapse: collapse; width: 100.146%; background-color: #ffffff; height: 182px;" border="1">
-<tbody>
-<tr style="height: 17px;">
-<td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">Why we\'re doing this:</span></strong></td>
-<td style="height: 17px; width: 82.6214%;" colspan="3">&lt; insert project justification &gt;</td>
-</tr>
-<tr style="height: 17px;">
-<td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">What are we working on:</span></strong></td>
-<td style="height: 17px; width: 82.6214%;" colspan="3">&lt; insert project description &gt;</td>
-</tr>
-<tr style="height: 46px;">
-<td style="width: 17.3786%; height: 46px; background-color: #3598db;">
-<p><strong><span style="color: #ffffff;">Project Objectives:</span></strong></p>
-</td>
-<td style="height: 46px; width: 82.6214%;" colspan="3">
-<ul>
-<li>Objective 1</li>
-<li>Objective 2</li>
-<li>Objective 3</li>
-</ul>
-</td>
-</tr>
-<tr style="height: 17px;">
-<td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">High Level Requirements:</span></strong></td>
-<td style="height: 17px; width: 82.6214%;" colspan="3">
-<ul>
-<li>Requirement 1</li>
-<li>Requirement 2</li>
-<li>Requirement 3</li>
-</ul>
-</td>
-</tr>
-<tr style="height: 17px;">
-<td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">In Scope Work</span></strong></td>
-<td style="height: 17px; width: 82.6214%;" colspan="3">
-<ul>
-<li>Item</li>
-<li>Item</li>
-<li>Item</li>
-</ul>
-</td>
-</tr>
-<tr style="height: 17px;">
-<td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">No-go\'s / Out of Scope:</span></strong></td>
-<td style="height: 17px; width: 82.6214%;" colspan="3">
-<ul>
-<li>Item</li>
-<li>Item</li>
-<li>Item</li>
-</ul>
-</td>
-</tr>
-<tr style="height: 17px;">
-<td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">Cost Estimates:</span></strong></td>
-<td style="height: 17px; width: 82.6214%;" colspan="3">
-<table style="border-collapse: collapse; width: 99.9991%; height: 68.875px;" border="1">
-<thead>
-<tr style="height: 51.875px;">
-<td style="width: 17.5448%; height: 51.875px;">
-<h5>Cost Item</h5>
-</td>
-<td style="width: 17.5448%; height: 51.875px;">
-<h5>Estimated Project Cost</h5>
-</td>
-<td style="width: 17.5448%; height: 51.875px;">
-<h5>Actual Spend</h5>
-</td>
-<td style="width: 17.5448%; height: 51.875px;">
-<h5>Cost Until Completion</h5>
-</td>
-<td style="width: 17.5475%; height: 51.875px;">
-<h5>Variance</h5>
-</td>
-</tr>
-</thead>
-<tbody>
-<tr style="height: 17px;">
-<td style="width: 17.5448%; height: 17px;">&lt; Software &gt;</td>
-<td style="width: 17.5448%; height: 17px;">&lt; $1500 &gt;</td>
-<td style="width: 17.5448%; height: 17px;">&lt; $700 &gt;</td>
-<td style="width: 17.5448%; height: 17px;">&nbsp;</td>
-<td style="width: 17.5475%; height: 17px;">&nbsp;</td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-</tbody>
-</table>';
-$templates[] = $projectOutline;
+// Project Outline migrated to YAML — see app/Domain/ContentTemplates/Library/wiki/project-outline.yaml
 
 // User Story
 $userStoryTpl = app()->make(Template::class);
@@ -419,26 +294,36 @@ $labelGray->content = '<span class="label label-default">Gray</span>';
 $templates[] = $labelGray;
 
 // ── ContentTemplates registry — appliesTo:"wiki" ──
-// Phase 3 of the content-templates rollout: plugins (and core) can
-// drop YAML files into ContentTemplates/wiki/ and they show up here
-// alongside the hardcoded set. The hardcoded ones above are
-// preserved for now and will migrate to YAML in follow-up PRs (the
-// i18n-in-content patterns in PRD/labels need a small resolver pass
-// before they can move).
+// Phase 3 of the content-templates rollout: plugins (and core) drop
+// YAML files into ContentTemplates/wiki/ and they appear here. As
+// hardcoded templates migrate to YAML their inline blocks above
+// disappear; PRD + the four status labels still live in PHP because
+// their HTML content uses many __() calls that would need their own
+// resolver pass — flagged for a follow-up sweep, not blocking.
+//
+// Each YAML string may carry t:KEY translation references; the
+// TranslationResolver helper expands them at consume time so the
+// user sees their locale's wording.
 try {
     $registry = app(\Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry::class);
     foreach ($registry->forAppliesTo('wiki') as $contentTpl) {
         $tplObj = app()->make(Template::class);
-        $tplObj->title = $contentTpl->title;
-        $tplObj->description = $contentTpl->description;
-        $tplObj->category = __('templates.documents');
+        $tplObj->title = \Leantime\Domain\ContentTemplates\Support\TranslationResolver::resolve($contentTpl->title);
+        $tplObj->description = \Leantime\Domain\ContentTemplates\Support\TranslationResolver::resolve($contentTpl->description);
+        // Category — for wiki templates we reuse the existing `sector`
+        // field (same concept, different domain vocabulary). Falls back to
+        // "documents" when the YAML doesn't specify one, matching the
+        // hardcoded templates' previous default.
+        $tplObj->category = $contentTpl->sector !== null && $contentTpl->sector !== ''
+            ? \Leantime\Domain\ContentTemplates\Support\TranslationResolver::resolve($contentTpl->sector)
+            : __('templates.documents');
         $articles = (array) ($contentTpl->payload['articles'] ?? []);
         // For single-article templates we mirror the legacy "one HTML blob"
         // shape the editor expects. Multi-article wiki templates are out of
         // scope for the editor's "insert template" flow (they'd map to wiki
         // page creation, not editor insertion).
         $tplObj->content = is_array($articles[0] ?? null)
-            ? (string) ($articles[0]['content'] ?? '')
+            ? \Leantime\Domain\ContentTemplates\Support\TranslationResolver::resolve((string) ($articles[0]['content'] ?? ''))
             : '';
         if ($tplObj->content !== '') {
             $templates[] = $tplObj;
