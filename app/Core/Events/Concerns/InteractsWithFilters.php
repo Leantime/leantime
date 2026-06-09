@@ -19,7 +19,9 @@ trait InteractsWithFilters
 {
     /**
      * Default: no legacy string names. Override during the migration window with the
-     * exact historical leantime.* names this filter used to run under.
+     * exact historical leantime.* name of the CURRENT emit site — rebuilt from a
+     * `legacyHook: __FUNCTION__` constructor discriminator when several methods
+     * historically ran the same raw hook (see the LeantimeFilter docblock).
      *
      * @return array<int, string>
      */

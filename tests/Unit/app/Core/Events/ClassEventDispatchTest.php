@@ -10,21 +10,26 @@ use Leantime\Core\Events\EventDispatcher;
 use Unit\TestCase;
 
 /**
- * Fixture event mirroring a migrated domain event: typed payload, legacy hooks
- * matching the historical auto-generated string names.
+ * Fixture event mirroring a migrated domain event: typed payload plus the
+ * `legacyHook: __FUNCTION__` discriminator pattern — each dispatch rebuilds the single
+ * historical name of its emit site (never a static list of all sites).
  */
 class FixtureThingUpdated implements LeantimeEvent
 {
     use InteractsWithEvents;
 
-    public function __construct(public readonly int $thingId) {}
+    public function __construct(
+        public readonly int $thingId,
+        private readonly ?string $legacyHook = null,
+    ) {}
 
     public function legacyHooks(): array
     {
-        return [
-            'leantime.domain.things.services.things.updateThing.thing_updated',
-            'leantime.domain.things.services.things.patchThing.thing_updated',
-        ];
+        if ($this->legacyHook === null) {
+            return [];
+        }
+
+        return ['leantime.domain.things.services.things.'.$this->legacyHook.'.thing_updated'];
     }
 }
 
@@ -158,7 +163,7 @@ class ClassEventDispatchTest extends TestCase
             }
         );
 
-        FixtureThingUpdated::dispatch(thingId: 42);
+        FixtureThingUpdated::dispatch(thingId: 42, legacyHook: 'updateThing');
 
         $this->assertIsArray($received);
         $this->assertSame(42, $received['thingId']);
@@ -171,19 +176,44 @@ class ClassEventDispatchTest extends TestCase
 
     /**
      * BACKWARDS COMPATIBILITY: plugin wildcard subscriptions (leantime.domain.*.services.*)
-     * match the declared legacy names of a class-based event.
+     * match the legacy name of a class-based event — exactly ONCE per dispatch, because
+     * each emit site contributes only its own historical name via the legacyHook
+     * discriminator. Both historical names stay reachable from their respective sites.
      */
-    public function test_wildcard_listener_matches_legacy_hooks_of_class_event(): void
+    public function test_wildcard_listener_fires_once_per_dispatch_for_legacy_hook(): void
     {
         $called = 0;
         EventDispatcher::add_event_listener('leantime.domain.*.services.*', function () use (&$called) {
             $called++;
         });
 
-        FixtureThingUpdated::dispatch(thingId: 1);
+        FixtureThingUpdated::dispatch(thingId: 1, legacyHook: 'updateThing');
+        $this->assertSame(1, $called);
 
-        // The event declares two legacy hooks; the wildcard matches both.
+        FixtureThingUpdated::dispatch(thingId: 1, legacyHook: 'patchThing');
         $this->assertSame(2, $called);
+    }
+
+    /**
+     * BACKWARDS COMPATIBILITY: an exact subscriber to one historical site's name does
+     * NOT fire when a different site emits the same logical event — per-site semantics
+     * are preserved through the migration window.
+     */
+    public function test_exact_legacy_listener_keeps_per_site_semantics(): void
+    {
+        $called = 0;
+        EventDispatcher::add_event_listener(
+            'leantime.domain.things.services.things.patchThing.thing_updated',
+            function () use (&$called) {
+                $called++;
+            }
+        );
+
+        FixtureThingUpdated::dispatch(thingId: 1, legacyHook: 'updateThing');
+        $this->assertSame(0, $called);
+
+        FixtureThingUpdated::dispatch(thingId: 1, legacyHook: 'patchThing');
+        $this->assertSame(1, $called);
     }
 
     /**

@@ -16,10 +16,13 @@ namespace Leantime\Core\Events\Contracts;
  *     EventDispatcher::add_filter_listener(TodoWidgetTasksFilter::class,
  *         fn ($tickets, TodoWidgetTasksFilter $filter) => $tickets);
  *
- * MIGRATION WINDOW: legacyHooks() returns the exact historical string names; the
- * dispatcher threads the payload through listeners on the FQCN first, then through
- * each legacy name where listeners receive today's ($payload, $availableParams) array
- * signature unchanged. See {@see LeantimeEvent} for the full rationale.
+ * MIGRATION WINDOW: legacyHooks() returns the exact historical string name(s) of the
+ * CURRENT emit site; the dispatcher threads the payload through listeners on the FQCN
+ * first, then through each legacy name where listeners receive today's
+ * ($payload, $availableParams) array signature unchanged. When several methods
+ * historically ran the same raw hook, rebuild the right name from a
+ * `legacyHook: __FUNCTION__` constructor discriminator — never statically list all
+ * sites. See {@see LeantimeEvent} for the full rationale.
  *
  * Use the {@see \Leantime\Core\Events\Concerns\InteractsWithFilters} trait for the
  * payload()/apply() plumbing and the default empty legacyHooks().
@@ -32,7 +35,9 @@ interface LeantimeFilter
     public function payload(): mixed;
 
     /**
-     * The exact historical dotted string names this filter used to run under.
+     * The exact historical dotted string name(s) the CURRENT emit site ran under.
+     * Use a `legacyHook: __FUNCTION__` constructor discriminator when several methods
+     * historically ran the same raw hook (see class docblock).
      *
      * @return array<int, string>
      */

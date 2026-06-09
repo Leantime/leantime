@@ -20,7 +20,9 @@ trait InteractsWithEvents
 {
     /**
      * Default: no legacy string names. Override during the migration window with the
-     * exact historical leantime.* names this event used to fire under.
+     * exact historical leantime.* name of the CURRENT emit site — rebuilt from a
+     * `legacyHook: __FUNCTION__` constructor discriminator when several methods
+     * historically fired the same raw hook (see the LeantimeEvent docblock).
      *
      * @return array<int, string>
      */
