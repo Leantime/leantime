@@ -208,10 +208,14 @@ class Reports extends BaseService
     /**
      * Returns a project's stored report history, authorized against the requested project.
      *
+     * $projectId is typed int so the param is REQUIRED and non-null: a JSON-RPC caller cannot
+     * pass null to make PermissionEnforcer::resolveProjectId() fall back to the session project
+     * (its isset() check treats explicit null as absent), which would dodge the per-target gate.
+     *
      * @api
      */
     #[RequiresPermission(ReportsPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getFullReport($projectId): false|array
+    public function getFullReport(int $projectId): false|array
     {
         return $this->reportRepository->getFullReport($projectId);
     }
@@ -220,12 +224,16 @@ class Reports extends BaseService
      * Computes a project's current ticket report, authorized against the requested project.
      * The repository scopes by BOTH projectId and sprint, so a foreign sprint id yields no rows.
      *
+     * $projectId is typed int for the same reason as getFullReport() — it keeps the dispatch gate
+     * bound to the requested project (no null → session fallback). $sprintId stays mixed because
+     * the empty string is the meaningful "backlog" selector.
+     *
      * @throws BindingResolutionException
      *
      * @api
      */
     #[RequiresPermission(ReportsPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getRealtimeReport($projectId, $sprintId): array|bool
+    public function getRealtimeReport(int $projectId, $sprintId): array|bool
     {
         return $this->reportRepository->runTicketReport($projectId, $sprintId);
     }
