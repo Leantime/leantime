@@ -2,10 +2,10 @@
 
 namespace Leantime\Domain\Calendar\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -40,10 +40,9 @@ class ConnectCalendar extends Controller
     /**
      * Display the Connect Calendar modal with available providers.
      */
+    #[RequiresPermission(CalendarPermissions::CREATE)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $providers = self::dispatchFilter('connectOptions.providers', []);
 
         $this->tpl->assign('providers', $providers);
@@ -54,10 +53,9 @@ class ConnectCalendar extends Controller
     /**
      * Handle iCal calendar import submission.
      */
+    #[RequiresPermission(CalendarPermissions::CREATE)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         if (isset($params['name']) || isset($params['url'])) {
             $values = [
                 'url' => $params['url'] ?? '',

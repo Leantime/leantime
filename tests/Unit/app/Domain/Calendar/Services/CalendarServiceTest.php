@@ -182,4 +182,136 @@ class CalendarServiceTest extends TestCase
         $this->assertEquals('actuser', $capturedUserHash, 'user hash should come from the act segment');
         $this->assertEquals('actcal', $capturedCalHash, 'cal hash should come from the act segment');
     }
+
+    // ---- permission-engine authorization ---------------------------------
+
+    /** Builds the service with a stubbed repo + PermissionService, as the session user (id 1). */
+    private function makeServiceWithPermissions(
+        CalendarRepository $repo,
+        \Leantime\Core\Auth\Permissions\PermissionService $perms
+    ): \Leantime\Domain\Calendar\Services\Calendar {
+        session(['userdata.id' => 1]);
+
+        $service = new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $repo,
+            language: $this->language,
+            settingsRepo: $this->settingsRepository,
+            config: $this->config
+        );
+        $service->setPermissionService($perms);
+
+        return $service;
+    }
+
+    /** PermissionService stub: currentUserCan returns the given value for every key. */
+    private function permissions(bool $allow): \Leantime\Core\Auth\Permissions\PermissionService
+    {
+        return $this->make(\Leantime\Core\Auth\Permissions\PermissionService::class, [
+            'currentUserCan' => fn () => $allow,
+            'authorize' => fn () => null,
+        ]);
+    }
+
+    public function test_get_event_returns_own_event(): void
+    {
+        $repo = $this->make(CalendarRepository::class, [
+            'getEvent' => fn () => ['id' => 5, 'userId' => 1, 'description' => 'mine'],
+        ]);
+        // can(MANAGE) = false, but the session user (1) owns the event.
+        $service = $this->makeServiceWithPermissions($repo, $this->permissions(false));
+
+        $this->assertSame(1, $service->getEvent(5)['userId']);
+    }
+
+    public function test_get_event_soft_denies_foreign_event_without_manage(): void
+    {
+        $repo = $this->make(CalendarRepository::class, [
+            'getEvent' => fn () => ['id' => 5, 'userId' => 2, 'description' => 'someone else'],
+        ]);
+        // Event owned by user 2; session user 1 lacks calendar.manage → soft-deny.
+        $service = $this->makeServiceWithPermissions($repo, $this->permissions(false));
+
+        $this->assertFalse($service->getEvent(5));
+    }
+
+    public function test_get_event_allows_foreign_event_with_manage(): void
+    {
+        $repo = $this->make(CalendarRepository::class, [
+            'getEvent' => fn () => ['id' => 5, 'userId' => 2, 'description' => 'someone else'],
+        ]);
+        // calendar.manage (admin+) is the cross-user override.
+        $service = $this->makeServiceWithPermissions($repo, $this->permissions(true));
+
+        $this->assertSame(2, $service->getEvent(5)['userId']);
+    }
+
+    public function test_get_external_calendar_ignores_passed_userid_and_uses_session(): void
+    {
+        $capturedUserId = null;
+        $repo = $this->make(CalendarRepository::class, [
+            'getExternalCalendar' => function ($id, $userId) use (&$capturedUserId) {
+                $capturedUserId = $userId;
+
+                return ['id' => $id, 'url' => 'https://example.com/cal.ics'];
+            },
+        ]);
+        $service = $this->makeServiceWithPermissions($repo, $this->permissions(true));
+
+        // Caller passes a FOREIGN userId (99); the service must query as the session user (1).
+        $service->getExternalCalendar(7, 99);
+
+        $this->assertSame(1, $capturedUserId, 'external calendar lookup must use the session user, not the passed id');
+    }
+
+    public function test_get_my_external_calendars_ignores_passed_userid_and_uses_session(): void
+    {
+        $capturedUserId = null;
+        $repo = $this->make(CalendarRepository::class, [
+            'getMyExternalCalendars' => function ($userId) use (&$capturedUserId) {
+                $capturedUserId = $userId;
+
+                return [];
+            },
+        ]);
+        $service = $this->makeServiceWithPermissions($repo, $this->permissions(true));
+
+        $service->getMyExternalCalendars(99);
+
+        $this->assertSame(1, $capturedUserId, 'calendar list must use the session user, not the passed id');
+    }
+
+    public function test_rpc_surface_is_locked(): void
+    {
+        $reflect = fn (string $m) => (new \ReflectionMethod(\Leantime\Domain\Calendar\Services\Calendar::class, $m))->getDocComment();
+        $isApi = fn (string $m) => ($d = $reflect($m)) !== false && preg_match('/^\s*\*\s*@api\b/m', $d) === 1;
+        $gate = function (string $m): ?string {
+            $attrs = (new \ReflectionMethod(\Leantime\Domain\Calendar\Services\Calendar::class, $m))
+                ->getAttributes(\Leantime\Core\Auth\Permissions\RequiresPermission::class);
+
+            return $attrs === [] ? null : $attrs[0]->newInstance()->permission;
+        };
+
+        // The iCal feed methods are served by the public hash-authed route — never RPC-callable.
+        $this->assertFalse($isApi('getIcalByHash'), 'getIcalByHash must not be @api');
+        $this->assertFalse($isApi('getIcalByRequestToken'), 'getIcalByRequestToken must not be @api');
+
+        // Every @api method carries a calendar.* dispatch gate.
+        $expected = [
+            'getEvent' => 'calendar.view',
+            'getExternalCalendar' => 'calendar.view',
+            'getMyExternalCalendars' => 'calendar.view',
+            'getCachedExternalCalendarContent' => 'calendar.view',
+            'addEvent' => 'calendar.create',
+            'addExternalCalendarUrl' => 'calendar.create',
+            'editEvent' => 'calendar.edit',
+            'editExternalCalendar' => 'calendar.edit',
+            'patch' => 'calendar.edit',
+            'delEvent' => 'calendar.delete',
+            'deleteGCal' => 'calendar.delete',
+        ];
+        foreach ($expected as $method => $permission) {
+            $this->assertTrue($isApi($method), "$method should stay @api");
+            $this->assertSame($permission, $gate($method), "$method must carry the $permission gate");
+        }
+    }
 }

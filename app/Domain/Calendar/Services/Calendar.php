@@ -6,12 +6,13 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
@@ -20,7 +21,17 @@ use Spatie\IcalendarGenerator\Components\Calendar as IcalCalendar;
 use Spatie\IcalendarGenerator\Components\Event as IcalEvent;
 use Spatie\IcalendarGenerator\Enums\Display;
 
-class Calendar
+/**
+ * Calendar service: personal events, external-calendar subscriptions, and the public iCal feed.
+ *
+ * Authorization: the @api methods carry a dispatch #[RequiresPermission(calendar.*)] capability gate
+ * (project-scoped, session project — readonly+ to view, editor+ to create/edit/delete). OWNERSHIP is
+ * separate and user-based: reads that aren't already userId-scoped by the repository self-authorize
+ * in-body (row.userId === currentUserId() OR can(MANAGE)); the userId PARAMS on the external-calendar
+ * reads are ignored in favor of the session user (closing the RPC param-spoof). The iCal feed methods
+ * are NOT @api — they are served by the public, hash-authenticated /calendar/ical route.
+ */
+class Calendar extends BaseService
 {
     private CalendarRepository $calendarRepo;
 
@@ -50,6 +61,7 @@ class Calendar
      *
      * @api
      */
+    #[RequiresPermission(CalendarPermissions::DELETE)]
     public function deleteGCal(int $id): bool
     {
         return $this->calendarRepo->deleteGCal($id);
@@ -66,10 +78,10 @@ class Calendar
      *
      * @api
      */
-    public function patch($id, $params): bool
+    #[RequiresPermission(CalendarPermissions::EDIT)]
+    public function patch(int $id, $params): bool
     {
-        // Admins can always change anything.
-        // Otherwise user has to own the event
+        // The event's owner can always change it; a cross-user override needs calendar.manage (admin+).
         if ($this->userIsAllowedToUpdate($id)) {
             return $this->calendarRepo->patch($id, $params);
         }
@@ -78,28 +90,22 @@ class Calendar
     }
 
     /**
-     * Checks if user is allowed to make changes to event
+     * Whether the current user may change the given event. The event's owner always may; a
+     * cross-user override requires calendar.manage (admin+ — replaces the legacy
+     * Auth::userIsAtLeast(admin) check, preserving the same admin-only override).
      *
-     *
-     * @params int $eventId Id of event to be checked
-     *
-     * @return bool true on success, false on failure
-     *
-     * @api
+     * @param  int  $eventId  Id of event to be checked
+     * @return bool true when allowed, false otherwise
      */
     private function userIsAllowedToUpdate($eventId): bool
     {
-
-        if (Auth::userIsAtLeast(Roles::$admin)) {
+        if ($this->can(CalendarPermissions::MANAGE)) {
             return true;
-        } else {
-            $event = $this->calendarRepo->getEvent($eventId);
-            if ($event && $event['userId'] == session('userdata.id')) {
-                return true;
-            }
         }
 
-        return false;
+        $event = $this->calendarRepo->getEvent($eventId);
+
+        return $event && (int) ($event['userId'] ?? 0) === $this->currentUserId();
     }
 
     /**
@@ -112,6 +118,7 @@ class Calendar
      *
      * @api
      */
+    #[RequiresPermission(CalendarPermissions::CREATE)]
     public function addEvent(array $values): int|false
     {
         $values['allDay'] = $values['allDay'] ?? false;
@@ -153,11 +160,26 @@ class Calendar
     }
 
     /**
+     * Returns a single event, fail-closed to its owner. The repository fetches by bare id, so
+     * without this check any user could read any event by id over RPC; calendar.manage (admin+)
+     * is the cross-user override. Soft-denies (returns false) for a foreign event.
+     *
      * @api
      */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
     public function getEvent(int $eventId): mixed
     {
-        return $this->calendarRepo->getEvent($eventId);
+        $event = $this->calendarRepo->getEvent($eventId);
+
+        if ($event === false || $event === null) {
+            return $event;
+        }
+
+        if ((int) ($event['userId'] ?? 0) !== $this->currentUserId() && ! $this->can(CalendarPermissions::MANAGE)) {
+            return false;
+        }
+
+        return $event;
     }
 
     /**
@@ -171,6 +193,7 @@ class Calendar
      *
      * @api
      */
+    #[RequiresPermission(CalendarPermissions::EDIT)]
     public function editEvent(array $values): bool
     {
         if (isset($values['id']) === true) {
@@ -236,6 +259,7 @@ class Calendar
      *
      * @api
      */
+    #[RequiresPermission(CalendarPermissions::DELETE)]
     public function delEvent(int $id): int|false
     {
         // Trigger event for plugins
@@ -245,13 +269,18 @@ class Calendar
     }
 
     /**
+     * Returns one external-calendar subscription, scoped to the SESSION user. The $userId argument
+     * is retained for signature/RPC compatibility but IGNORED for authorization — otherwise an RPC
+     * caller could read another user's subscription by passing a foreign id.
+     *
      * @return array|false
      *
      * @api
      */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
     public function getExternalCalendar(int $id, int $userId): bool|array
     {
-        return $this->calendarRepo->getExternalCalendar($id, $userId);
+        return $this->calendarRepo->getExternalCalendar($id, $this->currentUserId() ?? 0);
     }
 
     /**
@@ -266,11 +295,13 @@ class Calendar
      * controller behaviour.
      *
      * @param  int  $calId  The external calendar id.
-     * @param  int  $userId  The id of the user owning the calendar.
+     * @param  int  $userId  Retained for signature compatibility; the underlying read is pinned to
+     *                       the session user via getExternalCalendar().
      * @return string The iCal content, or an empty string when unavailable.
      *
      * @api
      */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
     public function getCachedExternalCalendarContent(int $calId, int $userId): string
     {
         $cacheTime = 60 * 30; // 30min
@@ -306,8 +337,12 @@ class Calendar
     }
 
     /**
+     * Edits an external-calendar subscription. The repository scopes the update to the session
+     * user (WHERE userId = session), so a foreign id is a no-op.
+     *
      * @api
      */
+    #[RequiresPermission(CalendarPermissions::EDIT)]
     public function editExternalCalendar(array $values, int $id): void
     {
         $this->calendarRepo->editGUrl($values, $id);
@@ -316,14 +351,16 @@ class Calendar
     /**
      * Retrieves all external calendars for a given user.
      *
-     * @param  int  $userId  The user ID
+     * @param  int  $userId  Retained for signature/RPC compatibility but IGNORED — the list is
+     *                       always scoped to the SESSION user, closing the cross-user param spoof.
      * @return array|false The external calendars or false if none found
      *
      * @api
      */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
     public function getMyExternalCalendars(int $userId): array|false
     {
-        return $this->calendarRepo->getMyExternalCalendars($userId);
+        return $this->calendarRepo->getMyExternalCalendars($this->currentUserId() ?? 0);
     }
 
     /**
@@ -333,6 +370,7 @@ class Calendar
      *
      * @api
      */
+    #[RequiresPermission(CalendarPermissions::CREATE)]
     public function addExternalCalendarUrl(array $values): void
     {
         $this->calendarRepo->addGUrl($values);
@@ -347,7 +385,9 @@ class Calendar
      *
      * @throws MissingParameterException If either user hash or calendar hash is empty.
      *
-     * @api
+     * Not @api: served by the PUBLIC, hash-authenticated /calendar/ical route (no session). The
+     * userHash+calHash secrets ARE the credential; exposing it over JSON-RPC would let a caller
+     * brute-force feeds. The Ical controller calls it internally.
      */
     public function getIcalByHash(string $userHash, string $calHash): IcalCalendar
     {
@@ -612,7 +652,9 @@ class Calendar
      * @throws MissingParameterException If the token does not contain both hashes.
      * @throws \Exception If the calendar could not be retrieved.
      *
-     * @api
+     * Not @api: the entry point for the PUBLIC, hash-authenticated /calendar/ical route (no
+     * session) — the Ical controller calls it directly. Not exposed via JSON-RPC (delegates to
+     * getIcalByHash, where the hashes are the credential).
      */
     public function getIcalByRequestToken(string $token, string $act = ''): IcalCalendar
     {
@@ -948,8 +990,6 @@ class Calendar
      *
      * @param  int|null  $dateFrom
      * @param  int|null  $dateTo
-     *
-     * @api
      */
     private function mapEventData(
         string $title,
