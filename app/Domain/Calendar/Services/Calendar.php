@@ -68,18 +68,16 @@ class Calendar extends BaseService
     }
 
     /**
-     * Patches calendar event
+     * Patches calendar event.
      *
-     *
-     * @params $id id of event to be updated (only events can be updated. Tickets need to be updated via ticket api
-     * @params $params key value array of columns to be updated
-     *
+     * @param  int  $id  Id of the event to update (only events; tickets are updated via the ticket API).
+     * @param  array  $params  Key/value array of columns to update.
      * @return bool true on success, false on failure
      *
      * @api
      */
     #[RequiresPermission(CalendarPermissions::EDIT)]
-    public function patch(int $id, $params): bool
+    public function patch(int $id, array $params): bool
     {
         // The event's owner can always change it; a cross-user override needs calendar.manage (admin+).
         if ($this->userIsAllowedToUpdate($id)) {
