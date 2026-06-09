@@ -2,9 +2,9 @@
 
 namespace Leantime\Domain\Calendar\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,10 +25,9 @@ class EditExternal extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(CalendarPermissions::EDIT)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         if (! isset($params['id'])) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
@@ -45,10 +44,9 @@ class EditExternal extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(CalendarPermissions::EDIT)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         if (! isset($params['id'])) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }

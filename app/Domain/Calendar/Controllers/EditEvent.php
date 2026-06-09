@@ -6,11 +6,11 @@
 
 namespace Leantime\Domain\Calendar\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Support\FromFormat;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,13 +23,13 @@ class EditEvent extends Controller
      */
     public function init(CalendarService $calendarService): void
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
         $this->calendarService = $calendarService;
     }
 
     /**
      * retrieves edit calendar event page data
      */
+    #[RequiresPermission(CalendarPermissions::EDIT)]
     public function get(array $params): Response
     {
         $values = $this->calendarService->getEvent($params['id']);
@@ -42,6 +42,7 @@ class EditEvent extends Controller
     /**
      * sets, creates, and updates edit calendar event page data
      */
+    #[RequiresPermission(CalendarPermissions::EDIT)]
     public function post(array $params): Response
     {
         $params['id'] = $_GET['id'] ?? null;

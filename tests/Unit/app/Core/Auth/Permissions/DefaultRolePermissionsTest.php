@@ -48,6 +48,13 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
             new Permission('files.upload', 'Upload', true),
             new Permission('files.delete', 'Delete', true),
             new Permission('reports.view', 'View', true),
+            // Calendar: project-scoped capability verbs (view→readonly+, create/edit/delete→editor+)
+            // + a GLOBAL manage verb (admin+ cross-user override; managers do NOT get it).
+            new Permission('calendar.view', 'View', true),
+            new Permission('calendar.create', 'Create', true),
+            new Permission('calendar.edit', 'Edit', true),
+            new Permission('calendar.delete', 'Delete', true),
+            new Permission('calendar.manage', 'Manage any calendar', false),
             new Permission('comments.view', 'View', true),
             new Permission('comments.create', 'Create', true),
             new Permission('comments.moderate', 'Moderate', true),
@@ -82,7 +89,7 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
 
     public function test_readonly_can_only_view_project_content(): void
     {
-        $this->assertEqualsCanonicalizing(['tickets.view', 'comments.view', 'sprints.view', 'wiki.view', 'ideas.view', 'blueprints.view', 'goals.view', 'files.view', 'reports.view'], $this->grantsFor('readonly'));
+        $this->assertEqualsCanonicalizing(['tickets.view', 'comments.view', 'sprints.view', 'wiki.view', 'ideas.view', 'blueprints.view', 'goals.view', 'files.view', 'reports.view', 'calendar.view'], $this->grantsFor('readonly'));
     }
 
     public function test_commenter_adds_comment_upload_and_can_create_comments(): void
@@ -156,6 +163,13 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('timesheets.edit', $grants);
         $this->assertContains('timesheets.delete', $grants);
         $this->assertNotContains('timesheets.manage', $grants);
+        // Calendar uses standard PROJECT verbs, so editor auto-gets view/create/edit/delete; the
+        // GLOBAL manage verb (cross-user override) stays admin+.
+        $this->assertContains('calendar.view', $grants);
+        $this->assertContains('calendar.create', $grants);
+        $this->assertContains('calendar.edit', $grants);
+        $this->assertContains('calendar.delete', $grants);
+        $this->assertNotContains('calendar.manage', $grants);
         $this->assertContains('comments.create', $grants);    // inherited
         $this->assertNotContains('comments.moderate', $grants); // manager+ only
         $this->assertNotContains('users.view', $grants);        // company-wide, admin+
@@ -178,6 +192,14 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('timesheets.manage', $grants);
         $this->assertContains('timesheets.view', $grants);
         $this->assertContains('timesheets.edit', $grants);
+        // Calendar: manager holds all four project capability verbs (project '*' rule) but NOT the
+        // cross-user override — calendar.manage is GLOBAL-scoped and admin-only (legacy override was
+        // Auth::userIsAtLeast(admin)).
+        $this->assertContains('calendar.view', $grants);
+        $this->assertContains('calendar.create', $grants);
+        $this->assertContains('calendar.edit', $grants);
+        $this->assertContains('calendar.delete', $grants);
+        $this->assertNotContains('calendar.manage', $grants);
         // Managers may INVITE users (within their own client — scoped in the controller), but
         // cannot view the roster, edit, delete, or import accounts (those stay admin+).
         $this->assertContains('users.create', $grants);
@@ -214,6 +236,7 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('projectsettings.labels.manage', $grants);
         $this->assertContains('comments.moderate', $grants);
         $this->assertContains('tickets.delete', $grants);
+        $this->assertContains('calendar.manage', $grants);  // cross-user calendar override (admin+)
         // Per policy (admin views + edits company settings), admins hold both company.settings
         // keys via an explicit grant alongside the wildcard-with-exclude rule.
         $this->assertContains('company.settings.view', $grants);
