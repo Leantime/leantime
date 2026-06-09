@@ -96,6 +96,7 @@ class Install
         30513,
         30514,
         30515,
+        30516,
     ];
 
     /**
@@ -3010,6 +3011,31 @@ class Install
             Log::error('Migration 30515: '.$e->getMessage());
 
             return ['Migration 30515 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Sync the permission catalog + re-seed built-in role grants for the Reports domain. Adds
+     * reports.view (project-scoped standard verb → auto-grants readonly+; no
+     * DefaultRolePermissions matrix edit). The re-seed lands the new key in zp_role_permissions
+     * for the built-in roles.
+     *
+     * Flush the discovered-provider cache FIRST so ReportsPermissions is rediscovered.
+     */
+    public function update_sql_30516(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30516: '.$e->getMessage());
+
+            return ['Migration 30516 failed: '.$e->getMessage()];
         }
 
         return true;

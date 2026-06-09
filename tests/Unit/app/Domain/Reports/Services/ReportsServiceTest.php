@@ -17,11 +17,61 @@ use Unit\TestCase;
 
 /**
  * Unit tests for the sprint-burndown selection logic extracted from the
- * Reports\Controllers\Show controller into the Reports service.
+ * Reports\Controllers\Show controller into the Reports service, plus the permission-engine
+ * security surface: the three by-projectId @api reads must stay gated against the REQUESTED
+ * project, and the system/telemetry methods must never become RPC-reachable again.
  */
 class ReportsServiceTest extends TestCase
 {
     use \Codeception\Test\Feature\Stub;
+
+    /** Matches Jsonrpc::isApiMethod(): @api only at the start of a docblock line. */
+    private function isApiExposed(string $method): bool
+    {
+        $doc = (new \ReflectionMethod(Reports::class, $method))->getDocComment();
+
+        return $doc !== false && preg_match('/^\s*\*\s*@api\b/m', $doc) === 1;
+    }
+
+    /** The #[RequiresPermission] attribute instance on a method, or null. */
+    private function permissionAttribute(string $method): ?\Leantime\Core\Auth\Permissions\RequiresPermission
+    {
+        $attributes = (new \ReflectionMethod(Reports::class, $method))
+            ->getAttributes(\Leantime\Core\Auth\Permissions\RequiresPermission::class);
+
+        return $attributes === [] ? null : $attributes[0]->newInstance();
+    }
+
+    public function test_by_project_reads_are_rpc_exposed_and_gated_against_the_requested_project(): void
+    {
+        foreach (['getSprintBurndownForReport', 'getFullReport', 'getRealtimeReport'] as $method) {
+            $this->assertTrue($this->isApiExposed($method), "$method should stay RPC-callable");
+
+            $attribute = $this->permissionAttribute($method);
+            $this->assertNotNull($attribute, "$method must carry a #[RequiresPermission] dispatch gate");
+            $this->assertSame('reports.view', $attribute->permission, $method);
+            // projectIdParam binds the gate to the REQUESTED project — without it the enforcer
+            // falls back to the session project and the cross-project RPC IDOR reopens.
+            $this->assertSame('projectId', $attribute->projectIdParam, $method);
+        }
+    }
+
+    public function test_system_and_telemetry_methods_are_not_rpc_reachable(): void
+    {
+        // dailyIngestion binds to session state; the others leak instance-wide aggregates or
+        // mutate company-wide settings. None may carry a line-starting @api tag.
+        foreach ([
+            'dailyIngestion',
+            'cronDailyIngestion',
+            'getAnonymousTelemetry',
+            'sendAnonymousTelemetry',
+            'optOutTelemetry',
+            'getProjectStatusReport',
+            'generateTicketReactionsReport',
+        ] as $method) {
+            $this->assertFalse($this->isApiExposed($method), "$method must NOT be RPC-callable");
+        }
+    }
 
     /**
      * Builds the Reports service with every constructor dependency stubbed,

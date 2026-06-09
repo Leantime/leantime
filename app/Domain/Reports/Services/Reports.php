@@ -10,9 +10,10 @@ use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Configuration\AppSettings as AppSettingCore;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
-use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Domains\BaseService;
 use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
@@ -20,6 +21,7 @@ use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Reactions\Repositories\Reactions;
+use Leantime\Domain\Reports\Permissions\ReportsPermissions;
 use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
@@ -30,12 +32,19 @@ use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 /**
+ * Reports service: per-project report aggregation (burndown, ticket-status history) plus the
+ * system-level daily-ingestion and telemetry tasks.
+ *
+ * Authorization model: the three by-projectId @api reads carry a dispatch
+ * #[RequiresPermission(reports.view, projectIdParam: 'projectId')] gate, authorized against the
+ * REQUESTED project (closes the cross-project RPC IDOR). The system/cron methods (ingestion,
+ * telemetry) are NOT @api — they run from the scheduler with no session user and must never be
+ * RPC-reachable.
+ *
  * @api
  */
-class Reports
+class Reports extends BaseService
 {
-    use DispatchesEvents;
-
     private TemplateCore $tpl;
 
     private AppSettingCore $appSettings;
@@ -99,6 +108,7 @@ class Reports
      *
      * @api
      */
+    #[RequiresPermission(ReportsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getSprintBurndownForReport(int $projectId, ?int $requestedSprintId): array
     {
         $allSprints = $this->sprintService->getAllSprints($projectId);
@@ -137,9 +147,13 @@ class Reports
     }
 
     /**
-     * @throws BindingResolutionException
+     * Runs the daily report ingestion for the session's current project.
      *
-     * @api
+     * Not @api: an internal web-path helper (called by the gated Reports\Controllers\Show after
+     * dispatch enforcement). It reads session('currentProject'), so an RPC caller would have no
+     * meaningful project binding — and it was needlessly RPC-exposed before.
+     *
+     * @throws BindingResolutionException
      */
     public function dailyIngestion(): void
     {
@@ -192,25 +206,36 @@ class Reports
     }
 
     /**
+     * Returns a project's stored report history, authorized against the requested project.
+     *
      * @api
      */
+    #[RequiresPermission(ReportsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getFullReport($projectId): false|array
     {
         return $this->reportRepository->getFullReport($projectId);
     }
 
     /**
+     * Computes a project's current ticket report, authorized against the requested project.
+     * The repository scopes by BOTH projectId and sprint, so a foreign sprint id yields no rows.
+     *
      * @throws BindingResolutionException
      *
      * @api
      */
+    #[RequiresPermission(ReportsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getRealtimeReport($projectId, $sprintId): array|bool
     {
         return $this->reportRepository->runTicketReport($projectId, $sprintId);
     }
 
     /**
-     * @api
+     * Builds the anonymous telemetry payload (instance-wide usage counts + company GUID).
+     *
+     * Not @api: system-level data source for sendAnonymousTelemetry() only. Exposing it over
+     * JSON-RPC let any authenticated user read instance-wide aggregates (user/project/feature
+     * counts) — reconnaissance, not a user capability.
      */
     public function getAnonymousTelemetry(
         IdeaRepository $ideaRepository,
@@ -322,9 +347,13 @@ class Reports
     }
 
     /**
-     * @throws BindingResolutionException
+     * Sends the daily anonymous telemetry ping (throttled to once a day, opt-out respected).
      *
-     * @api
+     * Not @api: a system task invoked by the scheduler (register.php cron, no session user) and
+     * the dashboard's lazy trigger — never a user-invokable RPC method (it makes an outbound
+     * HTTP request).
+     *
+     * @throws BindingResolutionException
      */
     public function sendAnonymousTelemetry(): bool|PromiseInterface
     {
@@ -378,11 +407,15 @@ class Reports
     }
 
     /**
+     * Opts the whole instance out of telemetry (writes companysettings.telemetry.active=false).
+     *
+     * Not @api: an instance-wide settings MUTATION. It is invoked internally by the admin-gated
+     * company-settings save (Setting::saveCompanySettings) — over JSON-RPC it previously let ANY
+     * authenticated user flip the company-wide telemetry setting.
+     *
      * @return false|void
      *
      * @throws Exception
-     *
-     * @api
      */
     public function optOutTelemetry()
     {
@@ -481,11 +514,14 @@ class Reports
     }
 
     /**
+     * Counts ALL projects in the instance by status color — a telemetry data source.
+     *
+     * Not @api: instance-wide aggregation with no project scope; over JSON-RPC it disclosed the
+     * whole company's project-health summary to any authenticated user.
+     *
      * @return array
      *
      * @throws Exception
-     *
-     * @api
      */
     public function getProjectStatusReport()
     {

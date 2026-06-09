@@ -47,6 +47,7 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
             new Permission('files.view', 'View', true),
             new Permission('files.upload', 'Upload', true),
             new Permission('files.delete', 'Delete', true),
+            new Permission('reports.view', 'View', true),
             new Permission('comments.view', 'View', true),
             new Permission('comments.create', 'Create', true),
             new Permission('comments.moderate', 'Moderate', true),
@@ -81,7 +82,7 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
 
     public function test_readonly_can_only_view_project_content(): void
     {
-        $this->assertEqualsCanonicalizing(['tickets.view', 'comments.view', 'sprints.view', 'wiki.view', 'ideas.view', 'blueprints.view', 'goals.view', 'files.view'], $this->grantsFor('readonly'));
+        $this->assertEqualsCanonicalizing(['tickets.view', 'comments.view', 'sprints.view', 'wiki.view', 'ideas.view', 'blueprints.view', 'goals.view', 'files.view', 'reports.view'], $this->grantsFor('readonly'));
     }
 
     public function test_commenter_adds_comment_upload_and_can_create_comments(): void
@@ -109,6 +110,9 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
         $this->assertContains('files.view', $grants);           // inherited from readonly
         $this->assertContains('files.upload', $grants);         // commenter upload verb
         $this->assertNotContains('files.delete', $grants);      // editor+
+        // Reports: view-only feature, inherited from readonly (maintainer-approved loosening of
+        // the legacy editor+ page gate — it only aggregates readonly-visible data).
+        $this->assertContains('reports.view', $grants);
         // Timesheets are editor+ (global); a commenter logs no time.
         $this->assertNotContains('timesheets.view', $grants);
         $this->assertNotContains('timesheets.create', $grants);
