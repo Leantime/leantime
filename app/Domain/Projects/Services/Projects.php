@@ -783,14 +783,6 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
-     * Gets the project IDs assigned to a specified user.
-     *
-     * @param  int  $userId  The ID of the user.
-     * @return false|array The project IDs assigned to the user, or false if no projects are found.
-     *
-     * @api
-     */
-    /**
      * Resolves the userId for an "assigned-to-user" read to the SESSION user unless the caller is an
      * admin/owner querying someone else — closing the cross-user param spoof on these @api reads (an
      * RPC caller could otherwise list another user's projects by passing a foreign id). Mirrors the
@@ -810,6 +802,14 @@ class Projects extends BaseService implements ChecksProjectAccess
         return (int) $userId;
     }
 
+    /**
+     * Gets the project IDs assigned to a specified user.
+     *
+     * @param  int  $userId  The ID of the user.
+     * @return false|array The project IDs assigned to the user, or false if no projects are found.
+     *
+     * @api
+     */
     public function getProjectIdAssignedToUser($userId): false|array
     {
         $userId = $this->resolveScopedUserId($userId);
@@ -1400,6 +1400,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getUsersAssignedToProject($projectId, $teamOnly = false): array
     {
         $users = $this->projectRepository->getUsersAssignedToProject($projectId, $teamOnly);
@@ -2311,7 +2312,8 @@ class Projects extends BaseService implements ChecksProjectAccess
     /**
      * Deletes a project and all associated user relations.
      *
-     * Only admins and owners can delete projects.
+     * Managers and above (manager/admin/owner) can delete any project, company-wide
+     * (projects.delete is a global, manager+ capability).
      *
      * @param  int  $id  The project ID to delete
      * @return bool True if deleted, false if unauthorized

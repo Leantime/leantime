@@ -527,8 +527,10 @@ class ProjectsServiceTest extends TestCase
             return ['permission' => $a->permission, 'global' => $a->global, 'projectIdParam' => $a->projectIdParam];
         };
 
-        // Engine-reachable / access-resolution: MUST be ungated.
-        foreach (['getProjectRole', 'isUserAssignedToProject', 'getUserProjectRelation', 'userCanManageProject', 'getProjectsUserHasAccessTo', 'getUsersAssignedToProject'] as $m) {
+        // Engine-reachable / access-resolution: MUST be ungated (the recursion guard). Note
+        // getUsersAssignedToProject is NOT in this set — the engine never calls it, so it is safely
+        // view-gated below to close its member-list IDOR.
+        foreach (['getProjectRole', 'isUserAssignedToProject', 'getUserProjectRelation', 'userCanManageProject', 'getProjectsUserHasAccessTo'] as $m) {
             $this->assertNull($gate($m), "$m must carry NO #[RequiresPermission] (recursion guard)");
         }
 
@@ -541,7 +543,7 @@ class ProjectsServiceTest extends TestCase
         }
 
         // By-id reads: project-scoped view.
-        foreach (['getProject', 'getProjectProgress', 'getProjectName', 'getProjectIntegrationSettings', 'getProjectCardData'] as $m) {
+        foreach (['getProject', 'getProjectProgress', 'getProjectName', 'getProjectIntegrationSettings', 'getProjectCardData', 'getUsersAssignedToProject'] as $m) {
             $g = $gate($m);
             $this->assertNotNull($g, "$m must be gated");
             $this->assertSame('projects.view', $g['permission'], $m);
