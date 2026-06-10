@@ -480,4 +480,95 @@ class ProjectsServiceTest extends TestCase
         $this->assertArrayNotHasKey('id', $patchedValues);
         $this->assertSame(2, $patchedValues['sortIndex']);
     }
+
+    // ---- permission-engine: recursion guardrail ---------------------------
+
+    /**
+     * THE recursion guardrail. The permission engine calls isUserAssignedToProject() and
+     * getProjectRole() during every project-scoped authorization, so those two methods must never
+     * invoke the engine in-body — otherwise authorize() → currentUserCan() → isUserAssignedToProject()
+     * → authorize() → ∞. A PermissionService stub that fails the test if touched proves it.
+     */
+    public function test_access_resolution_methods_never_invoke_the_permission_engine(): void
+    {
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => true,
+            'getUserProjectRelation' => fn () => [['projectRole' => 'editor']],
+        ]);
+
+        $tripwire = $this->make(\Leantime\Core\Auth\Permissions\PermissionService::class, [
+            'currentUserCan' => fn () => $this->fail('isUserAssignedToProject/getProjectRole must NOT call the permission engine (infinite-recursion guard).'),
+            'authorize' => fn () => $this->fail('access-resolution methods must NOT authorize in-body (infinite-recursion guard).'),
+        ]);
+
+        $service = $this->makeService(projectRepo: $projectRepo);
+        $service->setPermissionService($tripwire);
+
+        // Neither call may touch the engine.
+        $this->assertTrue($service->isUserAssignedToProject(1, 5));
+        $this->assertSame('editor', $service->getProjectRole(1, 5));
+    }
+
+    /**
+     * Reflection lock: the engine-reachable access methods must carry NO #[RequiresPermission]
+     * dispatch attribute (a dispatch gate on them would re-enter the engine), and the mutations/reads
+     * must carry the expected gate. Locks the recursion-safe contract in CI.
+     */
+    public function test_rpc_surface_contract(): void
+    {
+        $gate = function (string $method): ?array {
+            $attrs = (new \ReflectionMethod(ProjectService::class, $method))
+                ->getAttributes(\Leantime\Core\Auth\Permissions\RequiresPermission::class);
+            if ($attrs === []) {
+                return null;
+            }
+            $a = $attrs[0]->newInstance();
+
+            return ['permission' => $a->permission, 'global' => $a->global, 'projectIdParam' => $a->projectIdParam];
+        };
+
+        // Engine-reachable / access-resolution: MUST be ungated.
+        foreach (['getProjectRole', 'isUserAssignedToProject', 'getUserProjectRelation', 'userCanManageProject', 'getProjectsUserHasAccessTo', 'getUsersAssignedToProject'] as $m) {
+            $this->assertNull($gate($m), "$m must carry NO #[RequiresPermission] (recursion guard)");
+        }
+
+        // Mutations: global manager+.
+        foreach (['addProject' => 'projects.create', 'duplicateProject' => 'projects.create', 'editProject' => 'projects.edit', 'patch' => 'projects.edit', 'patchProject' => 'projects.edit', 'updateProjectUsers' => 'projects.edit', 'saveSlackWebhook' => 'projects.edit', 'deleteProject' => 'projects.delete'] as $m => $perm) {
+            $g = $gate($m);
+            $this->assertNotNull($g, "$m must be gated");
+            $this->assertSame($perm, $g['permission'], $m);
+            $this->assertTrue($g['global'], "$m must be global-scoped (manager+ company-wide)");
+        }
+
+        // By-id reads: project-scoped view.
+        foreach (['getProject', 'getProjectProgress', 'getProjectName', 'getProjectIntegrationSettings', 'getProjectCardData'] as $m) {
+            $g = $gate($m);
+            $this->assertNotNull($g, "$m must be gated");
+            $this->assertSame('projects.view', $g['permission'], $m);
+            $this->assertNotNull($g['projectIdParam'], "$m must bind to the requested project id");
+        }
+    }
+
+    /**
+     * The $userId-param reads pin to the SESSION user for non-admins, closing the cross-user spoof
+     * (an RPC caller could otherwise list another user's projects by passing a foreign id).
+     */
+    public function test_assigned_to_user_reads_pin_to_session_user_for_non_admins(): void
+    {
+        session(['userdata.id' => 1]);  // non-admin session user
+
+        $capturedUserId = null;
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUserProjectRelation' => function ($userId) use (&$capturedUserId) {
+                $capturedUserId = $userId;
+
+                return [];
+            },
+        ]);
+
+        // Caller passes a FOREIGN userId (99); the read must be scoped to the session user (1).
+        $this->makeService(projectRepo: $projectRepo)->getProjectIdAssignedToUser(99);
+
+        $this->assertSame(1, $capturedUserId, 'a non-admin must not be able to read another user\'s project assignments');
+    }
 }

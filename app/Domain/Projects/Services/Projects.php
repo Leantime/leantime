@@ -8,7 +8,8 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Auth\Contracts\ChecksProjectAccess;
-use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Events\EventDispatcher as EventCore;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
@@ -27,6 +28,7 @@ use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
@@ -36,10 +38,25 @@ use Leantime\Domain\Wiki\Repositories\Wiki;
 use SVG\SVG;
 use Symfony\Component\HttpFoundation\Response;
 
-class Projects implements ChecksProjectAccess
+/**
+ * Projects service (the company project god-service) + the engine's project-access provider.
+ *
+ * AUTHORIZATION MODEL (two scopes — see {@see ProjectsPermissions}):
+ *  - by-id READS carry a dispatch #[RequiresPermission(projects.view, projectIdParam: ...)] gate
+ *    (readonly+, AND-ins data access) — closes the cross-project read IDOR on the RPC surface.
+ *  - MUTATIONS carry #[RequiresPermission(projects.create|edit|delete, global: true)] (manager+,
+ *    company-wide — grant-equivalent to the legacy forceGlobal manager controllers).
+ *  - $userId-param reads pin to the session user (admin may query others), mirroring
+ *    getProjectsUserHasAccessTo().
+ *
+ * ⚠️ RECURSION GUARDRAIL: this class implements {@see ChecksProjectAccess}; the permission engine
+ * calls getProjectRole() and isUserAssignedToProject() during EVERY project-scoped authorization.
+ * Those two methods — and userCanManageProject()/getProjectsUserHasAccessTo() which the engine path
+ * also touches — MUST NEVER call $this->authorize()/$this->can() in-body, or authorization recurses
+ * infinitely. They stay ungated (pure repo / role reads).
+ */
+class Projects extends BaseService implements ChecksProjectAccess
 {
-    use DispatchesEvents;
-
     /**
      * Request-scoped memo for getProjectsAssignedToUser(), keyed by
      * "userId|status|clientId|projectTypes".
@@ -96,6 +113,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'id')]
     public function getProject(int $id): bool|array
     {
         return $this->projectRepository->getProject($id);
@@ -113,6 +131,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getProjectProgress($projectId): array
     {
         $returnValue = ['percent' => 0, 'estimatedCompletionDate' => 'We need more data to determine that.', 'plannedCompletionDate' => ''];
@@ -199,6 +218,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getUsersToNotify($projectId): array
     {
 
@@ -224,6 +244,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getAllUserInfoToNotify($projectId): array
     {
 
@@ -710,6 +731,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getMuteCountForProject(int $projectId): int
     {
         $db = app()->make(\Illuminate\Database\ConnectionInterface::class);
@@ -750,6 +772,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getProjectName($projectId)
     {
 
@@ -767,8 +790,29 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    /**
+     * Resolves the userId for an "assigned-to-user" read to the SESSION user unless the caller is an
+     * admin/owner querying someone else — closing the cross-user param spoof on these @api reads (an
+     * RPC caller could otherwise list another user's projects by passing a foreign id). Mirrors the
+     * inline override in getProjectsUserHasAccessTo(). Recursion-safe: a global role check only,
+     * never project membership.
+     *
+     * @param  int|string|null  $userId
+     */
+    private function resolveScopedUserId($userId): int
+    {
+        $sessionUser = (int) session('userdata.id');
+
+        if ((int) $userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+            return $sessionUser;
+        }
+
+        return (int) $userId;
+    }
+
     public function getProjectIdAssignedToUser($userId): false|array
     {
+        $userId = $this->resolveScopedUserId($userId);
 
         $projects = $this->projectRepository->getUserProjectRelation($userId);
 
@@ -791,6 +835,8 @@ class Projects implements ChecksProjectAccess
      */
     public function getProjectsAssignedToUser($userId, string $projectStatus = 'open', $clientId = null, string $projectTypes = 'all'): array
     {
+        $userId = $this->resolveScopedUserId($userId);
+
         // Request-scoped memo: this 11-join query is hit several times per page
         // load (status labels, multiple dashboard widgets). A user's project
         // assignments don't change within a request, so memoizing is safe.
@@ -874,6 +920,7 @@ class Projects implements ChecksProjectAccess
      */
     public function getProjectHierarchyAssignedToUser($userId, string $projectStatus = 'open', $clientId = null): array
     {
+        $userId = $this->resolveScopedUserId($userId);
 
         // Load all projects user is assigned to
         $projects = $this->projectRepository->getUserProjects(
@@ -920,6 +967,7 @@ class Projects implements ChecksProjectAccess
      */
     public function getProjectHierarchyAvailableToUser($userId, string $projectStatus = 'open', $clientId = null): array
     {
+        $userId = $this->resolveScopedUserId($userId);
 
         // Load all projects user is assigned to
         $projects = $this->projectRepository->getProjectsUserHasAccessTo(
@@ -954,6 +1002,7 @@ class Projects implements ChecksProjectAccess
      */
     public function getAllClientsAvailableToUser($userId, string $projectStatus = 'open'): array
     {
+        $userId = $this->resolveScopedUserId($userId);
 
         // Load all projects user is assigned to
         $projects = $this->projectRepository->getUserProjects(
@@ -1418,6 +1467,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::CREATE, global: true)]
     public function addProject(array $values): int|false
     {
 
@@ -1455,6 +1505,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::CREATE, global: true)]
     public function duplicateProject(int $projectId, int $clientId, string $projectName, string $userStartDate, bool $assignSameUsers): bool|int
     {
 
@@ -1654,8 +1705,6 @@ class Projects implements ChecksProjectAccess
      * @param  int  $newProjectId  The ID of the new project
      * @param  string  $canvasTypeName  The canvas type name (optional)
      * @return bool True if the canvas is duplicated successfully, false otherwise
-     *
-     * @api
      */
     private function duplicateCanvas(string $repository, int $originalProjectId, int $newProjectId, string $canvasTypeName = ''): bool
     {
@@ -1774,6 +1823,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function patch($id, $params): bool
     {
         return $this->projectRepository->patch($id, $params);
@@ -1829,6 +1879,7 @@ class Projects implements ChecksProjectAccess
      *           setter that trusts a caller-supplied $projectId over JSON-RPC would
      *           let any user overwrite another project's avatar.
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function setProjectAvatar($file, $projectId): bool
     {
 
@@ -1900,6 +1951,7 @@ class Projects implements ChecksProjectAccess
      * @param  int  $projectId  The ID of the project.
      * @return array The setup checklist for the project
      */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getProjectSetupChecklist($projectId): array
     {
         $progressSteps = [
@@ -2120,6 +2172,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function editUserProjectRelations($id, $projects): bool
     {
         return $this->projectRepository->editUserProjectRelations($id, $projects);
@@ -2132,6 +2185,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function deleteAllUserProjectRelations(int $userId): void
     {
         $this->projectRepository->deleteAllProjectRelations($userId);
@@ -2238,6 +2292,7 @@ class Projects implements ChecksProjectAccess
      *
      *  @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function editProject($values, $id)
     {
         // Preserve existing type if not provided
@@ -2263,6 +2318,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::DELETE, global: true)]
     public function deleteProject(int $id): bool
     {
         if (! Auth::userIsAtLeast(Roles::$manager)) {
@@ -2283,6 +2339,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'id')]
     public function hasTickets(int $id): bool
     {
         return $this->projectRepository->hasTickets($id);
@@ -2295,6 +2352,7 @@ class Projects implements ChecksProjectAccess
      * @param  string  $key  The setting key suffix (e.g. 'mattermostWebhookURL')
      * @param  mixed  $value  The setting value
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function saveProjectSetting(int $projectId, string $key, mixed $value): void
     {
         $this->settingsRepo->saveSetting('projectsettings.'.$projectId.'.'.$key, $value);
@@ -2307,6 +2365,7 @@ class Projects implements ChecksProjectAccess
      * @param  string  $key  The setting key suffix
      * @return mixed The setting value
      */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getProjectSetting(int $projectId, string $key): mixed
     {
         return $this->settingsRepo->getSetting('projectsettings.'.$projectId.'.'.$key);
@@ -2319,6 +2378,7 @@ class Projects implements ChecksProjectAccess
      * @param  array  $assignedUsers  Array of user IDs
      * @param  array  $projectRoles  Array of role data from POST
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function updateProjectUsers(int $projectId, array $assignedUsers, array $projectRoles): void
     {
         $values = [
@@ -2481,6 +2541,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function patchProject(int $id, array $values): bool
     {
         if (! $this->userCanManageProject($id)) {
@@ -2504,6 +2565,7 @@ class Projects implements ChecksProjectAccess
      */
     public function getClientManagerProjects(int $userId, int $clientId): array
     {
+        $userId = $this->resolveScopedUserId($userId);
 
         $clientProjects = $this->projectRepository->getClientProjects($clientId);
         $userProjects = $this->projectRepository->getUserProjects($userId);
@@ -2738,6 +2800,7 @@ class Projects implements ChecksProjectAccess
      */
     public function getProjectHubData(int $userId, ?int $clientId = null): array
     {
+        $userId = $this->resolveScopedUserId($userId);
         $currentClientName = '';
         $currentClient = $clientId ?? '';
 
@@ -2786,6 +2849,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getProjectCardData(int $projectId): array
     {
         $project = ['id' => $projectId];
@@ -2814,6 +2878,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function saveMattermostWebhook(int $projectId, string $webhookUrl): void
     {
         $this->saveProjectSetting($projectId, 'mattermostWebhookURL', strip_tags($webhookUrl));
@@ -2827,6 +2892,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function saveSlackWebhook(int $projectId, string $webhookUrl): void
     {
         $this->saveProjectSetting($projectId, 'slackWebhookURL', strip_tags($webhookUrl));
@@ -2844,6 +2910,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function saveZulipWebhook(int $projectId, array $hookData): array
     {
         $zulipHook = [
@@ -2878,6 +2945,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function saveDiscordWebhooks(int $projectId, array $postData): void
     {
         for ($i = 1; $i <= 3; $i++) {
@@ -2897,6 +2965,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getProjectIntegrationSettings(int $projectId): array
     {
         $settings = [
@@ -2939,6 +3008,7 @@ class Projects implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function editProjectAndNotify(
         array $values,
         int $projectId,
