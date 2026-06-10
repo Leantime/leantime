@@ -78,7 +78,13 @@ final class DefaultRolePermissions
             // scope and is fine, but the explicit key documents that ONLY create is intended).
             // timesheets.manage (company-wide invoicing/reports/others' time) is manager+; the
             // editor keys above are inherited up the hierarchy.
-            ['scope' => 'global', 'keys' => ['users.create', 'timesheets.manage']],
+            //
+            // projects.create/edit/delete are GLOBAL-scoped company actions (managers create/edit/
+            // delete ANY project — the legacy controllers gate on the global manager role via
+            // authOrRedirect([...], forceGlobalRoleCheck: true)). Being global, they are NOT matched
+            // by the editor's `scope:project create/edit/delete` rule, so they stay manager+ here;
+            // projects.view is a project-scoped verb and auto-grants readonly+ separately.
+            ['scope' => 'global', 'keys' => ['users.create', 'timesheets.manage', 'projects.create', 'projects.edit', 'projects.delete']],
         ],
         'admin' => [
             ['scope' => 'any', 'verbs' => ['*'], 'exclude' => ['company.settings.*']],
