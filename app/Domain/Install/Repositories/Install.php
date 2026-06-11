@@ -97,6 +97,8 @@ class Install
         30514,
         30515,
         30516,
+        30517,
+        30518,
     ];
 
     /**
@@ -3036,6 +3038,59 @@ class Install
             Log::error('Migration 30516: '.$e->getMessage());
 
             return ['Migration 30516 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Sync the permission catalog + re-seed built-in role grants for the Calendar domain. Adds
+     * calendar.view/create/edit/delete (project-scoped standard verbs → auto-grant readonly+/editor+)
+     * and calendar.manage (global → admin+ via scope:any). NO DefaultRolePermissions matrix edit:
+     * all verbs auto-grant. The re-seed lands the new keys in zp_role_permissions for the built-ins.
+     *
+     * Flush the discovered-provider cache FIRST so CalendarPermissions is rediscovered.
+     */
+    public function update_sql_30517(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30517: '.$e->getMessage());
+
+            return ['Migration 30517 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Sync the permission catalog + re-seed built-in role grants for the Projects domain. Adds
+     * projects.view (project-scoped → readonly+) and projects.create/edit/delete (GLOBAL → manager+
+     * via an explicit DefaultRolePermissions rule; admin/owner via scope:any).
+     *
+     * This migration MUST re-seed because the matrix CHANGED (manager gains the three global
+     * projects keys). Without re-seeding, managers would not hold projects.create/edit/delete and
+     * project management would deny everyone below admin.
+     *
+     * Flush the discovered-provider cache FIRST so ProjectsPermissions is rediscovered.
+     */
+    public function update_sql_30518(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30518: '.$e->getMessage());
+
+            return ['Migration 30518 failed: '.$e->getMessage()];
         }
 
         return true;

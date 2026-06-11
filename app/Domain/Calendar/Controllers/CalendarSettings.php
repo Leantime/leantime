@@ -2,9 +2,9 @@
 
 namespace Leantime\Domain\Calendar\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,10 +41,9 @@ class CalendarSettings extends Controller
     /**
      * Display the Calendar Settings modal.
      */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         // Get external calendars for the current user
         $externalCalendars = $this->calendarService->getMyExternalCalendars((int) session('userdata.id'));
 

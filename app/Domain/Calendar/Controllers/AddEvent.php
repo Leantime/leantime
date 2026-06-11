@@ -6,11 +6,11 @@
 
 namespace Leantime\Domain\Calendar\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Support\FromFormat;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,9 +24,9 @@ class AddEvent extends Controller
     public function init(Calendar $calendarService): void
     {
         $this->calendarService = $calendarService;
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
     }
 
+    #[RequiresPermission(CalendarPermissions::CREATE)]
     public function get(array $params): Response
     {
         $values = [
@@ -41,6 +41,7 @@ class AddEvent extends Controller
         return $this->tpl->displayPartial('calendar.addEvent');
     }
 
+    #[RequiresPermission(CalendarPermissions::CREATE)]
     public function post(array $params): Response
     {
 

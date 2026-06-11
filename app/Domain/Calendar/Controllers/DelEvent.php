@@ -6,10 +6,10 @@
 
 namespace Leantime\Domain\Calendar\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,12 +23,12 @@ class DelEvent extends Controller
     public function init(CalendarService $calendarService): void
     {
         $this->calendarService = $calendarService;
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
     }
 
     /**
      * retrieves delete calendar event page data
      */
+    #[RequiresPermission(CalendarPermissions::DELETE)]
     public function get(array $params): Response
     {
         return $this->tpl->displayPartial('calendar.delEvent');
@@ -37,6 +37,7 @@ class DelEvent extends Controller
     /**
      * sets, creates, and updates edit calendar event page data
      */
+    #[RequiresPermission(CalendarPermissions::DELETE)]
     public function post(array $params): Response
     {
 

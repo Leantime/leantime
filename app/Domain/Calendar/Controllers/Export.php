@@ -2,7 +2,9 @@
 
 namespace Leantime\Domain\Calendar\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
+use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,6 +31,7 @@ class Export extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
     public function get(array $params): Response
     {
         if (isset($_GET['remove'])) {
@@ -46,6 +49,7 @@ class Export extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
     public function post(array $params): Response
     {
         if (isset($_POST['generateUrl'])) {

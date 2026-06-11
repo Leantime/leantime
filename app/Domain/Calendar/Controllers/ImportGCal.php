@@ -2,9 +2,9 @@
 
 namespace Leantime\Domain\Calendar\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,10 +25,9 @@ class ImportGCal extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(CalendarPermissions::CREATE)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $this->tpl->assign('values', [
             'url' => '',
             'name' => '',
@@ -43,10 +42,9 @@ class ImportGCal extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(CalendarPermissions::CREATE)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $values = [
             'url' => $_POST['url'] ?? '',
             'name' => $_POST['name'] ?? 'My Calendar',
