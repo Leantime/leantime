@@ -1,0 +1,144 @@
+name: Prepare Release
+
+# Dispatch with a version number to open a "Release vX.Y.Z" PR containing the
+# version bump (package.json, package-lock.json, AppSettings.php) and an
+# AI-drafted CHANGELOG.md section. The regular CI suite runs on the PR as the
+# final test gate; merging the PR triggers the Create Release workflow which
+# tags, packages, and publishes.
+#
+# Requires the RELEASE_TOKEN repo secret (fine-grained PAT with Contents +
+# Pull requests read/write). PRs opened with the default GITHUB_TOKEN would
+# not trigger CI workflows.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'New version number (e.g. 3.8.1)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  models: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ inputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Validate version
+        run: |
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version '$VERSION' is not a valid X.Y.Z version number"
+            exit 1
+          fi
+          CURRENT=$(make get-version)
+          if [ "$VERSION" = "$CURRENT" ]; then
+            echo "::error::Version $VERSION is already the current version"
+            exit 1
+          fi
+          if git rev-parse -q --verify "refs/tags/v$VERSION" > /dev/null; then
+            echo "::error::Tag v$VERSION already exists"
+            exit 1
+          fi
+
+      - name: Bump version files
+        run: |
+          npm version "$VERSION" --no-git-tag-version
+          sed -i "s/appVersion = '[^']*'/appVersion = '$VERSION'/" app/Core/Configuration/AppSettings.php
+          echo "Bumped to $(make get-version)"
+
+      - name: Collect history since last release
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 --match 'v*')
+          echo "Generating changelog for $LAST_TAG..HEAD"
+          git log "$LAST_TAG"..HEAD --no-merges --pretty='- %s' > "$RUNNER_TEMP/commits.md"
+          wc -l "$RUNNER_TEMP/commits.md"
+
+      - name: Build changelog prompt
+        run: |
+          # Most recent CHANGELOG section doubles as the style example
+          awk '/^# Version:/{n++} n==1' CHANGELOG.md > "$RUNNER_TEMP/style-example.md"
+
+          cat > "$RUNNER_TEMP/system-prompt.md" << 'SYSEOF'
+          You are the release manager for Leantime, an open source project management
+          system. You write the CHANGELOG.md section for a new release based on the
+          git commit subjects since the last release.
+
+          Format rules:
+          - Start with exactly: # Version: <version>
+          - Use these sections, in this order, and ONLY if they have content:
+            ## Highlights, ## New Features, ## Bug Fixes, ## Improvements, ## Security, ## Localization, ## Dependency Updates
+          - Highlights: at most 1-3 entries, only for genuinely notable user-facing
+            features (### subheading + a short paragraph). Most releases have none -
+            omit the section rather than inflate minor work.
+          - All other entries are single bullets: **Short Title** - one-sentence
+            user-facing description ending with the PR reference(s), e.g. (#1234)
+          - Rewrite commit subjects into user-facing language; never copy
+            conventional-commit prefixes like fix(scope): into the output.
+          - Merge multiple commits about the same change into one bullet with all
+            PR references.
+          - Group dependency bumps into ## Dependency Updates as terse bullets.
+          - Skip pure chores with no user impact (CI tweaks, code style, review
+            follow-up commits that have no PR reference).
+          - Output raw markdown only - no surrounding code fences, no commentary.
+
+          Here is the previous release's section as a style example:
+
+          SYSEOF
+          cat "$RUNNER_TEMP/style-example.md" >> "$RUNNER_TEMP/system-prompt.md"
+
+          {
+            echo "Write the CHANGELOG section for version $VERSION based on these commits:"
+            echo
+            cat "$RUNNER_TEMP/commits.md"
+          } > "$RUNNER_TEMP/prompt.md"
+
+      - name: Generate changelog section
+        id: ai
+        uses: actions/ai-inference@v1
+        with:
+          model: openai/gpt-4.1
+          system-prompt-file: ${{ runner.temp }}/system-prompt.md
+          prompt-file: ${{ runner.temp }}/prompt.md
+          max-tokens: 4000
+
+      - name: Prepend section to CHANGELOG.md
+        env:
+          AI_RESPONSE: ${{ steps.ai.outputs.response }}
+        run: |
+          printf '%s\n' "$AI_RESPONSE" | sed '/^```/d' > "$RUNNER_TEMP/new-section.md"
+          if ! head -1 "$RUNNER_TEMP/new-section.md" | grep -q "^# Version: $VERSION"; then
+            printf '# Version: %s\n\n' "$VERSION" | cat - "$RUNNER_TEMP/new-section.md" > "$RUNNER_TEMP/new-section.tmp"
+            mv "$RUNNER_TEMP/new-section.tmp" "$RUNNER_TEMP/new-section.md"
+          fi
+          { cat "$RUNNER_TEMP/new-section.md"; echo; echo '---'; echo; cat CHANGELOG.md; } > "$RUNNER_TEMP/changelog.md"
+          mv "$RUNNER_TEMP/changelog.md" CHANGELOG.md
+
+          {
+            echo "Automated release PR. Review and edit the changelog below (it ships as CHANGELOG.md and as the GitHub release notes), wait for CI, then merge - the release publishes automatically."
+            echo
+            echo '---'
+            echo
+            cat "$RUNNER_TEMP/new-section.md"
+          } > "$RUNNER_TEMP/pr-body.md"
+
+      - name: Open release PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }}
+          commit-message: 'release: bump version to ${{ inputs.version }} + changelog'
+          branch: release/v${{ inputs.version }}
+          delete-branch: true
+          base: master
+          title: 'Release v${{ inputs.version }}'
+          labels: release
+          body-path: ${{ runner.temp }}/pr-body.md
