@@ -31,6 +31,7 @@ class BlueprintsServiceTest extends TestCase
             $repo ?? $this->make(BlueprintsRepository::class),
             $registry ?? new TemplateRegistry,
             $language,
+            new \Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry,
         );
     }
 

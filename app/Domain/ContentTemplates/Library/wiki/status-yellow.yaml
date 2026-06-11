@@ -1,0 +1,14 @@
+key: "status-yellow"
+title: "t:templates.titles.yellow_status"
+description: "t:templates.titles.yellow_status_description"
+appliesTo: "wiki"
+icon: "fa-circle-exclamation"
+author: "Leantime"
+version: "1.0.0"
+license: "CC0"
+sector: "t:templates.elements"
+
+wiki:
+  articles:
+    - title: "Yellow Status"
+      content: '<span class="label label-warning">Yellow</span>'

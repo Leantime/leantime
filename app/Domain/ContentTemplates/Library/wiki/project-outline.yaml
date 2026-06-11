@@ -1,0 +1,108 @@
+key: "project-outline"
+title: "Project Outline"
+description: ""
+appliesTo: "wiki"
+icon: "fa-bullseye"
+author: "Leantime"
+version: "1.0.0"
+license: "CC0"
+sector: "t:templates.documents"
+
+wiki:
+  articles:
+    - title: "Project Outline"
+      # Author / Date placeholders are intentionally blank — the user fills
+      # them in after the template is dropped into the editor. The hardcoded
+      # version baked $author / $today into the HTML; that doesn't translate
+      # cleanly to a content-template format (the template is the same
+      # regardless of who/when applies it), so the editable affordance is the
+      # right swap.
+      content: |
+        <h1><strong>Project Outline<br /></strong></h1>
+        <p>Author: <br />
+        Date: <br />
+        Status: <span class="label label-default">Draft</span><br />
+        <table style="border-collapse: collapse; width: 100.146%; background-color: #ffffff; height: 182px;" border="1">
+        <tbody>
+        <tr style="height: 17px;">
+        <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">Why we're doing this:</span></strong></td>
+        <td style="height: 17px; width: 82.6214%;" colspan="3">&lt; insert project justification &gt;</td>
+        </tr>
+        <tr style="height: 17px;">
+        <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">What are we working on:</span></strong></td>
+        <td style="height: 17px; width: 82.6214%;" colspan="3">&lt; insert project description &gt;</td>
+        </tr>
+        <tr style="height: 46px;">
+        <td style="width: 17.3786%; height: 46px; background-color: #3598db;">
+        <p><strong><span style="color: #ffffff;">Project Objectives:</span></strong></p>
+        </td>
+        <td style="height: 46px; width: 82.6214%;" colspan="3">
+        <ul>
+        <li>Objective 1</li>
+        <li>Objective 2</li>
+        <li>Objective 3</li>
+        </ul>
+        </td>
+        </tr>
+        <tr style="height: 17px;">
+        <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">High Level Requirements:</span></strong></td>
+        <td style="height: 17px; width: 82.6214%;" colspan="3">
+        <ul>
+        <li>Requirement 1</li>
+        <li>Requirement 2</li>
+        <li>Requirement 3</li>
+        </ul>
+        </td>
+        </tr>
+        <tr style="height: 17px;">
+        <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">In Scope Work</span></strong></td>
+        <td style="height: 17px; width: 82.6214%;" colspan="3">
+        <ul>
+        <li>Item</li>
+        <li>Item</li>
+        <li>Item</li>
+        </ul>
+        </td>
+        </tr>
+        <tr style="height: 17px;">
+        <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">Out of Scope Work</span></strong></td>
+        <td style="height: 17px; width: 82.6214%;" colspan="3">
+        <ul>
+        <li>Item</li>
+        <li>Item</li>
+        <li>Item</li>
+        </ul>
+        </td>
+        </tr>
+        <tr style="height: 17px;">
+        <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">Risks &amp; Assumptions</span></strong></td>
+        <td style="height: 17px; width: 82.6214%;" colspan="3">
+        <ul>
+        <li>Risk / Assumption</li>
+        <li>Risk / Assumption</li>
+        <li>Risk / Assumption</li>
+        </ul>
+        </td>
+        </tr>
+        <tr style="height: 17px;">
+        <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">Timeline / Milestones</span></strong></td>
+        <td style="height: 17px; width: 82.6214%;" colspan="3">
+        <ul>
+        <li>Milestone — date</li>
+        <li>Milestone — date</li>
+        <li>Milestone — date</li>
+        </ul>
+        </td>
+        </tr>
+        <tr style="height: 17px;">
+        <td style="width: 17.3786%; height: 17px; background-color: #3598db;"><strong><span style="color: #ffffff;">Stakeholders</span></strong></td>
+        <td style="height: 17px; width: 82.6214%;" colspan="3">
+        <ul>
+        <li>Stakeholder — role</li>
+        <li>Stakeholder — role</li>
+        <li>Stakeholder — role</li>
+        </ul>
+        </td>
+        </tr>
+        </tbody>
+        </table></p>
