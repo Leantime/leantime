@@ -133,6 +133,29 @@ class PermissionEnforcerTest extends \Unit\TestCase
         $this->assertSame([], $calls);
     }
 
+    public function test_non_integer_project_param_is_treated_as_unresolved(): void
+    {
+        // A bare (int) cast turns the array from `projectId[]=7` into 1 and "-5" into -5, either
+        // of which would authorize against the wrong project. Such values must be treated as
+        // unresolved → deny for a mandatory param, never silently coerced.
+        config(['permissions.enforce' => true]);
+
+        foreach ([['projectId' => [7]], ['projectId' => '-5'], ['projectId' => '7abc']] as $params) {
+            $calls = [];
+            $enforcer = $this->spyEnforcer($calls, allow: true);
+
+            $threw = false;
+            try {
+                $enforcer->enforce(PermissionEnforcerFixture::class, 'paramAction', $params);
+            } catch (\Leantime\Core\Exceptions\AuthorizationException) {
+                $threw = true;
+            }
+
+            $this->assertTrue($threw, 'non-positive-integer project param must be unresolved → deny: '.json_encode($params));
+            $this->assertSame([], $calls);
+        }
+    }
+
     public function test_optional_project_param_keeps_the_session_fallback(): void
     {
         // optionalParamAction defaults projectId to null ("current project"), so an absent value
