@@ -322,6 +322,10 @@ class EventDispatcher implements Dispatcher
         if (is_array($listener) && isset($listener[0]) && is_string($listener[0])) {
             [$class, $method] = [$listener[0], $listener[1] ?? 'handle'];
 
+            if (! method_exists($class, $method)) {
+                $method = '__invoke';
+            }
+
             return [app()->make($class), $method];
         }
 

@@ -58,6 +58,20 @@ class FixtureThingListener
 }
 
 /**
+ * Fixture invokable listener (no handle() method) to cover the __invoke fallback for
+ * array-form registrations like [FixtureInvokableListener::class].
+ */
+class FixtureInvokableListener
+{
+    public static ?object $received = null;
+
+    public function __invoke(FixtureThingCreated $event): void
+    {
+        self::$received = $event;
+    }
+}
+
+/**
  * Fixture filter mirroring a migrated domain filter: payload plus typed context.
  */
 class FixtureThingsFilter implements LeantimeFilter
@@ -146,6 +160,21 @@ class ClassEventDispatchTest extends TestCase
 
         $this->assertCount(1, FixtureThingListener::$received);
         $this->assertSame(7, FixtureThingListener::$received[0]->thingId);
+    }
+
+    /**
+     * An invokable listener registered in array form ([Class::class], no handle()
+     * method) falls back to __invoke() — same as the string registration form.
+     */
+    public function test_array_form_invokable_listener_falls_back_to_invoke(): void
+    {
+        FixtureInvokableListener::$received = null;
+        EventDispatcher::add_event_listener(FixtureThingCreated::class, [FixtureInvokableListener::class]);
+
+        FixtureThingCreated::dispatch(thingId: 11);
+
+        $this->assertInstanceOf(FixtureThingCreated::class, FixtureInvokableListener::$received);
+        $this->assertSame(11, FixtureInvokableListener::$received->thingId);
     }
 
     /**
