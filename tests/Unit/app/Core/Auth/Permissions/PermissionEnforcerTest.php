@@ -89,6 +89,64 @@ class PermissionEnforcerTest extends \Unit\TestCase
 
         $this->assertSame([], $calls);
     }
+
+    public function test_mandatory_project_param_absent_fails_closed(): void
+    {
+        // paramAction declares projectIdParam:'projectId' and types it `int` (no default) — the
+        // project is mandatory. With it absent, the enforcer must NOT fall back to the session
+        // project (which would authorize the wrong project); it denies without consulting the
+        // engine. allow:true proves the denial comes from the unresolved-project path, not a
+        // negative engine answer.
+        config(['permissions.enforce' => true]);
+
+        $calls = [];
+        $enforcer = $this->spyEnforcer($calls, allow: true);
+
+        $threw = false;
+        try {
+            $enforcer->enforce(PermissionEnforcerFixture::class, 'paramAction', []);
+        } catch (\Leantime\Core\Exceptions\AuthorizationException) {
+            $threw = true;
+        }
+
+        $this->assertTrue($threw, 'an unresolvable mandatory project param must deny');
+        $this->assertSame([], $calls, 'the engine must not be consulted when the project is unresolvable');
+    }
+
+    public function test_mandatory_project_param_explicit_null_fails_closed(): void
+    {
+        // isset() was the original bug: it is false for an explicit null, so a null projectId
+        // silently fell through to the session project. A mandatory param passed null now denies.
+        config(['permissions.enforce' => true]);
+
+        $calls = [];
+        $enforcer = $this->spyEnforcer($calls, allow: true);
+
+        $threw = false;
+        try {
+            $enforcer->enforce(PermissionEnforcerFixture::class, 'paramAction', ['projectId' => null]);
+        } catch (\Leantime\Core\Exceptions\AuthorizationException) {
+            $threw = true;
+        }
+
+        $this->assertTrue($threw, 'an explicit-null mandatory project param must deny');
+        $this->assertSame([], $calls);
+    }
+
+    public function test_optional_project_param_keeps_the_session_fallback(): void
+    {
+        // optionalParamAction defaults projectId to null ("current project"), so an absent value
+        // is legitimate — the enforcer authorizes against the session project, exactly as the
+        // method itself will operate. This is what makes the poll/dashboard endpoints keep working.
+        session(['currentProject' => 7]);
+
+        $calls = [];
+        $enforcer = $this->spyEnforcer($calls);
+
+        $enforcer->enforce(PermissionEnforcerFixture::class, 'optionalParamAction', []);
+
+        $this->assertSame([['key' => 'tickets.view', 'projectId' => 7, 'forceGlobal' => false]], $calls);
+    }
 }
 
 /**
@@ -105,6 +163,11 @@ class PermissionEnforcerFixture
 
     #[RequiresPermission('tickets.view', projectIdParam: 'projectId')]
     public function paramAction(int $projectId): void {}
+
+    // Same attribute, but the project param is OPTIONAL (defaults to null) — "current project"
+    // semantics. An absent/null value must keep the session fallback, not deny.
+    #[RequiresPermission('tickets.view', projectIdParam: 'projectId')]
+    public function optionalParamAction(?int $projectId = null): void {}
 
     #[RequiresPermission('tickets.view')]
     public function sessionAction(): void {}
