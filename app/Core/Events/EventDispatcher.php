@@ -13,6 +13,8 @@ use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ReflectsClosures;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\Contracts\LeantimeEvent;
+use Leantime\Core\Events\Contracts\LeantimeFilter;
 use Leantime\Core\Routing\RouteLoader;
 
 /**
@@ -158,6 +160,15 @@ class EventDispatcher implements Dispatcher
         string $context = ''
     ): void {
 
+        // Class-based events bypass the string machinery (context building, payload
+        // wrapping) entirely: listeners on the FQCN receive the typed object, listeners
+        // on the declared legacy string names receive today's array payload.
+        if ($event instanceof LeantimeEvent) {
+            self::executeClassEventHandlers($event);
+
+            return;
+        }
+
         // Laravel events can be objects. Let's get those into the right format
         // Event comes out as string, either as class string or regular old string
         // No-op for leantime events
@@ -183,6 +194,142 @@ class EventDispatcher implements Dispatcher
 
         self::executeHandlers($matchedEvents, 'events', $event, $payload);
 
+    }
+
+    /**
+     * Executes listeners for a class-based event.
+     *
+     * Listeners registered on the event's FQCN run first (priority-sorted) and receive
+     * the bare typed event object. Then, for each declared legacy hook name, listeners
+     * registered on (or wildcard-matching) that string run through the exact same code
+     * path as string events, receiving today's array payload built from the event's
+     * public properties — existing string/wildcard listeners (plugins) keep working
+     * unchanged during the migration window.
+     */
+    private static function executeClassEventHandlers(LeantimeEvent $event): void
+    {
+        $fqcn = get_class($event);
+        $legacyHooks = $event->legacyHooks();
+
+        foreach ([$fqcn, ...$legacyHooks] as $name) {
+            if (! in_array($name, self::$available_hooks['events'])) {
+                self::$available_hooks['events'][] = $name;
+            }
+        }
+
+        $matched = self::findEventListeners($fqcn, self::$eventRegistry);
+        if (count($matched) > 0) {
+            usort($matched, fn ($a, $b) => $a['priority'] <=> $b['priority']);
+
+            try {
+                foreach ($matched as $listener) {
+                    $callable = self::resolveClassHookCallable($listener['listener']);
+                    $callable($event);
+                }
+            } catch (\TypeError $e) {
+                Log::error($e);
+            }
+        }
+
+        if (empty($legacyHooks)) {
+            return;
+        }
+
+        $legacyPayload = get_object_vars($event);
+
+        foreach ($legacyHooks as $legacyName) {
+            $matched = self::findEventListeners($legacyName, self::$eventRegistry);
+            if (count($matched) == 0) {
+                continue;
+            }
+
+            $payload = $legacyPayload;
+            $payload['leantime'] = self::defineParams($legacyPayload, $legacyName);
+            $payload['laravel'] = $payload;
+
+            self::executeHandlers($matched, 'events', $legacyName, $payload);
+        }
+    }
+
+    /**
+     * Dispatches a class-based filter, threading the payload through listeners on the
+     * FQCN first (signature: fn ($payload, LeantimeFilter $filter)), then through each
+     * declared legacy hook name where listeners keep today's
+     * fn ($payload, $availableParams) signature. Returns the final payload.
+     *
+     * Filter listeners are deliberately NOT deduplicated across name groups: threading
+     * order is semantic, and a listener registered on both the FQCN and a legacy name
+     * is a registration error that should surface, not be silently absorbed.
+     */
+    public static function dispatch_class_filter(LeantimeFilter $filter): mixed
+    {
+        $fqcn = get_class($filter);
+        $legacyHooks = $filter->legacyHooks();
+
+        foreach ([$fqcn, ...$legacyHooks] as $name) {
+            if (! in_array($name, self::$available_hooks['filters'])) {
+                self::$available_hooks['filters'][] = $name;
+            }
+        }
+
+        $payload = $filter->payload();
+
+        $matched = self::findEventListeners($fqcn, self::$filterRegistry);
+        if (count($matched) > 0) {
+            usort($matched, fn ($a, $b) => $a['priority'] <=> $b['priority']);
+
+            try {
+                foreach ($matched as $listener) {
+                    $callable = self::resolveClassHookCallable($listener['listener']);
+                    $payload = $callable($payload, $filter);
+                }
+            } catch (\TypeError $e) {
+                Log::error($e);
+            }
+        }
+
+        foreach ($legacyHooks as $legacyName) {
+            $matched = self::findEventListeners($legacyName, self::$filterRegistry);
+            if (count($matched) == 0) {
+                continue;
+            }
+
+            $availableParams = self::defineParams(get_object_vars($filter), $legacyName);
+            $payload = self::executeHandlers($matched, 'filters', $legacyName, $payload, $availableParams);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * Resolves a listener registration (closure, callable, "Class", "Class@method",
+     * [Class::class, 'method']) into a callable for class-based hooks. Class listeners
+     * are instantiated through the container so constructor DI works; the method
+     * defaults to handle(), falling back to __invoke().
+     */
+    private static function resolveClassHookCallable(mixed $listener): callable
+    {
+        if (is_string($listener) && ! function_exists($listener)) {
+            [$class, $method] = self::parseClassCallable($listener);
+
+            if (! method_exists($class, $method)) {
+                $method = '__invoke';
+            }
+
+            return [app()->make($class), $method];
+        }
+
+        if (is_array($listener) && isset($listener[0]) && is_string($listener[0])) {
+            [$class, $method] = [$listener[0], $listener[1] ?? 'handle'];
+
+            if (! method_exists($class, $method)) {
+                $method = '__invoke';
+            }
+
+            return [app()->make($class), $method];
+        }
+
+        return $listener;
     }
 
     /**
