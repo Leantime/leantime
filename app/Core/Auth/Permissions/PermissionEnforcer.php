@@ -147,12 +147,16 @@ class PermissionEnforcer
 
         $name = $attribute->projectIdParam;
 
-        // Declared param present with a concrete, non-zero value: scope to it.
-        if (array_key_exists($name, $params) && $params[$name] !== null && (int) $params[$name] !== 0) {
-            return (int) $params[$name];
+        // Declared param present and a real positive integer: scope to it. Anything else — a
+        // missing/null value, a non-numeric or non-positive string, or a non-scalar like the
+        // array from `projectId[]=7` (which a bare `(int)` cast would silently turn into 1) — is
+        // treated as unresolved and falls through to the mandatory check below.
+        $resolved = $this->positiveInt($params[$name] ?? null);
+        if ($resolved !== null) {
+            return $resolved;
         }
 
-        // Declared but absent/null/zero. Fail closed only when the method proves the project is
+        // Declared but unresolved. Fail closed only when the method proves the project is
         // mandatory; methods that default the project (e.g. poll/dashboard "current project"
         // endpoints) legitimately mean "the session project" and keep the fallback.
         if ($this->paramIsMandatory($class, $method, $name)) {
@@ -160,6 +164,26 @@ class PermissionEnforcer
         }
 
         return $this->sessionProject();
+    }
+
+    /**
+     * Coerce a request value to a positive project id, or null if it doesn't represent one.
+     * Strict on purpose — this gates authorization, so only a real int or an all-digits string
+     * counts; arrays, floats, signs, and non-numeric strings are rejected rather than cast.
+     */
+    private function positiveInt(mixed $value): ?int
+    {
+        if (is_int($value)) {
+            return $value > 0 ? $value : null;
+        }
+
+        if (is_string($value) && ctype_digit($value)) {
+            $int = (int) $value;
+
+            return $int > 0 ? $int : null;
+        }
+
+        return null;
     }
 
     /** The current session project as an int, or null when none/zero is set. */
