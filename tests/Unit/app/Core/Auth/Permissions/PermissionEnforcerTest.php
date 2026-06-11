@@ -133,14 +133,21 @@ class PermissionEnforcerTest extends \Unit\TestCase
         $this->assertSame([], $calls);
     }
 
-    public function test_non_integer_project_param_is_treated_as_unresolved(): void
+    public function test_invalid_project_param_is_treated_as_unresolved(): void
     {
-        // A bare (int) cast turns the array from `projectId[]=7` into 1 and "-5" into -5, either
-        // of which would authorize against the wrong project. Such values must be treated as
-        // unresolved → deny for a mandatory param, never silently coerced.
+        // A bare (int) cast would mis-resolve every one of these: [7] (array) → 1, '-5' → -5,
+        // '7abc' → 7, and an out-of-range digit string → PHP_INT_MAX. None name a real project,
+        // so each must be unresolved → deny for a mandatory param, never silently coerced.
         config(['permissions.enforce' => true]);
 
-        foreach ([['projectId' => [7]], ['projectId' => '-5'], ['projectId' => '7abc']] as $params) {
+        $invalid = [
+            ['projectId' => [7]],                         // non-scalar
+            ['projectId' => '-5'],                        // negative
+            ['projectId' => '7abc'],                      // non-numeric
+            ['projectId' => '999999999999999999999999'],  // overflows the platform int range
+        ];
+
+        foreach ($invalid as $params) {
             $calls = [];
             $enforcer = $this->spyEnforcer($calls, allow: true);
 

@@ -168,22 +168,22 @@ class PermissionEnforcer
 
     /**
      * Coerce a request value to a positive project id, or null if it doesn't represent one.
-     * Strict on purpose — this gates authorization, so only a real int or an all-digits string
-     * counts; arrays, floats, signs, and non-numeric strings are rejected rather than cast.
+     * Strict on purpose — this gates authorization, so anything that isn't an in-range positive
+     * integer is rejected rather than cast.
      */
     private function positiveInt(mixed $value): ?int
     {
-        if (is_int($value)) {
-            return $value > 0 ? $value : null;
+        // Only an int or a string can name a project id — reject arrays/floats/bools/null outright.
+        if (! is_int($value) && ! is_string($value)) {
+            return null;
         }
 
-        if (is_string($value) && ctype_digit($value)) {
-            $int = (int) $value;
+        // FILTER_VALIDATE_INT rejects non-numeric strings AND out-of-range values; a bare (int)
+        // cast would instead saturate a giant all-digits string to PHP_INT_MAX and treat it as a
+        // real (wrong) project id.
+        $int = filter_var($value, FILTER_VALIDATE_INT);
 
-            return $int > 0 ? $int : null;
-        }
-
-        return null;
+        return ($int !== false && $int > 0) ? $int : null;
     }
 
     /** The current session project as an int, or null when none/zero is set. */
