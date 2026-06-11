@@ -18,9 +18,11 @@ on:
         required: true
         type: string
 
+# Least privilege: branch push + PR creation use the RELEASE_TOKEN PAT, so the
+# default token only needs read access (checkout, changelog) plus models.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  pull-requests: read
   models: read
 
 jobs:
