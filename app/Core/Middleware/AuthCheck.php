@@ -125,11 +125,41 @@ class AuthCheck
             if ($this->auth->guard($guard)->check()) {
                 $this->auth->shouldUse($guard);
 
+                $this->establishApiUserSession($request);
+
                 return true;
             }
         }
 
         return new Response(json_encode(['error' => 'Unauthorized']), 401);
+    }
+
+    /**
+     * Establish the Leantime user context (`session('userdata')`) for an authenticated API request.
+     *
+     * Every API guard must leave the SAME context behind: the permission engine — and everything
+     * else — reads the user's id and role from `session('userdata')`. The x-api-key guard populates
+     * it as a side effect of {@see \Leantime\Domain\Api\Services\Api::getAPIKeyUser()}, but the
+     * Sanctum (Bearer) guard resolves the user straight from its token and never does — so the
+     * engine saw no user and denied every gated `@api` method with -32001 on Bearer requests.
+     *
+     * This makes the HTTP API auth path uniform: whichever guard authenticated, the context is
+     * built once, from the canonical user row, through the same `setApiUserSession()` builder the
+     * x-api-key path uses. Idempotent — it skips when a guard already populated `userdata`
+     * (x-api-key, or a stateful web session), so those paths are byte-for-byte untouched. Services
+     * are resolved lazily because this only runs for an authenticated API request.
+     */
+    protected function establishApiUserSession(IncomingRequest $request): void
+    {
+        if (session()->exists('userdata') || ($apiUser = $request->user()) === null) {
+            return;
+        }
+
+        $userData = app(\Leantime\Domain\Users\Services\Users::class)->getUser((int) $apiUser->id);
+
+        if (is_array($userData)) {
+            app(\Leantime\Domain\Api\Services\Api::class)->setApiUserSession($userData, true);
+        }
     }
 
     /**
