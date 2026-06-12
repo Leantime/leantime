@@ -5,7 +5,7 @@
 #   1. Copy http-client.sample.env.json -> http-client.env.json
 #   2. Edit http-client.env.json: set base-url and bearer-token
 #   3. To mint a fresh bearer (no AdvancedAuth plugin required):
-#        php bin/leantime test:create-token --email=you@example.com --quiet-output
+#        php bin/leantime auth:create-bearer-token --email=you@example.com --quiet-output
 #      Copy the output into the bearer-token env var.
 #
 # These mirror the BearerApiCest.php contract suite, which is what runs

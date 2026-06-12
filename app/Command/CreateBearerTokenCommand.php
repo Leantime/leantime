@@ -12,22 +12,30 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'test:create-token',
-    description: 'Mint a Sanctum-style Bearer token for an existing user. Plugin-independent — does not require AdvancedAuth. Intended for CI + local testing of the JSON-RPC surface under Bearer auth.',
+    name: 'auth:create-bearer-token',
+    description: 'Mint a Sanctum-style Bearer token for an existing user. Plugin-independent — does not require AdvancedAuth. CLI-only.',
 )]
-class CreateTestTokenCommand extends Command
+class CreateBearerTokenCommand extends Command
 {
     protected function configure(): void
     {
         parent::configure();
 
         $this->addOption('email', null, InputOption::VALUE_REQUIRED, 'Email of an existing user to mint a token for')
-            ->addOption('name', null, InputOption::VALUE_OPTIONAL, 'Token name (logged on the row, useful for traceability)', 'test-bearer')
-            ->addOption('quiet-output', null, InputOption::VALUE_NONE, 'Print only the token (no decoration). Useful for shell capture in CI.');
+            ->addOption('name', null, InputOption::VALUE_OPTIONAL, 'Token name (logged on the row, useful for traceability)', 'cli-issued')
+            ->addOption('quiet-output', null, InputOption::VALUE_NONE, 'Print only the token (no decoration). Useful for shell capture.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        // Hard CLI gate. The Laravel console kernel already only runs
+        // commands from CLI in practice, but a future HTTP-served
+        // Artisan::call() (or a misconfigured kernel) must not be able
+        // to mint a bearer through here. Bail before any work happens.
+        if (! app()->runningInConsole()) {
+            return Command::FAILURE;
+        }
+
         ! defined('BASE_URL') && define('BASE_URL', '');
         ! defined('CURRENT_URL') && define('CURRENT_URL', '');
 
@@ -59,7 +67,6 @@ class CreateTestTokenCommand extends Command
         }
 
         if ($input->getOption('quiet-output')) {
-            // Plain token only — pipe-safe.
             $output->write($result['token']);
 
             return Command::SUCCESS;
