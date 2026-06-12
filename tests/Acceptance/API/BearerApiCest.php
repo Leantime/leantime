@@ -42,7 +42,7 @@ class BearerApiCest
             'method' => 'leantime.rpc.Tickets.Tickets.getAllOpenUserTickets',
             'params' => new \stdClass,
             'id' => 1,
-        ]));
+        ], JSON_THROW_ON_ERROR));
         $I->seeResponseCodeIs(401);
 
         // 2) Mint a Bearer token directly in the DB — no UI flow, no AdvancedAuth plugin. A token
@@ -95,7 +95,7 @@ class BearerApiCest
             'method' => $method,
             'params' => $params,
             'id' => 1,
-        ]));
+        ], JSON_THROW_ON_ERROR));
 
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();

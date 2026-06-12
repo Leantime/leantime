@@ -132,9 +132,9 @@ class AuthCheck
                     return true;
                 }
             } catch (\Throwable $e) {
-                // A guard that can't evaluate this request type must not abort the chain
-                // (e.g. the jsonRpc guard when no api key is present) — keep trying the rest.
-                Log::warning('API auth guard "'.$guard.'" failed to evaluate the request: '.$e->getMessage());
+                // A guard that throws while evaluating this request type must not abort the chain;
+                // keep trying the others, then fall through to the Bearer / 401 handling below.
+                Log::warning('API auth guard "'.$guard.'" threw while evaluating the request', ['exception' => $e]);
 
                 continue;
             }
