@@ -1,3 +1,13 @@
+# Version: 3.9.1
+
+## Bug Fixes
+- **Bearer API Authentication** - Restored user context for Sanctum Bearer API requests, fixing a 3.9.0 regression (#3514)
+
+## Improvements
+- **API Contract Tests** - Added a Bearer-auth JSON-RPC contract test suite with a CI gate (#3513)
+
+---
+
 # Version: 3.9.0
 
 ## Highlights
