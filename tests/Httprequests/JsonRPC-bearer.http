@@ -1,0 +1,132 @@
+# Bearer-auth JSON-RPC requests — for local exploration / debugging the
+# Bearer auth path on /api/jsonrpc.
+#
+# Setup (one-time per environment):
+#   1. Copy http-client.sample.env.json -> http-client.env.json
+#   2. Edit http-client.env.json: set base-url and bearer-token
+#   3. To mint a fresh bearer (no AdvancedAuth plugin required):
+#        php bin/leantime test:create-token --email=you@example.com --quiet-output
+#      Copy the output into the bearer-token env var.
+#
+# These mirror the BearerApiCest.php contract suite, which is what runs
+# in CI on every PR. Use this file when you need to poke at the auth
+# behavior manually (different user, different project, different role)
+# without running the full Codeception harness.
+
+###
+
+# whoami — server-authoritative session resolution from Bearer
+POST {{ base-url }}/api/jsonrpc
+Authorization: Bearer {{ bearer-token }}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "leantime.rpc.Users.Users.getUser",
+  "params": {},
+  "id": 1
+}
+
+###
+
+# Projects accessible to the bearer's user
+POST {{ base-url }}/api/jsonrpc
+Authorization: Bearer {{ bearer-token }}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "leantime.rpc.Projects.Projects.getProjectsUserHasAccessTo",
+  "params": {},
+  "id": 1
+}
+
+###
+
+# Open tickets across all accessible projects
+POST {{ base-url }}/api/jsonrpc
+Authorization: Bearer {{ bearer-token }}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "leantime.rpc.Tickets.Tickets.getAllOpenUserTickets",
+  "params": {},
+  "id": 1
+}
+
+###
+
+# Get a single ticket — projectIdParam-resolved permission check.
+# This is the call that started returning -32001 in the 2026-06 deploy.
+POST {{ base-url }}/api/jsonrpc
+Authorization: Bearer {{ bearer-token }}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "leantime.rpc.Tickets.Tickets.getTicket",
+  "params": {"id": 1},
+  "id": 1
+}
+
+###
+
+# Quick-add a ticket — RPC mutation under bearer
+POST {{ base-url }}/api/jsonrpc
+Authorization: Bearer {{ bearer-token }}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "leantime.rpc.Tickets.Tickets.quickAddTicket",
+  "params": {
+    "params": {
+      "headline": "Bearer-auth manual test",
+      "projectId": 1
+    }
+  },
+  "id": 1
+}
+
+###
+
+# Get comments on a ticket — entityScoped permission check.
+# Second of the 2026-06 regression pair.
+POST {{ base-url }}/api/jsonrpc
+Authorization: Bearer {{ bearer-token }}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "leantime.rpc.Comments.Comments.getComments",
+  "params": {"module": "ticket", "moduleId": 1},
+  "id": 1
+}
+
+###
+
+# Unread notifications count
+POST {{ base-url }}/api/jsonrpc
+Authorization: Bearer {{ bearer-token }}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "leantime.rpc.Notifications.Notifications.getUnreadCount",
+  "params": {},
+  "id": 1
+}
+
+###
+
+# Missing bearer — expect 401
+POST {{ base-url }}/api/jsonrpc
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "leantime.rpc.Tickets.Tickets.getAllOpenUserTickets",
+  "params": {},
+  "id": 1
+}

@@ -126,6 +126,11 @@ acceptance-test-ci: build-dev
 	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept build
 	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run Acceptance --steps
 
+bearer-api-test-ci: build-dev
+	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml up --detach --build --remove-orphans
+	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept build
+	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run Acceptance --group bearer-api --steps
+
 codesniffer:
 	./vendor/squizlabs/php_codesniffer/bin/phpcs app -d memory_limit=1048M
 

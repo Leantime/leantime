@@ -1,0 +1,36 @@
+name: API Tests (Bearer auth)
+
+# Sibling to acceptancetests.yml. Exists because the JSON-RPC endpoint
+# accepts three auth modes (session, x-api-key, Bearer) and ApiCest only
+# exercises x-api-key. Bearer is the mode mobile + AdvancedAuth integrators
+# hit, and a 2026-06 permission-engine deploy silently broke it for every
+# gated read with no CI signal. This workflow closes that gap.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master", "*.*-dev" ]
+  pull_request:
+    branches: [ "master", "*.*-dev" ]
+
+jobs:
+  bearer-api:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: redis, gd, ldap, mbstring, pdo_mysql, zip, bcmath, exif, pcntl
+
+      - name: Run Bearer API Tests
+        run: make bearer-api-test-ci
+
+      - name: Store screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: bearer-api-test
+          path: tests/_output
