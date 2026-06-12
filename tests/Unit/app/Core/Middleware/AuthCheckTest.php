@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\app\Core\Middleware;
+namespace Unit\app\Core\Middleware;
 
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Middleware\AuthCheck;
