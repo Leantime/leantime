@@ -146,13 +146,20 @@ class AuthCheck
         // token store directly (the same path the McpServer + AuthUser provider use), so Bearer
         // auth works for the mobile app and AdvancedAuth integrators independent of Sanctum's
         // token format or the plugin. getUserByToken enforces expiry and returns the user row.
-        if (! empty($bearer = $request->bearerToken())) {
+        // Use ApiRequest::getBearerToken(), not Laravel's $request->bearerToken(): the latter only
+        // reads the plain `Authorization` header, which Apache does not expose to PHP's header bag
+        // here (it lands in HTTP_AUTHORIZATION / REDIRECT_HTTP_AUTHORIZATION). getBearerToken()
+        // checks those variants, so this fires where bearerToken() silently returned null.
+        $bearer = method_exists($request, 'getBearerToken') ? $request->getBearerToken() : $request->bearerToken();
+
+        if (! empty($bearer)) {
             $user = app(\Leantime\Domain\Auth\Services\Auth::class)->getUserByToken($bearer);
 
             if (is_array($user) && ! empty($user['id'])) {
-                // Authenticate the request for downstream auth()/$request->user() reads, and
-                // establish the Leantime user context the permission engine reads.
-                $request->setUserResolver(fn () => (object) $user);
+                // Establish the Leantime user context the permission engine (and the rest of the
+                // app) reads — session('userdata'). Deliberately NOT setting a request user
+                // resolver: leaving $request->user() null lets AuthenticateSession bail instead of
+                // calling viaRemember() on the non-session WebGuard, matching the x-api-key path.
                 app(\Leantime\Domain\Api\Services\Api::class)->setApiUserSession($user, true);
 
                 return true;
