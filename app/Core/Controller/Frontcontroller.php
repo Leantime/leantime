@@ -242,8 +242,21 @@ class Frontcontroller
         $actionPath = $moduleName.'\\'.$controllerType.'\\'.$actionName;
 
         if ($this->config->debug == false) {
-            if (Cache::store('installation')->has('routes.'.$routepath.'.'.$methodNameLower)) {
-                return Cache::store('installation')->get('routes.'.$routepath.'.'.$methodNameLower);
+            $cachedRoute = Cache::store('installation')->get('routes.'.$routepath.'.'.$methodNameLower);
+
+            // Cached routes can outlive a deploy (e.g. a controller's run() replaced by get()/post()).
+            // Only trust the cache if the class and method still exist; otherwise drop it and re-resolve.
+            if (
+                is_array($cachedRoute)
+                && isset($cachedRoute['class'], $cachedRoute['method'])
+                && class_exists($cachedRoute['class'])
+                && method_exists($cachedRoute['class'], $cachedRoute['method'])
+            ) {
+                return $cachedRoute;
+            }
+
+            if ($cachedRoute !== null) {
+                Cache::store('installation')->forget('routes.'.$routepath.'.'.$methodNameLower);
             }
         }
 
