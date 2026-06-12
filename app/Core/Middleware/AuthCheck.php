@@ -5,6 +5,7 @@ namespace Leantime\Core\Middleware;
 use Closure;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
@@ -122,10 +123,37 @@ class AuthCheck
     protected function authenticateApi($request, array $guards)
     {
         foreach ($guards as $guard) {
-            if ($this->auth->guard($guard)->check()) {
-                $this->auth->shouldUse($guard);
+            try {
+                if ($this->auth->guard($guard)->check()) {
+                    $this->auth->shouldUse($guard);
 
-                $this->establishApiUserSession($request);
+                    $this->establishApiUserSession($request);
+
+                    return true;
+                }
+            } catch (\Throwable $e) {
+                // A guard that can't evaluate this request type must not abort the chain
+                // (e.g. the jsonRpc guard when no api key is present) — keep trying the rest.
+                Log::warning('API auth guard "'.$guard.'" failed to evaluate the request: '.$e->getMessage());
+
+                continue;
+            }
+        }
+
+        // Bearer / personal-access-token fallback. Leantime mints plain Str::random tokens
+        // (sha256-hashed in zp_access_tokens) — NOT Sanctum's {id}|{plaintext} format — so
+        // Sanctum's guard never resolves them and Bearer auth 401s. Validate against the core
+        // token store directly (the same path the McpServer + AuthUser provider use), so Bearer
+        // auth works for the mobile app and AdvancedAuth integrators independent of Sanctum's
+        // token format or the plugin. getUserByToken enforces expiry and returns the user row.
+        if (! empty($bearer = $request->bearerToken())) {
+            $user = app(\Leantime\Domain\Auth\Services\Auth::class)->getUserByToken($bearer);
+
+            if (is_array($user) && ! empty($user['id'])) {
+                // Authenticate the request for downstream auth()/$request->user() reads, and
+                // establish the Leantime user context the permission engine reads.
+                $request->setUserResolver(fn () => (object) $user);
+                app(\Leantime\Domain\Api\Services\Api::class)->setApiUserSession($user, true);
 
                 return true;
             }

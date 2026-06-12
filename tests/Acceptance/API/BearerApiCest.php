@@ -128,12 +128,15 @@ class BearerApiCest
     public function missingBearerReturns401(AcceptanceTester $I)
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
-        $I->sendPost('/api/jsonrpc', [
+        // Send a real JSON string — passing an array with a stdClass value makes Codeception's
+        // REST module form-encode the body (and choke on the stdClass), never reaching the
+        // JSON-RPC endpoint as JSON.
+        $I->sendPost('/api/jsonrpc', json_encode([
             'jsonrpc' => '2.0',
             'method' => 'leantime.rpc.Tickets.Tickets.getAllOpenUserTickets',
             'params' => new \stdClass,
             'id' => 1,
-        ]);
+        ]));
 
         $I->seeResponseCodeIs(401);
     }
@@ -147,12 +150,14 @@ class BearerApiCest
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->haveHttpHeader('Authorization', 'Bearer '.$this->bearerToken);
 
-        $I->sendPost('/api/jsonrpc', [
+        // JSON string body (not an array) — see missingBearerReturns401: an array body with a
+        // stdClass param gets form-encoded and never arrives as JSON-RPC.
+        $I->sendPost('/api/jsonrpc', json_encode([
             'jsonrpc' => '2.0',
             'method' => $method,
             'params' => $params,
             'id' => 1,
-        ]);
+        ]));
 
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
