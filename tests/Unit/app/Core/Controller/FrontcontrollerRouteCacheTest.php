@@ -23,7 +23,8 @@ class FrontcontrollerRouteCacheTest extends TestCase
     {
         parent::setUp();
 
-        // Route caching is skipped entirely when debug is on.
+        // The cached-route read path is only taken when debug is off (writes happen
+        // regardless), so the validation under test requires debug to be disabled.
         config(['debug' => false]);
     }
 
