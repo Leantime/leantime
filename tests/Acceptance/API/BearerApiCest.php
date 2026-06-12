@@ -6,6 +6,7 @@ use Codeception\Attribute\Depends;
 use Codeception\Attribute\Group;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
 use Leantime\Domain\Users\Repositories\Users;
+use PHPUnit\Framework\Assert;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Install;
 
@@ -53,13 +54,13 @@ class BearerApiCest
     {
         $usersRepo = app()->make(Users::class);
         $user = $usersRepo->getUserByEmail('test@leantime.io');
-        $I->assertNotEmpty($user['id'] ?? null, 'Test user not found after install');
+        Assert::assertNotEmpty($user['id'] ?? null, 'Test user not found after install');
 
         $tokenRepo = app()->make(AccessTokenRepository::class);
         $minted = $tokenRepo->createToken((int) $user['id'], 'bearer-api-cest');
 
         $this->bearerToken = $minted['token'];
-        $I->assertNotEmpty($this->bearerToken, 'Token mint returned empty string');
+        Assert::assertNotEmpty($this->bearerToken, 'Token mint returned empty string');
     }
 
     #[Group('bearer-api')]
@@ -97,7 +98,7 @@ class BearerApiCest
             ],
         ]);
         $newId = is_array($created) && isset($created['result']) ? $created['result'] : null;
-        $I->assertIsInt($newId, 'quickAddTicket should return an int id');
+        Assert::assertIsInt($newId, 'quickAddTicket should return an int id');
 
         $this->assertRpcSucceeds($I, 'leantime.rpc.Tickets.Tickets.getTicket', ['id' => $newId]);
     }
@@ -173,7 +174,7 @@ class BearerApiCest
         $body = $this->rpc($I, $method, $params);
 
         $code = $body['error']['code'] ?? null;
-        $I->assertNotSame(
+        Assert::assertNotSame(
             -32001,
             $code,
             sprintf(
