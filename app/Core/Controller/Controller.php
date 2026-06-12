@@ -2,7 +2,7 @@
 
 namespace Leantime\Core\Controller;
 
-use http\Exception\BadMethodCallException;
+use BadMethodCallException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
