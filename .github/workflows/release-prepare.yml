@@ -6,9 +6,10 @@ name: Prepare Release
 # final test gate; merging the PR triggers the Create Release workflow which
 # tags, packages, and publishes.
 #
-# Requires the RELEASE_TOKEN repo secret (fine-grained PAT with Contents +
-# Pull requests read/write). PRs opened with the default GITHUB_TOKEN would
-# not trigger CI workflows.
+# Requires two repo secrets:
+# - RELEASE_TOKEN: fine-grained PAT with Contents + Pull requests read/write.
+#   PRs opened with the default GITHUB_TOKEN would not trigger CI workflows.
+# - ANTHROPIC_API_KEY: Claude API key used to draft the changelog section.
 
 on:
   workflow_dispatch:
@@ -19,11 +20,10 @@ on:
         type: string
 
 # Least privilege: branch push + PR creation use the RELEASE_TOKEN PAT, so the
-# default token only needs read access (checkout, changelog) plus models.
+# default token only needs read access (checkout, changelog).
 permissions:
   contents: read
   pull-requests: read
-  models: read
 
 jobs:
   prepare:
@@ -105,19 +105,47 @@ jobs:
           } > "$RUNNER_TEMP/prompt.md"
 
       - name: Generate changelog section
-        id: ai
-        uses: actions/ai-inference@v1
-        with:
-          model: openai/gpt-4.1
-          system-prompt-file: ${{ runner.temp }}/system-prompt.md
-          prompt-file: ${{ runner.temp }}/prompt.md
-          max-tokens: 4000
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::error::ANTHROPIC_API_KEY secret is not set"
+            exit 1
+          fi
+
+          jq -n \
+            --rawfile system "$RUNNER_TEMP/system-prompt.md" \
+            --rawfile prompt "$RUNNER_TEMP/prompt.md" \
+            '{
+              model: "claude-opus-4-8",
+              max_tokens: 8000,
+              thinking: {type: "adaptive"},
+              system: $system,
+              messages: [{role: "user", content: $prompt}]
+            }' > "$RUNNER_TEMP/request.json"
+
+          if ! curl -sS --fail-with-body --max-time 600 https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "content-type: application/json" \
+            -d @"$RUNNER_TEMP/request.json" > "$RUNNER_TEMP/response.json"; then
+            echo "::error::Anthropic API request failed"
+            cat "$RUNNER_TEMP/response.json"
+            exit 1
+          fi
+
+          # Adaptive thinking responses interleave thinking blocks - keep text blocks only
+          jq -r '[.content[] | select(.type == "text") | .text] | join("\n")' \
+            "$RUNNER_TEMP/response.json" > "$RUNNER_TEMP/ai-response.md"
+
+          if ! [ -s "$RUNNER_TEMP/ai-response.md" ]; then
+            echo "::error::Empty changelog from the API (stop_reason: $(jq -r '.stop_reason' "$RUNNER_TEMP/response.json"))"
+            exit 1
+          fi
 
       - name: Prepend section to CHANGELOG.md
-        env:
-          AI_RESPONSE: ${{ steps.ai.outputs.response }}
         run: |
-          printf '%s\n' "$AI_RESPONSE" | sed '/^```/d' > "$RUNNER_TEMP/new-section.md"
+          sed '/^```/d' "$RUNNER_TEMP/ai-response.md" > "$RUNNER_TEMP/new-section.md"
           if ! head -1 "$RUNNER_TEMP/new-section.md" | grep -q "^# Version: $VERSION"; then
             printf '# Version: %s\n\n' "$VERSION" | cat - "$RUNNER_TEMP/new-section.md" > "$RUNNER_TEMP/new-section.tmp"
             mv "$RUNNER_TEMP/new-section.tmp" "$RUNNER_TEMP/new-section.md"
