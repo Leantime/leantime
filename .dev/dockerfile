@@ -48,9 +48,12 @@ RUN docker-php-ext-install \
     opcache \
     ldap \
     zip
-# zip is always installed above; xdebug/redis only if pecl was reachable — enable them
-# best-effort so a pecl outage doesn't fail the build.
-RUN docker-php-ext-enable zip && (docker-php-ext-enable xdebug redis || echo "xdebug/redis not installed, skipping enable")
+# zip is always installed above; xdebug/redis only if pecl was reachable. Enable each one
+# independently and best-effort, so a missing extension (partial pecl outage) doesn't prevent
+# enabling the one that IS present.
+RUN docker-php-ext-enable zip \
+ && (docker-php-ext-enable xdebug || echo "xdebug not installed, skipping enable") \
+ && (docker-php-ext-enable redis || echo "redis not installed, skipping enable")
 
 COPY ./dev-apache-site.conf /etc/apache2/sites-enabled/000-default.conf
 
