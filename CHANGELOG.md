@@ -1,3 +1,11 @@
+# Version: 3.9.2
+
+## Bug Fixes
+- **Route Caching** - Automatically recovers from stale route cache and corrects an invalid exception import to prevent routing errors (#3523)
+- **Bearer/PAT Authentication** - Fixed Bearer and personal access token authentication by validating against the core token store (#3522)
+
+---
+
 # Version: 3.9.1
 
 ## Bug Fixes
