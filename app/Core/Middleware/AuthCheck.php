@@ -134,7 +134,10 @@ class AuthCheck
             } catch (\Throwable $e) {
                 // A guard that throws while evaluating this request type must not abort the chain;
                 // keep trying the others, then fall through to the Bearer / 401 handling below.
-                Log::warning('API auth guard "'.$guard.'" threw while evaluating the request', ['exception' => $e]);
+                // Logged at debug, not warning: a misconfigured/disabled guard would throw on
+                // every API request, so warning-level here would flood production logs for a
+                // condition we recover from cleanly. Debug keeps it available when investigating.
+                Log::debug('API auth guard "'.$guard.'" threw while evaluating the request', ['exception' => $e]);
 
                 continue;
             }
