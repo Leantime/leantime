@@ -35,8 +35,10 @@ class TicketsCest
         $I->waitForElementClickable('.saveTicketBtn', 120);
         $I->clickWithRetry('.saveTicketBtn');
         $I->waitForElement('.growl', 120);
+        // Match by headline, not a hardcoded auto-increment id: the id depends on how many
+        // tickets earlier Cests created, so any change in suite composition (e.g. BearerApiCest
+        // creating a ticket) would shift it. Headline keeps this order-independent.
         $I->seeInDatabase('zp_tickets', [
-            'id' => 10,
             'headline' => 'Test Ticket',
             'description like' => '%<p>Test Description</p>%',
         ]);
@@ -48,7 +50,11 @@ class TicketsCest
     {
         $I->wantTo('Edit a ticket');
 
-        $I->amOnPage('/tickets/showKanban#/tickets/showTicket/10');
+        // Resolve the ticket created by createTicket() by headline rather than a hardcoded id,
+        // so this is independent of how many tickets other Cests created.
+        $ticketId = $I->grabFromDatabase('zp_tickets', 'id', ['headline' => 'Test Ticket']);
+
+        $I->amOnPage('/tickets/showKanban#/tickets/showTicket/'.$ticketId);
         // Currently (and only in tests) the editor is not loaded when clicked on less the page is reloaded first.
         $I->reloadPage();
         $I->waitForElementVisible('.main-title-input', 120);
@@ -61,7 +67,7 @@ class TicketsCest
         $I->waitForElement('.growl', 120);
         $I->wait(2);
         $I->seeInDatabase('zp_tickets', [
-            'id' => 10,
+            'id' => $ticketId,
             'headline' => 'Test Ticket',
             'description like' => '%Test Description Edited%',
         ]);

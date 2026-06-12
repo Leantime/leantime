@@ -5,6 +5,7 @@ namespace Leantime\Core\Middleware;
 use Closure;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
@@ -122,10 +123,47 @@ class AuthCheck
     protected function authenticateApi($request, array $guards)
     {
         foreach ($guards as $guard) {
-            if ($this->auth->guard($guard)->check()) {
-                $this->auth->shouldUse($guard);
+            try {
+                if ($this->auth->guard($guard)->check()) {
+                    $this->auth->shouldUse($guard);
 
-                $this->establishApiUserSession($request);
+                    $this->establishApiUserSession($request);
+
+                    return true;
+                }
+            } catch (\Throwable $e) {
+                // A guard that throws while evaluating this request type must not abort the chain;
+                // keep trying the others, then fall through to the Bearer / 401 handling below.
+                // Logged at debug, not warning: a misconfigured/disabled guard would throw on
+                // every API request, so warning-level here would flood production logs for a
+                // condition we recover from cleanly. Debug keeps it available when investigating.
+                Log::debug('API auth guard "'.$guard.'" threw while evaluating the request', ['exception' => $e]);
+
+                continue;
+            }
+        }
+
+        // Bearer / personal-access-token fallback. Leantime mints plain Str::random tokens
+        // (sha256-hashed in zp_access_tokens) — NOT Sanctum's {id}|{plaintext} format — so
+        // Sanctum's guard never resolves them and Bearer auth 401s. Validate against the core
+        // token store directly (the same path the McpServer + AuthUser provider use), so Bearer
+        // auth works for the mobile app and AdvancedAuth integrators independent of Sanctum's
+        // token format or the plugin. getUserByToken enforces expiry and returns the user row.
+        // Use ApiRequest::getBearerToken(), not Laravel's $request->bearerToken(): the latter only
+        // reads the plain `Authorization` header, which Apache does not expose to PHP's header bag
+        // here (it lands in HTTP_AUTHORIZATION / REDIRECT_HTTP_AUTHORIZATION). getBearerToken()
+        // checks those variants, so this fires where bearerToken() silently returned null.
+        $bearer = method_exists($request, 'getBearerToken') ? $request->getBearerToken() : $request->bearerToken();
+
+        if (! empty($bearer)) {
+            $user = app(\Leantime\Domain\Auth\Services\Auth::class)->getUserByToken($bearer);
+
+            if (is_array($user) && ! empty($user['id'])) {
+                // Establish the Leantime user context the permission engine (and the rest of the
+                // app) reads — session('userdata'). Deliberately NOT setting a request user
+                // resolver: leaving $request->user() null lets AuthenticateSession bail instead of
+                // calling viaRemember() on the non-session WebGuard, matching the x-api-key path.
+                app(\Leantime\Domain\Api\Services\Api::class)->setApiUserSession($user, true);
 
                 return true;
             }
