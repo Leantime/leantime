@@ -31,6 +31,14 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha || github.ref }}
 
+      # Same PHP setup as Makefile CI - the runner's stock ext-redis (5.3.7)
+      # conflicts with symfony/cache >= 7.4, which requires ext-redis >= 6.1.
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: redis, gd, ldap, mbstring, pdo_mysql, zip, bcmath, exif, pcntl
+
       - name: version
         run: echo "version=$(make get-version)" >> $GITHUB_OUTPUT
         id: version
