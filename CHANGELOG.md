@@ -1,7 +1,11 @@
 # Version: 3.9.3
 
 ## Bug Fixes
-- **Bearer Authentication** - Resolved a Bearer token error (-32001) by storing the role name instead of a raw integer in the Sanctum-guard session (#3525)
+- **Bearer Authentication** - Resolved a Bearer token error (-32001) that denied every permission-gated API method for mobile and token-based integrations. The Sanctum-guard session stored the raw role integer instead of the role name the permission engine expects (#3525)
+
+## Improvements
+- **Unified Session Handling** - All authentication paths (web login, API key, and Bearer token) now build the user session through a single factory, so the role and two-factor state can no longer diverge between them. This also makes two-factor handling consistent for token-based authentication and adds clearer diagnostics when an unresolvable role is encountered (#3526)
+- **API Auth Test Coverage** - The Bearer JSON-RPC contract tests now run through the real server auth path and cover non-manager roles, catching authorization regressions for non-admin users that owner-only testing missed (#3526)
 
 ---
 
