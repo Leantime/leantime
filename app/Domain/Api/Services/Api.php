@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Api\Contracts\StaticAssetType;
 use Leantime\Domain\Api\Repositories\Api as ApiRepository;
-use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\UserSessionBuilder;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -94,28 +94,16 @@ class Api
      */
     public function setApiUserSession(array $user, bool $isExternalAuth = false)
     {
-
-        $currentUser = [
-            'id' => (int) $user['id'],
-            'name' => strip_tags($user['firstname']),
-            'profileId' => $user['profileId'],
-            'mail' => filter_var($user['username'], FILTER_SANITIZE_EMAIL),
-            'clientId' => $user['clientId'],
-            'role' => Roles::getRoleString($user['role']),
-            'settings' => $user['settings'] ? safe_unserialize($user['settings'], []) : [],
-            'twoFAEnabled' => $user['twoFAEnabled'] ?? false,
-            'twoFAVerified' => false,
-            'twoFASecret' => $user['twoFASecret'] ?? '',
-            'isExternalAuth' => $isExternalAuth,
-            'createdOn' => ! empty($user['createdOn']) ? dtHelper()->parseDbDateTime($user['createdOn']) : dtHelper()->userNow(),
-            'modified' => ! empty($user['modified']) ? dtHelper()->parseDbDateTime($user['modified']) : dtHelper()->userNow(),
-        ];
+        // x-api-key (and Bearer fallback) session. twoFAVerified: true — like the Sanctum-token
+        // path, an API token is the strong credential and no interactive 2FA is possible (this
+        // was previously false, diverging from the AuthUser/Bearer builder). Built via the shared
+        // factory so role + every field stay identical across all auth paths.
+        $currentUser = UserSessionBuilder::build($user, isExternalAuth: $isExternalAuth, twoFAVerified: true);
 
         $currentUser = self::dispatch_filter('user_session_vars', $currentUser);
 
         // Session handler for api is array
         session(['userdata' => $currentUser]);
-
     }
 
     /**

@@ -5,7 +5,6 @@ namespace Leantime\Domain\Auth\Services;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Laravel\Sanctum\HasApiTokens;
-use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 
 class AuthUser implements UserProvider
@@ -100,27 +99,9 @@ class AuthUser implements UserProvider
 
     protected function setUserSession($user)
     {
-        $currentUser = [
-            'id' => (int) $user['id'],
-            'name' => strip_tags($user['firstname']),
-            'profileId' => $user['profileId'],
-            'mail' => filter_var($user['username'], FILTER_SANITIZE_EMAIL),
-            'clientId' => $user['clientId'],
-            // Store the role NAME string (e.g. "owner"), not the raw DB int ("50"). The permission
-            // engine's getRoleToCheck() validates the session role against Roles::getRoles() (the
-            // name list), so a raw int resolves to false and denies every #[RequiresPermission]
-            // method. The other two userdata builders (Api::setApiUserSession, Auth::setUserSession)
-            // already convert it; this is the Sanctum-guard path and must match them.
-            'role' => Roles::getRoleString($user['role']),
-            'settings' => $user['settings'] ? safe_unserialize($user['settings'], []) : [],
-            'twoFAEnabled' => $user['twoFAEnabled'] ?? false,
-            'twoFAVerified' => true, // Auto-verify for API tokens
-            'twoFASecret' => $user['twoFASecret'] ?? '',
-            'isExternalAuth' => false,
-            'createdOn' => ! empty($user['createdOn']) ? dtHelper()->parseDbDateTime($user['createdOn']) : dtHelper()->userNow(),
-            'modified' => ! empty($user['modified']) ? dtHelper()->parseDbDateTime($user['modified']) : dtHelper()->userNow(),
-        ];
-
-        session(['userdata' => $currentUser]);
+        // Sanctum/Bearer-token session. twoFAVerified: true — the token is the strong credential
+        // and no interactive 2FA is possible. Built via the shared factory so role (NAME string,
+        // not raw int) and every other field stay identical to the web + x-api-key paths.
+        session(['userdata' => UserSessionBuilder::build($user, isExternalAuth: false, twoFAVerified: true)]);
     }
 }
