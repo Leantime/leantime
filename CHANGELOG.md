@@ -1,3 +1,10 @@
+# Version: 3.9.3
+
+## Bug Fixes
+- **Bearer Authentication** - Resolved a Bearer token error (-32001) by storing the role name instead of a raw integer in the Sanctum-guard session (#3525)
+
+---
+
 # Version: 3.9.2
 
 ## Bug Fixes
