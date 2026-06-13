@@ -15,11 +15,18 @@ use Tests\Support\Page\Acceptance\Install;
  * path is what the mobile app + any AdvancedAuth integrator hits, and a permission-engine deploy in
  * 2026-06 silently broke it (every gated read 401'd) without CI noticing.
  *
- * It is ONE test method on purpose: the minted token lives in zp_access_tokens, and the Db module
- * deletes haveInDatabase() rows after each test — so a multi-method #[Depends] chain would lose the
- * token between the mint and the assertions. Keeping everything in one test keeps the token alive
- * for every call. Each authed call asserts 200, JSON, and NOT a -32001 permission denial — that
- * last assertion is the regression gate.
+ * Each test is self-contained: the minted token lives in zp_access_tokens and the Db module deletes
+ * haveInDatabase() rows after each test, so a method keeps everything it needs alive within itself
+ * (a multi-method #[Depends] chain would lose the token between the mint and the assertions). Each
+ * authed call asserts 200, JSON, and NOT a -32001 permission denial — that last assertion is the
+ * regression gate.
+ *
+ * Two scenarios:
+ *  - bearerAuthHonorsGatedReads — the OWNER (role 50). Owner short-circuits project-role resolution.
+ *  - nonManagerBearerHonorsProjectScopedReads — an EDITOR (role 20). Sub-manager roles run a wholly
+ *    different authorization path (getProjectRole + isUserAssignedToProject + a resolved projectId),
+ *    which owner-only testing never exercises. This is the path that would silently break for real
+ *    non-admin mobile users.
  */
 class BearerApiCest
 {
@@ -80,6 +87,49 @@ class BearerApiCest
 
         // 5) Entity-scoped comments resolve the project from (module, moduleId).
         $this->assertRpcSucceeds($I, 'leantime.rpc.Comments.Comments.getComments', ['module' => 'ticket', 'moduleId' => 1]);
+    }
+
+    #[Group('bearer-api')]
+    public function nonManagerBearerHonorsProjectScopedReads(AcceptanceTester $I)
+    {
+        // A non-manager (editor, role 20) assigned to a project. Unlike the owner, this role does
+        // NOT short-circuit effectiveRoleForProject() — it exercises getProjectRole() +
+        // isUserAssignedToProject() + a resolved project role over Bearer. That path only works
+        // when the session role context is correctly established (the regression), so this is the
+        // guard for "works for the owner but -32001s for real non-admin users."
+        $ownerProjectId = (int) $I->grabFromDatabase('zp_projects', 'id', ['name' => 'My Project']);
+        Assert::assertNotEmpty($ownerProjectId, 'Seed project not found after install');
+
+        $editorId = (int) $I->haveInDatabase('zp_user', [
+            'firstname' => 'Ed',
+            'lastname' => 'Itor',
+            'username' => 'editor@leantime.io',
+            'password' => 'x',
+            'role' => '20',
+            'status' => 'A',
+            'createdOn' => date('Y-m-d H:i:s'),
+        ]);
+        $I->haveInDatabase('zp_relationuserproject', [
+            'userId' => $editorId,
+            'projectId' => $ownerProjectId,
+            'projectRole' => '',
+        ]);
+
+        $this->bearerToken = bin2hex(random_bytes(20));
+        $I->haveInDatabase('zp_access_tokens', [
+            'tokenable_type' => 'Leantime\\Domain\\Auth\\Services\\Auth',
+            'tokenable_id' => $editorId,
+            'name' => 'bearer-api-cest-editor',
+            'token' => hash('sha256', $this->bearerToken),
+            'abilities' => json_encode(['*']),
+            'created_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        // Cross-project "my work" read (no projectId) + a project-scoped read by id, both as the
+        // editor over Bearer. Must resolve (200, no -32001).
+        $this->assertRpcSucceeds($I, 'leantime.rpc.Tickets.Tickets.getAllOpenUserTickets', new \stdClass);
+        $this->assertRpcSucceeds($I, 'leantime.rpc.Projects.Projects.getProject', ['id' => $ownerProjectId]);
+        $this->assertRpcSucceeds($I, 'leantime.rpc.Projects.Projects.getProjectProgress', ['projectId' => $ownerProjectId]);
     }
 
     /** POST /api/jsonrpc with the test bearer + method, return the decoded body. */
