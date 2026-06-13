@@ -5,6 +5,7 @@ namespace Leantime\Domain\Auth\Services;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Laravel\Sanctum\HasApiTokens;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 
 class AuthUser implements UserProvider
@@ -105,7 +106,12 @@ class AuthUser implements UserProvider
             'profileId' => $user['profileId'],
             'mail' => filter_var($user['username'], FILTER_SANITIZE_EMAIL),
             'clientId' => $user['clientId'],
-            'role' => $user['role'],
+            // Store the role NAME string (e.g. "owner"), not the raw DB int ("50"). The permission
+            // engine's getRoleToCheck() validates the session role against Roles::getRoles() (the
+            // name list), so a raw int resolves to false and denies every #[RequiresPermission]
+            // method. The other two userdata builders (Api::setApiUserSession, Auth::setUserSession)
+            // already convert it; this is the Sanctum-guard path and must match them.
+            'role' => Roles::getRoleString($user['role']),
             'settings' => $user['settings'] ? safe_unserialize($user['settings'], []) : [],
             'twoFAEnabled' => $user['twoFAEnabled'] ?? false,
             'twoFAVerified' => true, // Auto-verify for API tokens
