@@ -87,6 +87,25 @@ class BearerApiCest
 
         // 5) Entity-scoped comments resolve the project from (module, moduleId).
         $this->assertRpcSucceeds($I, 'leantime.rpc.Comments.Comments.getComments', ['module' => 'ticket', 'moduleId' => 1]);
+
+        // 6) Session-scoped mobile endpoints: no userId param, the caller is resolved from the
+        //    token. These previously 404'd on mobile because the userId-taking originals are
+        //    deliberately NOT @api (IDOR guard); the session-scoped siblings are the fix.
+        //    getInbox is the inbox list (getAllNotifications stays non-@api — it takes a $userId).
+        $inbox = $this->rpc($I, 'leantime.rpc.Notifications.Notifications.getInbox', new \stdClass);
+        Assert::assertArrayNotHasKey('error', $inbox, 'getInbox must be exposed + session-scoped: '.json_encode($inbox));
+        Assert::assertIsArray($inbox['result'] ?? null, 'getInbox should return an array: '.json_encode($inbox));
+
+        //    getExternalCalendarEvents (subscribed iCal feeds) is already session-scoped; it only
+        //    lacked the @api tag. No external calendars on a fresh install => an empty array.
+        $extEvents = $this->rpc($I, 'leantime.rpc.Calendar.Calendar.getExternalCalendarEvents', new \stdClass);
+        Assert::assertArrayNotHasKey('error', $extEvents, 'getExternalCalendarEvents must be exposed: '.json_encode($extEvents));
+        Assert::assertIsArray($extEvents['result'] ?? null, 'getExternalCalendarEvents should return an array: '.json_encode($extEvents));
+
+        //    getICalUrl is now exposed too. It legitimately errors when the user has no iCal secret
+        //    configured yet, so assert only that it is FOUND (not -32601 method-not-found).
+        $icalUrl = $this->rpc($I, 'leantime.rpc.Calendar.Calendar.getICalUrl', new \stdClass);
+        Assert::assertNotSame(-32601, $icalUrl['error']['code'] ?? null, 'getICalUrl must be exposed via @api: '.json_encode($icalUrl));
     }
 
     #[Group('bearer-api')]
@@ -147,6 +166,42 @@ class BearerApiCest
         $done = $this->rpc($I, 'leantime.rpc.Tickets.Tickets.markTicketDone', ['id' => $assignedTicketId]);
         Assert::assertArrayNotHasKey('error', $done, 'markTicketDone must be exposed + authorized: '.json_encode($done));
         Assert::assertTrue($done['result'] ?? false, 'markTicketDone should return true: '.json_encode($done));
+
+        // getMyCalendar is the session-scoped calendar feed (getCalendar itself trusts a userId and
+        // stays non-@api). Its calendar.view gate is project-scoped, but on an API call there is no
+        // session project, so it resolves capability-only against the effective role — which a
+        // non-manager editor holds (calendar.view is readonly+). This is the exact path that would
+        // -32001 if a project-scoped gate fell closed on a null project, so prove it resolves for a
+        // non-manager, not just the owner.
+        $cal = $this->rpc($I, 'leantime.rpc.Calendar.Calendar.getMyCalendar', new \stdClass);
+        Assert::assertArrayNotHasKey('error', $cal, 'getMyCalendar must resolve for a non-manager editor: '.json_encode($cal));
+        Assert::assertIsArray($cal['result'] ?? null, 'getMyCalendar should return an array: '.json_encode($cal));
+
+        // And the inbox list resolves for the editor too (session-scoped, ungated).
+        $editorInbox = $this->rpc($I, 'leantime.rpc.Notifications.Notifications.getInbox', new \stdClass);
+        Assert::assertArrayNotHasKey('error', $editorInbox, 'getInbox must resolve for a non-manager editor: '.json_encode($editorInbox));
+        Assert::assertIsArray($editorInbox['result'] ?? null, 'getInbox should return an array: '.json_encode($editorInbox));
+
+        // IDOR guard: markNotificationUnread is session-scoped (matches on (id, session user)).
+        // Seed a notification owned by the OWNER, read=1, then — as the editor — try to flip it
+        // unread by its id. With the previous unscoped where('id') update this would succeed; now
+        // it must NOT: the result is false and the row stays read.
+        $ownerId = (int) $I->grabFromDatabase('zp_user', 'id', ['username' => 'test@leantime.io']);
+        $ownerNotifId = (int) $I->haveInDatabase('zp_notifications', [
+            'userId' => $ownerId,
+            'read' => 1,
+            'type' => 'mention',
+            'module' => 'ticket',
+            'moduleId' => 1,
+            'message' => 'owner-only notification',
+            'datetime' => date('Y-m-d H:i:s'),
+            'url' => '',
+            'authorId' => $ownerId,
+        ]);
+        $unread = $this->rpc($I, 'leantime.rpc.Notifications.Notifications.markNotificationUnread', ['id' => $ownerNotifId]);
+        Assert::assertArrayNotHasKey('error', $unread, 'markNotificationUnread should respond cleanly: '.json_encode($unread));
+        Assert::assertFalse($unread['result'] ?? true, 'editor must NOT mark the owner\'s notification unread (IDOR): '.json_encode($unread));
+        Assert::assertEquals(1, $I->grabFromDatabase('zp_notifications', 'read', ['id' => $ownerNotifId]), 'the owner notification must remain read');
     }
 
     /** POST /api/jsonrpc with the test bearer + method, return the decoded body. */

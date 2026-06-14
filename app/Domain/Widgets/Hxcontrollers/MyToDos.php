@@ -79,15 +79,15 @@ class MyToDos extends HtmxController
         );
 
         if ($result['successCount'] > 0 && $result['errorCount'] === 0) {
-            $this->tpl->setNotification($this->language->__('notifications.group_changes_applied'), 'success');
+            $this->tpl->setNotification($this->language->__('short_notifications.group_changes_applied'), 'success');
         } elseif ($result['successCount'] > 0 && $result['errorCount'] > 0) {
-            $this->tpl->setNotification($this->language->__('notifications.group_changes_partial'), 'warning');
+            $this->tpl->setNotification($this->language->__('short_notifications.group_changes_partial'), 'warning');
         } elseif ($result['errorCount'] > 0) {
-            $this->tpl->setNotification($this->language->__('notifications.group_changes_failed'), 'error');
+            $this->tpl->setNotification($this->language->__('short_notifications.group_changes_failed'), 'error');
         }
 
         if (! $result['sorted']) {
-            $this->tpl->setNotification($this->language->__('notifications.sorting_error'), 'error');
+            $this->tpl->setNotification($this->language->__('short_notifications.sorting_error'), 'error');
         }
     }
 
@@ -117,7 +117,7 @@ class MyToDos extends HtmxController
             if ($result) {
                 $this->tpl->setNotification($this->language->__('short_notifications.status_updated'), 'success');
             } else {
-                $this->tpl->setNotification($this->language->__('notifications.status_update_error'), 'error');
+                $this->tpl->setNotification($this->language->__('short_notifications.status_update_error'), 'error');
             }
         }
     }
@@ -133,9 +133,9 @@ class MyToDos extends HtmxController
             $result = $this->ticketsService->patch($params['id'], ['milestoneid' => $params['milestoneId']]);
 
             if ($result) {
-                $this->tpl->setNotification($this->language->__('notifications.milestone_updated'), 'success');
+                $this->tpl->setNotification($this->language->__('short_notifications.milestone_updated'), 'success');
             } else {
-                $this->tpl->setNotification($this->language->__('notifications.milestone_update_error'), 'error');
+                $this->tpl->setNotification($this->language->__('short_notifications.milestone_update_error'), 'error');
             }
         }
     }
@@ -151,9 +151,9 @@ class MyToDos extends HtmxController
             $result = $this->ticketsService->patch($params['id'], ['dateToFinish' => $params['date']]);
 
             if ($result) {
-                $this->tpl->setNotification($this->language->__('notifications.date_updated'), 'success');
+                $this->tpl->setNotification($this->language->__('short_notifications.date_updated'), 'success');
             } else {
-                $this->tpl->setNotification($this->language->__('notifications.date_update_error'), 'error');
+                $this->tpl->setNotification($this->language->__('short_notifications.date_update_error'), 'error');
             }
         }
     }
@@ -172,9 +172,9 @@ class MyToDos extends HtmxController
             $result = $this->ticketsService->patch($params['id'], ['headline' => $headline]);
 
             if ($result) {
-                $this->tpl->setNotification($this->language->__('notifications.title_updated'), 'success');
+                $this->tpl->setNotification($this->language->__('short_notifications.title_updated'), 'success');
             } else {
-                $this->tpl->setNotification($this->language->__('notifications.title_update_error'), 'error');
+                $this->tpl->setNotification($this->language->__('short_notifications.title_update_error'), 'error');
             }
 
             return $this->tpl->displayRaw("{$headline}");
