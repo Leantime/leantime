@@ -1207,12 +1207,19 @@ class Tickets extends BaseService
     }
 
     /**
-     * Retrieves the open tickets assigned to a user for a specific project
-     * that are due this week and later, with optional inclusion of completed
-     * tickets and milestones.
+     * Retrieves the open tickets assigned to a user that are due this week and later, optionally
+     * narrowed to a single project, with optional inclusion of completed tickets and milestones.
+     *
+     * This is a "my work" view (filtered by $userId). $projectId is optional: pass a project id to
+     * narrow to it (the dispatch gate then runs the per-project membership check), or omit it / pass
+     * 0 for the cross-project view mobile's Tasks tab uses. When no concrete project resolves, the
+     * enforcer has no project to scope to (the session project is null on Bearer), so tickets.view
+     * is evaluated against the user's global role — a user can always see their own assigned
+     * tickets. A mandatory $projectId here previously fail-closed (-32001 on 0, -32602 when omitted)
+     * for every role, breaking the mobile Tasks tab.
      *
      * @param  int  $userId  The ID of the user whose tickets are to be retrieved.
-     * @param  int  $projectId  The ID of the project for which tickets are to be retrieved.
+     * @param  int|null  $projectId  Optional project to narrow to; null/0 = across all the user's projects.
      * @param  bool  $includeDoneTickets  Whether to include tickets marked as done. Default is false.
      * @param  bool  $includeMilestones  Whether to include milestones in the results. Default is false.
      * @return array Returns an array of grouped tickets categorized by their due date (e.g.,
@@ -1220,11 +1227,6 @@ class Tickets extends BaseService
      *
      * @api
      */
-    // projectId is OPTIONAL: this is a cross-project "my work" view (filtered by $userId). When a
-    // real project id is supplied the dispatch gate runs the per-project check; when it's omitted
-    // or 0 (mobile's cross-project sentinel) the enforcer falls back to the global tickets.view
-    // role — a user can always see their own assigned tickets. Mandatory-projectId here previously
-    // fail-closed (-32001 on 0, -32602 when omitted) for every role, breaking the mobile Tasks tab.
     #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getOpenUserTicketsThisWeekAndLater($userId, $projectId = null, bool $includeDoneTickets = false, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
