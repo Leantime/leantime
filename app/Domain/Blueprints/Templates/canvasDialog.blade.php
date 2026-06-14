@@ -101,7 +101,7 @@
         <input type="hidden" name="changeItem" value="1" />
 
         @if($id != '')
-            <a href="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="blueprintsCanvasModal delete right"><i class='fa fa-trash-can'></i> {!! __('links.delete') !!}</a>
+            <x-global::forms.button tag="a" link="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="blueprintsCanvasModal delete right" contentRole="secondary"><i class='fa fa-trash-can'></i> {!! __('links.delete') !!}</x-global::forms.button>
         @endif
 
         @if($login::userIsAtLeast($roles::$editor))
@@ -162,7 +162,7 @@
                         {!! __('label.loading_milestone') !!}
                     </div>
                 </div>
-                <a href="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="blueprintsCanvasModal delete formModal"><i class="fa fa-close"></i> {!! __('links.remove') !!}</a>
+                <x-global::forms.button tag="a" link="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="blueprintsCanvasModal delete formModal" contentRole="secondary"><i class="fa fa-close"></i> {!! __('links.remove') !!}</x-global::forms.button>
             @endif
         @endif
 

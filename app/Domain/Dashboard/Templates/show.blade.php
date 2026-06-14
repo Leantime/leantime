@@ -340,11 +340,13 @@
                                         name="comment"
                                         class="btn btn-primary btn-success tw-ml-0"
                                     />
-                                    <a
-                                        href="javascript:void(0);"
+                                    <x-global::forms.button
+                                        tag="a"
+                                        link="javascript:void(0);"
                                         onclick="leantime.commentsController.toggleCommentBoxes(-1);jQuery('.noCommentsMessage').toggle();"
                                         class="tw-leading-[50px]"
-                                    >{{ __('links.cancel') }}</a>
+                                        contentRole="secondary"
+                                    >{{ __('links.cancel') }}</x-global::forms.button>
                                     <input type="hidden" name="comment" value="1"/>
                                     <input type="hidden" name="father" id="father" value="0"/>
                                 </div>

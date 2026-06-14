@@ -162,16 +162,16 @@
                                     {{ __("label.loading_milestone") }}
                                 </div>
                             </div>
-                            <a href="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="goalCanvasModal delete formModal"><i class="fa fa-close"></i> {{ __("links.remove") }}</a>
+                            <x-global::forms.button tag="a" link="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="goalCanvasModal delete formModal" contentRole="secondary"><i class="fa fa-close"></i> {{ __("links.remove") }}</x-global::forms.button>
                         @endif
                     @endif
                 </div>
             </div>
 
             @if ($id != '')
-                <a href="{{ BASE_URL . "/goalcanvas/delCanvasItem/$id" }}" class="formModal delete right">
+                <x-global::forms.button tag="a" link="{{ BASE_URL . "/goalcanvas/delCanvasItem/$id" }}" class="formModal delete right" contentRole="secondary">
                     <i class='fa fa-trash-can'></i> {{ __('links.delete') }}
-                </a>
+                </x-global::forms.button>
             @endif
 
         </form>

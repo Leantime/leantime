@@ -206,3 +206,9 @@ class set / behavior. Categories found (to revisit, some need a design decision)
 - _button outline variant_: added `variant="outline"` to forms.button (emits btn-outline /
   btn-{state}-outline). All "Save & Close" buttons set to variant="outline" to match the edit-ticket
   save style (7 sites: 5 canvas/idea dialogs + the ticketDetails/articleDialog inputs componentized).
+- _action-links -> secondary_: ~35 standalone Cancel/Back/Close/Delete/Remove links that were bare
+  `<a>` text-links (no btn class) converted to `<x-global::forms.button ... contentRole="secondary">`,
+  preserving onclick + JS-hook classes (delete/formModal/editTimeModal/...). Strictly skipped: dropdown
+  `<li>` menu-items (incl. menu delete/edit), accordion + inline `|`-separated toggles, add/create
+  toggles, nav, timers, and already-`btn` links. Still bare (flagged, not converted): inline per-comment
+  `deleteComment` links + per-row table delete actions (would need a smaller-scale/inline treatment).

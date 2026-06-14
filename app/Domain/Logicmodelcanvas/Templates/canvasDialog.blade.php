@@ -165,7 +165,7 @@
             @endif
 
             @if ($id != '')
-                <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete" style="margin-left:auto;"><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</a>
+                <x-global::forms.button tag="a" link="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete" style="margin-left:auto;" contentRole="secondary"><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</x-global::forms.button>
             @endif
         </div>
 

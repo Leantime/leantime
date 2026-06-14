@@ -48,7 +48,7 @@
 
     <div class="clear"></div>
     <br />
-    <a href="{{ BASE_URL }}/calendar/delEvent/{{ (int) $_GET['id'] }}" class="formModal delete right"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a>
+    <x-global::forms.button tag="a" link="{{ BASE_URL }}/calendar/delEvent/{{ (int) $_GET['id'] }}" class="formModal delete right" contentRole="secondary"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</x-global::forms.button>
     <input type="hidden" value="1" name="save" />
     <input type="submit" name="saveEvent" id="save" value="{{ __('buttons.save') }}" class="button" />
 

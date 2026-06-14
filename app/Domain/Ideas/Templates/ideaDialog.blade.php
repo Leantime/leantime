@@ -137,8 +137,8 @@
 
 <div class="showDialogOnLoad" >
         @if ($id != '')
-            <a href="{{ BASE_URL }}/ideas/delCanvasItem/{{ $id }}" class="ideaModal delete right"><i
-                        class="fa fa-trash"></i> {!! __('links.delete') !!}</a>
+            <x-global::forms.button tag="a" link="{{ BASE_URL }}/ideas/delCanvasItem/{{ $id }}" class="ideaModal delete right" contentRole="secondary"><i
+                        class="fa fa-trash"></i> {!! __('links.delete') !!}</x-global::forms.button>
         @endif
 </div>
 
