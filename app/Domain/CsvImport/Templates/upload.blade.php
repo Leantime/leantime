@@ -35,7 +35,6 @@
 </div>
 
 @once
-@push('scripts')
 <script>
 
     if (typeof uppy === 'undefined') {
@@ -104,7 +103,6 @@
     }
 
 </script>
-@endpush
 @endonce
 
 @endsection

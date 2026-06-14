@@ -225,6 +225,30 @@ class Connector
             }
         }
 
+        // Storypoints/Effort Field Validation
+        // Only a fixed set of values is renderable (see Tickets repository efforts).
+        // An out-of-range value (e.g. "4") imports fine but later crashes ticket/dashboard views.
+        $matchingStorypointsField = '';
+        foreach ($fields as $item) {
+            if ($item['leantimeField'] === 'storypoints') {
+                $matchingStorypointsField = $item['sourceField'];
+                break;
+            }
+        }
+
+        if ($matchingStorypointsField) {
+            // Cast keys to strings: PHP coerces numeric-string array keys (e.g. '1')
+            // to ints, which would break the strict comparison below against the
+            // string CSV value.
+            $validStorypoints = array_map('strval', array_keys($this->ticketService->getEffortLabels()));
+            foreach ($values as &$row) {
+                $storypoints = trim((string) ($row[$matchingStorypointsField] ?? ''));
+                if ($storypoints !== '' && ! in_array($storypoints, $validStorypoints, true)) {
+                    $flags[] = $matchingStorypointsField.': '.$storypoints.' '.'is not a valid story point value. Use one of: '.implode(', ', $validStorypoints);
+                }
+            }
+        }
+
         $this->cacheSerializedFieldValues($fields, $values);
 
         return $flags;

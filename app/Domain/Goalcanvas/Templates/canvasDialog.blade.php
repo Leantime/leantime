@@ -1,5 +1,8 @@
 @extends($layout)
 @section('content')
+    @php
+        $hiddenRelatesLabels = $relatesLabels ?? [];
+    @endphp
     <script type="text/javascript">
         window.onload = function() {
             if (!window.jQuery) {

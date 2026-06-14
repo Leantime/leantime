@@ -128,6 +128,12 @@ class EditCanvasItem
                 $type = array_key_first($canvasTypes);
             }
 
+            // Fall back to a known box when the requested type isn't part of this
+            // canvas, otherwise the dialog renders $canvasTypes[$type] on null (500).
+            if (! isset($canvasTypes[$type])) {
+                $type = array_key_first($canvasTypes);
+            }
+
             $canvasItem = [
                 'id' => '',
                 'box' => $type,
