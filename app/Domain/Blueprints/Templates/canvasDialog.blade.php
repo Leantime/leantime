@@ -16,6 +16,8 @@
     if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         $id = $canvasItem['id'];
     }
+
+    $boxMeta = $canvasTypes[$canvasItem['box']] ?? ['icon' => '', 'title' => ''];
 @endphp
 
 <script type="text/javascript">
@@ -29,7 +31,7 @@
 
 <div class="" style="width:900px;">
 
-    <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i> {{ $canvasTypes[$canvasItem['box']]['title'] }}</h4>
+    <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas {{ $boxMeta['icon'] }}"></i> {{ $boxMeta['title'] }}</h4>
     <hr style="margin-top: 5px; margin-bottom: 15px;">
     {!! $tpl->displayNotification() !!}
 
