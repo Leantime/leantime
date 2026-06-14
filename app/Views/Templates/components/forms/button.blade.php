@@ -2,7 +2,7 @@
     'contentRole' => '',          // ''(none) | default | primary | secondary | tertiary(=ghost) | accent | link
     'state' => '',                // info | warning | danger | success
     'scale' => '',                // xs | s | m | l | xl
-    'variant' => '',              // reserved (component-specific)
+    'variant' => '',              // 'outline' = outline style (btn-outline / btn-{state}-outline)
     'tag' => 'button',            // a | button | input  (the polymorphic element)
     'link' => null,               // href, when tag="a"; null => emit no href (e.g. <a onclick> with no href)
     'inputType' => null,          // submit | button | reset, when tag="button"/"input" (default below)
@@ -54,7 +54,14 @@
         default => '',
     };
 
-    $colorClass = $stateClass !== '' ? $stateClass : $roleClass;
+    // variant="outline" selects the outline button style — btn-outline, or btn-{state}-outline
+    // (e.g. btn-danger-outline). This is the same style the edit-ticket save / "Save & Close"
+    // buttons use. Outline overrides the role color.
+    if ($variant === 'outline') {
+        $colorClass = $state !== '' ? 'btn-'.$state.'-outline' : 'btn-outline';
+    } else {
+        $colorClass = $stateClass !== '' ? $stateClass : $roleClass;
+    }
     $classes = trim('btn '.$colorClass.' '.$scaleClass);
 
     // Inner content: leading icon + (labelText or slot) + trailing icon, matching the

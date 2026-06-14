@@ -170,7 +170,7 @@
                         <input type="hidden" name="saveTicket" value="1" />
                         <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
                         <input type="submit" name="saveArticle" value="{{ __('buttons.save') }}" id="primaryArticleSubmitButton"/>
-                        <input type="submit" class="btn btn-outline" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="{{ __('buttons.save_and_close') }}"/>
+                        <x-global::forms.button tag="input" inputType="submit" variant="outline" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" :labelText="__('buttons.save_and_close')" />
                     </div>
                     <div class="col-md-2 align-right padding-top-sm">
                         @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))

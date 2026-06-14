@@ -202,4 +202,7 @@ class set / behavior. Categories found (to revisit, some need a design decision)
 - _button role promotions_: 5 main-action submits that were `default` promoted to `primary` for
   consistency with siblings — Ideas board create/save (advancedBoards + showBoards, ×4) and the
   Comments/showAll reply (generalComment's reply was already primary). Genuinely-secondary `default`
-  buttons (Back, Export, Copy, Reset Logo, Resend Invite, Save-and-Close, Close, Activate) left as-is.
+  buttons (Back, Export, Copy, Reset Logo, Resend Invite, Close, Activate) left as-is.
+- _button outline variant_: added `variant="outline"` to forms.button (emits btn-outline /
+  btn-{state}-outline). All "Save & Close" buttons set to variant="outline" to match the edit-ticket
+  save style (7 sites: 5 canvas/idea dialogs + the ticketDetails/articleDialog inputs componentized).

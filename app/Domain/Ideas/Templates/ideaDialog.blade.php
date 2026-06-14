@@ -38,7 +38,7 @@
                   placeholder="">{!! $tpl->escapeMinimal($canvasItem['data']) !!}</textarea><br/>
 
         <input type="submit" value="{{ __('buttons.save') }}" id="primaryCanvasSubmitButton"/>
-        <x-global::forms.button contentRole="primary" inputType="submit" value="closeModal" id="saveAndClose">{!! __('buttons.save_and_close') !!}</x-global::forms.button>
+        <x-global::forms.button variant="outline" inputType="submit" value="closeModal" id="saveAndClose">{!! __('buttons.save_and_close') !!}</x-global::forms.button>
 
         @if ($id !== '')
             <br/>
