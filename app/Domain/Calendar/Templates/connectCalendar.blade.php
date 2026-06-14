@@ -25,7 +25,7 @@
             <input type="text" id="ical_color" name="colorClass" autocomplete="off" value="#082236" class="simpleColorPicker"/>
 
             <br /><br />
-            <input type="submit" name="save" value="{{ __('label.import_ical_button') }}" class="btn btn-primary" />
+            <x-global::forms.button tag="input" inputType="submit" name="save" contentRole="primary" :labelText="__('label.import_ical_button')" />
         </form>
     </x-slot>
 </x-global::accordion>
@@ -45,10 +45,10 @@
             </x-slot>
             <x-slot name="content" style="padding-top: 10px;">
                 <p class="text-muted small">{{ $provider['description'] }}</p>
-                <a href="{{ $provider['actionUrl'] }}"
-                   class="btn btn-primary {{ ($provider['actionType'] ?? 'link') === 'modal' ? 'formModal' : '' }}">
+                <x-global::forms.button tag="a" link="{{ $provider['actionUrl'] }}"
+                   contentRole="primary" class="{{ ($provider['actionType'] ?? 'link') === 'modal' ? 'formModal' : '' }}">
                     {{ $provider['actionLabel'] }}
-                </a>
+                </x-global::forms.button>
             </x-slot>
         </x-global::accordion>
     @endif

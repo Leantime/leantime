@@ -106,7 +106,7 @@
 
         @if($login::userIsAtLeast($roles::$editor))
             <input type="submit" value="{{ __('buttons.save') }}" id="primaryCanvasSubmitButton"/>
-            <button type="submit" class="btn btn-default" value="closeModal" id="saveAndClose" onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();">{!! __('buttons.save_and_close') !!}</button>
+            <x-global::forms.button inputType="submit" contentRole="default" value="closeModal" id="saveAndClose" onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();">{!! __('buttons.save_and_close') !!}</x-global::forms.button>
         @endif
 
         @if($id !== '')
@@ -132,8 +132,8 @@
                             <input type="text" width="50%" name="newMilestone"><br />
                             <input type="hidden" name="type" value="milestone" />
                             <input type="hidden" name="{{ $canvasName }}canvasitemid" value="{{ $id }} " />
-                            <input type="button" value="{{ __('buttons.save') }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                            <input type="button" value="{{ __('buttons.cancel') }}" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
+                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')" contentRole="primary" />
                         </div>
                     </div>
 
@@ -149,8 +149,8 @@
                             </select>
                             <input type="hidden" name="type" value="milestone" />
                             <input type="hidden" name="{{ $canvasName }}canvasitemid" value="{{ $id }} " />
-                            <input type="button" value="{{ __('buttons.save') }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                            <input type="button" value="{{ __('buttons.cancel') }}" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
+                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.{{ $canvasName }}CanvasController.toggleMilestoneSelectors('hide')" contentRole="primary" />
                         </div>
                     </div>
                 </center>

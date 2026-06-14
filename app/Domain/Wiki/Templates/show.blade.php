@@ -113,7 +113,7 @@
             </div>
             <h3 class="wiki-empty-state-title">{!! __('headlines.no_articles_yet') !!}</h3>
             <p class="wiki-empty-state-text">{!! __('text.create_new_wiki') !!}</p>
-            <a href='#/wiki/wikiModal/' class='inlineEdit btn btn-primary'>{!! __('links.icon.create_new_board') !!}</a>
+            <x-global::forms.button tag="a" link="#/wiki/wikiModal/" class="inlineEdit" contentRole="primary">{!! __('links.icon.create_new_board') !!}</x-global::forms.button>
         </div>
 
     @elseif($wikis && count($wikis) > 0)
@@ -408,11 +408,11 @@
                 </div>
                 <h3 class="wiki-empty-state-title">{!! __('headlines.no_articles_yet') !!}</h3>
                 <p class="wiki-empty-state-text">{!! __('text.create_new_content') !!}</p>
-                <button class="btn btn-primary"
+                <x-global::forms.button contentRole="primary"
                         hx-post="{{ BASE_URL }}/hx/wiki/articleContent/create"
                         hx-swap="none">
                     <i class="fa fa-plus"></i> {!! __('link.create_article') !!}
-                </button>
+                </x-global::forms.button>
             </div>
         @endif
 

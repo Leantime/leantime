@@ -63,8 +63,8 @@
             <div class="col-md-4">
                 @if ($login::userIsAtLeast($roles::$editor))
                     @if (count($allCanvas) > 0)
-                        <a href="#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment"><span
-                                    class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!}</a>
+                        <x-global::forms.button tag="a" link="#/ideas/ideaDialog?type=idea" contentRole="primary" id="customersegment"><span
+                                    class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!}</x-global::forms.button>
                     @endif
                 @endif
             </div>
@@ -214,8 +214,8 @@
                 <h3>{!! __('headlines.have_an_idea') !!}</h3><br />
                 {!! __('subtitles.start_collecting_ideas') !!}<br/><br/>
                 @if ($login::userIsAtLeast($roles::$editor))
-                <a href="javascript:void(0)"
-                   class="addCanvasLink btn btn-primary">{!! __('links.icon.create_new_board') !!}</a>
+                <x-global::forms.button tag="a" link="javascript:void(0)"
+                   class="addCanvasLink" contentRole="primary">{!! __('links.icon.create_new_board') !!}</x-global::forms.button>
                 @endif
             </div>
 
@@ -236,9 +236,9 @@
                                    style="width:90%"/>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">{!! __('buttons.close') !!}</button>
-                            <input type="submit" class="btn btn-default" value="{{ __('buttons.create_board') }}" name="newCanvas"/>
+                            <x-global::forms.button inputType="button" contentRole="default"
+                                    data-dismiss="modal">{!! __('buttons.close') !!}</x-global::forms.button>
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="default" :labelText="__('buttons.create_board')" name="newCanvas"/>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
@@ -259,9 +259,9 @@
                                    style="width:90%"/>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">{!! __('buttons.close') !!}</button>
-                            <input type="submit" class="btn btn-default" value="{{ __('buttons.save') }}" name="editCanvas"/>
+                            <x-global::forms.button inputType="button" contentRole="default"
+                                    data-dismiss="modal">{!! __('buttons.close') !!}</x-global::forms.button>
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="default" :labelText="__('buttons.save')" name="editCanvas"/>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->

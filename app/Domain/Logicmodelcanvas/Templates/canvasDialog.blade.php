@@ -160,8 +160,8 @@
         {{-- ═══ Bottom: Actions ═══ --}}
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:16px; padding-top:16px; border-top:1px solid var(--main-border-color);">
             @if ($login::userIsAtLeast($roles::$editor))
-                <input type="submit" value="{{ $tpl->__('buttons.save') }}" id="primaryCanvasSubmitButton" class="btn btn-primary"/>
-                <button type="submit" class="btn btn-default" value="closeModal" id="saveAndClose" onclick="leantime.canvasController.setCloseModal();">{!! $tpl->__('buttons.save_and_close') !!}</button>
+                <x-global::forms.button tag="input" inputType="submit" :labelText="$tpl->__('buttons.save')" id="primaryCanvasSubmitButton" contentRole="primary"/>
+                <x-global::forms.button inputType="submit" contentRole="default" value="closeModal" id="saveAndClose" onclick="leantime.canvasController.setCloseModal();">{!! $tpl->__('buttons.save_and_close') !!}</x-global::forms.button>
             @endif
 
             @if ($id != '')

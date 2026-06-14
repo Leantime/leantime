@@ -15,11 +15,11 @@
     <input type="hidden" value="{{ session('currentProject') }}" name="projectId" id="projectIdInput"/>
 
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
-        <a onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
-           class="btn btn-link" data-tippy-content="{{ __('popover.filter') }}">
+        <x-global::forms.button tag="a" onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
+           contentRole="link" data-tippy-content="{{ __('popover.filter') }}">
             <i class="fas fa-filter"></i> Filter{!! $numOfFilters > 0 ? "  <span class='badge badge-primary'>" . $numOfFilters . '</span> ' : '' !!}
             {{-- Please don't change the code formatting below, if not right next to each other it somehow adds a space between the two buttons and increases the distance --}}
-        </a>@if ($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<div class="btn-group viewDropDown">
+        </x-global::forms.button>@if ($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<div class="btn-group viewDropDown">
 <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="{{ __('popover.group_by') }}">
                 <span class="fa-solid fa-diagram-project"></span> Group By
                 @if ($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
@@ -139,7 +139,7 @@
                 </div>
 
                 <div class="" style="margin-top:15px;">
-                    <input type="submit" value="{{ __('buttons.search') }}" name="search" class="form-control btn btn-primary" />
+                    <x-global::forms.button tag="input" inputType="submit" :labelText="__('buttons.search')" name="search" class="form-control" contentRole="primary" />
                 </div>
 
             </div>

@@ -101,13 +101,13 @@
                                        value="{{ $ticket['headline'] }}" name="headline"/>
                             </div>
                             <div>
-                                <button type="submit" name="edit" class="btn btn-primary">
+                                <x-global::forms.button inputType="submit" name="edit" contentRole="primary">
                                     <i class="fa fa-check"></i>
-                                </button>
+                                </x-global::forms.button>
                             </div>
                             <div>
-                                <a href="javascript:void(0);" class="btn cancel-edit-task" data-group="{{ $groupKey }}"><i
-                                        class="fa fa-x"></i></a>
+                                <x-global::forms.button tag="a" link="javascript:void(0);" class="cancel-edit-task" data-group="{{ $groupKey }}"><i
+                                        class="fa fa-x"></i></x-global::forms.button>
                             </div>
                         </form>
                     </div>
@@ -236,10 +236,9 @@
                 </div>
                 <div>
                     <input type="hidden" name="status" value="3"/>
-                    <button type="submit" class="btn btn-primary">{{ __('buttons.save') }}</button>
-                    <a href="javascript:void(0);"
-                       onclick="jQuery('#subtask-form-{{$ticket['id']}}').toggle();"
-                       class="btn">{{ __('buttons.cancel') }}</a>
+                    <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.save') }}</x-global::forms.button>
+                    <x-global::forms.button tag="a" link="javascript:void(0);"
+                       onclick="jQuery('#subtask-form-{{$ticket['id']}}').toggle();">{{ __('buttons.cancel') }}</x-global::forms.button>
                 </div>
             </div>
         </form>
@@ -294,10 +293,9 @@
                         </div>
                         <div>
                             <input type="hidden" name="status" value="3"/>
-                            <button type="submit" class="btn btn-primary">{{ __('buttons.save') }}</button>
-                            <a href="javascript:void(0);"
-                               onclick="jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}').toggle(); jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}-handler').toggle();"
-                               class="btn">{{ __('buttons.cancel') }}</a>
+                            <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.save') }}</x-global::forms.button>
+                            <x-global::forms.button tag="a" link="javascript:void(0);"
+                               onclick="jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}').toggle(); jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}-handler').toggle();">{{ __('buttons.cancel') }}</x-global::forms.button>
                         </div>
                     </div>
                 </form>

@@ -60,7 +60,7 @@
                     ><i class="fa fa-link"></i></a>
                     <div class="dropdown-menu padding-md">
                         <input type="text" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
-                        <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</button>
+                        <x-global::forms.button contentRole="primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</x-global::forms.button>
                     </div>
                 </div>
 
@@ -103,7 +103,7 @@
             </div>
 
             <div class="maincontentinner tw-z-10 latest-todos">
-                <a href="#/tickets/newTicket" class="btn btn-link action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> Create To-Do</a>
+                <x-global::forms.button tag="a" link="#/tickets/newTicket" contentRole="link" class="action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> Create To-Do</x-global::forms.button>
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
                 <ul class="sortableTicketList">
@@ -306,13 +306,15 @@
             <div class="maincontentinner project-updates">
                 <div class="pull-right">
                     @if ($login::userIsAtLeast($roles::$editor))
-                        <a
-                            href="javascript:void(0);"
+                        <x-global::forms.button
+                            tag="a"
+                            link="javascript:void(0);"
                             onclick="leantime.commentsController.toggleCommentBoxes(0);jQuery('.noCommentsMessage').toggle();"
                             id="mainToggler"
-                            class="btn btn-link action-link"
+                            contentRole="link"
+                            class="action-link"
                             style="margin-top:-7px;"
-                        ><span class="fa fa-plus"></span> {{ __('links.add_new_report') }}</a>
+                        ><span class="fa fa-plus"></span> {{ __('links.add_new_report') }}</x-global::forms.button>
                     @endif
                 </div>
 

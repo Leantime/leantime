@@ -187,5 +187,11 @@ class set / behavior. Categories found (to revisit, some need a design decision)
 - _button pilot_: `Auth/login` migrated; Playwright before/after = byte-identical (proven).
 - _button batch 1_: ~65 plain buttons migrated across 46 core form/admin/CRUD templates (9-agent
   fan-out, disjoint files); ~70 deferred per the backlog above. Verified: view:cache compiles,
-  audit shows no JS-coupled class swallowed. Remaining: JS-heavy domains (canvas/board/dashboard/
-  widgets/tickets/ideas/wiki/calendar) + the deferral backlog.
+  audit shows no JS-coupled class swallowed, real before/after on /users/showAll = identical class set.
+- _button href tweak_: component emits href only when `link` is set (so `<a onclick>` w/o href migrates).
+- _button batch 2_: ~100 plain buttons migrated across 43 JS-heavy templates (Tickets, Dashboard,
+  Widgets, Canvas/Blueprints/Goalcanvas/Logicmodel, Ideas, Wiki, Calendar, Sprints); the rest deferred
+  (dropdown-toggles, fc-* calendar, file-uploads, class="button", unmapped variants, role+state).
+  Verified: compile clean, audit clean, live no-op spot-check on /goalcanvas/showCanvas.
+  **Core plain-button migration is now essentially complete** — remaining work = the deferral backlog
+  (dropdowns get migrated in the dropdown-component phase; class="button"/unstyled = design decisions).

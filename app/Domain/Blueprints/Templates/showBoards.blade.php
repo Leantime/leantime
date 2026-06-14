@@ -60,7 +60,7 @@
                         </div>
                         <h3>{!! __('headline.no_blueprints_yet') !!}</h3>
                         <br />{!! __('text.no_blueprints_yet') !!}
-                        <br /><a href="{{ BASE_URL }}/blueprints/value/showCanvas" class="btn btn-primary">{!! __('button.start_here_project_value') !!}</a>
+                        <br /><x-global::forms.button tag="a" link="{{ BASE_URL }}/blueprints/value/showCanvas" contentRole="primary">{!! __('button.start_here_project_value') !!}</x-global::forms.button>
                     </div></div>
                 @endif
                 </div>

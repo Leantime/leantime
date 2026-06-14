@@ -91,10 +91,10 @@
                                     <textarea name="newMilestone"></textarea><br />
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="leancanvasitemid" value="{{ $id }} " />
-                                    <input type="button" value="{{ __('buttons.save') }}" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
-                                    <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" class="btn btn-secondary">
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryArticleSubmitButton').click()" contentRole="primary" />
+                                    <x-global::forms.button tag="a" link="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" contentRole="secondary">
                                         <i class="fas fa-times"></i> {!! __('links.cancel') !!}
-                                    </a>
+                                    </x-global::forms.button>
                                 </div>
                             </div>
 
@@ -112,7 +112,7 @@
                                     </select>
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="articleId" value="{{ $id }} " />
-                                    <input type="button" value="Save" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
+                                    <x-global::forms.button tag="input" inputType="button" labelText="Save" onclick="jQuery('#primaryArticleSubmitButton').click()" contentRole="primary" />
                                     <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
                                         <i class="fas fa-times"></i> {!! __('links.cancel') !!}
                                     </a>
