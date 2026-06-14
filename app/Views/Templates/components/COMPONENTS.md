@@ -198,5 +198,8 @@ class set / behavior. Categories found (to revisit, some need a design decision)
 - _button role sanity pass_: 15 Back/Cancel/"Go Back" buttons that were hard-coded btn-primary in the
   original markup demoted to contentRole="secondary" (alternative/navigate-away actions). Only the role
   VALUE changed. This is intentionally NOT a no-op (appearance changes; secondary is unstyled until the
-  design phase). FLAGGED, not changed: 2 Ideas board-submit buttons (advancedBoards) are `default` but
-  arguably should be primary for consistency with sibling board dialogs — awaiting decision.
+  design phase).
+- _button role promotions_: 5 main-action submits that were `default` promoted to `primary` for
+  consistency with siblings — Ideas board create/save (advancedBoards + showBoards, ×4) and the
+  Comments/showAll reply (generalComment's reply was already primary). Genuinely-secondary `default`
+  buttons (Back, Export, Copy, Reset Logo, Resend Invite, Save-and-Close, Close, Activate) left as-is.

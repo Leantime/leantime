@@ -72,7 +72,7 @@
                              class="commentBox">
                             <br/><x-global::forms.button tag="input" inputType="submit"
                                         :labelText="__('links.reply')"
-                                        name="comment" contentRole="default" />
+                                        name="comment" contentRole="primary" />
                         </div>
                     </div>
                     <div class="clear"></div>
