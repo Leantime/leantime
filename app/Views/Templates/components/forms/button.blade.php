@@ -1,5 +1,5 @@
 @props([
-    'contentRole' => 'primary',   // default | primary | secondary | tertiary(=ghost) | accent | link
+    'contentRole' => '',          // ''(none) | default | primary | secondary | tertiary(=ghost) | accent | link
     'state' => '',                // info | warning | danger | success
     'scale' => '',                // xs | s | m | l | xl
     'variant' => '',              // reserved (component-specific)
@@ -73,7 +73,9 @@
         @if ($leadingVisual)<i class="{{ $leadingVisual }}"></i> @endif{{ $hasLabel ? $labelText : $slot }}@if ($trailingVisual) <i class="{{ $trailingVisual }}"></i>@endif
     </a>
 @else
-    <button type="{{ $inputType ?? 'button' }}" {{ $attributes->merge(['class' => $classes]) }}>
+    {{-- Bare <button> emits NO type so the native default (submit inside a form) is preserved;
+         pass inputType only when the source had an explicit type. --}}
+    <button @if ($inputType !== null) type="{{ $inputType }}" @endif {{ $attributes->merge(['class' => $classes]) }}>
         @if ($leadingVisual)<i class="{{ $leadingVisual }}"></i> @endif{{ $hasLabel ? $labelText : $slot }}@if ($trailingVisual) <i class="{{ $trailingVisual }}"></i>@endif
     </button>
 @endif
