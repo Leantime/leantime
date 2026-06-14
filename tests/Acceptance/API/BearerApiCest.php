@@ -130,6 +130,23 @@ class BearerApiCest
         $this->assertRpcSucceeds($I, 'leantime.rpc.Tickets.Tickets.getAllOpenUserTickets', new \stdClass);
         $this->assertRpcSucceeds($I, 'leantime.rpc.Projects.Projects.getProject', ['id' => $ownerProjectId]);
         $this->assertRpcSucceeds($I, 'leantime.rpc.Projects.Projects.getProjectProgress', ['projectId' => $ownerProjectId]);
+
+        // Cross-project "my work" with the projectId=0 sentinel mobile sends — must actually
+        // SUCCEED, not just avoid -32001 (it previously -32001'd on 0 / -32602 when omitted, for
+        // every role incl. owner). Assert no error at all + an array result, so a regression to any
+        // error code (not only -32001) fails the test.
+        $body = $this->rpc($I, 'leantime.rpc.Tickets.Tickets.getOpenUserTicketsThisWeekAndLater', ['userId' => $editorId, 'projectId' => 0]);
+        Assert::assertArrayNotHasKey('error', $body, 'projectId=0 cross-project read must not error: '.json_encode($body));
+        Assert::assertIsArray($body['result'] ?? null, 'expected an array result, got: '.json_encode($body));
+
+        // markTicketDone (mobile swipe-complete) must be EXPOSED (was -32601) AND succeed for the
+        // assigned editor. Assert no error + result true, so a regression to -32601/-32602/false is
+        // caught — assertRpcSucceeds (absence of -32001 only) would not catch those.
+        $assignedTicketId = (int) $I->grabFromDatabase('zp_tickets', 'id', ['projectId' => $ownerProjectId]);
+        Assert::assertNotEmpty($assignedTicketId, 'Seed ticket not found in project');
+        $done = $this->rpc($I, 'leantime.rpc.Tickets.Tickets.markTicketDone', ['id' => $assignedTicketId]);
+        Assert::assertArrayNotHasKey('error', $done, 'markTicketDone must be exposed + authorized: '.json_encode($done));
+        Assert::assertTrue($done['result'] ?? false, 'markTicketDone should return true: '.json_encode($done));
     }
 
     /** POST /api/jsonrpc with the test bearer + method, return the decoded body. */

@@ -1207,12 +1207,19 @@ class Tickets extends BaseService
     }
 
     /**
-     * Retrieves the open tickets assigned to a user for a specific project
-     * that are due this week and later, with optional inclusion of completed
-     * tickets and milestones.
+     * Retrieves the open tickets assigned to a user that are due this week and later, optionally
+     * narrowed to a single project, with optional inclusion of completed tickets and milestones.
+     *
+     * This is a "my work" view (filtered by $userId). $projectId is optional: pass a project id to
+     * narrow to it (the dispatch gate then runs the per-project membership check), or omit it / pass
+     * 0 for the cross-project view mobile's Tasks tab uses. When no concrete project resolves, the
+     * enforcer has no project to scope to (the session project is null on Bearer), so tickets.view
+     * is evaluated against the user's global role — a user can always see their own assigned
+     * tickets. A mandatory $projectId here previously fail-closed (-32001 on 0, -32602 when omitted)
+     * for every role, breaking the mobile Tasks tab.
      *
      * @param  int  $userId  The ID of the user whose tickets are to be retrieved.
-     * @param  int  $projectId  The ID of the project for which tickets are to be retrieved.
+     * @param  int|null  $projectId  Optional project to narrow to; null/0 = across all the user's projects.
      * @param  bool  $includeDoneTickets  Whether to include tickets marked as done. Default is false.
      * @param  bool  $includeMilestones  Whether to include milestones in the results. Default is false.
      * @return array Returns an array of grouped tickets categorized by their due date (e.g.,
@@ -1221,7 +1228,7 @@ class Tickets extends BaseService
      * @api
      */
     #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, bool $includeDoneTickets = false, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
+    public function getOpenUserTicketsThisWeekAndLater($userId, $projectId = null, bool $includeDoneTickets = false, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
         if ($includeDoneTickets === true) {
@@ -1323,7 +1330,7 @@ class Tickets extends BaseService
      * @api
      */
     #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getOpenUserTicketsByProject($userId, $projectId, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
+    public function getOpenUserTicketsByProject($userId, $projectId = null, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
         $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
@@ -1367,7 +1374,7 @@ class Tickets extends BaseService
      * @api
      */
     #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getOpenUserTicketsByPriority($userId, $projectId, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
+    public function getOpenUserTicketsByPriority($userId, $projectId = null, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
         $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
@@ -1426,7 +1433,7 @@ class Tickets extends BaseService
      * @api
      */
     #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getOpenUserTicketsBySprint($userId, $projectId, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
+    public function getOpenUserTicketsBySprint($userId, $projectId = null, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
         $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
@@ -2398,12 +2405,25 @@ class Tickets extends BaseService
         return $this->patch($id, ['status' => $newStatusId]);
     }
 
+    /**
+     * Mark a ticket done by resolving the project's first DONE-statusType status and patching to
+     * it. Mobile's swipe-to-complete (the marquee gesture). Companion to {@see markTicketReopen}.
+     *
+     * Was unexposed (-32601) AND unauthorized — unlike its reopen companion it carried no @api,
+     * no #[RequiresPermission], and no in-body authorize (patch()'s dispatch attribute does not
+     * fire on this internal call). Now mirrors markTicketReopen exactly.
+     *
+     * @api
+     */
+    #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
     public function markTicketDone(int $id): bool
     {
         $ticket = $this->ticketRepository->getTicket($id);
         if (! $ticket || empty($ticket->projectId)) {
             return false;
         }
+
+        $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
         $statusLabels = $this->ticketRepository->getStateLabels((int) $ticket->projectId);
         if (! is_array($statusLabels)) {
