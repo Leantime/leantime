@@ -1,3 +1,10 @@
+# Version: 3.9.4
+
+## Bug Fixes
+- **My Work Across Projects** - Fixed an issue that prevented "My Work" from loading tickets across different projects, and exposed and secured the mark-ticket-done action (#3527)
+
+---
+
 # Version: 3.9.3
 
 ## Bug Fixes
