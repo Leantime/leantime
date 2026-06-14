@@ -177,7 +177,7 @@ class set / behavior. Categories found (to revisit, some need a design decision)
 - **Unmapped btn variants** — `btn-sm`/`btn-lg` (vs Leantime `btn-small`/`btn-large`),
   `btn-danger-outline`, `btn-circle`, `btn-inverse`, `btn-file`. Add mappings (after confirming CSS) or keep deferred.
 - **role+state combo** (`btn btn-default btn-success`) — component currently emits one color; allow coexistence.
-- **`<a onclick=...>` without `href`** — component forces `href="#"`; tweak to emit href only when `link` is set, then migrate.
+- ~~`<a onclick>` without `href`~~ — DONE: component emits `href` only when `link` is set; migrate these by omitting the `link` prop.
 - **dropdown-toggle / data-toggle / fileupload / span.btn** — handled in the dropdown / file-upload / later phases.
 
 ## Progress log

@@ -4,7 +4,7 @@
     'scale' => '',                // xs | s | m | l | xl
     'variant' => '',              // reserved (component-specific)
     'tag' => 'button',            // a | button | input  (the polymorphic element)
-    'link' => '#',                // href, when tag="a"
+    'link' => null,               // href, when tag="a"; null => emit no href (e.g. <a onclick> with no href)
     'inputType' => null,          // submit | button | reset, when tag="button"/"input" (default below)
     'leadingVisual' => '',        // icon class, e.g. "fa fa-plus"
     'trailingVisual' => '',       // icon class
@@ -69,7 +69,8 @@
         {{ $attributes->merge(['class' => $classes]) }}
     />
 @elseif ($tag === 'a')
-    <a {{ $attributes->merge(['class' => $classes, 'href' => $link]) }}>
+    {{-- emit href only when a link is given, so <a onclick> without href stays href-less --}}
+    <a {{ $attributes->merge(['class' => $classes] + ($link !== null ? ['href' => $link] : [])) }}>
         @if ($leadingVisual)<i class="{{ $leadingVisual }}"></i> @endif{{ $hasLabel ? $labelText : $slot }}@if ($trailingVisual) <i class="{{ $trailingVisual }}"></i>@endif
     </a>
 @else
