@@ -1220,8 +1220,13 @@ class Tickets extends BaseService
      *
      * @api
      */
+    // projectId is OPTIONAL: this is a cross-project "my work" view (filtered by $userId). When a
+    // real project id is supplied the dispatch gate runs the per-project check; when it's omitted
+    // or 0 (mobile's cross-project sentinel) the enforcer falls back to the global tickets.view
+    // role — a user can always see their own assigned tickets. Mandatory-projectId here previously
+    // fail-closed (-32001 on 0, -32602 when omitted) for every role, breaking the mobile Tasks tab.
     #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, bool $includeDoneTickets = false, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
+    public function getOpenUserTicketsThisWeekAndLater($userId, $projectId = null, bool $includeDoneTickets = false, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
         if ($includeDoneTickets === true) {
@@ -1323,7 +1328,7 @@ class Tickets extends BaseService
      * @api
      */
     #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getOpenUserTicketsByProject($userId, $projectId, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
+    public function getOpenUserTicketsByProject($userId, $projectId = null, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
         $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
@@ -1367,7 +1372,7 @@ class Tickets extends BaseService
      * @api
      */
     #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getOpenUserTicketsByPriority($userId, $projectId, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
+    public function getOpenUserTicketsByPriority($userId, $projectId = null, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
         $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
@@ -1426,7 +1431,7 @@ class Tickets extends BaseService
      * @api
      */
     #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getOpenUserTicketsBySprint($userId, $projectId, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
+    public function getOpenUserTicketsBySprint($userId, $projectId = null, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
         $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
@@ -2398,12 +2403,25 @@ class Tickets extends BaseService
         return $this->patch($id, ['status' => $newStatusId]);
     }
 
+    /**
+     * Mark a ticket done by resolving the project's first DONE-statusType status and patching to
+     * it. Mobile's swipe-to-complete (the marquee gesture). Companion to {@see markTicketReopen}.
+     *
+     * Was unexposed (-32601) AND unauthorized — unlike its reopen companion it carried no @api,
+     * no #[RequiresPermission], and no in-body authorize (patch()'s dispatch attribute does not
+     * fire on this internal call). Now mirrors markTicketReopen exactly.
+     *
+     * @api
+     */
+    #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
     public function markTicketDone(int $id): bool
     {
         $ticket = $this->ticketRepository->getTicket($id);
         if (! $ticket || empty($ticket->projectId)) {
             return false;
         }
+
+        $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
         $statusLabels = $this->ticketRepository->getStateLabels((int) $ticket->projectId);
         if (! is_array($statusLabels)) {

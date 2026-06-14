@@ -130,6 +130,17 @@ class BearerApiCest
         $this->assertRpcSucceeds($I, 'leantime.rpc.Tickets.Tickets.getAllOpenUserTickets', new \stdClass);
         $this->assertRpcSucceeds($I, 'leantime.rpc.Projects.Projects.getProject', ['id' => $ownerProjectId]);
         $this->assertRpcSucceeds($I, 'leantime.rpc.Projects.Projects.getProjectProgress', ['projectId' => $ownerProjectId]);
+
+        // Cross-project "my work" with the projectId=0 sentinel mobile sends — must NOT fail-closed
+        // (it previously -32001'd for every role, owner included). The param is now optional, so a
+        // missing/zero project falls back to the global tickets.view role.
+        $this->assertRpcSucceeds($I, 'leantime.rpc.Tickets.Tickets.getOpenUserTicketsThisWeekAndLater', ['userId' => $editorId, 'projectId' => 0]);
+
+        // markTicketDone (mobile swipe-complete) must be exposed AND honor the per-project authorize
+        // for an assigned editor. (Previously -32601 — unexposed. Mirrors markTicketReopen now.)
+        $assignedTicketId = (int) $I->grabFromDatabase('zp_tickets', 'id', ['projectId' => $ownerProjectId]);
+        Assert::assertNotEmpty($assignedTicketId, 'Seed ticket not found in project');
+        $this->assertRpcSucceeds($I, 'leantime.rpc.Tickets.Tickets.markTicketDone', ['id' => $assignedTicketId]);
     }
 
     /** POST /api/jsonrpc with the test bearer + method, return the decoded body. */
