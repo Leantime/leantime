@@ -171,24 +171,24 @@ function positionPopup(popup, clientRect) {
     var popupWidth = popup.offsetWidth || 280;
     var viewportHeight = window.innerHeight;
     var viewportWidth = window.innerWidth;
-    var scrollTop = window.scrollY || document.documentElement.scrollTop;
-    var scrollLeft = window.scrollX || document.documentElement.scrollLeft;
 
-    // Calculate position
-    var top = clientRect.bottom + scrollTop + 4;
-    var left = clientRect.left + scrollLeft;
+    // The popup is position: fixed, so clientRect (viewport-relative) is used directly
+    // without adding scroll offsets.
+    var top = clientRect.bottom + 4;
+    var left = clientRect.left;
 
-    // Adjust if popup would go off-screen
-    if (top + popupHeight > viewportHeight + scrollTop) {
-        top = clientRect.top + scrollTop - popupHeight - 4;
+    // Flip above the caret if it would overflow the bottom of the viewport.
+    if (top + popupHeight > viewportHeight) {
+        top = clientRect.top - popupHeight - 4;
     }
 
-    if (left + popupWidth > viewportWidth + scrollLeft) {
-        left = viewportWidth + scrollLeft - popupWidth - 8;
+    // Keep within horizontal viewport bounds.
+    if (left + popupWidth > viewportWidth) {
+        left = viewportWidth - popupWidth - 8;
     }
 
-    if (left < scrollLeft) {
-        left = scrollLeft + 8;
+    if (left < 0) {
+        left = 8;
     }
 
     popup.style.top = top + 'px';
