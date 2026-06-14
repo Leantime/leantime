@@ -34,6 +34,7 @@
 
 </div>
 
+@once
 <script>
 
     if (typeof uppy === 'undefined') {
@@ -102,5 +103,6 @@
     }
 
 </script>
+@endonce
 
 @endsection

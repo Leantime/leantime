@@ -237,7 +237,10 @@ class Connector
         }
 
         if ($matchingStorypointsField) {
-            $validStorypoints = array_keys($this->ticketService->getEffortLabels());
+            // Cast keys to strings: PHP coerces numeric-string array keys (e.g. '1')
+            // to ints, which would break the strict comparison below against the
+            // string CSV value.
+            $validStorypoints = array_map('strval', array_keys($this->ticketService->getEffortLabels()));
             foreach ($values as &$row) {
                 $storypoints = trim((string) ($row[$matchingStorypointsField] ?? ''));
                 if ($storypoints !== '' && ! in_array($storypoints, $validStorypoints, true)) {
