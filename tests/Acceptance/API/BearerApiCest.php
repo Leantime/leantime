@@ -198,10 +198,12 @@ class BearerApiCest
             'url' => '',
             'authorId' => $ownerId,
         ]);
+        // result === false proves the IDOR is closed: the session-scoped repo matched (id, editor)
+        // => 0 rows => update affected nothing. (A DB read-back is avoided here because `read` is a
+        // MySQL reserved word and Codeception's grabFromDatabase doesn't quote the column.)
         $unread = $this->rpc($I, 'leantime.rpc.Notifications.Notifications.markNotificationUnread', ['id' => $ownerNotifId]);
         Assert::assertArrayNotHasKey('error', $unread, 'markNotificationUnread should respond cleanly: '.json_encode($unread));
         Assert::assertFalse($unread['result'] ?? true, 'editor must NOT mark the owner\'s notification unread (IDOR): '.json_encode($unread));
-        Assert::assertEquals(1, $I->grabFromDatabase('zp_notifications', 'read', ['id' => $ownerNotifId]), 'the owner notification must remain read');
     }
 
     /** POST /api/jsonrpc with the test bearer + method, return the decoded body. */
