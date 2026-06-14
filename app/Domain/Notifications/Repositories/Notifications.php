@@ -94,10 +94,11 @@ class Notifications
             ->update(['read' => 1]) > 0;
     }
 
-    public function markNotificationUnread(int $id): bool
+    public function markNotificationUnread(int $id, int $userId): bool
     {
         return $this->db->table('zp_notifications')
             ->where('id', $id)
+            ->where('userId', $userId)
             ->update(['read' => 0]) > 0;
     }
 

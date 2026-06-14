@@ -442,6 +442,16 @@ class Calendar extends BaseService
         return $icalCalendar;
     }
 
+    /**
+     * Internal: builds the calendar feed (personal events + ticket due/edit events) for a GIVEN
+     * user id. Deliberately NOT @api — it trusts the $userId param. The web caller passes the
+     * session id; RPC callers must use {@see getMyCalendar()}, which pins to the session user.
+     *
+     * @param  int  $userId  The user whose calendar to build
+     * @param  null|string|CarbonImmutable  $from  Optional start of the window
+     * @param  null|string|CarbonImmutable  $until  Optional end of the window
+     * @return array<int, array<string, mixed>> FullCalendar-shaped event arrays
+     */
     public function getCalendar(int $userId, null|string|CarbonImmutable $from = null, null|string|CarbonImmutable $until = null): array
     {
         // Convert date parameters to Carbon instances if they're strings
@@ -617,7 +627,44 @@ class Calendar extends BaseService
         return $newValues;
     }
 
-    public function getICalUrl()
+    /**
+     * Session-scoped calendar feed (personal events + ticket due/edit events) for the
+     * authenticated user. Mobile's calendar tab calls this; the optional from/until window lets
+     * it fetch just the visible month.
+     *
+     * getCalendar() itself is internal-only — it trusts an arbitrary $userId — so this wrapper is
+     * the API entry point and pins the read to the session user (no spoofable param).
+     *
+     * @param  null|string|CarbonImmutable  $from  Optional ISO start of the window
+     * @param  null|string|CarbonImmutable  $until  Optional ISO end of the window
+     * @return array<int, array<string, mixed>> FullCalendar-shaped event arrays
+     *
+     * @api
+     */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
+    public function getMyCalendar(null|string|CarbonImmutable $from = null, null|string|CarbonImmutable $until = null): array
+    {
+        $userId = $this->currentUserId() ?? 0;
+        if ($userId === 0) {
+            return [];
+        }
+
+        return $this->getCalendar($userId, $from, $until);
+    }
+
+    /**
+     * The authenticated user's personal iCal subscription URL (hash-authenticated feed). Already
+     * session-scoped — it takes no userId. Mobile surfaces this so the user can subscribe their
+     * device calendar.
+     *
+     * @return string The full iCal feed URL
+     *
+     * @throws MissingParameterException When the user has no iCal feed configured (maps to RPC -32602)
+     *
+     * @api
+     */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
+    public function getICalUrl(): string
     {
         $userId = -1;
         if (! empty(session('userdata.id'))) {
@@ -628,7 +675,7 @@ class Calendar extends BaseService
         $icalHash = $this->settingsRepo->getSetting('usersettings.'.$userId.'.icalSecret');
 
         if (empty($icalHash)) {
-            throw new \Exception('User has no ical hash');
+            throw new MissingParameterException('User has no iCal feed configured');
         }
 
         return BASE_URL.'/calendar/ical/'.$icalHash.'_'.$userHash;
@@ -675,13 +722,17 @@ class Calendar extends BaseService
     }
 
     /**
-     * Gets all events from external calendars for a user
+     * External-calendar events (from the user's subscribed iCal feeds) for the authenticated user.
+     * Already session-scoped — it keys off session('userdata.id') with no spoofable param. Mobile
+     * merges these into its calendar view.
      *
-     * @param  int  $userId  The user ID to get external calendar events for
-     * @param  null|string|CarbonImmutable  $from  The start date to filter events by
-     * @param  null|string|CarbonImmutable  $until  The end date to filter events by
-     * @return array Array of calendar events from all external calendars
+     * @param  null|string|CarbonImmutable  $from  Optional ISO start of the window
+     * @param  null|string|CarbonImmutable  $until  Optional ISO end of the window
+     * @return array<int, array<string, mixed>> Array of external calendar events
+     *
+     * @api
      */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
     public function getExternalCalendarEvents(null|string|CarbonImmutable $from = null, null|string|CarbonImmutable $until = null): array
     {
         $cacheKey = 'calendar.external.'.session('userdata.id');
