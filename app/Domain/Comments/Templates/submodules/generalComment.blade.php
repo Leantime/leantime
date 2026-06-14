@@ -113,7 +113,7 @@
                             </div>
                             <div class="commentReply">
                                 <x-global::forms.button tag="input" inputType="submit" :labelText="__('links.reply')" name="comment" id="submit-reply-button" contentRole="primary" />
-                                <x-global::forms.button tag="input" inputType="button" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')" :labelText="__('links.cancel')" contentRole="primary" />
+                                <x-global::forms.button tag="input" inputType="button" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')" :labelText="__('links.cancel')" contentRole="secondary" />
                             </div>
                             <div class="clearall"></div>
                         </div>

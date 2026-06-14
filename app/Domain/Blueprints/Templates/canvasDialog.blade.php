@@ -133,7 +133,7 @@
                             <input type="hidden" name="type" value="milestone" />
                             <input type="hidden" name="blueprintscanvasitemid" value="{{ $id }} " />
                             <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
-                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.blueprintsController.toggleMilestoneSelectors('hide')" contentRole="primary" />
+                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.blueprintsController.toggleMilestoneSelectors('hide')" contentRole="secondary" />
                         </div>
                     </div>
 
@@ -150,7 +150,7 @@
                             <input type="hidden" name="type" value="milestone" />
                             <input type="hidden" name="blueprintscanvasitemid" value="{{ $id }} " />
                             <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
-                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.blueprintsController.toggleMilestoneSelectors('hide')" contentRole="primary" />
+                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.blueprintsController.toggleMilestoneSelectors('hide')" contentRole="secondary" />
                         </div>
                     </div>
                 </center>

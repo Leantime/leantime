@@ -195,3 +195,8 @@ class set / behavior. Categories found (to revisit, some need a design decision)
   Verified: compile clean, audit clean, live no-op spot-check on /goalcanvas/showCanvas.
   **Core plain-button migration is now essentially complete** — remaining work = the deferral backlog
   (dropdowns get migrated in the dropdown-component phase; class="button"/unstyled = design decisions).
+- _button role sanity pass_: 15 Back/Cancel/"Go Back" buttons that were hard-coded btn-primary in the
+  original markup demoted to contentRole="secondary" (alternative/navigate-away actions). Only the role
+  VALUE changed. This is intentionally NOT a no-op (appearance changes; secondary is unstyled until the
+  design phase). FLAGGED, not changed: 2 Ideas board-submit buttons (advancedBoards) are `default` but
+  arguably should be primary for consistency with sibling board dialogs — awaiting decision.
