@@ -68,11 +68,11 @@
                 </div>
 
                 <div class="left">
-                    <a href="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" class="btn btn-default pull-left">Back</a>
+                    <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" contentRole="default" class="pull-left">Back</x-global::forms.button>
                 </div>
 
                 <div class="right">
-                    <input type="submit" value="Next" class="btn" />
+                    <x-global::forms.button tag="input" inputType="submit" labelText="Next" />
                 </div>
                 <div class="clearall"></div>
             </form>

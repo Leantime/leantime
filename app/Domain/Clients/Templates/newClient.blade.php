@@ -107,8 +107,8 @@
 
                             <div class="form-group">
                                 <div class="span4 control-label">
-                                    <input type="submit" name="save" id="save"
-                                           value="{{ __('buttons.save') }}" class="btn btn-primary" />
+                                    <x-global::forms.button tag="input" inputType="submit" name="save" id="save"
+                                           :labelText="__('buttons.save')" contentRole="primary" />
                                 </div>
                                 <div class="span6">
 

@@ -70,9 +70,9 @@
                         <div style="display:none;"
                              id="comment{{ $row['id'] }}"
                              class="commentBox">
-                            <br/><input type="submit"
-                                        value="{{ __('links.reply') }}"
-                                        name="comment" class="btn btn-default"/>
+                            <br/><x-global::forms.button tag="input" inputType="submit"
+                                        :labelText="__('links.reply')"
+                                        name="comment" contentRole="default" />
                         </div>
                     </div>
                     <div class="clear"></div>

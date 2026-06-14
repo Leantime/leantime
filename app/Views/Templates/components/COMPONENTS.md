@@ -167,7 +167,25 @@ inline `jQuery(document).ready` init runs only on first paint and breaks after H
 5. Migrate the rest in batches, re-verifying; commit per batch.
 6. Update this tracker (status, gotchas, call-site count migrated).
 
+## Button migration — deferral backlog (handle in later passes)
+
+The no-op migration deliberately defers buttons it can't migrate without changing the rendered
+class set / behavior. Categories found (to revisit, some need a design decision):
+- **`class="button"` (not `btn`)** — many form submit inputs use `.button`. Need to confirm
+  whether `.button` styling == `.btn` in forms.css; if so, add it to the component/migration.
+- **Unstyled `<input type="submit">`** (no class) — adding `btn` is a *design* change, not a no-op. Defer.
+- **Unmapped btn variants** — `btn-sm`/`btn-lg` (vs Leantime `btn-small`/`btn-large`),
+  `btn-danger-outline`, `btn-circle`, `btn-inverse`, `btn-file`. Add mappings (after confirming CSS) or keep deferred.
+- **role+state combo** (`btn btn-default btn-success`) — component currently emits one color; allow coexistence.
+- **`<a onclick=...>` without `href`** — component forces `href="#"`; tweak to emit href only when `link` is set, then migrate.
+- **dropdown-toggle / data-toggle / fileupload / span.btn** — handled in the dropdown / file-upload / later phases.
+
 ## Progress log
 
 - _Phase 0_: tracker created; `feature/componentization` branched off master; card-naming resolved.
-- _button_: no-op `forms.button` built (proof-of-concept). Call-site migration pending Playwright pilot.
+- _button_: no-op `forms.button` built + 2 correctness fixes (native button-type, no default color).
+- _button pilot_: `Auth/login` migrated; Playwright before/after = byte-identical (proven).
+- _button batch 1_: ~65 plain buttons migrated across 46 core form/admin/CRUD templates (9-agent
+  fan-out, disjoint files); ~70 deferred per the backlog above. Verified: view:cache compiles,
+  audit shows no JS-coupled class swallowed. Remaining: JS-heavy domains (canvas/board/dashboard/
+  widgets/tickets/ideas/wiki/calendar) + the deferral backlog.

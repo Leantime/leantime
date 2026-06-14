@@ -23,7 +23,7 @@
         <input type="text" name="company" class="form-control" placeholder="{{ __('label.company_name') }}" value=""/>
         <br /><br />
         <input type="hidden" name="install" value="Install" />
-        <p><input type="submit" name="installAction" class="btn btn-primary" value="{{ __('buttons.install') }}" onClick="this.form.submit(); this.disabled=true; this.value='{{ __('buttons.install') }}'; "/></p>
+        <p><x-global::forms.button tag="input" inputType="submit" name="installAction" contentRole="primary" :labelText="__('buttons.install')" onClick="this.form.submit(); this.disabled=true; this.value='{{ __('buttons.install') }}'; " /></p>
     </form>
 
 </div>

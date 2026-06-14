@@ -122,7 +122,7 @@
 
                         <div class="col-md-6">
                             <h4 class="widgettitle title-light"><span class="fa fa-users"></span> {!! __('subtitles.users_assigned_to_this_client') !!}</h4>
-                            <a href="#/users/newUser?preSelectedClient={{ $values['id'] }}" class="btn btn-primary"><i class='fa fa-plus'></i> {!! __('buttons.add_user') !!} </a>
+                            <x-global::forms.button tag="a" link="#/users/newUser?preSelectedClient={{ $values['id'] }}" contentRole="primary"><i class='fa fa-plus'></i> {!! __('buttons.add_user') !!} </x-global::forms.button>
                             <table class='table table-bordered'>
                                 <colgroup>
                                     <col class="con1" />
@@ -154,9 +154,9 @@
                                                 @csrf
                                                 <input type="hidden" name="id" value="{{ $values['id'] }}" />
                                                 <input type="hidden" name="userId" value="{{ $user['id'] }}" />
-                                                <button type="submit" class="delete btn btn-link" title="{{ __('buttons.remove') }}" style="padding:0; border:none; background:none;">
+                                                <x-global::forms.button inputType="submit" class="delete" contentRole="link" title="{{ __('buttons.remove') }}" style="padding:0; border:none; background:none;">
                                                     <i class="fa fa-trash"></i>
-                                                </button>
+                                                </x-global::forms.button>
                                             </form>
                                         </td>
                                     </tr>
@@ -174,8 +174,8 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <input type="submit" name="save" id="save"
-                                   value="{{ __('buttons.save') }}" class="btn btn-primary" />
+                            <x-global::forms.button tag="input" inputType="submit" name="save" id="save"
+                                   :labelText="__('buttons.save')" contentRole="primary" />
                         </div>
                         <div class="col-md-6 align-right">
                             <a href="{{ BASE_URL }}/clients/delClient/{{ $_GET['id'] }}" class="delete"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a>

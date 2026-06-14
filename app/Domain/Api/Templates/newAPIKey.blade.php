@@ -14,7 +14,7 @@
     @if ($apiKeyValues !== false && isset($apiKeyValues['id']))
         <p>Your API Key was successfully created. Please copy the key below. This is your only chance to copy it.</p>
         <input type="text" id="apiKey" value="lt_{{ $apiKeyValues['user'] }}_{{ $apiKeyValues['passwordClean'] }}" style="width:100%;"/>
-        <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('apiKey');">{!! __('links.copy_key') !!}</button>
+        <x-global::forms.button contentRole="primary" onclick="leantime.snippets.copyUrl('apiKey');">{!! __('links.copy_key') !!}</x-global::forms.button>
     @else
     <form action="{{ BASE_URL }}/api/newApiKey" method="post" class="stdform formModal" >
 

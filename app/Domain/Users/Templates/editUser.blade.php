@@ -78,9 +78,9 @@
                             <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}"><i class="fa fa-link"></i> {!! __('label.copyinviteLink') !!}</a>
                             <div class="dropdown-menu padding-md noClickProp">
                                 <input type="text" id="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
-                                <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('inviteURL');">{!! __('links.copy_url') !!}</button>
+                                <x-global::forms.button contentRole="primary" onclick="leantime.snippets.copyUrl('inviteURL');">{!! __('links.copy_url') !!}</x-global::forms.button>
                             </div>
-                            <a href="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite=1" class="btn btn-default" style="margin-left:5px;"><i class="fa fa-envelope"></i> {!! __('buttons.resend_invite') !!}</a>
+                            <x-global::forms.button tag="a" link="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite=1" contentRole="default" style="margin-left:5px;"><i class="fa fa-envelope"></i> {!! __('buttons.resend_invite') !!}</x-global::forms.button>
                         </div>
                         @endif
                         <div class="clearfix"></div>

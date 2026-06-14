@@ -22,7 +22,7 @@
             <form method="post">
                 <p>{!! __('text.confirm_project_deletion') !!}</p><br />
                 <input type="submit" value="{{ __('buttons.yes_delete') }}" name="del" class="button" />
-                <a class="btn btn-primary" href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}">{!! __('buttons.back') !!}</a>
+                <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}" contentRole="primary">{!! __('buttons.back') !!}</x-global::forms.button>
             </form>
 
         </div>
