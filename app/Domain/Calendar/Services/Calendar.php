@@ -644,7 +644,12 @@ class Calendar extends BaseService
     #[RequiresPermission(CalendarPermissions::VIEW)]
     public function getMyCalendar(null|string|CarbonImmutable $from = null, null|string|CarbonImmutable $until = null): array
     {
-        return $this->getCalendar($this->currentUserId() ?? 0, $from, $until);
+        $userId = $this->currentUserId() ?? 0;
+        if ($userId === 0) {
+            return [];
+        }
+
+        return $this->getCalendar($userId, $from, $until);
     }
 
     /**

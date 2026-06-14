@@ -176,22 +176,30 @@ class Notifications
      *
      * (Mark-all-read is already covered by markRead('all').)
      *
+     * Pagination is clamped and the repo's arbitrary column=>value filter
+     * passthrough is intentionally NOT exposed here — an @api caller gets a
+     * bounded page of its OWN rows only (no caller-supplied WHERE columns, no
+     * unbounded limit).
+     *
      * @param  int  $showNewOnly  1 = only unread notifications, 0 = all
-     * @param  int  $limitStart  Offset for paging
-     * @param  int  $limitEnd  Page size
-     * @param  array<string, mixed>  $filterOptions  Optional extra column=>value filters
+     * @param  int  $limitStart  Offset for paging (clamped to >= 0)
+     * @param  int  $limitEnd  Page size (clamped to 1..100)
      * @return array<int, array<string, mixed>> The session user's notifications, or [] when unauthenticated
      *
      * @api
      */
-    public function getInbox(int $showNewOnly = 0, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = []): array
+    public function getInbox(int $showNewOnly = 0, int $limitStart = 0, int $limitEnd = 50): array
     {
         $userId = (int) session('userdata.id');
         if ($userId === 0) {
             return [];
         }
 
-        return $this->notificationsRepo->getAllNotifications($userId, (bool) $showNewOnly, $limitStart, $limitEnd, $filterOptions) ?: [];
+        // Clamp pagination so an @api caller cannot request an unbounded page.
+        $limitStart = max(0, $limitStart);
+        $limitEnd = min(max(1, $limitEnd), 100);
+
+        return $this->notificationsRepo->getAllNotifications($userId, (bool) $showNewOnly, $limitStart, $limitEnd) ?: [];
     }
 
     /**

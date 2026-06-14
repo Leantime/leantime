@@ -102,10 +102,17 @@ class BearerApiCest
         Assert::assertArrayNotHasKey('error', $extEvents, 'getExternalCalendarEvents must be exposed: '.json_encode($extEvents));
         Assert::assertIsArray($extEvents['result'] ?? null, 'getExternalCalendarEvents should return an array: '.json_encode($extEvents));
 
-        //    getICalUrl is now exposed too. It legitimately errors when the user has no iCal secret
-        //    configured yet, so assert only that it is FOUND (not -32601 method-not-found).
+        //    getICalUrl is now exposed too. It legitimately errors with -32602 when the user has no
+        //    iCal feed configured yet, so a valid response is EITHER a URL string OR -32602 — but
+        //    NEVER -32601 (method-not-found regression) or -32001 (permission regression).
         $icalUrl = $this->rpc($I, 'leantime.rpc.Calendar.Calendar.getICalUrl', new \stdClass);
-        Assert::assertNotSame(-32601, $icalUrl['error']['code'] ?? null, 'getICalUrl must be exposed via @api: '.json_encode($icalUrl));
+        $icalErr = $icalUrl['error']['code'] ?? null;
+        Assert::assertNotSame(-32601, $icalErr, 'getICalUrl must be exposed via @api (not method-not-found): '.json_encode($icalUrl));
+        Assert::assertNotSame(-32001, $icalErr, 'getICalUrl must not be permission-denied for the owner: '.json_encode($icalUrl));
+        Assert::assertTrue(
+            array_key_exists('result', $icalUrl) || $icalErr === -32602,
+            'getICalUrl should return a URL or -32602 (no feed configured): '.json_encode($icalUrl)
+        );
     }
 
     #[Group('bearer-api')]
