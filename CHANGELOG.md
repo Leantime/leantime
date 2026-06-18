@@ -6,7 +6,7 @@
 ## Bug Fixes
 - **Blueprints Canvas** - Fixed a 404 error when adding or editing canvas items (#3544)
 - **Editor Mentions** - The @mention dropdown now appears directly beneath the caret (#3530)
-- **General Fixes** - Resolved several recently reported bugs (#3488, #3480, #3467, #3463, #3532)
+- **General Fixes** - Resolved several recently reported bugs (#3532)
 
 ## Dependency Updates
 - **symfony/yaml** - Promoted to a production dependency (#3543)
