@@ -1,3 +1,18 @@
+# Version: 3.9.5
+
+## New Features
+- **Mobile API Endpoints** - Added session-scoped mobile endpoints for the notifications inbox and calendar (#3529)
+
+## Bug Fixes
+- **Blueprints Canvas** - Fixed a 404 error when adding or editing canvas items (#3544)
+- **Editor Mentions** - The @mention dropdown now appears directly beneath the caret (#3530)
+- **General Fixes** - Resolved several recently reported bugs (#3532)
+
+## Dependency Updates
+- **symfony/yaml** - Promoted to a production dependency (#3543)
+
+---
+
 # Version: 3.9.4
 
 ## Bug Fixes
