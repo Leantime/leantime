@@ -126,12 +126,15 @@ class Oidc
 
         if ($this->getAuthUrl()) {
 
+            $state = $this->generateState();
+            session(['oidc.state' => $state]);
+
             return $this->getAuthUrl().'?'.http_build_query([
                 'client_id' => $this->clientId,
                 'redirect_uri' => $this->buildRedirectUrl(),
                 'response_type' => 'code',
                 'scope' => $this->scopes,
-                'state' => $this->generateState(),
+                'state' => $state,
             ]);
         }
 
@@ -554,10 +557,17 @@ class Oidc
         return bin2hex(random_bytes(16));
     }
 
+    /**
+     * Verifies the state parameter returned by the OIDC provider against the
+     * value stored in the session when the login flow was initiated. The state
+     * is consumed (one-time use) regardless of the outcome to prevent replay.
+     */
     private function verifyState(string $state): bool
     {
-        // TODO
-        return true;
+        $storedState = (string) session('oidc.state');
+        session()->forget('oidc.state');
+
+        return $storedState !== '' && hash_equals($storedState, $state);
     }
 
     private function encodeBase64Url(string $value): string
