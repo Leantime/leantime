@@ -41,7 +41,7 @@ class DelCanvasItem
     }
 
     #[RequiresPermission(BlueprintsPermissions::DELETE)]
-    public function get(?string $id = null): Response
+    public function get(?string $canvasSlug = null, ?string $id = null): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
@@ -53,7 +53,7 @@ class DelCanvasItem
     }
 
     #[RequiresPermission(BlueprintsPermissions::DELETE, entityScoped: true)]
-    public function post(?string $id = null): Response
+    public function post(?string $canvasSlug = null, ?string $id = null): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');

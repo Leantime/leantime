@@ -65,10 +65,11 @@ class EditCanvasItem
     /**
      * get - handle GET requests for viewing/editing a canvas item.
      *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
      * @param  string|null  $id  Canvas item id
      */
     #[RequiresPermission(BlueprintsPermissions::VIEW, entityScoped: true)]
-    public function get(?string $id = null): Response
+    public function get(?string $canvasSlug = null, ?string $id = null): Response
     {
         $data = $this->request->getRequestParams();
         if ($id !== null) {
@@ -172,10 +173,11 @@ class EditCanvasItem
     /**
      * post - handle POST requests for creating/updating canvas items and comments.
      *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
      * @param  string|null  $id  Canvas item id
      */
     #[RequiresPermission(BlueprintsPermissions::EDIT, entityScoped: true)]
-    public function post(?string $id = null): Response
+    public function post(?string $canvasSlug = null, ?string $id = null): Response
     {
         $data = $this->request->getRequestParams();
         if ($id !== null) {

@@ -49,10 +49,11 @@ class Export
     /**
      * get - generate and return the XML export file.
      *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
      * @param  string|null  $id  Board id from the route
      */
     #[RequiresPermission(BlueprintsPermissions::VIEW, entityScoped: true)]
-    public function get(?string $id = null): Response
+    public function get(?string $canvasSlug = null, ?string $id = null): Response
     {
         if ($this->template === null) {
             return new Response('Unknown canvas type', 404);
