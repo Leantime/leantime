@@ -9,6 +9,12 @@ use Leantime\Core\Events\Contracts\LeantimeEvent;
  * Fired from the repository when a ticket's status column changes (kanban moves,
  * inline patches). Carries the legacy payload keys (ticketId/status/action/handler)
  * that existing plugin listeners read.
+ *
+ * The legacy bridge emits a SUPERSET of each historical payload: the patchTicket site
+ * historically passed no `handler` key, so its bridged payload now also carries
+ * `handler => null`. This is additive and safe — consumers read keys by name
+ * (`$payload['handler'] ?? …`), never by exact key-set/count — and the kanban
+ * (updateTicketStatus) site, the only live consumer, always carried `handler`.
  */
 final class TicketStatusUpdated implements LeantimeEvent
 {

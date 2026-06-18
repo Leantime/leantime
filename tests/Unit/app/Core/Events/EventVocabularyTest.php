@@ -22,9 +22,20 @@ class EventVocabularyTest extends Unit
 {
     public function test_event_class_names_end_with_central_vocabulary_verb(): void
     {
+        $discovered = $this->discoverEventClasses();
+
+        // Guard against a vacuous pass: if discovery silently finds nothing (e.g. a
+        // broken base path), the loop below would assert nothing. The pilot ships ten
+        // contract classes in Tickets, so discovery must find them.
+        $this->assertContains(
+            \Leantime\Domain\Tickets\Events\TicketUpdated::class,
+            $discovered,
+            'Event class discovery found nothing — the vocabulary check would pass vacuously.'
+        );
+
         $violations = [];
 
-        foreach ($this->discoverEventClasses() as $class) {
+        foreach ($discovered as $class) {
             $implements = class_implements($class);
             $shortName = substr($class, strrpos($class, '\\') + 1);
 
@@ -62,7 +73,9 @@ class EventVocabularyTest extends Unit
      */
     private function discoverEventClasses(): array
     {
-        $appRoot = dirname(__DIR__, 5);
+        // Anchor on the canonical app-root constant rather than a brittle relative
+        // dirname() hop, so the scan can't silently miss the Events folders.
+        $appRoot = defined('APP_ROOT') ? APP_ROOT : dirname(__DIR__, 5);
 
         $files = array_merge(
             glob($appRoot.'/app/Domain/*/Events/*.php') ?: [],
