@@ -40,8 +40,14 @@ class DelCanvasItem
         $this->template = $templateRegistry->get($this->canvasSlug);
     }
 
+    /**
+     * get - display the delete confirmation dialog for a canvas item.
+     *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
+     * @param  string|null  $id  Canvas item id from the route
+     */
     #[RequiresPermission(BlueprintsPermissions::DELETE)]
-    public function get(?string $id = null): Response
+    public function get(?string $canvasSlug = null, ?string $id = null): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
@@ -52,8 +58,14 @@ class DelCanvasItem
         return $this->tpl->displayPartial('blueprints.delCanvasItem');
     }
 
+    /**
+     * post - delete the canvas item identified by the route id.
+     *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
+     * @param  string|null  $id  Canvas item id from the route
+     */
     #[RequiresPermission(BlueprintsPermissions::DELETE, entityScoped: true)]
-    public function post(?string $id = null): Response
+    public function post(?string $canvasSlug = null, ?string $id = null): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
