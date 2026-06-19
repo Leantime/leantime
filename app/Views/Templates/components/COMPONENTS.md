@@ -158,6 +158,17 @@ Copy **Tiptap** (`public/assets/js/app/core/tiptap/index.js`) — the only widge
 This fixes the SlimSelect / Chosen / jQuery-UI-datepicker / tabs / inlineSelect bug where
 inline `jQuery(document).ready` init runs only on first paint and breaks after HTMX swaps.
 
+## ⚠️ Gotcha: no double-quotes inside a component attribute value
+
+Blade parses **component** attributes more strictly than plain HTML. A `"` inside a `{{ }}`
+expression within an attribute value terminates the attribute early and breaks the tag —
+even though the same markup works as a raw `<a href="...">`. So when migrating:
+- `href="{{ $x["key"] }}"` → use `{{ $x['key'] }}` (single-quote the array key), or `:link="$x['key']"`.
+- `href="{{ BASE_URL . "/path/$id" }}"` → use `link="{{ BASE_URL }}/path/{{ $id }}"` (Blade interpolation).
+- `class="{{ $c ? "a" : "b" }}"` → single-quote the strings, or compute in `@php`.
+Run the brace/quote-aware scan (forms.button opening tags with a `"` inside any `{{ }}`) after any
+button migration batch — `view:cache` does NOT catch these (they fail at render, not compile).
+
 ## Per-component playbook (repeatable)
 
 1. Read what the primitive renders today (classes, JS hooks, every call-site shape).

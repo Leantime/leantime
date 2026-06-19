@@ -169,7 +169,7 @@
             </div>
 
             @if ($id != '')
-                <x-global::forms.button tag="a" link="{{ BASE_URL . "/goalcanvas/delCanvasItem/$id" }}" class="formModal delete right" contentRole="secondary">
+                <x-global::forms.button tag="a" link="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete right" contentRole="secondary">
                     <i class='fa fa-trash-can'></i> {{ __('links.delete') }}
                 </x-global::forms.button>
             @endif
