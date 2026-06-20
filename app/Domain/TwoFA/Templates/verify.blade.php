@@ -14,7 +14,7 @@
         {!! $tpl->displayInlineNotification() !!}
 
         <div class="">
-            <x-global::forms.text-input variant="form" name="twoFA_code" id="twoFA_code"
+            <x-global::forms.text-input name="twoFA_code" id="twoFA_code"
                    placeholder="{{ __('label.twoFACode') }}"
                    value="" autofocus />
         </div>

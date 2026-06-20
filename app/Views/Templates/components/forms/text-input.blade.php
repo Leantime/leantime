@@ -1,8 +1,11 @@
 @props([
     // NO-OP variant -> the class the app renders TODAY. Default '' = a bare, unclassed input
     // (the common case: ~206 inputs have no class and are styled by their form/context).
-    'variant' => '',          // '' (bare) | form | headline | large | small | legacy | search
-    'inputType' => 'text',    // text | email | password | number | url | tel | search
+    'variant' => '',          // '' (bare) | headline | large | small | legacy
+                              //   NB: there is no "form" variant — `.form-control` (full-width/bordered)
+                              //   is fully overridden by forms.css's element selectors + container width
+                              //   rules, so a bare input already renders identically. Bare IS the form look.
+    'type' => 'text',         // text | email | password | number | url | tel | search (HTML-native; Blade extracts it from $attributes so it never duplicates)
 
     // --- design-system IDL: declared for the durable contract, but intentionally NOT rendered
     //     in no-op mode (a label/validation wrapper would change today's markup). They become
@@ -35,12 +38,13 @@
       • color: .simpleColorPicker              • any inline onchange/onblur/onkeyup/oninput handler
     See COMPONENTS.md for the full do-not-touch list.
 
-    Pass the input type via the `inputType` prop, NOT a `type="…"` attribute (the component emits
-    `type` itself; a `type` attribute would duplicate it).
+    Pass the input type via the HTML-native `type="…"` attribute. It is a declared @prop, so Blade
+    extracts it from the attribute bag — the component emits exactly one `type` (never duplicated).
+    Omit it for a plain text input (default "text").
 
     Migration cheatsheet (source class -> variant):
       <input type="text" name=…>                 -> <x-global::forms.text-input name=…>      (bare, no class)
-      <input type="email" class="form-control">  -> inputType="email" variant="form"
+      <input type="email" class="form-control">  -> type="email"   (drop form-control; it's redundant)
       <input class="main-title-input">           -> variant="headline"
       <input class="input-large">                -> variant="large"
       <input class="input"> (legacy)             -> variant="legacy"
@@ -48,7 +52,6 @@
 @php
     // No-op map: variant -> the exact class the markup uses today.
     $variantClass = match ($variant) {
-        'form', 'bordered' => 'form-control',
         'headline', 'title' => 'main-title-input',
         'large' => 'input-large',
         'small' => 'input-small',
@@ -61,4 +64,4 @@
     $attrs = $variantClass !== '' ? $attributes->merge(['class' => $variantClass]) : $attributes;
 @endphp
 
-<input type="{{ $inputType }}" {{ $attrs }} />
+<input type="{{ $type }}" {{ $attrs }} />

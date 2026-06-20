@@ -52,19 +52,19 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label>{{ __('label.starting_value') }}</label>
-                            <x-global::forms.text-input inputType="number" step="0.01" name="startValue" value="{{ $canvasItem['startValue'] }}"
+                            <x-global::forms.text-input type="number" step="0.01" name="startValue" value="{{ $canvasItem['startValue'] }}"
                                 style="width:105px" />
                         </div>
                         <div class="col-md-3">
                             <label>{{ __('label.current_value') }}</label>
-                            <x-global::forms.text-input inputType="number" step="0.01" name="currentValue" id="currentValueField"
+                            <x-global::forms.text-input type="number" step="0.01" name="currentValue" id="currentValueField"
                                 value="{{ $canvasItem['currentValue'] }}"
                                 @if ($canvasItem['setting'] == 'linkAndReport') readonly data-tippy-content="Current value calculated from child goals" @endif
                                 style="width:105px" />
                         </div>
                         <div class="col-md-3">
                             <label>{{ __('label.goal_value') }}</label>
-                            <x-global::forms.text-input inputType="number" step="0.01" name="endValue" value="{{ $canvasItem['endValue'] }}"
+                            <x-global::forms.text-input type="number" step="0.01" name="endValue" value="{{ $canvasItem['endValue'] }}"
                                 style="width:105px" />
                         </div>
                         <div class="col-md-3">

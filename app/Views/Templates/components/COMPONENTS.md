@@ -204,11 +204,14 @@ class set / behavior. Categories found (to revisit, some need a design decision)
 
 `forms.text-input` is a **thin no-op**: it emits a plain `<input>` with today's class (default = no
 class) and passes all attributes through; the label/validation IDL props are declared but not rendered
-(a wrapper would change markup — that's the design phase). Pass `inputType` (never a raw `type=`).
+(a wrapper would change markup — that's the design phase). Pass the **HTML-native `type=`** (it is a
+declared `@prop`, so Blade extracts it from the attribute bag — emits exactly one `type`, never a duplicate).
 
-- ✅ **Migrate (146 done in PR #3558; more in follow-ups):** standard inputs (`form-control` / bare /
-  legacy `input`), headline title inputs (`main-title-input` → `variant="headline"`), search inputs. Map
-  source class → `variant`; any extra non-variant class (tw-utilities, `pull-left`, …) passes through `class=`.
+- ✅ **Migrate (146 done in PR #3558; more in follow-ups):** standard inputs (bare / legacy `input`),
+  headline title inputs (`main-title-input` → `variant="headline"`), search inputs. Map source class →
+  `variant`; any extra non-variant class (tw-utilities, `pull-left`, …) passes through `class=`.
+  **`.form-control` → bare** (NOT a variant): forms.css element selectors override its look and container
+  rules (`.regpanelinner input{width:100%}`) supply the width, so a bare input renders identically.
 - ⛔ **Leave RAW — do-not-touch signals** (JS-coupled; breaking these regresses behavior):
   - **datepickers** (jQuery-UI): `.dates .duedates .quickDueDates .dateFrom .dateTo .editFrom .editTo
     .startDate .endDate .projectDateFrom .projectDateTo .week-picker .hasDatepicker` + ids `#deadline
@@ -271,3 +274,14 @@ class) and passes all attributes through; the label/validation IDL props are dec
   **Deferred to follow-ups:** `Auth/userInvite` (3 inputs w/ legacy `<?php echo ?>` in attrs — see gotcha),
   `Tickets/partials/ticketCard` + `partials/subtasks` (HTMX inline-edit/date), and everywhere the
   do-not-touch signals (datepickers/tags/inline-edit/color/`sorter`/`hourCell`/dynamic-class).
+- _text-input API refinement (review feedback)_: two API cleanups after review.
+  (1) **`inputType` → `type`**: renamed the prop to the HTML-native `type` (17 call-sites). It's a declared
+  `@prop`, so Blade extracts it from the attribute bag → exactly one `type`, no duplication. (`forms.button`
+  keeps `inputType` because it's polymorphic — `type` is ambiguous across a/button/input.)
+  (2) **dropped `variant="form"`** (the `form`/`bordered`→`.form-control` arm). 3-agent CSS audit proved
+  `.form-control` is cosmetically redundant in Leantime: `forms.css` element selectors (`input[type=text]…`,
+  loaded after Bootstrap) override its bg/border/radius/shadow/padding/height/color, and the only residual
+  effect (desktop `width:100%`) is already supplied by container rules (`.regpanelinner input{width:100%}`)
+  for the sole 7 call-sites (login ×2, twoFA/verify ×1, install ×4 — all entry pages). No JS hooks
+  `.form-control` on inputs. Collapsed those 7 to bare; live render on `/auth/login` = bare inputs, single
+  `type`, no `form-control`. Bare IS the form look now.
