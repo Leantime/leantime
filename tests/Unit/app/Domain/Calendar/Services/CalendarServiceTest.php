@@ -8,6 +8,7 @@ use Leantime\Core\Language;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Menu\Repositories\Menu;
 use Leantime\Domain\Setting\Repositories\Setting;
+use Leantime\Domain\Tickets\Services\Tickets;
 use Spatie\IcalendarGenerator\Components\Calendar as IcalCalendar;
 use Unit\TestCase;
 
@@ -313,5 +314,59 @@ class CalendarServiceTest extends TestCase
             $this->assertTrue($isApi($method), "$method should stay @api");
             $this->assertSame($permission, $gate($method), "$method must carry the $permission gate");
         }
+    }
+
+    // ---- calendar feed robustness ----------------------------------------
+
+    /**
+     * Regression for #3536: a ticket with a valid planned start (editFrom) but an
+     * empty/sentinel editTo used to throw in parseDbDateTime(), 500-ing the whole
+     * "My Work" calendar feed and leaving the dashboard widget loading forever.
+     * editTo must now be guarded and fall back to editFrom.
+     */
+    public function test_get_calendar_survives_ticket_with_empty_edit_to(): void
+    {
+        $repo = $this->make(CalendarRepository::class, [
+            'getAll' => fn () => [],
+        ]);
+
+        $ticket = [
+            'id' => 10,
+            'headline' => 'Planned task',
+            'description' => '',
+            'projectId' => 3,
+            'status' => 3,
+            'dateToFinish' => '',                 // invalid -> due-date block is skipped
+            'editFrom' => '2026-06-18 09:00:00',  // valid planned start
+            'editTo' => '',                       // empty end date -> previously threw
+        ];
+
+        $tickets = $this->make(Tickets::class, [
+            'getOpenUserTicketsThisWeekAndLater' => fn () => ['thisWeek' => ['tickets' => [$ticket]]],
+            'getStatusLabels' => fn () => [],
+        ]);
+        app()->instance(Tickets::class, $tickets);
+
+        $service = new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $repo,
+            language: $this->language,
+            settingsRepo: $this->settingsRepository,
+            config: $this->config
+        );
+
+        $events = $service->getCalendar(1);
+
+        $editEvents = array_values(array_filter(
+            $events,
+            fn ($event) => ($event['dateContext'] ?? null) === 'edit'
+        ));
+
+        $this->assertCount(1, $editEvents, 'the planned-edit event should still be produced (no exception)');
+        $this->assertSame('2026-06-18 09:00:00', $editEvents[0]['dateFrom']);
+        $this->assertSame(
+            '2026-06-18 09:00:00',
+            $editEvents[0]['dateTo'],
+            'editTo should fall back to editFrom when empty'
+        );
     }
 }
