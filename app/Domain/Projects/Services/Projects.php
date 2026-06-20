@@ -780,6 +780,8 @@ class Projects extends BaseService implements ChecksProjectAccess
         if ($project) {
             return $project['name'];
         }
+
+        return null;
     }
 
     /**

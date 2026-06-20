@@ -54,6 +54,8 @@ class WebGuard implements Guard
         if ($this->user()) {
             return $this->user()->id;
         }
+
+        return null;
     }
 
     public function validate(array $credentials = [])

@@ -115,7 +115,7 @@ class AuthenticateSession implements AuthenticatesSessions
      */
     protected function redirectTo(Request $request)
     {
-        //
+        return null;
     }
 
     public function setLeantimeSession(IncomingRequest $request, Closure $next): Response

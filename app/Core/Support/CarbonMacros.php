@@ -149,7 +149,7 @@ class CarbonMacros
     {
         $mixin = $this;
 
-        return function () use ($mixin): CarbonInterface {
+        return function () use ($mixin): CarbonImmutable {
             return self::this()
                 ->setTimezone($mixin->userTimezone)
                 ->locale($mixin->userLanguage);
@@ -167,7 +167,7 @@ class CarbonMacros
     {
         $mixin = $this;
 
-        return function () use ($mixin): CarbonInterface {
+        return function () use ($mixin): CarbonImmutable {
             return self::this()
                 ->setTimezone($mixin->dbTimezone)
                 ->locale($mixin->userLanguage);

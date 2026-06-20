@@ -24,7 +24,7 @@ class CheckPermissions
     {
         $route = $request->route();
 
-        if ($route !== null) {
+        if ($route instanceof \Illuminate\Routing\Route) {
             $controller = $route->getControllerClass();
             $method = $route->getActionMethod();
 

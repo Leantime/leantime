@@ -4374,7 +4374,6 @@ class Tickets extends BaseService
                         $values['editFrom'] = dtHelper()->parseUserDateTime(
                             $values['editFrom'],
                             $values['timeFrom'],
-                            FromFormat::UserDateTime
                         )->formatDateTimeForDb();
                         unset($values['timeFrom']);
                     } else {

@@ -69,7 +69,7 @@ class Menu
         $allAvailableProjects = $projects['allAvailableProjects'];
         $allAvailableProjectsHierarchy = $projects['allAvailableProjectsHierarchy'];
 
-        $clients = $this->projectService->getAllClientsAvailableToUser($userId, 'open', $client);
+        $clients = $this->projectService->getAllClientsAvailableToUser($userId, 'open');
 
         $recent = $this->settingSvc->getSetting('usersettings.'.$userId.'.recentProjects');
         $recentArr = safe_unserialize($recent, []);

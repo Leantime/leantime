@@ -411,7 +411,7 @@ class Users
      *
      * @throws BindingResolutionException
      */
-    public function setPicture($fileId, $id): void
+    public function setPicture($fileId, $id): bool
     {
         $this->connection->table('zp_user')
             ->where('id', $id)
@@ -419,6 +419,8 @@ class Users
                 'profileId' => $fileId,
                 'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
             ]);
+
+        return true;
     }
 
     /**

@@ -157,7 +157,7 @@ class ShowTicket extends Controller
         // TODO: Refactor thumbnail generation in file manager
         $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
 
-        $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'), 'open');
+        $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'));
         $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
         $response = $this->tpl->displayPartial('tickets.showTicketModal');
