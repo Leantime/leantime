@@ -85,8 +85,8 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 ### P0 — primitives & core
 | Component | Tag | Cat | Status | Ref | Notes |
 |---|---|---|---|---|---|
-| button | `forms.button` | forms | 🟡 | refactor/table-component | first pilot; no-op |
-| text-input | `forms.text-input` | forms | ⬜ | refactor/table-component | |
+| button | `forms.button` | forms | ✅ | refactor/table-component | merged #3531: no-op migration + 3-tier role model |
+| text-input | `forms.text-input` | forms | 🟡 | refactor/table-component | this PR; thin no-op; **defer JS-coupled** (datepickers/tags/inline-edit/color) |
 | textarea | `forms.textarea` | forms | ⬜ | selectsComponentUpdates | |
 | select (native) | `forms.select` | forms | ⬜ | refactor/table-component | native no-op first; JS-enhanced later |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
@@ -191,6 +191,25 @@ class set / behavior. Categories found (to revisit, some need a design decision)
 - ~~`<a onclick>` without `href`~~ — DONE: component emits `href` only when `link` is set; migrate these by omitting the `link` prop.
 - **dropdown-toggle / data-toggle / fileupload / span.btn** — handled in the dropdown / file-upload / later phases.
 
+## Text-input migration — scope & defer rubric
+
+`forms.text-input` is a **thin no-op**: it emits a plain `<input>` with today's class (default = no
+class) and passes all attributes through; the label/validation IDL props are declared but not rendered
+(a wrapper would change markup — that's the design phase). Pass `inputType` (never a raw `type=`).
+
+- ✅ **Migrate (~267):** standard inputs (`form-control` / bare / legacy `input`), headline title inputs
+  (`main-title-input` → `variant="headline"`), search inputs. Map source class → `variant`.
+- ⛔ **Leave RAW — do-not-touch signals** (JS-coupled; breaking these regresses behavior):
+  - **datepickers** (jQuery-UI): `.dates .duedates .quickDueDates .dateFrom .dateTo .editFrom .editTo
+    .startDate .endDate .projectDateFrom .projectDateTo .week-picker .hasDatepicker` + ids `#deadline
+    #sprintStart #sprintEnd #event_date_* #date #startDate #endDate #timesheetdate #invoiced* #paidDate`
+    (many init via inline `<script>` in the template + an a11y pass on `.hasDatepicker`).
+  - **time**: `.timepicker`, `type="time"`, `#dueTime #timeFrom #timeTo`.
+  - **tags**: `#tags` (+ `#tags_tag`/`#tags_tagsinput`), `.tagsinputField`, `data-role="tagsinput"`, `#wikiTagsInput`.
+  - **inline-edit / async-save**: `.secretInput`, `.asyncInputUpdate` (+ `data-label` / `data-id`).
+  - **color**: `.simpleColorPicker`.   **honeypot**: `.ohnohoney`.
+  - **any inline `onchange` / `onblur` / `onkeyup` / `oninput` handler**.
+
 ## Progress log
 
 - _Phase 0_: tracker created; `feature/componentization` branched off master; card-naming resolved.
@@ -223,3 +242,6 @@ class set / behavior. Categories found (to revisit, some need a design decision)
   `<li>` menu-items (incl. menu delete/edit), accordion + inline `|`-separated toggles, add/create
   toggles, nav, timers, and already-`btn` links. Still bare (flagged, not converted): inline per-comment
   `deleteComment` links + per-row table delete actions (would need a smaller-scale/inline treatment).
+- _text-input_: thin no-op `forms.text-input` built on `feature/text-input-component` (off master, post-#3531).
+  Scope + datepicker/tags/inline-edit defer rubric above. Pilot pending (verify no-op render AND that a
+  deferred datepicker still initializes on the same page).
