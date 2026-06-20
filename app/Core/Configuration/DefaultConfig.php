@@ -45,7 +45,7 @@ class DefaultConfig
 
     /**
      * @var bool Send anonymous data <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>More Info</a>.
-     *           No personal identifieble data will be sent and it will be impossible for us to track individual users.
+     *           No personally identifiable data will be sent and it will be impossible for us to track individual users.
      */
     public bool $allowTelemetry = true;
 

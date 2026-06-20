@@ -410,14 +410,12 @@ class Users
      */
     public function setPicture($fileId, $id): bool
     {
-        $this->connection->table('zp_user')
+        return $this->connection->table('zp_user')
             ->where('id', $id)
             ->update([
                 'profileId' => $fileId,
                 'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
-            ]);
-
-        return true;
+            ]) > 0;
     }
 
     /**

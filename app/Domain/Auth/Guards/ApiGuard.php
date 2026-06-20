@@ -13,7 +13,7 @@ class ApiGuard implements Guard
 {
     protected $user;
 
-    private string $apiKey;
+    private string $apiKey = '';
 
     public function __construct(
         protected UserProvider $provider,
@@ -71,11 +71,13 @@ class ApiGuard implements Guard
 
     public function id()
     {
-        if ($this->user()) {
-            return $this->user()->getAuthIdentifier();
-        }
+        // user() currently returns a stdClass of API-key user data (not yet a real
+        // Authenticatable — that conversion is tracked for the level-3 auth pass), so read
+        // the id off the object rather than calling getAuthIdentifier().
+        /** @var \stdClass|null $user */
+        $user = $this->user();
 
-        return null;
+        return $user?->id;
     }
 
     public function validate(array $credentials = [])
