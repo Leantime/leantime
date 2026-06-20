@@ -76,7 +76,8 @@ class PathManifestRepository
     /**
      * Create a fresh service manifest data structure.
      *
-     * @param  array  return [$this->manifestKey => $paths];
+     * @param  string  $manifestName
+     * @param  array  $paths
      * @return array
      */
     protected function freshManifest($manifestName, array $paths)
@@ -87,7 +88,8 @@ class PathManifestRepository
     /**
      * Write the service manifest file to disk.
      *
-     * @param  array  $manifest
+     * @param  string  $manifestName
+     * @param  array  $paths
      * @return array
      *
      * @throws \Exception

@@ -75,7 +75,7 @@ class Users
     /**
      * getUser - get on user from db
      *
-     * @return mixed
+     * @return array|false
      */
     public function getUserBySha($hash): array|false
     {
@@ -424,7 +424,7 @@ class Users
     }
 
     /**
-     * @return string[]|SVG
+     * @return array|false
      *
      * @throws BindingResolutionException
      */

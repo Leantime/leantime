@@ -87,9 +87,6 @@ class Language
 
     /**
      * Constructor method for initializing an instance of the class.
-     *
-     * @param  Environment  $config  The configuration environment.
-     * @param  ApiRequest  $request  The API request object.
      */
     public function __construct()
     {

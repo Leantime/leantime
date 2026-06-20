@@ -319,8 +319,6 @@ class Format
     /**
      * Format bytes to human readable format
      *
-     * @param  int  $bytes  The number of bytes
-     * @param  int  $precision  The number of decimal places
      * @return string The formatted size
      */
     public function formatBytes(): string

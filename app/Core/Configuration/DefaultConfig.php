@@ -44,8 +44,8 @@ class DefaultConfig
     public string $appDir = '';
 
     /**
-     * @var string Send anonymous data <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>More Info</a>.
-     *             No personal identifieble data will be sent and it will be impossible for us to track individual users.
+     * @var bool Send anonymous data <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>More Info</a>.
+     *           No personal identifieble data will be sent and it will be impossible for us to track individual users.
      */
     public bool $allowTelemetry = true;
 
@@ -97,7 +97,7 @@ class DefaultConfig
     public string $editor = 'phpstorm';
 
     /**
-     * @var environment
+     * @var string Application environment
      */
     #[LaravelConfig('app.env')]
     public string $env = 'production';
@@ -453,7 +453,7 @@ class DefaultConfig
     public bool $oidcCreateUser = false;
 
     /**
-     * @var string OIDC
+     * @var int OIDC
      *
      * Default Role for new users
      */

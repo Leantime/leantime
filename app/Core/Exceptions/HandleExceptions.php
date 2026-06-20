@@ -25,7 +25,7 @@ class HandleExceptions
     /**
      * The application instance.
      *
-     * @var \Leantime\Core\Bootstrap\Application
+     * @var \Leantime\Core\Application
      */
     protected static $app;
 

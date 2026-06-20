@@ -6,7 +6,7 @@ includes:
 parameters:
     bootstrapFiles:
         - bootstrap.php
-    level: 1
+    level: 2
     inferPrivatePropertyTypeFromConstructor: true
     paths:
         - ../public

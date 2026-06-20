@@ -1044,8 +1044,8 @@ class Calendar extends BaseService
     /**
      * Generates an event array for fullcalendar.io frontend.
      *
-     * @param  int|null  $dateFrom
-     * @param  int|null  $dateTo
+     * @param  string|null  $dateFrom
+     * @param  string|null  $dateTo
      */
     private function mapEventData(
         string $title,

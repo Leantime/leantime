@@ -204,9 +204,9 @@ class AuthCheck
      * Redirect with origin
      * Returns false if the current route is already the redirection route.
      *
-     * @return Response|RedirectResponse
+     * @return RedirectResponse|false
      *
-     * @throws BindingResolutionException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function redirectWithOrigin(string $route, string $origin, IncomingRequest $request): false|RedirectResponse
     {

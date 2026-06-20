@@ -1037,12 +1037,7 @@ class Projects
     }
 
     /**
-     * @return string[]|SVG
-     *
-     * @throws BindingResolutionException
-     */
-    /**
-     * @return array|SVG
+     * @return array|false
      *
      * @throws BindingResolutionException
      */

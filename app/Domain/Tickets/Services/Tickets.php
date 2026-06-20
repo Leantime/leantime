@@ -430,7 +430,7 @@ class Tickets extends BaseService
     /**
      * Retrieves all tickets based on the provided search criteria.
      *
-     * @param  array|null  $searchParams  An associative array containing search parameters such as
+     * @param  array|null  $searchCriteria  An associative array containing search parameters such as
      *                                    'currentProject', 'currentUser', 'users', 'status', 'term',
      *                                    'effort', 'excludeType', 'type', 'milestone', 'groupBy',
      *                                    'orderBy', 'orderDirection', 'priority', 'clients', and 'sprint'.

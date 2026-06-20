@@ -162,7 +162,7 @@ class Cast
     }
 
     /**
-     * @param  array|object  $iterator
+     * @param  iterable  $iterator
      **/
     protected function handleIterator(iterable $iterator, array $mappings = []): array|object
     {

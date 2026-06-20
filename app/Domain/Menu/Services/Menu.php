@@ -28,10 +28,6 @@ class Menu
 
     private MenuRepository $menuRepo;
 
-    /**
-     * @param  TimesheetRepository  $timesheetsRepo
-     * @param  SettingRepository  $settingsRepo
-     */
     public function __construct(
         ProjectService $projectService,
         TimesheetService $timesheetService,

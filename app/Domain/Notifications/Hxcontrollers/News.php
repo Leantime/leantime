@@ -17,9 +17,7 @@ class News extends HtmxController
     /**
      * Controller constructor
      *
-     * @param  Timesheets  $timesheetService
-     * @param  Menu  $menuService
-     * @param  \Leantime\Domain\Menu\Repositories\Menu  $menuRepo
+     * @param  \Leantime\Domain\Notifications\Services\News  $newsService
      */
     public function init(\Leantime\Domain\Notifications\Services\News $newsService): void
     {

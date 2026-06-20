@@ -1873,7 +1873,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      * Sets the avatar for a project.
      *
      * @param  mixed  $file  The file containing the avatar.
-     * @param  mixed  $project  The project object.
+     * @param  mixed  $projectId  The id of the project.
      * @return bool Indicates whether the avatar was successfully set.
      *
      * @throws BindingResolutionException

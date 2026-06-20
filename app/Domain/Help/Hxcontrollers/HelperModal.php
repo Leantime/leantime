@@ -17,7 +17,8 @@ class HelperModal extends HtmxController
     /**
      * Controller constructor
      *
-     * @param  \Leantime\Domain\Projects\Services\Projects  $projectService  The projects domain service.
+     * @param  Helper       $helperService  The help domain service.
+     * @param  UserService  $userService    The users domain service.
      * @return void
      */
     public function init(

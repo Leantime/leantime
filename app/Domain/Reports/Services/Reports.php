@@ -64,7 +64,7 @@ class Reports extends BaseService
     private SprintService $sprintService;
 
     /**
-     * @param  SettingRepository  $settings
+     * @param  SettingsService  $settings
      */
     public function __construct(
         TemplateCore $tpl,

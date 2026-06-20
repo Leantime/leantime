@@ -192,8 +192,6 @@ class Plugins
 
         /**
          * Filters session array of enabled plugins before returning
-         *
-         * @var array $enabledPlugins
          */
         return self::dispatch_filter(
             hook: 'beforeReturnCachedPlugins',
@@ -349,7 +347,7 @@ class Plugins
     {
         $this->clearCache();
 
-        /** @var PluginModel|false $plugin */
+        /** @var InstalledPlugin|false $plugin */
         $plugin = $this->pluginRepository->getPlugin($id);
 
         if (! $plugin) {

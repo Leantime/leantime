@@ -158,8 +158,6 @@ class Oidc
     }
 
     /**
-     * @return void
-     *
      * @throws GuzzleException
      */
     public function callback(string $code, string $state): Response
@@ -201,9 +199,6 @@ class Oidc
         return $this->getMultiUrl($this->userInfoUrl, $token);
     }
 
-    /**
-     * @return void
-     */
     private function login(array $userInfo): Response
     {
 

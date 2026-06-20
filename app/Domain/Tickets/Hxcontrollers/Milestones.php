@@ -15,7 +15,7 @@ class Milestones extends HtmxController
     /**
      * Controller constructor
      *
-     * @param  Timesheets  $timesheetService
+     * @param  Tickets  $ticketService
      */
     public function init(Tickets $ticketService): void
     {

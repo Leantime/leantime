@@ -26,8 +26,6 @@ class Bootloader
 
     /**
      * Get the Bootloader instance
-     *
-     * @param  Application  $app
      */
     public static function getInstance(): self
     {
