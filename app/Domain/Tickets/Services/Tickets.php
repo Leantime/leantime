@@ -30,6 +30,15 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+use Leantime\Domain\Tickets\Events\MilestoneCreated;
+use Leantime\Domain\Tickets\Events\MilestoneDeleted;
+use Leantime\Domain\Tickets\Events\MilestoneUpdated;
+use Leantime\Domain\Tickets\Events\StatusLabelsUpdated;
+use Leantime\Domain\Tickets\Events\TicketCreated;
+use Leantime\Domain\Tickets\Events\TicketDeleted;
+use Leantime\Domain\Tickets\Events\TicketListFilter;
+use Leantime\Domain\Tickets\Events\TicketUpdated;
+use Leantime\Domain\Tickets\Events\TodoWidgetTasksFilter;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Repositories\TicketHistory;
@@ -174,7 +183,10 @@ class Tickets extends BaseService
                 ];
             }
 
-            self::dispatchEvent('statusLabels_updated');
+            StatusLabelsUpdated::dispatch(
+                projectId: session('currentProject') ? (int) session('currentProject') : null,
+                legacyHook: __FUNCTION__
+            );
 
             Cache::forget('projectsettings.'.session('currentProject').'.ticketlabels');
 
@@ -1958,7 +1970,10 @@ class Tickets extends BaseService
 
         $result = $this->ticketRepository->addTicket($values);
 
-        self::dispatchEvent('ticket_created');
+        TicketCreated::dispatch(
+            ticketId: is_int($result) && $result > 0 ? $result : null,
+            legacyHook: __FUNCTION__
+        );
 
         if ($result > 0) {
             $values['id'] = $result;
@@ -2041,7 +2056,7 @@ class Tickets extends BaseService
             return $error;
         }
 
-        self::dispatchEvent('milestone_created');
+        MilestoneCreated::dispatch(legacyHook: __FUNCTION__);
 
         // $params is an array of field names. Exclude id
         return $this->ticketRepository->addTicket($values);
@@ -2125,7 +2140,10 @@ class Tickets extends BaseService
             // Update Ticket
             $addTicketResponse = $this->ticketRepository->addTicket($values);
 
-            self::dispatchEvent('ticket_created');
+            TicketCreated::dispatch(
+                ticketId: is_int($addTicketResponse) && $addTicketResponse > 0 ? $addTicketResponse : null,
+                legacyHook: __FUNCTION__
+            );
 
             if ($addTicketResponse !== false) {
                 $values['id'] = $addTicketResponse;
@@ -2273,7 +2291,7 @@ class Tickets extends BaseService
 
             $this->projectService->notifyProjectUsers($notification);
 
-            self::dispatchEvent('ticket_updated');
+            TicketUpdated::dispatch(ticketId: (int) $values['id'], legacyHook: __FUNCTION__);
 
             return true;
         }
@@ -2517,7 +2535,7 @@ class Tickets extends BaseService
             return false;
         }
 
-        self::dispatchEvent('ticket_updated');
+        TicketUpdated::dispatch(ticketId: (int) $id, legacyHook: __FUNCTION__);
 
         // Todo: create events and move notification logic to notification module
         if (isset($params['status'])) {
@@ -2662,7 +2680,7 @@ class Tickets extends BaseService
 
         $values = $this->prepareTicketDates($values);
 
-        self::dispatchEvent('milestone_updated');
+        MilestoneUpdated::dispatch(milestoneId: $milestoneId, legacyHook: __FUNCTION__);
 
         // $params is an array of field names. Exclude id
         return $this->ticketRepository->updateTicket($values, $milestoneId);
@@ -3041,7 +3059,7 @@ class Tickets extends BaseService
                 return false;
             }
 
-            self::dispatchEvent('ticket_created');
+            TicketCreated::dispatch(legacyHook: __FUNCTION__);
 
         } else {
             // Update Ticket
@@ -3050,7 +3068,7 @@ class Tickets extends BaseService
                 return false;
             }
 
-            self::dispatchEvent('ticket_updated');
+            TicketUpdated::dispatch(ticketId: (int) $subtaskId, legacyHook: __FUNCTION__);
         }
 
         return true;
@@ -3185,7 +3203,7 @@ class Tickets extends BaseService
         $result = $this->ticketRepository->bulkUpdateSortIndex($allUpdates);
 
         if ($result) {
-            self::dispatchEvent('ticket_updated');
+            TicketUpdated::dispatch(legacyHook: __FUNCTION__);
         }
 
         return $result;
@@ -3291,7 +3309,7 @@ class Tickets extends BaseService
             }
         }
 
-        self::dispatchEvent('ticket_updated');
+        TicketUpdated::dispatch(legacyHook: __FUNCTION__);
 
         return true;
     }
@@ -3320,7 +3338,7 @@ class Tickets extends BaseService
         // Collaborator relationship rows are cleaned up inside the repository's delticket().
         if ($this->ticketRepository->delticket($id)) {
 
-            self::dispatchEvent('ticket_deleted');
+            TicketDeleted::dispatch(ticketId: (int) $id, legacyHook: __FUNCTION__);
 
             return true;
         }
@@ -3368,7 +3386,7 @@ class Tickets extends BaseService
         $this->authorize(TicketsPermissions::DELETE, (int) $ticket->projectId);
 
         if ($this->ticketRepository->delMilestone($id)) {
-            self::dispatchEvent('milestone_deleted');
+            MilestoneDeleted::dispatch(milestoneId: (int) $id, legacyHook: __FUNCTION__);
 
             return true;
         }
@@ -3645,7 +3663,7 @@ class Tickets extends BaseService
         }
 
         $allTickets = $this->enrichGroupedTicketsWithCollaborators($allTickets);
-        $allTickets = self::dispatchFilter('filterTickets', $allTickets);
+        $allTickets = TicketListFilter::dispatch(tickets: $allTickets, legacyHook: __FUNCTION__);
 
         return [
             'currentSprint' => session('currentSprint'),
@@ -3805,7 +3823,7 @@ class Tickets extends BaseService
         }
 
         $tickets = $this->enrichGroupedTicketsWithCollaborators($tickets);
-        $tickets = self::dispatch_filter('myTodoWidgetTasks', $tickets);
+        $tickets = TodoWidgetTasksFilter::dispatch(tickets: $tickets, legacyHook: __FUNCTION__);
 
         return [
             'tickets' => $tickets,
@@ -3970,7 +3988,7 @@ class Tickets extends BaseService
         unset($ticketGroup);
 
         // Collaborators were enriched above, before the hierarchy was built.
-        $tickets = self::dispatch_filter('myTodoWidgetTasks', $tickets);
+        $tickets = TodoWidgetTasksFilter::dispatch(tickets: $tickets, hierarchical: true, legacyHook: __FUNCTION__);
 
         return [
             'tickets' => $tickets,
