@@ -31,6 +31,16 @@ interface FileManagerInterface
     public function getFile(string $fileName, string $realName, string $disk = 'default'): Response|false;
 
     /**
+     * Get a public/temporary URL for a file
+     *
+     * @param  string  $fileName  The file name (with extension)
+     * @param  string  $disk  The disk the file lives on
+     * @param  int  $expires  Minutes until a temporary URL expires (0 = permanent/public URL)
+     * @return string|false The URL or false on failure
+     */
+    public function getFileUrl(string $fileName, string $disk = 'default', int $expires = 0): string|false;
+
+    /**
      * Delete a file
      *
      * @param  string  $fileName  The file name (with extension)

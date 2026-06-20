@@ -333,7 +333,7 @@ class Install
         // The version changed: cached routes, plugin lists etc. may reference classes or
         // methods that no longer exist in the new codebase. Everything in the installation
         // store is re-derivable, so drop it wholesale before running the updates.
-        Cache::store('installation')->flush();
+        Cache::store('installation')->clear();
 
         // Find all update functions that need to be executed
         foreach ($this->dbUpdates as $updateVersion) {

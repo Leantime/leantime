@@ -77,6 +77,16 @@ interface Factory {}
  */
 interface Guard {}
 
+namespace Illuminate\Support;
+
+/**
+ * addRealMinutes() is a Carbon magic method (Carbon 3 dropped its @method annotation but the
+ * __call magic still resolves it). Used by StartSession exactly as upstream Laravel does.
+ *
+ * @method \Illuminate\Support\Carbon addRealMinutes(int $value = 1)
+ */
+class Carbon {}
+
 namespace Laravel\Socialite\Contracts;
 
 /**

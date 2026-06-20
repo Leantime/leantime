@@ -35,7 +35,7 @@ class Providers
     /**
      * @throws \Exception
      */
-    public function getProvider($providerId): provider
+    public function getProvider($providerId): object
     {
         if (isset($this->providers[$providerId])) {
             return $this->providers[$providerId];

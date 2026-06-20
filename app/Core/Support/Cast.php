@@ -74,7 +74,7 @@ class Cast
             try {
                 $type = collect($mappings)->firstOrFail(fn ($mapping, $key) => in_array($key, [$name, '*']));
             } catch (\Illuminate\Support\ItemNotFoundException) {
-                $type = ($reflectionType = $property->getType()) ? $reflectionType->getName() : null;
+                $type = ($reflectionType = $property->getType()) instanceof \ReflectionNamedType ? $reflectionType->getName() : null;
             }
 
             $returnObj->set($name, match (true) {

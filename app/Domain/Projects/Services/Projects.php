@@ -147,7 +147,7 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $dateOfFirstTicket = new DateTime($firstTicket->date);
         $today = new DateTime;
-        $totalprojectDays = $today->diff($dateOfFirstTicket)->format('%a');
+        $totalprojectDays = (int) $today->diff($dateOfFirstTicket)->format('%a');
 
         // Calculate percent
 

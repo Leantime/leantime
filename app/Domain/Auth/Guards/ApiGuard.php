@@ -5,6 +5,7 @@ namespace Leantime\Domain\Auth\Guards;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
+use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Api\Services\Api;
 
@@ -19,7 +20,7 @@ class ApiGuard implements Guard
         protected Api $apiService,
         protected IncomingRequest $request)
     {
-        if ($this->request->isApiRequest()) {
+        if ($this->request instanceof ApiRequest && $this->request->isApiRequest()) {
             $this->apiKey = $this->request->getAPIKey();
         }
     }
