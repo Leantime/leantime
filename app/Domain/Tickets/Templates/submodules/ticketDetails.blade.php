@@ -6,7 +6,7 @@
             <div class="col-md-12">
 
                 <div class="form-group">
-                    <input type="text" value="{{ $ticket->headline }}" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}"/>
+                    <x-global::forms.text-input value="{{ $ticket->headline }}" name="headline" variant="headline" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
                 </div>
                 <!-- Status -->
                 <div class="form-group tw-flex tw-w-3/5">
@@ -318,8 +318,8 @@
                     <div class="form-group">
                         <label class=" control-label">{!! __('label.planned_hours') !!} / {!! __('label.estimated_hours_remaining') !!}</label>
                         <div class="">
-                            <input type="text" value="{{ $ticket->planHours }}" name="planHours" style="width:45px;"/>&nbsp;/&nbsp;
-                            <input type="text" value="{{ $ticket->hourRemaining }}" name="hourRemaining" style="width:45px;"/>
+                            <x-global::forms.text-input value="{{ $ticket->planHours }}" name="planHours" style="width:45px;" />&nbsp;/&nbsp;
+                            <x-global::forms.text-input value="{{ $ticket->hourRemaining }}" name="hourRemaining" style="width:45px;" />
                             <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
                                 &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
                             </a>

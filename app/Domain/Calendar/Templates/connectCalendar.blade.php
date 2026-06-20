@@ -16,10 +16,10 @@
         <form action="{{ BASE_URL }}/calendar/connectCalendar" method="post" class="formModal">
             @csrf
             <label for="ical_name">{{ __('label.calendar_name') }}:</label>
-            <input type="text" id="ical_name" name="name" autocomplete="off" placeholder="{{ __('label.calendar_name') }}" /><br />
+            <x-global::forms.text-input id="ical_name" name="name" autocomplete="off" placeholder="{{ __('label.calendar_name') }}" /><br />
 
             <label for="ical_url">{{ __('label.ical_url') }}:</label>
-            <input type="text" id="ical_url" name="url" autocomplete="off" style="width:100%;" placeholder="https://example.com/calendar.ics" /><br />
+            <x-global::forms.text-input id="ical_url" name="url" autocomplete="off" style="width:100%;" placeholder="https://example.com/calendar.ics" /><br />
 
             <label for="ical_color">{{ __('label.color') }}:</label>
             <input type="text" id="ical_color" name="colorClass" autocomplete="off" value="#082236" class="simpleColorPicker"/>

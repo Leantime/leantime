@@ -19,7 +19,7 @@
 
     @if ($url)
         {!! __('text.you_ical_url') !!}
-        <br /><input type='text' value='{{ $url }}' style='width:100%;'/>
+        <br /><x-global::forms.text-input value='{{ $url }}' style='width:100%;' />
     @else
         {!! __('text.no_url') !!}
     @endif

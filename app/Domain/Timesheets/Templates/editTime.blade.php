@@ -121,8 +121,8 @@ use Leantime\Core\Support\FromFormat;
 <label for="date">{!! __('label.date') !!}</label> <input type="text" autocomplete="off"
     id="datepicker" name="date" value="{{ format(value: $values['date'], fromFormat: FromFormat::DbDate)->date() }}" size="7" />
 <br />
-<label for="hours">{!! __('label.hours') !!}</label> <input
-    type="text" id="hours" name="hours"
+<label for="hours">{!! __('label.hours') !!}</label> <x-global::forms.text-input
+    id="hours" name="hours"
     value="{{ $values['hours'] }}" size="7" /> <br />
 <label for="description">{!! __('label.description') !!}</label> <textarea
     rows="5" cols="50" id="description" name="description">{{ $values['description'] }}</textarea><br />

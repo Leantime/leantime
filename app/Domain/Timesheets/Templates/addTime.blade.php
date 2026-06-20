@@ -7,8 +7,8 @@ $values = $values ?? [];
 
 <div class="pageheader">
     <form action="index.php?act=tickets.showAll" method="post" class="searchbar">
-        <input type="text" name="term"
-               placeholder="{{ __('input.placeholders.search_type_hit_enter') }}"/>
+        <x-global::forms.text-input name="term"
+               placeholder="{{ __('input.placeholders.search_type_hit_enter') }}" />
     </form>
 
     <div class="pageicon"><span class="fa-laptop"></span></div>
@@ -102,9 +102,9 @@ $values = $values ?? [];
                                                                                          value="{{ $values['date'] }}"
                                                                                          size="7"/>
                             <br/>
-                            <label for="hours">{!! __('HOURS') !!}</label> <input
-                                    type="text" id="hours" name="hours"
-                                    value="{{ $values['hours'] }}" size="7"/> <br/>
+                            <label for="hours">{!! __('HOURS') !!}</label> <x-global::forms.text-input
+                                    id="hours" name="hours"
+                                    value="{{ $values['hours'] }}" size="7" /> <br/>
                             <label for="description">{!! __('DESCRIPTION') !!}</label> <textarea
                                     rows="5" cols="50" id="description"
                                     name="description">{{ $values['description'] }}</textarea><br/>

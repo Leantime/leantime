@@ -134,10 +134,10 @@
                 <div class="">
                     <div class="form-group">
                         <label class="inline">{!! __('label.search_term') !!}</label>
-                        <input type="text" name="termInput" id="termInput"
+                        <x-global::forms.text-input name="termInput" id="termInput"
                         style="width: 230px"
                         value="{{ $searchCriteria['term'] }}"
-                        placeholder="{{ __('label.search_term') }}">
+                        placeholder="{{ __('label.search_term') }}" />
                     </div>
                 </div>
 

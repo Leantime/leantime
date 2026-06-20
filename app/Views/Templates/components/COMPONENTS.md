@@ -86,7 +86,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | Component | Tag | Cat | Status | Ref | Notes |
 |---|---|---|---|---|---|
 | button | `forms.button` | forms | ✅ | refactor/table-component | merged #3531: no-op migration + 3-tier role model |
-| text-input | `forms.text-input` | forms | 🟡 | refactor/table-component | this PR; thin no-op; **defer JS-coupled** (datepickers/tags/inline-edit/color) |
+| text-input | `forms.text-input` | forms | 🟡 | refactor/table-component | PR #3558: thin no-op; **146 call-sites / 56 files migrated**; **defer JS-coupled** (datepickers/tags/inline-edit/color/sorter/hourCell) + legacy `<?php echo ?>`-in-attr |
 | textarea | `forms.textarea` | forms | ⬜ | selectsComponentUpdates | |
 | select (native) | `forms.select` | forms | ⬜ | refactor/table-component | native no-op first; JS-enhanced later |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
@@ -169,6 +169,15 @@ even though the same markup works as a raw `<a href="...">`. So when migrating:
 Run the brace/quote-aware scan (forms.button opening tags with a `"` inside any `{{ }}`) after any
 button migration batch — `view:cache` does NOT catch these (they fail at render, not compile).
 
+## ⚠️ Gotcha: no legacy `<?php echo ?>` / `<?= ?>` inside a component attribute value
+
+Raw PHP echo tags work in a plain `<input placeholder="<?php echo … ?>">` (PHP executes at render),
+but Laravel's **component-tag compiler** treats a non-bound attribute value as a *literal string*, so
+`<?php … ?>` inside a `<x-…>` attribute does NOT reliably execute. **Leave such inputs RAW** (or first
+modernize the echo to `{{ … }}` / `{!! $tpl->escape(…) !!}` in a separate step, then migrate). Found in
+`Auth/userInvite` (placeholders use `<?php echo $tpl->language->__('…') ?>`) — deferred. Scan migrated
+tags for `<?php` / `<?=` before committing.
+
 ## Per-component playbook (repeatable)
 
 1. Read what the primitive renders today (classes, JS hooks, every call-site shape).
@@ -197,8 +206,9 @@ class set / behavior. Categories found (to revisit, some need a design decision)
 class) and passes all attributes through; the label/validation IDL props are declared but not rendered
 (a wrapper would change markup — that's the design phase). Pass `inputType` (never a raw `type=`).
 
-- ✅ **Migrate (~267):** standard inputs (`form-control` / bare / legacy `input`), headline title inputs
-  (`main-title-input` → `variant="headline"`), search inputs. Map source class → `variant`.
+- ✅ **Migrate (146 done in PR #3558; more in follow-ups):** standard inputs (`form-control` / bare /
+  legacy `input`), headline title inputs (`main-title-input` → `variant="headline"`), search inputs. Map
+  source class → `variant`; any extra non-variant class (tw-utilities, `pull-left`, …) passes through `class=`.
 - ⛔ **Leave RAW — do-not-touch signals** (JS-coupled; breaking these regresses behavior):
   - **datepickers** (jQuery-UI): `.dates .duedates .quickDueDates .dateFrom .dateTo .editFrom .editTo
     .startDate .endDate .projectDateFrom .projectDateTo .week-picker .hasDatepicker` + ids `#deadline
@@ -208,7 +218,11 @@ class) and passes all attributes through; the label/validation IDL props are dec
   - **tags**: `#tags` (+ `#tags_tag`/`#tags_tagsinput`), `.tagsinputField`, `data-role="tagsinput"`, `#wikiTagsInput`.
   - **inline-edit / async-save**: `.secretInput`, `.asyncInputUpdate` (+ `data-label` / `data-id`).
   - **color**: `.simpleColorPicker`.   **honeypot**: `.ohnohoney`.
-  - **any inline `onchange` / `onblur` / `onkeyup` / `oninput` handler**.
+  - **JS grids / clone-templates**: `.hourCell` (timesheet grid), `.sorter` + `name`/`id` clone markers
+    like `XXNEWKEYXX` or pipe-keyed `name="new|GENERAL_BILLABLE|…"`.
+  - **dynamic `class`/`id`** built with `{{ }}` / `{!! !!}` (can't statically classify → defer).
+  - **legacy `<?php echo ?>` / `<?= ?>` in an attribute value** (see gotcha above).
+  - **any inline `onchange` / `onblur` / `onkeyup` / `oninput` / `onfocus` handler**.
 
 ## Progress log
 
@@ -243,5 +257,17 @@ class) and passes all attributes through; the label/validation IDL props are dec
   toggles, nav, timers, and already-`btn` links. Still bare (flagged, not converted): inline per-comment
   `deleteComment` links + per-row table delete actions (would need a smaller-scale/inline treatment).
 - _text-input_: thin no-op `forms.text-input` built on `feature/text-input-component` (off master, post-#3531).
-  Scope + datepicker/tags/inline-edit defer rubric above. Pilot pending (verify no-op render AND that a
-  deferred datepicker still initializes on the same page).
+  Scope + datepicker/tags/inline-edit defer rubric above. **PR #3558.**
+- _text-input pilot_: `Projects/newProject` headline (`main-title-input` → `variant="headline"`) migrated;
+  Playwright = byte-identical (same class/type/name/id/style/value/placeholder); the two `.dateFrom/.dateTo`
+  datepickers on the same page left RAW (component never applied to JS-coupled inputs → can't regress).
+  (Note: dev instance currently isn't loading `compiled-app`/jQuery, so runtime datepicker init couldn't be
+  exercised — but the datepicker DOM is byte-identical to master since those lines are untouched.)
+- _text-input sweep_: **146 call-sites across 56 files** migrated (63-file 2-phase workflow: per-file migrate
+  + adversarial diff-verify; all 63 verified ok). Diff is perfectly symmetric (202 ins / 202 del = pure
+  in-place swaps). Static audit of all 146: 0 problems (no `type=`/inputType dup, no variant class left in
+  `class=`, no JS-coupled signal swallowed, no nested-quote, no dup attrs). Compile + Pint clean. Live render
+  no-op confirmed on `/setting/editCompanySettings` (`pull-left` passthrough) + `/clients/newClient` (bare).
+  **Deferred to follow-ups:** `Auth/userInvite` (3 inputs w/ legacy `<?php echo ?>` in attrs — see gotcha),
+  `Tickets/partials/ticketCard` + `partials/subtasks` (HTMX inline-edit/date), and everywhere the
+  do-not-touch signals (datepickers/tags/inline-edit/color/`sorter`/`hourCell`/dynamic-class).

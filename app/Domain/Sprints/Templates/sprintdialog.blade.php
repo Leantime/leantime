@@ -18,7 +18,7 @@
 <form class="formModal" method="post" action="{{ BASE_URL }}/sprints/editSprint/{{ $id }}">
 
     <label>{!! __('label.sprint_name') !!}</label>
-    <input type="text" name="name" value="{{ $currentSprint->name }}" placeholder="{{ __('label.sprint_name') }}"/><br />
+    <x-global::forms.text-input name="name" value="{{ $currentSprint->name }}" placeholder="{{ __('label.sprint_name') }}" /><br />
 
     <label>{!! __('label.project') !!}</label>
     <select name="projectId">

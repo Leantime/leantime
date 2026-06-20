@@ -23,7 +23,7 @@
     @else
         <form class="importModal userImportModal" method="post" action="{{ BASE_URL }}/users/import">
             <label>{!! __('label.please_enter_password') !!} </label>
-            <input type="password" name="password" />
+            <x-global::forms.text-input inputType="password" name="password" />
             <input type="hidden" name="pwSubmit" value="1"/>
             <input type="submit" value="{{ __('buttons.find_users') }}" />
         </form>

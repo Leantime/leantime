@@ -178,9 +178,9 @@
                                             <div class="dropdown-menu"></div>
                                         </div>
                                         <input type="hidden" id="wikiArticleIcon" class="articleIcon" value="{{ e($currentArticle->data) }}" />
-                                        <input type="text"
+                                        <x-global::forms.text-input
                                                id="wikiTitleEditable"
-                                               class="main-title-input"
+                                               variant="headline"
                                                value="{{ e($currentArticle->title) }}"
                                                data-original="{{ e($currentArticle->title) }}"
                                                placeholder="{{ __('input.placeholders.wiki_title') }}"

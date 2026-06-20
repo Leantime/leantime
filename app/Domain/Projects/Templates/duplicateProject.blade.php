@@ -5,7 +5,7 @@
 <form class="formModal" method="post" action="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}">
 
     <label>{!! __('label.newProjectName') !!}</label>
-    <input type="text" name="projectName" value="{!! __('label.copy_of') !!} {{ $project['name'] }}" /><br />
+    <x-global::forms.text-input name="projectName" value="{!! __('label.copy_of') !!} {{ $project['name'] }}" /><br />
 
     <label>{!! __('label.planned_start_date') !!}</label>
     <input type="text" name="startDate" class="projectDateFrom" value="{{ format(date('Y-m-d'))->date() }}" placeholder="{{ __('language.dateformat') }}" id="sprintStart" /><br />

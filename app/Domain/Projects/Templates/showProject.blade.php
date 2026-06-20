@@ -92,7 +92,7 @@
                                             @php
                                             if (($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) {
                                             @endphp
-                                                <input type="text" readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$assignedUser['role']]) }}" />
+                                                <x-global::forms.text-input readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$assignedUser['role']]) }}" />
                                             @php
                                             } else {
                                             @endphp
@@ -141,7 +141,7 @@
                                                 </div>
                                                 <label for="user-{{ $row['id'] }}" >{!! sprintf(__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])) !!}</label>
                                                 @if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner)
-                                                    <input type="text" readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$row['role']]) }}" />
+                                                    <x-global::forms.text-input readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$row['role']]) }}" />
                                                 @else
                                                     @php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); @endphp
                                                     <select name="userProjectRole-{{ $row['id'] }}">
@@ -217,7 +217,7 @@
                     <div class="col-md-4">
                         <strong>{!! __('label.webhook_url') !!}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
-                            <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="{{ e($mattermostWebhookURL) }}"/>
+                            <x-global::forms.text-input name="mattermostWebhookURL" id="mattermostWebhookURL" value="{{ e($mattermostWebhookURL) }}" />
                             <br />
                             <input type="submit" value="{{ __('buttons.save') }}" name="mattermostSave" />
                         </form>
@@ -236,7 +236,7 @@
                     <div class="col-md-4">
                         <strong>{!! __('label.webhook_url') !!}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
-                            <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="{{ e($slackWebhookURL) }}"/>
+                            <x-global::forms.text-input name="slackWebhookURL" id="slackWebhookURL" value="{{ e($slackWebhookURL) }}" />
                             <br />
                             <input type="submit" value="{{ __('buttons.save') }}" name="slackSave" />
                         </form>
@@ -256,19 +256,19 @@
 
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             <strong>{!! __('label.base_url') !!}</strong><br />
-                            <input type="text" name="zulipURL" id="zulipURL" placeholder="{{ __('input.placeholders.zulip_url') }}" value="{{ $zulipHook['zulipURL'] }}"/>
+                            <x-global::forms.text-input name="zulipURL" id="zulipURL" placeholder="{{ __('input.placeholders.zulip_url') }}" value="{{ $zulipHook['zulipURL'] }}" />
                             <br />
                             <strong>{!! __('label.bot_email') !!}</strong><br />
-                            <input type="text" name="zulipEmail" id="zulipEmail" placeholder="" value="{{ $tpl->escape($zulipHook['zulipEmail']) }}"/>
+                            <x-global::forms.text-input name="zulipEmail" id="zulipEmail" placeholder="" value="{{ $tpl->escape($zulipHook['zulipEmail']) }}" />
                             <br />
                             <strong>{!! __('label.botkey') !!}</strong><br />
-                            <input type="text" name="zulipBotKey" id="zulipBotKey" placeholder="" value="{{ $tpl->escape($zulipHook['zulipBotKey']) }}"/>
+                            <x-global::forms.text-input name="zulipBotKey" id="zulipBotKey" placeholder="" value="{{ $tpl->escape($zulipHook['zulipBotKey']) }}" />
                             <br />
                             <strong>{!! __('label.stream') !!}</strong><br />
-                            <input type="text" name="zulipStream" id="zulipStream" placeholder="" value="{{ $tpl->escape($zulipHook['zulipStream']) }}"/>
+                            <x-global::forms.text-input name="zulipStream" id="zulipStream" placeholder="" value="{{ $tpl->escape($zulipHook['zulipStream']) }}" />
                             <br />
                             <strong>{!! __('label.topic') !!}</strong><br />
-                            <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="{{ $tpl->escape($zulipHook['zulipTopic']) }}"/>
+                            <x-global::forms.text-input name="zulipTopic" id="zulipTopic" placeholder="" value="{{ $tpl->escape($zulipHook['zulipTopic']) }}" />
                             <br />
                             <input type="submit" value="{{ __('buttons.save') }}" name="zulipSave" />
                         </form>
