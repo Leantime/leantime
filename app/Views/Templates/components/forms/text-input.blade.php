@@ -56,7 +56,7 @@
 @php
     // No-op map: variant -> the exact class the markup uses today.
     $variantClass = match ($variant) {
-        'headline', 'title' => 'main-title-input',
+        'headline' => 'main-title-input',
         'large' => 'input-large',
         'small' => 'input-small',
         default => '',   // bare / search: no class (styled by context / id / name)
