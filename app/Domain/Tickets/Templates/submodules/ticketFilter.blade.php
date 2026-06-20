@@ -15,11 +15,14 @@
     <input type="hidden" value="{{ session('currentProject') }}" name="projectId" id="projectIdInput"/>
 
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
-        <x-global::forms.button tag="a" onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
-           contentRole="link" data-tippy-content="{{ __('popover.filter') }}">
+        {{-- Kept as a raw <a> (not forms.button): this button is whitespace-sensitive — the
+             </a>@if adjacency below avoids an inline-block gap, and the component would reintroduce
+             surrounding whitespace. Migrate once the component guarantees whitespace-tight output. --}}
+        <a class="btn btn-link" onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
+           data-tippy-content="{{ __('popover.filter') }}">
             <i class="fas fa-filter"></i> Filter{!! $numOfFilters > 0 ? "  <span class='badge badge-primary'>" . $numOfFilters . '</span> ' : '' !!}
             {{-- Please don't change the code formatting below, if not right next to each other it somehow adds a space between the two buttons and increases the distance --}}
-        </x-global::forms.button>@if ($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<div class="btn-group viewDropDown">
+        </a>@if ($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<div class="btn-group viewDropDown">
 <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="{{ __('popover.group_by') }}">
                 <span class="fa-solid fa-diagram-project"></span> Group By
                 @if ($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
