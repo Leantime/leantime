@@ -1,10 +1,14 @@
 @props([
     // NO-OP variant -> the class the app renders TODAY. Default '' = a bare, unclassed input
     // (the common case: ~206 inputs have no class and are styled by their form/context).
-    'variant' => '',          // '' (bare) | headline | large | small | legacy
-                              //   NB: there is no "form" variant — `.form-control` (full-width/bordered)
-                              //   is fully overridden by forms.css's element selectors + container width
-                              //   rules, so a bare input already renders identically. Bare IS the form look.
+    'variant' => '',          // '' (bare) | headline | large | small
+                              //   Only EVIDENCE-BACKED, visually-distinct variants exist here:
+                              //     headline -> .main-title-input  (large 24/26px title font, drop-shadow removed)
+                              //     large    -> .input-large       (fixed 210px width — width only)
+                              //     small    -> .input-small       (fixed 90px width — width only)
+                              //   NO "form" or "legacy" variant: `.form-control` and `.input` are pure Bootstrap
+                              //   cruft — forms.css element selectors override them, so a bare input is identical.
+                              //   (Ghost/inline-edit `.secretInput` is a real future variant, pending its async-save JS.)
     'type' => 'text',         // text | email | password | number | url | tel | search (HTML-native; Blade extracts it from $attributes so it never duplicates)
 
     // --- design-system IDL: declared for the durable contract, but intentionally NOT rendered
@@ -47,7 +51,7 @@
       <input type="email" class="form-control">  -> type="email"   (drop form-control; it's redundant)
       <input class="main-title-input">           -> variant="headline"
       <input class="input-large">                -> variant="large"
-      <input class="input"> (legacy)             -> variant="legacy"
+      <input class="input"> (no CSS / cruft)     -> (bare; .input has no backing rule)
 --}}
 @php
     // No-op map: variant -> the exact class the markup uses today.
@@ -55,7 +59,6 @@
         'headline', 'title' => 'main-title-input',
         'large' => 'input-large',
         'small' => 'input-small',
-        'legacy' => 'input',
         default => '',   // bare / search: no class (styled by context / id / name)
     };
 

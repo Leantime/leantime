@@ -207,11 +207,23 @@ class) and passes all attributes through; the label/validation IDL props are dec
 (a wrapper would change markup — that's the design phase). Pass the **HTML-native `type=`** (it is a
 declared `@prop`, so Blade extracts it from the attribute bag — emits exactly one `type`, never a duplicate).
 
-- ✅ **Migrate (146 done in PR #3558; more in follow-ups):** standard inputs (bare / legacy `input`),
-  headline title inputs (`main-title-input` → `variant="headline"`), search inputs. Map source class →
-  `variant`; any extra non-variant class (tw-utilities, `pull-left`, …) passes through `class=`.
-  **`.form-control` → bare** (NOT a variant): forms.css element selectors override its look and container
-  rules (`.regpanelinner input{width:100%}`) supply the width, so a bare input renders identically.
+- ✅ **Migrate (146 done in PR #3558; more in follow-ups):** standard inputs (bare), headline title inputs
+  (`main-title-input` → `variant="headline"`), search inputs. Map source class → `variant`; any extra
+  non-variant class (tw-utilities, `pull-left`, …) passes through `class=`.
+  **`.form-control` AND `.input` → bare** (NOT variants): both are pure Bootstrap cruft — forms.css element
+  selectors override `.form-control`, and `.input` has *no backing CSS rule at all*; a bare input renders
+  identically (the entry-page width that `.form-control` gave comes from `.regpanelinner input{width:100%}`).
+
+### Variant taxonomy (evidence-backed — 4-agent CSS audit)
+Only visually-distinct treatments earn a variant. Verdicts:
+| variant | class | real? | what it actually is |
+|---|---|---|---|
+| `headline` | `.main-title-input` | ✅ | large 24/26px (`--font-size-xxxl`) title font + `box-shadow:none`; keeps border/bg |
+| `large` | `.input-large` | ✅ (width-only) | fixed `width:210px` — forms.css never sets width, so it survives |
+| `small` | `.input-small` | ✅ (width-only) | fixed `width:90px` |
+| `ghost` *(planned)* | `.secretInput` | ✅ | inline-edit "looks like text until touched": transparent, no border/shadow, hover/focus reveal box. Pending its async-save JS migration. |
+| ~~`form`~~ | `.form-control` | ❌ removed | overridden by forms.css element selectors |
+| ~~`legacy`~~ | `.input` | ❌ removed | no `.input` CSS rule exists anywhere |
 - ⛔ **Leave RAW — do-not-touch signals** (JS-coupled; breaking these regresses behavior):
   - **datepickers** (jQuery-UI): `.dates .duedates .quickDueDates .dateFrom .dateTo .editFrom .editTo
     .startDate .endDate .projectDateFrom .projectDateTo .week-picker .hasDatepicker` + ids `#deadline
@@ -285,3 +297,10 @@ declared `@prop`, so Blade extracts it from the attribute bag — emits exactly 
   for the sole 7 call-sites (login ×2, twoFA/verify ×1, install ×4 — all entry pages). No JS hooks
   `.form-control` on inputs. Collapsed those 7 to bare; live render on `/auth/login` = bare inputs, single
   `type`, no `form-control`. Bare IS the form look now.
+- _text-input variant taxonomy (review feedback)_: 4-agent CSS audit to keep ONLY evidence-backed variants.
+  Findings: `headline`(.main-title-input) = REAL (large `--font-size-xxxl` font + shadow removed);
+  `large`(.input-large)/`small`(.input-small) = REAL but width-only (210px/90px — the one prop forms.css
+  doesn't set); `ghost`(.secretInput) = REAL inline-edit treatment (4 distinct low-chrome looks found, the
+  canonical one being .secretInput) but its call-sites are the deferred async-save fields, so it's a planned
+  variant; `legacy`(.input) = REDUNDANT (no `.input` CSS rule exists anywhere). **Dropped `variant="legacy"`**
+  (1 call-site, TwoFA/edit → bare; removed the arm). Component now exposes only `headline`/`large`/`small`.
