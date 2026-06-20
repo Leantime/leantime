@@ -80,7 +80,7 @@
                     <br>
                     @if ($login::userIsAtLeast($roles::$editor))
                         <input type="submit" value="{{ __('buttons.save') }}" id="primaryCanvasSubmitButton">
-                        <x-global::forms.button inputType="submit" variant="outline" id="saveAndClose" value="closeModal"
+                        <x-global::forms.button inputType="submit" contentRole="secondary" id="saveAndClose" value="closeModal"
                             onclick="leantime.goalCanvasController.setCloseModal();">{{ __('buttons.save_and_close') }}</x-global::forms.button>
                     @endif
 
@@ -133,7 +133,7 @@
                                         <input type="hidden" name="type" value="milestone" />
                                         <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
                                         <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
-                                        <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="secondary" />
+                                        <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
                                     </div>
                                 </div>
 
@@ -150,7 +150,7 @@
                                         <input type="hidden" name="type" value="milestone" />
                                         <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
                                         <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
-                                        <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="secondary" />
+                                        <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
                                     </div>
                                 </div>
                             </center>
@@ -162,14 +162,14 @@
                                     {{ __("label.loading_milestone") }}
                                 </div>
                             </div>
-                            <x-global::forms.button tag="a" link="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="goalCanvasModal delete formModal" contentRole="secondary"><i class="fa fa-close"></i> {{ __("links.remove") }}</x-global::forms.button>
+                            <x-global::forms.button tag="a" link="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="goalCanvasModal delete formModal" state="danger" variant="outline"><i class="fa fa-close"></i> {{ __("links.remove") }}</x-global::forms.button>
                         @endif
                     @endif
                 </div>
             </div>
 
             @if ($id != '')
-                <x-global::forms.button tag="a" link="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete right" contentRole="secondary">
+                <x-global::forms.button tag="a" link="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete right" state="danger" variant="outline">
                     <i class='fa fa-trash-can'></i> {{ __('links.delete') }}
                 </x-global::forms.button>
             @endif

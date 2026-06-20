@@ -54,7 +54,7 @@
                             <div class="padding-top">
                                 @if (isset($project['id']) && $project['id'] != '')
                                     <div class="pull-right padding-top">
-                                        <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete" contentRole="secondary"><i class="fa fa-trash"></i> {!! __('buttons.delete') !!}</x-global::forms.button>
+                                        <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete" state="danger" variant="outline"><i class="fa fa-trash"></i> {!! __('buttons.delete') !!}</x-global::forms.button>
                                     </div>
                                 @endif
                                 <input type="submit" name="save" id="save" class="button" value="{{ __('buttons.save') }}" class="button" />

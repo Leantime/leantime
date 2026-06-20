@@ -388,7 +388,7 @@
                     <!-- Delete (pinned to bottom) -->
                     @if($login::userIsAtLeast($roles::$editor))
                     <div class="wiki-properties-footer">
-                        <x-global::forms.button tag="a" link="#/wiki/delArticle/{{ $currentArticle->id }}" class="wiki-action-btn delete" contentRole="secondary">
+                        <x-global::forms.button tag="a" link="#/wiki/delArticle/{{ $currentArticle->id }}" class="wiki-action-btn delete" state="danger" variant="outline">
                             <i class="fa fa-trash"></i> Delete Article
                         </x-global::forms.button>
                     </div>

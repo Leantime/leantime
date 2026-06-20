@@ -178,7 +178,7 @@
                                    :labelText="__('buttons.save')" contentRole="primary" />
                         </div>
                         <div class="col-md-6 align-right">
-                            <x-global::forms.button tag="a" link="{{ BASE_URL }}/clients/delClient/{{ $_GET['id'] }}" class="delete" contentRole="secondary"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</x-global::forms.button>
+                            <x-global::forms.button tag="a" link="{{ BASE_URL }}/clients/delClient/{{ $_GET['id'] }}" class="delete" state="danger" variant="outline"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</x-global::forms.button>
                         </div>
                     </div>
 

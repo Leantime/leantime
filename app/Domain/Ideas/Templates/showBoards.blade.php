@@ -236,7 +236,7 @@
                                    style="width:90%"/>
                         </div>
                         <div class="modal-footer">
-                            <x-global::forms.button inputType="button" contentRole="default"
+                            <x-global::forms.button inputType="button" contentRole="tertiary"
                                     data-dismiss="modal">{!! __('buttons.close') !!}</x-global::forms.button>
                             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.create_board')" name="newCanvas"/>
                         </div>
@@ -259,7 +259,7 @@
                                    style="width:90%"/>
                         </div>
                         <div class="modal-footer">
-                            <x-global::forms.button inputType="button" contentRole="default"
+                            <x-global::forms.button inputType="button" contentRole="tertiary"
                                     data-dismiss="modal">{!! __('buttons.close') !!}</x-global::forms.button>
                             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="editCanvas"/>
                         </div>

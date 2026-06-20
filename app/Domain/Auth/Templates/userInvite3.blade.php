@@ -49,7 +49,7 @@
         </div>
         <br /> <br />
         <div class="tw-text-right">
-            <x-global::forms.button tag="a" link="{{BASE_URL}}/auth/userInvite/{{$inviteId}}?step=2" contentRole="secondary" style="width:auto; margin-right:10px">Back</x-global::forms.button>
+            <x-global::forms.button tag="a" link="{{BASE_URL}}/auth/userInvite/{{$inviteId}}?step=2" contentRole="tertiary" style="width:auto; margin-right:10px">Back</x-global::forms.button>
             <input type="submit" name="createAccount" class="tw-w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
         </div>
 

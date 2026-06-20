@@ -20,6 +20,6 @@
             <input type="hidden" name="newCanvas" value="true">
             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.create_board')" name="newCanvas" />
         @endif
-        <x-global::forms.button inputType="button" contentRole="default" onclick="jQuery.nmTop().close();">{!! __('buttons.close') !!}</x-global::forms.button>
+        <x-global::forms.button inputType="button" contentRole="tertiary" onclick="jQuery.nmTop().close();">{!! __('buttons.close') !!}</x-global::forms.button>
     </div>
 </form>

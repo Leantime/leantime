@@ -27,10 +27,12 @@
     JS-coupled buttons (.dropdown-toggle) are migrated in the dropdown phase, not here.
 --}}
 @php
-    // Canonical role -> the class the app renders today (no-op mapping).
+    // Role carries the emphasis AND its default look:
+    //   primary = filled, secondary = outline, tertiary/ghost = transparent (low-chrome).
+    // (variant="outline" is only needed to force outline on a non-secondary role, e.g. state+outline.)
     $roleClass = match ($contentRole) {
         'primary' => 'btn-primary',
-        'secondary' => 'btn-secondary',
+        'secondary' => 'btn-outline',
         'default' => 'btn-default',
         'tertiary', 'ghost' => 'btn-transparent',
         'accent' => 'btn-primary',
@@ -58,7 +60,9 @@
     // (e.g. btn-danger-outline). This is the same style the edit-ticket save / "Save & Close"
     // buttons use. Outline overrides the role color.
     if ($variant === 'outline') {
-        $colorClass = $state !== '' ? 'btn-'.$state.'-outline' : 'btn-outline';
+        // Only build btn-{state}-outline for a VALIDATED state (so state="default" -> btn-outline,
+        // never btn-default-outline). $stateClass is '' for default/unknown states.
+        $colorClass = $stateClass !== '' ? 'btn-'.$state.'-outline' : 'btn-outline';
     } else {
         $colorClass = $stateClass !== '' ? $stateClass : $roleClass;
     }

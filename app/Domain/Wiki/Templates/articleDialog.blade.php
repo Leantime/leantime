@@ -92,7 +92,7 @@
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="leancanvasitemid" value="{{ $id }} " />
                                     <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryArticleSubmitButton').click()" contentRole="primary" />
-                                    <x-global::forms.button tag="a" link="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" contentRole="secondary">
+                                    <x-global::forms.button tag="a" link="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" contentRole="tertiary">
                                         <i class="fas fa-times"></i> {!! __('links.cancel') !!}
                                     </x-global::forms.button>
                                 </div>
@@ -113,7 +113,7 @@
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="articleId" value="{{ $id }} " />
                                     <x-global::forms.button tag="input" inputType="button" labelText="Save" onclick="jQuery('#primaryArticleSubmitButton').click()" contentRole="primary" />
-                                    <x-global::forms.button tag="a" link="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" contentRole="secondary">
+                                    <x-global::forms.button tag="a" link="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" contentRole="tertiary">
                                         <i class="fas fa-times"></i> {!! __('links.cancel') !!}
                                     </x-global::forms.button>
                                 </div>
@@ -130,7 +130,7 @@
                                     {!! __('label.loading_milestone') !!}
                                 </div>
                             </div>
-                            <x-global::forms.button tag="a" link="{{ CURRENT_URL }}?removeMilestone={{ $currentArticle->milestoneId }}" class="formModal" contentRole="secondary"><i class="fa fa-close"></i> {!! __('links.remove') !!}</x-global::forms.button>
+                            <x-global::forms.button tag="a" link="{{ CURRENT_URL }}?removeMilestone={{ $currentArticle->milestoneId }}" class="formModal" state="danger" variant="outline"><i class="fa fa-close"></i> {!! __('links.remove') !!}</x-global::forms.button>
 
                         </li>
                     @endif
@@ -170,12 +170,12 @@
                         <input type="hidden" name="saveTicket" value="1" />
                         <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
                         <input type="submit" name="saveArticle" value="{{ __('buttons.save') }}" id="primaryArticleSubmitButton"/>
-                        <x-global::forms.button tag="input" inputType="submit" variant="outline" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" :labelText="__('buttons.save_and_close')" />
+                        <x-global::forms.button tag="input" inputType="submit" contentRole="secondary" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" :labelText="__('buttons.save_and_close')" />
                     </div>
                     <div class="col-md-2 align-right padding-top-sm">
                         @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))
                             <br />
-                            <x-global::forms.button tag="a" link="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete" contentRole="secondary"><i class="fa fa-trash"></i> {!! __('links.delete_article') !!}</x-global::forms.button>
+                            <x-global::forms.button tag="a" link="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete" state="danger" variant="outline"><i class="fa fa-trash"></i> {!! __('links.delete_article') !!}</x-global::forms.button>
                         @endif
                     </div>
                 </div>

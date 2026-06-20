@@ -24,7 +24,7 @@
             <br /><br />
             <div class="row">
                 <div class="col-md-12 tw-text-center">
-                    <x-global::forms.button tag="a" link="javascript:void(0)" contentRole="secondary" onclick="leantime.helperController.closeModal()">I'll explore on my own</x-global::forms.button>
+                    <x-global::forms.button tag="a" link="javascript:void(0)" contentRole="tertiary" onclick="leantime.helperController.closeModal()">I'll explore on my own</x-global::forms.button>
                     <x-global::forms.button tag="a" link="javascript:void(0)" contentRole="primary" onclick="leantime.helperController.closeModal(); leantime.helperController.startMilestoneTour();">{{ __("buttons.start_tour") }} <i class="fa-solid fa-arrow-right"></i></x-global::forms.button>
                 </div>
             </div>

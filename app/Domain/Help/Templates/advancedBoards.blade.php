@@ -16,8 +16,8 @@
         <div class="col-md-12">
             <p>
              </p>
-            <x-global::forms.button tag="a" link="javascript:void(0);"  onclick="jQuery.nmTop().close()" contentRole="secondary">{!! __('links.close') !!}</x-global::forms.button><br />
-            <x-global::forms.button tag="a" link="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('advancedIdeaBoards')" contentRole="secondary">{!! __('links.close_dont_show_again') !!}</x-global::forms.button>
+            <x-global::forms.button tag="a" link="javascript:void(0);"  onclick="jQuery.nmTop().close()" contentRole="tertiary">{!! __('links.close') !!}</x-global::forms.button><br />
+            <x-global::forms.button tag="a" link="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('advancedIdeaBoards')" contentRole="tertiary">{!! __('links.close_dont_show_again') !!}</x-global::forms.button>
         </div>
     </div>
 

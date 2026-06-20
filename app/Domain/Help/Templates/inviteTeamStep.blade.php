@@ -18,7 +18,7 @@
     </div>
     <div class="row">
         <div class="col-md-12 tw-text-right">
-            <x-global::forms.button tag="a" link="javascript:void(0);" contentRole="secondary" onclick="jQuery.nmTop().close();">{{ __('links.skip_for_now') }}</x-global::forms.button>
+            <x-global::forms.button tag="a" link="javascript:void(0);" contentRole="tertiary" onclick="jQuery.nmTop().close();">{{ __('links.skip_for_now') }}</x-global::forms.button>
             <input type="submit" value="{{ __('buttons.lets_go') }}"/>
         </div>
     </div>

@@ -101,12 +101,12 @@
         <input type="hidden" name="changeItem" value="1" />
 
         @if($id != '')
-            <x-global::forms.button tag="a" link="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="blueprintsCanvasModal delete right" contentRole="secondary"><i class='fa fa-trash-can'></i> {!! __('links.delete') !!}</x-global::forms.button>
+            <x-global::forms.button tag="a" link="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="blueprintsCanvasModal delete right" state="danger" variant="outline"><i class='fa fa-trash-can'></i> {!! __('links.delete') !!}</x-global::forms.button>
         @endif
 
         @if($login::userIsAtLeast($roles::$editor))
             <input type="submit" value="{{ __('buttons.save') }}" id="primaryCanvasSubmitButton"/>
-            <x-global::forms.button inputType="submit" variant="outline" value="closeModal" id="saveAndClose" onclick="leantime.blueprintsController.setCloseModal();">{!! __('buttons.save_and_close') !!}</x-global::forms.button>
+            <x-global::forms.button inputType="submit" contentRole="secondary" value="closeModal" id="saveAndClose" onclick="leantime.blueprintsController.setCloseModal();">{!! __('buttons.save_and_close') !!}</x-global::forms.button>
         @endif
 
         @if($id !== '')
@@ -133,7 +133,7 @@
                             <input type="hidden" name="type" value="milestone" />
                             <input type="hidden" name="blueprintscanvasitemid" value="{{ $id }} " />
                             <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
-                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.blueprintsController.toggleMilestoneSelectors('hide')" contentRole="secondary" />
+                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.blueprintsController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
                         </div>
                     </div>
 
@@ -150,7 +150,7 @@
                             <input type="hidden" name="type" value="milestone" />
                             <input type="hidden" name="blueprintscanvasitemid" value="{{ $id }} " />
                             <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
-                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.blueprintsController.toggleMilestoneSelectors('hide')" contentRole="secondary" />
+                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.blueprintsController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
                         </div>
                     </div>
                 </center>
@@ -162,7 +162,7 @@
                         {!! __('label.loading_milestone') !!}
                     </div>
                 </div>
-                <x-global::forms.button tag="a" link="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="blueprintsCanvasModal delete formModal" contentRole="secondary"><i class="fa fa-close"></i> {!! __('links.remove') !!}</x-global::forms.button>
+                <x-global::forms.button tag="a" link="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="blueprintsCanvasModal delete formModal" state="danger" variant="outline"><i class="fa fa-close"></i> {!! __('links.remove') !!}</x-global::forms.button>
             @endif
         @endif
 
