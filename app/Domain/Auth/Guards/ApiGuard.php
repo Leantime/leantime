@@ -72,7 +72,7 @@ class ApiGuard implements Guard
     public function id()
     {
         if ($this->user()) {
-            return $this->user()->id;
+            return $this->user()->getAuthIdentifier();
         }
 
         return null;

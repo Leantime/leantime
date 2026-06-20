@@ -280,7 +280,8 @@ class Projects extends BaseService implements ChecksProjectAccess
     public function notifyProjectUsers(Notification $notification): void
     {
 
-        // Filter notifications
+        // Filter notifications (dispatch_filter returns mixed; the filter preserves the entity)
+        /** @var Notification $notification */
         $notification = EventCore::dispatch_filter('notificationFilter', $notification);
 
         // Email

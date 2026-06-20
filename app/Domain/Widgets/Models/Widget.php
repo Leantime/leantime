@@ -4,6 +4,9 @@ namespace Leantime\Domain\Widgets\Models;
 
 class Widget
 {
+    /** Set transiently by the Widgets service to flag freshly-available widgets in the UI. */
+    public bool $isNew = false;
+
     /**
      * Constructor for creating a new instance of the class.
      *
