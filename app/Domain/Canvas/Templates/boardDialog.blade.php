@@ -14,12 +14,12 @@
     </div>
     <div class="modal-footer">
         @if(isset($_GET['id']))
-            <input type="submit" class="btn btn-primary" value="{{ __('buttons.save_board') }}" name="newCanvas" />
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save_board')" name="newCanvas" />
             <input type="hidden" name="editCanvas" value="{{ (int) $_GET['id'] }}">
         @else
             <input type="hidden" name="newCanvas" value="true">
-            <input type="submit" class="btn btn-primary" value="{{ __('buttons.create_board') }}" name="newCanvas" />
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.create_board')" name="newCanvas" />
         @endif
-        <button type="button" class="btn btn-default" onclick="jQuery.nmTop().close();">{!! __('buttons.close') !!}</button>
+        <x-global::forms.button inputType="button" contentRole="tertiary" onclick="jQuery.nmTop().close();">{!! __('buttons.close') !!}</x-global::forms.button>
     </div>
 </form>

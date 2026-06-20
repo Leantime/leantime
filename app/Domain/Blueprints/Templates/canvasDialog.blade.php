@@ -103,12 +103,12 @@
         <input type="hidden" name="changeItem" value="1" />
 
         @if($id != '')
-            <a href="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="blueprintsCanvasModal delete right"><i class='fa fa-trash-can'></i> {!! __('links.delete') !!}</a>
+            <x-global::forms.button tag="a" link="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="blueprintsCanvasModal delete right" state="danger" variant="outline"><i class='fa fa-trash-can'></i> {!! __('links.delete') !!}</x-global::forms.button>
         @endif
 
         @if($login::userIsAtLeast($roles::$editor))
             <input type="submit" value="{{ __('buttons.save') }}" id="primaryCanvasSubmitButton"/>
-            <button type="submit" class="btn btn-default" value="closeModal" id="saveAndClose" onclick="leantime.blueprintsController.setCloseModal();">{!! __('buttons.save_and_close') !!}</button>
+            <x-global::forms.button inputType="submit" contentRole="secondary" value="closeModal" id="saveAndClose" onclick="leantime.blueprintsController.setCloseModal();">{!! __('buttons.save_and_close') !!}</x-global::forms.button>
         @endif
 
         @if($id !== '')
@@ -134,8 +134,8 @@
                             <input type="text" width="50%" name="newMilestone"><br />
                             <input type="hidden" name="type" value="milestone" />
                             <input type="hidden" name="blueprintscanvasitemid" value="{{ $id }} " />
-                            <input type="button" value="{{ __('buttons.save') }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                            <input type="button" value="{{ __('buttons.cancel') }}" onclick="leantime.blueprintsController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
+                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.blueprintsController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
                         </div>
                     </div>
 
@@ -151,8 +151,8 @@
                             </select>
                             <input type="hidden" name="type" value="milestone" />
                             <input type="hidden" name="blueprintscanvasitemid" value="{{ $id }} " />
-                            <input type="button" value="{{ __('buttons.save') }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                            <input type="button" value="{{ __('buttons.cancel') }}" onclick="leantime.blueprintsController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
+                            <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.blueprintsController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
                         </div>
                     </div>
                 </center>
@@ -164,7 +164,7 @@
                         {!! __('label.loading_milestone') !!}
                     </div>
                 </div>
-                <a href="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="blueprintsCanvasModal delete formModal"><i class="fa fa-close"></i> {!! __('links.remove') !!}</a>
+                <x-global::forms.button tag="a" link="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="blueprintsCanvasModal delete formModal" state="danger" variant="outline"><i class="fa fa-close"></i> {!! __('links.remove') !!}</x-global::forms.button>
             @endif
         @endif
 

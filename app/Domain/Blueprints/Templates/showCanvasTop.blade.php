@@ -82,8 +82,8 @@
             <div class="col-md-3">
 
                 @if($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
-                    <a href="#/blueprints/{{ $canvasSlug }}/editCanvasItem?type={{ $elementName }}"
-                       class="btn btn-primary" id="{{ $elementName }}">{!! __('links.add_new_canvas_item' . $canvasSlug) !!}</a>
+                    <x-global::forms.button tag="a" link="#/blueprints/{{ $canvasSlug }}/editCanvasItem?type={{ $elementName }}"
+                       contentRole="primary" id="{{ $elementName }}">{!! __('links.add_new_canvas_item' . $canvasSlug) !!}</x-global::forms.button>
                 @endif
 
             </div>

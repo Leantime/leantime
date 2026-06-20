@@ -48,7 +48,7 @@
                         <input type="hidden" name="milestone" value="{{ htmlspecialchars((string) ($searchCriteria['milestone'] ?? ''), ENT_QUOTES, 'UTF-8') }}" />
                         <input type="hidden" name="groupBy" value="{{ htmlspecialchars((string) ($searchCriteria['groupBy'] ?? ''), ENT_QUOTES, 'UTF-8') }}" />
                         <input type="hidden" name="quickadd" value="1"/>
-                        <input type="submit" class="btn btn-primary tw-mb-m" value="{{ __('buttons.save') }}" name="saveTicket" style="vertical-align: top; "/>
+                        <x-global::forms.button tag="input" inputType="submit" class="tw-mb-m" contentRole="primary" :labelText="__('buttons.save')" name="saveTicket" style="vertical-align: top; " />
                     </form>
 
 

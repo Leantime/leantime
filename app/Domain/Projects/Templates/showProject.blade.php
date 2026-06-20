@@ -22,7 +22,7 @@
 
         <div class="inlineDropDownContainer" style="float:right; z-index:9; padding-top:2px;">
 
-            <a href="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}" class="btn btn-default duplicateProjectModal" data-tippy-content="{{ __('link.duplicate_project') }}"><i class="fa-regular fa-copy"></i> Copy</a>
+            <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}" contentRole="default" class="duplicateProjectModal" data-tippy-content="{{ __('link.duplicate_project') }}"><i class="fa-regular fa-copy"></i> Copy</x-global::forms.button>
             <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" data-tippy-content="{{ __('link.delete_project') }}" class="btn btn-danger-outline delete"><i class="fa fa-trash"></i> Delete</a>
 
 
@@ -375,7 +375,7 @@
 
                     <a href="javascript:void(0);" onclick="leantime.projectsController.addToDoStatus();" class="quickAddLink" style="text-align:left;">{!! __('links.add_status') !!}</a>
                     <br />
-                    <input type="submit" value="{{ __('buttons.save') }}" name="submitSettings" class="btn btn-primary"/>
+                    <x-global::forms.button tag="input" inputType="submit" :labelText="__('buttons.save')" name="submitSettings" contentRole="primary"/>
                 </form>
             </div>
 

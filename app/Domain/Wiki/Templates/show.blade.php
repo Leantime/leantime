@@ -113,7 +113,7 @@
             </div>
             <h3 class="wiki-empty-state-title">{!! __('headlines.no_articles_yet') !!}</h3>
             <p class="wiki-empty-state-text">{!! __('text.create_new_wiki') !!}</p>
-            <a href='#/wiki/wikiModal/' class='inlineEdit btn btn-primary'>{!! __('links.icon.create_new_board') !!}</a>
+            <x-global::forms.button tag="a" link="#/wiki/wikiModal/" class="inlineEdit" contentRole="primary">{!! __('links.icon.create_new_board') !!}</x-global::forms.button>
         </div>
 
     @elseif($wikis && count($wikis) > 0)
@@ -388,9 +388,9 @@
                     <!-- Delete (pinned to bottom) -->
                     @if($login::userIsAtLeast($roles::$editor))
                     <div class="wiki-properties-footer">
-                        <a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="wiki-action-btn delete">
+                        <x-global::forms.button tag="a" link="#/wiki/delArticle/{{ $currentArticle->id }}" class="wiki-action-btn delete" state="danger" variant="outline">
                             <i class="fa fa-trash"></i> Delete Article
-                        </a>
+                        </x-global::forms.button>
                     </div>
                     @endif
 
@@ -408,11 +408,11 @@
                 </div>
                 <h3 class="wiki-empty-state-title">{!! __('headlines.no_articles_yet') !!}</h3>
                 <p class="wiki-empty-state-text">{!! __('text.create_new_content') !!}</p>
-                <button class="btn btn-primary"
+                <x-global::forms.button contentRole="primary"
                         hx-post="{{ BASE_URL }}/hx/wiki/articleContent/create"
                         hx-swap="none">
                     <i class="fa fa-plus"></i> {!! __('link.create_article') !!}
-                </button>
+                </x-global::forms.button>
             </div>
         @endif
 

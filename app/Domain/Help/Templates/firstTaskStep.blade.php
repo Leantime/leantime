@@ -11,7 +11,7 @@
                 <br />
                 <p class="text-muted">{{ __('text.first_task_help') }}</p>
                 <br />
-                <input type="submit" value="{{ __('buttons.lets_go') }}" class="btn btn-primary" />
+                <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.lets_go')" />
 
             </div>
             <div class="col-md-4">

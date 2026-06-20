@@ -47,7 +47,7 @@
                                 <p class='stdformbutton'>
                                     <input type="submit" name="disable" id="disable"
                                            value="{{ __('buttons.remove') }}" class="button"/>
-                                    <a href="{{ BASE_URL }}/users/editOwn" class="btn">{!! __('buttons.back') !!}</a>
+                                    <x-global::forms.button tag="a" link="{{ BASE_URL }}/users/editOwn">{!! __('buttons.back') !!}</x-global::forms.button>
                                 </p>
                             </form>
                         @endif

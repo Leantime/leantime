@@ -34,7 +34,7 @@
         </div>
             @dispatchEvent('beforeSubmitButton')
         <div class="">
-            <input type="submit" name="login" value="{{ __('buttons.login') }}" class="btn btn-primary"/>
+            <x-global::forms.button tag="input" inputType="submit" name="login" contentRole="primary" :labelText="__('buttons.login')" />
         </div>
         <div>
         </div>
@@ -53,9 +53,7 @@
             <div style="margin-top:20px; border-bottom:1px solid #ccc; with:100%; height:10px; overflow:show; text-align:center; margin-bottom:40px;">
                 <p style="text-align:center; display:inline-block; background:var(--secondary-background); padding:0px 5px;">{!! __('label.or_login_with') !!}</p>
             </div>
-            <a href="{{ BASE_URL }}/oidc/login" style="width:100%;" class="btn btn-primary">
-            {!! __('buttons.oidclogin') !!}
-            </a>
+            <x-global::forms.button tag="a" :link="BASE_URL . '/oidc/login'" contentRole="primary" style="width:100%;">{!! __('buttons.oidclogin') !!}</x-global::forms.button>
         </div>
     @endif
 

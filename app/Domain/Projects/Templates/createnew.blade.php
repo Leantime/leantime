@@ -23,9 +23,9 @@
                 {!! __($projectType["description"]) !!}
                 <br /><br />
                 @if($projectType["active"] == true )
-                    <a href="{{ BASE_URL }}/{{$projectType["url"] }}" class="btn btn-primary {{ $projectType["active"] !== true ? "disabled" : "" }}">{{  __($projectType['btnLabel'])  }}</a>
+                    <x-global::forms.button tag="a" link="{{ BASE_URL }}/{{ $projectType['url'] }}" contentRole="primary">{{  __($projectType['btnLabel'])  }}</x-global::forms.button>
                 @else
-                    <a href="#" class="btn btn-primary disabled">Not Available in this plan</a>
+                    <x-global::forms.button tag="a" link="#" contentRole="primary" class="disabled">Not Available in this plan</x-global::forms.button>
                 @endif
                 <div class="clearall"></div>
 

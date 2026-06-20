@@ -64,7 +64,7 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
             <div class="maincontentinner">
                 <div class="row">
                     <div class="col-md-4">
-                        <a href="#/calendar/addEvent" class="btn btn-primary formModal"><i class='fa fa-plus'></i> {!! __('buttons.add_event') !!}</a>
+                        <x-global::forms.button tag="a" link="#/calendar/addEvent" contentRole="primary" class="formModal"><i class='fa fa-plus'></i> {!! __('buttons.add_event') !!}</x-global::forms.button>
                     </div>
                     <div class="col-md-4">
                         <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
@@ -72,7 +72,7 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <a href="#/calendar/export" class="btn btn-default right">Export</a>
+                        <x-global::forms.button tag="a" link="#/calendar/export" contentRole="default" class="right">Export</x-global::forms.button>
                         <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
                             <span class="fc-icon fc-icon-chevron-right"></span>
                         </button>

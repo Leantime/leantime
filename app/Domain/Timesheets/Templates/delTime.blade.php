@@ -7,7 +7,7 @@
 <form method="post" action="{{ BASE_URL }}/timesheets/delTime/{{ $id }}">
     <p>{!! __('text.confirm_delete_timesheet') !!}</p><br />
     <input type="submit" value="{{ __('buttons.yes_delete') }}" name="del" class="button" />
-    <a class="btn btn-secondary" href="{{ session('lastPage') }}">{!! __('buttons.back') !!}</a>
+    <x-global::forms.button tag="a" contentRole="tertiary" link="{{ session('lastPage') }}">{!! __('buttons.back') !!}</x-global::forms.button>
 </form>
 
 @endsection

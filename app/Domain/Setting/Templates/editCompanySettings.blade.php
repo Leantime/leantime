@@ -199,13 +199,13 @@
                                 </form>
                                 <hr />
                                 {!! __('text.logo_reset') !!}<br /><br />
-                                <a href="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" class="btn btn-default">{!! __('buttons.reset_logo') !!}</a>
+                                <x-global::forms.button tag="a" link="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" contentRole="default">{!! __('buttons.reset_logo') !!}</x-global::forms.button>
                             </div>
                         </div>
                 </div>
 
                     <div id="apiKeys">
-                        <a href="#/api/newApiKey" class="btn btn-primary">Generate API Key</a>
+                        <x-global::forms.button tag="a" link="#/api/newApiKey" contentRole="primary">Generate API Key</x-global::forms.button>
                         <br /> <br />
                         <ul class="sortableTicketList">
 

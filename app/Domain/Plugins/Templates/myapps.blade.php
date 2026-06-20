@@ -53,7 +53,7 @@
                                                | <a href="{{ $newplugin->homepage }}"> {{ $tpl->__("text.visit_site") }} </a>
                                             </div>
                                             <div class="col-md-4" style="padding-top:5px;">
-                                                <a href="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" class="btn btn-default pull-right">{{ $tpl->__('buttons.activate') }}</a>
+                                                <x-global::forms.button tag="a" link="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" contentRole="default" class="pull-right">{{ $tpl->__('buttons.activate') }}</x-global::forms.button>
 
                                             </div>
 

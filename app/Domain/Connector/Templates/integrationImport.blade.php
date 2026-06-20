@@ -47,9 +47,9 @@
                     @endif
                 @endforeach
             </ul>
-            <a class="btn btn-primary pull-left" href="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}">Go Back</a>
+            <x-global::forms.button tag="a" class="pull-left" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" contentRole="tertiary">Go Back</x-global::forms.button>
         @else
-            <a class="btn btn-primary right" href="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import">Confirm</a>
+            <x-global::forms.button tag="a" class="right" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import" contentRole="primary">Confirm</x-global::forms.button>
         @endif
         <div class="clearall"></div>
 

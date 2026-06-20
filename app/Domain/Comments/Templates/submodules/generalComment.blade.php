@@ -112,8 +112,8 @@
                                 <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}"/>
                             </div>
                             <div class="commentReply">
-                                <input type="submit" value="{{ __('links.reply') }}" name="comment" id="submit-reply-button" class="btn btn-primary"/>
-                                <input type="button" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')" value="{{ __('links.cancel') }}" class="btn btn-primary"/>
+                                <x-global::forms.button tag="input" inputType="submit" :labelText="__('links.reply')" name="comment" id="submit-reply-button" contentRole="primary" />
+                                <x-global::forms.button tag="input" inputType="button" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')" :labelText="__('links.cancel')" contentRole="tertiary" />
                             </div>
                             <div class="clearall"></div>
                         </div>

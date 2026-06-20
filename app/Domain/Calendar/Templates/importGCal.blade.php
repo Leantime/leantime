@@ -17,7 +17,7 @@
 
     @dispatchEvent('beforeSubmitButton')
     <br /><br />
-    <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="btn" />
+    <x-global::forms.button tag="input" inputType="submit" name="save" id="save" :labelText="__('buttons.save')" />
 
 
 

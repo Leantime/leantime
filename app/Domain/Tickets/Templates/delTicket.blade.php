@@ -9,7 +9,7 @@
             <p>{!! __('text.confirm_ticket_deletion') !!}</p><br />
             <input type="submit" value="{{ __('buttons.yes_delete') }}" name="del" class="button" />
 
-            <a class="btn btn-primary" href="#/tickets/showTicket/{{ $ticket->id }}">{!! __('buttons.back') !!}</a>
+            <x-global::forms.button tag="a" contentRole="tertiary" link="#/tickets/showTicket/{{ $ticket->id }}">{!! __('buttons.back') !!}</x-global::forms.button>
 
 
         </form>
