@@ -118,10 +118,14 @@ class Oidc
     }
 
     /**
+     * Builds the OIDC authorization redirect URL and stores the CSRF state in
+     * the session. Returns false when the provider's auth endpoint cannot be
+     * resolved (callers treat a falsy result as "OIDC unavailable").
+     *
      * @throws GuzzleException
      * @throws \Exception
      */
-    public function buildLoginUrl(): string
+    public function buildLoginUrl(): string|false
     {
 
         if ($this->getAuthUrl()) {
@@ -144,7 +148,7 @@ class Oidc
     /**
      * @throws GuzzleException
      */
-    private function getAuthUrl(): string
+    private function getAuthUrl(): string|false
     {
         if (! empty($this->authUrl || $this->loadEndpoints())) {
             return $this->authUrl;
