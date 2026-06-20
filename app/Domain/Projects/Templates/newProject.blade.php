@@ -47,7 +47,7 @@
                                         {!! __('label.describe_outcome') !!}
                                         <br /><br />
                                     </p>
-                                    <textarea name="details" id="details" class="tiptapComplex" rows="5" cols="50">{{ htmlentities($project['details']) }}</textarea>
+                                    <textarea name="details" id="details" class="tiptapComplex" rows="5" cols="50">{{ $project['details'] }}</textarea>
 
                                 </div>
                             </div>

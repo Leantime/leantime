@@ -162,7 +162,7 @@
             <br />
             <input type="text" value="{{ $tpl->escape($currentArticle->tags) }}" name="tags" id="tags" />
 
-            <textarea class="tiptapComplex" rows="20" cols="80" id="wikiArticleContentEditor" name="description">{{ htmlentities($currentArticle->description ?? '') }}</textarea>
+            <textarea class="tiptapComplex" rows="20" cols="80" id="wikiArticleContentEditor" name="description">{{ $currentArticle->description ?? '' }}</textarea>
 
                 <div class="row">
                     <div class="col-md-10 padding-top-sm">
