@@ -85,8 +85,8 @@
                 $swimlaneExpanded = ! in_array($group['id'], session('collapsedSwimlanes', []));
                 $groupBy = $searchCriteria['groupBy'] ?? 'status';
                 $groupId = $group['id'];
-                $groupIdKey = (string) $group['id'];
-                $swimlaneBreakdown = $statusBreakdown[$groupIdKey] ?? $statusBreakdown[$group['id']] ?? [];
+                $groupIdKey = (string) $groupId;
+                $swimlaneBreakdown = $statusBreakdown[$groupIdKey] ?? $statusBreakdown[$groupId] ?? [];
                 $statusCounts = $swimlaneBreakdown['statusCounts'] ?? [];
                 $timeAlert = $swimlaneBreakdown['timeAlert'] ?? null;
                 @endphp
