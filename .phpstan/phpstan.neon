@@ -1,3 +1,8 @@
+includes:
+    # Carbon's official PHPStan extension: resolves macros registered via mixin()/macro()
+    # (including Leantime's date/time macros, registered in bootstrap.php) on all Carbon types.
+    - ../vendor/nesbot/carbon/extension.neon
+
 parameters:
     bootstrapFiles:
         - bootstrap.php
@@ -14,9 +19,11 @@ parameters:
         - ../vendor
         - ../config
     stubFiles:
-        # Declares Leantime's runtime-registered methods (Str macros, Collection::countNested,
+        # Declares Leantime's runtime-registered methods (Str/Carbon macros, Collection::countNested,
         # Event::discoverListeners) so vanilla PHPStan stops reporting them as undefined.
         - stubs/leantime-macros.stub
+        # Declares concrete Laravel methods our code calls through looser contracts (no Larastan).
+        - stubs/laravel-gaps.stub
     ignoreErrors:
             # Legacy templates receive their variables from the view layer ($tpl->assign / extract)
             # and blade files via compiled-in view data. PHPStan analyses them as plain PHP and so

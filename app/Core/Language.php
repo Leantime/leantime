@@ -212,22 +212,22 @@ class Language
         }
 
         // Default to english US
-        if (! file_exists(static::DEFAULT_LANG_FOLDER.'/en-US.ini')) {
+        if (! file_exists(self::DEFAULT_LANG_FOLDER.'/en-US.ini')) {
             throw new Exception('Cannot find default english language file en-US.ini');
         }
 
-        $mainLanguageArray = parse_ini_file(static::DEFAULT_LANG_FOLDER.'en-US.ini', false, INI_SCANNER_RAW);
+        $mainLanguageArray = parse_ini_file(self::DEFAULT_LANG_FOLDER.'en-US.ini', false, INI_SCANNER_RAW);
 
         foreach (
             $languageFiles = self::dispatchFilter('language_files', [
                 // Complement english with english customization
-                static::CUSTOM_LANG_FOLDER.'en-US.ini' => false,
+                self::CUSTOM_LANG_FOLDER.'en-US.ini' => false,
 
                 // Overwrite english language by non-english language
-                static::DEFAULT_LANG_FOLDER.$this->language.'.ini' => true,
+                self::DEFAULT_LANG_FOLDER.$this->language.'.ini' => true,
 
                 // Overwrite with non-engish customizations
-                static::CUSTOM_LANG_FOLDER.$this->language.'.ini' => true,
+                self::CUSTOM_LANG_FOLDER.$this->language.'.ini' => true,
             ], ['language' => $this->language]) as $language_file => $isForeign
         ) {
             $mainLanguageArray = $this->includeOverrides($mainLanguageArray, $language_file, $isForeign);
@@ -295,17 +295,17 @@ class Language
         }
 
         $langlist = false;
-        if (file_exists(static::DEFAULT_LANG_FOLDER.'/languagelist.ini')) {
+        if (file_exists(self::DEFAULT_LANG_FOLDER.'/languagelist.ini')) {
             $langlist = parse_ini_file(
-                static::DEFAULT_LANG_FOLDER.'/languagelist.ini',
+                self::DEFAULT_LANG_FOLDER.'/languagelist.ini',
                 false,
                 INI_SCANNER_RAW
             );
         }
 
-        if (file_exists(static::CUSTOM_LANG_FOLDER.'/languagelist.ini')) {
+        if (file_exists(self::CUSTOM_LANG_FOLDER.'/languagelist.ini')) {
             $langlist = parse_ini_file(
-                static::CUSTOM_LANG_FOLDER.'/languagelist.ini',
+                self::CUSTOM_LANG_FOLDER.'/languagelist.ini',
                 false,
                 INI_SCANNER_RAW
             );
