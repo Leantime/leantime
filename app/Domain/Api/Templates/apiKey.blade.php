@@ -21,8 +21,8 @@
                 lt_{{ substr($values['user'], 0, 5) }}***<br /><br />
 
                 <label for="firstname">{!! __('label.key_name') !!}</label><div class="clearfix"></div>
-                    <input
-                    type="text" name="firstname" id="firstname"
+                    <x-global::forms.text-input
+                    name="firstname" id="firstname"
                     value="{{ $values['firstname'] }}" /><br />
 
 

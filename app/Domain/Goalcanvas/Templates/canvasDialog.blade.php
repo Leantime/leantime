@@ -28,7 +28,7 @@
             <div class="row">
                 <div class="col-md-8">
                     <label>{{ __('label.what_is_your_goal') }}</label>
-                    <input type="text" name="title" value="{{ $canvasItem['title'] }}" style="width:100%"><br>
+                    <x-global::forms.text-input name="title" value="{{ $canvasItem['title'] }}" style="width:100%" /><br>
 
                     @if (!empty($relatesLabels))
                         <label>{{ __('label.relates') }}</label>
@@ -45,27 +45,27 @@
                     @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
                     <div id="measureGoalContainer">
                         <label>{{ __('text.what_metric_will_you_be_using') }}</label>
-                        <input type="text" name="description" value="{{ $canvasItem['description'] }}"
-                            style="width:100%"><br>
+                        <x-global::forms.text-input name="description" value="{{ $canvasItem['description'] }}"
+                            style="width:100%" /><br>
                     </div>
 
                     <div class="row">
                         <div class="col-md-3">
                             <label>{{ __('label.starting_value') }}</label>
-                            <input type="number" step="0.01" name="startValue" value="{{ $canvasItem['startValue'] }}"
-                                style="width:105px">
+                            <x-global::forms.text-input type="number" step="0.01" name="startValue" value="{{ $canvasItem['startValue'] }}"
+                                style="width:105px" />
                         </div>
                         <div class="col-md-3">
                             <label>{{ __('label.current_value') }}</label>
-                            <input type="number" step="0.01" name="currentValue" id="currentValueField"
+                            <x-global::forms.text-input type="number" step="0.01" name="currentValue" id="currentValueField"
                                 value="{{ $canvasItem['currentValue'] }}"
                                 @if ($canvasItem['setting'] == 'linkAndReport') readonly data-tippy-content="Current value calculated from child goals" @endif
-                                style="width:105px">
+                                style="width:105px" />
                         </div>
                         <div class="col-md-3">
                             <label>{{ __('label.goal_value') }}</label>
-                            <input type="number" step="0.01" name="endValue" value="{{ $canvasItem['endValue'] }}"
-                                style="width:105px">
+                            <x-global::forms.text-input type="number" step="0.01" name="endValue" value="{{ $canvasItem['endValue'] }}"
+                                style="width:105px" />
                         </div>
                         <div class="col-md-3">
                             <label>{{ __('label.type') }}</label>
@@ -132,7 +132,7 @@
                                 </div>
                                 <div class="row" id="newMilestone" style="display:none;">
                                     <div class="col-md-12">
-                                        <input type="text" width="50%" name="newMilestone"></textarea><br />
+                                        <x-global::forms.text-input width="50%" name="newMilestone" /><br />
                                         <input type="hidden" name="type" value="milestone" />
                                         <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
                                         <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />

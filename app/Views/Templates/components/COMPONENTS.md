@@ -85,8 +85,8 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 ### P0 — primitives & core
 | Component | Tag | Cat | Status | Ref | Notes |
 |---|---|---|---|---|---|
-| button | `forms.button` | forms | 🟡 | refactor/table-component | first pilot; no-op |
-| text-input | `forms.text-input` | forms | ⬜ | refactor/table-component | |
+| button | `forms.button` | forms | ✅ | refactor/table-component | merged #3531: no-op migration + 3-tier role model |
+| text-input | `forms.text-input` | forms | 🟡 | refactor/table-component | PR #3558: thin no-op; **146 call-sites / 56 files migrated**; **defer JS-coupled** (datepickers/tags/inline-edit/color/sorter/hourCell) + legacy `<?php echo ?>`-in-attr |
 | textarea | `forms.textarea` | forms | ⬜ | selectsComponentUpdates | |
 | select (native) | `forms.select` | forms | ⬜ | refactor/table-component | native no-op first; JS-enhanced later |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
@@ -169,6 +169,15 @@ even though the same markup works as a raw `<a href="...">`. So when migrating:
 Run the brace/quote-aware scan (forms.button opening tags with a `"` inside any `{{ }}`) after any
 button migration batch — `view:cache` does NOT catch these (they fail at render, not compile).
 
+## ⚠️ Gotcha: no legacy `<?php echo ?>` / `<?= ?>` inside a component attribute value
+
+Raw PHP echo tags work in a plain `<input placeholder="<?php echo … ?>">` (PHP executes at render),
+but Laravel's **component-tag compiler** treats a non-bound attribute value as a *literal string*, so
+`<?php … ?>` inside a `<x-…>` attribute does NOT reliably execute. **Leave such inputs RAW** (or first
+modernize the echo to `{{ … }}` / `{!! $tpl->escape(…) !!}` in a separate step, then migrate). Found in
+`Auth/userInvite` (placeholders use `<?php echo $tpl->language->__('…') ?>`) — deferred. Scan migrated
+tags for `<?php` / `<?=` before committing.
+
 ## Per-component playbook (repeatable)
 
 1. Read what the primitive renders today (classes, JS hooks, every call-site shape).
@@ -190,6 +199,45 @@ class set / behavior. Categories found (to revisit, some need a design decision)
 - **role+state combo** (`btn btn-default btn-success`) — component currently emits one color; allow coexistence.
 - ~~`<a onclick>` without `href`~~ — DONE: component emits `href` only when `link` is set; migrate these by omitting the `link` prop.
 - **dropdown-toggle / data-toggle / fileupload / span.btn** — handled in the dropdown / file-upload / later phases.
+
+## Text-input migration — scope & defer rubric
+
+`forms.text-input` is a **thin no-op**: it emits a plain `<input>` with today's class (default = no
+class) and passes all attributes through; the label/validation IDL props are declared but not rendered
+(a wrapper would change markup — that's the design phase). Pass the **HTML-native `type=`** (it is a
+declared `@prop`, so Blade extracts it from the attribute bag — emits exactly one `type`, never a duplicate).
+
+- ✅ **Migrate (146 done in PR #3558; more in follow-ups):** standard inputs (bare), headline title inputs
+  (`main-title-input` → `variant="headline"`), search inputs. Map source class → `variant`; any extra
+  non-variant class (tw-utilities, `pull-left`, …) passes through `class=`.
+  **`.form-control` AND `.input` → bare** (NOT variants): both are pure Bootstrap cruft — forms.css element
+  selectors override `.form-control`, and `.input` has *no backing CSS rule at all*; a bare input renders
+  identically (the entry-page width that `.form-control` gave comes from `.regpanelinner input{width:100%}`).
+
+### Variant taxonomy (evidence-backed — 4-agent CSS audit)
+Only visually-distinct treatments earn a variant. Verdicts:
+| variant | class | real? | what it actually is |
+|---|---|---|---|
+| `headline` | `.main-title-input` | ✅ | large 24/26px (`--font-size-xxxl`) title font + `box-shadow:none`; keeps border/bg |
+| `large` | `.input-large` | ✅ (width-only) | fixed `width:210px` — forms.css never sets width, so it survives |
+| `small` | `.input-small` | ✅ (width-only) | fixed `width:90px` |
+| `ghost` *(planned)* | `.secretInput` | ✅ | inline-edit "looks like text until touched": transparent, no border/shadow, hover/focus reveal box. Pending its async-save JS migration. |
+| ~~`form`~~ | `.form-control` | ❌ removed | overridden by forms.css element selectors |
+| ~~`legacy`~~ | `.input` | ❌ removed | no `.input` CSS rule exists anywhere |
+- ⛔ **Leave RAW — do-not-touch signals** (JS-coupled; breaking these regresses behavior):
+  - **datepickers** (jQuery-UI): `.dates .duedates .quickDueDates .dateFrom .dateTo .editFrom .editTo
+    .startDate .endDate .projectDateFrom .projectDateTo .week-picker .hasDatepicker` + ids `#deadline
+    #sprintStart #sprintEnd #event_date_* #date #startDate #endDate #timesheetdate #invoiced* #paidDate`
+    (many init via inline `<script>` in the template + an a11y pass on `.hasDatepicker`).
+  - **time**: `.timepicker`, `type="time"`, `#dueTime #timeFrom #timeTo`.
+  - **tags**: `#tags` (+ `#tags_tag`/`#tags_tagsinput`), `.tagsinputField`, `data-role="tagsinput"`, `#wikiTagsInput`.
+  - **inline-edit / async-save**: `.secretInput`, `.asyncInputUpdate` (+ `data-label` / `data-id`).
+  - **color**: `.simpleColorPicker`.   **honeypot**: `.ohnohoney`.
+  - **JS grids / clone-templates**: `.hourCell` (timesheet grid), `.sorter` + `name`/`id` clone markers
+    like `XXNEWKEYXX` or pipe-keyed `name="new|GENERAL_BILLABLE|…"`.
+  - **dynamic `class`/`id`** built with `{{ }}` / `{!! !!}` (can't statically classify → defer).
+  - **legacy `<?php echo ?>` / `<?= ?>` in an attribute value** (see gotcha above).
+  - **any inline `onchange` / `onblur` / `onkeyup` / `oninput` / `onfocus` handler**.
 
 ## Progress log
 
@@ -223,3 +271,36 @@ class set / behavior. Categories found (to revisit, some need a design decision)
   `<li>` menu-items (incl. menu delete/edit), accordion + inline `|`-separated toggles, add/create
   toggles, nav, timers, and already-`btn` links. Still bare (flagged, not converted): inline per-comment
   `deleteComment` links + per-row table delete actions (would need a smaller-scale/inline treatment).
+- _text-input_: thin no-op `forms.text-input` built on `feature/text-input-component` (off master, post-#3531).
+  Scope + datepicker/tags/inline-edit defer rubric above. **PR #3558.**
+- _text-input pilot_: `Projects/newProject` headline (`main-title-input` → `variant="headline"`) migrated;
+  Playwright = byte-identical (same class/type/name/id/style/value/placeholder); the two `.dateFrom/.dateTo`
+  datepickers on the same page left RAW (component never applied to JS-coupled inputs → can't regress).
+  (Note: dev instance currently isn't loading `compiled-app`/jQuery, so runtime datepicker init couldn't be
+  exercised — but the datepicker DOM is byte-identical to master since those lines are untouched.)
+- _text-input sweep_: **146 call-sites across 56 files** migrated (63-file 2-phase workflow: per-file migrate
+  + adversarial diff-verify; all 63 verified ok). Diff is perfectly symmetric (202 ins / 202 del = pure
+  in-place swaps). Static audit of all 146: 0 problems (no `type=`/inputType dup, no variant class left in
+  `class=`, no JS-coupled signal swallowed, no nested-quote, no dup attrs). Compile + Pint clean. Live render
+  no-op confirmed on `/setting/editCompanySettings` (`pull-left` passthrough) + `/clients/newClient` (bare).
+  **Deferred to follow-ups:** `Auth/userInvite` (3 inputs w/ legacy `<?php echo ?>` in attrs — see gotcha),
+  `Tickets/partials/ticketCard` + `partials/subtasks` (HTMX inline-edit/date), and everywhere the
+  do-not-touch signals (datepickers/tags/inline-edit/color/`sorter`/`hourCell`/dynamic-class).
+- _text-input API refinement (review feedback)_: two API cleanups after review.
+  (1) **`inputType` → `type`**: renamed the prop to the HTML-native `type` (17 call-sites). It's a declared
+  `@prop`, so Blade extracts it from the attribute bag → exactly one `type`, no duplication. (`forms.button`
+  keeps `inputType` because it's polymorphic — `type` is ambiguous across a/button/input.)
+  (2) **dropped `variant="form"`** (the `form`/`bordered`→`.form-control` arm). 3-agent CSS audit proved
+  `.form-control` is cosmetically redundant in Leantime: `forms.css` element selectors (`input[type=text]…`,
+  loaded after Bootstrap) override its bg/border/radius/shadow/padding/height/color, and the only residual
+  effect (desktop `width:100%`) is already supplied by container rules (`.regpanelinner input{width:100%}`)
+  for the sole 7 call-sites (login ×2, twoFA/verify ×1, install ×4 — all entry pages). No JS hooks
+  `.form-control` on inputs. Collapsed those 7 to bare; live render on `/auth/login` = bare inputs, single
+  `type`, no `form-control`. Bare IS the form look now.
+- _text-input variant taxonomy (review feedback)_: 4-agent CSS audit to keep ONLY evidence-backed variants.
+  Findings: `headline`(.main-title-input) = REAL (large `--font-size-xxxl` font + shadow removed);
+  `large`(.input-large)/`small`(.input-small) = REAL but width-only (210px/90px — the one prop forms.css
+  doesn't set); `ghost`(.secretInput) = REAL inline-edit treatment (4 distinct low-chrome looks found, the
+  canonical one being .secretInput) but its call-sites are the deferred async-save fields, so it's a planned
+  variant; `legacy`(.input) = REDUNDANT (no `.input` CSS rule exists anywhere). **Dropped `variant="legacy"`**
+  (1 call-site, TwoFA/edit → bare; removed the arm). Component now exposes only `headline`/`large`/`small`.

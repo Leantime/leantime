@@ -23,11 +23,11 @@
 
         <div class="">
             <label for="username">Email</label>
-            <input type="text" name="username" id="username" class="form-control" placeholder="{{ __($inputPlaceholder) }}" value=""/>
+            <x-global::forms.text-input name="username" id="username" placeholder="{{ __($inputPlaceholder) }}" value="" />
         </div>
         <div class="">
             <label for="password">Password</label>
-            <input type="password" name="password" id="password" autocomplete="off" class="form-control" placeholder="{{ __('input.placeholders.enter_password') }}" value=""/>
+            <x-global::forms.text-input type="password" name="password" id="password" autocomplete="off" placeholder="{{ __('input.placeholders.enter_password') }}" value="" />
             <div class="forgotPwContainer">
                 <a href="{{ BASE_URL }}/auth/resetPw" class="forgotPw">{!! __('links.forgot_password') !!}</a>
             </div>

@@ -30,7 +30,7 @@
                                 <h5>2. {!! __('text.twoFA_verify_code') !!}</h5>
                                 <p>
                                     <span>{!! __('label.twoFACode_short') !!}:</span>
-                                    <input type="text" class="input" name="twoFACode" id="twoFACode"/><br/>
+                                    <x-global::forms.text-input name="twoFACode" id="twoFACode" /><br/>
                                 </p>
 
                                 <input type="hidden" name="secret" value="{{ $secret }}" />

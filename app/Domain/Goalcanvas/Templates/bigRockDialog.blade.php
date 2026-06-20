@@ -8,7 +8,7 @@
 
     <br />
     <label>{{ __('label.goal_description') }}</label>
-    <input type="text" name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" style="width:100%;" /><br />
+    <x-global::forms.text-input name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" style="width:100%;" /><br />
 
     <br />
     <div class="row">

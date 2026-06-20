@@ -232,8 +232,8 @@
                         </div>
                         <div class="modal-body">
                             <label>{!! __('label.topic_idea_board') !!}</label>
-                            <input type="text" name="canvastitle" placeholder="{{ __('input.placeholders.name_for_idea_board') }}"
-                                   style="width:90%"/>
+                            <x-global::forms.text-input name="canvastitle" placeholder="{{ __('input.placeholders.name_for_idea_board') }}"
+                                   style="width:90%" />
                         </div>
                         <div class="modal-footer">
                             <x-global::forms.button inputType="button" contentRole="tertiary"
@@ -255,8 +255,8 @@
                         </div>
                         <div class="modal-body">
                             <label>{!! __('label.title_idea_board') !!}</label>
-                            <input type="text" name="canvastitle" value="{{ $canvasTitle }}"
-                                   style="width:90%"/>
+                            <x-global::forms.text-input name="canvastitle" value="{{ $canvasTitle }}"
+                                   style="width:90%" />
                         </div>
                         <div class="modal-footer">
                             <x-global::forms.button inputType="button" contentRole="tertiary"

@@ -16,7 +16,7 @@
     @dispatchEvent('afterFormOpen')
 
     <label for="description">{!! __('label.title') !!}</label>
-    <input type="text" id="description" name="description" value="{{ $tpl->escape($values['description']) }}" /><br />
+    <x-global::forms.text-input id="description" name="description" value="{{ $tpl->escape($values['description']) }}" /><br />
 
     <div class="par">
         <label for="dateFrom">{!! __('label.start_date') !!}</label>

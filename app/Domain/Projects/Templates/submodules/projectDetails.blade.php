@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <input type="text" name="name" id="name" class="main-title-input" style="width:99%"  value="{{ $project['name'] }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}"/>
+                        <x-global::forms.text-input variant="headline" name="name" id="name" style="width:99%"  value="{{ $project['name'] }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
                     </div>
                 </div>
             </div>
@@ -197,7 +197,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label"for="hourBudget">{!! __('label.hourly_budget') !!}</label>
                         <div class="col-md-6">
-                            <input type="text" name="hourBudget" class="input-large" id="hourBudget" value="{{ $project['hourBudget'] }}" />
+                            <x-global::forms.text-input variant="large" name="hourBudget" id="hourBudget" value="{{ $project['hourBudget'] }}" />
 
                         </div>
                     </div>
@@ -205,7 +205,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label" for="dollarBudget">{!! __('label.budget_cost') !!}</label>
                         <div class="col-md-6">
-                            <input type="text" name="dollarBudget" class="input-large" id="dollarBudget" value="{{ $project['dollarBudget'] }}" />
+                            <x-global::forms.text-input variant="large" name="dollarBudget" id="dollarBudget" value="{{ $project['dollarBudget'] }}" />
 
                         </div>
                     </div>

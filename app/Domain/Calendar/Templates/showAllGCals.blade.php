@@ -6,7 +6,7 @@
 <div class="pageheader">
     @dispatchEvent('afterPageHeaderOpen')
     <form action="{{ BASE_URL }}/index.php?act=tickets.showAll" method="post" class="searchbar">
-        <input type="text" name="term" placeholder="To search type and hit enter..." />
+        <x-global::forms.text-input name="term" placeholder="To search type and hit enter..." />
     </form>
 
     <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>

@@ -146,7 +146,7 @@
                                         <option value="{{ $compatibility['version_number'] }}">{{ $compatibility['version_number'] }}</option>
                                     @endforeach
                                 </select>
-                                <input class="!tw-mb-none !tw-p-[4px]" type="text" name="plugin[license]" placeholder="License Key" />
+                                <x-global::forms.text-input class="!tw-mb-none !tw-p-[4px]" name="plugin[license]" placeholder="License Key" />
                                 <x-global::button
                                     :tag="'button'"
                                     :type="'secondary'"

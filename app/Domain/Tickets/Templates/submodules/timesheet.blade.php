@@ -31,7 +31,7 @@ $currentPay = $userHours * $userInfo['wage'];
 
                     <label for="hours">{!! __('label.hours') !!}</label>
                     <span class="field">
-                        <input type="text" id="hours" name="hours" value="{{ $values['hours'] }}" size="7" class="input-small" />
+                        <x-global::forms.text-input id="hours" name="hours" value="{{ $values['hours'] }}" size="7" variant="small" />
                     </span>
                     <label for="description">{!! __('label.description') !!}</label>
                     <span class="field">
