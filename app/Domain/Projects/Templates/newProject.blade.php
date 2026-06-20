@@ -33,7 +33,7 @@
                                 <div class="col-md-12">
 
                                     <div class="form-group">
-                                        <input type="text" name="name" id="name" class="main-title-input" style="width:99%"  value="{{ $project['name'] }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}"/>
+                                        <x-global::forms.text-input variant="headline" name="name" id="name" style="width:99%" value="{{ $project['name'] }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
                                     </div>
                                     <input type="hidden" name="projectState"  id="projectState" value="0" />
 
