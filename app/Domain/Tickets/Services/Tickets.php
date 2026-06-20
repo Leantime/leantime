@@ -18,7 +18,6 @@ use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\DateTimeHelper;
-use Leantime\Core\Support\FromFormat;
 use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
@@ -430,11 +429,11 @@ class Tickets extends BaseService
     /**
      * Retrieves all tickets based on the provided search criteria.
      *
-     * @param  array|null  $searchParams  An associative array containing search parameters such as
-     *                                    'currentProject', 'currentUser', 'users', 'status', 'term',
-     *                                    'effort', 'excludeType', 'type', 'milestone', 'groupBy',
-     *                                    'orderBy', 'orderDirection', 'priority', 'clients', and 'sprint'.
-     *                                    These values are used to filter the search results.
+     * @param  array|null  $searchCriteria  An associative array containing search parameters such as
+     *                                      'currentProject', 'currentUser', 'users', 'status', 'term',
+     *                                      'effort', 'excludeType', 'type', 'milestone', 'groupBy',
+     *                                      'orderBy', 'orderDirection', 'priority', 'clients', and 'sprint'.
+     *                                      These values are used to filter the search results.
      * @return array|false An array of tickets matching the search criteria, or false on failure.
      *
      * @api
@@ -4374,7 +4373,6 @@ class Tickets extends BaseService
                         $values['editFrom'] = dtHelper()->parseUserDateTime(
                             $values['editFrom'],
                             $values['timeFrom'],
-                            FromFormat::UserDateTime
                         )->formatDateTimeForDb();
                         unset($values['timeFrom']);
                     } else {

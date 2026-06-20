@@ -8,7 +8,6 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Files\Repositories\Files;
-use SVG\SVG;
 
 class Users
 {
@@ -74,8 +73,6 @@ class Users
 
     /**
      * getUser - get on user from db
-     *
-     * @return mixed
      */
     public function getUserBySha($hash): array|false
     {
@@ -411,19 +408,17 @@ class Users
      *
      * @throws BindingResolutionException
      */
-    public function setPicture($fileId, $id): void
+    public function setPicture($fileId, $id): bool
     {
-        $this->connection->table('zp_user')
+        return $this->connection->table('zp_user')
             ->where('id', $id)
             ->update([
                 'profileId' => $fileId,
                 'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
-            ]);
+            ]) > 0;
     }
 
     /**
-     * @return string[]|SVG
-     *
      * @throws BindingResolutionException
      */
     public function getProfilePicture($id): array|false

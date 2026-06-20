@@ -39,7 +39,7 @@ class Import extends Controller
         $this->tpl->assign('admin', true);
         $this->tpl->assign('roles', Roles::getRoles());
 
-        if (session()->exist('tmp.ldapUsers') && count(session('tmp.ldapUsers')) > 0) {
+        if (session()->exists('tmp.ldapUsers') && count(session('tmp.ldapUsers')) > 0) {
             $this->tpl->assign('allLdapUsers', session('tmp.ldapUsers'));
             $this->tpl->assign('confirmUsers', true);
         }

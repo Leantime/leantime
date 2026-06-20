@@ -130,6 +130,8 @@ class EventDispatcher implements Dispatcher
     ) {
 
         $this->dispatch_event($event, $payload, '');
+
+        return null;
     }
 
     public static function dispatch_filter(

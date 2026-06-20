@@ -95,7 +95,7 @@ class NewTicket extends Controller
         $this->tpl->assign('userInfo', $this->userService->getUser(session('userdata.id')));
         $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
 
-        $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'), 'open');
+        $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'));
         $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
         return $this->tpl->displayPartial('tickets.newTicketModal');
@@ -147,7 +147,7 @@ class NewTicket extends Controller
                 $this->tpl->assign('userInfo', $this->userService->getUser(session('userdata.id')));
                 $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
 
-                $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'), 'open');
+                $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'));
                 $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
                 return $this->tpl->displayPartial('tickets.newTicketModal');

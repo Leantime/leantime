@@ -106,9 +106,6 @@ class Theme
 
     private Language $language;
 
-    /**
-     * @var language
-     */
     private AppSettings $appSettings;
 
     private FileManager $fileManager;

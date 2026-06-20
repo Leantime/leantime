@@ -101,11 +101,11 @@ class AuthenticateSession implements AuthenticatesSessions
     /**
      * Get the guard instance that should be used by the middleware.
      *
-     * @return \Illuminate\Contracts\Auth\Factory|\Illuminate\Contracts\Auth\Guard
+     * @return \Illuminate\Contracts\Auth\Guard
      */
     protected function guard()
     {
-        return $this->auth;
+        return $this->auth->guard();
     }
 
     /**
@@ -115,7 +115,7 @@ class AuthenticateSession implements AuthenticatesSessions
      */
     protected function redirectTo(Request $request)
     {
-        //
+        return null;
     }
 
     public function setLeantimeSession(IncomingRequest $request, Closure $next): Response

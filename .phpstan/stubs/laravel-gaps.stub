@@ -1,0 +1,107 @@
+<?php
+
+/**
+ * PHPStan stub: methods that exist on the CONCRETE Laravel classes our code uses at
+ * runtime, but are not declared on the looser contracts/interfaces we type-hint against.
+ *
+ * Leantime intentionally does NOT use Larastan, so vanilla PHPStan only sees the contract
+ * (e.g. ConnectionInterface) and reports the concrete method (e.g. getDriverName()) as
+ * undefined — even though the runtime object (Illuminate\Database\Connection) always has it.
+ *
+ * These @method tags merge onto the real interfaces/classes; native members are unaffected.
+ * Each entry is documented with the concrete class that actually provides the method.
+ */
+
+namespace Illuminate\Database;
+
+/**
+ * Provided at runtime by the abstract Illuminate\Database\Connection that
+ * DatabaseManager::connection() always returns.
+ *
+ * @method string getDriverName()
+ * @method \PDO getPdo()
+ * @method \Illuminate\Database\Query\Grammars\Grammar getQueryGrammar()
+ */
+interface ConnectionInterface {}
+
+namespace Illuminate\Cache;
+
+/**
+ * Repository forwards lock() via __call to its underlying store when that store is a
+ * LockProvider (Redis/File/Database/...). StartSession uses it for session locking.
+ *
+ * @method \Illuminate\Cache\Lock lock(string $name, int $seconds = 0, ?string $owner = null)
+ */
+class Repository {}
+
+namespace Illuminate\Contracts\Filesystem;
+
+/**
+ * Provided by the concrete Illuminate\Filesystem\FilesystemAdapter (and the Cloud contract
+ * for url()/temporaryUrl()). Storage::disk() returns that adapter.
+ *
+ * @method string url(string $path)
+ * @method string temporaryUrl(string $path, \DateTimeInterface $expiration, array $options = [])
+ * @method string|false mimeType(string $path)
+ */
+interface Filesystem {}
+
+namespace Illuminate\Contracts\Foundation;
+
+/**
+ * Provided by Illuminate\Foundation\Application (which Leantime\Core\Application extends).
+ *
+ * @method void rebinding(string $abstract, \Closure $callback)
+ * @method string getCachedConfigPath()
+ * @method string detectEnvironment(\Closure $callback)
+ */
+interface Application {}
+
+namespace Illuminate\Container;
+
+/**
+ * terminating() lives on Illuminate\Foundation\Application; the container instance Leantime
+ * passes around is that application.
+ *
+ * @method void terminating(\Closure|string $callback)
+ */
+class Container {}
+
+namespace Illuminate\Contracts\Auth;
+
+/**
+ * Provided by the concrete Illuminate\Auth\AuthManager bound to 'auth'.
+ *
+ * @method string getDefaultDriver()
+ * @method \Illuminate\Contracts\Auth\Authenticatable|null user()
+ */
+interface Factory {}
+
+/**
+ * viaRemember()/getRecallerName()/logoutCurrentDevice() are provided by the concrete
+ * session guard (Illuminate\Auth\SessionGuard) that AuthManager::guard() returns.
+ *
+ * @method bool viaRemember()
+ * @method string getRecallerName()
+ * @method void logoutCurrentDevice()
+ */
+interface Guard {}
+
+namespace Illuminate\Support;
+
+/**
+ * addRealMinutes() is a Carbon magic method (Carbon 3 dropped its @method annotation but the
+ * __call magic still resolves it). Used by StartSession exactly as upstream Laravel does.
+ *
+ * @method \Illuminate\Support\Carbon addRealMinutes(int $value = 1)
+ */
+class Carbon {}
+
+namespace Laravel\Socialite\Contracts;
+
+/**
+ * setScopes() is provided by the concrete Laravel\Socialite\Two\AbstractProvider.
+ *
+ * @method \Laravel\Socialite\Contracts\Provider setScopes(array|string $scopes)
+ */
+interface Provider {}

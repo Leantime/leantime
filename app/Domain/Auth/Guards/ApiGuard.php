@@ -5,6 +5,7 @@ namespace Leantime\Domain\Auth\Guards;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
+use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Api\Services\Api;
 
@@ -12,14 +13,14 @@ class ApiGuard implements Guard
 {
     protected $user;
 
-    private string $apiKey;
+    private string $apiKey = '';
 
     public function __construct(
         protected UserProvider $provider,
         protected Api $apiService,
         protected IncomingRequest $request)
     {
-        if ($this->request->isApiRequest()) {
+        if ($this->request instanceof ApiRequest && $this->request->isApiRequest()) {
             $this->apiKey = $this->request->getAPIKey();
         }
     }
@@ -70,9 +71,13 @@ class ApiGuard implements Guard
 
     public function id()
     {
-        if ($this->user()) {
-            return $this->user()->id;
-        }
+        // user() currently returns a stdClass of API-key user data (not yet a real
+        // Authenticatable — that conversion is tracked for the level-3 auth pass), so read
+        // the id off the object rather than calling getAuthIdentifier().
+        /** @var \stdClass|null $user */
+        $user = $this->user();
+
+        return $user?->id;
     }
 
     public function validate(array $credentials = [])

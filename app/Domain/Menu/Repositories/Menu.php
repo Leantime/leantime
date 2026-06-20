@@ -122,9 +122,6 @@ class Menu
         ],
     ];
 
-    /**
-     * @param  AuthService  $authService
-     */
     public function __construct(
         /** @var SettingRepository */
         private SettingRepository $settingsRepo,

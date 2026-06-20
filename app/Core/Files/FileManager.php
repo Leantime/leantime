@@ -430,7 +430,7 @@ class FileManager implements FileManagerInterface
         if (! in_array($sSuffix, ['P', 'T', 'G', 'M', 'K'])) {
             return (int) $sSize;
         }
-        $iValue = substr($sSize, 0, -1);
+        $iValue = (int) substr($sSize, 0, -1);
         switch ($sSuffix) {
             case 'P':
                 $iValue *= 1024;

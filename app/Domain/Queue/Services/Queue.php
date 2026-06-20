@@ -89,7 +89,7 @@ class Queue
     public function addToQueue(Workers $channel, string $subject, string $message, $projectId)
     {
 
-        return $this->queue->addMessageToQueue(
+        $this->queue->addMessageToQueue(
             channel: $channel,
             subject: $subject,
             message: $message,
@@ -103,7 +103,7 @@ class Queue
 
         $queue = app()->make(QueueRepository::class);
 
-        return $queue->addMessageToQueue(
+        $queue->addMessageToQueue(
             channel: $channel,
             subject: $subject,
             message: serialize($message),

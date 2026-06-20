@@ -7,7 +7,6 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
-use Illuminate\View\Compilers\Compiler;
 use Illuminate\View\View;
 use Illuminate\View\ViewException;
 use Leantime\Core\Configuration\AppSettings;
@@ -67,8 +66,6 @@ class Template
 
     /**
      * __construct - get instance of frontcontroller
-     *
-     * @param  Compiler|null  $bladeCompiler
      *
      * @throws BindingResolutionException
      * @throws \ReflectionException
@@ -263,8 +260,6 @@ class Template
 
     /**
      * Refreshes (main url page in the background)
-     *
-     * @param  string  $eventName
      **/
     public function htmxRefresh(): void
     {
@@ -277,8 +272,6 @@ class Template
 
     /**
      * Sets the response header to trigger an htmx event
-     *
-     * @param  string  $eventName
      **/
     public function closeModal(): void
     {
@@ -405,7 +398,7 @@ class Template
     /**
      * Display JSON content with an optional response code.
      *
-     * @param  array|object|string  $jsonContent  The JSON content to be displayed.
+     * @param  string  $content  The content to be displayed.
      * @param  int  $statusCode  The HTTP response code to be returned (default: 200).
      * @return Response The response object after displaying the JSON content.
      *

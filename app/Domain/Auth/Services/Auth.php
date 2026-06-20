@@ -68,9 +68,6 @@ class Auth implements Authenticatable
 
     private string $twoFASecret;
 
-    /**
-     * @var string|null
-     */
     private ?SessionManager $session = null;
 
     /**

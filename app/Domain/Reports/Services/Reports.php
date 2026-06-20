@@ -23,7 +23,6 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Reactions\Repositories\Reactions;
 use Leantime\Domain\Reports\Permissions\ReportsPermissions;
 use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
 use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
@@ -63,9 +62,6 @@ class Reports extends BaseService
 
     private SprintService $sprintService;
 
-    /**
-     * @param  SettingRepository  $settings
-     */
     public function __construct(
         TemplateCore $tpl,
         AppSettingCore $appSettings,

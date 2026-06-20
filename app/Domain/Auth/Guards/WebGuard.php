@@ -51,9 +51,13 @@ class WebGuard implements Guard
 
     public function id()
     {
-        if ($this->user()) {
-            return $this->user()->id;
-        }
+        // user() currently returns a stdClass (AuthUser::retrieveById casts to object; the real
+        // Authenticatable conversion is tracked for the level-3 auth pass), so read the id off
+        // the object rather than calling getAuthIdentifier().
+        /** @var \stdClass|null $user */
+        $user = $this->user();
+
+        return $user?->id;
     }
 
     public function validate(array $credentials = [])

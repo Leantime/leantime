@@ -119,7 +119,8 @@ class LoadConfig extends LoadConfiguration
      *
      * If the CURRENT_URL constant is not defined, it will be set by appending the getRequestUri method result to the BASE_URL.
      *
-     * @param  string  $appUrl  The URL to be used as BASE_URL and APP_URL. Defaults to an empty string.
+     * @param  mixed  $config  The configuration object providing the appUrl value.
+     * @param  mixed  $app  The application instance used to resolve the request.
      * @return void
      */
     public function setBaseConstants($config, $app)
@@ -168,8 +169,8 @@ class LoadConfig extends LoadConfiguration
     /**
      * Maps Leantime configuration options to Laravel configuration options.
      *
-     * @param  $config  The Laravel configuration object to map to.
-     * @return $config The updated Leantime configuration object with mapped values.
+     * @param  mixed  $config  The Laravel configuration object to map to.
+     * @return mixed The updated Leantime configuration object with mapped values.
      */
     protected function mapLeantime2LaravelConfig($config)
     {

@@ -5,10 +5,8 @@ namespace Leantime\Domain\Menu\Services;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Setting\Services\Setting;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users;
 
@@ -28,10 +26,6 @@ class Menu
 
     private MenuRepository $menuRepo;
 
-    /**
-     * @param  TimesheetRepository  $timesheetsRepo
-     * @param  SettingRepository  $settingsRepo
-     */
     public function __construct(
         ProjectService $projectService,
         TimesheetService $timesheetService,
@@ -69,7 +63,7 @@ class Menu
         $allAvailableProjects = $projects['allAvailableProjects'];
         $allAvailableProjectsHierarchy = $projects['allAvailableProjectsHierarchy'];
 
-        $clients = $this->projectService->getAllClientsAvailableToUser($userId, 'open', $client);
+        $clients = $this->projectService->getAllClientsAvailableToUser($userId, 'open');
 
         $recent = $this->settingSvc->getSetting('usersettings.'.$userId.'.recentProjects');
         $recentArr = safe_unserialize($recent, []);

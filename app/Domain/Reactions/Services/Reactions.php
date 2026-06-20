@@ -106,7 +106,7 @@ class Reactions
      * getGroupedEntityReactions - gets all reactions for a given entity grouped and counted by reactions
      *
      *
-     * @return array|bool returns the array on success or false on failure
+     * @return array|false returns the array on success or false on failure
      *
      * @api
      */

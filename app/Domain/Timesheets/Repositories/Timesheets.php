@@ -717,6 +717,7 @@ class Timesheets extends Repository
                 return 0;
             }
 
+            /** @var \Carbon\CarbonImmutable $userStartOfDay */
             $userStartOfDay = dtHelper()::createFromTimestamp($inTimestamp, 'UTC')->setToUserTimezone()->startOfDay();
 
             // Use raw query for ON DUPLICATE KEY UPDATE (MySQL specific)

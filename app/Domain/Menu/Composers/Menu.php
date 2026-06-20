@@ -34,8 +34,6 @@ class Menu extends Composer
     }
 
     /**
-     * @param  array  $data
-     *
      * @throws BindingResolutionException
      */
     public function with(): array

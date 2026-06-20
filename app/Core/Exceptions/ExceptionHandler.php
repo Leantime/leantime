@@ -97,7 +97,6 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Create a new exception handler instance.
      *
-     * @param  Application
      * @return void
      */
     public function __construct(Application $container)
@@ -581,6 +580,8 @@ class ExceptionHandler implements ExceptionHandlerContract
 
     /**
      * Determine if the given exception is an HTTP exception.
+     *
+     * @phpstan-assert-if-true \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $e
      *
      * @return bool
      */
