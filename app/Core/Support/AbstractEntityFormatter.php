@@ -165,7 +165,7 @@ abstract class AbstractEntityFormatter implements EntityFormatterInterface
         }
 
         if (is_array($value)) {
-            return json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            return json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) ?: '[]';
         }
 
         $stringValue = (string) $value;

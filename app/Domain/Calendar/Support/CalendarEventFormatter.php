@@ -33,8 +33,8 @@ class CalendarEventFormatter extends AbstractEntityFormatter
         'description',
         'eventType',
         'dateContext',
-        'dateFrom',
-        'dateTo',
+        'startDate',
+        'endDate',
         'allDay',
         'projectId',
     ];

@@ -25,8 +25,12 @@ class LLMStringSanitizer
      */
     public static function sanitizeForLLM(mixed $input, bool $removeNewlines = false): string
     {
+        if ($input === null) {
+            return '';
+        }
+
         if (! is_string($input)) {
-            return $input ?? '';
+            return (string) $input;
         }
 
         return Str::sanitizeForLLM($input, $removeNewlines);

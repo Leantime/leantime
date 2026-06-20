@@ -36,15 +36,17 @@ class PersonalTokens extends HtmxController
 
     /**
      * Create a new personal access token.
+     *
+     * @return mixed
      */
-    public function create(): string
+    public function create()
     {
         $name = $this->incomingRequest->request->get('name');
 
         if (empty($name)) {
             $this->tpl->setNotification(__('notifications.token_name_required'), 'error');
 
-            return $this->emptyResponse(400);
+            return $this->tpl->emptyResponse(400);
         }
 
         $token = $this->tokenService->createToken(

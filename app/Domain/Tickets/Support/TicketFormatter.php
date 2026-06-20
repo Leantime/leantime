@@ -176,7 +176,7 @@ class TicketFormatter extends AbstractEntityFormatter
     {
         $subtaskData = '';
         foreach ($subtasks as $subtask) {
-            $subtaskData .= ' #'.$subtask['id'].' '.$subtask['headline']."\n";
+            $subtaskData .= ' #'.$subtask['id'].' '.$this->sanitizeValue($subtask['headline'])."\n";
         }
 
         return $subtaskData;

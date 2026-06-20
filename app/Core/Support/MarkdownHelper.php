@@ -25,7 +25,7 @@ class MarkdownHelper
             return self::sanitizeForMarkdown((string) $data);
         }
 
-        return Str::toMarkdown($data, $headerLevel);
+        return Str::toMarkdown($data);
     }
 
     /**
