@@ -5,8 +5,6 @@ namespace Leantime\Domain\Notifications\Hxcontrollers;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Controller\HtmxController;
-use Leantime\Domain\Menu\Services\Menu;
-use Leantime\Domain\Timesheets\Services\Timesheets;
 
 class News extends HtmxController
 {
@@ -16,8 +14,6 @@ class News extends HtmxController
 
     /**
      * Controller constructor
-     *
-     * @param  \Leantime\Domain\Notifications\Services\News  $newsService
      */
     public function init(\Leantime\Domain\Notifications\Services\News $newsService): void
     {

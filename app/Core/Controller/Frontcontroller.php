@@ -47,7 +47,6 @@ class Frontcontroller
     /**
      * __construct - Set the rootpath of the server
      *
-     * @param  IncomingRequest  $request
      * @return void
      */
     public function __construct(IncomingRequest $request, private PermissionEnforcer $permissionEnforcer)
@@ -59,7 +58,6 @@ class Frontcontroller
     /**
      * run - executes the action depending on Request or firstAction
      *
-     * @param  IncomingRequest  $request
      *
      * @throws BindingResolutionException
      */
@@ -173,7 +171,6 @@ class Frontcontroller
      * executeAction - includes the class in includes/modules by the Request
      *
      * @param  string  $controller  actionname.filename
-     * @param  string  $method
      *
      * @throws BindingResolutionException
      */
@@ -441,9 +438,7 @@ class Frontcontroller
     /**
      * redirect - redirects an htmx page.
      *
-     * @param  string  $url
      * @param  array  $headers
-     * @return Response
      */
     public static function redirectHtmx(string $url, $headers = []): Response
     {

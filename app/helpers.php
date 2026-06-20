@@ -212,7 +212,6 @@ if (! function_exists('mix')) {
     /**
      * Get the path to a versioned Mix file. Customized for Leantime.
      *
-     * @return \Leantime\Core\Support\Mix|string
      *
      * @throws BindingResolutionException
      */

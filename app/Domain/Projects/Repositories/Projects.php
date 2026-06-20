@@ -13,7 +13,6 @@ use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use SVG\SVG;
 
 class Projects
 {
@@ -1037,8 +1036,6 @@ class Projects
     }
 
     /**
-     * @return array|false
-     *
      * @throws BindingResolutionException
      */
     public function getProjectAvatar($id): array|false

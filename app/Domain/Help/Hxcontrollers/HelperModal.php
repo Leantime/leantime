@@ -17,8 +17,8 @@ class HelperModal extends HtmxController
     /**
      * Controller constructor
      *
-     * @param  Helper       $helperService  The help domain service.
-     * @param  UserService  $userService    The users domain service.
+     * @param  Helper  $helperService  The help domain service.
+     * @param  UserService  $userService  The users domain service.
      * @return void
      */
     public function init(

@@ -204,7 +204,6 @@ class AuthCheck
      * Redirect with origin
      * Returns false if the current route is already the redirection route.
      *
-     * @return RedirectResponse|false
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */

@@ -8,7 +8,6 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Files\Repositories\Files;
-use SVG\SVG;
 
 class Users
 {
@@ -74,8 +73,6 @@ class Users
 
     /**
      * getUser - get on user from db
-     *
-     * @return array|false
      */
     public function getUserBySha($hash): array|false
     {
@@ -424,8 +421,6 @@ class Users
     }
 
     /**
-     * @return array|false
-     *
      * @throws BindingResolutionException
      */
     public function getProfilePicture($id): array|false

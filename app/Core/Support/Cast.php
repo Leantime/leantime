@@ -161,9 +161,6 @@ class Cast
         throw new \InvalidArgumentException('Value cannot be casted datetime');
     }
 
-    /**
-     * @param  iterable  $iterator
-     **/
     protected function handleIterator(iterable $iterator, array $mappings = []): array|object
     {
         $result = is_object($iterator) ? new \stdClass : [];

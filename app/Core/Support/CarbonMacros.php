@@ -3,7 +3,6 @@
 namespace Leantime\Core\Support;
 
 use Carbon\CarbonImmutable;
-use Carbon\CarbonInterface;
 use Leantime\Core\Language;
 
 /**

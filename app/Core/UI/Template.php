@@ -7,7 +7,6 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
-use Illuminate\View\Compilers\Compiler;
 use Illuminate\View\View;
 use Illuminate\View\ViewException;
 use Leantime\Core\Configuration\AppSettings;

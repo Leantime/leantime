@@ -113,7 +113,6 @@ class Helper
      * Constructor for the class.
      * Initializes the availableModals property by dispatching the "addHelperModal" event.
      *
-     * @param  \Leantime\Domain\Setting\Repositories\Setting  $settingsRepo
      * @return void
      */
     public function __construct(private Setting $settingsRepo)

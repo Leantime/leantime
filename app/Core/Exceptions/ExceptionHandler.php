@@ -97,7 +97,6 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Create a new exception handler instance.
      *
-     * @param  Application  $container
      * @return void
      */
     public function __construct(Application $container)
