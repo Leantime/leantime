@@ -105,9 +105,9 @@ $values = $values ?? [];
                             <label for="hours">{!! __('HOURS') !!}</label> <x-global::forms.text-input
                                     id="hours" name="hours"
                                     value="{{ $values['hours'] }}" size="7" /> <br/>
-                            <label for="description">{!! __('DESCRIPTION') !!}</label> <textarea
+                            <label for="description">{!! __('DESCRIPTION') !!}</label> <x-global::forms.textarea
                                     rows="5" cols="50" id="description"
-                                    name="description">{{ $values['description'] }}</textarea><br/>
+                                    name="description">{{ $values['description'] }}</x-global::forms.textarea><br/>
                             <br/>
                             <br/>
                             <label for="invoicedEmpl">{!! __('INVOICED') !!}</label> <input

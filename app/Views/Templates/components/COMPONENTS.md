@@ -86,8 +86,8 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | Component | Tag | Cat | Status | Ref | Notes |
 |---|---|---|---|---|---|
 | button | `forms.button` | forms | ✅ | refactor/table-component | merged #3531: no-op migration + 3-tier role model |
-| text-input | `forms.text-input` | forms | 🟡 | refactor/table-component | PR #3558: thin no-op; **146 call-sites / 56 files migrated**; **defer JS-coupled** (datepickers/tags/inline-edit/color/sorter/hourCell) + legacy `<?php echo ?>`-in-attr |
-| textarea | `forms.textarea` | forms | ⬜ | selectsComponentUpdates | |
+| text-input | `forms.text-input` | forms | ✅ | refactor/table-component | merged #3558: no-op; 146 call-sites / 56 files; variants `headline`/`large`/`small` (dropped `form`/`legacy` as CSS-redundant); HTML-native `type` prop; **defer JS-coupled** (datepickers/tags/inline-edit/color/sorter/hourCell) + legacy `<?php echo ?>`-in-attr |
+| textarea | `forms.textarea` | forms | 🟡 | selectsComponentUpdates | PR #3562: thin no-op (attrs + inner-content slot); 10 plain migrated / 6 files; **defer Tiptap editors** (`.tiptapSimple`/`.tiptapComplex`/`.wiki-editor-textarea`) |
 | select (native) | `forms.select` | forms | ⬜ | refactor/table-component | native no-op first; JS-enhanced later |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
 | card (content-box) | `elements.card` | elements | ⬜ | ui-components | **replaces `.maincontentinner`** (167 sites) |
@@ -304,3 +304,14 @@ Only visually-distinct treatments earn a variant. Verdicts:
   canonical one being .secretInput) but its call-sites are the deferred async-save fields, so it's a planned
   variant; `legacy`(.input) = REDUNDANT (no `.input` CSS rule exists anywhere). **Dropped `variant="legacy"`**
   (1 call-site, TwoFA/edit → bare; removed the arm). Component now exposes only `headline`/`large`/`small`.
+- _textarea_: thin no-op `forms.textarea` (off master, post-#3558 merge; worktree `.claude/worktrees/textarea`).
+  Body is `<textarea {{ $attributes }}>{{ $slot }}</textarea>` — attributes pass through, the field value is
+  the slot (inner content) preserved EXACTLY (textareas are whitespace-sensitive). **10 plain textareas
+  migrated across 6 files** (Help projectDefinitionStep ×3, Ideas/Wiki newMilestone, Timesheets add/edit +
+  Tickets timesheet description, Widgets myToDos description-input ×2). **19 Tiptap editor textareas left
+  RAW** — JS upgrades exactly `textarea.tiptapSimple` / `textarea.tiptapComplex` (core/tiptap/index.js) plus
+  the Wiki `.wiki-editor-textarea`; never route those through the component. No `variant` arm (plain
+  textareas carry no distinct style class; the only textarea classes are editor-coupled). Verified: full diff
+  is pure `<textarea>`↔`<x-global::forms.textarea>` tag swaps (14 ins / 14 del symmetric), view:cache + Pint
+  clean, static audit = 0 plain missed / 19 editors deferred. (No live render: the dev server serves the main
+  checkout, not this worktree branch; the swap is a by-construction no-op like text-input's proven mechanism.)
