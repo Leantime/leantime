@@ -84,7 +84,7 @@ class Sprints extends BaseService
      * @api
      */
     #[RequiresPermission(SprintsPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getUpcomingSprint(int $projectId): false|array
+    public function getUpcomingSprint(int $projectId): false|\Leantime\Domain\Sprints\Models\Sprints
     {
 
         $sprint = $this->sprintRepository->getUpcomingSprint($projectId);

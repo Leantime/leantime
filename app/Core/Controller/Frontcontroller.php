@@ -52,7 +52,7 @@ class Frontcontroller
     public function __construct(IncomingRequest $request, private PermissionEnforcer $permissionEnforcer)
     {
         $this->incomingRequest = $request;
-        $this->config = config();
+        $this->config = app(Environment::class);
     }
 
     /**
@@ -269,7 +269,7 @@ class Frontcontroller
      *
      * @param  string  $controllerType  The type of controller. Possible values are 'Controllers' or 'Hxcontrollers'.
      **/
-    public function getClassPath(string $controllerType, string $moduleName, string $actionName): string
+    public function getClassPath(string $controllerType, string $moduleName, string $actionName): string|false
     {
 
         $controllerNs = 'Domain';

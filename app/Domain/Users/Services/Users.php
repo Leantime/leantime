@@ -321,7 +321,7 @@ class Users extends BaseService
      * @api
      */
     #[RequiresPermission(UsersPermissions::CREATE, global: true)]
-    public function createUserInvite(array $values): bool|int
+    public function createUserInvite(array $values): bool|int|string
     {
 
         // Generate strong password

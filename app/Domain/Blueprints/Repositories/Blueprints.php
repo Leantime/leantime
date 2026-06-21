@@ -590,7 +590,7 @@ class Blueprints extends Repository
 
         $this->connection->table('zp_canvas_items')->insertUsing($columns, $selectQuery);
 
-        return $newCanvasId;
+        return (int) $newCanvasId;
     }
 
     /**

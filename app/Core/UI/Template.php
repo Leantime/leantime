@@ -188,8 +188,6 @@ class Template
 
     /**
      * get - get assigned values
-     *
-     * @return array
      */
     public function get(string $name): mixed
     {
@@ -692,7 +690,7 @@ class Template
      *
      * @deprecated this should be in a component
      */
-    public function getToggleState(string $name): string
+    public function getToggleState(string $name): string|false
     {
         if (session()->exists('usersettings.submenuToggle.'.$name)) {
             return session('usersettings.submenuToggle.'.$name);

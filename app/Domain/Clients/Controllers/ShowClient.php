@@ -68,7 +68,7 @@ class ShowClient extends Controller
 
                 return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id.'#files');
             } else {
-                $this->tpl->setNotification($result['msg'], 'error');
+                $this->tpl->setNotification(is_array($result) ? ($result['msg'] ?? '') : '', 'error');
             }
         }
 

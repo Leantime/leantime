@@ -157,7 +157,7 @@ if (! function_exists('redirect')) {
      * @param  int  $http_response_code
      * @param  array  $headers
      * @param  bool|null  $secure
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     function redirect($url = null, $http_response_code = 302, $headers = [], $secure = null)
     {
@@ -252,7 +252,7 @@ if (! function_exists('redirect')) {
      * @param  int  $http_response_code
      * @param  array  $headers
      * @param  bool|null  $secure
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     function redirect($url = null, $http_response_code = 302, $headers = [], $secure = null)
     {

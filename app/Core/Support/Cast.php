@@ -148,7 +148,7 @@ class Cast
      * Casts a string value into a datetime object.
      *
      * @param  string  $value  The value to be casted into a datetime object.
-     * @return \DateTime The datetime object.
+     * @return \Carbon\CarbonImmutable The datetime object.
      *
      * @throws \InvalidArgumentException If the value is not a valid datetime string.
      **/

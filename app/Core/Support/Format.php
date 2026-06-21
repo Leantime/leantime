@@ -207,7 +207,7 @@ class Format
     public function timestamp(): int|bool
     {
         if (empty($this->value) || ! $this->value instanceof CarbonImmutable) {
-            return '';
+            return false;
         }
 
         return $this->value->getTimestamp();
@@ -219,7 +219,7 @@ class Format
     public function jsTimestamp(): int|bool
     {
         if (empty($this->value) || ! $this->value instanceof CarbonImmutable) {
-            return '';
+            return false;
         }
 
         return $this->value->getTimestampMs();

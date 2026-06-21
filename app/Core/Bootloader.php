@@ -17,8 +17,6 @@ class Bootloader
 
     /**
      * Bootloader instance
-     *
-     * @var static
      */
     protected static ?Bootloader $instance = null;
 

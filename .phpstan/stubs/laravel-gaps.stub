@@ -24,15 +24,16 @@ namespace Illuminate\Database;
  */
 interface ConnectionInterface {}
 
-namespace Illuminate\Cache;
+namespace Illuminate\Contracts\Cache;
 
 /**
- * Repository forwards lock() via __call to its underlying store when that store is a
- * LockProvider (Redis/File/Database/...). StartSession uses it for session locking.
+ * The concrete Illuminate\Cache\Repository (what Cache::store() returns) forwards lock() via
+ * __call to its underlying store when that store is a LockProvider (Redis/File/Database/...).
+ * StartSession::cache() is typed against this contract and uses it for session locking.
  *
  * @method \Illuminate\Cache\Lock lock(string $name, int $seconds = 0, ?string $owner = null)
  */
-class Repository {}
+interface Repository {}
 
 namespace Illuminate\Contracts\Filesystem;
 

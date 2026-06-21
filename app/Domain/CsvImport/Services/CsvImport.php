@@ -104,7 +104,7 @@ class CsvImport extends Provider implements ProviderIntegration
     }
 
     /**
-     * @return void
+     * @return array<int, mixed>|false
      */
     public function getValues(Entity $Entity): mixed
     {

@@ -58,7 +58,7 @@ class PathManifestRepository
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -70,7 +70,7 @@ class PathManifestRepository
      */
     public function shouldRefresh($manifest, $paths)
     {
-        return is_null($manifest) || $manifest[$manifest] != $paths;
+        return is_null($manifest) || $manifest != $paths;
     }
 
     /**

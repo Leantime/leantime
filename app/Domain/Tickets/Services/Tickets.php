@@ -1590,7 +1590,7 @@ class Tickets extends BaseService
             return $flattened;
         }
 
-        return $tree;
+        return [];
     }
 
     private function sortTicketsWithinMilestone($tickets): array
