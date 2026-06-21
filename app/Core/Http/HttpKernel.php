@@ -198,12 +198,10 @@ class HttpKernel extends Kernel
 
         try {
             // Try Laravel routing first
-            $route = $this->router->getRoutes()->match($request);
+            $this->router->getRoutes()->match($request);
 
-            if ($route) {
-                // Use Laravel's router to handle the request
-                return $this->router->dispatch($request);
-            }
+            // Use Laravel's router to handle the request
+            return $this->router->dispatch($request);
         } catch (NotFoundHttpException $e) {
             // No Laravel route found, fall back to Frontcontroller
         } catch (\Exception $e) {

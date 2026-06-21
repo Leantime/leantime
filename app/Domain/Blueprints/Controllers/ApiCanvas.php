@@ -6,7 +6,6 @@ namespace Leantime\Domain\Blueprints\Controllers;
 
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Core\Language;
 use Leantime\Core\UI\Template;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
@@ -31,14 +30,12 @@ class ApiCanvas
      *
      * @param  IncomingRequest  $request  Incoming request
      * @param  Template  $tpl  Template handler
-     * @param  Language  $language  Language handler
      * @param  BlueprintsService  $blueprintsService  Blueprints service (project-authorized item CRUD)
      * @param  TemplateRegistry  $templateRegistry  Template registry
      */
     public function __construct(
         private IncomingRequest $request,
         private Template $tpl,
-        private Language $language,
         private BlueprintsService $blueprintsService,
         TemplateRegistry $templateRegistry,
     ) {

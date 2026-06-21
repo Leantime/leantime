@@ -157,8 +157,6 @@ class Cast
         if (is_string($value)) {
             return dtHelper()->parseDbDateTime($value);
         }
-
-        throw new \InvalidArgumentException('Value cannot be casted datetime');
     }
 
     protected function handleIterator(iterable $iterator, array $mappings = []): array|object

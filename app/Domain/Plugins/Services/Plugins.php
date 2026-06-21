@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
-use Leantime\Core\Console\ConsoleKernel;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Notifications\Services\Notifications;
 use Leantime\Domain\Plugins\Models\InstalledPlugin;
@@ -66,7 +65,6 @@ class Plugins
         private EnvironmentCore $config,
         private SettingsService $settingsService,
         private UsersService $usersService,
-        private ConsoleKernel $leantimeCli,
         private AppSettings $appSettings,
     ) {
         $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
@@ -124,10 +122,8 @@ class Plugins
         }
 
         // Gets plugins from the config, which are automatically enabled
-        if (
-            isset($this->config->plugins)
-            && $configplugins = explode(',', $this->config->plugins)
-        ) {
+        if (isset($this->config->plugins)) {
+            $configplugins = explode(',', $this->config->plugins);
             collect($configplugins)
                 ->filter(fn ($plugin) => ! empty($plugin))
                 ->each(function ($plugin) use (&$installedPluginsById) {

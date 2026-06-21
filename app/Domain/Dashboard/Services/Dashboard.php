@@ -119,7 +119,7 @@ class Dashboard
     {
         $userReaction = $this->reactionsService->getUserReactions($userId, 'project', $projectId, Reactions::$favorite);
 
-        return $userReaction && is_array($userReaction) && count($userReaction) > 0;
+        return $userReaction && is_array($userReaction);
     }
 
     /**
@@ -134,8 +134,7 @@ class Dashboard
      */
     public function buildDeleteCommentUrlBase(): string
     {
-        $url = parse_url(CURRENT_URL);
-
-        return $url['scheme'].'://'.$url['host'].($url['path'] ?? '').'?delComment=';
+        // Current URL up to (but excluding) any existing query string, plus the delComment flag.
+        return strtok(CURRENT_URL, '?').'?delComment=';
     }
 }

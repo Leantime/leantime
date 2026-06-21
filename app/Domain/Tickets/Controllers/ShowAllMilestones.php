@@ -3,32 +3,17 @@
 namespace Leantime\Domain\Tickets\Controllers;
 
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowAllMilestones extends Controller
 {
-    private ProjectService $projectService;
-
     private TicketService $ticketService;
 
-    private SprintService $sprintService;
-
-    private TimesheetService $timesheetService;
-
     public function init(
-        ProjectService $projectService,
-        TicketService $ticketService,
-        SprintService $sprintService,
-        TimesheetService $timesheetService
+        TicketService $ticketService
     ): void {
-        $this->projectService = $projectService;
         $this->ticketService = $ticketService;
-        $this->sprintService = $sprintService;
-        $this->timesheetService = $timesheetService;
 
         session(['lastPage' => CURRENT_URL]);
         session(['lastMilestoneView' => 'milestonetable']);

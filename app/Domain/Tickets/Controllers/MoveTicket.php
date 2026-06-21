@@ -53,7 +53,7 @@ class MoveTicket extends Controller
     #[RequiresPermission(TicketsPermissions::EDIT)]
     public function post($params): Response
     {
-        if (! empty($ticketId = (int) $_GET['id'] ?? null) && ! empty($projectId = (int) $params['projectId'] ?? null)) {
+        if (! empty($ticketId = (int) $_GET['id']) && ! empty($projectId = (int) $params['projectId'])) {
             if ($this->ticketService->moveTicket($ticketId, $projectId)) {
                 $this->tpl->setNotification($this->language->__('text.ticket_moved'), 'success');
             } else {

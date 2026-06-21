@@ -288,11 +288,9 @@ class Ldap
 
         $getLdap = explode('@', $username);
 
-        if ($getLdap && is_array($getLdap)) {
+        if (is_array($getLdap)) {
             return $getLdap[0];
         }
-
-        return '';
     }
 
     public function getAllMembers(): array|false

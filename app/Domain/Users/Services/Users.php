@@ -1160,7 +1160,7 @@ class Users extends BaseService
             return 'passwords_dont_match';
         }
 
-        if (isset($post['password']) && ($post['password'] ?? null) != ($post['password2'] ?? null)) {
+        if (isset($post['password']) && $post['password'] != ($post['password2'] ?? null)) {
             return 'enter_email';
         }
 

@@ -333,13 +333,6 @@ class Menu
     public function processMenuItem($element, &$structure): void
     {
 
-        // ModuleManager Check
-        if (false) {
-            $structure['type'] = 'disabled';
-
-            return;
-        }
-
         // Update security
         if (isset($element['role'])) {
             $accessGranted = AuthService::userIsAtLeast($element['role'], true);

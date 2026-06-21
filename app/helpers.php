@@ -27,7 +27,7 @@ if (! function_exists('array_sort')) {
     /**
      * sort array of arrqays by value
      *
-     * @param  string  $sortyBy
+     * @param  string|array<int, array{0: string, 1: string}>  $sortyBy  Column name (string) or multi-sort spec (array)
      */
     function array_sort(array $array, mixed $sortyBy): array
     {
@@ -95,7 +95,7 @@ if (! function_exists('format')) {
      * @param  string|int|float|DateTime|Carbon|null  $value
      * @param  string|int|float|DateTime|null  $value2
      */
-    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 = null, ?FromFormat $fromFormat = FromFormat::DbDate): Format|string
+    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 = null, ?FromFormat $fromFormat = FromFormat::DbDate): Format
     {
         return new Format($value, $value2, $fromFormat);
     }

@@ -6,7 +6,6 @@ use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Tickets\Repositories\Tickets;
 
 class Ideas
 {
@@ -29,8 +28,6 @@ class Ideas
 
     private LanguageCore $language;
 
-    private Tickets $ticketRepo;
-
     private DatabaseHelper $dbHelper;
 
     /**
@@ -38,11 +35,10 @@ class Ideas
      *
      * @return void
      */
-    public function __construct(DbCore $db, LanguageCore $language, Tickets $ticketRepo, DatabaseHelper $dbHelper)
+    public function __construct(DbCore $db, LanguageCore $language, DatabaseHelper $dbHelper)
     {
         $this->db = $db->getConnection();
         $this->language = $language;
-        $this->ticketRepo = $ticketRepo;
         $this->dbHelper = $dbHelper;
     }
 
@@ -374,14 +370,12 @@ class Ideas
         foreach ($params as $status => $ideaList) {
             $ideas = explode('&', $ideaList);
 
-            if (is_array($ideas) === true && count($ideas) > 0) {
-                foreach ($ideas as $key => $ideaString) {
-                    if (strlen($ideaString) > 0) {
-                        $id = substr($ideaString, 7);
+            foreach ($ideas as $key => $ideaString) {
+                if (strlen($ideaString) > 0) {
+                    $id = substr($ideaString, 7);
 
-                        if ($this->updateIdeaStatus((int) $id, $status) === false) {
-                            return false;
-                        }
+                    if ($this->updateIdeaStatus((int) $id, $status) === false) {
+                        return false;
                     }
                 }
             }

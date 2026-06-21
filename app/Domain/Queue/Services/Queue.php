@@ -2,15 +2,11 @@
 
 namespace Leantime\Domain\Queue\Services;
 
-use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Mailer as MailerCore;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Queue\Workers\DefaultWorker;
 use Leantime\Domain\Queue\Workers\EmailWorker;
 use Leantime\Domain\Queue\Workers\HttpRequestWorker;
 use Leantime\Domain\Queue\Workers\Workers;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 /**
  * @api
@@ -19,40 +15,18 @@ class Queue
 {
     private QueueRepository $queue;
 
-    private UserRepository $userRepo;
-
-    private SettingRepository $settingsRepo;
-
-    private MailerCore $mailer;
-
-    private LanguageCore $language;
-
     public $availableWorkers = ['email', 'httprequest'];
 
     /**
      * Class constructor.
      *
      * @param  QueueRepository  $queue  The queue repository.
-     * @param  UserRepository  $userRepo  The user repository.
-     * @param  SettingRepository  $settingsRepo  The settings repository.
-     * @param  MailerCore  $mailer  The mailer core.
-     * @param  LanguageCore  $language  The language core.
      */
     public function __construct(
-        QueueRepository $queue,
-        UserRepository $userRepo,
-        SettingRepository $settingsRepo,
-        MailerCore $mailer,
-        LanguageCore $language
+        QueueRepository $queue
     ) {
         // NEW Queuing messaging system
         $this->queue = $queue;
-
-        // We need users and settings and a mailer
-        $this->userRepo = $userRepo;
-        $this->settingsRepo = $settingsRepo;
-        $this->mailer = $mailer;
-        $this->language = $language;
     }
 
     /**

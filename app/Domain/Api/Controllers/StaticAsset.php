@@ -51,7 +51,7 @@ class StaticAsset extends Controller
             function (BinaryFileResponse $response) use ($type, $debug) {
                 $response->headers->set('Content-Type', StaticAssetType::getMimeTypeByExtension($type));
                 $response->headers->set('Content-length', filesize(
-                    ($filepath = $response->getFile()) instanceof \SplFileInfo ? $filepath->getPathname() : $filepath
+                    $response->getFile()->getPathname()
                 ));
 
                 if (in_array(true, [! $this->incomingRequest->query->has('id'), $debug])) {

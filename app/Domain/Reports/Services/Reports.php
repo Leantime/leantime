@@ -14,7 +14,6 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Configuration\AppSettings as AppSettingCore;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Domains\BaseService;
-use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
@@ -44,8 +43,6 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
  */
 class Reports extends BaseService
 {
-    private TemplateCore $tpl;
-
     private AppSettingCore $appSettings;
 
     private EnvironmentCore $config;
@@ -63,7 +60,6 @@ class Reports extends BaseService
     private SprintService $sprintService;
 
     public function __construct(
-        TemplateCore $tpl,
         AppSettingCore $appSettings,
         EnvironmentCore $config,
         ProjectRepository $projectRepository,
@@ -73,7 +69,6 @@ class Reports extends BaseService
         TicketRepository $ticketRepository,
         SprintService $sprintService
     ) {
-        $this->tpl = $tpl;
         $this->appSettings = $appSettings;
         $this->config = $config;
         $this->projectRepository = $projectRepository;
@@ -109,7 +104,7 @@ class Reports extends BaseService
     {
         $allSprints = $this->sprintService->getAllSprints($projectId);
 
-        if ($allSprints === false || count($allSprints) === 0) {
+        if (count($allSprints) === 0) {
             return ['chart' => false, 'currentSprintId' => false];
         }
 
@@ -341,7 +336,7 @@ class Reports extends BaseService
             'phpUname' => php_uname(),
             'isDocker' => $this->isRunningInDocker(),
             'phpSapiName' => php_sapi_name(),
-            'phpOs' => PHP_OS ?? 'unknown',
+            'phpOs' => PHP_OS,
 
         ];
 

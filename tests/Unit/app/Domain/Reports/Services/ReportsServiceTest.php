@@ -4,7 +4,6 @@ namespace Unit\app\Domain\Reports\Services;
 
 use Leantime\Core\Configuration\AppSettings as AppSettingCore;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
-use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
 use Leantime\Domain\Reports\Services\Reports;
@@ -81,7 +80,6 @@ class ReportsServiceTest extends TestCase
     private function makeService(SprintService $sprintService): Reports
     {
         return new Reports(
-            $this->make(TemplateCore::class),
             $this->make(AppSettingCore::class),
             $this->make(EnvironmentCore::class),
             $this->make(ProjectRepository::class),

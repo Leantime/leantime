@@ -21,8 +21,6 @@ class Oidc
 {
     private Environment $config;
 
-    private Language $Language;
-
     private AuthService $authService;
 
     public UserRepository $userRepo;
@@ -494,19 +492,19 @@ class Oidc
         }
         // load all not yet defined endpoints from well-known configuration
 
-        if (! $this->authUrl || $this->authUrl === '') {
+        if (! $this->authUrl) {
             $this->authUrl = $endpoints['authorization_endpoint'];
         }
 
-        if (! $this->tokenUrl || $this->tokenUrl === '') {
+        if (! $this->tokenUrl) {
             $this->tokenUrl = $endpoints['token_endpoint'];
         }
 
-        if (! $this->jwksUrl || $this->jwksUrl === '') {
+        if (! $this->jwksUrl) {
             $this->jwksUrl = $endpoints['jwks_uri'];
         }
 
-        if (! $this->userInfoUrl || $this->userInfoUrl === '') {
+        if (! $this->userInfoUrl) {
             $this->userInfoUrl = $endpoints['userinfo_endpoint'];
         }
 
@@ -567,11 +565,6 @@ class Oidc
         session()->forget('oidc.state');
 
         return $storedState !== '' && hash_equals($storedState, $state);
-    }
-
-    private function encodeBase64Url(string $value): string
-    {
-        return strtr(base64_encode($value), '+/', '-_');
     }
 
     private function decodeBase64Url(string $value): string

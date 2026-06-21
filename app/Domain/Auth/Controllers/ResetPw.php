@@ -101,6 +101,6 @@ class ResetPw extends Controller
             'error'
         );
 
-        return FrontcontrollerCore::redirect(BASE_URL.'/auth/resetPw/'.$params['id'] ?? '');
+        return FrontcontrollerCore::redirect(BASE_URL.'/auth/resetPw/'.$params['id']);
     }
 }

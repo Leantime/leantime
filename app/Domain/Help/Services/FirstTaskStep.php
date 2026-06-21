@@ -4,7 +4,6 @@ namespace Leantime\Domain\Help\Services;
 
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Help\Contracts\OnboardingSteps;
-use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
 
@@ -14,7 +13,6 @@ class FirstTaskStep implements OnboardingSteps
 
     public function __construct(
         private Setting $settingsRepo,
-        private Projects $projectService,
         private Tickets $ticketService
     ) {}
 
@@ -62,7 +60,7 @@ class FirstTaskStep implements OnboardingSteps
             $this->ticketService->quickAddTicket(['headline' => $params['headline']]);
         }
 
-        $this->settingsRepo->saveSetting('user.'.session()?->get('userdata.id', -1).'.firstLoginCompleted', true);
+        $this->settingsRepo->saveSetting('user.'.session()->get('userdata.id', -1).'.firstLoginCompleted', true);
 
         return true;
     }
