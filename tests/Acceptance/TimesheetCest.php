@@ -182,7 +182,7 @@ class TimesheetCest
         $I->clickWithRetry('#editTimesheet-1');
         $I->waitForElementVisible('#hours');
         $I->fillField('#hours', 2);
-        $I->clickWithRetry('.stdformbutton .button');
+        $I->clickWithRetry('.stdformbutton input[type=submit]');
         $I->waitForElement('.growl', 120);
 
         $I->seeInDatabase('zp_timesheets', [
@@ -213,7 +213,7 @@ class TimesheetCest
         $I->waitForElementVisible('#hours');
         $I->fillField('#hours', 4);
 
-        $I->clickWithRetry('.formModal .button');
+        $I->clickWithRetry('.formModal input[type=submit][name=saveTimes]');
         $I->wait(1);
 
         // Go and see if the total is correct.
@@ -244,21 +244,21 @@ class TimesheetCest
 
         // Maker paid
         $I->checkOption('//*//input[@id="checkAllPaid"]');
-        $I->clickWithRetry('#allTimesheetsTable_wrapper .button');
+        $I->clickWithRetry('#allTimesheetsTable_wrapper input[name=saveInvoice]');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
         $I->wait(2);
         $I->cantSeeElement('//*//input[@class="paid"]');
 
         // Make Invoiced
         $I->checkOption('//*/input[@id="checkAllEmpl"]');
-        $I->clickWithRetry('#allTimesheetsTable_wrapper .button');
+        $I->clickWithRetry('#allTimesheetsTable_wrapper input[name=saveInvoice]');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
         $I->wait(2);
         $I->cantSeeElement('//*//input[@class="invoicedEmpl"]');
 
         // Make MGR Approval
         $I->checkOption('//*//input[@id="checkAllComp"]');
-        $I->clickWithRetry('#allTimesheetsTable_wrapper .button');
+        $I->clickWithRetry('#allTimesheetsTable_wrapper input[name=saveInvoice]');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
         $I->wait(2);
         $I->cantSeeElement('//*//input[@class="invoicedComp"]');
@@ -281,7 +281,7 @@ class TimesheetCest
         $I->wait(5);
         $I->see('Should the timesheet really be deleted?');
 
-        $I->clickWithRetry('.nyroModalLink .button');
+        $I->clickWithRetry('.nyroModalLink input[type=submit]');
 
         $I->waitForElementVisible('#allTimesheetsTable');
         $I->wait(5);

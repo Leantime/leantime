@@ -38,7 +38,7 @@ $currentPay = $userHours * $userInfo['wage'];
                         <x-global::forms.textarea rows="5" cols="50" id="description" name="description">{{ $values['description'] }}</x-global::forms.textarea><br />
                     </span>
                     <input type="hidden" name="saveTimes" value="1" />
-                    <input type="submit" value="{{ __('buttons.save') }}" name="saveTimes" class="button" />
+                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="saveTimes" />
 
                 </form>
 

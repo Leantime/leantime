@@ -57,7 +57,7 @@
                                         <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete" state="danger" variant="outline"><i class="fa fa-trash"></i> {!! __('buttons.delete') !!}</x-global::forms.button>
                                     </div>
                                 @endif
-                                <input type="submit" name="save" id="save" class="button" value="{{ __('buttons.save') }}" class="button" />
+                                <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="save" />
 
                             </div>
                         </div>

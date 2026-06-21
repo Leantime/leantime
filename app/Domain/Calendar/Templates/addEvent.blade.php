@@ -50,7 +50,7 @@
 
     <p class="stdformbutton">
         <input type="hidden" value="1" name="save" />
-        <input type="submit" name="saveEvent" id="saveEvent" value="{{ __('buttons.save') }}" class="button" />
+        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="saveEvent" id="saveEvent" />
     </p>
 
     @dispatchEvent('beforeFormClose')

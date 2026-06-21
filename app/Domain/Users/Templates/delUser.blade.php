@@ -20,7 +20,7 @@
             <form method="post">
                 <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
                 <p>{!! __('text.confirm_user_deletion') !!}</p><br />
-                <input type="submit" value="{{ __('buttons.yes_delete') }}" name="del" class="button" />
+                <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.yes_delete')" name="del" />
                 <x-global::forms.button tag="a" contentRole="tertiary" link="{{ BASE_URL }}/users/showAll">{!! __('buttons.back') !!}</x-global::forms.button>
             </form>
 

@@ -191,8 +191,13 @@ tags for `<?php` / `<?=` before committing.
 
 The no-op migration deliberately defers buttons it can't migrate without changing the rendered
 class set / behavior. Categories found (to revisit, some need a design decision):
-- **`class="button"` (not `btn`)** — many form submit inputs use `.button`. Need to confirm
-  whether `.button` styling == `.btn` in forms.css; if so, add it to the component/migration.
+- ~~**`class="button"` (not `btn`)**~~ — DONE (PR follow-up): a CSS audit found `.button` has **no rule at
+  all**; `input[type='submit']` is styled by the `.btn-primary` element-selector group (forms.css:313), so
+  these 44 submits already render as primary buttons. Migrated all 44 to
+  `<x-global::forms.button tag="input" inputType="submit" contentRole="primary">` (no-op). Also cleaned up a
+  few pre-existing duplicate `class="button" class="button"` attrs. **Follow-up:** ~16 are `del*` confirmation
+  submits that look primary today — candidates for `state="danger"` in a later semantic pass (a visual change,
+  not a no-op).
 - **Unstyled `<input type="submit">`** (no class) — adding `btn` is a *design* change, not a no-op. Defer.
 - **Unmapped btn variants** — `btn-sm`/`btn-lg` (vs Leantime `btn-small`/`btn-large`),
   `btn-danger-outline`, `btn-circle`, `btn-inverse`, `btn-file`. Add mappings (after confirming CSS) or keep deferred.

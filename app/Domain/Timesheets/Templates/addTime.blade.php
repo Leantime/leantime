@@ -147,10 +147,7 @@ $values = $values ?? [];
 
 
 
-                            @endif <input type="submit" value="{{ __('SAVE') }}"
-                                              name="save" class="button"/> <input type="submit"
-                                                                                  value="{{ __('SAVE_NEW') }}"
-                                                                                  name="saveNew" class="button"/>
+                            @endif <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('SAVE')" name="save" /> <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('SAVE_NEW')" name="saveNew" />
 
 
         </form>
