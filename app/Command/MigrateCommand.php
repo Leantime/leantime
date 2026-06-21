@@ -89,7 +89,9 @@ class MigrateCommand extends Command
                 $installStatus = $install->setupDB($setupConfig);
 
                 if ($installStatus !== true) {
-                    $io->text($installStatus);
+                    // setupDB() returns bool; on failure it logs the cause. Give the CLI user a
+                    // concrete pointer instead of the empty string (string) false would produce.
+                    $io->error('Database installation failed. Check the application logs for details.');
 
                     return Command::FAILURE;
                 }

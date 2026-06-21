@@ -557,7 +557,7 @@ class Theme
                     ->withValue($id)
                     ->withExpires(time() + 60 * 60 * 24 * 30)
                     ->withPath(Str::finish($this->config->appDir, '/'))
-                    ->withSameSite('Strict')
+                    ->withSameSite('strict')
             ))
         );
     }
@@ -596,7 +596,7 @@ class Theme
                     ->withValue($colorMode)
                     ->withExpires(time() + 60 * 60 * 24 * 30)
                     ->withPath(Str::finish($this->config->appDir, '/'))
-                    ->withSameSite('Strict')
+                    ->withSameSite('strict')
             ))
         );
     }
@@ -625,7 +625,7 @@ class Theme
                     ->withValue($font)
                     ->withExpires(time() + 60 * 60 * 24 * 30)
                     ->withPath(Str::finish($this->config->appDir, '/'))
-                    ->withSameSite('Strict')
+                    ->withSameSite('strict')
             ))
         );
     }
@@ -655,7 +655,7 @@ class Theme
                     ->withValue($colorScheme)
                     ->withExpires(time() + 60 * 60 * 24 * 30)
                     ->withPath(Str::finish($this->config->appDir, '/'))
-                    ->withSameSite('Strict')
+                    ->withSameSite('strict')
             ))
         );
     }

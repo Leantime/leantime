@@ -333,6 +333,7 @@ class HandleExceptions
         }
 
         while (true) {
+            // @phpstan-ignore-next-line argument.type
             $previousHandler = set_error_handler(static fn () => null);
 
             restore_error_handler();

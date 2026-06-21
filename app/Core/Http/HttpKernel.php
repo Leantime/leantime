@@ -125,6 +125,7 @@ class HttpKernel extends Kernel
             $response = $this->renderException($request, $e);
         }
 
+        // @phpstan-ignore-next-line argument.type
         $this->app['events']->dispatch(new RequestHandled($request, $response));
 
         $response = self::dispatch_filter('beforeSendResponse', $response);

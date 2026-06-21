@@ -39,7 +39,7 @@ class Notifications
     /**
      * Not exposed via JSON-RPC: it accepts an arbitrary $userId.
      */
-    public function getAllNotifications($userId, int $showNewOnly = 0, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = []): false|array
+    public function getAllNotifications($userId, bool $showNewOnly = false, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = []): false|array
     {
 
         return $this->notificationsRepo->getAllNotifications($userId, $showNewOnly, $limitStart, $limitEnd, $filterOptions);

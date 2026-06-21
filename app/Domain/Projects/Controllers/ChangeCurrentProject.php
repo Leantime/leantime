@@ -20,7 +20,7 @@ class ChangeCurrentProject extends Controller
      */
     public function get($params)
     {
-        $id = filter_var($params['id'] ?? '', FILTER_SANITIZE_NUMBER_INT);
+        $id = (int) ($params['id'] ?? 0);
 
         if (
             ! isset($params['id']) ||

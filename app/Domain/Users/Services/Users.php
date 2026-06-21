@@ -118,8 +118,6 @@ class Users extends BaseService
     }
 
     /**
-     * @param  false  $activeOnly
-     *
      * @api
      */
     #[RequiresPermission(UsersPermissions::VIEW, global: true)]

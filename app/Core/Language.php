@@ -126,7 +126,7 @@ class Language
                         ->withValue($lang)
                         ->withExpires(time() + 60 * 60 * 24 * 30)
                         ->withPath(Str::finish($this->config->appDir, '/'))
-                        ->withSameSite('Lax')
+                        ->withSameSite('lax')
                 ))
             );
         }
