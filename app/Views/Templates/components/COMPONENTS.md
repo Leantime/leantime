@@ -200,7 +200,9 @@ class set / behavior. Categories found (to revisit, some need a design decision)
   not a no-op).
 - ~~**Unstyled `<input type="submit">`** (no class)~~ — DONE (#3564, round 2): NOT a design change after all —
   `input[type='submit']` is in the `.btn-primary` element-selector group (forms.css:313), so bare submits
-  already render primary. Migrated to `contentRole="primary"` (no-op). ~30 of them.
+  **already looked primary**. Migrated to `contentRole="primary"` (~30 of them). **Intended visual no-op**, not
+  strictly byte-identical: the component adds the shared `.btn` base (`input.btn { vertical-align: top; … }`)
+  which a bare submit lacked — imperceptible, but worth stating precisely.
 - **Unmapped btn variants** — `btn-sm`/`btn-lg` (vs Leantime `btn-small`/`btn-large`),
   `btn-danger-outline`, `btn-circle`, `btn-inverse`, `btn-file`. Add mappings (after confirming CSS) or keep deferred.
 - **role+state combo** (`btn btn-default btn-success`) — component currently emits one color; allow coexistence.
@@ -320,8 +322,9 @@ Only visually-distinct treatments earn a variant. Verdicts:
   through the component. No `variant` arm (plain textareas carry no distinct style class; the only textarea
   classes are editor-coupled).
 - _button + text-input completion (round 2)_: swept blade for buttons/inputs missed by #3531/#3558.
-  **53 migrated across 38 files**: 29 bare `<input type=submit>` (no class — render primary via
-  forms.css:313, so `contentRole="primary"` is a no-op), 4 token-UI text inputs/buttons, Errors back ×4,
+  **53 migrated across 38 files**: 29 bare `<input type=submit>` (no class — already looked primary via
+  forms.css:313, so `contentRole="primary"` is an intended **visual** no-op; the `.btn` base adds minor props
+  like `vertical-align`, imperceptible), 4 token-UI text inputs/buttons, Errors back ×4,
   support sponsor, Auth token UI (create/copy/close/delete), Files cancel ×2, widgetManager reset
   (btn-outline→secondary), Reports chart toggles ×6, showProject delete (btn-danger-outline→state=danger
   variant=outline), 1 comment reply. `btn-sm`/`btn-lg`/`btn-secondary` (own CSS, ≠ Leantime's
