@@ -109,7 +109,7 @@ class Reports extends BaseService
     {
         $allSprints = $this->sprintService->getAllSprints($projectId);
 
-        if ($allSprints === false || count($allSprints) === 0) {
+        if (count($allSprints) === 0) {
             return ['chart' => false, 'currentSprintId' => false];
         }
 

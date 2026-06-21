@@ -4321,7 +4321,7 @@ class Tickets extends BaseService
                     $values['dateToFinish'] = $values['dateToFinish']->formatDateTimeForDb();
                 } elseif (
                     is_string($values['dateToFinish'])
-                    && (empty($values['timeToFinish']) || $values['timeToFinish'] === null)
+                    && empty($values['timeToFinish'])
                     && preg_match('/^\d{4}-\d{2}-\d{2}$/', $values['dateToFinish'])
                 ) {
                     // Calendar-date input (e.g. "2026-05-21" from mobile) — store as
