@@ -326,7 +326,7 @@ class Tickets
      *
      * @param  null  $limit
      */
-    public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', $limit = null, $includeCounts = true, $offset = null): bool|array
+    public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', ?int $limit = null, $includeCounts = true, ?int $offset = null): bool|array
     {
         $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
         $userId = $searchCriteria['currentUser'] ?? session('userdata.id') ?? '-1';
@@ -1591,8 +1591,6 @@ class Tickets
 
             return $ticketId;
         }
-
-        return false;
     }
 
     /**

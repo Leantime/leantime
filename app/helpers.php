@@ -32,15 +32,11 @@ if (! function_exists('array_sort')) {
     function array_sort(array $array, mixed $sortyBy): array
     {
 
-        if (is_string($sortyBy)) {
-            $collection = collect($array);
+        $collection = collect($array);
 
-            $sorted = $collection->sortBy($sortyBy, SORT_NATURAL);
+        $sorted = $collection->sortBy($sortyBy, SORT_NATURAL);
 
-            return $sorted->values()->all();
-        } else {
-            return \Illuminate\Support\Collection::make($array)->sortBy($sortyBy)->all();
-        }
+        return $sorted->values()->all();
     }
 }
 
@@ -95,7 +91,7 @@ if (! function_exists('format')) {
      * @param  string|int|float|DateTime|Carbon|null  $value
      * @param  string|int|float|DateTime|null  $value2
      */
-    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 = null, ?FromFormat $fromFormat = FromFormat::DbDate): Format|string
+    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 = null, ?FromFormat $fromFormat = FromFormat::DbDate): Format
     {
         return new Format($value, $value2, $fromFormat);
     }

@@ -9,7 +9,6 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Db\Repository as RepositoryCore;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\EntityRelationshipEnum;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
@@ -46,14 +45,12 @@ class Calendar extends RepositoryCore
      *
      * @param  DbCore  $dbCore  The DbCore object.
      * @param  LanguageCore  $language  The LanguageCore object.
-     * @param  DateTimeHelper  $dateTimeHelper  The DateTimeHelper object.
      * @param  Environment  $config  The Environment object.
      * @return void
      */
     public function __construct(
         DbCore $dbCore,
         private LanguageCore $language,
-        private DateTimeHelper $dateTimeHelper,
         private Environment $config
     ) {
         $this->db = $dbCore->getConnection();

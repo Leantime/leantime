@@ -115,7 +115,7 @@ class Menu extends Composer
             'projectHierarchy' => $allAssignedprojectsHierarchy,
             'recentProjects' => $recentProjects,
             'currentProject' => $currentProject,
-            'menuStructure' => $this->menuRepo->getMenuStructure($menuType ?? '') ?? [],
+            'menuStructure' => $this->menuRepo->getMenuStructure($menuType ?? ''),
             'menuType' => $menuType,
             'settingsLink' => $settingsLink,
             'redirectUrl' => $redirectUrl,

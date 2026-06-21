@@ -120,7 +120,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         }
 
         // Load Dynamic command paths for leantime
-        $ltCommands = collect(glob(APP_ROOT.'/app/Domain/**/Command/') ?? []);
+        $ltCommands = collect(glob(APP_ROOT.'/app/Domain/**/Command/'));
 
         // Load commands from enabled plugins
         try {
@@ -143,7 +143,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             }
         } catch (\Exception $e) {
             // Fallback to scanning all plugin directories if service unavailable
-            $ltPluginCommands = collect(glob(APP_ROOT.'/app/Plugins/**/Command/') ?? []);
+            $ltPluginCommands = collect(glob(APP_ROOT.'/app/Plugins/**/Command/'));
             foreach ($ltPluginCommands as $pluginPath) {
                 $this->load($pluginPath);
             }

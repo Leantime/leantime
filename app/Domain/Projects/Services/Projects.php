@@ -1052,12 +1052,8 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
 
-        if (is_array($project)) {
-            if (isset($project[0]['projectRole']) && $project[0]['projectRole'] != '') {
-                return (string) $project[0]['projectRole'];
-            } else {
-                return '';
-            }
+        if (isset($project[0]['projectRole']) && $project[0]['projectRole'] != '') {
+            return (string) $project[0]['projectRole'];
         } else {
             return '';
         }
@@ -1865,8 +1861,6 @@ class Projects extends BaseService implements ChecksProjectAccess
         $avatar = $this->avatarcreator->getAvatar($project['name']);
 
         return self::dispatch_filter('afterGettingAvatar', $avatar, ['projectId' => $id]);
-
-        return $avatar;
     }
 
     /**

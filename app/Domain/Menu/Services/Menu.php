@@ -6,8 +6,6 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users;
 
 class Menu
@@ -15,10 +13,6 @@ class Menu
     use DispatchesEvents;
 
     private ProjectService $projectService;
-
-    private TimesheetService $timesheetService;
-
-    private SprintService $sprintService;
 
     private Users $userService;
 
@@ -28,16 +22,12 @@ class Menu
 
     public function __construct(
         ProjectService $projectService,
-        TimesheetService $timesheetService,
-        SprintService $sprintService,
         Users $userService,
         Setting $settingSvc,
         MenuRepository $menuRepo
     ) {
 
         $this->projectService = $projectService;
-        $this->timesheetService = $timesheetService;
-        $this->sprintService = $sprintService;
         $this->userService = $userService;
         $this->settingSvc = $settingSvc;
         $this->menuRepo = $menuRepo;
@@ -261,7 +251,7 @@ class Menu
             'projectHierarchy' => $allAssignedprojectsHierarchy,
             'recentProjects' => $recentProjects,
             'currentProject' => $currentProject,
-            'menuStructure' => $this->menuRepo->getMenuStructure($menuType) ?? [],
+            'menuStructure' => $this->menuRepo->getMenuStructure($menuType),
             'menuType' => $menuType,
             'settingsLink' => $settingsLink,
             'redirectUrl' => $redirectUrl,

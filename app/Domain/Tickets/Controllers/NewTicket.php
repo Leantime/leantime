@@ -7,8 +7,6 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Support\FromFormat;
-use Leantime\Domain\Comments\Services\Comments as CommentService;
-use Leantime\Domain\Files\Services\Files as FileService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
@@ -26,10 +24,6 @@ class NewTicket extends Controller
 
     private SprintService $sprintService;
 
-    private FileService $fileService;
-
-    private CommentService $commentService;
-
     private TimesheetService $timesheetService;
 
     private UserService $userService;
@@ -38,16 +32,12 @@ class NewTicket extends Controller
         ProjectService $projectService,
         TicketService $ticketService,
         SprintService $sprintService,
-        FileService $fileService,
-        CommentService $commentService,
         TimesheetService $timesheetService,
         UserService $userService
     ): void {
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
         $this->sprintService = $sprintService;
-        $this->fileService = $fileService;
-        $this->commentService = $commentService;
         $this->timesheetService = $timesheetService;
         $this->userService = $userService;
 

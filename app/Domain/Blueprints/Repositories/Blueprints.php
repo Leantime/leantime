@@ -6,7 +6,6 @@ use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Db\Repository;
-use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Tickets\Repositories\Tickets;
 
 /**
@@ -30,24 +29,19 @@ class Blueprints extends Repository
 
     protected DatabaseHelper $dbHelper;
 
-    private LanguageCore $language;
-
     private Tickets $ticketRepo;
 
     /**
      * @param  DbCore  $db  Database connection
-     * @param  LanguageCore  $language  Language service
      * @param  Tickets  $ticketRepo  Ticket repository
      * @param  DatabaseHelper  $dbHelper  Database helper
      */
     public function __construct(
         DbCore $db,
-        LanguageCore $language,
         Tickets $ticketRepo,
         DatabaseHelper $dbHelper
     ) {
         $this->connection = $db->getConnection();
-        $this->language = $language;
         $this->ticketRepo = $ticketRepo;
         $this->dbHelper = $dbHelper;
     }
@@ -188,7 +182,7 @@ class Blueprints extends Repository
             'projectId' => $values['projectId'],
         ]);
 
-        return $insertId !== false ? (string) $insertId : false;
+        return (string) $insertId;
     }
 
     /**
@@ -484,7 +478,7 @@ class Blueprints extends Repository
             'tags' => $values['tags'] ?? '',
         ]);
 
-        return $id !== false ? (string) $id : false;
+        return (string) $id;
     }
 
     /**

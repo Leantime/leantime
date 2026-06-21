@@ -737,7 +737,7 @@ class Projects
             }
         }
 
-        return is_numeric($projectId) ? (int) $projectId : false;
+        return (int) $projectId;
     }
 
     /**
@@ -828,7 +828,7 @@ class Projects
     /**
      * getUserProjectRelation - get all projects related to a user
      *
-     * @param  null  $projectId
+     * @param  int|null  $projectId
      */
     public function getUserProjectRelation($id, $projectId = null): array
     {

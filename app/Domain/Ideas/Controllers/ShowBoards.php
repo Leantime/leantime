@@ -94,7 +94,7 @@ class ShowBoards extends Controller
      */
     private function resolveCurrentCanvasId(array &$allCanvas, array $params): int
     {
-        if (! $allCanvas || count($allCanvas) == 0) {
+        if (! $allCanvas) {
             $currentCanvasId = $this->ideaService->ensureBoardExists(
                 (int) session('currentProject'),
                 (int) session('userdata.id'),
@@ -112,7 +112,7 @@ class ShowBoards extends Controller
             session(['currentIdeaCanvas' => '']);
         }
 
-        if (count($allCanvas) > 0 && session('currentIdeaCanvas') == '') {
+        if (session('currentIdeaCanvas') == '') {
             $currentCanvasId = $allCanvas[0]['id'];
             session(['currentIdeaCanvas' => $currentCanvasId]);
         }

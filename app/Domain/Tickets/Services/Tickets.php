@@ -11,21 +11,18 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
-use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\DateTimeHelper;
-use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
@@ -62,10 +59,7 @@ class Tickets extends BaseService
     /**
      * Constructor method for the class.
      *
-     * @param  TemplateCore  $tpl  The template core instance.
      * @param  LanguageCore  $language  The language core instance.
-     * @param  EnvironmentCore  $config  The environment core instance.
-     * @param  ProjectRepository  $projectRepository  The project repository instance.
      * @param  TicketRepository  $ticketRepository  The ticket repository instance.
      * @param  TimesheetRepository  $timesheetsRepo  The timesheet repository instance.
      * @param  SettingRepository  $settingsRepo  The setting repository instance.
@@ -79,10 +73,7 @@ class Tickets extends BaseService
      * @param  ClientService  $clientService  The clients service instance.
      */
     public function __construct(
-        private TemplateCore $tpl,
         private LanguageCore $language,
-        private EnvironmentCore $config,
-        private ProjectRepository $projectRepository,
         private TicketRepository $ticketRepository,
         private TimesheetRepository $timesheetsRepo,
         private SettingRepository $settingsRepo,
@@ -3384,13 +3375,10 @@ class Tickets extends BaseService
         // Editor+ in the milestone's project AND access to it (was access-only, no role gate).
         $this->authorize(TicketsPermissions::DELETE, (int) $ticket->projectId);
 
-        if ($this->ticketRepository->delMilestone($id)) {
-            MilestoneDeleted::dispatch(milestoneId: (int) $id, legacyHook: __FUNCTION__);
+        $this->ticketRepository->delMilestone($id);
+        MilestoneDeleted::dispatch(milestoneId: (int) $id, legacyHook: __FUNCTION__);
 
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**
@@ -4039,7 +4027,7 @@ class Tickets extends BaseService
 
         // Sort groups by their order
         uasort($tickets, function ($a, $b) {
-            return ($a['order'] ?? 999) <=> ($b['order'] ?? 999);
+            return $a['order'] <=> $b['order'];
         });
 
         return $tickets;

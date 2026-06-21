@@ -388,7 +388,7 @@ class Users
             'modified' => now(),
         ]);
 
-        return $userId !== false ? (string) $userId : false;
+        return (string) $userId;
     }
 
     /**

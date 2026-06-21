@@ -21,8 +21,6 @@ class Oidc
 {
     private Environment $config;
 
-    private Language $Language;
-
     private AuthService $authService;
 
     public UserRepository $userRepo;
@@ -567,11 +565,6 @@ class Oidc
         session()->forget('oidc.state');
 
         return $storedState !== '' && hash_equals($storedState, $state);
-    }
-
-    private function encodeBase64Url(string $value): string
-    {
-        return strtr(base64_encode($value), '+/', '-_');
     }
 
     private function decodeBase64Url(string $value): string

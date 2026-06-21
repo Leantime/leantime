@@ -347,6 +347,10 @@ class HandleExceptions
         if (class_exists(ErrorHandler::class)) {
             $instance = ErrorHandler::instance();
 
+            // The closure is rebound to $instance (PHPUnit's ErrorHandler, which has $enabled) via
+            // ->call(); PHPStan analyses it in this class's scope (no $enabled) and wrongly collapses
+            // it to always-false. The check is live at runtime.
+            // @phpstan-ignore-next-line
             if ((fn () => $this->enabled ?? false)->call($instance)) {
                 $instance->disable();
                 $instance->enable();

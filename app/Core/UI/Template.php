@@ -35,10 +35,6 @@ class Template
     /** @var array - vars that are set in the action */
     private array $vars = [];
 
-    private string $notifcation = '';
-
-    private string $notificationType = '';
-
     private string $hookContext = '';
 
     public string $tmpError = '';
@@ -71,9 +67,6 @@ class Template
      * @throws \ReflectionException
      */
     public function __construct(
-        /** @var Theme */
-        private Theme $theme,
-
         /** @var Language */
         public Language $language,
 
@@ -783,11 +776,10 @@ class Template
         $printedLength = 0;
         $position = 0;
         $tags = [];
-        $isUtf8 = true;
         $truncate = '';
         $html = $this->convertRelativePaths($html);
         // For UTF-8, we need to count multibyte sequences as one character.
-        $re = $isUtf8 ? '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;|[\x80-\xFF][\x80-\xBF]*}' : '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;}';
+        $re = '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;|[\x80-\xFF][\x80-\xBF]*}';
 
         while ($printedLength < $maxLength && preg_match($re, $html, $match, PREG_OFFSET_CAPTURE, $position)) {
             [$tag, $tagPosition] = $match[0];

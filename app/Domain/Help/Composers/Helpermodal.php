@@ -75,7 +75,7 @@ class Helpermodal extends Composer
         return [
             'completedOnboarding' => $completedOnboarding,
             'showHelperModal' => $showHelperModal,
-            'currentModal' => is_array($currentModal) ? $currentModal['template'] : $currentModal,
+            'currentModal' => $currentModal['template'],
             'isFirstLogin' => $isFirstLogin,
         ];
     }
