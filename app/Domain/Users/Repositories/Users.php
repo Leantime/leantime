@@ -304,7 +304,7 @@ class Users
 
         return $this->connection->table('zp_user')
             ->where('id', $id)
-            ->update($updateData);
+            ->update($updateData) > 0;
     }
 
     /**
@@ -338,7 +338,7 @@ class Users
             ->update([
                 'clientId' => null,
                 'modified' => now(),
-            ]);
+            ]) > 0;
     }
 
     /**
@@ -454,7 +454,7 @@ class Users
 
         return $this->connection->table('zp_user')
             ->where('id', $id)
-            ->update($updates);
+            ->update($updates) > 0;
     }
 
     /**

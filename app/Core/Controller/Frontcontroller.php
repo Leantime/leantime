@@ -52,7 +52,7 @@ class Frontcontroller
     public function __construct(IncomingRequest $request, private PermissionEnforcer $permissionEnforcer)
     {
         $this->incomingRequest = $request;
-        $this->config = config();
+        $this->config = app(Environment::class);
     }
 
     /**
@@ -257,6 +257,11 @@ class Frontcontroller
         }
 
         $classPath = $this->getClassPath($controllerType, $moduleName, $actionName);
+
+        if ($classPath === false) {
+            throw new NotFoundHttpException("Can't find a valid controller for ".strip_tags($moduleName).'/'.strip_tags($actionName));
+        }
+
         $classMethod = $this->getValidControllerMethod($classPath, $methodName);
 
         Cache::store('installation')->set('routes.'.$routepath.'.'.($classMethod == 'run' ? $methodNameLower : $classMethod), ['class' => $classPath, 'method' => $classMethod]);
@@ -269,7 +274,7 @@ class Frontcontroller
      *
      * @param  string  $controllerType  The type of controller. Possible values are 'Controllers' or 'Hxcontrollers'.
      **/
-    public function getClassPath(string $controllerType, string $moduleName, string $actionName): string
+    public function getClassPath(string $controllerType, string $moduleName, string $actionName): string|false
     {
 
         $controllerNs = 'Domain';

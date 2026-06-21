@@ -121,7 +121,7 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Register a reportable callback.
      *
-     * @return \Illuminate\Foundation\Exceptions\ReportableHandler
+     * @return \Leantime\Core\Exceptions\ReportableHandler
      */
     public function reportable(callable $reportUsing)
     {
@@ -435,7 +435,7 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Get the Whoops handler for the application.
      *
-     * @return \Whoops\Handler\Handler
+     * @return \Whoops\Handler\HandlerInterface
      */
     protected function whoopsHandler()
     {

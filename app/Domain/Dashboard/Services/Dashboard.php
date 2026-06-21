@@ -136,6 +136,6 @@ class Dashboard
     {
         $url = parse_url(CURRENT_URL);
 
-        return $url['scheme'].'://'.$url['host'].$url['path'].'?delComment=';
+        return $url['scheme'].'://'.$url['host'].($url['path'] ?? '').'?delComment=';
     }
 }

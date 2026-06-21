@@ -1727,7 +1727,7 @@ class Tickets
 
         return $this->connection->table('zp_tickets')
             ->where('id', $ticketId)
-            ->update($updates);
+            ->update($updates) > 0;
     }
 
     /**
@@ -1994,7 +1994,7 @@ class Tickets
             ->where('entityAType', 'Ticket')
             ->where('entityBType', 'User')
             ->where('relationship', EntityRelationshipEnum::Collaborator->value)
-            ->delete();
+            ->delete() > 0;
     }
 
     /**

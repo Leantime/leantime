@@ -188,8 +188,6 @@ class Template
 
     /**
      * get - get assigned values
-     *
-     * @return array
      */
     public function get(string $name): mixed
     {
@@ -688,11 +686,11 @@ class Template
      * getToggleState - retrieves the toggle state of a submenu by name from the session
      *
      * @param  string  $name  - the name of the submenu toggle
-     * @return string - the toggle state of the submenu (either "true" or "false")
+     * @return string|false - the toggle state of the submenu ("true"/"false"), or false if unset
      *
      * @deprecated this should be in a component
      */
-    public function getToggleState(string $name): string
+    public function getToggleState(string $name): string|false
     {
         if (session()->exists('usersettings.submenuToggle.'.$name)) {
             return session('usersettings.submenuToggle.'.$name);

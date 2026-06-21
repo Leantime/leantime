@@ -781,15 +781,19 @@ class EventDispatcher implements Dispatcher
     {
 
         if ($events instanceof \Closure) {
-            return collect($this->firstClosureParameterTypes($events))
+            collect($this->firstClosureParameterTypes($events))
                 ->each(function ($event) use ($events) {
                     $this->listen($event, $events);
                 });
+
+            return;
         } elseif ($events instanceof QueuedClosure) {
-            return collect($this->firstClosureParameterTypes($events->closure))
+            collect($this->firstClosureParameterTypes($events->closure))
                 ->each(function ($event) use ($events) {
                     $this->listen($event, $events->resolve());
                 });
+
+            return;
         } elseif ($listener instanceof QueuedClosure) {
             $listener = $listener->resolve();
         }

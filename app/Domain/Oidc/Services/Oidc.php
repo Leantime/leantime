@@ -455,7 +455,7 @@ class Oidc
     /**
      * @throws GuzzleException
      */
-    private function getTokenUrl(): string
+    private function getTokenUrl(): string|false
     {
         if (! empty($this->tokenUrl || $this->loadEndpoints())) {
             return $this->tokenUrl;

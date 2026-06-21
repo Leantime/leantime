@@ -96,7 +96,7 @@ class Files extends BaseService
      *
      * @api
      */
-    public function upload($file, $module, $moduleId, $entity = null, $disk = 'default'): array|string
+    public function upload($file, $module, $moduleId, $entity = null, $disk = 'default'): array|string|false
     {
         try {
             // Validate input parameters

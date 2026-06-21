@@ -52,7 +52,7 @@ class DelMilestone extends Controller
             return Frontcontroller::redirect(BASE_URL.'/tickets/roadmap');
         }
 
-        $this->tpl->setNotification($this->language->__($result['msg']), 'error');
+        $this->tpl->setNotification($this->language->__(is_array($result) ? ($result['msg'] ?? '') : ''), 'error');
         $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
 
         return $this->tpl->displayPartial('tickets.delMilestone');

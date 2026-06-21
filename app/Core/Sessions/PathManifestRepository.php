@@ -58,19 +58,19 @@ class PathManifestRepository
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
      * Determine if the manifest should be compiled.
      *
-     * @param  array  $manifest
+     * @param  array|null  $manifest
      * @param  array  $paths
      * @return bool
      */
     public function shouldRefresh($manifest, $paths)
     {
-        return is_null($manifest) || $manifest[$manifest] != $paths;
+        return is_null($manifest) || $manifest != $paths;
     }
 
     /**
