@@ -193,7 +193,9 @@ The no-op migration deliberately defers buttons it can't migrate without changin
 class set / behavior. Categories found (to revisit, some need a design decision):
 - **`class="button"` (not `btn`)** — many form submit inputs use `.button`. Need to confirm
   whether `.button` styling == `.btn` in forms.css; if so, add it to the component/migration.
-- **Unstyled `<input type="submit">`** (no class) — adding `btn` is a *design* change, not a no-op. Defer.
+- ~~**Unstyled `<input type="submit">`** (no class)~~ — DONE (round 2): NOT a design change after all —
+  `input[type='submit']` is in the `.btn-primary` element-selector group (forms.css:313), so bare submits
+  already render primary. Migrated to `contentRole="primary"` (no-op). ~30 of them.
 - **Unmapped btn variants** — `btn-sm`/`btn-lg` (vs Leantime `btn-small`/`btn-large`),
   `btn-danger-outline`, `btn-circle`, `btn-inverse`, `btn-file`. Add mappings (after confirming CSS) or keep deferred.
 - **role+state combo** (`btn btn-default btn-success`) — component currently emits one color; allow coexistence.
@@ -304,3 +306,16 @@ Only visually-distinct treatments earn a variant. Verdicts:
   canonical one being .secretInput) but its call-sites are the deferred async-save fields, so it's a planned
   variant; `legacy`(.input) = REDUNDANT (no `.input` CSS rule exists anywhere). **Dropped `variant="legacy"`**
   (1 call-site, TwoFA/edit → bare; removed the arm). Component now exposes only `headline`/`large`/`small`.
+- _button + text-input completion (round 2)_: swept blade for buttons/inputs missed by #3531/#3558.
+  **53 migrated across 38 files**: 29 bare `<input type=submit>` (no class — render primary via
+  forms.css:313, so `contentRole="primary"` is a no-op), 4 token-UI text inputs/buttons, Errors back ×4,
+  support sponsor, Auth token UI (create/copy/close/delete), Files cancel ×2, widgetManager reset
+  (btn-outline→secondary), Reports chart toggles ×6, showProject delete (btn-danger-outline→state=danger
+  variant=outline), 1 comment reply. `btn-sm`/`btn-lg`/`btn-secondary` (own CSS, ≠ Leantime's
+  small/large/outline) passed through `class=` pending a design-phase scale/role mapping.
+  **Left deferred (correct):** 3 comment `btn-success` role+state combos (component emits one color);
+  `partials/subtasks` quickadd (nested `__("…")` + HTMX file); dynamic-class links (calendarSettings,
+  Dashboard favoriteProject); `ticketFilter` raw `<a>` (whitespace-sensitive, intentional); custom non-`btn`
+  widget buttons (Wiki collapse/panel, calendar day-button, todoItem reset); modal `data-dismiss`/`.close`,
+  Files `.delete` icons, file-upload `picSubmit`, dropdown-toggles, `<?php echo` invite variants.
+  Verified: compile + Pint clean, 0 button-tag problems, diff is tag swaps (multiline tags collapse to 1 line).

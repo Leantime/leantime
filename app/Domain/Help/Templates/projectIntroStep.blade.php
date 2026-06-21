@@ -18,7 +18,7 @@
         </div>
         <div class="row">
             <div class="col-md-12 tw-text-right">
-                <input type="submit" value="{{ __('buttons.next') }}" />
+                <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.next')" />
             </div>
         </div>
     </form>

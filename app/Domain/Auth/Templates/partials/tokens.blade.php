@@ -6,10 +6,7 @@
             <p>{{ __('text.create_tokens_to_authenticate') }}</p>
             <br />
 
-            <a class="btn btn-primary"
-                     href="#/auth/tokenNew">
-                {{ __('buttons.create_token') }}
-            </a> <br />
+            <x-global::forms.button tag="a" contentRole="primary" link="#/auth/tokenNew">{{ __('buttons.create_token') }}</x-global::forms.button> <br />
 
             <div class="clearfix"></div>
 
@@ -29,12 +26,7 @@
                         <td>{{ $token['last_used_at'] ? format($token['last_used_at'])->date() . ' ' . format($token['last_used_at'])->time(): 'Never' }}</td>
                         <td>{{ format($token['created_at'])->date(). ' ' . format($token['created_at'])->time() }}</td>
                         <td>
-                            <button class="btn btn-danger btn-sm"
-                                    hx-delete="{{ BASE_URL }}/hx/auth/personalTokens/delete/{{ $token['id'] }}"
-                                    hx-confirm="{{ __('notifications.confirm_token_delete') }}"
-                                    hx-target="#personalTokens">
-                                <i class="fa fa-trash"></i>
-                            </button>
+                            <x-global::forms.button state="danger" class="btn-sm" hx-delete="{{ BASE_URL }}/hx/auth/personalTokens/delete/{{ $token['id'] }}" hx-confirm="{{ __('notifications.confirm_token_delete') }}" hx-target="#personalTokens"><i class="fa fa-trash"></i></x-global::forms.button>
                         </td>
                     </tr>
                 @endforeach

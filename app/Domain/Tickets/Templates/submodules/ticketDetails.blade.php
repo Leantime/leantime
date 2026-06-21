@@ -140,7 +140,7 @@
                     <input type="hidden" name="saveTicket" value="1" />
                     <input type="hidden" id="saveAndCloseButton" name="saveAndCloseTicket" value="0" />
 
-                    <input type="submit" name="saveTicket" class="saveTicketBtn" value="{{ __('buttons.save') }}"/>
+                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="saveTicket" class="saveTicketBtn" />
                     <x-global::forms.button tag="input" inputType="submit" variant="outline" name="saveAndCloseTicket" onclick="jQuery('#saveAndCloseButton').val('1');" :labelText="__('buttons.save_and_close')" />
                 </div>
             </div>

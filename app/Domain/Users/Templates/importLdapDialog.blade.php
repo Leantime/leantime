@@ -17,7 +17,7 @@
             @endforeach
             <br />
             <input type="hidden" name="importSubmit" value="1"/>
-            <input type="submit" value="{{ __('buttons.import') }}" />
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.import')" />
         </form>
 
     @else
@@ -25,7 +25,7 @@
             <label>{!! __('label.please_enter_password') !!} </label>
             <x-global::forms.text-input type="password" name="password" />
             <input type="hidden" name="pwSubmit" value="1"/>
-            <input type="submit" value="{{ __('buttons.find_users') }}" />
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.find_users')" />
         </form>
 
     @endif

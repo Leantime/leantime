@@ -30,7 +30,7 @@
         <div class="">
 
             @dispatchEvent('beforeSubmitButton')
-            <input type="submit" name="resetPassword" value="{{ __('buttons.reset_password') }}" />
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.reset_password')" name="resetPassword" />
             <div class="forgotPwContainer">
                 <a href="{{ BASE_URL }}/" class="forgotPw">{!! __('links.back_to_login') !!}</a>
             </div>
