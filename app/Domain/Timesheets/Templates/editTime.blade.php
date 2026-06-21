@@ -124,8 +124,8 @@ use Leantime\Core\Support\FromFormat;
 <label for="hours">{!! __('label.hours') !!}</label> <x-global::forms.text-input
     id="hours" name="hours"
     value="{{ $values['hours'] }}" size="7" /> <br />
-<label for="description">{!! __('label.description') !!}</label> <textarea
-    rows="5" cols="50" id="description" name="description">{{ $values['description'] }}</textarea><br />
+<label for="description">{!! __('label.description') !!}</label> <x-global::forms.textarea
+    rows="5" cols="50" id="description" name="description">{{ $values['description'] }}</x-global::forms.textarea><br />
 
 
 
