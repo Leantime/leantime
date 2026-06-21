@@ -21,9 +21,11 @@
 {{--
     forms.textarea — NO-OP textarea.
 
-    Renders a plain <textarea> with the SAME attributes the app uses today; every attribute
-    (name, id, rows, cols, placeholder, style, class, data-*, hx-*, required, …) passes through
-    via $attributes, and the field's value is the slot (inner content), preserved EXACTLY.
+    Renders a plain <textarea> with the SAME attributes the app uses today. Every attribute EXCEPT the
+    declared @props above (name, id, rows, cols, placeholder, style, class, data-*, hx-*, required, …)
+    passes through via $attributes — Blade extracts declared props (state, contentRole, scale, labelText, …)
+    so they are NOT emitted as HTML (they're reserved for the design phase). The field's value is the slot
+    (inner content), preserved EXACTLY.
 
     ⚠️ DO NOT route rich-text EDITOR textareas through this component — JS upgrades them to Tiptap
     and they will break. Keep these RAW:
