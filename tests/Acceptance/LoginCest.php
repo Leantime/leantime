@@ -24,6 +24,7 @@ class LoginCest
     public function loginDeniedForWrongCredentials(AcceptanceTester $I): void
     {
         $I->amOnPage('/auth/login');
+        $I->waitForElementVisible('#login', 10);
         $I->fillField(['name' => 'username'], 'test@leantime.io');
         $I->fillField(['name' => 'password'], 'WrongPassword');
         $I->click('Login');
