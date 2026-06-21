@@ -339,10 +339,7 @@ class TicketsServiceTest extends TestCase
         $service = $this->construct(
             TicketsService::class,
             [
-                $this->make(TemplateCore::class),
                 $this->make(LanguageCore::class),
-                $this->make(EnvironmentCore::class),
-                $this->make(ProjectRepository::class),
                 $this->make(TicketRepository::class),
                 $this->make(TimesheetRepository::class),
                 $this->make(SettingRepository::class),

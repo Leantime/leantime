@@ -27,16 +27,20 @@ if (! function_exists('array_sort')) {
     /**
      * sort array of arrqays by value
      *
-     * @param  string  $sortyBy
+     * @param  string|array<int, array{0: string, 1: string}>  $sortyBy  Column name (string) or multi-sort spec (array)
      */
     function array_sort(array $array, mixed $sortyBy): array
     {
 
-        $collection = collect($array);
+        if (is_string($sortyBy)) {
+            $collection = collect($array);
 
-        $sorted = $collection->sortBy($sortyBy, SORT_NATURAL);
+            $sorted = $collection->sortBy($sortyBy, SORT_NATURAL);
 
-        return $sorted->values()->all();
+            return $sorted->values()->all();
+        } else {
+            return \Illuminate\Support\Collection::make($array)->sortBy($sortyBy)->all();
+        }
     }
 }
 
