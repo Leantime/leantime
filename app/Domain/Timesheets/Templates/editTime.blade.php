@@ -179,6 +179,6 @@ use Leantime\Core\Support\FromFormat;
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
         <x-global::forms.button tag="a" class="delete editTimeModal pull-right" link="{{ BASE_URL }}/timesheets/delTime/{{ $tpl->escape($_GET['id']) }}" state="danger" variant="outline">{!! __('links.delete') !!}</x-global::forms.button>
-        <input type="submit" value="{{ __('buttons.save') }}" name="save" class="button" />
+        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" />
     </p>
 </form>

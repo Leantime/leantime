@@ -78,7 +78,7 @@
 
                     <p class="stdformbutton">
                         <input type="hidden" name="save" value="1" />
-                        <input type="submit" name="save" id="save" value="{{ __('buttons.invite_user') }}" class="button" />
+                        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.invite_user')" name="save" id="save" />
                     </p>
 
         </div>

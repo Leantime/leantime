@@ -26,7 +26,7 @@
             <div class="row padding-top">
                 <div class="col-md-12">
 
-                    <input type="submit" name="save" id="save" class="button" value="{{ __('buttons.save') }}" class="button" />
+                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="save" />
                 </div>
 
             </div>
