@@ -314,14 +314,14 @@ class Users extends BaseService
      * createUserInvite - generates a new invite token, creates the user in the db and sends the invitation email TODO: Should accept userModel
      *
      * @param  array  $values  basic user values
-     * @return bool|int returns new user id on success, false on failure
+     * @return false|string returns the new user id on success, false on failure
      *
      * @throws BindingResolutionException
      *
      * @api
      */
     #[RequiresPermission(UsersPermissions::CREATE, global: true)]
-    public function createUserInvite(array $values): bool|int|string
+    public function createUserInvite(array $values): false|string
     {
 
         // Generate strong password

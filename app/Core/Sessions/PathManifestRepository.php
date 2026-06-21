@@ -64,7 +64,7 @@ class PathManifestRepository
     /**
      * Determine if the manifest should be compiled.
      *
-     * @param  array  $manifest
+     * @param  array|null  $manifest
      * @param  array  $paths
      * @return bool
      */

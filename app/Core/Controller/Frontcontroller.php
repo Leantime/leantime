@@ -257,6 +257,11 @@ class Frontcontroller
         }
 
         $classPath = $this->getClassPath($controllerType, $moduleName, $actionName);
+
+        if ($classPath === false) {
+            throw new NotFoundHttpException("Can't find a valid controller for ".strip_tags($moduleName).'/'.strip_tags($actionName));
+        }
+
         $classMethod = $this->getValidControllerMethod($classPath, $methodName);
 
         Cache::store('installation')->set('routes.'.$routepath.'.'.($classMethod == 'run' ? $methodNameLower : $classMethod), ['class' => $classPath, 'method' => $classMethod]);

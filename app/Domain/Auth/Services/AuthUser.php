@@ -27,12 +27,26 @@ class AuthUser implements UserProvider
 
     public function retrieveById($identifier)
     {
-        return new AuthenticatableUser((array) $this->userRepo->getUser($identifier));
+        $userData = $this->userRepo->getUser($identifier);
+
+        // Not found → null, per the UserProvider contract. Returning a (non-null) empty user
+        // object would let the guard treat the request as authenticated.
+        if (empty($userData)) {
+            return null;
+        }
+
+        return new AuthenticatableUser((array) $userData);
     }
 
     public function retrieveByToken($identifier, $token)
     {
-        return new AuthenticatableUser((array) $this->authService->getUserByToken($token));
+        $userData = $this->authService->getUserByToken($token);
+
+        if (empty($userData)) {
+            return null;
+        }
+
+        return new AuthenticatableUser((array) $userData);
     }
 
     public function updateRememberToken(Authenticatable $user, $token)

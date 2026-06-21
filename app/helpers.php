@@ -244,37 +244,6 @@ if (! function_exists('base_path')) {
     }
 }
 
-if (! function_exists('redirect')) {
-    /**
-     * Get an instance of the redirector.
-     *
-     * @param  string|null  $url
-     * @param  int  $http_response_code
-     * @param  array  $headers
-     * @param  bool|null  $secure
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    function redirect($url = null, $http_response_code = 302, $headers = [], $secure = null)
-    {
-        return new RedirectResponse(
-            trim(preg_replace('/\s\s+/', '', strip_tags($url))),
-            $http_response_code
-        );
-    }
-}
-
-if (! function_exists('currentRoute')) {
-    /**
-     * Get an instance of the redirector.
-     */
-    function currentRoute()
-    {
-
-        return app('request')->getCurrentRoute();
-
-    }
-}
-
 if (! function_exists('safe_unserialize')) {
     /**
      * Safely unserialize data without allowing object instantiation.
