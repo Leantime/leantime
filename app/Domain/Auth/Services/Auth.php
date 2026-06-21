@@ -698,7 +698,7 @@ class Auth implements Authenticatable
 
     public function getRememberToken()
     {
-        return null; // Not implemented yet
+        return ''; // Not implemented yet (Authenticatable::getRememberToken is contractually a string)
     }
 
     public function setRememberToken($value)

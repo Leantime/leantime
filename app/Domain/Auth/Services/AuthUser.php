@@ -5,6 +5,7 @@ namespace Leantime\Domain\Auth\Services;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Laravel\Sanctum\HasApiTokens;
+use Leantime\Domain\Auth\Models\AuthenticatableUser;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 
 class AuthUser implements UserProvider
@@ -26,12 +27,12 @@ class AuthUser implements UserProvider
 
     public function retrieveById($identifier)
     {
-        return (object) $this->userRepo->getUser($identifier);
+        return new AuthenticatableUser((array) $this->userRepo->getUser($identifier));
     }
 
     public function retrieveByToken($identifier, $token)
     {
-        return (object) $this->authService->getUserByToken($token);
+        return new AuthenticatableUser((array) $this->authService->getUserByToken($token));
     }
 
     public function updateRememberToken(Authenticatable $user, $token)
@@ -63,10 +64,12 @@ class AuthUser implements UserProvider
 
     public function getOrCreateUser($user, $source)
     {
+        // Look up the existing account in a separate variable — the $user param holds the
+        // external/OAuth profile data we need to create the account from, so it must not be
+        // overwritten by the lookup result (doing so previously built new users with empty fields).
+        $existingUser = $this->authRepo->getUserByEmail($user['email']);
 
-        $user = $this->authRepo->getUserByEmail($user['email']);
-
-        if (empty($user) && config()->get('auth.create_user')) {
+        if (empty($existingUser) && config()->get('auth.create_user')) {
 
             $userArray = [
                 'firstname' => $user['firstname'],
@@ -83,11 +86,11 @@ class AuthUser implements UserProvider
                 'status' => 'a',
             ];
 
-            $userId = $this->userRepo->addUser($userArray);
-            $user = $this->authRepo->getUserByEmail($user['email']);
+            $this->userRepo->addUser($userArray);
+            $existingUser = $this->authRepo->getUserByEmail($user['email']);
         }
 
-        return $user;
+        return $existingUser;
     }
 
     public function setUser($userId)

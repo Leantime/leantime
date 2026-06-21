@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\UserProvider;
 use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Api\Services\Api;
+use Leantime\Domain\Auth\Models\AuthenticatableUser;
 
 class ApiGuard implements Guard
 {
@@ -64,20 +65,14 @@ class ApiGuard implements Guard
             return $this->user;
         }
 
-        $this->user = (object) $apiUser;
+        $this->user = new AuthenticatableUser((array) $apiUser);
 
         return $this->user;
     }
 
     public function id()
     {
-        // user() currently returns a stdClass of API-key user data (not yet a real
-        // Authenticatable — that conversion is tracked for the level-3 auth pass), so read
-        // the id off the object rather than calling getAuthIdentifier().
-        /** @var \stdClass|null $user */
-        $user = $this->user();
-
-        return $user?->id;
+        return $this->user()?->getAuthIdentifier();
     }
 
     public function validate(array $credentials = [])
