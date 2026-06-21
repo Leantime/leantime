@@ -52,7 +52,7 @@ class Installed
             return $response;
         }
 
-        if (! $session_says && $config_says) {
+        if (! $session_says) {
             $this->setInstalled();
         }
 

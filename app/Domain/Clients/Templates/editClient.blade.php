@@ -56,8 +56,7 @@
                     name="phone" id="phone"
                     value="{{ $values['phone'] }}" /><br />
 
-                <input type="submit" name="save" id="save"
-                    value="{{ __('SAVE') }}" class="button" />
+                <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('SAVE')" name="save" id="save" />
 
                 </div>
             </div>

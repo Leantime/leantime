@@ -163,10 +163,6 @@ class Theme
         return $scheme;
     }
 
-    private array $backgroundTypes = ['gradient', 'image'];
-
-    private array $backgroundSources = ['unsplash', 'upload'];
-
     /**
      * possible font choices
      */

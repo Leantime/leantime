@@ -107,22 +107,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
     }
 
     /**
-     * getBool - get a boolean value from the environment
-     */
-    private function getBool(string $envVar, bool $default): bool
-    {
-        return $this->environmentHelper($envVar, $default, 'boolean');
-    }
-
-    /**
-     * getString - get a string value from the environment
-     */
-    private function getString(string $envVar, string $default = ''): string
-    {
-        return $this->environmentHelper($envVar, $default, 'string');
-    }
-
-    /**
      * environmentHelper - helper function to get a value from the environment
      */
     private function environmentHelper(string $envVar, mixed $default, string $dataType = 'string'): mixed

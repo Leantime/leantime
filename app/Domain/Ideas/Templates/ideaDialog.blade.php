@@ -74,7 +74,7 @@
                         </div>
                         <div class="row" id="newMilestone" style="display:none;">
                             <div class="col-md-12">
-                                <textarea name="newMilestone"></textarea><br/>
+                                <x-global::forms.textarea name="newMilestone"></x-global::forms.textarea><br/>
                                 <input type="hidden" name="type" value="milestone"/>
                                 <input type="hidden" name="leancanvasitemid" value="{{ $id }} "/>
                                 <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()"

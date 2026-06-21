@@ -50,7 +50,7 @@
     <br />
     <x-global::forms.button tag="a" link="{{ BASE_URL }}/calendar/delEvent/{{ (int) $_GET['id'] }}" class="formModal delete right" state="danger" variant="outline"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</x-global::forms.button>
     <input type="hidden" value="1" name="save" />
-    <input type="submit" name="saveEvent" id="save" value="{{ __('buttons.save') }}" class="button" />
+    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="saveEvent" id="save" />
 
     <div class="clear"></div>
 

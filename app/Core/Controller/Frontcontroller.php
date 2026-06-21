@@ -23,22 +23,7 @@ class Frontcontroller
 {
     use DispatchesEvents;
 
-    /**
-     * @var string - last action that was fired
-     */
-    private string $lastAction = '';
-
-    /**
-     * @var string - fully parsed action
-     */
-    private string $fullAction = '';
-
     private IncomingRequest $incomingRequest;
-
-    /**
-     * @var array - valid status codes
-     */
-    private array $validStatusCodes = ['100', '101', '200', '201', '202', '203', '204', '205', '206', '300', '301', '302', '303', '304', '305', '306', '307', '400', '401', '402', '403', '404', '405', '406', '407', '408', '409', '410', '411', '412', '413', '414', '415', '416', '417', '500', '501', '502', '503', '504', '505'];
 
     protected $defaultRoute = 'dashboard.home';
 
@@ -73,8 +58,6 @@ class Frontcontroller
 
         // Setting default response code to 200, can be changed in controller
         $this->setResponseCode(200);
-
-        $this->lastAction = $moduleName.'.'.$controllerName.'.'.$method;
 
         $this->dispatchEvent('execute_action_end', ['action' => $controllerName, 'module' => $moduleName]);
 
@@ -182,7 +165,7 @@ class Frontcontroller
         // Enforce #[RequiresPermission] on the resolved action before instantiating the
         // controller. This is the single chokepoint for every convention-routed controller,
         // regardless of which base class (if any) it extends.
-        $this->permissionEnforcer->enforce($controller, $method, is_array($parameters) ? $parameters : []);
+        $this->permissionEnforcer->enforce($controller, $method, $parameters);
 
         $controllerClass = app()->make($controller);
 
@@ -419,8 +402,6 @@ class Frontcontroller
         if (is_array($actionParts)) {
             return $actionParts[0];
         }
-
-        return '';
     }
 
     /**

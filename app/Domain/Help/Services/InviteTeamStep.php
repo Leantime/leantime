@@ -6,7 +6,6 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\UI\Template;
 use Leantime\Domain\Help\Contracts\OnboardingSteps;
 use Leantime\Domain\Projects\Services\Projects;
-use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Users\Services\Users;
 
 class InviteTeamStep implements OnboardingSteps
@@ -14,7 +13,6 @@ class InviteTeamStep implements OnboardingSteps
     use DispatchesEvents;
 
     public function __construct(
-        private Setting $settingsRepo,
         private Projects $projectService,
         private Users $userService,
         private Template $tplService

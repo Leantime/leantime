@@ -16,8 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CsvImport extends Provider implements ProviderIntegration
 {
-    private array $fields;
-
     /**
      * @var array|array[]
      */

@@ -30,7 +30,7 @@
                             </div>
                         </div>
 
-                        <input type="submit" name="upload" class="button" value="{{ __('UPLOAD') }}" />
+                        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('UPLOAD')" name="upload" />
 
                     </form>
 

@@ -6,8 +6,6 @@ use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Menu\Services\Menu;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users;
 use Unit\TestCase;
 
@@ -28,8 +26,6 @@ class MenuServiceTest extends TestCase
     {
         return new Menu(
             $this->make(ProjectService::class),
-            $this->make(TimesheetService::class),
-            $this->make(SprintService::class),
             $this->make(Users::class),
             $this->make(Setting::class),
             $this->make(MenuRepository::class),

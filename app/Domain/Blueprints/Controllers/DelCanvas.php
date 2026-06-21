@@ -91,7 +91,7 @@ class DelCanvas
                 strtoupper($this->canvasSlug).'canvas_deleted'
             );
 
-            if (! $allCanvas || count($allCanvas) == 0) {
+            if (! $allCanvas) {
                 return Frontcontroller::redirect(BASE_URL.'/blueprints/showBoards');
             }
 

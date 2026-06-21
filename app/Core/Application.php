@@ -22,11 +22,6 @@ class Application extends \Illuminate\Foundation\Application
     use DispatchesEvents;
 
     /**
-     * Application bootstrap status
-     */
-    private static bool $bootstrapped = false;
-
-    /**
      * Constructor for the class.
      *
      * @param  string  $basePath  The base path for the application.

@@ -5,7 +5,6 @@ namespace Leantime\Domain\Wiki\Repositories;
 use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
-use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Blueprints\Repositories\Blueprints;
 use Leantime\Domain\Tickets\Repositories\Tickets;
 use Leantime\Domain\Wiki\Models\Article;
@@ -21,9 +20,9 @@ class Wiki extends Blueprints
 
     protected ConnectionInterface $dbConnection;
 
-    public function __construct(DbCore $db, LanguageCore $language, Tickets $ticketRepo, DatabaseHelper $dbHelper)
+    public function __construct(DbCore $db, Tickets $ticketRepo, DatabaseHelper $dbHelper)
     {
-        parent::__construct($db, $language, $ticketRepo, $dbHelper);
+        parent::__construct($db, $ticketRepo, $dbHelper);
         $this->dbConnection = $db->getConnection();
     }
 

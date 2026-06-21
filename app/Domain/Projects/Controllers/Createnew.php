@@ -6,24 +6,19 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Modulemanager\Services\Modulemanager;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;
 
 class Createnew extends Controller
 {
-    private ProjectService $projectService;
-
     private Modulemanager $modulemanager;
 
     /**
      * Initializes dependencies.
      */
     public function init(
-        Modulemanager $modulemanager,
-        ProjectService $projectService
+        Modulemanager $modulemanager
     ): void {
         $this->modulemanager = $modulemanager;
-        $this->projectService = $projectService;
     }
 
     /**

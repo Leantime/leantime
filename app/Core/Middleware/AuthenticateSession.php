@@ -7,9 +7,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Session\Middleware\AuthenticatesSessions;
 use Illuminate\Http\Request;
-use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Core\Language;
 use Leantime\Domain\Setting\Services\Setting;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,9 +20,7 @@ class AuthenticateSession implements AuthenticatesSessions
      */
     public function __construct(
         protected AuthFactory $auth,
-        private readonly Setting $settings,
-        private readonly Environment $config,
-        private readonly Language $language) {}
+        private readonly Setting $settings) {}
 
     /**
      * Handle an incoming request.

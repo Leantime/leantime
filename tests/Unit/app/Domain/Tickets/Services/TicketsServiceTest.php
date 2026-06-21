@@ -82,10 +82,7 @@ class TicketsServiceTest extends TestCase
 
         // Instantiate the service with mocked dependencies
         $this->ticketsService = new TicketsService(
-            tpl: $tpl,
             language: $language,
-            config: $config,
-            projectRepository: $projectRepository,
             ticketRepository: $ticketRepository,
             timesheetsRepo: $timesheetsRepo,
             settingsRepo: $settingsRepo,
@@ -291,10 +288,7 @@ class TicketsServiceTest extends TestCase
     private function buildServiceWithClientService(ClientService $clientService): TicketsService
     {
         return new TicketsService(
-            tpl: $this->make(TemplateCore::class),
             language: $this->make(LanguageCore::class),
-            config: $this->make(EnvironmentCore::class),
-            projectRepository: $this->make(ProjectRepository::class),
             ticketRepository: $this->make(TicketRepository::class),
             timesheetsRepo: $this->make(TimesheetRepository::class),
             settingsRepo: $this->make(SettingRepository::class),
@@ -316,10 +310,7 @@ class TicketsServiceTest extends TestCase
     private function buildServiceWithTicketRepository(TicketRepository $ticketRepository): TicketsService
     {
         return new TicketsService(
-            tpl: $this->make(TemplateCore::class),
             language: $this->make(LanguageCore::class),
-            config: $this->make(EnvironmentCore::class),
-            projectRepository: $this->make(ProjectRepository::class),
             ticketRepository: $ticketRepository,
             timesheetsRepo: $this->make(TimesheetRepository::class),
             settingsRepo: $this->make(SettingRepository::class),
@@ -348,10 +339,7 @@ class TicketsServiceTest extends TestCase
         $service = $this->construct(
             TicketsService::class,
             [
-                $this->make(TemplateCore::class),
                 $this->make(LanguageCore::class),
-                $this->make(EnvironmentCore::class),
-                $this->make(ProjectRepository::class),
                 $this->make(TicketRepository::class),
                 $this->make(TimesheetRepository::class),
                 $this->make(SettingRepository::class),

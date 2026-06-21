@@ -86,8 +86,8 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | Component | Tag | Cat | Status | Ref | Notes |
 |---|---|---|---|---|---|
 | button | `forms.button` | forms | ✅ | refactor/table-component | merged #3531: no-op migration + 3-tier role model |
-| text-input | `forms.text-input` | forms | 🟡 | refactor/table-component | PR #3558: thin no-op; **146 call-sites / 56 files migrated**; **defer JS-coupled** (datepickers/tags/inline-edit/color/sorter/hourCell) + legacy `<?php echo ?>`-in-attr |
-| textarea | `forms.textarea` | forms | ⬜ | selectsComponentUpdates | |
+| text-input | `forms.text-input` | forms | ✅ | refactor/table-component | merged #3558: no-op; 146 call-sites / 56 files; variants `headline`/`large`/`small` (dropped `form`/`legacy` as CSS-redundant); HTML-native `type` prop; **defer JS-coupled** (datepickers/tags/inline-edit/color/sorter/hourCell) + legacy `<?php echo ?>`-in-attr |
+| textarea | `forms.textarea` | forms | 🟡 | selectsComponentUpdates | PR #3562: thin no-op (attrs + inner-content slot); 10 plain migrated / 6 files; **defer Tiptap editors** (`.tiptapSimple`/`.tiptapComplex`/`.wiki-editor-textarea`) |
 | select (native) | `forms.select` | forms | ⬜ | refactor/table-component | native no-op first; JS-enhanced later |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
 | card (content-box) | `elements.card` | elements | ⬜ | ui-components | **replaces `.maincontentinner`** (167 sites) |
@@ -191,9 +191,14 @@ tags for `<?php` / `<?=` before committing.
 
 The no-op migration deliberately defers buttons it can't migrate without changing the rendered
 class set / behavior. Categories found (to revisit, some need a design decision):
-- **`class="button"` (not `btn`)** — many form submit inputs use `.button`. Need to confirm
-  whether `.button` styling == `.btn` in forms.css; if so, add it to the component/migration.
-- ~~**Unstyled `<input type="submit">`** (no class)~~ — DONE (round 2): NOT a design change after all —
+- ~~**`class="button"` (not `btn`)**~~ — DONE (#3563): a CSS audit found `.button` has **no rule at
+  all**; `input[type='submit']` is styled by the `.btn-primary` element-selector group (forms.css:313), so
+  these 44 submits already render as primary buttons. Migrated all 44 to
+  `<x-global::forms.button tag="input" inputType="submit" contentRole="primary">` (no-op). Also cleaned up a
+  few pre-existing duplicate `class="button" class="button"` attrs. **Follow-up:** ~16 are `del*` confirmation
+  submits that look primary today — candidates for `state="danger"` in a later semantic pass (a visual change,
+  not a no-op).
+- ~~**Unstyled `<input type="submit">`** (no class)~~ — DONE (#3564, round 2): NOT a design change after all —
   `input[type='submit']` is in the `.btn-primary` element-selector group (forms.css:313), so bare submits
   already render primary. Migrated to `contentRole="primary"` (no-op). ~30 of them.
 - **Unmapped btn variants** — `btn-sm`/`btn-lg` (vs Leantime `btn-small`/`btn-large`),
@@ -306,6 +311,14 @@ Only visually-distinct treatments earn a variant. Verdicts:
   canonical one being .secretInput) but its call-sites are the deferred async-save fields, so it's a planned
   variant; `legacy`(.input) = REDUNDANT (no `.input` CSS rule exists anywhere). **Dropped `variant="legacy"`**
   (1 call-site, TwoFA/edit → bare; removed the arm). Component now exposes only `headline`/`large`/`small`.
+- _textarea_: thin no-op `forms.textarea` (#3562). Body is `<textarea {{ $attributes }}>{{ $slot }}</textarea>`
+  — attributes pass through, the field value is the slot (inner content) preserved EXACTLY (textareas are
+  whitespace-sensitive). **10 plain textareas migrated across 6 files** (Help projectDefinitionStep ×3,
+  Ideas/Wiki newMilestone, Timesheets add/edit + Tickets timesheet description, Widgets myToDos
+  description-input ×2). **19 Tiptap editor textareas left RAW** — JS upgrades exactly `textarea.tiptapSimple`
+  / `textarea.tiptapComplex` (core/tiptap/index.js) plus the Wiki `.wiki-editor-textarea`; never route those
+  through the component. No `variant` arm (plain textareas carry no distinct style class; the only textarea
+  classes are editor-coupled).
 - _button + text-input completion (round 2)_: swept blade for buttons/inputs missed by #3531/#3558.
   **53 migrated across 38 files**: 29 bare `<input type=submit>` (no class — render primary via
   forms.css:313, so `contentRole="primary"` is a no-op), 4 token-UI text inputs/buttons, Errors back ×4,
@@ -319,3 +332,5 @@ Only visually-distinct treatments earn a variant. Verdicts:
   widget buttons (Wiki collapse/panel, calendar day-button, todoItem reset); modal `data-dismiss`/`.close`,
   Files `.delete` icons, file-upload `picSubmit`, dropdown-toggles, `<?php echo` invite variants.
   Verified: compile + Pint clean, 0 button-tag problems, diff is tag swaps (multiline tags collapse to 1 line).
+  ALSO: TimesheetCest selectors that clicked `.button` repointed to `input[type=submit]`/name (the `.button`
+  class is removed by the migration) — see #3563.

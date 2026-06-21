@@ -32,7 +32,7 @@ class ApiRequest extends IncomingRequest
                 'REDIRECT_HTTP_AUTHORIZATION',
             ] as $key
         ) {
-            $header = trim($this->headers->get($key)) ?? '';
+            $header = trim($this->headers->get($key, ''));
 
             if (! empty($header)) {
                 return $header;

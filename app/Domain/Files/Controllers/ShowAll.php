@@ -61,7 +61,7 @@ class ShowAll extends Controller
                 return Frontcontroller::redirect(BASE_URL.'/files/showAll'.(($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : ''));
             }
 
-            $this->tpl->setNotification($this->language->__('notifications.file_delete_error'), 'error');
+            $this->tpl->setNotification($this->language->__('notifications.file_deleted_error'), 'error');
         }
 
         if ($result['action'] === 'upload') {

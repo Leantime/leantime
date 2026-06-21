@@ -260,7 +260,7 @@ class StartSession
             // Implement exponential backoff retry
             $this->retryWithBackoff($callback, $session);
         } finally {
-            $lock?->release();
+            $lock->release();
         }
     }
 

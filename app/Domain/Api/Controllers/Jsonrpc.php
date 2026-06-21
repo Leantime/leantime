@@ -25,11 +25,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Jsonrpc extends Controller
 {
-    /**
-     * @var array - holds json data from request body
-     */
-    private array $json_data = [];
-
     private PermissionEnforcer $permissionEnforcer;
 
     /**

@@ -122,7 +122,7 @@
 
 
                     <p class="stdformbutton">
-                        <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="button" />
+                        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="save" />
                     </p>
                     </div>
                 </div>

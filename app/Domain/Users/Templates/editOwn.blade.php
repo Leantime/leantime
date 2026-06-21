@@ -67,7 +67,7 @@
                                         <p class='stdformbutton'>
                                             <input type="hidden" name="profileInfo" value="1" />
 
-                                            <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="button"/>
+                                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="save" />
                                         </p>
                                         <br />
                                         <h4 class="widgettitle title-light">{{ __('label.employee_information') }}</h4>
@@ -185,7 +185,7 @@
                             </div>
                             @if (!session("userdata.isExternalAuth") )
                                 <input type="hidden" name="savepw" value="1" />
-                                <input type="submit" name="save" id="savePw" value="{{ __('buttons.save') }}" class="button"/>
+                                <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="savePw" />
                             @endif
                         </form>
                         <br /><br />
@@ -272,7 +272,7 @@
                                 </div>
                             </div>
                             <input type="hidden" name="saveSettings" value="1" />
-                            <input type="submit" name="save" id="saveSettings" value="{{ __('buttons.save') }}" class="button"/>
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="saveSettings" />
                         </form>
                     </div>
 
@@ -348,7 +348,7 @@
                             </div>
                             <br /><br />
                             <input type="hidden" name="saveTheme" value="1" />
-                            <input type="submit" name="save" id="saveTheme" value="{{ __('buttons.save') }}" class="button"/>
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="saveTheme" />
                         </form>
 
                         @dispatchEvent('themecontent')
@@ -478,7 +478,7 @@
                             </div>
 
                             <input type="hidden" name="savenotifications" value="1" />
-                            <input type="submit" name="save" value="{{ __('buttons.save') }}" class="button"/>
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" />
                         </form>
                     </div>
 

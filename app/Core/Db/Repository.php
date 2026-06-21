@@ -4,7 +4,6 @@ namespace Leantime\Core\Db;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Database;
-use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Events\DispatchesEvents;
 use PDO;
 use PDOStatement;
@@ -22,10 +21,6 @@ abstract class Repository
 
     protected string $model;
 
-    public function __construct(
-        private DbCore $db
-    ) {}
-
     /**
      * dbcall - creates a new dbcall object
      *
@@ -35,13 +30,11 @@ abstract class Repository
     {
         return new class($args, $this)
         {
-            private PDOStatement $stmn;
+            private ?PDOStatement $stmn = null;
 
             private array $args;
 
             private Repository $caller_class;
-
-            private Db $Db;
 
             /**
              * @var \Closure|mixed|object|null

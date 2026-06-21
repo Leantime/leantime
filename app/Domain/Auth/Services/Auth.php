@@ -32,41 +32,7 @@ class Auth implements Authenticatable
      */
     private ?int $userId = null;
 
-    /**
-     * @var int|null user id from DB
-     */
-    private ?int $clientId = null;
-
-    /**
-     * @var string|null username from db
-     */
-    private ?string $username = null;
-
-    /**
-     * @var string username from db
-     */
-    private string $name = '';
-
-    /**
-     * @var string profileid (image) from db
-     */
-    private string $profileId = '';
-
     private ?string $password = null;
-
-    /**
-     * @var string|null username (emailaddress)
-     */
-    private ?string $user = null;
-
-    /**
-     * @var string|null username (emailaddress)
-     */
-    private ?string $mail = null;
-
-    private bool $twoFAEnabled;
-
-    private string $twoFASecret;
 
     private ?SessionManager $session = null;
 

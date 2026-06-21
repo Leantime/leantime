@@ -85,7 +85,7 @@ class ShowTicket extends Controller
                 return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'#files');
             }
 
-            $this->tpl->setNotification(is_array($result) ? ($result['msg'] ?? '') : '', 'error');
+            $this->tpl->setNotification($this->language->__('notifications.file_deleted_error'), 'error');
         }
 
         // Delete comment

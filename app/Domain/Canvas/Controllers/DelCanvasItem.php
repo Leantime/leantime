@@ -2,7 +2,6 @@
 
 namespace Leantime\Domain\Canvas\Controllers;
 
-use Illuminate\Support\Str;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
@@ -20,8 +19,6 @@ class DelCanvasItem extends Controller
      */
     protected const CANVAS_NAME = '??';
 
-    private mixed $canvasRepo;
-
     private BlueprintsService $blueprintsService;
 
     /**
@@ -30,9 +27,6 @@ class DelCanvasItem extends Controller
     public function init(): void
     {
         $this->blueprintsService = app()->make(BlueprintsService::class);
-        $canvasName = Str::studly(static::CANVAS_NAME).'canvas';
-        $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
-        $this->canvasRepo = app()->make($repoName);
     }
 
     /**
