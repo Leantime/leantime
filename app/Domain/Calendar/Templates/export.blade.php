@@ -30,7 +30,7 @@
 
             @dispatchEvent('beforeSubmitButton')
 
-            <br /><input type="submit" value="{{ __('buttons.generate_ical_url') }}"/>
+            <br /><x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.generate_ical_url')" />
 
         </div>
         <div class="col-md-6 align-right">

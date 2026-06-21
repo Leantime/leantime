@@ -30,7 +30,7 @@
         @if ($login::userIsAtLeast($roles::$editor))
         <div class="uploadWrapper">
 
-            <a href="javascript:void(0);" id="cancelLink" class="btn btn-default" style="display:none;">{!! __('links.cancel') !!}</a>
+            <x-global::forms.button tag="a" contentRole="default" id="cancelLink" link="javascript:void(0);" style="display:none;">{!! __('links.cancel') !!}</x-global::forms.button>
             <div class="extra" style="margin-top:5px;"></div>
             <div class="fileUploadDrop">
                 <p><i>{!! __('text.drop_files') !!}</i></p>

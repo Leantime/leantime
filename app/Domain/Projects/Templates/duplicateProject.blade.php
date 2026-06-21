@@ -27,7 +27,7 @@
 
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="{{ __('buttons.duplicate') }}"/>
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.duplicate')" />
         </div>
         <div class="col-md-6 align-right padding-top-sm">
 

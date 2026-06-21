@@ -107,7 +107,7 @@
         @endif
 
         @if($login::userIsAtLeast($roles::$editor))
-            <input type="submit" value="{{ __('buttons.save') }}" id="primaryCanvasSubmitButton"/>
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="primaryCanvasSubmitButton" />
             <x-global::forms.button inputType="submit" contentRole="secondary" value="closeModal" id="saveAndClose" onclick="leantime.blueprintsController.setCloseModal();">{!! __('buttons.save_and_close') !!}</x-global::forms.button>
         @endif
 

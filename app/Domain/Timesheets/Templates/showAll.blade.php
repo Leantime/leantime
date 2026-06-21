@@ -218,7 +218,7 @@
                     </td>
                     <td>
                         <input type="hidden" name='filterSubmit' value="1"/>
-                        <input type="submit" value="{{ __('buttons.search') }}" class="reload" />
+                        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.search')" class="reload" />
                     </td>
                 </tr>
             </table>

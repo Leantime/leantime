@@ -6,21 +6,15 @@
 
         <div class="form-group">
             <label for="tokenName">{{ __('label.token_name') }}</label>
-            <input type="text" class="form-control" id="tokenName"
-                   name="name" required>
+            <x-global::forms.text-input id="tokenName" name="name" required />
             <small class="form-text text-muted">
                 <br/>{{ __('text.token_name_description') }}
             </small>
         </div>
         <br />
         <div class="align-right">
-            <button type="button" class="btn btn-default"
-                    onclick="jQuery('#modal').modal('hide');">
-                {{ __('buttons.close') }}
-            </button>
-            <button type="submit" class="btn btn-primary">
-                {{ __('buttons.create_token') }}
-            </button>
+            <x-global::forms.button inputType="button" contentRole="default" onclick="jQuery('#modal').modal('hide');">{{ __('buttons.close') }}</x-global::forms.button>
+            <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.create_token') }}</x-global::forms.button>
         </div>
     </form>
 </div>

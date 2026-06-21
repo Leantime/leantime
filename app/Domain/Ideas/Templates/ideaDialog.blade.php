@@ -37,7 +37,7 @@
         <textarea rows="3" cols="10" name="data" class="tiptapComplex"
                   placeholder="">{!! $tpl->escapeMinimal($canvasItem['data']) !!}</textarea><br/>
 
-        <input type="submit" value="{{ __('buttons.save') }}" id="primaryCanvasSubmitButton"/>
+        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="primaryCanvasSubmitButton" />
         <x-global::forms.button contentRole="secondary" inputType="submit" value="closeModal" id="saveAndClose">{!! __('buttons.save_and_close') !!}</x-global::forms.button>
 
         @if ($id !== '')

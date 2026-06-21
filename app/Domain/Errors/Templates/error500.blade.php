@@ -9,7 +9,7 @@
     <span class="animate2 bounceIn">0</span>
     <span class="animate3 bounceIn">0</span>
     <div class="errorbtns animate4 fadeInUp">
-        <a onclick="history.back()" class="btn btn-default">{!! __('buttons.back') !!}</a>
+        <x-global::forms.button tag="a" contentRole="default" onclick="history.back()">{!! __('buttons.back') !!}</x-global::forms.button>
         <x-global::forms.button tag="a" link="{{ BASE_URL }}" contentRole="primary">{!! __('links.dashboard') !!}</x-global::forms.button>
     </div><br/><br/><br/><br/>
 
