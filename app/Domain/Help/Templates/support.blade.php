@@ -147,7 +147,7 @@
                         <h1 class="fancyLink">Ready to make a direct impact?</h1><p>Every contribution—from $1 to $100—goes directly to making Leantime better for everyone.</p>
                         <br />
                         <div class="tw-text-center">
-                            <x-global::forms.button tag="a" contentRole="primary" class="btn-lg" link="https://github.com/sponsors/Leantime" target="_blank">Start Sponsoring Today</x-global::forms.button>
+                            <x-global::forms.button tag="a" contentRole="primary" class="btn-lg" link="https://github.com/sponsors/Leantime" target="_blank" rel="noopener noreferrer">Start Sponsoring Today</x-global::forms.button>
                         </div>
                     </center>
                 </div>
