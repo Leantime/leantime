@@ -40,7 +40,7 @@ class I18n
         ];
 
         foreach ($dateTimeIniSettings as $index) {
-            $languageIni[$index] = $this->language->__($index, true);
+            $languageIni[$index] = $this->language->__($index);
         }
 
         // Fullcalendar and other scripts can handle local to use the browser timezone

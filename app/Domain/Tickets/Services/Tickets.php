@@ -1221,7 +1221,7 @@ class Tickets extends BaseService
      * for every role, breaking the mobile Tasks tab.
      *
      * @param  int  $userId  The ID of the user whose tickets are to be retrieved.
-     * @param  int|null  $projectId  Optional project to narrow to; null/0 = across all the user's projects.
+     * @param  int|string|null  $projectId  Optional project to narrow to; null/0/'' = across all the user's projects.
      * @param  bool  $includeDoneTickets  Whether to include tickets marked as done. Default is false.
      * @param  bool  $includeMilestones  Whether to include milestones in the results. Default is false.
      * @return array Returns an array of grouped tickets categorized by their due date (e.g.,

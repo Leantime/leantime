@@ -287,7 +287,7 @@ class Auth implements Authenticatable
 
     public function updateUserSessionDB(int $userId, string $sessionID): bool
     {
-        return $this->authRepo->updateUserSession($userId, $sessionID, time());
+        return $this->authRepo->updateUserSession($userId, $sessionID, (string) time());
     }
 
     /**

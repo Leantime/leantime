@@ -82,7 +82,9 @@ class InviteTeamStep implements OnboardingSteps
                 if (filter_var($params['email'.$i], FILTER_VALIDATE_EMAIL)) {
                     if ($this->userService->usernameExist($params['email'.$i]) === false) {
                         $userId = $this->userService->createUserInvite($values);
-                        $this->projectService->editUserProjectRelations($userId, [session('currentProject')]);
+                        if ($userId !== false) {
+                            $this->projectService->editUserProjectRelations((int) $userId, [session('currentProject')]);
+                        }
                     }
                 }
 

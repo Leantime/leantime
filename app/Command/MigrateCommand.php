@@ -89,7 +89,7 @@ class MigrateCommand extends Command
                 $installStatus = $install->setupDB($setupConfig);
 
                 if ($installStatus !== true) {
-                    $io->text($installStatus);
+                    $io->text((string) $installStatus);
 
                     return Command::FAILURE;
                 }

@@ -34,7 +34,7 @@ abstract class DTO
                 $propertyName = array_shift($propertyPath);
             }
 
-            $placement = implode('.', array_filter([$propertyPath, $propertyName]));
+            $placement = implode('.', array_filter([$propertyName, ...$propertyPath]));
             $attributes = array_filter(
                 $propertyAttributes,
                 fn ($key) => Str::beforeLast('.', $key) == $placement && Str::afterLast('.', $key) !== 'Map',

@@ -589,9 +589,9 @@ class Blueprints extends Repository
 
     /**
      * @param  int  $canvasId  Target canvas ID
-     * @param  string  $mergeId  Source canvas ID
+     * @param  int  $mergeId  Source canvas ID
      */
-    public function mergeCanvas(int $canvasId, string $mergeId): bool
+    public function mergeCanvas(int $canvasId, int $mergeId): bool
     {
         $columns = [
             'title', 'description', 'assumptions', 'data', 'conclusion', 'box', 'author',

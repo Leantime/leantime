@@ -378,7 +378,7 @@ class Projects
     }
 
     // This populates the projects show all tab and shows users all the projects that they could access
-    public function getProjectsUserHasAccessTo($userId, string $status = 'all', string $clientId = ''): false|array
+    public function getProjectsUserHasAccessTo($userId, string $status = 'all', int $clientId = 0): false|array
     {
         $query = $this->connection->table('zp_projects as project')
             ->select([
