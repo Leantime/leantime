@@ -157,7 +157,7 @@ leantime.ideasController = (function () {
                     leantime.rpc('Ideas.Ideas.patchIdeaItem', { id: canvasId, params: { author: userId } })
                         .then(function (success) {
                             if (! success) { return; }
-                            jQuery("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img").attr("src", leantime.appUrl + "/api/users?profileImage=" + userId);
+                            jQuery("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img").attr("src", leantime.appUrl + "/users/profileImage/" + userId);
 
                             jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated")});
                         })

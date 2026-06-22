@@ -825,7 +825,7 @@ leantime.ticketsController = (function () {
                 leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: { editorId: userId } })
                     .then(
                     function () {
-                        jQuery("#userDropdownMenuLink" + ticketId + " span.text span#userImage" + ticketId + " img").attr("src", leantime.appUrl + "/api/users?profileImage=" + userId);
+                        jQuery("#userDropdownMenuLink" + ticketId + " span.text span#userImage" + ticketId + " img").attr("src", leantime.appUrl + "/users/profileImage/" + userId);
                         jQuery("#userDropdownMenuLink" + ticketId + " span.text span#user" + ticketId).text(dataLabel);
                         jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
 
@@ -1399,7 +1399,7 @@ leantime.ticketsController = (function () {
                                 var $userDropdown = jQuery('#userDropdownMenuLink' + ticketId);
                                 if ($userDropdown.length) {
                                     // Update user image
-                                    $userDropdown.find('span.text span img').attr('src', leantime.appUrl + '/api/users?profileImage=' + newGroupValue);
+                                    $userDropdown.find('span.text span img').attr('src', leantime.appUrl + '/users/profileImage/' + newGroupValue);
 
                                     // Get the new user's name from swimlane header
                                     var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
