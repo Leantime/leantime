@@ -67,7 +67,12 @@ class Login extends Controller
             if (isset($_POST['redirectUrl'])) {
                 $redirectUrl = urldecode(filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL));
             } else {
-                $redirectUrl = '';
+                // Browser flow always submits the hidden redirectUrl field. Non-
+                // browser callers (curl/API/test rigs) may omit it; previously
+                // this branch yielded '' and Frontcontroller::redirect('') threw
+                // "Cannot redirect to an empty URL". Match the GET-path default
+                // from Auth::resolveSafeRedirect().
+                $redirectUrl = BASE_URL.'/dashboard/home';
             }
 
             $username = trim($_POST['username']);
