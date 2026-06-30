@@ -1050,7 +1050,7 @@ class Projects extends BaseService implements ChecksProjectAccess
         $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
 
         if (is_array($project)) {
-            if (isset($project[0]['projectRole']) && $project[0]['projectRole'] != '') {
+            if (isset($project[0]['projectRole']) && $project[0]['projectRole'] != '' && (int) $project[0]['projectRole'] !== 0) {
                 return (string) $project[0]['projectRole'];
             } else {
                 return '';

@@ -791,8 +791,9 @@ class Projects
         if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
             foreach ($values['assignedUsers'] as $userId) {
                 $projectRole = null;
-                if (isset($values['projectRoles']['userProjectRole-'.$userId]) && $values['projectRoles']['userProjectRole-'.$userId] != '40' && $values['projectRoles']['userProjectRole-'.$userId] != '50') {
-                    $projectRole = (int) $values['projectRoles']['userProjectRole-'.$userId];
+                $roleValue = $values['projectRoles']['userProjectRole-'.$userId] ?? null;
+                if ($roleValue !== null && $roleValue !== 'inherit' && $roleValue !== '40' && $roleValue !== '50') {
+                    $projectRole = (int) $roleValue;
                 }
 
                 $this->addProjectRelation($userId, $projectId, $projectRole);
