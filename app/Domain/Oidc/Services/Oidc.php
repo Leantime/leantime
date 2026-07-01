@@ -21,8 +21,6 @@ class Oidc
 {
     private Environment $config;
 
-    private Language $Language;
-
     private AuthService $authService;
 
     public UserRepository $userRepo;
@@ -118,20 +116,27 @@ class Oidc
     }
 
     /**
+     * Builds the OIDC authorization redirect URL and stores the CSRF state in
+     * the session. Returns false when the provider's auth endpoint cannot be
+     * resolved (callers treat a falsy result as "OIDC unavailable").
+     *
      * @throws GuzzleException
      * @throws \Exception
      */
-    public function buildLoginUrl(): string
+    public function buildLoginUrl(): string|false
     {
 
         if ($this->getAuthUrl()) {
+
+            $state = $this->generateState();
+            session(['oidc.state' => $state]);
 
             return $this->getAuthUrl().'?'.http_build_query([
                 'client_id' => $this->clientId,
                 'redirect_uri' => $this->buildRedirectUrl(),
                 'response_type' => 'code',
                 'scope' => $this->scopes,
-                'state' => $this->generateState(),
+                'state' => $state,
             ]);
         }
 
@@ -141,7 +146,7 @@ class Oidc
     /**
      * @throws GuzzleException
      */
-    private function getAuthUrl(): string
+    private function getAuthUrl(): string|false
     {
         if (! empty($this->authUrl || $this->loadEndpoints())) {
             return $this->authUrl;
@@ -151,8 +156,6 @@ class Oidc
     }
 
     /**
-     * @return void
-     *
      * @throws GuzzleException
      */
     public function callback(string $code, string $state): Response
@@ -194,9 +197,6 @@ class Oidc
         return $this->getMultiUrl($this->userInfoUrl, $token);
     }
 
-    /**
-     * @return void
-     */
     private function login(array $userInfo): Response
     {
 
@@ -453,7 +453,7 @@ class Oidc
     /**
      * @throws GuzzleException
      */
-    private function getTokenUrl(): string
+    private function getTokenUrl(): string|false
     {
         if (! empty($this->tokenUrl || $this->loadEndpoints())) {
             return $this->tokenUrl;
@@ -492,19 +492,19 @@ class Oidc
         }
         // load all not yet defined endpoints from well-known configuration
 
-        if (! $this->authUrl || $this->authUrl === '') {
+        if (! $this->authUrl) {
             $this->authUrl = $endpoints['authorization_endpoint'];
         }
 
-        if (! $this->tokenUrl || $this->tokenUrl === '') {
+        if (! $this->tokenUrl) {
             $this->tokenUrl = $endpoints['token_endpoint'];
         }
 
-        if (! $this->jwksUrl || $this->jwksUrl === '') {
+        if (! $this->jwksUrl) {
             $this->jwksUrl = $endpoints['jwks_uri'];
         }
 
-        if (! $this->userInfoUrl || $this->userInfoUrl === '') {
+        if (! $this->userInfoUrl) {
             $this->userInfoUrl = $endpoints['userinfo_endpoint'];
         }
 
@@ -554,15 +554,17 @@ class Oidc
         return bin2hex(random_bytes(16));
     }
 
+    /**
+     * Verifies the state parameter returned by the OIDC provider against the
+     * value stored in the session when the login flow was initiated. The state
+     * is consumed (one-time use) regardless of the outcome to prevent replay.
+     */
     private function verifyState(string $state): bool
     {
-        // TODO
-        return true;
-    }
+        $storedState = (string) session('oidc.state');
+        session()->forget('oidc.state');
 
-    private function encodeBase64Url(string $value): string
-    {
-        return strtr(base64_encode($value), '+/', '-_');
+        return $storedState !== '' && hash_equals($storedState, $state);
     }
 
     private function decodeBase64Url(string $value): string

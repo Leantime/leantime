@@ -58,25 +58,25 @@ class PathManifestRepository
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
      * Determine if the manifest should be compiled.
      *
-     * @param  array  $manifest
+     * @param  array|null  $manifest
      * @param  array  $paths
      * @return bool
      */
     public function shouldRefresh($manifest, $paths)
     {
-        return is_null($manifest) || $manifest[$manifest] != $paths;
+        return is_null($manifest) || $manifest != $paths;
     }
 
     /**
      * Create a fresh service manifest data structure.
      *
-     * @param  array  return [$this->manifestKey => $paths];
+     * @param  string  $manifestName
      * @return array
      */
     protected function freshManifest($manifestName, array $paths)
@@ -87,7 +87,6 @@ class PathManifestRepository
     /**
      * Write the service manifest file to disk.
      *
-     * @param  array  $manifest
      * @return array
      *
      * @throws \Exception

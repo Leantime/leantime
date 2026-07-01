@@ -45,10 +45,11 @@ class DelCanvas
     /**
      * get - display the delete confirmation dialog.
      *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
      * @param  string|null  $id  Board id from the route
      */
     #[RequiresPermission(BlueprintsPermissions::DELETE)]
-    public function get(?string $id = null): Response
+    public function get(?string $canvasSlug = null, ?string $id = null): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
@@ -62,10 +63,11 @@ class DelCanvas
     /**
      * post - process the board deletion.
      *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
      * @param  string|null  $id  Board id from the route
      */
     #[RequiresPermission(BlueprintsPermissions::DELETE, entityScoped: true)]
-    public function post(?string $id = null): Response
+    public function post(?string $canvasSlug = null, ?string $id = null): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
@@ -89,7 +91,7 @@ class DelCanvas
                 strtoupper($this->canvasSlug).'canvas_deleted'
             );
 
-            if (! $allCanvas || count($allCanvas) == 0) {
+            if (! $allCanvas) {
                 return Frontcontroller::redirect(BASE_URL.'/blueprints/showBoards');
             }
 

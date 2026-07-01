@@ -3,56 +3,12 @@
 namespace Leantime\Domain\Auth\Repositories;
 
 use Illuminate\Database\ConnectionInterface;
-use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 class Auth
 {
-    /**
-     * @var int|null user id from DB
-     */
-    private ?int $userId = null;
-
-    /**
-     * @var int|null user id from DB
-     */
-    private ?int $clientId = null;
-
-    /**
-     * @var string|null username from db
-     */
-    private ?string $username = null;
-
-    /**
-     * @var string username from db
-     */
-    private string $name = '';
-
-    /**
-     * @var string profileid (image) from db
-     */
-    private string $profileId = '';
-
-    private ?string $password = null;
-
-    /**
-     * @var string|null username (emailaddress)
-     */
-    private ?string $user = null;
-
-    /**
-     * @var string|null username (emailaddress)
-     */
-    private ?string $mail = null;
-
-    private bool $twoFAEnabled;
-
-    private string $twoFASecret;
-
-    private ?string $session = null;
-
     private ConnectionInterface $db;
 
     /**
@@ -75,14 +31,10 @@ class Auth
 
     public object $hasher;
 
-    private static Auth $instance;
-
     /**
      * How often can a user reset a password before it has to be changed
      */
     public int $pwResetLimit = 5;
-
-    private EnvironmentCore $config;
 
     private UserRepository $userRepo;
 
@@ -90,12 +42,10 @@ class Auth
 
     public function __construct(
         DbCore $db,
-        EnvironmentCore $config,
         UserRepository $userRepo,
         DatabaseHelper $dbHelper
     ) {
         $this->db = $db->getConnection();
-        $this->config = $config;
         $this->userRepo = $userRepo;
         $this->dbHelper = $dbHelper;
     }
@@ -107,18 +57,6 @@ class Auth
     {
         return $this->db->table('zp_user')
             ->where('session', $sessionId)
-            ->update(['session' => '']) >= 0;
-    }
-
-    /**
-     * checkSessions - check all sessions in the database and unset them if necessary
-     */
-    private function invalidateExpiredUserSessions(): bool
-    {
-        $expirationTime = time() - $this->config->sessionExpiration;
-
-        return $this->db->table('zp_user')
-            ->where('sessiontime', '<', $expirationTime)
             ->update(['session' => '']) >= 0;
     }
 

@@ -8,12 +8,12 @@
 
     <br />
     <label>{{ __('label.goal_description') }}</label>
-    <input type="text" name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" style="width:100%;" /><br />
+    <x-global::forms.text-input name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" style="width:100%;" /><br />
 
     <br />
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn" />
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="saveBtn" />
         </div>
         <div class="col-md-6 align-right padding-top-sm">
 

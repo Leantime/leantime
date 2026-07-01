@@ -19,7 +19,7 @@
         {!! $tpl->displayNotification() !!}
 
         @can('clients.create')
-             <a class="btn btn-primary" href="{{ BASE_URL }}/clients/newClient"><i class='fa fa-plus'></i> {!! __('link.new_client') !!}</a>
+             <x-global::forms.button tag="a" link="{{ BASE_URL }}/clients/newClient" contentRole="primary"><i class='fa fa-plus'></i> {!! __('link.new_client') !!}</x-global::forms.button>
         @endcan
 
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allClientsTable">

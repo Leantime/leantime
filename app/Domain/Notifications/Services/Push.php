@@ -211,7 +211,7 @@ class Push
             );
         } catch (ClientException $e) {
             $response = $e->getResponse();
-            $bodyText = $response !== null ? (string) $response->getBody() : '';
+            $bodyText = (string) $response->getBody();
 
             // FCM signals dead tokens via UNREGISTERED (404) or
             // INVALID_ARGUMENT (400 with that specific error code).

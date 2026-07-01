@@ -52,7 +52,7 @@ class Db
     /**
      * Get the PDO connection (lazily retrieved from Laravel's connection pool)
      *
-     * @return PDO
+     * @return \PDO|null
      */
     public function __get($name)
     {

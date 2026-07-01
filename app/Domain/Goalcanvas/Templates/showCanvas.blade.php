@@ -100,8 +100,8 @@
             <div class="row">
                 <div class="col-md-3">
                     @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
-                        <a href="#/goalcanvas/editCanvasItem?type={{ $elementName }}" class="btn btn-primary"
-                            id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</a>
+                        <x-global::forms.button tag="a" link="#/goalcanvas/editCanvasItem?type={{ $elementName }}" contentRole="primary"
+                            id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</x-global::forms.button>
                     @endif
                 </div>
 
@@ -438,9 +438,9 @@
 
                     @if ($login::userIsAtLeast($roles::$editor))
                         <br /><br />
-                        <a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
+                        <x-global::forms.button tag="a" link="javascript:void(0)" class="addCanvasLink" contentRole="primary">
                             {{ __('links.icon.create_new_board') }}
-                        </a>
+                        </x-global::forms.button>
                     @endif
                 </div>
             @endif

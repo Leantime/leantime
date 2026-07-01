@@ -52,7 +52,7 @@
                     </div>
                     <div class="filterBoxLeft">
                         <label>&nbsp;</label>
-                        <input type="submit" value="{{ __('buttons.search') }}" class="reload" />
+                        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.search')" class="reload" />
                     </div>
                     <div class="clearall"></div>
                 </div>

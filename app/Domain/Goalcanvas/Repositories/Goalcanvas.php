@@ -86,7 +86,7 @@ class Goalcanvas extends Blueprints
      */
     public function __construct(DbCore $db, LanguageCore $language, Tickets $ticketRepo, DatabaseHelper $dbHelper)
     {
-        parent::__construct($db, $language, $ticketRepo, $dbHelper);
+        parent::__construct($db, $ticketRepo, $dbHelper);
         $this->dbConnection = $db->getConnection();
         $this->canvasLanguage = $language;
     }

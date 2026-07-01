@@ -11,6 +11,7 @@ use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\EntityRelationshipEnum;
+use Leantime\Domain\Tickets\Events\TicketStatusUpdated;
 use Leantime\Domain\Users\Services\Users;
 
 class Tickets
@@ -325,7 +326,7 @@ class Tickets
      *
      * @param  null  $limit
      */
-    public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', $limit = null, $includeCounts = true, $offset = null): bool|array
+    public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', ?int $limit = null, $includeCounts = true, ?int $offset = null): bool|array
     {
         $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
         $userId = $searchCriteria['currentUser'] ?? session('userdata.id') ?? '-1';
@@ -1590,8 +1591,6 @@ class Tickets
 
             return $ticketId;
         }
-
-        return false;
     }
 
     /**
@@ -1650,7 +1649,7 @@ class Tickets
             $updates[$sanitizedKey] = $value;
 
             if ($key == 'status') {
-                static::dispatch_event('ticketStatusUpdate', ['ticketId' => $id, 'status' => $value, 'action' => 'ticketStatusUpdate']);
+                TicketStatusUpdated::dispatch(ticketId: (int) $id, status: $value, legacyHook: __FUNCTION__);
             }
         }
 
@@ -1722,11 +1721,11 @@ class Tickets
             $updates['kanbanSortIndex'] = $ticketSorting;
         }
 
-        static::dispatch_event('ticketStatusUpdate', ['ticketId' => $ticketId, 'status' => $status, 'action' => 'ticketStatusUpdate', 'handler' => $handler]);
+        TicketStatusUpdated::dispatch(ticketId: (int) $ticketId, status: $status, handler: $handler, legacyHook: __FUNCTION__);
 
         return $this->connection->table('zp_tickets')
             ->where('id', $ticketId)
-            ->update($updates);
+            ->update($updates) > 0;
     }
 
     /**
@@ -1993,7 +1992,7 @@ class Tickets
             ->where('entityAType', 'Ticket')
             ->where('entityBType', 'User')
             ->where('relationship', EntityRelationshipEnum::Collaborator->value)
-            ->delete();
+            ->delete() > 0;
     }
 
     /**

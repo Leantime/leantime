@@ -384,7 +384,7 @@ jQuery(document).ready(function(){
                 </tfoot>
             </table>
             <div class="right">
-                <input type="submit" name="saveTimeSheet" class="saveTimesheetBtn" value="Save" />
+                <x-global::forms.button tag="input" inputType="submit" contentRole="primary" labelText="Save" name="saveTimeSheet" class="saveTimesheetBtn" />
             </div>
             <div class="clearall"></div>
         </form>

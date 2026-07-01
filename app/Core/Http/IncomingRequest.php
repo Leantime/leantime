@@ -266,11 +266,6 @@ class IncomingRequest extends \Illuminate\Http\Request
         return $pattern === '' ? '/' : $pattern;
     }
 
-    private function getBaseUrlReal(): string
-    {
-        return $this->baseUrl ??= $this->prepareBaseUrl();
-    }
-
     public function setCurrentRoute($route): void
     {
         $this->currentRoute = $route;
@@ -292,8 +287,6 @@ class IncomingRequest extends \Illuminate\Http\Request
         if (is_array($actionParts)) {
             return $actionParts[0];
         }
-
-        return '';
     }
 
     /**

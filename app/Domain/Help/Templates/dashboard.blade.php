@@ -15,7 +15,7 @@
             2. Define the work that will get you to those goals<br />
             3. And then reach them, planning your day to day with your My Work Dashboard.<br />
             <br /><br />
-            <a href="javascript:void(0)" class="btn btn-primary" onclick="leantime.helperController.hideAndKeepHidden('dashboard'); leantime.helperController.startProjectDashboardTour();">{{ __("buttons.lets_go") }} <i class="fa-solid fa-arrow-right"></i></a>
+            <x-global::forms.button tag="a" link="javascript:void(0)" contentRole="primary" onclick="leantime.helperController.hideAndKeepHidden('dashboard'); leantime.helperController.startProjectDashboardTour();">{{ __("buttons.lets_go") }} <i class="fa-solid fa-arrow-right"></i></x-global::forms.button>
             <div class="clearall"></div>
         </div>
     </div>

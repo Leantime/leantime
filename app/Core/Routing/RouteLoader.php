@@ -65,10 +65,9 @@ class RouteLoader
      */
     private static function loadSystemPluginRoutes(): void
     {
-        if (
-            isset(app(Environment::class)->plugins)
-            && $configPlugins = explode(',', app(Environment::class)->plugins)
-        ) {
+        if (isset(app(Environment::class)->plugins)) {
+            $configPlugins = explode(',', app(Environment::class)->plugins);
+
             Route::middleware([CheckPermissions::class])->group(function () use ($configPlugins) {
                 foreach ($configPlugins as $plugin) {
                     if (file_exists($pluginRoutesPath = APP_ROOT.'/app/Plugins/'.$plugin.'/routes.php')) {

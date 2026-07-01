@@ -24,8 +24,8 @@
             <br /><br />
             <div class="row">
                 <div class="col-md-12 tw-text-center">
-                    <a href="javascript:void(0)" class="btn btn-secondary" onclick="leantime.helperController.closeModal()">I'll explore on my own</a>
-                    <a href="javascript:void(0)" class="btn btn-primary" onclick="leantime.helperController.closeModal(); leantime.helperController.startKanbanTour();">{{ __("buttons.start_tour") }} <i class="fa-solid fa-arrow-right"></i></a>
+                    <x-global::forms.button tag="a" link="javascript:void(0)" contentRole="tertiary" onclick="leantime.helperController.closeModal()">I'll explore on my own</x-global::forms.button>
+                    <x-global::forms.button tag="a" link="javascript:void(0)" contentRole="primary" onclick="leantime.helperController.closeModal(); leantime.helperController.startKanbanTour();">{{ __("buttons.start_tour") }} <i class="fa-solid fa-arrow-right"></i></x-global::forms.button>
                 </div>
             </div>
             <div class="row mt-3">

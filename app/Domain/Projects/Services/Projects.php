@@ -147,7 +147,7 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $dateOfFirstTicket = new DateTime($firstTicket->date);
         $today = new DateTime;
-        $totalprojectDays = $today->diff($dateOfFirstTicket)->format('%a');
+        $totalprojectDays = (int) $today->diff($dateOfFirstTicket)->format('%a');
 
         // Calculate percent
 
@@ -280,7 +280,8 @@ class Projects extends BaseService implements ChecksProjectAccess
     public function notifyProjectUsers(Notification $notification): void
     {
 
-        // Filter notifications
+        // Filter notifications (dispatch_filter returns mixed; the filter preserves the entity)
+        /** @var Notification $notification */
         $notification = EventCore::dispatch_filter('notificationFilter', $notification);
 
         // Email
@@ -780,6 +781,8 @@ class Projects extends BaseService implements ChecksProjectAccess
         if ($project) {
             return $project['name'];
         }
+
+        return null;
     }
 
     /**
@@ -1862,15 +1865,13 @@ class Projects extends BaseService implements ChecksProjectAccess
         $avatar = $this->avatarcreator->getAvatar($project['name']);
 
         return self::dispatch_filter('afterGettingAvatar', $avatar, ['projectId' => $id]);
-
-        return $avatar;
     }
 
     /**
      * Sets the avatar for a project.
      *
      * @param  mixed  $file  The file containing the avatar.
-     * @param  mixed  $project  The project object.
+     * @param  mixed  $projectId  The id of the project.
      * @return bool Indicates whether the avatar was successfully set.
      *
      * @throws BindingResolutionException

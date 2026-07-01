@@ -31,22 +31,22 @@
                             <div class="form-group">
                                 <label class="span4 control-label">{!! __('label.name') !!}</label>
                                 <div class="span6">
-                                    <input type="text" name="name" id="name" value="{{ $values['name'] }}" />
+                                    <x-global::forms.text-input name="name" id="name" value="{{ $values['name'] }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="span4 control-label">{!! __('label.email') !!}</label>
                                 <div class="span6">
-                                    <input type="text" name="email" id="email" value="{{ $values['email'] }}" />
+                                    <x-global::forms.text-input name="email" id="email" value="{{ $values['email'] }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="span4 control-label">{!! __('label.url') !!}</label>
                                 <div class="span6">
-                                    <input
-                                            type="text" name="internet" id="internet"
+                                    <x-global::forms.text-input
+                                            name="internet" id="internet"
                                             value="{{ $values['internet'] }}" />
                                 </div>
                             </div>
@@ -54,8 +54,8 @@
                             <div class="form-group">
                                 <label class="span4 control-label">{!! __('label.street') !!}</label>
                                 <div class="span6">
-                                    <input
-                                            type="text" name="street" id="street"
+                                    <x-global::forms.text-input
+                                            name="street" id="street"
                                             value="{{ $values['street'] }}" />
                                 </div>
                             </div>
@@ -63,7 +63,7 @@
                             <div class="form-group">
                                 <label class="span4 control-label">{!! __('label.zip') !!}</label>
                                 <div class="span6">
-                                    <input type="text"
+                                    <x-global::forms.text-input
                                            name="zip" id="zip" value="{{ $values['zip'] }}" />
                                 </div>
                             </div>
@@ -71,7 +71,7 @@
                             <div class="form-group">
                                 <label class="span4 control-label">{!! __('label.city') !!}</label>
                                 <div class="span6">
-                                    <input type="text"
+                                    <x-global::forms.text-input
                                            name="city" id="city" value="{{ $values['city'] }}" />
                                 </div>
                             </div>
@@ -79,8 +79,8 @@
                             <div class="form-group">
                                 <label class="span4 control-label">{!! __('label.state') !!}</label>
                                 <div class="span6">
-                                    <input
-                                            type="text" name="state" id="state"
+                                    <x-global::forms.text-input
+                                            name="state" id="state"
                                             value="{{ $values['state'] }}" />
                                 </div>
                             </div>
@@ -88,8 +88,8 @@
                             <div class="form-group">
                                 <label class="span4 control-label">{!! __('label.country') !!}</label>
                                 <div class="span6">
-                                    <input
-                                            type="text" name="country" id="country"
+                                    <x-global::forms.text-input
+                                            name="country" id="country"
                                             value="{{ $values['country'] }}" />
                                 </div>
                             </div>
@@ -97,8 +97,8 @@
                             <div class="form-group">
                                 <label class="span4 control-label">{!! __('label.phone') !!}</label>
                                 <div class="span6">
-                                    <input
-                                            type="text" name="phone" id="phone"
+                                    <x-global::forms.text-input
+                                            name="phone" id="phone"
                                             value="{{ $values['phone'] }}" />
                                 </div>
                             </div>
@@ -107,8 +107,8 @@
 
                             <div class="form-group">
                                 <div class="span4 control-label">
-                                    <input type="submit" name="save" id="save"
-                                           value="{{ __('buttons.save') }}" class="btn btn-primary" />
+                                    <x-global::forms.button tag="input" inputType="submit" name="save" id="save"
+                                           :labelText="__('buttons.save')" contentRole="primary" />
                                 </div>
                                 <div class="span6">
 

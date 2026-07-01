@@ -179,7 +179,9 @@ class Ldap
     public function getEmail(string $username): string
     {
         if (! $this->ldapConnection) {
-            Log::error('No connection, last error: '.ldap_error($this->ldapConnection));
+            Log::error('LDAP: No connection established');
+
+            return '';
         }
         $filter = '('.$this->ldapKeys->username.'='.$this->extractLdapFromUsername($username).')';
 
@@ -203,7 +205,9 @@ class Ldap
     {
 
         if (! $this->ldapConnection) {
-            Log::error('No connection, last error: '.ldap_error($this->ldapConnection));
+            Log::error('LDAP: No connection established');
+
+            return false;
         }
 
         $filter = '('.$this->ldapKeys->username.'='.$this->extractLdapFromUsername($username).')';
@@ -288,11 +292,9 @@ class Ldap
 
         $getLdap = explode('@', $username);
 
-        if ($getLdap && is_array($getLdap)) {
+        if (is_array($getLdap)) {
             return $getLdap[0];
         }
-
-        return '';
     }
 
     public function getAllMembers(): array|false
@@ -321,7 +323,7 @@ class Ldap
             return $allUsers;
         }
 
-        Log::error('ldap extension not installed', 0);
+        Log::error('ldap extension not installed');
 
         return false;
     }

@@ -70,4 +70,33 @@
         padding: 0px !important;
         bottom: 10px;
     }
+
+    /*
+     * When a modal (e.g. a single to-do) is open, print only the modal's
+     * content instead of the underlying page. nyroModal appends .nyroModalBg
+     * (overlay) and .nyroModalCont (content) to the body, so we can hide the
+     * rest of the app and let the modal flow onto the page.
+     */
+    body:has(.nyroModalCont) .mainwrapper,
+    body:has(.nyroModalCont) .nyroModalBg,
+    .nyroModalCont .nyroModalClose,
+    .nyroModalCont .modalCloseButton {
+        display: none !important;
+    }
+
+    body:has(.nyroModalCont) .nyroModalCont {
+        position: static !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+        page-break-inside: avoid;
+    }
+
+    body:has(.nyroModalCont) .nyroModalCont * {
+        overflow: visible !important;
+    }
 }

@@ -16,16 +16,16 @@
             👋 {{ __('text.hi') }} {{ session()->get("userdata.name") }}
 
             <div class="tw-float-right">
-                <a href="{{ BASE_URL }}/users/editOwn#theme" class="btn btn-link" style="color:var(--main-titles-color); padding:0px; width:31px; line-height:31px; text-align: center;" data-tippy-content="{{ __('text.update_theme') }}">
+                <x-global::forms.button tag="a" link="{{ BASE_URL }}/users/editOwn#theme" contentRole="link" style="color:var(--main-titles-color); padding:0px; width:31px; line-height:31px; text-align: center;" data-tippy-content="{{ __('text.update_theme') }}">
                     <i class="fa-solid fa-palette"></i>
-                </a>
+                </x-global::forms.button>
 
-                <a href="#/widgets/widgetManager" class="btn btn-link" style="color:var(--main-titles-color); padding:0px; width:31px; line-height:31px; text-align: center;" data-tippy-content="{{ __('text.update_dashboard') }}">
+                <x-global::forms.button tag="a" link="#/widgets/widgetManager" contentRole="link" style="color:var(--main-titles-color); padding:0px; width:31px; line-height:31px; text-align: center;" data-tippy-content="{{ __('text.update_dashboard') }}">
                     <span class="fa fa-fw fa-cogs"></span>
                     @if($showSettingsIndicator)
                         <span class='new-indicator'></span>
                     @endif
-                </a>
+                </x-global::forms.button>
             </div>
         </div>
 

@@ -58,10 +58,11 @@ class BoardDialog
     /**
      * get - display the create/edit board dialog.
      *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
      * @param  string|null  $id  Current board id
      */
     #[RequiresPermission(BlueprintsPermissions::VIEW, entityScoped: true)]
-    public function get(?string $id = null): Response
+    public function get(?string $canvasSlug = null, ?string $id = null): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');
@@ -88,10 +89,11 @@ class BoardDialog
     /**
      * post - handle create/edit board submissions.
      *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
      * @param  string|null  $id  Current board id
      */
     #[RequiresPermission(BlueprintsPermissions::EDIT, entityScoped: true)]
-    public function post(?string $id = null): Response
+    public function post(?string $canvasSlug = null, ?string $id = null): Response
     {
         if ($this->template === null) {
             return $this->tpl->displayPartial('errors.error404');

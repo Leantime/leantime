@@ -16,7 +16,7 @@
     @dispatchEvent('afterFormOpen')
 
     <label for="description">{!! __('label.title') !!}</label>
-    <input type="text" id="description" name="description" value="{{ $tpl->escape($values['description']) }}" /><br />
+    <x-global::forms.text-input id="description" name="description" value="{{ $tpl->escape($values['description']) }}" /><br />
 
     <div class="par">
         <label for="dateFrom">{!! __('label.start_date') !!}</label>
@@ -50,7 +50,7 @@
 
     <p class="stdformbutton">
         <input type="hidden" value="1" name="save" />
-        <input type="submit" name="saveEvent" id="saveEvent" value="{{ __('buttons.save') }}" class="button" />
+        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="saveEvent" id="saveEvent" />
     </p>
 
     @dispatchEvent('beforeFormClose')

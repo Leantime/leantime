@@ -28,7 +28,7 @@
             <div class="row">
                 <div class="col-md-8">
                     <label>{{ __('label.what_is_your_goal') }}</label>
-                    <input type="text" name="title" value="{{ $canvasItem['title'] }}" style="width:100%"><br>
+                    <x-global::forms.text-input name="title" value="{{ $canvasItem['title'] }}" style="width:100%" /><br>
 
                     @if (!empty($relatesLabels))
                         <label>{{ __('label.relates') }}</label>
@@ -45,27 +45,27 @@
                     @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
                     <div id="measureGoalContainer">
                         <label>{{ __('text.what_metric_will_you_be_using') }}</label>
-                        <input type="text" name="description" value="{{ $canvasItem['description'] }}"
-                            style="width:100%"><br>
+                        <x-global::forms.text-input name="description" value="{{ $canvasItem['description'] }}"
+                            style="width:100%" /><br>
                     </div>
 
                     <div class="row">
                         <div class="col-md-3">
                             <label>{{ __('label.starting_value') }}</label>
-                            <input type="number" step="0.01" name="startValue" value="{{ $canvasItem['startValue'] }}"
-                                style="width:105px">
+                            <x-global::forms.text-input type="number" step="0.01" name="startValue" value="{{ $canvasItem['startValue'] }}"
+                                style="width:105px" />
                         </div>
                         <div class="col-md-3">
                             <label>{{ __('label.current_value') }}</label>
-                            <input type="number" step="0.01" name="currentValue" id="currentValueField"
+                            <x-global::forms.text-input type="number" step="0.01" name="currentValue" id="currentValueField"
                                 value="{{ $canvasItem['currentValue'] }}"
                                 @if ($canvasItem['setting'] == 'linkAndReport') readonly data-tippy-content="Current value calculated from child goals" @endif
-                                style="width:105px">
+                                style="width:105px" />
                         </div>
                         <div class="col-md-3">
                             <label>{{ __('label.goal_value') }}</label>
-                            <input type="number" step="0.01" name="endValue" value="{{ $canvasItem['endValue'] }}"
-                                style="width:105px">
+                            <x-global::forms.text-input type="number" step="0.01" name="endValue" value="{{ $canvasItem['endValue'] }}"
+                                style="width:105px" />
                         </div>
                         <div class="col-md-3">
                             <label>{{ __('label.type') }}</label>
@@ -82,9 +82,9 @@
 
                     <br>
                     @if ($login::userIsAtLeast($roles::$editor))
-                        <input type="submit" value="{{ __('buttons.save') }}" id="primaryCanvasSubmitButton">
-                        <button type="submit" class="btn btn-primary" id="saveAndClose" value="closeModal"
-                            onclick="leantime.goalCanvasController.setCloseModal();">{{ __('buttons.save_and_close') }}</button>
+                        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="primaryCanvasSubmitButton" />
+                        <x-global::forms.button inputType="submit" contentRole="secondary" id="saveAndClose" value="closeModal"
+                            onclick="leantime.goalCanvasController.setCloseModal();">{{ __('buttons.save_and_close') }}</x-global::forms.button>
                     @endif
 
                     @if ($id !== '')
@@ -132,11 +132,11 @@
                                 </div>
                                 <div class="row" id="newMilestone" style="display:none;">
                                     <div class="col-md-12">
-                                        <input type="text" width="50%" name="newMilestone"></textarea><br />
+                                        <x-global::forms.text-input width="50%" name="newMilestone" /><br />
                                         <input type="hidden" name="type" value="milestone" />
                                         <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
-                                        <input type="button" value="{{ __("buttons.save") }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                        <input type="button" value="{{ __("buttons.cancel") }}" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                                        <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
+                                        <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
                                     </div>
                                 </div>
 
@@ -152,8 +152,8 @@
                                         </select>
                                         <input type="hidden" name="type" value="milestone" />
                                         <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
-                                        <input type="button" value="{{ __("buttons.save") }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                        <input type="button" value="{{ __("buttons.cancel") }}" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                                        <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
+                                        <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
                                     </div>
                                 </div>
                             </center>
@@ -165,16 +165,16 @@
                                     {{ __("label.loading_milestone") }}
                                 </div>
                             </div>
-                            <a href="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="goalCanvasModal delete formModal"><i class="fa fa-close"></i> {{ __("links.remove") }}</a>
+                            <x-global::forms.button tag="a" link="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="goalCanvasModal delete formModal" state="danger" variant="outline"><i class="fa fa-close"></i> {{ __("links.remove") }}</x-global::forms.button>
                         @endif
                     @endif
                 </div>
             </div>
 
             @if ($id != '')
-                <a href="{{ BASE_URL . "/goalcanvas/delCanvasItem/$id" }}" class="formModal delete right">
+                <x-global::forms.button tag="a" link="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete right" state="danger" variant="outline">
                     <i class='fa fa-trash-can'></i> {{ __('links.delete') }}
-                </a>
+                </x-global::forms.button>
             @endif
 
         </form>

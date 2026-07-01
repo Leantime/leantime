@@ -15,9 +15,6 @@ use Symfony\Component\HttpFoundation;
  */
 class WidgetManager extends Controller
 {
-    /**
-     * @var WidgetService
-     */
     private Widgets $widgetService;
 
     /**

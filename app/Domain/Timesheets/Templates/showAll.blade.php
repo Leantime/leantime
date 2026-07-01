@@ -218,7 +218,7 @@
                     </td>
                     <td>
                         <input type="hidden" name='filterSubmit' value="1"/>
-                        <input type="submit" value="{{ __('buttons.search') }}" class="reload" />
+                        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.search')" class="reload" />
                     </td>
                 </tr>
             </table>
@@ -340,7 +340,7 @@
 
                         <td>
                             @if ($login::userIsAtLeast($roles::$manager))
-                            <input type="submit" class="button" value="{{ __('buttons.save') }}" name="saveInvoice" />
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="saveInvoice" />
                             @endif
                         </td>
                         <td>

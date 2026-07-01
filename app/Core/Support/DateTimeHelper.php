@@ -248,6 +248,19 @@ class DateTimeHelper extends CarbonImmutable
     }
 
     /**
+     * Parses a database 24-hour time string and returns a CarbonImmutable instance.
+     *
+     * @param  string  $db24Time  The 24-hour time string to parse.
+     * @return CarbonImmutable The parsed CarbonImmutable instance in the database timezone (UTC)
+     */
+    public function parseDb24hTime(string $db24Time): CarbonImmutable
+    {
+        $this->datetime = CarbonImmutable::createFromFormat('!H:i', $db24Time, $this->dbTimezone);
+
+        return $this->datetime;
+    }
+
+    /**
      * Returns the current date and time based on the user's timezone and language.
      *
      * @return CarbonImmutable The current date and time in the user's timezone and language.

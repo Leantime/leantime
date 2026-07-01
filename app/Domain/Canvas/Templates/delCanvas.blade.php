@@ -6,7 +6,7 @@
 
 <form method="post" action="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvas/{{ $id }}">
     <p>{!! __('text.confirm_board_deletion') !!}</p><br />
-    <input type="submit" value="{{ __('buttons.yes_delete') }}" name="del" class="button" />
-    <a class="btn btn-secondary"
-       href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas">{!! __('buttons.back') !!}</a>
+    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.yes_delete')" name="del" />
+    <x-global::forms.button tag="a" contentRole="tertiary"
+       link="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas">{!! __('buttons.back') !!}</x-global::forms.button>
 </form>

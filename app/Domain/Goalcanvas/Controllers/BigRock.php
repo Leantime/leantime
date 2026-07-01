@@ -10,12 +10,8 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
-use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -23,27 +19,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class BigRock extends Controller
 {
-    private GoalcanvaRepository $canvasRepo;
-
-    private CommentRepository $commentsRepo;
-
-    private TicketService $ticketService;
-
-    private ProjectService $projectService;
-
     private GoalcanvaService $goalService;
 
     public function init(
-        GoalcanvaRepository $canvasRepo,
-        CommentRepository $commentsRepo,
-        TicketService $ticketService,
-        ProjectService $projectService,
         GoalcanvaService $goalService
     ): void {
-        $this->canvasRepo = $canvasRepo;
-        $this->commentsRepo = $commentsRepo;
-        $this->ticketService = $ticketService;
-        $this->projectService = $projectService;
         $this->goalService = $goalService;
     }
 

@@ -208,9 +208,9 @@
                 <br />{!! $tpl->__('text.logicmodel.helper_content') !!}
                 @if ($login::userIsAtLeast($roles::$editor))
                     <br /><br />
-                    <a href="javascript:void(0)" class="addCanvasLink btn btn-primary">
+                    <x-global::forms.button tag="a" link="javascript:void(0)" class="addCanvasLink" contentRole="primary">
                         {{ $tpl->__('links.icon.create_new_board') }}
-                    </a>
+                    </x-global::forms.button>
                 @endif
             </div>
         @endif

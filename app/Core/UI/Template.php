@@ -7,7 +7,6 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
-use Illuminate\View\Compilers\Compiler;
 use Illuminate\View\View;
 use Illuminate\View\ViewException;
 use Leantime\Core\Configuration\AppSettings;
@@ -35,10 +34,6 @@ class Template
 
     /** @var array - vars that are set in the action */
     private array $vars = [];
-
-    private string $notifcation = '';
-
-    private string $notificationType = '';
 
     private string $hookContext = '';
 
@@ -68,15 +63,10 @@ class Template
     /**
      * __construct - get instance of frontcontroller
      *
-     * @param  Compiler|null  $bladeCompiler
-     *
      * @throws BindingResolutionException
      * @throws \ReflectionException
      */
     public function __construct(
-        /** @var Theme */
-        private Theme $theme,
-
         /** @var Language */
         public Language $language,
 
@@ -191,8 +181,6 @@ class Template
 
     /**
      * get - get assigned values
-     *
-     * @return array
      */
     public function get(string $name): mixed
     {
@@ -263,8 +251,6 @@ class Template
 
     /**
      * Refreshes (main url page in the background)
-     *
-     * @param  string  $eventName
      **/
     public function htmxRefresh(): void
     {
@@ -277,8 +263,6 @@ class Template
 
     /**
      * Sets the response header to trigger an htmx event
-     *
-     * @param  string  $eventName
      **/
     public function closeModal(): void
     {
@@ -405,7 +389,7 @@ class Template
     /**
      * Display JSON content with an optional response code.
      *
-     * @param  array|object|string  $jsonContent  The JSON content to be displayed.
+     * @param  string  $content  The content to be displayed.
      * @param  int  $statusCode  The HTTP response code to be returned (default: 200).
      * @return Response The response object after displaying the JSON content.
      *
@@ -695,11 +679,11 @@ class Template
      * getToggleState - retrieves the toggle state of a submenu by name from the session
      *
      * @param  string  $name  - the name of the submenu toggle
-     * @return string - the toggle state of the submenu (either "true" or "false")
+     * @return string|false - the toggle state of the submenu ("true"/"false"), or false if unset
      *
      * @deprecated this should be in a component
      */
-    public function getToggleState(string $name): string
+    public function getToggleState(string $name): string|false
     {
         if (session()->exists('usersettings.submenuToggle.'.$name)) {
             return session('usersettings.submenuToggle.'.$name);
@@ -792,11 +776,10 @@ class Template
         $printedLength = 0;
         $position = 0;
         $tags = [];
-        $isUtf8 = true;
         $truncate = '';
         $html = $this->convertRelativePaths($html);
         // For UTF-8, we need to count multibyte sequences as one character.
-        $re = $isUtf8 ? '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;|[\x80-\xFF][\x80-\xBF]*}' : '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;}';
+        $re = '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;|[\x80-\xFF][\x80-\xBF]*}';
 
         while ($printedLength < $maxLength && preg_match($re, $html, $match, PREG_OFFSET_CAPTURE, $position)) {
             [$tag, $tagPosition] = $match[0];

@@ -14,9 +14,6 @@ use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
 class EditCanvasComment extends Controller
 {
@@ -25,13 +22,7 @@ class EditCanvasComment extends Controller
      */
     protected const CANVAS_NAME = 'goal';
 
-    private TicketRepository $ticketRepo;
-
     private CommentRepository $commentsRepo;
-
-    private SprintService $sprintService;
-
-    private TicketService $ticketService;
 
     private ProjectService $projectService;
 
@@ -43,17 +34,11 @@ class EditCanvasComment extends Controller
      * init - initialize private variables
      */
     public function init(
-        TicketRepository $ticketRepo,
         CommentRepository $commentsRepo,
-        SprintService $sprintService,
-        TicketService $ticketService,
         ProjectService $projectService,
         GoalcanvaService $goalService
     ) {
-        $this->ticketRepo = $ticketRepo;
         $this->commentsRepo = $commentsRepo;
-        $this->sprintService = $sprintService;
-        $this->ticketService = $ticketService;
         $this->projectService = $projectService;
         $this->goalService = $goalService;
 

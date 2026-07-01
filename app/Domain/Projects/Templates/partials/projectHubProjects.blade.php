@@ -39,7 +39,7 @@
                 {{ __('notifications.not_assigned_to_any_project') }}
                 @if($login::userIsAtLeast($roles::$manager))
                     <br />
-                    <a href='{{ BASE_URL }}/projects/newProject' class='btn btn-primary'>{{ __('link.new_project') }}</a>
+                    <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/newProject" contentRole="primary">{{ __('link.new_project') }}</x-global::forms.button>
                 @endif
             </div>
         </div>

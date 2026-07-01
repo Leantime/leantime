@@ -16,8 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CsvImport extends Provider implements ProviderIntegration
 {
-    private array $fields;
-
     /**
      * @var array|array[]
      */
@@ -104,7 +102,7 @@ class CsvImport extends Provider implements ProviderIntegration
     }
 
     /**
-     * @return void
+     * @return array<int, mixed>|false
      */
     public function getValues(Entity $Entity): mixed
     {

@@ -33,7 +33,7 @@
                                 <div class="col-md-12">
 
                                     <div class="form-group">
-                                        <input type="text" name="name" id="name" class="main-title-input" style="width:99%"  value="{{ $project['name'] }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}"/>
+                                        <x-global::forms.text-input variant="headline" name="name" id="name" style="width:99%" value="{{ $project['name'] }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
                                     </div>
                                     <input type="hidden" name="projectState"  id="projectState" value="0" />
 
@@ -47,17 +47,17 @@
                                         {!! __('label.describe_outcome') !!}
                                         <br /><br />
                                     </p>
-                                    <textarea name="details" id="details" class="tiptapComplex" rows="5" cols="50">{{ htmlentities($project['details']) }}</textarea>
+                                    <textarea name="details" id="details" class="tiptapComplex" rows="5" cols="50">{{ $project['details'] }}</textarea>
 
                                 </div>
                             </div>
                             <div class="padding-top">
                                 @if (isset($project['id']) && $project['id'] != '')
                                     <div class="pull-right padding-top">
-                                        <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete"><i class="fa fa-trash"></i> {!! __('buttons.delete') !!}</a>
+                                        <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" class="delete" state="danger" variant="outline"><i class="fa fa-trash"></i> {!! __('buttons.delete') !!}</x-global::forms.button>
                                     </div>
                                 @endif
-                                <input type="submit" name="save" id="save" class="button" value="{{ __('buttons.save') }}" class="button" />
+                                <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="save" />
 
                             </div>
                         </div>

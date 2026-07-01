@@ -16,9 +16,6 @@ use Leantime\Domain\Blueprints\Services\TemplateRegistry;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -42,10 +39,7 @@ class EditCanvasComment
      * @param  IncomingRequest  $request  Incoming request
      * @param  Template  $tpl  Template engine
      * @param  Language  $language  Language service
-     * @param  TicketRepository  $ticketRepo  Ticket repository
      * @param  CommentRepository  $commentsRepo  Comment repository
-     * @param  SprintService  $sprintService  Sprint service
-     * @param  TicketService  $ticketService  Ticket service
      * @param  ProjectService  $projectService  Project service
      * @param  BlueprintsService  $blueprintsService  Blueprints service (project-authorized item CRUD)
      * @param  TemplateRegistry  $templateRegistry  Template registry
@@ -54,10 +48,7 @@ class EditCanvasComment
         private IncomingRequest $request,
         private Template $tpl,
         private Language $language,
-        private TicketRepository $ticketRepo,
         private CommentRepository $commentsRepo,
-        private SprintService $sprintService,
-        private TicketService $ticketService,
         private ProjectService $projectService,
         private BlueprintsService $blueprintsService,
         TemplateRegistry $templateRegistry,
@@ -69,10 +60,11 @@ class EditCanvasComment
     /**
      * get - handle GET requests for the comment editing view.
      *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
      * @param  string|null  $id  Canvas item id from the route
      */
     #[RequiresPermission(BlueprintsPermissions::VIEW, entityScoped: true)]
-    public function get(?string $id = null): Response
+    public function get(?string $canvasSlug = null, ?string $id = null): Response
     {
         $data = $this->request->getRequestParams();
         if ($id !== null) {
@@ -153,10 +145,11 @@ class EditCanvasComment
     /**
      * post - handle POST requests for updating canvas items and adding comments.
      *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
      * @param  string|null  $id  Canvas item id from the route
      */
     #[RequiresPermission(BlueprintsPermissions::EDIT, entityScoped: true)]
-    public function post(?string $id = null): Response
+    public function post(?string $canvasSlug = null, ?string $id = null): Response
     {
         $data = $this->request->getRequestParams();
         if ($id !== null) {

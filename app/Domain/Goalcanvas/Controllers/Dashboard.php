@@ -133,7 +133,7 @@ class Dashboard extends Controller
      */
     private function ensureDefaultCanvas(array $allCanvas): array
     {
-        if (! $allCanvas || count($allCanvas) == 0) {
+        if (! $allCanvas) {
             $values = [
                 'title' => $this->language->__('label.board'),
                 'author' => session('userdata.id'),

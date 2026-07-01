@@ -65,10 +65,10 @@
                         </tbody>
                     </table>
                     <div class="left">
-                        <a href="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" class="btn btn-default pull-left">Back</a>
+                        <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" contentRole="tertiary" class="pull-left">Back</x-global::forms.button>
                     </div>
                     <div class="right">
-                        <button type="submit" class="btn btn-primary">Next</button>
+                        <x-global::forms.button inputType="submit" contentRole="primary">Next</x-global::forms.button>
                     </div>
                     <div class="clearall"></div>
                 </form>

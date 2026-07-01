@@ -51,9 +51,7 @@ class WebGuard implements Guard
 
     public function id()
     {
-        if ($this->user()) {
-            return $this->user()->id;
-        }
+        return $this->user()?->getAuthIdentifier();
     }
 
     public function validate(array $credentials = [])

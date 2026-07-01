@@ -77,8 +77,8 @@ class InstalledPlugin implements PluginDisplayStrategy
             $links[] = $vendor;
         }
 
-        if (! empty($this->authors) && (is_array($this->authors) || is_object($this->authors))) {
-            $author = is_array($this->authors) ? $this->authors[0] : $this->authors;
+        if (! empty($this->authors) && is_array($this->authors)) {
+            $author = $this->authors[0];
 
             if (is_object($author)) {
                 $links[] = [

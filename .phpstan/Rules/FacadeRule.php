@@ -29,8 +29,9 @@ class FacadeRule implements Rule
         $className = $node->class->toString();
 
         // Check if it's likely a facade
-        if (strpos($className, 'Illuminate\\Support\\Facades\\') === 0 || count($node->class->parts) === 1) {
-            $facadeName = count($node->class->parts) === 1 ? $node->class->parts[0] : end($node->class->parts);
+        $parts = $node->class->getParts();
+        if (strpos($className, 'Illuminate\\Support\\Facades\\') === 0 || count($parts) === 1) {
+            $facadeName = count($parts) === 1 ? $parts[0] : end($parts);
 
             if (!in_array($facadeName, self::ALLOWED_FACADES)) {
                 return [

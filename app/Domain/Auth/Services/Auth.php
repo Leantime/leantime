@@ -32,45 +32,8 @@ class Auth implements Authenticatable
      */
     private ?int $userId = null;
 
-    /**
-     * @var int|null user id from DB
-     */
-    private ?int $clientId = null;
-
-    /**
-     * @var string|null username from db
-     */
-    private ?string $username = null;
-
-    /**
-     * @var string username from db
-     */
-    private string $name = '';
-
-    /**
-     * @var string profileid (image) from db
-     */
-    private string $profileId = '';
-
     private ?string $password = null;
 
-    /**
-     * @var string|null username (emailaddress)
-     */
-    private ?string $user = null;
-
-    /**
-     * @var string|null username (emailaddress)
-     */
-    private ?string $mail = null;
-
-    private bool $twoFAEnabled;
-
-    private string $twoFASecret;
-
-    /**
-     * @var string|null
-     */
     private ?SessionManager $session = null;
 
     /**
@@ -324,7 +287,7 @@ class Auth implements Authenticatable
 
     public function updateUserSessionDB(int $userId, string $sessionID): bool
     {
-        return $this->authRepo->updateUserSession($userId, $sessionID, time());
+        return $this->authRepo->updateUserSession($userId, $sessionID, (string) time());
     }
 
     /**
@@ -701,7 +664,7 @@ class Auth implements Authenticatable
 
     public function getRememberToken()
     {
-        return null; // Not implemented yet
+        return ''; // Not implemented yet (Authenticatable::getRememberToken is contractually a string)
     }
 
     public function setRememberToken($value)
