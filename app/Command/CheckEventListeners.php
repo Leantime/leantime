@@ -168,7 +168,7 @@ class CheckEventListeners extends Command
         preg_match_all('/\{RGX:(.*?):RGX\}/', $listener, $regexMatches);
 
         $key = strtr($listener, [
-            ...collect($regexMatches[0] ?? [])->mapWithKeys(fn ($match, $i) => [$match => "REGEX_MATCH_$i"])->toArray(),
+            ...collect($regexMatches[0])->mapWithKeys(fn ($match, $i) => [$match => "REGEX_MATCH_$i"])->toArray(),
             '*' => 'RANDOM_STRING',
             '?' => 'RANDOM_CHARACTER',
         ]);
@@ -179,7 +179,7 @@ class CheckEventListeners extends Command
         $pattern = strtr($pattern, [
             'RANDOM_STRING' => '.*?', // 0 or more (lazy) - asterisk (*)
             'RANDOM_CHARACTER' => '.', // 1 character - question mark (?)
-            ...collect($regexMatches[1] ?? [])->mapWithKeys(fn ($match, $i) => ["REGEX_MATCH_$i" => $match])->toArray(),
+            ...collect($regexMatches[1])->mapWithKeys(fn ($match, $i) => ["REGEX_MATCH_$i" => $match])->toArray(),
         ]);
 
         foreach ($events as $event) {

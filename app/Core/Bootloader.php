@@ -17,8 +17,6 @@ class Bootloader
 
     /**
      * Bootloader instance
-     *
-     * @var static
      */
     protected static ?Bootloader $instance = null;
 
@@ -26,8 +24,6 @@ class Bootloader
 
     /**
      * Get the Bootloader instance
-     *
-     * @param  Application  $app
      */
     public static function getInstance(): self
     {

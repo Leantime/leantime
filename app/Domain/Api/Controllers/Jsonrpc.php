@@ -25,11 +25,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Jsonrpc extends Controller
 {
-    /**
-     * @var array - holds json data from request body
-     */
-    private array $json_data = [];
-
     private PermissionEnforcer $permissionEnforcer;
 
     /**
@@ -76,7 +71,7 @@ class Jsonrpc extends Controller
         // params['params'] could be array (single value) or json object
         if (isset($params['params'])) {
             if (! is_array($params['params'])) {
-                $params['params'] = json_decode($params['params'], JSON_OBJECT_AS_ARRAY);
+                $params['params'] = json_decode($params['params'], true);
             }
         }
 
@@ -115,7 +110,7 @@ class Jsonrpc extends Controller
             'jsonrpc' => $params['jsonrpc'] ?? '',
         ];
 
-        $params['params'] = json_decode($params['params'], JSON_OBJECT_AS_ARRAY);
+        $params['params'] = json_decode($params['params'], true);
 
         // check if decode failed
         if ($params == null) {
@@ -136,7 +131,7 @@ class Jsonrpc extends Controller
 
             $bodyContent = json_decode(
                 json: $this->incomingRequest->getContent(),
-                associative: JSON_OBJECT_AS_ARRAY,
+                associative: true,
                 flags: JSON_THROW_ON_ERROR
             );
 

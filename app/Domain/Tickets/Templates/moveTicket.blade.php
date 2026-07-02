@@ -35,8 +35,8 @@
         @endphp
         </select><br /><br /><br /><br />
         <br />
-        <input type="submit" value="{{ __('buttons.move') }}" name="move" class="button" />
-        <a class="pull-right" href="javascript:void(0);" onclick="jQuery.nmTop().close();">{!! __('buttons.back') !!}</a>
+        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.move')" name="move" />
+        <x-global::forms.button tag="a" class="pull-right" link="javascript:void(0);" onclick="jQuery.nmTop().close();" contentRole="tertiary">{!! __('buttons.back') !!}</x-global::forms.button>
         <div class="clearall"></div>
         <br />
     </form>

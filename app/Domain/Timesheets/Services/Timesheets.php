@@ -645,8 +645,8 @@ class Timesheets extends BaseService
             invEmpl: $invEmpl,
             invComp: $invComp,
             paid: $paid,
-            clientId: $clientId,
-            ticketFilter: $ticketFilter
+            clientId: (int) $clientId,
+            ticketFilter: (int) $ticketFilter
         );
     }
 

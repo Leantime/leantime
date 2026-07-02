@@ -30,14 +30,13 @@
                                 <h5>2. {!! __('text.twoFA_verify_code') !!}</h5>
                                 <p>
                                     <span>{!! __('label.twoFACode_short') !!}:</span>
-                                    <input type="text" class="input" name="twoFACode" id="twoFACode"/><br/>
+                                    <x-global::forms.text-input name="twoFACode" id="twoFACode" /><br/>
                                 </p>
 
                                 <input type="hidden" name="secret" value="{{ $secret }}" />
                                 <br/>
                                 <p class='stdformbutton'>
-                                    <input type="submit" name="save" id="save"
-                                           value="{{ __('buttons.save') }}" class="button"/>
+                                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="save" />
                                 </p>
                             </form>
                         @else
@@ -45,9 +44,8 @@
                                 <h5>{!! __('text.twoFA_already_enabled') !!}</h5>
                                 <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
                                 <p class='stdformbutton'>
-                                    <input type="submit" name="disable" id="disable"
-                                           value="{{ __('buttons.remove') }}" class="button"/>
-                                    <a href="{{ BASE_URL }}/users/editOwn" class="btn">{!! __('buttons.back') !!}</a>
+                                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.remove')" name="disable" id="disable" />
+                                    <x-global::forms.button tag="a" link="{{ BASE_URL }}/users/editOwn">{!! __('buttons.back') !!}</x-global::forms.button>
                                 </p>
                             </form>
                         @endif

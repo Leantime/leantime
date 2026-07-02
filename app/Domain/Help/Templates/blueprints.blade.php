@@ -22,7 +22,7 @@
     <div class="row">
         <div class="col-md-12">
 
-            <a href="{{ BASE_URL }}/valuecanvas/showCanvas"  class="btn btn-primary">Create a Project Value Canvas</a><br />
+            <x-global::forms.button tag="a" link="{{ BASE_URL }}/valuecanvas/showCanvas" contentRole="primary">Create a Project Value Canvas</x-global::forms.button><br />
 
         </div>
     </div>

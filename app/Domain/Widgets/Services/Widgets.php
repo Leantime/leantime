@@ -2,7 +2,6 @@
 
 namespace Leantime\Domain\Widgets\Services;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -218,7 +217,7 @@ class Widgets
         // Sort Widgets
         $widgets = array_sort($widgets, [['gridY', 'asc'], ['gridX', 'asc']]);
 
-        Cache::set($activeWidgetKey, $widgets, CarbonImmutable::now()->addDays(30));
+        Cache::set($activeWidgetKey, $widgets, new \DateInterval('P30D'));
 
         return $widgets;
     }

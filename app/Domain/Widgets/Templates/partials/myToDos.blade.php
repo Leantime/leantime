@@ -163,7 +163,7 @@
                     </div>
                     <br/>
                     <h4>{{ __("text.no_tasks_assigned") }}</h4>
-                    <a href="javascript:void(0);" class="add-task-button btn btn-link" style="margin-left:0px;" data-group="emptyGroup"><i class="fa-solid fa-circle-plus"></i> {{ __('links.add_task') }}</a>
+                    <x-global::forms.button tag="a" link="javascript:void(0);" contentRole="link" class="add-task-button" style="margin-left:0px;" data-group="emptyGroup"><i class="fa-solid fa-circle-plus"></i> {{ __('links.add_task') }}</x-global::forms.button>
 
                     <div class="quickAddForm" id="quickAddForm-emptyGroup"
                          style="display:none; margin-bottom:15px; padding-bottom:5px; padding-left:5px;">
@@ -174,9 +174,9 @@
                               hx-indicator="#todoWidgetLoader">
                             <div class="tw-flex tw-flex-row tw-gap-2">
                                 <div class="tw-flex-grow">
-                                    <input type="text" name="headline" class="main-title-input"
+                                    <x-global::forms.text-input variant="headline" name="headline"
                                            style="font-size:var(--base-font-size)"
-                                           placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
+                                           placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                                     <input type="hidden" name="quickadd" value="true"/>
                                 </div>
                                 <div>
@@ -196,14 +196,14 @@
                                            value=""/>
                                     <input type="hidden" name="dateToFinish"
                                            value="{{ date('Y-m-d', strtotime('next friday'))}}"/>
-                                    <textarea name="description" class="description-input" style="display:none;"
-                                              placeholder="{{ __('input.placeholders.description') }}"></textarea>
+                                    <x-global::forms.textarea name="description" class="description-input" style="display:none;"
+                                              placeholder="{{ __('input.placeholders.description') }}"></x-global::forms.textarea>
                                 </div>
                                 <div>
-                                    <input type="submit" value="{{ __('buttons.save') }}" name="create"
-                                           class="btn btn-primary"/>
-                                    <a href="javascript:void(0);" class="btn cancel-add-task"
-                                       data-group="emptyGroup">{{ __('buttons.cancel') }}</a>
+                                    <x-global::forms.button tag="input" inputType="submit" :labelText="__('buttons.save')" name="create"
+                                           contentRole="primary"/>
+                                    <x-global::forms.button tag="a" link="javascript:void(0);" class="cancel-add-task"
+                                       data-group="emptyGroup">{{ __('buttons.cancel') }}</x-global::forms.button>
                                 </div>
                             </div>
                         </form>
@@ -236,8 +236,8 @@
                         </span>
                     </x-slot>
                     <x-slot name="actionlink">
-                        <a href="javascript:void(0);" class="add-task-button btn btn-link" style="padding:0px; padding-left:1px; width:31px; line-height:31px; height:31px; font-weight:bold; text-align: center; font-size:var(--font-size-l);" data-group="{{ $groupKey }}">
-                            <i class="fa-solid fa-circle-plus"></i></a>
+                        <x-global::forms.button tag="a" link="javascript:void(0);" contentRole="link" class="add-task-button" style="padding:0px; padding-left:1px; width:31px; line-height:31px; height:31px; font-weight:bold; text-align: center; font-size:var(--font-size-l);" data-group="{{ $groupKey }}">
+                            <i class="fa-solid fa-circle-plus"></i></x-global::forms.button>
                     </x-slot>
                     <x-slot name="content">
                         <!-- Quick Add Form for this group -->
@@ -250,9 +250,9 @@
                                   hx-indicator="#todoWidgetLoader">
                                 <div class="tw-flex tw-flex-row tw-gap-2">
                                     <div class="tw-flex-grow">
-                                        <input type="text" name="headline" class="main-title-input"
+                                        <x-global::forms.text-input variant="headline" name="headline"
                                                style="font-size:var(--base-font-size)"
-                                               placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
+                                               placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                                         <input type="hidden" name="quickadd" value="true"/>
                                     </div>
                                     <div>
@@ -281,14 +281,14 @@
                                         @endphp
                                         <input type="hidden" name="dateToFinish"
                                                value="{{ $dueDate }}"/>
-                                        <textarea name="description" class="description-input" style="display:none;"
-                                                  placeholder="{{ __('input.placeholders.description') }}"></textarea>
+                                        <x-global::forms.textarea name="description" class="description-input" style="display:none;"
+                                                  placeholder="{{ __('input.placeholders.description') }}"></x-global::forms.textarea>
                                     </div>
                                     <div>
-                                        <input type="submit" value="{{ __('buttons.save') }}" name="create"
-                                               class="btn btn-primary"/>
-                                        <a href="javascript:void(0);" class="btn cancel-add-task"
-                                           data-group="{{ $groupKey }}">{{ __('buttons.cancel') }}</a>
+                                        <x-global::forms.button tag="input" inputType="submit" :labelText="__('buttons.save')" name="create"
+                                               contentRole="primary"/>
+                                        <x-global::forms.button tag="a" link="javascript:void(0);" class="cancel-add-task"
+                                           data-group="{{ $groupKey }}">{{ __('buttons.cancel') }}</x-global::forms.button>
                                     </div>
                                 </div>
                             </form>

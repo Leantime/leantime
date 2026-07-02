@@ -74,7 +74,7 @@ class Cast
             try {
                 $type = collect($mappings)->firstOrFail(fn ($mapping, $key) => in_array($key, [$name, '*']));
             } catch (\Illuminate\Support\ItemNotFoundException) {
-                $type = ($reflectionType = $property->getType()) ? $reflectionType->getName() : null;
+                $type = ($reflectionType = $property->getType()) instanceof \ReflectionNamedType ? $reflectionType->getName() : null;
             }
 
             $returnObj->set($name, match (true) {
@@ -148,7 +148,7 @@ class Cast
      * Casts a string value into a datetime object.
      *
      * @param  string  $value  The value to be casted into a datetime object.
-     * @return \DateTime The datetime object.
+     * @return \Carbon\CarbonImmutable The datetime object.
      *
      * @throws \InvalidArgumentException If the value is not a valid datetime string.
      **/
@@ -157,13 +157,8 @@ class Cast
         if (is_string($value)) {
             return dtHelper()->parseDbDateTime($value);
         }
-
-        throw new \InvalidArgumentException('Value cannot be casted datetime');
     }
 
-    /**
-     * @param  array|object  $iterator
-     **/
     protected function handleIterator(iterable $iterator, array $mappings = []): array|object
     {
         $result = is_object($iterator) ? new \stdClass : [];

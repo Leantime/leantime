@@ -68,7 +68,7 @@ class DelCanvas extends Controller
 
             $this->tpl->setNotification($this->language->__('notification.board_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvas_deleted');
 
-            if (! $allCanvas || count($allCanvas) == 0) {
+            if (! $allCanvas) {
                 return Frontcontroller::redirect(BASE_URL.'/blueprints/showBoards');
             }
 

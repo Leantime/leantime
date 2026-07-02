@@ -46,7 +46,7 @@ class DelMilestone extends Controller
             return $this->tpl->displayPartial('errors.error404', responseCode: 404);
         }
 
-        if ($result = $this->ticketService->deleteMilestone($id = (int) ($_GET['id']))) {
+        if (($result = $this->ticketService->deleteMilestone($id = (int) ($_GET['id']))) === true) {
             $this->tpl->setNotification($this->language->__('notification.milestone_deleted'), 'success');
 
             return Frontcontroller::redirect(BASE_URL.'/tickets/roadmap');

@@ -121,11 +121,11 @@ use Leantime\Core\Support\FromFormat;
 <label for="date">{!! __('label.date') !!}</label> <input type="text" autocomplete="off"
     id="datepicker" name="date" value="{{ format(value: $values['date'], fromFormat: FromFormat::DbDate)->date() }}" size="7" />
 <br />
-<label for="hours">{!! __('label.hours') !!}</label> <input
-    type="text" id="hours" name="hours"
+<label for="hours">{!! __('label.hours') !!}</label> <x-global::forms.text-input
+    id="hours" name="hours"
     value="{{ $values['hours'] }}" size="7" /> <br />
-<label for="description">{!! __('label.description') !!}</label> <textarea
-    rows="5" cols="50" id="description" name="description">{{ $values['description'] }}</textarea><br />
+<label for="description">{!! __('label.description') !!}</label> <x-global::forms.textarea
+    rows="5" cols="50" id="description" name="description">{{ $values['description'] }}</x-global::forms.textarea><br />
 
 
 
@@ -178,7 +178,7 @@ use Leantime\Core\Support\FromFormat;
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <a class="delete editTimeModal pull-right" href="{{ BASE_URL }}/timesheets/delTime/{{ $tpl->escape($_GET['id']) }}">{!! __('links.delete') !!}</a>
-        <input type="submit" value="{{ __('buttons.save') }}" name="save" class="button" />
+        <x-global::forms.button tag="a" class="delete editTimeModal pull-right" link="{{ BASE_URL }}/timesheets/delTime/{{ $tpl->escape($_GET['id']) }}" state="danger" variant="outline">{!! __('links.delete') !!}</x-global::forms.button>
+        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" />
     </p>
 </form>

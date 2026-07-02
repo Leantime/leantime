@@ -135,8 +135,6 @@ class Mailer
 
     /**
      * setHTML - set Mail html (no function yet)
-     *
-     * @param  false  $hideWrapper
      */
     public function setHtml($html, bool $hideWrapper = false): void
     {

@@ -15,15 +15,15 @@
 
     <form action="{{ BASE_URL }}/install" method="post" class="registrationForm">
         <h3 class="subtitle">{!! __('subtitles.login_info') !!}</h3>
-        <input type="email" name="email" class="form-control" placeholder="{{ __('label.email') }}" value=""/><br />
+        <x-global::forms.text-input type="email" name="email" placeholder="{{ __('label.email') }}" value="" /><br />
         <br /><br />
         <h3 class="subtitle">{!! __('subtitles.user_info') !!}</h3>
-        <input type="text" name="firstname" class="form-control" placeholder="{{ __('label.firstname') }}" value=""/><br />
-        <input type="text" name="lastname" class="form-control" placeholder="{{ __('label.lastname') }}" value=""/>
-        <input type="text" name="company" class="form-control" placeholder="{{ __('label.company_name') }}" value=""/>
+        <x-global::forms.text-input name="firstname" placeholder="{{ __('label.firstname') }}" value="" /><br />
+        <x-global::forms.text-input name="lastname" placeholder="{{ __('label.lastname') }}" value="" />
+        <x-global::forms.text-input name="company" placeholder="{{ __('label.company_name') }}" value="" />
         <br /><br />
         <input type="hidden" name="install" value="Install" />
-        <p><input type="submit" name="installAction" class="btn btn-primary" value="{{ __('buttons.install') }}" onClick="this.form.submit(); this.disabled=true; this.value='{{ __('buttons.install') }}'; "/></p>
+        <p><x-global::forms.button tag="input" inputType="submit" name="installAction" contentRole="primary" :labelText="__('buttons.install')" onClick="this.form.submit(); this.disabled=true; this.value='{{ __('buttons.install') }}'; " /></p>
     </form>
 
 </div>

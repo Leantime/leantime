@@ -14,9 +14,9 @@ class Comments
         $this->db = $db->getConnection();
     }
 
-    public function getComments(string $module, int $moduleId, int $parent = 0, string $orderByState = '0'): false|array
+    public function getComments(string $module, int $moduleId, int $parent = 0, int $orderByState = 0): false|array
     {
-        $orderBy = $orderByState == '1' ? 'asc' : 'desc';
+        $orderBy = $orderByState === 1 ? 'asc' : 'desc';
 
         $query = $this->db->table('zp_comment as comment')
             ->select(

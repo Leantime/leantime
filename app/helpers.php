@@ -27,7 +27,7 @@ if (! function_exists('array_sort')) {
     /**
      * sort array of arrqays by value
      *
-     * @param  string  $sortyBy
+     * @param  string|array<int, array{0: string, 1: string}>  $sortyBy  Column name (string) or multi-sort spec (array)
      */
     function array_sort(array $array, mixed $sortyBy): array
     {
@@ -95,7 +95,7 @@ if (! function_exists('format')) {
      * @param  string|int|float|DateTime|Carbon|null  $value
      * @param  string|int|float|DateTime|null  $value2
      */
-    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 = null, ?FromFormat $fromFormat = FromFormat::DbDate): Format|string
+    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 = null, ?FromFormat $fromFormat = FromFormat::DbDate): Format
     {
         return new Format($value, $value2, $fromFormat);
     }
@@ -105,9 +105,9 @@ if (! function_exists('cast')) {
     /**
      * Casts a variable to a different type if possible.
      *
-     * @param  mixed  $obj  The object to be cast.
-     * @param  string  $to_class  The class to which the object should be cast.
-     * @param  array  $construct_params  Optional parameters to pass to the constructor.
+     * @param  mixed  $source  The object to be cast.
+     * @param  string  $classOrType  The class to which the object should be cast.
+     * @param  array  $constructParams  Optional parameters to pass to the constructor.
      * @param  array  $mappings  Make sure certain sub properties are casted to specific types.
      * @return mixed The casted object, or throws an exception on failure.
      *
@@ -154,10 +154,10 @@ if (! function_exists('redirect')) {
      * Get an instance of the redirector.
      *
      * @param  string|null  $url
-     * @param  int  $status
+     * @param  int  $http_response_code
      * @param  array  $headers
      * @param  bool|null  $secure
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     function redirect($url = null, $http_response_code = 302, $headers = [], $secure = null)
     {
@@ -171,11 +171,6 @@ if (! function_exists('redirect')) {
 if (! function_exists('currentRoute')) {
     /**
      * Get an instance of the redirector.
-     *
-     * @param  string|null  $to
-     * @param  int  $status
-     * @param  array  $headers
-     * @param  bool|null  $secure
      */
     function currentRoute()
     {
@@ -217,7 +212,6 @@ if (! function_exists('mix')) {
     /**
      * Get the path to a versioned Mix file. Customized for Leantime.
      *
-     * @return Mix|string
      *
      * @throws BindingResolutionException
      */
@@ -247,42 +241,6 @@ if (! function_exists('base_path')) {
     function base_path($path = '')
     {
         return app()->basePath($path);
-    }
-}
-
-if (! function_exists('redirect')) {
-    /**
-     * Get an instance of the redirector.
-     *
-     * @param  string|null  $url
-     * @param  int  $status
-     * @param  array  $headers
-     * @param  bool|null  $secure
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
-     */
-    function redirect($url = null, $http_response_code = 302, $headers = [], $secure = null)
-    {
-        return new RedirectResponse(
-            trim(preg_replace('/\s\s+/', '', strip_tags($url))),
-            $http_response_code
-        );
-    }
-}
-
-if (! function_exists('currentRoute')) {
-    /**
-     * Get an instance of the redirector.
-     *
-     * @param  string|null  $to
-     * @param  int  $status
-     * @param  array  $headers
-     * @param  bool|null  $secure
-     */
-    function currentRoute()
-    {
-
-        return app('request')->getCurrentRoute();
-
     }
 }
 

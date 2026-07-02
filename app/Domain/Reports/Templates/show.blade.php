@@ -90,9 +90,9 @@
 
                                 <div class="pull-right">
                                     <div class="btn-group mt-1 mx-auto" role="group">
-                                        <a href="javascript:void(0)" id="NumChartButtonSprint" class="btn btn-sm btn-secondary active chartButtons">{!! __('label.num_tickets') !!}</a>
-                                        <a href="javascript:void(0)" id="EffortChartButtonSprint" class="btn btn-sm btn-secondary chartButtons">{!! __('label.effort') !!}</a>
-                                        <a href="javascript:void(0)" id="HourlyChartButtonSprint" class="btn btn-sm btn-secondary chartButtons">{!! __('label.hours') !!}</a>
+                                        <x-global::forms.button tag="a" id="NumChartButtonSprint" class="btn-sm btn-secondary active chartButtons" link="javascript:void(0)">{!! __('label.num_tickets') !!}</x-global::forms.button>
+                                        <x-global::forms.button tag="a" id="EffortChartButtonSprint" class="btn-sm btn-secondary chartButtons" link="javascript:void(0)">{!! __('label.effort') !!}</x-global::forms.button>
+                                        <x-global::forms.button tag="a" id="HourlyChartButtonSprint" class="btn-sm btn-secondary chartButtons" link="javascript:void(0)">{!! __('label.hours') !!}</x-global::forms.button>
                                     </div>
 
                                 </div>
@@ -111,9 +111,9 @@
 
                         <div class="pull-right">
                             <div class="btn-group mt-1 mx-auto" role="group">
-                                <a href="javascript:void(0)" id="NumChartButtonBacklog" class="btn btn-sm btn-secondary active backlogChartButtons">{!! __('label.num_tickets') !!}</a>
-                                <a href="javascript:void(0)" id="EffortChartButtonBacklog" class="btn btn-sm btn-secondary backlogChartButtons">{!! __('label.effort') !!}</a>
-                                <a href="javascript:void(0)" id="HourlyChartButtonBacklog" class="btn btn-sm btn-secondary backlogChartButtons">{!! __('label.hours') !!}</a>
+                                <x-global::forms.button tag="a" id="NumChartButtonBacklog" class="btn-sm btn-secondary active backlogChartButtons" link="javascript:void(0)">{!! __('label.num_tickets') !!}</x-global::forms.button>
+                                <x-global::forms.button tag="a" id="EffortChartButtonBacklog" class="btn-sm btn-secondary backlogChartButtons" link="javascript:void(0)">{!! __('label.effort') !!}</x-global::forms.button>
+                                <x-global::forms.button tag="a" id="HourlyChartButtonBacklog" class="btn-sm btn-secondary backlogChartButtons" link="javascript:void(0)">{!! __('label.hours') !!}</x-global::forms.button>
                             </div>
 
                         </div>

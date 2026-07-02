@@ -24,7 +24,7 @@ class TrustProxies
     /**
      * The headers that should be used to detect proxies.
      *
-     * @var string
+     * @var int
      */
     protected $headers = IncomingRequest::HEADER_X_FORWARDED_FOR |
         IncomingRequest::HEADER_X_FORWARDED_HOST |

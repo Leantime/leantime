@@ -18,7 +18,7 @@
 <form class="formModal" method="post" action="{{ BASE_URL }}/sprints/editSprint/{{ $id }}">
 
     <label>{!! __('label.sprint_name') !!}</label>
-    <input type="text" name="name" value="{{ $currentSprint->name }}" placeholder="{{ __('label.sprint_name') }}"/><br />
+    <x-global::forms.text-input name="name" value="{{ $currentSprint->name }}" placeholder="{{ __('label.sprint_name') }}" /><br />
 
     <label>{!! __('label.project') !!}</label>
     <select name="projectId">
@@ -43,7 +43,7 @@
 
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="{{ __('buttons.save') }}"/>
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" />
         </div>
         <div class="col-md-6 align-right padding-top-sm">
             @if (isset($currentSprint->id) && $currentSprint->id != '' && $login::userIsAtLeast($roles::$editor))

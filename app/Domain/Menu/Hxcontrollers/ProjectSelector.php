@@ -7,7 +7,6 @@ use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Menu\Services\Menu;
-use Leantime\Domain\Timesheets\Services\Timesheets;
 
 class ProjectSelector extends HtmxController
 {
@@ -15,16 +14,13 @@ class ProjectSelector extends HtmxController
 
     protected static string $view = 'menu::partials.projectSelector';
 
-    private Timesheets $timesheetService;
-
     private Menu $menuService;
 
     /**
      * Controller constructor
      */
-    public function init(Timesheets $timesheetService, Menu $menuService): void
+    public function init(Menu $menuService): void
     {
-        $this->timesheetService = $timesheetService;
         $this->menuService = $menuService;
     }
 

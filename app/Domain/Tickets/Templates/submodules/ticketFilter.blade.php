@@ -15,8 +15,11 @@
     <input type="hidden" value="{{ session('currentProject') }}" name="projectId" id="projectIdInput"/>
 
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
-        <a onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
-           class="btn btn-link" data-tippy-content="{{ __('popover.filter') }}">
+        {{-- Kept as a raw <a> (not forms.button): this button is whitespace-sensitive — the
+             </a>@if adjacency below avoids an inline-block gap, and the component would reintroduce
+             surrounding whitespace. Migrate once the component guarantees whitespace-tight output. --}}
+        <a class="btn btn-link" onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
+           data-tippy-content="{{ __('popover.filter') }}">
             <i class="fas fa-filter"></i> Filter{!! $numOfFilters > 0 ? "  <span class='badge badge-primary'>" . $numOfFilters . '</span> ' : '' !!}
             {{-- Please don't change the code formatting below, if not right next to each other it somehow adds a space between the two buttons and increases the distance --}}
         </a>@if ($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<div class="btn-group viewDropDown">
@@ -131,15 +134,15 @@
                 <div class="">
                     <div class="form-group">
                         <label class="inline">{!! __('label.search_term') !!}</label>
-                        <input type="text" name="termInput" id="termInput"
+                        <x-global::forms.text-input name="termInput" id="termInput"
                         style="width: 230px"
                         value="{{ $searchCriteria['term'] }}"
-                        placeholder="{{ __('label.search_term') }}">
+                        placeholder="{{ __('label.search_term') }}" />
                     </div>
                 </div>
 
                 <div class="" style="margin-top:15px;">
-                    <input type="submit" value="{{ __('buttons.search') }}" name="search" class="form-control btn btn-primary" />
+                    <x-global::forms.button tag="input" inputType="submit" :labelText="__('buttons.search')" name="search" class="form-control" contentRole="primary" />
                 </div>
 
             </div>

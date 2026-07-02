@@ -26,7 +26,7 @@
 <form class="formModal" method="post" action="{{ BASE_URL }}/tickets/editMilestone/{{ $currentMilestone->id }}" style="min-width: 250px;">
 
     <label>{!! __('label.milestone_title') !!}</label>
-    <input type="text" name="headline" value="{{ $currentMilestone->headline }}" placeholder="{{ __('label.milestone_title') }}"/><br />
+    <x-global::forms.text-input name="headline" value="{{ $currentMilestone->headline }}" placeholder="{{ __('label.milestone_title') }}" /><br />
 
     <label class="control-label">{!! __('label.project') !!}</label>
     <select name="projectId" class="tw-w-full">
@@ -89,7 +89,7 @@
 
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="{{ __('buttons.save') }}" class="btn btn-primary"/>
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" />
         </div>
         <div class="col-md-6 align-right padding-top-sm">
 

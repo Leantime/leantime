@@ -60,7 +60,7 @@
                                             <label>{!! __('label.company_name') !!}</label>
                                         </div>
                                         <div class="col-md-8">
-                                            <input type="text" name="name" id="companyName"  value="{{ $companySettings['name'] }}" class="pull-left"/>
+                                            <x-global::forms.text-input name="name" id="companyName"  value="{{ $companySettings['name'] }}" class="pull-left" />
                                             <small>{!! __('text.company_name_helper') !!}</small>
                                         </div>
                                     </div>
@@ -144,7 +144,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn"/>
+                                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="saveBtn" />
                                 </form>
                             </div>
                             <div class="col-md-4">
@@ -199,13 +199,13 @@
                                 </form>
                                 <hr />
                                 {!! __('text.logo_reset') !!}<br /><br />
-                                <a href="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" class="btn btn-default">{!! __('buttons.reset_logo') !!}</a>
+                                <x-global::forms.button tag="a" link="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" contentRole="default">{!! __('buttons.reset_logo') !!}</x-global::forms.button>
                             </div>
                         </div>
                 </div>
 
                     <div id="apiKeys">
-                        <a href="#/api/newApiKey" class="btn btn-primary">Generate API Key</a>
+                        <x-global::forms.button tag="a" link="#/api/newApiKey" contentRole="primary">Generate API Key</x-global::forms.button>
                         <br /> <br />
                         <ul class="sortableTicketList">
 

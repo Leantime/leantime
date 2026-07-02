@@ -73,7 +73,7 @@ class Wiki extends BaseService
 
         $wikis = $this->wikiRepository->getAllProjectWikis($projectId);
 
-        if (! $wikis || count($wikis) == 0) {
+        if (! $wikis) {
 
             $wiki = app()->make(\Leantime\Domain\Wiki\Models\Wiki::class);
             $wiki->title = $this->language->__('label.default');

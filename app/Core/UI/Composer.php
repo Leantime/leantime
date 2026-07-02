@@ -28,7 +28,7 @@ abstract class Composer
     /**
      * Compose the view before rendering.
      *
-     * @param  View  $view
+     * @param  View|array  $parameters
      *
      * @throws BindingResolutionException
      */

@@ -64,9 +64,9 @@
                 <div class="tw-flex-grow">
                     <div hx-trigger="load"
                          hx-indicator=".htmx-indicator-ticket-{{ $ticket['id'] }}"
-                         hx-get="<?=BASE_URL ?>/hx/tickets/milestones/progress?milestoneId=<?=$ticket['id'] ?>&progressColor={{ trim($ticket['tags'], "#") }}">
+                         hx-get="<?= BASE_URL ?>/hx/tickets/milestones/progress?milestoneId=<?= $ticket['id'] ?>&progressColor={{ trim($ticket['tags'], "#") }}">
                         <div class="htmx-indicator">
-                                <?= $tpl->__("label.loading_milestone") ?>
+                                <?= $tpl->__('label.loading_milestone') ?>
                         </div>
                     </div>
                 </div>
@@ -96,18 +96,18 @@
                         >
                             <input type="hidden" name="id" value="{{ $ticket['id'] }}"/>
                             <div>
-                                <input type="text" class="main-title-input"
+                                <x-global::forms.text-input variant="headline"
                                        style="font-size:var(--base-font-size); margin-bottom:0px"
-                                       value="{{ $ticket['headline'] }}" name="headline"/>
+                                       value="{{ $ticket['headline'] }}" name="headline" />
                             </div>
                             <div>
-                                <button type="submit" name="edit" class="btn btn-primary">
+                                <x-global::forms.button inputType="submit" name="edit" contentRole="primary">
                                     <i class="fa fa-check"></i>
-                                </button>
+                                </x-global::forms.button>
                             </div>
                             <div>
-                                <a href="javascript:void(0);" class="btn cancel-edit-task" data-group="{{ $groupKey }}"><i
-                                        class="fa fa-x"></i></a>
+                                <x-global::forms.button tag="a" link="javascript:void(0);" class="cancel-edit-task" data-group="{{ $groupKey }}"><i
+                                        class="fa fa-x"></i></x-global::forms.button>
                             </div>
                         </form>
                     </div>
@@ -230,16 +230,15 @@
             <input type="hidden" value="{{ format($ticket['dateToFinish'])->date() }}" name="dateToFinish"/>
             <div class="tw-flex tw-flex-row tw-gap-2">
                 <div class="tw-flex-grow">
-                    <input name="headline" type="text" class="main-title-input"
+                    <x-global::forms.text-input name="headline" variant="headline"
                            style="font-size:var(--base-font-size)"
-                           placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
+                           placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                 </div>
                 <div>
                     <input type="hidden" name="status" value="3"/>
-                    <button type="submit" class="btn btn-primary">{{ __('buttons.save') }}</button>
-                    <a href="javascript:void(0);"
-                       onclick="jQuery('#subtask-form-{{$ticket['id']}}').toggle();"
-                       class="btn">{{ __('buttons.cancel') }}</a>
+                    <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.save') }}</x-global::forms.button>
+                    <x-global::forms.button tag="a" link="javascript:void(0);"
+                       onclick="jQuery('#subtask-form-{{$ticket['id']}}').toggle();">{{ __('buttons.cancel') }}</x-global::forms.button>
                 </div>
             </div>
         </form>
@@ -288,16 +287,15 @@
                     />
                     <div class="tw-flex tw-flex-row tw-gap-2">
                         <div class="tw-flex-grow">
-                            <input name="headline" type="text" class="main-title-input"
+                            <x-global::forms.text-input name="headline" variant="headline"
                                    style="font-size:var(--base-font-size)"
-                                   placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
+                                   placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                         </div>
                         <div>
                             <input type="hidden" name="status" value="3"/>
-                            <button type="submit" class="btn btn-primary">{{ __('buttons.save') }}</button>
-                            <a href="javascript:void(0);"
-                               onclick="jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}').toggle(); jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}-handler').toggle();"
-                               class="btn">{{ __('buttons.cancel') }}</a>
+                            <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.save') }}</x-global::forms.button>
+                            <x-global::forms.button tag="a" link="javascript:void(0);"
+                               onclick="jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}').toggle(); jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}-handler').toggle();">{{ __('buttons.cancel') }}</x-global::forms.button>
                         </div>
                     </div>
                 </form>

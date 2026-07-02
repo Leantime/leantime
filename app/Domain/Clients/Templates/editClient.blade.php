@@ -25,39 +25,38 @@
             <div class="widgetcontent">
 
                 <label for="name">{!! __('NAME') !!}</label>
-                <input type="text" name="name" id="name" value="{{ $values['name'] }}" /><br />
+                <x-global::forms.text-input name="name" id="name" value="{{ $values['name'] }}" /><br />
 
                 <label for="email">{!! __('EMAIL') !!}</label>
-                <input type="text" name="email" id="email" value="{{ $values['email'] }}" /><br />
+                <x-global::forms.text-input name="email" id="email" value="{{ $values['email'] }}" /><br />
 
-                <label for="internet">{!! __('URL') !!}</label> <input
-                    type="text" name="internet" id="internet"
+                <label for="internet">{!! __('URL') !!}</label> <x-global::forms.text-input
+                    name="internet" id="internet"
                     value="{{ $values['internet'] }}" /><br />
 
-                <label for="street">{!! __('STREET') !!}</label> <input
-                    type="text" name="street" id="street"
+                <label for="street">{!! __('STREET') !!}</label> <x-global::forms.text-input
+                    name="street" id="street"
                     value="{{ $values['street'] }}" /><br />
 
-                <label for="zip">{!! __('ZIP') !!}</label> <input type="text"
+                <label for="zip">{!! __('ZIP') !!}</label> <x-global::forms.text-input
                     name="zip" id="zip" value="{{ $values['zip'] }}" /><br />
 
-                <label for="city">{!! __('CITY') !!}</label> <input type="text"
+                <label for="city">{!! __('CITY') !!}</label> <x-global::forms.text-input
                     name="city" id="city" value="{{ $values['city'] }}" /><br />
 
-                <label for="state">{!! __('STATE') !!}</label> <input
-                    type="text" name="state" id="state"
+                <label for="state">{!! __('STATE') !!}</label> <x-global::forms.text-input
+                    name="state" id="state"
                     value="{{ $values['state'] }}" /><br />
 
-                <label for="country">{!! __('COUNTRY') !!}</label> <input
-                    type="text" name="country" id="country"
+                <label for="country">{!! __('COUNTRY') !!}</label> <x-global::forms.text-input
+                    name="country" id="country"
                     value="{{ $values['country'] }}" /><br />
 
-                <label for="phone">{!! __('PHONE') !!}</label> <input
-                    type="text" name="phone" id="phone"
+                <label for="phone">{!! __('PHONE') !!}</label> <x-global::forms.text-input
+                    name="phone" id="phone"
                     value="{{ $values['phone'] }}" /><br />
 
-                <input type="submit" name="save" id="save"
-                    value="{{ __('SAVE') }}" class="button" />
+                <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('SAVE')" name="save" id="save" />
 
                 </div>
             </div>

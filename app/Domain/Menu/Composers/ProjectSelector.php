@@ -7,7 +7,6 @@ use Leantime\Core\Controller\Composer;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest as IncomingRequestCore;
-use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 
 class ProjectSelector extends Composer
 {
@@ -17,18 +16,14 @@ class ProjectSelector extends Composer
         'menu::projectSelector',
     ];
 
-    private MenuRepository $menuRepo;
-
     private IncomingRequestCore $incomingRequest;
 
     private \Leantime\Domain\Menu\Services\Menu $menuService;
 
     public function init(
-        MenuRepository $menuRepo,
         \Leantime\Domain\Menu\Services\Menu $menuService,
         IncomingRequestCore $request
     ): void {
-        $this->menuRepo = $menuRepo;
         $this->menuService = $menuService;
         $this->incomingRequest = $request;
     }

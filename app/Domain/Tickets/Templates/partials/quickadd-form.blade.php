@@ -61,11 +61,11 @@ $hasError = $isActive && !empty($reopenState['error']);
         </div>
 
         <div class="formButtonContainer">
-            <button type="submit" class="btn btn-primary" onclick="this.closest('form').dataset.submitting = 'true'; this.closest('form').querySelector('[data-stay-open-input]').value = '0';">Save</button>
-            <button type="button" class="btn btn-secondary"
+            <x-global::forms.button inputType="submit" contentRole="primary" onclick="this.closest('form').dataset.submitting = 'true'; this.closest('form').querySelector('[data-stay-open-input]').value = '0';">Save</x-global::forms.button>
+            <x-global::forms.button inputType="button" contentRole="secondary"
                     onclick="leantime.kanbanController.toggleQuickAdd(this.closest('.quickaddContainer').querySelector('.quickAddLink'))">
                 Cancel
-            </button>
+            </x-global::forms.button>
             <i class="fa fa-circle-question"
                data-tippy-content="<strong>Keyboard Shortcuts:</strong><br>Enter: Save and close<br>Shift+Enter: Save and add another<br>Esc: Cancel"
                tabindex="0"

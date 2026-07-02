@@ -68,7 +68,7 @@
             <div class="col-md-8">
 
                 {{-- Title --}}
-                <input type="text" name="description" class="main-title-input" style="width:99%;"
+                <x-global::forms.text-input name="description" variant="headline" style="width:99%;"
                     value="{{ $tpl->escape($canvasItem['description']) }}"
                     placeholder="{{ $tpl->__('input.placeholders.short_name') }}" /><br /><br />
 
@@ -160,12 +160,12 @@
         {{-- ═══ Bottom: Actions ═══ --}}
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:16px; padding-top:16px; border-top:1px solid var(--main-border-color);">
             @if ($login::userIsAtLeast($roles::$editor))
-                <input type="submit" value="{{ $tpl->__('buttons.save') }}" id="primaryCanvasSubmitButton" class="btn btn-primary"/>
-                <button type="submit" class="btn btn-default" value="closeModal" id="saveAndClose" onclick="leantime.canvasController.setCloseModal();">{!! $tpl->__('buttons.save_and_close') !!}</button>
+                <x-global::forms.button tag="input" inputType="submit" :labelText="$tpl->__('buttons.save')" id="primaryCanvasSubmitButton" contentRole="primary"/>
+                <x-global::forms.button inputType="submit" contentRole="secondary" value="closeModal" id="saveAndClose" onclick="leantime.canvasController.setCloseModal();">{!! $tpl->__('buttons.save_and_close') !!}</x-global::forms.button>
             @endif
 
             @if ($id != '')
-                <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete" style="margin-left:auto;"><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</a>
+                <x-global::forms.button tag="a" link="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete" style="margin-left:auto;" state="danger" variant="outline"><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</x-global::forms.button>
             @endif
         </div>
 

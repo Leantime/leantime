@@ -19,7 +19,7 @@ use Leantime\Domain\Files\Controllers\Upload;
 Route::get('/download.php', function () {
     $qs = request()->getQueryString();
 
-    return redirect()->to('/files/get'.($qs ? '?'.$qs : ''), 301);
+    return redirect('/files/get'.($qs ? '?'.$qs : ''), 301);
 });
 
 /*

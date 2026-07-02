@@ -32,7 +32,7 @@
         {{ $provider->name }}<br />
         {!! $provider->description !!}<br /><br />
 
-        <a class="btn btn-primary" href="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=connect">Click Here to Connect</a>
+        <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=connect" contentRole="primary">Click Here to Connect</x-global::forms.button>
 
     </div>
 </div>

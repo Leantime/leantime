@@ -16,7 +16,7 @@ class InitialHeaders
      *
      * @param  \Closure(IncomingRequest): Response  $next
      *
-     * @throws BindingResolutionException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      **/
     public function handle($request, Closure $next): Response
     {

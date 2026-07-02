@@ -43,12 +43,12 @@
             <div class="col-md-3">
                 <div class="quickAddForm" style="margin-top:15px;">
                     <form action="" method="post">
-                        <input type="text" name="headline" autofocus placeholder="{{ __('input.placeholders.create_task') }}" style="width: 100%;"/>
+                        <x-global::forms.text-input name="headline" autofocus placeholder="{{ __('input.placeholders.create_task') }}" style="width: 100%;" />
                         <input type="hidden" name="sprint" value="{{ $currentSprint }}" />
                         <input type="hidden" name="milestone" value="{{ htmlspecialchars((string) ($searchCriteria['milestone'] ?? ''), ENT_QUOTES, 'UTF-8') }}" />
                         <input type="hidden" name="groupBy" value="{{ htmlspecialchars((string) ($searchCriteria['groupBy'] ?? ''), ENT_QUOTES, 'UTF-8') }}" />
                         <input type="hidden" name="quickadd" value="1"/>
-                        <input type="submit" class="btn btn-primary tw-mb-m" value="{{ __('buttons.save') }}" name="saveTicket" style="vertical-align: top; "/>
+                        <x-global::forms.button tag="input" inputType="submit" class="tw-mb-m" contentRole="primary" :labelText="__('buttons.save')" name="saveTicket" style="vertical-align: top; " />
                     </form>
 
 

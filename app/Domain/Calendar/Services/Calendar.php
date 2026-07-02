@@ -586,9 +586,16 @@ class Calendar extends BaseService
 
                 if (dtHelper()->isValidDateString($ticket['editFrom'])) {
 
-                    // Set ticket to all-day ticket when no time is set
+                    // Set ticket to all-day ticket when no time is set.
+                    // Guard editTo the same way editFrom is guarded: a ticket can
+                    // have a planned start but no (or a sentinel) end date, and
+                    // parseDbDateTime() throws on empty/zero-date values — which
+                    // previously took down the whole calendar feed with a 500.
                     $dateFrom = dtHelper()->parseDbDateTime($ticket['editFrom']);
-                    $dateTo = dtHelper()->parseDbDateTime($ticket['editTo']);
+                    $hasValidEditTo = dtHelper()->isValidDateString($ticket['editTo'] ?? '');
+                    $dateTo = $hasValidEditTo
+                        ? dtHelper()->parseDbDateTime($ticket['editTo'])
+                        : $dateFrom;
 
                     if ($from || $until) {
 
@@ -618,7 +625,7 @@ class Calendar extends BaseService
                         backgroundColor: $backgroundColor,
                         borderColor: $statusColor,
                         dateFrom: $ticket['editFrom'],
-                        dateTo: $ticket['editTo']
+                        dateTo: $hasValidEditTo ? $ticket['editTo'] : $ticket['editFrom']
                     );
                 }
             }
@@ -1036,9 +1043,6 @@ class Calendar extends BaseService
 
     /**
      * Generates an event array for fullcalendar.io frontend.
-     *
-     * @param  int|null  $dateFrom
-     * @param  int|null  $dateTo
      */
     private function mapEventData(
         string $title,

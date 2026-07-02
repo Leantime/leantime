@@ -136,7 +136,7 @@ class Install
      */
     public function getDBObject(): ?PDO
     {
-        return $this->connection?->getPdo();
+        return $this->connection->getPdo();
     }
 
     /**
@@ -334,7 +334,7 @@ class Install
         // The version changed: cached routes, plugin lists etc. may reference classes or
         // methods that no longer exist in the new codebase. Everything in the installation
         // store is re-derivable, so drop it wholesale before running the updates.
-        Cache::store('installation')->flush();
+        Cache::store('installation')->clear();
 
         // Find all update functions that need to be executed
         foreach ($this->dbUpdates as $updateVersion) {
@@ -2177,11 +2177,11 @@ class Install
                 $this->mergeEntityRelationshipTables($pluralTable, $singularTable);
             }
             // Case A: Only plural exists - rename to singular
-            elseif ($pluralExists && ! $singularExists) {
+            elseif ($pluralExists) {
                 $this->connection->statement("RENAME TABLE `{$pluralTable}` TO `{$singularTable}`");
             }
-            // Case E: Neither exists - create singular with correct schema
-            elseif (! $pluralExists && ! $singularExists) {
+            // Case E: Neither exists - create singular with correct schema (plural already ruled out above)
+            elseif (! $singularExists) {
                 $this->createEntityRelationshipTable();
 
                 return true;
@@ -2386,9 +2386,9 @@ class Install
             // Handle any remaining plural table issues
             if ($pluralExists && $singularExists) {
                 $this->mergeEntityRelationshipTables($pluralTable, $singularTable);
-            } elseif ($pluralExists && ! $singularExists) {
+            } elseif ($pluralExists) {
                 $this->connection->statement("RENAME TABLE `{$pluralTable}` TO `{$singularTable}`");
-            } elseif (! $pluralExists && ! $singularExists) {
+            } elseif (! $singularExists) {
                 $this->createEntityRelationshipTable();
 
                 return true;
@@ -2430,9 +2430,9 @@ class Install
             // Handle any remaining plural table issues
             if ($pluralExists && $singularExists) {
                 $this->mergeEntityRelationshipTables($pluralTable, $singularTable);
-            } elseif ($pluralExists && ! $singularExists) {
+            } elseif ($pluralExists) {
                 $this->connection->statement("RENAME TABLE `{$pluralTable}` TO `{$singularTable}`");
-            } elseif (! $pluralExists && ! $singularExists) {
+            } elseif (! $singularExists) {
                 $this->createEntityRelationshipTable();
 
                 return true;

@@ -63,10 +63,11 @@ class ShowCanvas
     /**
      * get - display the canvas board (and handle the board switcher).
      *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
      * @param  string|null  $id  Active board id from the route
      */
     #[RequiresPermission(BlueprintsPermissions::VIEW, entityScoped: true)]
-    public function get(?string $id = null): Response
+    public function get(?string $canvasSlug = null, ?string $id = null): Response
     {
         $data = $this->request->getRequestParams();
         if ($id !== null) {
@@ -95,10 +96,11 @@ class ShowCanvas
     /**
      * post - handle create / edit / clone / merge / import board actions.
      *
+     * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
      * @param  string|null  $id  Active board id from the route
      */
     #[RequiresPermission(BlueprintsPermissions::EDIT, entityScoped: true)]
-    public function post(?string $id = null): Response
+    public function post(?string $canvasSlug = null, ?string $id = null): Response
     {
         $data = $this->request->getRequestParams();
         if ($id !== null) {
@@ -262,7 +264,7 @@ class ShowCanvas
         $allCanvas = $this->blueprintsRepo->getAllCanvas(session('currentProject'), $canvasType);
 
         // Create a default board when the project has none.
-        if (! $allCanvas || count($allCanvas) == 0) {
+        if (! $allCanvas) {
             $this->blueprintsRepo->addCanvas([
                 'title' => $this->language->__('label.board'),
                 'author' => session('userdata.id'),

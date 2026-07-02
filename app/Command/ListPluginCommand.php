@@ -64,14 +64,14 @@ EOL);
         // Filter by “installed" if requested.
         $installed = $this->input->getOption('installed');
         if ($installed !== null) {
-            $installed = $installed === null || filter_var($installed, FILTER_VALIDATE_BOOLEAN);
+            $installed = filter_var($installed, FILTER_VALIDATE_BOOLEAN);
             $plugins = array_filter($plugins, fn (InstalledPlugin $p) => ! ($installed xor isset($p->id)));
         }
 
         // Filter by “enabled" if requested.
         $enabled = $this->input->getOption('enabled');
         if ($enabled !== null) {
-            $enabled = $enabled === null || filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
+            $enabled = filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
             $plugins = array_filter($plugins, fn (InstalledPlugin $p) => ! ($enabled xor $p->enabled));
         }
 

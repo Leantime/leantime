@@ -171,14 +171,14 @@
                     <div class="form-group">
                         <label class=" control-label">{!! __('label.planned_hours') !!}</label>
                         <div class="">
-                            <input type="text" value="{{ $ticket->planHours }}" name="planHours" style="width:90px;"/>
+                            <x-global::forms.text-input value="{{ $ticket->planHours }}" name="planHours" style="width:90px;" />
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class=" control-label">{!! __('label.estimated_hours_remaining') !!}</label>
                         <div class="">
-                            <input type="text" value="{{ $ticket->hourRemaining }}" name="hourRemaining" style="width:90px;"/>
+                            <x-global::forms.text-input value="{{ $ticket->hourRemaining }}" name="hourRemaining" style="width:90px;" />
                             <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __('tooltip.how_many_hours_remaining') }}">
                                 &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
                             </a>
@@ -188,15 +188,15 @@
                     <div class="form-group">
                         <label class=" control-label">{!! __('label.booked_hours') !!}</label>
                         <div class="">
-                            <input type="text" disabled="disabled"
-                                   value="{{ $timesheetsAllHours }}" style="width:90px;"/>
+                            <x-global::forms.text-input disabled="disabled"
+                                   value="{{ $timesheetsAllHours }}" style="width:90px;" />
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class=" control-label">{!! __('label.actual_hours_remaining') !!}</label>
                         <div class="">
-                            <input type="text" disabled="disabled" value="{{ $remainingHours }}" style="width:90px;"/>
+                            <x-global::forms.text-input disabled="disabled" value="{{ $remainingHours }}" style="width:90px;" />
                         </div>
                     </div>
 

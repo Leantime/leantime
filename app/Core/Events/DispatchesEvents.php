@@ -67,7 +67,7 @@ trait DispatchesEvents
      * Gets the class Context based on path, this uses the same method as the autoloader
      * Helps create unique strings for events/filters
      */
-    private static function set_class_context(): string
+    protected static function set_class_context(): string
     {
         return str_replace('\\', '.', strtolower(static::class));
     }
@@ -79,7 +79,7 @@ trait DispatchesEvents
      * Exception::getTrace() to avoid the overhead of creating a full
      * exception object on every event dispatch (~60 times per request).
      */
-    private static function get_function_context(?int $functionInt = null): string
+    protected static function get_function_context(?int $functionInt = null): string
     {
         $tracePointer = is_int($functionInt) ? $functionInt : 3;
 

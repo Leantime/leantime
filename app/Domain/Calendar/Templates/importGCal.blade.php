@@ -7,17 +7,17 @@
 <form action="{{ BASE_URL }}/calendar/importGCal" method="post" class="formModal">
 
     <label for="name">{{ $tpl->__('label.calendar_name') }}:</label>
-    <input type="text" id="name" name="name" autocomplete="off" value="{{ $values['name'] }}" /><br />
+    <x-global::forms.text-input id="name" name="name" autocomplete="off" value="{{ $values['name'] }}" /><br />
 
     <label for="url">{{ $tpl->__('label.ical_url') }}:</label>
-    <input type="text" id="url" name="url" autocomplete="off" style="width:300px;" value="{{ $values['url'] }}" /><br />
+    <x-global::forms.text-input id="url" name="url" autocomplete="off" style="width:300px;" value="{{ $values['url'] }}" /><br />
 
     <label for="color">{{ $tpl->__('label.color') }}:</label>
     <input type="text" name="colorClass" autocomplete="off" value="{{ $values['colorClass'] }}"  class="simpleColorPicker"/>
 
     @dispatchEvent('beforeSubmitButton')
     <br /><br />
-    <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="btn" />
+    <x-global::forms.button tag="input" inputType="submit" name="save" id="save" :labelText="__('buttons.save')" />
 
 
 
