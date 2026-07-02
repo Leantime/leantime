@@ -920,7 +920,10 @@ class Users extends BaseService
         // the RPC entry point is a current-password oracle / takeover vector against any account).
         $userId = (int) session('userdata.id');
 
-        $row = $this->getUser($userId);
+        // Read from the repository, not the service getUser: the latter strips
+        // the password hash (and other secrets) for API safety (#3556), but the
+        // current-password check needs the real hash.
+        $row = $this->userRepo->getUser($userId);
 
         if (! password_verify($currentPassword, $row['password'])) {
             return 'previous_password_incorrect';
