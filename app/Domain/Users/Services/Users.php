@@ -168,8 +168,46 @@ class Users extends BaseService
             return $this->userCache[$resolvedId];
         }
 
-        $user = $this->userRepo->getUser($resolvedId);
+        $user = $this->stripSensitiveUserFields($this->userRepo->getUser($resolvedId));
         $this->userCache[$resolvedId] = $user;
+
+        return $user;
+    }
+
+    /**
+     * Fields on the zp_user row that must never reach an API caller: the
+     * bcrypt password, the plaintext TOTP seed, the session token, and the
+     * password-reset token/metadata. Authentication, 2FA and session flows
+     * read these straight from the repository (Users\Repositories\Users and
+     * the Auth repos), never through this service — so stripping them here
+     * closes the @api read paths (getUser is intentionally ungated so view
+     * composers keep working — see above) without breaking login.
+     *
+     * @see https://github.com/Leantime/leantime/issues/3556
+     */
+    private const SENSITIVE_USER_FIELDS = [
+        'password',
+        'twoFASecret',
+        'session',
+        'sessiontime',
+        'pwReset',
+        'pwResetExpiration',
+        'pwResetCount',
+    ];
+
+    /**
+     * Remove sensitive fields from a single user row before it is returned to
+     * an API caller. Passes the `false` "not found" shape through untouched.
+     */
+    private function stripSensitiveUserFields(array|bool $user): array|bool
+    {
+        if (! is_array($user)) {
+            return $user;
+        }
+
+        foreach (self::SENSITIVE_USER_FIELDS as $field) {
+            unset($user[$field]);
+        }
 
         return $user;
     }
@@ -180,7 +218,7 @@ class Users extends BaseService
     #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getUserByEmail($email, $status = 'a'): false|array
     {
-        return $this->userRepo->getUserByEmail($email, $status);
+        return $this->stripSensitiveUserFields($this->userRepo->getUserByEmail($email, $status));
     }
 
     /**
