@@ -20,6 +20,8 @@ class Timesheets extends Repository
 
     private DatabaseHelper $dbHelper;
 
+    private TimesheetsHistory $historyRepo;
+
     public array $kind = [
         'GENERAL_BILLABLE' => 'label.general_billable',
         'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
@@ -32,10 +34,23 @@ class Timesheets extends Repository
     /**
      * Get database connection
      */
-    public function __construct(DbCore $db, DatabaseHelper $dbHelper)
+    public function __construct(DbCore $db, DatabaseHelper $dbHelper, TimesheetsHistory $historyRepo)
     {
         $this->db = $db->getConnection();
         $this->dbHelper = $dbHelper;
+        $this->historyRepo = $historyRepo;
+    }
+
+    /**
+     * Records a history event for the given timesheet id, classifying it as 'logged' (first
+     * event ever recorded for this id) or 'modified' (any subsequent event), and resolving
+     * the acting user from the session. Called after every write to an already-known row id.
+     */
+    private function recordTimesheetHistory(int $timesheetId, float $hours): void
+    {
+        $action = $this->historyRepo->countHistoryForTimesheet($timesheetId) === 0 ? 'logged' : 'modified';
+
+        $this->historyRepo->addHistory($timesheetId, (int) session('userdata.id'), $action, $hours);
     }
 
     /**
@@ -649,6 +664,23 @@ class Timesheets extends Repository
             $values['description'] ?? '',
         ]);
 
+        // The insert above can collapse into an ON DUPLICATE KEY UPDATE against an existing
+        // row (unique key: userId+ticketId+workDate+kind), so neither a new id nor the
+        // resulting hours value is known here — re-query by that same unique key to resolve
+        // both. hours is additive on collision, so the post-write value can't be assumed to
+        // equal $values['hours'].
+        $affectedId = $this->db->table('zp_timesheets')
+            ->where('userId', $values['userId'])
+            ->where('ticketId', $values['ticket'])
+            ->where('workDate', $values['date'])
+            ->where('kind', $values['kind'])
+            ->value('id');
+
+        if ($affectedId !== null) {
+            $resultingHours = (float) $this->db->table('zp_timesheets')->where('id', $affectedId)->value('hours');
+            $this->recordTimesheetHistory((int) $affectedId, $resultingHours);
+        }
+
         $this->cleanUpEmptyTimesheets();
     }
 
@@ -820,6 +852,8 @@ class Timesheets extends Repository
                 'modified' => date('Y-m-d H:i:s'),
             ]);
 
+        $this->recordTimesheetHistory((int) $values['id'], (float) $values['hours']);
+
         $this->cleanUpEmptyTimesheets();
     }
 
@@ -918,6 +952,61 @@ class Timesheets extends Repository
         $this->db->table('zp_timesheets')
             ->where('id', $id)
             ->delete();
+    }
+
+    /**
+     * Get individual (non-aggregated) time entries logged against a ticket, newest first.
+     *
+     * @param  int  $ticketId  The ticket to fetch entries for
+     * @return array Individual timesheet rows including the logging user's name
+     */
+    public function getTimeEntriesForTicket(int $ticketId): array
+    {
+        $results = $this->db->table('zp_timesheets')
+            ->select(
+                'zp_timesheets.id',
+                'zp_timesheets.userId',
+                'zp_timesheets.workDate',
+                'zp_timesheets.hours',
+                'zp_timesheets.description',
+                'zp_timesheets.kind',
+                'zp_user.firstname',
+                'zp_user.lastname',
+            )
+            ->leftJoin('zp_user', 'zp_timesheets.userId', '=', 'zp_user.id')
+            ->where('zp_timesheets.ticketId', $ticketId)
+            ->orderBy('zp_timesheets.workDate', 'desc')
+            ->get();
+
+        return array_map(fn ($item) => (array) $item, $results->toArray());
+    }
+
+    /**
+     * Passthrough to the history repository, scoped to a single timesheet entry.
+     */
+    public function getHistoryForTimesheet(int $timesheetId): array
+    {
+        return $this->historyRepo->getHistoryForTimesheet($timesheetId);
+    }
+
+    /**
+     * Overwrite the logged duration of a single time entry. Only touches the hours/modified
+     * columns so the entry's owner, ticket, date, kind, description, and invoicing status are
+     * never affected by this update.
+     *
+     * @param  int  $id  The timesheet entry ID
+     * @param  int  $hours  The new logged duration in whole hours
+     */
+    public function updateTimeHours(int $id, int $hours): void
+    {
+        $this->db->table('zp_timesheets')
+            ->where('id', $id)
+            ->update([
+                'hours' => $hours,
+                'modified' => date('Y-m-d H:i:s'),
+            ]);
+
+        $this->recordTimesheetHistory($id, (float) $hours);
     }
 
     /**

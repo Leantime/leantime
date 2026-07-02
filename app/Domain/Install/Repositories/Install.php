@@ -90,6 +90,7 @@ class Install
         // Pre-release, so no installed DB ran the intermediate versions; fresh installs are
         // covered by SchemaBuilder + setupDB().
         30518,
+        30519,
     ];
 
     /**
@@ -2756,6 +2757,36 @@ class Install
             Log::error('Migration 30518: '.$e->getMessage());
 
             return ['Migration 30518 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Adds the zp_timesheets_history table: an append-only audit log of "logged"/"modified"
+     * events on zp_timesheets rows. Idempotent (guarded by hasTable) so re-running is safe.
+     *
+     * @return bool|array True on success, array of error strings on failure.
+     */
+    public function update_sql_30519(): bool|array
+    {
+        try {
+            if (! Schema::hasTable('zp_timesheets_history')) {
+                Schema::create('zp_timesheets_history', function (Blueprint $table) {
+                    $table->id();
+                    $table->integer('timesheetId')->nullable();
+                    $table->integer('userId')->nullable();
+                    $table->string('action', 20)->nullable();
+                    $table->float('hours')->nullable();
+                    $table->dateTime('dateCreated')->nullable();
+
+                    $table->index(['timesheetId'], 'idx_timesheetshistory_timesheetId');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30519: '.$e->getMessage());
+
+            return ['Migration 30519 failed: '.$e->getMessage()];
         }
 
         return true;

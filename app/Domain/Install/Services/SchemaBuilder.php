@@ -43,6 +43,7 @@ class SchemaBuilder
         $this->createTicketHistoryTable();
         $this->createTicketsTable();
         $this->createTimesheetsTable();
+        $this->createTimesheetsHistoryTable();
         $this->createUserTable();
         $this->createSprintsTable();
         $this->createStatsTable();
@@ -534,6 +535,25 @@ class SchemaBuilder
             $table->index(['ticketId'], 'idx_timesheets_ticketId');
             $table->index(['userId', 'workDate'], 'idx_timesheets_userId_workDate');
             $table->index(['ticketId', 'workDate'], 'idx_timesheets_ticketId_workDate');
+        });
+    }
+
+    /**
+     * Create zp_timesheets_history table: an append-only audit log of "logged"/"modified"
+     * events on zp_timesheets rows. No FK to zp_timesheets.id (deliberate, matches the rest of
+     * this schema) so a deleted or cleaned-up timesheet row never takes its history with it.
+     */
+    private function createTimesheetsHistoryTable(): void
+    {
+        Schema::create('zp_timesheets_history', function (Blueprint $table) {
+            $table->id();
+            $table->integer('timesheetId')->nullable();
+            $table->integer('userId')->nullable();
+            $table->string('action', 20)->nullable();
+            $table->float('hours')->nullable();
+            $table->dateTime('dateCreated')->nullable();
+
+            $table->index(['timesheetId'], 'idx_timesheetshistory_timesheetId');
         });
     }
 

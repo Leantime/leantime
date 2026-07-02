@@ -1,8 +1,5 @@
 @php
 $values = $timesheetValues;
-if ($remainingHours < 0) {
-    $remainingHours = 0;
-}
 $currentPay = $userHours * $userInfo['wage'];
 @endphp
 
@@ -48,11 +45,13 @@ $currentPay = $userHours * $userInfo['wage'];
 
                 <br />
                 <canvas id="canvas"></canvas>
-                <p><br />
-                    {!! __('label.planned_hours') !!}: {{ $ticket->planHours }}<br />
-                    {!! __('label.booked_hours') !!}: {{ $timesheetsAllHours }}<br />
-                    {!! __('label.actual_hours_remaining') !!}: {{ $remainingHours }}<br />
-                </p>
+                <br />
+                <x-global::hx
+                    wrapperId="ticketTimeLog"
+                    :for="\Leantime\Domain\Timesheets\Hxcontrollers\TicketTimeLog::class"
+                    :id="$ticket->id"
+                    trigger="load"
+                />
             </div>
         </div>
 

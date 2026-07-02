@@ -304,6 +304,77 @@ class Timesheets extends BaseService
     }
 
     /**
+     * Get individual time entries logged against a ticket, for the manager-only ticket
+     * time-tracking entry list. Unlike the ungated ticket-hours aggregates, this exposes
+     * per-user data, so it is restricted to timesheets.manage (manager+) regardless of
+     * whose entries are being viewed.
+     *
+     * @param  int  $ticketId  The ticket to fetch entries for
+     * @return array Individual timesheet rows including the logging user's name
+     *
+     * @api
+     */
+    #[RequiresPermission(TimesheetsPermissions::MANAGE, global: true, entityScoped: true)]
+    public function getTimeEntriesForTicket(int $ticketId): array
+    {
+        $this->authorize(TimesheetsPermissions::MANAGE);
+
+        return $this->timesheetsRepo->getTimeEntriesForTicket($ticketId);
+    }
+
+    /**
+     * Overwrite the logged duration of a single time entry. Restricted to manager+
+     * regardless of who owns the entry (unlike updateTime(), which lets an entry's own
+     * editor+ owner edit it). Only the hours/modified columns are written, so the
+     * original logger and all other fields are never changed by this call.
+     *
+     * @param  int  $id  The timesheet entry ID
+     * @param  int  $hours  The new logged duration in whole hours; must be greater than zero
+     * @return bool True if updated, false if the duration was invalid or the entry doesn't exist
+     *
+     * @api
+     */
+    #[RequiresPermission(TimesheetsPermissions::MANAGE, global: true, entityScoped: true)]
+    public function updateTimeDuration(int $id, int $hours): bool
+    {
+        $this->authorize(TimesheetsPermissions::MANAGE);
+
+        if ($hours <= 0) {
+            return false;
+        }
+
+        if (! $this->timesheetsRepo->getTimesheet($id)) {
+            return false;
+        }
+
+        $this->timesheetsRepo->updateTimeHours($id, $hours);
+
+        return true;
+    }
+
+    /**
+     * Get the full audit history for a single time entry, oldest to newest. Manager+ only,
+     * regardless of who owns the entry — mirrors updateTimeDuration()'s gating exactly, since
+     * history exposes per-user event data.
+     *
+     * @param  int  $timesheetId  The timesheet entry ID
+     * @return array History rows (oldest first), empty if the entry doesn't exist
+     *
+     * @api
+     */
+    #[RequiresPermission(TimesheetsPermissions::MANAGE, global: true, entityScoped: true)]
+    public function getTimeEntryHistory(int $timesheetId): array
+    {
+        $this->authorize(TimesheetsPermissions::MANAGE);
+
+        if (! $this->timesheetsRepo->getTimesheet($timesheetId)) {
+            return [];
+        }
+
+        return $this->timesheetsRepo->getHistoryForTimesheet($timesheetId);
+    }
+
+    /**
      * Retrieve a single timesheet entry by ID.
      *
      * @param  int  $id  The timesheet entry ID
