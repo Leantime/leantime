@@ -2857,10 +2857,18 @@ class Tickets extends BaseService
      *
      * @api
      */
-    #[RequiresPermission(TicketsPermissions::VIEW)]
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'id')]
     public function getMilestone(int $id): TicketModel|bool
     {
-        return $this->ticketRepository->getTicket($id);
+        $milestone = $this->ticketRepository->getTicket($id);
+
+        // Verify the user is assigned to the milestone's project.
+        // Mirrors the authorization check in getTicket().
+        if ($milestone && $this->projectService->isUserAssignedToProject(session('userdata.id'), $milestone->projectId)) {
+            return $milestone;
+        }
+
+        return false;
     }
 
     /**
