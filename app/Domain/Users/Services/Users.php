@@ -642,7 +642,10 @@ class Users extends BaseService
 
         $this->userRepo->editOwn($values, $id);
 
-        $user = $this->getUser($id);
+        // Rebuild the session from the FULL row (repo, not the stripped service
+        // getUser): setUserSession -> the session builder needs twoFASecret, or
+        // 2FA verification breaks for the user after a profile edit (#3556).
+        $user = $this->userRepo->getUser($id);
 
         $this->authService->setUserSession($user);
 
