@@ -772,8 +772,23 @@ class Users extends BaseService
     {
         $userId = (int) session('userdata.id');
 
+        // No authenticated user → don't fall through to usersettings.0.*.
+        if ($userId === 0) {
+            return [
+                'workStart' => null,
+                'lunch' => null,
+                'workEnd' => null,
+                'timezone' => date_default_timezone_get(),
+            ];
+        }
+
         $daySchedule = $this->settingsService->getSetting('usersettings.'.$userId.'.daySchedule');
         $daySchedule = $daySchedule ? safe_unserialize($daySchedule, []) : [];
+        // safe_unserialize can yield a non-array (e.g. false for a corrupt or
+        // scalar value); normalize so the array reads below are safe.
+        if (! is_array($daySchedule)) {
+            $daySchedule = [];
+        }
 
         $timezone = $this->settingsService->getSetting('usersettings.'.$userId.'.timezone');
         if (! $timezone) {
