@@ -721,8 +721,11 @@ class Tickets extends BaseService
                         case 'milestoneid':
                             $label = 'No Milestone Set';
                             $sortId = 'zzz_no_milestone'; // Sort "No Milestone" last alphabetically
-                            if ($ticket['milestoneid'] > 0) {
-                                $milestone = $this->getTicket($ticket['milestoneid']);
+                            // getTicket() returns false when the current user can't access the
+                            // milestone's project (e.g. a cross-project milestone linked to a goal).
+                            // Fall back to the "No Milestone Set" default rather than dereferencing false.
+                            $milestone = $ticket['milestoneid'] > 0 ? $this->getTicket($ticket['milestoneid']) : false;
+                            if ($milestone) {
                                 $color = $milestone->tags;
                                 $class = '';
                                 $groupColor = $color;
@@ -3910,10 +3913,18 @@ class Tickets extends BaseService
                         $milestoneId = $ticket['milestoneid'];
 
                         if (! isset($milestoneCache[$milestoneId])) {
-                            $milestoneCache[$milestoneId] = (array) $this->getTicket($milestoneId);
+                            // getTicket() returns false when the user can't access the milestone's
+                            // project (e.g. a cross-project milestone linked to a goal). Casting false
+                            // to an array injects an empty "ticket" that later 500s the widget render,
+                            // so cache null and skip it instead.
+                            $milestone = $this->getTicket($milestoneId);
+                            $milestoneCache[$milestoneId] = $milestone ? (array) $milestone : null;
                         }
-                        $ticketGroup['tickets'][] = $milestoneCache[$milestoneId];
-                        $milestoneIds[$ticketGroup['groupValue']][] = $milestoneId;
+
+                        if ($milestoneCache[$milestoneId] !== null) {
+                            $ticketGroup['tickets'][] = $milestoneCache[$milestoneId];
+                            $milestoneIds[$ticketGroup['groupValue']][] = $milestoneId;
+                        }
                     }
                 }
             }
