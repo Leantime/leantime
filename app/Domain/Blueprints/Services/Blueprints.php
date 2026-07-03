@@ -412,7 +412,40 @@ class Blueprints extends BaseService
         $dom = new DOMDocument('1.0', 'UTF-8');
         $users = app()->make(UserRepository::class);
 
-        $canvasData = file_get_contents($filename);
+        // Validate the file path to prevent SSRF and Local File Inclusion.
+        // Reject URL wrappers (http://, ftp://, etc.) and restrict reads to
+        // allowed local directories only.
+        $allowedDirs = [
+            realpath(sys_get_temp_dir()),
+            realpath(storage_path('userfiles')),
+        ];
+
+        $resolvedPath = realpath($filename);
+
+        if ($resolvedPath === false) {
+            Log::error('Blueprints import: file not found or path does not exist', ['filename' => $filename]);
+
+            return false;
+        }
+
+        $pathAllowed = false;
+        foreach ($allowedDirs as $allowedDir) {
+            if ($allowedDir !== false && str_starts_with($resolvedPath, $allowedDir)) {
+                $pathAllowed = true;
+                break;
+            }
+        }
+
+        if (! $pathAllowed) {
+            Log::error('Blueprints import: path traversal or SSRF attempt blocked', [
+                'filename' => $filename,
+                'resolvedPath' => $resolvedPath,
+            ]);
+
+            return false;
+        }
+
+        $canvasData = file_get_contents($resolvedPath);
         if ($canvasData === false) {
             return false;
         }
