@@ -417,9 +417,6 @@ leantime.projectsController = (function () {
                             view_modes: ['Day', 'Week', 'Month'],
                             view_mode: viewMode,
                             custom_popup_html: function (project) {
-                                // the project object will contain the updated
-                                // dates and progress value
-                                var end_date = project._end;
 
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 

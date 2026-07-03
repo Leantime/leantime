@@ -596,15 +596,8 @@ class Timesheets extends Repository
         // Portable upsert on the (userId, ticketId, workDate, kind) unique key: accumulate hours
         // and prepend the new description onto the existing entry. Replaces MySQL-only
         // ON DUPLICATE KEY UPDATE so this also runs on PostgreSQL.
-        $existing = $this->findTimesheetRow(
-            (int) $values['userId'],
-            (int) $values['ticket'],
-            $values['date'],
-            $values['kind'],
-        );
-
-        if ($existing) {
-            $this->accumulateAddTimeRow($existing, $values, $now);
+        if ($this->findTimesheetRow((int) $values['userId'], (int) $values['ticket'], $values['date'], $values['kind'])) {
+            $this->accumulateAddTimeRow($values, $now);
             $this->cleanUpEmptyTimesheets();
 
             return;
@@ -628,24 +621,13 @@ class Timesheets extends Repository
                 'modified' => $now,
             ]);
         } catch (QueryException $e) {
-            // A concurrent request created the entry between our read and insert; the unique key
+            // A concurrent request created the entry between our check and insert; the unique key
             // rejects this insert, so accumulate onto the row that now exists instead of 500ing.
             if (! $this->isUniqueConstraintViolation($e)) {
                 throw $e;
             }
 
-            $existing = $this->findTimesheetRow(
-                (int) $values['userId'],
-                (int) $values['ticket'],
-                $values['date'],
-                $values['kind'],
-            );
-
-            if (! $existing) {
-                throw $e;
-            }
-
-            $this->accumulateAddTimeRow($existing, $values, $now);
+            $this->accumulateAddTimeRow($values, $now);
         }
 
         $this->cleanUpEmptyTimesheets();
@@ -833,20 +815,34 @@ class Timesheets extends Repository
     }
 
     /**
-     * accumulateAddTimeRow - Add hours to and prepend the description of an existing timesheet row,
-     * shared by addTime's initial-match path and its concurrent-insert fallback.
+     * accumulateAddTimeRow - Atomically add hours to and prepend the description of the existing
+     * timesheet row on the (userId, ticketId, workDate, kind) unique key. Done as a single DB-side
+     * UPDATE (hours = hours + ?, description via CONCAT) so concurrent addTime() calls can't lose an
+     * update; CONCAT and bound parameters are portable across MySQL and PostgreSQL.
      */
-    private function accumulateAddTimeRow(object $existing, array $values, string $now): void
+    private function accumulateAddTimeRow(array $values, string $now): void
     {
-        $description = $values['description'] ?? '';
+        $descriptionPrefix = $values['date']."\n".($values['description'] ?? '')."\n--\n\n";
 
-        $this->db->table('zp_timesheets')
-            ->where('id', $existing->id)
-            ->update([
-                'hours' => (float) $existing->hours + (float) $values['hours'],
-                'description' => $values['date']."\n".$description."\n--\n\n".($existing->description ?? ''),
-                'modified' => $now,
-            ]);
+        $this->db->update(
+            'UPDATE zp_timesheets
+                SET hours = hours + ?,
+                    description = CONCAT(?, description),
+                    modified = ?
+              WHERE userId = ?
+                AND ticketId = ?
+                AND workDate = ?
+                AND kind = ?',
+            [
+                (float) $values['hours'],
+                $descriptionPrefix,
+                $now,
+                (int) $values['userId'],
+                (int) $values['ticket'],
+                $values['date'],
+                $values['kind'],
+            ]
+        );
     }
 
     /**
