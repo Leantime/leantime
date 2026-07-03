@@ -591,63 +591,45 @@ class Timesheets extends Repository
      */
     public function addTime(array $values): void
     {
-        // Laravel Query Builder doesn't support ON DUPLICATE KEY UPDATE well
-        // Use raw query for this MySQL-specific feature
-        $query = "INSERT INTO zp_timesheets (
-            userId,
-            ticketId,
-            workDate,
-            hours,
-            kind,
-            description,
-            invoicedEmpl,
-            invoicedComp,
-            invoicedEmplDate,
-            invoicedCompDate,
-            rate,
-            paid,
-            paidDate,
-            modified
-        ) VALUES (
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?
-        ) ON DUPLICATE KEY UPDATE
-             hours = hours + ?,
-             description = CONCAT(?, '\n', ?, '\n', '--', '\n\n', description)";
+        $description = $values['description'] ?? '';
+        $now = date('Y-m-d H:i:s');
 
-        $query = self::dispatch_filter('sql', $query);
-
-        $this->db->insert($query, [
-            $values['userId'],
-            $values['ticket'],
+        // Portable upsert on the (userId, ticketId, workDate, kind) unique key: accumulate hours
+        // and prepend the new description onto the existing entry. Replaces MySQL-only
+        // ON DUPLICATE KEY UPDATE so this also runs on PostgreSQL.
+        $existing = $this->findTimesheetRow(
+            (int) $values['userId'],
+            (int) $values['ticket'],
             $values['date'],
-            $values['hours'],
             $values['kind'],
-            $values['description'] ?? '',
-            $values['invoicedEmpl'] ?? '',
-            $values['invoicedComp'] ?? '',
-            $values['invoicedEmplDate'] ?? '',
-            $values['invoicedCompDate'] ?? '',
-            $values['rate'] ?? '',
-            $values['paid'] ?? '',
-            $values['paidDate'] ?? '',
-            date('Y-m-d H:i:s'),
-            $values['hours'],
-            $values['date'],
-            $values['description'] ?? '',
-        ]);
+        );
+
+        if ($existing) {
+            $this->db->table('zp_timesheets')
+                ->where('id', $existing->id)
+                ->update([
+                    'hours' => (float) $existing->hours + (float) $values['hours'],
+                    'description' => $values['date']."\n".$description."\n--\n\n".($existing->description ?? ''),
+                    'modified' => $now,
+                ]);
+        } else {
+            $this->db->table('zp_timesheets')->insert([
+                'userId' => $values['userId'],
+                'ticketId' => $values['ticket'],
+                'workDate' => $values['date'],
+                'hours' => $values['hours'],
+                'kind' => $values['kind'],
+                'description' => $description,
+                'invoicedEmpl' => $values['invoicedEmpl'] ?? '',
+                'invoicedComp' => $values['invoicedComp'] ?? '',
+                'invoicedEmplDate' => $values['invoicedEmplDate'] ?? '',
+                'invoicedCompDate' => $values['invoicedCompDate'] ?? '',
+                'rate' => $values['rate'] ?? '',
+                'paid' => $values['paid'] ?? '',
+                'paidDate' => $values['paidDate'] ?? '',
+                'modified' => $now,
+            ]);
+        }
 
         $this->cleanUpEmptyTimesheets();
     }
@@ -720,19 +702,17 @@ class Timesheets extends Repository
             /** @var \Carbon\CarbonImmutable $userStartOfDay */
             $userStartOfDay = dtHelper()::createFromTimestamp($inTimestamp, 'UTC')->setToUserTimezone()->startOfDay();
 
-            // Use raw query for ON DUPLICATE KEY UPDATE (MySQL specific)
-            $query = "INSERT INTO `zp_timesheets` (userId, ticketId, workDate, hours, kind, modified)
-                      VALUES (?, ?, ?, ?, 'GENERAL_BILLABLE', ?)
-                      ON DUPLICATE KEY UPDATE hours = hours + ?";
-
-            $this->db->insert($query, [
-                session('userdata.id'),
+            // Accumulate onto the day's existing entry for this ticket/kind. Done as a portable
+            // read-then-write instead of MySQL-only ON DUPLICATE KEY UPDATE so it also runs on
+            // PostgreSQL. The (userId, ticketId, workDate, kind) unique key + surrounding
+            // transaction keep this atomic.
+            $this->accumulateHours(
+                (int) session('userdata.id'),
                 $ticketId,
                 $userStartOfDay->formatDateTimeForDb(),
+                'GENERAL_BILLABLE',
                 $hoursWorked,
-                date('Y-m-d H:i:s'),
-                $hoursWorked,
-            ]);
+            );
 
             return $hoursWorked;
         });
@@ -745,58 +725,74 @@ class Timesheets extends Repository
      */
     public function upsertTimesheetEntry(array $values): void
     {
-        // Use raw query for ON DUPLICATE KEY UPDATE (MySQL specific)
-        $query = 'INSERT INTO zp_timesheets (
-                userId,
-                ticketId,
-                workDate,
-                hours,
-                kind,
-                invoicedEmpl,
-                invoicedComp,
-                invoicedEmplDate,
-                invoicedCompDate,
-                rate,
-                paid,
-                paidDate,
-                modified
-            ) VALUES (
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?
-            ) ON DUPLICATE KEY UPDATE
-                 hours = ?';
-
-        $query = self::dispatch_filter('sql', $query);
-
-        $this->db->insert($query, [
-            $values['userId'],
-            $values['ticket'],
-            $values['date'],
-            $values['hours'],
-            $values['kind'],
-            $values['invoicedEmpl'] ?? '',
-            $values['invoicedComp'] ?? '',
-            $values['invoicedEmplDate'] ?? '',
-            $values['invoicedCompDate'] ?? '',
-            $values['rate'] ?? '',
-            $values['paid'] ?? '',
-            $values['paidDate'] ?? '',
-            date('Y-m-d H:i:s'),
-            $values['hours'],
-        ]);
+        // Cross-DB upsert on the (userId, ticketId, workDate, kind) unique key. Laravel's upsert()
+        // emits the correct dialect per driver (MySQL ON DUPLICATE KEY, PostgreSQL ON CONFLICT).
+        // On conflict only `hours` is overwritten, matching the previous behaviour.
+        $this->db->table('zp_timesheets')->upsert(
+            [[
+                'userId' => $values['userId'],
+                'ticketId' => $values['ticket'],
+                'workDate' => $values['date'],
+                'hours' => $values['hours'],
+                'kind' => $values['kind'],
+                'invoicedEmpl' => $values['invoicedEmpl'] ?? '',
+                'invoicedComp' => $values['invoicedComp'] ?? '',
+                'invoicedEmplDate' => $values['invoicedEmplDate'] ?? '',
+                'invoicedCompDate' => $values['invoicedCompDate'] ?? '',
+                'rate' => $values['rate'] ?? '',
+                'paid' => $values['paid'] ?? '',
+                'paidDate' => $values['paidDate'] ?? '',
+                'modified' => date('Y-m-d H:i:s'),
+            ]],
+            ['userId', 'ticketId', 'workDate', 'kind'],
+            ['hours'],
+        );
 
         $this->cleanUpEmptyTimesheets();
+    }
+
+    /**
+     * findTimesheetRow - Look up a single timesheet entry by its natural unique key
+     * (userId, ticketId, workDate, kind), used by the portable upsert paths.
+     */
+    private function findTimesheetRow(int $userId, int $ticketId, string $workDate, string $kind): ?object
+    {
+        return $this->db->table('zp_timesheets')
+            ->where('userId', $userId)
+            ->where('ticketId', $ticketId)
+            ->where('workDate', $workDate)
+            ->where('kind', $kind)
+            ->first();
+    }
+
+    /**
+     * accumulateHours - Add $hours to the day's timesheet entry for a ticket/kind, inserting the
+     * row if it doesn't exist yet. Portable replacement for MySQL-only ON DUPLICATE KEY UPDATE.
+     */
+    private function accumulateHours(int $userId, int $ticketId, string $workDate, string $kind, float $hours): void
+    {
+        $existing = $this->findTimesheetRow($userId, $ticketId, $workDate, $kind);
+        $now = date('Y-m-d H:i:s');
+
+        if ($existing) {
+            $this->db->table('zp_timesheets')
+                ->where('id', $existing->id)
+                ->update([
+                    'hours' => (float) $existing->hours + $hours,
+                    'modified' => $now,
+                ]);
+
+            return;
+        }
+
+        $this->db->table('zp_timesheets')->insert([
+            'userId' => $userId,
+            'ticketId' => $ticketId,
+            'workDate' => $workDate,
+            'hours' => $hours,
+            'kind' => $kind,
+            'modified' => $now,
+        ]);
     }
 
     /**
