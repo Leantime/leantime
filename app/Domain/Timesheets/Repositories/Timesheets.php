@@ -591,7 +591,6 @@ class Timesheets extends Repository
      */
     public function addTime(array $values): void
     {
-        $description = $values['description'] ?? '';
         $now = date('Y-m-d H:i:s');
 
         // Portable upsert on the (userId, ticketId, workDate, kind) unique key: accumulate hours
@@ -605,21 +604,20 @@ class Timesheets extends Repository
         );
 
         if ($existing) {
-            $this->db->table('zp_timesheets')
-                ->where('id', $existing->id)
-                ->update([
-                    'hours' => (float) $existing->hours + (float) $values['hours'],
-                    'description' => $values['date']."\n".$description."\n--\n\n".($existing->description ?? ''),
-                    'modified' => $now,
-                ]);
-        } else {
+            $this->accumulateAddTimeRow($existing, $values, $now);
+            $this->cleanUpEmptyTimesheets();
+
+            return;
+        }
+
+        try {
             $this->db->table('zp_timesheets')->insert([
                 'userId' => $values['userId'],
                 'ticketId' => $values['ticket'],
                 'workDate' => $values['date'],
                 'hours' => $values['hours'],
                 'kind' => $values['kind'],
-                'description' => $description,
+                'description' => $values['description'] ?? '',
                 'invoicedEmpl' => $values['invoicedEmpl'] ?? '',
                 'invoicedComp' => $values['invoicedComp'] ?? '',
                 'invoicedEmplDate' => $values['invoicedEmplDate'] ?? '',
@@ -629,6 +627,25 @@ class Timesheets extends Repository
                 'paidDate' => $values['paidDate'] ?? '',
                 'modified' => $now,
             ]);
+        } catch (QueryException $e) {
+            // A concurrent request created the entry between our read and insert; the unique key
+            // rejects this insert, so accumulate onto the row that now exists instead of 500ing.
+            if (! $this->isUniqueConstraintViolation($e)) {
+                throw $e;
+            }
+
+            $existing = $this->findTimesheetRow(
+                (int) $values['userId'],
+                (int) $values['ticket'],
+                $values['date'],
+                $values['kind'],
+            );
+
+            if (! $existing) {
+                throw $e;
+            }
+
+            $this->accumulateAddTimeRow($existing, $values, $now);
         }
 
         $this->cleanUpEmptyTimesheets();
@@ -767,32 +784,78 @@ class Timesheets extends Repository
 
     /**
      * accumulateHours - Add $hours to the day's timesheet entry for a ticket/kind, inserting the
-     * row if it doesn't exist yet. Portable replacement for MySQL-only ON DUPLICATE KEY UPDATE.
+     * row if it doesn't exist yet. Portable, atomic replacement for MySQL-only
+     * ON DUPLICATE KEY UPDATE that also runs on PostgreSQL.
      */
     private function accumulateHours(int $userId, int $ticketId, string $workDate, string $kind, float $hours): void
     {
-        $existing = $this->findTimesheetRow($userId, $ticketId, $workDate, $kind);
         $now = date('Y-m-d H:i:s');
 
-        if ($existing) {
-            $this->db->table('zp_timesheets')
-                ->where('id', $existing->id)
-                ->update([
-                    'hours' => (float) $existing->hours + $hours,
-                    'modified' => $now,
-                ]);
+        // Atomic, DB-side increment. Only affects the row if it already exists, so concurrent
+        // callers can't lose an update the way a read-modify-write would.
+        $affected = $this->db->table('zp_timesheets')
+            ->where('userId', $userId)
+            ->where('ticketId', $ticketId)
+            ->where('workDate', $workDate)
+            ->where('kind', $kind)
+            ->increment('hours', $hours, ['modified' => $now]);
 
+        if ($affected > 0) {
             return;
         }
 
-        $this->db->table('zp_timesheets')->insert([
-            'userId' => $userId,
-            'ticketId' => $ticketId,
-            'workDate' => $workDate,
-            'hours' => $hours,
-            'kind' => $kind,
-            'modified' => $now,
-        ]);
+        // No row yet: insert one. Wrapped in a nested transaction so that on PostgreSQL a
+        // unique-key violation from a concurrent insert rolls back to a savepoint instead of
+        // aborting the surrounding punchOut transaction. On conflict, fall back to the increment.
+        try {
+            $this->db->transaction(function () use ($userId, $ticketId, $workDate, $kind, $hours, $now) {
+                $this->db->table('zp_timesheets')->insert([
+                    'userId' => $userId,
+                    'ticketId' => $ticketId,
+                    'workDate' => $workDate,
+                    'hours' => $hours,
+                    'kind' => $kind,
+                    'modified' => $now,
+                ]);
+            });
+        } catch (QueryException $e) {
+            if (! $this->isUniqueConstraintViolation($e)) {
+                throw $e;
+            }
+
+            $this->db->table('zp_timesheets')
+                ->where('userId', $userId)
+                ->where('ticketId', $ticketId)
+                ->where('workDate', $workDate)
+                ->where('kind', $kind)
+                ->increment('hours', $hours, ['modified' => $now]);
+        }
+    }
+
+    /**
+     * accumulateAddTimeRow - Add hours to and prepend the description of an existing timesheet row,
+     * shared by addTime's initial-match path and its concurrent-insert fallback.
+     */
+    private function accumulateAddTimeRow(object $existing, array $values, string $now): void
+    {
+        $description = $values['description'] ?? '';
+
+        $this->db->table('zp_timesheets')
+            ->where('id', $existing->id)
+            ->update([
+                'hours' => (float) $existing->hours + (float) $values['hours'],
+                'description' => $values['date']."\n".$description."\n--\n\n".($existing->description ?? ''),
+                'modified' => $now,
+            ]);
+    }
+
+    /**
+     * isUniqueConstraintViolation - True when a QueryException is a duplicate/unique-key violation
+     * (SQLSTATE 23000 on MySQL, 23505 on PostgreSQL), used to retry upserts as updates.
+     */
+    private function isUniqueConstraintViolation(QueryException $e): bool
+    {
+        return in_array((string) $e->getCode(), ['23000', '23505'], true);
     }
 
     /**
