@@ -796,6 +796,55 @@ class Users extends BaseService
     }
 
     /**
+     * The authenticated user's work-day schedule (workStart / lunch / workEnd
+     * hours) plus their timezone. A lean, self-scoped read for clients that
+     * only need the schedule — e.g. the mobile app seeds reminder times and the
+     * day-progress marker from it — rather than the heavy getOwnProfileSettings
+     * payload. Values are null when the user hasn't set a schedule (caller
+     * applies its own defaults).
+     *
+     * Self-scoped: always the session user, never a caller-supplied id.
+     *
+     * @api
+     *
+     * @return array{workStart: mixed, lunch: mixed, workEnd: mixed, timezone: string}
+     */
+    public function getMyDaySchedule(): array
+    {
+        $userId = (int) session('userdata.id');
+
+        // No authenticated user → don't fall through to usersettings.0.*.
+        if ($userId === 0) {
+            return [
+                'workStart' => null,
+                'lunch' => null,
+                'workEnd' => null,
+                'timezone' => date_default_timezone_get(),
+            ];
+        }
+
+        $daySchedule = $this->settingsService->getSetting('usersettings.'.$userId.'.daySchedule');
+        $daySchedule = $daySchedule ? safe_unserialize($daySchedule, []) : [];
+        // safe_unserialize can yield a non-array (e.g. false for a corrupt or
+        // scalar value); normalize so the array reads below are safe.
+        if (! is_array($daySchedule)) {
+            $daySchedule = [];
+        }
+
+        $timezone = $this->settingsService->getSetting('usersettings.'.$userId.'.timezone');
+        if (! $timezone) {
+            $timezone = date_default_timezone_get();
+        }
+
+        return [
+            'workStart' => $daySchedule['workStart'] ?? null,
+            'lunch' => $daySchedule['lunch'] ?? null,
+            'workEnd' => $daySchedule['workEnd'] ?? null,
+            'timezone' => $timezone,
+        ];
+    }
+
+    /**
      * Gathers the notification preferences for the "edit own profile" screen,
      * applying company defaults and the per-project notification levels
      * (including the lazy migration from the legacy muted-projects format).
