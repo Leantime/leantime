@@ -49,6 +49,23 @@ class PluginsServiceTest extends TestCase
         $this->assertSame('Not json', $plugin->excerpt);
     }
 
+    public function test_build_marketplace_plugin_from_request_ignores_disallowed_control_fields(): void
+    {
+        /** @var PluginService $service */
+        $service = $this->make(PluginService::class);
+
+        $plugin = $service->buildMarketplacePluginFromRequest([
+            'identifier' => 'acme-plugin',
+            'type' => 'system',
+            'marketplaceUrl' => 'https://attacker.example.com',
+        ]);
+
+        // Allowlisted field is set; sensitive control fields are ignored and keep their defaults.
+        $this->assertSame('acme-plugin', $plugin->identifier);
+        $this->assertSame('marketplace', $plugin->type);
+        $this->assertSame('', $plugin->marketplaceUrl);
+    }
+
     public function test_is_bundle_true_when_bundles_category_present(): void
     {
         /** @var PluginService $service */

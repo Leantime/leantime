@@ -31,18 +31,27 @@ class Plugins
 
     /**
      * Properties accepted from the request when building a MarketplacePlugin for install.
-     * A positive allowlist (fail-closed): control fields such as `type` and `marketplaceUrl`
-     * are deliberately absent so they can't be mass-assigned from client input.
+     * A positive allowlist (fail-closed): the security-sensitive control fields `type` and
+     * `marketplaceUrl` are deliberately absent so they can't be mass-assigned from client input,
+     * and `version` is intentionally excluded because the caller handles it separately. Everything
+     * here is benign marketplace descriptor/display data carried by the install round-trip.
      */
     private const MARKETPLACE_INSTALL_PROPS = [
         'identifier',
         'license',
-        'version',
         'name',
+        'excerpt',
+        'description',
+        'imageUrl',
         'icon',
+        'vendorDisplayName',
+        'vendorId',
         'marketplaceId',
         'compatibility',
         'categories',
+        'tags',
+        'rating',
+        'reviewCount',
     ];
 
     private string $pluginDirectory = ROOT.'/../app/Plugins/';
