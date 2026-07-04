@@ -4,7 +4,9 @@ namespace Leantime\Domain\Plugins\Hxcontrollers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Client\RequestException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\HtmxController;
+use Leantime\Domain\Plugins\Permissions\PluginsPermissions;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
 
 class Details extends HtmxController
@@ -22,6 +24,7 @@ class Details extends HtmxController
     /**
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function install(): string
     {
         $pluginProps = $this->incomingRequest->request->all()['plugin'];

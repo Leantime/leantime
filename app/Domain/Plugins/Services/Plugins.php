@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Notifications\Services\Notifications;
 use Leantime\Domain\Plugins\Models\InstalledPlugin;
 use Leantime\Domain\Plugins\Models\MarketplacePlugin;
+use Leantime\Domain\Plugins\Permissions\PluginsPermissions;
 use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
 use Leantime\Domain\Users\Services\Users as UsersService;
@@ -26,6 +28,22 @@ use Leantime\Domain\Users\Services\Users as UsersService;
 class Plugins
 {
     use DispatchesEvents;
+
+    /**
+     * Properties accepted from the request when building a MarketplacePlugin for install.
+     * A positive allowlist (fail-closed): control fields such as `type` and `marketplaceUrl`
+     * are deliberately absent so they can't be mass-assigned from client input.
+     */
+    private const MARKETPLACE_INSTALL_PROPS = [
+        'identifier',
+        'license',
+        'version',
+        'name',
+        'icon',
+        'marketplaceId',
+        'compatibility',
+        'categories',
+    ];
 
     private string $pluginDirectory = ROOT.'/../app/Plugins/';
 
@@ -203,6 +221,7 @@ class Plugins
      *
      * @api
      */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function discoverNewPlugins(): array
     {
         $this->clearCache();
@@ -263,6 +282,7 @@ class Plugins
      *
      * @api
      */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function installPlugin($pluginFolder): false|string
     {
         $this->clearCache();
@@ -296,6 +316,7 @@ class Plugins
     /**
      * @api
      */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function enablePlugin(int $id): bool
     {
         $this->clearCache();
@@ -317,6 +338,7 @@ class Plugins
     /**
      * @api
      */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function disablePlugin(int $id): bool
     {
         $this->clearCache();
@@ -339,6 +361,7 @@ class Plugins
      *
      * @api
      */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function removePlugin(int $id): bool
     {
         $this->clearCache();
@@ -537,11 +560,20 @@ class Plugins
      *
      * @api
      */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function buildMarketplacePluginFromRequest(array $pluginProps): MarketplacePlugin
     {
         $builder = build(new MarketplacePlugin);
 
         foreach ($pluginProps as $key => $value) {
+            // Only accept the properties the install round-trip legitimately carries. Everything
+            // else — notably control fields like `type` and `marketplaceUrl` — is ignored, so a
+            // request can't mass-assign arbitrary model state (the download always targets the
+            // server-configured marketplace, keyed by identifier).
+            if (! in_array($key, self::MARKETPLACE_INSTALL_PROPS, true)) {
+                continue;
+            }
+
             if (is_string($value)) {
                 $newValue = json_decode(json: $value, flags: JSON_OBJECT_AS_ARRAY);
 
@@ -898,6 +930,7 @@ class Plugins
      *
      * @api
      */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function performPluginAction(string $action, mixed $id): array
     {
         $allowedActions = ['install', 'enable', 'disable', 'remove'];
