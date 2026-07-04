@@ -1050,13 +1050,27 @@ class Projects extends BaseService implements ChecksProjectAccess
     public function getProjectRole($userId, $projectId): string
     {
 
-        $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
+        $projectRole = $this->projectRepository->getUserProjectRelation($userId, $projectId)[0]['projectRole'] ?? '';
 
-        if (isset($project[0]['projectRole']) && $project[0]['projectRole'] != '') {
-            return (string) $project[0]['projectRole'];
-        } else {
+        if ($projectRole === '') {
             return '';
         }
+
+        // For a numeric role key, only return it when it's a real, non-admin/owner role. The legacy
+        // "0" (written before "inherit" was handled on save) and any other unknown/junk key resolve
+        // to "no explicit role" so callers safely fall back to the user's global role instead of an
+        // unresolvable one that would deny all project access.
+        if (ctype_digit((string) $projectRole)) {
+            $roles = Roles::getRoles();
+            $assignableRoles = array_diff_key($roles, [
+                array_search(Roles::$admin, $roles, true) => null,
+                array_search(Roles::$owner, $roles, true) => null,
+            ]);
+
+            return isset($assignableRoles[(int) $projectRole]) ? (string) (int) $projectRole : '';
+        }
+
+        return (string) $projectRole;
     }
 
     /**

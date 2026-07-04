@@ -788,10 +788,24 @@ class Projects
 
         // Add users to relation
         if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
+            // Roles that may be assigned as a per-project role: every known role key except
+            // admin/owner (they're global-only and never scoped to a single project).
+            $roles = Roles::getRoles();
+            $assignableRoles = array_diff_key($roles, [
+                array_search(Roles::$admin, $roles, true) => null,
+                array_search(Roles::$owner, $roles, true) => null,
+            ]);
+
             foreach ($values['assignedUsers'] as $userId) {
+                $roleValue = (string) ($values['projectRoles']['userProjectRole-'.$userId] ?? '');
+
+                // Only persist a whitelisted, digit-only role key. "inherit", an empty selection,
+                // or any value that isn't a known assignable role leaves the role null, so the user
+                // falls back to their global role instead of being stored with an invalid key
+                // (which would later resolve to "no role" and lock them out of the project).
                 $projectRole = null;
-                if (isset($values['projectRoles']['userProjectRole-'.$userId]) && $values['projectRoles']['userProjectRole-'.$userId] != '40' && $values['projectRoles']['userProjectRole-'.$userId] != '50') {
-                    $projectRole = (int) $values['projectRoles']['userProjectRole-'.$userId];
+                if (ctype_digit($roleValue) && isset($assignableRoles[(int) $roleValue])) {
+                    $projectRole = (int) $roleValue;
                 }
 
                 $this->addProjectRelation($userId, $projectId, $projectRole);
