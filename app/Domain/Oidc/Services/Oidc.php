@@ -248,6 +248,12 @@ class Oidc
 
             $user['role'] = $this->getUserRole($userInfo, $user);
 
+            // $user carries the full zp_user row from getUserByEmail(), including the stored
+            // bcrypt password hash and session/reset tokens. Passing those back into editUser()
+            // would re-hash the already-hashed password on every login and clobber local
+            // credentials, so drop them — OIDC never manages the local password.
+            unset($user['password'], $user['session'], $user['pwReset'], $user['pwResetExpiration']);
+
             $this->userRepo->editUser($user, $user['id']);
 
             // Get updated user

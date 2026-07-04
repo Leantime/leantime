@@ -1,0 +1,35 @@
+key: "weekly-status"
+title: "Weekly Status Update"
+description: "Concise weekly recap — wins, blockers, next week's focus."
+appliesTo: "wiki"
+sector: "process"
+icon: "fa-calendar-week"
+author: "Leantime"
+version: "1.0.0"
+license: "CC0"
+
+wiki:
+  articles:
+    - title: "Weekly Status Update"
+      content: |
+        <h1>Weekly Status Update</h1>
+        <p><strong>Week of:</strong> </p>
+        <p><strong>From:</strong> </p>
+        <h2>Wins</h2>
+        <ul>
+          <li>What shipped, what's measurably better, what surprised us positively</li>
+        </ul>
+        <h2>In flight</h2>
+        <ul>
+          <li>What's actively being worked on and the expected landing date</li>
+        </ul>
+        <h2>Blockers</h2>
+        <ul>
+          <li>What's stuck and what specifically would unstick it</li>
+        </ul>
+        <h2>Next week</h2>
+        <ul>
+          <li>The 2-3 things that matter most</li>
+        </ul>
+        <h2>Risks worth flagging</h2>
+        <p>Things that aren't blockers yet but are worth telling leadership about now rather than later.</p>

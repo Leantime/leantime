@@ -168,8 +168,46 @@ class Users extends BaseService
             return $this->userCache[$resolvedId];
         }
 
-        $user = $this->userRepo->getUser($resolvedId);
+        $user = $this->stripSensitiveUserFields($this->userRepo->getUser($resolvedId));
         $this->userCache[$resolvedId] = $user;
+
+        return $user;
+    }
+
+    /**
+     * Fields on the zp_user row that must never reach an API caller: the
+     * bcrypt password, the plaintext TOTP seed, the session token, and the
+     * password-reset token/metadata. Authentication, 2FA and session flows
+     * read these straight from the repository (Users\Repositories\Users and
+     * the Auth repos), never through this service — so stripping them here
+     * closes the @api read paths (getUser is intentionally ungated so view
+     * composers keep working — see above) without breaking login.
+     *
+     * @see https://github.com/Leantime/leantime/issues/3556
+     */
+    private const SENSITIVE_USER_FIELDS = [
+        'password',
+        'twoFASecret',
+        'session',
+        'sessiontime',
+        'pwReset',
+        'pwResetExpiration',
+        'pwResetCount',
+    ];
+
+    /**
+     * Remove sensitive fields from a single user row before it is returned to
+     * an API caller. Passes the `false` "not found" shape through untouched.
+     */
+    private function stripSensitiveUserFields(array|bool $user): array|bool
+    {
+        if (! is_array($user)) {
+            return $user;
+        }
+
+        foreach (self::SENSITIVE_USER_FIELDS as $field) {
+            unset($user[$field]);
+        }
 
         return $user;
     }
@@ -180,7 +218,7 @@ class Users extends BaseService
     #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getUserByEmail($email, $status = 'a'): false|array
     {
-        return $this->userRepo->getUserByEmail($email, $status);
+        return $this->stripSensitiveUserFields($this->userRepo->getUserByEmail($email, $status));
     }
 
     /**
@@ -604,7 +642,10 @@ class Users extends BaseService
 
         $this->userRepo->editOwn($values, $id);
 
-        $user = $this->getUser($id);
+        // Rebuild the session from the FULL row (repo, not the stripped service
+        // getUser): setUserSession -> the session builder needs twoFASecret, or
+        // 2FA verification breaks for the user after a profile edit (#3556).
+        $user = $this->userRepo->getUser($id);
 
         $this->authService->setUserSession($user);
 
@@ -755,6 +796,55 @@ class Users extends BaseService
     }
 
     /**
+     * The authenticated user's work-day schedule (workStart / lunch / workEnd
+     * hours) plus their timezone. A lean, self-scoped read for clients that
+     * only need the schedule — e.g. the mobile app seeds reminder times and the
+     * day-progress marker from it — rather than the heavy getOwnProfileSettings
+     * payload. Values are null when the user hasn't set a schedule (caller
+     * applies its own defaults).
+     *
+     * Self-scoped: always the session user, never a caller-supplied id.
+     *
+     * @api
+     *
+     * @return array{workStart: mixed, lunch: mixed, workEnd: mixed, timezone: string}
+     */
+    public function getMyDaySchedule(): array
+    {
+        $userId = (int) session('userdata.id');
+
+        // No authenticated user → don't fall through to usersettings.0.*.
+        if ($userId === 0) {
+            return [
+                'workStart' => null,
+                'lunch' => null,
+                'workEnd' => null,
+                'timezone' => date_default_timezone_get(),
+            ];
+        }
+
+        $daySchedule = $this->settingsService->getSetting('usersettings.'.$userId.'.daySchedule');
+        $daySchedule = $daySchedule ? safe_unserialize($daySchedule, []) : [];
+        // safe_unserialize can yield a non-array (e.g. false for a corrupt or
+        // scalar value); normalize so the array reads below are safe.
+        if (! is_array($daySchedule)) {
+            $daySchedule = [];
+        }
+
+        $timezone = $this->settingsService->getSetting('usersettings.'.$userId.'.timezone');
+        if (! $timezone) {
+            $timezone = date_default_timezone_get();
+        }
+
+        return [
+            'workStart' => $daySchedule['workStart'] ?? null,
+            'lunch' => $daySchedule['lunch'] ?? null,
+            'workEnd' => $daySchedule['workEnd'] ?? null,
+            'timezone' => $timezone,
+        ];
+    }
+
+    /**
      * Gathers the notification preferences for the "edit own profile" screen,
      * applying company defaults and the per-project notification levels
      * (including the lazy migration from the legacy muted-projects format).
@@ -882,7 +972,10 @@ class Users extends BaseService
         // the RPC entry point is a current-password oracle / takeover vector against any account).
         $userId = (int) session('userdata.id');
 
-        $row = $this->getUser($userId);
+        // Read from the repository, not the service getUser: the latter strips
+        // the password hash (and other secrets) for API safety (#3556), but the
+        // current-password check needs the real hash.
+        $row = $this->userRepo->getUser($userId);
 
         if (! password_verify($currentPassword, $row['password'])) {
             return 'previous_password_incorrect';
