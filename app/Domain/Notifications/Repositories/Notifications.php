@@ -17,9 +17,6 @@ class Notifications
         $this->db = $db->getConnection();
     }
 
-    /**
-     * @param  false  $showNewOnly
-     */
     public function getAllNotifications(int $userId, bool $showNewOnly = false, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = []): false|array
     {
         $query = $this->db->table('zp_notifications')

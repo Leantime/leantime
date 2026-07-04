@@ -97,7 +97,6 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Create a new exception handler instance.
      *
-     * @param  Application
      * @return void
      */
     public function __construct(Application $container)
@@ -122,7 +121,7 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Register a reportable callback.
      *
-     * @return \Illuminate\Foundation\Exceptions\ReportableHandler
+     * @return \Leantime\Core\Exceptions\ReportableHandler
      */
     public function reportable(callable $reportUsing)
     {
@@ -436,7 +435,7 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Get the Whoops handler for the application.
      *
-     * @return \Whoops\Handler\Handler
+     * @return \Whoops\Handler\HandlerInterface
      */
     protected function whoopsHandler()
     {
@@ -581,6 +580,8 @@ class ExceptionHandler implements ExceptionHandlerContract
 
     /**
      * Determine if the given exception is an HTTP exception.
+     *
+     * @phpstan-assert-if-true \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $e
      *
      * @return bool
      */

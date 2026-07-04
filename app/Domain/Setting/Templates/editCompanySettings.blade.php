@@ -144,7 +144,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn"/>
+                                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="saveBtn" />
                                 </form>
                             </div>
                             <div class="col-md-4">

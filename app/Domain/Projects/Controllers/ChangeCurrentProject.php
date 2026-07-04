@@ -5,18 +5,14 @@ namespace Leantime\Domain\Projects\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Setting\Services\Setting as SettingService;
 
 class ChangeCurrentProject extends Controller
 {
     private ProjectService $projectService;
 
-    private SettingService $settingService;
-
-    public function init(ProjectService $projectService, SettingService $settingService): void
+    public function init(ProjectService $projectService): void
     {
         $this->projectService = $projectService;
-        $this->settingService = $settingService;
     }
 
     /**
@@ -24,7 +20,7 @@ class ChangeCurrentProject extends Controller
      */
     public function get($params)
     {
-        $id = filter_var($params['id'] ?? '', FILTER_SANITIZE_NUMBER_INT);
+        $id = (int) ($params['id'] ?? 0);
 
         if (
             ! isset($params['id']) ||

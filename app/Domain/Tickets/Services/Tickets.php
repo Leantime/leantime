@@ -11,22 +11,18 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
-use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\DateTimeHelper;
-use Leantime\Core\Support\FromFormat;
-use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
@@ -63,10 +59,7 @@ class Tickets extends BaseService
     /**
      * Constructor method for the class.
      *
-     * @param  TemplateCore  $tpl  The template core instance.
      * @param  LanguageCore  $language  The language core instance.
-     * @param  EnvironmentCore  $config  The environment core instance.
-     * @param  ProjectRepository  $projectRepository  The project repository instance.
      * @param  TicketRepository  $ticketRepository  The ticket repository instance.
      * @param  TimesheetRepository  $timesheetsRepo  The timesheet repository instance.
      * @param  SettingRepository  $settingsRepo  The setting repository instance.
@@ -80,10 +73,7 @@ class Tickets extends BaseService
      * @param  ClientService  $clientService  The clients service instance.
      */
     public function __construct(
-        private TemplateCore $tpl,
         private LanguageCore $language,
-        private EnvironmentCore $config,
-        private ProjectRepository $projectRepository,
         private TicketRepository $ticketRepository,
         private TimesheetRepository $timesheetsRepo,
         private SettingRepository $settingsRepo,
@@ -430,11 +420,11 @@ class Tickets extends BaseService
     /**
      * Retrieves all tickets based on the provided search criteria.
      *
-     * @param  array|null  $searchParams  An associative array containing search parameters such as
-     *                                    'currentProject', 'currentUser', 'users', 'status', 'term',
-     *                                    'effort', 'excludeType', 'type', 'milestone', 'groupBy',
-     *                                    'orderBy', 'orderDirection', 'priority', 'clients', and 'sprint'.
-     *                                    These values are used to filter the search results.
+     * @param  array|null  $searchCriteria  An associative array containing search parameters such as
+     *                                      'currentProject', 'currentUser', 'users', 'status', 'term',
+     *                                      'effort', 'excludeType', 'type', 'milestone', 'groupBy',
+     *                                      'orderBy', 'orderDirection', 'priority', 'clients', and 'sprint'.
+     *                                      These values are used to filter the search results.
      * @return array|false An array of tickets matching the search criteria, or false on failure.
      *
      * @api
@@ -731,8 +721,11 @@ class Tickets extends BaseService
                         case 'milestoneid':
                             $label = 'No Milestone Set';
                             $sortId = 'zzz_no_milestone'; // Sort "No Milestone" last alphabetically
-                            if ($ticket['milestoneid'] > 0) {
-                                $milestone = $this->getTicket($ticket['milestoneid']);
+                            // getTicket() returns false when the current user can't access the
+                            // milestone's project (e.g. a cross-project milestone linked to a goal).
+                            // Fall back to the "No Milestone Set" default rather than dereferencing false.
+                            $milestone = $ticket['milestoneid'] > 0 ? $this->getTicket($ticket['milestoneid']) : false;
+                            if ($milestone) {
                                 $color = $milestone->tags;
                                 $class = '';
                                 $groupColor = $color;
@@ -1231,7 +1224,7 @@ class Tickets extends BaseService
      * for every role, breaking the mobile Tasks tab.
      *
      * @param  int  $userId  The ID of the user whose tickets are to be retrieved.
-     * @param  int|null  $projectId  Optional project to narrow to; null/0 = across all the user's projects.
+     * @param  int|string|null  $projectId  Optional project to narrow to; null/0/'' = across all the user's projects.
      * @param  bool  $includeDoneTickets  Whether to include tickets marked as done. Default is false.
      * @param  bool  $includeMilestones  Whether to include milestones in the results. Default is false.
      * @return array Returns an array of grouped tickets categorized by their due date (e.g.,
@@ -1591,7 +1584,7 @@ class Tickets extends BaseService
             return $flattened;
         }
 
-        return $tree;
+        return [];
     }
 
     private function sortTicketsWithinMilestone($tickets): array
@@ -3385,13 +3378,10 @@ class Tickets extends BaseService
         // Editor+ in the milestone's project AND access to it (was access-only, no role gate).
         $this->authorize(TicketsPermissions::DELETE, (int) $ticket->projectId);
 
-        if ($this->ticketRepository->delMilestone($id)) {
-            MilestoneDeleted::dispatch(milestoneId: (int) $id, legacyHook: __FUNCTION__);
+        $this->ticketRepository->delMilestone($id);
+        MilestoneDeleted::dispatch(milestoneId: (int) $id, legacyHook: __FUNCTION__);
 
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**
@@ -3923,10 +3913,18 @@ class Tickets extends BaseService
                         $milestoneId = $ticket['milestoneid'];
 
                         if (! isset($milestoneCache[$milestoneId])) {
-                            $milestoneCache[$milestoneId] = (array) $this->getTicket($milestoneId);
+                            // getTicket() returns false when the user can't access the milestone's
+                            // project (e.g. a cross-project milestone linked to a goal). Casting false
+                            // to an array injects an empty "ticket" that later 500s the widget render,
+                            // so cache null and skip it instead.
+                            $milestone = $this->getTicket($milestoneId);
+                            $milestoneCache[$milestoneId] = $milestone ? (array) $milestone : null;
                         }
-                        $ticketGroup['tickets'][] = $milestoneCache[$milestoneId];
-                        $milestoneIds[$ticketGroup['groupValue']][] = $milestoneId;
+
+                        if ($milestoneCache[$milestoneId] !== null) {
+                            $ticketGroup['tickets'][] = $milestoneCache[$milestoneId];
+                            $milestoneIds[$ticketGroup['groupValue']][] = $milestoneId;
+                        }
                     }
                 }
             }
@@ -4040,7 +4038,7 @@ class Tickets extends BaseService
 
         // Sort groups by their order
         uasort($tickets, function ($a, $b) {
-            return ($a['order'] ?? 999) <=> ($b['order'] ?? 999);
+            return $a['order'] <=> $b['order'];
         });
 
         return $tickets;
@@ -4322,7 +4320,7 @@ class Tickets extends BaseService
                     $values['dateToFinish'] = $values['dateToFinish']->formatDateTimeForDb();
                 } elseif (
                     is_string($values['dateToFinish'])
-                    && (empty($values['timeToFinish']) || $values['timeToFinish'] === null)
+                    && empty($values['timeToFinish'])
                     && preg_match('/^\d{4}-\d{2}-\d{2}$/', $values['dateToFinish'])
                 ) {
                     // Calendar-date input (e.g. "2026-05-21" from mobile) — store as
@@ -4374,7 +4372,6 @@ class Tickets extends BaseService
                         $values['editFrom'] = dtHelper()->parseUserDateTime(
                             $values['editFrom'],
                             $values['timeFrom'],
-                            FromFormat::UserDateTime
                         )->formatDateTimeForDb();
                         unset($values['timeFrom']);
                     } else {

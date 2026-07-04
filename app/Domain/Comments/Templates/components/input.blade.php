@@ -3,12 +3,7 @@
         <x-users::profile-image :user="$user" />
     </div>
     <div class="commentReply">
-        <input
-            type="submit"
-            value="{{ __('links.reply') }}"
-            name="comment"
-            class="btn btn-default"
-        />
+        <x-global::forms.button tag="input" inputType="submit" contentRole="default" :labelText="__('links.reply')" name="comment" />
     </div>
     <div class="clearall"></div>
 </div>

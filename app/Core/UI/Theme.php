@@ -106,9 +106,6 @@ class Theme
 
     private Language $language;
 
-    /**
-     * @var language
-     */
     private AppSettings $appSettings;
 
     private FileManager $fileManager;
@@ -165,10 +162,6 @@ class Theme
         // Light mode: use original values
         return $scheme;
     }
-
-    private array $backgroundTypes = ['gradient', 'image'];
-
-    private array $backgroundSources = ['unsplash', 'upload'];
 
     /**
      * possible font choices
@@ -564,7 +557,7 @@ class Theme
                     ->withValue($id)
                     ->withExpires(time() + 60 * 60 * 24 * 30)
                     ->withPath(Str::finish($this->config->appDir, '/'))
-                    ->withSameSite('Strict')
+                    ->withSameSite('strict')
             ))
         );
     }
@@ -603,7 +596,7 @@ class Theme
                     ->withValue($colorMode)
                     ->withExpires(time() + 60 * 60 * 24 * 30)
                     ->withPath(Str::finish($this->config->appDir, '/'))
-                    ->withSameSite('Strict')
+                    ->withSameSite('strict')
             ))
         );
     }
@@ -632,7 +625,7 @@ class Theme
                     ->withValue($font)
                     ->withExpires(time() + 60 * 60 * 24 * 30)
                     ->withPath(Str::finish($this->config->appDir, '/'))
-                    ->withSameSite('Strict')
+                    ->withSameSite('strict')
             ))
         );
     }
@@ -662,7 +655,7 @@ class Theme
                     ->withValue($colorScheme)
                     ->withExpires(time() + 60 * 60 * 24 * 30)
                     ->withPath(Str::finish($this->config->appDir, '/'))
-                    ->withSameSite('Strict')
+                    ->withSameSite('strict')
             ))
         );
     }

@@ -26,7 +26,7 @@
 
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn"/>
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="saveBtn" />
         </div>
         <div class="col-md-6 align-right padding-top-sm">
             @if (isset($currentWiki->id) && $currentWiki->id != '' && $login::userIsAtLeast($roles::$editor))

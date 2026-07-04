@@ -9,7 +9,6 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Db\Repository as RepositoryCore;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\EntityRelationshipEnum;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
@@ -46,23 +45,17 @@ class Calendar extends RepositoryCore
      *
      * @param  DbCore  $dbCore  The DbCore object.
      * @param  LanguageCore  $language  The LanguageCore object.
-     * @param  DateTimeHelper  $dateTimeHelper  The DateTimeHelper object.
      * @param  Environment  $config  The Environment object.
      * @return void
      */
     public function __construct(
         DbCore $dbCore,
         private LanguageCore $language,
-        private DateTimeHelper $dateTimeHelper,
         private Environment $config
     ) {
         $this->db = $dbCore->getConnection();
     }
 
-    /**
-     * @param  string  $dateFrom
-     * @param  string  $dateTo
-     */
     public function getAllDates(?CarbonImmutable $dateFrom, ?CarbonImmutable $dateTo): false|array
     {
         $query = $this->db->table('zp_calendar')
@@ -88,7 +81,7 @@ class Calendar extends RepositoryCore
      * @param  int|null  $userId  The user ID to filter the results by.
      * @param  CarbonImmutable|null  $dateFrom  The minimum date and time of the events.
      * @param  CarbonImmutable|null  $dateTo  The maximum date and time of the events.
-     * @return bool|array Returns an array of calendar events if successful, otherwise false.
+     * @return false|array Returns an array of calendar events if successful, otherwise false.
      */
     public function getAll(?int $userId, ?CarbonImmutable $dateFrom, ?CarbonImmutable $dateTo): false|array
     {
@@ -242,9 +235,6 @@ class Calendar extends RepositoryCore
 
     /**
      * Generates an event array for fullcalendar.io frontend.
-     *
-     * @param  int|null  $dateFrom
-     * @param  int|null  $dateTo
      */
     private function mapEventData(
         string $title,

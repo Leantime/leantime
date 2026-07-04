@@ -21,8 +21,6 @@ class Oidc
 {
     private Environment $config;
 
-    private Language $Language;
-
     private AuthService $authService;
 
     public UserRepository $userRepo;
@@ -158,8 +156,6 @@ class Oidc
     }
 
     /**
-     * @return void
-     *
      * @throws GuzzleException
      */
     public function callback(string $code, string $state): Response
@@ -201,9 +197,6 @@ class Oidc
         return $this->getMultiUrl($this->userInfoUrl, $token);
     }
 
-    /**
-     * @return void
-     */
     private function login(array $userInfo): Response
     {
 
@@ -254,6 +247,12 @@ class Oidc
             $user['department'] = $this->readMultilayerKey($userInfo, $this->fieldDepartment) != '' ? $this->readMultilayerKey($userInfo, $this->fieldDepartment) : $user['department'];
 
             $user['role'] = $this->getUserRole($userInfo, $user);
+
+            // $user carries the full zp_user row from getUserByEmail(), including the stored
+            // bcrypt password hash and session/reset tokens. Passing those back into editUser()
+            // would re-hash the already-hashed password on every login and clobber local
+            // credentials, so drop them — OIDC never manages the local password.
+            unset($user['password'], $user['session'], $user['pwReset'], $user['pwResetExpiration']);
 
             $this->userRepo->editUser($user, $user['id']);
 
@@ -460,7 +459,7 @@ class Oidc
     /**
      * @throws GuzzleException
      */
-    private function getTokenUrl(): string
+    private function getTokenUrl(): string|false
     {
         if (! empty($this->tokenUrl || $this->loadEndpoints())) {
             return $this->tokenUrl;
@@ -499,19 +498,19 @@ class Oidc
         }
         // load all not yet defined endpoints from well-known configuration
 
-        if (! $this->authUrl || $this->authUrl === '') {
+        if (! $this->authUrl) {
             $this->authUrl = $endpoints['authorization_endpoint'];
         }
 
-        if (! $this->tokenUrl || $this->tokenUrl === '') {
+        if (! $this->tokenUrl) {
             $this->tokenUrl = $endpoints['token_endpoint'];
         }
 
-        if (! $this->jwksUrl || $this->jwksUrl === '') {
+        if (! $this->jwksUrl) {
             $this->jwksUrl = $endpoints['jwks_uri'];
         }
 
-        if (! $this->userInfoUrl || $this->userInfoUrl === '') {
+        if (! $this->userInfoUrl) {
             $this->userInfoUrl = $endpoints['userinfo_endpoint'];
         }
 
@@ -572,11 +571,6 @@ class Oidc
         session()->forget('oidc.state');
 
         return $storedState !== '' && hash_equals($storedState, $state);
-    }
-
-    private function encodeBase64Url(string $value): string
-    {
-        return strtr(base64_encode($value), '+/', '-_');
     }
 
     private function decodeBase64Url(string $value): string

@@ -23,7 +23,7 @@
         <div class="inlineDropDownContainer" style="float:right; z-index:9; padding-top:2px;">
 
             <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}" contentRole="default" class="duplicateProjectModal" data-tippy-content="{{ __('link.duplicate_project') }}"><i class="fa-regular fa-copy"></i> Copy</x-global::forms.button>
-            <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" data-tippy-content="{{ __('link.delete_project') }}" class="btn btn-danger-outline delete"><i class="fa fa-trash"></i> Delete</a>
+            <x-global::forms.button tag="a" state="danger" variant="outline" class="delete" link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" data-tippy-content="{{ __('link.delete_project') }}"><i class="fa fa-trash"></i> Delete</x-global::forms.button>
 
 
         </div>
@@ -191,7 +191,7 @@
                     </div>
                 </div>
                     <br/>
-                    <input type="submit" name="saveUsers" id="save" class="button" value="{{ __('buttons.save') }}" class="button" />
+                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="saveUsers" id="save" />
 
                 </form>
 
@@ -219,7 +219,7 @@
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             <x-global::forms.text-input name="mattermostWebhookURL" id="mattermostWebhookURL" value="{{ e($mattermostWebhookURL) }}" />
                             <br />
-                            <input type="submit" value="{{ __('buttons.save') }}" name="mattermostSave" />
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="mattermostSave" />
                         </form>
                     </div>
                 </div>
@@ -238,7 +238,7 @@
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             <x-global::forms.text-input name="slackWebhookURL" id="slackWebhookURL" value="{{ e($slackWebhookURL) }}" />
                             <br />
-                            <input type="submit" value="{{ __('buttons.save') }}" name="slackSave" />
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="slackSave" />
                         </form>
                     </div>
                 </div>
@@ -270,7 +270,7 @@
                             <strong>{!! __('label.topic') !!}</strong><br />
                             <x-global::forms.text-input name="zulipTopic" id="zulipTopic" placeholder="" value="{{ $tpl->escape($zulipHook['zulipTopic']) }}" />
                             <br />
-                            <input type="submit" value="{{ __('buttons.save') }}" name="zulipSave" />
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="zulipSave" />
                         </form>
                     </div>
                 </div>
@@ -292,7 +292,7 @@
                             @php $discordVarName = 'discordWebhookURL'.$i; $discordVarVal = $$discordVarName ?? ''; @endphp
                             <input type="text" name="discordWebhookURL{{ $i }}" id="discordWebhookURL{{ $i }}" placeholder="{{ __('input.placeholders.discord_url') }}" value="{{ e($discordVarVal) }}"/><br/>
                             @endfor
-                            <input type="submit" value="{{ __('buttons.save') }}" name="discordSave"/>
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="discordSave" />
                         </form>
                     </div>
                 </div>

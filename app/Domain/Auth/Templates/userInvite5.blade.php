@@ -32,7 +32,7 @@
             intentions<br />to get the work done.</p> <br />
 
         <br />
-        <input type="submit" name="createAccount" value="Complete Sign up" />
+        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" labelText="Complete Sign up" name="createAccount" />
 
 
     </form>

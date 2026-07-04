@@ -121,7 +121,7 @@ class RequestRateLimiter
             return new Response(
                 json_encode(['error' => 'Too many requests per minute.']),
                 Response::HTTP_TOO_MANY_REQUESTS,
-                $this->getHeaders($key, $limit),
+                $this->getHeaders($key, (int) $limit),
             );
         }
 
@@ -133,7 +133,7 @@ class RequestRateLimiter
     /**
      * Get rate limiter headers for response.
      */
-    private function getHeaders(string $key, string $limit): array
+    private function getHeaders(string $key, int $limit): array
     {
         return [
             'X-RateLimit-Remaining' => $this->limiter->retriesLeft($key, $limit),

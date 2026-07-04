@@ -6,8 +6,6 @@ namespace Leantime\Domain\Blueprints\Controllers;
 
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Core\Language;
-use Leantime\Core\UI\Template;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Services\BlueprintsExport;
@@ -30,15 +28,11 @@ class Export
      * __construct - resolve dependencies and determine the canvas slug from the request.
      *
      * @param  IncomingRequest  $request  Incoming request
-     * @param  Template  $tpl  Template engine
-     * @param  Language  $language  Language service
      * @param  BlueprintsExport  $exportService  Blueprints export service
      * @param  TemplateRegistry  $templateRegistry  Template registry
      */
     public function __construct(
-        private IncomingRequest $request,
-        private Template $tpl,
-        private Language $language,
+        IncomingRequest $request,
         private BlueprintsExport $exportService,
         TemplateRegistry $templateRegistry,
     ) {

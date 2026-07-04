@@ -69,7 +69,6 @@ class Build
                 if (
                     in_array(true, [
                         is_object($currentElement) && ! property_exists($currentElement, $propName),
-                        is_array($currentElement) && ! isset($currentElement[$propName]),
                     ])
                 ) {
                     continue;

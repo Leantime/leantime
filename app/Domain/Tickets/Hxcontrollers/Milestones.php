@@ -4,7 +4,6 @@ namespace Leantime\Domain\Tickets\Hxcontrollers;
 
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Tickets\Services\Tickets;
-use Leantime\Domain\Timesheets\Services\Timesheets;
 
 class Milestones extends HtmxController
 {
@@ -14,8 +13,6 @@ class Milestones extends HtmxController
 
     /**
      * Controller constructor
-     *
-     * @param  Timesheets  $timesheetService
      */
     public function init(Tickets $ticketService): void
     {

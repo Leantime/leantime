@@ -10,7 +10,7 @@
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
                 <x-global::forms.text-input name="headline" title="{{ __('label.headline') }}" style="width:100%" placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
-                <input type="submit" value="{{ __('buttons.save') }}" name="quickadd"  />
+                <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="quickadd" />
                 <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />
                 <input type="hidden" name="status" value="3" />
                 <input type="hidden" name="sprint" value="{{ session('currentSprint') }}" />

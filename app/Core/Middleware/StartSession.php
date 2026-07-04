@@ -260,7 +260,7 @@ class StartSession
             // Implement exponential backoff retry
             $this->retryWithBackoff($callback, $session);
         } finally {
-            $lock?->release();
+            $lock->release();
         }
     }
 
@@ -467,7 +467,7 @@ class StartSession
      * Resolve the given cache driver.
      *
      * @param  string  $driver
-     * @return \Illuminate\Cache\Store
+     * @return \Illuminate\Contracts\Cache\Repository
      */
     protected function cache($driver)
     {

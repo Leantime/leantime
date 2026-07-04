@@ -9,13 +9,11 @@ use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\CarbonMacros;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use Leantime\Domain\Setting\Services\Setting;
 use Symfony\Component\HttpFoundation\Response;
 
 class Localization
 {
     public function __construct(
-        private readonly Setting $settings,
         private readonly SettingRepository $settingsRepo,
         private readonly Environment $config,
         private readonly Language $language,

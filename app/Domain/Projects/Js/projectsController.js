@@ -261,7 +261,7 @@ leantime.projectsController = (function () {
                 jQuery.ajax(
                     {
                         type: 'POST',
-                        url: leantime.appUrl + '/api/projects',
+                        url: leantime.appUrl + '/projects/projectImage',
                         data: formData,
                         processData: false,
                         contentType: false,
@@ -291,6 +291,11 @@ leantime.projectsController = (function () {
         jQuery(document).ready(
             function () {
 
+                // The Gantt constructor fires on_view_change once while building. Persisting that
+                // event would overwrite the user's saved scale with the default, so ignore any
+                // view change until construction is finished; only user-driven changes save.
+                var ganttInitializing = true;
+
                 if (readonly === false) {
                     var gantt_chart = new Gantt(
                         "#gantt",
@@ -305,7 +310,7 @@ leantime.projectsController = (function () {
                             bar_corner_radius: 10,
                             arrow_curve: 10,
                             padding:20,
-                            view_mode: 'Month',
+                            view_mode: viewMode,
                             date_format: leantime.i18n.__("language.momentJSDate"),
                             language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
                             additional_rows: 5,
@@ -391,6 +396,7 @@ leantime.projectsController = (function () {
                             },
                             on_view_change: function (mode) {
 
+                                if (ganttInitializing) { return; }
                                 leantime.usersRepository.updateUserViewSettings("projectGantt", mode);
 
                             },
@@ -408,14 +414,13 @@ leantime.projectsController = (function () {
                             resizing: false,
                             progress: false,
                             is_draggable: false,
+                            view_modes: ['Day', 'Week', 'Month'],
+                            view_mode: viewMode,
                             custom_popup_html: function (project) {
-                                // the task object will contain the updated
-                                // dates and progress value
-                                var end_date = task._end;
 
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
-                                if (task.projectName !== undefined) {
+                                if (project.projectName !== undefined) {
                                     popUpHTML +=  '<h3><b>' + project.name + '</b></h3>';
                                 }
 
@@ -438,6 +443,7 @@ leantime.projectsController = (function () {
                             },
                             on_view_change: function (mode) {
 
+                                if (ganttInitializing) { return; }
                                 leantime.usersRepository.updateUserViewSettings("projectGantt", mode);
 
                             }
@@ -460,7 +466,9 @@ leantime.projectsController = (function () {
                     }
                 );
 
-                gantt_chart.change_view_mode(viewMode);
+                // Constructor already built the chart at the saved viewMode; construction is done,
+                // so from here on real user-driven view changes are allowed to persist.
+                ganttInitializing = false;
 
             }
         );

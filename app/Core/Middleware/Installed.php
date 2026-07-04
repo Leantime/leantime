@@ -18,7 +18,7 @@ class Installed
      *
      * @param  \Closure(IncomingRequest): Response  $next
      *
-     * @throws BindingResolutionException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
@@ -52,7 +52,7 @@ class Installed
             return $response;
         }
 
-        if (! $session_says && $config_says) {
+        if (! $session_says) {
             $this->setInstalled();
         }
 
@@ -90,7 +90,7 @@ class Installed
     /**
      * Redirect to install
      *
-     * @throws BindingResolutionException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     private function redirectToInstall(IncomingRequest $request): Response|false
     {

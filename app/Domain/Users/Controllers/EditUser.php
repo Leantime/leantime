@@ -9,6 +9,7 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Users\Permissions\UsersPermissions;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Users\Services\Users;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,17 +21,21 @@ class EditUser extends Controller
 
     private Users $userService;
 
+    private UserRepository $userRepo;
+
     /**
      * Initializes dependencies.
      */
     public function init(
         ProjectService $projectService,
         ClientService $clientService,
-        Users $userService
+        Users $userService,
+        UserRepository $userRepo
     ): void {
         $this->projectService = $projectService;
         $this->clientService = $clientService;
         $this->userService = $userService;
+        $this->userRepo = $userRepo;
     }
 
     /**
@@ -46,7 +51,10 @@ class EditUser extends Controller
         }
 
         $id = (int) $params['id'];
-        $row = $this->userService->getUser($id);
+        // Admin edit form needs the full row (e.g. pwReset for the invite
+        // link), so read from the repository — the service getUser strips
+        // secrets for API safety (#3556).
+        $row = $this->userRepo->getUser($id);
 
         if ($row === false) {
             return $this->tpl->display('errors.error404', responseCode: 404);
@@ -82,7 +90,10 @@ class EditUser extends Controller
         }
 
         $id = (int) $params['id'];
-        $row = $this->userService->getUser($id);
+        // Admin edit form needs the full row (e.g. pwReset for the invite
+        // link), so read from the repository — the service getUser strips
+        // secrets for API safety (#3556).
+        $row = $this->userRepo->getUser($id);
 
         if ($row === false) {
             return $this->tpl->display('errors.error404', responseCode: 404);

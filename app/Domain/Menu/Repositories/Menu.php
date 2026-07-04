@@ -122,9 +122,6 @@ class Menu
         ],
     ];
 
-    /**
-     * @param  AuthService  $authService
-     */
     public function __construct(
         /** @var SettingRepository */
         private SettingRepository $settingsRepo,
@@ -335,13 +332,6 @@ class Menu
 
     public function processMenuItem($element, &$structure): void
     {
-
-        // ModuleManager Check
-        if (false) {
-            $structure['type'] = 'disabled';
-
-            return;
-        }
 
         // Update security
         if (isset($element['role'])) {

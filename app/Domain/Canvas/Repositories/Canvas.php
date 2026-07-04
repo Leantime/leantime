@@ -108,8 +108,6 @@ class Canvas extends BlueprintsRepository
 
     private LanguageCore $language;
 
-    private Tickets $ticketRepo;
-
     /**
      * __construct - get db connection and initialise the underlying Blueprints repository
      */
@@ -120,13 +118,12 @@ class Canvas extends BlueprintsRepository
         DatabaseHelper $dbHelper
     ) {
         // Initialise the Blueprints parent so the delegated methods have a connection.
-        parent::__construct($db, $language, $ticketRepo, $dbHelper);
+        parent::__construct($db, $ticketRepo, $dbHelper);
 
         // Keep local copies for the config accessors and goal-specific queries below.
         $this->db = $db;
         $this->connection = $db->getConnection();
         $this->language = $language;
-        $this->ticketRepo = $ticketRepo;
         $this->dbHelper = $dbHelper;
     }
 

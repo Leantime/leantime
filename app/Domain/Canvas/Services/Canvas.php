@@ -64,7 +64,7 @@ class Canvas
     /**
      * getLastUpdatedCanvas - canvas boards ordered by last updated item (delegates to Blueprints).
      *
-     * @param  string  $projectId  projectId (optional)
+     * @param  int|null  $projectId  projectId (optional)
      * @param  array  $boards  Array of project board types
      * @return array List of boards
      *

@@ -77,7 +77,9 @@ class Integration extends Controller
 
         if (isset($params['integrationId'])) {
             $currentIntegration = $this->integrationService->get($params['integrationId']);
-            $this->tpl->assign('integrationId', $currentIntegration->id);
+            if (is_object($currentIntegration)) {
+                $this->tpl->assign('integrationId', $currentIntegration->id);
+            }
         }
 
         if (! isset($params['step'])) {

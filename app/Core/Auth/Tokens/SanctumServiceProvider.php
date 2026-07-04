@@ -18,6 +18,7 @@ class SanctumServiceProvider extends ServiceProvider
     {
 
         // Use our custom token model
+        // @phpstan-ignore-next-line argument.type
         SanctumBase::usePersonalAccessTokenModel(AccessToken::class);
 
     }

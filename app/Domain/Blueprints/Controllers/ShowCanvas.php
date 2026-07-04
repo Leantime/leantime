@@ -264,7 +264,7 @@ class ShowCanvas
         $allCanvas = $this->blueprintsRepo->getAllCanvas(session('currentProject'), $canvasType);
 
         // Create a default board when the project has none.
-        if (! $allCanvas || count($allCanvas) == 0) {
+        if (! $allCanvas) {
             $this->blueprintsRepo->addCanvas([
                 'title' => $this->language->__('label.board'),
                 'author' => session('userdata.id'),

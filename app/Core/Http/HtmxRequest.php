@@ -9,7 +9,7 @@ class HtmxRequest extends IncomingRequest
     /**
      * Get HTMX request information
      *
-     * @return array[string|bool]
+     * @return array<string, string|bool|null>
      */
     public function getHtmxRequestVars(): array
     {
