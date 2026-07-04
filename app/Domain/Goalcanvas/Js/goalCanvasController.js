@@ -124,7 +124,7 @@ leantime.goalCanvasController = (function () {
                         }
                     ).done(
                         function () {
-                            jQuery("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img").attr("src", leantime.appUrl + "/users/profileImage/" + userId);
+                            jQuery("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img").attr("src", leantime.appUrl + "/users/profileImage/" + encodeURIComponent(userId));
                             jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
                         }
                     );
