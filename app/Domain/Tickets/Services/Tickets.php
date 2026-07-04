@@ -759,7 +759,9 @@ class Tickets extends BaseService
 
                             break;
                         case 'sprint':
-                            $label = $ticket['sprintName'];
+                            // Rendered raw ({!! !!}) in the kanban swimlane header, so escape the
+                            // user-controlled sprint name to prevent stored XSS.
+                            $label = htmlspecialchars((string) $ticket['sprintName'], ENT_QUOTES);
                             if ($label == '') {
                                 $label = 'Not assigned to a sprint';
                             }
@@ -770,7 +772,8 @@ class Tickets extends BaseService
                             break;
                         case 'dependingTicketId':
                             if ($ticket['dependingTicketId'] > 0 && ! empty($ticket['parentHeadline'])) {
-                                $label = $ticket['parentHeadline'];
+                                // Rendered raw in the swimlane header — escape the user headline.
+                                $label = htmlspecialchars((string) $ticket['parentHeadline'], ENT_QUOTES);
                                 $sortId = 'a_'.strtolower($ticket['parentHeadline']);
                             } else {
                                 $label = $this->language->__('label.no_parent_task');
@@ -778,7 +781,7 @@ class Tickets extends BaseService
                             }
                             break;
                         default:
-                            $label = $groupedFieldValue;
+                            $label = htmlspecialchars((string) $groupedFieldValue, ENT_QUOTES);
                             break;
                     }
 
@@ -2267,7 +2270,7 @@ class Tickets extends BaseService
         if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $values['id'], strip_tags($values['headline']));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$values['id'];
-            $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), $values['headline']);
+            $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($values['headline']));
 
             $notification = new NotificationModel;
             $notification->url = [
@@ -2510,6 +2513,13 @@ class Tickets extends BaseService
             return false;
         }
 
+        // Reassigning a ticket to a different project requires edit rights in the TARGET project,
+        // not just the source (which the @api callers already authorized). Without this a user
+        // could move/inject a ticket into a project they have no access to.
+        if (isset($params['projectId']) && (int) $params['projectId'] !== (int) $ticket->projectId) {
+            $this->authorize(TicketsPermissions::EDIT, (int) $params['projectId']);
+        }
+
         // Handle collaborators separately since they live in the relationship table, not on zp_tickets
         $collaboratorsUpdated = false;
         if (array_key_exists('collaborators', $params)) {
@@ -2572,7 +2582,10 @@ class Tickets extends BaseService
             return false;
         }
 
+        // Edit rights in BOTH the source project (above) and the TARGET project — otherwise a
+        // user with access to project A could inject tickets into project B they can't touch.
         $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
+        $this->authorize(TicketsPermissions::EDIT, $projectId);
 
         if ($ticket->type == 'milestone') {
             $milestoneTickets = $this->getAll(['milestone' => $ticket->id]);

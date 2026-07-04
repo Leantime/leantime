@@ -156,7 +156,7 @@ class Ldap
                 }
             } else {
                 // OL requires distinguished name login
-                $usernameDN = $this->ldapKeys->username.'='.$username.','.$this->ldapDn;
+                $usernameDN = $this->ldapKeys->username.'='.ldap_escape($username, '', LDAP_ESCAPE_DN).','.$this->ldapDn;
 
                 $bind = @ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
             }
@@ -183,7 +183,7 @@ class Ldap
 
             return '';
         }
-        $filter = '('.$this->ldapKeys->username.'='.$this->extractLdapFromUsername($username).')';
+        $filter = '('.$this->ldapKeys->username.'='.ldap_escape($this->extractLdapFromUsername($username), '', LDAP_ESCAPE_FILTER).')';
 
         $attr = [$this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email];
 
@@ -210,7 +210,7 @@ class Ldap
             return false;
         }
 
-        $filter = '('.$this->ldapKeys->username.'='.$this->extractLdapFromUsername($username).')';
+        $filter = '('.$this->ldapKeys->username.'='.ldap_escape($this->extractLdapFromUsername($username), '', LDAP_ESCAPE_FILTER).')';
 
         $attr = [$this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phone, $this->ldapKeys->jobTitle, $this->ldapKeys->jobLevel, $this->ldapKeys->department];
 

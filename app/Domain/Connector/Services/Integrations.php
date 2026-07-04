@@ -3,7 +3,9 @@
 namespace Leantime\Domain\Connector\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
+use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
 use Leantime\Domain\Connector\Repositories\Integrations as IntegrationsRepo;
 use Leantime\Domain\Connector\Repositories\LeantimeEntities;
 
@@ -33,6 +35,7 @@ class Integrations
      * @throws BindingResolutionException
      * @throws \ReflectionException
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function get(int $id): object|array|false
     {
         return $this->integrationRepo->get($id);
@@ -43,6 +46,7 @@ class Integrations
      *
      * @api
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function updateTicket(object|array $object): bool
     {
         // TODO: Implement update() method.
@@ -56,6 +60,7 @@ class Integrations
      *
      * @throws \ReflectionException
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function create(object|array $object): int|false
     {
         return $this->integrationRepo->insert($object);
@@ -66,6 +71,7 @@ class Integrations
      *
      * @api
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function delete(int $id): bool
     {
         // TODO: Implement delete() method.
@@ -77,6 +83,7 @@ class Integrations
      *
      * @api
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function getAll(?array $searchparams = null): array|false
     {
         // TODO: Implement getAll() method.
@@ -91,6 +98,7 @@ class Integrations
      * @param  int  $id  Integration id
      * @param  array  $params  Column => value pairs to update
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function patch(int $id, array $params): bool
     {
         return $this->integrationRepo->patch($id, $params);
@@ -103,6 +111,7 @@ class Integrations
      *
      * @return array Map of entity key => entity definition
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function getAvailableEntities(): array
     {
         return $this->leantimeEntities->availableLeantimeEntities;
@@ -116,6 +125,7 @@ class Integrations
      * @param  string  $entity  Entity key (e.g. tickets, projects, users)
      * @return array Map of field key => field definition
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function getEntityFields(string $entity): array
     {
         return $this->leantimeEntities->availableLeantimeEntities[$entity]['fields'] ?? [];
@@ -135,6 +145,7 @@ class Integrations
      * @param  IntegrationModel  $currentIntegration  Integration model to hydrate with the resolved entity
      * @return string|null The resolved entity key, or null when no entity could be determined
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function resolveImportEntity(array $request, IntegrationModel $currentIntegration): ?string
     {
         if (isset($request['leantimeEntities'])) {
@@ -165,6 +176,7 @@ class Integrations
      * @param  object  $provider  Provider instance exposing getFields()
      * @return array List of provider field identifiers
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function resolveProviderFields(IntegrationModel $currentIntegration, object $provider): array
     {
         if (isset($currentIntegration->fields) && $currentIntegration->fields != '') {
@@ -184,6 +196,7 @@ class Integrations
      *
      * @return array{values: array, fields: array} The decoded values and field mappings
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function getCachedImportPayload(): array
     {
         return [

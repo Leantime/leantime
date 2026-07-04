@@ -51,7 +51,7 @@
                                data="item_{{ $row['id'] }}">{{ $row['description'] }}</a></h4>
 
                         @if($row['conclusion'] != '')
-                            <small>{!! $tpl->convertRelativePaths($row['conclusion']) !!}</small>
+                            <small>{!! $tpl->convertRelativePaths($tpl->escapeMinimal($row['conclusion'])) !!}</small>
                         @endif
 
                         <div class="clearfix" style="padding-bottom: 8px;"></div>

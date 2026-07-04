@@ -6,8 +6,10 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Api\Contracts\StaticAssetType;
+use Leantime\Domain\Api\Permissions\ApiPermissions;
 use Leantime\Domain\Api\Repositories\Api as ApiRepository;
 use Leantime\Domain\Auth\Services\UserSessionBuilder;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
@@ -120,6 +122,7 @@ class Api
      *
      * @api
      */
+    #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
     public function createAPIKey(array $values): bool|array
     {
         $user = $this->randomStr(32);
@@ -148,6 +151,7 @@ class Api
      *
      * @api
      */
+    #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
     public function getApiKeyFormValues(int $id): array
     {
         if ($id <= 0) {
@@ -186,6 +190,7 @@ class Api
      *
      * @api
      */
+    #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
     public function updateApiKey(int $id, array $postValues, ?array $projects): bool
     {
         if ($id <= 0) {
@@ -227,6 +232,7 @@ class Api
      *
      * @api
      */
+    #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
     public function createApiKeyWithProjects(array $values, ?array $projects): array|false
     {
         $apiKeyValues = $this->createAPIKey($values);
@@ -270,6 +276,7 @@ class Api
      *
      * @api
      */
+    #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
     public function getProjectRelationIds(int $id): array
     {
         $projects = $this->projectRepo->getUserProjectRelation($id);
@@ -322,6 +329,7 @@ class Api
      *
      * @api
      */
+    #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
     public function getAPIKeys(): false|array
     {
         $keys = $this->userRepo->getAllBySource('api');

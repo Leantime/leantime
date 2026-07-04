@@ -5,7 +5,9 @@ namespace Leantime\Domain\Notifications\Services;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Support\OutboundUrlGuard;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Services\Tickets;
@@ -85,7 +87,14 @@ class Messengers
             $data_string = json_encode($data);
 
             try {
+                if (! OutboundUrlGuard::isAllowedUrl($slackWebhookURL)) {
+                    Log::warning('Blocked Slack webhook to disallowed URL (SSRF guard)', ['url' => $slackWebhookURL]);
+
+                    return false;
+                }
+
                 $this->httpClient->post($slackWebhookURL, [
+                    'allow_redirects' => OutboundUrlGuard::redirectOptions(),
                     'body' => $data_string,
                     'headers' => ['Content-Type' => 'application/json'],
                 ]);
@@ -125,7 +134,14 @@ class Messengers
             $data_string = json_encode($data);
 
             try {
+                if (! OutboundUrlGuard::isAllowedUrl($mattermostWebhookURL)) {
+                    Log::warning('Blocked Mattermost webhook to disallowed URL (SSRF guard)', ['url' => $mattermostWebhookURL]);
+
+                    return false;
+                }
+
                 $this->httpClient->post($mattermostWebhookURL, [
+                    'allow_redirects' => OutboundUrlGuard::redirectOptions(),
                     'body' => $data_string,
                 ]);
 
@@ -174,7 +190,14 @@ class Messengers
             $data_string = json_encode($data);
 
             try {
+                if (! OutboundUrlGuard::isAllowedUrl($curlUrl)) {
+                    Log::warning('Blocked Zulip webhook to disallowed URL (SSRF guard)', ['url' => $curlUrl]);
+
+                    return false;
+                }
+
                 $this->httpClient->post($curlUrl, [
+                    'allow_redirects' => OutboundUrlGuard::redirectOptions(),
                     'body' => $data_string,
                     'headers' => ['Content-Type' => 'application/json'],
                     'auth' => [
@@ -246,7 +269,14 @@ class Messengers
                 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
                 try {
+                    if (! OutboundUrlGuard::isAllowedUrl($discordWebhookURL)) {
+                        Log::warning('Blocked Discord webhook to disallowed URL (SSRF guard)', ['url' => $discordWebhookURL]);
+
+                        return false;
+                    }
+
                     $this->httpClient->post($discordWebhookURL, [
+                        'allow_redirects' => OutboundUrlGuard::redirectOptions(),
                         'body' => $data_string,
                         'headers' => ['Content-Type' => 'application/json'],
                     ]);

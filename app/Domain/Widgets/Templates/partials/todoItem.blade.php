@@ -13,7 +13,7 @@
         'color' =>   'var(--accent2)',
         'enitityType' =>  'ticket',
         'url' =>  BASE_URL.'#/tickets/showTicket/'.$ticket['id'],
-    ]);
+    ], JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP);
 
     $hasChildren = !empty($ticket['children']);
 @endphp

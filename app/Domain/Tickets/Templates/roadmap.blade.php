@@ -142,7 +142,7 @@
                             dependencies :'".implode(',', $dependencyList)."',
                             custom_class :'',
                             type: '".strtolower($mlst->type)."',
-                            bg_color: '".$color."',
+                            bg_color: ".json_encode($color, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP).",
                             thumbnail: '".BASE_URL.'/api/users?profileImage='.$mlst->editorId."',
                             sortIndex: ".$sortIndex.'
                         },';

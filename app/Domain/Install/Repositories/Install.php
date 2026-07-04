@@ -91,6 +91,7 @@ class Install
         // covered by SchemaBuilder + setupDB().
         30518,
         30519,
+        30520,
     ];
 
     /**
@@ -2795,6 +2796,48 @@ class Install
             Log::error('Migration 30519: '.$e->getMessage());
 
             return ['Migration 30519 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30520 — grant the new api.manage and connector.manage capabilities to existing
+     * installs. The API-key management and Connector integration surfaces are now permission-gated;
+     * fresh installs pick these up through the built-in seed, but installs already on the permission
+     * engine have no row for the new keys — which would deny everyone, including admins. Sync the
+     * vocabulary and grant both keys to admin + owner only (targeted grant, not a full reseed, so
+     * any custom role edits/revocations are preserved).
+     */
+    public function update_sql_30520(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+
+            $repo = app(\Leantime\Core\Auth\Permissions\PermissionRepository::class);
+            $keys = [
+                \Leantime\Domain\Api\Permissions\ApiPermissions::MANAGE,
+                \Leantime\Domain\Connector\Permissions\ConnectorPermissions::MANAGE,
+            ];
+
+            foreach (['admin', 'owner'] as $roleName) {
+                $role = $repo->getRoleByName($roleName);
+
+                if ($role !== null) {
+                    foreach ($keys as $key) {
+                        $repo->grant((int) $role['id'], $key);
+                    }
+                }
+            }
+
+            app(\Leantime\Core\Auth\Permissions\PermissionService::class)->flushCache();
+        } catch (\Exception $e) {
+            Log::error('Migration 30520: '.$e->getMessage());
+
+            return ['Migration 30520 failed: '.$e->getMessage()];
         }
 
         return true;
