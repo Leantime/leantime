@@ -1,0 +1,32 @@
+key: "decision-record"
+title: "Decision Record"
+description: "Capture a single decision with its context, options weighed, and chosen path."
+appliesTo: "wiki"
+sector: "process"
+icon: "fa-gavel"
+author: "Leantime"
+version: "1.0.0"
+license: "CC0"
+
+wiki:
+  articles:
+    - title: "Decision Record"
+      content: |
+        <h1>Decision Record</h1>
+        <p><strong>Status:</strong> Proposed</p>
+        <p><strong>Date:</strong> </p>
+        <p><strong>Decision makers:</strong> </p>
+        <h2>Context</h2>
+        <p>What's the situation that requires a decision? What problem are we solving?</p>
+        <h2>Options considered</h2>
+        <ol>
+          <li><strong>Option A —</strong> brief description, pros, cons</li>
+          <li><strong>Option B —</strong> brief description, pros, cons</li>
+          <li><strong>Option C —</strong> brief description, pros, cons</li>
+        </ol>
+        <h2>Decision</h2>
+        <p>The chosen option and the one-sentence reason.</p>
+        <h2>Consequences</h2>
+        <p>What does choosing this mean? What follow-on work does it imply? What did we explicitly NOT choose?</p>
+        <h2>Revisit</h2>
+        <p>What would have to change for us to revisit this decision?</p>

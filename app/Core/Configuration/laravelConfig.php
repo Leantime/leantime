@@ -42,6 +42,7 @@ return [
             \Leantime\Core\Middleware\RateLimiter::class,
             \Leantime\Core\Database\DatabaseServiceProvider::class,
             \Leantime\Core\WorkStructure\WorkStructureServiceProvider::class,
+            \Leantime\Domain\ContentTemplates\ContentTemplatesServiceProvider::class,
             \Leantime\Core\i18n\LanguageServiceProvider::class,
             // \Leantime\Core\Providers\RouteServiceProvider::class,
 
