@@ -56,8 +56,17 @@ class BulkAddCalendarEventsTool extends Tool
                 continue;
             }
 
-            $dateFrom = ($eventData['dateFrom'] instanceof CarbonImmutable) ? $eventData['dateFrom'] : dtHelper()->parseUserDateTime($eventData['dateFrom']);
-            $dateTo = ($eventData['dateTo'] instanceof CarbonImmutable) ? $eventData['dateTo'] : dtHelper()->parseUserDateTime($eventData['dateTo']);
+            try {
+                $dateFrom = ($eventData['dateFrom'] instanceof CarbonImmutable) ? $eventData['dateFrom'] : dtHelper()->parseUserDateTime($eventData['dateFrom']);
+                $dateTo = ($eventData['dateTo'] instanceof CarbonImmutable) ? $eventData['dateTo'] : dtHelper()->parseUserDateTime($eventData['dateTo']);
+
+                $durationSeconds = $dateTo->getTimestamp() - $dateFrom->getTimestamp();
+                if ($durationSeconds < 900) {
+                    $validationErrors[] = "Event #{$index} is shorter than the minimum 15 minute duration";
+                }
+            } catch (\Exception $e) {
+                $validationErrors[] = "Event #{$index} has invalid date format";
+            }
         }
 
         if (! empty($validationErrors)) {
@@ -94,7 +103,7 @@ class BulkAddCalendarEventsTool extends Tool
                 $results[] = [
                     'title' => $eventData['eventTitle'] ?? 'Unknown',
                     'status' => 'error',
-                    'message' => $e->getMessage(),
+                    'message' => 'Failed to create event',
                 ];
                 Log::error($e);
             }

@@ -41,7 +41,12 @@ class GetAllStatusLabelsByUserIdTool extends Tool
      */
     public function handle(Request $request): Response
     {
-        $status = $this->ticketsService->getAllStatusLabelsByUserId(session('userdata.id'));
+        $userId = $request->integer('userId');
+        if ($userId === 0) {
+            $userId = session('userdata.id');
+        }
+
+        $status = $this->ticketsService->getAllStatusLabelsByUserId($userId);
 
         $statusAIString = '## Status Labels';
         foreach ($status as $projectKey => $projectStatus) {

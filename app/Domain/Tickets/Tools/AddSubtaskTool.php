@@ -27,7 +27,7 @@ class AddSubtaskTool extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'parentTicket' => $schema->string()
+            'parentTicket' => $schema->integer()
                 ->description('ID of the parent ticket.')
                 ->required(),
             'headline' => $schema->string()
@@ -76,7 +76,7 @@ class AddSubtaskTool extends Tool
             'editTo' => $request->get('editTo'),
             'milestone' => null,
             'type' => 'subtask',
-            'dependingTicketId' => $request->string('parentTicket'),
+            'dependingTicketId' => $request->integer('parentTicket'),
             'storypoints' => $request->integer('effort', 3),
             'priority' => $request->integer('priority', 3),
             'planHours' => $request->integer('planHours', 0),

@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Timesheets\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Log;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
@@ -68,7 +69,9 @@ class LogTimeTool extends Tool
 
             return Response::error('Failed to log time entry. Please check the provided information.');
         } catch (\Exception $e) {
-            return Response::error('Error logging time: '.$e->getMessage());
+            Log::error('Error logging time: '.$e->getMessage());
+
+            return Response::error('Failed to log time entry. Please try again.');
         }
     }
 }

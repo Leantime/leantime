@@ -28,11 +28,7 @@ class GetICalUrlTool extends Tool
      */
     public function schema(JsonSchema $schema): array
     {
-        return [
-            'userId' => $schema->integer()
-                ->description('User ID of the user whose iCal URL to retrieve.')
-                ->required(),
-        ];
+        return [];
     }
 
     /**

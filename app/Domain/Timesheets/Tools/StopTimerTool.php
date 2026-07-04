@@ -27,9 +27,8 @@ class StopTimerTool extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'ticketId' => $schema->string()
-                ->description('Timer to stop on a specific ticket.')
-                ->required(),
+            'ticketId' => $schema->integer()
+                ->description('Ticket ID to stop the timer for. Omit to stop the active timer.'),
         ];
     }
 
@@ -38,10 +37,12 @@ class StopTimerTool extends Tool
      */
     public function handle(Request $request): Response
     {
-        $ticketId = $request->string('ticketId');
+        $ticketId = $request->get('ticketId');
 
-        if ($ticketId) {
-            $this->timesheetsService->punchOut($ticketId);
+        if ($ticketId !== null && (int) $ticketId > 0) {
+            $this->timesheetsService->punchOut((int) $ticketId);
+        } else {
+            $this->timesheetsService->stopActiveTimer();
         }
 
         return Response::text('Timer stopped successfully.');

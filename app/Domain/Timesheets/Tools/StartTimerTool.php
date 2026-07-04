@@ -61,8 +61,8 @@ class StartTimerTool extends Tool
             return Response::error('Invalid duration format. Use format like "25m" or "1h30m".');
         }
 
-        if ($taskId) {
-            $this->timesheetsService->punchIn($taskId);
+        if ($taskId !== null && (int) $taskId > 0) {
+            $this->timesheetsService->punchIn((int) $taskId);
         }
 
         return Response::text("[timer startTime='".(time() + 10)."' duration='".($minutes * 60)."' type='".$type."']");
