@@ -261,7 +261,7 @@ leantime.projectsController = (function () {
                 jQuery.ajax(
                     {
                         type: 'POST',
-                        url: leantime.appUrl + '/api/projects',
+                        url: leantime.appUrl + '/projects/projectImage',
                         data: formData,
                         processData: false,
                         contentType: false,

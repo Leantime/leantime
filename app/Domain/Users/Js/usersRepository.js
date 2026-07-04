@@ -8,7 +8,7 @@ leantime.usersRepository = (function () {
         jQuery.ajax(
             {
                 type: 'POST',
-                url: leantime.appUrl + '/api/users',
+                url: leantime.appUrl + '/users/profileImage',
                 data: formData,
                 processData: false,
                 contentType: false,
