@@ -789,9 +789,18 @@ class Projects
         // Add users to relation
         if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
             foreach ($values['assignedUsers'] as $userId) {
+                $roleValue = $values['projectRoles']['userProjectRole-'.$userId] ?? null;
+
+                // Only store an explicit, assignable, numeric project-role key. "inherit" (and any
+                // other non-numeric value such as an empty selection) leaves the role null so the
+                // user falls back to their global role, and admin/owner (40/50) are never
+                // assignable as a per-project role.
                 $projectRole = null;
-                if (isset($values['projectRoles']['userProjectRole-'.$userId]) && $values['projectRoles']['userProjectRole-'.$userId] != '40' && $values['projectRoles']['userProjectRole-'.$userId] != '50') {
-                    $projectRole = (int) $values['projectRoles']['userProjectRole-'.$userId];
+                if (is_numeric($roleValue)) {
+                    $roleKey = (int) $roleValue;
+                    if ($roleKey !== 0 && $roleKey !== 40 && $roleKey !== 50) {
+                        $projectRole = $roleKey;
+                    }
                 }
 
                 $this->addProjectRelation($userId, $projectId, $projectRole);

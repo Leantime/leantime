@@ -1050,13 +1050,15 @@ class Projects extends BaseService implements ChecksProjectAccess
     public function getProjectRole($userId, $projectId): string
     {
 
-        $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
+        $projectRole = $this->projectRepository->getUserProjectRelation($userId, $projectId)[0]['projectRole'] ?? '';
 
-        if (isset($project[0]['projectRole']) && $project[0]['projectRole'] != '') {
-            return (string) $project[0]['projectRole'];
-        } else {
+        // An empty value, or the legacy "0" role written before "inherit" was handled on save,
+        // means the user has no explicit project role -> callers fall back to the global role.
+        if ($projectRole === '' || $projectRole === null || $projectRole === 0 || $projectRole === '0') {
             return '';
         }
+
+        return (string) $projectRole;
     }
 
     /**
